@@ -72,7 +72,7 @@ messages -> RemoteGraphicsContextGL Stream {
 #if ENABLE(WEBXR)
     [EnabledBy=WebXREnabled] void FramebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
 #endif
-    void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace colorSpace)
+    void SetDrawingBufferColorSpace(WebCore::ColorSpace colorSpace)
 
     void ActiveTexture(uint32_t texture) StreamBatched
     void AttachShader(uint32_t program, uint32_t shader) StreamBatched

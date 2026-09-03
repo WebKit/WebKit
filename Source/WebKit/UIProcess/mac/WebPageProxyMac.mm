@@ -52,6 +52,7 @@
 #import "WKQuickLookPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
+#import <WebCore/ColorSpace.h>
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
 #import "WebPageProxyMessages.h"
@@ -60,7 +61,6 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/CornerRadii.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>

@@ -442,7 +442,7 @@ private:
     FloatRect backingStoreBounds() const { return FloatRect { { }, FloatSize { canvasBase().size() } }; }
 
     PixelFormat pixelFormat() const final;
-    DestinationColorSpace colorSpace() const final;
+    ColorSpace colorSpace() const final;
     bool willReadFrequently() const final;
 
     void realizeSavesLoop();

@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, DestinationColorSpace colorSpace)
+Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, ColorSpace colorSpace)
 {
     return adoptRef(*new FEComponentTransfer(redFunction, greenFunction, blueFunction, alphaFunction, colorSpace));
 }
@@ -49,7 +49,7 @@ Ref<FEComponentTransfer> FEComponentTransfer::create(ComponentTransferFunctions&
     return adoptRef(*new FEComponentTransfer(WTF::move(functions)));
 }
 
-FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, DestinationColorSpace colorSpace)
+FEComponentTransfer::FEComponentTransfer(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEComponentTransfer, colorSpace)
     , m_functions(std::array { redFunction, greenFunction, blueFunction, alphaFunction })
 {

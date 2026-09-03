@@ -28,8 +28,8 @@
 
 #if USE(CORE_IMAGE)
 
+#import "ColorSpace.h"
 #import "ColorSpaceCG.h"
-#import "DestinationColorSpace.h"
 #import "Filter.h"
 #import "Logging.h"
 #import <CoreImage/CIFilterBuiltins.h>
@@ -84,7 +84,7 @@ ImageBuffer* FilterImage::filterResultImageBuffer(const Filter& filter)
 
     ASSERT(imageBuffer->surface());
 
-    RetainPtr context = colorSpace() == DestinationColorSpace::LinearSRGB() ? sharedLinearSRGBCIContext() : sharedSRGBCIContext();
+    RetainPtr context = colorSpace() == ColorSpace::LinearSRGB() ? sharedLinearSRGBCIContext() : sharedSRGBCIContext();
 
     // We use -[CIContext:startTaskToRender...] because it lets us specify `fromRect`, which provides the rect against which earlier
     // CIImages extents are computed (in flipped coordinates). -[CIContext render:...] uses the size of the IOSurface, which is only

@@ -29,7 +29,7 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/ColorInterpolationMethod.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/GradientColorStops.h>
 #include <WebCore/GraphicsTypes.h>
@@ -117,7 +117,7 @@ public:
 
 #if USE(CG)
     void paint(GraphicsContext&);
-    void paint(CGContextRef, std::optional<DestinationColorSpace> = { });
+    void paint(CGContextRef, std::optional<ColorSpace> = { });
 #endif
 
 #if USE(SKIA)

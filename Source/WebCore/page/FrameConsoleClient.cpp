@@ -381,7 +381,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                     auto snapshotImageElement = [&snapshot] (HTMLImageElement& imageElement) {
                         if (RefPtr cachedImage = imageElement.cachedImage()) {
                             if (RefPtr image = cachedImage->image(); image && image != &Image::nullImage()) {
-                                snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+                                snapshot = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
                                 snapshot->context().drawImage(*image, FloatPoint(0, 0));
                             }
                         }
@@ -397,7 +397,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                     else if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(node)) {
                         unsigned videoWidth = videoElement->videoWidth();
                         unsigned videoHeight = videoElement->videoHeight();
-                        snapshot = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+                        snapshot = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
                         videoElement->paintCurrentFrameInContext(snapshot->context(), FloatRect(0, 0, videoWidth, videoHeight));
                     }
 #endif
@@ -413,7 +413,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
                     if (!snapshot) {
                         Ref frame = m_frame.get();
                         if (RefPtr localMainFrame = frame->localMainFrame())
-                            snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+                            snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
                     }
 
                     if (snapshot)
@@ -423,7 +423,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
         } else if (RefPtr imageData = JSImageData::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-                if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     imageBuffer->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(IntPoint(), imageData->size()));
                     dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
                 }
@@ -445,7 +445,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
                 Ref frame = m_frame.get();
                 if (RefPtr localMainFrame = frame->localMainFrame()) {
-                    if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, enclosingIntRect(rect->toFloatRect()), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
+                    if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, enclosingIntRect(rect->toFloatRect()), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
                         dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
                 }
             }
@@ -464,7 +464,7 @@ void FrameConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Re
             if (RefPtr localMainFrame = frame->localMainFrame()) {
                 // If no target is provided, capture an image of the viewport.
                 auto viewportRect = protect(localMainFrame->view())->unobscuredContentRect();
-                if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
+                if (RefPtr snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() }))
                     dataURL = encodeDataURL(WTF::move(snapshot), "image/png"_s);
             }
         }

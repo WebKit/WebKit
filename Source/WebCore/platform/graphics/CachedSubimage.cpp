@@ -63,7 +63,7 @@ std::unique_ptr<CachedSubimage> CachedSubimage::create(GraphicsContext& context,
 
     auto cachedSubimageDestinationRect = mapRect(cachedSubimageSourceRect, sourceRect, destinationRect);
 
-    auto imageBuffer = context.createScaledImageBuffer(cachedSubimageDestinationRect, context.scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    auto imageBuffer = context.createScaledImageBuffer(cachedSubimageDestinationRect, context.scaleFactor(), ColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
     if (!imageBuffer)
         return nullptr;
 
@@ -72,7 +72,7 @@ std::unique_ptr<CachedSubimage> CachedSubimage::create(GraphicsContext& context,
 
 std::unique_ptr<CachedSubimage> CachedSubimage::createPixelated(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect)
 {
-    auto imageBuffer = context.createScaledImageBuffer(destinationRect, context.scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    auto imageBuffer = context.createScaledImageBuffer(destinationRect, context.scaleFactor(), ColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
     if (!imageBuffer)
         return nullptr;
 

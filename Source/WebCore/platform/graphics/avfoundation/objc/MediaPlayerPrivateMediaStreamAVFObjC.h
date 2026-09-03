@@ -157,7 +157,7 @@ private:
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() override;
-    DestinationColorSpace colorSpace() override;
+    ColorSpace colorSpace() override;
     bool metaDataAvailable() const { return m_mediaStreamPrivate && m_readyState >= MediaPlayer::ReadyState::HaveMetadata; }
 
     void acceleratedRenderingStateChanged() final { updateLayersAsNeeded(); }

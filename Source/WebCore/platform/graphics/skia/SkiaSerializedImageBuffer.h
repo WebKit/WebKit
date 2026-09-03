@@ -47,7 +47,7 @@ private:
     RefPtr<ImageBuffer> m_imageBuffer;
     FloatSize m_logicalSize;
     float m_resolutionScale { 1 };
-    DestinationColorSpace m_colorSpace { DestinationColorSpace::SRGB() };
+    ColorSpace m_colorSpace { ColorSpace::SRGB() };
     ImageBufferFormat m_bufferFormat;
     RefPtr<NativeImage> m_image;
     std::unique_ptr<GLFence> m_fence;

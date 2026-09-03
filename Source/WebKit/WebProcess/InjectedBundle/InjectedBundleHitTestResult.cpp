@@ -171,7 +171,7 @@ RefPtr<WebImage> InjectedBundleHitTestResult::image() const
         return nullptr;
 
     IntSize size(bitmapImage->size());
-    RefPtr webImage = WebImage::create(size, { }, DestinationColorSpace::SRGB());
+    RefPtr webImage = WebImage::create(size, { }, ColorSpace::SRGB());
     if (!webImage->context())
         return nullptr;
 

@@ -39,7 +39,7 @@ messages -> DrawingArea {
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()
-    SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
+    SetColorSpace(struct std::optional<WebCore::ColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
     AcceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, String key, MonotonicTime startTime)

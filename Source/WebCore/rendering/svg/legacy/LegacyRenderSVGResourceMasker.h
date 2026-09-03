@@ -63,7 +63,7 @@ private:
 
     ASCIILiteral renderName() const override { return "RenderSVGResourceMasker"_s; }
 
-    bool drawContentIntoMaskImage(MaskerData*, const DestinationColorSpace&, RenderObject*);
+    bool drawContentIntoMaskImage(MaskerData*, const ColorSpace&, RenderObject*);
     void calculateMaskContentRepaintRect(RepaintRectCalculation);
 
     EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_maskContentBoundaries;

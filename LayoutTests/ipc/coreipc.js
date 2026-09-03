@@ -245,7 +245,7 @@ const aliases = {
     'CGColorSpaceRef': 'WebKit::CoreIPCCGColorSpace'
 }
 
-// A DestinationColorSpace holding sRGB. Under USE(CG) it is a structured variant; under
+// A ColorSpace holding sRGB. Under USE(CG) it is a structured variant; under
 // USE(SKIA) sk_sp<SkColorSpace> crosses IPC as the bytes SkColorSpace::serialize() produces,
 // which IPC.serializedSRGBColorSpace() obtains from the real serializer.
 export function sRGBColorSpace() {

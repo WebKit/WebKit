@@ -157,16 +157,16 @@ bool suppressEDRForDisplay(PlatformDisplayID)
 }
 #endif
 
-DestinationColorSpace screenColorSpace(Widget* widget)
+ColorSpace screenColorSpace(Widget* widget)
 {
     UNUSED_PARAM(widget);
 
 #if ENABLE(PIXEL_FORMAT_RGB10) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
     if (screenContentsFormats(widget).contains(ContentsFormat::RGBA10))
-        return DestinationColorSpace::ExtendedSRGB();
+        return ColorSpace::ExtendedSRGB();
 #endif
 
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 // These functions scale between screen and page coordinates because JavaScript/DOM operations

@@ -74,7 +74,7 @@ ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const
     if (!multiRepresentationHEIC)
         return ImageDrawResult::DidNothing;
 
-    RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
+    RefPtr imageBuffer = createScaledImageBuffer(destination.size(), scaleFactor(), ColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
     if (!imageBuffer)
         return ImageDrawResult::DidNothing;
 

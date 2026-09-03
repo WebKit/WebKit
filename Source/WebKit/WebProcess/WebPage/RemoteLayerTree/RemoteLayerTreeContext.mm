@@ -91,7 +91,7 @@ std::optional<DrawingAreaIdentifier> RemoteLayerTreeContext::drawingAreaIdentifi
     return m_webPage->drawingArea()->identifier();
 }
 
-std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeContext::displayColorSpace() const
+std::optional<WebCore::ColorSpace> RemoteLayerTreeContext::displayColorSpace() const
 {
     if (RefPtr drawingArea = m_webPage->drawingArea())
         return drawingArea->displayColorSpace();

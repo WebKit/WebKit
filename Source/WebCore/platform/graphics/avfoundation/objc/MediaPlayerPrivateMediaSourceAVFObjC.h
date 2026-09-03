@@ -239,7 +239,7 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    ColorSpace colorSpace() final;
 
     bool supportsAcceleratedRendering() const override;
     // called when the rendering system flips the into or out of accelerated rendering mode.

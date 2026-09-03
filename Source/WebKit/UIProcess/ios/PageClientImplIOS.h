@@ -41,7 +41,7 @@ OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTarget;
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 enum class DOMPasteAccessCategory : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 struct PromisedAttachmentInfo;
@@ -82,7 +82,7 @@ private:
     bool isViewInWindow() override;
     bool isViewVisibleOrOccluded() override;
     bool isVisuallyIdle() override;
-    WebCore::DestinationColorSpace colorSpace() override;
+    WebCore::ColorSpace colorSpace() override;
 
     void processDidExit() override;
     void processWillSwap() override;
@@ -393,7 +393,7 @@ private:
 
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
-    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
+    std::optional<WebCore::ColorSpace> m_colorSpace;
 };
 } // namespace WebKit
 

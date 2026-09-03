@@ -83,7 +83,7 @@ struct ImageBufferCreationContext {
 struct ImageBufferParameters {
     FloatSize logicalSize;
     float resolutionScale;
-    DestinationColorSpace colorSpace;
+    ColorSpace colorSpace;
     ImageBufferFormat bufferFormat;
     RenderingPurpose purpose;
 };
@@ -93,15 +93,15 @@ class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Image
 public:
     using Parameters = ImageBufferParameters;
 
-    static RefPtr<ImageBuffer> create(const FloatSize& size, RenderingMode mode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat bufferFormat, GraphicsClient* client = nullptr)
+    static RefPtr<ImageBuffer> create(const FloatSize& size, RenderingMode mode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, PixelFormat bufferFormat, GraphicsClient* client = nullptr)
     {
         return create(size, mode, purpose, resolutionScale, colorSpace, ImageBufferFormat { bufferFormat }, client);
     }
 
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat, GraphicsClient* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const ColorSpace&, ImageBufferFormat, GraphicsClient* = nullptr);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat bufferFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
     {
         Parameters parameters { size, resolutionScale, colorSpace, bufferFormat, purpose };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
@@ -172,7 +172,7 @@ public:
     FloatSize logicalSize() const { return m_parameters.logicalSize; }
     IntSize truncatedLogicalSize() const { return IntSize(m_parameters.logicalSize); } // You probably should be calling logicalSize() instead.
     float resolutionScale() const { return m_parameters.resolutionScale; }
-    DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
+    ColorSpace colorSpace() const { return m_parameters.colorSpace; }
 
     RenderingPurpose renderingPurpose() const { return m_parameters.purpose; }
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
@@ -225,7 +225,7 @@ public:
     WEBCORE_EXPORT static RefPtr<SharedBuffer> sinkIntoPDFDocument(RefPtr<ImageBuffer>);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
-    WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);
+    WEBCORE_EXPORT virtual void transformToColorSpace(const ColorSpace& newColorSpace);
 
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& = ImageBufferAllocator()) const;
     WEBCORE_EXPORT virtual void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied);

@@ -39,7 +39,7 @@ class Device;
 enum class TextureFormat : uint8_t;
 }
 
-class DestinationColorSpace;
+class ColorSpace;
 class ImageBuffer;
 
 class GPUCompositorIntegration : public RefCountedAndCanMakeWeakPtr<GPUCompositorIntegration> {
@@ -50,7 +50,7 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebCore::WebGPU::Device&) const;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebCore::WebGPU::Device&) const;
 #endif
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&);

@@ -56,6 +56,7 @@
 #import "WKWebViewPrivateForTesting.h"
 #import "WebColorPickerMac.h"
 #import "WebContextMenuProxyMac.h"
+#import <WebCore/ColorSpace.h>
 #import "WebDataListSuggestionsDropdownMac.h"
 #import "WebDateTimePickerMac.h"
 #import "WebEditCommandProxy.h"
@@ -71,7 +72,6 @@
 #import <WebCore/BitmapImage.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/Cursor.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/FloatRect.h>
@@ -264,7 +264,7 @@ void PageClientImpl::viewWillMoveToAnotherWindow()
     clearAllEditCommands();
 }
 
-WebCore::DestinationColorSpace PageClientImpl::colorSpace()
+WebCore::ColorSpace PageClientImpl::colorSpace()
 {
     return protect(m_impl)->colorSpace();
 }

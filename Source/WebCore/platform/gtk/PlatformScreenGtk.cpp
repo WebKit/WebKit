@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "HostWindow.h"
 #include "LocalFrameView.h"
@@ -76,9 +76,9 @@ bool screenIsMonochrome(Widget* widget)
     return screenDepth(widget) < 2;
 }
 
-DestinationColorSpace screenColorSpace(Widget*)
+ColorSpace screenColorSpace(Widget*)
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 bool screenHasInvertedColors()

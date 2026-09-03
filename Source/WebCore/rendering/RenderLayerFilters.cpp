@@ -263,10 +263,10 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
         // SVG spec: color-interpolation-filters defaults to linearRGB, so SVG filter
         // operations should happen in linear color space. Match legacy SVG filter behavior.
-        auto colorSpace = DestinationColorSpace::SRGB();
+        auto colorSpace = ColorSpace::SRGB();
 #if !USE(CAIRO)
         if (usesSVGUserSpace)
-            colorSpace = DestinationColorSpace::LinearSRGB();
+            colorSpace = ColorSpace::LinearSRGB();
 #endif
 
         m_targetSwitcher = GraphicsContextSwitcher::create(context, sourceImageRect, colorSpace, { WTF::move(filter) });
@@ -286,11 +286,11 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
 
     ASSERT(m_targetSwitcher);
 
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
 #if !USE(CAIRO)
     if (CheckedPtr layer = m_layer.get()) {
         if (layer->renderer().isSVGLayerAwareRenderer() && !layer->renderer().isRenderSVGRoot())
-            colorSpace = DestinationColorSpace::LinearSRGB();
+            colorSpace = ColorSpace::LinearSRGB();
     }
 #endif
 

@@ -1203,10 +1203,10 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     return nullptr;
 }
 
-DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
+ColorSpace MediaPlayerPrivateRemote::colorSpace()
 {
     notImplemented();
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 #endif
 

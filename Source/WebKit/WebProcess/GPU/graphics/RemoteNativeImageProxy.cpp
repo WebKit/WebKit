@@ -44,7 +44,7 @@ static PlatformImagePtr placeholderPlatformImage()
     static NeverDestroyed<PlatformImagePtr> image = [] {
         // Currently we return a placeholder that does not match the NativeImage
         // size, colorspace, isAlpha properties.
-        RefPtr buffer = ImageBuffer::create(FloatSize { 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferFormat { PixelFormat::BGRA8 });
+        RefPtr buffer = ImageBuffer::create(FloatSize { 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), ImageBufferFormat { PixelFormat::BGRA8 });
         RELEASE_ASSERT(buffer);
         buffer->context().fillRect({ 0, 0, 1, 1 }, Color::black);
         RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
@@ -125,10 +125,10 @@ bool RemoteNativeImageProxy::hasAlpha() const
     return m_hasAlpha;
 }
 
-DestinationColorSpace RemoteNativeImageProxy::colorSpace() const
+ColorSpace RemoteNativeImageProxy::colorSpace() const
 {
     // FIXME: Images are not in destination color space, they are in any color space.
-    return DestinationColorSpace { m_colorSpace };
+    return ColorSpace { m_colorSpace };
 }
 
 }

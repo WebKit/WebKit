@@ -42,19 +42,19 @@
 
 namespace WebCore {
 
-void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace& newColorSpace)
+void ImageBufferCairoBackend::transformToColorSpace(const ColorSpace& newColorSpace)
 {
     if (m_parameters.colorSpace == newColorSpace)
         return;
 
     // only sRGB <-> linearRGB are supported at the moment
-    if ((m_parameters.colorSpace != DestinationColorSpace::LinearSRGB() && m_parameters.colorSpace != DestinationColorSpace::SRGB())
-        || (newColorSpace != DestinationColorSpace::LinearSRGB() && newColorSpace != DestinationColorSpace::SRGB()))
+    if ((m_parameters.colorSpace != ColorSpace::LinearSRGB() && m_parameters.colorSpace != ColorSpace::SRGB())
+        || (newColorSpace != ColorSpace::LinearSRGB() && newColorSpace != ColorSpace::SRGB()))
         return;
 
     m_parameters.colorSpace = newColorSpace;
 
-    if (newColorSpace == DestinationColorSpace::LinearSRGB()) {
+    if (newColorSpace == ColorSpace::LinearSRGB()) {
         static const std::array<uint8_t, 256> linearRgbLUT = [] {
             std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {

@@ -21,7 +21,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FilterEffect.h>
 
 namespace WebCore {
@@ -30,7 +30,7 @@ class FEDropShadow final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEDropShadow);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEDropShadow);
 public:
-    WEBCORE_EXPORT static Ref<FEDropShadow> create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEDropShadow> create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEDropShadow&) const;
 
@@ -55,11 +55,11 @@ public:
     static IntOutsets calculateOutsets(const FloatSize& offset, const FloatSize& stdDeviation);
 
 #if USE(CAIRO)
-    void setOperatingColorSpace(const DestinationColorSpace&) override { }
+    void setOperatingColorSpace(const ColorSpace&) override { }
 #endif
 
 private:
-    FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace);
+    FEDropShadow(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDropShadow>(*this, other); }
 

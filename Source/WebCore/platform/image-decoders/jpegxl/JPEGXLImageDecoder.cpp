@@ -519,7 +519,7 @@ void JPEGXLImageDecoder::maybePerformColorSpaceConversion(std::span<uint8_t> inp
         .format = {
             .alphaFormat = alphaFormat,
             .pixelFormat = PixelFormat::BGRA8,
-            .colorSpace = DestinationColorSpace(m_profile.get()),
+            .colorSpace = ColorSpace(m_profile.get()),
         },
         .bytesPerRow = static_cast<unsigned>(4 * size().width()),
         .rows = inputBuffer,
@@ -528,7 +528,7 @@ void JPEGXLImageDecoder::maybePerformColorSpaceConversion(std::span<uint8_t> inp
         .format = {
             .alphaFormat = alphaFormat,
             .pixelFormat = PixelFormat::BGRA8,
-            .colorSpace = DestinationColorSpace::SRGB(),
+            .colorSpace = ColorSpace::SRGB(),
         },
         .bytesPerRow = static_cast<unsigned>(4 * size().width()),
         .rows = intermediateBuffer.mutableSpan()

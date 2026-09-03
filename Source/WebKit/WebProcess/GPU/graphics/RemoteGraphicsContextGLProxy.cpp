@@ -552,7 +552,7 @@ void RemoteGraphicsContextGLProxy::framebufferDiscard(GCGLenum target, std::span
 }
 #endif
 
-void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::ColorSpace& colorSpace)
 {
     if (isContextLost())
         return;

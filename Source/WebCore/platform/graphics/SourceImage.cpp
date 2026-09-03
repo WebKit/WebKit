@@ -100,7 +100,7 @@ ImageBuffer* SourceImage::imageBuffer() const
         auto nativeImage = std::get<Ref<NativeImage>>(m_imageVariant);
 
         auto rect = FloatRect { { }, nativeImage->size() };
-        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        auto imageBuffer = ImageBuffer::create(nativeImage->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!imageBuffer)
             return nullptr;
 

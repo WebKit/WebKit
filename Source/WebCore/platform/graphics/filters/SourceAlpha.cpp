@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-Ref<SourceAlpha> SourceAlpha::create(const DestinationColorSpace& colorSpace)
+Ref<SourceAlpha> SourceAlpha::create(const ColorSpace& colorSpace)
 {
     return adoptRef(*new SourceAlpha(colorSpace));
 }
 
-SourceAlpha::SourceAlpha(DestinationColorSpace colorSpace)
+SourceAlpha::SourceAlpha(ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::SourceAlpha, colorSpace)
 {
 }

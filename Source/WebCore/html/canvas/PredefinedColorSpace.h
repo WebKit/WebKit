@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 
 enum class PredefinedColorSpace : uint8_t {
     SRGB,
@@ -40,11 +40,11 @@ enum class PredefinedColorSpace : uint8_t {
 #endif
 };
 
-DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace);
-DestinationColorSpace toExtendedDestinationColorSpace(PredefinedColorSpace);
+ColorSpace toColorSpace(PredefinedColorSpace);
+ColorSpace toExtendedColorSpace(PredefinedColorSpace);
 enum class AllowExtendedColorSpace : bool;
-DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace, AllowExtendedColorSpace);
+ColorSpace toColorSpace(PredefinedColorSpace, AllowExtendedColorSpace);
 
-std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace&);
+std::optional<PredefinedColorSpace> toPredefinedColorSpace(const ColorSpace&);
 
 }

@@ -400,7 +400,7 @@ void PageTimelineAgent::captureScreenshot()
     if (!localMainFrameView)
         return;
 
-    if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() })) {
+    if (RefPtr snapshot = snapshotFrameRect(*localMainFrame, localMainFrameView->unobscuredContentRect(), { { }, PixelFormat::BGRA8, ColorSpace::SRGB() })) {
         Ref snapshotRecord = TimelineRecordFactory::createScreenshotData(encodeDataURL(WTF::move(snapshot), "image/png"_s));
         pushCurrentRecord(WTF::move(snapshotRecord), TimelineRecordType::Screenshot, false, snapshotStartTime);
         didCompleteCurrentRecord(TimelineRecordType::Screenshot);

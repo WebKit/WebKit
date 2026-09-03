@@ -39,7 +39,7 @@ Ref<WebImage> WebImage::createEmpty()
     return adoptRef(*new WebImage(nullptr));
 }
 
-Ref<WebImage> WebImage::create(const FloatSize& size, ImageOptions options, const DestinationColorSpace& colorSpace, ChromeClient* client)
+Ref<WebImage> WebImage::create(const FloatSize& size, ImageOptions options, const ColorSpace& colorSpace, ChromeClient* client)
 {
     auto pixelFormat = PixelFormat::BGRA8;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

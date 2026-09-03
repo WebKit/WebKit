@@ -87,7 +87,7 @@ public:
 
     FloatSize resolvedIntrinsicSize(float density = 1.0f) const;
 
-    RefPtr<NativeImage> nativeImage(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB());
+    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB());
 
 private:
     friend class SVGImageChromeClient;
@@ -113,7 +113,7 @@ private:
     bool currentFrameIsComplete() const final { return !!m_page; }
 
     bool hasHDRContent() const final;
-    RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) final;
+    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) final;
 
     void startAnimationTimerFired();
 

@@ -58,7 +58,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
 
-static void setCGFillColor(CGContextRef context, const Color& color, const DestinationColorSpace& colorSpace)
+static void setCGFillColor(CGContextRef context, const Color& color, const ColorSpace& colorSpace)
 {
     CGContextSetFillColorWithColor(context, cachedCGColorInDestinationStandardRange(color, colorSpace).get());
 }
@@ -242,7 +242,7 @@ CGContextRef GraphicsContextCG::contextForState() const
     return m_cgContext.get();
 }
 
-const DestinationColorSpace& GraphicsContextCG::colorSpace() const
+const ColorSpace& GraphicsContextCG::colorSpace() const
 {
     if (m_colorSpace)
         return *m_colorSpace;
@@ -260,7 +260,7 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
         colorSpace = CGContextGetColorSpace(context);
 
     // FIXME: Need to ASSERT(colorSpace). For now fall back to sRGB if colorSpace is nil.
-    m_colorSpace = colorSpace ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
+    m_colorSpace = colorSpace ? ColorSpace(colorSpace) : ColorSpace::SRGB();
     return *m_colorSpace;
 }
 

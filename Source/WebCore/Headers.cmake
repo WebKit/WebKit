@@ -2501,6 +2501,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorModels.h
     platform/graphics/ColorNormalization.h
     platform/graphics/ColorSerialization.h
+    platform/graphics/ColorSpace.h
     platform/graphics/ColorSpaceName.h
     platform/graphics/ColorTransferFunctions.h
     platform/graphics/ColorTypes.h
@@ -2514,7 +2515,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Damage.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
-    platform/graphics/DestinationColorSpace.h
     platform/graphics/DisplayRefreshMonitor.h
     platform/graphics/DisplayRefreshMonitorClient.h
     platform/graphics/DisplayRefreshMonitorFactory.h

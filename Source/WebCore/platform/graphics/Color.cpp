@@ -180,7 +180,7 @@ ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(ColorSpac
     return convertAndResolveColorComponents(inputColorSpace, components, outputColorSpace);
 }
 
-ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(const DestinationColorSpace& outputColorSpace) const
+ColorComponents<float, 4> Color::toResolvedColorComponentsInColorSpace(const ColorSpace& outputColorSpace) const
 {
     auto [inputColorSpace, components] = colorSpaceAndResolvedColorComponents();
     return convertAndResolveColorComponents(inputColorSpace, components, outputColorSpace);

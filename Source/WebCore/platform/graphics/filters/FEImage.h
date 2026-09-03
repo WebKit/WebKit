@@ -55,8 +55,8 @@ private:
 
     unsigned numberOfEffectInputs() const override { return 0; }
 
-    // FEImage results are always in DestinationColorSpace::SRGB()
-    void setOperatingColorSpace(const DestinationColorSpace&) override { }
+    // FEImage results are always in ColorSpace::SRGB()
+    void setOperatingColorSpace(const ColorSpace&) override { }
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 

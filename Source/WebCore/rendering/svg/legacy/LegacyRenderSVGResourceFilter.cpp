@@ -144,9 +144,9 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
     filterData->filter->clampFilterRegionIfNeeded();
 
 #if USE(CAIRO)
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
 #else
-    auto colorSpace = DestinationColorSpace::LinearSRGB();
+    auto colorSpace = ColorSpace::LinearSRGB();
 #endif
 
     auto& results = protect(filterData->filter)->ensureResults([&]() {
@@ -219,7 +219,7 @@ void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, G
 
     if (filterData.targetSwitcher) {
         filterData.state = FilterData::Built;
-        filterData.targetSwitcher->endDrawSourceImage(*context, DestinationColorSpace::LinearSRGB());
+        filterData.targetSwitcher->endDrawSourceImage(*context, ColorSpace::LinearSRGB());
     }
 
     LOG_WITH_STREAM(Filters, stream << "LegacyRenderSVGResourceFilter " << this << " postApplyResource done\n");

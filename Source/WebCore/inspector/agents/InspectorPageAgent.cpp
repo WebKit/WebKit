@@ -1011,7 +1011,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
 
-    RefPtr snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    RefPtr snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
     return encodeDataURL(WTF::move(snapshot), "image/png"_s);
@@ -1019,7 +1019,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
 
 Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Inspector::Protocol::Page::CoordinateSystem coordinateSystem)
 {
-    SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { }, PixelFormat::BGRA8, ColorSpace::SRGB() };
     if (coordinateSystem == Inspector::Protocol::Page::CoordinateSystem::Viewport)
         options.flags.add(SnapshotFlags::InViewCoordinates);
 

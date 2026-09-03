@@ -19,7 +19,7 @@
  */
 #pragma once
 
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/GraphicsTypesGL.h>
 #include <WebCore/IntRect.h>

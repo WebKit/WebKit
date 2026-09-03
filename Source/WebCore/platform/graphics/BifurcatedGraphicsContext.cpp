@@ -58,7 +58,7 @@ PlatformGraphicsContext* BifurcatedGraphicsContext::platformContext() const
     return m_primaryContext.platformContext();
 }
 
-const DestinationColorSpace& BifurcatedGraphicsContext::colorSpace() const
+const ColorSpace& BifurcatedGraphicsContext::colorSpace() const
 {
     return m_primaryContext.colorSpace();
 }

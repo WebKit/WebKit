@@ -110,7 +110,7 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final;
 
-    DestinationColorSpace colorSpace() final;
+    ColorSpace colorSpace() final;
 
 protected:
     void onCreatedMediaSource(COMPtr<IMFMediaSource>&&, bool loadingProgress);

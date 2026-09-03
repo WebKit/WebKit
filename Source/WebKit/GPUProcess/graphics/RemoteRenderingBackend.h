@@ -69,7 +69,7 @@ enum class Synchronous : bool;
 }
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class Filter;
 class FloatSize;
 class Gradient;
@@ -132,7 +132,7 @@ public:
 
     RefPtr<WebCore::ImageBuffer> imageBuffer(WebCore::RenderingResourceIdentifier);
 
-    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat, WebCore::ImageBufferCreationContext);
+    RefPtr<WebCore::ImageBuffer> allocateImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, WebCore::ImageBufferCreationContext);
 
     RemoteRenderingBackendIdentifier identifier() { return m_renderingBackendIdentifier; }
 private:
@@ -151,7 +151,7 @@ private:
     void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
 
     // Messages to be received.
-    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
+    void createImageBuffer(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier, RemoteSerializedImageBufferIdentifier);
     void moveToImageBuffer(RemoteSerializedImageBufferIdentifier, WebCore::RenderingResourceIdentifier, RemoteGraphicsContextIdentifier);

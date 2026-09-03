@@ -64,7 +64,7 @@ public:
 
     Ref<RemoteNativeImageProxy> createNativeImage(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha);
 
-    [[nodiscard]] bool recordNativeImageUse(const WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
+    [[nodiscard]] bool recordNativeImageUse(const WebCore::NativeImage&, const WebCore::ColorSpace&);
 
     // Starts tracking a shared NativeImage whose contents live in the GPU process's
     // RemoteSharedResourceCache, and returns the read reference the rendering backend uses to adopt it

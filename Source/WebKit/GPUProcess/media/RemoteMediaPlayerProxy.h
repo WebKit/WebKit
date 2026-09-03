@@ -364,8 +364,8 @@ private:
 
 #if PLATFORM(COCOA)
     WebCore::FloatSize mediaPlayerVideoLayerSize() const final;
-    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
-    void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::ColorSpace)>&&);
+    void colorSpace(CompletionHandler<void(WebCore::ColorSpace)>&&);
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
     void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);

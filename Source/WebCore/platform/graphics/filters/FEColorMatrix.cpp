@@ -39,18 +39,18 @@
 
 namespace WebCore {
 
-Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values, DestinationColorSpace colorSpace)
+Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values, ColorSpace colorSpace)
 {
     ASSERT(areValuesValidForType(type, values));
     return adoptRef(*new FEColorMatrix(type, WTF::move(values), colorSpace));
 }
 
-Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, const ColorMatrix<5, 4>& matrix, DestinationColorSpace colorSpace)
+Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, const ColorMatrix<5, 4>& matrix, ColorSpace colorSpace)
 {
     return create(type, matrix.data(), colorSpace);
 }
 
-FEColorMatrix::FEColorMatrix(ColorMatrixType type, Vector<float>&& values, DestinationColorSpace colorSpace)
+FEColorMatrix::FEColorMatrix(ColorMatrixType type, Vector<float>&& values, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEColorMatrix, colorSpace)
     , m_type(type)
     , m_values(WTF::move(values))

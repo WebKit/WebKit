@@ -50,8 +50,8 @@ class SharedVideoFrameWriter;
 class RemoteGraphicsContextProxy : public WebCore::DisplayList::Recorder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContextProxy);
 public:
-    RemoteGraphicsContextProxy(const WebCore::DestinationColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteRenderingBackendProxy&);
-    RemoteGraphicsContextProxy(const WebCore::DestinationColorSpace&, WebCore::ContentsFormat, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::ColorSpace&, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteRenderingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::ColorSpace&, WebCore::ContentsFormat, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
     ~RemoteGraphicsContextProxy();
     RemoteGraphicsContextIdentifier identifier() const { return m_identifier; }
 
@@ -83,7 +83,7 @@ public:
     }
 
 protected:
-    RemoteGraphicsContextProxy(const WebCore::DestinationColorSpace&, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, DrawGlyphsMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
+    RemoteGraphicsContextProxy(const WebCore::ColorSpace&, std::optional<WebCore::ContentsFormat>, WebCore::RenderingMode, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, DrawGlyphsMode, RemoteGraphicsContextIdentifier, RemoteRenderingBackendProxy&);
 
     template<typename T> void send(T&& message);
 
@@ -192,9 +192,9 @@ private:
     static constexpr size_t maxPendingLineStrokes = 64;
     Vector<WebCore::PathDataLineColorThickness> m_pendingLineStrokes;
 
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>, WebCore::ImageBufferFormat) const final;
-    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
-    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::ColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>, WebCore::ImageBufferFormat) const final;
+    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::ColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
+    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::ColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     void setMaxEDRHeadroom(std::optional<float> headroom) final { m_maxEDRHeadroom = headroom; }

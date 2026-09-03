@@ -26,9 +26,9 @@
 
 #pragma once
 
+#include <WebCore/ColorSpace.h>
 #include <WebCore/ControlPart.h>
 #include <WebCore/DashArray.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSegment.h>
 #include <WebCore/FontCascade.h>
@@ -81,7 +81,7 @@ public:
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
 
-    virtual const DestinationColorSpace& colorSpace() const { return DestinationColorSpace::SRGB(); }
+    virtual const ColorSpace& colorSpace() const { return ColorSpace::SRGB(); }
 
     virtual bool paintingDisabled() const { return false; }
     virtual bool performingPaintInvalidation() const { return false; }
@@ -245,14 +245,14 @@ public:
 
     IntSize compatibleImageBufferSize(const FloatSize&) const;
 
-    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, float resolutionScale = 1, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt, ImageBufferFormat = { PixelFormat::BGRA8 }) const;
-    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, PixelFormat) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, float resolutionScale = 1, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt, ImageBufferFormat = { PixelFormat::BGRA8 }) const;
+    RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const ColorSpace&, PixelFormat) const;
 
-    WEBCORE_EXPORT RefPtr<ImageBuffer> createScaledImageBuffer(const FloatSize&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt) const;
-    WEBCORE_EXPORT RefPtr<ImageBuffer> createScaledImageBuffer(const FloatRect&, const FloatSize& scale = { 1, 1 }, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt) const;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createScaledImageBuffer(const FloatSize&, const FloatSize& scale = { 1, 1 }, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt) const;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createScaledImageBuffer(const FloatRect&, const FloatSize& scale = { 1, 1 }, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMode> = std::nullopt, std::optional<RenderingMethod> = std::nullopt) const;
 
-    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
-    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const ColorSpace& = ColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
     WEBCORE_EXPORT virtual void drawNativeImage(const NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 

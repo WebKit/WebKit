@@ -27,7 +27,7 @@
 
 #include "Helpers/Test.h"
 #include "Helpers/WebCoreTestUtilities.h"
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListRecorderImpl.h>
 #include <WebCore/GraphicsContext.h>
@@ -54,7 +54,7 @@ constexpr unsigned testContextHeight = 88;
 
 static RefPtr<WebCore::ImageBuffer> createReferenceTarget()
 {
-    auto colorSpace = WebCore::DestinationColorSpace::SRGB();
+    auto colorSpace = WebCore::ColorSpace::SRGB();
     auto pixelFormat = WebCore::PixelFormat::BGRA8;
     WebCore::FloatSize logicalSize { testContextWidth, testContextHeight };
     float scale = 1;
@@ -72,7 +72,7 @@ static WebCore::Path createTestPath()
 
 static Ref<WebCore::ImageBuffer> createTestImageBuffer()
 {
-    auto colorSpace = WebCore::DestinationColorSpace::SRGB();
+    auto colorSpace = WebCore::ColorSpace::SRGB();
     auto pixelFormat = WebCore::PixelFormat::BGRA8;
     WebCore::FloatSize logicalSize { 3, 7 };
     float scale = 1;

@@ -2567,7 +2567,7 @@ RefPtr<ArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(
     // This computation can be used for cache retrieval as well as the real putImageData.
     // We're not doing RGBA -> BGRA swizzle here, as that is not needed for cache retrieval and
     // the swizzle copy can be made at the putImageData copy site.
-    auto colorSpace = toDestinationColorSpace(imageData.colorSpace());
+    auto colorSpace = toColorSpace(imageData.colorSpace());
     auto pixelFormat = toPixelFormat(imageData.pixelFormat());
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * PixelBuffer::bytesPerPixel(pixelFormat);
     PixelBufferFormat cachedFormat { AlphaPremultiplication::Premultiplied, pixelFormat, colorSpace };
@@ -2680,7 +2680,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (!buffer)
         return ImageData::create(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)) };
     RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
@@ -2688,7 +2688,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         return Exception { ExceptionCode::InvalidStateError };
     }
 
-    ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)));
+    ASSERT(pixelBuffer->format().colorSpace == toColorSpace(computedColorSpace, allowExtendedColorSpace(outputPixelFormat)));
 
     if (RefPtr imageData = ImageData::create(pixelBuffer.releaseNonNull(), outputImageDataPixelFormat))
         return { { imageData.releaseNonNull() } };
@@ -3201,9 +3201,9 @@ static constexpr AllowExtendedColorSpace allowExtendedColorSpace(CanvasRendering
     return AllowExtendedColorSpace::No;
 }
 
-DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
+ColorSpace CanvasRenderingContext2DBase::colorSpace() const
 {
-    return toDestinationColorSpace(m_settings.colorSpace, allowExtendedColorSpace(m_settings.colorType));
+    return toColorSpace(m_settings.colorSpace, allowExtendedColorSpace(m_settings.colorType));
 }
 
 bool CanvasRenderingContext2DBase::willReadFrequently() const

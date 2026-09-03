@@ -101,7 +101,7 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
     Ref canvasBase = this->canvasBase();
     auto size = canvasBase->size();
     if (!m_buffer)
-        return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     canvasBase->willUpdateContents(FloatRect { { }, size });
     RefPtr result = std::exchange(m_buffer, { });
     m_bufferNativeImage = nullptr;
@@ -113,7 +113,7 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
 RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
     if (!m_buffer) {
-        RefPtr buffer = ImageBuffer::create(canvasBase().size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        RefPtr buffer = ImageBuffer::create(canvasBase().size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
         if (buffer) {
             updateMemoryCost(buffer->memoryCost());
             m_buffer = WTF::move(buffer);

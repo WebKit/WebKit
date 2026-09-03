@@ -28,7 +28,7 @@
 
 #if HAVE(IOSURFACE)
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/NeverDestroyed.h>
@@ -78,7 +78,7 @@ Ref<IOSurfacePool> IOSurfacePool::create()
     return adoptRef(*new IOSurfacePool);
 }
 
-static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, const DestinationColorSpace& colorSpace, IOSurface::Format format, UseLosslessCompression useLosslessCompression)
+static bool surfaceMatchesParameters(IOSurface& surface, IntSize requestedSize, const ColorSpace& colorSpace, IOSurface::Format format, UseLosslessCompression useLosslessCompression)
 {
     // FIXME: It might be OK to take a surface that doesn't use compression when requesting one that does, but not the other way around.
     if (!surface.hasFormat({ format, useLosslessCompression }))
@@ -121,7 +121,7 @@ void IOSurfacePool::didUseSurfaceOfSize(IntSize size)
     m_sizesInPruneOrder.append(size);
 }
 
-std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Format format, UseLosslessCompression useLosslessCompression)
+std::unique_ptr<IOSurface> IOSurfacePool::takeSurface(IntSize size, const ColorSpace& colorSpace, IOSurface::Format format, UseLosslessCompression useLosslessCompression)
 {
     Locker locker { m_lock };
     CachedSurfaceMap::iterator mapIter = m_cachedSurfaces.find(size);

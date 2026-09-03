@@ -109,7 +109,7 @@ public:
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
-    void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
+    void setDrawingBufferColorSpace(const ColorSpace&) final;
     void prepareForDisplay() override;
 
     RefPtr<NativeImage> copyNativeImage(SurfaceBuffer) override;
@@ -148,7 +148,7 @@ protected:
     RetainPtr<IOSurfaceRef> copySurfaceBuffer(SurfaceBuffer);
 
     ProcessIdentity m_resourceOwner;
-    DestinationColorSpace m_drawingBufferColorSpace;
+    ColorSpace m_drawingBufferColorSpace;
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif

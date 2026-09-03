@@ -62,7 +62,7 @@ public:
     LightSource& lightSource() const { return m_lightSource; }
 
 protected:
-    FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
+    FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, ColorSpace);
 
     using FilterEffect::operator==;
 

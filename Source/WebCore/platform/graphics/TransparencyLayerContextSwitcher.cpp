@@ -74,7 +74,7 @@ void TransparencyLayerContextSwitcher::beginDrawSourceImage(GraphicsContext& des
     }
 }
 
-void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&)
+void TransparencyLayerContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&)
 {
     for ([[maybe_unused]] auto& filterStyle : m_filterStyles) {
         destinationContext.endTransparencyLayer();

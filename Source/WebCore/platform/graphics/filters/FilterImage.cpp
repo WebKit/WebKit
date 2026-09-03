@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferAllocator& allocator)
+RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const ColorSpace& colorSpace, ImageBufferAllocator& allocator)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()));
     return adoptRef(new FilterImage(primitiveSubregion, imageRect, absoluteImageRect, isAlphaImage, isValidPremultiplied, renderingMode, colorSpace, allocator));
@@ -58,7 +58,7 @@ RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, Fil
     return adoptRef(*new FilterImage(primitiveSubregion, other.imageRect(), other.absoluteImageRect(), Ref { *buffer }, allocator));
 }
 
-FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const DestinationColorSpace& colorSpace, ImageBufferAllocator& allocator)
+FilterImage::FilterImage(const FloatRect& primitiveSubregion, const FloatRect& imageRect, const IntRect& absoluteImageRect, bool isAlphaImage, bool isValidPremultiplied, RenderingMode renderingMode, const ColorSpace& colorSpace, ImageBufferAllocator& allocator)
     : m_primitiveSubregion(primitiveSubregion)
     , m_imageRect(imageRect)
     , m_absoluteImageRect(absoluteImageRect)
@@ -213,7 +213,7 @@ static bool copyImageBytes(const PixelBuffer& sourcePixelBuffer, PixelBuffer& de
     return true;
 }
 
-static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, AlphaPremultiplication alphaFormat, const IntRect& sourceRect, ColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
     auto convertedImageBuffer = allocator.createImageBuffer(clampedSize, colorSpace, RenderingMode::Unaccelerated);
@@ -227,7 +227,7 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(ImageBuffer& imageBuffer, Alp
     return convertedImageBuffer->getPixelBuffer(format, sourceRect, allocator);
 }
 
-static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, DestinationColorSpace colorSpace, ImageBufferAllocator& allocator)
+static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffer, AlphaPremultiplication alphaFormat, ColorSpace colorSpace, ImageBufferAllocator& allocator)
 {
     auto sourceRect = IntRect { { } , sourcePixelBuffer.size() };
     auto clampedSize = ImageBuffer::clampedSize(sourceRect.size());
@@ -241,7 +241,7 @@ static RefPtr<PixelBuffer> getConvertedPixelBuffer(PixelBuffer& sourcePixelBuffe
     return getConvertedPixelBuffer(*imageBuffer, alphaFormat, sourceRect, colorSpace, allocator);
 }
 
-bool FilterImage::requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace> colorSpace) const
+bool FilterImage::requiresPixelBufferColorSpaceConversion(std::optional<ColorSpace> colorSpace) const
 {
 #if USE(CG) || USE(SKIA)
     // This function determines whether we need the step of an extra color space conversion
@@ -297,7 +297,7 @@ PixelBuffer* FilterImage::pixelBuffer(AlphaPremultiplication alphaFormat)
     return pixelBuffer.get();
 }
 
-RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaFormat, const IntRect& sourceRect, std::optional<DestinationColorSpace> colorSpace)
+RefPtr<PixelBuffer> FilterImage::getPixelBuffer(AlphaPremultiplication alphaFormat, const IntRect& sourceRect, std::optional<ColorSpace> colorSpace)
 {
     ASSERT(!ImageBuffer::sizeNeedsClamping(sourceRect.size()));
 
@@ -396,7 +396,7 @@ void FilterImage::correctPremultipliedPixelBuffer()
     }
 }
 
-void FilterImage::transformToColorSpace(const DestinationColorSpace& colorSpace)
+void FilterImage::transformToColorSpace(const ColorSpace& colorSpace)
 {
 #if USE(CG) || USE(SKIA)
     // CG and SKIA handle color space adjustments internally.

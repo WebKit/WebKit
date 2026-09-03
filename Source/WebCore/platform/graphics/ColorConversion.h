@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 
 enum class ColorSpaceName : uint8_t;
 
@@ -45,7 +45,7 @@ template<typename Output, typename Input> Output convertColorCarryingForwardMiss
 
 // Conversion functions for raw color components with associated color spaces.
 ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace);
-ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace);
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const ColorSpace& outputColorSpace);
 
 // All color types, other than XYZA or those inheriting from RGBType, must implement
 // the following conversions to and from their "Reference" color.

@@ -80,7 +80,7 @@ void ModelPlayer::visibilityStateDidChange()
 {
 }
 
-RefPtr<ImageBuffer> ModelPlayer::snapshotCurrentFrame(const FloatSize&, const DestinationColorSpace&)
+RefPtr<ImageBuffer> ModelPlayer::snapshotCurrentFrame(const FloatSize&, const ColorSpace&)
 {
     return nullptr;
 }

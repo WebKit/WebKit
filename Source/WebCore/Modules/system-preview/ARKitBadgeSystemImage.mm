@@ -200,7 +200,7 @@ void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRe
             CIImage *translatedImage = [croppedImage imageByApplyingTransform:CGAffineTransformMakeTranslation(-flippedInsetBadgeRect.origin.x, -flippedInsetBadgeRect.origin.y)];
 
             auto surfaceDimension = useSmallBadge ? BadgeMetrics::smallDimension : BadgeMetrics::largeDimension;
-            std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPoolSingleton(), { surfaceDimension, surfaceDimension }, DestinationColorSpace::SRGB());
+            std::unique_ptr<IOSurface> badgeSurface = IOSurface::create(&IOSurfacePool::sharedPoolSingleton(), { surfaceDimension, surfaceDimension }, ColorSpace::SRGB());
             IOSurfaceRef surface = badgeSurface->surface();
             [ciContext render:translatedImage toIOSurface:surface bounds:badgeRect colorSpace:sRGBColorSpaceSingleton()];
             auto surfaceContext = badgeSurface->createPlatformContext();

@@ -56,7 +56,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
             return { };
 
         OptionSet<SnapshotFlags> snapshotFlags { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection };
-        auto imageBuffer = snapshotFrameRect(frame.get(), snapshotRect, { snapshotFlags, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+        auto imageBuffer = snapshotFrameRect(frame.get(), snapshotRect, { snapshotFlags, PixelFormat::BGRA8, ColorSpace::SRGB() });
         if (!imageBuffer)
             return { };
 

@@ -30,7 +30,7 @@ class FEOffset final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEOffset);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEOffset);
 public:
-    WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEOffset> create(float dx, float dy, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEOffset&) const;
 
@@ -43,7 +43,7 @@ public:
     static IntOutsets calculateOutsets(const FloatSize& offset);
 
 private:
-    FEOffset(float dx, float dy, DestinationColorSpace);
+    FEOffset(float dx, float dy, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEOffset>(*this, other); }
 

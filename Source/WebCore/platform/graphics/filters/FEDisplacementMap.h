@@ -39,7 +39,7 @@ class FEDisplacementMap final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEDisplacementMap);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEDisplacementMap);
 public:
-    WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace = DestinationColorSpace::SRGB(), bool in2IsTainted = false);
+    WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, ColorSpace = ColorSpace::SRGB(), bool in2IsTainted = false);
 
     bool operator==(const FEDisplacementMap&) const;
 
@@ -59,7 +59,7 @@ public:
     static IntOutsets calculateOutsets(const FloatSize& maxDisplacement);
 
 private:
-    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float, DestinationColorSpace);
+    FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEDisplacementMap>(*this, other); }
 
@@ -67,7 +67,7 @@ private:
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 
-    const DestinationColorSpace& resultColorSpace(std::span<const Ref<FilterImage>>) const override;
+    const ColorSpace& resultColorSpace(std::span<const Ref<FilterImage>>) const override;
     void transformInputsColorSpace(std::span<const Ref<FilterImage>> inputs) const override;
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode>) const override;

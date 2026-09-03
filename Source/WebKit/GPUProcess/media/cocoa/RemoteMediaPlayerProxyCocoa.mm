@@ -34,7 +34,7 @@
 #import "MediaPlayerPrivateRemoteMessages.h"
 #import "RemoteVideoFrameObjectHeap.h"
 #import <QuartzCore/QuartzCore.h>
-#import <WebCore/DestinationColorSpace.h>
+#import <WebCore/ColorSpace.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FloatSize.h>
 #import <WebCore/HostingContext.h>
@@ -107,42 +107,42 @@ WebCore::FloatSize RemoteMediaPlayerProxy::mediaPlayerVideoLayerSize() const
     return m_layerHostingContextManager->videoLayerSize();
 }
 
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&& completionHandler)
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::ColorSpace)>&& completionHandler)
 {
     using namespace WebCore;
 
     RefPtr player = m_player;
     if (!player) {
-        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
+        completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
     }
 
     auto nativeImage = player->nativeImageForCurrentTime();
     if (!nativeImage) {
-        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
+        completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
     }
 
     auto platformImage = nativeImage->platformImage();
     if (!platformImage) {
-        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
+        completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
     }
 
     auto surface = WebCore::IOSurface::createFromImage(nullptr, platformImage.get());
     if (!surface) {
-        completionHandler(std::nullopt, DestinationColorSpace::SRGB());
+        completionHandler(std::nullopt, ColorSpace::SRGB());
         return;
     }
 
     completionHandler(surface->createSendRight(), nativeImage->colorSpace());
 }
 
-void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&& completionHandler)
+void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::ColorSpace)>&& completionHandler)
 {
     RefPtr player = m_player;
     if (!player) {
-        completionHandler(WebCore::DestinationColorSpace::SRGB());
+        completionHandler(WebCore::ColorSpace::SRGB());
         return;
     }
 

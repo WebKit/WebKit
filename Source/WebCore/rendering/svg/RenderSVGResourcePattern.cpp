@@ -179,7 +179,7 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& c
     auto tileSize = roundedUnscaledImageBufferSize(size, scale);
 
     // FIXME: consider color space handling/'color-interpolation'.
-    auto tileImage = context.createScaledImageBuffer(tileSize, scale, DestinationColorSpace::SRGB());
+    auto tileImage = context.createScaledImageBuffer(tileSize, scale, ColorSpace::SRGB());
     if (!tileImage)
         return nullptr;
 

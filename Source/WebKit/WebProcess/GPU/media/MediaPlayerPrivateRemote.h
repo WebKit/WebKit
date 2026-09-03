@@ -348,7 +348,7 @@ private:
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
-    WebCore::DestinationColorSpace colorSpace() final;
+    WebCore::ColorSpace colorSpace() final;
     Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 #if PLATFORM(COCOA)
     bool shouldGetNativeImageForCanvasDrawing() const final { return false; }

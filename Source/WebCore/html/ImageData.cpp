@@ -173,7 +173,7 @@ ImageData::~ImageData() = default;
 Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
 {
     Ref uint8Data = m_data.asUint8ClampedArray();
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toColorSpace(m_colorSpace) };
     return ByteArrayPixelBuffer::create(format, m_size, uint8Data.get());
 }
 
@@ -181,7 +181,7 @@ Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
 Ref<Float16ArrayPixelBuffer> ImageData::float16ArrayPixelBuffer() const
 {
     Ref float16Data = m_data.asFloat16Array();
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toExtendedDestinationColorSpace(m_colorSpace) };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toExtendedColorSpace(m_colorSpace) };
     return Float16ArrayPixelBuffer::create(format, m_size, float16Data.get());
 }
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)

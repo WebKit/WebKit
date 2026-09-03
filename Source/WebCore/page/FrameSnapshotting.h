@@ -30,7 +30,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/PixelFormat.h>
 #include <WebCore/SimpleRange.h>
 #include <memory>
@@ -66,7 +66,7 @@ enum class SnapshotFlags : uint16_t {
 struct SnapshotOptions {
     OptionSet<SnapshotFlags> flags;
     PixelFormat pixelFormat;
-    DestinationColorSpace colorSpace;
+    ColorSpace colorSpace;
 };
 
 WEBCORE_EXPORT RefPtr<ImageBuffer> snapshotFrameRect(LocalFrame&, const IntRect&, SnapshotOptions&&, Node* nodeToDraw = nullptr);

@@ -213,7 +213,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync();
     using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
     WEBCORE_EXPORT virtual Ref<BitmapImagePromise> bitmapImageForCurrentTime();
-    virtual DestinationColorSpace colorSpace() = 0;
+    virtual ColorSpace colorSpace() = 0;
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
     virtual void setShouldDisableHDR(bool) { }

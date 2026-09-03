@@ -94,7 +94,7 @@ public:
     struct Parameters {
         Type type { Type::Bitmap };
         WebCore::FloatSize size;
-        WebCore::DestinationColorSpace colorSpace { WebCore::DestinationColorSpace::SRGB() };
+        WebCore::ColorSpace colorSpace { WebCore::ColorSpace::SRGB() };
         WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
         float scale { 1.0f };
         bool isOpaque { false };
@@ -135,7 +135,7 @@ public:
     WebCore::FloatSize size() const { return m_parameters.size; }
     float scale() const { return m_parameters.scale; }
     WebCore::ContentsFormat contentsFormat() const { return m_parameters.contentsFormat; }
-    WebCore::DestinationColorSpace colorSpace() const { return m_parameters.colorSpace; }
+    WebCore::ColorSpace colorSpace() const { return m_parameters.colorSpace; }
     WebCore::PixelFormat NODELETE pixelFormat() const;
     Type type() const { return m_parameters.type; }
     bool isOpaque() const { return m_parameters.isOpaque; }

@@ -45,7 +45,7 @@ namespace DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Recorder);
 
-Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
+Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : GraphicsContext(isDeferred, state)
     , m_committedState(state)
     , m_colorSpace(colorSpace)

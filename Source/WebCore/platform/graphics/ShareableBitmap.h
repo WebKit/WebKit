@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <WebCore/ColorSpace.h>
 #include <WebCore/CopyImageOptions.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PixelFormat.h>
@@ -64,7 +64,7 @@ public:
     explicit ShareableBitmapConfiguration(const ShareableBitmapConfiguration&) = default;
     ShareableBitmapConfiguration(ShareableBitmapConfiguration&&) = default;
 
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<PixelFormat> = unspecifiedPixelFormat, Headroom = Headroom::None, bool isOpaque = false);
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const ColorSpace& = ColorSpace::SRGB(), std::optional<PixelFormat> = unspecifiedPixelFormat, Headroom = Headroom::None, bool isOpaque = false);
 #if USE(CG)
     ShareableBitmapConfiguration(const NativeImage&);
 #endif
@@ -72,7 +72,7 @@ public:
     ShareableBitmapConfiguration& operator=(ShareableBitmapConfiguration&&) = default;
 
     IntSize size() const { return m_size; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace; }
+    const ColorSpace& colorSpace() const { return m_colorSpace; }
     PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
     PixelFormat pixelFormat() const { return m_pixelFormat; }
     Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
@@ -91,27 +91,27 @@ public:
 
     CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
 
-    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, PixelFormat, const DestinationColorSpace&);
-    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, PixelFormat, const DestinationColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, PixelFormat, const ColorSpace&);
+    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, PixelFormat, const ColorSpace&);
 
 private:
     friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration>;
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const DestinationColorSpace&, PixelFormat, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
+    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, const ColorSpace&, PixelFormat, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
         , CGBitmapInfo
         , std::optional<ShareableGainMap>&&
 #endif
     );
 
-    static DestinationColorSpace validateColorSpace(const DestinationColorSpace&);
-    static CheckedUint32 calculateBitsPerComponent(PixelFormat, const DestinationColorSpace&);
-    static CheckedUint32 calculateBytesPerPixel(PixelFormat, const DestinationColorSpace&);
+    static ColorSpace validateColorSpace(const ColorSpace&);
+    static CheckedUint32 calculateBitsPerComponent(PixelFormat, const ColorSpace&);
+    static CheckedUint32 calculateBytesPerPixel(PixelFormat, const ColorSpace&);
 #if USE(CG)
     static CGBitmapInfo calculateBitmapInfo(PixelFormat, bool isOpaque);
 #endif
 
     IntSize m_size;
-    DestinationColorSpace m_colorSpace { DestinationColorSpace::SRGB() };
+    ColorSpace m_colorSpace { ColorSpace::SRGB() };
     PixelFormat m_pixelFormat { PixelFormat::RGBA8 };
     Headroom m_baseImageHeadroom { Headroom::None };
     bool m_isOpaque { false };
@@ -165,9 +165,9 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImagePixels(const NativeImage&);
 #endif
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&);
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&, const IntSize&);
-    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const DestinationColorSpace&, const IntSize& destinationSize, const IntSize& sourceSize);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const ColorSpace&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const ColorSpace&, const IntSize&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createFromImageDraw(const NativeImage&, const ColorSpace&, const IntSize& destinationSize, const IntSize& sourceSize);
 
     // Create a shareable bitmap from a handle.
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite, SharedMemory::CopyOnWrite = defaultCopyOnWrite);
@@ -189,7 +189,7 @@ public:
     WEBCORE_EXPORT std::span<uint8_t> NODELETE mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
-    const DestinationColorSpace& colorSpace() const { return m_configuration.colorSpace(); }
+    const ColorSpace& colorSpace() const { return m_configuration.colorSpace(); }
     PixelFormat pixelFormat() const { return m_configuration.pixelFormat(); }
 
     // Create a graphics context that can be used to paint into the backing store.

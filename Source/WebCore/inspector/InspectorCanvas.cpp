@@ -896,7 +896,7 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&](Ref<HTMLVideoElement>& videoElement) {
             unsigned videoWidth = videoElement->videoWidth();
             unsigned videoHeight = videoElement->videoHeight();
-            RefPtr imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+            RefPtr imageBuffer = ImageBuffer::create(FloatSize(videoWidth, videoHeight), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
             if (imageBuffer)
                 videoElement->paintCurrentFrameInContext(imageBuffer->context(), FloatRect(0, 0, videoWidth, videoHeight));
             index = indexForData(encodeDataURL(WTF::move(imageBuffer), "image/png"_s, std::nullopt));

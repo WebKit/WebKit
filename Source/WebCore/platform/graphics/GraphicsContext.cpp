@@ -260,17 +260,17 @@ RenderingMode GraphicsContext::renderingModeForCompatibleBuffer() const
     return RenderingMode::Unaccelerated;
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod>, ImageBufferFormat pixelFormat) const
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, float resolutionScale, const ColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod>, ImageBufferFormat pixelFormat) const
 {
     return ImageBuffer::create(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), RenderingPurpose::Unspecified, resolutionScale, colorSpace, pixelFormat);
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat) const
+RefPtr<ImageBuffer> GraphicsContext::createImageBuffer(const FloatSize& size, const ColorSpace& colorSpace, PixelFormat pixelFormat) const
 {
     return createImageBuffer(size, 1, colorSpace, std::nullopt, std::nullopt, { pixelFormat });
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatSize& size, const FloatSize& scale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatSize& size, const FloatSize& scale, const ColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {
     auto expandedScaledSize = scaledImageBufferSize(size, scale);
     if (expandedScaledSize.isEmpty())
@@ -290,7 +290,7 @@ RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatSize& si
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatRect& rect, const FloatSize& scale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatRect& rect, const FloatSize& scale, const ColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {
     auto expandedScaledRect = scaledImageBufferRect(rect, scale);
     if (expandedScaledRect.isEmpty())
@@ -313,12 +313,12 @@ RefPtr<ImageBuffer> GraphicsContext::createScaledImageBuffer(const FloatRect& re
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatSize& size, const ColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
     return createScaledImageBuffer(size, scaleFactor(), colorSpace, renderingModeForCompatibleBuffer(), renderingMethod);
 }
 
-RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& rect, const ColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
     return createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingModeForCompatibleBuffer(), renderingMethod);
 }

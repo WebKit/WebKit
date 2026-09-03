@@ -664,7 +664,7 @@ std::optional<GainMap> ImageDecoderCG::frameGainMapAtIndex(size_t index, const D
     return GainMap {
         WTF::move(metadata),
         WTF::move(gainMapPixelBuffer),
-        colorSpace ? std::optional<DestinationColorSpace> { DestinationColorSpace(WTF::move(colorSpace)) } : std::nullopt
+        colorSpace ? std::optional<ColorSpace> { ColorSpace(WTF::move(colorSpace)) } : std::nullopt
     };
 #else
     UNUSED_PARAM(index);

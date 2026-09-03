@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-static std::optional<DestinationColorSpace> nonLinearDestinationColorSpace(const DestinationColorSpace& colorSpace)
+static std::optional<ColorSpace> nonLinearColorSpace(const ColorSpace& colorSpace)
 {
     auto predefined = toPredefinedColorSpace(colorSpace);
     if (!predefined)
@@ -66,10 +66,10 @@ void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
 
 void Gradient::paint(GraphicsContext& context)
 {
-    paint(context.platformContext(), nonLinearDestinationColorSpace(context.colorSpace()));
+    paint(context.platformContext(), nonLinearColorSpace(context.colorSpace()));
 }
 
-void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColorSpace> colorSpace)
+void Gradient::paint(CGContextRef platformContext, std::optional<ColorSpace> colorSpace)
 {
     if (!m_platformRenderer || m_platformRenderer->colorSpace() != colorSpace)
         m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };

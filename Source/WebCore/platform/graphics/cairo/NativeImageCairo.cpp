@@ -114,10 +114,10 @@ bool NativeImage::hasAlpha() const
     return cairo_surface_get_content(m_platformImage.get()) != CAIRO_CONTENT_COLOR;
 }
 
-DestinationColorSpace NativeImage::colorSpace() const
+ColorSpace NativeImage::colorSpace() const
 {
     notImplemented();
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const

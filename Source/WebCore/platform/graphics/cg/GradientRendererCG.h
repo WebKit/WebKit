@@ -27,7 +27,7 @@
 
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/ColorInterpolationMethod.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -38,15 +38,15 @@ using GradientColorStopVector = Vector<GradientColorStop, 2>;
 
 class GradientRendererCG {
 public:
-    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, std::optional<DestinationColorSpace> = { });
+    GradientRendererCG(ColorInterpolationMethod, const GradientColorStops&, std::optional<ColorSpace> = { });
 
     void drawLinearGradient(CGContextRef, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions);
     void drawRadialGradient(CGContextRef, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions);
     void drawConicGradient(CGContextRef, CGPoint center, CGFloat angle);
 
-    const std::optional<DestinationColorSpace>& colorSpace() const { return m_colorSpace; }
+    const std::optional<ColorSpace>& colorSpace() const { return m_colorSpace; }
 
-    static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStopVector&, const std::optional<DestinationColorSpace>& = { });
+    static RetainPtr<CGGradientRef> createGradientBySampling(ColorInterpolationMethod, const GradientColorStopVector&, const std::optional<ColorSpace>& = { });
 
 private:
     using Gradient = RetainPtr<CGGradientRef>;
@@ -54,7 +54,7 @@ private:
     Gradient makeGradient(ColorInterpolationMethod, const GradientColorStops&) const;
     Gradient makeGradientBySampling(ColorInterpolationMethod, const GradientColorStops&) const;
 
-    std::optional<DestinationColorSpace> m_colorSpace;
+    std::optional<ColorSpace> m_colorSpace;
     Gradient m_gradient;
 };
 

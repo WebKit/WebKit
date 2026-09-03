@@ -128,7 +128,7 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
         SnapshotFlags::FastAndLowQualityFilters
     };
 
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
 
     ASSERT(document.view());
     auto snapshot = snapshotFrameRect(protect(document.view()->frame()), IntRect(location, IntSize(1, 1)), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
@@ -290,8 +290,8 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
 bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
 {
     static constexpr auto maxDistanceSquaredForSimilarColors = 36;
-    auto [redA, greenA, blueA, alphaA] = a.toResolvedColorComponentsInColorSpace(DestinationColorSpace::SRGB());
-    auto [redB, greenB, blueB, alphaB] = b.toResolvedColorComponentsInColorSpace(DestinationColorSpace::SRGB());
+    auto [redA, greenA, blueA, alphaA] = a.toResolvedColorComponentsInColorSpace(ColorSpace::SRGB());
+    auto [redB, greenB, blueB, alphaB] = b.toResolvedColorComponentsInColorSpace(ColorSpace::SRGB());
     auto distance = pow(255 * (redA - redB), 2) + pow(255 * (greenA - greenB), 2) + pow(255 * (blueA - blueB), 2);
     return distance <= maxDistanceSquaredForSimilarColors;
 }
@@ -318,7 +318,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
         SnapshotFlags::FixedAndStickyLayersOnly,
     };
 
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return PredominantColorType::None;

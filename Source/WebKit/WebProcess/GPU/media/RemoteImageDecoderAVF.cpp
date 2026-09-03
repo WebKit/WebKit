@@ -31,9 +31,9 @@
 #include "GPUProcessConnection.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "SharedBufferReference.h"
+#include <WebCore/ColorSpace.h>
 #include "WebProcess.h"
 #include <WebCore/AVAssetMIMETypeCache.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IOSurface.h>
 #include <WebCore/ImageTypes.h>
 #include <WebCore/MIMETypeRegistry.h>

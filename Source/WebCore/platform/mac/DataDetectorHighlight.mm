@@ -132,7 +132,7 @@ void DataDetectorHighlight::paintContents(const GraphicsLayer&, GraphicsContext&
     CGRect highlightBoundingRect = PAL::softLink_DataDetectors_DDHighlightGetBoundingRect(protect(m_highlight).get());
     highlightBoundingRect.origin = CGPointZero;
 
-    auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), DestinationColorSpace::SRGB(), graphicsContext.renderingMode(), RenderingMethod::Local);
+    auto imageBuffer = graphicsContext.createImageBuffer(FloatSize(highlightBoundingRect.size), deviceScaleFactor(), ColorSpace::SRGB(), graphicsContext.renderingMode(), RenderingMethod::Local);
     if (!imageBuffer)
         return;
 

@@ -133,13 +133,13 @@ bool NativeImage::hasAlpha() const
     return false;
 }
 
-DestinationColorSpace NativeImage::colorSpace() const
+ColorSpace NativeImage::colorSpace() const
 {
     Locker locker { m_lock };
     if (auto colorSpace = m_platformImage->refColorSpace())
-        return DestinationColorSpace(colorSpace);
+        return ColorSpace(colorSpace);
     // No color space means the default - SRGB.
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const

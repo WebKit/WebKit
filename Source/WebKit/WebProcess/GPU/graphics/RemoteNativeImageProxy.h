@@ -53,7 +53,7 @@ public:
     WebCore::PlatformImagePtr platformImage() const override;
     WebCore::IntSize size() const override;
     bool hasAlpha() const override;
-    WebCore::DestinationColorSpace colorSpace() const override;
+    WebCore::ColorSpace colorSpace() const override;
 
     // Reference tracking for images held in the RemoteSharedResourceCache. The tracker's lifetime is
     // this image's lifetime, so the shared cache does not need to track it separately.

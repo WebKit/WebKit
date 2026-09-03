@@ -41,8 +41,8 @@ class FEColorMatrix final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEColorMatrix);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEColorMatrix);
 public:
-    WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
-    static Ref<FEColorMatrix> create(ColorMatrixType, const ColorMatrix<5, 4>&, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, ColorSpace = ColorSpace::SRGB());
+    static Ref<FEColorMatrix> create(ColorMatrixType, const ColorMatrix<5, 4>&, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEColorMatrix&) const;
 
@@ -58,7 +58,7 @@ public:
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
 private:
-    FEColorMatrix(ColorMatrixType, Vector<float>&&, DestinationColorSpace);
+    FEColorMatrix(ColorMatrixType, Vector<float>&&, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEColorMatrix>(*this, other); }
 

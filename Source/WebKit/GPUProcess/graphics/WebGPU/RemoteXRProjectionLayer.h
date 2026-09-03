@@ -49,7 +49,7 @@ struct RateMapDescription;
 }
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class ImageBuffer;
 }
 

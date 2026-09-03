@@ -114,8 +114,8 @@ class SecurityOrigin;
 
 namespace WebCore {
 class Color;
+class ColorSpace;
 class Cursor;
-class DestinationColorSpace;
 class FloatQuad;
 class FloatRect;
 class Region;
@@ -585,7 +585,7 @@ public:
 
     virtual CocoaWindow *platformWindow() const = 0;
 
-    virtual WebCore::DestinationColorSpace colorSpace() = 0;
+    virtual WebCore::ColorSpace colorSpace() = 0;
 #endif
 
     virtual void reconcileEnclosingScrollViewContentOffset(EditorState&) { };

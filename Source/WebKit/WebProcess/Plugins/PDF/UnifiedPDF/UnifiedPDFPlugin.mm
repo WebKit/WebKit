@@ -3766,7 +3766,7 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForPageRect(FloatRect pageR
     auto rectInRootViewCoordinates = convertFromPluginToRootView(encloseRectToDevicePixels(rectInPluginCoordinates, deviceScaleFactor));
     auto bufferSize = rectInRootViewCoordinates.size().scaled(mainFrameScaleForTextIndicator);
 
-    auto buffer { ImageBuffer::create(bufferSize, RenderingMode::Unaccelerated, RenderingPurpose::ShareableSnapshot, deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8) };
+    auto buffer { ImageBuffer::create(bufferSize, RenderingMode::Unaccelerated, RenderingPurpose::ShareableSnapshot, deviceScaleFactor, ColorSpace::SRGB(), PixelFormat::BGRA8) };
     if (!buffer)
         return { };
 

@@ -45,7 +45,7 @@ public:
     bool hasPlatformContext() const;
     PlatformGraphicsContext* platformContext() const final;
 
-    const DestinationColorSpace& colorSpace() const final;
+    const ColorSpace& colorSpace() const final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;

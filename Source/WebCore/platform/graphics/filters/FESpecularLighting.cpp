@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-Ref<FESpecularLighting> FESpecularLighting::create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, DestinationColorSpace colorSpace)
+Ref<FESpecularLighting> FESpecularLighting::create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, ColorSpace colorSpace)
 {
     return adoptRef(*new FESpecularLighting(lightingColor, surfaceScale, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, WTF::move(lightSource), colorSpace));
 }
 
-FESpecularLighting::FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, DestinationColorSpace colorSpace)
+FESpecularLighting::FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, ColorSpace colorSpace)
     : FELighting(FilterEffect::Type::FESpecularLighting, lightingColor, surfaceScale, 0, specularConstant, specularExponent, kernelUnitLengthX, kernelUnitLengthY, WTF::move(lightSource), colorSpace)
 {
 }

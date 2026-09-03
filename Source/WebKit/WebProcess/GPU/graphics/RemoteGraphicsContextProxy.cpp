@@ -59,17 +59,17 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextProxy);
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteRenderingBackendProxy& renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const ColorSpace& colorSpace, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteRenderingBackendProxy& renderingBackend)
     : RemoteGraphicsContextProxy(colorSpace, std::nullopt, renderingMode, initialClip, initialCTM, DrawGlyphsMode::Deconstruct, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
 {
 }
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const DestinationColorSpace& colorSpace, WebCore::ContentsFormat contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const ColorSpace& colorSpace, WebCore::ContentsFormat contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
     : RemoteGraphicsContextProxy(colorSpace, contentsFormat, renderingMode, initialClip, initialCTM, DrawGlyphsMode::Deconstruct, identifier, renderingBackend)
 {
 }
 
-RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const DestinationColorSpace& colorSpace, std::optional<ContentsFormat> contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
+RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const ColorSpace& colorSpace, std::optional<ContentsFormat> contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
     : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, colorSpace, drawGlyphsMode)
     , m_renderingMode(renderingMode)
     , m_identifier(identifier)
@@ -754,15 +754,15 @@ bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
         // The image will be drawn to a Float16 layer, so use extended range sRGB
         // to preserve the HDR contents.
         if (m_contentsFormat && *m_contentsFormat == ContentsFormat::RGBA16F)
-            colorSpace = DestinationColorSpace::ExtendedSRGB();
+            colorSpace = ColorSpace::ExtendedSRGB();
         else
 #endif
 #if PLATFORM(IOS_FAMILY)
             // iOS typically renders into extended range sRGB to preserve wide gamut colors, but we want
             // a non-extended range colorspace here so that the contents are tone mapped to SDR range.
-            colorSpace = DestinationColorSpace::DisplayP3();
+            colorSpace = ColorSpace::DisplayP3();
 #else
-            colorSpace = DestinationColorSpace::SRGB();
+            colorSpace = ColorSpace::SRGB();
 #endif
     }
 
@@ -854,7 +854,7 @@ std::optional<RemoteDisplayListIdentifier> RemoteGraphicsContextProxy::recordRes
     return renderingBackend->remoteResourceCacheProxy().recordDisplayListUse(displayList);
 }
 
-RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod, WebCore::ImageBufferFormat pixelFormat) const
+RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const ColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod, WebCore::ImageBufferFormat pixelFormat) const
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]] {
@@ -870,13 +870,13 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createImageBuffer(const FloatSiz
     return renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), purpose, resolutionScale, colorSpace, pixelFormat);
 }
 
-RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const FloatSize& size, const ColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
     auto renderingMode = !renderingMethod ? this->renderingModeForCompatibleBuffer() : RenderingMode::Unaccelerated;
     return GraphicsContext::createScaledImageBuffer(size, scaleFactor(), colorSpace, renderingMode, renderingMethod);
 }
 
-RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
+RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const FloatRect& rect, const ColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
     auto renderingMode = !renderingMethod ? this->renderingModeForCompatibleBuffer() : RenderingMode::Unaccelerated;
     return GraphicsContext::createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode, renderingMethod);

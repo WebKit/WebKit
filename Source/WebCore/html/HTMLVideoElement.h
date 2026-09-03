@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 class HTMLImageLoader;
 class ImageBuffer;
 class RenderVideo;
@@ -79,7 +79,7 @@ public:
     void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&) override;
 #endif
 
-    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const DestinationColorSpace&, ImageBufferFormat) const;
+    RefPtr<ImageBuffer> createBufferForPainting(const FloatSize&, RenderingMode, const ColorSpace&, ImageBufferFormat) const;
 
     // Used by render painting. Best effort, only paint if we already have an image generator or video output available.
     void paint(GraphicsContext&, const FloatRect&);
@@ -92,7 +92,7 @@ public:
     WEBCORE_EXPORT RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync() const;
     using BitmapImagePromise = MediaPlayer::BitmapImagePromise;
     WEBCORE_EXPORT Ref<BitmapImagePromise> bitmapImageForCurrentTime() const;
-    std::optional<DestinationColorSpace> colorSpace() const;
+    std::optional<ColorSpace> colorSpace() const;
 
     WEBCORE_EXPORT bool shouldDisplayPosterImage() const;
 

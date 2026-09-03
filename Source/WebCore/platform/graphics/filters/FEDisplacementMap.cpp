@@ -35,14 +35,14 @@
 
 namespace WebCore {
 
-Ref<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace colorSpace, bool in2IsTainted)
+Ref<FEDisplacementMap> FEDisplacementMap::create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, ColorSpace colorSpace, bool in2IsTainted)
 {
     Ref<FEDisplacementMap> effect = adoptRef(*new FEDisplacementMap(xChannelSelector, yChannelSelector, scale, colorSpace));
     effect->m_in2IsTainted = in2IsTainted;
     return effect;
 }
 
-FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace colorSpace)
+FEDisplacementMap::FEDisplacementMap(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEDisplacementMap, colorSpace)
     , m_xChannelSelector(xChannelSelector)
     , m_yChannelSelector(yChannelSelector)
@@ -94,7 +94,7 @@ IntOutsets FEDisplacementMap::calculateOutsets(const FloatSize& maxDisplacement)
     return { intDisplacement.height(), intDisplacement.width(), intDisplacement.height(), intDisplacement.width() };
 }
 
-const DestinationColorSpace& FEDisplacementMap::resultColorSpace(std::span<const Ref<FilterImage>> inputs) const
+const ColorSpace& FEDisplacementMap::resultColorSpace(std::span<const Ref<FilterImage>> inputs) const
 {
     // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
     // and does not apply to the 'in' source image. The 'in' source image must remain in its

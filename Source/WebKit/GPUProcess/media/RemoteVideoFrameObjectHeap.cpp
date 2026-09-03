@@ -143,9 +143,9 @@ void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& rea
     completionHandler(WTF::move(pixelBuffer));
 }
 
-void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, CompletionHandler<void(WebCore::DestinationColorSpace)>&& callback)
+void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVideoFrame, CompletionHandler<void(WebCore::ColorSpace)>&& callback)
 {
-    DestinationColorSpace destinationColorSpace { DestinationColorSpace::SRGB().platformColorSpace() };
+    ColorSpace destinationColorSpace { ColorSpace::SRGB().platformColorSpace() };
     auto scope = makeScopeExit([&callback, &destinationColorSpace] { callback(destinationColorSpace); });
 
     RefPtr<VideoFrame> frame;
@@ -162,7 +162,7 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     }
 
     RetainPtr<CVPixelBufferRef> buffer = frame->pixelBuffer();
-    destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
+    destinationColorSpace = ColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
 
     if (CVPixelBufferGetPixelFormatType(buffer.get()) != kCVPixelFormatType_32BGRA) {
         Locker locker { m_pixelBufferConformerLock };

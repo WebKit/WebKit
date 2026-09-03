@@ -503,7 +503,7 @@ void RemoteGraphicsContextGL::framebufferDiscard(uint32_t target, std::span<cons
 
 #endif
 
-void RemoteGraphicsContextGL::setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& colorSpace)
+void RemoteGraphicsContextGL::setDrawingBufferColorSpace(WebCore::ColorSpace&& colorSpace)
 {
     assertIsCurrent(workQueue());
     protect(m_context)->setDrawingBufferColorSpace(colorSpace);

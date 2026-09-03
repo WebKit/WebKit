@@ -94,7 +94,7 @@ public:
     virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::None; }
     virtual unsigned primaryFrameIndex() const { return 0; }
     virtual unsigned frameCount() const { return 1; }
-    virtual DestinationColorSpace colorSpace() const = 0;
+    virtual ColorSpace colorSpace() const = 0;
     virtual std::optional<Color> singlePixelSolidColor() const = 0;
     virtual bool hasHDRGainMap() const { return false; }
     virtual bool hasHDRContent() const = 0;

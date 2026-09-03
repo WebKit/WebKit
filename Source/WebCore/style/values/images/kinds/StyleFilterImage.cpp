@@ -157,7 +157,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
 
     cssFilter->setFilterRegion(sourceImageRect);
 
-    auto sourceImage = ImageBuffer::create(size, destinationContext.renderingMode(), RenderingPurpose::DOM, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
+    auto sourceImage = ImageBuffer::create(size, destinationContext.renderingMode(), RenderingPurpose::DOM, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, renderer->hostWindow());
     if (!sourceImage)
         return &WebCore::Image::nullImage();
 

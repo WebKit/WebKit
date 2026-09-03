@@ -277,12 +277,12 @@ bool SVGImage::hasHDRContent() const
     return false;
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpace)
+RefPtr<NativeImage> SVGImage::nativeImage(const ColorSpace& colorSpace)
 {
     return nativeImage(size(), colorSpace);
 }
 
-RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const DestinationColorSpace& colorSpace)
+RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpace& colorSpace)
 {
     if (!m_page)
         return nullptr;

@@ -54,7 +54,7 @@ public:
 
     ~GPUCanvasContextCocoa();
 
-    DestinationColorSpace colorSpace() const override;
+    ColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
     bool needsPreparationForDisplay() const override { return true; }

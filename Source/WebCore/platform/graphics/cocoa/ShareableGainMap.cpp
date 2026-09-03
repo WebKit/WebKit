@@ -51,7 +51,7 @@ std::optional<ShareableGainMap> ShareableGainMap::create(const std::optional<Gai
     return ShareableGainMap { WTF::move(metadata), gainMapShareablePixelBuffer.releaseNonNull(), gainMap->colorSpace };
 }
 
-std::optional<ShareableGainMap> ShareableGainMap::create(RetainPtr<CFDataRef>&& metadata, Ref<ShareableCVPixelBuffer>&& gainMapShareablePixelBuffer, const std::optional<DestinationColorSpace> colorSpace)
+std::optional<ShareableGainMap> ShareableGainMap::create(RetainPtr<CFDataRef>&& metadata, Ref<ShareableCVPixelBuffer>&& gainMapShareablePixelBuffer, const std::optional<ColorSpace> colorSpace)
 {
     if (!metadata)
         return std::nullopt;
@@ -59,7 +59,7 @@ std::optional<ShareableGainMap> ShareableGainMap::create(RetainPtr<CFDataRef>&& 
     return ShareableGainMap { WTF::move(metadata), WTF::move(gainMapShareablePixelBuffer), colorSpace };
 }
 
-ShareableGainMap::ShareableGainMap(RetainPtr<CFDataRef>&& metadata, Ref<ShareableCVPixelBuffer>&& gainMapShareablePixelBuffer, const std::optional<DestinationColorSpace> colorSpace)
+ShareableGainMap::ShareableGainMap(RetainPtr<CFDataRef>&& metadata, Ref<ShareableCVPixelBuffer>&& gainMapShareablePixelBuffer, const std::optional<ColorSpace> colorSpace)
     : m_metadata(WTF::move(metadata))
     , m_gainMapShareablePixelBuffer(WTF::move(gainMapShareablePixelBuffer))
     , m_colorSpace(colorSpace)

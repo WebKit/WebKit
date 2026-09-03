@@ -277,7 +277,7 @@ private:
     WebCore::DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const final;
 
 #if ENABLE(GPU_PROCESS)
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat) const final;
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
 #endif
     std::unique_ptr<WebCore::WorkerClient> createWorkerClient(SerialFunctionDispatcher&) final;

@@ -36,7 +36,7 @@ namespace WebCore {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const DestinationColorSpace& colorSpace, std::optional<PixelFormat> pixelFormat, Headroom baseImageHeadroom, bool isOpaque)
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const ColorSpace& colorSpace, std::optional<PixelFormat> pixelFormat, Headroom baseImageHeadroom, bool isOpaque)
     : m_size(size)
     , m_colorSpace(validateColorSpace(colorSpace))
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -60,7 +60,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     ASSERT(m_baseImageHeadroom >= Headroom::None);
 }
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, Headroom baseImageHeadroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, const ColorSpace& colorSpace, PixelFormat pixelFormat, Headroom baseImageHeadroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
     , CGBitmapInfo bitmapInfo
     , std::optional<ShareableGainMap>&& shareableGainMap
@@ -87,7 +87,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, 
     ASSERT(m_baseImageHeadroom >= Headroom::None);
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, PixelFormat pixelFormat, const ColorSpace& colorSpace)
 {
     return calculateBytesPerRow(size, pixelFormat, colorSpace) * size.height();
 }
@@ -120,17 +120,17 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
     return adoptRef(new ShareableBitmap(configuration, WTF::move(sharedMemory)));
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const DestinationColorSpace& colorSpace)
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const ColorSpace& colorSpace)
 {
     return createFromImageDraw(image, colorSpace, image.size());
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const DestinationColorSpace& colorSpace, const IntSize& destinationSize)
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const ColorSpace& colorSpace, const IntSize& destinationSize)
 {
     return createFromImageDraw(image, colorSpace, destinationSize, destinationSize);
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const DestinationColorSpace& colorSpace, const IntSize& destinationSize, const IntSize& sourceSize)
+RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(const NativeImage& image, const ColorSpace& colorSpace, const IntSize& destinationSize, const IntSize& sourceSize)
 {
     auto bitmap = ShareableBitmap::create({ destinationSize, colorSpace });
     if (!bitmap)

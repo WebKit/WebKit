@@ -116,7 +116,7 @@ GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderi
     , m_renderingMode(renderingMode)
     , m_renderingPurpose(renderingPurpose)
     , m_destroyNotify(WTF::move(destroyNotify))
-    , m_colorSpace(canvas.imageInfo().colorSpace() ? DestinationColorSpace(canvas.imageInfo().refColorSpace()) : DestinationColorSpace::SRGB())
+    , m_colorSpace(canvas.imageInfo().colorSpace() ? ColorSpace(canvas.imageInfo().refColorSpace()) : ColorSpace::SRGB())
 {
 }
 
@@ -142,7 +142,7 @@ SkCanvas* GraphicsContextSkia::platformContext() const
     return &m_canvas;
 }
 
-const DestinationColorSpace& GraphicsContextSkia::colorSpace() const
+const ColorSpace& GraphicsContextSkia::colorSpace() const
 {
     return m_colorSpace;
 }

@@ -72,7 +72,7 @@ private:
     void copyNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier);
     void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
-    void transformToColorSpace(const WebCore::DestinationColorSpace&);
+    void transformToColorSpace(const WebCore::ColorSpace&);
     void setFlushSignal(IPC::Signal&&);
     void flushContext();
     void flushContextSync(CompletionHandler<void()>&&);

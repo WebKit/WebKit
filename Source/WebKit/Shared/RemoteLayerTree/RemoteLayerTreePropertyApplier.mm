@@ -433,7 +433,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             if (RefPtr webPage = drawingArea->page())
                 return webPage->colorSpace();
 
-            return DestinationColorSpace::SRGB();
+            return ColorSpace::SRGB();
         }();
 
         RetainPtr cgColor = cachedCGColorInDestinationStandardRange(properties.backgroundColor, colorSpace);

@@ -38,7 +38,7 @@ using namespace WebCore;
 
 static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point)
 {
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer.getPixelBuffer(format, enclosingIntRect(FloatRect { point, FloatSize { 1, 1 } }));
     return Color { SRGBA<uint8_t> { pixelBuffer->item(0), pixelBuffer->item(1), pixelBuffer->item(2), pixelBuffer->item(3) } };
 }
@@ -61,7 +61,7 @@ static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point
 
 ::testing::AssertionResult imagePixelIs(Color expected, Image& image, FloatPoint point, unsigned tolerance)
 {
-    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
+    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
@@ -70,7 +70,7 @@ static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point
 
 ::testing::AssertionResult imagePixelIs(Color expected, NativeImage& image, FloatPoint point, unsigned tolerance)
 {
-    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
+    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)
         return ::testing::AssertionFailure() << "failed to allocate temp buffer";
     buffer->context().drawNativeImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });

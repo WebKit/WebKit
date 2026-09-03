@@ -256,7 +256,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, ImageBuffer& buffer, IntSize size, WebCodecsVideoFrame::Init&& init)
 {
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, ColorSpace::SRGB() };
     IntRect region { IntPoint::zero(), size };
 
     auto pixelBuffer = buffer.getPixelBuffer(format, region);

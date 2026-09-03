@@ -214,14 +214,14 @@ static void prepareContextForQRCode(ContextMenuContext& context)
     if (!frame)
         return;
 
-    RefPtr nodeSnapshotImageBuffer = snapshotNode(*frame, *element, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    RefPtr nodeSnapshotImageBuffer = snapshotNode(*frame, *element, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
     RefPtr nodeSnapshotImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(nodeSnapshotImageBuffer)));
     context.setPotentialQRCodeNodeSnapshotImage(nodeSnapshotImage.get());
 
     // FIXME: Node snapshotting does not take transforms into account, making it unreliable for QR code detection.
     // As a fallback, also take a viewport-level snapshot. A node snapshot is still required to capture partially
     // obscured elements. This workaround can be removed once rdar://87204215 is fixed.
-    auto viewportSnapshotImageBuffer = snapshotFrameRect(*frame, elementRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto viewportSnapshotImageBuffer = snapshotFrameRect(*frame, elementRect, { { }, PixelFormat::BGRA8, ColorSpace::SRGB() });
     RefPtr viewportSnapshotImage = BitmapImage::create(ImageBuffer::sinkIntoNativeImage(WTF::move(viewportSnapshotImageBuffer)));
     context.setPotentialQRCodeViewportSnapshotImage(viewportSnapshotImage.get());
 }

@@ -30,7 +30,7 @@
 #include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/Color.h>
 #include <WebCore/ColorConversion.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferAllocator.h>
@@ -213,17 +213,17 @@ protected:
     // How the contents of the pixel buffer describe their alpha. Without alpha the contents are
     // drawn as opaque, so premultiplication does not apply to them.
     AlphaPremultiplication alphaFormat() const { return alphaMode() == AlphaMode::Premultiplied ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied; }
-    RefPtr<PixelBuffer> createPixelBuffer(const IntSize&, const DestinationColorSpace&) const;
-    RefPtr<PixelBuffer> createTestPatternPixelBuffer(const IntSize&, const DestinationColorSpace&, std::span<const TestPattern>) const;
+    RefPtr<PixelBuffer> createPixelBuffer(const IntSize&, const ColorSpace&) const;
+    RefPtr<PixelBuffer> createTestPatternPixelBuffer(const IntSize&, const ColorSpace&, std::span<const TestPattern>) const;
 };
 
-RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createPixelBuffer(const IntSize& size, const DestinationColorSpace& colorSpace) const
+RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createPixelBuffer(const IntSize& size, const ColorSpace& colorSpace) const
 {
     PixelBufferFormat format { alphaFormat(), pixelFormat(), colorSpace };
     return ImageBufferAllocator().createPixelBuffer(format, size);
 }
 
-RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createTestPatternPixelBuffer(const IntSize& size, const DestinationColorSpace& colorSpace, std::span<const TestPattern> testPattern) const
+RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createTestPatternPixelBuffer(const IntSize& size, const ColorSpace& colorSpace, std::span<const TestPattern> testPattern) const
 {
     RefPtr pixelBuffer = createPixelBuffer(size, colorSpace);
     if (!pixelBuffer)
@@ -239,7 +239,7 @@ RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createTestPatternPixelBuffer(const
 TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferDraws)
 {
     constexpr IntSize testSize { 16, 16 };
-    RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, DestinationColorSpace::SRGB(), std::span { g_testPattern });
+    RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, ColorSpace::SRGB(), std::span { g_testPattern });
     ASSERT_NE(pixelBuffer, nullptr);
 
     RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha());
@@ -250,11 +250,11 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferDraws)
     ASSERT_NE(image, nullptr);
     EXPECT_EQ(image->size(), testSize);
     EXPECT_EQ(image->hasAlpha(), hasAlpha());
-    EXPECT_TRUE(image->colorSpace() == DestinationColorSpace::SRGB());
+    EXPECT_TRUE(image->colorSpace() == ColorSpace::SRGB());
 
     for (auto& target : g_drawTargets) {
         SCOPED_TRACE(target.name.characters());
-        auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), target.pixelFormat);
+        auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, ColorSpace::SRGB(), target.pixelFormat);
         ASSERT_NE(buffer, nullptr);
         buffer->context().drawNativeImage(*image, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { CompositeOperator::Copy });
         for (auto& pattern : g_testPattern) {
@@ -277,7 +277,7 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromEmptyPixelBufferFails)
     static constexpr IntSize emptySizes[] = { { 0, 0 }, { 0, 16 }, { 16, 0 } };
     for (auto& size : emptySizes) {
         SCOPED_TRACE(::testing::Message() << "size: " << size.width() << "x" << size.height());
-        RefPtr pixelBuffer = createPixelBuffer(size, DestinationColorSpace::SRGB());
+        RefPtr pixelBuffer = createPixelBuffer(size, ColorSpace::SRGB());
         ASSERT_NE(pixelBuffer, nullptr);
         EXPECT_EQ(NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha()), nullptr);
     }
@@ -301,19 +301,19 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferUsesPixelBufferColorSpace)
     if (!isSupportedImagePixelFormat(pixelFormat()))
         return;
     constexpr IntSize testSize { 16, 16 };
-    RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, DestinationColorSpace::DisplayP3(), std::span { g_displayP3TestPattern });
+    RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, ColorSpace::DisplayP3(), std::span { g_displayP3TestPattern });
     ASSERT_NE(pixelBuffer, nullptr);
 
     RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha());
     ASSERT_NE(image, nullptr);
-    EXPECT_TRUE(image->colorSpace() == DestinationColorSpace::DisplayP3());
+    EXPECT_TRUE(image->colorSpace() == ColorSpace::DisplayP3());
 
     // The color matching of the platform rounds slightly differently than the color conversion
     // the expectation is computed with.
     constexpr unsigned tolerance = 2;
     for (auto& target : g_drawTargets) {
         SCOPED_TRACE(target.name.characters());
-        auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, DestinationColorSpace::SRGB(), target.pixelFormat);
+        auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, ColorSpace::SRGB(), target.pixelFormat);
         ASSERT_NE(buffer, nullptr);
         buffer->context().drawNativeImage(*image, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { CompositeOperator::Copy });
         for (auto& pattern : g_displayP3TestPattern) {

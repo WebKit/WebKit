@@ -3319,7 +3319,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
     }
 
     FloatSize bufferSize(targetWidth, targetHeight);
-    auto imageBuffer = ImageBuffer::create(bufferSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(bufferSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 
@@ -3334,7 +3334,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
         extractionRect = IntRect(IntPoint(), IntSize(targetWidth, targetHeight));
 
     // Extract pixels as unpremultiplied RGBA8.
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, extractionRect);
     if (!pixelBuffer)
         return nullptr;

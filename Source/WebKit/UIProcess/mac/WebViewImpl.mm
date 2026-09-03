@@ -86,6 +86,7 @@
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewMac.h"
 #import "WebBackForwardList.h"
+#import <WebCore/ColorSpace.h>
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
 #import "WebFrameProxy.h"
@@ -112,7 +113,6 @@
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
 #import <WebCore/DataDetectorElementInfo.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DigitalCredentialsRequestData.h>
@@ -2832,7 +2832,7 @@ void WebViewImpl::scheduleMouseDidMoveOverElement(NSEvent *flagsChangedEvent)
     m_page->dispatchMouseDidMoveOverElementAsynchronously(WTF::move(webEvent));
 }
 
-WebCore::DestinationColorSpace WebViewImpl::colorSpace()
+WebCore::ColorSpace WebViewImpl::colorSpace()
 {
     if (!m_colorSpace) {
         m_colorSpace = [&] () -> NSColorSpace * {
@@ -2853,7 +2853,7 @@ WebCore::DestinationColorSpace WebViewImpl::colorSpace()
     }
 
     ASSERT(m_colorSpace);
-    return WebCore::DestinationColorSpace { [m_colorSpace CGColorSpace] };
+    return WebCore::ColorSpace { [m_colorSpace CGColorSpace] };
 }
 
 void WebViewImpl::setUnderlayColor(NSColor *underlayColor)

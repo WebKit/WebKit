@@ -184,7 +184,7 @@ public:
     void setPresentationSize(const IntSize&) final { }
 
     void paint(GraphicsContext&, const FloatRect&) final { }
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
+    ColorSpace colorSpace() final { return ColorSpace::SRGB(); }
 private:
     explicit NullMediaPlayerPrivate(MediaPlayer&) { }
 };
@@ -1250,7 +1250,7 @@ Ref<MediaPlayer::BitmapImagePromise> MediaPlayer::bitmapImageForCurrentTime()
     return protect(m_private)->bitmapImageForCurrentTime();
 }
 
-DestinationColorSpace MediaPlayer::colorSpace()
+ColorSpace MediaPlayer::colorSpace()
 {
     return protect(m_private)->colorSpace();
 }

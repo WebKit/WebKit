@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
@@ -39,7 +39,7 @@ class GraphicsContext;
 class GraphicsContextSwitcher {
     WTF_MAKE_TZONE_ALLOCATED(GraphicsContextSwitcher);
 public:
-    static std::unique_ptr<GraphicsContextSwitcher> create(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace&, RefPtr<Filter>&& = nullptr, FilterResults* = nullptr);
+    static std::unique_ptr<GraphicsContextSwitcher> create(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const ColorSpace&, RefPtr<Filter>&& = nullptr, FilterResults* = nullptr);
 
     virtual ~GraphicsContextSwitcher() = default;
 
@@ -48,10 +48,10 @@ public:
     virtual bool hasSourceImage() const { return false; }
 
     virtual void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect, NOESCAPE const Function<void(GraphicsContext&)>& applyAdditionalDestinationClip = { }) = 0;
-    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) = 0;
+    virtual void endClipAndDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) = 0;
 
     virtual void beginDrawSourceImage(GraphicsContext& destinationContext, float opacity = 1.f) = 0;
-    virtual void endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace&) = 0;
+    virtual void endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace&) = 0;
 
 protected:
     explicit GraphicsContextSwitcher(RefPtr<Filter>&&);

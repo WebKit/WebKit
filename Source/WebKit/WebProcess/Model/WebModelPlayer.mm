@@ -522,7 +522,7 @@ const MachSendRight* WebModelPlayer::displayBuffer() const
     return &m_displayBuffers[m_displayTextureIndex];
 }
 
-RefPtr<WebCore::ImageBuffer> WebModelPlayer::snapshotCurrentFrame(const WebCore::FloatSize& deviceSize, const WebCore::DestinationColorSpace& colorSpace)
+RefPtr<WebCore::ImageBuffer> WebModelPlayer::snapshotCurrentFrame(const WebCore::FloatSize& deviceSize, const WebCore::ColorSpace& colorSpace)
 {
     RefPtr currentModel { m_currentModel };
     if (!currentModel || !m_hasRenderedFrame || m_displayTextureIndex >= m_displayBuffers.size())

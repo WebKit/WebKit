@@ -27,7 +27,7 @@
 #include "PixelBufferConversion.h"
 
 #include "AlphaPremultiplication.h"
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "PixelBuffer.h"

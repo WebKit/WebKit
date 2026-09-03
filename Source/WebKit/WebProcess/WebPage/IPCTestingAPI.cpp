@@ -64,7 +64,7 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/SharedMemory.h>
 #if USE(SKIA)
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/SkiaSpanExtras.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorSpace.h>
@@ -2711,7 +2711,7 @@ JSValueRef JSIPC::serializedSRGBColorSpace(JSContextRef context, JSObjectRef, JS
     JSC::JSLockHolder lock(vm);
     auto scope = DECLARE_TOP_EXCEPTION_SCOPE(vm);
 
-    sk_sp<SkData> data = WebCore::DestinationColorSpace::SRGB().serializableColorSpace()->serialize();
+    sk_sp<SkData> data = WebCore::ColorSpace::SRGB().serializableColorSpace()->serialize();
     auto bytes = WebCore::span(data);
 
     JSC::JSObject* array = JSC::constructEmptyArray(globalObject, nullptr);

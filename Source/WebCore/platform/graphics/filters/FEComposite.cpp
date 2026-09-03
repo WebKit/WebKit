@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4, DestinationColorSpace colorSpace)
+Ref<FEComposite> FEComposite::create(const CompositeOperationType& type, float k1, float k2, float k3, float k4, ColorSpace colorSpace)
 {
     return adoptRef(*new FEComposite(type, k1, k2, k3, k4, colorSpace));
 }
 
-FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4, DestinationColorSpace colorSpace)
+FEComposite::FEComposite(const CompositeOperationType& type, float k1, float k2, float k3, float k4, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEComposite, colorSpace)
     , m_type(type)
     , m_k1(k1)

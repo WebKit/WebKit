@@ -28,7 +28,7 @@
 #include <wtf/Platform.h>
 #if ENABLE(WEBGL)
 
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/GCGLExtension.h>
 #include <WebCore/GraphicsContextGLActiveInfo.h>
 #include <WebCore/GraphicsContextGLAttributes.h>
@@ -1661,7 +1661,7 @@ public:
 
     virtual void reshape(int width, int height) = 0;
 
-    WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const DestinationColorSpace&);
+    WEBCORE_EXPORT virtual void setDrawingBufferColorSpace(const ColorSpace&);
 
     virtual void prepareForDisplay() = 0;
 

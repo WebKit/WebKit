@@ -133,7 +133,7 @@ RefPtr<FilterImage> Filter::apply(ImageBuffer* sourceImage, const FloatRect& sou
         return nullptr;
 
     result->correctPremultipliedPixelBuffer();
-    result->transformToColorSpace(DestinationColorSpace::SRGB());
+    result->transformToColorSpace(ColorSpace::SRGB());
     return result;
 }
 

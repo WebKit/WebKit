@@ -45,7 +45,7 @@ namespace DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 
-RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
+RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const ColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
     : Recorder(state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);

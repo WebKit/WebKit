@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 class GraphicsContextGL;
 class ImageBuffer;
 class SerializedImageBuffer;
@@ -63,7 +63,7 @@ public:
 
 private:
     // Called by passing GraphicsClient into ImageBuffer functions.
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferFormat) const = 0;
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const ColorSpace&, ImageBufferFormat) const = 0;
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;

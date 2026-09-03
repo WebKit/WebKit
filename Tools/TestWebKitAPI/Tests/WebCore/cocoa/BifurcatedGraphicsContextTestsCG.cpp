@@ -28,7 +28,7 @@
 #if USE(CG)
 
 #include <WebCore/BifurcatedGraphicsContext.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorderImpl.h>
@@ -49,7 +49,7 @@ constexpr CGFloat contextHeight = 1;
 
 TEST(BifurcatedGraphicsContextTests, Basic)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
@@ -116,7 +116,7 @@ TEST(BifurcatedGraphicsContextTests, Text)
 
 TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     RetainPtr secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
@@ -148,7 +148,7 @@ TEST(BifurcatedGraphicsContextTests, DrawTiledGradientImage)
 
 TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
     RetainPtr secondaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
@@ -180,7 +180,7 @@ TEST(BifurcatedGraphicsContextTests, DrawGradientImage)
 
 TEST(BifurcatedGraphicsContextTests, Borders)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
@@ -204,7 +204,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
 
 TEST(BifurcatedGraphicsContextTests, TransformedClip)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
@@ -262,7 +262,7 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
 
 TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
+    auto colorSpace = ColorSpace::SRGB();
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, 100, 100, 8, 4 * 100, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
@@ -292,7 +292,7 @@ TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
-    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create({ 100, 100 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     ctx.clipToImageBuffer(*imageBuffer, { 0, 0, 100, 100 });
 
     auto runTest = [&] (const DisplayList& displayList) {

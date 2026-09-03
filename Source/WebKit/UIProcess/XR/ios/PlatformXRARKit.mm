@@ -55,7 +55,7 @@ static std::tuple<MachSendRight, bool> makeMachSendRight(id<MTLTexture> texture)
     RetainPtr<MTLSharedTextureHandle> sharedTextureHandle = adoptNS([texture newSharedTextureHandle]);
     if (sharedTextureHandle)
         return { MachSendRight::adopt([sharedTextureHandle.get() createMachPort]), true };
-    auto surface = WebCore::IOSurface::createFromSurface(texture.iosurface, WebCore::DestinationColorSpace::SRGB());
+    auto surface = WebCore::IOSurface::createFromSurface(texture.iosurface, WebCore::ColorSpace::SRGB());
     if (!surface)
         return { MachSendRight(), false };
     return { surface->createSendRight(), false };

@@ -22,7 +22,7 @@
 
 #if USE(EXTERNAL_HOLEPUNCH)
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
 #include <wtf/RefCounted.h>
@@ -91,7 +91,7 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final { };
 
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
+    ColorSpace colorSpace() final { return ColorSpace::SRGB(); }
 
     bool supportsAcceleratedRendering() const final { return true; }
 

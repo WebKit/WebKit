@@ -2659,6 +2659,7 @@ platform/graphics/ColorInterpolation.cpp
 platform/graphics/ColorInterpolationMethod.cpp
 platform/graphics/ColorLuminance.cpp
 platform/graphics/ColorSerialization.cpp
+platform/graphics/ColorSpace.cpp
 platform/graphics/ColorSpaceName.cpp
 platform/graphics/ColorUtilities.cpp
 platform/graphics/ComplexTextController.cpp
@@ -2666,7 +2667,6 @@ platform/graphics/ContentTypeUtilities.cpp
 platform/graphics/ContentsFormat.cpp
 platform/graphics/CornerRadii.cpp
 platform/graphics/CrossfadeGeneratedImage.cpp
-platform/graphics/DestinationColorSpace.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
 platform/graphics/DisplayRefreshMonitorClient.cpp
 platform/graphics/DisplayRefreshMonitorManager.cpp

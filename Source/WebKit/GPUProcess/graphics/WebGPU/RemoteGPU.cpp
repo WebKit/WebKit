@@ -279,7 +279,7 @@ Vector<UniqueRef<WebCore::IOSurface>> RemoteGPU::createRenderBuffers(unsigned wi
 #else
     const auto colorFormat = WebCore::IOSurface::Format::BGRA;
 #endif
-    const auto colorSpace = standardDynamicRange ? WebCore::DestinationColorSpace::LinearDisplayP3() : WebCore::DestinationColorSpace::ExtendedLinearDisplayP3();
+    const auto colorSpace = standardDynamicRange ? WebCore::ColorSpace::LinearDisplayP3() : WebCore::ColorSpace::ExtendedLinearDisplayP3();
 
     Vector<UniqueRef<WebCore::IOSurface>> ioSurfaces;
 

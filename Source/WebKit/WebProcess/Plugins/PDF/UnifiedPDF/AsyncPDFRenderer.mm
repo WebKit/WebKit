@@ -168,7 +168,7 @@ void AsyncPDFRenderer::setShowDebugBorders(bool showDebugBorders)
 static RefPtr<NativeImage> renderPDFPagePreview(RetainPtr<PDFDocument>&& pdfDocument, const PDFPagePreviewRenderRequest& request)
 {
     ASSERT(!isMainRunLoop());
-    RefPtr imageBuffer = ImageBuffer::create(request.normalizedPageBounds.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, request.scale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr imageBuffer = ImageBuffer::create(request.normalizedPageBounds.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, request.scale, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
     if (RetainPtr pdfPage = [pdfDocument pageAtIndex:request.pageIndex]) {
@@ -601,7 +601,7 @@ static void renderPDFTile(PDFDocument *pdfDocument, const TileRenderInfo& render
 static RefPtr<NativeImage> renderPDFTileToImage(PDFDocument *pdfDocument, const TileRenderInfo& renderInfo)
 {
     ASSERT(!isMainRunLoop());
-    RefPtr tileBuffer = ImageBuffer::create(renderInfo.tileRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr tileBuffer = ImageBuffer::create(renderInfo.tileRect.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, renderInfo.pageCoverage.deviceScaleFactor, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!tileBuffer)
         return nullptr;
     {
@@ -619,7 +619,7 @@ static std::optional<DynamicContentScalingDisplayList> renderPDFTileToDynamicCon
     ASSERT(!isMainRunLoop());
     WebCore::ImageBufferCreationContext creationContext;
     creationContext.dynamicContentScalingResourceCache = dynamicContentScalingResourceCache;
-    RefPtr tileBuffer = ImageBuffer::create<DynamicContentScalingImageBufferBackend, DynamicContentScalingImageBuffer>(renderInfo.tileRect.size(), renderInfo.pageCoverage.deviceScaleFactor, DestinationColorSpace::SRGB(), { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified, creationContext);
+    RefPtr tileBuffer = ImageBuffer::create<DynamicContentScalingImageBufferBackend, DynamicContentScalingImageBuffer>(renderInfo.tileRect.size(), renderInfo.pageCoverage.deviceScaleFactor, ColorSpace::SRGB(), { PixelFormat::BGRA8 }, RenderingPurpose::Unspecified, creationContext);
     if (!tileBuffer)
         return std::nullopt;
     // Fixup incremental rendering requests to render the contents covering the full tile.

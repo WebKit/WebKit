@@ -53,7 +53,7 @@ enum class Critical : bool;
 }
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class DisplayRefreshMonitor;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -154,7 +154,7 @@ public:
 
     virtual void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) { }
 
-    virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
+    virtual std::optional<WebCore::ColorSpace> displayColorSpace() const { return { }; }
 
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
@@ -240,7 +240,7 @@ private:
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 
 #if PLATFORM(COCOA)
-    virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
+    virtual void setColorSpace(std::optional<WebCore::ColorSpace>) { }
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)

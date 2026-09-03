@@ -66,7 +66,7 @@ class ModelPlayerTransformState;
 class SharedBuffer;
 class TransformationMatrix;
 
-class DestinationColorSpace;
+class ColorSpace;
 class FloatSize;
 struct ModelPlayerGraphicsLayerConfiguration;
 
@@ -88,7 +88,7 @@ public:
     virtual void configureGraphicsLayer(GraphicsLayer&, ModelPlayerGraphicsLayerConfiguration&&) = 0;
     virtual void NODELETE adoptContentsDisplayDelegateFrom(ModelPlayer&);
 
-    virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const DestinationColorSpace&);
+    virtual RefPtr<ImageBuffer> snapshotCurrentFrame(const FloatSize& deviceSize, const ColorSpace&);
 
     // State changes.
     virtual void NODELETE visibilityStateDidChange();

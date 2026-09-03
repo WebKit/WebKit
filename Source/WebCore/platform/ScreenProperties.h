@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/FloatRect.h>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
@@ -52,7 +52,7 @@ enum class DynamicRangeMode : uint8_t {
 struct ScreenData {
     FloatRect screenAvailableRect;
     FloatRect screenRect;
-    DestinationColorSpace colorSpace { DestinationColorSpace::SRGB() };
+    ColorSpace colorSpace { ColorSpace::SRGB() };
     int screenDepth { 0 };
     int screenDepthPerComponent { 0 };
     bool screenSupportsExtendedColor { false };

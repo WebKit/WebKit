@@ -56,7 +56,7 @@ public:
     bool hasPlatformContext() const final;
     SkCanvas* platformContext() const final;
 
-    const DestinationColorSpace& colorSpace() const final;
+    const ColorSpace& colorSpace() const final;
 
     enum class RecordingMode : uint8_t { Tile, Canvas, Scrollbar };
     void beginRecording(RecordingMode, const sk_sp<GrContextThreadSafeProxy>& = nullptr);
@@ -207,7 +207,7 @@ private:
 #endif
     bool m_enableStateReplayTracking : 1 { false };
     std::unique_ptr<SkiaImageAtlasLayoutBuilder> m_atlasLayoutBuilder;
-    const DestinationColorSpace m_colorSpace;
+    const ColorSpace m_colorSpace;
 };
 
 } // namespace WebCore

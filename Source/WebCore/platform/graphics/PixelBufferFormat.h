@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/AlphaPremultiplication.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/PixelFormat.h>
 #include <wtf/Forward.h>
 
@@ -35,7 +35,7 @@ namespace WebCore {
 struct PixelBufferFormat {
     AlphaPremultiplication alphaFormat;
     PixelFormat pixelFormat;
-    DestinationColorSpace colorSpace;
+    ColorSpace colorSpace;
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);

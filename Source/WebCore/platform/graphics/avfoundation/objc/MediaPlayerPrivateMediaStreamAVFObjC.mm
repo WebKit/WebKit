@@ -1159,11 +1159,11 @@ RefPtr<VideoFrame> MediaPlayerPrivateMediaStreamAVFObjC::videoFrameForCurrentTim
     return m_imagePainter.videoFrame;
 }
 
-DestinationColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()
+ColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()
 {
     updateCurrentFrameImage();
     RefPtr cgImage = m_imagePainter.cgImage;
-    return cgImage ? cgImage->colorSpace() : DestinationColorSpace::SRGB();
+    return cgImage ? cgImage->colorSpace() : ColorSpace::SRGB();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateLayersAsNeeded()

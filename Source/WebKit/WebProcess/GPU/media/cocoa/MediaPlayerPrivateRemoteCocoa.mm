@@ -70,13 +70,13 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     return protect(protect(WebProcess::singleton().ensureGPUProcessConnection())->videoFrameObjectHeapProxy())->getNativeImage(*videoFrame);
 }
 
-WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
+WebCore::ColorSpace MediaPlayerPrivateRemote::colorSpace()
 {
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
-        return DestinationColorSpace::SRGB();
+        return ColorSpace::SRGB();
 
     auto sendResult = protect(connection())->sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
-    auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
+    auto [colorSpace] = sendResult.takeReplyOr(ColorSpace::SRGB());
     return colorSpace;
 }
 

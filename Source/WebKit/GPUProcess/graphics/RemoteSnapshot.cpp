@@ -110,7 +110,7 @@ RemoteSnapshot::DisplayListAndReleaseDispatcher::~DisplayListAndReleaseDispatche
 std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& size, FrameIdentifier rootIdentifier)
 {
     ASSERT(isComplete());
-    RefPtr buffer = ImageBuffer::create(size, RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr buffer = ImageBuffer::create(size, RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 
@@ -127,7 +127,7 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
 std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
 {
     ASSERT(isComplete());
-    Ref image = WebImage::create(size, ImageOption::Shareable, DestinationColorSpace::SRGB());
+    Ref image = WebImage::create(size, ImageOption::Shareable, ColorSpace::SRGB());
     auto* context = image->context();
     if (!context)
         return std::nullopt;

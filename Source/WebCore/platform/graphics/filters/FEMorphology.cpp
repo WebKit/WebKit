@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY, DestinationColorSpace colorSpace)
+Ref<FEMorphology> FEMorphology::create(MorphologyOperatorType type, float radiusX, float radiusY, ColorSpace colorSpace)
 {
     return adoptRef(*new FEMorphology(type, radiusX, radiusY, colorSpace));
 }
 
-FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY, DestinationColorSpace colorSpace)
+FEMorphology::FEMorphology(MorphologyOperatorType type, float radiusX, float radiusY, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEMorphology, colorSpace)
     , m_type(type)
     , m_radiusX(std::max(0.0f, radiusX))

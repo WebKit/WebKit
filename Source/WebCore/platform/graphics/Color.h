@@ -49,7 +49,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 
 struct OutOfLineColorDataForIPC {
     ColorSpaceName colorSpace;
@@ -133,7 +133,7 @@ public:
     template<typename ColorType> ColorType toColorTypeLossyCarryingForwardMissing() const;
 
     WEBCORE_EXPORT ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpaceName) const;
-    ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const DestinationColorSpace&) const;
+    ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const ColorSpace&) const;
 
     WEBCORE_EXPORT std::pair<ColorSpaceName, ColorComponents<float, 4>> colorSpaceAndResolvedColorComponents() const;
 
@@ -307,8 +307,8 @@ bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
 
 #if USE(CG)
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
-WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColorInDestinationStandardRange(const Color&, const DestinationColorSpace&);
-WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName, ColorComponents<float, 4>, const DestinationColorSpace&);
+WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColorInDestinationStandardRange(const Color&, const ColorSpace&);
+WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName, ColorComponents<float, 4>, const ColorSpace&);
 WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef);
 #endif
 

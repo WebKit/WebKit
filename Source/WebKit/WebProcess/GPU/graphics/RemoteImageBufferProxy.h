@@ -52,7 +52,7 @@ class RemoteImageBufferProxy final : public WebCore::ImageBuffer {
     friend class RemoteSerializedImageBufferProxy;
 public:
     template<typename BackendType>
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::ColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
         Parameters parameters { size, resolutionScale, colorSpace, bufferFormat, purpose };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
@@ -106,7 +106,7 @@ private:
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication = WebCore::AlphaPremultiplication::Premultiplied) final;
 
     void convertToLuminanceMask() final;
-    void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
+    void transformToColorSpace(const WebCore::ColorSpace&) final;
 
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;

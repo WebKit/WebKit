@@ -57,7 +57,7 @@ typedef struct CGColorSpace *CGColorSpaceRef;
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 class FloatPoint;
 class FloatRect;
 class FloatSize;
@@ -66,7 +66,7 @@ class Widget;
 int screenDepth(Widget*);
 int screenDepthPerComponent(Widget*);
 bool screenIsMonochrome(Widget*);
-WEBCORE_EXPORT DestinationColorSpace screenColorSpace(Widget* = nullptr);
+WEBCORE_EXPORT ColorSpace screenColorSpace(Widget* = nullptr);
 
 bool screenHasInvertedColors();
 

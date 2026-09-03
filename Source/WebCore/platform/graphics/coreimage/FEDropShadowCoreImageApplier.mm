@@ -67,7 +67,7 @@ bool FEDropShadowCoreImageApplier::apply(const Filter& filter, std::span<const R
     auto shadowColor = m_effect->shadowColor().colorWithAlphaMultipliedBy(m_effect->shadowOpacity());
     auto [r, g, b, a] = shadowColor.toResolvedColorComponentsInColorSpace(m_effect->operatingColorSpace());
 
-    RetainPtr colorSpace = m_effect->operatingColorSpace() == DestinationColorSpace::SRGB() ? sRGBColorSpaceSingleton() : linearSRGBColorSpaceSingleton();
+    RetainPtr colorSpace = m_effect->operatingColorSpace() == ColorSpace::SRGB() ? sRGBColorSpaceSingleton() : linearSRGBColorSpaceSingleton();
     RetainPtr shadowCIColor = [CIColor colorWithRed:r green:g blue:b alpha:a colorSpace:colorSpace.get()];
 
     // Extract alpha.

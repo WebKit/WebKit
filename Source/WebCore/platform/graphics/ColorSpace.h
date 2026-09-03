@@ -35,25 +35,25 @@
 
 namespace WebCore {
 
-class DestinationColorSpace {
+class ColorSpace {
 public:
-    WEBCORE_EXPORT static const DestinationColorSpace& SRGB();
-    WEBCORE_EXPORT static const DestinationColorSpace& LinearSRGB();
+    WEBCORE_EXPORT static const ColorSpace& SRGB();
+    WEBCORE_EXPORT static const ColorSpace& LinearSRGB();
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    WEBCORE_EXPORT static const DestinationColorSpace& DisplayP3();
-    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedDisplayP3();
-    WEBCORE_EXPORT static const DestinationColorSpace& LinearDisplayP3();
-    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedLinearDisplayP3();
+    WEBCORE_EXPORT static const ColorSpace& DisplayP3();
+    WEBCORE_EXPORT static const ColorSpace& ExtendedDisplayP3();
+    WEBCORE_EXPORT static const ColorSpace& LinearDisplayP3();
+    WEBCORE_EXPORT static const ColorSpace& ExtendedLinearDisplayP3();
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
-    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedSRGB();
-    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedLinearSRGB();
+    WEBCORE_EXPORT static const ColorSpace& ExtendedSRGB();
+    WEBCORE_EXPORT static const ColorSpace& ExtendedLinearSRGB();
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
-    WEBCORE_EXPORT static const DestinationColorSpace& ExtendedRec2020();
+    WEBCORE_EXPORT static const ColorSpace& ExtendedRec2020();
 #endif
 
-    explicit DestinationColorSpace(PlatformColorSpace platformColorSpace)
+    explicit ColorSpace(PlatformColorSpace platformColorSpace)
         : m_platformColorSpace { WTF::move(platformColorSpace) }
     {
 #if USE(CG) || USE(SKIA)
@@ -68,8 +68,8 @@ public:
 #endif
     PlatformColorSpace serializableColorSpace() const { return m_platformColorSpace; }
 
-    WEBCORE_EXPORT std::optional<DestinationColorSpace> asRGB() const;
-    WEBCORE_EXPORT std::optional<DestinationColorSpace> asExtended() const;
+    WEBCORE_EXPORT std::optional<ColorSpace> asRGB() const;
+    WEBCORE_EXPORT std::optional<ColorSpace> asExtended() const;
 
     WEBCORE_EXPORT bool supportsOutput() const;
 
@@ -81,7 +81,7 @@ private:
     PlatformColorSpace m_platformColorSpace;
 };
 
-WEBCORE_EXPORT bool operator==(const DestinationColorSpace&, const DestinationColorSpace&);
+WEBCORE_EXPORT bool operator==(const ColorSpace&, const ColorSpace&);
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const DestinationColorSpace&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ColorSpace&);
 }

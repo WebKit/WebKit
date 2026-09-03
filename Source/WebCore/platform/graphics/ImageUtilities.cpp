@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ImageUtilities.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "MIMETypeRegistry.h"
@@ -44,7 +44,7 @@ Vector<uint8_t> encodeData(const NativeImage& source, const String& mimeType, st
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=308704): The encoding should take in background color and not use drawing.
         auto colorSpace = source.colorSpace();
         if (!colorSpace.supportsOutput())
-            colorSpace = DestinationColorSpace::SRGB();
+            colorSpace = ColorSpace::SRGB();
         RefPtr buffer = ImageBuffer::create(source.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, colorSpace, PixelFormat::BGRA8);
         if (!buffer)
             return { };

@@ -27,7 +27,7 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "MediaDeviceRoute.h"
 #include "MediaPlayerPrivate.h"
 #include <wtf/CanMakeWeakPtr.h>
@@ -104,7 +104,7 @@ private:
     const PlatformTimeRanges& buffered() const LIFETIME_BOUND final { return m_buffered; }
     bool didLoadingProgress() const final { return m_didLoadingProgress; }
     void paint(GraphicsContext&, const FloatRect&) final { }
-    DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
+    ColorSpace colorSpace() final { return ColorSpace::SRGB(); }
     static OptionSet<MediaPlaybackTargetType> playbackTargetTypes();
     String wirelessPlaybackTargetName() const final;
     String wirelessPlaybackRouteName() const final;

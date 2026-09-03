@@ -52,7 +52,7 @@ bool FEFloodCoreImageApplier::apply(const Filter& filter, std::span<const Ref<Fi
     auto color = m_effect->floodColor().colorWithAlphaMultipliedBy(m_effect->floodOpacity());
     auto [r, g, b, a] = color.toResolvedColorComponentsInColorSpace(m_effect->operatingColorSpace());
 
-    RetainPtr colorSpace = m_effect->operatingColorSpace() == DestinationColorSpace::SRGB() ? sRGBColorSpaceSingleton() : linearSRGBColorSpaceSingleton();
+    RetainPtr colorSpace = m_effect->operatingColorSpace() == ColorSpace::SRGB() ? sRGBColorSpaceSingleton() : linearSRGBColorSpaceSingleton();
     RetainPtr ciColor = [CIColor colorWithRed:r green:g blue:b alpha:a colorSpace:colorSpace.get()];
 
     RetainPtr image = [CIImage imageWithColor:ciColor.get()];

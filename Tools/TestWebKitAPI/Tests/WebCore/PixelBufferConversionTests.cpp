@@ -47,8 +47,8 @@ TEST(PixelBufferConversionTests, convertImagePixels)
     const std::vector<uint8_t> reorderedBytesOpaqueAlpha = { 0, 95, 191, 255 };
 
     auto convert = [&](PixelFormat sourceFormat, AlphaPremultiplication sourceAlphaPremultiplication, PixelFormat destinationFormat, AlphaPremultiplication destinationAlphaPremultiplication, bool removeAlpha = false) -> std::vector<uint8_t> {
-        const PixelBufferFormat sourcePixelBufferFormat { sourceAlphaPremultiplication, sourceFormat, DestinationColorSpace::SRGB() };
-        const PixelBufferFormat destinationPixelBufferFormat { destinationAlphaPremultiplication, destinationFormat, DestinationColorSpace::SRGB() };
+        const PixelBufferFormat sourcePixelBufferFormat { sourceAlphaPremultiplication, sourceFormat, ColorSpace::SRGB() };
+        const PixelBufferFormat destinationPixelBufferFormat { destinationAlphaPremultiplication, destinationFormat, ColorSpace::SRGB() };
         const std::vector<uint8_t> sourceBytes =
             pixelFormatIsOpaque(sourceFormat)
                 ? orderedBytesPremultiplied
@@ -118,8 +118,8 @@ TEST(PixelBufferConversionTests, convertImagePixels)
 TEST(PixelBufferConversionTests, convertImagePixels2)
 {
     auto convert = [&](PixelFormat sourceFormat, PixelFormat destinationFormat) -> std::vector<uint8_t> {
-        const PixelBufferFormat sourcePixelBufferFormat { AlphaPremultiplication::Unpremultiplied, sourceFormat, DestinationColorSpace::SRGB() };
-        const PixelBufferFormat destinationPixelBufferFormat { AlphaPremultiplication::Unpremultiplied, destinationFormat, DestinationColorSpace::SRGB() };
+        const PixelBufferFormat sourcePixelBufferFormat { AlphaPremultiplication::Unpremultiplied, sourceFormat, ColorSpace::SRGB() };
+        const PixelBufferFormat destinationPixelBufferFormat { AlphaPremultiplication::Unpremultiplied, destinationFormat, ColorSpace::SRGB() };
         const std::vector<uint8_t> sourceBytes = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
         std::vector<uint8_t> destinationBytes(8);
         constexpr int sourceBytesPerRow = 8;
@@ -152,7 +152,7 @@ static std::vector<Float16> float16sFromByteVector(const std::vector<uint8_t>& b
     return components;
 }
 
-static std::vector<Float16> convertFloat16s(AlphaPremultiplication sourceAlphaFormat, DestinationColorSpace sourceColorSpace, AlphaPremultiplication destinationAlphaFormat, DestinationColorSpace destinationDestinationColorSpace, const std::vector<Float16>& components)
+static std::vector<Float16> convertFloat16s(AlphaPremultiplication sourceAlphaFormat, ColorSpace sourceColorSpace, AlphaPremultiplication destinationAlphaFormat, ColorSpace destinationColorSpace, const std::vector<Float16>& components)
 {
     RELEASE_ASSERT(!(components.size() % 4));
     IntSize size(components.size() / 4, 1);
@@ -160,7 +160,7 @@ static std::vector<Float16> convertFloat16s(AlphaPremultiplication sourceAlphaFo
     unsigned bytesPerRow = sourceBytes.size();
     std::vector<uint8_t> destinationBytes(bytesPerRow);
     ConstPixelBufferConversionView source { PixelBufferFormat { .alphaFormat = sourceAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = sourceColorSpace }, bytesPerRow, sourceBytes };
-    PixelBufferConversionView destination { PixelBufferFormat { .alphaFormat = destinationAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = destinationDestinationColorSpace }, bytesPerRow, destinationBytes };
+    PixelBufferConversionView destination { PixelBufferFormat { .alphaFormat = destinationAlphaFormat, .pixelFormat = PixelFormat::RGBA16F, .colorSpace = destinationColorSpace }, bytesPerRow, destinationBytes };
 
     convertImagePixels(source, destination, size);
 
@@ -178,14 +178,14 @@ static void expectFloat16sNear(const std::vector<Float16>& actual, const std::ve
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16Identical)
 {
     std::vector<Float16> sourceFloat16s { 3.0, 0.5, 0.25, 1.0, 0.125, -0.25, 0.5, 1.0 };
-    EXPECT_EQ(convertFloat16s(AlphaPremultiplication::Premultiplied, DestinationColorSpace::SRGB(), AlphaPremultiplication::Premultiplied, DestinationColorSpace::SRGB(), sourceFloat16s), sourceFloat16s);
+    EXPECT_EQ(convertFloat16s(AlphaPremultiplication::Premultiplied, ColorSpace::SRGB(), AlphaPremultiplication::Premultiplied, ColorSpace::SRGB(), sourceFloat16s), sourceFloat16s);
 }
 
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16AlphaOnly)
 {
     // Alpha-only changes within RGBA16F use the vImage half-float premultiply entry points.
     auto convert = [](AlphaPremultiplication sourceAlphaFormat, AlphaPremultiplication destinationAlphaFormat, const std::vector<Float16>& components) {
-        return convertFloat16s(sourceAlphaFormat, DestinationColorSpace::SRGB(), destinationAlphaFormat, DestinationColorSpace::SRGB(), components);
+        return convertFloat16s(sourceAlphaFormat, ColorSpace::SRGB(), destinationAlphaFormat, ColorSpace::SRGB(), components);
     };
 
     expectFloat16sNear(convert(AlphaPremultiplication::Unpremultiplied, AlphaPremultiplication::Premultiplied, { 1.0, 0.5, 0.25, 0.5 }), { 0.5, 0.25, 0.125, 0.5 });
@@ -199,12 +199,12 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16ColorSpaceConversion)
 {
     // Orange rgb(255, 165, 0) ~ color(srgb 1 0.6471 0) -> color(display-p3 0.9497 0.6629 0.2330)
     std::vector<Float16> sourceFloat16s { 1.0, 0.6471, 0.0, 1.0 };
-    expectFloat16sNear(convertFloat16s(AlphaPremultiplication::Premultiplied, DestinationColorSpace::SRGB(), AlphaPremultiplication::Premultiplied, DestinationColorSpace::ExtendedDisplayP3(), sourceFloat16s), { 0.9497, 0.6629, 0.2330, 1.0 });
+    expectFloat16sNear(convertFloat16s(AlphaPremultiplication::Premultiplied, ColorSpace::SRGB(), AlphaPremultiplication::Premultiplied, ColorSpace::ExtendedDisplayP3(), sourceFloat16s), { 0.9497, 0.6629, 0.2330, 1.0 });
 }
 
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16ToAndFromByte)
 {
-    const auto colorSpace = DestinationColorSpace::SRGB();
+    const auto colorSpace = ColorSpace::SRGB();
     constexpr int float16BytesPerRow = 4 * sizeof(Float16);
     constexpr int u8BytesPerRow = 4;
 
@@ -238,7 +238,7 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16ToAndFromByte)
 
 TEST(PixelBufferConversionTests, convertImagePixelsFloat16PaddedRows)
 {
-    const auto colorSpace = DestinationColorSpace::SRGB();
+    const auto colorSpace = ColorSpace::SRGB();
     const auto sourceBytes = byteVectorFromFloat16s({
         1.0, 0.0, 0.0, 1.0, /* padding: */ 0.0, 0.0,
         0.0, 1.0, 0.0, 1.0, /* padding: */ 0.0, 0.0,

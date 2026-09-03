@@ -48,7 +48,7 @@ struct CreateShareableBitmapResult {
 };
 }
 
-static std::optional<CreateShareableBitmapResult> createShareableBitmapForNativeImage(const NativeImage& image, const DestinationColorSpace& fallbackColorSpace)
+static std::optional<CreateShareableBitmapResult> createShareableBitmapForNativeImage(const NativeImage& image, const ColorSpace& fallbackColorSpace)
 {
     RefPtr<ShareableBitmap> bitmap;
     PlatformImagePtr platformImage;
@@ -67,7 +67,7 @@ static std::optional<CreateShareableBitmapResult> createShareableBitmapForNative
         // If createGraphicsContext() failed because the image fallbackColorSpace is not
         // supported for output, fallback to SRGB.
         if (!platformImage) {
-            bitmap = ShareableBitmap::createFromImageDraw(image, DestinationColorSpace::SRGB());
+            bitmap = ShareableBitmap::createFromImageDraw(image, ColorSpace::SRGB());
             if (bitmap)
                 platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
         }
@@ -133,7 +133,7 @@ void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
     }
 }
 
-bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, const DestinationColorSpace& fallbackColorSpace)
+bool RemoteResourceCacheProxy::recordNativeImageUse(const NativeImage& image, const ColorSpace& fallbackColorSpace)
 {
     if (isMainRunLoop())
         WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();

@@ -101,7 +101,7 @@ protected:
         float specularConstant;
         float specularExponent;
         const LightSource* lightSource;
-        const DestinationColorSpace* operatingColorSpace;
+        const ColorSpace* operatingColorSpace;
 
         PixelBuffer* pixels;
         int widthMultipliedByPixelSize;

@@ -77,7 +77,7 @@ public:
 
     float NODELETE deviceScaleFactor() const;
     
-    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
+    std::optional<WebCore::ColorSpace> displayColorSpace() const;
 
     std::optional<DrawingAreaIdentifier> NODELETE drawingAreaIdentifier() const;
 

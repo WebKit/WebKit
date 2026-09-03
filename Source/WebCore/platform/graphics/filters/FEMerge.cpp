@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<FEMerge> FEMerge::create(unsigned numberOfEffectInputs, DestinationColorSpace colorSpace)
+Ref<FEMerge> FEMerge::create(unsigned numberOfEffectInputs, ColorSpace colorSpace)
 {
     return adoptRef(*new FEMerge(numberOfEffectInputs, colorSpace));
 }
 
-FEMerge::FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace colorSpace)
+FEMerge::FEMerge(unsigned numberOfEffectInputs, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEMerge, colorSpace)
     , m_numberOfEffectInputs(numberOfEffectInputs)
 {

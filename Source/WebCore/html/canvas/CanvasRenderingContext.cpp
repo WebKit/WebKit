@@ -28,7 +28,7 @@
 
 #include "CachedImage.h"
 #include "CanvasPattern.h"
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
@@ -131,9 +131,9 @@ bool CanvasRenderingContext::isOpaque() const
     return pixelFormatIsOpaque(pixelFormat());
 }
 
-DestinationColorSpace CanvasRenderingContext::colorSpace() const
+ColorSpace CanvasRenderingContext::colorSpace() const
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 bool CanvasRenderingContext::willReadFrequently() const

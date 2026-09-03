@@ -420,9 +420,9 @@ void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const Fl
         m_presenter->paintCurrentFrame(context, rect);
 }
 
-DestinationColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
+ColorSpace MediaPlayerPrivateMediaFoundation::colorSpace()
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 HRESULT beginGetEvent(WeakPtr<MediaPlayerPrivateMediaFoundation> weakThis, COMPtr<IMFMediaSession> mediaSession)

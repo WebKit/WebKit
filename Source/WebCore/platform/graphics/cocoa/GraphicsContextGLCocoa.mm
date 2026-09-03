@@ -180,7 +180,7 @@ RefPtr<GraphicsContextGLCocoa> GraphicsContextGLCocoa::create(GraphicsContextGLA
 GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& creationAttributes, ProcessIdentity&& resourceOwner)
     : GraphicsContextGLANGLE(WTF::move(creationAttributes))
     , m_resourceOwner(WTF::move(resourceOwner))
-    , m_drawingBufferColorSpace(DestinationColorSpace::SRGB())
+    , m_drawingBufferColorSpace(ColorSpace::SRGB())
 {
 }
 
@@ -449,7 +449,7 @@ RetainPtr<IOSurfaceRef> GraphicsContextGLCocoa::copySurfaceBuffer(SurfaceBuffer 
     return destination.surface()->surface();
 }
 
-void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
+void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const ColorSpace& colorSpace)
 {
     if (!makeContextCurrent())
         return;

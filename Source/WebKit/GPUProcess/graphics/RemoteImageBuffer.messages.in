@@ -35,7 +35,7 @@ messages -> RemoteImageBuffer Stream {
     CopyNativeImage(WebCore::RenderingResourceIdentifier image)
     FilteredNativeImage(Ref<WebCore::Filter> filter) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
-    TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
+    TransformToColorSpace(WebCore::ColorSpace colorSpace)
     SetFlushSignal(IPC::Signal signal) NotStreamEncodable
     FlushContext()
     FlushContextSync() -> () Synchronous

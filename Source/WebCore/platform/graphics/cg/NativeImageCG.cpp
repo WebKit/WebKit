@@ -270,10 +270,10 @@ size_t NativeImage::sizeInBytes() const
     return sizeInBytes;
 }
 
-DestinationColorSpace NativeImage::colorSpace() const
+ColorSpace NativeImage::colorSpace() const
 {
     Locker locker { m_lock };
-    return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+    return ColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 
 void NativeImage::computeHeadroom() const

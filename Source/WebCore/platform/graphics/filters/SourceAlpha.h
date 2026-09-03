@@ -28,12 +28,12 @@ class SourceAlpha final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceAlpha);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceAlpha);
 public:
-    WEBCORE_EXPORT static Ref<SourceAlpha> create(const DestinationColorSpace& = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<SourceAlpha> create(const ColorSpace& = ColorSpace::SRGB());
 
     static AtomString effectName() { return FilterEffect::sourceAlphaName(); }
 
 private:
-    explicit SourceAlpha(DestinationColorSpace);
+    explicit SourceAlpha(ColorSpace);
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes(OptionSet<FilterRenderingMode> preferredFilterRenderingModes) const override;
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;

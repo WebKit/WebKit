@@ -215,7 +215,7 @@ bool RemoteLayerWithInProcessRenderingBackingStore::setBufferVolatile(BufferType
 }
 
 template<typename ImageBufferType>
-static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::ImageBufferCreationContext& creationContext)
+static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::ColorSpace& colorSpace, WebCore::ImageBufferFormat bufferFormat, WebCore::ImageBufferCreationContext& creationContext)
 {
     switch (type) {
     case RemoteLayerBackingStore::Type::IOSurface:

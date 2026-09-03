@@ -26,12 +26,12 @@
 #include "config.h"
 #include "ContentsFormat.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFormat contentsFormat)
+std::optional<ColorSpace> contentsFormatExtendedColorSpace(ContentsFormat contentsFormat)
 {
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
@@ -40,7 +40,7 @@ std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFo
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
-        return DestinationColorSpace::ExtendedSRGB();
+        return ColorSpace::ExtendedSRGB();
 #endif
         break;
 #endif
@@ -48,7 +48,7 @@ std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFo
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
 #if ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
-        return DestinationColorSpace::ExtendedSRGB();
+        return ColorSpace::ExtendedSRGB();
 #endif
         break;
 #endif

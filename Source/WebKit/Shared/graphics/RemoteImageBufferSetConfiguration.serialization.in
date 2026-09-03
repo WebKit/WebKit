@@ -27,7 +27,7 @@ header: "RemoteImageBufferSetConfiguration.h"
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::RemoteImageBufferSetConfiguration {
     WebCore::FloatSize logicalSize;
     float resolutionScale;
-    WebCore::DestinationColorSpace colorSpace;
+    WebCore::ColorSpace colorSpace;
     WebCore::ContentsFormat contentsFormat;
     WebCore::ImageBufferFormat bufferFormat;
     WebCore::RenderingMode renderingMode;

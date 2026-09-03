@@ -595,7 +595,7 @@ void GraphicsContextGL::framebufferResolveRenderbuffer(GCGLenum, GCGLenum, GCGLe
 }
 #endif
 
-void GraphicsContextGL::setDrawingBufferColorSpace(const DestinationColorSpace&)
+void GraphicsContextGL::setDrawingBufferColorSpace(const ColorSpace&)
 {
 }
 
@@ -635,7 +635,7 @@ void GraphicsContextGL::didChangeMemoryCost()
 RefPtr<NativeImage> GraphicsContextGL::videoFrameToNativeImage(VideoFrame& frame)
 {
     IntSize size { static_cast<int>(frame.presentationSize().width()), static_cast<int>(frame.presentationSize().height()) };
-    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return { };
     imageBuffer->context().drawVideoFrame(frame, { { }, size }, ImageOrientation::Orientation::None, true);

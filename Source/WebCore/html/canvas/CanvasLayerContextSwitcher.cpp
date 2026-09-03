@@ -59,7 +59,7 @@ CanvasLayerContextSwitcher::CanvasLayerContextSwitcher(CanvasRenderingContext2DB
 
 CanvasLayerContextSwitcher::~CanvasLayerContextSwitcher()
 {
-    m_targetSwitcher->endDrawSourceImage(*m_effectiveDrawingContext, DestinationColorSpace::SRGB());
+    m_targetSwitcher->endDrawSourceImage(*m_effectiveDrawingContext, ColorSpace::SRGB());
 }
 
 GraphicsContext* CanvasLayerContextSwitcher::drawingContext() const

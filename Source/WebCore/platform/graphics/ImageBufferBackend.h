@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <WebCore/ColorSpace.h>
 #include <WebCore/CopyImageOptions.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/GraphicsTypesGL.h>
@@ -131,7 +131,7 @@ public:
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
 
     WEBCORE_EXPORT void convertToLuminanceMask();
-    virtual void transformToColorSpace(const DestinationColorSpace&) { }
+    virtual void transformToColorSpace(const ColorSpace&) { }
 
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBufferSourceView&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
@@ -185,7 +185,7 @@ protected:
 
     IntSize size() const { return m_parameters.backendSize; };
     float resolutionScale() const { return m_parameters.resolutionScale; }
-    const DestinationColorSpace& colorSpace() const LIFETIME_BOUND { return m_parameters.colorSpace; }
+    const ColorSpace& colorSpace() const LIFETIME_BOUND { return m_parameters.colorSpace; }
     PixelFormat pixelFormat() const { return m_parameters.bufferFormat.pixelFormat; }
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

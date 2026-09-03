@@ -43,7 +43,7 @@ class Blob;
 class CachedImage;
 class CanvasBase;
 class CSSStyleImageValue;
-class DestinationColorSpace;
+class ColorSpace;
 class FloatSize;
 class HTMLCanvasElement;
 class HTMLImageElement;
@@ -117,10 +117,10 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, Promise&&);
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
-    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, DestinationColorSpace, float resolutionScale = 1);
-    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, DestinationColorSpace, float resolutionScale = 1);
+    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1);
+    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, ColorSpace, float resolutionScale = 1);
 
-    static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, DestinationColorSpace);
+    static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, ColorSpace);
     static Ref<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);
     static Ref<ImageBitmap> create(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
 

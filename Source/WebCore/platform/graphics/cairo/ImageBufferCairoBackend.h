@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ImageBufferCairoBackend : public ImageBufferBackend {
 public:
-    WEBCORE_EXPORT void transformToColorSpace(const DestinationColorSpace&) override;
+    WEBCORE_EXPORT void transformToColorSpace(const ColorSpace&) override;
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;

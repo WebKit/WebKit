@@ -140,7 +140,7 @@ enum class HysteresisState : bool;
 }
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class IntPoint;
 struct DataDetectorElementInfo;
 struct ExceptionData;
@@ -416,7 +416,7 @@ public:
 
     RetainPtr<NSView> hitTest(CGPoint);
 
-    WebCore::DestinationColorSpace colorSpace();
+    WebCore::ColorSpace colorSpace();
 
     void setUnderlayColor(NSColor *);
     RetainPtr<NSColor> underlayColor() const;

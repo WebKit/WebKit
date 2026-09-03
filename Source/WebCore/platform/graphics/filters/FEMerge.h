@@ -30,14 +30,14 @@ class FEMerge final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEMerge);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEMerge);
 public:
-    WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEMerge&) const;
 
     unsigned numberOfEffectInputs() const override { return m_numberOfEffectInputs; }
 
 private:
-    FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace);
+    FEMerge(unsigned numberOfEffectInputs, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEMerge>(*this, other); }
 

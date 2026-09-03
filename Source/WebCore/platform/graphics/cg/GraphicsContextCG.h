@@ -49,7 +49,7 @@ public:
     // Returns the platform context for any purpose, including draws. Conservative estimate.
     CGContextRef platformContext() const final { return const_cast<GraphicsContextCG*>(this)->contextForDraw(); }
 
-    const DestinationColorSpace& colorSpace() const final;
+    const ColorSpace& colorSpace() const final;
 
     void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
     void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore) final;
@@ -171,7 +171,7 @@ private:
     CGContextRef NODELETE contextForState() const;
 
     const RetainPtr<CGContextRef> m_cgContext;
-    mutable std::optional<DestinationColorSpace> m_colorSpace;
+    mutable std::optional<ColorSpace> m_colorSpace;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     std::optional<float> m_maxEDRHeadroom;
 #endif

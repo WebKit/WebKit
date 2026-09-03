@@ -32,7 +32,7 @@ class FEBlend final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEBlend);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEBlend);
 public:
-    WEBCORE_EXPORT static Ref<FEBlend> create(BlendMode, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEBlend> create(BlendMode, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEBlend&) const;
 
@@ -40,7 +40,7 @@ public:
     bool NODELETE setBlendMode(BlendMode);
 
 private:
-    FEBlend(BlendMode, DestinationColorSpace);
+    FEBlend(BlendMode, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEBlend>(*this, other); }
 

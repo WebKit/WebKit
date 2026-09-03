@@ -84,7 +84,7 @@ class AudioSourceProvider;
 class AudioTrackPrivate;
 class CDMInstance;
 class CachedResourceLoader;
-class DestinationColorSpace;
+class ColorSpace;
 class GraphicsContextGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
@@ -556,7 +556,7 @@ public:
     RefPtr<ShareableBitmap> bitmapImageForCurrentTimeSync();
     using BitmapImagePromise = NativePromise<Ref<ShareableBitmap>, void>;
     Ref<BitmapImagePromise> bitmapImageForCurrentTime();
-    DestinationColorSpace colorSpace();
+    ColorSpace colorSpace();
     bool shouldGetNativeImageForCanvasDrawing() const;
 
     using MediaPlayerEnums::NetworkState;

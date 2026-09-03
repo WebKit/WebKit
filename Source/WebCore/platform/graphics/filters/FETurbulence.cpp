@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-Ref<FETurbulence> FETurbulence::create(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace colorSpace)
+Ref<FETurbulence> FETurbulence::create(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, ColorSpace colorSpace)
 {
     return adoptRef(*new FETurbulence(type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles, colorSpace));
 }
 
-FETurbulence::FETurbulence(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace colorSpace)
+FETurbulence::FETurbulence(TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FETurbulence, colorSpace)
     , m_type(type)
     , m_baseFrequencyX(baseFrequencyX)

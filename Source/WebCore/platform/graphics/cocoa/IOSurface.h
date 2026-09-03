@@ -28,7 +28,7 @@
 #if HAVE(IOSURFACE)
 
 #include <CoreGraphics/CoreGraphics.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/PixelFormat.h>
 #include <WebCore/ProcessIdentity.h>
@@ -147,13 +147,13 @@ public:
         RetainPtr<IOSurfaceRef> m_surface;
     };
 
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA, UseLosslessCompression = UseLosslessCompression::No);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const ColorSpace&, Name = Name::Default, Format = Format::BGRA, UseLosslessCompression = UseLosslessCompression::No);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromUntrustedUncompressedWebKitSendRight(const WTF::MachSendRight&&);
     // If the colorSpace argument is non-null, it replaces any colorspace metadata on the surface.
-    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, std::optional<ColorSpace>&&);
 
     WEBCORE_EXPORT static void moveToPool(std::unique_ptr<IOSurface>&&, IOSurfacePool*);
 
@@ -231,7 +231,7 @@ public:
     WEBCORE_EXPORT void loadContentEDRHeadroom();
 #endif
 
-    WEBCORE_EXPORT DestinationColorSpace colorSpace();
+    WEBCORE_EXPORT ColorSpace colorSpace();
     WEBCORE_EXPORT IOSurfaceID surfaceID() const;
     WEBCORE_EXPORT size_t bytesPerRow() const;
 
@@ -250,12 +250,12 @@ public:
     RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
 
 private:
-    IOSurface(IntSize, const DestinationColorSpace&, Name, Format, UseLosslessCompression, bool& success);
-    IOSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
+    IOSurface(IntSize, const ColorSpace&, Name, Format, UseLosslessCompression, bool& success);
+    IOSurface(IOSurfaceRef, std::optional<ColorSpace>&&);
 
     void setColorSpaceProperty();
     void ensureColorSpace();
-    std::optional<DestinationColorSpace> surfaceColorSpace() const;
+    std::optional<ColorSpace> surfaceColorSpace() const;
 
     void setName(Name name) { m_name = name; }
 
@@ -267,7 +267,7 @@ private:
     BitmapConfiguration NODELETE bitmapConfiguration() const;
 
     std::optional<UsedFormat> m_format;
-    std::optional<DestinationColorSpace> m_colorSpace;
+    std::optional<ColorSpace> m_colorSpace;
     IntSize m_size;
     size_t m_totalBytes;
 #if HAVE(SUPPORT_HDR_DISPLAY)

@@ -28,7 +28,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "GPUAdapter.h"
@@ -485,22 +485,22 @@ static bool equalConfigurations(const auto& a, const auto& b)
         && a.colorSpace     == b.colorSpace;
 }
 
-static DestinationColorSpace toWebCoreColorSpace(const PredefinedColorSpace& colorSpace, const GPUCanvasToneMapping& toneMapping)
+static ColorSpace toWebCoreColorSpace(const PredefinedColorSpace& colorSpace, const GPUCanvasToneMapping& toneMapping)
 {
     switch (colorSpace) {
     case PredefinedColorSpace::SRGB:
-        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? DestinationColorSpace::SRGB() : DestinationColorSpace::ExtendedSRGB();
+        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? ColorSpace::SRGB() : ColorSpace::ExtendedSRGB();
     case PredefinedColorSpace::SRGBLinear:
-        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::ExtendedLinearSRGB();
+        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? ColorSpace::LinearSRGB() : ColorSpace::ExtendedLinearSRGB();
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     case PredefinedColorSpace::DisplayP3:
-        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? DestinationColorSpace::DisplayP3() : DestinationColorSpace::ExtendedDisplayP3();
+        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? ColorSpace::DisplayP3() : ColorSpace::ExtendedDisplayP3();
     case PredefinedColorSpace::DisplayP3Linear:
-        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? DestinationColorSpace::LinearDisplayP3() : DestinationColorSpace::ExtendedLinearDisplayP3();
+        return toneMapping.mode == GPUCanvasToneMappingMode::Standard ? ColorSpace::LinearDisplayP3() : ColorSpace::ExtendedLinearDisplayP3();
 #endif
     }
 
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 static WebGPU::TextureFormat NODELETE computeTextureFormat(GPUTextureFormat format, GPUCanvasToneMappingMode toneMappingMode)
@@ -661,10 +661,10 @@ bool GPUCanvasContextCocoa::isOpaque() const
     return true;
 }
 
-DestinationColorSpace GPUCanvasContextCocoa::colorSpace() const
+ColorSpace GPUCanvasContextCocoa::colorSpace() const
 {
     if (!m_configuration)
-        return DestinationColorSpace::SRGB();
+        return ColorSpace::SRGB();
 
     return toWebCoreColorSpace(m_configuration->colorSpace, m_configuration->toneMapping);
 }

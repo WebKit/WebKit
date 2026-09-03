@@ -115,7 +115,7 @@ DragImageRef createDragImageForNode(LocalFrame& frame, Node& node)
 {
     ScopedNodeDragEnabler enableDrag(frame, node);
 
-    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, ColorSpace::SRGB() };
 
     return createDragImageFromSnapshot(snapshotNode(frame, node, WTF::move(options)), &node);
 }
@@ -124,7 +124,7 @@ DragImageRef createDragImageForNode(LocalFrame& frame, Node& node)
 
 DragImageData createDragImageForSelection(LocalFrame& frame, bool forceBlackText)
 {
-    SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { }, PixelFormat::BGRA8, ColorSpace::SRGB() };
     if (forceBlackText)
         options.flags.add(SnapshotFlags::ForceBlackText);
     return { createDragImageFromSnapshot(snapshotSelection(frame, WTF::move(options)), nullptr), nullptr };
@@ -182,7 +182,7 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
     if (!startRenderer || !endRenderer)
         return nullptr;
 
-    SnapshotOptions options { { SnapshotFlags::PaintSelectionOnly }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { SnapshotFlags::PaintSelectionOnly }, PixelFormat::BGRA8, ColorSpace::SRGB() };
     if (forceBlackText)
         options.flags.add(SnapshotFlags::ForceBlackText);
 
@@ -204,7 +204,7 @@ DragImageRef createDragImageForImage(LocalFrame& frame, Node& node, IntRect& ima
     if (!node.renderer())
         return nullptr;
 
-    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions options { { SnapshotFlags::DraggableElement }, PixelFormat::BGRA8, ColorSpace::SRGB() };
 
     RefPtr snapshot = snapshotNode(frame, node, WTF::move(options), &imageRect, &elementRect);
     if (imageRect.isEmpty())

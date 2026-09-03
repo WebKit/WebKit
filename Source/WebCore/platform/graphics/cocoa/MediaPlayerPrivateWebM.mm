@@ -913,12 +913,12 @@ RefPtr<VideoFrame> MediaPlayerPrivateWebM::videoFrameForCurrentTime()
     return m_lastVideoFrame;
 }
 
-DestinationColorSpace MediaPlayerPrivateWebM::colorSpace()
+ColorSpace MediaPlayerPrivateWebM::colorSpace()
 {
     assertIsMainThread();
     updateLastImage();
     RefPtr lastImage = m_lastImage;
-    return lastImage ? lastImage->colorSpace() : DestinationColorSpace::SRGB();
+    return lastImage ? lastImage->colorSpace() : ColorSpace::SRGB();
 }
 
 Ref<MediaPlayer::BitmapImagePromise> MediaPlayerPrivateWebM::bitmapImageForCurrentTime()

@@ -168,9 +168,9 @@ RepetitionCount BitmapImageDescriptor::repetitionCount() const
     return imageMetadata(m_repetitionCount, static_cast<RepetitionCount>(RepetitionCountNone), CachedFlag::RepetitionCount, &AsyncImageDecoder::repetitionCount);
 }
 
-DestinationColorSpace BitmapImageDescriptor::colorSpace() const
+ColorSpace BitmapImageDescriptor::colorSpace() const
 {
-    return primaryNativeImageMetadata(m_colorSpace, DestinationColorSpace::SRGB(), CachedFlag::ColorSpace, &NativeImage::colorSpace);
+    return primaryNativeImageMetadata(m_colorSpace, ColorSpace::SRGB(), CachedFlag::ColorSpace, &NativeImage::colorSpace);
 }
 
 std::optional<Color> BitmapImageDescriptor::singlePixelSolidColor() const

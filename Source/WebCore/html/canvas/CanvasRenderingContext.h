@@ -43,7 +43,7 @@ namespace WebCore {
 class CSSStyleImageValue;
 class CachedImage;
 class CanvasPattern;
-class DestinationColorSpace;
+class ColorSpace;
 class GraphicsLayer;
 class HTMLCanvasElement;
 class HTMLImageElement;
@@ -128,7 +128,7 @@ public:
     virtual std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const { return std::nullopt; }
 
     virtual PixelFormat pixelFormat() const;
-    virtual DestinationColorSpace colorSpace() const;
+    virtual ColorSpace colorSpace() const;
     virtual bool isOpaque() const;
     virtual bool NODELETE willReadFrequently() const;
     virtual std::optional<RenderingMode> renderingModeForTesting() const { return std::nullopt; }

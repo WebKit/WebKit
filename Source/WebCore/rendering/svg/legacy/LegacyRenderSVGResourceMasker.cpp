@@ -79,14 +79,14 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     ImageBuffer::sizeNeedsClamping(decoratedBounds.size(), scale);
 
     if (!maskerData->maskImage && !decoratedBounds.isEmpty()) {
-        auto maskColorSpace = DestinationColorSpace::SRGB();
-        auto drawColorSpace = DestinationColorSpace::SRGB();
+        auto maskColorSpace = ColorSpace::SRGB();
+        auto drawColorSpace = ColorSpace::SRGB();
 
         if (style().colorInterpolation() == ColorInterpolation::LinearRGB) {
 #if USE(CG) || USE(SKIA)
-            maskColorSpace = DestinationColorSpace::LinearSRGB();
+            maskColorSpace = ColorSpace::LinearSRGB();
 #endif
-            drawColorSpace = DestinationColorSpace::LinearSRGB();
+            drawColorSpace = ColorSpace::LinearSRGB();
         }
         // FIXME (149470): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks alpha masking, though.
         maskerData->maskImage = context->createScaledImageBuffer(decoratedBounds, scale, maskColorSpace, RenderingMode::Unaccelerated);
@@ -104,7 +104,7 @@ auto LegacyRenderSVGResourceMasker::applyResource(RenderElement& renderer, const
     return { ApplyResult::ResourceApplied };
 }
 
-bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const DestinationColorSpace& colorSpace, RenderObject* object)
+bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, const ColorSpace& colorSpace, RenderObject* object)
 {
     RefPtr maskImage = maskerData->maskImage;
     auto& maskImageContext = maskImage->context();

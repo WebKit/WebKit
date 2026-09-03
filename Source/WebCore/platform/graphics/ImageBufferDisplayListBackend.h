@@ -33,7 +33,7 @@ namespace WebCore {
 class ImageBufferDisplayListBackend : public ImageBufferBackend {
 public:
     WEBCORE_EXPORT static std::unique_ptr<ImageBufferDisplayListBackend> create(const Parameters&, const ImageBufferCreationContext&);
-    WEBCORE_EXPORT static std::unique_ptr<ImageBufferDisplayListBackend> create(const FloatSize&, float resolutionScale, const DestinationColorSpace&, PixelFormat, RenderingPurpose, ControlFactory&);
+    WEBCORE_EXPORT static std::unique_ptr<ImageBufferDisplayListBackend> create(const FloatSize&, float resolutionScale, const ColorSpace&, PixelFormat, RenderingPurpose, ControlFactory&);
 
     static size_t calculateMemoryCost(const Parameters&) { return 0; }
 

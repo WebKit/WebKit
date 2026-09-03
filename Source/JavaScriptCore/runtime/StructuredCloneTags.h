@@ -92,7 +92,7 @@ namespace JSC {
  *    | DOMQuad
  *    | ImageBitmapTransferTag <value:uint32_t>
  *    | RTCCertificateTag
- *    | ImageBitmapTag <imageBitmapSerializationFlags:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> DestinationColorSpace <byteLength:uint32_t>(<imageByteData:uint8_t>)
+ *    | ImageBitmapTag <imageBitmapSerializationFlags:uint8_t> <logicalWidth:int32_t> <logicalHeight:int32_t> <resolutionScale:double> ColorSpace <byteLength:uint32_t>(<imageByteData:uint8_t>)
  *    | OffscreenCanvasTransferTag <value:uint32_t>
  *    | WasmMemoryTag <value:uint32_t>
  *    | RTCDataChannelTransferTag <identifier:uint32_t>
@@ -223,13 +223,13 @@ namespace JSC {
  *      | PredefinedColorSpaceTag::SRGBLinear
  *      | PredefinedColorSpaceTag::DisplayP3Linear
  *
- * DestinationColorSpace :-
- *        DestinationColorSpaceSRGBTag
- *      | DestinationColorSpaceLinearSRGBTag
- *      | DestinationColorSpaceDisplayP3Tag
- *      | DestinationColorSpaceCGColorSpaceNameTag <nameDataLength:uint32_t> <nameData:uint8_t>{nameDataLength}
- *      | DestinationColorSpaceCGColorSpacePropertyListTag <propertyListDataLength:uint32_t> <propertyListData:uint8_t>{propertyListDataLength}
- *      | DestinationColorSpaceLinearDisplayP3Tag
+ * ColorSpace :-
+ *        ColorSpaceSRGBTag
+ *      | ColorSpaceLinearSRGBTag
+ *      | ColorSpaceDisplayP3Tag
+ *      | ColorSpaceCGColorSpaceNameTag <nameDataLength:uint32_t> <nameData:uint8_t>{nameDataLength}
+ *      | ColorSpaceCGColorSpacePropertyListTag <propertyListDataLength:uint32_t> <propertyListData:uint8_t>{propertyListDataLength}
+ *      | ColorSpaceLinearDisplayP3Tag
  */
 
 enum SerializationTag {

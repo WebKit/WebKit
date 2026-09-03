@@ -36,7 +36,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDisplayListRecorderProxy);
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& renderingBackend)
-    : RemoteGraphicsContextProxy(DestinationColorSpace::SRGB(), std::nullopt, RenderingMode::Accelerated, { }, { }, DrawGlyphsMode::Normal, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
+    : RemoteGraphicsContextProxy(ColorSpace::SRGB(), std::nullopt, RenderingMode::Accelerated, { }, { }, DrawGlyphsMode::Normal, RemoteGraphicsContextIdentifier::generate(), renderingBackend)
 {
 }
 

@@ -200,12 +200,12 @@ void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTre
     }
 }
 
-WebCore::DestinationColorSpace WebPageProxy::colorSpace() const
+WebCore::ColorSpace WebPageProxy::colorSpace() const
 {
     if (RefPtr pageClient = this->pageClient())
         return pageClient->colorSpace();
 
-    return WebCore::DestinationColorSpace::SRGB();
+    return WebCore::ColorSpace::SRGB();
 }
 
 void WebPageProxy::didCommitMainFrameData(const MainFrameData& mainFrameData, const TransactionID& transactionID)

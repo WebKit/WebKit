@@ -182,7 +182,7 @@ void RemoteImageBuffer::convertToLuminanceMask()
     m_imageBuffer->convertToLuminanceMask();
 }
 
-void RemoteImageBuffer::transformToColorSpace(const WebCore::DestinationColorSpace& colorSpace)
+void RemoteImageBuffer::transformToColorSpace(const WebCore::ColorSpace& colorSpace)
 {
     assertIsCurrent(workQueue());
     m_imageBuffer->transformToColorSpace(colorSpace);

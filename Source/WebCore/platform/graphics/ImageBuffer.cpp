@@ -76,7 +76,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SerializedImageBuffer);
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat, GraphicsClient* graphicsClient)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat pixelFormat, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
@@ -482,7 +482,7 @@ void ImageBuffer::convertToLuminanceMask()
         backend->convertToLuminanceMask();
 }
 
-void ImageBuffer::transformToColorSpace(const DestinationColorSpace& newColorSpace)
+void ImageBuffer::transformToColorSpace(const ColorSpace& newColorSpace)
 {
     if (auto* backend = ensureBackend()) {
         backend->transformToColorSpace(newColorSpace);

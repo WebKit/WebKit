@@ -609,6 +609,7 @@
 #include "CharacterData.h"
 #include "ClipboardAccessPolicy.h"
 #include "ColorInterpolationMethod.h"
+#include "ColorSpace.h"
 #include "CommonAtomStrings.h"
 #include "CompositeOperation.h"
 #include "ComputedStyleDependencies.h"
@@ -627,7 +628,6 @@
 #include "DataDetectorType.h"
 #endif
 #include "DecodingOptions.h"
-#include "DestinationColorSpace.h"
 #include "Document.h"
 #include "DocumentClasses.h"
 #include "DocumentEnums.h"

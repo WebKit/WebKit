@@ -370,7 +370,7 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 {
     auto alphaFormat = contextAttributes().premultipliedAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
-    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;

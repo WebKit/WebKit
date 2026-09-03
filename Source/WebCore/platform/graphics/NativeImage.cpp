@@ -112,7 +112,7 @@ RefPtr<NativeImage> NativeImage::rotatedImage(ImageOrientation orientation)
     IntSize sizeForRotation = orientation.usesWidthAsHeight() ? size().transposedSize() : size();
 
     // FIXME: This preserves neither the pixelFormat nor the colorSapace of the original NativeImage.
-    RefPtr buffer = ImageBuffer::create(sizeForRotation, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr buffer = ImageBuffer::create(sizeForRotation, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 

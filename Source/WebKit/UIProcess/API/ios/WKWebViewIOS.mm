@@ -1423,7 +1423,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     auto transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
     auto snapshotFormat = WebCore::convertToIOSurfaceFormat(WebCore::PlatformCALayer::contentsFormatForLayer());
-    auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot, snapshotFormat);
+    auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::ColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot, snapshotFormat);
     if (!surface)
         return nullptr;
 
@@ -5055,7 +5055,7 @@ static bool isLockdownModeWarningNeeded()
     NSString *displayName = self.window.screen.displayConfiguration.name;
     if (displayName && !self.window.hidden) {
         TraceScope snapshotScope(RenderServerSnapshotStart, RenderServerSnapshotEnd);
-        auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot);
+        auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebCore::ColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot);
         if (!surface) {
             completionHandler(nullptr);
             return;

@@ -5200,7 +5200,7 @@
 		BC2C0C982D32FCF500FCFBA0 /* CSSPrimitiveNumeric.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0C8F2D32F35000FCFBA0 /* CSSPrimitiveNumeric.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2C0C9A2D3316C200FCFBA0 /* CSSPrimitiveNumericOrKeyword.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0C902D32F3F200FCFBA0 /* CSSPrimitiveNumericOrKeyword.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2CBF4E140F1ABD003879BE /* JSWebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */; };
-		BC2CCA102655DDB200B8C035 /* DestinationColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CCA0E2655DDB200B8C035 /* DestinationColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2CCA102655DDB200B8C035 /* ColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2CCA0E2655DDB200B8C035 /* ColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2E5C972E47B80A0083FFF5 /* StyleBackgroundSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E5C962E47B80A0083FFF5 /* StyleBackgroundSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2E5C992E47BF5F0083FFF5 /* StyleRepeatStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E5C982E47BF5F0083FFF5 /* StyleRepeatStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2EE8EA2765943A0077768B /* ColorInterpolationMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2EE8E82765942A0077768B /* ColorInterpolationMethod.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19445,8 +19445,8 @@
 		BC2C0C922D32F54500FCFBA0 /* StylePrimitiveNumericOrKeyword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StylePrimitiveNumericOrKeyword.h; sourceTree = "<group>"; };
 		BC2CBF4B140F1A65003879BE /* JSWebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextEvent.h; sourceTree = "<group>"; };
 		BC2CBF7A140F1D58003879BE /* JSWebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextEvent.cpp; sourceTree = "<group>"; };
-		BC2CCA0E2655DDB200B8C035 /* DestinationColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DestinationColorSpace.h; sourceTree = "<group>"; };
-		BC2CCA0F2655DDB200B8C035 /* DestinationColorSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DestinationColorSpace.cpp; sourceTree = "<group>"; };
+		BC2CCA0E2655DDB200B8C035 /* ColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
+		BC2CCA0F2655DDB200B8C035 /* ColorSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorSpace.cpp; sourceTree = "<group>"; };
 		BC2CFBAA2BEFC6CC008CA222 /* CSSColorConversion+ToColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSColorConversion+ToColor.h"; sourceTree = "<group>"; };
 		BC2CFBAB2BEFC6CC008CA222 /* CSSColorConversion+ToTypedColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSColorConversion+ToTypedColor.h"; sourceTree = "<group>"; };
 		BC2CFBAC2BEFC6D6008CA222 /* CSSColorMixResolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSColorMixResolver.cpp; sourceTree = "<group>"; };
@@ -36845,6 +36845,8 @@
 				BCB2F88D275BEE57007231BF /* ColorNormalization.h */,
 				7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */,
 				7CD1E69124ABF6240089C419 /* ColorSerialization.h */,
+				BC2CCA0F2655DDB200B8C035 /* ColorSpace.cpp */,
+				BC2CCA0E2655DDB200B8C035 /* ColorSpace.h */,
 				BCAFEDAF25966D050030E6AA /* ColorSpaceName.cpp */,
 				9382DF5710A8D5C900925652 /* ColorSpaceName.h */,
 				BC10137E25C3631600DC773C /* ColorTransferFunctions.h */,
@@ -36867,8 +36869,6 @@
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
 				A8CB41020E85B8A50032C4F0 /* DashArray.h */,
 				555130001E7CCCCA00A69E38 /* DecodingOptions.h */,
-				BC2CCA0F2655DDB200B8C035 /* DestinationColorSpace.cpp */,
-				BC2CCA0E2655DDB200B8C035 /* DestinationColorSpace.h */,
 				49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */,
 				49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */,
 				2D29ECC1192ECC8300984B78 /* DisplayRefreshMonitorClient.cpp */,
@@ -44820,6 +44820,7 @@
 				BC10137C25C3624B00DC773C /* ColorModels.h in Headers */,
 				BCB2F88E275BEE58007231BF /* ColorNormalization.h in Headers */,
 				7CD1E69324ABF6240089C419 /* ColorSerialization.h in Headers */,
+				BC2CCA102655DDB200B8C035 /* ColorSpace.h in Headers */,
 				BCAFEDB425968D0B0030E6AA /* ColorSpaceCG.h in Headers */,
 				9382DF5810A8D5C900925652 /* ColorSpaceName.h in Headers */,
 				BC10137F25C3631600DC773C /* ColorTransferFunctions.h in Headers */,
@@ -45368,7 +45369,6 @@
 				BC6616852FBF6EDE006B8E8E /* DeprecatedCSSOMValueList.h in Headers */,
 				7CBD129E1F98B90E00127D29 /* DeprecatedGlobalSettings.h in Headers */,
 				7A5E238528D3A68A00448042 /* DeprecationReportBody.h in Headers */,
-				BC2CCA102655DDB200B8C035 /* DestinationColorSpace.h in Headers */,
 				411223C52603567D00B0A0B6 /* DetachedRTCDataChannel.h in Headers */,
 				1C9F4C1729E529660015819E /* DetectedBarcodeInterface.h in Headers */,
 				1C9F4C1429E529660015819E /* DetectedFaceInterface.h in Headers */,

@@ -89,9 +89,9 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
         return std::nullopt;
 
 #if USE(CAIRO)
-    const auto colorSpace = filterElement.colorInterpolation() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB() : DestinationColorSpace::SRGB();
+    const auto colorSpace = filterElement.colorInterpolation() == ColorInterpolation::LinearRGB ? ColorSpace::LinearSRGB() : ColorSpace::SRGB();
 #else
-    const auto colorSpace = DestinationColorSpace::SRGB();
+    const auto colorSpace = ColorSpace::SRGB();
 #endif
 
     SVGFilterEffectGraph graph(SourceGraphic::create(colorSpace), SourceAlpha::create(colorSpace));
@@ -112,7 +112,7 @@ static std::optional<std::tuple<SVGFilterEffectGraph, FilterEffectGeometryMap>> 
         }
 
         if (effectElement->colorInterpolation() == ColorInterpolation::LinearRGB)
-            effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
+            effect->setOperatingColorSpace(ColorSpace::LinearSRGB());
 
         graph.addNamedNode(AtomString { effectElement->result() }, { *effect });
         graph.setNodeInputs(*effect, WTF::move(*inputs));

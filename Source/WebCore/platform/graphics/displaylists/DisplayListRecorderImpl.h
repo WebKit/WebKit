@@ -36,9 +36,9 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(RecorderImpl, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
-    WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);
+    WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const ColorSpace& = ColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);
     RecorderImpl(FloatSize initialClipSize)
-        : RecorderImpl({ }, { { }, initialClipSize }, { }, DestinationColorSpace::SRGB(), DrawGlyphsMode::Normal)
+        : RecorderImpl({ }, { { }, initialClipSize }, { }, ColorSpace::SRGB(), DrawGlyphsMode::Normal)
     {
     }
     WEBCORE_EXPORT virtual ~RecorderImpl();

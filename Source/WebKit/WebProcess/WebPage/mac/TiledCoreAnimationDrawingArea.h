@@ -114,8 +114,8 @@ private:
     void setDeviceScaleFactor(float, CompletionHandler<void()>&&) override;
     void suspendPainting();
     void resumePainting();
-    void setColorSpace(std::optional<WebCore::DestinationColorSpace>) override;
-    std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
+    void setColorSpace(std::optional<WebCore::ColorSpace>) override;
+    std::optional<WebCore::ColorSpace> displayColorSpace() const override;
     void addFence(const WTF::MachSendRight&) override;
 
     void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;

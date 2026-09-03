@@ -4296,9 +4296,9 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     context.drawVideoFrame(frame, rect, m_videoSourceOrientation, false);
 }
 
-DestinationColorSpace MediaPlayerPrivateGStreamer::colorSpace()
+ColorSpace MediaPlayerPrivateGStreamer::colorSpace()
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()

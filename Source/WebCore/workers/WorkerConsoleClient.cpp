@@ -226,7 +226,7 @@ void WorkerConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, R
         if (RefPtr imageData = JSImageData::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
-                if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                if (RefPtr imageBuffer = ImageBuffer::create(imageData->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, /* scale */ 1, ColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     imageBuffer->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(IntPoint(), imageData->size()));
                     dataURL = encodeDataURL(WTF::move(imageBuffer), "image/png"_s);
                 }

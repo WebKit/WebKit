@@ -33,7 +33,7 @@ class FEGaussianBlur final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEGaussianBlur);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEGaussianBlur);
 public:
-    WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEGaussianBlur&) const;
 
@@ -55,7 +55,7 @@ public:
     static IntOutsets calculateOutsets(const FloatSize& stdDeviation);
 
 private:
-    FEGaussianBlur(float x, float y, EdgeModeType, DestinationColorSpace);
+    FEGaussianBlur(float x, float y, EdgeModeType, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEGaussianBlur>(*this, other); }
 

@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 
 TEST(IOSurfaceTest, IsInUse)
 {
-    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB()); 
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
     EXPECT_FALSE(s1->isInUse());
     auto sendRight1 = s1->createSendRight();
     EXPECT_TRUE(s1->isInUse());
@@ -49,7 +49,7 @@ TEST(IOSurfaceTest, IsInUse)
 
 TEST(IOSurfaceTest, CreatePlatformContext)
 {
-    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB()); 
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
     EXPECT_FALSE(s1->isInUse());
     auto c1 = s1->createPlatformContext();
     auto c2 = s1->createPlatformContext();
@@ -63,7 +63,7 @@ TEST(IOSurfaceTest, CreatePlatformContext)
 
 TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightSRGB)
 {
-    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB());
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB());
     ASSERT_NE(original, nullptr);
 
     auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
@@ -75,7 +75,7 @@ TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightSRGB)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightRGBA16F)
 {
-    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::ExtendedDisplayP3(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::RGBA16F);
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::ExtendedDisplayP3(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::RGBA16F);
     ASSERT_NE(original, nullptr);
 
     auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
@@ -87,7 +87,7 @@ TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightRGBA16F)
 
 TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightYUV422)
 {
-    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::ExtendedRec2020(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::YUV422);
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::ExtendedRec2020(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::YUV422);
     ASSERT_NE(original, nullptr);
 
     auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
@@ -98,7 +98,7 @@ TEST(IOSurfaceTest, IOSurfaceNames)
 {
     {
         auto purpose = WebCore::RenderingPurpose::DOM;
-        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
         NSString *expected = @"WebKit DOM";
 
         EXPECT_EQ(WebCore::IOSurface::Name::DOM, s->name());
@@ -107,7 +107,7 @@ TEST(IOSurfaceTest, IOSurfaceNames)
     {
 
         auto purpose = WebCore::RenderingPurpose::Snapshot;
-        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+        auto s = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
         NSString *expected = @"WKWebView Snapshot";
 
         EXPECT_EQ(WebCore::IOSurface::Name::Snapshot, s->name());
@@ -121,18 +121,18 @@ TEST(IOSurfacePoolTest, IOSurfacePoolNames)
     auto purpose = WebCore::RenderingPurpose::Canvas;
     auto* pool = &WebCore::IOSurfacePool::sharedPoolSingleton();
 
-    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
+    auto s1 = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(initialPurpose));
     EXPECT_EQ(WebCore::IOSurface::Name::ImageBufferShareableMapped, s1->name());
 
     pool->addSurface(WTF::move(s1));
 
-    auto s2 = WebCore::IOSurface::create(pool, { 5, 5 }, WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
+    auto s2 = WebCore::IOSurface::create(pool, { 5, 5 }, WebCore::ColorSpace::SRGB(), WebCore::IOSurface::nameForRenderingPurpose(purpose));
     EXPECT_EQ(WebCore::IOSurface::Name::Canvas, s2->name());
 }
 
 static std::unique_ptr<WebCore::IOSurface> createSurface(WebCore::IOSurfacePool* pool, int width, int height)
 {
-    return WebCore::IOSurface::create(pool, { width, height }, WebCore::DestinationColorSpace::SRGB());
+    return WebCore::IOSurface::create(pool, { width, height }, WebCore::ColorSpace::SRGB());
 }
 
 // Exercises IOSurfacePool::tryEvictOldestCachedSurface() with many distinct sizes so the

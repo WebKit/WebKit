@@ -43,7 +43,7 @@
 #endif
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class ImageBuffer;
 }
 

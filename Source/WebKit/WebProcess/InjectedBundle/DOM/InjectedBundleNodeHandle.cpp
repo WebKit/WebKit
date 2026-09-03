@@ -174,7 +174,7 @@ static RefPtr<WebImage> imageForRect(LocalFrameView* frameView, Node* nodeToDraw
     if (bitmapSize.isEmpty())
         return nullptr;
 
-    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), DestinationColorSpace::SRGB());
+    auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), ColorSpace::SRGB());
     if (!snapshot->context())
         return nullptr;
 

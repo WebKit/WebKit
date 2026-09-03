@@ -36,7 +36,7 @@
 #endif
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class PixelBufferConformerCV;
 class VideoFrame;
 }
@@ -71,7 +71,7 @@ private:
 #if PLATFORM(COCOA)
     void getVideoFrameBuffer(RemoteVideoFrameReadReference&&, bool canSendIOSurface);
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
-    void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
+    void convertFrameBuffer(SharedVideoFrame&&, CompletionHandler<void(WebCore::ColorSpace)>&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(WebCore::SharedMemory::Handle&&);
 

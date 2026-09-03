@@ -64,7 +64,7 @@ public:
 
     // Primary & current NativeImage
     RefPtr<NativeImage> primaryNativeImage() { return m_source->primaryNativeImage(); }
-    RefPtr<NativeImage> nativeImage(const DestinationColorSpace& = DestinationColorSpace::SRGB()) final { return primaryNativeImage(); }
+    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) final { return primaryNativeImage(); }
     RefPtr<NativeImage> currentNativeImage() final { return m_source->currentNativeImage(); }
 
     // Image Metadata
@@ -72,7 +72,7 @@ public:
     FloatSize size(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const final { return m_source->size(orientation); }
     FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return m_source->sourceSize(orientation); }
     FloatSize density() const { return m_source->density(); }
-    DestinationColorSpace colorSpace() final { return m_source->colorSpace(); }
+    ColorSpace colorSpace() final { return m_source->colorSpace(); }
     bool hasHDRContent() const final { return m_source->hasHDRContent(); }
     ImageOrientation orientation() const final { return m_source->orientation(); }
     unsigned frameCount() const final { return m_source->frameCount(); }

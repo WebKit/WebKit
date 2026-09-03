@@ -50,7 +50,7 @@ static PlatformXR::FrameData::ExternalTexture makeMachSendRight(id<MTLTexture> t
     if (sharedTextureHandle)
         return { MachSendRight::adopt([sharedTextureHandle.get() createMachPort]), true };
 #endif
-    auto surface = WebCore::IOSurface::createFromSurface(texture.iosurface, WebCore::DestinationColorSpace::SRGB());
+    auto surface = WebCore::IOSurface::createFromSurface(texture.iosurface, WebCore::ColorSpace::SRGB());
     if (!surface)
         return { MachSendRight(), false };
     return { surface->createSendRight(), false };

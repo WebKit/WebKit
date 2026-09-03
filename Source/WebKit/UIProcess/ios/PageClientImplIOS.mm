@@ -238,7 +238,7 @@ bool PageClientImpl::isVisuallyIdle()
     return !isActiveViewVisible();
 }
 
-WebCore::DestinationColorSpace PageClientImpl::colorSpace()
+WebCore::ColorSpace PageClientImpl::colorSpace()
 {
     if (!m_colorSpace)
         m_colorSpace = screenColorSpace(nullptr);

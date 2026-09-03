@@ -30,10 +30,10 @@ class FETile final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FETile);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FETile);
 public:
-    WEBCORE_EXPORT static Ref<FETile> create(DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FETile> create(ColorSpace = ColorSpace::SRGB());
 
 private:
-    explicit FETile(DestinationColorSpace);
+    explicit FETile(ColorSpace);
 
     FloatRect calculateImageRect(const Filter&, std::span<const FloatRect> inputImageRects, const FloatRect& primitiveSubregion) const override;
 

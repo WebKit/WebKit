@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "NotImplemented.h"
 
@@ -72,9 +72,9 @@ bool screenSupportsExtendedColor(Widget*)
     return false;
 }
 
-DestinationColorSpace screenColorSpace(Widget*)
+ColorSpace screenColorSpace(Widget*)
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 } // namespace WebCore

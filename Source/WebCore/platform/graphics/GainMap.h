@@ -27,7 +27,7 @@
 
 #if PLATFORM(COCOA)
 #include <ImageIO/CGImageMetadata.h>
-#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/ColorSpace.h>
 #include <wtf/RetainPtr.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
@@ -39,7 +39,7 @@ struct GainMap {
 #if PLATFORM(COCOA)
     RetainPtr<CGImageMetadataRef> metadata;
     RetainPtr<CVPixelBufferRef> gainMapPixelBuffer;
-    std::optional<DestinationColorSpace> colorSpace;
+    std::optional<ColorSpace> colorSpace;
 #endif
 };
 

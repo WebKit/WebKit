@@ -58,7 +58,7 @@
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 class Filter;
 class FloatSize;
 class PixelBuffer;
@@ -113,7 +113,7 @@ public:
 
     RefPtr<RemoteImageBufferProxy> cachedImageBuffer(const WebCore::ImageBuffer&) const;
 
-    RefPtr<RemoteImageBufferProxy> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferFormat);
+    RefPtr<RemoteImageBufferProxy> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat);
     void releaseImageBuffer(RemoteImageBufferProxy&);
     bool getPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect, std::span<uint8_t> result);
     // Returns backing store bitmap for the RemoteNativeImageProxy.

@@ -36,7 +36,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBufferContextSwitcher);
 
-ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const DestinationColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
+ImageBufferContextSwitcher::ImageBufferContextSwitcher(GraphicsContext& destinationContext, const FloatRect& sourceImageRect, const ColorSpace& colorSpace, RefPtr<Filter>&& filter, FilterResults* results)
     : GraphicsContextSwitcher(WTF::move(filter))
     , m_sourceImageRect(sourceImageRect)
     , m_results(results)
@@ -72,7 +72,7 @@ void ImageBufferContextSwitcher::beginClipAndDrawSourceImage(GraphicsContext& de
     }
 }
 
-void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
+void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace& colorSpace)
 {
     if (auto* context = drawingContext(destinationContext))
         context->restore();
@@ -80,7 +80,7 @@ void ImageBufferContextSwitcher::endClipAndDrawSourceImage(GraphicsContext& dest
     endDrawSourceImage(destinationContext, colorSpace);
 }
 
-void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const DestinationColorSpace& colorSpace)
+void ImageBufferContextSwitcher::endDrawSourceImage(GraphicsContext& destinationContext, const ColorSpace& colorSpace)
 {
     if (!m_filter) {
         if (m_sourceImage)

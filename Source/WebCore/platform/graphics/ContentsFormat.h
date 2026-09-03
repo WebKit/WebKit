@@ -33,7 +33,7 @@ class TextStream;
 
 namespace WebCore {
 
-class DestinationColorSpace;
+class ColorSpace;
 
 enum class ContentsFormat : uint8_t {
     RGBA8 = 1 << 0,
@@ -68,7 +68,7 @@ constexpr unsigned contentsFormatBytesPerPixel(ContentsFormat contentsFormat, bo
     return 4;
 }
 
-WEBCORE_EXPORT std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFormat);
+WEBCORE_EXPORT std::optional<ColorSpace> contentsFormatExtendedColorSpace(ContentsFormat);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ContentsFormat);
 
 } // namespace WebCore

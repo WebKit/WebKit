@@ -257,7 +257,7 @@ bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
     return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
 }
 
-RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat bufferFormat)
+RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat)
 {
     RefPtr<RemoteImageBufferProxy> imageBuffer;
     switch (renderingMode) {

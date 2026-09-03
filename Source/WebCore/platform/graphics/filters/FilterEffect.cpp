@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-FilterEffect::FilterEffect(Type type, DestinationColorSpace colorSpace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+FilterEffect::FilterEffect(Type type, ColorSpace colorSpace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
     : FilterFunction(type, renderingResourceIdentifier)
     , m_operatingColorSpace(colorSpace)
 {

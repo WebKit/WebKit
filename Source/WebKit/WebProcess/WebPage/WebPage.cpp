@@ -3598,13 +3598,13 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
             if (RefPtr cachedImage = imageElement->cachedImage()) {
                 if (RefPtr image = cachedImage->image()) {
                     if (RefPtr nativeImage = image->currentNativeImage())
-                        bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+                        bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
                 }
             }
         } else if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node)) {
             if (RefPtr imageBuffer = canvasElement->makeRenderingResultsAvailable()) {
                 if (RefPtr nativeImage = imageBuffer->copyNativeImage())
-                    bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+                    bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
             }
         }
     }
@@ -3818,7 +3818,7 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
         frameView.setBaseBackgroundColor(savedBackgroundColor);
 }
 
-static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
+static ColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
 {
 #if USE(CG)
     if (options.contains(SnapshotOption::UseScreenColorSpace)) {
@@ -3835,10 +3835,10 @@ static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
     if (options.contains(SnapshotOption::AllowHDR) && protect(page.corePage())->drawsHDRContent())
-        return DestinationColorSpace::ExtendedSRGB();
+        return ColorSpace::ExtendedSRGB();
 #endif
 
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, LocalFrame& frame, LocalFrameView& frameView)
@@ -8674,7 +8674,7 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
 
         IntSize roundedDestinationSize = flooredIntSize(destinationSize);
         auto sourceColorSpace = nativeImage->colorSpace();
-        auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
+        auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : ColorSpace::SRGB();
         auto bitmap = ShareableBitmap::create({ roundedDestinationSize, destinationColorSpace });
         if (!bitmap)
             return completionHandler(makeUnexpected<ResourceError>({ }));
@@ -9498,7 +9498,7 @@ void WebPage::updateAttachmentIcon(const String& identifier, std::optional<Share
     if (RefPtr attachment = attachmentElementWithIdentifier(identifier)) {
         if (auto icon = iconHandle ? ShareableBitmap::create(WTF::move(*iconHandle)) : nullptr) {
             if (attachment->isWideLayout()) {
-                if (auto imageBuffer = ImageBuffer::create(icon->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                if (auto imageBuffer = ImageBuffer::create(icon->size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0, ColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     icon->paint(imageBuffer->context(), IntPoint::zero(), IntRect(IntPoint::zero(), icon->size()));
                     attachment->updateIconForWideLayout(encodeData(WTF::move(imageBuffer), "image/png"_s));
                     return;

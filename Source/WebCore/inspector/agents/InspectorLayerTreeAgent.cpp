@@ -31,7 +31,7 @@
 #include "config.h"
 #include "InspectorLayerTreeAgent.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
@@ -371,7 +371,7 @@ Inspector::CommandResult<String> InspectorLayerTreeAgent::requestContent(const I
         maxScaleFactor,
     });
 
-    auto imageBuffer = ImageBuffer::create(layerSize, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto imageBuffer = ImageBuffer::create(layerSize, RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, scaleFactor, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return makeUnexpected("Failed to create image buffer"_s);
 

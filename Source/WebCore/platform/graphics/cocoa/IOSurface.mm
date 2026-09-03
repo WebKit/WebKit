@@ -26,8 +26,8 @@
 #import "config.h"
 #import "IOSurface.h"
 
+#import "ColorSpace.h"
 #import "ColorSpaceCG.h"
-#import "DestinationColorSpace.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "ImageBufferBackend.h"
@@ -87,7 +87,7 @@ static RetainPtr<NSString> surfaceNameToNSString(IOSurface::Name name)
     }
 }
 
-std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format pixelFormat, UseLosslessCompression useLosslessCompression)
+std::unique_ptr<IOSurface> IOSurface::create(IOSurfacePool* pool, IntSize size, const ColorSpace& colorSpace, IOSurface::Name name, Format pixelFormat, UseLosslessCompression useLosslessCompression)
 {
     ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
 
@@ -173,7 +173,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromUntrustedUncompressedWebKitSendR
     return { };
 }
 
-std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
+std::unique_ptr<IOSurface> IOSurface::createFromSurface(IOSurfaceRef surface, std::optional<ColorSpace>&& colorSpace)
 {
     if (!surface)
         return nullptr;
@@ -189,7 +189,7 @@ std::unique_ptr<IOSurface> IOSurface::createFromImage(IOSurfacePool* pool, CGIma
     size_t width = CGImageGetWidth(image);
     size_t height = CGImageGetHeight(image);
 
-    auto surface = IOSurface::create(pool, IntSize(width, height), DestinationColorSpace { CGImageGetColorSpace(image) }, Name::ImageBuffer);
+    auto surface = IOSurface::create(pool, IntSize(width, height), ColorSpace { CGImageGetColorSpace(image) }, Name::ImageBuffer);
     if (!surface)
         return nullptr;
     auto context = surface->createPlatformContext();
@@ -393,7 +393,7 @@ static RetainPtr<IOSurfaceRef> createSurface(IntSize size, IOSurface::Name name,
 
 // MARK: -
 
-IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSurface::Name name, Format format, UseLosslessCompression useLosslessCompression, bool& success)
+IOSurface::IOSurface(IntSize size, const ColorSpace& colorSpace, IOSurface::Name name, Format format, UseLosslessCompression useLosslessCompression, bool& success)
     : m_format({ format, useLosslessCompression })
     , m_colorSpace(colorSpace)
     , m_size(size)
@@ -472,7 +472,7 @@ static std::optional<IOSurface::UsedFormat> formatFromSurface(IOSurfaceRef surfa
     return { };
 }
 
-IOSurface::IOSurface(IOSurfaceRef surface, std::optional<DestinationColorSpace>&& colorSpace)
+IOSurface::IOSurface(IOSurfaceRef surface, std::optional<ColorSpace>&& colorSpace)
     : m_format(formatFromSurface(surface))
     , m_colorSpace(WTF::move(colorSpace))
     , m_surface(surface)
@@ -762,7 +762,7 @@ SetNonVolatileResult IOSurface::setVolatile(bool isVolatile)
     return SetNonVolatileResult::Valid;
 }
 
-DestinationColorSpace IOSurface::colorSpace()
+ColorSpace IOSurface::colorSpace()
 {
     ensureColorSpace();
     return *m_colorSpace;
@@ -900,7 +900,7 @@ void IOSurface::ensureColorSpace()
     if (m_colorSpace)
         return;
 
-    m_colorSpace = surfaceColorSpace().value_or(DestinationColorSpace::SRGB());
+    m_colorSpace = surfaceColorSpace().value_or(ColorSpace::SRGB());
 }
 
 #if HAVE(SUPPORT_HDR_DISPLAY)
@@ -927,7 +927,7 @@ void IOSurface::loadContentEDRHeadroom()
 }
 #endif
 
-std::optional<DestinationColorSpace> IOSurface::surfaceColorSpace() const
+std::optional<ColorSpace> IOSurface::surfaceColorSpace() const
 {
     auto propertyList = adoptCF(IOSurfaceCopyValue(m_surface.get(), kIOSurfaceColorSpace));
     if (!propertyList)
@@ -937,7 +937,7 @@ std::optional<DestinationColorSpace> IOSurface::surfaceColorSpace() const
     if (!colorSpaceCF)
         return { };
     
-    return DestinationColorSpace { colorSpaceCF };
+    return ColorSpace { colorSpaceCF };
 }
 
 IOSurface::Name IOSurface::nameForRenderingPurpose(RenderingPurpose purpose)

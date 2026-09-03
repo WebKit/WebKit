@@ -97,7 +97,7 @@ private:
     Seconds lastFrameGPUCost() const override;
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, Device&) override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, Device&) override;
 
     Vector<UniqueRef<WebCore::IOSurface>> m_renderBuffers;
     WebCore::AlphaPremultiplication m_alphaMode { WebCore::AlphaPremultiplication::Premultiplied };

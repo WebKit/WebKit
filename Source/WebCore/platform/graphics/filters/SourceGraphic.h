@@ -29,12 +29,12 @@ class SourceGraphic final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceGraphic);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceGraphic);
 public:        
-    WEBCORE_EXPORT static Ref<SourceGraphic> create(DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<SourceGraphic> create(ColorSpace = ColorSpace::SRGB());
 
     static AtomString effectName() { return FilterEffect::sourceGraphicName(); }
 
 private:
-    explicit SourceGraphic(DestinationColorSpace);
+    explicit SourceGraphic(ColorSpace);
 
     unsigned numberOfEffectInputs() const override { return 0; }
 

@@ -94,7 +94,7 @@ private:
         if (!m_client.drawRect)
             return;
 
-        auto imageBuffer = graphicsContext.createAlignedImageBuffer(dirtyRect.size(), WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod::Local);
+        auto imageBuffer = graphicsContext.createAlignedImageBuffer(dirtyRect.size(), WebCore::ColorSpace::SRGB(), WebCore::RenderingMethod::Local);
         if (!imageBuffer)
             return;
 

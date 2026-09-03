@@ -293,7 +293,7 @@ void PlatformCALayerRemote::ensureBackingStore()
     updateBackingStore();
 }
 
-DestinationColorSpace PlatformCALayerRemote::displayColorSpace() const
+ColorSpace PlatformCALayerRemote::displayColorSpace() const
 {
 #if PLATFORM(IOS_FAMILY)
     if (auto displayColorSpace = contentsFormatExtendedColorSpace(contentsFormat()))
@@ -311,7 +311,7 @@ DestinationColorSpace PlatformCALayerRemote::displayColorSpace() const
     }
 #endif
 
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

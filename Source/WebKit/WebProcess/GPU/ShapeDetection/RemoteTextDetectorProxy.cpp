@@ -33,8 +33,8 @@
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteTextDetectorMessages.h"
 #include "StreamClientConnection.h"
+#include <WebCore/ColorSpace.h>
 #include "WebProcess.h"
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/ImageBuffer.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -67,7 +67,7 @@ void RemoteTextDetectorProxy::detect(const WebCore::NativeImage& image, Completi
         completionHandler({ });
         return;
     }
-    if (!renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, WebCore::DestinationColorSpace::SRGB())) {
+    if (!renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, WebCore::ColorSpace::SRGB())) {
         completionHandler({ });
         return;
     }

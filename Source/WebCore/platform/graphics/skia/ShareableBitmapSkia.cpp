@@ -37,17 +37,17 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-DestinationColorSpace ShareableBitmapConfiguration::validateColorSpace(const DestinationColorSpace& colorSpace)
+ColorSpace ShareableBitmapConfiguration::validateColorSpace(const ColorSpace& colorSpace)
 {
     return colorSpace;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(PixelFormat pixelFormat, const ColorSpace& colorSpace)
 {
     return (calculateBytesPerPixel(pixelFormat, colorSpace) / 4) * 8;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat pixelFormat, const ColorSpace& colorSpace)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     RELEASE_ASSERT(pixelFormat != PixelFormat::RGBA16F);
@@ -57,7 +57,7 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat p
     return SkImageInfo::MakeN32Premul(1, 1, colorSpace.platformColorSpace()).bytesPerPixel();
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, PixelFormat pixelFormat, const DestinationColorSpace& colorSpace)
+CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, PixelFormat pixelFormat, const ColorSpace& colorSpace)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     RELEASE_ASSERT(pixelFormat != PixelFormat::RGBA16F);

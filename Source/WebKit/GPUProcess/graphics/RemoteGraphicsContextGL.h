@@ -157,7 +157,7 @@ protected:
 #if ENABLE(WEBXR)
     void framebufferDiscard(uint32_t target, std::span<const uint32_t> attachments);
 #endif
-    void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&&);
+    void setDrawingBufferColorSpace(WebCore::ColorSpace&&);
 
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;

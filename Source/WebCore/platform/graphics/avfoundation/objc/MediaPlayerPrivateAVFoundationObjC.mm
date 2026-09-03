@@ -2906,12 +2906,12 @@ RefPtr<NativeImage> MediaPlayerPrivateAVFoundationObjC::nativeImageForCurrentTim
     return returnValue;
 }
 
-DestinationColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
+ColorSpace MediaPlayerPrivateAVFoundationObjC::colorSpace()
 {
-    DestinationColorSpace colorSpace = DestinationColorSpace::SRGB();
+    ColorSpace colorSpace = ColorSpace::SRGB();
     updateLastImage([&] {
         if (m_lastPixelBuffer)
-            colorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
+            colorSpace = ColorSpace(createCGColorSpaceForCVPixelBuffer(m_lastPixelBuffer.get()));
     });
     return colorSpace;
 }

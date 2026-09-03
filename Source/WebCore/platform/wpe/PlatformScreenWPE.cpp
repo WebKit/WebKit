@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "DestinationColorSpace.h"
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "HostWindow.h"
 #include "LocalFrameView.h"
@@ -145,9 +145,9 @@ FloatRect screenAvailableRect(Widget* widget)
     return screenRect(widget);
 }
 
-DestinationColorSpace screenColorSpace(Widget*)
+ColorSpace screenColorSpace(Widget*)
 {
-    return DestinationColorSpace::SRGB();
+    return ColorSpace::SRGB();
 }
 
 bool screenSupportsExtendedColor(Widget*)

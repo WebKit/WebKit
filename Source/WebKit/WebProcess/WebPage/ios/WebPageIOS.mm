@@ -4161,7 +4161,7 @@ void WebPage::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, 
 
         auto snapshotRect = IntRect { FloatRect { { }, FloatSize { printInfo.availablePaperWidth, printInfo.availablePaperHeight } } };
 
-        RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!buffer)
             return;
 

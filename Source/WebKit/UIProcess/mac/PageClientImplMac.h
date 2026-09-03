@@ -86,7 +86,7 @@ private:
     bool isViewVisibleOrOccluded() override;
     bool isViewInWindow() override;
     bool isVisuallyIdle() override;
-    WebCore::DestinationColorSpace colorSpace() override;
+    WebCore::ColorSpace colorSpace() override;
     void setRemoteLayerTreeRootNode(RemoteLayerTreeNode*) override;
     CALayer *acceleratedCompositingRootLayer() const override;
     CALayer *headerBannerLayer() const override;

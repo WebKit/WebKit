@@ -35,6 +35,7 @@
 #include "UserContentControllerParameters.h"
 #include "ViewWindowCoordinates.h"
 #include "VisitedLinkTableIdentifier.h"
+#include <WebCore/ColorSpace.h>
 #include "WebPageGroupData.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
@@ -45,7 +46,6 @@
 #include <WebCore/Color.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CornerRadii.h>
-#include <WebCore/DestinationColorSpace.h>
 #include <WebCore/DocumentSyncData.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/FrameIdentifier.h>
@@ -203,7 +203,7 @@ struct WebPageCreationParameters {
     bool backgroundTextExtractionEnabled { false };
 
 #if PLATFORM(MAC)
-    std::optional<WebCore::DestinationColorSpace> colorSpace { };
+    std::optional<WebCore::ColorSpace> colorSpace { };
     bool useFormSemanticContext { false };
     int headerBannerHeight { 0 };
     int footerBannerHeight { 0 };

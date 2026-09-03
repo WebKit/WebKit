@@ -312,18 +312,18 @@ enum class PredefinedColorSpaceTag : uint8_t {
 #endif
 };
 
-enum DestinationColorSpaceTag {
-    DestinationColorSpaceSRGBTag = 0,
-    DestinationColorSpaceLinearSRGBTag = 1,
+enum ColorSpaceTag {
+    ColorSpaceSRGBTag = 0,
+    ColorSpaceLinearSRGBTag = 1,
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    DestinationColorSpaceDisplayP3Tag = 2,
+    ColorSpaceDisplayP3Tag = 2,
 #endif
 #if PLATFORM(COCOA)
-    DestinationColorSpaceCGColorSpaceNameTag = 3,
-    DestinationColorSpaceCGColorSpacePropertyListTag = 4,
+    ColorSpaceCGColorSpaceNameTag = 3,
+    ColorSpaceCGColorSpacePropertyListTag = 4,
 #endif
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    DestinationColorSpaceLinearDisplayP3Tag = 5,
+    ColorSpaceLinearDisplayP3Tag = 5,
 #endif
 };
 
@@ -1517,7 +1517,7 @@ public:
 private:
     using Base::write;
 
-    void write(DestinationColorSpaceTag tag)
+    void write(ColorSpaceTag tag)
     {
         JSC::StructuredCloneInternal::writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
@@ -1605,26 +1605,26 @@ private:
     }
 #endif
 
-    void write(DestinationColorSpace destinationColorSpace)
+    void write(ColorSpace destinationColorSpace)
     {
-        if (destinationColorSpace == DestinationColorSpace::SRGB()) {
-            write(DestinationColorSpaceSRGBTag);
+        if (destinationColorSpace == ColorSpace::SRGB()) {
+            write(ColorSpaceSRGBTag);
             return;
         }
 
-        if (destinationColorSpace == DestinationColorSpace::LinearSRGB()) {
-            write(DestinationColorSpaceLinearSRGBTag);
+        if (destinationColorSpace == ColorSpace::LinearSRGB()) {
+            write(ColorSpaceLinearSRGBTag);
             return;
         }
 
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        if (destinationColorSpace == DestinationColorSpace::DisplayP3()) {
-            write(DestinationColorSpaceDisplayP3Tag);
+        if (destinationColorSpace == ColorSpace::DisplayP3()) {
+            write(ColorSpaceDisplayP3Tag);
             return;
         }
 
-        if (destinationColorSpace == DestinationColorSpace::LinearDisplayP3()) {
-            write(DestinationColorSpaceLinearDisplayP3Tag);
+        if (destinationColorSpace == ColorSpace::LinearDisplayP3()) {
+            write(ColorSpaceLinearDisplayP3Tag);
             return;
         }
 #endif
@@ -1635,11 +1635,11 @@ private:
         if (RetainPtr name = CGColorSpaceGetName(colorSpace.get())) {
             auto data = adoptCF(CFStringCreateExternalRepresentation(nullptr, name.get(), kCFStringEncodingUTF8, 0));
             if (!data) {
-                write(DestinationColorSpaceSRGBTag);
+                write(ColorSpaceSRGBTag);
                 return;
             }
 
-            write(DestinationColorSpaceCGColorSpaceNameTag);
+            write(ColorSpaceCGColorSpaceNameTag);
             write(data);
             return;
         }
@@ -1647,18 +1647,18 @@ private:
         if (auto propertyList = adoptCF(CGColorSpaceCopyPropertyList(colorSpace.get()))) {
             auto data = adoptCF(CFPropertyListCreateData(nullptr, propertyList.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr));
             if (!data) {
-                write(DestinationColorSpaceSRGBTag);
+                write(ColorSpaceSRGBTag);
                 return;
             }
 
-            write(DestinationColorSpaceCGColorSpacePropertyListTag);
+            write(ColorSpaceCGColorSpacePropertyListTag);
             write(data);
             return;
         }
 #endif
 
         ASSERT_NOT_REACHED();
-        write(DestinationColorSpaceSRGBTag);
+        write(ColorSpaceSRGBTag);
     }
 
     void write(CryptoKeyOKP::NamedCurve curve)
@@ -2470,11 +2470,11 @@ private:
         }
     }
 
-    bool NODELETE read(DestinationColorSpaceTag& tag)
+    bool NODELETE read(ColorSpaceTag& tag)
     {
         if (m_data.empty())
             return false;
-        tag = static_cast<DestinationColorSpaceTag>(consume(m_data));
+        tag = static_cast<ColorSpaceTag>(consume(m_data));
         return true;
     }
 
@@ -2494,29 +2494,29 @@ private:
     }
 #endif
 
-    bool read(DestinationColorSpace& destinationColorSpace)
+    bool read(ColorSpace& destinationColorSpace)
     {
-        DestinationColorSpaceTag tag;
+        ColorSpaceTag tag;
         if (!read(tag))
             return false;
 
         switch (tag) {
-        case DestinationColorSpaceSRGBTag:
-            destinationColorSpace = DestinationColorSpace::SRGB();
+        case ColorSpaceSRGBTag:
+            destinationColorSpace = ColorSpace::SRGB();
             return true;
-        case DestinationColorSpaceLinearSRGBTag:
-            destinationColorSpace = DestinationColorSpace::LinearSRGB();
+        case ColorSpaceLinearSRGBTag:
+            destinationColorSpace = ColorSpace::LinearSRGB();
             return true;
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        case DestinationColorSpaceDisplayP3Tag:
-            destinationColorSpace = DestinationColorSpace::DisplayP3();
+        case ColorSpaceDisplayP3Tag:
+            destinationColorSpace = ColorSpace::DisplayP3();
             return true;
-        case DestinationColorSpaceLinearDisplayP3Tag:
-            destinationColorSpace = DestinationColorSpace::LinearDisplayP3();
+        case ColorSpaceLinearDisplayP3Tag:
+            destinationColorSpace = ColorSpace::LinearDisplayP3();
             return true;
 #endif
 #if PLATFORM(COCOA)
-        case DestinationColorSpaceCGColorSpaceNameTag: {
+        case ColorSpaceCGColorSpaceNameTag: {
             RetainPtr<CFDataRef> data;
             if (!read(data))
                 return false;
@@ -2529,10 +2529,10 @@ private:
             if (!colorSpace)
                 return false;
 
-            destinationColorSpace = DestinationColorSpace(colorSpace.get());
+            destinationColorSpace = ColorSpace(colorSpace.get());
             return true;
         }
-        case DestinationColorSpaceCGColorSpacePropertyListTag: {
+        case ColorSpaceCGColorSpacePropertyListTag: {
             RetainPtr<CFDataRef> data;
             if (!read(data))
                 return false;
@@ -2545,7 +2545,7 @@ private:
             if (!colorSpace)
                 return false;
 
-            destinationColorSpace = DestinationColorSpace(colorSpace.get());
+            destinationColorSpace = ColorSpace(colorSpace.get());
             return true;
         }
 #endif
@@ -3445,7 +3445,7 @@ private:
         int32_t logicalWidth;
         int32_t logicalHeight;
         double resolutionScale;
-        auto colorSpace = DestinationColorSpace::SRGB();
+        auto colorSpace = ColorSpace::SRGB();
         RefPtr<ArrayBuffer> arrayBuffer;
 
         if (!read(rawFlags) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || (m_majorVersion > 8 && !read(colorSpace)) || !readArrayBufferImpl<uint32_t>(arrayBuffer)) {

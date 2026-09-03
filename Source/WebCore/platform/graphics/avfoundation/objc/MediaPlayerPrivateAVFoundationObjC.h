@@ -276,7 +276,7 @@ private:
     void paintWithVideoOutput(GraphicsContext&, const FloatRect&);
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<NativeImage> nativeImageForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    ColorSpace colorSpace() final;
 
     enum class UpdateResult { Succeeded, Failed, TimedOut, ObjectDestroyed };
     UpdateResult waitForVideoOutputMediaDataWillChange();

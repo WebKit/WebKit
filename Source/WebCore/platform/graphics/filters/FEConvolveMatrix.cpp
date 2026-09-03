@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-Ref<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace colorSpace)
+Ref<FEConvolveMatrix> FEConvolveMatrix::create(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, ColorSpace colorSpace)
 {
     return adoptRef(*new FEConvolveMatrix(kernelSize, divisor, bias, targetOffset, edgeMode, kernelUnitLength, preserveAlpha, kernelMatrix, colorSpace));
 }
 
-FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, DestinationColorSpace colorSpace)
+FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, float bias, const IntPoint& targetOffset, EdgeModeType edgeMode, const FloatPoint& kernelUnitLength, bool preserveAlpha, const Vector<float>& kernelMatrix, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEConvolveMatrix, colorSpace)
     , m_kernelSize(kernelSize)
     , m_divisor(divisor)

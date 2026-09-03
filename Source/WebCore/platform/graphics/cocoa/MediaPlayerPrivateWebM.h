@@ -173,7 +173,7 @@ private:
     void paint(GraphicsContext&, const FloatRect&) final;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
-    DestinationColorSpace colorSpace() final;
+    ColorSpace colorSpace() final;
     Ref<BitmapImagePromise> bitmapImageForCurrentTime() final;
 
     void setNaturalSize(FloatSize);

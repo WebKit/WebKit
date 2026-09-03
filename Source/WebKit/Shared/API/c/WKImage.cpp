@@ -36,7 +36,7 @@ WKTypeID WKImageGetTypeID(void)
 
 WKImageRef WKImageCreate(WKSize size, WKImageOptions options)
 {
-    return toAPILeakingRef(WebKit::WebImage::create(WebKit::toIntSize(size), WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB()));
+    return toAPILeakingRef(WebKit::WebImage::create(WebKit::toIntSize(size), WebKit::toImageOptions(options), WebCore::ColorSpace::SRGB()));
 }
 
 WKSize WKImageGetSize(WKImageRef imageRef)

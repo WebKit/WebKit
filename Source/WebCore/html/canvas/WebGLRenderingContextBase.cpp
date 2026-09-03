@@ -606,7 +606,7 @@ void WebGLRenderingContextBase::initializeContextState()
     m_drawBuffersWebGLRequirementsChecked = false;
     m_drawBuffersSupported = false;
 
-    context->setDrawingBufferColorSpace(toDestinationColorSpace(m_drawingBufferColorSpace));
+    context->setDrawingBufferColorSpace(toColorSpace(m_drawingBufferColorSpace));
 
     IntSize canvasSize = clampedCanvasSize();
     context->viewport(0, 0, canvasSize.width(), canvasSize.height());
@@ -780,7 +780,7 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cal
 // Temporary function to create image buffer for backing store reads until NativeImages are used.
 static RefPtr<ImageBuffer> createImageBufferForWebGLContextReads(IntSize size, ScriptExecutionContext& scriptExecutionContext)
 {
-    return ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext.graphicsClient());
+    return ImageBuffer::create(size, RenderingMode::Accelerated, RenderingPurpose::Canvas, 1, ColorSpace::SRGB(), PixelFormat::BGRA8, scriptExecutionContext.graphicsClient());
 }
 
 void WebGLRenderingContextBase::ReadSurfaceBuffer::clear()
@@ -819,7 +819,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::surfaceBufferToNativeImage(Surfac
     }
     // A lost context or a failed read is transparent black.
     if (!readBuffer.image)
-        readBuffer.image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8));
+        readBuffer.image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
     if (readBuffer.image)
         updateMemoryCost();
     return readBuffer.image;
@@ -864,7 +864,7 @@ RefPtr<ByteArrayPixelBuffer> WebGLRenderingContextBase::drawingBufferToPixelBuff
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, size);
     if (!pixelBuffer)
         return nullptr;
@@ -982,7 +982,7 @@ void WebGLRenderingContextBase::setDrawingBufferColorSpace(PredefinedColorSpace 
     if (isContextLost())
         return;
 
-    protect(graphicsContextGL())->setDrawingBufferColorSpace(toDestinationColorSpace(colorSpace));
+    protect(graphicsContextGL())->setDrawingBufferColorSpace(toColorSpace(colorSpace));
 }
 
 unsigned WebGLRenderingContextBase::sizeInBytes(GCGLenum type)
@@ -4263,7 +4263,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image,
 {
     IntSize size(width, height);
     size.scale(deviceScaleFactor);
-    RefPtr buf = m_generatedImageCache.imageBuffer(size, DestinationColorSpace::SRGB());
+    RefPtr buf = m_generatedImageCache.imageBuffer(size, ColorSpace::SRGB());
     if (!buf) {
         synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory"_s);
         return nullptr;
@@ -4318,7 +4318,7 @@ RefPtr<NativeImage> WebGLRenderingContextBase::videoFrameToNativeImage(HTMLVideo
         IntSize videoSize { static_cast<int>(video.videoWidth()), static_cast<int>(video.videoHeight()) };
         auto colorSpace = video.colorSpace();
         if (!colorSpace)
-            colorSpace = DestinationColorSpace::SRGB();
+            colorSpace = ColorSpace::SRGB();
         imageBuffer = m_generatedImageCache.imageBuffer(videoSize, *colorSpace);
         if (!imageBuffer) {
             synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory"_s);
@@ -5424,7 +5424,7 @@ WebGLRenderingContextBase::LRUImageBufferCache::LRUImageBufferCache(int capacity
 {
 }
 
-RefPtr<ImageBuffer> WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, DestinationColorSpace colorSpace, CompositeOperator fillOperator)
+RefPtr<ImageBuffer> WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const IntSize& size, ColorSpace colorSpace, CompositeOperator fillOperator)
 {
     size_t i;
     for (i = 0; i < m_buffers.size(); ++i) {

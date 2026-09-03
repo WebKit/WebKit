@@ -35,6 +35,7 @@
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "ViewGestureControllerMessages.h"
+#import <WebCore/ColorSpace.h>
 #import "WebDisplayRefreshMonitor.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -49,7 +50,6 @@
 #import <WebCore/AsyncScrollingCoordinator.h>
 #import <WebCore/ColorSpaceCG.h>
 #import <WebCore/DebugPageOverlays.h>
-#import <WebCore/DestinationColorSpace.h>
 #import <WebCore/FrameInlines.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
@@ -558,14 +558,14 @@ void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor
     completionHandler();
 }
 
-void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::DestinationColorSpace> colorSpace)
+void TiledCoreAnimationDrawingArea::setColorSpace(std::optional<WebCore::ColorSpace> colorSpace)
 {
     m_layerHostingContext->setColorSpace(colorSpace ? protect(colorSpace->platformColorSpace()).get() : nullptr);
 }
 
-std::optional<WebCore::DestinationColorSpace> TiledCoreAnimationDrawingArea::displayColorSpace() const
+std::optional<WebCore::ColorSpace> TiledCoreAnimationDrawingArea::displayColorSpace() const
 {
-    return DestinationColorSpace { m_layerHostingContext->colorSpace() };
+    return ColorSpace { m_layerHostingContext->colorSpace() };
 }
 
 RefPtr<WebCore::DisplayRefreshMonitor> TiledCoreAnimationDrawingArea::createDisplayRefreshMonitor(PlatformDisplayID displayID)

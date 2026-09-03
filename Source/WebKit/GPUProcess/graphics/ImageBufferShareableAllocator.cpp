@@ -56,7 +56,7 @@ ImageBufferShareableAllocator::ImageBufferShareableAllocator(const ProcessIdenti
 }
 #endif
 
-RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode) const
+RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const FloatSize& size, const ColorSpace& colorSpace, RenderingMode renderingMode) const
 {
 #if HAVE(IOSURFACE)
     if (renderingMode == RenderingMode::Accelerated) {

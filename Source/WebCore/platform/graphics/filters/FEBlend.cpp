@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-Ref<FEBlend> FEBlend::create(BlendMode mode, DestinationColorSpace colorSpace)
+Ref<FEBlend> FEBlend::create(BlendMode mode, ColorSpace colorSpace)
 {
     return adoptRef(*new FEBlend(mode, colorSpace));
 }
 
-FEBlend::FEBlend(BlendMode mode, DestinationColorSpace colorSpace)
+FEBlend::FEBlend(BlendMode mode, ColorSpace colorSpace)
     : FilterEffect(FilterEffect::Type::FEBlend, colorSpace)
     , m_mode(mode)
 {

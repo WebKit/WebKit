@@ -167,7 +167,7 @@ private:
     std::optional<IntSize> densityCorrectedSize() const { return m_descriptor.densityCorrectedSize(); }
     bool hasDensityCorrectedSize() const final { return densityCorrectedSize().has_value(); }
     ImageOrientation orientation() const final { return m_descriptor.orientation(); }
-    DestinationColorSpace colorSpace() const final { return m_descriptor.colorSpace(); }
+    ColorSpace colorSpace() const final { return m_descriptor.colorSpace(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_descriptor.singlePixelSolidColor(); }
     bool hasHDRGainMap() const final { return m_descriptor.hasHDRGainMap(); }
     bool hasHDRContent() const final { return m_descriptor.hasHDRGainMap() || m_descriptor.hasHDRColorSpace() || hasHDRContentForTesting(); }

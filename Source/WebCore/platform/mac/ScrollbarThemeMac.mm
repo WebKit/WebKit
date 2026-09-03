@@ -640,7 +640,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
         paintScrollbar(scrollbar, context);
     } else {
         if (auto imageBuffer = [&] -> RefPtr<ImageBuffer> {
-            if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), DestinationColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local)) {
+            if (auto buffer = context.createImageBuffer(scrollbarRect.size(), scrollbar.deviceScaleFactor(), ColorSpace::SRGB(), context.renderingMode(), RenderingMethod::Local)) {
                 paintScrollbar(scrollbar, buffer->context());
                 return buffer;
             }

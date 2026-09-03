@@ -53,7 +53,7 @@ bool FETileSoftwareApplier::apply(const Filter& filter, std::span<const Ref<Filt
     auto maxResultRect = result.maxEffectRect(filter);
     maxResultRect.scale(filter.filterScale());
 
-    auto tileImage = ImageBuffer::create(tileRect.size(), filter.renderingMode(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto tileImage = ImageBuffer::create(tileRect.size(), filter.renderingMode(), RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!tileImage)
         return false;
 

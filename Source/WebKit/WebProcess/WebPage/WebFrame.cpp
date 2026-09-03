@@ -1445,7 +1445,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 
 RefPtr<WebImage> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*protect(coreLocalFrame()), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+    auto snapshot = snapshotSelection(*protect(coreLocalFrame()), { { WebCore::SnapshotFlags::ForceBlackText, WebCore::SnapshotFlags::Shareable }, PixelFormat::BGRA8, ColorSpace::SRGB() });
     if (!snapshot)
         return nullptr;
 
@@ -1817,7 +1817,7 @@ static RefPtr<ShareableBitmap> shareableBitmapFromImageBuffer(ImageBuffer& image
     RefPtr nativeImage = imageBuffer.copyNativeImage();
     if (!nativeImage)
         return nullptr;
-    return ShareableBitmap::createFromImageDraw(*nativeImage, DestinationColorSpace::SRGB());
+    return ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
 }
 
 RefPtr<ShareableBitmap> shareableBitmapFromImageData(ImageData& imageData)
@@ -1827,7 +1827,7 @@ RefPtr<ShareableBitmap> shareableBitmapFromImageData(ImageData& imageData)
     if (size.isEmpty())
         return nullptr;
 
-    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr imageBuffer = ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!imageBuffer)
         return nullptr;
 

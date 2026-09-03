@@ -200,7 +200,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 
 static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndicatorOption> options)
 {
-    SnapshotOptions snapshotOptions { { SnapshotFlags::PaintWithIntegralScaleFactor }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    SnapshotOptions snapshotOptions { { SnapshotFlags::PaintWithIntegralScaleFactor }, PixelFormat::BGRA8, ColorSpace::SRGB() };
 
     if (!options.contains(TextIndicatorOption::PaintAllContent)) {
         if (options.contains(TextIndicatorOption::PaintBackgrounds))
@@ -241,7 +241,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
         return false;
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight)) {
-        SnapshotOptions snapshotOptions { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+        SnapshotOptions snapshotOptions { { }, PixelFormat::BGRA8, ColorSpace::SRGB() };
         if (data.options.contains(TextIndicatorOption::SnapshotContentAt3xBaseScale))
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 
@@ -251,7 +251,7 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
     }
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection)) {
-        SnapshotOptions snapshotOptions { { SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+        SnapshotOptions snapshotOptions { { SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, ColorSpace::SRGB() };
         if (data.options.contains(TextIndicatorOption::SnapshotContentAt3xBaseScale))
             snapshotOptions.flags.add(SnapshotFlags::PaintWith3xBaseScale);
 

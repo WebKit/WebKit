@@ -43,7 +43,7 @@ public:
     WEBCORE_EXPORT ImageBufferAllocator();
     WEBCORE_EXPORT virtual ~ImageBufferAllocator();
 
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode) const;
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const ColorSpace&, RenderingMode) const;
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> createPixelBuffer(const PixelBufferFormat&, const IntSize&) const;
 };
 

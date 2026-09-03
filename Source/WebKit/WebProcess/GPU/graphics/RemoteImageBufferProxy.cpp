@@ -422,7 +422,7 @@ void RemoteImageBufferProxy::convertToLuminanceMask()
     send(Messages::RemoteImageBuffer::ConvertToLuminanceMask());
 }
 
-void RemoteImageBufferProxy::transformToColorSpace(const DestinationColorSpace& colorSpace)
+void RemoteImageBufferProxy::transformToColorSpace(const ColorSpace& colorSpace)
 {
     sendPendingDrawsIfNecessary();
     send(Messages::RemoteImageBuffer::TransformToColorSpace(colorSpace));

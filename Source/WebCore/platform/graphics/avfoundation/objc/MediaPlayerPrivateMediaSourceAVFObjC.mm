@@ -939,12 +939,12 @@ RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTim
     return m_lastVideoFrame;
 }
 
-DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
+ColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
 {
     assertIsMainThread();
     updateLastImage();
     RefPtr lastImage = m_lastImage;
-    return lastImage ? lastImage->colorSpace() : DestinationColorSpace::SRGB();
+    return lastImage ? lastImage->colorSpace() : ColorSpace::SRGB();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const

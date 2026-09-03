@@ -30,7 +30,7 @@ class FESpecularLighting final : public FELighting {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FESpecularLighting);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FESpecularLighting);
 public:
-    WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FESpecularLighting> create(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FESpecularLighting& other) const { return FELighting::operator==(other); }
 
@@ -43,7 +43,7 @@ public:
     WTF::TextStream& externalRepresentation(WTF::TextStream&, FilterRepresentation) const override;
 
 private:
-    FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, DestinationColorSpace);
+    FESpecularLighting(const Color& lightingColor, float surfaceScale, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FESpecularLighting>(*this, other); }
 };

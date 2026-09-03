@@ -187,7 +187,7 @@ static ScreenProperties collectScreenPropertiesExceptForHDRState()
         screenData.screenAvailableRect = screenAvailableRect;
 
         screenData.screenRect = screen.frame;
-        screenData.colorSpace = DestinationColorSpace { screen.colorSpace.CGColorSpace };
+        screenData.colorSpace = ColorSpace { screen.colorSpace.CGColorSpace };
         screenData.screenDepth = NSBitsPerPixelFromDepth(screen.depth);
         screenData.screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
         screenData.screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
@@ -442,14 +442,14 @@ NSScreen *screen(PlatformDisplayID displayID)
     return firstScreen();
 }
 
-DestinationColorSpace screenColorSpace(Widget* widget)
+ColorSpace screenColorSpace(Widget* widget)
 {
     Ref platformScreen = PlatformScreen::singleton();
     if (auto data = platformScreen->screenData(displayID(widget)))
         return data->colorSpace;
 
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    return DestinationColorSpace { protect(screen(widget)).get().colorSpace.CGColorSpace };
+    return ColorSpace { protect(screen(widget)).get().colorSpace.CGColorSpace };
 }
 
 OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)

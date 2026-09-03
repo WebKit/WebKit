@@ -45,7 +45,7 @@
 #endif
 
 namespace WebCore {
-class DestinationColorSpace;
+class ColorSpace;
 class ImageBuffer;
 }
 
@@ -97,7 +97,7 @@ private:
     void paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier, uint32_t, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA)
-    void recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
+    void recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 #endif
 
     void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(Seconds)>&&);

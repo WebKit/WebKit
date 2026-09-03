@@ -57,7 +57,7 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     
     RefPtr nativeImage = WebCore::NativeImage::create(imageRef);
     WebCore::IntSize imageSize = nativeImage->size();
-    Ref webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::DestinationColorSpace::SRGB());
+    Ref webImage = WebKit::WebImage::create(imageSize, WebKit::toImageOptions(options), WebCore::ColorSpace::SRGB());
     if (!webImage->context())
         return nullptr;
     auto& graphicsContext = *webImage->context();

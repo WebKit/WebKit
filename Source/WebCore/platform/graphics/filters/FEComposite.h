@@ -42,7 +42,7 @@ class FEComposite final : public FilterEffect {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FEComposite);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComposite);
 public:
-    WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace = DestinationColorSpace::SRGB());
+    WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4, ColorSpace = ColorSpace::SRGB());
 
     bool operator==(const FEComposite&) const;
 
@@ -62,7 +62,7 @@ public:
     bool NODELETE setK4(float);
 
 private:
-    FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace);
+    FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4, ColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEComposite>(*this, other); }
 

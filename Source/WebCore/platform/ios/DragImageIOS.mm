@@ -91,7 +91,7 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
         imageSize = adjustedSize;
     }
 
-    RefPtr buffer = ImageBuffer::create(imageSize, RenderingMode::Accelerated, RenderingPurpose::Snapshot, scale, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, client);
+    RefPtr buffer = ImageBuffer::create(imageSize, RenderingMode::Accelerated, RenderingPurpose::Snapshot, scale, ColorSpace::SRGB(), PixelFormat::BGRA8, client);
     if (!buffer)
         return nil;
 

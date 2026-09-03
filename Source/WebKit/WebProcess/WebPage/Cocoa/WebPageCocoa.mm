@@ -1908,7 +1908,7 @@ void WebPage::drawToPDF(const std::optional<FloatRect>& rect, bool allowTranspar
     Ref frameView = *localMainFrame->view();
     auto snapshotRect = IntRect { rect.value_or(FloatRect { { }, frameView->contentsSize() }) };
 
-    RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
     if (!buffer)
         return;
 
@@ -1927,7 +1927,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
 #if USE(CG)
     if (coreFrame) {
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame.get()));
-        image = WebImage::create(imageSize, ImageOption::Local, DestinationColorSpace::SRGB(), &m_page->chrome().client());
+        image = WebImage::create(imageSize, ImageOption::Local, ColorSpace::SRGB(), &m_page->chrome().client());
         if (!image || !image->context()) {
             ASSERT_NOT_REACHED();
             return completionHandler({ });
@@ -1973,7 +1973,7 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 
         FloatRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : FloatRect { 0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight };
 
-        RefPtr buffer = ImageBuffer::create(mediaBox.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+        RefPtr buffer = ImageBuffer::create(mediaBox.size(), RenderingMode::PDFDocument, RenderingPurpose::Snapshot, 1, ColorSpace::SRGB(), PixelFormat::BGRA8);
         if (!buffer)
             return;
         GraphicsContext& context = buffer->context();
