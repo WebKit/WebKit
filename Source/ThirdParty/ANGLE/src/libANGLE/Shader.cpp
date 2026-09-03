@@ -674,12 +674,12 @@ void Shader::compile(const Context *context, angle::JobResultExpectancy resultEx
 
     // Find a shader in Blob Cache
     Compiler *compiler = context->getCompiler();
-    setShaderKey(context, options, compiler->getShaderOutputType(),
-                 compiler->getBuiltInResources());
-    ASSERT(!mShaderHash.empty());
     MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
     if (shaderCache != nullptr)
     {
+        setShaderKey(context, options, compiler->getShaderOutputType(),
+                 compiler->getBuiltInResources());
+        ASSERT(!mShaderHash.empty());
         egl::CacheGetResult result =
             shaderCache->getShader(context, this, mShaderHash, resultExpectancy);
         switch (result)
@@ -778,6 +778,7 @@ void Shader::resolveCompile(const Context *context)
             MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
             if (shaderCache != nullptr)
             {
+                ASSERT(!mShaderHash.empty());
                 // Save to the shader cache.
                 if (shaderCache->putShader(context, mShaderHash, this) != angle::Result::Continue)
                 {
