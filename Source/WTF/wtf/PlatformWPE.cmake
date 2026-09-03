@@ -94,6 +94,7 @@ list(APPEND WTF_PRIVATE_DEFINITIONS
 )
 
 if (ENABLE_JOURNALD_LOG)
+    list(APPEND WTF_INTERFACE_LIBRARIES Journald::Journald)
     list(APPEND WTF_LIBRARIES Journald::Journald)
 endif ()
 
