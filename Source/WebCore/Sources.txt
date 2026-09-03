@@ -3472,7 +3472,6 @@ style/values/fonts/StyleFontVariantNumeric.cpp
 style/values/fonts/StyleFontVariationSettings.cpp
 style/values/fonts/StyleFontWeight.cpp @header:RenderStyleGetters @cost:5
 style/values/fonts/StyleFontWidth.cpp
-style/values/grid/StyleFitTolerance.cpp
 style/values/grid/StyleGridAutoFlow.cpp
 style/values/grid/StyleGridLineNames.cpp
 style/values/grid/StyleGridNamedLinesMap.cpp

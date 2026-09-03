@@ -39,13 +39,6 @@ struct FitTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegativ
     ALWAYS_INLINE bool isInfinite() const { return holdsAlternative<CSS::Keyword::Infinite>(); }
 };
 
-// MARK: - Blending
-
-template<> struct Blending<FitTolerance> {
-    bool NODELETE canBlend(const FitTolerance&, const FitTolerance&);
-    auto blend(const FitTolerance&, const FitTolerance&, const BlendingContext&) -> FitTolerance;
-};
-
 } // namespace Style
 } // namespace WebCore
 
