@@ -1505,7 +1505,7 @@ inline void copyElements(std::span<uint16_t> destinationSpan, std::span<const ui
     auto* __restrict source = sourceSpan.data();
     size_t length = sourceSpan.size();
 
-#if CPU(ARM64)
+#if CPU(ARM64) || CPU(X86_64)
     const auto* end = destination + length;
 
     // Process 64 bytes at a time using NEON.
