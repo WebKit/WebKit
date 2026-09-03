@@ -161,24 +161,6 @@ Value BBQJIT::instanceValue()
     TypeKind returnType = table.wasmType().kind();
     ASSERT(typeKindSizeInBytes(returnType) == 8);
 
-    if (table.type() == TableElementType::Funcref) {
-        emitZeroExtendAddressOperand(table.addressType().is64Bit(), index);
-
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            Value::fromI32(tableIndex),
-            index
-        };
-        result = topValue(returnType);
-        emitCCall(&operationGetWasmTableElement, arguments, result);
-        Location resultLocation = loadIfNecessary(result);
-
-        LOG_INSTRUCTION("TableGet", tableIndex, index, RESULT(result));
-
-        recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, resultLocation.asGPR()));
-        return { };
-    }
-
     emitZeroExtendAddressOperand(table.addressType().is64Bit(), index);
 
     {
@@ -201,9 +183,30 @@ Value BBQJIT::instanceValue()
             recordJumpToThrowException(ExceptionType::OutOfBoundsTableAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, indexGPR, scratchGPR));
         }
 
-        m_jit.loadPtr(Address(tableGPR, ExternOrAnyRefTable::offsetOfJSValues()), tableGPR);
-        static_assert(sizeof(WriteBarrier<Unknown>) == 8);
-        m_jit.load64(MacroAssembler::BaseIndex(tableGPR, indexGPR, MacroAssembler::TimesEight), valueGPR);
+        if (table.type() == TableElementType::Funcref) {
+            m_jit.loadPtr(Address(tableGPR, FuncRefTable::offsetOfWrappers()), tableGPR);
+            static_assert(sizeof(WriteBarrier<WebAssemblyFunctionBase>) == 8);
+            m_jit.load64(MacroAssembler::BaseIndex(tableGPR, indexGPR, MacroAssembler::TimesEight), valueGPR);
+
+            JumpList slowPath = m_jit.branchTest64(ResultCondition::Zero, valueGPR);
+            MacroAssembler::Label done(m_jit);
+            uint64_t constIndex = index.isConst()
+                ? (table.addressType().is64Bit() ? static_cast<uint64_t>(index.asI64()) : static_cast<uint32_t>(index.asI32()))
+                : 0;
+            m_slowPaths.append({ origin(), WTF::move(slowPath), WTF::move(done), copyBindings(), [tableIndex, indexIsConst = index.isConst(), constIndex, indexGPR, valueGPR](BBQJIT&, CCallHelpers& jit) {
+                jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+                if (indexIsConst)
+                    jit.setupArguments<decltype(operationGetWasmTableElement)>(GPRInfo::wasmContextInstancePointer, TrustedImm32(tableIndex), TrustedImm64(constIndex));
+                else
+                    jit.setupArguments<decltype(operationGetWasmTableElement)>(GPRInfo::wasmContextInstancePointer, TrustedImm32(tableIndex), indexGPR);
+                jit.callOperation<OperationPtrTag>(operationGetWasmTableElement);
+                jit.move(GPRInfo::returnValueGPR, valueGPR);
+            } });
+        } else {
+            m_jit.loadPtr(Address(tableGPR, ExternOrAnyRefTable::offsetOfJSValues()), tableGPR);
+            static_assert(sizeof(WriteBarrier<Unknown>) == 8);
+            m_jit.load64(MacroAssembler::BaseIndex(tableGPR, indexGPR, MacroAssembler::TimesEight), valueGPR);
+        }
 
         consume(index);
         result = topValue(returnType);

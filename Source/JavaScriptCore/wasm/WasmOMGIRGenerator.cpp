@@ -1728,17 +1728,6 @@ auto OMGIRGenerator::addRefIsNull(ExpressionType value, ExpressionType& result) 
 auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, ExpressionType& result) -> PartialResult
 {
     auto& tableInformation = m_info.table(tableIndex);
-    if (tableInformation.type() == TableElementType::Funcref) {
-        Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::Externref), operationGetWasmTableElement,
-            instanceValue(), constant(Int32, tableIndex), addressOperand(tableInformation.addressType().is64Bit(), index));
-        result = push(resultValue);
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, m_currentBlock->appendNew<WasmConstRefValue>(m_proc, origin(), 0)));
-        check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsTableAccess);
-        });
-        return { };
-    }
 
     auto* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)));
     m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_tables[tableIndex], table);
@@ -1756,21 +1745,51 @@ auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
         this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsTableAccess);
     });
 
-    auto* jsValues = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(ExternOrAnyRefTable::offsetOfJSValues()));
-    m_heaps.decorateMemory(&m_heaps.WasmExternOrAnyRefTable_jsValues, jsValues);
+    Value* rawIndex = get(index);
+    auto decorateSlot = [&](auto& heap, MemoryValue* load) {
+        const B3::AbstractHeap* slotHeap = &heap.atAnyIndex();
+        if (rawIndex->hasInt32())
+            slotHeap = &heap[static_cast<ptrdiff_t>(static_cast<uint32_t>(rawIndex->asInt32()))];
+        else if (rawIndex->hasInt64())
+            slotHeap = &heap[static_cast<ptrdiff_t>(static_cast<uint64_t>(rawIndex->asInt64()))];
+        m_heaps.decorateMemory(slotHeap, load);
+    };
 
     static_assert(sizeof(WriteBarrier<Unknown>) == 8);
+    static_assert(sizeof(WriteBarrier<WebAssemblyFunctionBase>) == 8);
+    const bool isFuncref = tableInformation.type() == TableElementType::Funcref;
+    auto* values = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(isFuncref ? FuncRefTable::offsetOfWrappers() : ExternOrAnyRefTable::offsetOfJSValues()));
+    m_heaps.decorateMemory(isFuncref ? &m_heaps.WasmFuncRefTable_wrappers : &m_heaps.WasmExternOrAnyRefTable_jsValues, values);
+
     Value* offset = m_currentBlock->appendNew<Value>(m_proc, Shl, origin(), indexValue, constant(Int32, 3));
-    Value* slot = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), jsValues, offset);
-    auto* resultValue = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), slot);
-    Value* rawIndex = get(index);
-    const B3::AbstractHeap* slotHeap = &m_heaps.WasmExternOrAnyRefTable_jsValuesBuffer.atAnyIndex();
-    if (rawIndex->hasInt32())
-        slotHeap = &m_heaps.WasmExternOrAnyRefTable_jsValuesBuffer[static_cast<ptrdiff_t>(static_cast<uint32_t>(rawIndex->asInt32()))];
-    else if (rawIndex->hasInt64())
-        slotHeap = &m_heaps.WasmExternOrAnyRefTable_jsValuesBuffer[static_cast<ptrdiff_t>(static_cast<uint64_t>(rawIndex->asInt64()))];
-    m_heaps.decorateMemory(slotHeap, resultValue);
-    result = push(resultValue);
+    Value* slot = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), values, offset);
+    auto* loaded = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, isFuncref ? wasmRefType() : Int64, origin(), slot);
+    decorateSlot(isFuncref ? m_heaps.WasmFuncRefTable_wrappersBuffer : m_heaps.WasmExternOrAnyRefTable_jsValuesBuffer, loaded);
+
+    if (isFuncref) {
+        auto* slowPath = m_proc.addBlock();
+        auto* continuation = m_proc.addBlock();
+        auto* phi = continuation->appendNew<Value>(m_proc, Phi, wasmRefType(), origin());
+
+        m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), loaded, phi);
+        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), loaded,
+            FrequentedBlock(continuation), FrequentedBlock(slowPath, FrequencyClass::Rare));
+        slowPath->addPredecessor(m_currentBlock);
+        continuation->addPredecessor(m_currentBlock);
+
+        m_currentBlock = slowPath;
+        auto* called = callWasmOperation(m_currentBlock, wasmRefType(), operationGetWasmTableElement,
+            instanceValue(), constant(Int32, tableIndex), indexValue);
+        m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), called, phi);
+        m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+        continuation->addPredecessor(m_currentBlock);
+
+        m_currentBlock = continuation;
+        result = push(phi);
+        return { };
+    }
+
+    result = push(loaded);
     return { };
 }
 
