@@ -772,6 +772,7 @@
 		6D9B474C9772B31D1F2AC404 /* es3fFboMultisampleTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF04C6D8B521D83F2EC8173 /* es3fFboMultisampleTests.cpp */; };
 		6DA64073883FDF54168599CF /* es2fDepthStencilClearTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FA34FD4B03534F80E4DCA39 /* es2fDepthStencilClearTests.cpp */; };
 		6E1B4911B80D8FDCDD1EA9FF /* egluCallLogWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 107146A881C2C2BB5CEEA7E1 /* egluCallLogWrapper.cpp */; };
+		4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		6E5B419BBE7661EF0F8D9BF1 /* xeTestCaseResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F38248B9AC4DE2D848347AF9 /* xeTestCaseResult.cpp */; };
 		6E6B4B668AD281FE2EB8C9A0 /* es2fNegativeBufferApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9354306BB3F15EEA8B5E554 /* es2fNegativeBufferApiTests.cpp */; };
@@ -6492,6 +6493,7 @@
 				7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */,
 				7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */,
 				7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */,
+				4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */,
 				7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */,
 				7BFAF56C2DE59E0900327F7F /* LineLoopTest.cpp */,
 				7BFAF56D2DE59E0900327F7F /* LinkAndRelinkTest.cpp */,
@@ -10540,6 +10542,7 @@
 				7BFAF5EE2DE59E0900327F7F /* IndexBufferOffsetTest.cpp in Sources */,
 				7BFAF5F42DE59E0900327F7F /* IndexedPointsTest.cpp in Sources */,
 				7BFAF5CE2DE59E0900327F7F /* InstancingTest.cpp in Sources */,
+				4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */,
 				7BFAF5D82DE59E0900327F7F /* KTXCompressedTextureTest.cpp in Sources */,
 				7BB9723D2DE4827800455D13 /* libEGL_autogen.cpp in Sources */,
 				7BB972362DE480F000455D13 /* libGLESv2_autogen.cpp in Sources */,
