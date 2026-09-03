@@ -1,0 +1,31 @@
+This test ensures we compute a valid frame for a radio button that is visually clipped out of the viewport.
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ Foo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Bar

@@ -1,0 +1,8 @@
+This test verifies that moving a div containing an iframe updates the screen position of elements inside that iframe.
+
+PASS: delta was equal or approximately equal to 200.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

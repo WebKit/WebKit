@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<map id="apple" name="imagemap1">
+  <area id="area1" shape="rect" coords="10,10,133,72" href="#Link1" title="Link1" />
+  <area id="area2" shape="rect" coords="20,50,133,72" href="#Link2" title="Link2" />
+</map>
+
+<img src="../../mac/resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
+
+<a href="#Link3">Link3</a>
+<a href="#Link4">Link4</a>
+
+<script>
+description("This test passes if all four links on the page are found.");
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    (async () => {
+        // Image map area paths are cached during paint. Wait for the
+        // path to become available on an area element before dumping attributes.
+        await waitUntilIDHasPathWith("area1", 1, "Line to");
+
+        let webArea = accessibilityController.rootElement.childAtIndex(0);
+        debugEscaped(webArea.attributesOfDocumentLinks());
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>
+

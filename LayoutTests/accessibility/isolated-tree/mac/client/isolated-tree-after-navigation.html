@@ -1,0 +1,27 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+<h1>First Page Heading</h1>
+<script>
+// This test navigates to a second document. Both pages use client accessibility mode, which serves
+// the tree from the UI process by walking down from the WKWebView, the same path VoiceOver uses.
+// Building the tree on the first page is what leaves a tree behind for the second page to trip over.
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        // Force the first document's isolated tree to be built and cached by the page's
+        // accessibility element, so that navigating away leaves a tree that must be discarded.
+        await waitForElements([(element) => element.role.includes("Heading")]);
+
+        location.href = "../../../mac/client/resources/isolated-tree-after-navigation-second.html";
+    }, 0);
+}
+</script>
+</body>
+</html>

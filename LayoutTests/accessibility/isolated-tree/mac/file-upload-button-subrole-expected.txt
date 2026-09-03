@@ -1,0 +1,13 @@
+
+This tests that a file upload button will have a specific subrole and a title that matches the files selected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS uploadButton.subrole is 'AXSubrole: AXFileUploadButton'
+PASS uploadButton.roleDescription is 'AXRoleDescription: file upload button'
+PASS uploadButton.title is 'AXTitle: no file selected'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

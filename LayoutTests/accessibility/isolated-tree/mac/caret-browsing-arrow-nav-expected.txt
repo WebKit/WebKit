@@ -1,0 +1,23 @@
+This tests caret browsing when a keydown handler moves focus.
+
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Baz'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: caretBrowsingEnabled(webArea) === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: Bar'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar
+Baz

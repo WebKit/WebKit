@@ -1,0 +1,14 @@
+This tests that live region notifications for elements with different languages include the right language attributes.
+
+Received announcement request:
+AnnouncementKey: Manzana{
+    AXLanguage = es;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple: Manzana
