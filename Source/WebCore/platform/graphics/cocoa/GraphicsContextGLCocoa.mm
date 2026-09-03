@@ -487,7 +487,12 @@ IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
 IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
 {
     const auto size = getInternalFramebufferSize();
-    auto surface = IOSurface::create(nullptr, size, m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
+    IOSurface::IOSurfaceOptions options;
+#if HAVE(IOSURFACE_ALPHA_CHANNEL_MODE)
+    if (contextAttributes().alpha)
+        options.alphaPremultiplication = contextAttributes().premultipliedAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
+#endif
+    auto surface = IOSurface::create(nullptr, size, m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL, IOSurface::Format::BGRA, UseLosslessCompression::No, options);
     if (!surface)
         return { };
     if (m_resourceOwner)

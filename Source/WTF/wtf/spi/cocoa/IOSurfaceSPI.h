@@ -132,6 +132,12 @@ IOReturn IOSurfaceSetOwnership(IOSurfaceRef buffer, task_t newOwner, int newLedg
 kern_return_t IOSurfaceSetOwnershipIdentity(IOSurfaceRef buffer, mach_port_t task_id_token, int newLedgerTag, uint32_t newLedgerOptions);
 #endif
 
+#if HAVE(IOSURFACE_ALPHA_CHANNEL_MODE)
+extern const CFStringRef kIOSurfaceAlphaChannelMode;
+extern const CFStringRef kIOSurfaceAlphaChannelMode_StraightAlpha;
+extern const CFStringRef kIOSurfaceAlphaChannelMode_PremultipliedAlpha;
+#endif
+
 WTF_EXTERN_C_END
 
 #endif
