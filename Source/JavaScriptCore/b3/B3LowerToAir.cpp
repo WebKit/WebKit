@@ -657,12 +657,11 @@ private:
             if (!Arg::isValidIndexForm(1, offset, width))
                 return fallback();
 
-            // FIXME: We should support ARM64 LDR 32-bit addressing, which will
-            // allow us to fuse a Shl ptr, 2 into the address. Additionally, and
-            // perhaps more importantly, it would allow us to avoid a truncating
-            // move. See: https://bugs.webkit.org/show_bug.cgi?id=163465
+            Tmp base = Tmp(wasmAddress->pinnedGPR());
+            if (std::optional<unsigned> scale = scaleForShl(pointer, offset, width))
+                return indexArg(base, pointer->child(0), *scale, offset);
 
-            return indexArg(Tmp(wasmAddress->pinnedGPR()), pointer, 1, offset);
+            return indexArg(base, pointer, 1, offset);
         }
 
         default:

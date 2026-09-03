@@ -1171,6 +1171,8 @@ void run(const TestConfig* config)
     RUN(testWasmBoundsCheck(std::numeric_limits<unsigned>::max() - 5));
 
     RUN(testWasmAddress());
+    RUN(testWasmAddressZeroExtendScaledIndex());
+    RUN(testWasmAddressZeroExtend32BitShiftWraps());
     RUN(testWasmAddressWithOffset());
     
     RUN(testFastTLSLoad());

@@ -1913,6 +1913,70 @@ void testWasmAddress()
         CHECK_EQ(numToStore, value);
 }
 
+void testWasmAddressZeroExtendScaledIndex()
+{
+    if (Options::defaultB3OptLevel() < 2)
+        return;
+
+    Procedure proc;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR2;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, unsigned*>(proc, root);
+    Value* index32 = arguments[0];
+    Value* pointer = root->appendNew<Value>(
+        proc, Shl, Origin(),
+        root->appendNew<Value>(proc, ZExt32, Origin(), index32),
+        root->appendNew<Const32Value>(proc, Origin(), 2));
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 0));
+
+    auto code = compileProc(proc);
+    if (isARM64())
+        checkUsesInstruction(*code, ".*ldr.*uxtw #0x2.*", true);
+
+    int32_t values[] = { 11, 22, 33, 44, 55 };
+    for (int32_t i = 0; i < 5; ++i)
+        CHECK_EQ(invoke<int32_t>(*code, i, 0, values), values[i]);
+
+    int32_t num = 99;
+    uint32_t wideIndex = 0x40000000;
+    intptr_t addr = std::bit_cast<intptr_t>(&num);
+    intptr_t base = addr - (static_cast<intptr_t>(wideIndex) << 2);
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int32_t>(wideIndex), 0, std::bit_cast<unsigned*>(base)), num);
+}
+
+void testWasmAddressZeroExtend32BitShiftWraps()
+{
+    Procedure proc;
+    GPRReg pinnedGPR = GPRInfo::argumentGPR2;
+    proc.pinRegister(pinnedGPR);
+
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t, unsigned*>(proc, root);
+    Value* index32 = arguments[0];
+    Value* pointer = root->appendNew<Value>(
+        proc, ZExt32, Origin(),
+        root->appendNew<Value>(
+            proc, Shl, Origin(), index32,
+            root->appendNew<Const32Value>(proc, Origin(), 2)));
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<WasmAddressValue>(proc, Origin(), pointer, pinnedGPR), 0));
+
+    auto code = compileProc(proc);
+    int32_t values[] = { 11, 22, 33, 44, 55 };
+    CHECK_EQ(invoke<int32_t>(*code, 0, 0, values), 11);
+    CHECK_EQ(invoke<int32_t>(*code, 1, 0, values), 22);
+    CHECK_EQ(invoke<int32_t>(*code, static_cast<int32_t>(0x40000000), 0, values), 11);
+}
+
 void testWasmAddressWithOffset()
 {
     Procedure proc;

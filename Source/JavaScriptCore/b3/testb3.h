@@ -1280,6 +1280,8 @@ void testDepend32();
 void testDepend64();
 void testWasmBoundsCheck(unsigned offset);
 void testWasmAddress();
+void testWasmAddressZeroExtendScaledIndex();
+void testWasmAddressZeroExtend32BitShiftWraps();
 void testFastTLSLoad();
 void testFastTLSStore();
 void testDoubleLiteralComparison(double, double);
