@@ -31,7 +31,6 @@
         const videoSource1 = document.createElement('source');
         videoSource1.type = 'video/mp4';
         videoSource1.src = URL.createObjectURL(source);
-        video.src = videoSource1.src;
         video.appendChild(videoSource1) ;
         
         // Add AirPlay-compatible HLS source
