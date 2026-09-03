@@ -1,0 +1,19 @@
+This test ensures popover elements have a minimum role of group per HTML AAM.
+
+A div with popover attribute should have computed role 'group' (minimum role per HTML AAM):
+PASS: popoverDiv.computedRoleString === 'group'
+
+An explicit role='generic' popover should keep 'generic' (explicit role takes precedence):
+PASS: explicitGenericPopover.computedRoleString === 'generic'
+
+A display:contents popover should also have computed role 'group':
+PASS: displayContentsPopover.computedRoleString === 'group'
+
+Dynamic test - adding popover attribute should change role to group:
+PASS: !dynamicPopover || dynamicPopover.computedRoleString !== 'group' === true
+PASS: dynamicPopover.computedRoleString === 'group'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Popover contentExplicit generic popoverDisplay contents popoverDynamic popover

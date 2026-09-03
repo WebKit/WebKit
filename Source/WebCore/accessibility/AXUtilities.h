@@ -72,6 +72,10 @@ bool hasARIAAccNameAttribute(Element&);
 
 bool isNodeFocused(Node&);
 
+// Returns true if the node is an HTML element with the popover attribute.
+// https://www.w3.org/TR/html-aam-1.0/#att-popover
+bool isPopoverElement(const Node*);
+
 bool needsLayoutOrStyleRecalc(const Document&);
 
 bool NODELETE isRenderHidden(const Style::ComputedStyle*);

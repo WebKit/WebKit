@@ -4034,7 +4034,11 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXNotification::CommandForChanged);
     else if (attrName == popovertargetAttr)
         postNotification(element, AXNotification::PopoverTargetChanged);
-    else if (attrName == scopeAttr)
+    else if (attrName == popoverAttr) {
+        // The popover attribute affects role computation (generic -> group).
+        if (RefPtr axObject = get(*element))
+            axObject->updateRole();
+    } else if (attrName == scopeAttr)
         postNotification(element, AXNotification::CellScopeChanged);
     else if (attrName == datetimeAttr)
         postNotification(element, AXNotification::DatetimeChanged);

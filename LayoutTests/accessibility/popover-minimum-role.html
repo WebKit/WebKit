@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="popover-div" popover="manual">Popover content</div>
+<div id="explicit-generic-popover" role="generic" popover="manual">Explicit generic popover</div>
+<div id="display-contents-popover" popover="manual" style="display:contents">Display contents popover</div>
+
+<script>
+var output = "This test ensures popover elements have a minimum role of group per HTML AAM.\n\n";
+var popoverDiv;
+var explicitGenericPopover;
+var displayContentsPopover;
+var dynamicPopover;
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    document.getElementById("popover-div").showPopover();
+    document.getElementById("explicit-generic-popover").showPopover();
+    document.getElementById("display-contents-popover").showPopover();
+
+    setTimeout(async function() {
+        popoverDiv = accessibilityController.accessibleElementById("popover-div");
+        explicitGenericPopover = accessibilityController.accessibleElementById("explicit-generic-popover");
+        displayContentsPopover = accessibilityController.accessibleElementById("display-contents-popover");
+
+        output += "A div with popover attribute should have computed role 'group' (minimum role per HTML AAM):\n";
+        output += expect("popoverDiv.computedRoleString", "'group'");
+
+        output += "\nAn explicit role='generic' popover should keep 'generic' (explicit role takes precedence):\n";
+        output += expect("explicitGenericPopover.computedRoleString", "'generic'");
+
+        output += "\nA display:contents popover should also have computed role 'group':\n";
+        output += expect("displayContentsPopover.computedRoleString", "'group'");
+
+        output += "\nDynamic test - adding popover attribute should change role to group:\n";
+        var newDiv = document.createElement("div");
+        newDiv.id = "dynamic-popover";
+        newDiv.textContent = "Dynamic popover";
+        document.body.appendChild(newDiv);
+
+        // Verify the div doesn't have a computed role before adding the popover attribute.
+        dynamicPopover = accessibilityController.accessibleElementById("dynamic-popover");
+        output += expect("!dynamicPopover || dynamicPopover.computedRoleString !== 'group'", "true");
+
+        newDiv.setAttribute("popover", "manual");
+        newDiv.showPopover();
+
+        await waitFor(() => {
+            dynamicPopover = accessibilityController.accessibleElementById("dynamic-popover");
+            return dynamicPopover && dynamicPopover.computedRoleString === "group";
+        });
+        output += expect("dynamicPopover.computedRoleString", "'group'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
