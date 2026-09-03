@@ -119,8 +119,10 @@ static void testEditorArrowKeysStillScroll(EditorKeyBindingTest* test, gconstpoi
 
 void beforeAll()
 {
-    EditorKeyBindingTest::add("WebKitWebView", "editor-copy-key-binding-non-editable", testEditorCopyKeyBindingNonEditable);
-    EditorKeyBindingTest::add("WebKitWebView", "editor-copy-key-binding-editable", testEditorCopyKeyBindingEditable);
+    if (!Test::s_useWPELegacyAPI) {
+        EditorKeyBindingTest::add("WebKitWebView", "editor-copy-key-binding-non-editable", testEditorCopyKeyBindingNonEditable);
+        EditorKeyBindingTest::add("WebKitWebView", "editor-copy-key-binding-editable", testEditorCopyKeyBindingEditable);
+    }
     EditorKeyBindingTest::add("WebKitWebView", "editor-select-all-key-binding-non-editable", testEditorSelectAllKeyBindingNonEditable);
     EditorKeyBindingTest::add("WebKitWebView", "editor-arrow-keys-still-scroll", testEditorArrowKeysStillScroll);
 }

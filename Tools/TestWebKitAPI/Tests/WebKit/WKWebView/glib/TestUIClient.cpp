@@ -1753,7 +1753,12 @@ void beforeAll()
 #if ENABLE(POINTER_LOCK)
     UIClientTest::add("WebKitWebView", "pointer-lock-permission-request", testWebViewPointerLockPermissionRequest);
 #endif
-    UIClientTest::add("WebKitWebView", "clipboard-permission-request", testWebViewClipboardPermissionRequest);
+    bool clipboardPermissionRequestSupported = true;
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    clipboardPermissionRequestSupported = !Test::s_useWPELegacyAPI;
+#endif
+    if (clipboardPermissionRequestSupported)
+        UIClientTest::add("WebKitWebView", "clipboard-permission-request", testWebViewClipboardPermissionRequest);
 }
 
 void afterAll()
