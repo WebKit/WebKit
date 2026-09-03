@@ -2828,11 +2828,7 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
     URL testURL { "http://www.example.com"_str };
     auto testHtml = generateOpenerHTML(openerTemplate, testURL.string());
 
-    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
-    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
-
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400)]);
     RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
     [delegate setIsAsyncExecution:true];
@@ -2850,12 +2846,11 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
     EXPECT_TRUE(policyForAppSSOPerformed);
 
     RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.createNSURL().get() statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:nil]);
-    auto resonseHtmlCString = generateHTML(newWindowResponseTemplate, "window.close();"_s).utf8(); // The pop up closes itself.
-    // The secret WKWebView needs to be destroyed right the way.
+    auto responseHtmlCString = generateHTML(newWindowResponseTemplate, "window.close();"_s).utf8();
     @autoreleasepool {
-        [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:resonseHtmlCString.data() length:resonseHtmlCString.length()]).get()];
+        [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] initWithBytes:responseHtmlCString.data() length:responseHtmlCString.length()]).get()];
     }
-    Util::run(&allMessagesReceived);
+    [webView waitForMessagesUnordered:@[@"Hello.", @"WindowClosed."]];
 }
 
 
