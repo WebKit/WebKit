@@ -2686,6 +2686,7 @@ webkit.org/b/251195 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-flo
 
 # Passing on GLib; failing generically after the 2026-07-18 WebGL conformance update.
 webkit.org/b/320901 webgl/2.0.y/conformance2/extensions/webgl-render-shared-exponent.html [ Pass ]
+webkit.org/b/292182 webgl/2.0.y/conformance/textures/misc/texture-srgb-upload.html [ Pass ]
 
 # No colorspaces in non-Cocoa WebGL.
 
