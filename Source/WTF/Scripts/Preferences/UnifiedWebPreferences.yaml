@@ -8264,6 +8264,15 @@ ShouldPrintBackgrounds:
     WebCore:
       default: false
 
+ShouldReportDesktopClassPointingDevice:
+  type: bool
+  status: embedder
+  humanReadableName: "Report Desktop Class Pointing Device"
+  humanReadableDescription: "Report a mouse-like pointing device to the hover and pointer media features"
+  defaultValue:
+    WebCore:
+      default: false
+
 ShouldReportViewportSizeAsScreenSize:
   type: bool
   status: embedder

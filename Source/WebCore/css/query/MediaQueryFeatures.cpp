@@ -231,9 +231,10 @@ static const IdentifierSchema& anyHoverFeatureSchema()
         FixedVector { CSSValueNone, CSSValueHover },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            if (context.document->quirks().shouldSupportHoverMediaQueries())
+            Ref frame = *context.document->frame();
+            if (context.document->quirks().shouldSupportHoverMediaQueries() || frame->settings().shouldReportDesktopClassPointingDevice())
                 return MatchingIdentifiers { CSSValueHover };
-            RefPtr page = context.document->frame()->page();
+            RefPtr page = frame->page();
             bool isSupported = page && page->chrome().client().hoverSupportedByAnyAvailablePointingDevice();
             return MatchingIdentifiers { isSupported ? CSSValueHover : CSSValueNone };
         }
@@ -248,7 +249,11 @@ static const IdentifierSchema& anyPointerFeatureSchema()
         FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            RefPtr page = context.document->frame()->page();
+            Ref frame = *context.document->frame();
+            if (frame->settings().shouldReportDesktopClassPointingDevice())
+                return MatchingIdentifiers { CSSValueFine };
+
+            RefPtr page = frame->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfAllAvailablePointingDevices() : OptionSet<PointerCharacteristics>();
 
             MatchingIdentifiers identifiers;
@@ -443,9 +448,10 @@ static const IdentifierSchema& hoverFeatureSchema()
         FixedVector { CSSValueNone, CSSValueHover },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            if (context.document->quirks().shouldSupportHoverMediaQueries())
+            Ref frame = *context.document->frame();
+            if (context.document->quirks().shouldSupportHoverMediaQueries() || frame->settings().shouldReportDesktopClassPointingDevice())
                 return MatchingIdentifiers { CSSValueHover };
-            RefPtr page = context.document->frame()->page();
+            RefPtr page = frame->page();
             bool isSupported =  page && page->chrome().client().hoverSupportedByPrimaryPointingDevice();
             return MatchingIdentifiers { isSupported ? CSSValueHover : CSSValueNone };
         }
@@ -525,7 +531,11 @@ static const IdentifierSchema& pointerFeatureSchema()
         FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
         OptionSet<MediaQueryDynamicDependency>(),
         [](auto& context) {
-            RefPtr page = context.document->frame()->page();
+            Ref frame = *context.document->frame();
+            if (frame->settings().shouldReportDesktopClassPointingDevice())
+                return MatchingIdentifiers { CSSValueFine };
+
+            RefPtr page = frame->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : OptionSet<PointerCharacteristics>();
             MatchingIdentifiers identifiers;
             if (pointerCharacteristics.contains(PointerCharacteristics::Fine))

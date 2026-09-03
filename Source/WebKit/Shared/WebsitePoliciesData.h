@@ -76,6 +76,7 @@ public:
     std::optional<bool> overrideShouldReportZeroMaxTouchPoints;
 #endif
     std::optional<bool> overrideShouldReportViewportSizeAsScreenSize;
+    std::optional<bool> overrideShouldReportDesktopClassPointingDevice;
     std::optional<bool> globalPrivacyControlEnabled;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };

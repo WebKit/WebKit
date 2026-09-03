@@ -74,6 +74,7 @@ struct WebKit::WebsitePoliciesData {
     std::optional<bool> overrideShouldReportZeroMaxTouchPoints;
 #endif
     std::optional<bool> overrideShouldReportViewportSizeAsScreenSize;
+    std::optional<bool> overrideShouldReportDesktopClassPointingDevice;
     std::optional<bool> globalPrivacyControlEnabled;
     WebKit::WebsiteAutoplayPolicy autoplayPolicy;
     WebKit::WebsitePopUpPolicy popUpPolicy;

@@ -1590,6 +1590,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setOverrideShouldReportZeroMaxTouchPoints(shouldEmulateDesktopClassHardware);
 #endif
         policies.setOverrideShouldReportViewportSizeAsScreenSize(shouldEmulateDesktopClassHardware && !desktopClassBrowsingSupported());
+        policies.setOverrideShouldReportDesktopClassPointingDevice(shouldEmulateDesktopClassHardware);
     };
 
     if (needsSiteSpecificQuirks) {

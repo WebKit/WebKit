@@ -118,6 +118,9 @@ void WebsitePoliciesData::applyToSettings(const WebsitePoliciesData& websitePoli
 
     if (auto overrideValue = websitePolicies.overrideShouldReportViewportSizeAsScreenSize)
         settings.setShouldReportViewportSizeAsScreenSize(*overrideValue);
+
+    if (auto overrideValue = websitePolicies.overrideShouldReportDesktopClassPointingDevice)
+        settings.setShouldReportDesktopClassPointingDevice(*overrideValue);
 }
 
 void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePolicies, WebCore::DocumentLoader& documentLoader)
@@ -251,6 +254,9 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 
     if (auto overrideValue = websitePolicies.overrideShouldReportViewportSizeAsScreenSize)
         frame->settings().setShouldReportViewportSizeAsScreenSize(*overrideValue);
+
+    if (auto overrideValue = websitePolicies.overrideShouldReportDesktopClassPointingDevice)
+        frame->settings().setShouldReportDesktopClassPointingDevice(*overrideValue);
 
     documentLoader.applyPoliciesToSettings();
 }

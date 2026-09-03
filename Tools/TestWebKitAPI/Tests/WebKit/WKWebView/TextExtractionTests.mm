@@ -3329,6 +3329,11 @@ static bool isSmallScreenDevice()
     return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
 }
 
+static bool matchesMediaQuery(TestWKWebView *webView, NSString *query)
+{
+    return [[webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"matchMedia('%@').matches", query]] boolValue];
+}
+
 static void expectDesktopClassHardwareEmulation(TestWKWebView *webView)
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -3337,6 +3342,13 @@ static void expectDesktopClassHardwareEmulation(TestWKWebView *webView)
 #if ENABLE(TOUCH_EVENTS)
     EXPECT_FALSE(touchEventDOMAttributesAreExposed(webView));
 #endif
+
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(pointer: fine)"));
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(any-pointer: fine)"));
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(hover: hover)"));
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(any-hover: hover)"));
+    EXPECT_FALSE(matchesMediaQuery(webView, @"(pointer: coarse)"));
+    EXPECT_FALSE(matchesMediaQuery(webView, @"(hover: none)"));
 
     if (!isSmallScreenDevice())
         return;
@@ -3357,6 +3369,11 @@ static void expectNoDesktopClassHardwareEmulation(TestWKWebView *webView)
 #if ENABLE(TOUCH_EVENTS)
     EXPECT_TRUE(touchEventDOMAttributesAreExposed(webView));
 #endif
+
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(pointer: coarse)"));
+    EXPECT_TRUE(matchesMediaQuery(webView, @"(hover: none)"));
+    EXPECT_FALSE(matchesMediaQuery(webView, @"(pointer: fine)"));
+    EXPECT_FALSE(matchesMediaQuery(webView, @"(hover: hover)"));
 
     if (!isSmallScreenDevice())
         return;
