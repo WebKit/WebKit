@@ -399,6 +399,7 @@ void addLargeSharingPoolTests();
 void addLockFreeReadPtrPtrHashtableTests();
 void addLotsOfHeapsAndThreadsTests();
 void addMARTests();
+void addMallocLoggerTests();
 void addMemalignTests();
 void addMTETests();
 void addMinHeapTests();
@@ -900,6 +901,7 @@ int main(int argc, char** argv)
     ADD_SUITE(LockFreeReadPtrPtrHashtable);
     ADD_SUITE(LotsOfHeapsAndThreads);
     ADD_SUITE(MAR);
+    ADD_SUITE(MallocLogger);
     ADD_SUITE(Memalign);
     ADD_SUITE(MinHeap);
     ADD_SUITE(PGM);

@@ -242,6 +242,22 @@ pas_large_heap_try_allocate_user_allocation(pas_large_heap* heap,
     return result;
 }
 
+bool pas_large_heap_owns_object(uintptr_t begin,
+                                const pas_heap_config* heap_config)
+{
+    pas_large_map_entry map_entry;
+
+    pas_heap_lock_assert_held();
+
+    map_entry = pas_large_map_find(begin);
+
+    if (pas_large_map_entry_is_empty(map_entry))
+        return heap_config->pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin);
+
+    return pas_heap_config_kind_get_config(
+        pas_heap_for_large_heap(map_entry.heap)->config_kind) == heap_config;
+}
+
 bool pas_large_heap_try_deallocate(uintptr_t begin,
                                    const pas_heap_config* heap_config)
 {
