@@ -420,6 +420,17 @@ String WebAutomationSession::effectiveHandleForWebFrameProxy(const WebFrameProxy
     return handleForWebFrameID(webFrameProxy.frameID());
 }
 
+// WebDriver allows running commands in a browsing context which has not done any loads yet, and
+// which is therefore displaying the initial empty document. FrameLoader::init() creates that
+// document with an empty URL, so PageLoadState::activeURL() is empty for it. WebDriver clients
+// need to see "about:blank" instead, which is also what Document::urlForBindings() reports to
+// script for the same state.
+static const URL& activeOrInitialURL(WebPageProxy& page)
+{
+    auto& activeURL = page.pageLoadState().activeURL();
+    return activeURL.isEmpty() ? aboutBlankURL() : activeURL;
+}
+
 Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buildBrowsingContextForPage(WebPageProxy& page, WebCore::FloatRect windowFrame)
 {
     auto originObject = Inspector::Protocol::Automation::Point::create()
@@ -438,7 +449,7 @@ Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buil
     return Inspector::Protocol::Automation::BrowsingContext::create()
         .setHandle(handle)
         .setActive(isActive)
-        .setUrl(page.pageLoadState().activeURL().string())
+        .setUrl(activeOrInitialURL(page).string())
         .setWindowOrigin(WTF::move(originObject))
         .setWindowSize(WTF::move(sizeObject))
         .release();
@@ -2056,8 +2067,7 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    auto& activeURL = page->pageLoadState().activeURL();
-    ASSERT(activeURL.isValid());
+    auto& activeURL = activeOrInitialURL(*page);
 
     WebCore::Cookie cookie;
 
@@ -2113,8 +2123,7 @@ CommandResult<void> WebAutomationSession::deleteAllCookies(const Inspector::Prot
     RefPtr page = webPageProxyForHandle(browsingContextHandle);
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
-    auto& activeURL = page->pageLoadState().activeURL();
-    ASSERT(activeURL.isValid());
+    auto& activeURL = activeOrInitialURL(*page);
 
     String host = activeURL.host().toString();
     SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(host.isNull(), WindowNotFound);
