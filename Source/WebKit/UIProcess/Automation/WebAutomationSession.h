@@ -287,7 +287,7 @@ public:
     void getAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>>>&&) override;
     void deleteSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& cookieName, Inspector::CommandCallback<void>&&) override;
     void addSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& cookie, Inspector::CommandCallback<void>&&) override;
-    Inspector::CommandResult<void> deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle&) override;
+    void deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::CommandCallback<void>&&) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>> getSessionPermissions() override;
     Inspector::CommandResult<void> setSessionPermissions(Ref<JSON::Array>&&) override;
 

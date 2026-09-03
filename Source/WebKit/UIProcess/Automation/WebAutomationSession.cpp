@@ -2118,20 +2118,23 @@ void WebAutomationSession::addSingleCookie(const Inspector::Protocol::Automation
     });
 }
 
-CommandResult<void> WebAutomationSession::deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle)
+void WebAutomationSession::deleteAllCookies(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, CommandCallback<void>&& callback)
 {
     RefPtr page = webPageProxyForHandle(browsingContextHandle);
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
     auto& activeURL = activeOrInitialURL(*page);
 
     String host = activeURL.host().toString();
-    SYNC_FAIL_WITH_PREDEFINED_ERROR_IF(host.isNull(), WindowNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(host.isNull(), WindowNotFound);
 
+    // Wait for the cookies to actually be deleted before replying. Returning early
+    // lets a client proceed while the deletion is still in flight, so cookies can
+    // survive into whatever the client does next.
     Ref cookieStore = protect(page->websiteDataStore())->cookieStore();
-    cookieStore->deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [] { });
-
-    return { };
+    cookieStore->deleteCookiesForHostnames({ host, domainByAddingDotPrefixIfNeeded(host) }, [callback = WTF::move(callback)]() {
+        callback({ });
+    });
 }
 
 CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::Automation::SessionPermissionData>>> WebAutomationSession::getSessionPermissions()

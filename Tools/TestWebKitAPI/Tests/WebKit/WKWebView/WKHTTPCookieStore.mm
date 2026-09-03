@@ -35,6 +35,9 @@
 #import <WebKit/WKHTTPCookieStorePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKAutomationSession.h>
+#import <WebKit/_WKAutomationSessionConfiguration.h>
+#import <WebKit/_WKAutomationSessionPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -1202,6 +1205,79 @@ TEST(WKHTTPCookieStore, SetCookies)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+#if ENABLE(REMOTE_INSPECTOR)
+
+// A driver that reads cookies back after a successful deleteAllCookies must not see any.
+TEST(WKHTTPCookieStore, AutomationDeleteAllCookiesWaitsForDeletion)
+{
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+    RetainPtr sessionConfiguration = adoptNS([_WKAutomationSessionConfiguration new]);
+    RetainPtr session = adoptNS([[_WKAutomationSession alloc] initWithConfiguration:sessionConfiguration.get()]);
+    [session setSessionIdentifier:@"DeleteAllCookiesTest"];
+
+    RetainPtr processPool = adoptNS([WKProcessPool new]);
+    [processPool _setAutomationSession:session.get()];
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [configuration setProcessPool:processPool.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"start network process" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+
+    // One cookie can be removed too quickly to catch a reply that did not wait.
+    constexpr NSUInteger cookieCount = 200;
+    RetainPtr cookies = adoptNS([[NSMutableArray alloc] initWithCapacity:cookieCount]);
+    for (NSUInteger i = 0; i < cookieCount; ++i) {
+        [cookies addObject:[NSHTTPCookie cookieWithProperties:@{
+            NSHTTPCookiePath: @"/",
+            NSHTTPCookieName: [NSString stringWithFormat:@"cookie%lu", static_cast<unsigned long>(i)],
+            NSHTTPCookieValue: @"value",
+            NSHTTPCookieDomain: @"example.com",
+        }]];
+    }
+
+    __block bool done = false;
+    [[dataStore httpCookieStore] setCookies:cookies.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *allCookies) {
+        EXPECT_EQ([allCookies count], cookieCount);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    RetainPtr handle = [session _registerWebViewForTesting:webView.get()];
+    EXPECT_NOT_NULL(handle.get());
+
+    // The store must already be empty by the time the reply arrives.
+    __block bool gotReply = false;
+    __block NSUInteger cookiesRemainingAtReply = NSNotFound;
+    [session _setMessageToFrontendHandlerForTesting:^(NSString *message) {
+        if (![message containsString:@"\"id\":1"])
+            return;
+        [[dataStore httpCookieStore] getAllCookies:^(NSArray<NSHTTPCookie *> *allCookies) {
+            cookiesRemainingAtReply = [allCookies count];
+            gotReply = true;
+        }];
+    }];
+
+    [session _dispatchMessageFromRemoteForTesting:[NSString stringWithFormat:
+        @"{\"id\":1,\"method\":\"Automation.deleteAllCookies\",\"params\":{\"browsingContextHandle\":\"%@\"}}", handle.get()]];
+
+    TestWebKitAPI::Util::run(&gotReply);
+    EXPECT_EQ(cookiesRemainingAtReply, static_cast<NSUInteger>(0));
+
+    [session _setMessageToFrontendHandlerForTesting:nil];
+    [processPool _setAutomationSession:nil];
+}
+
+#endif // ENABLE(REMOTE_INSPECTOR)
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
 TEST(WKHTTPCookieStore, PartitionedCookieShouldHavePartitionProperty)
