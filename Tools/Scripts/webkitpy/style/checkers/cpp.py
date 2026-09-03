@@ -3854,6 +3854,70 @@ def check_objc_protocol(clean_lines, line_number, file_extension, error):
     error(line_number, 'spacing/objc-protocol', 2, "Protocol names shouldn't have a space before them.")
 
 
+def check_release_with_access(clean_lines, line_number, error):
+    """Checks for UB from accessing a smart pointer in the same expression as .release().
+
+    In C++, function arguments have indeterminate evaluation order. If
+    ptr.release() and ptr->member (or ptr.get()) are arguments to the same
+    function call, the compiler may evaluate .release() first, making the
+    other accesses dereference a null pointer (undefined behavior).
+    """
+    line = clean_lines.elided[line_number]
+
+    release_match = search(r'\b(\w+)\.release\(\)', line)
+    if not release_match:
+        return
+
+    varname = release_match.group(1)
+
+    # Collect lines belonging to the same expression by scanning backwards.
+    # Track brace depth to skip over lambda/block bodies: going backwards,
+    # '}' increases depth (entering a block) and '{' decreases it (exiting).
+    # Only collect lines at depth 0 (the outer expression level).
+    # Store (line_number, text) so we can report errors on the right lines.
+    expression_lines = [(line_number, line)]
+    brace_depth = line.count('}') - line.count('{')
+    i = line_number - 1
+    max_lookback = 80
+    while i >= 0 and (line_number - i) <= max_lookback:
+        prev_line = clean_lines.elided[i].strip()
+        if not prev_line:
+            i -= 1
+            continue
+        brace_depth += prev_line.count('}') - prev_line.count('{')
+        if brace_depth < 0:
+            # Gone past the opening of our enclosing block.
+            break
+        if brace_depth == 0:
+            # At the outer expression level: check for statement boundary.
+            if prev_line.endswith(';'):
+                break
+            expression_lines.insert(0, (i, prev_line))
+        # brace_depth > 0: inside a nested block (lambda body), skip.
+        i -= 1
+
+    expression = ' '.join(text for _, text in expression_lines)
+
+    # Check for varname-> or varname.member (excluding .release() itself)
+    access_pattern = r'\b' + re.escape(varname) + r'(?:->|\.(?!release\b)\w+)'
+    if not search(access_pattern, expression):
+        return
+
+    message = ("Accessing '%s' in the same expression as %s.release() is undefined behavior"
+               " due to indeterminate argument evaluation order."
+               " Extract the value into a local variable before the call."
+               % (varname, varname))
+
+    # Report on every participating line so the error surfaces regardless of
+    # which line is in the diff (check-webkit-style filters by line number).
+    reported = set()
+    for expr_line_number, expr_text in expression_lines:
+        if search(access_pattern, expr_text) or search(r'\b' + re.escape(varname) + r'\.release\(\)', expr_text):
+            if expr_line_number not in reported:
+                error(expr_line_number, 'safercpp/release_with_access', 4, message)
+                reported.add(expr_line_number)
+
+
 def check_safer_cpp(clean_lines, line_number, error):
     """Looks for safer C++ errors.
 
@@ -4086,6 +4150,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_arguments_for_wk_api_available(clean_lines, line_number, error)
     check_objc_protocol(clean_lines, line_number, file_extension, error)
     check_safer_cpp(clean_lines, line_number, error)
+    check_release_with_access(clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
@@ -5407,6 +5472,7 @@ class CppChecker(object):
         'safercpp/memmove',
         'safercpp/memset',
         'safercpp/memset_s',
+        'safercpp/release_with_access',
         'safercpp/weak_ref_exception',
         'safercpp/strcmp',
         'safercpp/strncmp',

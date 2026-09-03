@@ -7065,6 +7065,76 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('if (RefPtr document = viewportDocumentForFrame(protectedMainFrame()))', '', 'foo.cpp')
         self.assert_lint('if (RefPtr foo = someFunction(checkedBar()))', '', 'foo.cpp')
 
+        # Tests for release_with_access: release and access in same expression is UB.
+        self.assert_lint(
+            'g_foo_call(foo, request->cancellable.get(), callback, request.release());',
+            "Accessing 'request' in the same expression as request.release() is undefined behavior"
+            " due to indeterminate argument evaluation order."
+            " Extract the value into a local variable before the call."
+            "  [safercpp/release_with_access] [4]",
+            'foo.cpp')
+
+        # Standalone release (no access of the same variable): no error
+        self.assert_lint(
+            'auto* raw = request.release();',
+            '',
+            'foo.cpp')
+
+        # Different variables: no error (only 'other' is accessed, not 'request')
+        self.assert_lint(
+            'func(other->member, request.release());',
+            '',
+            'foo.cpp')
+
+        # Using .get() on the same variable as .release(): should error
+        self.assert_lint(
+            'func(request.get(), request.release());',
+            "Accessing 'request' in the same expression as request.release() is undefined behavior"
+            " due to indeterminate argument evaluation order."
+            " Extract the value into a local variable before the call."
+            "  [safercpp/release_with_access] [4]",
+            'foo.cpp')
+
+        # Multi-line: access and release in same call: error reported on both
+        # the access line and the .release() line so check-webkit-style catches
+        # the bug regardless of which line appears in the diff.
+        release_with_access_error = (
+            "Accessing 'request' in the same expression as request.release() is undefined behavior"
+            " due to indeterminate argument evaluation order."
+            " Extract the value into a local variable before the call."
+            "  [safercpp/release_with_access] [4]")
+        self.assert_multi_line_lint(
+            'g_foo_call(foo,\n'
+            '    request->cancellable.get(),\n'
+            '    callback, request.release());',
+            [release_with_access_error, release_with_access_error],
+            'foo.cpp')
+
+        # Multi-line with lambda body between access and release (the real-world crash pattern).
+        # The brace-aware scan should skip over the lambda body and still detect the UB.
+        self.assert_multi_line_lint(
+            'g_foo_call(foo,\n'
+            '    G_SOME_FLAGS, -1,\n'
+            '    request->cancellable.get(),\n'
+            '    [](GObject* object, GAsyncResult* result, gpointer userData) {\n'
+            '    auto* req = static_cast<Request*>(userData);\n'
+            '    req->complete();\n'
+            '}, request.release());',
+            [release_with_access_error, release_with_access_error],
+            'foo.cpp')
+
+        # Lambda body with nested braces: should still detect the UB
+        self.assert_multi_line_lint(
+            'func(request->value,\n'
+            '    [](int x) {\n'
+            '    if (x) {\n'
+            '        doFirst();\n'
+            '        doSecond();\n'
+            '    }\n'
+            '}, request.release());',
+            [release_with_access_error, release_with_access_error],
+            'foo.cpp')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',
