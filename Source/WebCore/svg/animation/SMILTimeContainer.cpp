@@ -71,7 +71,9 @@ void SMILTimeContainer::unschedule(SVGSMILElement* animation, SVGElement* target
     ASSERT(animation->timeContainer() == this);
 
     ElementAttributePair key(target, attributeName);
-    auto& animations = m_scheduledAnimations.find(key)->value;
+    auto it = m_scheduledAnimations.find(key);
+    ASSERT(it != m_scheduledAnimations.end());
+    auto& animations = it->value;
     bool wasRemoved = animations.removeFirstMatching([&](auto& item) { return item.ptr() == animation; });
     ASSERT_UNUSED(wasRemoved, wasRemoved);
 }
