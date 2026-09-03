@@ -64,3 +64,8 @@ WK_EXPORT void webkitWebViewBaseSynthesizeTouchEvent(WebKitWebViewBase*, TouchEv
 
 WK_EXPORT SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase*);
 
+// Synthetic GDK events cannot drive a real drag (webkit.org/b/157179). UntrustedURIList
+// feeds the uri-list through setURIList() alone, the path DataTransfer.setData() takes.
+enum class FileDropSource : uint8_t { WebOrSameApp, External, UntrustedURIList };
+WK_EXPORT void webkitWebViewBaseSynthesizeFileDropForTesting(WebKitWebViewBase*, const String& uriList, Vector<String>&& portalFilenames, FileDropSource, int x, int y);
+

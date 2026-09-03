@@ -53,6 +53,16 @@ public:
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
     void clearURIList() { m_uriList = emptyString(); }
 
+    // Trusted UIProcess drops only. Web-authored setData() never reaches these.
+    void setFilenames(Vector<String>&&);
+    void setFilenamesFromURIList(const String&);
+    void setTrustedDrop(const String& uriList, Vector<String>&& portalFilenames);
+    void clearFilenames() { m_filenames.clear(); }
+    static Vector<String> filenamesFromURIList(const String&);
+    static String localPathFromURIListLine(const String&);
+    static String uriListWithoutFilenames(const String&);
+    static bool uriListContainsFileURI(const String&);
+
     void setImage(RefPtr<Image>&& newImage) { m_image = WTF::move(newImage); }
     const RefPtr<Image>& image() const { return m_image; }
     bool hasImage() const { return m_image; }
@@ -74,7 +84,7 @@ public:
     void clearAll();
     void clearAllExceptFilenames();
 
-    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, RefPtr<WebCore::Image>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
+    SelectionData(const String& text, const String& markup, const URL&, const String& uriList, Vector<String>&& filenames, RefPtr<WebCore::Image>&&, RefPtr<WebCore::SharedBuffer>&&, bool);
     SelectionData() = default;
 
 private:

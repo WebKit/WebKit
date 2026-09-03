@@ -43,6 +43,15 @@ using namespace WebCore;
 
 enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste };
 
+static OptionSet<DragApplicationFlags> applicationFlagsForDrop(GdkDrop* drop)
+{
+    OptionSet<DragApplicationFlags> flags;
+    // Non-null when the drag started in this application.
+    if (drop && gdk_drop_get_drag(drop))
+        flags.add(DragApplicationFlags::IsSource);
+    return flags;
+}
+
 DropTarget::DropTarget(GtkWidget* webView)
     : m_webView(webView)
 {
@@ -103,16 +112,32 @@ DropTarget::DropTarget(GtkWidget* webView)
 DropTarget::~DropTarget()
 {
     g_cancellable_cancel(m_cancellable.get());
+    finishUnfinishedDrop();
+}
+
+// A deferred drop outlives the ::drop handler, so every teardown path has to finish it.
+void DropTarget::finishUnfinishedDrop()
+{
+    if (!m_state.takeUnfinishedDrop())
+        return;
+
+    if (m_drop)
+        gdk_drop_finish(m_drop.get(), static_cast<GdkDragAction>(0));
 }
 
 void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position, unsigned)
 {
+    g_cancellable_cancel(m_cancellable.get());
+    finishUnfinishedDrop();
+
     m_drop = drop;
     m_position = position;
     m_selectionData = SelectionData();
     m_dataRequestCount = 0;
     m_cancellable = adoptGRef(g_cancellable_new());
     m_uriListBuilder.clear();
+    m_portalFilenames.clear();
+    m_transferredFilesFromPortal = false;
 
     // WebCore needs the selection data to decide, so we need to preload the
     // data of targets we support. Once all data requests are done we start
@@ -148,7 +173,6 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         "org.webkitgtk.WebKit.custom-pasteboard-data"_s,
     };
 
-    bool transferredFilesFromPortal = false;
     for (const ASCIILiteral& mimeType : supportedMimeTypes) {
         if (!gdk_content_formats_contain_mime_type(formats, mimeType))
             continue;
@@ -156,7 +180,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         // Reading from the File Transfer portal is a bit special. When either portal
         // mimetypes are present, GTK serializes them using the GdkFileList type. If
         // this type is present, ignore file:// URIs from the "text/uri-list" later on.
-        if (!transferredFilesFromPortal && std::ranges::find(portalMIMETypes, mimeType) != portalMIMETypes.end()) {
+        if (!m_transferredFilesFromPortal && std::ranges::find(portalMIMETypes, mimeType) != portalMIMETypes.end()) {
             ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
 
             m_dataRequestCount++;
@@ -164,21 +188,25 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 if (g_cancellable_is_cancelled(cancellable.get()))
                     return;
 
-                // Convert files transferred by the File Transfer portal into URIs
                 for (auto& fileUri : fileUris) {
                     if (!m_uriListBuilder.isEmpty())
                         m_uriListBuilder.append("\r\n"_s);
                     m_uriListBuilder.append(fileUri);
+
+                    // GTK also deserializes text/uri-list into a GdkFileList, so the
+                    // import rule applies here too.
+                    if (auto filename = WebCore::SelectionData::localPathFromURIListLine(fileUri); !filename.isNull())
+                        m_portalFilenames.append(WTF::move(filename));
                 }
 
                 didLoadData();
             });
-            transferredFilesFromPortal = true;
+            m_transferredFilesFromPortal = true;
             continue;
         }
 
         m_dataRequestCount++;
-        loadData(mimeType, [this, transferredFilesFromPortal, mimeType, cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
+        loadData(mimeType, [this, mimeType, cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
             if (g_cancellable_is_cancelled(cancellable.get()))
                 return;
 
@@ -219,7 +247,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
 
                         // If we have file transfers from the portal, ignore file:// URIs.
                         URL url { line };
-                        if (transferredFilesFromPortal && url.isValid()) {
+                        if (m_transferredFilesFromPortal && url.isValid()) {
                             GUniqueOutPtr<GError> error;
                             GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
                             if (!error && filename)
@@ -240,6 +268,12 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
 
             didLoadData();
         });
+    }
+
+    m_state.didAccept(m_dataRequestCount > 0);
+    if (!m_dataRequestCount) {
+        // Nothing to wait for; didLoadData() will not run.
+        m_cancellable = nullptr;
     }
 }
 
@@ -313,46 +347,51 @@ void DropTarget::didLoadData()
 
     // Build the URI list after collecting everything from transferred files,
     // and the uri-list mimetype
-    if (!m_uriListBuilder.isEmpty()) {
-        m_selectionData->setURIList(m_uriListBuilder.toString());
+    if (!m_uriListBuilder.isEmpty() || !m_portalFilenames.isEmpty()) {
+        m_selectionData->setTrustedDrop(m_uriListBuilder.toString(), WTF::move(m_portalFilenames));
         m_uriListBuilder.clear();
     }
 
     m_cancellable = nullptr;
+    m_state.didFinishLoadingData();
 
     if (!m_position) {
         // Enter hasn't been emitted yet, so just wait for it.
         return;
     }
 
-    // Call enter again.
+    // Call enter again, also for a deferred drop: DragController needs dragEntered
+    // before performDragOperation.
     enter(IntPoint(m_position.value()));
+
+    if (m_state.takeDeferredDrop())
+        drop(IntPoint(m_position.value()));
 }
 
 void DropTarget::enter(IntPoint&& position, unsigned)
 {
     m_position = WTF::move(position);
-    if (m_cancellable)
+    if (m_state.isWaitingForData())
         return;
 
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
     page->resetCurrentDragInformation();
 
-    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())), applicationFlagsForDrop(m_drop.get()));
     page->dragEntered(dragData);
 }
 
 void DropTarget::update(IntPoint&& position, unsigned)
 {
     m_position = WTF::move(position);
-    if (m_cancellable)
+    if (m_state.isWaitingForData())
         return;
 
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())), applicationFlagsForDrop(m_drop.get()));
     page->dragUpdated(dragData);
 }
 
@@ -375,12 +414,14 @@ void DropTarget::didPerformAction()
 void DropTarget::leave()
 {
     g_cancellable_cancel(m_cancellable.get());
+    // Cancelling the reads means didLoadData() will not release a deferred drop.
+    finishUnfinishedDrop();
 
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
     auto position = m_position.value_or(IntPoint());
-    DragData dragData(&m_selectionData.value(), position, position, { });
+    DragData dragData(&m_selectionData.value(), position, position, { }, applicationFlagsForDrop(m_drop.get()));
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 
@@ -388,19 +429,33 @@ void DropTarget::leave()
     m_position = std::nullopt;
     m_selectionData = std::nullopt;
     m_cancellable = nullptr;
+    m_uriListBuilder.clear();
+    m_portalFilenames.clear();
+    m_transferredFilesFromPortal = false;
 }
 
 void DropTarget::drop(IntPoint&& position, unsigned)
 {
     m_position = WTF::move(position);
+    // Wait for the mime loads to finish; didLoadData() performs the drop.
+    if (m_state.didRequestDrop())
+        return;
+
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, *m_position, gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())), applicationFlagsForDrop(m_drop.get()));
     page->performDragOperation(dragData, { }, { }, { });
-    gdk_drop_finish(m_drop.get(), gdk_drop_get_actions(m_drop.get()));
+    // gdk_drop_finish() requires a single action or 0. gdk_drop_get_actions() is a mask.
+    auto finishAction = dragOperationToSingleGdkDragAction(m_operation);
+    if (!finishAction)
+        finishAction = dragOperationToSingleGdkDragAction(gdkDragActionToDragOperation(gdk_drop_get_actions(m_drop.get())));
+    gdk_drop_finish(m_drop.get(), finishAction);
+    m_state.didFinishDrop();
 
     m_drop = nullptr;
+    m_portalFilenames.clear();
+    m_transferredFilesFromPortal = false;
 }
 
 } // namespace WebKit

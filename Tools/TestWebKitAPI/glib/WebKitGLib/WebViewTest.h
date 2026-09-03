@@ -87,6 +87,10 @@ public:
 
 #if PLATFORM(GTK)
     void emitPopupMenuSignal();
+
+    // Synthetic GDK events cannot drive a real drag (webkit.org/b/157179).
+    enum class DropSource : uint8_t { WebOrSameApp, External, UntrustedURIList };
+    void dropFiles(const char* uriList, Vector<String>&& portalFilenames, DropSource, int x = 10, int y = 10);
 #endif
 
     JSCValue* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);

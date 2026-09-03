@@ -26,6 +26,7 @@ class WebCore::SelectionData {
     String markup()
     URL url()
     String uriList()
+    Vector<String> filenames()
     RefPtr<WebCore::Image> image()
     RefPtr<WebCore::SharedBuffer> customData()
     bool canSmartReplace()

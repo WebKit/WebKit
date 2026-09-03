@@ -194,7 +194,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
     SetForScope frameWritingToClipboard(m_frameWritingToClipboard, WebPasteboardProxy::singleton().primarySelectionOwner());
 
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
-    if (selectionData.hasURIList())
+    if (selectionData.hasURIList() && !WebCore::SelectionData::uriListWithoutFilenames(selectionData.uriList()).isEmpty())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/uri-list"), 0, ClipboardTargetType::URIList);
     if (selectionData.hasMarkup())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/html"), 0, ClipboardTargetType::Markup);
@@ -238,7 +238,10 @@ void Clipboard::write(WebCore::SelectionData&& selectionData, CompletionHandler<
                 break;
             }
             case ClipboardTargetType::URIList: {
-                CString uriList = data.selectionData.uriList().utf8();
+                auto sanitizedURIList = WebCore::SelectionData::uriListWithoutFilenames(data.selectionData.uriList());
+                if (sanitizedURIList.isEmpty())
+                    break;
+                CString uriList = sanitizedURIList.utf8();
                 gtk_selection_data_set(selection, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
                 break;
             }

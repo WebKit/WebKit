@@ -57,11 +57,16 @@ DragSource::DragSource(GtkWidget* webView)
             break;
         }
         case DragTargetType::URIList: {
-            CString uriList = drag.m_selectionData->uriList().utf8();
+            auto sanitizedURIList = SelectionData::uriListWithoutFilenames(drag.m_selectionData->uriList());
+            if (sanitizedURIList.isEmpty())
+                break;
+            CString uriList = sanitizedURIList.utf8();
             gtk_selection_data_set(data, gdk_atom_intern_static_string("text/uri-list"), 8, reinterpret_cast<const guchar*>(uriList.data()), uriList.length());
             break;
         }
         case DragTargetType::NetscapeURL: {
+            if (drag.m_selectionData->url().protocolIsFile())
+                break;
             auto urlString = drag.m_selectionData->url().string();
             auto url = makeString(urlString, '\n', drag.m_selectionData->hasText() ? drag.m_selectionData->text() : urlString).utf8();
             gtk_selection_data_set(data, gdk_atom_intern_static_string("_NETSCAPE_URL"), 8, reinterpret_cast<const guchar*>(url.data()), url.length());
@@ -126,9 +131,9 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         gtk_target_list_add_text_targets(list.get(), DragTargetType::Text);
     if (m_selectionData->hasMarkup())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("text/html"), 0, DragTargetType::Markup);
-    if (m_selectionData->hasURIList())
+    if (m_selectionData->hasURIList() && !SelectionData::uriListWithoutFilenames(m_selectionData->uriList()).isEmpty())
         gtk_target_list_add_uri_targets(list.get(), DragTargetType::URIList);
-    if (m_selectionData->hasURL())
+    if (m_selectionData->hasURL() && !m_selectionData->url().protocolIsFile())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("_NETSCAPE_URL"), 0, DragTargetType::NetscapeURL);
     if (m_selectionData->hasImage())
         gtk_target_list_add_image_targets(list.get(), DragTargetType::Image, TRUE);

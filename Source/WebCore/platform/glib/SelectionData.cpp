@@ -24,13 +24,51 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringCommon.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
+// g_filename_from_uri() discards the authority when the hostname out parameter is
+// null, so file://attacker.example/etc/passwd would resolve to /etc/passwd. RFC 8089
+// only lets an empty authority or "localhost" mean this machine.
+String SelectionData::localPathFromURIListLine(const String& line)
+{
+    URL url { line };
+    if (!url.isValid())
+        return { };
+
+    GUniqueOutPtr<GError> error;
+    GUniqueOutPtr<gchar> hostname;
+    GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), &hostname.outPtr(), &error.outPtr()));
+    if (error || !filename)
+        return { };
+
+    if (hostname && hostname.get()[0] && !equalLettersIgnoringASCIICase(String::fromUTF8(hostname.get()), "localhost"_s))
+        return { };
+
+    return String::fromUTF8(filename.get());
+}
+
+// Broader than localPathFromURIListLine() on purpose. A receiving application may
+// resolve a remote-host file URI locally, so export strips anything file shaped.
+static bool isFileURIListLine(const String& line)
+{
+    URL url { line };
+    if (!url.isValid())
+        return false;
+
+    if (url.protocolIs("file"_s))
+        return true;
+
+    GUniqueOutPtr<GError> error;
+    GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), nullptr, &error.outPtr()));
+    return !error && filename;
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionData);
 
-SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, RefPtr<WebCore::Image>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
+SelectionData::SelectionData(const String& text, const String& markup, const URL& url, const String& uriList, Vector<String>&& filenames, RefPtr<WebCore::Image>&& image, RefPtr<WebCore::SharedBuffer>&& buffer, bool canSmartReplace)
 {
     if (!text.isEmpty())
         setText(text);
@@ -40,6 +78,9 @@ SelectionData::SelectionData(const String& text, const String& markup, const URL
         setURL(url, String());
     if (!uriList.isEmpty())
         setURIList(uriList);
+    // After setURIList(), which must not touch m_filenames.
+    if (!filenames.isEmpty())
+        setFilenames(WTF::move(filenames));
     if (image)
         setImage(WTF::move(image));
     if (buffer)
@@ -58,22 +99,13 @@ void SelectionData::setText(const String& newText)
     replaceNonBreakingSpaceWithSpace(m_text);
 }
 
-void SelectionData::setURIList(const String& uriListString)
+static void updateURLFromURIList(const String& uriListString, URL& url, bool& urlIsSet)
 {
-    m_uriList = uriListString;
-
-    // This code is originally from: platform/chromium/ChromiumDataObject.cpp.
-    // FIXME: We should make this code cross-platform eventually.
+    if (urlIsSet)
+        return;
 
     // Line separator is \r\n per RFC 2483 - however, for compatibility
     // reasons we also allow just \n here.
-
-    // Process the input and copy the first valid URL into the url member.
-    // In case no URLs can be found, subsequent calls to getData("URL")
-    // will get an empty string. This is in line with the HTML5 spec (see
-    // "The DragEvent and DataTransfer interfaces"). Also extract all filenames
-    // from the URI list.
-    bool setURL = hasURL();
     for (auto& line : uriListString.split('\n')) {
         line = line.trim(deprecatedIsSpaceOrNewline);
         if (line.isEmpty())
@@ -81,19 +113,106 @@ void SelectionData::setURIList(const String& uriListString)
         if (line[0] == '#')
             continue;
 
-        URL url { line };
-        if (url.isValid()) {
-            if (!setURL) {
-                m_url = url;
-                setURL = true;
-            }
+        URL parsed { line };
+        if (!parsed.isValid())
+            continue;
 
-            GUniqueOutPtr<GError> error;
-            GUniquePtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
-            if (!error && filename)
-                m_filenames.append(String::fromUTF8(filename.get()));
-        }
+        url = WTF::move(parsed);
+        urlIsSet = true;
+        return;
     }
+}
+
+Vector<String> SelectionData::filenamesFromURIList(const String& uriListString)
+{
+    // This code is originally from: platform/chromium/ChromiumDataObject.cpp.
+    Vector<String> filenames;
+    for (auto& line : uriListString.split('\n')) {
+        line = line.trim(deprecatedIsSpaceOrNewline);
+        if (line.isEmpty())
+            continue;
+        if (line[0] == '#')
+            continue;
+
+        auto path = localPathFromURIListLine(line);
+        if (!path.isNull())
+            filenames.append(WTF::move(path));
+    }
+    return filenames;
+}
+
+void SelectionData::setURIList(const String& uriListString)
+{
+    m_uriList = uriListString;
+
+    // Process the input and copy the first valid URL into the url member.
+    // In case no URLs can be found, subsequent calls to getData("URL")
+    // will get an empty string. This is in line with the HTML5 spec (see
+    // "The DragEvent and DataTransfer interfaces").
+    //
+    // Script can write text/uri-list through DataTransfer.setData(), so file:// lines
+    // are not promoted into m_filenames here. See CVE-2025-13947.
+    bool setURL = hasURL();
+    updateURLFromURIList(uriListString, m_url, setURL);
+}
+
+void SelectionData::setFilenames(Vector<String>&& filenames)
+{
+    m_filenames = WTF::move(filenames);
+}
+
+void SelectionData::setFilenamesFromURIList(const String& uriListString)
+{
+    m_filenames = filenamesFromURIList(uriListString);
+}
+
+void SelectionData::setTrustedDrop(const String& uriListString, Vector<String>&& portalFilenames)
+{
+    setURIList(uriListString);
+
+    // The portal list is the grant when present. A parallel uri-list could only widen it.
+    if (!portalFilenames.isEmpty()) {
+        setFilenames(WTF::move(portalFilenames));
+        return;
+    }
+
+    setFilenamesFromURIList(uriListString);
+}
+
+String SelectionData::uriListWithoutFilenames(const String& uriListString)
+{
+    StringBuilder builder;
+    for (auto& line : uriListString.split('\n')) {
+        auto trimmed = line.trim(deprecatedIsSpaceOrNewline);
+        if (trimmed.isEmpty())
+            continue;
+        if (trimmed[0] == '#')
+            continue;
+
+        if (isFileURIListLine(trimmed))
+            continue;
+
+        if (!builder.isEmpty())
+            builder.append("\r\n"_s);
+        builder.append(trimmed);
+    }
+    return builder.toString();
+}
+
+// Answers from web-writable text, so callers may only narrow on a true result.
+bool SelectionData::uriListContainsFileURI(const String& uriListString)
+{
+    for (auto& line : uriListString.split('\n')) {
+        auto trimmed = line.trim(deprecatedIsSpaceOrNewline);
+        if (trimmed.isEmpty())
+            continue;
+        if (trimmed[0] == '#')
+            continue;
+
+        if (isFileURIListLine(trimmed))
+            return true;
+    }
+    return false;
 }
 
 void SelectionData::setURL(const URL& url, const String& label)
