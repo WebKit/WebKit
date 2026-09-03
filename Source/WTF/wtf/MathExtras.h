@@ -131,40 +131,6 @@ constexpr float grad2turn(float g) { return deg2turn(grad2deg(g)); }
 constexpr float turn2rad(float t) { return deg2rad(turn2deg(t)); }
 constexpr float rad2turn(float r) { return deg2turn(rad2deg(r)); }
 
-namespace WTF {
-
-// FIXME: Replace with std::isnan() once std::isnan() is constexpr. requires C++23
-template<std::floating_point T>
-constexpr bool isNaNConstExpr(T value)
-{
-#if COMPILER_HAS_CLANG_BUILTIN(__builtin_isnan)
-    return __builtin_isnan(value);
-#else
-    return value != value;
-#endif
-}
-
-template<std::integral T>
-constexpr bool isNaNConstExpr(T)
-{
-    return false;
-}
-
-// FIXME: Replace with std::fabs() once std::fabs() is constexpr. requires C++23
-template<std::floating_point T>
-constexpr T fabsConstExpr(T value)
-{
-    if (value != value)
-        return value;
-    if (!value)
-        return 0.0; // -0.0 should be converted to +0.0
-    if (value < 0.0)
-        return -value;
-    return value;
-}
-
-} // namespace WTF
-
 inline double roundTowardsPositiveInfinity(double value) { return std::floor(value + 0.5); }
 inline float roundTowardsPositiveInfinity(float value) { return std::floor(value + 0.5f); }
 
@@ -556,14 +522,14 @@ constexpr bool areEssentiallyEqual(T u, T v, T epsilon = std::numeric_limits<T>:
 template<std::floating_point T>
 constexpr T nanPropagatingMin(T a, T b)
 {
-    return isNaNConstExpr(a) || isNaNConstExpr(b) ? std::numeric_limits<T>::quiet_NaN() : std::min(a, b);
+    return std::isnan(a) || std::isnan(b) ? std::numeric_limits<T>::quiet_NaN() : std::min(a, b);
 }
 
 // Match behavior of Math.max, where NaN is returned if either argument is NaN.
 template<std::floating_point T>
 constexpr T nanPropagatingMax(T a, T b)
 {
-    return isNaNConstExpr(a) || isNaNConstExpr(b) ? std::numeric_limits<T>::quiet_NaN() : std::max(a, b);
+    return std::isnan(a) || std::isnan(b) ? std::numeric_limits<T>::quiet_NaN() : std::max(a, b);
 }
 
 constexpr bool isIntegral(float value)
@@ -1083,8 +1049,6 @@ using WTF::clz;
 using WTF::ctz;
 using WTF::getLSBSet;
 using WTF::getMSBSet;
-using WTF::isNaNConstExpr;
-using WTF::fabsConstExpr;
 using WTF::reverseBits32;
 using WTF::roundDownToMultipleOf;
 using WTF::roundUpToMultipleOf;
