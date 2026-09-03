@@ -609,6 +609,7 @@
 		E3096D4C2A82357800BC4CA0 /* pas_allocation_result.c in Sources */ = {isa = PBXBuildFile; fileRef = E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */; };
 		E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */; };
 		F30C5BE42E8F33E4006CA1E9 /* MARTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */; };
+		B67C2F5E82594CE1B8AF7B81 /* MallocLoggerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E2D1AF6BDB3D448CA5317B27 /* MallocLoggerTests.cpp */; };
 		F3EFAABC2E90316400A1EDE0 /* pas_mar_registry.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EFAAB92E90316400A1EDE0 /* pas_mar_registry.c */; };
 		F3EFAABD2E90316400A1EDE0 /* pas_mar_report_crash.c in Sources */ = {isa = PBXBuildFile; fileRef = F3EFAABB2E90316400A1EDE0 /* pas_mar_report_crash.c */; };
 		F3EFAABE2E90316400A1EDE0 /* pas_mar_crash_reporter_report.h in Headers */ = {isa = PBXBuildFile; fileRef = F3EFAAB72E90316400A1EDE0 /* pas_mar_crash_reporter_report.h */; };
@@ -1355,6 +1356,7 @@
 		E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_result.c; sourceTree = "<group>"; };
 		E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_darwin_spi.h; sourceTree = "<group>"; };
 		F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MARTests.cpp; sourceTree = "<group>"; };
+		E2D1AF6BDB3D448CA5317B27 /* MallocLoggerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MallocLoggerTests.cpp; sourceTree = "<group>"; };
 		F3EFAAB72E90316400A1EDE0 /* pas_mar_crash_reporter_report.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_mar_crash_reporter_report.h; sourceTree = "<group>"; };
 		F3EFAAB82E90316400A1EDE0 /* pas_mar_registry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_mar_registry.h; sourceTree = "<group>"; };
 		F3EFAAB92E90316400A1EDE0 /* pas_mar_registry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pas_mar_registry.c; sourceTree = "<group>"; };
@@ -1490,6 +1492,7 @@
 				0FEB6669231DA86F009C001B /* LargeSharingPoolTests.cpp */,
 				0FEA45BE236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp */,
 				2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */,
+				E2D1AF6BDB3D448CA5317B27 /* MallocLoggerTests.cpp */,
 				F30C5BE32E8F33E4006CA1E9 /* MARTests.cpp */,
 				2C734C8F277680EF0017BFFE /* MemalignTests.cpp */,
 				0FD22D0722CD8A7500B21841 /* MinHeapTests.cpp */,
@@ -2806,6 +2809,7 @@
 				0FEB666A231DA86F009C001B /* LargeSharingPoolTests.cpp in Sources */,
 				0FEA45BF236CDAED00B5A375 /* LockFreeReadPtrPtrHashtableTests.cpp in Sources */,
 				2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */,
+				B67C2F5E82594CE1B8AF7B81 /* MallocLoggerTests.cpp in Sources */,
 				F30C5BE42E8F33E4006CA1E9 /* MARTests.cpp in Sources */,
 				2C734C90277680EF0017BFFE /* MemalignTests.cpp in Sources */,
 				0FD22D0822CD8A7500B21841 /* MinHeapTests.cpp in Sources */,
