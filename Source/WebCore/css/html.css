@@ -1397,14 +1397,12 @@ progress::-webkit-progress-bar {
     background-color: gray;
     height: 100%;
     width: 100%;
-    box-sizing: border-box;
 }
 
 progress::-webkit-progress-value {
     background-color: green;
     block-size: 100%;
     inline-size: 50%; /* should be removed later */
-    box-sizing: border-box;
 }
 
 /* inline elements */
