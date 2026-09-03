@@ -1000,7 +1000,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *     g_variant_dict_insert (&dict, "count", "u", 42);
  *     GVariant *args = g_variant_dict_end (&dict);
  *     const gchar *body = "return new Promise((resolve) => { resolve(count); });";
- *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, arguments, NULL, NULL, web_view_javascript_finished, NULL);
+ *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, args, NULL, NULL, web_view_javascript_finished, NULL);
  * }
  * ```
  *
@@ -1070,7 +1070,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *     g_variant_dict_insert (&dict, "count", "u", 42);
  *     GVariant *args = g_variant_dict_end (&dict);
  *     const gchar *body = "return new Promise((resolve) => { resolve(count); });";
- *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, arguments, NULL, NULL, web_view_javascript_finished, NULL);
+ *     webkit_web_view_run_async_javascript_function_in_world (web_view, body, args, NULL, NULL, web_view_javascript_finished, NULL);
  * }
  * ```
  *
