@@ -514,6 +514,10 @@ void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument, Document& new
 {
     if (m_imageLoader)
         m_imageLoader->elementDidMoveToNewDocument(oldDocument);
+
+    LazyLoadVideoObserver::unobserve(*this, oldDocument);
+    LazyLoadVideoObserver::observe(*this);
+
     HTMLMediaElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 

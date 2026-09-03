@@ -5696,6 +5696,11 @@ bool Internals::isPlayerVisibleInViewport(const HTMLMediaElement& element) const
     return player && player->viewportVisibility() == HTMLMediaElement::ViewportVisibility::VisibleInViewport;
 }
 
+bool Internals::isMediaElementIntersectingViewport(const HTMLMediaElement& element) const
+{
+    return element.isIntersectingViewport();
+}
+
 bool Internals::isPlayerMuted(const HTMLMediaElement& element) const
 {
     RefPtr player = element.player();

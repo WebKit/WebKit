@@ -1,0 +1,4 @@
+
+
+PASS MediaStream video element migrated from an inert document must become intersecting
+
