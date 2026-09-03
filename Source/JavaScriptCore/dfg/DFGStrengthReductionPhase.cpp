@@ -438,8 +438,10 @@ private:
                     break;
                 }
 
-                if (accessesOverlap(m_graph, node, AbstractHeap(Stack, operand)))
+                if (accessesOverlap(m_graph, node, AbstractHeap(Stack, operand))) {
+                    dataLogLnIf(Options::verboseObjectAllocationSinking(), "Could not remove flush D@", m_node->index(), " due to conflict with D@", node->index());
                     break;
+                }
 
             }
             

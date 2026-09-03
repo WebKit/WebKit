@@ -2153,7 +2153,7 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     VariableAccessData* calleeVariable = nullptr;
     if (callee.isClosureCall()) {
         Node* calleeSet = set(
-            VirtualRegister(registerOffsetAfterFixup + CallFrameSlot::callee), callTargetNode, ImmediateNakedSet);
+            VirtualRegister(registerOffsetAfterFixup + CallFrameSlot::callee), callTargetNode, ImmediateSetWithFlush);
         
         calleeVariable = calleeSet->variableAccessData();
         calleeVariable->mergeShouldNeverUnbox(true);

@@ -741,6 +741,7 @@ private:
 
         Allocation unescaped = WTF::move(allocation);
         allocation = Allocation(unescaped.identifier(), Allocation::Kind::Escaped);
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Escaping allocation D@", identifier->index());
 
         for (const auto& entry : unescaped.fields())
             escapeAllocation(entry.value);
@@ -971,6 +972,8 @@ private:
         UncheckedKeyHashMap<PromotedLocationDescriptor, LazyNode> writes;
         PromotedLocationDescriptor exactRead;
 
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Handling node D@", node->index());
+
         switch (node->op()) {
         // We model sinking of Arrays by splitting the allocation of the Butterfly and the Array itself into two nodes.
         // This is necessary because this phase only considers one allocation per Node and the butterfly is not an implementation
@@ -1122,7 +1125,7 @@ private:
                 target = &m_heap.newAllocation(node, Allocation::Kind::Function);
 
             writes.add(FunctionExecutablePLoc, LazyNode(node->cellOperand()));
-            writes.add(FunctionActivationPLoc, LazyNode(node->child1().node()));
+            // writes.add(FunctionActivationPLoc, LazyNode(node->child1().node()));
             break;
         }
 
@@ -1208,6 +1211,7 @@ private:
                 m_heap.escape(node->child1().node());
             break;
 
+        case AssertNotEmpty:
         case CheckStructureOrEmpty:
         case CheckStructure: {
             Allocation* allocation = m_heap.onlyLocalAllocation(node->child1().node());
@@ -1399,6 +1403,11 @@ private:
                 m_heap.escape(node->child1().node());
                 m_heap.escape(node->child2().node());
             }
+            break;
+        }
+
+        case Identity: {
+            m_heap.newPointer(node, node->child1().node());
             break;
         }
 
