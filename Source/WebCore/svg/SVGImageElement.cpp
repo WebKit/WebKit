@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -228,6 +228,34 @@ void SVGImageElement::didMoveToNewDocument(Document& oldDocument, Document& newD
 void SVGImageElement::decode(Ref<DeferredPromise>&& promise)
 {
     return m_imageLoader->decode(WTF::move(promise));
+}
+
+void SVGImageElement::setDecoding(AtomString&& decodingMode)
+{
+    setAttributeWithoutSynchronization(SVGNames::decodingAttr, WTFMove(decodingMode));
+}
+
+String SVGImageElement::decoding() const
+{
+    switch (decodingMode()) {
+    case DecodingMode::Auto:
+        break;
+    case DecodingMode::Synchronous:
+        return "sync"_s;
+    case DecodingMode::Asynchronous:
+        return "async"_s;
+    }
+    return autoAtom();
+}
+
+DecodingMode SVGImageElement::decodingMode() const
+{
+    const AtomString& decodingMode = attributeWithoutSynchronization(SVGNames::decodingAttr);
+    if (equalLettersIgnoringASCIICase(decodingMode, "sync"_s))
+        return DecodingMode::Synchronous;
+    if (equalLettersIgnoringASCIICase(decodingMode, "async"_s))
+        return DecodingMode::Asynchronous;
+    return DecodingMode::Auto;
 }
 
 }

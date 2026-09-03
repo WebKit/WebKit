@@ -34,6 +34,7 @@
     readonly attribute SVGAnimatedPreserveAspectRatio preserveAspectRatio;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString? crossOrigin;
 
+    [CEReactions=NotNeeded] attribute [AtomString] DOMString decoding;
     Promise<undefined> decode();
 };
 
