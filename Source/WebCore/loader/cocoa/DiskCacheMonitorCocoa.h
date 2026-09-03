@@ -28,7 +28,7 @@
 #include "ResourceRequest.h"
 #include <pal/SessionID.h>
 
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
+using CFCachedURLResponseRef = const struct _CFCachedURLResponse*;
 
 namespace WebCore {
 

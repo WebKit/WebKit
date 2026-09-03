@@ -219,7 +219,7 @@ private:
     
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).
-    typedef HashMap<PAL::SessionID, std::unique_ptr<CachedResourceMap>> SessionCachedResourceMap;
+    using SessionCachedResourceMap = HashMap<PAL::SessionID, std::unique_ptr<CachedResourceMap>>;
     SessionCachedResourceMap m_sessionResources;
 
     Timer m_pruneTimer;
