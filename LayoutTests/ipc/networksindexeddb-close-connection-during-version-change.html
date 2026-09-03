@@ -14,13 +14,17 @@ window.setTimeout(async () => {
 
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+    // NetworkStorageManager rejects storage requests whose site was never loaded by this
+    // web process, so the requests below have to use this document's own origin.
+    const originData = {
+        protocol: location.protocol.replace(/:$/, ''),
+        host: location.hostname,
+        port: location.port ? { optionalValue: parseInt(location.port, 10) } : {},
+    };
+
     const origin = {
-        topOrigin: {
-            data: { variantIndex: 0, variant: { protocol: 'http', host: '127.0.0.1', port: {} } },
-        },
-        clientOrigin: {
-            data: { variantIndex: 0, variant: { protocol: 'http', host: '127.0.0.1', port: {} } },
-        },
+        topOrigin: { data: { variantIndex: 0, variant: originData } },
+        clientOrigin: { data: { variantIndex: 0, variant: originData } },
     };
 
     function resId(connId, resourceNum) {
@@ -72,7 +76,10 @@ window.setTimeout(async () => {
     await sleep(300);
 
     let vc1ConnId = dbConnIds[0];
-    if (!vc1ConnId) { console.log('FAIL: no dbConnId captured'); return; }
+    if (!vc1ConnId) {
+        console.log('FAIL: no dbConnId captured');
+        return window.testRunner?.notifyDone();
+    }
 
     // Step 2: Queue Open #2 behind VC1
     sendMessage(IPC.messages.NetworkStorageManager_OpenDatabase, 0n, {
