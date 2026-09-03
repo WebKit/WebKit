@@ -602,7 +602,6 @@ public:
     virtual bool isColumnHeader() const { return false; }
     virtual bool isRowHeader() const { return false; }
     bool isTableCellInSameRowGroup(AXCoreObject&);
-    bool isTableCellInSameColGroup(AXCoreObject*);
     std::optional<AXID> rowGroupAncestorID() const;
     virtual String cellScope() const { return { }; }
     // Returns the start location and row span of the cell.
@@ -1218,7 +1217,6 @@ public:
     RefPtr<AXCoreObject> nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const;
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded, bool includeCrossFrame) const;
-    AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
     AXCoreObject* nextSiblingIncludingIgnoredOrParent() const;
     std::optional<AXID> idOfNextSiblingIncludingIgnoredOrParent() const
     {
