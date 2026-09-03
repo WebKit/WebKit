@@ -34,6 +34,7 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
+from . import generate_s3_url
 from .steps import *
 
 CURRENT_HOSTNAME = socket.gethostname().strip()
@@ -882,6 +883,17 @@ class TestInstallMetalToolchain(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=SUCCESS, state_string='Installed metal toolchain')
         return self.run_step()
+
+
+class TestGenerateS3URL(unittest.TestCase):
+    def test_revision_of_none(self):
+        with self.assertRaises(TypeError):
+            generate_s3_url.generateS3URL('ews-archives.webkit.org', 'mac-sequoia-arm64-release', None)
+
+    def test_invalid_revision(self):
+        for revision in ['', 'None']:
+            with self.assertRaises(ValueError):
+                generate_s3_url.generateS3URL('ews-archives.webkit.org', 'mac-sequoia-arm64-release', revision)
 
 
 if __name__ == '__main__':

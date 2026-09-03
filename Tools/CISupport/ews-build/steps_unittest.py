@@ -6808,6 +6808,23 @@ class TestGenerateS3URL(BuildStepMixinAdditions, unittest.TestCase):
         with current_hostname('something-other-than-steps.EWS_BUILD_HOSTNAME'):
             return self.run_step()
 
+    def test_missing_change_id(self):
+        self.setup_step(GenerateS3URL('mac-highsierra-x86_64-release'))
+        mock_generate = create_autospec(generate_s3_url.generateS3URL, side_effect=TypeError('boom'))
+        self.patch(generate_s3_url, 'generateS3URL', mock_generate)
+        self.expect_outcome(result=FAILURE, state_string='Failed to generate S3 URL')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            d = self.run_step()
+
+        def check(_):
+            mock_generate.assert_called_once_with(
+                'ews-archives.webkit.org', 'mac-highsierra-x86_64-release', None,
+                additions=None, extension='zip', content_type=None,
+            )
+            self.assertEqual(self.build.s3url, '')
+        d.addCallback(check)
+        return d
+
 
 class TestTransferToS3(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -9476,6 +9493,71 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_property('comment_text', 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
         self.expect_property('build_summary', 'Committed 5dc27962b4c5')
+
+
+class TestConfigureBuild(BuildStepMixinAdditions, unittest.TestCase):
+    HASH = '7496f8ec5a3ba2ee4b6f5e9e2e0f8b9c0d1e2f3a'
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(ConfigureBuild(
+            platform='mac-sequoia', configuration='release', architectures=['arm64'],
+            buildOnly=False, triggers=None, remotes=None, additionalArguments=None,
+        ))
+
+    def test_pull_request(self):
+        self.configureStep()
+        self.setProperty('github.number', 1234)
+        self.setProperty('github.head.sha', self.HASH)
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expect_outcome(result=SUCCESS, state_string='Configured build')
+        rc = self.run_step()
+        self.expect_property('change_id', '7496f8ec')
+        self.expect_property('remote', 'origin')
+        self.expect_property('sensitive', False)
+        return rc
+
+    def test_pull_request_against_secret_remote(self):
+        self.configureStep()
+        self.setProperty('github.number', 1234)
+        self.setProperty('github.head.sha', self.HASH)
+        self.setProperty('project', 'WebKit/WebKit-security')
+        self.expect_outcome(result=SUCCESS, state_string='Configured build')
+        rc = self.run_step()
+        self.expect_property('change_id', '7496f8ec')
+        self.expect_property('remote', 'security')
+        self.expect_property('sensitive', True)
+        return rc
+
+    def test_no_pull_request(self):
+        self.configureStep()
+        self.expect_outcome(result=SUCCESS, state_string='Configured build')
+        rc = self.run_step()
+        self.expect_property('change_id', None)
+        return rc
+
+    def test_pull_request_without_hash(self):
+        self.configureStep()
+        self.setProperty('github.number', 1234)
+        self.setProperty('project', 'WebKit/WebKit')
+        self.assertEqual(ConfigureBuild.haltOnFailure, True)
+        self.expect_outcome(result=FAILURE, state_string='Failed to determine change_id (failure)')
+        return self.run_step()
+
+    def test_pull_request_without_pr_details(self):
+        self.configureStep()
+        self.patch(ConfigureBuild, 'add_pr_details', lambda self: defer.succeed(None))
+        self.setProperty('github.number', 1234)
+        self.setProperty('github.head.sha', self.HASH)
+        self.setProperty('project', 'WebKit/WebKit')
+        self.expect_outcome(result=FAILURE, state_string='Failed to determine change_id (failure)')
+        return self.run_step()
 
 
 class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):

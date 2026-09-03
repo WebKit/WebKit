@@ -19,6 +19,10 @@ S3_MINIFIED_BUCKET = f'minified-archives.webkit{custom_suffix}.org'
 
 
 def generateS3URL(bucket, identifier, revision, additions=None, extension=None, content_type=None):
+    if revision is None:
+        raise TypeError('Refusing to generate an S3 URL for a revision of None')
+    if not revision or revision == 'None':
+        raise ValueError(f'Refusing to generate an S3 URL for revision {revision!r}')
     key = f"{identifier}/{revision}{f'-{additions}' if additions else ''}.{extension or 'zip'}"
     print(f'\tS3 Bucket: {bucket}\n\tS3 Key: {key}')
     config = Config(region_name='us-west-2')

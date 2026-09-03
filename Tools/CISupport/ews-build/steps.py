@@ -797,6 +797,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
     name = 'configure-build'
     description = ['configuring build']
     descriptionDone = ['Configured build']
+    haltOnFailure = True
 
     def __init__(self, platform, configuration, architectures, buildOnly, triggers, remotes, additionalArguments, triggered_by=None, rebuild_without_change_on_builder=False, deployment_target=None):
         super().__init__()
@@ -842,6 +843,11 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
 
         yield self.add_pr_details()
 
+        if self.getProperty('github.number') and not self.getProperty('change_id'):
+            yield self._addToLog('stdio', 'Unable to determine change_id for this pull request.\n')
+            self.descriptionDone = 'Failed to determine change_id'
+            return defer.returnValue(FAILURE)
+
         defer.returnValue(SUCCESS)
 
     @defer.inlineCallbacks
@@ -865,7 +871,8 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
         else:
             self.setProperty('sensitive', True)
 
-        self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
+        if revision:
+            self.setProperty('change_id', revision[:HASH_LENGTH_TO_DISPLAY], 'ConfigureBuild')
 
         title = f': {title}' if title else ''
         self.addURL(f'PR {pr_number}{title}', GitHub.pr_url(pr_number, repository_url))
