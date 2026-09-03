@@ -107,6 +107,47 @@ private:
         return false;
     }
 
+    static bool isPositive(Node* node, unsigned timeToLive = 3)
+    {
+        if (!timeToLive)
+            return false;
+
+        switch (node->op()) {
+        case ValueToInt32:
+        case DoubleRep:
+            return isPositive(node->child1().node(), timeToLive);
+        case ArithMul: {
+            if (node->isBinaryInt32UseKind()) {
+                if (node->child1().node() == node->child2().node())
+                    return true;
+            }
+            return isPositive(node->child1().node(), timeToLive - 1) && isPositive(node->child2().node(), timeToLive - 1);
+        }
+        case ArithBitAnd: {
+            if (node->child1()->isInt32Constant()) {
+                if (node->child1()->asInt32() >= 0)
+                    return true;
+            }
+            if (node->child2()->isInt32Constant()) {
+                if (node->child2()->asInt32() >= 0)
+                    return true;
+            }
+            return isPositive(node->child1().node(), timeToLive - 1) && isPositive(node->child2().node(), timeToLive - 1);
+        }
+        case DoubleConstant: {
+            JSValue immediateValue = node->asJSValue();
+            if (!immediateValue.isNumber())
+                return false;
+            double immediate = immediateValue.asNumber();
+            if (!std::isfinite(immediate))
+                return false;
+            return !std::signbit(immediate);
+        }
+        default:
+            return false;
+        }
+    }
+
     void handleNode()
     {
         switch (m_node->op()) {
@@ -173,14 +214,20 @@ private:
                 && m_node->child1()->child2()->isInt32Constant()
                 && (m_node->child1()->child2()->asInt32() & 0x1f)
                 && m_node->arithMode() != Arith::DoOverflow) {
-                m_node->convertToIdentity();
-                m_changed = true;
+                convertToIdentityOverChild1();
                 break;
             }
+
             if (bytecodeCanTruncateInteger(m_node->arithNodeFlags())) {
-                m_node->convertToIdentity();
-                m_changed = true;
+                convertToIdentityOverChild1();
                 break;
+            }
+
+            if (m_node->child1().useKind() == Int32Use && m_node->arithMode() == Arith::CheckOverflow) {
+                if (isPositive(m_node->child1().node())) {
+                    convertToIdentityOverChild1();
+                    break;
+                }
             }
             break;
             
