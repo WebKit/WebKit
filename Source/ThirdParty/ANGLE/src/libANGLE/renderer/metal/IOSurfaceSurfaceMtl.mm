@@ -151,14 +151,14 @@ egl::Error IOSurfaceSurfaceMtl::releaseTexImage(const gl::Context *context, EGLi
 angle::Result IOSurfaceSurfaceMtl::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
-    const gl::OwnImageIndex &ownImageIndex,
+    const gl::ImageIndex &imageIndex,
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {
     // Initialize offscreen texture if needed:
     ANGLE_TRY(ensureColorTextureCreated(context));
 
-    return OffscreenSurfaceMtl::getAttachmentRenderTarget(context, binding, ownImageIndex, samples,
+    return OffscreenSurfaceMtl::getAttachmentRenderTarget(context, binding, imageIndex, samples,
                                                           rtOut);
 }
 

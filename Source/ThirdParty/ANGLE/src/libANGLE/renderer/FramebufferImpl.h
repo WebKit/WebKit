@@ -105,6 +105,8 @@ class FramebufferImpl : angle::NonCopyable
 
     virtual angle::Result onLabelUpdate(const gl::Context *context);
 
+    virtual angle::Result onAttachmentLayerCountChange(gl::FramebufferAttachment *attachment);
+
     const gl::FramebufferState &getState() const { return mState; }
 
   protected:
@@ -114,6 +116,12 @@ class FramebufferImpl : angle::NonCopyable
 inline bool FramebufferImpl::shouldSyncStateBeforeCheckStatus() const
 {
     return false;
+}
+
+inline angle::Result FramebufferImpl::onAttachmentLayerCountChange(
+    gl::FramebufferAttachment *attachment)
+{
+    return angle::Result::Continue;
 }
 
 // Default implementation returns the format specified in the attachment.

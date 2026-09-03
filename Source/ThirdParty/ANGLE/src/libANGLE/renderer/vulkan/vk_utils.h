@@ -1346,6 +1346,9 @@ struct RenderPassPerfCounters
 
 // A Vulkan image level index.
 using LevelIndex = gl::LevelIndexWrapper<uint32_t>;
+// For uniformity with vk::LevelIndex, even though there's no translation between gl::OwnerLayer
+// and vk::LayerIndex.
+using LayerIndex = gl::OwnerLayer;
 
 // Ensure viewport is within Vulkan requirements
 void ClampViewport(VkViewport *viewport);
@@ -1513,7 +1516,7 @@ GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID forma
 
 bool HasRequiredGlobalPriority(
     const VkQueueFamilyGlobalPriorityProperties &globalPriorityProperties,
-    VkQueueGlobalPriorityEXT requiredGlobalPriority);
+    VkQueueGlobalPriority requiredGlobalPriority);
 
 namespace gl_vk
 {
@@ -1564,7 +1567,7 @@ void GetExtentsAndLayerCount(gl::TextureType textureType,
                              VkExtent3D *extentsOut,
                              uint32_t *layerCountOut);
 
-vk::LevelIndex GetLevelIndex(gl::LevelIndex levelGL, gl::LevelIndex baseLevel);
+vk::LevelIndex GetLevelIndex(gl::OwnerLevel levelGL, gl::OwnerLevel baseLevel);
 
 VkImageTiling GetTilingMode(gl::TilingMode tilingMode);
 
@@ -1598,7 +1601,7 @@ GLuint GetMaxSampleCount(VkSampleCountFlags sampleCounts);
 // Return a supported sample count that's at least as large as the requested one.
 GLuint GetSampleCount(VkSampleCountFlags supportedCounts, GLuint requestedCount);
 
-gl::LevelIndex GetLevelIndex(vk::LevelIndex levelVk, gl::LevelIndex baseLevel);
+gl::OwnerLevel GetLevelIndex(vk::LevelIndex levelVk, gl::OwnerLevel baseLevel);
 
 GLenum ConvertVkFixedRateToGLFixedRate(const VkImageCompressionFixedRateFlagsEXT vkCompressionRate);
 GLint ConvertCompressionFlagsToGLFixedRates(

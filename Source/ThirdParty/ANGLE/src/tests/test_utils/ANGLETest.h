@@ -540,6 +540,7 @@ class ANGLETestBase : public ::testing::Test
 
     int getClientMajorVersion() const;
     int getClientMinorVersion() const;
+    bool isAtLeastClientVersion(int major, int minor) const;
 
     GLWindowBase *getGLWindow() const;
     EGLWindow *getEGLWindow() const;

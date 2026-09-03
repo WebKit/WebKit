@@ -23,7 +23,7 @@ class MockTextureImpl : public TextureImpl
     virtual ~MockTextureImpl() { destructor(); }
     MOCK_METHOD9(setImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                GLenum,
                                const gl::Extents &,
                                GLenum,
@@ -33,7 +33,7 @@ class MockTextureImpl : public TextureImpl
                                const uint8_t *));
     MOCK_METHOD8(setSubImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                const gl::Box &,
                                GLenum,
                                GLenum,
@@ -42,7 +42,7 @@ class MockTextureImpl : public TextureImpl
                                const uint8_t *));
     MOCK_METHOD7(setCompressedImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                GLenum,
                                const gl::Extents &,
                                const gl::PixelUnpackState &,
@@ -50,7 +50,7 @@ class MockTextureImpl : public TextureImpl
                                const uint8_t *));
     MOCK_METHOD7(setCompressedSubImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                const gl::Box &,
                                GLenum,
                                const gl::PixelUnpackState &,
@@ -58,31 +58,31 @@ class MockTextureImpl : public TextureImpl
                                const uint8_t *));
     MOCK_METHOD5(copyImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                const gl::Rectangle &,
                                GLenum,
                                gl::Framebuffer *));
     MOCK_METHOD5(copySubImage,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                const gl::Offset &,
                                const gl::Rectangle &,
                                gl::Framebuffer *));
     MOCK_METHOD9(copyTexture,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                GLenum,
                                GLenum,
-                               gl::OwnLevel,
+                               gl::LevelIndex,
                                bool,
                                bool,
                                bool,
                                const gl::Texture *));
     MOCK_METHOD9(copySubTexture,
                  angle::Result(const gl::Context *,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                const gl::Offset &,
-                               gl::OwnLevel,
+                               gl::LevelIndex,
                                const gl::Box &,
                                bool,
                                bool,
@@ -118,7 +118,7 @@ class MockTextureImpl : public TextureImpl
     MOCK_METHOD5(getAttachmentRenderTarget,
                  angle::Result(const gl::Context *,
                                GLenum,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                GLsizei,
                                FramebufferAttachmentRenderTarget **));
 

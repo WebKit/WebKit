@@ -27,11 +27,9 @@ class VertexArrayGL : public VertexArrayImpl
   public:
     VertexArrayGL(const gl::VertexArrayState &data,
                   GLuint id,
-                  const gl::VertexArrayBuffers &vertexArrayBuffers);
-    VertexArrayGL(const gl::VertexArrayState &data,
-                  GLuint id,
+                  bool ownsId,
                   const gl::VertexArrayBuffers &vertexArrayBuffers,
-                  VertexArrayStateGL *sharedState);
+                  VertexArrayStateGL *nativeState);
     ~VertexArrayGL() override;
 
     void destroy(const gl::Context *context) override;
@@ -51,8 +49,7 @@ class VertexArrayGL : public VertexArrayImpl
                                         const void **outIndices) const;
 
     GLuint getVertexArrayID() const;
-    VertexArrayStateGL *getNativeState() const;
-    bool syncsToSharedState() const { return !mOwnsNativeState; }
+    bool syncsToSharedState() const { return !mOwnsID; }
 
     angle::Result syncState(const gl::Context *context,
                             const gl::VertexArray::DirtyBits &dirtyBits,
@@ -63,7 +60,7 @@ class VertexArrayGL : public VertexArrayImpl
     angle::Result applyActiveAttribLocationsMask(const gl::Context *context,
                                                  const gl::AttributesMask &activeMask);
 
-    angle::Result validateState(const gl::Context *context) const;
+    void validateState(const FunctionsGL *functions) const;
 
     angle::Result recoverForcedStreamingAttributesForDrawArraysInstanced(
         const gl::Context *context) const;
@@ -135,13 +132,13 @@ class VertexArrayGL : public VertexArrayImpl
         gl::AttributesMask *attributeMask) const;
 
     GLuint mVertexArrayID = 0;
+    bool mOwnsID          = false;
     int mAppliedNumViews  = 1;
 
     // Remember the program's active attrib location mask so that attributes can be enabled/disabled
     // based on whether they are active in the program
     gl::AttributesMask mProgramActiveAttribLocationsMask;
 
-    bool mOwnsNativeState            = false;
     VertexArrayStateGL *mNativeState = nullptr;
 
     mutable gl::BindingPointer<gl::Buffer> mElementArrayBuffer;

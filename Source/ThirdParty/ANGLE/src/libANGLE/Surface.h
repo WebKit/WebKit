@@ -54,10 +54,10 @@ struct SurfaceState final : private angle::NonCopyable
     bool isRobustResourceInitEnabled() const;
     bool hasProtectedContent() const;
 
-    gl::SourceImageIndex toSourceIndex(const gl::OwnImageIndex &index) const
+    gl::OwnerImageIndex toOwnerIndex(const gl::ImageIndex &index) const
     {
         // Surfaces cannot be an EGL image sibling, so the translation is no-op.
-        return ImageSourceAttributes{}.toSourceIndex(index);
+        return ImageSourceAttributes{}.toOwnerIndex(index);
     }
 
     SurfaceID id;

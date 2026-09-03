@@ -111,7 +111,9 @@ def main(args):
     trace_versions = {}
     with futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
         for trace_info in traces['traces']:
-            trace, trace_version = trace_info.split(' ')
+            parts = trace_info.split(' ')
+            trace = parts[0]
+            trace_version = parts[1]
             trace_versions[trace] = trace_version
             if args.filter and not fnmatch.fnmatch(trace, args.filter):
                 logging.debug('Skipping %s because it does not match the test filter.' % trace)

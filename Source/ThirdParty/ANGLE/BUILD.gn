@@ -240,12 +240,6 @@ config("internal_config") {
     defines += [ "ANGLE_ENABLE_TRACE_EVENTS=1" ]
   }
 
-  # Enables platform trace events (PlatformMethods::addTraceEvent) e.g.
-  # AGI/perfetto on Android
-  if (angle_enable_platform_trace_events) {
-    defines += [ "ANGLE_ENABLE_PLATFORM_TRACE_EVENTS=1" ]
-  }
-
   # Output `INFO`-level logs and up.
   if (angle_always_log_info) {
     defines += [ "ANGLE_ALWAYS_LOG_INFO" ]
@@ -577,6 +571,9 @@ template("angle_common_lib") {
       ":angle_abseil",
       ":includes",
     ]
+    if (angle_enable_perfetto) {
+      public_deps += [ ":angle_libperfetto" ]
+    }
     public_configs += [ ":angle_common_config" ]
     if (angle_has_build && use_fuzzing_engine) {
       all_dependent_configs = [ ":angle_disable_pool_alloc" ]
@@ -1246,6 +1243,36 @@ if (angle_use_wayland) {
         "$wayland_gn_dir:wayland_client",
         "$wayland_gn_dir:wayland_egl",
       ]
+    }
+  }
+}
+
+if (!defined(angle_perfetto_cpp_dir)) {
+  angle_perfetto_cpp_dir = "//third_party/perfetto"
+}
+
+if (angle_enable_perfetto) {
+  config("angle_perfetto_config") {
+    defines = [ "ANGLE_USE_PERFETTO" ]
+
+    configs = [ "$angle_perfetto_cpp_dir/gn:public_config" ]
+
+    include_dirs = [
+      "$angle_perfetto_cpp_dir/include",
+      "$root_gen_dir/third_party/perfetto",
+      "$root_gen_dir/third_party/perfetto/build_config",
+    ]
+  }
+
+  if (build_with_chromium) {
+    group("angle_libperfetto") {
+      public_deps = [ "$angle_perfetto_cpp_dir:libperfetto" ]
+      public_configs = [ ":angle_perfetto_config" ]
+    }
+  } else {
+    component("angle_libperfetto") {
+      public_deps = [ "$angle_perfetto_cpp_dir/src/tracing:client_api" ]
+      public_configs = [ ":angle_perfetto_config" ]
     }
   }
 }

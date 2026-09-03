@@ -6,6 +6,7 @@
 # found in the LICENSE file.
 
 set(libangle_common_headers
+    "src/common/base/anglebase/trace_event/trace_categories.h"
     "src/common/BinaryStream.h"
     "src/common/CircularBuffer.h"
     "src/common/Color.h"
@@ -86,6 +87,7 @@ set(libangle_common_sources
     "src/common/android_util.cpp"
     "src/common/angleutils.cpp"
     "src/common/base/anglebase/sha1.cc"
+    "src/common/base/anglebase/trace_event/trace_categories.cc"
     "src/common/debug.cpp"
     "src/common/entry_points_enum_autogen.cpp"
     "src/common/event_tracer.cpp"
@@ -392,7 +394,6 @@ set(libangle_headers
     "src/libANGLE/validationES3_autogen.h"
     "src/libANGLE/validationESEXT.h"
     "src/libANGLE/validationESEXT_autogen.h"
-    "src/common/base/anglebase/trace_event/trace_event.h"
     "src/libANGLE/CLPlatform.h"
     "src/libANGLE/renderer/CLPlatformImpl.h"
     "src/libANGLE/CLObject.h"

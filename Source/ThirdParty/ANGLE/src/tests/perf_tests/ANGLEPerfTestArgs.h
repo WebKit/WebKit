@@ -47,7 +47,10 @@ extern const char *gRequestedExtensions;
 extern bool gIncludeInactiveResources;
 extern bool gTrackGPUTime;
 extern bool gAddSwapIntoGPUTime;
+extern bool gTrackFrameWallTime;
 extern bool gAddSwapIntoFrameWallTime;
+extern int gTrackVulkanApiWallTime;
+extern bool gCapturedFrameCountOnly;
 
 // Constant for when trace's frame count should be used
 constexpr int kAllFrames = -1;

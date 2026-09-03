@@ -129,8 +129,10 @@ void ReInitializeFeaturesAtGPUSwitch(const FunctionsGL *functions, angle::Featur
 namespace nativegl
 {
 bool SupportsVertexArrayObjects(const FunctionsGL *functions);
+bool SupportsVertexAttributeBindings(const FunctionsGL *functions);
 bool SupportsTextureBufferObjects(const FunctionsGL *functions);
 bool SupportsPixelBufferObjects(const FunctionsGL *functions);
+bool SupportsSamplerObjects(const FunctionsGL *functions);
 bool CanUseDefaultVertexArrayObject(const FunctionsGL *functions);
 bool CanUseClientSideArrays(const FunctionsGL *functions, GLuint vao);
 bool SupportsSettingCubemapSeamless(const FunctionsGL *functions);
@@ -154,6 +156,7 @@ bool SupportsDrawIndirect(const FunctionsGL *functions);
 bool SupportsSeparateFramebufferBindings(const FunctionsGL *functions);
 bool SupportsUnpackSubImage(const FunctionsGL *functions);
 bool SupportsPackSubImage(const FunctionsGL *functions);
+bool Supports3DUnpackParameters(const FunctionsGL *functions);
 bool SupportsClipControl(const FunctionsGL *functions);
 bool SupportsDrawBuffersIndexed(const FunctionsGL *functions);
 bool SupportsBlendEquationAdvancedCoherent(const FunctionsGL *functions);
@@ -168,16 +171,25 @@ bool SupportsShaderIOBlocks(const FunctionsGL *functions);
 bool SupportsClipCullDistance(const FunctionsGL *functions);
 bool SupportsSampleMask(const FunctionsGL *functions);
 bool SupportsRasterizerDiscard(const FunctionsGL *functions);
+bool SupportsInstancing(const FunctionsGL *functions);
 bool SupportsNativeRendering(const FunctionsGL *functions,
                              gl::TextureType type,
                              GLenum internalFormat);
 bool SupportsTexImage(gl::TextureType type);
 bool UseTexImage2D(gl::TextureType textureType);
 bool UseTexImage3D(gl::TextureType textureType);
+bool SupportsTextureType(const FunctionsGL *functions, gl::TextureType type);
 GLenum GetTextureBindingQuery(gl::TextureType textureType);
 GLenum GetTextureBindingTarget(gl::TextureType textureType);
 GLenum GetTextureBindingTarget(gl::TextureTarget textureTarget);
-GLenum GetBufferBindingQuery(gl::BufferBinding bufferBinding);
+bool SupportsBufferBinding(const FunctionsGL *functions, gl::BufferBinding type);
+struct BufferBindingQuery
+{
+    GLenum bindingQuery;
+    std::optional<GLenum> startQuery;
+    std::optional<GLenum> sizeQuery;
+};
+BufferBindingQuery GetBufferBindingQuery(gl::BufferBinding bufferBinding);
 std::string GetBufferBindingString(gl::BufferBinding bufferBinding);
 }  // namespace nativegl
 

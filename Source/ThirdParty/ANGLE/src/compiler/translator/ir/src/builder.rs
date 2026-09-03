@@ -1498,7 +1498,11 @@ impl Builder {
 
     // Called when constant scalar values are visited.
     fn push_constant(&mut self, id: ConstantId, type_id: TypeId) {
-        self.push_id(Id::new_constant(id), type_id, Precision::NotApplicable);
+        self.push_id(
+            Id::new_constant(id),
+            type_id,
+            util::unassigned_precision(&self.ir.meta, type_id),
+        );
     }
     pub fn push_constant_float(&mut self, value: f32) {
         let id = self.ir.meta.get_constant_float(value);
@@ -1688,6 +1692,7 @@ impl Builder {
                     self.interm_ids.push(TypedId::from_constant_id(
                         self.ir.meta.get_constant_uint(row),
                         TYPE_ID_UINT,
+                        Precision::Unassigned,
                     ));
                     self.index();
                     matrix_expanded_args.push(self.load());
@@ -1794,7 +1799,7 @@ impl Builder {
         // simplicity.
         let args = self.trim_constructor_args(type_id, args);
 
-        let result = instruction::construct(&mut self.ir.meta, type_id, args);
+        let result = instruction::construct(&mut self.ir.meta, type_id, args, None);
         self.add_instruction(result);
     }
 
@@ -3629,6 +3634,8 @@ fn builder_finish(mut builder: Box<BuilderWrapper>) -> Box<IR> {
     // Propagate precision to constant
     let mut ir = builder.builder.take_ir();
     transform::run!(propagate_precision, &mut ir);
+    #[cfg(debug_assertions)]
+    validator::validate_glsl_precision_rules(&ir, "propagate_precision");
 
     Box::new(ir)
 }

@@ -214,8 +214,8 @@ class BlitGL : angle::NonCopyable
     GLuint mScratchFBO         = 0;
 
     GLuint mVAO                   = 0;
+    bool mOwnsVAO                 = false;
     VertexArrayStateGL *mVAOState = nullptr;
-    bool mOwnsVAOState            = false;
 
     const GLuint mTexcoordAttribLocation = 0;
     GLuint mVertexBuffer                 = 0;

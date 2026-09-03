@@ -140,6 +140,8 @@
 448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.pbuffer_888_colorspace_srgb = FAIL
 448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_1010102_colorspace_default = FAIL
 448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_1010102_colorspace_p3_passthrough = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_8888_colorspace_p3 = FAIL
+448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_8888_colorspace_srgb = FAIL
 448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_888_colorspace_p3 = FAIL
 448972978 PIXEL10 GLES : dEQP-EGL.functional.wide_color.window_888_colorspace_srgb = FAIL
 

@@ -3870,7 +3870,8 @@ angle::Result State::syncTexturesInit(const Context *context, Command command)
         Texture *texture = mActiveTexturesCache[textureUnitIndex];
         if (texture)
         {
-            ANGLE_TRY(texture->ensureInitialized(context));
+            ANGLE_TRY(
+                texture->ensureInitialized(context, EnsureInitializedLevels::AllEnabledLevels));
         }
     }
     return angle::Result::Continue;
@@ -3885,7 +3886,8 @@ angle::Result State::syncImagesInit(const Context *context, Command command)
         Texture *texture = mImageUnits[imageUnitIndex].texture.get();
         if (texture)
         {
-            ANGLE_TRY(texture->ensureInitialized(context));
+            ANGLE_TRY(
+                texture->ensureInitialized(context, EnsureInitializedLevels::AllEnabledLevels));
         }
     }
     return angle::Result::Continue;

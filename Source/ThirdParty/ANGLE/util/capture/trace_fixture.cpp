@@ -682,6 +682,41 @@ void FenceSync2(GLenum condition, GLbitfield flags, uintptr_t fenceSync)
     gSyncMap2[fenceSync] = glFenceSync(condition, flags);
 }
 
+GLenum ClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout, GLenum capturedReturnValue)
+{
+    if (capturedReturnValue == GL_ALREADY_SIGNALED || capturedReturnValue == GL_CONDITION_SATISFIED)
+    {
+        GLenum result        = GL_TIMEOUT_EXPIRED;
+        GLuint64 waitTimeout = 100000000;  // 100ms
+        int attempts         = 0;
+        while (result != GL_ALREADY_SIGNALED && result != GL_CONDITION_SATISFIED)
+        {
+            result = glClientWaitSync(sync, flags, waitTimeout);
+            attempts++;
+            if (attempts > 100)
+            {
+                printf(
+                    "ClientWaitSync: Waiting for sync object %p to be signaled is taking too long "
+                    "(attempts: %d)\n",
+                    (void *)sync, attempts);
+                attempts = 0;
+            }
+            if (result == GL_WAIT_FAILED)
+            {
+                printf(
+                    "ClientWaitSync: glClientWaitSync returned GL_WAIT_FAILED for sync object %p\n",
+                    (void *)sync);
+                break;
+            }
+        }
+        return result;
+    }
+    else
+    {
+        return glClientWaitSync(sync, flags, timeout);
+    }
+}
+
 GLuint CreateEGLImageResource(GLsizei width, GLsizei height)
 {
     GLint previousTexId;

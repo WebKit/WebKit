@@ -3700,6 +3700,115 @@ TEST_P(CopyTextureTestES3, NonZeroLevelInverted)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test copy to different faces of cubemap with RGB9_E5 format (which sometimes has to take the CPU
+// copy path).
+TEST_P(CopyTextureTestES3, RGB9E5CubeMap)
+{
+    ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    constexpr char kVS[] = R"(varying vec2 texcoord;
+attribute vec4 position;
+void main()
+{
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+    texcoord = (position.xy * 0.5) + 0.5;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+uniform samplerCube texCube;
+uniform int cubeFace;
+varying vec2 texcoord;
+void main()
+{
+    vec2 scaled = vec2(1) - vec2(2) * texcoord.xy;
+    vec3 cubecoord = vec3(1, scaled.xy);
+    if (cubeFace == 1)
+        cubecoord = vec3(-1, scaled.xy);
+    else if (cubeFace == 2)
+        cubecoord = vec3(scaled.x, 1, scaled.y);
+    else if (cubeFace == 3)
+        cubecoord = vec3(scaled.x, -1, scaled.y);
+    else if (cubeFace == 4)
+        cubecoord = vec3(scaled.xy, 1);
+    else if (cubeFace == 5)
+        cubecoord = vec3(scaled.xy, -1);
+
+    gl_FragColor = textureCube(texCube, cubecoord);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    const std::array<GLColor, 4> kData = {GLColor::red, GLColor::green, GLColor::blue,
+                                          GLColor::yellow};
+
+    GLTexture source;
+    glBindTexture(GL_TEXTURE_2D, source);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, kData.data());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    for (uint32_t face = 0; face < 6; ++face)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGB9_E5, 2, 2, 0, GL_RGB,
+                     GL_FLOAT, nullptr);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    const int w = getWindowWidth();
+    const int h = getWindowHeight();
+    glViewport(0, 0, w, h);
+
+    for (uint32_t face = 0; face < 6; ++face)
+    {
+        glCopySubTextureCHROMIUM(source, 0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, texture, 0, 0, 0,
+                                 0, 0, 2, 2, false, false, false);
+
+        // The faces aren't sampled in the orientation the data is uploaded in, adjust for that.
+        std::array<GLColor, 4> expect = kData;
+        switch (face)
+        {
+            case 0:
+                std::swap(expect[1], expect[2]);
+                break;
+            case 1:
+                expect[0] = kData[1];
+                expect[1] = kData[3];
+                expect[2] = kData[0];
+                expect[3] = kData[2];
+                break;
+            case 2:
+                expect[0] = kData[3];
+                expect[1] = kData[2];
+                expect[2] = kData[1];
+                expect[3] = kData[0];
+                break;
+            case 3:
+            case 4:
+                std::swap(expect[0], expect[1]);
+                std::swap(expect[2], expect[3]);
+                break;
+            case 5:
+                break;
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glUniform1i(glGetUniformLocation(program, "cubeFace"), face);
+        drawQuad(program, "position", 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(w / 4, h / 4, expect[0]);
+        EXPECT_PIXEL_COLOR_EQ(3 * w / 4, h / 4, expect[1]);
+        EXPECT_PIXEL_COLOR_EQ(w / 4, 3 * h / 4, expect[2]);
+        EXPECT_PIXEL_COLOR_EQ(3 * w / 4, 3 * h / 4, expect[3]);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(CopyTextureTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_6(CopyTextureVariationsTest,
                                  CopyTextureVariationsTestPrint,

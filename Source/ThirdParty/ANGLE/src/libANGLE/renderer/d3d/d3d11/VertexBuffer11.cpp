@@ -43,6 +43,7 @@ angle::Result VertexBuffer11::initialize(const gl::Context *context,
                                          bool dynamicUsage)
 {
     mBuffer.reset();
+    mBufferSize = 0;
     updateSerial();
 
     if (size > 0)
@@ -143,7 +144,9 @@ angle::Result VertexBuffer11::storeVertexAttributes(const gl::Context *context,
     angle::CheckedNumeric<size_t> checkedSpaceRequired = count;
     checkedSpaceRequired *= elementSize;
     checkedSpaceRequired += offset;
-    ASSERT(checkedSpaceRequired.IsValid() && checkedSpaceRequired.ValueOrDie() <= mBufferSize);
+    ANGLE_CHECK_GL_ALLOC(
+        GetImplAs<Context11>(context),
+        checkedSpaceRequired.IsValid() && checkedSpaceRequired.ValueOrDie() <= mBufferSize);
 
     vertexFormatInfo.copyFunction(input, inputStride, count, output);
 

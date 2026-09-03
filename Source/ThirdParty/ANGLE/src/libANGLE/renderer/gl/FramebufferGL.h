@@ -28,7 +28,11 @@ class StateManagerGL;
 class FramebufferGL : public FramebufferImpl
 {
   public:
-    FramebufferGL(const gl::FramebufferState &data, GLuint id, bool emulatedAlpha);
+    FramebufferGL(const gl::FramebufferState &data,
+                  GLuint id,
+                  bool emulatedAlpha,
+                  const FunctionsGL *functions,
+                  StateManagerGL *stateManager);
     ~FramebufferGL() override;
 
     void destroy(const gl::Context *context) override;
@@ -83,6 +87,8 @@ class FramebufferGL : public FramebufferImpl
 
     // The GL back-end requires a full sync state before we call checkStatus.
     bool shouldSyncStateBeforeCheckStatus() const override;
+
+    angle::Result onAttachmentLayerCountChange(gl::FramebufferAttachment *attachment) override;
 
     gl::FramebufferStatus checkStatus(const gl::Context *context) const override;
 
@@ -152,6 +158,8 @@ class FramebufferGL : public FramebufferImpl
     GLuint mFramebufferID;
     bool mHasEmulatedAlphaAttachment;
     gl::DrawBufferMask mAppliedEnabledDrawBuffers;
+    const FunctionsGL *mFunctions;
+    StateManagerGL *mStateManager;
 };
 
 bool IsEmulatedAlphaChannelTextureAttachment(const gl::FramebufferAttachment *attachment);

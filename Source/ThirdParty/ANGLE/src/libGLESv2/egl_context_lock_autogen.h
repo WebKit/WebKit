@@ -17,56 +17,45 @@ namespace egl
 {
 
 // EGL 1.0
-ScopedContextMutexLock GetContextLock_ChooseConfig(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CopyBuffers(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_ChooseConfig(Thread *thread);
+ScopedContextMutexLock GetContextLock_CopyBuffers(Thread *thread);
 ScopedContextMutexLock GetContextLock_CreateContext(Thread *thread,
-                                                    egl::Display *dpyPacked,
+                                                    const egl::Display *validDisplay,
                                                     gl::ContextID share_contextPacked);
-ScopedContextMutexLock GetContextLock_CreatePbufferSurface(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CreatePixmapSurface(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CreateWindowSurface(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_DestroyContext(Thread *thread,
-                                                     egl::Display *dpyPacked,
-                                                     gl::ContextID ctxPacked);
-ScopedContextMutexLock GetContextLock_DestroySurface(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetConfigAttrib(Thread *thread,
-                                                      egl::Display *dpyPacked,
-                                                      EGLint attribute);
-ScopedContextMutexLock GetContextLock_GetConfigs(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CreatePbufferSurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_CreatePixmapSurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_CreateWindowSurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_DestroyContext(Thread *thread, gl::ContextID ctxPacked);
+ScopedContextMutexLock GetContextLock_DestroySurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetConfigAttrib(Thread *thread, EGLint attribute);
+ScopedContextMutexLock GetContextLock_GetConfigs(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetCurrentDisplay(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetCurrentSurface(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetDisplay(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetError(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetProcAddress(Thread *thread);
-ScopedContextMutexLock GetContextLock_Initialize(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_MakeCurrent(Thread *thread,
-                                                  egl::Display *dpyPacked,
-                                                  gl::ContextID ctxPacked);
+ScopedContextMutexLock GetContextLock_Initialize(Thread *thread);
+ScopedContextMutexLock GetContextLock_MakeCurrent(Thread *thread, gl::ContextID ctxPacked);
 ScopedContextMutexLock GetContextLock_QueryContext(Thread *thread,
-                                                   egl::Display *dpyPacked,
+                                                   const egl::Display *validDisplay,
                                                    gl::ContextID ctxPacked,
                                                    EGLint attribute);
-ScopedContextMutexLock GetContextLock_QueryString(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_QuerySurface(Thread *thread,
-                                                   egl::Display *dpyPacked,
-                                                   EGLint attribute);
-ScopedContextMutexLock GetContextLock_SwapBuffers(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_Terminate(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_QueryString(Thread *thread);
+ScopedContextMutexLock GetContextLock_QuerySurface(Thread *thread, EGLint attribute);
+ScopedContextMutexLock GetContextLock_SwapBuffers(Thread *thread);
+ScopedContextMutexLock GetContextLock_Terminate(Thread *thread);
 ScopedContextMutexLock GetContextLock_WaitGL(Thread *thread);
 ScopedContextMutexLock GetContextLock_WaitNative(Thread *thread);
 
 // EGL 1.1
-ScopedContextMutexLock GetContextLock_BindTexImage(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ReleaseTexImage(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_SurfaceAttrib(Thread *thread,
-                                                    egl::Display *dpyPacked,
-                                                    EGLint attribute);
-ScopedContextMutexLock GetContextLock_SwapInterval(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_BindTexImage(Thread *thread);
+ScopedContextMutexLock GetContextLock_ReleaseTexImage(Thread *thread);
+ScopedContextMutexLock GetContextLock_SurfaceAttrib(Thread *thread, EGLint attribute);
+ScopedContextMutexLock GetContextLock_SwapInterval(Thread *thread);
 
 // EGL 1.2
 ScopedContextMutexLock GetContextLock_BindAPI(Thread *thread);
-ScopedContextMutexLock GetContextLock_CreatePbufferFromClientBuffer(Thread *thread,
-                                                                    egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CreatePbufferFromClientBuffer(Thread *thread);
 ScopedContextMutexLock GetContextLock_QueryAPI(Thread *thread);
 ScopedContextMutexLock GetContextLock_ReleaseThread(Thread *thread);
 ScopedContextMutexLock GetContextLock_WaitClient(Thread *thread);
@@ -75,229 +64,169 @@ ScopedContextMutexLock GetContextLock_WaitClient(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetCurrentContext(Thread *thread);
 
 // EGL 1.5
-ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread,
-                                                     egl::Display *dpyPacked,
-                                                     EGLint flags);
+ScopedContextMutexLock GetContextLock_ClientWaitSync(Thread *thread, EGLint flags);
 ScopedContextMutexLock GetContextLock_CreateImage(Thread *thread,
-                                                  egl::Display *dpyPacked,
+                                                  const egl::Display *validDisplay,
                                                   gl::ContextID ctxPacked);
-ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurface(Thread *thread,
-                                                                  egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurface(Thread *thread,
-                                                                  egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CreateSync(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_DestroyImage(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_DestroySync(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurface(Thread *thread);
+ScopedContextMutexLock GetContextLock_CreateSync(Thread *thread);
+ScopedContextMutexLock GetContextLock_DestroyImage(Thread *thread);
+ScopedContextMutexLock GetContextLock_DestroySync(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetPlatformDisplay(Thread *thread);
-ScopedContextMutexLock GetContextLock_GetSyncAttrib(Thread *thread,
-                                                    egl::Display *dpyPacked,
-                                                    EGLint attribute);
-ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread,
-                                               egl::Display *dpyPacked,
-                                               EGLint flags);
+ScopedContextMutexLock GetContextLock_GetSyncAttrib(Thread *thread, EGLint attribute);
+ScopedContextMutexLock GetContextLock_WaitSync(Thread *thread, EGLint flags);
 
 // EGL_ANDROID_blob_cache
-ScopedContextMutexLock GetContextLock_SetBlobCacheFuncsANDROID(Thread *thread,
-                                                               egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_SetBlobCacheFuncsANDROID(Thread *thread);
 
 // EGL_ANDROID_create_native_client_buffer
 ScopedContextMutexLock GetContextLock_CreateNativeClientBufferANDROID(Thread *thread);
 
 // EGL_ANDROID_get_frame_timestamps
-ScopedContextMutexLock GetContextLock_GetCompositorTimingSupportedANDROID(Thread *thread,
-                                                                          egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetCompositorTimingANDROID(Thread *thread,
-                                                                 egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetNextFrameIdANDROID(Thread *thread,
-                                                            egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetFrameTimestampSupportedANDROID(Thread *thread,
-                                                                        egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetFrameTimestampsANDROID(Thread *thread,
-                                                                egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_GetCompositorTimingSupportedANDROID(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetCompositorTimingANDROID(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetNextFrameIdANDROID(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetFrameTimestampSupportedANDROID(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetFrameTimestampsANDROID(Thread *thread);
 
 // EGL_ANDROID_get_native_client_buffer
 ScopedContextMutexLock GetContextLock_GetNativeClientBufferANDROID(Thread *thread);
 
 // EGL_ANDROID_native_fence_sync
-ScopedContextMutexLock GetContextLock_DupNativeFenceFDANDROID(Thread *thread,
-                                                              egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_DupNativeFenceFDANDROID(Thread *thread);
 
 // EGL_ANDROID_presentation_time
-ScopedContextMutexLock GetContextLock_PresentationTimeANDROID(Thread *thread,
-                                                              egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_PresentationTimeANDROID(Thread *thread);
 
 // EGL_ANGLE_device_creation
 ScopedContextMutexLock GetContextLock_CreateDeviceANGLE(Thread *thread);
 ScopedContextMutexLock GetContextLock_ReleaseDeviceANGLE(Thread *thread);
 
 // EGL_ANGLE_device_vulkan
-ScopedContextMutexLock GetContextLock_LockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_UnlockVulkanQueueANGLE(Thread *thread,
-                                                             egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_LockVulkanQueueANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_UnlockVulkanQueueANGLE(Thread *thread);
 
 // EGL_ANGLE_external_context_and_surface
-ScopedContextMutexLock GetContextLock_AcquireExternalContextANGLE(Thread *thread,
-                                                                  egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ReleaseExternalContextANGLE(Thread *thread,
-                                                                  egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_AcquireExternalContextANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_ReleaseExternalContextANGLE(Thread *thread);
 
 // EGL_ANGLE_feature_control
-ScopedContextMutexLock GetContextLock_QueryStringiANGLE(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_QueryDisplayAttribANGLE(Thread *thread,
-                                                              egl::Display *dpyPacked,
-                                                              EGLint attribute);
+ScopedContextMutexLock GetContextLock_QueryStringiANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_QueryDisplayAttribANGLE(Thread *thread, EGLint attribute);
 
 // EGL_ANGLE_metal_shared_event_sync
-ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thread *thread,
-                                                                egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CopyMetalSharedEventANGLE(Thread *thread);
 
 // EGL_ANGLE_no_error
 ScopedContextMutexLock GetContextLock_SetValidationEnabledANGLE(Thread *thread);
 
 // EGL_ANGLE_power_preference
 ScopedContextMutexLock GetContextLock_ReleaseHighPowerGPUANGLE(Thread *thread,
-                                                               egl::Display *dpyPacked,
+                                                               const egl::Display *validDisplay,
                                                                gl::ContextID ctxPacked);
 ScopedContextMutexLock GetContextLock_ReacquireHighPowerGPUANGLE(Thread *thread,
-                                                                 egl::Display *dpyPacked,
+                                                                 const egl::Display *validDisplay,
                                                                  gl::ContextID ctxPacked);
-ScopedContextMutexLock GetContextLock_HandleGPUSwitchANGLE(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ForceGPUSwitchANGLE(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_HandleGPUSwitchANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_ForceGPUSwitchANGLE(Thread *thread);
 
 // EGL_ANGLE_prepare_swap_buffers
-ScopedContextMutexLock GetContextLock_PrepareSwapBuffersANGLE(Thread *thread,
-                                                              egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_PrepareSwapBuffersANGLE(Thread *thread);
 
 // EGL_ANGLE_program_cache_control
-ScopedContextMutexLock GetContextLock_ProgramCacheGetAttribANGLE(Thread *thread,
-                                                                 egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ProgramCacheQueryANGLE(Thread *thread,
-                                                             egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ProgramCachePopulateANGLE(Thread *thread,
-                                                                egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_ProgramCacheResizeANGLE(Thread *thread,
-                                                              egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_ProgramCacheGetAttribANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_ProgramCacheQueryANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_ProgramCachePopulateANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_ProgramCacheResizeANGLE(Thread *thread);
 
 // EGL_ANGLE_query_surface_pointer
-ScopedContextMutexLock GetContextLock_QuerySurfacePointerANGLE(Thread *thread,
-                                                               egl::Display *dpyPacked,
-                                                               EGLint attribute);
+ScopedContextMutexLock GetContextLock_QuerySurfacePointerANGLE(Thread *thread, EGLint attribute);
 
 // EGL_ANGLE_stream_producer_d3d_texture
-ScopedContextMutexLock GetContextLock_CreateStreamProducerD3DTextureANGLE(Thread *thread,
-                                                                          egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_StreamPostD3DTextureANGLE(Thread *thread,
-                                                                egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CreateStreamProducerD3DTextureANGLE(Thread *thread);
+ScopedContextMutexLock GetContextLock_StreamPostD3DTextureANGLE(Thread *thread);
 
 // EGL_ANGLE_sync_control_rate
-ScopedContextMutexLock GetContextLock_GetMscRateANGLE(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_GetMscRateANGLE(Thread *thread);
 
 // EGL_ANGLE_vulkan_image
-ScopedContextMutexLock GetContextLock_ExportVkImageANGLE(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_ExportVkImageANGLE(Thread *thread);
 
 // EGL_ANGLE_wait_until_work_scheduled
-ScopedContextMutexLock GetContextLock_WaitUntilWorkScheduledANGLE(Thread *thread,
-                                                                  egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_WaitUntilWorkScheduledANGLE(Thread *thread);
 
 // EGL_CHROMIUM_sync_control
-ScopedContextMutexLock GetContextLock_GetSyncValuesCHROMIUM(Thread *thread,
-                                                            egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_GetSyncValuesCHROMIUM(Thread *thread);
 
 // EGL_EXT_device_query
 ScopedContextMutexLock GetContextLock_QueryDeviceAttribEXT(Thread *thread, EGLint attribute);
 ScopedContextMutexLock GetContextLock_QueryDeviceStringEXT(Thread *thread);
-ScopedContextMutexLock GetContextLock_QueryDisplayAttribEXT(Thread *thread,
-                                                            egl::Display *dpyPacked,
-                                                            EGLint attribute);
+ScopedContextMutexLock GetContextLock_QueryDisplayAttribEXT(Thread *thread, EGLint attribute);
 
 // EGL_EXT_image_dma_buf_import_modifiers
-ScopedContextMutexLock GetContextLock_QueryDmaBufFormatsEXT(Thread *thread,
-                                                            egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_QueryDmaBufModifiersEXT(Thread *thread,
-                                                              egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_QueryDmaBufFormatsEXT(Thread *thread);
+ScopedContextMutexLock GetContextLock_QueryDmaBufModifiersEXT(Thread *thread);
 
 // EGL_EXT_platform_base
-ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurfaceEXT(Thread *thread,
-                                                                     egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurfaceEXT(Thread *thread,
-                                                                     egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_CreatePlatformPixmapSurfaceEXT(Thread *thread);
+ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurfaceEXT(Thread *thread);
 ScopedContextMutexLock GetContextLock_GetPlatformDisplayEXT(Thread *thread);
 
 // EGL_EXT_surface_compression
-ScopedContextMutexLock GetContextLock_QuerySupportedCompressionRatesEXT(Thread *thread,
-                                                                        egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_QuerySupportedCompressionRatesEXT(Thread *thread);
 
 // EGL_KHR_debug
 ScopedContextMutexLock GetContextLock_DebugMessageControlKHR(Thread *thread);
-ScopedContextMutexLock GetContextLock_LabelObjectKHR(Thread *thread, egl::Display *displayPacked);
+ScopedContextMutexLock GetContextLock_LabelObjectKHR(Thread *thread);
 ScopedContextMutexLock GetContextLock_QueryDebugKHR(Thread *thread, EGLint attribute);
 
 // EGL_KHR_fence_sync
-ScopedContextMutexLock GetContextLock_ClientWaitSyncKHR(Thread *thread,
-                                                        egl::Display *dpyPacked,
-                                                        EGLint flags);
-ScopedContextMutexLock GetContextLock_CreateSyncKHR(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_DestroySyncKHR(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_GetSyncAttribKHR(Thread *thread,
-                                                       egl::Display *dpyPacked,
-                                                       EGLint attribute);
+ScopedContextMutexLock GetContextLock_ClientWaitSyncKHR(Thread *thread, EGLint flags);
+ScopedContextMutexLock GetContextLock_CreateSyncKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_DestroySyncKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_GetSyncAttribKHR(Thread *thread, EGLint attribute);
 
 // EGL_KHR_image
 ScopedContextMutexLock GetContextLock_CreateImageKHR(Thread *thread,
-                                                     egl::Display *dpyPacked,
+                                                     const egl::Display *validDisplay,
                                                      gl::ContextID ctxPacked);
-ScopedContextMutexLock GetContextLock_DestroyImageKHR(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_DestroyImageKHR(Thread *thread);
 
 // EGL_KHR_lock_surface3
-ScopedContextMutexLock GetContextLock_LockSurfaceKHR(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_QuerySurface64KHR(Thread *thread,
-                                                        egl::Display *dpyPacked,
-                                                        EGLint attribute);
-ScopedContextMutexLock GetContextLock_UnlockSurfaceKHR(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_LockSurfaceKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_QuerySurface64KHR(Thread *thread, EGLint attribute);
+ScopedContextMutexLock GetContextLock_UnlockSurfaceKHR(Thread *thread);
 
 // EGL_KHR_partial_update
-ScopedContextMutexLock GetContextLock_SetDamageRegionKHR(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_SetDamageRegionKHR(Thread *thread);
 
 // EGL_KHR_reusable_sync
-ScopedContextMutexLock GetContextLock_SignalSyncKHR(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_SignalSyncKHR(Thread *thread);
 
 // EGL_KHR_stream
-ScopedContextMutexLock GetContextLock_CreateStreamKHR(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_DestroyStreamKHR(Thread *thread, egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_QueryStreamKHR(Thread *thread,
-                                                     egl::Display *dpyPacked,
-                                                     EGLenum attribute);
-ScopedContextMutexLock GetContextLock_QueryStreamu64KHR(Thread *thread,
-                                                        egl::Display *dpyPacked,
-                                                        EGLenum attribute);
-ScopedContextMutexLock GetContextLock_StreamAttribKHR(Thread *thread,
-                                                      egl::Display *dpyPacked,
-                                                      EGLenum attribute);
+ScopedContextMutexLock GetContextLock_CreateStreamKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_DestroyStreamKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_QueryStreamKHR(Thread *thread, EGLenum attribute);
+ScopedContextMutexLock GetContextLock_QueryStreamu64KHR(Thread *thread, EGLenum attribute);
+ScopedContextMutexLock GetContextLock_StreamAttribKHR(Thread *thread, EGLenum attribute);
 
 // EGL_KHR_stream_consumer_gltexture
-ScopedContextMutexLock GetContextLock_StreamConsumerAcquireKHR(Thread *thread,
-                                                               egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_StreamConsumerGLTextureExternalKHR(Thread *thread,
-                                                                         egl::Display *dpyPacked);
-ScopedContextMutexLock GetContextLock_StreamConsumerReleaseKHR(Thread *thread,
-                                                               egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_StreamConsumerAcquireKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_StreamConsumerGLTextureExternalKHR(Thread *thread);
+ScopedContextMutexLock GetContextLock_StreamConsumerReleaseKHR(Thread *thread);
 
 // EGL_KHR_swap_buffers_with_damage
-ScopedContextMutexLock GetContextLock_SwapBuffersWithDamageKHR(Thread *thread,
-                                                               egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_SwapBuffersWithDamageKHR(Thread *thread);
 
 // EGL_KHR_wait_sync
-ScopedContextMutexLock GetContextLock_WaitSyncKHR(Thread *thread,
-                                                  egl::Display *dpyPacked,
-                                                  EGLint flags);
+ScopedContextMutexLock GetContextLock_WaitSyncKHR(Thread *thread, EGLint flags);
 
 // EGL_NV_post_sub_buffer
-ScopedContextMutexLock GetContextLock_PostSubBufferNV(Thread *thread, egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_PostSubBufferNV(Thread *thread);
 
 // EGL_NV_stream_consumer_gltexture_yuv
-ScopedContextMutexLock GetContextLock_StreamConsumerGLTextureExternalAttribsNV(
-    Thread *thread,
-    egl::Display *dpyPacked);
+ScopedContextMutexLock GetContextLock_StreamConsumerGLTextureExternalAttribsNV(Thread *thread);
 }  // namespace egl
 
 #endif  // LIBGLESV2_EGL_CONTEXT_LOCK_AUTOGEN_H_

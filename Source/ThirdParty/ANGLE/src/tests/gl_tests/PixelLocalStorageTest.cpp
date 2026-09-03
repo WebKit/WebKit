@@ -8819,7 +8819,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageWebGLValidationTe
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageValidationTest,
                        WithRobustness(ES31_NULL()).enable(Feature::EmulatePixelLocalStorage));
 ANGLE_INSTANTIATE_TEST(PixelLocalStorageWebGLValidationTest,
-                       WithRobustness(ES31_NULL()).enable(Feature::EmulatePixelLocalStorage));
+                       WithRobustness(ES3_NULL()).enable(Feature::EmulatePixelLocalStorage));
 
 class PixelLocalStorageCompilerTest : public ANGLETest<>
 {

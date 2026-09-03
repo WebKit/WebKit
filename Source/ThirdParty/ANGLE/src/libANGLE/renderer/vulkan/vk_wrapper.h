@@ -13,6 +13,7 @@
 
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/renderer/vulkan/vk_api_perf_counters.h"
 #include "libANGLE/renderer/vulkan/vk_mem_alloc_wrapper.h"
 #include "libANGLE/trace.h"
 
@@ -756,7 +757,7 @@ ANGLE_INLINE void CommandPool::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyCommandPool(device, mHandle, nullptr);
+        VK_CALL(vkDestroyCommandPool, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -764,7 +765,7 @@ ANGLE_INLINE void CommandPool::destroy(VkDevice device)
 ANGLE_INLINE VkResult CommandPool::reset(VkDevice device, VkCommandPoolResetFlags flags)
 {
     ASSERT(valid());
-    return vkResetCommandPool(device, mHandle, flags);
+    return VK_CALL(vkResetCommandPool, device, mHandle, flags);
 }
 
 ANGLE_INLINE void CommandPool::freeCommandBuffers(VkDevice device,
@@ -772,13 +773,13 @@ ANGLE_INLINE void CommandPool::freeCommandBuffers(VkDevice device,
                                                   const VkCommandBuffer *commandBuffers)
 {
     ASSERT(valid());
-    vkFreeCommandBuffers(device, mHandle, commandBufferCount, commandBuffers);
+    VK_CALL(vkFreeCommandBuffers, device, mHandle, commandBufferCount, commandBuffers);
 }
 
 ANGLE_INLINE VkResult CommandPool::init(VkDevice device, const VkCommandPoolCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateCommandPool(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateCommandPool, device, &createInfo, nullptr, &mHandle);
 }
 
 namespace priv
@@ -796,7 +797,7 @@ ANGLE_INLINE VkResult CommandBuffer::init(VkDevice device,
                                           const VkCommandBufferAllocateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkAllocateCommandBuffers(device, &createInfo, &mHandle);
+    return VK_CALL(vkAllocateCommandBuffers, device, &createInfo, &mHandle);
 }
 
 ANGLE_INLINE void CommandBuffer::blitImage(const Image &srcImage,
@@ -809,32 +810,32 @@ ANGLE_INLINE void CommandBuffer::blitImage(const Image &srcImage,
 {
     ASSERT(valid() && srcImage.valid() && dstImage.valid());
     ASSERT(regionCount == 1);
-    vkCmdBlitImage(mHandle, srcImage.getHandle(), srcImageLayout, dstImage.getHandle(),
-                   dstImageLayout, 1, regions, filter);
+    VK_SECONDARY_CMD_CALL(vkCmdBlitImage(mHandle, srcImage.getHandle(), srcImageLayout,
+                                         dstImage.getHandle(), dstImageLayout, 1, regions, filter));
 }
 
 ANGLE_INLINE VkResult CommandBuffer::begin(const VkCommandBufferBeginInfo &info)
 {
     ASSERT(valid());
-    return vkBeginCommandBuffer(mHandle, &info);
+    return VK_CALL(vkBeginCommandBuffer, mHandle, &info);
 }
 
 ANGLE_INLINE VkResult CommandBuffer::end()
 {
     ASSERT(valid());
-    return vkEndCommandBuffer(mHandle);
+    return VK_CALL(vkEndCommandBuffer, mHandle);
 }
 
 ANGLE_INLINE VkResult CommandBuffer::reset()
 {
     ASSERT(valid());
-    return vkResetCommandBuffer(mHandle, 0);
+    return VK_CALL(vkResetCommandBuffer, mHandle, 0);
 }
 
 ANGLE_INLINE void CommandBuffer::nextSubpass(VkSubpassContents subpassContents)
 {
     ASSERT(valid());
-    vkCmdNextSubpass(mHandle, subpassContents);
+    VK_CALL(vkCmdNextSubpass, mHandle, subpassContents);
 }
 
 ANGLE_INLINE void CommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask,
@@ -842,8 +843,8 @@ ANGLE_INLINE void CommandBuffer::memoryBarrier(VkPipelineStageFlags srcStageMask
                                                const VkMemoryBarrier &memoryBarrier)
 {
     ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 1, &memoryBarrier, 0, nullptr, 0,
-                         nullptr);
+    VK_CALL(vkCmdPipelineBarrier, mHandle, srcStageMask, dstStageMask, 0, 1, &memoryBarrier, 0,
+            nullptr, 0, nullptr);
 }
 
 ANGLE_INLINE void CommandBuffer::memoryBarrier2(const VkMemoryBarrier2 &memoryBarrier2)
@@ -857,7 +858,7 @@ ANGLE_INLINE void CommandBuffer::memoryBarrier2(const VkMemoryBarrier2 &memoryBa
     pDependencyInfo.pBufferMemoryBarriers    = nullptr;
     pDependencyInfo.imageMemoryBarrierCount  = 0;
     pDependencyInfo.pImageMemoryBarriers     = nullptr;
-    vkCmdPipelineBarrier2KHR(mHandle, &pDependencyInfo);
+    VK_CALL(vkCmdPipelineBarrier2KHR, mHandle, &pDependencyInfo);
 }
 
 ANGLE_INLINE void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMask,
@@ -871,9 +872,9 @@ ANGLE_INLINE void CommandBuffer::pipelineBarrier(VkPipelineStageFlags srcStageMa
                                                  const VkImageMemoryBarrier *imageMemoryBarriers)
 {
     ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, dependencyFlags, memoryBarrierCount,
-                         memoryBarriers, bufferMemoryBarrierCount, bufferMemoryBarriers,
-                         imageMemoryBarrierCount, imageMemoryBarriers);
+    VK_CALL(vkCmdPipelineBarrier, mHandle, srcStageMask, dstStageMask, dependencyFlags,
+            memoryBarrierCount, memoryBarriers, bufferMemoryBarrierCount, bufferMemoryBarriers,
+            imageMemoryBarrierCount, imageMemoryBarriers);
 }
 
 ANGLE_INLINE void CommandBuffer::pipelineBarrier2(
@@ -896,7 +897,7 @@ ANGLE_INLINE void CommandBuffer::pipelineBarrier2(
     dependencyInfo.pBufferMemoryBarriers    = bufferMemoryBarriers2;
     dependencyInfo.imageMemoryBarrierCount  = imageMemoryBarrierCount;
     dependencyInfo.pImageMemoryBarriers     = imageMemoryBarriers2;
-    vkCmdPipelineBarrier2KHR(mHandle, &dependencyInfo);
+    VK_CALL(vkCmdPipelineBarrier2KHR, mHandle, &dependencyInfo);
 }
 
 ANGLE_INLINE void CommandBuffer::imageBarrier(VkPipelineStageFlags srcStageMask,
@@ -904,8 +905,8 @@ ANGLE_INLINE void CommandBuffer::imageBarrier(VkPipelineStageFlags srcStageMask,
                                               const VkImageMemoryBarrier &imageMemoryBarrier)
 {
     ASSERT(valid());
-    vkCmdPipelineBarrier(mHandle, srcStageMask, dstStageMask, 0, 0, nullptr, 0, nullptr, 1,
-                         &imageMemoryBarrier);
+    VK_CALL(vkCmdPipelineBarrier, mHandle, srcStageMask, dstStageMask, 0, 0, nullptr, 0, nullptr, 1,
+            &imageMemoryBarrier);
 }
 
 ANGLE_INLINE void CommandBuffer::imageBarrier2(const VkImageMemoryBarrier2 &imageMemoryBarrier2)
@@ -920,7 +921,7 @@ ANGLE_INLINE void CommandBuffer::imageBarrier2(const VkImageMemoryBarrier2 &imag
     pDependencyInfo.pBufferMemoryBarriers    = nullptr;
     pDependencyInfo.imageMemoryBarrierCount  = 1;
     pDependencyInfo.pImageMemoryBarriers     = &imageMemoryBarrier2;
-    vkCmdPipelineBarrier2KHR(mHandle, &pDependencyInfo);
+    VK_CALL(vkCmdPipelineBarrier2KHR, mHandle, &pDependencyInfo);
 }
 
 ANGLE_INLINE void CommandBuffer::imageWaitEvent(const VkEvent &event,
@@ -929,8 +930,8 @@ ANGLE_INLINE void CommandBuffer::imageWaitEvent(const VkEvent &event,
                                                 const VkImageMemoryBarrier &imageMemoryBarrier)
 {
     ASSERT(valid());
-    vkCmdWaitEvents(mHandle, 1, &event, srcStageMask, dstStageMask, 0, nullptr, 0, nullptr, 1,
-                    &imageMemoryBarrier);
+    VK_CALL(vkCmdWaitEvents, mHandle, 1, &event, srcStageMask, dstStageMask, 0, nullptr, 0, nullptr,
+            1, &imageMemoryBarrier);
 }
 
 ANGLE_INLINE void CommandBuffer::destroy(VkDevice device)
@@ -945,7 +946,7 @@ ANGLE_INLINE void CommandBuffer::destroy(VkDevice device, const vk::CommandPool 
     if (valid())
     {
         ASSERT(commandPool.valid());
-        vkFreeCommandBuffers(device, commandPool.getHandle(), 1, &mHandle);
+        VK_CALL(vkFreeCommandBuffers, device, commandPool.getHandle(), 1, &mHandle);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -956,7 +957,8 @@ ANGLE_INLINE void CommandBuffer::copyBuffer(const Buffer &srcBuffer,
                                             const VkBufferCopy *regions)
 {
     ASSERT(valid() && srcBuffer.valid() && destBuffer.valid());
-    vkCmdCopyBuffer(mHandle, srcBuffer.getHandle(), destBuffer.getHandle(), regionCount, regions);
+    VK_CALL(vkCmdCopyBuffer, mHandle, srcBuffer.getHandle(), destBuffer.getHandle(), regionCount,
+            regions);
 }
 
 ANGLE_INLINE void CommandBuffer::copyBufferToImage(VkBuffer srcBuffer,
@@ -968,7 +970,8 @@ ANGLE_INLINE void CommandBuffer::copyBufferToImage(VkBuffer srcBuffer,
     ASSERT(valid() && dstImage.valid());
     ASSERT(srcBuffer != VK_NULL_HANDLE);
     ASSERT(regionCount == 1);
-    vkCmdCopyBufferToImage(mHandle, srcBuffer, dstImage.getHandle(), dstImageLayout, 1, regions);
+    VK_CALL(vkCmdCopyBufferToImage, mHandle, srcBuffer, dstImage.getHandle(), dstImageLayout, 1,
+            regions);
 }
 
 ANGLE_INLINE void CommandBuffer::copyImageToBuffer(const Image &srcImage,
@@ -980,7 +983,8 @@ ANGLE_INLINE void CommandBuffer::copyImageToBuffer(const Image &srcImage,
     ASSERT(valid() && srcImage.valid());
     ASSERT(dstBuffer != VK_NULL_HANDLE);
     ASSERT(regionCount == 1);
-    vkCmdCopyImageToBuffer(mHandle, srcImage.getHandle(), srcImageLayout, dstBuffer, 1, regions);
+    VK_CALL(vkCmdCopyImageToBuffer, mHandle, srcImage.getHandle(), srcImageLayout, dstBuffer, 1,
+            regions);
 }
 
 ANGLE_INLINE void CommandBuffer::clearColorImage(const Image &image,
@@ -991,7 +995,7 @@ ANGLE_INLINE void CommandBuffer::clearColorImage(const Image &image,
 {
     ASSERT(valid());
     ASSERT(rangeCount == 1);
-    vkCmdClearColorImage(mHandle, image.getHandle(), imageLayout, &color, 1, ranges);
+    VK_CALL(vkCmdClearColorImage, mHandle, image.getHandle(), imageLayout, &color, 1, ranges);
 }
 
 ANGLE_INLINE void CommandBuffer::clearDepthStencilImage(
@@ -1003,7 +1007,8 @@ ANGLE_INLINE void CommandBuffer::clearDepthStencilImage(
 {
     ASSERT(valid());
     ASSERT(rangeCount == 1);
-    vkCmdClearDepthStencilImage(mHandle, image.getHandle(), imageLayout, &depthStencil, 1, ranges);
+    VK_CALL(vkCmdClearDepthStencilImage, mHandle, image.getHandle(), imageLayout, &depthStencil, 1,
+            ranges);
 }
 
 ANGLE_INLINE void CommandBuffer::clearAttachments(uint32_t attachmentCount,
@@ -1012,7 +1017,8 @@ ANGLE_INLINE void CommandBuffer::clearAttachments(uint32_t attachmentCount,
                                                   const VkClearRect *rects)
 {
     ASSERT(valid());
-    vkCmdClearAttachments(mHandle, attachmentCount, attachments, rectCount, rects);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdClearAttachments(mHandle, attachmentCount, attachments, rectCount, rects));
 }
 
 ANGLE_INLINE void CommandBuffer::copyImage(const Image &srcImage,
@@ -1024,33 +1030,33 @@ ANGLE_INLINE void CommandBuffer::copyImage(const Image &srcImage,
 {
     ASSERT(valid() && srcImage.valid() && dstImage.valid());
     ASSERT(regionCount == 1);
-    vkCmdCopyImage(mHandle, srcImage.getHandle(), srcImageLayout, dstImage.getHandle(),
-                   dstImageLayout, 1, regions);
+    VK_SECONDARY_CMD_CALL(vkCmdCopyImage(mHandle, srcImage.getHandle(), srcImageLayout,
+                                         dstImage.getHandle(), dstImageLayout, 1, regions));
 }
 
 ANGLE_INLINE void CommandBuffer::beginRenderPass(const VkRenderPassBeginInfo &beginInfo,
                                                  VkSubpassContents subpassContents)
 {
     ASSERT(valid());
-    vkCmdBeginRenderPass(mHandle, &beginInfo, subpassContents);
+    VK_CALL(vkCmdBeginRenderPass, mHandle, &beginInfo, subpassContents);
 }
 
 ANGLE_INLINE void CommandBuffer::beginRendering(const VkRenderingInfo &beginInfo)
 {
     ASSERT(valid());
-    vkCmdBeginRenderingKHR(mHandle, &beginInfo);
+    VK_CALL(vkCmdBeginRenderingKHR, mHandle, &beginInfo);
 }
 
 ANGLE_INLINE void CommandBuffer::endRenderPass()
 {
     ASSERT(valid());
-    vkCmdEndRenderPass(mHandle);
+    VK_CALL(vkCmdEndRenderPass, mHandle);
 }
 
 ANGLE_INLINE void CommandBuffer::endRendering()
 {
     ASSERT(valid());
-    vkCmdEndRenderingKHR(mHandle);
+    VK_CALL(vkCmdEndRenderingKHR, mHandle);
 }
 
 ANGLE_INLINE void CommandBuffer::bindIndexBuffer(const Buffer &buffer,
@@ -1058,7 +1064,7 @@ ANGLE_INLINE void CommandBuffer::bindIndexBuffer(const Buffer &buffer,
                                                  VkIndexType indexType)
 {
     ASSERT(valid());
-    vkCmdBindIndexBuffer(mHandle, buffer.getHandle(), offset, indexType);
+    VK_SECONDARY_CMD_CALL(vkCmdBindIndexBuffer(mHandle, buffer.getHandle(), offset, indexType));
 }
 
 ANGLE_INLINE void CommandBuffer::bindIndexBuffer2(const Buffer &buffer,
@@ -1067,7 +1073,8 @@ ANGLE_INLINE void CommandBuffer::bindIndexBuffer2(const Buffer &buffer,
                                                   VkIndexType indexType)
 {
     ASSERT(valid());
-    vkCmdBindIndexBuffer2KHR(mHandle, buffer.getHandle(), offset, size, indexType);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdBindIndexBuffer2KHR(mHandle, buffer.getHandle(), offset, size, indexType));
 }
 
 ANGLE_INLINE void CommandBuffer::bindDescriptorSets(const PipelineLayout &layout,
@@ -1079,16 +1086,17 @@ ANGLE_INLINE void CommandBuffer::bindDescriptorSets(const PipelineLayout &layout
                                                     const uint32_t *dynamicOffsets)
 {
     ASSERT(valid() && layout.valid());
-    vkCmdBindDescriptorSets(this->mHandle, pipelineBindPoint, layout.getHandle(),
-                            ToUnderlying(firstSet), descriptorSetCount, descriptorSets,
-                            dynamicOffsetCount, dynamicOffsets);
+    VK_SECONDARY_CMD_CALL(vkCmdBindDescriptorSets(
+        this->mHandle, pipelineBindPoint, layout.getHandle(), ToUnderlying(firstSet),
+        descriptorSetCount, descriptorSets, dynamicOffsetCount, dynamicOffsets));
 }
 
 ANGLE_INLINE void CommandBuffer::executeCommands(uint32_t commandBufferCount,
                                                  const CommandBuffer *commandBuffers)
 {
     ASSERT(valid());
-    vkCmdExecuteCommands(mHandle, commandBufferCount, commandBuffers[0].ptr());
+    VK_SECONDARY_CMD_CALL(
+        vkCmdExecuteCommands(mHandle, commandBufferCount, commandBuffers[0].ptr()));
 }
 
 ANGLE_INLINE void CommandBuffer::getMemoryUsageStats(size_t *usedMemoryOut,
@@ -1105,7 +1113,7 @@ ANGLE_INLINE void CommandBuffer::fillBuffer(const Buffer &dstBuffer,
                                             uint32_t data)
 {
     ASSERT(valid());
-    vkCmdFillBuffer(mHandle, dstBuffer.getHandle(), dstOffset, size, data);
+    VK_SECONDARY_CMD_CALL(vkCmdFillBuffer(mHandle, dstBuffer.getHandle(), dstOffset, size, data));
 }
 
 ANGLE_INLINE void CommandBuffer::pushConstants(const PipelineLayout &layout,
@@ -1115,19 +1123,19 @@ ANGLE_INLINE void CommandBuffer::pushConstants(const PipelineLayout &layout,
                                                const void *data)
 {
     ASSERT(valid() && layout.valid());
-    vkCmdPushConstants(mHandle, layout.getHandle(), flag, offset, size, data);
+    VK_CALL(vkCmdPushConstants, mHandle, layout.getHandle(), flag, offset, size, data);
 }
 
 ANGLE_INLINE void CommandBuffer::setBlendConstants(const float blendConstants[4])
 {
     ASSERT(valid());
-    vkCmdSetBlendConstants(mHandle, blendConstants);
+    VK_SECONDARY_CMD_CALL(vkCmdSetBlendConstants(mHandle, blendConstants));
 }
 
 ANGLE_INLINE void CommandBuffer::setCullMode(VkCullModeFlags cullMode)
 {
     ASSERT(valid());
-    vkCmdSetCullModeEXT(mHandle, cullMode);
+    VK_SECONDARY_CMD_CALL(vkCmdSetCullModeEXT(mHandle, cullMode));
 }
 
 ANGLE_INLINE void CommandBuffer::setDepthBias(float depthBiasConstantFactor,
@@ -1135,94 +1143,95 @@ ANGLE_INLINE void CommandBuffer::setDepthBias(float depthBiasConstantFactor,
                                               float depthBiasSlopeFactor)
 {
     ASSERT(valid());
-    vkCmdSetDepthBias(mHandle, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdSetDepthBias(mHandle, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor));
 }
 
 ANGLE_INLINE void CommandBuffer::setDepthBiasEnable(VkBool32 depthBiasEnable)
 {
     ASSERT(valid());
-    vkCmdSetDepthBiasEnableEXT(mHandle, depthBiasEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetDepthBiasEnableEXT(mHandle, depthBiasEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setDepthCompareOp(VkCompareOp depthCompareOp)
 {
     ASSERT(valid());
-    vkCmdSetDepthCompareOpEXT(mHandle, depthCompareOp);
+    VK_SECONDARY_CMD_CALL(vkCmdSetDepthCompareOpEXT(mHandle, depthCompareOp));
 }
 
 ANGLE_INLINE void CommandBuffer::setDepthTestEnable(VkBool32 depthTestEnable)
 {
     ASSERT(valid());
-    vkCmdSetDepthTestEnableEXT(mHandle, depthTestEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetDepthTestEnableEXT(mHandle, depthTestEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setDepthWriteEnable(VkBool32 depthWriteEnable)
 {
     ASSERT(valid());
-    vkCmdSetDepthWriteEnableEXT(mHandle, depthWriteEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetDepthWriteEnableEXT(mHandle, depthWriteEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setEvent(VkEvent event, VkPipelineStageFlags stageMask)
 {
     ASSERT(valid() && event != VK_NULL_HANDLE);
-    vkCmdSetEvent(mHandle, event, stageMask);
+    VK_CALL(vkCmdSetEvent, mHandle, event, stageMask);
 }
 
 ANGLE_INLINE void CommandBuffer::setFragmentShadingRate(const VkExtent2D *fragmentSize,
                                                         VkFragmentShadingRateCombinerOpKHR ops[2])
 {
     ASSERT(valid() && fragmentSize != nullptr);
-    vkCmdSetFragmentShadingRateKHR(mHandle, fragmentSize, ops);
+    VK_SECONDARY_CMD_CALL(vkCmdSetFragmentShadingRateKHR(mHandle, fragmentSize, ops));
 }
 
 ANGLE_INLINE void CommandBuffer::setFrontFace(VkFrontFace frontFace)
 {
     ASSERT(valid());
-    vkCmdSetFrontFaceEXT(mHandle, frontFace);
+    VK_SECONDARY_CMD_CALL(vkCmdSetFrontFaceEXT(mHandle, frontFace));
 }
 
 ANGLE_INLINE void CommandBuffer::setLineWidth(float lineWidth)
 {
     ASSERT(valid());
-    vkCmdSetLineWidth(mHandle, lineWidth);
+    VK_SECONDARY_CMD_CALL(vkCmdSetLineWidth(mHandle, lineWidth));
 }
 
 ANGLE_INLINE void CommandBuffer::setLogicOp(VkLogicOp logicOp)
 {
     ASSERT(valid());
-    vkCmdSetLogicOpEXT(mHandle, logicOp);
+    VK_SECONDARY_CMD_CALL(vkCmdSetLogicOpEXT(mHandle, logicOp));
 }
 
 ANGLE_INLINE void CommandBuffer::setPrimitiveRestartEnable(VkBool32 primitiveRestartEnable)
 {
     ASSERT(valid());
-    vkCmdSetPrimitiveRestartEnableEXT(mHandle, primitiveRestartEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetPrimitiveRestartEnableEXT(mHandle, primitiveRestartEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setPrimitiveTopology(VkPrimitiveTopology primitiveTopology)
 {
     ASSERT(valid());
-    vkCmdSetPrimitiveTopologyEXT(mHandle, primitiveTopology);
+    VK_SECONDARY_CMD_CALL(vkCmdSetPrimitiveTopologyEXT(mHandle, primitiveTopology));
 }
 
 ANGLE_INLINE void CommandBuffer::setRasterizerDiscardEnable(VkBool32 rasterizerDiscardEnable)
 {
     ASSERT(valid());
-    vkCmdSetRasterizerDiscardEnableEXT(mHandle, rasterizerDiscardEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetRasterizerDiscardEnableEXT(mHandle, rasterizerDiscardEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setRenderingAttachmentLocations(
     const VkRenderingAttachmentLocationInfoKHR *info)
 {
     ASSERT(valid());
-    vkCmdSetRenderingAttachmentLocationsKHR(mHandle, info);
+    VK_CALL(vkCmdSetRenderingAttachmentLocationsKHR, mHandle, info);
 }
 
 ANGLE_INLINE void CommandBuffer::setRenderingInputAttachmentIndicates(
     const VkRenderingInputAttachmentIndexInfoKHR *info)
 {
     ASSERT(valid());
-    vkCmdSetRenderingInputAttachmentIndicesKHR(mHandle, info);
+    VK_CALL(vkCmdSetRenderingInputAttachmentIndicesKHR, mHandle, info);
 }
 
 ANGLE_INLINE void CommandBuffer::setScissor(uint32_t firstScissor,
@@ -1230,15 +1239,16 @@ ANGLE_INLINE void CommandBuffer::setScissor(uint32_t firstScissor,
                                             const VkRect2D *scissors)
 {
     ASSERT(valid() && scissors != nullptr);
-    vkCmdSetScissor(mHandle, firstScissor, scissorCount, scissors);
+    VK_SECONDARY_CMD_CALL(vkCmdSetScissor(mHandle, firstScissor, scissorCount, scissors));
 }
 
 ANGLE_INLINE void CommandBuffer::setStencilCompareMask(uint32_t compareFrontMask,
                                                        uint32_t compareBackMask)
 {
     ASSERT(valid());
-    vkCmdSetStencilCompareMask(mHandle, VK_STENCIL_FACE_FRONT_BIT, compareFrontMask);
-    vkCmdSetStencilCompareMask(mHandle, VK_STENCIL_FACE_BACK_BIT, compareBackMask);
+    VK_SECONDARY_CMD_CALL(
+        (vkCmdSetStencilCompareMask(mHandle, VK_STENCIL_FACE_FRONT_BIT, compareFrontMask),
+         vkCmdSetStencilCompareMask(mHandle, VK_STENCIL_FACE_BACK_BIT, compareBackMask)));
 }
 
 ANGLE_INLINE void CommandBuffer::setStencilOp(VkStencilFaceFlags faceMask,
@@ -1248,29 +1258,32 @@ ANGLE_INLINE void CommandBuffer::setStencilOp(VkStencilFaceFlags faceMask,
                                               VkCompareOp compareOp)
 {
     ASSERT(valid());
-    vkCmdSetStencilOpEXT(mHandle, faceMask, failOp, passOp, depthFailOp, compareOp);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdSetStencilOpEXT(mHandle, faceMask, failOp, passOp, depthFailOp, compareOp));
 }
 
 ANGLE_INLINE void CommandBuffer::setStencilReference(uint32_t frontReference,
                                                      uint32_t backReference)
 {
     ASSERT(valid());
-    vkCmdSetStencilReference(mHandle, VK_STENCIL_FACE_FRONT_BIT, frontReference);
-    vkCmdSetStencilReference(mHandle, VK_STENCIL_FACE_BACK_BIT, backReference);
+    VK_SECONDARY_CMD_CALL(
+        (vkCmdSetStencilReference(mHandle, VK_STENCIL_FACE_FRONT_BIT, frontReference),
+         vkCmdSetStencilReference(mHandle, VK_STENCIL_FACE_BACK_BIT, backReference)));
 }
 
 ANGLE_INLINE void CommandBuffer::setStencilTestEnable(VkBool32 stencilTestEnable)
 {
     ASSERT(valid());
-    vkCmdSetStencilTestEnableEXT(mHandle, stencilTestEnable);
+    VK_SECONDARY_CMD_CALL(vkCmdSetStencilTestEnableEXT(mHandle, stencilTestEnable));
 }
 
 ANGLE_INLINE void CommandBuffer::setStencilWriteMask(uint32_t writeFrontMask,
                                                      uint32_t writeBackMask)
 {
     ASSERT(valid());
-    vkCmdSetStencilWriteMask(mHandle, VK_STENCIL_FACE_FRONT_BIT, writeFrontMask);
-    vkCmdSetStencilWriteMask(mHandle, VK_STENCIL_FACE_BACK_BIT, writeBackMask);
+    VK_SECONDARY_CMD_CALL(
+        (vkCmdSetStencilWriteMask(mHandle, VK_STENCIL_FACE_FRONT_BIT, writeFrontMask),
+         vkCmdSetStencilWriteMask(mHandle, VK_STENCIL_FACE_BACK_BIT, writeBackMask)));
 }
 
 ANGLE_INLINE void CommandBuffer::setVertexInput(
@@ -1280,8 +1293,9 @@ ANGLE_INLINE void CommandBuffer::setVertexInput(
     const VkVertexInputAttributeDescription2EXT *VertexAttributeDescriptions)
 {
     ASSERT(valid());
-    vkCmdSetVertexInputEXT(mHandle, vertexBindingDescriptionCount, VertexBindingDescriptions,
-                           vertexAttributeDescriptionCount, VertexAttributeDescriptions);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdSetVertexInputEXT(mHandle, vertexBindingDescriptionCount, VertexBindingDescriptions,
+                               vertexAttributeDescriptionCount, VertexAttributeDescriptions));
 }
 
 ANGLE_INLINE void CommandBuffer::setViewport(uint32_t firstViewport,
@@ -1289,13 +1303,13 @@ ANGLE_INLINE void CommandBuffer::setViewport(uint32_t firstViewport,
                                              const VkViewport *viewports)
 {
     ASSERT(valid() && viewports != nullptr);
-    vkCmdSetViewport(mHandle, firstViewport, viewportCount, viewports);
+    VK_SECONDARY_CMD_CALL(vkCmdSetViewport(mHandle, firstViewport, viewportCount, viewports));
 }
 
 ANGLE_INLINE void CommandBuffer::resetEvent(VkEvent event, VkPipelineStageFlags stageMask)
 {
     ASSERT(valid() && event != VK_NULL_HANDLE);
-    vkCmdResetEvent(mHandle, event, stageMask);
+    VK_CALL(vkCmdResetEvent, mHandle, event, stageMask);
 }
 
 ANGLE_INLINE void CommandBuffer::waitEvents(uint32_t eventCount,
@@ -1310,9 +1324,9 @@ ANGLE_INLINE void CommandBuffer::waitEvents(uint32_t eventCount,
                                             const VkImageMemoryBarrier *imageMemoryBarriers)
 {
     ASSERT(valid());
-    vkCmdWaitEvents(mHandle, eventCount, events, srcStageMask, dstStageMask, memoryBarrierCount,
-                    memoryBarriers, bufferMemoryBarrierCount, bufferMemoryBarriers,
-                    imageMemoryBarrierCount, imageMemoryBarriers);
+    VK_CALL(vkCmdWaitEvents, mHandle, eventCount, events, srcStageMask, dstStageMask,
+            memoryBarrierCount, memoryBarriers, bufferMemoryBarrierCount, bufferMemoryBarriers,
+            imageMemoryBarrierCount, imageMemoryBarriers);
 }
 
 ANGLE_INLINE void CommandBuffer::resetQueryPool(const QueryPool &queryPool,
@@ -1320,7 +1334,7 @@ ANGLE_INLINE void CommandBuffer::resetQueryPool(const QueryPool &queryPool,
                                                 uint32_t queryCount)
 {
     ASSERT(valid() && queryPool.valid());
-    vkCmdResetQueryPool(mHandle, queryPool.getHandle(), firstQuery, queryCount);
+    VK_CALL(vkCmdResetQueryPool, mHandle, queryPool.getHandle(), firstQuery, queryCount);
 }
 
 ANGLE_INLINE void CommandBuffer::resolveImage(const Image &srcImage,
@@ -1331,8 +1345,9 @@ ANGLE_INLINE void CommandBuffer::resolveImage(const Image &srcImage,
                                               const VkImageResolve *regions)
 {
     ASSERT(valid() && srcImage.valid() && dstImage.valid());
-    vkCmdResolveImage(mHandle, srcImage.getHandle(), srcImageLayout, dstImage.getHandle(),
-                      dstImageLayout, regionCount, regions);
+    VK_SECONDARY_CMD_CALL(vkCmdResolveImage(mHandle, srcImage.getHandle(), srcImageLayout,
+                                            dstImage.getHandle(), dstImageLayout, regionCount,
+                                            regions));
 }
 
 ANGLE_INLINE void CommandBuffer::beginQuery(const QueryPool &queryPool,
@@ -1340,13 +1355,13 @@ ANGLE_INLINE void CommandBuffer::beginQuery(const QueryPool &queryPool,
                                             VkQueryControlFlags flags)
 {
     ASSERT(valid() && queryPool.valid());
-    vkCmdBeginQuery(mHandle, queryPool.getHandle(), query, flags);
+    VK_SECONDARY_CMD_CALL(vkCmdBeginQuery(mHandle, queryPool.getHandle(), query, flags));
 }
 
 ANGLE_INLINE void CommandBuffer::endQuery(const QueryPool &queryPool, uint32_t query)
 {
     ASSERT(valid() && queryPool.valid());
-    vkCmdEndQuery(mHandle, queryPool.getHandle(), query);
+    VK_SECONDARY_CMD_CALL(vkCmdEndQuery(mHandle, queryPool.getHandle(), query));
 }
 
 ANGLE_INLINE void CommandBuffer::writeTimestamp(VkPipelineStageFlagBits pipelineStage,
@@ -1354,7 +1369,7 @@ ANGLE_INLINE void CommandBuffer::writeTimestamp(VkPipelineStageFlagBits pipeline
                                                 uint32_t query)
 {
     ASSERT(valid());
-    vkCmdWriteTimestamp(mHandle, pipelineStage, queryPool.getHandle(), query);
+    VK_CALL(vkCmdWriteTimestamp, mHandle, pipelineStage, queryPool.getHandle(), query);
 }
 
 ANGLE_INLINE void CommandBuffer::writeTimestamp2(VkPipelineStageFlagBits2 pipelineStage,
@@ -1362,7 +1377,8 @@ ANGLE_INLINE void CommandBuffer::writeTimestamp2(VkPipelineStageFlagBits2 pipeli
                                                  uint32_t query)
 {
     ASSERT(valid());
-    vkCmdWriteTimestamp2KHR(mHandle, pipelineStage, queryPool.getHandle(), query);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdWriteTimestamp2KHR(mHandle, pipelineStage, queryPool.getHandle(), query));
 }
 
 ANGLE_INLINE void CommandBuffer::draw(uint32_t vertexCount,
@@ -1371,7 +1387,8 @@ ANGLE_INLINE void CommandBuffer::draw(uint32_t vertexCount,
                                       uint32_t firstInstance)
 {
     ASSERT(valid());
-    vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance));
 }
 
 ANGLE_INLINE void CommandBuffer::drawIndexed(uint32_t indexCount,
@@ -1381,7 +1398,8 @@ ANGLE_INLINE void CommandBuffer::drawIndexed(uint32_t indexCount,
                                              uint32_t firstInstance)
 {
     ASSERT(valid());
-    vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+    VK_SECONDARY_CMD_CALL(vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex,
+                                           vertexOffset, firstInstance));
 }
 
 ANGLE_INLINE void CommandBuffer::drawIndexedIndirect(const Buffer &buffer,
@@ -1390,7 +1408,8 @@ ANGLE_INLINE void CommandBuffer::drawIndexedIndirect(const Buffer &buffer,
                                                      uint32_t stride)
 {
     ASSERT(valid());
-    vkCmdDrawIndexedIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdDrawIndexedIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride));
 }
 
 ANGLE_INLINE void CommandBuffer::drawIndirect(const Buffer &buffer,
@@ -1399,7 +1418,8 @@ ANGLE_INLINE void CommandBuffer::drawIndirect(const Buffer &buffer,
                                               uint32_t stride)
 {
     ASSERT(valid());
-    vkCmdDrawIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdDrawIndirect(mHandle, buffer.getHandle(), offset, drawCount, stride));
 }
 
 ANGLE_INLINE void CommandBuffer::dispatch(uint32_t groupCountX,
@@ -1407,32 +1427,34 @@ ANGLE_INLINE void CommandBuffer::dispatch(uint32_t groupCountX,
                                           uint32_t groupCountZ)
 {
     ASSERT(valid());
-    vkCmdDispatch(mHandle, groupCountX, groupCountY, groupCountZ);
+    VK_SECONDARY_CMD_CALL(vkCmdDispatch(mHandle, groupCountX, groupCountY, groupCountZ));
 }
 
 ANGLE_INLINE void CommandBuffer::dispatchIndirect(const Buffer &buffer, VkDeviceSize offset)
 {
     ASSERT(valid());
-    vkCmdDispatchIndirect(mHandle, buffer.getHandle(), offset);
+    VK_SECONDARY_CMD_CALL(vkCmdDispatchIndirect(mHandle, buffer.getHandle(), offset));
 }
 
 ANGLE_INLINE void CommandBuffer::bindPipeline(VkPipelineBindPoint pipelineBindPoint,
                                               const Pipeline &pipeline)
 {
     ASSERT(valid() && pipeline.valid());
-    vkCmdBindPipeline(mHandle, pipelineBindPoint, pipeline.getHandle());
+    VK_SECONDARY_CMD_CALL(vkCmdBindPipeline(mHandle, pipelineBindPoint, pipeline.getHandle()));
 }
 
 ANGLE_INLINE void CommandBuffer::bindGraphicsPipeline(const Pipeline &pipeline)
 {
     ASSERT(valid() && pipeline.valid());
-    vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getHandle());
+    VK_SECONDARY_CMD_CALL(
+        vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.getHandle()));
 }
 
 ANGLE_INLINE void CommandBuffer::bindComputePipeline(const Pipeline &pipeline)
 {
     ASSERT(valid() && pipeline.valid());
-    vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.getHandle());
+    VK_SECONDARY_CMD_CALL(
+        vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.getHandle()));
 }
 
 ANGLE_INLINE void CommandBuffer::bindVertexBuffers(uint32_t firstBinding,
@@ -1441,7 +1463,8 @@ ANGLE_INLINE void CommandBuffer::bindVertexBuffers(uint32_t firstBinding,
                                                    const VkDeviceSize *offsets)
 {
     ASSERT(valid());
-    vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, buffers, offsets);
+    VK_SECONDARY_CMD_CALL(
+        vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, buffers, offsets));
 }
 
 ANGLE_INLINE void CommandBuffer::bindVertexBuffers2(uint32_t firstBinding,
@@ -1452,8 +1475,8 @@ ANGLE_INLINE void CommandBuffer::bindVertexBuffers2(uint32_t firstBinding,
                                                     const VkDeviceSize *strides)
 {
     ASSERT(valid());
-    vkCmdBindVertexBuffers2EXT(mHandle, firstBinding, bindingCount, buffers, offsets, sizes,
-                               strides);
+    VK_SECONDARY_CMD_CALL(vkCmdBindVertexBuffers2EXT(mHandle, firstBinding, bindingCount, buffers,
+                                                     offsets, sizes, strides));
 }
 
 ANGLE_INLINE void CommandBuffer::bindVertexBuffers2NoSize(uint32_t firstBinding,
@@ -1488,7 +1511,7 @@ ANGLE_INLINE void CommandBuffer::bindTileMemory(const DeviceMemory &tileMemory)
     ASSERT(tileMemory.valid());
     const VkTileMemoryBindInfoQCOM tileMemoryBindInfo = {
         VK_STRUCTURE_TYPE_TILE_MEMORY_BIND_INFO_QCOM, nullptr, tileMemory.getHandle()};
-    vkCmdBindTileMemoryQCOM(mHandle, &tileMemoryBindInfo);
+    VK_SECONDARY_CMD_CALL(vkCmdBindTileMemoryQCOM(mHandle, &tileMemoryBindInfo));
 }
 
 ANGLE_INLINE void CommandBuffer::beginTransformFeedback(uint32_t firstCounterBuffer,
@@ -1498,8 +1521,8 @@ ANGLE_INLINE void CommandBuffer::beginTransformFeedback(uint32_t firstCounterBuf
 {
     ASSERT(valid());
     ASSERT(vkCmdBeginTransformFeedbackEXT);
-    vkCmdBeginTransformFeedbackEXT(mHandle, firstCounterBuffer, counterBufferCount, counterBuffers,
-                                   counterBufferOffsets);
+    VK_SECONDARY_CMD_CALL(vkCmdBeginTransformFeedbackEXT(
+        mHandle, firstCounterBuffer, counterBufferCount, counterBuffers, counterBufferOffsets));
 }
 
 ANGLE_INLINE void CommandBuffer::endTransformFeedback(uint32_t firstCounterBuffer,
@@ -1509,8 +1532,8 @@ ANGLE_INLINE void CommandBuffer::endTransformFeedback(uint32_t firstCounterBuffe
 {
     ASSERT(valid());
     ASSERT(vkCmdEndTransformFeedbackEXT);
-    vkCmdEndTransformFeedbackEXT(mHandle, firstCounterBuffer, counterBufferCount, counterBuffers,
-                                 counterBufferOffsets);
+    VK_SECONDARY_CMD_CALL(vkCmdEndTransformFeedbackEXT(
+        mHandle, firstCounterBuffer, counterBufferCount, counterBuffers, counterBufferOffsets));
 }
 
 ANGLE_INLINE void CommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBinding,
@@ -1521,8 +1544,8 @@ ANGLE_INLINE void CommandBuffer::bindTransformFeedbackBuffers(uint32_t firstBind
 {
     ASSERT(valid());
     ASSERT(vkCmdBindTransformFeedbackBuffersEXT);
-    vkCmdBindTransformFeedbackBuffersEXT(mHandle, firstBinding, bindingCount, buffers, offsets,
-                                         sizes);
+    VK_SECONDARY_CMD_CALL(vkCmdBindTransformFeedbackBuffersEXT(mHandle, firstBinding, bindingCount,
+                                                               buffers, offsets, sizes));
 }
 
 ANGLE_INLINE void CommandBuffer::beginDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &labelInfo)
@@ -1536,7 +1559,7 @@ ANGLE_INLINE void CommandBuffer::beginDebugUtilsLabelEXT(const VkDebugUtilsLabel
         using rx::vkCmdBeginDebugUtilsLabelEXT;
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
         ASSERT(vkCmdBeginDebugUtilsLabelEXT);
-        vkCmdBeginDebugUtilsLabelEXT(mHandle, &labelInfo);
+        VK_SECONDARY_CMD_CALL(vkCmdBeginDebugUtilsLabelEXT(mHandle, &labelInfo));
     }
 }
 
@@ -1544,14 +1567,14 @@ ANGLE_INLINE void CommandBuffer::endDebugUtilsLabelEXT()
 {
     ASSERT(valid());
     ASSERT(vkCmdEndDebugUtilsLabelEXT);
-    vkCmdEndDebugUtilsLabelEXT(mHandle);
+    VK_SECONDARY_CMD_CALL(vkCmdEndDebugUtilsLabelEXT(mHandle));
 }
 
 ANGLE_INLINE void CommandBuffer::insertDebugUtilsLabelEXT(const VkDebugUtilsLabelEXT &labelInfo)
 {
     ASSERT(valid());
     ASSERT(vkCmdInsertDebugUtilsLabelEXT);
-    vkCmdInsertDebugUtilsLabelEXT(mHandle, &labelInfo);
+    VK_CALL(vkCmdInsertDebugUtilsLabelEXT, mHandle, &labelInfo);
 }
 }  // namespace priv
 
@@ -1570,7 +1593,7 @@ ANGLE_INLINE void Image::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyImage(device, mHandle, nullptr);
+        VK_CALL(vkDestroyImage, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1578,14 +1601,14 @@ ANGLE_INLINE void Image::destroy(VkDevice device)
 ANGLE_INLINE VkResult Image::init(VkDevice device, const VkImageCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateImage(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateImage, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE void Image::getMemoryRequirements(VkDevice device,
                                                VkMemoryRequirements *requirementsOut) const
 {
     ASSERT(valid());
-    vkGetImageMemoryRequirements(device, mHandle, requirementsOut);
+    VK_CALL(vkGetImageMemoryRequirements, device, mHandle, requirementsOut);
 }
 
 ANGLE_INLINE void Image::getMemoryRequirements2(VkDevice device,
@@ -1593,19 +1616,19 @@ ANGLE_INLINE void Image::getMemoryRequirements2(VkDevice device,
                                                 VkMemoryRequirements2 *requirements2Out) const
 {
     ASSERT(valid());
-    vkGetImageMemoryRequirements2(device, &info, requirements2Out);
+    VK_CALL(vkGetImageMemoryRequirements2, device, &info, requirements2Out);
 }
 
 ANGLE_INLINE VkResult Image::bindMemory(VkDevice device, const vk::DeviceMemory &deviceMemory)
 {
     ASSERT(valid() && deviceMemory.valid());
-    return vkBindImageMemory(device, mHandle, deviceMemory.getHandle(), 0);
+    return VK_CALL(vkBindImageMemory, device, mHandle, deviceMemory.getHandle(), 0);
 }
 
 ANGLE_INLINE VkResult Image::bindMemory2(VkDevice device, const VkBindImageMemoryInfoKHR &bindInfo)
 {
     ASSERT(valid());
-    return vkBindImageMemory2(device, 1, &bindInfo);
+    return VK_CALL(vkBindImageMemory2, device, 1, &bindInfo);
 }
 
 ANGLE_INLINE void Image::getSubresourceLayout(VkDevice device,
@@ -1619,7 +1642,7 @@ ANGLE_INLINE void Image::getSubresourceLayout(VkDevice device,
     subresource.mipLevel           = mipLevel;
     subresource.arrayLayer         = arrayLayer;
 
-    vkGetImageSubresourceLayout(device, getHandle(), &subresource, outSubresourceLayout);
+    VK_CALL(vkGetImageSubresourceLayout, device, getHandle(), &subresource, outSubresourceLayout);
 }
 
 // ImageView implementation.
@@ -1627,14 +1650,14 @@ ANGLE_INLINE void ImageView::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyImageView(device, mHandle, nullptr);
+        VK_CALL(vkDestroyImageView, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
 
 ANGLE_INLINE VkResult ImageView::init(VkDevice device, const VkImageViewCreateInfo &createInfo)
 {
-    return vkCreateImageView(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateImageView, device, &createInfo, nullptr, &mHandle);
 }
 
 // Semaphore implementation.
@@ -1642,7 +1665,7 @@ ANGLE_INLINE void Semaphore::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroySemaphore(device, mHandle, nullptr);
+        VK_CALL(vkDestroySemaphore, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1665,14 +1688,14 @@ ANGLE_INLINE VkResult Semaphore::init(VkDevice device, VkSemaphoreType semaphore
         semaphoreInfo.pNext = &semaphoreTypeInfo;
     }
 
-    return vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateSemaphore, device, &semaphoreInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Semaphore::importFd(VkDevice device,
                                           const VkImportSemaphoreFdInfoKHR &importFdInfo) const
 {
     ASSERT(valid());
-    return vkImportSemaphoreFdKHR(device, &importFdInfo);
+    return VK_CALL(vkImportSemaphoreFdKHR, device, &importFdInfo);
 }
 
 // Framebuffer implementation.
@@ -1680,7 +1703,7 @@ ANGLE_INLINE void Framebuffer::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyFramebuffer(device, mHandle, nullptr);
+        VK_CALL(vkDestroyFramebuffer, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1688,7 +1711,7 @@ ANGLE_INLINE void Framebuffer::destroy(VkDevice device)
 ANGLE_INLINE VkResult Framebuffer::init(VkDevice device, const VkFramebufferCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateFramebuffer(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateFramebuffer, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE void Framebuffer::setHandle(VkFramebuffer handle)
@@ -1701,7 +1724,7 @@ ANGLE_INLINE void DeviceMemory::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkFreeMemory(device, mHandle, nullptr);
+        VK_CALL(vkFreeMemory, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1709,7 +1732,7 @@ ANGLE_INLINE void DeviceMemory::destroy(VkDevice device)
 ANGLE_INLINE VkResult DeviceMemory::allocate(VkDevice device, const VkMemoryAllocateInfo &allocInfo)
 {
     ASSERT(!valid());
-    return vkAllocateMemory(device, &allocInfo, nullptr, &mHandle);
+    return VK_CALL(vkAllocateMemory, device, &allocInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult DeviceMemory::map(VkDevice device,
@@ -1719,23 +1742,24 @@ ANGLE_INLINE VkResult DeviceMemory::map(VkDevice device,
                                         uint8_t **mapPointer) const
 {
     ASSERT(valid());
-    return vkMapMemory(device, mHandle, offset, size, flags, reinterpret_cast<void **>(mapPointer));
+    return VK_CALL(vkMapMemory, device, mHandle, offset, size, flags,
+                   reinterpret_cast<void **>(mapPointer));
 }
 
 ANGLE_INLINE void DeviceMemory::unmap(VkDevice device) const
 {
     ASSERT(valid());
-    vkUnmapMemory(device, mHandle);
+    VK_CALL(vkUnmapMemory, device, mHandle);
 }
 
 ANGLE_INLINE void DeviceMemory::flush(VkDevice device, VkMappedMemoryRange &memRange)
 {
-    vkFlushMappedMemoryRanges(device, 1, &memRange);
+    VK_CALL(vkFlushMappedMemoryRanges, device, 1, &memRange);
 }
 
 ANGLE_INLINE void DeviceMemory::invalidate(VkDevice device, VkMappedMemoryRange &memRange)
 {
-    vkInvalidateMappedMemoryRanges(device, 1, &memRange);
+    VK_CALL(vkInvalidateMappedMemoryRanges, device, 1, &memRange);
 }
 
 // Allocator implementation.
@@ -1850,7 +1874,7 @@ ANGLE_INLINE void RenderPass::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyRenderPass(device, mHandle, nullptr);
+        VK_CALL(vkDestroyRenderPass, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1858,13 +1882,13 @@ ANGLE_INLINE void RenderPass::destroy(VkDevice device)
 ANGLE_INLINE VkResult RenderPass::init(VkDevice device, const VkRenderPassCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateRenderPass(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateRenderPass, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult RenderPass::init2(VkDevice device, const VkRenderPassCreateInfo2 &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateRenderPass2KHR(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateRenderPass2KHR, device, &createInfo, nullptr, &mHandle);
 }
 
 // Buffer implementation.
@@ -1872,7 +1896,7 @@ ANGLE_INLINE void Buffer::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyBuffer(device, mHandle, nullptr);
+        VK_CALL(vkDestroyBuffer, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1880,7 +1904,7 @@ ANGLE_INLINE void Buffer::destroy(VkDevice device)
 ANGLE_INLINE VkResult Buffer::init(VkDevice device, const VkBufferCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateBuffer(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateBuffer, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Buffer::bindMemory(VkDevice device,
@@ -1888,14 +1912,14 @@ ANGLE_INLINE VkResult Buffer::bindMemory(VkDevice device,
                                          VkDeviceSize offset)
 {
     ASSERT(valid() && deviceMemory.valid());
-    return vkBindBufferMemory(device, mHandle, deviceMemory.getHandle(), offset);
+    return VK_CALL(vkBindBufferMemory, device, mHandle, deviceMemory.getHandle(), offset);
 }
 
 ANGLE_INLINE void Buffer::getMemoryRequirements(VkDevice device,
                                                 VkMemoryRequirements *memoryRequirementsOut)
 {
     ASSERT(valid());
-    vkGetBufferMemoryRequirements(device, mHandle, memoryRequirementsOut);
+    VK_CALL(vkGetBufferMemoryRequirements, device, mHandle, memoryRequirementsOut);
 }
 
 // BufferView implementation.
@@ -1903,7 +1927,7 @@ ANGLE_INLINE void BufferView::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyBufferView(device, mHandle, nullptr);
+        VK_CALL(vkDestroyBufferView, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1911,7 +1935,7 @@ ANGLE_INLINE void BufferView::destroy(VkDevice device)
 ANGLE_INLINE VkResult BufferView::init(VkDevice device, const VkBufferViewCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateBufferView(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateBufferView, device, &createInfo, nullptr, &mHandle);
 }
 
 // ShaderModule implementation.
@@ -1919,7 +1943,7 @@ ANGLE_INLINE void ShaderModule::destroy(VkDevice device)
 {
     if (mHandle != VK_NULL_HANDLE)
     {
-        vkDestroyShaderModule(device, mHandle, nullptr);
+        VK_CALL(vkDestroyShaderModule, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1928,7 +1952,7 @@ ANGLE_INLINE VkResult ShaderModule::init(VkDevice device,
                                          const VkShaderModuleCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateShaderModule(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateShaderModule, device, &createInfo, nullptr, &mHandle);
 }
 
 // PipelineLayout implementation.
@@ -1936,7 +1960,7 @@ ANGLE_INLINE void PipelineLayout::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyPipelineLayout(device, mHandle, nullptr);
+        VK_CALL(vkDestroyPipelineLayout, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1945,7 +1969,7 @@ ANGLE_INLINE VkResult PipelineLayout::init(VkDevice device,
                                            const VkPipelineLayoutCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreatePipelineLayout(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreatePipelineLayout, device, &createInfo, nullptr, &mHandle);
 }
 
 // PipelineCache implementation.
@@ -1953,7 +1977,7 @@ ANGLE_INLINE void PipelineCache::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyPipelineCache(device, mHandle, nullptr);
+        VK_CALL(vkDestroyPipelineCache, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -1964,7 +1988,7 @@ ANGLE_INLINE VkResult PipelineCache::init(VkDevice device,
     ASSERT(!valid());
     // Note: if we are concerned with memory usage of this cache, we should give it custom
     // allocators.  Also, failure of this function is of little importance.
-    return vkCreatePipelineCache(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreatePipelineCache, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult PipelineCache::merge(VkDevice device,
@@ -1972,7 +1996,7 @@ ANGLE_INLINE VkResult PipelineCache::merge(VkDevice device,
                                            const VkPipelineCache *srcCaches) const
 {
     ASSERT(valid());
-    return vkMergePipelineCaches(device, mHandle, srcCacheCount, srcCaches);
+    return VK_CALL(vkMergePipelineCaches, device, mHandle, srcCacheCount, srcCaches);
 }
 
 ANGLE_INLINE VkResult PipelineCache::getCacheData(VkDevice device,
@@ -1987,7 +2011,7 @@ ANGLE_INLINE VkResult PipelineCache::getCacheData(VkDevice device,
     // VK_INCOMPLETE in the first case is an expected output.  In the second case, VK_INCOMPLETE is
     // also acceptable and the resulting buffer will contain valid value by spec.  Angle currently
     // ensures *cacheSize to be either 0 or of enough size, therefore VK_INCOMPLETE is not expected.
-    return vkGetPipelineCacheData(device, mHandle, cacheSize, cacheData);
+    return VK_CALL(vkGetPipelineCacheData, device, mHandle, cacheSize, cacheData);
 }
 
 // Pipeline implementation.
@@ -1995,7 +2019,7 @@ ANGLE_INLINE void Pipeline::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyPipeline(device, mHandle, nullptr);
+        VK_CALL(vkDestroyPipeline, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2005,8 +2029,8 @@ ANGLE_INLINE VkResult Pipeline::initGraphics(VkDevice device,
                                              const PipelineCache &pipelineCacheVk)
 {
     ASSERT(!valid());
-    return vkCreateGraphicsPipelines(device, pipelineCacheVk.getHandle(), 1, &createInfo, nullptr,
-                                     &mHandle);
+    return VK_CALL(vkCreateGraphicsPipelines, device, pipelineCacheVk.getHandle(), 1, &createInfo,
+                   nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Pipeline::initCompute(VkDevice device,
@@ -2014,8 +2038,8 @@ ANGLE_INLINE VkResult Pipeline::initCompute(VkDevice device,
                                             const PipelineCache &pipelineCacheVk)
 {
     ASSERT(!valid());
-    return vkCreateComputePipelines(device, pipelineCacheVk.getHandle(), 1, &createInfo, nullptr,
-                                    &mHandle);
+    return VK_CALL(vkCreateComputePipelines, device, pipelineCacheVk.getHandle(), 1, &createInfo,
+                   nullptr, &mHandle);
 }
 
 // DescriptorSetLayout implementation.
@@ -2023,7 +2047,7 @@ ANGLE_INLINE void DescriptorSetLayout::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyDescriptorSetLayout(device, mHandle, nullptr);
+        VK_CALL(vkDestroyDescriptorSetLayout, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2032,7 +2056,7 @@ ANGLE_INLINE VkResult DescriptorSetLayout::init(VkDevice device,
                                                 const VkDescriptorSetLayoutCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateDescriptorSetLayout, device, &createInfo, nullptr, &mHandle);
 }
 
 // DescriptorPool implementation.
@@ -2040,7 +2064,7 @@ ANGLE_INLINE void DescriptorPool::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyDescriptorPool(device, mHandle, nullptr);
+        VK_CALL(vkDestroyDescriptorPool, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2049,7 +2073,7 @@ ANGLE_INLINE VkResult DescriptorPool::init(VkDevice device,
                                            const VkDescriptorPoolCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateDescriptorPool(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateDescriptorPool, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult
@@ -2058,7 +2082,7 @@ DescriptorPool::allocateDescriptorSets(VkDevice device,
                                        VkDescriptorSet *descriptorSetsOut)
 {
     ASSERT(valid());
-    return vkAllocateDescriptorSets(device, &allocInfo, descriptorSetsOut);
+    return VK_CALL(vkAllocateDescriptorSets, device, &allocInfo, descriptorSetsOut);
 }
 
 ANGLE_INLINE VkResult DescriptorPool::freeDescriptorSets(VkDevice device,
@@ -2067,7 +2091,7 @@ ANGLE_INLINE VkResult DescriptorPool::freeDescriptorSets(VkDevice device,
 {
     ASSERT(valid());
     ASSERT(descriptorSetCount > 0);
-    return vkFreeDescriptorSets(device, mHandle, descriptorSetCount, descriptorSets);
+    return VK_CALL(vkFreeDescriptorSets, device, mHandle, descriptorSetCount, descriptorSets);
 }
 
 // Sampler implementation.
@@ -2075,7 +2099,7 @@ ANGLE_INLINE void Sampler::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroySampler(device, mHandle, nullptr);
+        VK_CALL(vkDestroySampler, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2083,7 +2107,7 @@ ANGLE_INLINE void Sampler::destroy(VkDevice device)
 ANGLE_INLINE VkResult Sampler::init(VkDevice device, const VkSamplerCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateSampler(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateSampler, device, &createInfo, nullptr, &mHandle);
 }
 
 // SamplerYuvConversion implementation.
@@ -2091,7 +2115,7 @@ ANGLE_INLINE void SamplerYcbcrConversion::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroySamplerYcbcrConversion(device, mHandle, nullptr);
+        VK_CALL(vkDestroySamplerYcbcrConversion, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2100,7 +2124,7 @@ ANGLE_INLINE VkResult
 SamplerYcbcrConversion::init(VkDevice device, const VkSamplerYcbcrConversionCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateSamplerYcbcrConversion(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateSamplerYcbcrConversion, device, &createInfo, nullptr, &mHandle);
 }
 
 // Event implementation.
@@ -2108,7 +2132,7 @@ ANGLE_INLINE void Event::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyEvent(device, mHandle, nullptr);
+        VK_CALL(vkDestroyEvent, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2116,25 +2140,25 @@ ANGLE_INLINE void Event::destroy(VkDevice device)
 ANGLE_INLINE VkResult Event::init(VkDevice device, const VkEventCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateEvent(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateEvent, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Event::getStatus(VkDevice device) const
 {
     ASSERT(valid());
-    return vkGetEventStatus(device, mHandle);
+    return VK_CALL(vkGetEventStatus, device, mHandle);
 }
 
 ANGLE_INLINE VkResult Event::set(VkDevice device) const
 {
     ASSERT(valid());
-    return vkSetEvent(device, mHandle);
+    return VK_CALL(vkSetEvent, device, mHandle);
 }
 
 ANGLE_INLINE VkResult Event::reset(VkDevice device) const
 {
     ASSERT(valid());
-    return vkResetEvent(device, mHandle);
+    return VK_CALL(vkResetEvent, device, mHandle);
 }
 
 // Fence implementation.
@@ -2142,7 +2166,7 @@ ANGLE_INLINE void Fence::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyFence(device, mHandle, nullptr);
+        VK_CALL(vkDestroyFence, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2150,32 +2174,32 @@ ANGLE_INLINE void Fence::destroy(VkDevice device)
 ANGLE_INLINE VkResult Fence::init(VkDevice device, const VkFenceCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateFence(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateFence, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Fence::reset(VkDevice device)
 {
     ASSERT(valid());
-    return vkResetFences(device, 1, &mHandle);
+    return VK_CALL(vkResetFences, device, 1, &mHandle);
 }
 
 ANGLE_INLINE VkResult Fence::getStatus(VkDevice device) const
 {
     ASSERT(valid());
-    return vkGetFenceStatus(device, mHandle);
+    return VK_CALL(vkGetFenceStatus, device, mHandle);
 }
 
 ANGLE_INLINE VkResult Fence::wait(VkDevice device, uint64_t timeout) const
 {
     ASSERT(valid());
-    return vkWaitForFences(device, 1, &mHandle, true, timeout);
+    return VK_CALL(vkWaitForFences, device, 1, &mHandle, true, timeout);
 }
 
 ANGLE_INLINE VkResult Fence::importFd(VkDevice device,
                                       const VkImportFenceFdInfoKHR &importFenceFdInfo) const
 {
     ASSERT(valid());
-    return vkImportFenceFdKHR(device, &importFenceFdInfo);
+    return VK_CALL(vkImportFenceFdKHR, device, &importFenceFdInfo);
 }
 
 ANGLE_INLINE VkResult Fence::exportFd(VkDevice device,
@@ -2183,7 +2207,7 @@ ANGLE_INLINE VkResult Fence::exportFd(VkDevice device,
                                       int *fdOut) const
 {
     ASSERT(valid());
-    return vkGetFenceFdKHR(device, &fenceGetFdInfo, fdOut);
+    return VK_CALL(vkGetFenceFdKHR, device, &fenceGetFdInfo, fdOut);
 }
 
 // QueryPool implementation.
@@ -2191,7 +2215,7 @@ ANGLE_INLINE void QueryPool::destroy(VkDevice device)
 {
     if (valid())
     {
-        vkDestroyQueryPool(device, mHandle, nullptr);
+        VK_CALL(vkDestroyQueryPool, device, mHandle, nullptr);
         mHandle = VK_NULL_HANDLE;
     }
 }
@@ -2199,7 +2223,7 @@ ANGLE_INLINE void QueryPool::destroy(VkDevice device)
 ANGLE_INLINE VkResult QueryPool::init(VkDevice device, const VkQueryPoolCreateInfo &createInfo)
 {
     ASSERT(!valid());
-    return vkCreateQueryPool(device, &createInfo, nullptr, &mHandle);
+    return VK_CALL(vkCreateQueryPool, device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult QueryPool::getResults(VkDevice device,
@@ -2211,8 +2235,11 @@ ANGLE_INLINE VkResult QueryPool::getResults(VkDevice device,
                                             VkQueryResultFlags flags) const
 {
     ASSERT(valid());
-    return vkGetQueryPoolResults(device, mHandle, firstQuery, queryCount, dataSize, data, stride,
-                                 flags);
+    return VK_CALL_WITH_GROUP((flags & VK_QUERY_RESULT_WAIT_BIT)
+                                  ? angle::VulkanApiPerfCounterGroup::Wait
+                                  : angle::VulkanApiPerfCounterGroup::Other,
+                              vkGetQueryPoolResults(device, mHandle, firstQuery, queryCount,
+                                                    dataSize, data, stride, flags));
 }
 
 // VirtualBlock implementation.

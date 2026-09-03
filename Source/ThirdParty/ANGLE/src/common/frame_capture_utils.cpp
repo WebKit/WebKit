@@ -530,7 +530,16 @@ void WriteParamValueReplay<ParamType::TSurfaceID>(std::ostream &os,
                                                   const CallCapture &call,
                                                   egl::SurfaceID value)
 {
-    os << "gSurfaceMap2[" << value.value << "]";
+    // Real EGL surfaces will never be assigned 0 so value 0 always means EGL_NO_SURFACE.
+    // Emit that directly instead of 'gSurfaceMap2[0]' which can be indeterminate at replay time
+    if (value.value == 0)
+    {
+        os << "EGL_NO_SURFACE";
+    }
+    else
+    {
+        os << "gSurfaceMap2[" << value.value << "]";
+    }
 }
 
 template <>

@@ -578,6 +578,37 @@ TEST_P(IndexBufferOffsetTest, DrawArraysLineLoopFollowedByDrawElementsTriangle)
     EXPECT_GL_NO_ERROR();
 }
 
+// Draw with an index buffer offset while sourcing vertex data from client memory.
+TEST_P(IndexBufferOffsetTest, DrawAtOffsetWithClientSideVertexData)
+{
+    constexpr size_t kIndexCount = 6;
+    constexpr size_t kBufferSize = 1024;
+    constexpr size_t kOffset     = kBufferSize - kIndexCount * sizeof(GLushort);
+
+    const GLushort indexData[kIndexCount] = {0, 1, 2, 1, 2, 3};
+    std::vector<GLubyte> bufferData(kBufferSize, 0);
+    ANGLE_UNSAFE_TODO(memcpy(&bufferData[kOffset], indexData, sizeof(indexData)));
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, kBufferSize, bufferData.data(), GL_STATIC_DRAW);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    // Source vertex data from client memory so the backend must compute the index range.
+    const GLfloat vertices[] = {-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    glDrawElements(GL_TRIANGLES, kIndexCount, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(kOffset));
+
+    EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::red);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Uses index buffer offset and 2 drawElement calls one of the other with different counts,
 // makes sure the second drawElement call will have its data available.
 TEST_P(IndexBufferOffsetTest, DrawWithDifferentCountsSameOffset)
@@ -610,8 +641,6 @@ TEST_P(IndexBufferOffsetTest, DrawWithDifferentCountsSameOffset)
     EXPECT_GL_NO_ERROR();
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(IndexBufferOffsetTest,
-                                       ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8));
+ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(IndexBufferOffsetTest);
 
-ANGLE_INSTANTIATE_TEST_ES3_AND(IndexBufferOffsetTestES3,
-                               ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8));
+ANGLE_INSTANTIATE_TEST_ES3(IndexBufferOffsetTestES3);

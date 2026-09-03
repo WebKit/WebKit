@@ -111,8 +111,17 @@ angle::Result CLMemoryVk::map(uint8_t *&ptrOut, size_t offset)
     if (getFlags().intersects(CL_MEM_USE_HOST_PTR))
     {
         // as per spec, the returned pointer for USE_HOST_PTR will be derived from the hostptr...
-        ASSERT(mMemory.getHostPtr());
-        ptrOut = ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mMemory.getHostPtr()) + offset);
+        if (cl::Is1DImageBuffer(getType()))
+        {
+            ASSERT(mParent);
+            ASSERT(mParent->getHostPtr());
+            ptrOut = ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mParent->getHostPtr())) + offset;
+        }
+        else
+        {
+            ASSERT(mMemory.getHostPtr());
+            ptrOut = ANGLE_UNSAFE_TODO(static_cast<uint8_t *>(mMemory.getHostPtr())) + offset;
+        }
     }
     else
     {
@@ -437,7 +446,7 @@ angle::Result CLBufferVk::updateRect(UpdateRectOperation op,
                 ANGLE_UNSAFE_TODO(dataUint8Ptr + dataRect.getRowOffset(slice, row));
             uint8_t *offsetBufferPtr =
                 ANGLE_UNSAFE_TODO(bufferPtr + bufferRect.getRowOffset(slice, row));
-            size_t updateSize        = dataRect.mSize.width * dataRect.mElementSize;
+            size_t updateSize = dataRect.mSize.width * dataRect.mElementSize;
 
             switch (op)
             {

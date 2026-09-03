@@ -110,24 +110,24 @@ egl::Error DisplayVkWin32::initialize(egl::Display *display)
     VkInstance instance         = mRenderer->getInstance();
     VkPhysicalDevice physDevice = mRenderer->getPhysicalDevice();
 
-    if (vkCreateWin32SurfaceKHR(instance, &info, nullptr, &surfaceVk) != VK_SUCCESS)
+    if (VK_CALL(vkCreateWin32SurfaceKHR, instance, &info, nullptr, &surfaceVk) != VK_SUCCESS)
     {
         return egl::Error(EGL_NOT_INITIALIZED, "vkCreateWin32SurfaceKHR failed");
     }
     uint32_t surfaceFormatCount;
 
-    if (vkGetPhysicalDeviceSurfaceFormatsKHR(physDevice, surfaceVk, &surfaceFormatCount, nullptr) !=
-        VK_SUCCESS)
+    if (VK_CALL(vkGetPhysicalDeviceSurfaceFormatsKHR, physDevice, surfaceVk, &surfaceFormatCount,
+                nullptr) != VK_SUCCESS)
     {
         return egl::Error(EGL_NOT_INITIALIZED, "vkGetPhysicalDeviceSurfaceFormatsKHR failed");
     }
     mSurfaceFormats.resize(surfaceFormatCount);
-    if (vkGetPhysicalDeviceSurfaceFormatsKHR(physDevice, surfaceVk, &surfaceFormatCount,
-                                             mSurfaceFormats.data()) != VK_SUCCESS)
+    if (VK_CALL(vkGetPhysicalDeviceSurfaceFormatsKHR, physDevice, surfaceVk, &surfaceFormatCount,
+                mSurfaceFormats.data()) != VK_SUCCESS)
     {
         return egl::Error(EGL_NOT_INITIALIZED, "vkGetPhysicalDeviceSurfaceFormatsKHR (2nd) failed");
     }
-    vkDestroySurfaceKHR(instance, surfaceVk, nullptr);
+    VK_CALL(vkDestroySurfaceKHR, instance, surfaceVk, nullptr);
 
     DestroyWindow(mMockWindow);
     mMockWindow = nullptr;

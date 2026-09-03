@@ -66,6 +66,10 @@
 	path = third_party/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools
 	gclient-condition = not build_with_chromium
+[submodule "third_party/expat/src"]
+	path = third_party/expat/src
+	url = https://chromium.googlesource.com/external/github.com/libexpat/libexpat
+	gclient-condition = not build_with_chromium and host_os == "linux"
 [submodule "third_party/EGL-Registry/src"]
 	path = third_party/EGL-Registry/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
@@ -163,12 +167,12 @@
 	gclient-condition = not build_with_chromium
 [submodule "third_party/perfetto"]
 	path = third_party/perfetto
-	url = https://android.googlesource.com/platform/external/perfetto
-	gclient-condition = not build_with_chromium and checkout_angle_perfetto
+	url = https://chromium.googlesource.com/external/github.com/google/perfetto
+	gclient-condition = not build_with_chromium
 [submodule "third_party/partition_alloc"]
-    path = third_party/partition_alloc
-    url = https://chromium.googlesource.com/chromium/src/base/allocator/partition_allocator
-    gclient-condition = not build_with_chromium and checkout_angle_partition_alloc
+	path = third_party/partition_alloc
+	url = https://chromium.googlesource.com/chromium/src/base/allocator/partition_allocator
+	gclient-condition = not build_with_chromium and checkout_angle_partition_alloc
 [submodule "third_party/protobuf"]
 	path = third_party/protobuf
 	url = https://chromium.googlesource.com/chromium/src/third_party/protobuf
@@ -251,6 +255,14 @@
 	path = third_party/vulkan_memory_allocator
 	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 	gclient-condition = not build_with_chromium
+[submodule "third_party/wayland/src"]
+	path = third_party/wayland/src
+	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland
+	gclient-condition = not build_with_chromium and host_os == "linux"
+[submodule "third_party/wayland-protocols/src"]
+	path = third_party/wayland-protocols/src
+	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland-protocols
+	gclient-condition = not build_with_chromium and host_os == "linux"
 [submodule "third_party/zlib"]
 	path = third_party/zlib
 	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
@@ -299,15 +311,3 @@
 	path = tools/win
 	url = https://chromium.googlesource.com/chromium/src/tools/win
 	gclient-condition = checkout_win and not build_with_chromium
-[submodule "third_party/wayland/src"]
-	path = third_party/wayland/src
-	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland
-        gclient-condition = not build_with_chromium and host_os == "linux"
-[submodule "third_party/wayland-protocols/src"]
-	path = third_party/wayland-protocols/src
-	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland-protocols
-        gclient-condition = not build_with_chromium and host_os == "linux"
-[submodule "third_party/expat/src"]
-	path = third_party/expat/src
-	url = https://chromium.googlesource.com/external/github.com/libexpat/libexpat
-        gclient-condition = not build_with_chromium and host_os == "linux"

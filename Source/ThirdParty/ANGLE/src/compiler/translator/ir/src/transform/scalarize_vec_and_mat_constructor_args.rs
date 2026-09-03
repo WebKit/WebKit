@@ -70,12 +70,12 @@ fn construct_helper(
     if let Some(result_id) = result_id {
         traverser::add_typed_instruction(
             transforms,
-            instruction::make_with_result_id!(construct, ir_meta, result_id, type_id, args),
+            instruction::make_with_result_id!(construct, ir_meta, result_id, type_id, args, None),
         )
     } else {
         traverser::add_typed_instruction(
             transforms,
-            instruction::make!(construct, ir_meta, type_id, args),
+            instruction::make!(construct, ir_meta, type_id, args, None),
         )
     }
 }
@@ -92,7 +92,7 @@ fn flatten(
         Type::Matrix(_, column_count) => {
             // Flatten matrices column by column
             for column in 0..column_count {
-                let column = ir_meta.get_constant_uint_typed(column);
+                let column = ir_meta.get_constant_uint_typed(column, Precision::Unassigned);
                 let column_id = traverser::add_typed_instruction(
                     transforms,
                     instruction::make!(index, ir_meta, id, column),
@@ -129,11 +129,12 @@ fn cast(
     transforms: &mut Vec<traverser::Transform>,
     value: TypedId,
     to_type: TypeId,
+    preserved_precision: Precision,
 ) -> TypedId {
     if value.type_id != to_type {
         traverser::add_typed_instruction(
             transforms,
-            instruction::make!(construct, ir_meta, to_type, vec![value]),
+            instruction::make!(construct, ir_meta, to_type, vec![value], Some(preserved_precision)),
         )
     } else {
         value
@@ -146,10 +147,13 @@ fn cast_constructor_args(
     transforms: &mut Vec<traverser::Transform>,
     args: Vec<TypedId>,
     constructor_type_id: TypeId,
+    preserved_precision: Precision,
 ) -> Vec<TypedId> {
     let constructor_basic_type_id = ir_meta.get_scalar_type(constructor_type_id);
 
-    args.iter().map(|&arg| cast(ir_meta, transforms, arg, constructor_basic_type_id)).collect()
+    args.iter()
+        .map(|&arg| cast(ir_meta, transforms, arg, constructor_basic_type_id, preserved_precision))
+        .collect()
 }
 
 fn construct_vector_from_scalar(
@@ -158,8 +162,35 @@ fn construct_vector_from_scalar(
     result: TypedRegisterId,
 ) -> Vec<traverser::Transform> {
     let mut transforms = vec![];
+    // Assuming original instruction is:
+    //     r3  (int[3], mediump) = ConstructVectorFromScalar r2 (bool)
+    // This function transforms it to the following 2 new instructions:
+    //     r7  (int) = ConstructScalarFromScalar r2 (bool)
+    //     r3  (int[3]) = ConstructVectorFromMultiple (r7, r7, r7)
+    // Since r2 is a boolean type, it does not have a precision, new instruction result registers
+    // have no precision, either. This is because of the following code in instruction::construct():
+    //
+    //     Constructor precision is derived from its parameters, except for structs.
+    //     let promoted_precision = precision::construct(ir_meta, type_id, &mut args.iter().map(|id|
+    //                                                    id.precision));
+    //
+    // This is incorrect as r3 ends up losing the original precision.
+    // We need to preserve the original result precision by passing it to cast() function,
+    // so that r7 ends up with the original precision.
+    // Then, util::construct_vector_from_scalar() will correctly set the precision of r3 based on
+    // r7's precision.
+
+    // Such transformations can be observed in the IR dump when running the following tests:
+    // dEQP-GLES2.functional.shaders.conversions.scalar_to_vector.bool_to_ivec3_vertex
+    // --use-angle=webgpu
+    // dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.64 --use-angle=webgpu
+    // GLSLTest.FunctionArgumentEvalOrderIncrement/ES2_WebGPU
+
+    // Cache original result precision
+    let preserved_precision = result.precision;
     let constructor_basic_type_id = ir_meta.get_scalar_type(result.type_id);
-    let arg = cast(ir_meta, &mut transforms, arg, constructor_basic_type_id);
+    // Pass target precision into scalar cast
+    let arg = cast(ir_meta, &mut transforms, arg, constructor_basic_type_id, preserved_precision);
 
     util::construct_vector_from_scalar(
         ir_meta,
@@ -177,8 +208,13 @@ fn construct_matrix_from_scalar(
     result: TypedRegisterId,
 ) -> Vec<traverser::Transform> {
     let mut transforms = vec![];
+
+    // Cache original result precision
+    let preserved_precision = result.precision;
     let constructor_basic_type_id = ir_meta.get_scalar_type(result.type_id);
-    let arg = cast(ir_meta, &mut transforms, arg, constructor_basic_type_id);
+
+    // Pass target precision into scalar cast
+    let arg = cast(ir_meta, &mut transforms, arg, constructor_basic_type_id, preserved_precision);
 
     util::construct_matrix_from_scalar(
         ir_meta,
@@ -218,7 +254,10 @@ fn construct_matrix_from_matrix(
                     .collect(),
                 Type::Matrix(_, column_count) => (0..column_count)
                     .map(|column| {
-                        let column = ir_meta.get_constant_uint_typed(column);
+                        // column should have a precision assigned after propagate_precision pass.
+                        // since the number of columns of matrix is small, Precision::Low is
+                        // sufficient.
+                        let column = ir_meta.get_constant_uint_typed(column, Precision::Low);
                         traverser::add_typed_instruction(
                             transforms,
                             instruction::make!(index, ir_meta, id, column),
@@ -238,12 +277,15 @@ fn construct_vector_from_multiple(
     result: TypedRegisterId,
 ) -> Vec<traverser::Transform> {
     let mut transforms = vec![];
+    // Cache original result precision
+    let preserved_precision = result.precision;
     let args = flatten_constructor_args(ir_meta, &mut transforms, args);
-    let args = cast_constructor_args(ir_meta, &mut transforms, args, result.type_id);
+    let args =
+        cast_constructor_args(ir_meta, &mut transforms, args, result.type_id, preserved_precision);
 
     traverser::add_typed_instruction(
         &mut transforms,
-        instruction::make_with_result_id!(construct, ir_meta, result, result.type_id, args),
+        instruction::make_with_result_id!(construct, ir_meta, result, result.type_id, args, None),
     );
     transforms
 }
@@ -253,8 +295,11 @@ fn construct_matrix_from_multiple(
     result: TypedRegisterId,
 ) -> Vec<traverser::Transform> {
     let mut transforms = vec![];
+    // Cache original result precision
+    let preserved_precision = result.precision;
     let args = flatten_constructor_args(ir_meta, &mut transforms, args);
-    let args = cast_constructor_args(ir_meta, &mut transforms, args, result.type_id);
+    let args =
+        cast_constructor_args(ir_meta, &mut transforms, args, result.type_id, preserved_precision);
 
     util::construct_matrix_from_multiple(
         ir_meta,

@@ -149,170 +149,155 @@ TextureTarget TextureTypeToTarget(TextureType type, GLint layerIndex);
 // * The target texture's base level (always 0) maps to the backing image's level 1, which is 3 (the
 //   EGL image level) minus 2 (base level).
 //
-// To avoid all confusions, some types specific to image siblings are created:
+// To avoid all confusions, two sets of types exist:
 //
-// * OwnLevel, OwnLayer and OwnImageIndex: these contain levels and layers from the
-//   point of view of the current texture, be it the source or target texture.  They correspond to
-//   the front-end's state, and are passed to the backend.
-// * SourceLevel, SourceLayer and SourceImageIndex: these contain levels and layers corresponding to
-//   the source texture.  For the source texture itself, these are equal to the Own* variants.  For
-//   the target texture, they are offset by mEGLImageSourceAttributes.  This property holds for the
-//   source texture too, since these offsets are zero.
+// * LevelIndex, LayerIndex, and ImageIndex: these contain levels and layers from the point of view
+//   of the current texture, be it the source or target texture.  They correspond to the front-end's
+//   state, and are passed to the backend.
+// * OwnerLevel, OwnerLayer, and OwnerImageIndex: these contain levels and layers corresponding to
+//   the source texture (owner of the backing storage).  For the source texture itself, these are
+//   equal to the other variants.  For the target texture, they are offset by
+//   mEGLImageSourceAttributes.  This property holds for the source texture too, since these offsets
+//   are zero.
 //
-// Before the backend accesses the backing image, it must use the |toSource*()| helpers in
-// TextureState/RenderbufferState to convert |Own*| types to |Source*| types, where the EGL image
-// level and layer offsets are applied, and finally |get()| the translated level/layer/image index
-// to interface with the backing image.  The backend |TextureBackend| object should strive to
-// internally pass around either Own* or Source* types, never gl::LevelIndex, uint32_t
-// layer or gl::ImageIndex directly to ensure translation is always done and done only once.
-// Ideally, the backend would _never_ use the gl::LevelIndex, uint32_t layer and gl::ImageIndex
-// directly and would always use either the |Own*| or |Source*| type so there cannot be mistakes.
-//
-// For backends that don't need this translation, such as the GL backend where the translation is
-// done by the driver, use |getUntranslated()| to get the untranslated front-end values for the
-// current texture out of |Own*| types.
-template <typename T>
-class OwnIndex
+// Before the backend accesses the backing image, it must use the |toOwner*()| helpers in
+// TextureState/RenderbufferState to convert from the first set of types to |Owner*| types, where
+// the EGL image level and layer offsets are applied, and finally |get()| the translated
+// level/layer/image index to interface with the native API.  The backend |TextureBackend| object
+// should strive to internally use |Owner*| types before translation to the native API, never
+// gl::LevelIndex, gl::LayerIndex, or gl::ImageIndex directly to ensure translation is always done
+// and done only once.
+
+// Similar class to LevelIndex.  Notable difference is the default constructor which initializes to
+// an invalid value; the fact that this level corresponds to the owner of the backing storage must
+// always be explicit.
+class OwnerLevel final
 {
   public:
-    explicit OwnIndex(T index) : mIndex(index) {}
+    constexpr OwnerLevel() : mLevel(0xFFFFFFFF) {}
+    constexpr explicit OwnerLevel(uint32_t ownerLevel) : mLevel(ownerLevel) {}
 
-    T getUntranslated() const { return mIndex; }
-
-  protected:
-    T mIndex;
-};
-
-template <typename T>
-class SourceIndex
-{
-  public:
-    constexpr T get() const { return mIndex; }
-
-  protected:
-    friend struct egl::ImageSourceAttributes;
-    constexpr SourceIndex(T index) : mIndex(index) {}
-    T mIndex;
-};
-
-// Note: The front-end generally uses uint32_t for levels instead of LevelIndex.  The templated type
-// uses LevelIndex so it's different from OwnLayer, but a uint32_t-taking constructor is added for
-// convenience.
-class OwnLevel : public OwnIndex<LevelIndex>
-{
-  public:
-    explicit OwnLevel(uint32_t level) : OwnIndex(LevelIndex(level)) {}
-};
-using OwnLayer = OwnIndex<uint32_t>;
-class OwnImageIndex : public OwnIndex<ImageIndex>
-{
-  public:
-    explicit OwnImageIndex(const ImageIndex &index) : OwnIndex(index) {}
-
-    // Convenience helpers that forward to ImageIndex and possibly wrap the results.
-    TextureType getType() const { return mIndex.getType(); }
-    OwnLevel getLevelIndex() const { return OwnLevel(mIndex.getLevelIndex()); }
-    bool hasLayer() const { return mIndex.hasLayer(); }
-    OwnLayer getLayerIndex() const
-    {
-        return OwnLayer(mIndex.hasLayer() ? mIndex.getLayerIndex() : 0);
-    }
-    OwnLayer cubeMapFaceIndex() const { return OwnLayer(mIndex.cubeMapFaceIndex()); }
-    uint32_t getLayerCount() const { return mIndex.getLayerCount(); }
-    bool usesTex3D() const { return mIndex.usesTex3D(); }
-    TextureTarget getTarget() const { return mIndex.getTarget(); }
-    TextureTarget getTargetOrFirstCubeFace() const { return mIndex.getTargetOrFirstCubeFace(); }
-};
-
-class SourceImageIndex;
-class SourceLevel : public SourceIndex<LevelIndex>
-{
-  public:
     // Convenience helpers
-    constexpr SourceLevel operator+(uint32_t offset) const { return SourceLevel(mIndex + offset); }
-    SourceLevel &operator++()
+    constexpr OwnerLevel operator+(uint32_t offset) const { return OwnerLevel(mLevel + offset); }
+    constexpr uint32_t operator-(OwnerLevel other) const
     {
-        ++mIndex;
+        ASSERT(mLevel >= other.mLevel);
+        return mLevel - other.mLevel;
+    }
+    OwnerLevel &operator++()
+    {
+        ++mLevel;
         return *this;
     }
-    constexpr bool operator<(const SourceLevel &other) const { return mIndex < other.mIndex; }
-    constexpr bool operator<=(const SourceLevel &other) const { return mIndex <= other.mIndex; }
+    constexpr bool operator<(const OwnerLevel &other) const { return mLevel < other.mLevel; }
+    constexpr bool operator<=(const OwnerLevel &other) const { return mLevel <= other.mLevel; }
+    constexpr bool operator>(const OwnerLevel &other) const { return mLevel > other.mLevel; }
+    constexpr bool operator>=(const OwnerLevel &other) const { return mLevel >= other.mLevel; }
+    constexpr bool operator==(const OwnerLevel &other) const { return mLevel == other.mLevel; }
+    constexpr bool operator!=(const OwnerLevel &other) const { return mLevel != other.mLevel; }
 
-    static constexpr SourceLevel Zero() { return SourceLevel(LevelIndex(0)); }
+    constexpr uint32_t get() const { return mLevel; }
 
-    // Helper while code is being transitioned to using SourceLevel consistently.  Remove once done.
-    // TODO(http://anglebug.com/525079760)
-    static constexpr SourceLevel VerifiedSourceLevel(LevelIndex level)
+  protected:
+    uint32_t mLevel;
+};
+// Similar class to LayerIndex.  Notable difference is the default constructor which initializes to
+// an invalid value; the fact that this layer corresponds to the owner of the backing storage must
+// always be explicit.
+class OwnerLayer final
+{
+  public:
+    constexpr OwnerLayer() : mLayer(0xFFFFFFFF) {}
+    constexpr explicit OwnerLayer(uint32_t ownerLayer) : mLayer(ownerLayer) {}
+
+    // Convenience helpers
+    constexpr OwnerLayer operator+(uint32_t offset) const { return OwnerLayer(mLayer + offset); }
+    OwnerLayer &operator++()
     {
-        return SourceLevel(level);
+        ++mLayer;
+        return *this;
     }
 
-  protected:
-    friend struct egl::ImageSourceAttributes;
-    friend class SourceImageIndex;
-    constexpr SourceLevel(LevelIndex level) : SourceIndex(level) {}
-};
-class SourceLayer : public SourceIndex<uint32_t>
-{
-  public:
-    // Convenience helpers
-    constexpr SourceLayer operator+(uint32_t offset) const { return SourceLayer(mIndex + offset); }
+    constexpr bool operator<(const OwnerLayer &other) const { return mLayer < other.mLayer; }
+    constexpr bool operator<=(const OwnerLayer &other) const { return mLayer <= other.mLayer; }
+    constexpr bool operator>(const OwnerLayer &other) const { return mLayer > other.mLayer; }
+    constexpr bool operator>=(const OwnerLayer &other) const { return mLayer >= other.mLayer; }
+    constexpr bool operator==(const OwnerLayer &other) const { return mLayer == other.mLayer; }
+    constexpr bool operator!=(const OwnerLayer &other) const { return mLayer != other.mLayer; }
+    // Helper for loops up to "layer count"
+    constexpr bool operator<(uint32_t limit) const { return mLayer < limit; }
 
-    static constexpr SourceLayer Zero() { return SourceLayer(0); }
-
-    // Helper while code is being transitioned to using SourceLayer consistently.  Remove once done.
-    // TODO(http://anglebug.com/525079760)
-    static constexpr SourceLayer VerifiedSourceLayer(uint32_t layer) { return SourceLayer(layer); }
+    constexpr uint32_t get() const { return mLayer; }
 
   protected:
-    friend struct egl::ImageSourceAttributes;
-    friend class SourceImageIndex;
-    constexpr SourceLayer(uint32_t layer) : SourceIndex(layer) {}
+    uint32_t mLayer;
 };
-class SourceImageIndex : public SourceIndex<ImageIndex>
+// Wrapper around |ImageIndex| to reuse its functionality.  Notable difference is that
+// |getLayerIndex()| returns 0 if there are no layers, instead of -1 in |ImageIndex|, obviating the
+// need for |index.hasLayer() ? index.getLayerIndex() : 0| in many places.
+class OwnerImageIndex final
 {
   public:
+    OwnerImageIndex() = default;
+
     // Convenience helpers that forward to ImageIndex and possibly wrap the results.
     TextureType getType() const { return mIndex.getType(); }
-    SourceLevel getLevelIndex() const { return SourceLevel(LevelIndex(mIndex.getLevelIndex())); }
+    OwnerLevel getLevelIndex() const { return OwnerLevel(mIndex.getLevelIndex()); }
     bool hasLayer() const { return mIndex.hasLayer(); }
-    SourceLayer getLayerIndex() const
+    bool has3DLayer() const { return mIndex.has3DLayer(); }
+    OwnerLayer getLayerIndex() const
     {
-        return SourceLayer(mIndex.hasLayer() ? mIndex.getLayerIndex() : 0);
+        return OwnerLayer(mIndex.hasLayer() ? mIndex.getLayerIndex() : 0);
     }
-    SourceLayer cubeMapFaceIndex() const { return SourceLayer(mIndex.cubeMapFaceIndex()); }
+    OwnerLayer cubeMapFaceIndex() const { return OwnerLayer(mIndex.cubeMapFaceIndex()); }
     uint32_t getLayerCount() const { return mIndex.getLayerCount(); }
     bool usesTex3D() const { return mIndex.usesTex3D(); }
+    bool isLayered() const { return mIndex.isLayered(); }
     TextureTarget getTarget() const { return mIndex.getTarget(); }
     TextureTarget getTargetOrFirstCubeFace() const { return mIndex.getTargetOrFirstCubeFace(); }
 
-    static SourceImageIndex Make2D(SourceLevel level)
+    static OwnerImageIndex MakeInvalid() { return OwnerImageIndex(ImageIndex{}); }
+    static OwnerImageIndex Make2D(OwnerLevel level)
     {
-        return SourceImageIndex(ImageIndex::Make2D(level.get().get()));
+        return OwnerImageIndex(ImageIndex::Make2D(level.get()));
     }
-    static SourceImageIndex MakeCubeMapFace(TextureTarget target, SourceLevel level)
+    static OwnerImageIndex MakeCubeMapFace(TextureTarget target, OwnerLevel level)
     {
-        return SourceImageIndex(ImageIndex::MakeCubeMapFace(target, level.get().get()));
+        return OwnerImageIndex(ImageIndex::MakeCubeMapFace(target, level.get()));
     }
-    static SourceImageIndex Make2DArrayRange(SourceLevel level, SourceLayer layer, GLint layerCount)
+    static OwnerImageIndex Make2DArrayRange(OwnerLevel level, OwnerLayer layer, GLint layerCount)
     {
-        return SourceImageIndex(
-            ImageIndex::Make2DArrayRange(level.get().get(), layer.get(), layerCount));
+        return OwnerImageIndex(ImageIndex::Make2DArrayRange(level.get(), layer.get(), layerCount));
     }
-    static SourceImageIndex MakeFromType(TextureType type,
-                                         SourceLevel level,
-                                         SourceLayer layer = kEntireLayer,
-                                         GLint layerCount  = 1)
+    static OwnerImageIndex Make3D(OwnerLevel level, OwnerLayer layer = kEntireLayer)
     {
-        return SourceImageIndex(
-            ImageIndex::MakeFromType(type, level.get().get(), layer.get(), layerCount));
+        return OwnerImageIndex(ImageIndex::Make3D(level.get(), layer.get()));
+    }
+    static OwnerImageIndex MakeFromTarget(TextureTarget target, OwnerLevel level, GLint depth = 0)
+    {
+        return OwnerImageIndex(ImageIndex::MakeFromTarget(target, level.get(), depth));
+    }
+    static OwnerImageIndex MakeFromType(TextureType type,
+                                        OwnerLevel level,
+                                        OwnerLayer layer = kEntireLayer,
+                                        GLint layerCount = 1)
+    {
+        return OwnerImageIndex(
+            ImageIndex::MakeFromType(type, level.get(), layer.get(), layerCount));
     }
 
-    static constexpr SourceLayer kEntireLayer = SourceLayer::Zero() + ImageIndex::kEntireLevel;
+    bool operator<(const OwnerImageIndex &b) const { return mIndex < b.mIndex; }
+    bool operator==(const OwnerImageIndex &b) const { return mIndex == b.mIndex; }
+    bool operator!=(const OwnerImageIndex &b) const { return mIndex != b.mIndex; }
+
+    const ImageIndex &get() const { return mIndex; }
+
+    static constexpr OwnerLayer kEntireLayer = OwnerLayer(ImageIndex::kEntireLevel);
 
   protected:
+    ImageIndex mIndex;
     friend struct egl::ImageSourceAttributes;
-    SourceImageIndex(const ImageIndex &index) : SourceIndex(index) {}
+    OwnerImageIndex(const ImageIndex &index) : mIndex(index) {}
 };
 
 }  // namespace gl

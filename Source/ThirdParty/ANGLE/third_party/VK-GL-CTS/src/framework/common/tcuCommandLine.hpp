@@ -373,6 +373,9 @@ public:
     //! Prefix for offline pipeline compiler input files
     const char *getPipelineCompilerFilePrefix(void) const;
 
+    //! TCP port used for main process<->subprocess IPC (0 if not set; assigned automatically by the main process)
+    int getIPCPort(void) const;
+
     // Print logs of video operations to stdout
     bool getVideoLogPrint(void) const;
 

@@ -2562,6 +2562,18 @@ void Framebuffer::onSubjectStateChange(angle::SubjectIndex index, angle::Subject
             return;
         }
 
+        if (message == angle::SubjectMessage::TextureLayerCountIncreased)
+        {
+            FramebufferAttachment *attachment = getAttachmentFromSubjectIndex(index);
+            if (attachment)
+            {
+                (void)mImpl->onAttachmentLayerCountChange(attachment);
+            }
+            mDirtyBits.set(index);
+            onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
+            return;
+        }
+
         // This can be triggered by the GL back-end TextureGL class.
         ASSERT(message == angle::SubjectMessage::DirtyBitsFlagged ||
                message == angle::SubjectMessage::TextureIDDeleted);

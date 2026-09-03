@@ -7195,9 +7195,7 @@ TEST_P(VertexAttributeTestES31_Basic, EnabledAttribArrayWithoutVertexAttribForma
 ANGLE_INSTANTIATE_TEST_ES3(VertexAttributeResizeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttributeUint8Test);
-ANGLE_INSTANTIATE_TEST_ES3_AND(VertexAttributeUint8Test,
-                               ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
-                               ES3_VULKAN_SWIFTSHADER().disable(Feature::SupportsIndexTypeUint8));
+ANGLE_INSTANTIATE_TEST_ES3(VertexAttributeUint8Test);
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     VertexAttributeShiftInstancedArrayDataWithOffsetTest,

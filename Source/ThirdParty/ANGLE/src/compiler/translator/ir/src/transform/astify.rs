@@ -551,7 +551,7 @@ fn has_constants_with_higher_precision(operands: &[TypedId]) -> Option<Precision
         highest_non_constant_precision,
     );
 
-    if highest_constant_precision != Precision::NotApplicable
+    if highest_constant_precision.is_assigned()
         && highest_non_constant_precision != highest_precision
     {
         Some(highest_non_constant_precision)
@@ -636,7 +636,7 @@ fn declare_temp_variable_for_constant_operands(
     // for `1.0`.
     let instruction = state.ir_meta.get_instruction(id);
     let result = instruction.result;
-    if result.precision == Precision::NotApplicable {
+    if !result.precision.is_assigned() {
         return;
     }
 

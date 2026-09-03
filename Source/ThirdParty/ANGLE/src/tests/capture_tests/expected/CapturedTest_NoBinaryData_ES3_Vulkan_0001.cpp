@@ -5,7 +5,7 @@
 
 void SetupReplayContext8(void)
 {
-    eglMakeCurrent(gEGLDisplay, gSurfaceMap2[0], gSurfaceMap2[0], gContextMap2[8]);
+    eglMakeCurrent(gEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, gContextMap2[8]);
     UpdateCurrentContext(8);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, gTransformFeedbackMap[0]);

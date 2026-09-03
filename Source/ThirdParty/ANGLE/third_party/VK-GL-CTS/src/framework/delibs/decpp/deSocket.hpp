@@ -112,6 +112,11 @@ public:
     }
 
     void listen(const SocketAddress &address);
+
+    //! Port the socket is actually bound to. When listen() was called with port 0 this
+    //! returns the ephemeral port assigned by the OS. Returns 0 if the address is unavailable.
+    int getBoundPort(void) const;
+
     Socket *accept(SocketAddress &clientAddress)
     {
         return accept(clientAddress.getPtr());

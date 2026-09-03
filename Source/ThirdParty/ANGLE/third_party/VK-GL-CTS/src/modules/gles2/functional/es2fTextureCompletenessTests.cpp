@@ -38,6 +38,7 @@
 #include "gluPixelTransfer.hpp"
 #include "gluContextInfo.hpp"
 #include "gluRenderContext.hpp"
+#include "gluStrUtil.hpp"
 
 #include "glw.h"
 
@@ -72,6 +73,18 @@ static bool isExtensionSupported(const glu::ContextInfo &ctxInfo, const char *ex
             return true;
 
     return false;
+}
+
+static void expectError(TestLog &log, GLenum expected, const char *message)
+{
+    const GLenum error = glGetError();
+
+    if (error != expected)
+    {
+        log << TestLog::Message << message << ": expected " << glu::getErrorStr(expected) << ", got "
+            << glu::getErrorStr(error) << TestLog::EndMessage;
+        TCU_FAIL("Got unexpected GL error");
+    }
 }
 
 static bool compareToConstantColor(TestLog &log, const char *imageSetName, const char *imageSetDesc,
@@ -280,9 +293,20 @@ void Incomplete2DSizeCase::createTexture(GLuint texture)
         "GL_NV_texture_npot_2D_mipmap",
     };
 
+    TestLog &log           = m_testCtx.getLog();
     tcu::TextureFormat fmt = glu::mapGLTransferFormat(GL_RGBA, GL_UNSIGNED_BYTE);
     tcu::TextureLevel levelData(fmt);
-    TestLog &log = m_testCtx.getLog();
+
+    const char *relaxingExtension = nullptr;
+
+    for (int ndx = 0; ndx < DE_LENGTH_OF_ARRAY(s_relaxingExtensions); ++ndx)
+    {
+        if (isExtensionSupported(m_ctxInfo, s_relaxingExtensions[ndx]))
+        {
+            relaxingExtension = s_relaxingExtensions[ndx];
+            break;
+        }
+    }
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -291,6 +315,7 @@ void Incomplete2DSizeCase::createTexture(GLuint texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GLU_CHECK_MSG("Set texturing state");
 
     int numLevels = 1 + de::max(deLog2Floor32(m_size.x()), deLog2Floor32(m_size.y()));
 
@@ -304,23 +329,17 @@ void Incomplete2DSizeCase::createTexture(GLuint texture)
 
         glTexImage2D(GL_TEXTURE_2D, levelNdx, GL_RGBA, levelW, levelH, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      levelData.getAccess().getDataPtr());
+        const bool invalidNpotLevel =
+            relaxingExtension == nullptr && levelNdx > 0 && (!deIsPowerOfTwo32(levelW) || !deIsPowerOfTwo32(levelH));
+        expectError(log, invalidNpotLevel ? GL_INVALID_VALUE : GL_NO_ERROR, "glTexImage2D()");
     }
 
-    GLU_CHECK_MSG("Set texturing state");
-
-    // If size not allowed in core, search for relaxing extensions
-    if (!deIsPowerOfTwo32(m_size.x()) && !deIsPowerOfTwo32(m_size.y()))
+    // A relaxing extension can make the NPOT mipmap complete.
+    if ((!deIsPowerOfTwo32(m_size.x()) || !deIsPowerOfTwo32(m_size.y())) && relaxingExtension != nullptr)
     {
-        for (int ndx = 0; ndx < DE_LENGTH_OF_ARRAY(s_relaxingExtensions); ++ndx)
-        {
-            if (isExtensionSupported(m_ctxInfo, s_relaxingExtensions[ndx]))
-            {
-                log << TestLog::Message << s_relaxingExtensions[ndx]
-                    << " supported, assuming completeness test to pass." << TestLog::EndMessage;
-                m_compareColor = RGBA(0, 0, 255, 255);
-                break;
-            }
-        }
+        log << TestLog::Message << relaxingExtension << " supported, assuming completeness test to pass."
+            << TestLog::EndMessage;
+        m_compareColor = RGBA(0, 0, 255, 255);
     }
 }
 
@@ -598,10 +617,11 @@ class IncompleteCubeSizeCase : public TexCubeCompletenessCase
 {
 public:
     IncompleteCubeSizeCase(tcu::TestContext &testCtx, glu::RenderContext &renderCtx, const char *name,
-                           const char *description, IVec2 size, IVec2 invalidLevelSize, int invalidLevelNdx);
+                           const char *description, IVec2 size, IVec2 invalidLevelSize, int invalidLevelNdx,
+                           const glu::ContextInfo &ctxInfo);
     IncompleteCubeSizeCase(tcu::TestContext &testCtx, glu::RenderContext &renderCtx, const char *name,
                            const char *description, IVec2 size, IVec2 invalidLevelSize, int invalidLevelNdx,
-                           tcu::CubeFace invalidCubeFace);
+                           tcu::CubeFace invalidCubeFace, const glu::ContextInfo &ctxInfo);
     ~IncompleteCubeSizeCase(void)
     {
     }
@@ -612,16 +632,19 @@ private:
     int m_invalidLevelNdx;
     IVec2 m_invalidLevelSize;
     tcu::CubeFace m_invalidCubeFace;
+    const glu::ContextInfo &m_ctxInfo;
     IVec2 m_size;
 };
 
 IncompleteCubeSizeCase::IncompleteCubeSizeCase(tcu::TestContext &testCtx, glu::RenderContext &renderCtx,
                                                const char *name, const char *description, IVec2 size,
-                                               IVec2 invalidLevelSize, int invalidLevelNdx)
+                                               IVec2 invalidLevelSize, int invalidLevelNdx,
+                                               const glu::ContextInfo &ctxInfo)
     : TexCubeCompletenessCase(testCtx, renderCtx, name, description)
     , m_invalidLevelNdx(invalidLevelNdx)
     , m_invalidLevelSize(invalidLevelSize)
     , m_invalidCubeFace(tcu::CUBEFACE_LAST)
+    , m_ctxInfo(ctxInfo)
     , m_size(size)
 {
 }
@@ -629,19 +652,23 @@ IncompleteCubeSizeCase::IncompleteCubeSizeCase(tcu::TestContext &testCtx, glu::R
 IncompleteCubeSizeCase::IncompleteCubeSizeCase(tcu::TestContext &testCtx, glu::RenderContext &renderCtx,
                                                const char *name, const char *description, IVec2 size,
                                                IVec2 invalidLevelSize, int invalidLevelNdx,
-                                               tcu::CubeFace invalidCubeFace)
+                                               tcu::CubeFace invalidCubeFace, const glu::ContextInfo &ctxInfo)
     : TexCubeCompletenessCase(testCtx, renderCtx, name, description)
     , m_invalidLevelNdx(invalidLevelNdx)
     , m_invalidLevelSize(invalidLevelSize)
     , m_invalidCubeFace(invalidCubeFace)
+    , m_ctxInfo(ctxInfo)
     , m_size(size)
 {
 }
 
 void IncompleteCubeSizeCase::createTexture(GLuint texture)
 {
+    TestLog &log           = m_testCtx.getLog();
     tcu::TextureFormat fmt = glu::mapGLTransferFormat(GL_RGBA, GL_UNSIGNED_BYTE);
     tcu::TextureLevel levelData(fmt);
+
+    const bool fullNpotSupport = isExtensionSupported(m_ctxInfo, "GL_OES_texture_npot");
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
@@ -650,6 +677,7 @@ void IncompleteCubeSizeCase::createTexture(GLuint texture)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    GLU_CHECK_MSG("Set texturing state");
 
     int numLevels = 1 + de::max(deLog2Floor32(m_size.x()), deLog2Floor32(m_size.y()));
 
@@ -670,10 +698,11 @@ void IncompleteCubeSizeCase::createTexture(GLuint texture)
             }
             glTexImage2D(s_cubeTargets[targetNdx], levelNdx, GL_RGBA, levelW, levelH, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                          levelData.getAccess().getDataPtr());
+            const bool invalidNpotLevel =
+                !fullNpotSupport && levelNdx > 0 && (!deIsPowerOfTwo32(levelW) || !deIsPowerOfTwo32(levelH));
+            expectError(log, invalidNpotLevel ? GL_INVALID_VALUE : GL_NO_ERROR, "glTexImage2D()");
         }
     }
-
-    GLU_CHECK_MSG("Set texturing state");
 }
 
 class IncompleteCubeFormatCase : public TexCubeCompletenessCase
@@ -1053,15 +1082,17 @@ void TextureCompletenessTests::init(void)
 
     // Cube size.
     cube->addChild(new IncompleteCubeSizeCase(m_testCtx, m_context.getRenderContext(), "npot_size_level_0", "",
-                                              IVec2(64, 64), IVec2(63, 63), 0));
+                                              IVec2(64, 64), IVec2(63, 63), 0, m_context.getContextInfo()));
     cube->addChild(new IncompleteCubeSizeCase(m_testCtx, m_context.getRenderContext(), "npot_size_level_1", "",
-                                              IVec2(64, 64), IVec2(31, 31), 1));
+                                              IVec2(64, 64), IVec2(31, 31), 1, m_context.getContextInfo()));
     cube->addChild(new IncompleteCubeSizeCase(m_testCtx, m_context.getRenderContext(), "npot_size_level_0_pos_x", "",
-                                              IVec2(64, 64), IVec2(63, 63), 0, tcu::CUBEFACE_POSITIVE_X));
+                                              IVec2(64, 64), IVec2(63, 63), 0, tcu::CUBEFACE_POSITIVE_X,
+                                              m_context.getContextInfo()));
     cube->addChild(new IncompleteCubeSizeCase(m_testCtx, m_context.getRenderContext(), "npot_size_level_1_neg_x", "",
-                                              IVec2(64, 64), IVec2(31, 31), 1, tcu::CUBEFACE_NEGATIVE_X));
+                                              IVec2(64, 64), IVec2(31, 31), 1, tcu::CUBEFACE_NEGATIVE_X,
+                                              m_context.getContextInfo()));
     cube->addChild(new IncompleteCubeSizeCase(m_testCtx, m_context.getRenderContext(), "not_positive_level_0", "",
-                                              IVec2(64, 64), IVec2(0, 0), 0));
+                                              IVec2(64, 64), IVec2(0, 0), 0, m_context.getContextInfo()));
     // Cube format.
     cube->addChild(new IncompleteCubeFormatCase(m_testCtx, m_context.getRenderContext(),
                                                 "format_mismatch_rgb_rgba_level_0", "", IVec2(64, 64), GL_RGB,

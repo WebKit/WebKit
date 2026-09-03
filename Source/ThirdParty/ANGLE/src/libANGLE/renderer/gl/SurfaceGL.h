@@ -25,7 +25,7 @@ class SurfaceGL : public SurfaceImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::OwnImageIndex &ownImageIndex) override;
+                                     const gl::ImageIndex &imageIndex) override;
 
     virtual bool hasEmulatedAlphaChannel() const;
 

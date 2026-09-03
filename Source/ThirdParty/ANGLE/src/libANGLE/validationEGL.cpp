@@ -1192,6 +1192,39 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
     return true;
 }
 
+bool ValidateDisplay(const ValidationContext *val, const Display *display)
+{
+    if (display == nullptr)
+    {
+        if (val)
+        {
+            val->setError(EGL_BAD_DISPLAY, "display is EGL_NO_DISPLAY or invalid.");
+        }
+        return false;
+    }
+    ASSERT(Display::isValidDisplay(display));
+
+    if (!display->isInitialized())
+    {
+        if (val)
+        {
+            val->setError(EGL_NOT_INITIALIZED, "display is not initialized.");
+        }
+        return false;
+    }
+
+    if (display->isDeviceLost())
+    {
+        if (val)
+        {
+            val->setError(EGL_CONTEXT_LOST, "display had a context loss");
+        }
+        return false;
+    }
+
+    return true;
+}
+
 bool ValidateStream(const ValidationContext *val, const Display *display, const Stream *stream)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
@@ -1310,7 +1343,6 @@ bool ValidateLabeledObject(const ValidationContext *val,
                                  const_cast<const LabeledObject **>(outLabeledObject));
 }
 
-// This is a common sub-check of Display status that's shared by multiple functions
 bool ValidateDisplayPointer(const ValidationContext *val, const Display *display)
 {
     if (display == EGL_NO_DISPLAY)
@@ -2499,31 +2531,6 @@ void ValidationContext::setError(EGLint error, const char *message...) const
     eglThread->setError(error, entryPoint, labeledObject, buffer);
 }
 
-bool ValidateDisplay(const ValidationContext *val, const Display *display)
-{
-    ANGLE_VALIDATION_TRY(ValidateDisplayPointer(val, display));
-
-    if (!display->isInitialized())
-    {
-        if (val)
-        {
-            val->setError(EGL_NOT_INITIALIZED, "display is not initialized.");
-        }
-        return false;
-    }
-
-    if (display->isDeviceLost())
-    {
-        if (val)
-        {
-            val->setError(EGL_CONTEXT_LOST, "display had a context loss");
-        }
-        return false;
-    }
-
-    return true;
-}
-
 bool ValidateSurface(const ValidationContext *val, const Display *display, SurfaceID surfaceID)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
@@ -2837,7 +2844,22 @@ const Thread *GetThreadIfValid(const Thread *thread)
 
 const Display *GetDisplayIfValid(const Display *display)
 {
-    return ValidateDisplay(nullptr, display) ? display : nullptr;
+    if (!ValidateDisplayPointer(nullptr, display))
+    {
+        return nullptr;
+    }
+
+    return display;
+}
+
+Display *GetDisplayIfValid(Display *display)
+{
+    if (!ValidateDisplayPointer(nullptr, display))
+    {
+        return nullptr;
+    }
+
+    return display;
 }
 
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID)
@@ -3043,12 +3065,12 @@ bool ValidateCreateContext(const ValidationContext *val,
                     }
                     if ((attributes.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) ==
                          EGL_TRUE) &&
-                        (clientMinorVersion > 1))
+                        (clientMinorVersion > 0))
                     {
                         val->setError(EGL_BAD_MATCH,
                                       "Requested GLES version (%" PRIxPTR ".%" PRIxPTR
                                       ") is greater than "
-                                      "max supported 3.1 for WebGL.",
+                                      "max supported 3.0 for WebGL.",
                                       clientMajorVersion, clientMinorVersion);
                         return false;
                     }
@@ -4040,8 +4062,8 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
 
-            if (texture->isEGLImageSource(gl::ImageIndex::MakeFromTarget(
-                    gl::TextureTarget::_2D, static_cast<GLint>(level), 1)))
+            if (texture->isEGLImageSource(gl::OwnerImageIndex::MakeFromTarget(
+                    gl::TextureTarget::_2D, gl::OwnerLevel(static_cast<GLint>(level)), 1)))
             {
                 val->setError(EGL_BAD_ACCESS,
                               "The texture has been bound to an existing EGL image.");
@@ -4129,8 +4151,8 @@ bool ValidateCreateImage(const ValidationContext *val,
 
             gl::TextureTarget glTexTarget =
                 gl::CubeFaceIndexToTextureTarget(CubeMapTextureTargetToLayerIndex(target));
-            if (texture->isEGLImageSource(
-                    gl::ImageIndex::MakeCubeMapFace(glTexTarget, static_cast<GLint>(level))))
+            if (texture->isEGLImageSource(gl::OwnerImageIndex::MakeCubeMapFace(
+                    glTexTarget, gl::OwnerLevel(static_cast<GLint>(level)))))
             {
                 val->setError(EGL_BAD_ACCESS,
                               "The texture has been bound to an existing EGL image.");
@@ -4207,7 +4229,8 @@ bool ValidateCreateImage(const ValidationContext *val,
                 return false;
             }
             if (texture->isEGLImageSource(
-                    gl::ImageIndex::Make3D(static_cast<GLint>(level), static_cast<GLint>(zOffset))))
+                    gl::OwnerImageIndex::Make3D(gl::OwnerLevel(static_cast<GLint>(level)),
+                                                gl::OwnerLayer(static_cast<GLint>(zOffset)))))
             {
                 val->setError(EGL_BAD_ACCESS,
                               "The texture has been bound to an existing EGL image.");

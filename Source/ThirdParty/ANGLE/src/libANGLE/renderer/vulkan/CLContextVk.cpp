@@ -8,6 +8,7 @@
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "common/PackedEnums.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
@@ -133,17 +134,22 @@ angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
                                                     cl_image_format *imageFormats,
                                                     cl_uint *numImageFormats)
 {
-    // Required Vulkan features from OpenCL flags
+    // a 1D image buffer is backed by a Vulkan texel buffer (buffer view), so its supported formats
+    // must be queried against the buffer feature bits, not the (optimal tiling) image feature bits.
+    const bool is1DBuffer = cl::Is1DImageBuffer(imageType);
+
     VkFormatFeatureFlags requiredFeatures = 0;
 
     if (flags.intersects(CL_MEM_READ_ONLY) != 0)
     {
-        requiredFeatures |= VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
+        requiredFeatures |= is1DBuffer ? VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT
+                                       : VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT;
     }
 
     if (flags.intersects(CL_MEM_WRITE_ONLY | CL_MEM_KERNEL_READ_AND_WRITE | CL_MEM_READ_WRITE) != 0)
     {
-        requiredFeatures |= VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT;
+        requiredFeatures |= is1DBuffer ? VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT
+                                       : VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT;
     }
 
     std::vector<cl_image_format> finalSupportedFormats;
@@ -154,12 +160,28 @@ angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
         {
             continue;
         }
-
-        const angle::FormatID id = cl::GetImageAngleFormat(clFmt);
-        if (id != angle::FormatID::NONE &&
-            mRenderer->hasImageFormatFeatureBits(id, requiredFeatures))
+        if (clFmt.image_channel_order == CL_A &&
+            !getRenderer()->getFeatures().enableAlphaChannelImages.enabled)
         {
-            finalSupportedFormats.push_back(clFmt);
+            continue;
+        }
+
+        const vk::Format &vkFormat        = mRenderer->getFormat(cl::GetImageAngleFormat(clFmt));
+        const angle::Format &actualFormat = is1DBuffer
+                                                ? vkFormat.getActualBufferFormat()
+                                                : vkFormat.getActualImageFormat(vk::SampleOnly);
+
+        if (actualFormat.id != angle::FormatID::NONE)
+        {
+            const bool hasRequiredFeatures =
+                is1DBuffer
+                    ? mRenderer->hasBufferFormatFeatureBits(actualFormat.id, requiredFeatures)
+                    : mRenderer->hasImageFormatFeatureBits(actualFormat.id, requiredFeatures);
+
+            if (hasRequiredFeatures)
+            {
+                finalSupportedFormats.push_back(clFmt);
+            }
         }
     }
 

@@ -529,25 +529,21 @@ unsigned int GetTypeComponentCount(const TType &type)
     return components;
 }
 
-bool IsWholeArrayFragDataUsed(TIntermTyped *node)
+TIntermTyped *RemoveCommaLeftHandSize(TIntermTyped *node)
 {
-    if (node->getQualifier() == EvqFragData)
+    TIntermTyped *current = node;
+    while (true)
     {
-        return true;
+        TIntermBinary *asBinary = current->getAsBinaryNode();
+        if (asBinary == nullptr || asBinary->getOp() != EOpComma)
+        {
+            break;
+        }
+
+        current = asBinary->getRight();
     }
 
-    TIntermBinary *asBinary = node->getAsBinaryNode();
-    if (asBinary != nullptr && asBinary->getOp() == EOpComma)
-    {
-        return IsWholeArrayFragDataUsed(asBinary->getRight());
-    }
-
-    // Either this is not ESSL 100 (where gl_FragData may be used), or gl_FragData is not used as a
-    // whole array.
-    //
-    // Note: ESSL 100 does not allow arrays in ternary operator, so there is no need to check for
-    // TIntermTernary here for a whole-array use of gl_FragData.
-    return false;
+    return current;
 }
 }  // namespace
 
@@ -1894,6 +1890,20 @@ bool TParseContext::checkIsValidTypeAndQualifierForArray(const TSourceLoc &index
               typeString.c_str());
         return false;
     }
+
+    // Support for arrays of samplerExternalOES and __samplerExternal2DY2Y are broken in some
+    // backends.
+    if (mCompileOptions.rejectWebglShadersWithUndefinedBehavior &&
+        (elementType.getBasicType() == EbtSamplerExternalOES ||
+         elementType.getBasicType() == EbtSamplerExternal2DY2YEXT))
+    {
+        TInfoSinkBase typeString;
+        typeString << TType(elementType);
+        error(indexLocation, "arrays of external samplers are currently unsupported",
+              typeString.c_str());
+        return false;
+    }
+
     return checkIsValidQualifierForArray(indexLocation, elementType);
 }
 
@@ -3381,7 +3391,10 @@ void TParseContext::functionCallFragDataCheck(const TFunction *fnCandidate,
     for (size_t i = 0; i < fnCandidate->getParamCount(); ++i)
     {
         TIntermTyped *argument = (*fnCall->getSequence())[i]->getAsTyped();
-        if (IsWholeArrayFragDataUsed(argument))
+        // Note: ESSL 100 does not allow arrays in ternary operator, so there is no need to check
+        // for TIntermTernary here for a whole-array use of gl_FragData, only descending into
+        // EOpComma nodes is sufficient.
+        if (RemoveCommaLeftHandSize(argument)->getQualifier() == EvqFragData)
         {
             // The whole array is passed to the function.  For validation purposes, assume all
             // indices are accessed in the function.
@@ -7293,7 +7306,8 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
         return CreateZeroNode(TType(EbtFloat, EbpHigh, EvqConst));
     }
 
-    switch (baseExpression->getQualifier())
+    TIntermTyped *effectivelyIndexedExpression = RemoveCommaLeftHandSize(baseExpression);
+    switch (effectivelyIndexedExpression->getQualifier())
     {
         case EvqPerVertexIn:
             if (mGeometryShaderInputPrimitiveType == EptUndefined &&
@@ -7327,9 +7341,9 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
     // effects - like array length() method on a non-constant array.
     if (indexExpression->getQualifier() != EvqConst || indexConstantUnion == nullptr)
     {
-        if (baseExpression->isInterfaceBlock())
+        if (effectivelyIndexedExpression->isInterfaceBlock())
         {
-            switch (baseExpression->getQualifier())
+            switch (effectivelyIndexedExpression->getQualifier())
             {
                 case EvqPerVertexIn:
                     break;
@@ -7350,9 +7364,9 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
                     break;
                 default:
                     // It's ok for shader I/O blocks to be dynamically indexed
-                    if (!IsShaderIoBlock(baseExpression->getQualifier()) &&
-                        baseExpression->getQualifier() != EvqPatchIn &&
-                        baseExpression->getQualifier() != EvqPatchOut)
+                    if (!IsShaderIoBlock(effectivelyIndexedExpression->getQualifier()) &&
+                        effectivelyIndexedExpression->getQualifier() != EvqPatchIn &&
+                        effectivelyIndexedExpression->getQualifier() != EvqPatchOut)
                     {
                         // We can reach here only in error cases.
                         ASSERT(mDiagnostics->numErrors() > 0);
@@ -7360,29 +7374,30 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
                     break;
             }
         }
-        else if (baseExpression->getQualifier() == EvqFragmentOut ||
-                 baseExpression->getQualifier() == EvqFragmentInOut)
+        else if (effectivelyIndexedExpression->getQualifier() == EvqFragmentOut ||
+                 effectivelyIndexedExpression->getQualifier() == EvqFragmentInOut)
         {
             error(location,
                   "array indexes for fragment outputs must be constant integral expressions", "[");
         }
-        else if (baseExpression->getQualifier() == EvqLastFragData)
+        else if (effectivelyIndexedExpression->getQualifier() == EvqLastFragData)
         {
             error(location,
                   "array indexes for gl_LastFragData must be constant integral expressions", "[");
         }
-        else if (mShaderSpec == SH_WEBGL2_SPEC && baseExpression->getQualifier() == EvqFragData)
+        else if (mShaderSpec == SH_WEBGL2_SPEC &&
+                 effectivelyIndexedExpression->getQualifier() == EvqFragData)
         {
             error(location, "array index for gl_FragData must be constant zero", "[");
         }
         else if (mShaderSpec == SH_WEBGL2_SPEC &&
-                 baseExpression->getQualifier() == EvqSecondaryFragDataEXT)
+                 effectivelyIndexedExpression->getQualifier() == EvqSecondaryFragDataEXT)
         {
             error(location, "array index for gl_SecondaryFragDataEXT must be constant zero", "[");
         }
-        else if (baseExpression->isArray())
+        else if (effectivelyIndexedExpression->isArray())
         {
-            TBasicType elementType = baseExpression->getType().getBasicType();
+            TBasicType elementType = effectivelyIndexedExpression->getType().getBasicType();
 
             // Note: In Section 12.30 of the ESSL 3.00 spec on p143-144:
             //
@@ -7459,9 +7474,10 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
             safeIndex = 0;
         }
 
-        if (!baseExpression->getType().isUnsizedArray())
+        if (!effectivelyIndexedExpression->getType().isUnsizedArray())
         {
-            if (baseExpression->isArray() && baseExpression->getQualifier() == EvqFragData)
+            if (effectivelyIndexedExpression->isArray() &&
+                effectivelyIndexedExpression->getQualifier() == EvqFragData)
             {
                 mMaxFragDataArrayIndexUsed = std::max(mMaxFragDataArrayIndexUsed, index);
                 if (index > 0 && !isExtensionEnabled(TExtension::EXT_draw_buffers))
@@ -7476,24 +7492,27 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
             // Only do generic out-of-range check if similar error hasn't already been reported.
             if (safeIndex < 0)
             {
-                if (baseExpression->isArray())
+                if (effectivelyIndexedExpression->isArray())
                 {
-                    safeIndex = checkIndexLessThan(outOfRangeIndexIsError, location, index,
-                                                   baseExpression->getOutermostArraySize(),
-                                                   "array index out of range");
+                    safeIndex =
+                        checkIndexLessThan(outOfRangeIndexIsError, location, index,
+                                           effectivelyIndexedExpression->getOutermostArraySize(),
+                                           "array index out of range");
                 }
-                else if (baseExpression->isMatrix())
+                else if (effectivelyIndexedExpression->isMatrix())
                 {
-                    safeIndex = checkIndexLessThan(outOfRangeIndexIsError, location, index,
-                                                   baseExpression->getType().getCols(),
-                                                   "matrix field selection out of range");
+                    safeIndex =
+                        checkIndexLessThan(outOfRangeIndexIsError, location, index,
+                                           effectivelyIndexedExpression->getType().getCols(),
+                                           "matrix field selection out of range");
                 }
                 else
                 {
-                    ASSERT(baseExpression->isVector());
-                    safeIndex = checkIndexLessThan(outOfRangeIndexIsError, location, index,
-                                                   baseExpression->getType().getNominalSize(),
-                                                   "vector field selection out of range");
+                    ASSERT(effectivelyIndexedExpression->isVector());
+                    safeIndex =
+                        checkIndexLessThan(outOfRangeIndexIsError, location, index,
+                                           effectivelyIndexedExpression->getType().getNominalSize(),
+                                           "vector field selection out of range");
                 }
             }
 
@@ -7513,7 +7532,8 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
                 new TIntermBinary(EOpIndexDirect, baseExpression, indexExpression);
             node->setLine(location);
 
-            if (baseExpression->isVector() && !baseExpression->isArray())
+            if (effectivelyIndexedExpression->isVector() &&
+                !effectivelyIndexedExpression->isArray())
             {
                 const uint32_t irIndex = mIRBuilder.popArraySize();
 #ifdef ANGLE_IR
@@ -7534,7 +7554,8 @@ TIntermTyped *TParseContext::addIndexExpression(TIntermTyped *baseExpression,
     // According to ESSL 100 spec, Appendix A, the index expression must be a
     // constant-index-expression unless the operand is a uniform in a vertex shader.
     if (mValidateESSL100Limitations &&
-        !(mShaderType == GL_VERTEX_SHADER && baseExpression->getQualifier() == EvqUniform))
+        !(mShaderType == GL_VERTEX_SHADER &&
+          effectivelyIndexedExpression->getQualifier() == EvqUniform))
     {
         checkESSL100ConstantIndex(indexExpression, location);
     }

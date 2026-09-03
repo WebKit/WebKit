@@ -1180,12 +1180,12 @@ TEST_P(GLSLValidationTest, VoidInConstructorArguments)
 TEST_P(GLSLValidationTest_ES3, EmptyArrayConstructor)
 {
     constexpr char kFS[] = R"(#version 300 es
-         precision mediump float;
-         out vec4 my_FragColor;
-         uniform float u;
-         const float[] f = float[]();
-         void main() {
-             my_FragColor = vec4(0.0);
+        precision mediump float;
+        out vec4 my_FragColor;
+        uniform float u;
+        const float[] f = float[]();
+        void main() {
+            my_FragColor = vec4(0.0);
       })";
 
     validateError(GL_FRAGMENT_SHADER, kFS,
@@ -1197,13 +1197,33 @@ TEST_P(GLSLValidationTest_ES3, EmptyArrayConstructor)
 TEST_P(GLSLValidationTest_ES3, DynamicallyIndexedFragmentOutput)
 {
     constexpr char kFS[] = R"(#version 300 es
-         precision mediump float;
-         uniform int a;
-         out vec4[2] my_FragData;
-         void main()
-         {
+        precision mediump float;
+        uniform int a;
+        out vec4[2] my_FragData;
+        void main()
+        {
              my_FragData[true ? 0 : a] = vec4(0.0);
-         }
+        }
+    )";
+
+    validateError(
+        GL_FRAGMENT_SHADER, kFS,
+        " '[' : array indexes for fragment outputs must be constant integral expressions");
+}
+
+// Test that indexing fragment outputs with a non-constant expression is forbidden, even if ANGLE
+// is able to constant fold the index expression. ESSL 3.00 section 4.3.6.
+TEST_P(GLSLValidationTest_ES3, DynamicallyIndexedFragmentOutput2)
+{
+    constexpr char kFS[] = R"(#version 300 es
+        precision mediump float;
+        uniform int a;
+        out vec4[2] my_FragData;
+        void main()
+        {
+            float unused;
+            (unused, my_FragData)[true ? 0 : a];
+        }
     )";
 
     validateError(
@@ -1268,7 +1288,8 @@ TEST_P(GLSLValidationTest_ES3, DynamicallyIndexedSampler)
         out vec4 my_FragColor;
         void main()
         {
-            my_FragColor = texture(s[true ? 0 : a], vec2(0));
+            float unused;
+            my_FragColor = texture((unused, s)[true ? 0 : a], vec2(0));
         })";
 
     validateError(GL_FRAGMENT_SHADER, kFS,
@@ -1286,7 +1307,8 @@ TEST_P(GLSLValidationTest_ES31, DynamicallyIndexedImage)
         out vec4 my_FragColor;
         void main()
         {
-            my_FragColor = imageLoad(image[true ? 0 : a], ivec2(0));
+            float unused;
+            my_FragColor = imageLoad((unused, unused, image)[true ? 0 : a], ivec2(0));
     })";
 
     validateError(GL_FRAGMENT_SHADER, kFS,
@@ -1312,7 +1334,6 @@ TEST_P(GLSLValidationTest, StructConstructorWithStructDefinition)
 // WebGL 2.0 spec section 'GLSL ES 1.00 Fragment Shader Output'
 TEST_P(WebGL2GLSLValidationTest, IndexFragDataWithNonConstant)
 {
-
     constexpr char kFS[] = R"(precision mediump float;
          void main() {
              for (int i = 0; i < 2; ++i) {
@@ -1325,11 +1346,10 @@ TEST_P(WebGL2GLSLValidationTest, IndexFragDataWithNonConstant)
 }
 
 // Global variable initializers need to be constant expressions (ESSL 1.00 section 4.3)
-// Initializing with an uniform should generate a warning
+// Initializing with a uniform should generate a warning
 // (we don't generate an error on ESSL 1.00 because of WebGL compatibility)
 TEST_P(WebGL2GLSLValidationTest, AssignUniformToGlobalESSL1)
 {
-
     constexpr char kFS[] = R"(precision mediump float;
          uniform float a;
          float b = a * 2.0;
@@ -5037,6 +5057,29 @@ void main() {
                   "GL_MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT when gl_SecondaryFragDataEXT is used");
 }
 
+// Shader that writes to SecondaryFragData and FragData at an index >= than
+// gl_MaxDualSourceDrawBuffersEXT.  FragData is the result of a comma operator.
+TEST_P(GLSLValidationTest, BlendFuncExtendedDataArrayAndSecondaryDataWithComma)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
+
+    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
+#extension GL_EXT_blend_func_extended : require
+precision mediump float;
+void main() {
+    float f;
+    vec4 value = (f = 0.,
+                  gl_SecondaryFragDataEXT[0] = vec4(1.0),
+                  f += 0.5,
+                  gl_FragData)[gl_MaxDualSourceDrawBuffersEXT];
+    gl_FragData[0] = vec4(value.xyz, f);
+})";
+    validateError(GL_FRAGMENT_SHADER, kFS,
+                  "array index for gl_FragData must be less than "
+                  "GL_MAX_DUAL_SOURCE_DRAW_BUFFERS_EXT when gl_SecondaryFragDataEXT is used");
+}
+
 // Shader that writes to SecondaryFragData and passes FragData to a function.
 TEST_P(GLSLValidationTest, BlendFuncExtendedPassFragDataToFunction)
 {
@@ -6584,6 +6627,42 @@ void main()
     validateSuccess(GL_FRAGMENT_SHADER, kFS);
 }
 
+// External sampler arrays are not implemented correctly and so are forbidden for now.
+TEST_P(WebGL2GLSLValidationTest, SamplerExternalArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp float;
+uniform samplerExternalOES textures[2];
+out vec4 fragColor;
+void main()
+{
+    fragColor = texture(textures[0], vec2(0))
+              + texture(textures[1], vec2(0));
+})";
+    validateError(GL_FRAGMENT_SHADER, kFS, "arrays of external samplers are currently unsupported");
+}
+
+// External Y2Y sampler arrays are not implemented correctly and so are forbidden for now.
+TEST_P(WebGL2GLSLValidationTest, SamplerExternalY2YArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_YUV_target"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_EXT_YUV_target : require
+precision highp float;
+uniform __samplerExternal2DY2YEXT textures[2];
+out vec4 fragColor;
+void main()
+{
+    fragColor = texture(textures[0], vec2(0))
+              + texture(textures[1], vec2(0));
+})";
+    validateError(GL_FRAGMENT_SHADER, kFS, "arrays of external samplers are currently unsupported");
+}
+
 class WebGLGLSLValidationExtensionDisableTest : public WebGLGLSLValidationTest
 {};
 
@@ -6963,10 +7042,10 @@ TEST_P(GLSLValidationClipDistanceTest_ES3, TooManyCombinedFS)
     ANGLE_SKIP_TEST_IF(maxCombinedClipAndCullDistances > 11);
 
     constexpr char kFS[] = R"(out highp vec4 fragColor;
-
 void main()
 {
-    fragColor = vec4(gl_ClipDistance[4], gl_CullDistance[5], 0, 1);
+    mediump float unused;
+    fragColor = vec4((unused, gl_ClipDistance)[4], (unused, unused, gl_CullDistance)[5], 0, 1);
 })";
     constexpr char kExpect[] =
         "The sum of 'gl_ClipDistance' and 'gl_CullDistance' size is greater than "
@@ -7197,6 +7276,41 @@ void main()
     for (int i = 0; i < 2; ++i)
     {
         gl_ClipDistance[i] = 1.0;
+    }
+}
+out highp float gl_ClipDistance[3];
+)";
+    constexpr char kExpect[] =
+        "'gl_ClipDistance' : redeclaration of gl_ClipDistance after it is referenced is not "
+        "allowed";
+
+    if (hasAngle)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_ANGLE_clip_cull_distance", kVS, kExpect);
+    }
+
+    if (hasExt)
+    {
+        validateErrorWithExt(GL_VERTEX_SHADER, "GL_EXT_clip_cull_distance", kVS, kExpect);
+    }
+}
+
+// Shader redeclares gl_ClipDistance, but after it's been referenced with a non-constant index.
+TEST_P(GLSLValidationClipDistanceTest_ES3, RedeclareClipDistanceAfterReferenceNonConstantIndex2)
+{
+    const bool hasExt   = IsGLExtensionEnabled("GL_EXT_clip_cull_distance");
+    const bool hasAngle = IsGLExtensionEnabled("GL_ANGLE_clip_cull_distance");
+    ANGLE_SKIP_TEST_IF(!hasExt && !hasAngle);
+
+    constexpr char kVS[] =
+        R"(in vec4 aPosition;
+void main()
+{
+    gl_Position = aPosition;
+    for (int i = 0; i < 2; ++i)
+    {
+        float unused;
+        float f = (unused, gl_ClipDistance)[i];
     }
 }
 out highp float gl_ClipDistance[3];

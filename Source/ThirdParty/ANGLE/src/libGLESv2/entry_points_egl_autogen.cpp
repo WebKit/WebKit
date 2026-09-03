@@ -47,11 +47,12 @@ EGLBoolean EGLAPIENTRY EGL_ChooseConfig(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ChooseConfig, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ChooseConfig, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, ChooseConfig, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, attrib_listPacked, configs, config_size, num_config);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, ChooseConfig, validDisplay, EGLBoolean, validDisplay,
+                                   attrib_listPacked, configs, config_size, num_config);
             }
             else
             {
@@ -88,11 +89,12 @@ EGLBoolean EGLAPIENTRY EGL_CopyBuffers(EGLDisplay dpy,
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CopyBuffers, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CopyBuffers, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CopyBuffers, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked, target);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CopyBuffers, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked, target);
             }
             else
             {
@@ -128,13 +130,15 @@ EGLContext EGLAPIENTRY EGL_CreateContext(EGLDisplay dpy,
         egl::Config *configPacked             = PackParam<egl::Config *>(config);
         gl::ContextID share_contextPacked     = PackParam<gl::ContextID>(share_context);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
+        const egl::Display *validDisplay      = GetDisplayIfValid(dpyPacked);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateContext, thread, dpyPacked, share_contextPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(CreateContext, thread, validDisplay,
+                                              share_contextPacked);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreateContext, GetDisplayIfValid(dpyPacked), EGLContext,
-                                   dpyPacked, configPacked, share_contextPacked, attrib_listPacked);
+                ANGLE_EGL_VALIDATE(thread, CreateContext, validDisplay, EGLContext, validDisplay,
+                                   configPacked, share_contextPacked, attrib_listPacked);
             }
             else
             {
@@ -172,11 +176,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferSurface(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePbufferSurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePbufferSurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreatePbufferSurface, GetDisplayIfValid(dpyPacked),
-                                   EGLSurface, dpyPacked, configPacked, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreatePbufferSurface, validDisplay, EGLSurface,
+                                   validDisplay, configPacked, attrib_listPacked);
             }
             else
             {
@@ -215,11 +220,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePixmapSurface(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePixmapSurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePixmapSurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreatePixmapSurface, GetDisplayIfValid(dpyPacked),
-                                   EGLSurface, dpyPacked, configPacked, pixmap, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreatePixmapSurface, validDisplay, EGLSurface,
+                                   validDisplay, configPacked, pixmap, attrib_listPacked);
             }
             else
             {
@@ -259,11 +265,12 @@ EGLSurface EGLAPIENTRY EGL_CreateWindowSurface(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateWindowSurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateWindowSurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreateWindowSurface, GetDisplayIfValid(dpyPacked),
-                                   EGLSurface, dpyPacked, configPacked, win, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreateWindowSurface, validDisplay, EGLSurface,
+                                   validDisplay, configPacked, win, attrib_listPacked);
             }
             else
             {
@@ -297,11 +304,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroyContext(EGLDisplay dpy, EGLContext ctx)
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyContext, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyContext, thread, ctxPacked);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, DestroyContext, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, ctxPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, DestroyContext, validDisplay, EGLBoolean, validDisplay,
+                                   ctxPacked);
             }
             else
             {
@@ -332,11 +340,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroySurface(EGLDisplay dpy, EGLSurface surface)
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, DestroySurface, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, DestroySurface, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked);
             }
             else
             {
@@ -372,11 +381,12 @@ EGLBoolean EGLAPIENTRY EGL_GetConfigAttrib(EGLDisplay dpy,
         egl::Config *configPacked = PackParam<egl::Config *>(config);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetConfigAttrib, thread, dpyPacked, attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetConfigAttrib, thread, attribute);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, GetConfigAttrib, GetDisplayIfValid(dpyPacked),
-                                   EGLBoolean, dpyPacked, configPacked, attribute, value);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, GetConfigAttrib, validDisplay, EGLBoolean, validDisplay,
+                                   configPacked, attribute, value);
             }
             else
             {
@@ -412,11 +422,12 @@ EGLBoolean EGLAPIENTRY EGL_GetConfigs(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetConfigs, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetConfigs, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, GetConfigs, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, configs, config_size, num_config);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, GetConfigs, validDisplay, EGLBoolean, validDisplay,
+                                   configs, config_size, num_config);
             }
             else
             {
@@ -584,11 +595,12 @@ EGLBoolean EGLAPIENTRY EGL_Initialize(EGLDisplay dpy, EGLint *major, EGLint *min
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(Initialize, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(Initialize, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, Initialize, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, major, minor);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, Initialize, validDisplay, EGLBoolean, validDisplay,
+                                   major, minor);
             }
             else
             {
@@ -626,11 +638,12 @@ EGLBoolean EGLAPIENTRY EGL_MakeCurrent(EGLDisplay dpy,
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(MakeCurrent, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(MakeCurrent, thread, ctxPacked);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, MakeCurrent, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, drawPacked, readPacked, ctxPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, MakeCurrent, validDisplay, EGLBoolean, validDisplay,
+                                   drawPacked, readPacked, ctxPacked);
             }
             else
             {
@@ -662,15 +675,17 @@ EGLBoolean EGLAPIENTRY EGL_QueryContext(EGLDisplay dpy,
                                     ", attribute = %d, value = 0x%016" PRIxPTR "",
                                     (uintptr_t)dpy, (uintptr_t)ctx, attribute, (uintptr_t)value));
 
-        egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
-        gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
+        egl::Display *dpyPacked          = PackParam<egl::Display *>(dpy);
+        gl::ContextID ctxPacked          = PackParam<gl::ContextID>(ctx);
+        const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryContext, thread, dpyPacked, ctxPacked, attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(QueryContext, thread, validDisplay, ctxPacked,
+                                              attribute);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, QueryContext, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, ctxPacked, attribute, value);
+                ANGLE_EGL_VALIDATE(thread, QueryContext, validDisplay, EGLBoolean, validDisplay,
+                                   ctxPacked, attribute, value);
             }
             else
             {
@@ -700,11 +715,12 @@ const char *EGLAPIENTRY EGL_QueryString(EGLDisplay dpy, EGLint name)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryString, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryString, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, QueryString, GetDisplayIfValid(dpyPacked), const char *,
-                                   dpyPacked, name);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, QueryString, validDisplay, const char *, validDisplay,
+                                   name);
             }
             else
             {
@@ -743,11 +759,12 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QuerySurface, thread, dpyPacked, attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QuerySurface, thread, attribute);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, QuerySurface, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked, attribute, value);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, QuerySurface, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked, attribute, value);
             }
             else
             {
@@ -779,11 +796,12 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffers(EGLDisplay dpy, EGLSurface surface)
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapBuffers, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapBuffers, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, SwapBuffers, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, SwapBuffers, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked);
             }
             else
             {
@@ -811,11 +829,11 @@ EGLBoolean EGLAPIENTRY EGL_Terminate(EGLDisplay dpy)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(Terminate, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(Terminate, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, Terminate, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, Terminate, validDisplay, EGLBoolean, validDisplay);
             }
             else
             {
@@ -905,11 +923,12 @@ EGLBoolean EGLAPIENTRY EGL_BindTexImage(EGLDisplay dpy, EGLSurface surface, EGLi
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(BindTexImage, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(BindTexImage, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, BindTexImage, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked, buffer);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, BindTexImage, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked, buffer);
             }
             else
             {
@@ -941,11 +960,12 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseTexImage(EGLDisplay dpy, EGLSurface surface, E
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ReleaseTexImage, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ReleaseTexImage, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, ReleaseTexImage, GetDisplayIfValid(dpyPacked),
-                                   EGLBoolean, dpyPacked, surfacePacked, buffer);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, ReleaseTexImage, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked, buffer);
             }
             else
             {
@@ -981,11 +1001,12 @@ EGLBoolean EGLAPIENTRY EGL_SurfaceAttrib(EGLDisplay dpy,
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SurfaceAttrib, thread, dpyPacked, attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SurfaceAttrib, thread, attribute);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, SurfaceAttrib, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, surfacePacked, attribute, value);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, SurfaceAttrib, validDisplay, EGLBoolean, validDisplay,
+                                   surfacePacked, attribute, value);
             }
             else
             {
@@ -1015,11 +1036,12 @@ EGLBoolean EGLAPIENTRY EGL_SwapInterval(EGLDisplay dpy, EGLint interval)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapInterval, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapInterval, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, SwapInterval, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, interval);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, SwapInterval, validDisplay, EGLBoolean, validDisplay,
+                                   interval);
             }
             else
             {
@@ -1087,12 +1109,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePbufferFromClientBuffer(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePbufferFromClientBuffer, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePbufferFromClientBuffer, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreatePbufferFromClientBuffer,
-                                   GetDisplayIfValid(dpyPacked), EGLSurface, dpyPacked, buftype,
-                                   buffer, configPacked, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreatePbufferFromClientBuffer, validDisplay, EGLSurface,
+                                   validDisplay, buftype, buffer, configPacked, attrib_listPacked);
             }
             else
             {
@@ -1241,11 +1263,12 @@ EGLint EGLAPIENTRY EGL_ClientWaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ClientWaitSync, thread, dpyPacked, flags);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ClientWaitSync, thread, flags);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, ClientWaitSync, GetDisplayIfValid(dpyPacked), EGLint,
-                                   dpyPacked, syncPacked, flags, timeout);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, ClientWaitSync, validDisplay, EGLint, validDisplay,
+                                   syncPacked, flags, timeout);
             }
             else
             {
@@ -1282,13 +1305,14 @@ EGLImage EGLAPIENTRY EGL_CreateImage(EGLDisplay dpy,
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked               = PackParam<gl::ContextID>(ctx);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
+        const egl::Display *validDisplay      = GetDisplayIfValid(dpyPacked);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateImage, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY(CreateImage, thread, validDisplay, ctxPacked);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreateImage, GetDisplayIfValid(dpyPacked), EGLImage,
-                                   dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
+                ANGLE_EGL_VALIDATE(thread, CreateImage, validDisplay, EGLImage, validDisplay,
+                                   ctxPacked, target, buffer, attrib_listPacked);
             }
             else
             {
@@ -1328,12 +1352,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurface(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformPixmapSurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformPixmapSurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreatePlatformPixmapSurface,
-                                   GetDisplayIfValid(dpyPacked), EGLSurface, dpyPacked,
-                                   configPacked, native_pixmap, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreatePlatformPixmapSurface, validDisplay, EGLSurface,
+                                   validDisplay, configPacked, native_pixmap, attrib_listPacked);
             }
             else
             {
@@ -1373,12 +1397,12 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurface(EGLDisplay dpy,
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformWindowSurface, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformWindowSurface, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreatePlatformWindowSurface,
-                                   GetDisplayIfValid(dpyPacked), EGLSurface, dpyPacked,
-                                   configPacked, native_window, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreatePlatformWindowSurface, validDisplay, EGLSurface,
+                                   validDisplay, configPacked, native_window, attrib_listPacked);
             }
             else
             {
@@ -1412,11 +1436,12 @@ EGLSync EGLAPIENTRY EGL_CreateSync(EGLDisplay dpy, EGLenum type, const EGLAttrib
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateSync, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateSync, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, CreateSync, GetDisplayIfValid(dpyPacked), EGLSync,
-                                   dpyPacked, type, attrib_listPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, CreateSync, validDisplay, EGLSync, validDisplay, type,
+                                   attrib_listPacked);
             }
             else
             {
@@ -1449,11 +1474,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroyImage(EGLDisplay dpy, EGLImage image)
         ImageID imagePacked     = PackParam<ImageID>(image);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyImage, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyImage, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, DestroyImage, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, imagePacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, DestroyImage, validDisplay, EGLBoolean, validDisplay,
+                                   imagePacked);
             }
             else
             {
@@ -1484,11 +1510,12 @@ EGLBoolean EGLAPIENTRY EGL_DestroySync(EGLDisplay dpy, EGLSync sync)
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySync, thread, dpyPacked);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySync, thread);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, DestroySync, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, syncPacked);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, DestroySync, validDisplay, EGLBoolean, validDisplay,
+                                   syncPacked);
             }
             else
             {
@@ -1562,11 +1589,12 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttrib(EGLDisplay dpy,
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetSyncAttrib, thread, dpyPacked, attribute);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetSyncAttrib, thread, attribute);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, GetSyncAttrib, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, syncPacked, attribute, value);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, GetSyncAttrib, validDisplay, EGLBoolean, validDisplay,
+                                   syncPacked, attribute, value);
             }
             else
             {
@@ -1598,11 +1626,12 @@ EGLBoolean EGLAPIENTRY EGL_WaitSync(EGLDisplay dpy, EGLSync sync, EGLint flags)
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
         {
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitSync, thread, dpyPacked, flags);
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitSync, thread, flags);
             if (IsEGLValidationEnabled())
             {
-                ANGLE_EGL_VALIDATE(thread, WaitSync, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                                   dpyPacked, syncPacked, flags);
+                const egl::Display *validDisplay = GetDisplayIfValid(dpyPacked);
+                ANGLE_EGL_VALIDATE(thread, WaitSync, validDisplay, EGLBoolean, validDisplay,
+                                   syncPacked, flags);
             }
             else
             {

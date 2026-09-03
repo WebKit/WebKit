@@ -5620,6 +5620,8 @@ void GL_APIENTRY glMinSampleShadingOES(GLfloat value)
 
 // GL_OES_standard_derivatives
 
+// GL_OES_stencil8
+
 // GL_OES_surfaceless_context
 
 // GL_OES_tessellation_shader

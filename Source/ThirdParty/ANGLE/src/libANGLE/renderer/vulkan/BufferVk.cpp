@@ -800,6 +800,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
 {
     vk::Renderer *renderer = contextVk->getRenderer();
     ASSERT(mBuffer.valid());
+    ASSERT(offset + length <= static_cast<VkDeviceSize>(mState.getSize()));
 
     // Record map call parameters in case this call is from angle internal (the access/offset/length
     // will be inconsistent from mState).
@@ -986,7 +987,7 @@ angle::Result BufferVk::getIndexRange(const gl::Context *context,
     ANGLE_TRACE_EVENT0("gpu.angle", "BufferVk::getIndexRange");
 
     void *mapPtr;
-    ANGLE_TRY(mapRangeForReadAccessOnly(contextVk, offset, getSize(), &mapPtr));
+    ANGLE_TRY(mapRangeForReadAccessOnly(contextVk, offset, getSize() - offset, &mapPtr));
     *outRange = gl::ComputeIndexRange(type, mapPtr, count, primitiveRestartEnabled);
     ANGLE_TRY(unmapReadAccessOnly(contextVk));
 

@@ -57,8 +57,8 @@ angle::Result GetClientBufferMemoryRequirements(ErrorContext *context,
     bufferProperties.pNext = nullptr;
 
     VkDevice device = context->getRenderer()->getDevice();
-    ANGLE_VK_TRY(context, vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer,
-                                                                      &bufferProperties));
+    ANGLE_VK_TRY(context, VK_CALL(vkGetAndroidHardwareBufferPropertiesANDROID, device,
+                                  hardwareBuffer, &bufferProperties));
 
     memRequirements.size           = bufferProperties.allocationSize;
     memRequirements.alignment      = 0;

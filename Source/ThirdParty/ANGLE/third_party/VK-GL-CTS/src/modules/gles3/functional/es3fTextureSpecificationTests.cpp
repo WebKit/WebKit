@@ -422,15 +422,24 @@ void TextureCubeSpecCase::verifyTexture(sglr::GLContext &gles3Context, sglr::Ref
                 renderTex(dst, shaderID, levelSize, levelSize);
             }
 
-            const float threshold = 0.02f;
-            string faceStr        = de::toString((tcu::CubeFace)face);
-            string levelStr       = de::toString(levelNdx);
-            string name           = string("Level") + levelStr;
-            string desc           = string("Level ") + levelStr + ", face " + faceStr;
-            bool isFaceOk =
-                tcu::fuzzyCompare(m_testCtx.getLog(), name.c_str(), desc.c_str(), reference, result, threshold,
-                                  levelNdx == 0 ? tcu::COMPARE_LOG_RESULT : tcu::COMPARE_LOG_ON_ERROR);
+            int alphaBits = m_context.getRenderTarget().getPixelFormat().alphaBits;
+            tcu::Vec4 threshold(0.02f, 0.02f, 0.02f, (alphaBits == 2) ? 0.35f : 0.02f);
+            string faceStr  = de::toString((tcu::CubeFace)face);
+            string levelStr = de::toString(levelNdx);
+            string desc     = string("Level_") + levelStr + "_" + faceStr;
 
+            /* Crop away edges of the image to handle issues with cubemap LOD handling causing possible
+             * differences in boundaries and corners of the cubemap.
+             */
+            const unsigned pad                  = 1;
+            tcu::ConstPixelBufferAccess cropRef = tcu::getSubregion(
+                reference.getAccess(), pad, pad, reference.getWidth() - (pad * 2), reference.getHeight() - (pad * 2));
+            tcu::ConstPixelBufferAccess cropRes = tcu::getSubregion(
+                result.getAccess(), pad, pad, reference.getWidth() - (pad * 2), reference.getHeight() - (pad * 2));
+
+            bool isFaceOk = tcu::floatThresholdCompare(
+                m_testCtx.getLog(), desc.c_str(), "Image Comparison", cropRef, cropRes, threshold,
+                levelNdx == 0 ? tcu::COMPARE_LOG_RESULT : tcu::COMPARE_LOG_ON_ERROR);
             if (!isFaceOk)
             {
                 m_testCtx.setTestResult(QP_TEST_RESULT_FAIL, "Image comparison failed");
@@ -1953,9 +1962,9 @@ protected:
     void createTexture(void)
     {
         const tcu::RenderTarget &renderTarget = TestCase::m_context.getRenderContext().getRenderTarget();
-        bool targetHasRGB = renderTarget.getPixelFormat().redBits > 0 && renderTarget.getPixelFormat().greenBits > 0 &&
-                            renderTarget.getPixelFormat().blueBits > 0;
-        bool targetHasAlpha    = renderTarget.getPixelFormat().alphaBits > 0;
+        const tcu::PixelFormat &pixelFormat   = renderTarget.getPixelFormat();
+        bool targetHasRGB      = pixelFormat.redBits > 0 && pixelFormat.greenBits > 0 && pixelFormat.blueBits > 0;
+        bool targetHasAlpha    = pixelFormat.alphaBits > 0;
         tcu::TextureFormat fmt = mapGLUnsizedInternalFormat(m_internalFormat);
         bool texHasRGB         = fmt.order != tcu::TextureFormat::A;
         bool texHasAlpha       = fmt.order == tcu::TextureFormat::RGBA || fmt.order == tcu::TextureFormat::LA ||
@@ -1967,6 +1976,10 @@ protected:
 
         if ((texHasRGB && !targetHasRGB) || (texHasAlpha && !targetHasAlpha))
             throw tcu::NotSupportedError("Copying from current framebuffer is not supported", "", __FILE__, __LINE__);
+
+        if ((pixelFormat.redBits == 10) && (pixelFormat.greenBits == 10) && (pixelFormat.blueBits == 10) &&
+            (pixelFormat.alphaBits == 2 || pixelFormat.alphaBits == 0))
+            throw tcu::NotSupportedError("Copy from 1010102 in GLES not supported, skipping ", "", __FILE__, __LINE__);
 
         // Fill render target with gradient.
         shader.setGradient(*getCurrentContext(), shaderID, Vec4(0.0f), Vec4(1.0f));
@@ -2004,9 +2017,9 @@ protected:
     void createTexture(void)
     {
         const tcu::RenderTarget &renderTarget = TestCase::m_context.getRenderContext().getRenderTarget();
-        bool targetHasRGB = renderTarget.getPixelFormat().redBits > 0 && renderTarget.getPixelFormat().greenBits > 0 &&
-                            renderTarget.getPixelFormat().blueBits > 0;
-        bool targetHasAlpha    = renderTarget.getPixelFormat().alphaBits > 0;
+        const tcu::PixelFormat &pixelFormat   = renderTarget.getPixelFormat();
+        bool targetHasRGB      = pixelFormat.redBits > 0 && pixelFormat.greenBits > 0 && pixelFormat.blueBits > 0;
+        bool targetHasAlpha    = pixelFormat.alphaBits > 0;
         tcu::TextureFormat fmt = mapGLUnsizedInternalFormat(m_internalFormat);
         bool texHasRGB         = fmt.order != tcu::TextureFormat::A;
         bool texHasAlpha       = fmt.order == tcu::TextureFormat::RGBA || fmt.order == tcu::TextureFormat::LA ||
@@ -2018,6 +2031,10 @@ protected:
 
         if ((texHasRGB && !targetHasRGB) || (texHasAlpha && !targetHasAlpha))
             throw tcu::NotSupportedError("Copying from current framebuffer is not supported", "", __FILE__, __LINE__);
+
+        if ((pixelFormat.redBits == 10) && (pixelFormat.greenBits == 10) && (pixelFormat.blueBits == 10) &&
+            (pixelFormat.alphaBits == 2 || pixelFormat.alphaBits == 0))
+            throw tcu::NotSupportedError("Copy from 1010102 in GLES not supported, skipping ", "", __FILE__, __LINE__);
 
         // Fill render target with gradient.
         shader.setGradient(*getCurrentContext(), shaderID, Vec4(0.0f), Vec4(1.0f));
@@ -2060,9 +2077,9 @@ protected:
     void createTexture(void)
     {
         const tcu::RenderTarget &renderTarget = TestCase::m_context.getRenderContext().getRenderTarget();
-        bool targetHasRGB = renderTarget.getPixelFormat().redBits > 0 && renderTarget.getPixelFormat().greenBits > 0 &&
-                            renderTarget.getPixelFormat().blueBits > 0;
-        bool targetHasAlpha    = renderTarget.getPixelFormat().alphaBits > 0;
+        const tcu::PixelFormat &pixelFormat   = renderTarget.getPixelFormat();
+        bool targetHasRGB      = pixelFormat.redBits > 0 && pixelFormat.greenBits > 0 && pixelFormat.blueBits > 0;
+        bool targetHasAlpha    = pixelFormat.alphaBits > 0;
         tcu::TextureFormat fmt = glu::mapGLTransferFormat(m_format, m_dataType);
         bool texHasRGB         = fmt.order != tcu::TextureFormat::A;
         bool texHasAlpha       = fmt.order == tcu::TextureFormat::RGBA || fmt.order == tcu::TextureFormat::LA ||
@@ -2075,6 +2092,10 @@ protected:
 
         if ((texHasRGB && !targetHasRGB) || (texHasAlpha && !targetHasAlpha))
             throw tcu::NotSupportedError("Copying from current framebuffer is not supported", "", __FILE__, __LINE__);
+
+        if ((pixelFormat.redBits == 10) && (pixelFormat.greenBits == 10) && (pixelFormat.blueBits == 10) &&
+            (pixelFormat.alphaBits == 2 || pixelFormat.alphaBits == 0))
+            throw tcu::NotSupportedError("Copy from 1010102 in GLES not supported, skipping ", "", __FILE__, __LINE__);
 
         glGenTextures(1, &tex);
         glBindTexture(GL_TEXTURE_2D, tex);
@@ -2140,9 +2161,9 @@ protected:
     void createTexture(void)
     {
         const tcu::RenderTarget &renderTarget = TestCase::m_context.getRenderContext().getRenderTarget();
-        bool targetHasRGB = renderTarget.getPixelFormat().redBits > 0 && renderTarget.getPixelFormat().greenBits > 0 &&
-                            renderTarget.getPixelFormat().blueBits > 0;
-        bool targetHasAlpha    = renderTarget.getPixelFormat().alphaBits > 0;
+        const tcu::PixelFormat &pixelFormat   = renderTarget.getPixelFormat();
+        bool targetHasRGB      = pixelFormat.redBits > 0 && pixelFormat.greenBits > 0 && pixelFormat.blueBits > 0;
+        bool targetHasAlpha    = pixelFormat.alphaBits > 0;
         tcu::TextureFormat fmt = glu::mapGLTransferFormat(m_format, m_dataType);
         bool texHasRGB         = fmt.order != tcu::TextureFormat::A;
         bool texHasAlpha       = fmt.order == tcu::TextureFormat::RGBA || fmt.order == tcu::TextureFormat::LA ||
@@ -2155,6 +2176,10 @@ protected:
 
         if ((texHasRGB && !targetHasRGB) || (texHasAlpha && !targetHasAlpha))
             throw tcu::NotSupportedError("Copying from current framebuffer is not supported", "", __FILE__, __LINE__);
+
+        if ((pixelFormat.redBits == 10) && (pixelFormat.greenBits == 10) && (pixelFormat.blueBits == 10) &&
+            (pixelFormat.alphaBits == 2 || pixelFormat.alphaBits == 0))
+            throw tcu::NotSupportedError("Copy from 1010102 in GLES not supported, skipping ", "", __FILE__, __LINE__);
 
         glGenTextures(1, &tex);
         glBindTexture(GL_TEXTURE_CUBE_MAP, tex);

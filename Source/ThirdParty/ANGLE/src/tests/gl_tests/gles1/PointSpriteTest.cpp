@@ -100,6 +100,4 @@ TEST_P(PointSpriteTest, TrianglesNotTreatedAsPointSprites)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 ANGLE_INSTANTIATE_TEST_ES1_AND(PointSpriteTest,
-                               ES1_VULKAN().enable(Feature::EmulatedPrerotation90),
-                               ES1_VULKAN().enable(Feature::EmulatedPrerotation180),
-                               ES1_VULKAN().enable(Feature::EmulatedPrerotation270));
+                               ES1_VULKAN().enable(Feature::EmulatedPrerotation180));

@@ -206,6 +206,14 @@ bool operator==(const RectangleImpl<T> &a, const RectangleImpl<T> &b);
 template <typename T>
 bool operator!=(const RectangleImpl<T> &a, const RectangleImpl<T> &b);
 
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const RectangleImpl<T> &rect)
+{
+    os << "x = " << rect.x << ", y = " << rect.y << ", width = " << rect.width
+       << ", height = " << rect.height;
+    return os;
+}
+
 using Rectangle = RectangleImpl<int>;
 
 // Calculate the intersection of two rectangles.  Returns false if the intersection is empty.
@@ -534,15 +542,26 @@ struct PixelStoreStateBase
     GLint skipPixels  = 0;
     GLint imageHeight = 0;
     GLint skipImages  = 0;
+
+    bool operator==(const PixelStoreStateBase &other) const = default;
+    bool operator!=(const PixelStoreStateBase &other) const = default;
 };
 
 struct PixelUnpackState : PixelStoreStateBase
-{};
+{
+    bool operator==(const PixelUnpackState &other) const = default;
+    bool operator!=(const PixelUnpackState &other) const = default;
+};
+std::ostream &operator<<(std::ostream &os, const PixelUnpackState &unpackState);
 
 struct PixelPackState : PixelStoreStateBase
 {
     bool reverseRowOrder = false;
+
+    bool operator==(const PixelPackState &other) const = default;
+    bool operator!=(const PixelPackState &other) const = default;
 };
+std::ostream &operator<<(std::ostream &os, const PixelPackState &packState);
 
 struct SupportedSampleSet
 {
@@ -810,7 +829,11 @@ class BlendStateExt final
     EquationStorage::Type expandEquationColorIndexed(const size_t index) const;
     EquationStorage::Type expandEquationAlphaIndexed(const size_t index) const;
     void setEquations(const GLenum modeColor, const GLenum modeAlpha);
+    void setEquations(const BlendEquationType modeColor, const BlendEquationType modeAlpha);
     void setEquationsIndexed(const size_t index, const GLenum modeColor, const GLenum modeAlpha);
+    void setEquationsIndexed(const size_t index,
+                             const BlendEquationType modeColor,
+                             const BlendEquationType modeAlpha);
     void setEquationsIndexed(const size_t index,
                              const size_t otherIndex,
                              const BlendStateExt &other);
@@ -843,11 +866,15 @@ class BlendStateExt final
                     const GLenum dstColor,
                     const GLenum srcAlpha,
                     const GLenum dstAlpha);
+    void setFactors(const BlendFactorType srcColorFactor,
+                    const BlendFactorType dstColorFactor,
+                    const BlendFactorType srcAlphaFactor,
+                    const BlendFactorType dstAlphaFactor);
     void setFactorsIndexed(const size_t index,
-                           const gl::BlendFactorType srcColorFactor,
-                           const gl::BlendFactorType dstColorFactor,
-                           const gl::BlendFactorType srcAlphaFactor,
-                           const gl::BlendFactorType dstAlphaFactor);
+                           const BlendFactorType srcColorFactor,
+                           const BlendFactorType dstColorFactor,
+                           const BlendFactorType srcAlphaFactor,
+                           const BlendFactorType dstAlphaFactor);
     void setFactorsIndexed(const size_t index,
                            const GLenum srcColor,
                            const GLenum dstColor,
@@ -939,6 +966,9 @@ class BlendStateExt final
     }
 
     constexpr void setEnabledMask(const DrawBufferMask enabledMask) { mEnabledMask = enabledMask; }
+
+    bool operator==(const BlendStateExt &other) const;
+    bool operator!=(const BlendStateExt &other) const;
 
     ///////// Data Members /////////
   private:
@@ -1273,6 +1303,8 @@ class LevelIndexWrapper
 
 // A GL texture level index.
 using LevelIndex = LevelIndexWrapper<GLint>;
+// A GL texture layer index.
+using LayerIndex = LevelIndexWrapper<uint32_t>;
 
 enum class MultisamplingMode
 {

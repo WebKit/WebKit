@@ -36,7 +36,7 @@ class MockRenderbufferImpl : public RenderbufferImpl
     MOCK_METHOD5(getAttachmentRenderTarget,
                  angle::Result(const gl::Context *,
                                GLenum,
-                               const gl::OwnImageIndex &,
+                               const gl::ImageIndex &,
                                GLsizei,
                                FramebufferAttachmentRenderTarget **));
 

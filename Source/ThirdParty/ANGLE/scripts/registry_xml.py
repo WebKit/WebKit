@@ -297,6 +297,7 @@ gles1_extensions = [
     "GL_OES_point_size_array",
     "GL_OES_point_sprite",
     "GL_OES_query_matrix",
+    "GL_OES_stencil8",
     "GL_OES_texture_cube_map",
     "GL_OES_texture_mirrored_repeat",
 ]

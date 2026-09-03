@@ -6,14 +6,34 @@
 
 import("../../../gni/angle.gni")
 import("../angle_traces.gni")
-
 angle_trace_libs("angle_restricted_traces") {
   json_path = "restricted_traces.json"
   if (angle_restricted_traces != []) {
     trace_list = angle_restricted_traces
   } else {
     _trace_json = read_file(json_path, "json")
-    trace_list = _trace_json.traces
+    trace_list = []
+    foreach(_trace_and_version, _trace_json.traces) {
+      _arr = []
+      _arr = string_split(_trace_and_version)
+      _name = _arr[0]
+      _version = _arr[1]
+
+      _is_representative = filter_include(_arr, [ "representative" ]) != []
+      _is_smoke = filter_include(_arr, [ "smoke" ]) != []
+      _is_ci = filter_include(_arr, [ "ci" ]) != []
+
+      _enabled = false
+      if (_is_ci && !_is_representative && !_is_smoke) {
+        _enabled = checkout_extra_traces
+      } else {
+        _enabled = checkout_angle_restricted_traces
+      }
+
+      if (_enabled) {
+        trace_list += [ "${_name} ${_version}" ]
+      }
+    }
   }
 }
 
@@ -37,6 +57,7 @@ group("goldctl") {
 
 group("angle_restricted_trace_gold_tests") {
   testonly = true
+  deps = [ ":gen_trace_list_json" ]
   data_deps = [
     ":goldctl",
     "$angle_root/src/tests:angle_system_info_test",
@@ -45,6 +66,7 @@ group("angle_restricted_trace_gold_tests") {
   data = [
     "restricted_trace_gold_tests.py",
     "restricted_traces.json",
+    "$root_gen_dir/trace_list.json",
     "../py_utils/android_helper.py",
     "../py_utils/angle_path_util.py",
     "../py_utils/angle_test_util.py",

@@ -122,6 +122,13 @@ inline T clamp(T x, MIN min, MAX max)
 }
 
 template <typename T>
+inline bool isOutsideOfBounds(T value, T min, T max)
+{
+    // Since NaNs fail all comparison tests, a NaN value will return true (out of bounds).
+    return !(value >= min && value <= max);
+}
+
+template <typename T>
 T clampForBitCount(T value, size_t bitCount)
 {
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");

@@ -286,8 +286,6 @@ class ContextGL : public ContextImpl
 
     void setMaxShaderCompilerThreads(GLuint count) override;
 
-    void validateState() const;
-
     void setNeedsFlushBeforeDeleteTextures();
     void flushIfNecessaryBeforeDeleteTextures();
 
@@ -304,6 +302,15 @@ class ContextGL : public ContextImpl
     void tickGC();
 
   private:
+    enum StateType
+    {
+        GlobalState,
+        VAOState,
+        Count,
+    };
+    using StateTypes = angle::BitSet<StateType::Count>;
+    void validateState(StateTypes statesToValidate);
+
     angle::Result setDrawArraysState(const gl::Context *context,
                                      GLint first,
                                      GLsizei count,

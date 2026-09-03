@@ -1186,9 +1186,8 @@ void CaptureGLCallToFrameCapture(CaptureFuncT captureFunc,
     }
     FrameCaptureShared *frameCaptureShared = context->getShareGroup()->getFrameCaptureShared();
 
-    // EGL calls are protected by the global context mutex but only a subset of GL calls
-    // are so protected. Ensure FrameCaptureShared access thread safety by using a
-    // frame-capture only mutex.
+    // Most but not all GL calls take the ContextMutex so we ensure thread-safe FrameCaptureShared
+    // access by always taking the frame-capture mutex
     std::lock_guard<angle::SimpleMutex> lock(frameCaptureShared->getFrameCaptureMutex());
 
     if (!frameCaptureShared->isCapturing())
@@ -1240,10 +1239,15 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
             return;
         }
     }
+
+    // Take standard per-context EGL entry point lock
     std::lock_guard<egl::ContextMutex> lock(context->getContextMutex());
 
     angle::FrameCaptureShared *frameCaptureShared =
         context->getShareGroup()->getFrameCaptureShared();
+    // Also take the the frame-capture mutex to cover the GL capture path
+    std::lock_guard<angle::SimpleMutex> fcLock(frameCaptureShared->getFrameCaptureMutex());
+
     if (!frameCaptureShared->isCapturing())
     {
         return;

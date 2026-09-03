@@ -56,7 +56,6 @@ struct ValidationContext
 };
 
 // Object validation
-bool ValidateDisplay(const ValidationContext *val, const Display *display);
 bool ValidateSurface(const ValidationContext *val, const Display *display, SurfaceID surfaceID);
 bool ValidateConfig(const ValidationContext *val, const Display *display, const Config *config);
 bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
@@ -67,6 +66,7 @@ bool ValidateSync(const ValidationContext *val, const Display *display, SyncID s
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
 const Display *GetDisplayIfValid(const Display *display);
+Display *GetDisplayIfValid(Display *display);
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
 const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);

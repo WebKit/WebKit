@@ -124,6 +124,7 @@ uint32_t deSocket_getOpenChannels(const deSocket *socket);
 bool deSocket_setFlags(deSocket *socket, uint32_t flags);
 
 bool deSocket_listen(deSocket *socket, const deSocketAddress *address);
+bool deSocket_getBoundAddress(const deSocket *socket, deSocketAddress *address);
 deSocket *deSocket_accept(deSocket *socket, deSocketAddress *clientAddress);
 
 bool deSocket_connect(deSocket *socket, const deSocketAddress *address);

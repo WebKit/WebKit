@@ -816,6 +816,9 @@ struct Extensions
     // GL_OES_query_matrix
     bool queryMatrixOES = false;
 
+    // GL_OES_stencil8
+    bool stencil8OES = false;
+
     // GL_OES_texture_cube_map
     bool textureCubeMapOES = false;
 

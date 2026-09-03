@@ -45,7 +45,7 @@ class SurfaceNULL : public SurfaceImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::OwnImageIndex &ownImageIndex) override;
+                                     const gl::ImageIndex &imageIndex) override;
 
     egl::Error attachToFramebuffer(const gl::Context *context,
                                    gl::Framebuffer *framebuffer) override;

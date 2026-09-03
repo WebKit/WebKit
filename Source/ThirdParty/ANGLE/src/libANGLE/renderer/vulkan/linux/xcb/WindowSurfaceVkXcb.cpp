@@ -28,8 +28,8 @@ angle::Result WindowSurfaceVkXcb::createSurfaceVk(vk::ErrorContext *context)
     createInfo.flags      = 0;
     createInfo.connection = mXcbConnection;
     createInfo.window     = static_cast<xcb_window_t>(mNativeWindowType);
-    ANGLE_VK_TRY(context, vkCreateXcbSurfaceKHR(context->getRenderer()->getInstance(), &createInfo,
-                                                nullptr, &mSurface));
+    ANGLE_VK_TRY(context, VK_CALL(vkCreateXcbSurfaceKHR, context->getRenderer()->getInstance(),
+                                  &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }

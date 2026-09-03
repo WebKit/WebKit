@@ -54,17 +54,17 @@ egl::Error ImageEGL::initialize(const egl::Display *display)
     if (egl::IsTextureTarget(mTarget))
     {
         attributes.push_back(EGL_GL_TEXTURE_LEVEL);
-        attributes.push_back(mState.imageIndex.getLevelIndex());
+        attributes.push_back(mState.imageIndex.getLevelIndex().get());
 
         if (mState.imageIndex.has3DLayer())
         {
             attributes.push_back(EGL_GL_TEXTURE_ZOFFSET);
-            attributes.push_back(mState.imageIndex.getLayerIndex());
+            attributes.push_back(mState.imageIndex.getLayerIndex().get());
         }
 
         const TextureGL *textureGL = GetImplAs<TextureGL>(GetAs<gl::Texture>(mState.source));
         buffer                = gl_egl::GLObjectHandleToEGLClientBuffer(textureGL->getTextureID());
-        mNativeInternalFormat = textureGL->getNativeInternalFormat(mState.imageIndex);
+        mNativeInternalFormat = textureGL->getNativeInternalFormat(mState.imageIndex.get());
     }
     else if (egl::IsRenderbufferTarget(mTarget))
     {

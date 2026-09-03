@@ -274,6 +274,12 @@ struct NDRange
                 globalWorkSize[dim] =
                     static_cast<uint32_t>(ANGLE_UNSAFE_TODO(globalWorkSizeIn[dim]));
             }
+            else
+            {
+                // For versions >= 2.1, global work size can be a nullptr, in which case set dim to
+                // zero. Validation checks ensure that we are here only for >= 2.1 versions.
+                globalWorkSize[dim] = 0;
+            }
             if (localWorkSizeIn != nullptr)
             {
                 ASSERT(ANGLE_UNSAFE_TODO(localWorkSizeIn[dim]) <= UINT32_MAX);
@@ -317,7 +323,7 @@ struct NDRange
         {
             for (uint32_t dim = 0; dim < workDimensions; dim++)
             {
-                NDRange &region    = regions.at(regionPos);
+                NDRange &region = regions.at(regionPos);
                 uint32_t remainder =
                     ANGLE_UNSAFE_TODO(region.globalWorkSize[dim] % region.localWorkSize[dim]);
                 if (remainder != 0)

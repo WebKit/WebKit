@@ -330,3 +330,5 @@
 349994211 IR PIXEL10 VULKAN : toca_life_world = SKIP
 349994211 IR PIXEL10 VULKAN : warcraft_rumble = SKIP
 349994211 IR PIXEL10 VULKAN : whiteout_survival = SKIP
+
+539554093 WIN NVIDIA VULKAN : nier_reincarnation = SKIP

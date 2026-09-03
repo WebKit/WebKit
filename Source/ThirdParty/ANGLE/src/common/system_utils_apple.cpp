@@ -58,6 +58,15 @@ double GetCurrentSystemTime()
     return secondCoeff * mach_absolute_time();
 }
 
+uint64_t GetCurrentSystemTimeNs()
+{
+    mach_timebase_info_data_t timebaseInfo;
+    mach_timebase_info(&timebaseInfo);
+
+    double nanosecondCoeff = static_cast<double>(timebaseInfo.numer) / timebaseInfo.denom;
+    return static_cast<uint64_t>(nanosecondCoeff * mach_absolute_time());
+}
+
 void SetCurrentThreadName(const char *name)
 {
     pthread_setname_np(name);

@@ -17,7 +17,14 @@ Add the following to ANGLE's .gclient file:
       "checkout_angle_restricted_traces": True
     },
 ```
-
+The above will get you a selection of ~50 traces that are considered representative of the entire set, covering major engines, benchmarks, and some
+custom engines.  If you want the entire collection of 300+ traces, add an addition arg like below, but be ready to wait a while and dedicate 30+ GB of storage:
+```
+    "custom_vars": {
+      "checkout_angle_restricted_traces": True,
+      "checkout_extra_traces": True
+    },
+```
 Note: alternatively, you can checkout only a few specific traces using the following format (`angle_restricted_traces` in gn args below should be a matching list or a subset):
 ```
     "custom_vars": {
@@ -391,6 +398,13 @@ adb pull /sdcard/Android/data/$PACKAGE_NAME/angle_capture/. $LABEL/
 
 The list of traces is tracked in [restricted_traces.json](restricted_traces.json). Manually add your
 new trace to this list. Use version "1" for the trace version.
+
+New traces added to this list run on CQ (unconditional checkout) by default and require no extra
+tags (e.g., `"my_new_trace 1"`).
+
+We enforce a limit of 10 extra (non-representative) traces on CQ to keep CQ build/test times low. If
+the limit is exceeded when adding a new trace, you must add the `ci` tag to older traces to make
+them conditional (e.g., change `"old_trace 1"` to `"old_trace 1 ci"`).
 
 On Linux, you can also use a tool called `jq` to update the list. This ensures we get them in
 alphabetical order with no duplicates. It can also be done by hand if you are unable to install it,

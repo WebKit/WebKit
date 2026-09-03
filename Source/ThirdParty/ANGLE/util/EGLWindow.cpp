@@ -73,7 +73,10 @@ void ConfigParameters::reset()
 
 // GLWindowBase implementation.
 GLWindowBase::GLWindowBase(GLint glesMajorVersion, EGLint glesMinorVersion)
-    : mClientMajorVersion(glesMajorVersion), mClientMinorVersion(glesMinorVersion)
+    : mClientMajorVersion(glesMajorVersion),
+      mClientMinorVersion(glesMinorVersion),
+      mRequestedClientMajorVersion(glesMajorVersion),
+      mRequestedClientMinorVersion(glesMinorVersion)
 {}
 
 GLWindowBase::~GLWindowBase() = default;
@@ -293,7 +296,9 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
     displayAttributes.push_back(EGL_NONE);
 
     if (driverType == angle::GLESDriverType::SystemWGL)
+    {
         return false;
+    }
 
     if (IsANGLE(driverType) &&
         ANGLE_UNSAFE_TODO(strstr(extensionString, "EGL_ANGLE_platform_angle")))
@@ -584,10 +589,10 @@ EGLContext EGLWindow::createContext(EGLContext share, EGLint *extraAttributes)
     if (hasKHRCreateContext)
     {
         contextAttributes.push_back(EGL_CONTEXT_MAJOR_VERSION_KHR);
-        contextAttributes.push_back(mClientMajorVersion);
+        contextAttributes.push_back(mRequestedClientMajorVersion);
 
         contextAttributes.push_back(EGL_CONTEXT_MINOR_VERSION_KHR);
-        contextAttributes.push_back(mClientMinorVersion);
+        contextAttributes.push_back(mRequestedClientMinorVersion);
 
         // Note that the Android loader currently doesn't handle this flag despite reporting 1.5.
         // Work around this by only using the debug bit when we request a debug context.
@@ -945,7 +950,10 @@ bool EGLWindow::makeCurrent(EGLSurface draw, EGLSurface read, EGLContext context
 
 bool EGLWindow::makeCurrent(EGLContext context)
 {
-    return makeCurrent(mSurface, mSurface, context);
+    // EGL_NO_CONTEXT needs to be paired with EGL_NO_SURFACE or we get EGL_BAD_MATCH
+    // validation errors
+    EGLSurface surface = (context == EGL_NO_CONTEXT) ? EGL_NO_SURFACE : mSurface;
+    return makeCurrent(surface, surface, context);
 }
 
 bool EGLWindow::setSwapInterval(EGLint swapInterval)

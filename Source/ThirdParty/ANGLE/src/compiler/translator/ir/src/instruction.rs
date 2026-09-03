@@ -3403,15 +3403,17 @@ pub mod precision {
     // Taking some precision and comparing it with another:
     //
     // * Upgrade to highp is either no-op or an upgrade, so it can unconditionally be done.
-    // * Upgrade to mediump is only necessary if the original precision was lowp.
-    // * Upgrade to lowp is never necessary.
+    // * Upgrade to mediump is only necessary if the original precision was lowp or unassigned.
+    // * Upgrade to lowp is only necessary if the original precision was unassigned.
     //
-    // If either precision is NotApplicable, use the other one.  This can happen with constants as
-    // they don't have a precision.
+    // If either precision is NotApplicable, use the other one.
     pub fn higher_precision(one: Precision, other: Precision) -> Precision {
         match one {
             Precision::High => Precision::High,
-            Precision::Medium if other == Precision::Low => Precision::Medium,
+            Precision::Medium if (other == Precision::Low || other == Precision::Unassigned) => {
+                Precision::Medium
+            }
+            Precision::Low if other == Precision::Unassigned => Precision::Low,
             _ => {
                 // The other's precision is at least as high as this one, unless it doesn't have a
                 // precision at all.
@@ -3421,11 +3423,12 @@ pub mod precision {
     }
 
     // Take a set of precisions and return the highest per `higher_precision`.
-    fn highest_precision(precisions: &mut impl Iterator<Item = Precision>) -> Precision {
+    pub fn highest_precision(precisions: &mut impl Iterator<Item = Precision>) -> Precision {
         precisions.reduce(higher_precision).unwrap()
     }
 
-    // Constructor precision is derived from its parameters, except for structs.
+    // Constructor precision is derived from its parameters, except for structs and type_id where
+    // precision should be NotApplicable
     pub fn construct(
         ir_meta: &IRMeta,
         type_id: TypeId,
@@ -3434,7 +3437,7 @@ pub mod precision {
         if !util::is_precision_applicable_to_type(ir_meta, type_id) {
             Precision::NotApplicable
         } else {
-            args.fold(Precision::NotApplicable, |accumulator, precision| {
+            args.fold(Precision::Unassigned, |accumulator, precision| {
                 higher_precision(accumulator, precision)
             })
         }
@@ -3737,7 +3740,7 @@ pub mod precision {
         precision: Precision,
         to_propagate: &mut Vec<(RegisterId, Precision)>,
     ) {
-        if id.precision == Precision::NotApplicable && precision != Precision::NotApplicable {
+        if id.precision == Precision::Unassigned && precision.is_assigned() {
             match id.id {
                 Id::Register(register_id) => {
                     id.precision = precision;
@@ -3759,6 +3762,17 @@ pub mod precision {
             propagate_to_id(id, precision, to_propagate);
         });
     }
+
+    pub fn propagate_by_matching_precision(
+        ids: &mut std::slice::IterMut<'_, TypedId>,
+        to_match: &[Precision],
+        to_propagate: &mut Vec<(RegisterId, Precision)>,
+    ) {
+        ids.zip(to_match.iter()).for_each(|(id, &expect)| {
+            propagate_to_id(id, expect, to_propagate);
+        });
+    }
+
     pub fn propagate(
         instruction: &mut Instruction,
         function_arg_precisions: &std::collections::HashMap<FunctionId, Vec<Precision>>,
@@ -3766,15 +3780,6 @@ pub mod precision {
         to_propagate: &mut Vec<(RegisterId, Precision)>,
     ) {
         let precision = instruction.result.precision;
-
-        let propagate_by_matching_precision =
-            |ids: &mut std::slice::IterMut<'_, TypedId>,
-             to_match: &[Precision],
-             to_propagate: &mut Vec<(RegisterId, Precision)>| {
-                ids.zip(to_match.iter()).for_each(|(id, &expect)| {
-                    propagate_to_id(id, expect, to_propagate);
-                });
-            };
 
         match instruction.op {
             OpCode::ExtractVectorComponentDynamic(ref mut indexed, ref mut index)
@@ -3929,9 +3934,9 @@ pub mod precision {
                         // Apply precision from one operand to the other, as the result does not
                         // have a precision.  If neither has a precision, precision cannot be
                         // derived, AST generation will assume highp.
-                        if lhs.precision != Precision::NotApplicable {
+                        if lhs.precision.is_assigned() {
                             propagate_to_id(rhs, lhs.precision, to_propagate);
-                        } else {
+                        } else if rhs.precision.is_assigned() {
                             propagate_to_id(lhs, rhs.precision, to_propagate);
                         }
                     }
@@ -4564,14 +4569,36 @@ fn verify_construct_arg_component_count(
 }
 
 // Construct a value of a type from the given arguments.
-pub fn construct(ir_meta: &mut IRMeta, type_id: TypeId, args: Vec<TypedId>) -> Result {
+pub fn construct(
+    ir_meta: &mut IRMeta,
+    type_id: TypeId,
+    args: Vec<TypedId>,
+    precision_override: Option<Precision>,
+) -> Result {
     // Note: For vector and matrix constructors with multiple components, it is expected that
     // the total components in `args` matches the components needed for type_id.
     debug_assert!(verify_construct_arg_component_count(ir_meta, type_id, &args));
 
-    // Constructor precision is derived from its parameters, except for structs.
-    let promoted_precision =
-        precision::construct(ir_meta, type_id, &mut args.iter().map(|id| id.precision));
+    // Constructor precision is derived from its parameters, except for structs and type_id where
+    // precision is not applicable, e.g. bool.
+
+    // Override the promoted_precision with precision_override if precision_override is assigned.
+    // This is needed when doing the following conversions:
+    //     r3  (int[3], mediump) = ConstructVectorFromScalar r2 (bool) - old
+    // To
+    //     r7  (int, mediump) = ConstructScalarFromScalar r2 (bool) - new1
+    //     r3  (int[3], mediump) = ConstructVectorFromMultiple (r7, r7, r7) - new2
+    // Note that when constructing new1, type_id is int and arg is a single bool,
+    // propomoted_precision is Unassigned. However, we need the promoted_precision to be Medium
+    // in order to preserve the Medium precision for r3.
+    let promoted_precision = if let Some(precision_override) = precision_override
+        && precision_override.is_assigned()
+    {
+        debug_assert!(util::is_precision_applicable_to_type(ir_meta, type_id));
+        precision_override
+    } else {
+        precision::construct(ir_meta, type_id, &mut args.iter().map(|id| id.precision))
+    };
 
     // If the type of the first argument is the same as the result, the rest of the arguments
     // will be stripped (if any) and the cast is a no-op.  In that case, push args[0] back to

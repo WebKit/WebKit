@@ -59,6 +59,8 @@ class OcclusionQueryPool
 
     void destroy(ContextMtl *contextMtl);
 
+    bool canAllocateQueryOffset(ContextMtl *contextMtl) const;
+
     // Begin a new occlusion query in the current render pass.
     angle::Result beginQuery(ContextMtl *contextMtl,
                              const BufferRef &resultBuffer,

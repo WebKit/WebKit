@@ -2093,15 +2093,7 @@
             "name": "supports_global_priority",
             "category": "Features",
             "description": [
-                "VkDevice supports VK_EXT_global_priority"
-            ],
-            "issue": "https://anglebug.com/397474813"
-        },
-        {
-            "name": "supports_global_priority_query",
-            "category": "Features",
-            "description": [
-                "VkDevice supports VK_EXT_global_priority_query"
+                "VkDevice supports VK_KHR_global_priority"
             ],
             "issue": "https://anglebug.com/397474813"
         },
@@ -2251,6 +2243,13 @@
             "category": "Workarounds",
             "description": [
                 "Initialize color tetxure attachment with white color for app bug workaround."
+            ]
+        },
+        {
+            "name": "enable_alpha_channel_images",
+            "category": "Workarounds",
+            "description": [
+                "Enables alpha channel image format."
             ]
         }
     ]

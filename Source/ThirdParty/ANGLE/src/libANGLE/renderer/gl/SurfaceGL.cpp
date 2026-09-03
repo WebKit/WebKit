@@ -36,7 +36,7 @@ egl::Error SurfaceGL::getMscRate(EGLint *numerator, EGLint *denominator)
 
 angle::Result SurfaceGL::initializeContents(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::OwnImageIndex &ownImageIndex)
+                                            const gl::ImageIndex &imageIndex)
 {
     FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(context->getFramebuffer({0}));
     ASSERT(framebufferGL->isDefault());

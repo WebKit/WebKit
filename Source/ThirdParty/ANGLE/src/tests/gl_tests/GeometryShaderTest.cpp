@@ -932,6 +932,8 @@ void main()
 // EXT_geometry_shader, or we will get an INVALID_ENUM error.
 TEST_P(GeometryShaderTest, ReferencedByGeometryShaderWithoutExtensionEnabled)
 {
+    // ES 3.2 supports geometry shaders.
+    ANGLE_SKIP_TEST_IF(isAtLeastClientVersion(3, 2));
     ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_EXT_geometry_shader"));
 
     constexpr char kFS[] = R"(#version 310 es

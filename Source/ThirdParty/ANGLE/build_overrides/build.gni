@@ -30,6 +30,10 @@ if (host_os == "mac" && use_system_xcode == "") {
 
 enable_java_templates = true
 
+perfetto_build_with_embedder = true
+perfetto_build_standalone = false
+is_perfetto_build_generator = false
+
 # Build with fewer Android dependencies
 limit_android_deps = true
 

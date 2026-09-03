@@ -556,6 +556,27 @@ bool deSocket_listen(deSocket *sock, const deSocketAddress *address)
     return true;
 }
 
+bool deSocket_getBoundAddress(const deSocket *sock, deSocketAddress *address)
+{
+    uint8_t bsdAddrBuf[sizeof(struct sockaddr_in6)];
+    struct sockaddr *bsdAddr = (struct sockaddr *)&bsdAddrBuf[0];
+    NativeSocklen bsdAddrLen = (NativeSocklen)sizeof(bsdAddrBuf);
+
+    deMemset(bsdAddr, 0, (size_t)bsdAddrLen);
+
+    if (!deSocketHandleIsValid(sock->handle))
+        return false;
+
+    /* Query the local address the socket is actually bound to. When the socket was bound to
+     * port 0 this returns the ephemeral port assigned by the OS. */
+    if (getsockname(sock->handle, bsdAddr, &bsdAddrLen) != 0)
+        return false;
+
+    deBsdAddressToSocketAddress(address, bsdAddr, (int)bsdAddrLen);
+
+    return true;
+}
+
 deSocket *deSocket_accept(deSocket *sock, deSocketAddress *clientAddress)
 {
     deSocketHandle newFd = DE_INVALID_SOCKET_HANDLE;

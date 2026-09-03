@@ -27,8 +27,8 @@ angle::Result WindowSurfaceVkWin32::createSurfaceVk(vk::ErrorContext *context)
     createInfo.flags     = 0;
     createInfo.hinstance = GetModuleHandle(nullptr);
     createInfo.hwnd      = mNativeWindowType;
-    ANGLE_VK_TRY(context, vkCreateWin32SurfaceKHR(context->getRenderer()->getInstance(),
-                                                  &createInfo, nullptr, &mSurface));
+    ANGLE_VK_TRY(context, VK_CALL(vkCreateWin32SurfaceKHR, context->getRenderer()->getInstance(),
+                                  &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }

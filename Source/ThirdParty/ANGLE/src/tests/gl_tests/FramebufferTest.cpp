@@ -1052,6 +1052,28 @@ TEST_P(FramebufferTest_ES3, StencilOnlyAttachmentInvalidateDepth)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test the returned component type for a stencil-only attachment.
+TEST_P(FramebufferTest_ES3, StencilOnlyComponentType)
+{
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_STENCIL_INDEX8, 2, 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+    ASSERT_GL_NO_ERROR();
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLenum type = 0;
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                          GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE,
+                                          reinterpret_cast<GLint *>(&type));
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GLENUM_EQ(GL_UNSIGNED_INT, type);
+}
+
 // Test that a scissored draw followed by subinvalidate followed by a non-scissored draw retains the
 // part that is not invalidated.  Uses swapped width/height for invalidate which results in a
 // partial invalidate, but also prevents bugs with Vulkan pre-rotation.
@@ -7932,9 +7954,14 @@ class FramebufferExtensionsTest : public FramebufferTest
     {
         GLFramebuffer fbo;
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        checkTexture(GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        checkRenderbuffer(GL_RGB565, 0);
 
+        // GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE is core in ES3. In this case,
+        // glGetFramebufferAttachmentParameteriv() (in checkParameter()) will not return with
+        // GL_INVALID_ENUM, even if extensions are disabled.
+        GLenum expectedComponentBeforeExtEnable =
+            isAtLeastClientVersion(3, 0) ? GL_UNSIGNED_NORMALIZED_EXT : static_cast<GLenum>(0);
+        checkTexture(GL_RGBA, GL_UNSIGNED_BYTE, expectedComponentBeforeExtEnable);
+        checkRenderbuffer(GL_RGB565, expectedComponentBeforeExtEnable);
         ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(extensionName));
 
         checkTexture(GL_RGBA, GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED_EXT);

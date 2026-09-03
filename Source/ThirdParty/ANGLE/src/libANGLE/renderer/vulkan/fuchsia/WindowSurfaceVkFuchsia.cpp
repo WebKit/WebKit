@@ -44,8 +44,9 @@ angle::Result WindowSurfaceVkFuchsia::createSurfaceVk(vk::ErrorContext *context)
     VkImagePipeSurfaceCreateInfoFUCHSIA createInfo = {};
     createInfo.sType           = VK_STRUCTURE_TYPE_IMAGEPIPE_SURFACE_CREATE_INFO_FUCHSIA;
     createInfo.imagePipeHandle = fuchsia_egl_window_release_image_pipe(egl_window);
-    ANGLE_VK_TRY(context, vkCreateImagePipeSurfaceFUCHSIA(context->getRenderer()->getInstance(),
-                                                          &createInfo, nullptr, &mSurface));
+    ANGLE_VK_TRY(context,
+                 VK_CALL(vkCreateImagePipeSurfaceFUCHSIA, context->getRenderer()->getInstance(),
+                         &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }

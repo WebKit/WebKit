@@ -46,6 +46,19 @@ angle_trace("angle_capture_tests_external_ahb_trace") {
 
   deps = [ "$angle_root/util:angle_trace_fixture" ]
 }
+angle_trace("angle_capture_tests_client_wait_sync_trace") {
+  _trace = "CapturedTest_ClientWaitSync_ES3_Vulkan"
+
+  json_file_name = "expected/CapturedTest_ClientWaitSync_ES3_Vulkan.json"
+  rebased_path = "expected/"
+
+  data = [
+    "$_trace.json",
+    "$_trace.angledata",
+  ]
+
+  deps = [ "$angle_root/util:angle_trace_fixture" ]
+}
 
 if (angle_enable_cl) {
   angle_trace("angle_capture_tests_multi_frame_cl_trace") {

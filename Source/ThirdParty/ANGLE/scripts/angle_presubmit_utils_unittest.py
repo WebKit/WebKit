@@ -466,5 +466,213 @@ class CheckShaderVersionInShaderLangHeaderTest(unittest.TestCase):
         self.assertEqual(len(errors), 0)
 
 
+class RestrictedTracesCheckTest(unittest.TestCase):
+
+    def __init__(self, *args, **kwargs):
+        super(RestrictedTracesCheckTest, self).__init__(*args, **kwargs)
+        self.output_api = OutputAPI_mock()
+        self.angle_root = os.getcwd()
+
+    def setUp(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            self.original_content = f.read().splitlines()
+
+    def run_check(self, affected_files):
+        input_api = InputAPI_mock('', affected_files=affected_files)
+        input_api.cwd = self.angle_root
+        return PRESUBMIT._CheckRestrictedTraces(input_api, self.output_api)
+
+    def test_json_not_modified(self):
+        affected_files = [AffectedFile_mock('', 'some/other/file.cpp')]
+        errors = self.run_check(affected_files)
+        self.assertEqual(len(errors), 0)
+
+    def test_json_modified_limit_not_exceeded(self):
+        affected_files = [
+            AffectedFile_mock(
+                '',
+                'src/tests/restricted_traces/restricted_traces.json',
+                old_contents=self.original_content)
+        ]
+        errors = self.run_check(affected_files)
+        self.assertEqual(len(errors), 0)
+
+    def test_json_modified_limit_exceeded(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            # Add 11 extra traces (no 'ci' and no 'representative')
+            temp_data['traces'] = original_data['traces'] + [
+                f"dummy_trace_{i} 1" for i in range(11)
+            ]
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=self.original_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("Too many CQ extra traces", errors[0]._message)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+    def test_missing_traces_key(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            if 'traces' in temp_data:
+                del temp_data['traces']
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=self.original_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("missing the \"traces\" key", errors[0]._message)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+    def test_allowed_coexisting_tags(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            temp_data['traces'] = original_data['traces'] + [
+                "dummy_trace_1 1 ci representative smoke"
+            ]
+
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            with open(json_path, 'r') as f:
+                mutated_content = f.read().splitlines()
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=mutated_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 0)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+    def test_unsorted_tags(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            new_traces = []
+            modified = False
+            for trace in original_data['traces']:
+                if 'antutu_refinery' in trace and not modified:
+                    new_traces.append("antutu_refinery 1 representative ci smoke")
+                    modified = True
+                else:
+                    new_traces.append(trace)
+            temp_data['traces'] = new_traces
+
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=self.original_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("has unsorted tags", errors[0]._message)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+    def test_new_trace_with_tags_fails(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            temp_data['traces'] = original_data['traces'] + ["dummy_new_trace 1 representative"]
+
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=self.original_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("must not have any tags initially", errors[0]._message)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+    def test_new_trace_without_tags_passes(self):
+        json_path = os.path.join(self.angle_root,
+                                 'src/tests/restricted_traces/restricted_traces.json')
+        with open(json_path, 'r') as f:
+            original_data = json.load(f)
+
+        try:
+            temp_data = original_data.copy()
+            temp_data['traces'] = original_data['traces'] + ["dummy_new_trace 1"]
+
+            with open(json_path, 'w') as f:
+                json.dump(temp_data, f)
+
+            affected_files = [
+                AffectedFile_mock(
+                    '',
+                    'src/tests/restricted_traces/restricted_traces.json',
+                    old_contents=self.original_content)
+            ]
+            errors = self.run_check(affected_files)
+            self.assertEqual(len(errors), 0)
+        finally:
+            with open(json_path, 'w') as f:
+                json.dump(original_data, f, indent=2)
+                f.write('\n')
+
+
 if __name__ == '__main__':
     unittest.main()

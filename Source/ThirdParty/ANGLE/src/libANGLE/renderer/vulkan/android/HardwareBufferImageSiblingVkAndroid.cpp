@@ -250,8 +250,8 @@ egl::Error HardwareBufferImageSiblingVkAndroid::ValidateHardwareBuffer(
     bufferProperties.pNext = &bufferFormatProperties;
 
     VkDevice device = renderer->getDevice();
-    VkResult result =
-        vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer, &bufferProperties);
+    VkResult result = VK_CALL(vkGetAndroidHardwareBufferPropertiesANDROID, device, hardwareBuffer,
+                              &bufferProperties);
     if (result != VK_SUCCESS)
     {
         return egl::Error(EGL_BAD_PARAMETER, "Failed to query AHardwareBuffer properties");
@@ -350,8 +350,8 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     }
 
     VkDevice device = renderer->getDevice();
-    ANGLE_VK_TRY(displayVk, vkGetAndroidHardwareBufferPropertiesANDROID(device, hardwareBuffer,
-                                                                        &bufferProperties));
+    ANGLE_VK_TRY(displayVk, VK_CALL(vkGetAndroidHardwareBufferPropertiesANDROID, device,
+                                    hardwareBuffer, &bufferProperties));
 
     bool externalFormatHasNecessaryFormatSupport;
     bool formatHasNecessaryFormatSupport;
@@ -566,7 +566,7 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     ANGLE_TRY(mImage->initExternal(
         displayVk, textureType, vkExtents, intendedFormatID, actualRenderableFormatID, 1, usage,
         imageCreateFlags, vk::ImageAccess::ExternalPreInitialized, imageCreateInfoPNext,
-        gl::LevelIndex(0), mLevelCount, layerCount, robustInitEnabled, hasProtectedContent(),
+        gl::OwnerLevel(0), mLevelCount, layerCount, robustInitEnabled, hasProtectedContent(),
         vk::TileMemory::Prohibited, conversionDesc, nullptr, formatReinterpretability));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};

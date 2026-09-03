@@ -229,21 +229,83 @@ inline bool operator==(const ANGLEPlatformDisplay &a, const ANGLEPlatformDisplay
     return a.tie() == b.tie();
 }
 
-static angle::SimpleMutex *DevicePlatformDisplayMapMutex()
+template <typename Key, size_t N>
+class PlatformDisplayMap : angle::NonCopyable
 {
-    static angle::base::NoDestructor<angle::SimpleMutex> devicePlatformDisplayMapMutex;
-    return devicePlatformDisplayMapMutex.get();
-}
+  public:
+    PlatformDisplayMap() = default;
 
-static angle::SimpleMutex *ANGLEPlatformDisplayMapMutex()
-{
-    static angle::base::NoDestructor<angle::SimpleMutex> anglePlatformDisplayMapMutex;
-    return anglePlatformDisplayMapMutex.get();
-}
+    Display *get(const Key &key)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        auto iter = mDisplays.find(key);
+        return (iter != mDisplays.end()) ? iter->second : nullptr;
+    }
+
+    template <typename CreateDisplayFunc>
+    Display *getOrInsert(const Key &key, CreateDisplayFunc createDisplayFunc)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        auto iter = mDisplays.find(key);
+        if (iter != mDisplays.end())
+        {
+            return iter->second;
+        }
+
+        Display *display = createDisplayFunc();
+        if (display != nullptr)
+        {
+            mDisplays.insert(std::make_pair(key, display));
+        }
+        return display;
+    }
+
+    Display *getDisplayFromDevice(Device *device)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (const auto &displayMapEntry : mDisplays)
+        {
+            Display *iterDisplay = displayMapEntry.second;
+            if (iterDisplay->getDevice() == device)
+            {
+                return iterDisplay;
+            }
+        }
+        return nullptr;
+    }
+
+    void erase(const Key &key)
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        auto iter = mDisplays.find(key);
+        if (iter != mDisplays.end())
+        {
+            mDisplays.erase(iter);
+        }
+    }
+
+    bool contains(const egl::Display *display) const
+    {
+        std::lock_guard<angle::SimpleMutex> lock(mMutex);
+        for (const auto &displayPair : mDisplays)
+        {
+            if (displayPair.second == display)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+  private:
+    angle::FlatUnorderedMap<Key, Display *, N> mDisplays;
+    mutable angle::SimpleMutex mMutex;
+};
 
 static constexpr size_t kANGLEPlatformDisplayMapSize = 9;
-typedef angle::FlatUnorderedMap<ANGLEPlatformDisplay, Display *, kANGLEPlatformDisplayMapSize>
-    ANGLEPlatformDisplayMap;
+using ANGLEPlatformDisplayMap =
+    PlatformDisplayMap<ANGLEPlatformDisplay, kANGLEPlatformDisplayMapSize>;
+
 static ANGLEPlatformDisplayMap *GetANGLEPlatformDisplayMap()
 {
     static angle::base::NoDestructor<ANGLEPlatformDisplayMap> displays;
@@ -251,8 +313,8 @@ static ANGLEPlatformDisplayMap *GetANGLEPlatformDisplayMap()
 }
 
 static constexpr size_t kDevicePlatformDisplayMapSize = 8;
-typedef angle::FlatUnorderedMap<Device *, Display *, kDevicePlatformDisplayMapSize>
-    DevicePlatformDisplayMap;
+using DevicePlatformDisplayMap = PlatformDisplayMap<Device *, kDevicePlatformDisplayMapSize>;
+
 static DevicePlatformDisplayMap *GetDevicePlatformDisplayMap()
 {
     static angle::base::NoDestructor<DevicePlatformDisplayMap> displays;
@@ -826,28 +888,17 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
         nativePlatformType, x11VisualID, enabledFeatureOverrides, disabledFeatureOverrides,
         disableAllNonOverriddenFeatures);
 
-    {
-        std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
-
-        ANGLEPlatformDisplayMap *displays = GetANGLEPlatformDisplayMap();
-        const auto &iter                  = displays->find(combinedDisplayKey);
-
-        if (iter != displays->end())
-        {
-            display = iter->second;
-        }
-
-        if (display == nullptr)
-        {
-            // Validate the native display
+    display = GetANGLEPlatformDisplayMap()->getOrInsert(
+        combinedDisplayKey, [platform, nativeDisplay]() -> Display * {
             if (!Display::isValidNativeDisplay(nativeDisplay))
             {
                 return nullptr;
             }
-
-            display = new Display(platform, nativeDisplay, nullptr);
-            displays->insert(std::make_pair(combinedDisplayKey, display));
-        }
+            return new Display(platform, nativeDisplay, nullptr);
+        });
+    if (display == nullptr)
+    {
+        return nullptr;
     }
     // Apply new attributes if the display is not initialized yet.
     if (!display->isInitialized())
@@ -877,17 +928,7 @@ Display *Display::GetDisplayFromNativeDisplay(EGLenum platform,
 // static
 Display *Display::GetExistingDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay)
 {
-    std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
-    ANGLEPlatformDisplayMap *displays = GetANGLEPlatformDisplayMap();
-    const auto &iter                  = displays->find(nativeDisplay);
-
-    // Check that there is a matching display
-    if (iter == displays->end())
-    {
-        return nullptr;
-    }
-
-    return iter->second;
+    return GetANGLEPlatformDisplayMap()->get(nativeDisplay);
 }
 
 // static
@@ -899,37 +940,14 @@ Display *Display::GetDisplayFromDevice(Device *device, const AttributeMap &attri
 
     {
         // First see if this eglDevice is in use by a Display created using ANGLE platform
-        std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
-        ANGLEPlatformDisplayMap *anglePlatformDisplays = GetANGLEPlatformDisplayMap();
-        for (auto &displayMapEntry : *anglePlatformDisplays)
-        {
-            egl::Display *iterDisplay = displayMapEntry.second;
-            if (iterDisplay->getDevice() == device)
-            {
-                display = iterDisplay;
-            }
-        }
+        display = GetANGLEPlatformDisplayMap()->getDisplayFromDevice(device);
     }
 
     if (display == nullptr)
     {
         // Next see if this eglDevice is in use by a Display created using the DEVICE platform
-        std::lock_guard<angle::SimpleMutex> lock(*DevicePlatformDisplayMapMutex());
-        DevicePlatformDisplayMap *devicePlatformDisplays = GetDevicePlatformDisplayMap();
-
-        // See if the eglDevice is in use by a Display created using the DEVICE platform
-        const auto &iter = devicePlatformDisplays->find(device);
-        if (iter != devicePlatformDisplays->end())
-        {
-            display = iter->second;
-        }
-
-        if (display == nullptr)
-        {
-            // Otherwise create a new Display
-            display = new Display(EGL_PLATFORM_DEVICE_EXT, 0, device);
-            devicePlatformDisplays->insert(std::make_pair(device, display));
-        }
+        display = GetDevicePlatformDisplayMap()->getOrInsert(
+            device, [&]() -> Display * { return new Display(EGL_PLATFORM_DEVICE_EXT, 0, device); });
     }
 
     // Apply new attributes if the display is not initialized yet.
@@ -987,9 +1005,7 @@ Display::~Display()
         case EGL_PLATFORM_WAYLAND_EXT:
         case EGL_PLATFORM_SURFACELESS_MESA:
         {
-            std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
-            ANGLEPlatformDisplayMap *displays      = GetANGLEPlatformDisplayMap();
-            ANGLEPlatformDisplayMap::iterator iter = displays->find(ANGLEPlatformDisplay(
+            GetANGLEPlatformDisplayMap()->erase(ANGLEPlatformDisplay(
                 mState.displayId,
                 mAttributeMap.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE),
                 mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE,
@@ -1002,21 +1018,11 @@ Display::~Display()
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_ENABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE, 0),
                 mAttributeMap.get(EGL_FEATURE_ALL_DISABLED_ANGLE, 0)));
-            if (iter != displays->end())
-            {
-                displays->erase(iter);
-            }
             break;
         }
         case EGL_PLATFORM_DEVICE_EXT:
         {
-            std::lock_guard<angle::SimpleMutex> lock(*DevicePlatformDisplayMapMutex());
-            DevicePlatformDisplayMap *displays      = GetDevicePlatformDisplayMap();
-            DevicePlatformDisplayMap::iterator iter = displays->find(mDevice);
-            if (iter != displays->end())
-            {
-                displays->erase(iter);
-            }
+            GetDevicePlatformDisplayMap()->erase(mDevice);
             break;
         }
         default:
@@ -1813,8 +1819,6 @@ Error Display::makeCurrent(Thread *thread,
     {
         ScopedContextMutexLock lock(context != nullptr ? &context->getContextMutex() : nullptr);
 
-        thread->setCurrent(context);
-
         ANGLE_TRY(mImplementation->makeCurrent(this, drawSurface, readSurface, context));
 
         if (context != nullptr)
@@ -1825,6 +1829,8 @@ Error Display::makeCurrent(Thread *thread,
                 context->addRef();
             }
         }
+
+        thread->setCurrent(context);
     }
 
     // Tick all the scratch buffers to make sure they get cleaned up eventually if they stop being
@@ -2367,28 +2373,14 @@ Error Display::validatePixmap(const Config *config,
 
 bool Display::isValidDisplay(const egl::Display *display)
 {
+    if (GetANGLEPlatformDisplayMap()->contains(display))
     {
-        std::lock_guard<angle::SimpleMutex> lock(*ANGLEPlatformDisplayMapMutex());
-        const ANGLEPlatformDisplayMap *anglePlatformDisplayMap = GetANGLEPlatformDisplayMap();
-        for (const auto &displayPair : *anglePlatformDisplayMap)
-        {
-            if (displayPair.second == display)
-            {
-                return true;
-            }
-        }
+        return true;
     }
 
+    if (GetDevicePlatformDisplayMap()->contains(display))
     {
-        std::lock_guard<angle::SimpleMutex> lock(*DevicePlatformDisplayMapMutex());
-        const DevicePlatformDisplayMap *devicePlatformDisplayMap = GetDevicePlatformDisplayMap();
-        for (const auto &displayPair : *devicePlatformDisplayMap)
-        {
-            if (displayPair.second == display)
-            {
-                return true;
-            }
-        }
+        return true;
     }
 
     return false;

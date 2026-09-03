@@ -48,8 +48,14 @@
 #endif  // (DE_OS == DE_OS_WIN32)
 
 #if (DE_OS == DE_OS_UNIX)
-#    include "tcuLnxX11EglDisplayFactory.hpp"
-#endif  // (DE_OKS == DE_OS_UNIX)
+#    include "tcuLnxEglPlatform.hpp"
+#    if defined(DEQP_SUPPORT_X11)
+#        include "tcuLnxX11EglDisplayFactory.hpp"
+#    endif
+#    if defined(DEQP_SUPPORT_WAYLAND)
+#        include "tcuLnxWaylandEglDisplayFactory.hpp"
+#    endif
+#endif  // (DE_OS == DE_OS_UNIX)
 
 static_assert(EGL_DONT_CARE == -1, "Unexpected value for EGL_DONT_CARE");
 
@@ -86,7 +92,9 @@ class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu:
     std::vector<const char *> mEnableFeatureOverrides;
 
 #if (DE_OS == DE_OS_UNIX)
+#    if defined(DEQP_SUPPORT_X11) || defined(DEQP_SUPPORT_WAYLAND)
     lnx::EventState mLnxEventState;
+#    endif
     // Native window-system platform (X11/Wayland) OSWindow::New() will select,
     // so the display we create agrees with the window. 0 if unknown.
     eglw::EGLAttrib mNativePlatformType = 0;
@@ -248,9 +256,15 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc,
     }
 
 #if (DE_OS == DE_OS_UNIX)
+#    if defined(DEQP_SUPPORT_X11)
     m_nativeDisplayFactoryRegistry.registerFactory(
         lnx::x11::egl::createDisplayFactory(mLnxEventState));
-#endif
+#    endif
+#    if defined(DEQP_SUPPORT_WAYLAND)
+    m_nativeDisplayFactoryRegistry.registerFactory(
+        lnx::wayland::egl::createDisplayFactory(mLnxEventState));
+#    endif
+#endif  // (DE_OS == DE_OS_UNIX)
 
     m_contextFactoryRegistry.registerFactory(
         new eglu::GLContextFactory(m_nativeDisplayFactoryRegistry));

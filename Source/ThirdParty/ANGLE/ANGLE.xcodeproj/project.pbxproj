@@ -559,6 +559,8 @@
 		3A0EBF9A2980B495002C72BC /* sys_byteorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF822980B445002C72BC /* sys_byteorder.h */; };
 		3A0EBF9B2980B49D002C72BC /* sha1.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF942980B445002C72BC /* sha1.h */; };
 		3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EBF922980B445002C72BC /* sha1.cc */; };
+		7BCA710C2E5B3F1000455D13 /* trace_categories.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCA710A2E5B3F1000455D13 /* trace_categories.h */; };
+		7BCA710D2E5B3F1000455D13 /* trace_categories.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7BCA710B2E5B3F1000455D13 /* trace_categories.cc */; };
 		3A0EBF9D2980B49D002C72BC /* macros.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF932980B445002C72BC /* macros.h */; };
 		3A0EBF9E2980B4A0002C72BC /* base_export.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF972980B445002C72BC /* base_export.h */; };
 		3A0EBF9F2980B4A0002C72BC /* no_destructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBF982980B445002C72BC /* no_destructor.h */; };
@@ -1050,6 +1052,7 @@
 		7BB9735D2DE4875E00455D13 /* SystemInfo_apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647F9E2511A1A60010F8FB /* SystemInfo_apple.mm */; };
 		7BB9735E2DE4875E00455D13 /* SystemInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD59982284FC750018F2D8 /* SystemInfo.cpp */; };
 		7BB9735F2DE4877900455D13 /* sha1.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EBF922980B445002C72BC /* sha1.cc */; };
+		7BCA710E2E5B3F1000455D13 /* trace_categories.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7BCA710B2E5B3F1000455D13 /* trace_categories.cc */; };
 		7BB973602DE4880F00455D13 /* validationES32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B57E8238CB09C0079FDDC /* validationES32.cpp */; };
 		7BB973612DE4881500455D13 /* validationES31.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD816A1DBFE999006066B8 /* validationES31.cpp */; };
 		7BB973622DE4888800455D13 /* SyncMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = FF81FE8325818D6800894E24 /* SyncMtl.mm */; };
@@ -3113,7 +3116,8 @@
 		397D4CBFB1B052787F4E4224 /* es2fDefaultVertexAttributeTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es2fDefaultVertexAttributeTests.cpp; sourceTree = "<group>"; };
 		398F4D02926F78077944C943 /* tcuRasterizationVerifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tcuRasterizationVerifier.cpp; sourceTree = "<group>"; };
 		3A014F248B54FD3CF22BA4D1 /* tcuRGBA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tcuRGBA.cpp; sourceTree = "<group>"; };
-		3A0EBF802980B445002C72BC /* trace_event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace_event.h; sourceTree = "<group>"; };
+		7BCA710B2E5B3F1000455D13 /* trace_categories.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = trace_categories.cc; sourceTree = "<group>"; };
+		7BCA710A2E5B3F1000455D13 /* trace_categories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trace_categories.h; sourceTree = "<group>"; };
 		3A0EBF812980B445002C72BC /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
 		3A0EBF822980B445002C72BC /* sys_byteorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sys_byteorder.h; sourceTree = "<group>"; };
 		3A0EBF842980B445002C72BC /* clamped_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clamped_math.h; sourceTree = "<group>"; };
@@ -5261,7 +5265,8 @@
 		3A0EBF7F2980B445002C72BC /* trace_event */ = {
 			isa = PBXGroup;
 			children = (
-				3A0EBF802980B445002C72BC /* trace_event.h */,
+				7BCA710B2E5B3F1000455D13 /* trace_categories.cc */,
+				7BCA710A2E5B3F1000455D13 /* trace_categories.h */,
 			);
 			path = trace_event;
 			sourceTree = "<group>";
@@ -8118,6 +8123,7 @@
 				31CDFF772491849200486F27 /* Token.h in Headers */,
 				31CDFF742491849200486F27 /* Tokenizer.h in Headers */,
 				31CD0055249184FC00486F27 /* trace.h in Headers */,
+				7BCA710C2E5B3F1000455D13 /* trace_categories.h in Headers */,
 				31CD00C12491854D00486F27 /* trace_event.h in Headers */,
 				31CD005C249184FC00486F27 /* TransformFeedback.h in Headers */,
 				31CD002D249184F400486F27 /* TransformFeedbackImpl.h in Headers */,
@@ -9287,6 +9293,7 @@
 				DF83E21F2639FC74000825EF /* tls.cpp in Sources */,
 				DF83E2302639FCB0000825EF /* Token.cpp in Sources */,
 				DF83E2422639FCD5000825EF /* ToposortStructs.cpp in Sources */,
+				7BCA710D2E5B3F1000455D13 /* trace_categories.cc in Sources */,
 				DF83E3182639FE17000825EF /* TransformFeedback.cpp in Sources */,
 				7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */,
 				DF83E38C2639FEB8000825EF /* TransformFeedbackMtl.mm in Sources */,
@@ -10749,6 +10756,7 @@
 				7BF554E52C81F198002B101E /* tls.cpp in Sources */,
 				7BF555562C81F198002B101E /* Token.cpp in Sources */,
 				7BF555392C81F198002B101E /* ToposortStructs.cpp in Sources */,
+				7BCA710E2E5B3F1000455D13 /* trace_categories.cc in Sources */,
 				7BFAF9122DE6F85B00327F7F /* TranslatorESSL.cpp in Sources */,
 				7BFAF9142DE6F85B00327F7F /* TranslatorGLSL.cpp in Sources */,
 				7BF554E02C81F198002B101E /* TranslatorMSL.cpp in Sources */,

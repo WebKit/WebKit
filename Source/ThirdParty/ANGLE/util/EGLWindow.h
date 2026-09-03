@@ -167,6 +167,8 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
 
     EGLint mClientMajorVersion;
     EGLint mClientMinorVersion;
+    EGLint mRequestedClientMajorVersion;
+    EGLint mRequestedClientMinorVersion;
     EGLPlatformParameters mPlatform;
     ConfigParameters mConfigParams;
 };

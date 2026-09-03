@@ -99,6 +99,14 @@ void Socket::listen(const SocketAddress &address)
         throw SocketError("Listening on socket failed");
 }
 
+int Socket::getBoundPort(void) const
+{
+    SocketAddress address;
+    if (!deSocket_getBoundAddress(m_socket, address.getPtr()))
+        throw SocketError("Querying bound socket address failed");
+    return address.getPort();
+}
+
 void Socket::connect(const SocketAddress &address)
 {
     if (!deSocket_connect(m_socket, address))

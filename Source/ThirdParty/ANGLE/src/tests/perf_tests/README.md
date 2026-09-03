@@ -62,6 +62,7 @@ Several command-line arguments control how the tests run:
 * `--warmup`: Run a warmup phase before the test. Defaults to off.
 * `--fixed-test-time-with-warmup x`: Start with a warmup, then run the tests until this much time has elapsed.
 * `--trials`: Number of times to repeat testing. Defaults to 3.
+* `--captured-framecount-only`: Run each trial for exactly the number of frames that were captured, trace gets fully restarted between trials.
 * `--sleep-between-trials`: Number of milliseconds to sleep between trials. May be useful to see trials boundaries in Perfetto `"gpu.renderstages"` traces.
 * `--no-finish`: Don't call glFinish after each test trial.
 * `--validation`: Enable serialization validation in the trace tests. Normally used with SwiftShader and retracing.
@@ -116,7 +117,9 @@ Trace tests take command line arguments that pick the run configuration:
 * `--fps-limit-uses-busy-wait` : Use busy wait instead of sleep to limit the framerate. This may be useful to move test process to the "BIG" core and active "high performance" mode on Android devices for more accurate `frame_wall_time` measurements. Note, that simply setting affinity of the test thread to "BIG" core may not give the same result (2X measured difference was observed on a real device between busy wait vs just setting thread CPU affinity).
 * `--track-gpu-time` : Enables GPU frametime tracking if "GL_EXT_disjoint_timer_query" is available.
 * `--add-swap-into-gpu-time` : Normally, GPU time is only tracked for the replay frame commands while excluding swap (or blit calls in case of the offscreen test). This option includes swap/blit time into the GPU frametime tracking. Warning: this will also include screenshot capture code when it is enabled.
+* `--track-frame-wall-time` : Enables `frame_wall_time` metric tracking (CPU time of the `replayFrame()` function). Not tracked by default; use this flag to enable tracking. Note: `--add-swap-into-frame-wall-time` and `--track-vulkan-api-wall-time` requires this flag.
 * `--add-swap-into-frame-wall-time` : Similar to `--add-swap-into-gpu-time` but for the `frame_wall_time` (CPU time of the `replayFrame()` function).
+* `--track-vulkan-api-wall-time <mode>` : Enables ANGLE vulkan back-end `vk*()` calls wall time tracking (subset of `frame_wall_time`). Modes: `0` - disables tracking; `1` - enables tracking but only shows summary information; `2` - enables tracking and also shows information for different Vulkan API groups. The `*_api_samples` metric shows the number of time measurement samples that were made on average in each frame (which is not the same as the number of `vk*()` calls, since most `vkCmd*()` calls are tracked by single sample per secondary command buffer). **Requires:** using `angle_vulkan_api_perf_counters_mode` build option and both `angle_enable_custom_vulkan_outside_render_pass_cmd_buffers` and `angle_enable_custom_vulkan_render_pass_cmd_buffers` build options enabled, and is currently **NOT** supported on Apple platforms.
 
 For example, for an endless run with no warmup on swiftshader, run:
 
@@ -131,7 +134,7 @@ on all CPU threads for the test.
 * `wall_time`: Wall time taken to run a single iteration, calculated by dividing the total wall
 clock time by the number of test iterations.
   * For trace tests, each rendered frame is an iteration.
-* `frame_wall_time`: Time of all GLES calls in the `replayFrame()` function. Optionally may include swap / offscreen blit calls by using the `--add-swap-into-frame-wall-time` argument.
+* `frame_wall_time`: Time of all GLES calls in the `replayFrame()` function. Optionally may include swap / offscreen blit calls by using the `--add-swap-into-frame-wall-time` argument. Not tracked by default; enable with `--track-frame-wall-time`.
 * `gpu_time`: Estimated GPU elapsed time per test iteration. We compute the estimate using GLES
 [timestamp queries](https://www.khronos.org/registry/OpenGL/extensions/EXT/EXT_disjoint_timer_query.txt)
 at the beginning and ending of each test loop.

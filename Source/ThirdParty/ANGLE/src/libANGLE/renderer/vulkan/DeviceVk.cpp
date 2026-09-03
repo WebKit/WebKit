@@ -141,7 +141,7 @@ DeviceVk::WrappedCreateInstance(const VkInstanceCreateInfo *pCreateInfo,
                                 VkInstance *pInstance)
 {
     ScopedEnv scopedEnv;
-    return vkCreateInstance(pCreateInfo, pAllocator, pInstance);
+    return VK_CALL(vkCreateInstance, pCreateInfo, pAllocator, pInstance);
 }
 
 // static
@@ -151,7 +151,7 @@ DeviceVk::WrappedEnumerateInstanceExtensionProperties(const char *pLayerName,
                                                       VkExtensionProperties *pProperties)
 {
     ScopedEnv scopedEnv;
-    return vkEnumerateInstanceExtensionProperties(pLayerName, pPropertyCount, pProperties);
+    return VK_CALL(vkEnumerateInstanceExtensionProperties, pLayerName, pPropertyCount, pProperties);
 }
 
 // static
@@ -160,14 +160,14 @@ DeviceVk::WrappedEnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
                                                   VkLayerProperties *pProperties)
 {
     ScopedEnv scopedEnv;
-    return vkEnumerateInstanceLayerProperties(pPropertyCount, pProperties);
+    return VK_CALL(vkEnumerateInstanceLayerProperties, pPropertyCount, pProperties);
 }
 
 // static
 VKAPI_ATTR VkResult VKAPI_CALL DeviceVk::WrappedEnumerateInstanceVersion(uint32_t *pApiVersion)
 {
     ScopedEnv scopedEnv;
-    return vkEnumerateInstanceVersion(pApiVersion);
+    return VK_CALL(vkEnumerateInstanceVersion, pApiVersion);
 }
 
 // static
@@ -181,7 +181,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(Vk
 
     if (instance != VK_NULL_HANDLE)
     {
-        return vkGetInstanceProcAddr(instance, pName);
+        return VK_CALL(vkGetInstanceProcAddr, instance, pName);
     }
 
     if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkCreateInstance")))
@@ -200,7 +200,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(Vk
     }
     if (!ANGLE_UNSAFE_TODO(strcmp(pName, "vkEnumerateInstanceVersion")))
     {
-        if (!vkGetInstanceProcAddr(nullptr, "vkEnumerateInstanceVersion"))
+        if (!VK_CALL(vkGetInstanceProcAddr, nullptr, "vkEnumerateInstanceVersion"))
         {
             // Vulkan 1.0 doesn't have vkEnumerateInstanceVersion.
             return nullptr;
@@ -212,7 +212,7 @@ VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL DeviceVk::WrappedGetInstanceProcAddr(Vk
         return reinterpret_cast<PFN_vkVoidFunction>(DeviceVk::WrappedGetInstanceProcAddr);
     }
 
-    return vkGetInstanceProcAddr(instance, pName);
+    return VK_CALL(vkGetInstanceProcAddr, instance, pName);
 }
 
 }  // namespace rx

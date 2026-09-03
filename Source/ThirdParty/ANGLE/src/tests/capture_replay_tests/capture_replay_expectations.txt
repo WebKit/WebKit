@@ -149,6 +149,7 @@
 42265967 : Texture2DTest.TextureMaxSize/* = SKIP_FOR_CAPTURE
 42265844 : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP_FOR_CAPTURE
 
+42265895 : MultithreadingTest.ConcurrentEGLGLCapture/* = SKIP_FOR_CAPTURE
 42265895 : MultithreadingTest.NoFlushNoContextReturnsTimeout/* = SKIP_FOR_CAPTURE
 42265895 : MultithreadingTestES3.ThreadBClientWaitBeforeThreadASyncFinish/* = SKIP_FOR_CAPTURE
 42265895 : MultithreadingTestES3.ThreadBClientWaitBeforeThreadASyncFlush/* = SKIP_FOR_CAPTURE
@@ -260,6 +261,7 @@
 # VVL error
 42264614 LINUX : VulkanExternalImageTestES31.UninitializedOnGLImportAndStorageWrite/* = SKIP_FOR_CAPTURE
 42264614 LINUX : VulkanExternalImageTest.NonRenderableWithFlags/* = SKIP_FOR_CAPTURE
+540256225 : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP_FOR_CAPTURE
 
 # CoherentBufferTracker deadlocks and flaky crashes
 42266529 LINUX : BufferDataTestES3.* = SKIP_FOR_CAPTURE
@@ -285,3 +287,6 @@
 
 # Crashes on win and linux trace bots
 372059358 : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP_FOR_CAPTURE
+
+# Fails on win and linux trace bots
+499602793 : Texture2DArrayTestES3_ReattachTextureToFbo.IncreaseLayersWithFramebufferAttachedMultiContext/* = SKIP_FOR_CAPTURE

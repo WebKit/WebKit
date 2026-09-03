@@ -156,7 +156,7 @@ def flattened_target(target_name: str, descs: dict, stop_at_lib: bool =True) -> 
                     # the value of "public" can be a string instead of a list.
                     existing = flattened.get(k, [])
                     if isinstance(existing, str):
-                      existing = [existing]
+                        existing = [existing]
                     # Use temporary sets then sort them to avoid a bottleneck here
                     if not isinstance(existing, set):
                         flattened[k] = set(existing)
@@ -293,6 +293,8 @@ IGNORED_DIRECTORIES = {
     '//third_party/wayland',
     '//third_party/wayland-protocols',
     '//third_party/partition_alloc',
+    '//third_party/perfetto',
+    '//third_party/protobuf',
 }
 
 def has_all_includes(target_name: str, descs: dict) -> bool:

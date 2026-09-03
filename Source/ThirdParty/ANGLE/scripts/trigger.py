@@ -29,7 +29,7 @@
 #      also need to find a value for "os_dim". For the above example:
 #         "os_dim" -> Ubuntu-18.04.6, "GPU" -> 8086:9bc5-20.0.8.
 #   6. For "gn_path" and "test", use your local GN out directory path and triggered test name. The test name must
-#      match an entry in infra/specs/gn_isolate_map.pyl. For example:
+#      match an entry in infra/config/generated/testing/gn_isolate_map.pyl. For example:
 #         trigger.py -g 8086:9bc5-20.0.8 out/Debug angle_unittests Ubuntu-18.04.6
 #   7. Finally, append the same arguments you'd run with locally when invoking this trigger script, e.g:
 #         --gtest_filter=*YourTest*
@@ -104,7 +104,10 @@ def invoke_mb(args, stdout=None):
 
     if is_standalone:
         logging.info('Standalone mode detected.')
-        mb_args += ['-i', os.path.join('infra', 'specs', 'gn_isolate_map.pyl')]
+        mb_args += [
+            '-i',
+            os.path.join('infra', 'config', 'generated', 'testing', 'gn_isolate_map.pyl')
+        ]
 
     logging.info('Invoking mb: %s' % ' '.join(mb_args))
     proc = subprocess.run(mb_args, stdout=stdout)

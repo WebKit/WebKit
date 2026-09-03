@@ -221,6 +221,9 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
 
     ANGLE_TRACE_EVENT0("gpu.angle", "SecondaryCommandBuffer::executeCommands");
 
+    // Track all commands using single scope since tracking each command adds too much CPU overhead.
+    ScopedVulkanApiPerfTimer timer(angle::VulkanApiPerfCounterGroup::Command);
+
     for (const CommandHeader *command : mCommands)
     {
         for (const CommandHeader *currentCommand                      = command;

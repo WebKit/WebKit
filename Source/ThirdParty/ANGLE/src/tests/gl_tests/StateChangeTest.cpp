@@ -5499,12 +5499,6 @@ class WebGL2ValidationStateChangeTest : public ValidationStateChangeTest
 class ValidationStateChangeTestES31 : public ANGLETest<>
 {};
 
-class WebGLComputeValidationStateChangeTest : public ANGLETest<>
-{
-  public:
-    WebGLComputeValidationStateChangeTest() { setWebGLCompatibilityEnabled(true); }
-};
-
 class RobustBufferAccessWebGL2ValidationStateChangeTest : public WebGL2ValidationStateChangeTest
 {
   protected:
@@ -6058,76 +6052,6 @@ TEST_P(ValidationStateChangeTestES31, RebindVertexBufferShouldPickupBufferChange
     // Clean up and destroy context2
     eglMakeCurrent(display, surface1, surface1, context1);
     eglDestroyContext(display, context2);
-}
-
-// Tests that changing a vertex binding with glVertexAttribDivisor updates the buffer size check.
-TEST_P(WebGLComputeValidationStateChangeTest, DrawPastEndOfBufferWithDivisor)
-{
-    // Initialize program and set up state.
-    ANGLE_GL_PROGRAM(program, kColorVS, kColorFS);
-
-    glUseProgram(program);
-    GLint positionLoc = glGetAttribLocation(program, "position");
-    ASSERT_NE(-1, positionLoc);
-    GLint colorLoc = glGetAttribLocation(program, "color");
-    ASSERT_NE(-1, colorLoc);
-
-    // Create a user vertex array.
-    GLVertexArray vao;
-    glBindVertexArray(vao);
-
-    const std::array<Vector3, 6> &quadVertices = GetQuadVertices();
-    const size_t posBufferSize                 = quadVertices.size() * sizeof(Vector3);
-
-    GLBuffer posBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, posBuffer);
-    glBufferData(GL_ARRAY_BUFFER, posBufferSize, quadVertices.data(), GL_STATIC_DRAW);
-
-    // Start with position enabled.
-    glVertexAttribPointer(positionLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(positionLoc);
-
-    std::vector<GLColor> blueVertices(6, GLColor::blue);
-    const size_t blueBufferSize = sizeof(GLColor) * 6;
-
-    GLBuffer blueBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, blueBuffer);
-    glBufferData(GL_ARRAY_BUFFER, blueBufferSize, blueVertices.data(), GL_STATIC_DRAW);
-
-    // Start with color enabled at an unused binding.
-    constexpr GLint kUnusedBinding = 3;
-    ASSERT_NE(colorLoc, kUnusedBinding);
-    ASSERT_NE(positionLoc, kUnusedBinding);
-    glVertexAttribFormat(colorLoc, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0);
-    glVertexAttribBinding(colorLoc, kUnusedBinding);
-    glBindVertexBuffer(kUnusedBinding, blueBuffer, 0, sizeof(GLColor));
-    glEnableVertexAttribArray(colorLoc);
-
-    // Make binding 'colorLoc' use a small buffer.
-    std::vector<GLColor> greenVertices(6, GLColor::green);
-    const size_t greenBufferSize = sizeof(GLColor) * 3;
-    GLBuffer greenBuffer;
-    glBindBuffer(GL_ARRAY_BUFFER, greenBuffer);
-    glBufferData(GL_ARRAY_BUFFER, greenBufferSize, greenVertices.data(), GL_STATIC_DRAW);
-    glBindVertexBuffer(colorLoc, greenBuffer, 0, sizeof(GLColor));
-
-    ASSERT_GL_NO_ERROR();
-
-    // Draw without a mapped buffer. Should succeed.
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
-
-    // Change divisor with VertexAttribDivisor. Should fail.
-    glVertexAttribDivisor(colorLoc, 0);
-    ASSERT_GL_NO_ERROR();
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "draw with small buffer should fail.";
-
-    // Do a small draw. Should succeed.
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    ASSERT_GL_NO_ERROR();
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Tests state changes with uniform block validation.
@@ -11853,7 +11777,6 @@ ANGLE_INSTANTIATE_TEST_ES2(StateChangeRenderTest);
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(
     StateChangeTestES3,
-    ES3_VULKAN().disable(Feature::SupportsIndexTypeUint8),
     ES3_VULKAN().disable(Feature::UseDepthWriteEnableDynamicState),
     ES3_VULKAN()
         .disable(Feature::SupportsExtendedDynamicState)
@@ -11868,7 +11791,6 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(
     StateChangeTestES31,
-    ES31_VULKAN().disable(Feature::SupportsIndexTypeUint8),
     ES31_VULKAN()
         .disable(Feature::SupportsExtendedDynamicState)
         .disable(Feature::SupportsExtendedDynamicState2),
@@ -11919,9 +11841,6 @@ ANGLE_INSTANTIATE_TEST_ES3(RobustBufferAccessWebGL2ValidationStateChangeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ValidationStateChangeTestES31);
 ANGLE_INSTANTIATE_TEST_ES31(ValidationStateChangeTestES31);
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(WebGLComputeValidationStateChangeTest);
-ANGLE_INSTANTIATE_TEST_ES31(WebGLComputeValidationStateChangeTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VertexAttribArrayStateChangeTest);
 ANGLE_INSTANTIATE_TEST_ES3(VertexAttribArrayStateChangeTest);

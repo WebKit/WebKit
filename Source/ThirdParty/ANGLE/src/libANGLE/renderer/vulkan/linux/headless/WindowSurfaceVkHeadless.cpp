@@ -29,7 +29,8 @@ angle::Result WindowSurfaceVkHeadless::createSurfaceVk(vk::ErrorContext *context
     VkHeadlessSurfaceCreateInfoEXT createInfo = {};
     createInfo.sType                          = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
 
-    ANGLE_VK_TRY(context, vkCreateHeadlessSurfaceEXT(instance, &createInfo, nullptr, &mSurface));
+    ANGLE_VK_TRY(context,
+                 VK_CALL(vkCreateHeadlessSurfaceEXT, instance, &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }

@@ -45,8 +45,8 @@ void RenderTargetVk::init(vk::ImageHelper *image,
                           vk::ImageViewHelper *imageViews,
                           vk::ImageHelper *resolveImage,
                           vk::ImageViewHelper *resolveImageViews,
-                          gl::LevelIndex levelIndexGL,
-                          uint32_t layerIndex,
+                          gl::OwnerLevel levelIndexGL,
+                          gl::OwnerLayer layerIndex,
                           uint32_t layerCount,
                           RenderTargetTransience transience)
 {
@@ -74,8 +74,8 @@ void RenderTargetVk::reset()
     mImageViews         = nullptr;
     mResolveImage       = nullptr;
     mResolveImageViews  = nullptr;
-    mLevelIndexGL       = gl::LevelIndex(0);
-    mLayerIndex         = 0;
+    mLevelIndexGL       = gl::OwnerLevel(0);
+    mLayerIndex         = gl::OwnerLayer(0);
     mLayerCount         = 0;
 }
 
@@ -83,7 +83,7 @@ vk::ImageOrBufferViewSubresourceSerial RenderTargetVk::getSubresourceSerialImpl(
     vk::ImageViewHelper *imageViews) const
 {
     ASSERT(imageViews);
-    ASSERT(mLayerIndex < std::numeric_limits<uint16_t>::max());
+    ASSERT(mLayerIndex.get() < std::numeric_limits<uint16_t>::max());
     ASSERT(mLevelIndexGL.get() < std::numeric_limits<uint16_t>::max());
 
     vk::LayerMode layerMode = vk::GetLayerMode(*mImage, mLayerCount);
@@ -348,10 +348,10 @@ gl::Extents RenderTargetVk::getRotatedExtents() const
     return mImage->getRotatedLevelExtents2D(levelVk);
 }
 
-gl::LevelIndex RenderTargetVk::getLevelIndexForImage(const vk::ImageHelper &image) const
+gl::OwnerLevel RenderTargetVk::getLevelIndexForImage(const vk::ImageHelper &image) const
 {
     return (getOwnerOfData()->getImageSerial() == image.getImageSerial()) ? mLevelIndexGL
-                                                                          : gl::LevelIndex(0);
+                                                                          : gl::OwnerLevel(0);
 }
 
 void RenderTargetVk::updateSwapchainImage(vk::ImageHelper *image,
@@ -360,8 +360,8 @@ void RenderTargetVk::updateSwapchainImage(vk::ImageHelper *image,
                                           vk::ImageViewHelper *resolveImageViews)
 {
     ASSERT(image && image->valid() && imageViews);
-    ASSERT(mLevelIndexGL == gl::LevelIndex(0));
-    ASSERT(mLayerIndex == 0);
+    ASSERT(mLevelIndexGL == gl::OwnerLevel(0));
+    ASSERT(mLayerIndex == gl::OwnerLayer(0));
     mImage             = image;
     mImageViews        = imageViews;
     mResolveImage      = resolveImage;
@@ -392,10 +392,10 @@ angle::Result RenderTargetVk::flushStagedUpdates(ContextVk *contextVk,
     // It's impossible to defer clears to slices of a 3D images, as the clear applies to all the
     // slices, while deferred clears only clear a single slice (where the framebuffer is attached).
     // Additionally, the layer index for 3D textures is always zero according to Vulkan.
-    uint32_t layerIndex = mLayerIndex;
+    gl::OwnerLayer layerIndex = mLayerIndex;
     if (mImage->getType() == VK_IMAGE_TYPE_3D)
     {
-        layerIndex         = 0;
+        layerIndex         = gl::OwnerLayer(0);
         deferredClears     = nullptr;
         deferredClearIndex = 0;
     }
@@ -452,7 +452,7 @@ void RenderTargetVk::invalidateEntireStencilContent(ContextVk *contextVk,
                                                preferToKeepContentsDefinedOut);
 }
 
-gl::SourceImageIndex RenderTargetVk::getImageIndexForClear(uint32_t layerCount) const
+gl::OwnerImageIndex RenderTargetVk::getImageIndexForClear(uint32_t layerCount) const
 {
     // Determine the GL type from the Vk Image properties.
     if (mImage->getType() == VK_IMAGE_TYPE_3D || mImage->getLayerCount() > 1)
@@ -461,14 +461,12 @@ gl::SourceImageIndex RenderTargetVk::getImageIndexForClear(uint32_t layerCount) 
         // threated as layers for this purpose.
         //
         // We also don't need to distinguish 2D array and cube.
-        return gl::SourceImageIndex::Make2DArrayRange(
-            gl::SourceLevel::VerifiedSourceLevel(mLevelIndexGL),
-            gl::SourceLayer::VerifiedSourceLayer(mLayerIndex), layerCount);
+        return gl::OwnerImageIndex::Make2DArrayRange(mLevelIndexGL, mLayerIndex, layerCount);
     }
 
-    ASSERT(mLayerIndex == 0);
+    ASSERT(mLayerIndex == gl::OwnerLayer(0));
     ASSERT(mLayerCount == 1);
     ASSERT(layerCount == 1);
-    return gl::SourceImageIndex::Make2D(gl::SourceLevel::VerifiedSourceLevel(mLevelIndexGL));
+    return gl::OwnerImageIndex::Make2D(mLevelIndexGL);
 }
 }  // namespace rx

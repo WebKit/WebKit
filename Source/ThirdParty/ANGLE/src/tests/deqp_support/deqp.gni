@@ -4,12 +4,15 @@
 
 import("../../../gni/angle.gni")
 deqp_path = "../../third_party/VK-GL-CTS/src"
+deqp_support_path = "../../src/tests/deqp_support"
 
 deqp_include_dirs = [
   "$deqp_path/executor",
   "$deqp_path/execserver",
   "$deqp_path/framework/platform/lnx",
   "$deqp_path/framework/platform/lnx/X11",
+  "$deqp_path/framework/platform/lnx/wayland",
+  "$deqp_support_path/wayland",
   "$deqp_path/framework/platform/null",
   "$deqp_path/framework/platform/win32",
   "$deqp_path/framework/xexml",

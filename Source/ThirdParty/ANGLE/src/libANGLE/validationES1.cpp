@@ -196,7 +196,7 @@ bool ValidateLightCommon(const PrivateState &state,
         case LightParameter::SpotDirection:
             return true;
         case LightParameter::SpotExponent:
-            if (params[0] < 0.0f || params[0] > 128.0f)
+            if (isOutsideOfBounds(params[0], 0.0f, 128.0f))
             {
                 errors->validationError(entryPoint, GL_INVALID_VALUE, kLightParameterOutOfRange);
                 return false;
@@ -207,7 +207,7 @@ bool ValidateLightCommon(const PrivateState &state,
             {
                 return true;
             }
-            if (params[0] < 0.0f || params[0] > 90.0f)
+            if (isOutsideOfBounds(params[0], 0.0f, 90.0f))
             {
                 errors->validationError(entryPoint, GL_INVALID_VALUE, kLightParameterOutOfRange);
                 return false;
@@ -216,7 +216,7 @@ bool ValidateLightCommon(const PrivateState &state,
         case LightParameter::ConstantAttenuation:
         case LightParameter::LinearAttenuation:
         case LightParameter::QuadraticAttenuation:
-            if (params[0] < 0.0f)
+            if (params[0] < 0.0f || isNaN(params[0]))
             {
                 errors->validationError(entryPoint, GL_INVALID_VALUE, kLightParameterOutOfRange);
                 return false;
@@ -265,7 +265,7 @@ bool ValidateMaterialCommon(const PrivateState &state,
         case MaterialParameter::Emission:
             return true;
         case MaterialParameter::Shininess:
-            if (params[0] < 0.0f || params[0] > 128.0f)
+            if (isOutsideOfBounds(params[0], 0.0f, 128.0f))
             {
                 errors->validationError(entryPoint, GL_INVALID_VALUE, kMaterialParameterOutOfRange);
                 return false;
@@ -408,7 +408,7 @@ bool ValidateFogCommon(const PrivateState &state,
         case GL_FOG_COLOR:
             break;
         case GL_FOG_DENSITY:
-            if (params[0] < 0.0f)
+            if (params[0] < 0.0f || isNaN(params[0]))
             {
                 errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidFogDensity);
                 return false;
@@ -648,7 +648,8 @@ bool ValidatePointParameterCommon(const PrivateState &state,
         case PointParameter::PointDistanceAttenuation:
             for (unsigned int i = 0; i < GetPointParameterCount(pname); i++)
             {
-                if (ANGLE_UNSAFE_TODO(params[i]) < 0.0f)
+                const GLfloat paramValue = ANGLE_UNSAFE_TODO(params[i]);
+                if (paramValue < 0.0f || isNaN(paramValue))
                 {
                     errors->validationError(entryPoint, GL_INVALID_VALUE,
                                             kInvalidPointParameterValue);
@@ -669,7 +670,7 @@ bool ValidatePointSizeCommon(const PrivateState &state,
                              angle::EntryPoint entryPoint,
                              GLfloat size)
 {
-    if (size <= 0.0f)
+    if (size <= 0.0f || isNaN(size))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kInvalidPointSizeValue);
         return false;
@@ -683,7 +684,7 @@ bool ValidateDrawTexCommon(const Context *context,
                            float width,
                            float height)
 {
-    if (width <= 0.0f || height <= 0.0f)
+    if (width <= 0.0f || height <= 0.0f || isNaN(width) || isNaN(height))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNonPositiveDrawTextureDimension);
         return false;
