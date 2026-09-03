@@ -93,7 +93,7 @@ public:
     WTF::String customPropertyValueSerializationInStyle(const Style::ComputedStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
 
     // Helper methods for HTML editing.
-    Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
+    Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>, UpdateLayout = UpdateLayout::Yes) const;
     Ref<MutableStyleProperties> copyProperties() const;
     RefPtr<CSSValue> getFontSizeCSSValuePreferringKeyword() const;
     bool useFixedFontDefaultSize() const;
