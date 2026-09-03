@@ -43,10 +43,6 @@ public:
     ResourceMonitorThrottler(String&& databaseDirectoryPath, size_t count, Seconds duration, size_t maxHosts);
     ~ResourceMonitorThrottler();
 
-    void openDatabase(String&& path);
-    void closeDatabase();
-    void recordAccess(const String& host, ContinuousApproximateTime);
-
     bool tryAccess(const String& host, ContinuousApproximateTime);
     void clearAllData();
 
@@ -74,14 +70,11 @@ private:
         ContinuousApproximateTime newestAccessTime() const { return m_newestAccessTime; }
 
     private:
-        void removeExpired(ContinuousApproximateTime);
-
         PriorityQueue<ContinuousApproximateTime, std::greater<ContinuousApproximateTime>> m_accessTimes;
         ContinuousApproximateTime m_newestAccessTime { -ContinuousApproximateTime::infinity() };
     };
 
     AccessThrottler& throttlerForHost(const String& host);
-    void removeExpiredThrottler();
     void removeOldestThrottler();
     void maintainHosts(ContinuousApproximateTime);
 
