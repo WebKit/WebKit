@@ -192,7 +192,7 @@ public:
     {
         if (m_rareData) [[unlikely]]
             return m_rareData->m_endColumn;
-        return m_unlinkedExecutable->linkedEndColumn(m_source.startColumn().oneBasedInt());
+        return m_unlinkedExecutable->linkedEndColumn();
     }
 
     int firstLine() const
