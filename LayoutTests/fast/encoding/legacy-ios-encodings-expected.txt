@@ -10,21 +10,21 @@ PASS new TextDecoder("macos-35-10.2").encoding threw exception RangeError: Bad v
 PASS new TextDecoder("macos-29-10.2").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("macos-7_3-10.2").encoding threw exception RangeError: Bad value.
 PASS new TextDecoder("softbank-sjis").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-greek").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-turkish").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-centraleurroman").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("windows-10006").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macgr").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-macgreek").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("windows-10081").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("mactr").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-macturkish").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("windows-10029").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-mac-ce").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("macce").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("maccentraleurope").encoding threw exception RangeError: Bad value.
+PASS new TextDecoder("x-maccentraleurope").encoding threw exception RangeError: Bad value.
 The following encoding names are supported by WebKit cross-platform, but some may be removed at a later time.
-PASS new TextDecoder("x-mac-greek").encoding is "x-mac-greek"
-PASS new TextDecoder("windows-10006").encoding is "x-mac-greek"
-PASS new TextDecoder("macgr").encoding is "x-mac-greek"
-PASS new TextDecoder("x-macgreek").encoding is "x-mac-greek"
-PASS new TextDecoder("x-mac-turkish").encoding is "x-mac-turkish"
-PASS new TextDecoder("windows-10081").encoding is "x-mac-turkish"
-PASS new TextDecoder("mactr").encoding is "x-mac-turkish"
-PASS new TextDecoder("x-macturkish").encoding is "x-mac-turkish"
-PASS new TextDecoder("x-mac-centraleurroman").encoding is "x-mac-centraleurroman"
-PASS new TextDecoder("windows-10029").encoding is "x-mac-centraleurroman"
-PASS new TextDecoder("x-mac-ce").encoding is "x-mac-centraleurroman"
-PASS new TextDecoder("macce").encoding is "x-mac-centraleurroman"
-PASS new TextDecoder("maccentraleurope").encoding is "x-mac-centraleurroman"
-PASS new TextDecoder("x-maccentraleurope").encoding is "x-mac-centraleurroman"
 PASS new TextDecoder("x-mac-cyrillic").encoding is "x-mac-cyrillic"
 PASS new TextDecoder("windows-10007").encoding is "x-mac-cyrillic"
 PASS new TextDecoder("mac-cyrillic").encoding is "x-mac-cyrillic"
