@@ -62,7 +62,7 @@ BEWebContentFilter* WebParentalControlsURLFilter::ensureWebContentFilter()
     if (!m_webContentFilter)
         lazyInitialize(m_webContentFilter, adoptNS([[BEWebContentFilter alloc] init]));
 
-    return m_webContentFilter.get();
+    return m_webContentFilter;
 }
 
 bool WebParentalControlsURLFilter::isEnabledImpl() const
@@ -97,7 +97,7 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isM
         if (WebCore::DeprecatedGlobalSettings::webContentRestrictionsTransitiveTrustEnabled()) {
             BOOL isMainFrameForEvaluation = (isMainFrame == WebCore::IsMainFrameLoad::Yes);
             if ([filter respondsToSelector:@selector(evaluateURL:mainFrameURL:isMainFrame:completionHandler:)]) {
-                [filter evaluateURL:url.createNSURL().get() mainFrameURL:mainDocumentURL.createNSURL().get() isMainFrame:isMainFrameForEvaluation completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+                [filter evaluateURL:url.createNSURL() mainFrameURL:mainDocumentURL.createNSURL() isMainFrame:isMainFrameForEvaluation completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
                     if (completionHandler)
                         completionHandler(!shouldBlock, replacementData);
                 }).get()];
@@ -106,7 +106,7 @@ void WebParentalControlsURLFilter::isURLAllowedImpl(WebCore::IsMainFrameLoad isM
         }
 #endif
 #endif
-        [filter evaluateURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
+        [filter evaluateURL:url.createNSURL() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
             // Make sure we don't crash even if [BEWebContentFilter evaluateURL:completionHandler:] calls its
             // completion handler more than once (which seems to happen in practice).
             if (completionHandler)
@@ -125,7 +125,7 @@ void WebParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<vo
             return;
         }
 
-        [protect(ensureWebContentFilter()) allowURL:url.createNSURL().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
+        [protect(ensureWebContentFilter()) allowURL:url.createNSURL() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](BOOL didAllow, NSError *) mutable {
             RELEASE_LOG(Loading, "WebParentalControlsURLFilter::allowURL result %d.\n", didAllow);
             callOnMainRunLoop([didAllow, completionHandler = WTF::move(completionHandler)] mutable {
                 if (completionHandler)
@@ -189,7 +189,7 @@ void WebParentalControlsURLFilter::requestPermissionForURL(const URL& url, const
                         completionHandler(didAllow);
                 });
             });
-            [filter requestPermissionForURL:url.createNSURL().get() referrerURL:referrerURL.createNSURL().get() presentingView:presentingViewAsUIView completionHandler:permissionDecisionCompletionHandler.get()];
+            [filter requestPermissionForURL:url.createNSURL() referrerURL:referrerURL.createNSURL() presentingView:presentingViewAsUIView completionHandler:permissionDecisionCompletionHandler.get()];
             return;
         }
 #endif
