@@ -250,16 +250,10 @@ Ref<LocalFrameView> LocalFrameView::create(LocalFrame& frame, const IntSize& ini
 LocalFrameView::~LocalFrameView()
 {
     removeFromAXObjectCache();
-    resetScrollbars();
 
-    // Custom scrollbars should already be destroyed at this point
-    ASSERT(!horizontalScrollbar() || !horizontalScrollbar()->isCustomScrollbar());
-    ASSERT(!verticalScrollbar() || !verticalScrollbar()->isCustomScrollbar());
-
-    setHasHorizontalScrollbar(false); // Remove native scrollbars now before we lose the connection to the HostWindow.
+    setHasHorizontalScrollbar(false);
     setHasVerticalScrollbar(false);
-    
-    ASSERT(!m_scrollCorner);
+    ASSERT(!m_scrollCorner && !horizontalScrollbar() && !verticalScrollbar());
 
     ASSERT(m_frame->view() != this || !m_frame->contentRenderer());
 }
