@@ -6,8 +6,10 @@ accessibility/isolated-tree [ Pass ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/isolated-tree/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash ]
+accessibility/isolated-tree/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash ]
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
+accessibility/isolated-tree/mac/frame-with-title.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]
 accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
 accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
@@ -58,7 +60,9 @@ accessibility/isolated-tree/mac/attributed-string/attributed-string-for-range-wi
 accessibility/mac/attributed-string/attributed-string-for-range.html [ Failure ]
 accessibility/isolated-tree/mac/attributed-string/attributed-string-for-range.html [ Failure ]
 accessibility/mac/line-range-continuity.html [ Failure ]
+accessibility/isolated-tree/mac/line-range-continuity.html [ Failure ]
 accessibility/mac/content-editable-attributed-string.html [ Failure ]
+accessibility/isolated-tree/mac/content-editable-attributed-string.html [ Failure ]
 accessibility/mac/misspelled-attributed-string.html [ Failure ]
 accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
 accessibility/mac/text-marker-for-index.html [ Failure ]
@@ -79,12 +83,14 @@ accessibility/textarea-insertion-point-line-number.html [ Failure ]
 accessibility/mac/replaced-element-line-index-hang.html [ Failure ]
 
 accessibility/mac/html5-input-number.html [ Timeout ]
+accessibility/isolated-tree/mac/html5-input-number.html [ Timeout ]
 
 # Fails because we don't get paint calls for SVG shapes and thus can't cache a path for them.
 accessibility/bezier-path-curves.html [ Failure ]
 
 # Regressions from ENABLE(ACCESSIBILITY_LOCAL_FRAME).
 accessibility/mac/iframe-position-after-scroll.html [ Failure ]
+accessibility/isolated-tree/mac/iframe-position-after-scroll.html [ Failure ]
 accessibility/scroll-to-global-point-main-window.html [ Failure ]
 accessibility/scroll-to-make-visible-iframe-offscreen.html [ Timeout ]
 

@@ -1,0 +1,18 @@
+This tests caret browsing for html select elements.
+
+PASS: webArea.role === 'AXRole: AXWebArea'
+PASS: caretBrowsingEnabled(webArea) === false
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: foo'
+PASS: accessibilityController.enhancedAccessibilityEnabled === true
+PASS: caretBrowsingEnabled(webArea) === true
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: foo'
+PASS: elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue === 'AXValue: bar'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+foo
+A paragraph with a single line
+
+bar

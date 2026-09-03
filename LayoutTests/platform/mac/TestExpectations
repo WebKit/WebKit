@@ -2126,6 +2126,7 @@ webkit.org/b/269873 imported/w3c/web-platform-tests/webrtc-extensions/transfer-d
 webkit.org/b/271178 media/now-playing-webaudio.html [ Pass Failure ]
 
 webkit.org/b/271194 accessibility/mac/custom-text-editor.html [ Pass Timeout ]
+webkit.org/b/271194 accessibility/isolated-tree/mac/custom-text-editor.html [ Pass Timeout ]
 
 # webkit.org/b/247632 5 WPT Fetch Metadata tests time out on macOS
 imported/w3c/web-platform-tests/fetch/metadata/generated/element-a.sub.html [ Skip ]
@@ -2210,6 +2211,7 @@ webkit.org/b/289275 media/media-garbage-collection.html [ Pass Failure Timeout ]
 
 # webkit.org/b/290848 : AX: accessibility/mac/line-boundary-at-br.html asserts on Debug
 [ Debug ] accessibility/mac/line-boundary-at-br.html [ Skip ]
+[ Debug ] accessibility/isolated-tree/mac/line-boundary-at-br.html [ Skip ]
 
 # Timing is different in debug, thus skip.
 # webkit.org/b/306573 test is also a flaky failure on release builds possinly due to same timing issue

@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <path role="button" id="svg" d="M150 0 L75 200 L225 200 Z" />
+</svg>
+
+<map name="imagemap1">
+    <AREA id="map1" shape="polygon" coords="90,25,162,26,163,96,89,25,90,24" href="triangle.html">
+    <AREA id="map2" shape="circle" coords="130,304,110" href="circle.html">
+</map>
+
+<img src="../../mac/resources/cake.png"  border="1" align="left" usemap="#imagemap1" vspace="1">
+
+<!-- Border-radius test cases -->
+<button id="pill-button" style="border-radius: 50%; width: 100px; height: 50px;">Pill</button>
+<div id="rounded-div" role="button" style="border-radius: 10px; width: 100px; height: 50px;">Rounded</div>
+<div id="no-radius-div" role="button" style="width: 100px; height: 50px;">Sharp</div>
+
+<!-- Clip-path test case -->
+<div id="clip-path-div" role="button" style="clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); width: 100px; height: 100px;">Diamond</div>
+
+<!-- Multi-line link test cases -->
+<p style="width: 200px; font-size: 16px;"><a href="#" id="multiline-link">This is a long link that should wrap across multiple lines in a narrow container</a></p>
+<p><a href="#" id="singleline-link">Short</a></p>
+
+<!-- Link test cases -->
+<p><a href="#" id="link-with-image">Click <img src="../../mac/resources/cake.png" alt="cake" width="10" height="10"> here</a></p>
+<a href="#" id="link-with-div" style="display: block; width: 200px;"><div>Block content inside a link</div></a>
+
+<!-- Vertical writing mode test cases -->
+<div style="writing-mode: vertical-rl; height: 40px; font-size: 16px;"><a href="#" id="vertical-multiline-link">Vertical wrap</a></div>
+
+<!-- RTL multi-line test cases -->
+<p dir="rtl" style="width: 200px; font-size: 16px;"><a href="#" id="rtl-multiline-link">This is a long RTL link that should wrap across multiple lines in a narrow container</a></p>
+
+<script>
+var output = "This tests that AXPath is correctly computed for SVG elements, image map areas, elements with border-radius, elements with clip-path, and multi-line links with heuristics.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var svgSupportsPath = accessibilityController.accessibleElementById("svg").isAttributeSupported("AXPath");
+    output += expect("svgSupportsPath", "true");
+
+    // Single-line link: elementPath() returns empty (bounding rect is sufficient).
+    output += expect("pathSegmentCountOfID('singleline-link', 'Line to') === 0", "true");
+
+    // Link with non-text content (image): path is empty.
+    output += expect("pathSegmentCountOfID('link-with-image', 'Line to') === 0", "true");
+
+    // Link with block-flow descendant (div): path is empty.
+    output += expect("pathSegmentCountOfID('link-with-div', 'Line to') === 0", "true");
+
+    // No border-radius: should not support AXPath.
+    var noRadiusSupportsPath = accessibilityController.accessibleElementById("no-radius-div").isAttributeSupported("AXPath");
+    output += expect("noRadiusSupportsPath", "false");
+
+    var map1 = accessibilityController.accessibleElementById("map1");
+    var map2 = accessibilityController.accessibleElementById("map2");
+    (async () => {
+        // Image map areas, border-radius paths, and multi-line link paths
+        // are cached during paint in the isolated tree. Wait for the paths
+        // to become available before querying.
+        await waitUntilIDHasPathWith("pill-button", 1, "Curve to");
+
+        output += expect("map1.isAttributeSupported('AXPath')", "true");
+        output += expect("map2.isAttributeSupported('AXPath')", "true");
+
+        // Border-radius: pill button (border-radius: 50%) should have curves.
+        output += expect("pathSegmentCountOfID('pill-button', 'Curve to') > 0", "true");
+
+        // Border-radius: rounded div (border-radius: 10px) should have curves.
+        output += expect("pathSegmentCountOfID('rounded-div', 'Curve to') > 0", "true");
+
+        // Clip-path: diamond polygon should have line segments.
+        output += expect("pathSegmentCountOfID('clip-path-div', 'Line to') > 0", "true");
+
+        // Multi-line link (2-3 lines, text-only): should have a non-rectangular shrink-wrapped path.
+        output += expect("pathSegmentCountOfID('multiline-link', 'Line to') > 4", "true");
+
+        // Scroll the vertical and RTL elements into view so they get painted
+        // (their text needs to be in the painted-text map for the isolated tree
+        // code path to produce paths).
+        document.getElementById("vertical-multiline-link").scrollIntoView();
+        await waitUntilIDHasPathWith("vertical-multiline-link", 5, "Line to");
+        output += expect("pathSegmentCountOfID('vertical-multiline-link', 'Line to') > 4", "true");
+
+        document.getElementById("rtl-multiline-link").scrollIntoView();
+        await waitUntilIDHasPathWith("rtl-multiline-link", 5, "Line to");
+        output += expect("pathSegmentCountOfID('rtl-multiline-link', 'Line to') > 4", "true");
+
+        debug(output);
+        finishJSTest();
+    })();
+}
+</script>
+</body>
+</html>

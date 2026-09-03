@@ -1,0 +1,10 @@
+This test ensures we don't skip any content when using the text marker APIs to navigate by line (like VoiceOver).
+
+PASS: Was able to navigate through all lines of text.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Game Boy, platform of Donkey Kong Land
+

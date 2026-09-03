@@ -1,0 +1,108 @@
+This test ensures the accessibility tree is correct after inserting elements near a render continuation.
+
+
+{AXRole: AXStaticText AXValue: 1}
+
+{#div1 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 2}
+
+{AXRole: AXStaticText AXValue: 3}
+
+{AXRole: AXStaticText AXValue: 4}
+
+{#group-2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 5}
+
+{AXRole: AXStaticText AXValue: 6}
+
+{#div2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 7}
+
+{AXRole: AXStaticText AXValue: 8}
+
+{AXRole: AXStaticText AXValue: 9}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 10}
+
+
+
+{AXRole: AXStaticText AXValue: 1}
+
+{AXRole: AXButton}
+
+{#div1 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 2}
+
+{AXRole: AXStaticText AXValue: 3}
+
+{AXRole: AXStaticText AXValue: 4}
+
+{#group-2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 5}
+
+{AXRole: AXStaticText AXValue: 6}
+
+{#div2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 7}
+
+{AXRole: AXStaticText AXValue: 8}
+
+{AXRole: AXStaticText AXValue: 9}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 10}
+
+
+
+{AXRole: AXStaticText AXValue: 1}
+
+{#div1 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 2}
+
+{AXRole: AXStaticText AXValue: 3}
+
+{AXRole: AXStaticText AXValue: 4}
+
+{#group-2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 5}
+
+{AXRole: AXStaticText AXValue: 6}
+
+{AXRole: AXButton}
+
+{#div2 AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 7}
+
+{AXRole: AXStaticText AXValue: 8}
+
+{AXRole: AXStaticText AXValue: 9}
+
+{AXRole: AXGroup}
+
+{AXRole: AXStaticText AXValue: 10}
+
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+1
+2
+3 4
+5
+6foo
+7
+8 9
+10

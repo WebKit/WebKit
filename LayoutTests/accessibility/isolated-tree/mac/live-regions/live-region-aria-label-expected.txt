@@ -1,0 +1,21 @@
+This tests that the notifications for aria-live properly handle alternative text provided via aria-label.
+
+Received announcement request:
+AnnouncementKey: Be right back{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+Received announcement request:
+AnnouncementKey: For your information{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FYI
