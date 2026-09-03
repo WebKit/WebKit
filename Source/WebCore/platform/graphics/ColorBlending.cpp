@@ -117,10 +117,6 @@ static bool requiresLegacyInterpolationRules(const Color& color)
 
 Color blend(const Color& from, const Color& to, const BlendingContext& context)
 {
-    // We need to preserve the state of the valid flag at the end of the animation
-    if (context.progress == 1 && !to.isValid())
-        return { };
-
     if (requiresLegacyInterpolationRules(from) && requiresLegacyInterpolationRules(to)) {
         using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
 
@@ -138,6 +134,23 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
             return addColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, toComponents);
         }
     } else {
+        // Interpolation requires returning the exact `from` and `to` colors at
+        // `0` and `1` respectively so that they serialize exactly as they would
+        // if interpolation had occurred. If we let them go through, they would
+        // be converted to the interpolation color space, which, if different
+        // than the color space of the color itself, would cause the value to
+        // serialize differently.
+        //
+        // This also ensures that invalid colors will be preserved at the end
+        // points, which some consumers expect.
+
+        if (context.compositeOperation == CompositeOperation::Replace) {
+            if (context.progress == 0)
+                return from;
+            else if (context.progress == 1)
+                return to;
+        }
+
         using InterpolationColorSpace = ColorInterpolationMethod::OKLab;
 
         auto fromComponents = from.toColorTypeLossyCarryingForwardMissing<typename InterpolationColorSpace::ColorType>();

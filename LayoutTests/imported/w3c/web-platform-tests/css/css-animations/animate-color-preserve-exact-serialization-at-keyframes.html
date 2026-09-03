@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CSS color animaitons preserve exact serialization at keyframe stops</title>
+<link rel="author" title="Sam Weinig" href="mailto:sam@webkit.org">
+<link rel="help" href="https://drafts.csswg.org/css-values-4/#interpolation">
+<meta name="assert" content="interpolation of colors persevere exact serialization at keyframe stops">
+</head>
+<style>
+  @keyframes legacy-rgb-to-non-legacy-rgb {
+    from { background-color: rgb(255, 0, 0); }
+    50% { background-color: color(srgb 0 1 0); }
+    to { background-color: color(srgb-linear 0 0 1); }
+  }
+
+  @keyframes implicit-legacy-rgb-to-non-legacy-rgb {
+    50% { background-color: color(srgb 0 1 0); }
+    to { background-color: color(srgb-linear 0 0 1); }
+  }
+
+  @keyframes non-oklab-to-non-oklab {
+    from { background-color: color(srgb 1 0 0); }
+    to { background-color: color(srgb-linear 0 0 1); }
+  }
+
+  #target {
+    background-color: red;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-play-state: paused;
+    animation-fill-mode: forwards;
+    height: 100px;
+    width: 100px;
+  }
+  .legacy-rgb-to-non-legacy-rgb {
+    animation-name: legacy-rgb-to-non-legacy-rgb;
+  }
+  .implicit-legacy-rgb-to-non-legacy-rgb {
+    animation-name: implicit-legacy-rgb-to-non-legacy-rgb;
+  }
+  .non-oklab-to-non-oklab {
+    animation-name: non-oklab-to-non-oklab;
+  }
+</style>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/web-animations/testcommon.js"></script>
+<script src="/css/support/color-testcommon.js"></script>
+
+<body>
+  <div id="target"></div>
+  <div id="test"></div>
+</body>
+<script>
+  'use strict';
+
+  async function runAnimationTest(t, name, expected_colors) {
+    const target = document.getElementById('target');
+    target.classList.add(name);
+    t.add_cleanup(() => {
+      target.classList.remove(name);
+    });
+    const anim = document.getAnimations()[0];
+    await anim.ready;
+    expected_colors.forEach(data => {
+      anim.currentTime = 1000 * data.at;
+      const actual = getComputedStyle(target).backgroundColor;
+      const expected = data.value;
+      if (data.exact) {
+        assert_equals(
+            actual, expected,
+            `Background color at ${100*data.at}% animation progress`);
+      } else {
+        assert_oklab_color(
+            actual, expected,
+            `Background color at ${100*data.at}% animation progress`);
+      }
+    });
+  }
+
+  const legacy_rgb_to_non_legacy_rgb = [
+    { at: 0, value: 'rgb(255, 0, 0)', exact: true },
+    { at: 0.25, value: 'oklab(0.747198 -0.004512 0.152672)', exact: false },
+    { at: 0.5, value: 'color(srgb 0 1 0)', exact: true },
+    { at: 0.75, value: 'oklab(0.659227 -0.133172 -0.066015)', exact: false },
+    { at: 1, value: 'color(srgb-linear 0 0 1)', exact: true },
+  ];
+
+  const implicit_legacy_rgb_to_non_legacy_rgb = [
+    { at: 0, value: 'rgb(255, 0, 0)', exact: true },
+    { at: 0.25, value: 'oklab(0.747198 -0.004512 0.152672)', exact: false },
+    { at: 0.5, value: 'color(srgb 0 1 0)', exact: true },
+    { at: 0.75, value: 'oklab(0.659227 -0.133172 -0.066015)', exact: false },
+    { at: 1, value: 'color(srgb-linear 0 0 1)', exact: true },
+  ];
+
+  const non_oklab_to_non_ok_lab = [
+    { at: 0, value: 'color(srgb 1 0 0)', exact: true },
+    { at: 0.25, value: 'oklab(0.58397 0.160533 0.016503)', exact: false },
+    { at: 0.5, value: 'oklab(0.539985 0.096203 -0.092841)', exact: false },
+    { at: 0.75, value: 'oklab(0.495999 0.031873 -0.202185)', exact: false },
+    { at: 1, value: 'color(srgb-linear 0 0 1)', exact: true },
+  ];
+
+  window.onload = async () => {
+    promise_test(t => {
+      return runAnimationTest(t, 'legacy-rgb-to-non-legacy-rgb', legacy_rgb_to_non_legacy_rgb);
+    }, 'Animate from legacy rgb keyframe to non-legacy rgb keyframe');
+    promise_test(t => {
+      return runAnimationTest(t, 'implicit-legacy-rgb-to-non-legacy-rgb', implicit_legacy_rgb_to_non_legacy_rgb);
+    }, 'Animate from implicit legacy rgb keyframe to non-legacy rgb keyframe');
+    promise_test(t => {
+      return runAnimationTest(t, 'non-oklab-to-non-oklab', non_oklab_to_non_ok_lab);
+    }, 'Animate from non-oklab keyframe to non-oklab keyframe');
+  };
+</script>
+</html>
