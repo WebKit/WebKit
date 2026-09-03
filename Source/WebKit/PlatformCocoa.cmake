@@ -2155,6 +2155,47 @@ with open(sys.argv[2], 'wb') as f:
             ${_gpu_ext_ents})
     endif ()
 
+    # Daemons. These are command-line tools whose product sits at the top of the
+    # build directory and is installed into WebKit.framework/Daemons.
+    function(WEBKIT_IOS_DAEMON _target _source)
+        add_executable(${_target} ${_source})
+        add_dependencies(${_target} WebKit)
+
+        set_target_properties(${_target} PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            MACOSX_BUNDLE FALSE)
+
+        target_compile_options(${_target} PRIVATE
+            -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
+        target_link_libraries(${_target} PRIVATE
+            "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            "-framework WebKit"
+            "-framework Foundation"
+        )
+
+        if (_is_simulator)
+            set(_daemon_entitlements ${_sim_get_task_allow})
+        else ()
+            set(_daemon_entitlements ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
+            WEBKIT_GENERATE_ENTITLEMENTS(${_target}
+                USING Scripts/process-entitlements.sh
+                OUTPUT ${_daemon_entitlements})
+        endif ()
+
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND codesign --force --sign -
+                --timestamp=none --generate-entitlement-der
+                --entitlements ${_daemon_entitlements}
+                "$<TARGET_FILE:${_target}>"
+            COMMENT "Codesigning ${_target}")
+    endfunction()
+
+    WEBKIT_IOS_DAEMON(webpushd
+        ${WEBKIT_DIR}/webpushd/webpushd.cpp)
+    WEBKIT_IOS_DAEMON(adattributiond
+        ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.cpp)
+
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Resources")
     file(MAKE_DIRECTORY ${_sb_output_dir})
