@@ -20,8 +20,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import platform
 import requests
+import shutil
 
 from webkitscmpy import Package, Version
 
@@ -30,7 +32,7 @@ class GeckoDriverPackage(Package):
     URL = 'https://api.github.com/repos/mozilla/geckodriver/releases'
 
     def __init__(self, version=None):
-        super(GeckoDriverPackage, self).__init__('geckodriver', version=version)
+        super(GeckoDriverPackage, self).__init__('geckodriver', version=version, custom_install=True)
 
     def archives(self):
         try:
@@ -43,9 +45,9 @@ class GeckoDriverPackage(Package):
 
         os_name = platform.system()
         if os_name == 'Darwin':
-            os = 'macos'
+            os_tag = 'macos'
         else:
-            os = '{}{}'.format(os_name, platform.machine()[-2:])
+            os_tag = '{}{}'.format(os_name.lower(), platform.machine()[-2:])
 
         archives = []
         for candidate in reversed(response.json()):
@@ -58,7 +60,7 @@ class GeckoDriverPackage(Package):
                 url = asset.get('browser_download_url')
                 if not url:
                     continue
-                if os not in url:
+                if os_tag not in url:
                     continue
 
                 extension = 'zip' if url.endswith('.zip') else 'tar.gz'
@@ -79,7 +81,13 @@ class GeckoDriverPackage(Package):
 
         return archives
 
+    def do_custom_install(self, unpack_location):
+        # The geckodriver binary is directly in the archive root
+        source = os.path.join(unpack_location, self.name)
+        shutil.copy(source, self.location)
+        os.chmod(self.location, 0o755)
 
-package = GeckoDriverPackage(version=Version(0, 27, 0))
+
+package = GeckoDriverPackage(version=Version(0, 36, 0))
 package.install()
 executable = package.location
