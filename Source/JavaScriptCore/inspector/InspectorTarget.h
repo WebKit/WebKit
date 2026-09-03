@@ -51,6 +51,11 @@ public:
     virtual String identifier() const = 0;
     virtual InspectorTargetType type() const = 0;
 
+    // Identifies the process hosting this target, so the frontend can tell which targets share one.
+    // Opaque for the same reason `identifier()` is: only the embedder can name a process. Empty when
+    // the embedder does not track this.
+    virtual String processId() const { return { }; }
+
     virtual bool isProvisional() const { return false; }
     bool isPaused() const { return m_isPaused; }
     void NODELETE pause();
