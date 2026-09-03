@@ -58,15 +58,18 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
             mayAffectStyleInShadowTree = true;
         if (features.attributesAffectingHost.contains(attributeNameForLookups))
             shouldInvalidateCurrent = true;
-        else if (auto affectsShadowTree = features.substitutionAttributeNamesInRules.getOptional(attributeNameForLookups)) {
-            shouldInvalidateCurrent = true;
-            // Only invalidate the host's shadow subtree if a shadow-piercing rule (::part(),
-            // ::placeholder, etc.) actually uses attr() on this attribute and the element has
-            // a shadow tree to invalidate.
-            if (m_element->shadowRoot() && *affectsShadowTree == RuleFeatureSet::AffectsShadowTree::Yes)
-                mayAffectStyleInShadowTree = true;
-        }
     });
+
+    // attr() only reads attributes of the element being styled, so the dependency is registered on
+    // that element's scope and a single lookup covers it.
+    if (auto affectsShadowTree = Scope::forNode(m_element.get()).substitutionAttribute(attributeNameForLookups)) {
+        shouldInvalidateCurrent = true;
+        // Only invalidate the host's shadow subtree if a shadow-piercing rule (::part(),
+        // ::placeholder, etc.) actually uses attr() on this attribute and the element has
+        // a shadow tree to invalidate.
+        if (m_element->shadowRoot() && *affectsShadowTree == AttributeAffectsShadowTree::Yes)
+            mayAffectStyleInShadowTree = true;
+    }
 
     if (mayAffectStyleInShadowTree) {
         // FIXME: More fine-grained invalidation.

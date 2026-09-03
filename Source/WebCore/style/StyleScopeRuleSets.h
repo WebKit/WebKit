@@ -121,8 +121,6 @@ public:
 
     std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&);
 
-    RuleFeatureSet& mutableFeatures() LIFETIME_BOUND;
-
     void setDynamicViewTransitionsStyle(RuleSet* ruleSet)
     {
         m_dynamicViewTransitionsStyle = ruleSet;
@@ -165,14 +163,6 @@ private:
 };
 
 inline const RuleFeatureSet& ScopeRuleSets::features() const
-{
-    if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
-        collectFeatures();
-    return m_features;
-}
-
-// FIXME: There should be just the const version.
-inline RuleFeatureSet& ScopeRuleSets::mutableFeatures()
 {
     if (m_defaultStyleVersionOnFeatureCollection < UserAgentStyle::defaultStyleVersion)
         collectFeatures();

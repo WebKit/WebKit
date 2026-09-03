@@ -74,6 +74,10 @@ class MatchResultCache;
 class Resolver;
 class RuleSet;
 
+// Whether a dependency on an attribute reaches past a shadow boundary, via a shadow-piercing
+// rule like ::part() or a document author rule matching a UA shadow pseudo-element.
+enum class AttributeAffectsShadowTree : bool { No, Yes };
+
 class Scope : public CanMakeWeakPtr<Scope>, public CanMakeCheckedPtr<Scope>, public Identified<ScopeIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(Scope);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Scope);
@@ -149,6 +153,12 @@ public:
     CustomPropertyRegistry& customPropertyRegistry() LIFETIME_BOUND { return m_customPropertyRegistry.get(); }
     const CSSCounterStyleRegistry& counterStyleRegistry() const LIFETIME_BOUND { return m_counterStyleRegistry.get(); }
     CSSCounterStyleRegistry& counterStyleRegistry() LIFETIME_BOUND { return m_counterStyleRegistry.get(); }
+
+    // Names of the attributes that attr() has been seen reading from elements in this scope. These
+    // are discovered by building style, so they are not derivable from the style sheets and have to
+    // survive both style sheet changes and the resolver being dropped.
+    void registerSubstitutionAttribute(const AtomString&, AttributeAffectsShadowTree) const;
+    std::optional<AttributeAffectsShadowTree> substitutionAttribute(const AtomString& lowercaseLocalName) const { return m_substitutionAttributes.getOptional(lowercaseLocalName); }
 
 protected:
     explicit Scope(Document&);
@@ -229,6 +239,8 @@ private:
 
     const UniqueRef<CustomPropertyRegistry> m_customPropertyRegistry;
     const UniqueRef<CSSCounterStyleRegistry> m_counterStyleRegistry;
+
+    mutable HashMap<AtomString, AttributeAffectsShadowTree> m_substitutionAttributes;
 };
 
 RefPtr<HTMLSlotElement> assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

@@ -175,6 +175,15 @@ void Scope::clearResolver()
     counterStyleRegistry().clearAuthorCounterStyles();
 }
 
+void Scope::registerSubstitutionAttribute(const AtomString& attributeName, AttributeAffectsShadowTree affectsShadowTree) const
+{
+    auto lowercaseName = attributeName.convertToASCIILowercase();
+    if (affectsShadowTree == AttributeAffectsShadowTree::Yes)
+        m_substitutionAttributes.set(lowercaseName, AttributeAffectsShadowTree::Yes);
+    else
+        m_substitutionAttributes.add(lowercaseName, AttributeAffectsShadowTree::No);
+}
+
 void Scope::releaseMemory()
 {
 #if ENABLE(CSS_SELECTOR_JIT)

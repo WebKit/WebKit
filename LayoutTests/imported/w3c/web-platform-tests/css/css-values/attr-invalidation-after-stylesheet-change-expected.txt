@@ -1,0 +1,3 @@
+
+PASS attr() invalidates on attribute change after a style sheet is added
+
