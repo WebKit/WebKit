@@ -2019,6 +2019,12 @@ with open(sys.argv[2], 'wb') as f:
         COMMAND ${CMAKE_COMMAND} -E rm -rf
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions
         COMMAND ${CMAKE_COMMAND} -E rm -rf
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ../../libWebKitSwift.dylib
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks/libWebKitSwift.dylib
+        COMMAND ${CMAKE_COMMAND} -E rm -rf
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices
         COMMAND ${CMAKE_COMMAND} -E make_directory
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices
@@ -2034,10 +2040,11 @@ with open(sys.argv[2], 'wb') as f:
         COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
         COMMENT "Installing WebKit.framework resources and codesigning")
 
-    # Note: GPU.xpc symlink, when ENABLE_GPU_PROCESS is on, MUST be created
-    # in the same POST_BUILD chain as codesign above. Adding it via a
-    # separate add_custom_command(POST_BUILD ...) modifies the framework
-    # after the seal, breaking codesign verification at sim runtime.
+    # Note: the GPU.xpc symlink, when ENABLE_GPU_PROCESS is on, and the
+    # Frameworks/libWebKitSwift.dylib symlink MUST be created in the same
+    # POST_BUILD chain as codesign above. Adding either via a separate
+    # add_custom_command(POST_BUILD ...) modifies the framework after the
+    # seal, breaking codesign verification at sim runtime.
 
     function(WEBKIT_IOS_EXTENSION _name _bundle_id _info_plist _swift_source _entitlements)
         if (NOT WEBKIT_SDK_TARGET_OS STREQUAL "ios")
@@ -2227,7 +2234,13 @@ set_target_properties(WebKitSwift PROPERTIES
     PREFIX "lib"
     SUFFIX ".dylib"
     Swift_MODULE_NAME WebKitSwift
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    # Nothing links this library, so an @rpath install name would only resolve
+    # for a loader that happens to carry a matching LC_RPATH. Record the path it
+    # is installed to, as Configurations/WebKitSwift.xcconfig does.
+    MACOSX_RPATH OFF
+    BUILD_WITH_INSTALL_NAME_DIR ON
+    INSTALL_NAME_DIR "/System/Library/Frameworks/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
 )
 
 target_include_directories(WebKitSwift PRIVATE
@@ -2286,6 +2299,15 @@ target_compile_options(WebKitSwift PRIVATE
 
 target_link_libraries(WebKitSwift PRIVATE WebKit)
 add_dependencies(WebKitSwift WebKit)
+
+# WEBKIT_FRAMEWORK/WEBKIT_EXECUTABLE sign what they create; a plain add_library
+# does not. The framework's own signature does not cover this file either, since
+# WebKit.framework/Frameworks/libWebKitSwift.dylib is a symlink to it, and an
+# unsigned dylib in /System/Library is rejected when the device loads it.
+add_custom_command(TARGET WebKitSwift POST_BUILD
+    COMMAND /usr/bin/codesign --force --sign ${WEBKIT_CODE_SIGN_IDENTITY}
+        $<TARGET_FILE:WebKitSwift>
+    COMMENT "Code signing libWebKitSwift.dylib")
 
 unset(_wks_dir)
 
