@@ -29,6 +29,7 @@
 #include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderDescendantIterator.h"
 #include "RenderSVGBlockInlines.h"
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
@@ -87,7 +88,20 @@ void LegacyRenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint
     }
 
     // Paint all phases of FO elements atomically, as though the FO element established its
-    // own stacking context.
+    // own stacking context. Per SVG spec, foreignObject establishes an isolated group, so
+    // wrap children in a transparency layer to prevent blend modes from leaking out.
+    // LegacyRenderSVGForeignObject has no RenderLayer, so
+    // RenderLayer::hasNotIsolatedBlendingDescendants() is unavailable here.
+    auto hasDescendantWithBlendMode = [&] {
+        for (CheckedRef descendant : descendantsOfType<RenderElement>(*this)) {
+            if (descendant->style().blendMode() != BlendMode::Normal)
+                return true;
+        }
+        return false;
+    };
+    bool needsIsolation = hasDescendantWithBlendMode();
+    if (needsIsolation)
+        childPaintInfo.context().beginTransparencyLayer(1);
     childPaintInfo.phase = PaintPhase::BlockBackground;
     RenderBlock::paint(childPaintInfo, childPoint);
     childPaintInfo.phase = PaintPhase::ChildBlockBackgrounds;
@@ -98,6 +112,8 @@ void LegacyRenderSVGForeignObject::paint(PaintInfo& paintInfo, const LayoutPoint
     RenderBlock::paint(childPaintInfo, childPoint);
     childPaintInfo.phase = PaintPhase::Outline;
     RenderBlock::paint(childPaintInfo, childPoint);
+    if (needsIsolation)
+        childPaintInfo.context().endTransparencyLayer();
 }
 
 const AffineTransform& LegacyRenderSVGForeignObject::localToParentTransform() const
