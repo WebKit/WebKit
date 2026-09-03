@@ -1,0 +1,20 @@
+Verifies CSS scroll-axis-lock property affects whether iframe scroll can be axis-locked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scroller.scrollTop is 0
+PASS scroller.scrollLeft is 0
+PASS getComputedStyle(scroller).scrollAxisLock is "none"
+PASS scroller.scrollTop is > 0
+PASS scroller.scrollLeft is > 0
+PASS scroller.scrollTop is 0
+PASS scroller.scrollLeft is 0
+PASS getComputedStyle(scroller).scrollAxisLock is "auto"
+PASS scroller.scrollTop is > 0
+PASS scroller.scrollLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

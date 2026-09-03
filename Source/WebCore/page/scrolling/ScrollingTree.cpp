@@ -732,6 +732,14 @@ OverscrollBehavior ScrollingTree::mainFrameVerticalOverscrollBehavior() const
     return m_rootNode ? m_rootNode->verticalOverscrollBehavior() : OverscrollBehavior::Auto;
 }
 
+ScrollAxisLock ScrollingTree::mainFrameScrollAxisLock() const
+{
+    Locker locker { m_treeLock };
+    if (RefPtr rootNode = m_rootNode)
+        return rootNode->scrollAxisLock();
+    return ScrollAxisLock::Auto;
+}
+
 IntPoint ScrollingTree::mainFrameScrollOrigin() const
 {
     Locker locker { m_treeLock };

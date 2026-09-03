@@ -51,6 +51,7 @@ private:
 
     // ScrollingEffectsControllerClient.
     bool scrollAnimationEnabled() const final { return m_scrollAnimatorEnabled; }
+    ScrollAxisLock scrollAxisLock() const final;
 
     bool m_scrollAnimatorEnabled { false };
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/scroll-axis-lock.js"></script>
+<style>
+  #scroller {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  #content {
+    width: 200vw;
+    height: 200vh;
+    background: linear-gradient(45deg, red, green);
+  }
+</style>
+<p id="description"></p>
+<p id="console"></p>
+<div id="scroller">
+  <div id="content"></div>
+</div>
+<script>
+  var jsTestIsAsync = true;
+  description('Verifies CSS scroll-axis-lock property affects whether overflow scroll can be axis-locked.')
+  let scroll_is_axis_locked = UIHelper.isMac();
+  window.addEventListener('load', () => runTest({ scroller: document.getElementById('scroller'), scroll_is_axis_locked }));
+</script>

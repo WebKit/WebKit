@@ -7233,6 +7233,15 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     return OverscrollBehavior::Auto;
 }
 
+ScrollAxisLock LocalFrameView::scrollAxisLock() const
+{
+    auto* document = m_frame->document();
+    auto* scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject && renderView())
+        return scrollingObject->style().scrollAxisLock();
+    return ScrollAxisLock::Auto;
+}
+
 Color LocalFrameView::scrollbarThumbColorStyle() const
 {
     RefPtr document = m_frame->document();

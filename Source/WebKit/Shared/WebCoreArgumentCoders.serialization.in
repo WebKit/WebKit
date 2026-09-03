@@ -1022,6 +1022,11 @@ enum class WebCore::OverscrollBehavior : uint8_t {
     None
 };
 
+enum class WebCore::ScrollAxisLock : uint8_t {
+    Auto,
+    None
+};
+
 enum class WebCore::ScrollPinningBehavior : uint8_t {
     DoNotPin,
     PinToTop,
@@ -1886,6 +1891,7 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     WebCore::ScrollbarMode verticalScrollbarMode;
     WebCore::OverscrollBehavior horizontalOverscrollBehavior;
     WebCore::OverscrollBehavior verticalOverscrollBehavior;
+    WebCore::ScrollAxisLock scrollAxisLock;
     bool allowsHorizontalScrolling;
     bool allowsVerticalScrolling;
     WebCore::NativeScrollbarVisibility horizontalNativeScrollbarVisibility;

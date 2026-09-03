@@ -240,7 +240,7 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
         auto alreadyDirectionallyLocked = wheelEvent.inputSource() == MouseEventInputSource::Automation;
 
         // FIXME: This axis locking replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
-        if (!alreadyDirectionallyLocked)
+        if (!alreadyDirectionallyLocked && m_client.scrollAxisLock() == ScrollAxisLock::Auto)
             delta = deltaAlignedToPredominantGestureAxis(wheelEvent.timestamp(), delta);
     }
 

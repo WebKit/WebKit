@@ -69,6 +69,11 @@ bool ScrollingTreeScrollingNodeDelegateCoordinated::handleWheelEvent(const Platf
     return m_scrollController.handleWheelEvent(wheelEvent);
 }
 
+ScrollAxisLock ScrollingTreeScrollingNodeDelegateCoordinated::scrollAxisLock() const
+{
+    return scrollingNode()->scrollAxisLock();
+}
+
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 void ScrollingTreeScrollingNodeDelegateCoordinated::updateFromStateNode(const ScrollingStateScrollingNode& scrollingStateNode)
 {

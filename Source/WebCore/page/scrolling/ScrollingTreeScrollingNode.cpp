@@ -641,6 +641,11 @@ ScrollPropagationInfo ScrollingTreeScrollingNode::computeScrollPropagation(const
     return propagation;
 }
 
+ScrollAxisLock ScrollingTreeScrollingNode::scrollAxisLock() const
+{
+    return m_scrollableAreaParameters.scrollAxisLock;
+}
+
 void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientation orientation, bool isVisible)
 {
     if (RefPtr tree = scrollingTree())

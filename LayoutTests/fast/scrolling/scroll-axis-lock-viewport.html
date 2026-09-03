@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="resources/scroll-axis-lock.js"></script>
+<style>
+  html {
+    width: 200vw;
+    height: 200vh;
+    background: linear-gradient(45deg, red, green);
+  }
+</style>
+<script>
+  var jsTestIsAsync = true;
+  description('Verifies CSS scroll-axis-lock property affects whether viewport scroll can be axis-locked.')
+  let scroll_is_axis_locked = UIHelper.isIOSFamily() || UIHelper.isMac();
+  window.addEventListener('load', () => runTest({ doc: document, scroll_is_axis_locked }));
+</script>

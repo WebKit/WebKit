@@ -449,6 +449,11 @@ bool ScrollingTreeScrollingNodeDelegateMac::isPointInScrollbar(const FloatPoint&
     return isPointOverScroller(m_scrollerPair->verticalScroller()) || isPointOverScroller(m_scrollerPair->horizontalScroller());
 }
 
+ScrollAxisLock ScrollingTreeScrollingNodeDelegateMac::scrollAxisLock() const
+{
+    return scrollingNode()->scrollAxisLock();
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)

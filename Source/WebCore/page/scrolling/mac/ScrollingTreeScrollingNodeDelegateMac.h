@@ -79,6 +79,8 @@ public:
 
     bool isPointInScrollbar(const FloatPoint& pointInReferenceLayer, CALayer *referenceLayer) const;
 
+    ScrollAxisLock scrollAxisLock() const final;
+
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;
 
