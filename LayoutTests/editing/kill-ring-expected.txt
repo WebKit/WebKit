@@ -1,0 +1,42 @@
+
+Dump of markup 1:
+| <#selection-caret>
+| "This line of text goes into the kill ring"
+
+Dump of markup 2:
+| <#selection-caret>
+| <br>
+
+Dump of markup 3:
+| "Text yanked out of the kill ring appears just below this sentence."
+| <div>
+|   "This line of text goes into the kill ring<#selection-caret>"
+
+Dump of markup 4:
+| "Text yanked out of the kill ring appears selected just below this sentence."
+| <div>
+|   "<#selection-anchor>This line of text goes into the kill ring<#selection-focus>"
+
+Dump of markup 5:
+| <#selection-caret>
+| "These two lines of text"
+| <div>
+|   "go into the kill ring"
+
+Dump of markup 6:
+| <#selection-caret>
+| <br>
+
+Dump of markup 7:
+| "Text yanked out of the kill ring appears just below this sentence."
+| <div>
+|   "These two lines of text"
+| <div>
+|   "go into the kill ring<#selection-caret>"
+
+Dump of markup 8:
+| "Text yanked out of the kill ring appears selected just below this sentence."
+| <div>
+|   "These two lines of text"
+| <div>
+|   "<#selection-anchor>go into the kill ring<#selection-focus>"

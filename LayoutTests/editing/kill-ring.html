@@ -1,0 +1,46 @@
+<script src="../resources/dump-as-markup.js"></script>
+<p>This does some basic testing of kill ring commands, deleting to put text into the kill ring and yanking out of it.</p>
+<div id="container" contenteditable="true"></div>
+<script>
+const selection = window.getSelection();
+const container = document.getElementById("container");
+selection.setPosition(container, 0);
+document.execCommand("InsertText", false, "This line of text goes into the kill ring")
+selection.setPosition(container, 0);
+Markup.dump("container");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+Markup.dump("container");
+document.execCommand("InsertText", false, "Text yanked out of the kill ring appears just below this sentence.\n");
+internals.executeEditingCommand("Yank");
+Markup.dump("container");
+while (container.firstChild)
+    container.removeChild(container.firstChild);
+document.execCommand("InsertText", false, "This line of text goes into the kill ring")
+selection.setPosition(container, 0);
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+document.execCommand("InsertText", false, "Text yanked out of the kill ring appears selected just below this sentence.\n");
+internals.executeEditingCommand("YankAndSelect");
+Markup.dump("container");
+while (container.firstChild)
+    container.removeChild(container.firstChild);
+document.execCommand("InsertText", false, "These two lines of text\ngo into the kill ring")
+selection.setPosition(container, 0);
+Markup.dump("container");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+Markup.dump("container");
+document.execCommand("InsertText", false, "Text yanked out of the kill ring appears just below this sentence.\n");
+internals.executeEditingCommand("Yank");
+Markup.dump("container");
+while (container.firstChild)
+    container.removeChild(container.firstChild);
+document.execCommand("InsertText", false, "These two lines of text\ngo into the kill ring")
+selection.setPosition(container, 0);
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+internals.executeEditingCommand("DeleteToEndOfParagraph");
+document.execCommand("InsertText", false, "Text yanked out of the kill ring appears selected just below this sentence.\n");
+internals.executeEditingCommand("YankAndSelect");
+Markup.dump("container");
+</script>
