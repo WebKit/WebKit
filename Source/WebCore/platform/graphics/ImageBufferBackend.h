@@ -151,7 +151,7 @@ public:
 #endif
 
     virtual bool isInUse() const { return false; }
-    virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
+    virtual void releaseGraphicsContext() { }
 
     virtual void transferToNewContext(const ImageBufferCreationContext&) { }
 
