@@ -288,7 +288,9 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CG
     }
 }
 
-static void setCGFontRenderingMode(GraphicsContext& context)
+static constexpr float minFontSizeForSubpixelQuantizationClipping = 16.f;
+
+static void setCGFontRenderingMode(GraphicsContext& context, const Font& font)
 {
     RetainPtr<CGContextRef> cgContext = context.platformContext();
     CGContextSetShouldAntialiasFonts(cgContext.get(), true);
@@ -297,6 +299,16 @@ static void setCGFontRenderingMode(GraphicsContext& context)
     bool isTranslationOrIntegralScale = WTF::isIntegral(contextTransform.a) && WTF::isIntegral(contextTransform.d) && contextTransform.b == 0.f && contextTransform.c == 0.f;
     bool isRotated = ((contextTransform.b || contextTransform.c) && (contextTransform.a || contextTransform.d));
     bool doSubpixelQuantization = isTranslationOrIntegralScale || (!isRotated && context.shouldSubpixelQuantizeFonts());
+
+    // Workaround for rdar://126148010: subpixel quantization on accelerated
+    // contexts can clip the left edge of fixed-pitch glyphs at certain font
+    // sizes when the device position is fractional.
+    float deviceX = contextTransform.tx;
+    bool isFractionalDevicePosition = deviceX != std::floor(deviceX);
+    doSubpixelQuantization &= !(context.renderingMode() == RenderingMode::Accelerated
+        && font.pitch() == FixedPitch
+        && font.platformData().size() >= minFontSizeForSubpixelQuantizationClipping
+        && isFractionalDevicePosition);
 
     CGContextSetShouldSubpixelPositionFonts(cgContext.get(), true);
     CGContextSetShouldSubpixelQuantizeFonts(cgContext.get(), doSubpixelQuantization);
@@ -351,7 +363,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
     auto textMatrix = computeOverallTextMatrix(font);
     ScopedTextMatrix restorer(textMatrix, cgContext.get());
 
-    setCGFontRenderingMode(context);
+    setCGFontRenderingMode(context, font);
     CGContextSetFontSize(cgContext.get(), platformData.size());
 
     auto shadow = context.dropShadow();
