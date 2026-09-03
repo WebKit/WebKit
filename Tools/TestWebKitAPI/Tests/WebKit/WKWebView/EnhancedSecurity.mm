@@ -509,11 +509,9 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysEnabledAfterSubFrameNaviga
 
     EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-    // Without Site Isolation, cross-site frame must be loaded in the same process as main frame,
-    // so process variant cannot change; with Site Isolation, cross-site frame is put in a
-    // different process, and that process can have different variant.
-    auto frameProcessVariant = isSiteIsolationEnabled(webView.get()) ? "standard" : "security";
-    EXPECT_STREQ(frameProcessVariant, [webView _webContentProcessVariantForFrame:[webView firstChildFrame]._handle].UTF8String);
+    // Security restrictions are page-wide, so the cross-site subframe inherits the main frame's
+    // process variant even under Site Isolation, where it gets a process of its own.
+    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:[webView firstChildFrame]._handle].UTF8String);
 
 }
 
@@ -604,11 +602,9 @@ TEST(EnhancedSecurity, EnhancedSecurityNavigationStaysDisabledAfterSubFrameNavig
 
     EXPECT_EQ(false, isEnhancedSecurityEnabled(webView.get()));
     EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-    // Without Site Isolation, cross-site frame must be loaded in the same process as main frame,
-    // so process variant cannot change; with Site Isolation, cross-site frame is put in a
-    // different process, and that process can have different variant.
-    auto frameProcessVariant = isSiteIsolationEnabled(webView.get()) ? "security" : "standard";
-    EXPECT_STREQ(frameProcessVariant, [webView _webContentProcessVariantForFrame:[webView firstChildFrame]._handle].UTF8String);
+    // Security restrictions are page-wide, so the cross-site subframe inherits the main frame's
+    // process variant even under Site Isolation, where it gets a process of its own.
+    EXPECT_STREQ("standard", [webView _webContentProcessVariantForFrame:[webView firstChildFrame]._handle].UTF8String);
 }
 
 TEST(EnhancedSecurity, WindowOpenWithNoopenerFromEnhancedSecurityPage)
