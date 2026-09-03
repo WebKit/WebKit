@@ -1100,6 +1100,30 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
         export *
     }
 
+    module JavaScriptEvaluationResult {
+        requires cplusplus20
+        header \"${WEBKIT_DIR}/Shared/JavaScriptEvaluationResult.h\"
+        export *
+    }
+
+    module JavaScriptEvaluationResultCxxInteropSupport {
+        requires cplusplus23
+        header \"${WEBKIT_DIR}/Shared/JavaScriptEvaluationResultCxxInteropSupport.h\"
+        export *
+    }
+
+    module RunJavaScriptParameters {
+        requires cplusplus23
+        header \"${WEBKIT_DIR}/Shared/RunJavaScriptParameters.h\"
+        export *
+    }
+
+    module RunJavaScriptResult {
+        requires cplusplus20
+        header \"${WEBKIT_DIR}/Shared/RunJavaScriptResult.h\"
+        export *
+    }
+
     module SwiftDemoLogoConfirmation {
         requires cplusplus20
         header \"${WEBKIT_DIR}/UIProcess/SwiftDemoLogoConfirmation.h\"
