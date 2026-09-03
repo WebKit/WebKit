@@ -2408,9 +2408,9 @@ bool JSObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Proper
             ASSERT(!isValidOffset(structure->get(vm, propertyName, attributes)));
             if (offset != invalidOffset)
                 thisObject->locationForOffset(offset)->clear();
-            if (thisObject->mayBePrototype()) [[unlikely]]
-                vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Remove);
         }
+        if (thisObject->mayBePrototype()) [[unlikely]]
+            vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Remove);
     } else
         slot.setConfigurableMiss();
 
