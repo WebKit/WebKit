@@ -142,7 +142,9 @@ public:
 
     const std::optional<Vector<String>>& styleSheets() const LIFETIME_BOUND { return m_styleSheets; }
 
-    virtual bool shouldPurgeCuesFromUnbufferedRanges() const { return false; }
+    bool shouldPurgeCuesFromUnbufferedRanges() const { return m_shouldPurgeCuesFromUnbufferedRanges; }
+    void setShouldPurgeCuesFromUnbufferedRanges(bool shouldPurge) { m_shouldPurgeCuesFromUnbufferedRanges = shouldPurge; }
+
     virtual void removeCuesNotInTimeRanges(const PlatformTimeRanges&);
 
     ScriptExecutionContext* scriptExecutionContext() const final;
@@ -186,6 +188,7 @@ private:
     std::optional<int> m_trackIndex;
     std::optional<int> m_renderedTrackIndex;
     bool m_hasBeenConfigured { false };
+    bool m_shouldPurgeCuesFromUnbufferedRanges { false };
 };
 
 inline auto TextTrack::mode() const -> Mode

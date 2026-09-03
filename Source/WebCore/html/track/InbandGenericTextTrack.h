@@ -78,8 +78,6 @@ private:
     void newStyleSheetsParsed() final;
     void fileFailedToParse() final;
 
-    bool shouldPurgeCuesFromUnbufferedRanges() const final { return true; }
-
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "InbandGenericTextTrack"_s; }
 #endif

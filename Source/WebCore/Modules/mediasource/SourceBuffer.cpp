@@ -1008,6 +1008,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             // appropriate information from the initialization segment.
             Ref newTextTrack = InbandTextTrack::create(*protect(scriptExecutionContext()), textTrackPrivate);
             newTextTrack->addClient(*this);
+            newTextTrack->setShouldPurgeCuesFromUnbufferedRanges(false);
 
             // 5.4.2 If the mode property on new text track equals "showing" or "hidden", then set active
             // track flag to true.
