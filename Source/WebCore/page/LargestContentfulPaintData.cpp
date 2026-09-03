@@ -109,13 +109,15 @@ bool LargestContentfulPaintData::canCompareWithLargestPaintArea(const Element& e
 }
 
 // https://w3c.github.io/largest-contentful-paint/#sec-effective-visual-size
-std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Element& element, CachedImage* image, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize)
+std::optional<EffectiveVisualSizeResult> LargestContentfulPaintData::effectiveVisualSize(const Element& element, CachedImage* image, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize)
 {
     RefPtr frameView = element.document().view();
     if (!frameView)
         return { };
 
-    auto area = intersectionRect.area();
+    auto width = std::ceil(intersectionRect.width());
+    auto height = std::ceil(intersectionRect.height());
+    auto area = width * height;
     if (area >= viewportSize.area())
         return { };
 
@@ -127,20 +129,26 @@ std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Eleme
         auto absoluteContentRect = renderer->localToAbsoluteQuad(FloatRect(imageLocalRect)).boundingBox();
 
         auto intersectingContentRect = intersection(absoluteContentRect, intersectionRect);
-        area = intersectingContentRect.area();
+        width = std::ceil(intersectingContentRect.width());
+        height = std::ceil(intersectingContentRect.height());
+        area = width * height;
 
         auto naturalSize = image->imageSizeForRenderer(renderer.get(), 1);
         if (naturalSize.isEmpty())
             return { };
 
         auto scaleFactor = absoluteContentRect.area() / FloatSize { naturalSize }.area();
-        if (scaleFactor > 1)
+        if (scaleFactor > 1) {
             area /= scaleFactor;
+            auto linearScaleFactor = std::sqrt(scaleFactor);
+            width = std::ceil(width / linearScaleFactor);
+            height = std::ceil(height / linearScaleFactor);
+        }
 
-        return area;
+        return EffectiveVisualSizeResult { area, width, height };
     }
 
-    return area;
+    return EffectiveVisualSizeResult { area, width, height };
 }
 
 // https://w3c.github.io/largest-contentful-paint/#sec-add-lcp-entry
@@ -176,19 +184,29 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
     if (!viewportSize)
         viewportSize = FloatSize { view->visualViewportRect().size() };
 
-    auto elementArea = effectiveVisualArea(element, image, imageLocalRect, intersectionRect, *viewportSize);
-    if (!elementArea)
+    auto result = effectiveVisualSize(element, image, imageLocalRect, intersectionRect, *viewportSize);
+    if (!result)
         return;
 
-    if (*elementArea <= m_largestPaintArea) {
-        LOG_WITH_STREAM(LargestContentfulPaint, stream << " element area " << elementArea << " less than LCP " << m_largestPaintArea);
+    if (result->size <= m_largestPaintArea) {
+        LOG_WITH_STREAM(LargestContentfulPaint, stream << " element area " << result->size << " less than LCP " << m_largestPaintArea);
         return;
     }
 
-    if (!isEligibleForLargestContentfulPaint(element, *elementArea))
+    // https://w3c.github.io/largest-contentful-paint/#sec-report-largest-contentful-paint
+    // If the current size is greater than 0, skip candidates whose width and height each differ
+    // by 3 or fewer pixels from the current largest candidate.
+    if (m_largestPaintArea > 0) {
+        if (result->width - m_largestPaintWidth <= 3 && result->height - m_largestPaintHeight <= 3)
+            return;
+    }
+
+    if (!isEligibleForLargestContentfulPaint(element, result->size))
         return;
 
-    m_largestPaintArea = *elementArea;
+    m_largestPaintArea = result->size;
+    m_largestPaintWidth = result->width;
+    m_largestPaintHeight = result->height;
 
     Ref pendingEntry = LargestContentfulPaint::create(0);
     pendingEntry->setElement(&element);

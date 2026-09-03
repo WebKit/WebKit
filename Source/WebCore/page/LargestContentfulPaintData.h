@@ -52,6 +52,12 @@ struct PerElementImageData {
     bool inContentSet { false };
 };
 
+struct EffectiveVisualSizeResult {
+    float size { 0 };
+    float width { 0 };
+    float height { 0 };
+};
+
 struct ElementLargestContentfulPaintData {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(ElementLargestContentfulPaintData);
     FloatRect accumulatedTextRect;
@@ -74,7 +80,7 @@ public:
 
 private:
 
-    static std::optional<float> effectiveVisualArea(const Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize);
+    static std::optional<EffectiveVisualSizeResult> effectiveVisualSize(const Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize);
 
     static FloatRect computeViewportIntersectionRect(Element&, FloatRect localRect);
     static FloatRect computeViewportIntersectionRectForTextContainer(Element&, const WeakHashSet<Text, WeakPtrImplWithEventTargetData>&);
@@ -87,6 +93,8 @@ private:
     void scheduleRenderingUpdateIfNecessary(Element&);
 
     float m_largestPaintArea { 0 };
+    float m_largestPaintWidth { 0 };
+    float m_largestPaintHeight { 0 };
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_paintedTextRecords;
     WeakHashMap<Element, Vector<WeakPtr<CachedImage>>, WeakPtrImplWithEventTargetData> m_pendingImageRecords;
