@@ -84,6 +84,7 @@ specific_include_rules = {
   "candidate\\.h": [
     "+rtc_base/network_constants.h",
     "+rtc_base/socket_address.h",
+    "+rtc_base/ssl_fingerprint.h",
   ],
 
   "create_peerconnection_factory\\.h": [
@@ -263,6 +264,10 @@ specific_include_rules = {
 
   "video_encoder_factory_template.*\\.h": [
     "+modules/video_coding",
+  ],
+
+  "video_encoder_builders\\.h": [
+    "+rtc_base/numerics",
   ],
 
   "video_encoder_factory_interface\\.h": [

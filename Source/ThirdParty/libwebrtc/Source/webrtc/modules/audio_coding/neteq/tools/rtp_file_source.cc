@@ -17,6 +17,7 @@
 #include <optional>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/units/timestamp.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -49,7 +50,7 @@ bool RtpFileSource::ValidPcap(absl::string_view file_name) {
 RtpFileSource::~RtpFileSource() {}
 
 bool RtpFileSource::RegisterRtpHeaderExtension(RTPExtensionType type,
-                                               uint8_t id) {
+                                               RtpHeaderExtensionId id) {
   return rtp_header_extension_map_.RegisterByType(id, type);
 }
 

@@ -133,6 +133,7 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   DataRate max_padding_rate_;
 
   bool previously_in_alr_ = false;
+  bool last_is_bandwidth_limited_ = true;
 
   std::optional<DataSize> current_data_window_;
 };

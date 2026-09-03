@@ -26,7 +26,7 @@
 #include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/sframe/sframe_encrypter_interface.h"
+#include "api/sframe/sframe_encryptor_interface.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "pc/proxy.h"
 
@@ -59,9 +59,9 @@ PROXY_METHOD1(void, SetStreams, const std::vector<std::string>&)
 PROXY_METHOD1(void,
               SetFrameTransformer,
               scoped_refptr<FrameTransformerInterface>)
-PROXY_METHOD1(RTCErrorOr<scoped_refptr<SframeEncrypterInterface>>,
-              CreateSframeEncrypterOrError,
-              const SframeEncrypterInit&)
+PROXY_METHOD1(RTCErrorOr<scoped_refptr<SframeEncryptorInterface>>,
+              CreateSframeEncryptorOrError,
+              const SframeEncryptorInit&)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 PROXY_METHOD1(void,

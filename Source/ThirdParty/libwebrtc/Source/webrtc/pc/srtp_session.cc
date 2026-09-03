@@ -342,7 +342,15 @@ bool SrtpSession::UnprotectRtcp(CopyOnWriteBuffer& buffer) {
   int out_len = buffer.size();
   int err = srtp_unprotect_rtcp(session_, buffer.MutableData<char>(), &out_len);
   if (err != srtp_err_status_ok) {
-    RTC_LOG(LS_WARNING) << "Failed to unprotect SRTCP packet, err=" << err;
+    // Limit the error logging to avoid excessive logs when there are lots of
+    // bad packets.
+    const int kFailureLogThrottleCount = 100;
+    if (rtcp_decryption_failure_count_ % kFailureLogThrottleCount == 0) {
+      RTC_LOG(LS_WARNING) << "Failed to unprotect SRTCP packet, err=" << err
+                          << ", previous failure count: "
+                          << rtcp_decryption_failure_count_;
+    }
+    ++rtcp_decryption_failure_count_;
     RTC_HISTOGRAM_ENUMERATION("WebRTC.PeerConnection.SrtcpUnprotectError",
                               static_cast<int>(err), kSrtpErrorCodeBoundary);
     return false;

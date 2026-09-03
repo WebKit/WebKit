@@ -12,6 +12,7 @@
 #define VIDEO_CORRUPTION_DETECTION_FRAME_SELECTOR_H_
 
 #include <map>
+#include <optional>
 
 #include "api/environment/environment.h"
 #include "api/units/time_delta.h"
@@ -53,6 +54,8 @@ class FrameSelector {
                 Timespan high_overhead_frame_span);
 
   bool ShouldInstrumentFrame(const VideoFrame& raw_frame,
+                             const EncodedImage& encoded_frame);
+  bool ShouldInstrumentFrame(const std::optional<VideoFrame>& raw_frame,
                              const EncodedImage& encoded_frame);
 
  private:

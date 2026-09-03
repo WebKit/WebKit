@@ -42,6 +42,7 @@ rtc_library("dav1d_decoder") {
     "../../../../api:scoped_refptr",
     "../../../../api/environment",
     "../../../../api/video:encoded_image",
+    "../../../../api/video:video_codec_constants",
     "../../../../api/video:video_frame",
     "../../../../api/video:video_rtp_headers",
     "../../../../api/video_codecs:video_codecs_api",
@@ -138,67 +139,132 @@ rtc_library("libaom_speed_config_factory") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("video_coding_codecs_av1_tests") {
+  rtc_library("av1_svc_config_unittest") {
     testonly = true
-
-    sources = [
-      "av1_svc_config_unittest.cc",
-      "dav1d_decoder_unittest.cc",
-    ]
-
+    sources = [ "av1_svc_config_unittest.cc" ]
     deps = [
       ":av1_svc_config",
+      "../../../../api/video:video_frame",
+      "../../../../api/video_codecs:scalability_mode",
+      "../../../../api/video_codecs:video_codecs_api",
+      "../../../../test:test_support",
+    ]
+  }
+
+  rtc_library("dav1d_decoder_unittest") {
+    testonly = true
+    sources = [ "dav1d_decoder_unittest.cc" ]
+    deps = [
       ":dav1d_decoder",
       "../..:video_codec_interface",
-      "../../../../api:field_trials",
-      "../../../../api:make_ref_counted",
-      "../../../../api:scoped_refptr",
       "../../../../api/environment",
       "../../../../api/environment:environment_factory",
-      "../../../../api/transport/rtp:dependency_descriptor",
-      "../../../../api/units:data_rate",
+      "../../../../api/video:encoded_image",
+      "../../../../api/video:video_frame",
+      "../../../../api/video:video_rtp_headers",
+      "../../../../api/video_codecs:video_codecs_api",
+      "../../../../test:create_test_environment",
+      "../../../../test:create_test_field_trials",
+      "../../../../test:test_support",
+    ]
+  }
+
+  rtc_library("libaom_av1_encoder_unittest") {
+    testonly = true
+    sources = [ "libaom_av1_encoder_unittest.cc" ]
+    deps = [
+      ":av1_svc_config",
+      ":libaom_av1_encoder",
+      "../..:encoded_video_frame_producer",
+      "../..:video_codec_interface",
+      "../../../../api:create_frame_generator",
+      "../../../../api:field_trials",
+      "../../../../api:frame_generator_api",
+      "../../../../api:mock_video_encoder",
+      "../../../../api/environment",
+      "../../../../api/environment:environment_factory",
+      "../../../../api/units:data_size",
+      "../../../../api/units:time_delta",
       "../../../../api/units:timestamp",
       "../../../../api/video:encoded_image",
       "../../../../api/video:render_resolution",
       "../../../../api/video:video_bitrate_allocation",
       "../../../../api/video:video_frame",
       "../../../../api/video:video_frame_type",
-      "../../../../api/video:video_rtp_headers",
       "../../../../api/video_codecs:scalability_mode",
+      "../../../../api/video_codecs:video_codecs_api",
+      "../../../../modules/rtp_rtcp:rtp_rtcp_format",
+      "../../../../rtc_base:checks",
+      "../../../../test:create_test_environment",
+      "../../../../test:create_test_field_trials",
+      "../../../../test:fileutils",
+      "../../../../test:test_support",
+      "../../../../test:video_test_support",
+    ]
+  }
+
+  rtc_library("libaom_av1_unittest") {
+    testonly = true
+    sources = [ "libaom_av1_unittest.cc" ]
+    deps = [
+      ":dav1d_decoder",
+      ":libaom_av1_encoder",
+      "../..:encoded_video_frame_producer",
+      "../..:video_codec_interface",
+      "../../../../api:make_ref_counted",
+      "../../../../api:mock_video_encoder",
+      "../../../../api:scoped_refptr",
+      "../../../../api/environment",
+      "../../../../api/transport/rtp:dependency_descriptor",
+      "../../../../api/units:data_rate",
+      "../../../../api/units:data_size",
+      "../../../../api/units:time_delta",
+      "../../../../api/video:encoded_image",
+      "../../../../api/video:video_bitrate_allocation",
+      "../../../../api/video:video_frame",
+      "../../../../api/video_codecs:scalability_mode",
+      "../../../../api/video_codecs:video_codecs_api",
+      "../../../../rtc_base:checks",
+      "../../../../test:create_test_environment",
+      "../../../../test:test_support",
+      "../../svc:scalability_mode_util",
+      "../../svc:scalability_structures",
+      "../../svc:scalable_video_controller",
+      "../../svc:svc_rate_allocator",
+    ]
+  }
+
+  rtc_library("libaom_speed_config_factory_unittest") {
+    testonly = true
+    sources = [ "libaom_speed_config_factory_unittest.cc" ]
+    deps = [
+      ":libaom_speed_config_factory",
+      "../../../../api:field_trials",
+      "../../../../api/environment",
+      "../../../../api/units:time_delta",
       "../../../../api/video_codecs:video_codecs_api",
       "../../../../rtc_base:checks",
       "../../../../test:create_test_environment",
       "../../../../test:create_test_field_trials",
       "../../../../test:test_support",
     ]
+  }
+
+  rtc_library("video_coding_codecs_av1_tests") {
+    testonly = true
+
+    sources = []
+
+    deps = [
+      ":av1_svc_config_unittest",
+      ":dav1d_decoder_unittest",
+    ]
 
     if (enable_libaom) {
-      sources += [
-        "libaom_av1_encoder_unittest.cc",
-        "libaom_av1_unittest.cc",
-        "libaom_speed_config_factory_unittest.cc",
-      ]
       deps += [
-        ":libaom_av1_encoder",
-        ":libaom_speed_config_factory",
-        "../..:encoded_video_frame_producer",
-        "../..:video_coding_utility",
-        "../../../../api:create_frame_generator",
-        "../../../../api:field_trials",
-        "../../../../api:field_trials_view",
-        "../../../../api:frame_generator_api",
-        "../../../../api:mock_video_encoder",
-        "../../../../api/units:data_size",
-        "../../../../api/units:time_delta",
-        "../../../../modules/rtp_rtcp:rtp_rtcp_format",
-        "../../../../test:create_test_environment",
-        "../../../../test:fileutils",
-        "../../../../test:test_support",
-        "../../../../test:video_test_support",
-        "../../svc:scalability_mode_util",
-        "../../svc:scalability_structures",
-        "../../svc:scalable_video_controller",
-        "../../svc:svc_rate_allocator",
+        ":libaom_av1_encoder_unittest",
+        ":libaom_av1_unittest",
+        ":libaom_speed_config_factory_unittest",
       ]
     }
   }

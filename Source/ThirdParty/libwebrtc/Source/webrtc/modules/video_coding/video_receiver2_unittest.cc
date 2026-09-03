@@ -17,6 +17,7 @@
 
 #include "api/field_trials.h"
 #include "api/test/mock_video_decoder.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/video_codec_type.h"
@@ -88,7 +89,8 @@ class VideoReceiver2Test : public ::testing::Test {
 
   FieldTrials field_trials_ = CreateTestFieldTrials();
   SimulatedClock clock_{Timestamp::Millis(1337)};
-  VCMTiming timing_{&clock_, field_trials_};
+  VCMTiming timing_{&clock_, field_trials_,
+                    /*render_time=*/TimeDelta::Millis(10)};
   NiceMock<MockVCMReceiveCallback> receive_callback_;
   VideoReceiver2 receiver_{&clock_, &timing_, field_trials_,
                            /*corruption_score_calculator=*/nullptr};

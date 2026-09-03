@@ -10,26 +10,29 @@
 
 #include "api/field_trials.h"
 #include "api/units/time_delta.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
-TEST(PsnrExperimentTest, DisabledByDefault) {
-  FieldTrials field_trials("");
+TEST(PsnrExperimentTest, EnabledByDefault) {
+  FieldTrials field_trials = CreateTestFieldTrials("");
   PsnrExperiment config(field_trials);
-  EXPECT_FALSE(config.IsEnabled());
+  EXPECT_TRUE(config.IsEnabled());
+  EXPECT_EQ(config.SamplingInterval(), TimeDelta::Millis(1000));
 }
 
 TEST(PsnrExperimentTest, Enabled) {
-  FieldTrials field_trials("WebRTC-Video-CalculatePsnr/Enabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-Video-CalculatePsnr/Enabled/");
   PsnrExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
   EXPECT_EQ(config.SamplingInterval(), TimeDelta::Millis(1000));
 }
 
 TEST(PsnrExperimentTest, EnabledWithCustomSampling) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:2500ms/");
   PsnrExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
@@ -37,7 +40,7 @@ TEST(PsnrExperimentTest, EnabledWithCustomSampling) {
 }
 
 TEST(PsnrExperimentTest, EnabledWithInvalidSampling) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:0ms/");
   PsnrExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
@@ -45,14 +48,14 @@ TEST(PsnrExperimentTest, EnabledWithInvalidSampling) {
 }
 
 TEST(PsnrExperimentTest, DisabledWithParams) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-CalculatePsnr/Disabled,sampling_interval:500ms/");
   PsnrExperiment config(field_trials);
   EXPECT_FALSE(config.IsEnabled());
 }
 
 TEST(PsnrExperimentTest, EnabledWithNegativeSampling) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:-100ms/");
   PsnrExperiment config(field_trials);
   EXPECT_TRUE(config.IsEnabled());
@@ -60,7 +63,8 @@ TEST(PsnrExperimentTest, EnabledWithNegativeSampling) {
 }
 
 TEST(PsnrExperimentTest, ExplicitlyDisabled) {
-  FieldTrials field_trials("WebRTC-Video-CalculatePsnr/Disabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-Video-CalculatePsnr/Disabled/");
   PsnrExperiment config(field_trials);
   EXPECT_FALSE(config.IsEnabled());
 }

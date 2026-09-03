@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/units/timestamp.h"
@@ -37,11 +38,8 @@
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-  kVideoContentTypeExtensionId,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
+constexpr RtpHeaderExtensionId kVideoContentTypeExtensionId(2);
 
 class HistogramTest : public test::CallTest {
  public:
@@ -343,4 +341,5 @@ TEST_F(HistogramTest, VerifyStatsWithScreenshare) {
   VerifyHistogramStats(kEnabledRtx, kEnabledRed, kScreenshare);
 }
 
+}  // namespace
 }  // namespace webrtc

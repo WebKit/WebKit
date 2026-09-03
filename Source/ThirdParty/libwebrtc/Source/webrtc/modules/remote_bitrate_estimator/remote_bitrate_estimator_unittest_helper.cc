@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/units/data_rate.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
@@ -239,7 +240,7 @@ void RemoteBitrateEstimatorTest::IncomingPacket(uint32_t ssrc,
                                                 uint32_t rtp_timestamp,
                                                 uint32_t absolute_send_time) {
   RtpHeaderExtensionMap extensions;
-  extensions.Register<AbsoluteSendTime>(1);
+  extensions.Register<AbsoluteSendTime>(RtpHeaderExtensionId(1));
   RtpPacketReceived rtp_packet(&extensions);
   rtp_packet.SetSsrc(ssrc);
   rtp_packet.SetTimestamp(rtp_timestamp);

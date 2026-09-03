@@ -25,10 +25,6 @@ namespace {
 
 constexpr Timestamp kInitialTime = Timestamp::Millis(123'456);
 
-constexpr TimeDelta kMinBwePeriod = TimeDelta::Seconds(2);
-constexpr TimeDelta kDefaultPeriod = TimeDelta::Seconds(3);
-constexpr TimeDelta kMaxBwePeriod = TimeDelta::Seconds(50);
-
 // After an overuse, we back off to 85% to the received bitrate.
 constexpr double kFractionAfterOveruse = 0.85;
 
@@ -53,7 +49,7 @@ TEST(AimdRateControlTest, NearMaxIncreaseRateIs5kbpsOn60kbpsAnd100msRtt) {
   EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 5'000);
 }
 
-TEST(AimdRateControlTest, GetIncreaseRateAndBandwidthPeriod) {
+TEST(AimdRateControlTest, GetIncreaseRate) {
   AimdRateControl aimd_rate_control(CreateTestFieldTrials());
   constexpr DataRate kBitrate = DataRate::BitsPerSec(300'000);
   aimd_rate_control.SetEstimate(kBitrate, kInitialTime);
@@ -61,7 +57,6 @@ TEST(AimdRateControlTest, GetIncreaseRateAndBandwidthPeriod) {
                            kInitialTime);
   EXPECT_NEAR(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 14'000,
               1'000);
-  EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(), kDefaultPeriod);
 }
 
 TEST(AimdRateControlTest, BweLimitedByAckedBitrate) {
@@ -99,22 +94,9 @@ TEST(AimdRateControlTest, BweNotLimitedByDecreasingAckedBitrate) {
               2'000);
 }
 
-TEST(AimdRateControlTest, DefaultPeriodUntilFirstOveruse) {
+TEST(AimdRateControlTest, TypicalDrop) {
   AimdRateControl aimd_rate_control(CreateTestFieldTrials());
-  aimd_rate_control.SetStartBitrate(DataRate::KilobitsPerSec(300));
-  EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(), kDefaultPeriod);
-  aimd_rate_control.Update(
-      {BandwidthUsage::kBwOverusing, DataRate::KilobitsPerSec(280)},
-      kInitialTime);
-  EXPECT_NE(aimd_rate_control.GetExpectedBandwidthPeriod(), kDefaultPeriod);
-}
-
-TEST(AimdRateControlTest, ExpectedPeriodAfterTypicalDrop) {
-  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
-  // The rate increase at 216 kbps should be 12 kbps. If we drop from
-  // 216 + 4*12 = 264 kbps, it should take 4 seconds to recover. Since we
-  // back off to 0.85*acked_rate-5kbps, the acked bitrate needs to be 260
-  // kbps to end up at 216 kbps.
+  // The rate increase at 216 kbps should be 12 kbps.
   constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(264'000);
   constexpr DataRate kUpdatedBitrate = DataRate::BitsPerSec(216'000);
   const DataRate kAckedBitrate =
@@ -125,34 +107,6 @@ TEST(AimdRateControlTest, ExpectedPeriodAfterTypicalDrop) {
   aimd_rate_control.Update({BandwidthUsage::kBwOverusing, kAckedBitrate}, now);
   EXPECT_EQ(aimd_rate_control.LatestEstimate(), kUpdatedBitrate);
   EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 12'000);
-  EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(),
-            TimeDelta::Seconds(4));
-}
-
-TEST(AimdRateControlTest, BandwidthPeriodIsNotBelowMin) {
-  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
-  constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(10'000);
-  Timestamp now = kInitialTime;
-  aimd_rate_control.SetEstimate(kInitialBitrate, now);
-  now += TimeDelta::Millis(100);
-  // Make a small (1.5 kbps) bitrate drop to 8.5 kbps.
-  aimd_rate_control.Update(
-      {BandwidthUsage::kBwOverusing, kInitialBitrate - DataRate::BitsPerSec(1)},
-      now);
-  EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(), kMinBwePeriod);
-}
-
-TEST(AimdRateControlTest, BandwidthPeriodIsNotAboveMaxNoSmoothingExp) {
-  AimdRateControl aimd_rate_control(CreateTestFieldTrials());
-  constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(10'010'000);
-  Timestamp now = kInitialTime;
-  aimd_rate_control.SetEstimate(kInitialBitrate, now);
-  now += TimeDelta::Millis(100);
-  // Make a large (10 Mbps) bitrate drop to 10 kbps.
-  const DataRate kAckedBitrate =
-      DataRate::BitsPerSec(10'000) / kFractionAfterOveruse;
-  aimd_rate_control.Update({BandwidthUsage::kBwOverusing, kAckedBitrate}, now);
-  EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(), kMaxBwePeriod);
 }
 
 TEST(AimdRateControlTest, SendingRateBoundedWhenThroughputNotEstimated) {

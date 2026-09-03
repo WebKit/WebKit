@@ -20,6 +20,7 @@
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
 #include "api/sequence_checker.h"
+#include "api/units/time_delta.h"
 #include "api/video/encoded_frame.h"
 #include "call/video_receive_stream.h"
 #include "modules/rtp_rtcp/include/receive_statistics.h"
@@ -79,6 +80,8 @@ class Assembler : public ReceivedRtpPacketCallback,
   // Lets the `RtpVideoStreamReceiver2` know that `frame_id` has been "decoded",
   // so that it can be flushed from the `PacketBuffer`.
   void OnDecodedFrameId(int64_t frame_id) override;
+
+  void UpdateMaxRtt(TimeDelta max_rtt);
 
  private:
   // Trivially implements `Transport`.

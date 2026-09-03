@@ -20,12 +20,11 @@ constexpr char kFieldTrialName[] = "WebRTC-Video-CalculatePsnr";
 }  // namespace
 
 PsnrExperiment::PsnrExperiment(const FieldTrialsView& field_trials)
-    : enabled_(false), sampling_interval_(TimeDelta::Millis(1000)) {
-  if (!field_trials.IsEnabled(kFieldTrialName)) {
+    : enabled_(true), sampling_interval_(TimeDelta::Millis(1000)) {
+  if (field_trials.IsDisabled(kFieldTrialName)) {
+    enabled_ = false;
     return;
   }
-
-  enabled_ = true;
 
   FieldTrialParameter<TimeDelta> sampling_interval("sampling_interval",
                                                    TimeDelta::Millis(1000));

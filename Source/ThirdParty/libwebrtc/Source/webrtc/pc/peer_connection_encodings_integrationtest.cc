@@ -381,8 +381,7 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
       scoped_refptr<PeerConnectionTestWrapper> pc_wrapper) {
     auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
     pc_wrapper->pc()->CreateOffer(observer.get(), {});
-    EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue()),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
     return observer->MoveDescription();
   }
 
@@ -390,8 +389,7 @@ class PeerConnectionEncodingsIntegrationTest : public ::testing::Test {
       scoped_refptr<PeerConnectionTestWrapper> pc_wrapper) {
     auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
     pc_wrapper->pc()->CreateAnswer(observer.get(), {});
-    EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue()),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
     return observer->MoveDescription();
   }
 
@@ -1877,8 +1875,10 @@ TEST_F(PeerConnectionEncodingsIntegrationTest,
 // still work.
 TEST_F(PeerConnectionEncodingsIntegrationTest,
        SetParametersAcceptsMungedCodecFromGetParameters) {
-  scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper = CreatePc();
-  scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper = CreatePc();
+  scoped_refptr<PeerConnectionTestWrapper> local_pc_wrapper =
+      CreatePc("WebRTC-NoSdpMangleAllowForTesting/Enabled,85/");
+  scoped_refptr<PeerConnectionTestWrapper> remote_pc_wrapper =
+      CreatePc("WebRTC-NoSdpMangleAllowForTesting/Enabled,85/");
   ExchangeIceCandidates(local_pc_wrapper, remote_pc_wrapper);
 
   auto transceiver_or_error =

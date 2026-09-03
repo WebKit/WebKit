@@ -58,7 +58,7 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
         is_linux = self.platform.startswith('linux') and not is_android
         is_win = self.platform.startswith('win')
 
-        if test_type not in ('console_test_launcher', 'windowed_test_launcher',
+        if test_type not in ('console_test_launcher',
                              'non_parallel_console_test_launcher', 'raw',
                              'additional_compile_target', 'generated_script'):
             self.WriteFailureAndRaise('No command line for '
@@ -72,8 +72,7 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
         ]
         vpython_exe = 'vpython3'
 
-        if (is_ios or is_fuchsia or test_type == 'raw'
-                or test_type == 'generated_script'):
+        if (is_ios or is_fuchsia or test_type in ('generated_script', 'raw')):
             if is_win:
                 cmdline = ['bin\\run_{}.bat'.format(target)]
             else:
@@ -96,10 +95,7 @@ class WebRTCMetaBuildWrapper(mb.MetaBuildWrapper):
                 extra_files.append('../../tools_webrtc/configure_pipewire.py')
 
             # is_linux uses use_ozone and x11 by default.
-            use_x11 = is_linux
-
-            xvfb = use_x11 and test_type == 'windowed_test_launcher'
-            if xvfb:
+            if is_linux and isolate_map[target].get('use_xvfb', False):
                 cmdline += [vpython_exe, '../../testing/xvfb.py']
                 extra_files.append('../../testing/xvfb.py')
             else:

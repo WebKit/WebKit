@@ -51,6 +51,7 @@ if (rtc_include_tests) {
       "../../../api/audio:builtin_audio_processing_builder",
       "../../../api/environment:environment_factory",
       "../../../rtc_base:checks",
+      "../../../test:create_test_environment",
       "../../../test:test_support",
       "//testing/gtest",
     ]

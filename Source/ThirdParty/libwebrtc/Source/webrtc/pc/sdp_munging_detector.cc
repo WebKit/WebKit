@@ -75,6 +75,16 @@ SdpMungingType DetermineTransportModification(
         transport_infos_to_set[i].description.transport_options) {
       RTC_LOG(LS_WARNING) << "SDP munging: ice_options does not match last "
                              "created description.";
+      bool created_empty_options =
+          last_created_transport_infos[i].description.transport_options.empty();
+      bool set_empty_options =
+          transport_infos_to_set[i].description.transport_options.empty();
+      // This handles the surprisingly common case where the default `trickle`
+      // is removed together with the entire ice-options attribute.
+      if (!created_empty_options && set_empty_options) {
+        return SdpMungingType::kIceOptionsRemoved;
+      }
+
       bool created_renomination =
           absl::c_find(
               last_created_transport_infos[i].description.transport_options,
@@ -87,6 +97,7 @@ SdpMungingType DetermineTransportModification(
       if (!created_renomination && set_renomination) {
         return SdpMungingType::kIceOptionsRenomination;
       }
+
       bool created_trickle =
           absl::c_find(
               last_created_transport_infos[i].description.transport_options,
@@ -99,6 +110,7 @@ SdpMungingType DetermineTransportModification(
       if (created_trickle && !set_trickle) {
         return SdpMungingType::kIceOptionsTrickle;
       }
+
       return SdpMungingType::kIceOptions;
     }
   }
@@ -487,6 +499,15 @@ SdpMungingType DetermineContentsModification(
       RTC_LOG(LS_WARNING) << "SDP munging: mid does not match "
                              "last created description.";
       return SdpMungingType::kMid;
+    }
+
+    // Rejecting (or unrejecting) an m= section should be done via negotiation,
+    // not munging.
+    if (last_created_contents[content_index].rejected !=
+        contents_to_set[content_index].rejected) {
+      RTC_LOG(LS_WARNING) << "SDP munging: m= section rejected state does not "
+                             "match last created description.";
+      return SdpMungingType::kRejected;
     }
 
     auto* last_created_media_description =

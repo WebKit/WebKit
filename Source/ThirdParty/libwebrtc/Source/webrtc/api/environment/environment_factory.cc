@@ -16,6 +16,7 @@
 #include "absl/base/nullability.h"
 #include "api/environment/deprecated_global_field_trials.h"
 #include "api/environment/environment.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
 #include "api/ref_counted_base.h"
@@ -99,6 +100,11 @@ void EnvironmentFactory::Set(
 }
 
 Environment EnvironmentFactory::CreateWithDefaults() && {
+  RTC_CHECK((field_trials_ != nullptr && field_trials_->IsTest()) ||
+            !IsForceTestEnvironmentEnabled() ||
+            IsTestEnvironmentCheckBypassed())
+      << "Production Environment creation is not allowed in tests. Use "
+         "CreateTestEnvironment.";
   if (field_trials_ == nullptr) {
     Set(std::make_unique<DeprecatedGlobalFieldTrials>());
   }

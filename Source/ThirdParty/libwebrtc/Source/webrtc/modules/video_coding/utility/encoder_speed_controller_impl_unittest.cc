@@ -499,4 +499,83 @@ TEST(EncoderSpeedControllerTest, WorksWithDefaultInfiniteTimestamp) {
   EXPECT_EQ(controller->GetEncodeSettings(frame_info).speed, 6);
 }
 
+TEST(EncoderSpeedControllerTest, FirstFrameIsAlwaysTreatedAsRegularFrame) {
+  EncoderSpeedController::Config config = GetDefaultConfig();
+  config.psnr_probing_settings = {
+      .mode = EncoderSpeedController::Config::PsnrProbingSettings::Mode::
+          kRegularBaseLayerSampling,
+      .sampling_interval = TimeDelta::Seconds(5)};
+  config.start_speed_index = 1;
+  auto controller = EncoderSpeedController::Create(config, kFrameInterval);
+  ASSERT_NE(controller, nullptr);
+
+  // 1. GetEncodeSettings on the first frame with is_repeat_frame = true.
+  // Because it's the first frame, it should NOT be ignored as a repeat frame,
+  // and so calculate_psnr should be true.
+  EncoderSpeedController::FrameEncodingInfo first_frame_info = {
+      .reference_type = ReferenceClass::kMain,
+      .is_repeat_frame = true,
+      .timestamp = Timestamp::Zero()};
+  EXPECT_TRUE(controller->GetEncodeSettings(first_frame_info).calculate_psnr);
+
+  // 2. OnEncodedFrame on the first frame with is_repeat_frame = true.
+  // This should initialize stats (num_samples_ becomes 1).
+  controller->OnEncodedFrame({.encode_time = kFrameInterval * 0.9,
+                              .qp = 30,
+                              .frame_info = first_frame_info},
+                             /*baseline_results=*/std::nullopt);
+
+  // 3. GetEncodeSettings on a subsequent frame with is_repeat_frame = true.
+  // Since num_samples_ > 0, is_repeat_frame should be respected, so
+  // calculate_psnr should be false even if the timestamp is advanced beyond the
+  // sampling interval.
+  EncoderSpeedController::FrameEncodingInfo second_frame_info = {
+      .reference_type = ReferenceClass::kMain,
+      .is_repeat_frame = true,
+      .timestamp =
+          Timestamp::Zero() + config.psnr_probing_settings->sampling_interval};
+  EXPECT_FALSE(controller->GetEncodeSettings(second_frame_info).calculate_psnr);
+}
+
+TEST(EncoderSpeedControllerTest, KeyFrameIsAlwaysTreatedAsRegularFrame) {
+  EncoderSpeedController::Config config = GetDefaultConfig();
+  config.psnr_probing_settings = {
+      .mode = EncoderSpeedController::Config::PsnrProbingSettings::Mode::
+          kRegularBaseLayerSampling,
+      .sampling_interval = TimeDelta::Seconds(5)};
+  config.start_speed_index = 1;
+  auto controller = EncoderSpeedController::Create(config, kFrameInterval);
+  ASSERT_NE(controller, nullptr);
+
+  // Initialize stats with a regular frame.
+  EncoderSpeedController::FrameEncodingInfo first_frame_info = {
+      .reference_type = ReferenceClass::kMain,
+      .is_repeat_frame = false,
+      .timestamp = Timestamp::Zero()};
+  controller->OnEncodedFrame({.encode_time = kFrameInterval * 0.5,
+                              .qp = 30,
+                              .frame_info = first_frame_info},
+                             /*baseline_results=*/std::nullopt);
+
+  // Get settings for a keyframe with is_repeat_frame = true.
+  // Although it's a repeat frame, because it is a keyframe, it should not be
+  // ignored, and so calculate_psnr should be true when the sampling interval is
+  // reached.
+  EncoderSpeedController::FrameEncodingInfo key_frame_info = {
+      .reference_type = ReferenceClass::kKey,
+      .is_repeat_frame = true,
+      .timestamp =
+          Timestamp::Zero() + config.psnr_probing_settings->sampling_interval};
+  EXPECT_TRUE(controller->GetEncodeSettings(key_frame_info).calculate_psnr);
+
+  // Conversely, a non-keyframe with is_repeat_frame = true at the same
+  // timestamp should not trigger PSNR.
+  EncoderSpeedController::FrameEncodingInfo repeat_frame_info = {
+      .reference_type = ReferenceClass::kMain,
+      .is_repeat_frame = true,
+      .timestamp =
+          Timestamp::Zero() + config.psnr_probing_settings->sampling_interval};
+  EXPECT_FALSE(controller->GetEncodeSettings(repeat_frame_info).calculate_psnr);
+}
+
 }  // namespace webrtc

@@ -295,7 +295,7 @@ TransportFeedbackAdapter::ProcessCongestionControlFeedback(
                                  : TimeDelta::Zero();
   last_feedback_compact_ntp_time_ = feedback.report_timestamp_compact_ntp();
 
-  if (feedback_delta < -TimeDelta::Millis(500)) {
+  if (feedback_delta < TimeDelta::Seconds(-5)) {
     RTC_LOG(LS_WARNING) << "Unexpected feedback ntp time delta "
                         << feedback_delta << ".";
     current_offset_ = feedback_receive_time;

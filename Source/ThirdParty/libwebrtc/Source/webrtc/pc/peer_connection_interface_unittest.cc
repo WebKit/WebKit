@@ -24,10 +24,12 @@
 #include "api/audio/audio_device.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
-#include "api/create_peerconnection_factory.h"
+#include "api/create_modular_peer_connection_factory.h"
 #include "api/crypto/crypto_options.h"
 #include "api/data_channel_interface.h"
+#include "api/enable_media.h"
 #include "api/enable_media_with_defaults.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
 #include "api/media_stream_interface.h"
@@ -90,6 +92,7 @@
 #include "rtc_base/virtual_socket_server.h"
 #include "rtc_base/weak_ptr.h"
 #include "test/create_test_environment.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
@@ -622,6 +625,7 @@ class PeerConnectionFactoryForTest : public PeerConnectionFactory {
     // Use fake audio device module since we're only testing the interface
     // level, and using a real one could make tests flaky when run in parallel.
     dependencies.adm = FakeAudioCaptureModule::Create();
+    dependencies.env = CreateTestEnvironment();
     EnableMediaWithDefaults(dependencies);
     dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>();
 
@@ -639,7 +643,8 @@ class PeerConnectionFactoryForTest : public PeerConnectionFactory {
 class PeerConnectionInterfaceBaseTest : public ::testing::Test {
  protected:
   explicit PeerConnectionInterfaceBaseTest(SdpSemantics sdp_semantics)
-      : vss_(new VirtualSocketServer()),
+      : env_(CreateTestEnvironment()),
+        vss_(new VirtualSocketServer()),
         main_(vss_.get()),
         sdp_semantics_(sdp_semantics) {
 #ifdef WEBRTC_ANDROID
@@ -658,17 +663,27 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     worker_thread_->SetName("WorkerThread", nullptr);
     ASSERT_TRUE(worker_thread_->Start());
 
-    pc_factory_ = CreatePeerConnectionFactory(
-        network_thread_.get(), worker_thread_.get(), Thread::Current(),
-        scoped_refptr<AudioDeviceModule>(fake_audio_capture_module_),
-        CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory(),
+    PeerConnectionFactoryDependencies dependencies;
+    dependencies.network_thread = network_thread_.get();
+    dependencies.worker_thread = worker_thread_.get();
+    dependencies.signaling_thread = Thread::Current();
+    dependencies.socket_factory = network_thread_->socketserver();
+    dependencies.adm =
+        scoped_refptr<AudioDeviceModule>(fake_audio_capture_module_);
+    dependencies.audio_encoder_factory = CreateBuiltinAudioEncoderFactory();
+    dependencies.audio_decoder_factory = CreateBuiltinAudioDecoderFactory();
+    dependencies.video_encoder_factory =
         std::make_unique<VideoEncoderFactoryTemplate<
             LibvpxVp8EncoderTemplateAdapter, LibvpxVp9EncoderTemplateAdapter,
-            OpenH264EncoderTemplateAdapter, LibaomAv1EncoderTemplateAdapter>>(),
+            OpenH264EncoderTemplateAdapter, LibaomAv1EncoderTemplateAdapter>>();
+    dependencies.video_decoder_factory =
         std::make_unique<VideoDecoderFactoryTemplate<
             LibvpxVp8DecoderTemplateAdapter, LibvpxVp9DecoderTemplateAdapter,
-            OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>(),
-        nullptr /* audio_mixer */, nullptr /* audio_processing */);
+            OpenH264DecoderTemplateAdapter, Dav1dDecoderTemplateAdapter>>();
+    dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>();
+    dependencies.env = env_;
+    EnableMedia(dependencies);
+    pc_factory_ = CreateModularPeerConnectionFactory(std::move(dependencies));
     ASSERT_TRUE(pc_factory_);
   }
 
@@ -689,11 +704,15 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   // DTLS does not work in a loopback call, so is disabled for many
   // tests in this file.
   void CreatePeerConnectionWithoutDtls() {
+    CreatePeerConnectionWithoutDtls("");
+  }
+
+  void CreatePeerConnectionWithoutDtls(absl::string_view field_trials) {
     RTCConfiguration config;
     PeerConnectionFactoryInterface::Options options;
     options.disable_encryption = true;
     pc_factory_->SetOptions(options);
-    CreatePeerConnection(config);
+    CreatePeerConnection(config, field_trials);
     options.disable_encryption = false;
     pc_factory_->SetOptions(options);
   }
@@ -718,6 +737,15 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   }
 
   void CreatePeerConnection(const RTCConfiguration& config) {
+    CreatePeerConnection(config, "");
+  }
+
+  void CreatePeerConnection(absl::string_view field_trials) {
+    CreatePeerConnection(RTCConfiguration(), field_trials);
+  }
+
+  void CreatePeerConnection(const RTCConfiguration& config,
+                            absl::string_view field_trials) {
     if (pc_) {
       pc_->Close();
       ReleasePeerConnection();
@@ -746,6 +774,9 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     PeerConnectionDependencies pc_dependencies(&observer_);
     pc_dependencies.cert_generator = std::move(cert_generator);
     pc_dependencies.allocator = std::move(port_allocator);
+    if (!field_trials.empty()) {
+      pc_dependencies.trials = CreateTestFieldTrialsPtr(field_trials);
+    }
     auto result = pc_factory_->CreatePeerConnectionOrError(
         modified_config, std::move(pc_dependencies));
     ASSERT_TRUE(result.ok());
@@ -888,9 +919,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
       pc_->CreateAnswer(observer.get(),
                         options ? *options : RTCOfferAnswerOptions());
     }
-    EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue(),
-                          {.timeout = TimeDelta::Millis(kTimeout)}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer->called(); },
+                          {.timeout = TimeDelta::Millis(kTimeout)}));
     *desc = observer->MoveDescription();
     return observer->result();
   }
@@ -915,9 +945,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
       pc_->SetRemoteDescription(observer.get(), desc.release());
     }
     if (pc_->signaling_state() != PeerConnectionInterface::kClosed) {
-      EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue(),
-                            {.timeout = TimeDelta::Millis(kTimeout)}),
-                  IsRtcOk());
+      EXPECT_TRUE(WaitUntil([&] { return observer->called(); },
+                            {.timeout = TimeDelta::Millis(kTimeout)}));
     }
     return observer->result();
   }
@@ -944,9 +973,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     RTC_ALLOW_PLAN_B_DEPRECATION_END();
     if (!result)
       return false;
-    EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue(),
-                          {.timeout = TimeDelta::Millis(kTimeout)}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer->called(); },
+                          {.timeout = TimeDelta::Millis(kTimeout)}));
     return observer->called();
   }
 
@@ -954,9 +982,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   bool DoGetRTCStats() {
     auto callback = make_ref_counted<MockRTCStatsCollectorCallback>();
     pc_->GetStats(callback.get());
-    EXPECT_THAT(WaitUntil([&] { return callback->called(); }, IsTrue(),
-                          {.timeout = TimeDelta::Millis(kTimeout)}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return callback->called(); },
+                          {.timeout = TimeDelta::Millis(kTimeout)}));
     return callback->called();
   }
 
@@ -1071,9 +1098,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     EXPECT_TRUE(DoSetLocalDescription(std::move(new_offer)));
     EXPECT_EQ(PeerConnectionInterface::kHaveLocalOffer, observer_.state_);
     // Wait for the ice_complete message, so that SDP will have candidates.
-    EXPECT_THAT(WaitUntil([&] { return observer_.ice_gathering_complete_; },
-                          IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer_.ice_gathering_complete_; },
+                          {.timeout = TimeDelta::Millis(kTimeout)}));
   }
 
   void CreateAnswerAsRemoteDescription(const std::string& sdp) {
@@ -1228,9 +1254,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     RTC_DCHECK(pc_);
     auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
     pc_->CreateOffer(observer.get(), offer_answer_options);
-    EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue(),
-                          {.timeout = TimeDelta::Millis(kTimeout)}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return observer->called(); },
+                          {.timeout = TimeDelta::Millis(kTimeout)}));
     return observer->MoveDescription();
   }
 
@@ -1290,6 +1315,7 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
 
   SocketServer* socket_server() const { return vss_.get(); }
 
+  const Environment env_;
   std::unique_ptr<VirtualSocketServer> vss_;
   test::RunLoop main_;
   std::unique_ptr<Thread> network_thread_;
@@ -1830,9 +1856,8 @@ TEST_P(PeerConnectionInterfaceTest, IceCandidates) {
                         ::testing::Ne(nullptr),
                         {.timeout = TimeDelta::Millis(kTimeout)}),
               IsRtcOk());
-  EXPECT_THAT(WaitUntil([&] { return observer_.ice_gathering_complete_; },
-                        IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer_.ice_gathering_complete_; },
+                        {.timeout = TimeDelta::Millis(kTimeout)}));
 
   EXPECT_TRUE(pc_->AddIceCandidate(observer_.last_candidate()));
 }
@@ -2183,7 +2208,9 @@ TEST_P(PeerConnectionInterfaceTest, ReceiveFireFoxOffer) {
 // limited set of audio codecs and receive an updated offer with more audio
 // codecs, where the added codecs are not supported.
 TEST_P(PeerConnectionInterfaceTest, ReceiveUpdatedAudioOfferWithBadCodecs) {
-  CreatePeerConnectionWithoutDtls();
+  // Munging allowed: kMsidStream (36)
+  CreatePeerConnectionWithoutDtls(
+      "WebRTC-NoSdpMangleAllowForTesting/Enabled,36/");
   AddAudioTrack("audio_label");
   CreateOfferAsLocalDescription();
 
@@ -2818,8 +2845,14 @@ RTC_ALLOW_PLAN_B_DEPRECATION_END()
 // This tests that remote tracks are ended if a local session description is set
 // that rejects the media content type.
 TEST_P(PeerConnectionInterfaceTest, RejectMediaContent) {
+  // Munging allowed: kRejected (section rejection)
+  // TODO: bugs.webrtc.org/41480906 - This test rejects m= sections by
+  // munging content->rejected because it also runs under Plan B, where the
+  // transceiver API is unavailable. Once Plan B is removed, reject sections via
+  // transceiver->StopStandard() instead of munging and drop the
+  // WebRTC-NoSdpMangleAllowForTesting exception below.
   RTCConfiguration config;
-  CreatePeerConnection(config);
+  CreatePeerConnection(config, "WebRTC-NoSdpMangleAllowForTesting/Enabled,39/");
   // First create and set a remote offer, then reject its video content in our
   // answer.
   CreateAndSetRemoteOffer(kSdpStringWithStream1PlanB);
@@ -2871,8 +2904,8 @@ RTC_ALLOW_PLAN_B_DEPRECATION_BEGIN()
 // of PeerConnection and then PeerConnection tries to reject the track.
 // Don't run under Unified Plan since the stream API is not available.
 TEST_F(PeerConnectionInterfaceTestPlanB, RemoveTrackThenRejectMediaContent) {
-  RTCConfiguration config;
-  CreatePeerConnection(config);
+  // Munging allowed: kWithoutCreateAnswer (2) (manually created local answer)
+  CreatePeerConnection("WebRTC-NoSdpMangleAllowForTesting/Enabled,2/");
   CreateAndSetRemoteOffer(GetSdpStringWithStream1());
   MediaStreamInterface* remote_stream = observer_.remote_streams()->at(0);
   remote_stream->RemoveTrack(remote_stream->GetVideoTracks()[0]);
@@ -3166,8 +3199,10 @@ RTC_ALLOW_PLAN_B_DEPRECATION_END()
 // changed when SetLocalDescription is called.
 TEST_P(PeerConnectionInterfaceTest,
        ChangeSsrcOnTrackInLocalSessionDescription) {
+  // Munging allowed: kWithoutCreateOffer (3), kSsrcs (27)
   RTCConfiguration config;
-  CreatePeerConnection(config);
+  CreatePeerConnection(config,
+                       "WebRTC-NoSdpMangleAllowForTesting/Enabled,3,27/");
 
   AddAudioTrack(kAudioTracks[0]);
   AddVideoTrack(kVideoTracks[0]);
@@ -3392,7 +3427,8 @@ TEST_P(PeerConnectionInterfaceTest,
 // one offer/answer exchange as the offerer, then another as the answerer.
 TEST_P(PeerConnectionInterfaceTest, CurrentAndPendingDescriptions) {
   // This disables DTLS so we can apply an answer to ourselves.
-  CreatePeerConnection();
+  // Munging allowed: kWithoutCreateAnswer (2)
+  CreatePeerConnection("WebRTC-NoSdpMangleAllowForTesting/Enabled,2/");
 
   // Create initial local offer and get SDP (which will also be used as
   // answer/pranswer);
@@ -3871,30 +3907,26 @@ TEST_F(PeerConnectionInterfaceTestPlanB,
   scoped_refptr<VideoTrackInterface> video_track(
       CreateVideoTrack("video_track"));
   stream->AddTrack(audio_track);
-  EXPECT_THAT(WaitUntil([&] { return observer_.renegotiation_needed_; },
-                        IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer_.renegotiation_needed_; },
+                        {.timeout = TimeDelta::Millis(kTimeout)}));
   observer_.renegotiation_needed_ = false;
 
   CreateOfferReceiveAnswer();
   stream->AddTrack(video_track);
-  EXPECT_THAT(WaitUntil([&] { return observer_.renegotiation_needed_; },
-                        IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer_.renegotiation_needed_; },
+                        {.timeout = TimeDelta::Millis(kTimeout)}));
   observer_.renegotiation_needed_ = false;
 
   CreateOfferReceiveAnswer();
   stream->RemoveTrack(audio_track);
-  EXPECT_THAT(WaitUntil([&] { return observer_.renegotiation_needed_; },
-                        IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer_.renegotiation_needed_; },
+                        {.timeout = TimeDelta::Millis(kTimeout)}));
   observer_.renegotiation_needed_ = false;
 
   CreateOfferReceiveAnswer();
   stream->RemoveTrack(video_track);
-  EXPECT_THAT(WaitUntil([&] { return observer_.renegotiation_needed_; },
-                        IsTrue(), {.timeout = TimeDelta::Millis(kTimeout)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer_.renegotiation_needed_; },
+                        {.timeout = TimeDelta::Millis(kTimeout)}));
   observer_.renegotiation_needed_ = false;
 }
 RTC_ALLOW_PLAN_B_DEPRECATION_END()

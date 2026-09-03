@@ -8,10 +8,146 @@
 
 import("../../webrtc.gni")
 
+rtc_library("default_video_jitter_timing") {
+  visibility = [
+    ":*",
+    "../../modules/video_coding/timing:timing_module",
+    "../../modules/video_coding/timing:timing_unittests",
+  ]
+  sources = [
+    "default_video_jitter_timing.cc",
+    "default_video_jitter_timing.h",
+  ]
+  deps = [
+    ":inter_frame_delay_variation_calculator",
+    ":jitter_estimator",
+    ":timestamp_extrapolator",
+    "../../api:field_trials_view",
+    "../../api/environment",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../api/video/timing:video_jitter_timing_interface",
+    "../../system_wrappers",
+  ]
+}
+
+rtc_library("frame_delay_variation_kalman_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "frame_delay_variation_kalman_filter.cc",
+    "frame_delay_variation_kalman_filter.h",
+  ]
+  deps = [ "../../rtc_base:checks" ]
+}
+
+rtc_library("inter_frame_delay_variation_calculator") {
+  visibility = [ ":*" ]
+  sources = [
+    "inter_frame_delay_variation_calculator.cc",
+    "inter_frame_delay_variation_calculator.h",
+  ]
+  deps = [
+    "../../api/units:frequency",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../modules:module_api_public",
+    "../../rtc_base:rtc_numerics",
+  ]
+}
+
+rtc_library("jitter_estimator") {
+  visibility = [ ":*" ]
+  sources = [
+    "jitter_estimator.cc",
+    "jitter_estimator.h",
+  ]
+  deps = [
+    ":frame_delay_variation_kalman_filter",
+    ":rtt_filter",
+    "../../api:field_trials_view",
+    "../../api/units:data_size",
+    "../../api/units:frequency",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rolling_accumulator",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../system_wrappers",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
+rtc_library("rtt_filter") {
+  visibility = [ ":*" ]
+  sources = [
+    "rtt_filter.cc",
+    "rtt_filter.h",
+  ]
+  deps = [
+    "../../api/units:time_delta",
+    "../../rtc_base:checks",
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("timestamp_extrapolator") {
+  visibility = [ ":*" ]
+  sources = [
+    "timestamp_extrapolator.cc",
+    "timestamp_extrapolator.h",
+  ]
+  deps = [
+    "../../api:field_trials_view",
+    "../../api/units:time_delta",
+    "../../api/units:timestamp",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_numerics",
+    "../../rtc_base/experiments:field_trial_parser",
+    "../../system_wrappers:metrics",
+    "//third_party/abseil-cpp/absl/strings:string_view",
+  ]
+}
+
 if (rtc_include_tests) {
+  rtc_library("video_timing_unittests") {
+    testonly = true
+    sources = [
+      "default_video_jitter_timing_unittest.cc",
+      "frame_delay_variation_kalman_filter_unittest.cc",
+      "inter_frame_delay_variation_calculator_unittest.cc",
+      "jitter_estimator_unittest.cc",
+      "rtt_filter_unittest.cc",
+      "timestamp_extrapolator_unittest.cc",
+    ]
+    deps = [
+      ":default_video_jitter_timing",
+      ":frame_delay_variation_kalman_filter",
+      ":inter_frame_delay_variation_calculator",
+      ":jitter_estimator",
+      ":rtt_filter",
+      ":timestamp_extrapolator",
+      "../../api:field_trials",
+      "../../api/environment",
+      "../../api/units:data_size",
+      "../../api/units:frequency",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../api/video/timing:video_jitter_timing_interface",
+      "../../rtc_base:histogram_percentile_counter",
+      "../../system_wrappers",
+      "../../system_wrappers:metrics",
+      "../../test:create_test_environment",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
   rtc_test("video_timing_tests") {
     testonly = true
-    deps = []
+    deps = [ ":video_timing_unittests" ]
 
     if (rtc_enable_protobuf) {
       deps += [

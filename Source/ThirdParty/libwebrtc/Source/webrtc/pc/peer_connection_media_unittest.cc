@@ -24,6 +24,7 @@
 
 #include "absl/algorithm/container.h"
 #include "api/create_modular_peer_connection_factory.h"
+#include "api/environment/environment.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
 #include "api/peer_connection_interface.h"
@@ -163,6 +164,8 @@ class PeerConnectionMediaBaseTest : public ::testing::Test {
       std::unique_ptr<FakeMediaEngine> media_engine) {
     auto* media_engine_ptr = media_engine.get();
 
+    Environment env = CreateTestEnvironment();
+
     PeerConnectionFactoryDependencies factory_dependencies;
 
     factory_dependencies.network_thread = Thread::Current();
@@ -171,11 +174,12 @@ class PeerConnectionMediaBaseTest : public ::testing::Test {
     EnableFakeMedia(factory_dependencies, std::move(media_engine));
     factory_dependencies.event_log_factory =
         std::make_unique<RtcEventLogFactory>();
+    factory_dependencies.env = env;
     auto pc_factory =
         CreateModularPeerConnectionFactory(std::move(factory_dependencies));
 
-    auto fake_port_allocator = std::make_unique<FakePortAllocator>(
-        CreateTestEnvironment(), vss_.get());
+    auto fake_port_allocator =
+        std::make_unique<FakePortAllocator>(env, vss_.get());
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     auto modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;

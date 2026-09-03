@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/encoded_image.h"
@@ -31,6 +30,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
@@ -40,7 +40,7 @@ class VideoCodecUnitTest : public ::testing::Test {
  public:
   VideoCodecUnitTest()
       : field_trials_(CreateTestFieldTrials()),
-        env_(CreateEnvironment(field_trials_.CreateCopy())),
+        env_(CreateTestEnvironment()),
         encode_complete_callback_(this),
         decode_complete_callback_(this),
         wait_for_encoded_frames_threshold_(1),

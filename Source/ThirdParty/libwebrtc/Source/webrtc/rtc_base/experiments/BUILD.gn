@@ -236,6 +236,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api/units:time_delta",
       "../../api/video:video_frame",
       "../../api/video_codecs:video_codecs_api",
+      "../../test:create_test_field_trials",
       "../../test:test_support",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]

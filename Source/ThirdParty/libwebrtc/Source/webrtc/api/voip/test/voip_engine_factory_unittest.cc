@@ -13,11 +13,10 @@
 #include <memory>
 #include <utility>
 
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder_factory.h"
@@ -33,7 +32,7 @@ TEST(VoipEngineFactoryTest, CreateEngineWithMockModules) {
   VoipEngineConfig config;
   config.encoder_factory = make_ref_counted<MockAudioEncoderFactory>();
   config.decoder_factory = make_ref_counted<MockAudioDecoderFactory>();
-  config.env = CreateEnvironment(CreateTestFieldTrialsPtr());
+  config.env = CreateTestEnvironment();
   config.audio_processing_builder =
       std::make_unique<NiceMock<test::MockAudioProcessingBuilder>>();
   config.audio_device_module = test::MockAudioDeviceModule::CreateNice();
@@ -47,6 +46,7 @@ TEST(VoipEngineFactoryTest, UseNoAudioProcessing) {
   VoipEngineConfig config;
   config.encoder_factory = make_ref_counted<MockAudioEncoderFactory>();
   config.decoder_factory = make_ref_counted<MockAudioDecoderFactory>();
+  config.env = CreateTestEnvironment();
   config.audio_device_module = test::MockAudioDeviceModule::CreateNice();
 
   auto voip_engine = CreateVoipEngine(std::move(config));

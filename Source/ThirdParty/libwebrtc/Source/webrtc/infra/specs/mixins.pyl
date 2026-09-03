@@ -25,13 +25,6 @@
       'chromium-tester@chops-service-accounts.iam.gserviceaccount.com'
     }
   },
-  'cores-12': {
-    'swarming': {
-      'dimensions': {
-        'cores': '12'
-      }
-    }
-  },
   'fuchsia-gtest-output': {
     'args': [
       '--test-launcher-summary-output=${ISOLATED_OUTDIR}/gtest_output.json',
@@ -92,19 +85,11 @@
       }
     }
   },
-  'mac_15_arm64': {
+  'mac_26_arm64': {
     'swarming': {
       'dimensions': {
         'cpu': 'arm64',
-        'os': 'Mac-15'
-      }
-    }
-  },
-  'mac_15_x64': {
-    'swarming': {
-      'dimensions': {
-        'cpu': 'x86-64',
-        'os': 'Mac-15'
+        'os': 'Mac-26'
       }
     }
   },
@@ -116,7 +101,7 @@
         'location':
         '.',
         'revision':
-        'git_revision:4c7290150d1c360cecc6a93c0214dc531585c3ab'
+        'git_revision:07e67ff89ff11ed0e3071867ed6bb49319a91b05'
       }]
     }
   },
@@ -250,10 +235,10 @@
     }
   },
   'xcode_26_main': {
-    'args': ['--xcode-build-version', '17a400'],
+    'args': ['--xcode-build-version', '17f42'],
     'swarming': {
       'named_caches': [{
-        'name': 'xcode_ios_17a400',
+        'name': 'xcode_ios_17f42',
         'path': 'Xcode.app'
       }]
     }

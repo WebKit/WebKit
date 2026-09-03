@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "api/call/transport.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_headers.h"
 #include "call/flexfec_receive_stream_impl.h"
 #include "call/rtp_packet_sink_interface.h"
@@ -26,6 +25,7 @@
 #include "modules/rtp_rtcp/mocks/mock_rtcp_rtt_stats.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -96,7 +96,8 @@ class FlexfecReceiveStreamTest : public ::testing::Test {
                                         main_thread_.task_queue(),
                                         &dummy_validator_) {
     receive_stream_ = std::make_unique<FlexfecReceiveStreamImpl>(
-        CreateEnvironment(&log_), config_, &recovered_packet_receiver_,
+        CreateTestEnvironment({.event_log = &log_}), config_,
+        &recovered_packet_receiver_,
         /* packet_router= */ nullptr, &rtt_stats_);
     receive_stream_->RegisterWithTransport(&rtp_stream_receiver_controller_);
   }

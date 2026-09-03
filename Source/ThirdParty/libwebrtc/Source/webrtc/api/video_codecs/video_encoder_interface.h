@@ -15,6 +15,7 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -47,12 +48,33 @@ class VideoEncoderInterface {
     virtual void EncodeComplete(const EncodeResult& encode_result) = 0;
   };
 
-  struct TemporalUnitSettings {
-    VideoCodecMode content_hint = VideoCodecMode::kRealtimeVideo;
-    Timestamp presentation_timestamp;
+  class TemporalUnitSettings {
+   public:
+    constexpr TemporalUnitSettings()
+        : presentation_timestamp_(Timestamp::Zero()) {}
+    constexpr explicit TemporalUnitSettings(Timestamp timestamp)
+        : presentation_timestamp_(timestamp) {}
+    constexpr TemporalUnitSettings(VideoCodecMode content_hint,
+                                   Timestamp timestamp)
+        : content_hint_(content_hint), presentation_timestamp_(timestamp) {}
+
+    VideoCodecMode content_hint() const { return content_hint_; }
+    void set_content_hint(VideoCodecMode content_hint) {
+      content_hint_ = content_hint;
+    }
+
+    Timestamp presentation_timestamp() const { return presentation_timestamp_; }
+    void set_presentation_timestamp(Timestamp timestamp) {
+      presentation_timestamp_ = timestamp;
+    }
+
+   private:
+    VideoCodecMode content_hint_ = VideoCodecMode::kRealtimeVideo;
+    Timestamp presentation_timestamp_;
   };
 
-  struct FrameEncodeSettings {
+  class FrameEncodeSettings {
+   public:
     struct Cbr {
       TimeDelta duration;
       DataRate target_bitrate;
@@ -62,17 +84,64 @@ class VideoEncoderInterface {
       int target_qp;
     };
 
-    std::variant<Cqp, Cbr> rate_options;
+    FrameEncodeSettings() = default;
 
-    FrameType frame_type = FrameType::kDeltaFrame;
-    int temporal_id = 0;
-    int spatial_id = 0;
-    Resolution resolution;
-    std::vector<int> reference_buffers;
-    std::optional<int> update_buffer;
-    int effort_level = 0;
+    FrameEncodeSettings(const FrameEncodeSettings&) = delete;
+    FrameEncodeSettings& operator=(const FrameEncodeSettings&) = delete;
 
-    std::unique_ptr<FrameOutput> frame_output;
+    FrameEncodeSettings(FrameEncodeSettings&&) = default;
+    FrameEncodeSettings& operator=(FrameEncodeSettings&&) = default;
+
+    const std::variant<Cqp, Cbr>& rate_options() const { return rate_options_; }
+    void set_cqp_options(int qp) { rate_options_ = Cqp{.target_qp = qp}; }
+    void set_cbr_options(TimeDelta duration, DataRate target_bitrate) {
+      rate_options_ =
+          Cbr{.duration = duration, .target_bitrate = target_bitrate};
+    }
+
+    FrameType frame_type() const { return frame_type_; }
+    void set_frame_type(FrameType type) { frame_type_ = type; }
+
+    int temporal_id() const { return temporal_id_; }
+    void set_temporal_id(int id) { temporal_id_ = id; }
+
+    int spatial_id() const { return spatial_id_; }
+    void set_spatial_id(int id) { spatial_id_ = id; }
+
+    Resolution resolution() const { return resolution_; }
+    void set_resolution(Resolution res) { resolution_ = res; }
+
+    std::span<const int> reference_buffers() const {
+      return std::span<const int>(reference_buffers_);
+    }
+    void set_reference_buffers(std::span<const int> refs) {
+      reference_buffers_.assign(refs.begin(), refs.end());
+    }
+
+    std::optional<int> update_buffer() const { return update_buffer_; }
+    void set_update_buffer(std::optional<int> buf) { update_buffer_ = buf; }
+
+    int effort_level() const { return effort_level_; }
+    void set_effort_level(int level) { effort_level_ = level; }
+
+    FrameOutput* frame_output() const { return frame_output_.get(); }
+    std::unique_ptr<FrameOutput> release_frame_output() {
+      return std::move(frame_output_);
+    }
+    void set_frame_output(std::unique_ptr<FrameOutput> output) {
+      frame_output_ = std::move(output);
+    }
+
+   private:
+    std::variant<Cqp, Cbr> rate_options_;
+    FrameType frame_type_ = FrameType::kDeltaFrame;
+    int temporal_id_ = 0;
+    int spatial_id_ = 0;
+    Resolution resolution_;
+    std::vector<int> reference_buffers_;
+    std::optional<int> update_buffer_;
+    int effort_level_ = 0;
+    std::unique_ptr<FrameOutput> frame_output_;
   };
 
   virtual void Encode(scoped_refptr<VideoFrameBuffer> frame_buffer,

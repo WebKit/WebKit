@@ -87,12 +87,8 @@ if (rtc_enable_protobuf) {
 
     deps = [
       ":network_tester",
-      "../../api:rtc_error_matchers",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../rtc_base:random",
-      "../../rtc_base:threading",
-      "../../rtc_base:timeutils",
       "../../test:create_test_environment",
       "../../test:fileutils",
       "../../test:run_loop",
@@ -124,6 +120,14 @@ if (rtc_enable_protobuf) {
 }
 
 if (is_android) {
+  import("//third_party/jni_zero/jni_zero.gni")
+  generate_jni("generated_jni") {
+    testonly = true
+    sources =
+        [ "androidapp/src/com/google/media/networktester/NetworkTester.java" ]
+    namespace = "webrtc"
+  }
+
   rtc_android_apk("NetworkTesterMobile") {
     testonly = true
     apk_name = "NetworkTesterMobile"
@@ -152,7 +156,9 @@ if (is_android) {
     resources_package = "com.google.media.networktester"
     deps = [
       ":NetworkTesterMobile_resources",
+      ":generated_jni_java",
       "../../rtc_base:base_java",
+      "//third_party/jni_zero:jni_zero_java",
     ]
   }
 
@@ -172,10 +178,6 @@ if (is_android) {
       "androidapp/res/values/dimens.xml",
       "androidapp/res/values/strings.xml",
     ]
-
-    # Needed for Bazel converter.
-    resource_dirs = [ "androidapp/res" ]
-    assert(resource_dirs != [])  # Mark as used.
   }
 
   rtc_shared_library("network_tester_so") {
@@ -183,15 +185,19 @@ if (is_android) {
     sources = [ "jni.cc" ]
 
     deps = [
+      ":generated_jni",
       ":network_tester",
       "../../rtc_base:logging",
       "../../rtc_base:threading",
       "../../test:create_test_environment",
+      "//third_party/jni_zero",
     ]
 
     suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
     configs += [ "//build/config/android:hide_all_but_jni" ]
 
     output_extension = "so"
+
+    java_targets = [ ":NetworkTesterMobile" ]
   }
 }

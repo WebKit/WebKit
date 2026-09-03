@@ -55,7 +55,7 @@ class GlobalSimulatedTimeController : public TimeController {
   void SkipForwardBy(TimeDelta duration);
 
  private:
-  ScopedBaseFakeClock global_clock_;
+  ScopedFakeClock global_clock_;
   // Provides simulated CurrentNtpInMilliseconds()
   SimulatedClock sim_clock_;
   sim_time_impl::SimulatedTimeControllerImpl impl_;

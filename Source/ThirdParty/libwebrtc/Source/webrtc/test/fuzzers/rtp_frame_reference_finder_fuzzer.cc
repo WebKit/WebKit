@@ -89,6 +89,36 @@ GenerateGenericFrameDependencies(DataReader* reader) {
 
   return result;
 }
+
+RTPVideoHeaderVP8 FuzzVp8Header(DataReader& fuzz_data) {
+  RTPVideoHeaderVP8 result;
+  result.InitRTPVideoHeaderVP8();
+
+  // Fuzz VP8 header with the respect of possible range of each value which is
+  // narrower than underlying c++ type.
+  // See https://datatracker.ietf.org/doc/html/rfc7741#section-4.2 what range
+  // each field supports.
+  uint8_t flags = fuzz_data.GetNum<uint8_t>();
+  result.partitionId = flags & 0b0000'0111;
+  result.beginningOfPartition = (flags & 0b0000'1000) != 0;
+
+  result.nonReference = (flags & 0b0001'0000) != 0;
+  if (flags & 0b0010'0000) {
+    result.pictureId = fuzz_data.GetNum<int16_t>() & 0x7FFF;  // 15 bits
+  }
+  if (flags & 0b0100'0000) {
+    result.tl0PicIdx = fuzz_data.GetNum<uint8_t>();
+  }
+  if (flags & 0b1000'0000) {
+    uint8_t tk_octet = fuzz_data.GetNum<uint8_t>();
+    result.temporalIdx = (tk_octet & 0b1100'0000) >> 6;
+    result.layerSync = (tk_octet & 0b0010'0000) != 0;
+    result.keyIdx = (tk_octet & 0b0001'1111);
+  }
+
+  return result;
+}
+
 }  // namespace
 
 void FuzzOneInput(FuzzDataHelper fuzz_data) {
@@ -117,8 +147,7 @@ void FuzzOneInput(FuzzDataHelper fuzz_data) {
 
     switch (codec) {
       case kVideoCodecVP8:
-        reader.CopyTo(
-            video_header.video_type_header.emplace<RTPVideoHeaderVP8>());
+        video_header.video_type_header = FuzzVp8Header(reader);
         break;
       case kVideoCodecVP9:
         reader.CopyTo(

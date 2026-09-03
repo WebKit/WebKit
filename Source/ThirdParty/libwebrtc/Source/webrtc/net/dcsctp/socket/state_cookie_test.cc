@@ -14,6 +14,7 @@
 
 #include "absl/strings/string_view.h"
 #include "net/dcsctp/common/internal_types.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/socket/capabilities.h"
 #include "net/dcsctp/testing/testing_macros.h"
 #include "test/gmock.h"
@@ -24,12 +25,13 @@ namespace {
 using ::testing::SizeIs;
 
 TEST(StateCookieTest, SerializeAndDeserialize) {
-  Capabilities capabilities = {.partial_reliability = true,
-                               .message_interleaving = false,
-                               .reconfig = true,
-                               .zero_checksum = true,
-                               .negotiated_maximum_incoming_streams = 123,
-                               .negotiated_maximum_outgoing_streams = 234};
+  Capabilities capabilities = {
+      .partial_reliability = true,
+      .message_interleaving = false,
+      .reconfig = true,
+      .zero_checksum_method = ZeroChecksumAlternateErrorDetectionMethod(1),
+      .negotiated_maximum_incoming_streams = 123,
+      .negotiated_maximum_outgoing_streams = 234};
   StateCookie cookie(/*peer_tag=*/VerificationTag(123),
                      /*my_tag=*/VerificationTag(321),
                      /*peer_initial_tsn=*/TSN(456), /*my_initial_tsn=*/TSN(654),
@@ -44,14 +46,17 @@ TEST(StateCookieTest, SerializeAndDeserialize) {
   EXPECT_EQ(deserialized.my_initial_tsn(), TSN(654));
   EXPECT_EQ(deserialized.a_rwnd(), 789u);
   EXPECT_EQ(deserialized.tie_tag(), TieTag(101112));
-  EXPECT_TRUE(deserialized.capabilities().partial_reliability);
-  EXPECT_FALSE(deserialized.capabilities().message_interleaving);
-  EXPECT_TRUE(deserialized.capabilities().reconfig);
-  EXPECT_TRUE(deserialized.capabilities().zero_checksum);
-  EXPECT_EQ(deserialized.capabilities().negotiated_maximum_incoming_streams,
-            123);
-  EXPECT_EQ(deserialized.capabilities().negotiated_maximum_outgoing_streams,
-            234);
+  EXPECT_TRUE(deserialized.peer_capabilities().partial_reliability);
+  EXPECT_FALSE(deserialized.peer_capabilities().message_interleaving);
+  EXPECT_TRUE(deserialized.peer_capabilities().reconfig);
+  EXPECT_EQ(deserialized.peer_capabilities().zero_checksum_method,
+            ZeroChecksumAlternateErrorDetectionMethod(1));
+  EXPECT_EQ(
+      deserialized.peer_capabilities().negotiated_maximum_incoming_streams,
+      123);
+  EXPECT_EQ(
+      deserialized.peer_capabilities().negotiated_maximum_outgoing_streams,
+      234);
 }
 
 TEST(StateCookieTest, ValidateMagicValue) {

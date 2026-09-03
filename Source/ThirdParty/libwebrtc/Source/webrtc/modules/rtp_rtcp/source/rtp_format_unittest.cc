@@ -231,6 +231,21 @@ TEST(RtpPacketizerSplitAboutEqually,
   EXPECT_THAT(RtpPacketizer::SplitAboutEqually(20, limits), ElementsAre(9, 11));
 }
 
+TEST(RtpPacketizerSplitAboutEqually, RejectsZeroSize) {
+  RtpPacketizer::PayloadSizeLimits limits;
+  limits.max_payload_len = 1200;
+
+  EXPECT_THAT(RtpPacketizer::SplitAboutEqually(0, limits), IsEmpty());
+}
+
+TEST(RtpPacketizerSplitAboutEqually, RejectsHugeSize) {
+  RtpPacketizer::PayloadSizeLimits limits;
+  limits.max_payload_len = 1200;
+
+  EXPECT_THAT(RtpPacketizer::SplitAboutEqually(0xFFFF'FFFF, limits), IsEmpty());
+  EXPECT_THAT(RtpPacketizer::SplitAboutEqually(40'000'000, limits), IsEmpty());
+}
+
 TEST(RtpPacketizerSplitAboutEqually, RejectsZeroMaxPayloadLen) {
   RtpPacketizer::PayloadSizeLimits limits;
   limits.max_payload_len = 0;

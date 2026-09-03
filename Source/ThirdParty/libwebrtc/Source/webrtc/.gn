@@ -38,6 +38,8 @@ no_check_targets = [
 exec_script_allowlist = build_dotfile_settings.exec_script_allowlist +
                         [ "//build_overrides/build.gni" ]
 
+expand_directory_allowlist = build_dotfile_settings.expand_directory_allowlist
+
 export_compile_commands = [ "*" ]
 
 default_args = {

@@ -41,7 +41,7 @@ CHROMIUM_DIRS = [
 TARGET_RE = re.compile(
     r'(?P<indentation_level>\s*)\w*\("(?P<target_name>\w*)"\) {$')
 
-BAD_TARGETS = ['libjingle_peerconnection_api']
+BAD_TARGETS = []
 
 
 class TemporaryDirectory:

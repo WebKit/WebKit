@@ -85,10 +85,10 @@ class DatagramConnectionTest : public ::testing::Test {
     std::string transport_name2 = "FakeTransport2";
 
     auto ice1 = std::make_unique<FakeIceTransportInternal>(
-        transport_name1, ICE_CANDIDATE_COMPONENT_RTP);
+        env_, transport_name1, ICE_CANDIDATE_COMPONENT_RTP);
     ice1->SetAsync(true);
     auto ice2 = std::make_unique<FakeIceTransportInternal>(
-        transport_name2, ICE_CANDIDATE_COMPONENT_RTP);
+        env_, transport_name2, ICE_CANDIDATE_COMPONENT_RTP);
     ice2->SetAsync(true);
     ice1_ = ice1.get();
     ice2_ = ice2.get();

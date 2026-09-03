@@ -43,6 +43,10 @@ bool VerifyPeerCertMatchesHost(SSL* ssl, absl::string_view host);
 // prefix can be provided for context.
 void LogSSLErrors(absl::string_view prefix);
 
+// Logs a human-readable description of the SSL connection's handshake state
+// and any alerts. Intended to be installed via SSL_CTX_set_info_callback().
+void SSLInfoCallback(const SSL* ssl, int where, int ret);
+
 #ifndef WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
 // Attempt to add the certificates from the loader into the SSL_CTX. False is
 // returned only if there are no certificates returned from the loader or none

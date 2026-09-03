@@ -141,7 +141,9 @@ TimeDelta TransportSequenceNumberFeedbackGenenerator::Process(Timestamp now) {
 }
 
 void TransportSequenceNumberFeedbackGenenerator::OnSendBandwidthEstimateChanged(
-    DataRate estimate) {
+    DataRate estimate,
+    bool /*is_bandwidth_limited*/,
+    std::optional<DataSize> /*transport_overhead*/) {
   // TwccReportSize = Ipv4(20B) + UDP(8B) + SRTP(10B) +
   // AverageTwccReport(30B)
   // TwccReport size at 50ms interval is 24 byte.

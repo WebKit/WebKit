@@ -23,7 +23,6 @@
 #include "api/crypto/crypto_options.h"
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
@@ -65,6 +64,7 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "system_wrappers/include/metrics.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -100,7 +100,8 @@ class FakeIceTransportFactory : public IceTransportFactory {
       int component,
       IceTransportInit init) override {
     return make_ref_counted<FakeIceTransport>(
-        std::make_unique<FakeIceTransportInternal>(transport_name, component));
+        std::make_unique<FakeIceTransportInternal>(init.env(), transport_name,
+                                                   component));
   }
 };
 
@@ -118,7 +119,7 @@ class JsepTransportControllerTest : public JsepTransportController::Observer,
                                     public ::testing::Test {
  public:
   JsepTransportControllerTest()
-      : env_(CreateEnvironment(&field_trials_)),
+      : env_(CreateTestEnvironment({.field_trials = &field_trials_})),
         signaling_thread_(Thread::Current()) {
     fake_ice_transport_factory_ = std::make_unique<FakeIceTransportFactory>();
     fake_dtls_transport_factory_ = std::make_unique<FakeDtlsTransportFactory>();

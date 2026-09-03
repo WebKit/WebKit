@@ -18,6 +18,8 @@ pub struct Timestamp {
     pub(crate) microseconds: i64,
 }
 
+// SAFETY: `Timestamp` is `#[repr(transparent)]` over `i64`,
+// matching the layout of C++ `webrtc::Timestamp`, which is a trivial type.
 unsafe impl ExternType for Timestamp {
     type Id = type_id!("webrtc::Timestamp");
     type Kind = cxx::kind::Trivial;

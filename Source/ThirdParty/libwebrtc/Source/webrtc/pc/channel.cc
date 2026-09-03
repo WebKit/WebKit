@@ -51,7 +51,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket.h"
-#include "rtc_base/strings/string_format.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/trace_event.h"
 #include "rtc_base/unique_id_generator.h"
@@ -188,7 +188,8 @@ BaseChannel::BaseChannel(
       worker_thread_(worker_thread),
       network_thread_(network_thread),
       signaling_thread_(signaling_thread),
-      alive_(PendingTaskSafetyFlag::Create()),
+      alive_(PendingTaskSafetyFlag::CreateAttachedToTaskQueue(true,
+                                                              worker_thread)),
       on_first_packet_received_(std::move(callbacks.on_first_packet_received)),
       on_first_packet_sent_(std::move(callbacks.on_first_packet_sent)),
       on_packet_received_n_(std::move(callbacks.on_packet_received)),
@@ -206,7 +207,6 @@ BaseChannel::BaseChannel(
                             : SenderParamsVariant(AudioSenderParameter())),
       media_type_(media_type),
       ssrc_generator_(ssrc_generator) {
-  RTC_DCHECK_RUN_ON(worker_thread_);
   RTC_DCHECK(media_send_channel_);
   RTC_DCHECK(media_receive_channel_);
   RTC_DCHECK(ssrc_generator_);
@@ -226,9 +226,9 @@ BaseChannel::~BaseChannel() {
 }
 
 std::string BaseChannel::ToString() const {
-  return StringFormat(
-      "{mid: %s, media_type: %s}", mid().c_str(),
-      MediaTypeToString(media_send_channel_->media_type()).c_str());
+  return (StringBuilder() << "{mid: " << mid() << ", media_type: "
+                          << media_send_channel_->media_type() << "}")
+      .Release();
 }
 
 bool BaseChannel::ConnectToRtpTransport_n(RtpTransportInternal* rtp_transport) {
@@ -843,11 +843,21 @@ RTCError BaseChannel::SetRemoteContent_w(const MediaContentDescription* content,
                                                    : RtcpMode::kCompound);
     voice_media_receive_channel()->SetReceiveNackEnabled(
         voice_media_send_channel()->SenderNackEnabled());
+    // Enable non-sender RTT (RRTR/DLRR) when negotiated. Both the standard
+    // a=rtcp-xr:rcvr-rtt and the legacy rtcp-fb rrtr are folded into
+    // receive_non_sender_rtt by the SDP layer.
     voice_media_receive_channel()->SetReceiveNonSenderRttEnabled(
-        voice_media_send_channel()->SenderNonSenderRttEnabled());
+        content->receive_non_sender_rtt());
   }
 
   RTC_DCHECK_BLOCK_COUNT_NO_MORE_THAN(0);
+
+  if (media_type_ == MediaType::VIDEO) {
+    // Enable non-sender RTT (RRTR/DLRR) when negotiated (both wire forms are
+    // folded into receive_non_sender_rtt by the SDP layer).
+    video_media_receive_channel()->SetReceiveNonSenderRttEnabled(
+        content->receive_non_sender_rtt());
+  }
 
   error = UpdateRemoteStreams_w(content, type);
 

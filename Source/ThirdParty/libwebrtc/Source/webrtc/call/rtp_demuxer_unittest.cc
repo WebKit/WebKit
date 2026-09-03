@@ -17,6 +17,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
@@ -113,7 +114,7 @@ class RtpDemuxerTest : public ::testing::Test {
       uint32_t ssrc,
       absl::string_view mid) {
     RtpPacketReceived::ExtensionManager extension_manager;
-    extension_manager.Register<RtpMid>(11);
+    extension_manager.Register<RtpMid>(RtpHeaderExtensionId(11));
 
     auto packet = CreatePacket(ssrc, &extension_manager);
     packet->SetExtension<RtpMid>(mid);
@@ -124,7 +125,7 @@ class RtpDemuxerTest : public ::testing::Test {
       uint32_t ssrc,
       absl::string_view rsid) {
     RtpPacketReceived::ExtensionManager extension_manager;
-    extension_manager.Register<RtpStreamId>(6);
+    extension_manager.Register<RtpStreamId>(RtpHeaderExtensionId(6));
 
     auto packet = CreatePacket(ssrc, &extension_manager);
     packet->SetExtension<RtpStreamId>(rsid);
@@ -135,7 +136,7 @@ class RtpDemuxerTest : public ::testing::Test {
       uint32_t ssrc,
       absl::string_view rrid) {
     RtpPacketReceived::ExtensionManager extension_manager;
-    extension_manager.Register<RepairedRtpStreamId>(7);
+    extension_manager.Register<RepairedRtpStreamId>(RtpHeaderExtensionId(7));
 
     auto packet = CreatePacket(ssrc, &extension_manager);
     packet->SetExtension<RepairedRtpStreamId>(rrid);
@@ -147,8 +148,8 @@ class RtpDemuxerTest : public ::testing::Test {
       absl::string_view mid,
       absl::string_view rsid) {
     RtpPacketReceived::ExtensionManager extension_manager;
-    extension_manager.Register<RtpMid>(11);
-    extension_manager.Register<RtpStreamId>(6);
+    extension_manager.Register<RtpMid>(RtpHeaderExtensionId(11));
+    extension_manager.Register<RtpStreamId>(RtpHeaderExtensionId(6));
 
     auto packet = CreatePacket(ssrc, &extension_manager);
     packet->SetExtension<RtpMid>(mid);
@@ -161,8 +162,8 @@ class RtpDemuxerTest : public ::testing::Test {
       absl::string_view rsid,
       absl::string_view rrid) {
     RtpPacketReceived::ExtensionManager extension_manager;
-    extension_manager.Register<RtpStreamId>(6);
-    extension_manager.Register<RepairedRtpStreamId>(7);
+    extension_manager.Register<RtpStreamId>(RtpHeaderExtensionId(6));
+    extension_manager.Register<RepairedRtpStreamId>(RtpHeaderExtensionId(7));
 
     auto packet = CreatePacket(ssrc, &extension_manager);
     packet->SetExtension<RtpStreamId>(rsid);

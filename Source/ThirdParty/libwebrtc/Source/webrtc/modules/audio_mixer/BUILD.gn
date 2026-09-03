@@ -93,29 +93,58 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("audio_mixer_unittests") {
+  rtc_library("audio_frame_manipulator_unittest") {
     testonly = true
-
-    sources = [
-      "audio_frame_manipulator_unittest.cc",
-      "audio_mixer_impl_unittest.cc",
-      "frame_combiner_unittest.cc",
-    ]
+    sources = [ "audio_frame_manipulator_unittest.cc" ]
     deps = [
       ":audio_frame_manipulator",
+      "../../api/audio:audio_frame_api",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("audio_mixer_impl_unittest") {
+    testonly = true
+    sources = [ "audio_mixer_impl_unittest.cc" ]
+    deps = [
       ":audio_mixer_impl",
-      ":audio_mixer_test_utils",
       "../../api:rtp_packet_info",
       "../../api:scoped_refptr",
       "../../api/audio:audio_frame_api",
       "../../api/audio:audio_mixer_api",
       "../../api/units:timestamp",
-      "../../audio/utility:audio_frame_operations",
       "../../rtc_base:checks",
       "../../rtc_base:stringutils",
       "../../rtc_base:task_queue_for_test",
       "../../system_wrappers:metrics",
       "../../test:test_support",
+    ]
+  }
+
+  rtc_library("frame_combiner_unittest") {
+    testonly = true
+    sources = [ "frame_combiner_unittest.cc" ]
+    deps = [
+      ":audio_mixer_impl",
+      ":audio_mixer_test_utils",
+      "../../api:rtp_packet_info",
+      "../../api/audio:audio_frame_api",
+      "../../api/units:timestamp",
+      "../../audio/utility:audio_frame_operations",
+      "../../rtc_base:checks",
+      "../../rtc_base:stringutils",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("audio_mixer_unittests") {
+    testonly = true
+
+    sources = []
+    deps = [
+      ":audio_frame_manipulator_unittest",
+      ":audio_mixer_impl_unittest",
+      ":frame_combiner_unittest",
     ]
   }
 

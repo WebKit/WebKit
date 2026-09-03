@@ -12,6 +12,7 @@
 #include <optional>
 
 #include "api/rtp_parameters.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/test/simulated_network.h"
@@ -32,7 +33,7 @@ namespace webrtc {
 class CallOperationEndToEndTest : public test::CallTest {};
 
 TEST_F(CallOperationEndToEndTest, ReceiverCanBeStartedTwice) {
-  CreateCalls();
+  CreateCalls(TaskQueueBase::Current());
 
   test::NullTransport transport;
   CreateSendConfig(1, 0, 0, &transport);
@@ -47,7 +48,7 @@ TEST_F(CallOperationEndToEndTest, ReceiverCanBeStartedTwice) {
 }
 
 TEST_F(CallOperationEndToEndTest, ReceiverCanBeStoppedTwice) {
-  CreateCalls();
+  CreateCalls(TaskQueueBase::Current());
 
   test::NullTransport transport;
   CreateSendConfig(1, 0, 0, &transport);
@@ -62,7 +63,7 @@ TEST_F(CallOperationEndToEndTest, ReceiverCanBeStoppedTwice) {
 }
 
 TEST_F(CallOperationEndToEndTest, ReceiverCanBeStoppedAndRestarted) {
-  CreateCalls();
+  CreateCalls(TaskQueueBase::Current());
 
   test::NullTransport transport;
   CreateSendConfig(1, 0, 0, &transport);

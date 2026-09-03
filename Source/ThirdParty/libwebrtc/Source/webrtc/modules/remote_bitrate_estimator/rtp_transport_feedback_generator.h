@@ -13,9 +13,11 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet.h"
@@ -37,7 +39,10 @@ class RtpTransportFeedbackGenerator {
   // Returns time until next call to Process should be made.
   virtual TimeDelta Process(Timestamp now) = 0;
 
-  virtual void OnSendBandwidthEstimateChanged(DataRate estimate) = 0;
+  virtual void OnSendBandwidthEstimateChanged(
+      DataRate estimate,
+      bool is_bandwidth_limited,
+      std::optional<DataSize> transport_overhead) = 0;
 };
 
 }  // namespace webrtc

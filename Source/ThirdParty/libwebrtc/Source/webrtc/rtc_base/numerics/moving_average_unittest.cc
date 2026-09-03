@@ -14,24 +14,25 @@
 
 #include "test/gtest.h"
 
-namespace test {
+namespace webrtc {
+namespace {
 
 TEST(MovingAverageTest, EmptyAverage) {
-  webrtc::MovingAverage moving_average(1);
+  MovingAverage moving_average(1);
   EXPECT_EQ(0u, moving_average.Size());
   EXPECT_EQ(std::nullopt, moving_average.GetAverageRoundedDown());
 }
 
 // Test single value.
 TEST(MovingAverageTest, OneElement) {
-  webrtc::MovingAverage moving_average(1);
+  MovingAverage moving_average(1);
   moving_average.AddSample(3);
   EXPECT_EQ(1u, moving_average.Size());
   EXPECT_EQ(3, *moving_average.GetAverageRoundedDown());
 }
 
 TEST(MovingAverageTest, GetAverage) {
-  webrtc::MovingAverage moving_average(1024);
+  MovingAverage moving_average(1024);
   moving_average.AddSample(1);
   moving_average.AddSample(1);
   moving_average.AddSample(3);
@@ -41,7 +42,7 @@ TEST(MovingAverageTest, GetAverage) {
 }
 
 TEST(MovingAverageTest, GetAverageRoundedDownRounds) {
-  webrtc::MovingAverage moving_average(1024);
+  MovingAverage moving_average(1024);
   moving_average.AddSample(1);
   moving_average.AddSample(2);
   moving_average.AddSample(2);
@@ -50,7 +51,7 @@ TEST(MovingAverageTest, GetAverageRoundedDownRounds) {
 }
 
 TEST(MovingAverageTest, GetAverageRoundedToClosestRounds) {
-  webrtc::MovingAverage moving_average(1024);
+  MovingAverage moving_average(1024);
   moving_average.AddSample(1);
   moving_average.AddSample(2);
   moving_average.AddSample(2);
@@ -59,7 +60,7 @@ TEST(MovingAverageTest, GetAverageRoundedToClosestRounds) {
 }
 
 TEST(MovingAverageTest, Reset) {
-  webrtc::MovingAverage moving_average(5);
+  MovingAverage moving_average(5);
   moving_average.AddSample(1);
   EXPECT_EQ(1, *moving_average.GetAverageRoundedDown());
   EXPECT_EQ(1, *moving_average.GetAverageRoundedToClosest());
@@ -73,7 +74,7 @@ TEST(MovingAverageTest, Reset) {
 }
 
 TEST(MovingAverageTest, ManySamples) {
-  webrtc::MovingAverage moving_average(10);
+  MovingAverage moving_average(10);
   for (int i = 1; i < 11; i++) {
     moving_average.AddSample(i);
   }
@@ -85,5 +86,5 @@ TEST(MovingAverageTest, ManySamples) {
   EXPECT_EQ(*moving_average.GetAverageRoundedDown(), 1995);
   EXPECT_EQ(*moving_average.GetAverageRoundedToClosest(), 1996);
 }
-
-}  // namespace test
+}  // namespace
+}  // namespace webrtc

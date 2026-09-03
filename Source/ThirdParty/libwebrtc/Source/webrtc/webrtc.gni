@@ -31,6 +31,10 @@ if (is_ios) {
   import("//build/config/ios/rules.gni")
 }
 
+if (is_android) {
+  import("//third_party/jni_zero/jni_zero.gni")
+}
+
 if (is_mac) {
   import("//build/config/mac/rules.gni")
 }
@@ -126,14 +130,15 @@ declare_args() {
   # supported Ubuntu and Debian distributions.
   rtc_use_pipewire = is_linux && use_sysroot
 
-  # Set this to link PipeWire and required libraries directly instead of using the dlopen.
+  # Set this to link PipeWire and required libraries directly instead of using
+  # the dlopen.
   rtc_link_pipewire = false
 
   # Enable to use the Mozilla internal settings.
   build_with_mozilla = false
 
-  # Experimental: enable use of Android AAudio which requires Android SDK 26 or above
-  # and NDK r16 or above.
+  # Experimental: enable use of Android AAudio which requires Android SDK 26 or
+  # above and NDK r16 or above.
   rtc_enable_android_aaudio = false
 
   # Set to "func", "block", "edge" for coverage generation.
@@ -391,6 +396,10 @@ set_defaults("rtc_test") {
   suppressed_configs = []
 }
 
+set_defaults("rtc_cc_test") {
+  configs = rtc_add_configs
+}
+
 set_defaults("rtc_library") {
   configs = rtc_add_configs
   public_deps = rtc_common_public_deps  # no-presubmit-check TODO(webrtc:8603)
@@ -480,8 +489,8 @@ all_poison_types = [
 absl_include_config = "//third_party/abseil-cpp:absl_include_config"
 absl_define_config = "//third_party/abseil-cpp:absl_define_config"
 
-# Abseil Flags are testonly, so this config will only be applied to WebRTC targets
-# that are testonly.
+# Abseil Flags are testonly, so this config will only be applied to WebRTC
+# targets that are testonly.
 absl_flags_config = webrtc_root + ":absl_flags_configs"
 
 # WebRTC wrapper of Chromium's test() template. This template just adds some
@@ -520,7 +529,13 @@ template("rtc_test") {
       public_configs += invoker.public_configs
     }
     if (!build_with_chromium && is_android) {
+      # Do not use Chromium's launcher. native_unittests defines its own
+      # JNI_OnLoad.
       use_default_launcher = false
+
+      # Without this setting some tests only succeed after the first retry.
+      # Value is high enough for webrtc_perf_tests to complete.
+      shard_timeout = 4500
       android_manifest = webrtc_root + "test/android/AndroidManifest.xml"
       use_raw_android_executable = false
       min_sdk_version = 23
@@ -535,8 +550,11 @@ template("rtc_test") {
       ]
     }
 
-    # TODO: bugs.webrtc.org/467294026 - Support iOS too.
-    if (!defined(invoker.is_xctest) || !invoker.is_xctest) {
+    if (defined(invoker.is_xctest) && invoker.is_xctest) {
+      # XCTest bundles are launched by the XCTest harness and provide their own
+      # UIApplicationMain entry point.
+      deps += [ webrtc_root + "test:test_main_xctest" ]
+    } else {
       deps += [ webrtc_root + "test:test_main" ]
     }
 
@@ -551,7 +569,8 @@ template("rtc_test") {
         !defined(absl_deps),
         "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
 
-    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl
+    # when build_with_chromium=true
     if (build_with_chromium && defined(deps)) {
       absl_dependencies =
           filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
@@ -674,7 +693,8 @@ template("rtc_source_set") {
         !defined(absl_deps),
         "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
 
-    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl
+    # when build_with_chromium=true
     if (build_with_chromium && defined(deps)) {
       absl_dependencies =
           filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
@@ -766,7 +786,8 @@ template("rtc_static_library") {
         !defined(absl_deps),
         "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
 
-    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl
+    # when build_with_chromium=true
     if (build_with_chromium && defined(deps)) {
       absl_dependencies =
           filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
@@ -909,7 +930,8 @@ template("rtc_library") {
         !defined(absl_deps),
         "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
 
-    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl
+    # when build_with_chromium=true
     if (build_with_chromium && defined(deps)) {
       absl_dependencies =
           filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
@@ -983,7 +1005,12 @@ template("rtc_executable") {
 }
 
 template("rtc_shared_library") {
-  shared_library(target_name) {
+  if (is_android) {
+    target_type = "shared_library_with_jni"
+  } else {
+    target_type = "shared_library"
+  }
+  target(target_type, target_name) {
     forward_variables_from(invoker,
                            "*",
                            [
@@ -1266,6 +1293,14 @@ if (is_android) {
                                "suppressed_configs",
                                "visibility",
                              ])
+      if (defined(invoker.shared_libraries)) {
+        if (!defined(srcjar_deps)) {
+          srcjar_deps = []
+        }
+        foreach(_dep, invoker.shared_libraries) {
+          srcjar_deps += [ "${_dep}__jni_registration" ]
+        }
+      }
     }
   }
 
@@ -1304,7 +1339,6 @@ template("rtc_cc_test") {
     forward_variables_from(invoker,
                            "*",
                            [
-                             "configs",
                              "public_configs",
                              "suppressed_configs",
                              "deps",
@@ -1345,9 +1379,6 @@ template("rtc_cc_test") {
     deps = [ ":${_lib_target_name}" ]
     if (defined(invoker.data_deps)) {
       data_deps = invoker.data_deps
-    }
-    if (defined(invoker.shard_timeout)) {
-      shard_timeout = invoker.shard_timeout
     }
   }
 }
@@ -1419,15 +1450,10 @@ template("rtc_test_suite") {
 
   assert(!defined(invoker.deps), "rtc_test_suite does not allow deps")
 
-  # TODO(webrtc:498394143): Infer shard_timeout for the suite based on the
-  # individual test timeouts if shard_timeouts are still required.
   rtc_test(_suite_name) {
     testonly = true
     deps = invoker.tests
     deps += [ ":${_suite_name}_verify_metadata" ]
-    if (defined(invoker.shard_timeout)) {
-      shard_timeout = invoker.shard_timeout
-    }
   }
 }
 
@@ -1540,7 +1566,8 @@ template("rtc_rust_cxx_bridge") {
 
     # WebRTC and Abseil include paths/defines are explicitly populated so that
     # auto-generated bridge C++ source files (.cc) can safely locate required
-    # headers during compilation, and propagate header visibility cleanly via public_configs.
+    # headers during compilation, and propagate header visibility cleanly via
+    # public_configs.
     if (defined(invoker.configs)) {
       configs += invoker.configs
     }

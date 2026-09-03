@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "api/task_queue/task_queue_base.h"
-#include "api/test/rtc_error_matchers.h"
 #include "api/test/simulated_network.h"
 #include "api/units/time_delta.h"
 #include "audio/test/audio_end_to_end_test.h"
@@ -58,10 +57,8 @@ TEST_F(NonSenderRttTest, NonSenderRttStats) {
       // Wait until we have an RTT measurement, but no longer than
       // `kLongTimeoutMs`. This usually takes around 5 seconds, but in rare
       // cases it can take more than 10 seconds.
-      EXPECT_THAT(
-          WaitUntil([&] { return HasRoundTripTimeMeasurement(); }, IsTrue(),
-                    {.timeout = TimeDelta::Millis(kLongTimeoutMs)}),
-          IsRtcOk());
+      EXPECT_TRUE(WaitUntil([&] { return HasRoundTripTimeMeasurement(); },
+                            {.timeout = TimeDelta::Millis(kLongTimeoutMs)}));
     }
 
     void OnStreamsStopped() override {

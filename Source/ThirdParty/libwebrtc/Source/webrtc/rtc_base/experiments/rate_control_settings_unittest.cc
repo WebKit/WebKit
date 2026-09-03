@@ -11,7 +11,7 @@
 #include "rtc_base/experiments/rate_control_settings.h"
 
 #include "absl/strings/string_view.h"
-#include "api/field_trials.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -23,7 +23,7 @@ using ::testing::DoubleEq;
 using ::testing::Optional;
 
 RateControlSettings ParseFrom(absl::string_view field_trials) {
-  return RateControlSettings(FieldTrials(field_trials));
+  return RateControlSettings(CreateTestFieldTrials(field_trials));
 }
 
 TEST(RateControlSettingsTest, CongestionWindow) {

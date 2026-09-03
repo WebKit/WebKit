@@ -63,18 +63,14 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
     caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
     // Wait a short time for observer to be called. Timeout is short
     // because the fuzzer should be trying many branches.
-    EXPECT_THAT(
-        WaitUntil([&] { return srd_observer->called(); }, ::testing::IsTrue()),
-        IsRtcOk());
+    EXPECT_TRUE(WaitUntil([&] { return srd_observer->called(); }));
 
     // If set-remote-description was successful, try to answer.
     auto sld_observer =
         webrtc::make_ref_counted<FakeSetLocalDescriptionObserver>();
     if (srd_observer->error().ok()) {
       caller()->pc()->SetLocalDescription(sld_observer);
-      EXPECT_THAT(WaitUntil([&] { return sld_observer->called(); },
-                            ::testing::IsTrue()),
-                  IsRtcOk());
+      EXPECT_TRUE(WaitUntil([&] { return sld_observer->called(); }));
     }
 #if !defined(WEBRTC_WEBKIT_BUILD)
     // If there is an EXPECT failure, die here.

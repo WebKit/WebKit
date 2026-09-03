@@ -33,7 +33,6 @@ namespace webrtc {
 using ClockVariant = std::variant<std::monostate,
                                   SimulatedClock*,
                                   FakeClock*,
-                                  ThreadProcessingFakeClock*,
                                   TimeController*>;
 
 struct WaitUntilSettings {

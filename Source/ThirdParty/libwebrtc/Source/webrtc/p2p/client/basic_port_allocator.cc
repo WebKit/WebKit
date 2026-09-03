@@ -32,6 +32,7 @@
 #include "api/packet_socket_factory.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/enums.h"
 #include "api/units/time_delta.h"
 #include "p2p/base/port.h"
@@ -52,7 +53,6 @@
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/strings/string_builder.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/trace_event.h"
 
 namespace webrtc {
@@ -260,7 +260,7 @@ BasicPortAllocatorSession::BasicPortAllocatorSession(
                            ice_pwd,
                            allocator->flags()),
       allocator_(allocator),
-      network_thread_(Thread::Current()),
+      network_thread_(TaskQueueBase::Current()),
       socket_factory_(allocator->socket_factory()),
       allocation_started_(false),
       network_manager_started_(false),
@@ -1408,7 +1408,7 @@ void AllocationSequence::Stop() {
 }
 
 void AllocationSequence::Process(int epoch) {
-  RTC_DCHECK(Thread::Current() == session_->network_thread());
+  RTC_DCHECK(TaskQueueBase::Current() == session_->network_thread());
   const char* const PHASE_NAMES[kNumPhases] = {"Udp", "Relay", "Tcp"};
 
   if (epoch != epoch_)
@@ -1472,7 +1472,8 @@ void AllocationSequence::CreateUDPPorts() {
          .ice_password = session_->password(),
          .content_name = session_->content_name(),
          .lna_permission_factory =
-             session_->allocator()->lna_permission_factory()},
+             session_->allocator()->lna_permission_factory(),
+         .ice_tiebreaker = session_->allocator()->ice_tiebreaker()},
         udp_socket_.get(), emit_local_candidate_for_anyaddress,
         session_->allocator()->stun_candidate_keepalive_interval());
   } else {
@@ -1485,14 +1486,14 @@ void AllocationSequence::CreateUDPPorts() {
          .ice_password = session_->password(),
          .content_name = session_->content_name(),
          .lna_permission_factory =
-             session_->allocator()->lna_permission_factory()},
+             session_->allocator()->lna_permission_factory(),
+         .ice_tiebreaker = session_->allocator()->ice_tiebreaker()},
         session_->allocator()->min_port(), session_->allocator()->max_port(),
         emit_local_candidate_for_anyaddress,
         session_->allocator()->stun_candidate_keepalive_interval());
   }
 
   if (port) {
-    port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     // If shared socket is enabled, STUN candidate will be allocated by the
     // UDPPort.
     if (IsFlagSet(PORTALLOCATOR_ENABLE_SHARED_SOCKET)) {
@@ -1527,11 +1528,11 @@ void AllocationSequence::CreateTCPPorts() {
        .network = network_,
        .ice_username_fragment = session_->username(),
        .ice_password = session_->password(),
-       .content_name = session_->content_name()},
+       .content_name = session_->content_name(),
+       .ice_tiebreaker = session_->allocator()->ice_tiebreaker()},
       session_->allocator()->min_port(), session_->allocator()->max_port(),
       session_->allocator()->allow_tcp_listen());
   if (port) {
-    port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     session_->AddAllocatedPort(port.release(), this);
     // Since TCPPort is not created using shared socket, `port` will not be
     // added to the dequeue.
@@ -1563,12 +1564,12 @@ void AllocationSequence::CreateStunPorts() {
        .ice_password = session_->password(),
        .content_name = session_->content_name(),
        .lna_permission_factory =
-           session_->allocator()->lna_permission_factory()},
+           session_->allocator()->lna_permission_factory(),
+       .ice_tiebreaker = session_->allocator()->ice_tiebreaker()},
       session_->allocator()->min_port(), session_->allocator()->max_port(),
       config_->StunServers(),
       session_->allocator()->stun_candidate_keepalive_interval());
   if (port) {
-    port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     session_->AddAllocatedPort(port.release(), this);
     // Since StunPort is not created using shared socket, `port` will not be
     // added to the dequeue.
@@ -1638,6 +1639,7 @@ void AllocationSequence::CreateTurnPort(const RelayServerConfig& config,
     args.relative_priority = relative_priority;
     args.lna_permission_factory =
         session_->allocator()->lna_permission_factory();
+    args.ice_tiebreaker = session_->allocator()->ice_tiebreaker();
 
     std::unique_ptr<Port> port;
     // Shared socket mode must be enabled only for UDP based ports. Hence
@@ -1672,7 +1674,6 @@ void AllocationSequence::CreateTurnPort(const RelayServerConfig& config,
       }
     }
     RTC_DCHECK(port != nullptr);
-    port->SetIceTiebreaker(session_->allocator()->ice_tiebreaker());
     session_->AddAllocatedPort(port.release(), this);
   }
 }

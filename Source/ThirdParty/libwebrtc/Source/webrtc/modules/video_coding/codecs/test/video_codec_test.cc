@@ -22,7 +22,6 @@
 
 #include "absl/flags/flag.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/test/metrics/global_metrics_logger_and_exporter.h"
 #include "api/units/data_rate.h"
 #include "api/units/frequency.h"
@@ -40,7 +39,7 @@
 #include "modules/video_coding/svc/scalability_mode_util.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/test_flags.h"
 #include "test/testsupport/file_utils.h"
@@ -326,7 +325,7 @@ class SpatialQualityTest : public ::testing::TestWithParam<std::tuple<
 };
 
 TEST_P(SpatialQualityTest, SpatialQuality) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   auto [codec_type, codec_impl, video_info, coding_settings] = GetParam();
   auto [width, height, framerate_fps, bitrate_kbps, expected_min_psnr] =
       coding_settings;
@@ -412,7 +411,7 @@ class BitrateAdaptationTest
 
 TEST_P(BitrateAdaptationTest, BitrateAdaptation) {
   auto [codec_type, codec_impl, video_info, bitrate_kbps] = GetParam();
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
 
   int duration_s = 10;  // Duration of fixed rate interval.
   int num_frames =
@@ -506,7 +505,7 @@ class FramerateAdaptationTest
 
 TEST_P(FramerateAdaptationTest, FramerateAdaptation) {
   auto [codec_type, codec_impl, video_info, framerate_fps] = GetParam();
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
 
   int duration_s = 10;  // Duration of fixed rate interval.
 
@@ -582,7 +581,7 @@ INSTANTIATE_TEST_SUITE_P(All,
                          FramerateAdaptationTest::TestParamsToString);
 
 TEST(VideoCodecTest, DISABLED_EncodeDecode) {
-  const Environment env = CreateEnvironment(CreateTestFieldTrialsPtr());
+  const Environment env = CreateTestEnvironment();
 
   VideoSourceSettings source_settings{
       .file_path = absl::GetFlag(FLAGS_input_path),

@@ -12,8 +12,11 @@
 
 #include "test/gtest.h"
 
+namespace webrtc {
+namespace {
+
 TEST(MovingMaxCounter, ReportsMaximumInTheWindow) {
-  webrtc::MovingMaxCounter<int> counter(100);
+  MovingMaxCounter<int> counter(100);
   counter.Add(1, 1);
   EXPECT_EQ(counter.Max(1), 1);
   counter.Add(2, 30);
@@ -27,7 +30,7 @@ TEST(MovingMaxCounter, ReportsMaximumInTheWindow) {
 }
 
 TEST(MovingMaxCounter, IgnoresOldElements) {
-  webrtc::MovingMaxCounter<int> counter(100);
+  MovingMaxCounter<int> counter(100);
   counter.Add(1, 1);
   counter.Add(2, 30);
   counter.Add(100, 60);
@@ -39,14 +42,14 @@ TEST(MovingMaxCounter, IgnoresOldElements) {
 }
 
 TEST(MovingMaxCounter, HandlesEmptyWindow) {
-  webrtc::MovingMaxCounter<int> counter(100);
+  MovingMaxCounter<int> counter(100);
   counter.Add(123, 1);
   EXPECT_TRUE(counter.Max(101).has_value());
   EXPECT_FALSE(counter.Max(102).has_value());
 }
 
 TEST(MovingMaxCounter, HandlesSamplesWithEqualTimestamps) {
-  webrtc::MovingMaxCounter<int> counter(100);
+  MovingMaxCounter<int> counter(100);
   counter.Add(2, 30);
   EXPECT_EQ(counter.Max(30), 2);
   counter.Add(5, 30);
@@ -56,3 +59,6 @@ TEST(MovingMaxCounter, HandlesSamplesWithEqualTimestamps) {
   counter.Add(1, 90);
   EXPECT_EQ(counter.Max(150), 1);
 }
+
+}  // namespace
+}  // namespace webrtc

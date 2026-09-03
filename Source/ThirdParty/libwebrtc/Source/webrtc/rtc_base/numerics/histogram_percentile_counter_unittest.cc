@@ -16,8 +16,11 @@
 
 #include "test/gtest.h"
 
+namespace webrtc {
+namespace {
+
 TEST(HistogramPercentileCounterTest, ReturnsCorrectPercentiles) {
-  webrtc::HistogramPercentileCounter counter(10);
+  HistogramPercentileCounter counter(10);
   const std::vector<int> kTestValues = {1,  2,  3,  4,  5,  6,  7,  8,  9,  10,
                                         11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
@@ -37,8 +40,11 @@ TEST(HistogramPercentileCounterTest, ReturnsCorrectPercentiles) {
 }
 
 TEST(HistogramPercentileCounterTest, HandlesEmptySequence) {
-  webrtc::HistogramPercentileCounter counter(10);
+  HistogramPercentileCounter counter(10);
   EXPECT_FALSE(counter.GetPercentile(0.5f));
   counter.Add(1u);
   EXPECT_TRUE(counter.GetPercentile(0.5f));
 }
+
+}  // namespace
+}  // namespace webrtc

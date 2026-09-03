@@ -11,6 +11,7 @@
 #include "modules/congestion_controller/scream/scream_network_controller.h"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -119,9 +120,10 @@ NetworkControlUpdate ScreamNetworkController::OnNetworkRouteChange(
 
 NetworkControlUpdate ScreamNetworkController::OnProcessInterval(
     ProcessInterval msg) {
-  NetworkControlUpdate update;
-  update.pacer_config = MaybeCreatePacerConfig(msg.at_time);
-  return update;
+  if (msg.pacer_queue) {
+    pacer_queue_size_ = *msg.pacer_queue;
+  }
+  return CreateUpdate(msg.at_time);
 }
 
 NetworkControlUpdate ScreamNetworkController::OnRemoteBitrateReport(
@@ -139,6 +141,7 @@ NetworkControlUpdate ScreamNetworkController::OnRoundTripTimeUpdate(
 
 NetworkControlUpdate ScreamNetworkController::OnSentPacket(SentPacket msg) {
   scream_->OnPacketSent(msg.data_in_flight);
+  data_in_flight_ = msg.data_in_flight;
   if (msg.data_in_flight > scream_->max_data_in_flight() ||
       scream_->delay_based_congestion_control().IsQueueDelayDetected()) {
     return CreateUpdate(msg.send_time);
@@ -195,21 +198,47 @@ NetworkControlUpdate ScreamNetworkController::OnNetworkStateEstimate(
 NetworkControlUpdate ScreamNetworkController::OnTransportPacketsFeedback(
     TransportPacketsFeedback msg) {
   scream_->OnTransportPacketsFeedback(msg);
+  data_in_flight_ = msg.data_in_flight;
   return CreateUpdate(msg.feedback_time);
+}
+
+double ScreamNetworkController::CalculateCwndReduceRatio() const {
+  if (data_in_flight_ > scream_->max_data_in_flight()) {
+    return 1.0;
+  }
+
+  double cwnd_reduce_ratio = 0.0;
+  if (scream_->pacing_rate() > DataRate::Zero() &&
+      !pacer_queue_size_.IsZero()) {
+    TimeDelta pacing_delay = pacer_queue_size_ / scream_->pacing_rate();
+    TimeDelta min_delay = params_.min_pacing_delay_for_pushback.Get();
+    TimeDelta max_delay = params_.max_pacing_delay_for_pushback.Get();
+    if (max_delay > min_delay) {
+      double ratio = (pacing_delay - min_delay) / (max_delay - min_delay);
+      cwnd_reduce_ratio += std::clamp(ratio, 0.0, 1.0);
+    }
+  }
+  return std::clamp(cwnd_reduce_ratio, 0.0, 1.0);
 }
 
 NetworkControlUpdate ScreamNetworkController::CreateUpdate(Timestamp now) {
   NetworkControlUpdate update;
-  if (scream_->target_rate() != reported_target_rate_) {
+  bool is_bandwidth_limited = !scream_->is_application_limited();
+  double cwnd_reduce_ratio = CalculateCwndReduceRatio();
+
+  if (scream_->target_rate() != reported_target_rate_ ||
+      is_bandwidth_limited != reported_is_bandwidth_limited_ ||
+      std::abs(cwnd_reduce_ratio - reported_cwnd_reduce_ratio_) > 0.1) {
     reported_target_rate_ = scream_->target_rate();
+    reported_is_bandwidth_limited_ = is_bandwidth_limited;
+    reported_cwnd_reduce_ratio_ = cwnd_reduce_ratio;
     TargetTransferRate target_rate_msg;
     target_rate_msg.at_time = now;
     target_rate_msg.target_rate = scream_->target_rate();
+    target_rate_msg.cwnd_reduce_ratio = cwnd_reduce_ratio;
     target_rate_msg.network_estimate.at_time = now;
     target_rate_msg.network_estimate.round_trip_time = scream_->rtt();
-    // TODO: bugs.webrtc.org/447037083 - bwe_period must currently be set but
-    // it seems like it is not used for anything sensible. Try to remove it.
-    target_rate_msg.network_estimate.bwe_period = TimeDelta::Millis(25);
+    target_rate_msg.is_bandwidth_limited = is_bandwidth_limited;
     update.target_rate = target_rate_msg;
   }
   update.pacer_config = MaybeCreatePacerConfig(now);

@@ -412,20 +412,6 @@ TEST_F(QualityScalingTest, NoAdaptDownForLowStartBitrateIfBitrateEnough_Vp8) {
 }
 
 TEST_F(QualityScalingTest,
-       NoAdaptDownForLowStartBitrateIfDefaultLimitsDisabled_Vp8) {
-  // qp_low:1, qp_high:127 -> kNormalQp
-  SetQualityScalingTrialQP({.vp8_low = 1, .vp8_high = 127});
-  field_trials().Set("WebRTC-DefaultBitrateLimitsKillSwitch", "Enabled");
-
-  DownscalingObserver test(
-      "VP8", {{.active = false}, {.active = false}, {.active = true}},
-      kSinglecastLimits720pVp8->min_start_bitrate_bps - 1,
-      /*automatic_resize=*/true,
-      /*expect_downscale=*/false);
-  RunBaseTest(&test);
-}
-
-TEST_F(QualityScalingTest,
        NoAdaptDownForLowStartBitrate_OneStreamSinglecastLimitsNotUsed_Vp8) {
   // qp_low:1, qp_high:127 -> kNormalQp
   SetQualityScalingTrialQP({.vp8_low = 1, .vp8_high = 127});

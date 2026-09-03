@@ -308,16 +308,43 @@ rtc_source_set("video_encoder_interface") {
   ]
 }
 
-rtc_source_set("video_encoder_factory_interface") {
-  sources = [ "video_encoder_factory_interface.h" ]
+rtc_library("video_encoder_factory_interface") {
+  visibility = [ "*" ]
+  sources = [
+    "video_encoder_builders.cc",
+    "video_encoder_builders.h",
+    "video_encoder_factory_interface.h",
+  ]
 
   deps = [
+    ":video_codecs_api",
     ":video_encoder_interface",
     ":video_encoding_general",
+    "..:function_view",
     "../../rtc_base:rtc_numerics",
+    "../units:data_rate",
+    "../units:data_size",
     "../units:time_delta",
+    "../units:timestamp",
     "../video:resolution",
     "../video:video_frame",
+  ]
+}
+
+rtc_library("video_encoder_builders_for_test") {
+  testonly = true
+  sources = [
+    "video_encoder_builders_for_test.cc",
+    "video_encoder_builders_for_test.h",
+  ]
+
+  deps = [
+    ":video_encoder_factory_interface",
+    ":video_encoder_interface",
+    "../units:data_rate",
+    "../units:data_size",
+    "../units:time_delta",
+    "../video:resolution",
   ]
 }
 
@@ -342,6 +369,7 @@ rtc_library("simple_encoder_wrapper") {
     "../units:data_size",
     "../units:frequency",
     "../units:timestamp",
+    "../video:resolution",
     "../video:video_frame",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/functional:any_invocable",
@@ -357,6 +385,7 @@ rtc_library("simple_encoder_wrapper_unittests") {
   deps = [
     ":libaom_av1_encoder_factory",
     ":simple_encoder_wrapper",
+    ":video_encoder_builders_for_test",
     ":video_encoder_factory_interface",
     ":video_encoding_general",
     "../../test:fileutils",
@@ -391,6 +420,7 @@ rtc_library("libaom_av1_encoder_factory_test") {
   deps = [
     ":libaom_av1_encoder_factory",
     ":video_codecs_api",
+    ":video_encoder_builders_for_test",
     ":video_encoder_factory_interface",
     ":video_encoder_interface",
     ":video_encoding_general",

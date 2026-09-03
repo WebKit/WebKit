@@ -40,6 +40,7 @@
 -api/numerics/samples_stats_counter_unittest.cc
 -api/rtc_error.cc
 -api/rtp_packet_info.cc
+-api/stats/rtcstats_objects.cc
 -api/video/i010_buffer.cc
 -api/video/i210_buffer.cc
 -api/video/i410_buffer.cc
@@ -54,6 +55,7 @@
 -api/video/test/nv12_buffer_unittest.cc
 -api/transport/stun.cc
 -api/transport/stun_unittest.cc
+-api/video/video_adapter_unittest.cc
 -api/video/video_bitrate_allocation.cc
 -api/video_codecs/h264_profile_level_id.cc
 -api/video_codecs/h265_profile_tier_level.cc
@@ -182,7 +184,6 @@
 -media/base/rtp_utils_unittest.cc
 -media/base/stream_params_unittest.cc
 -media/base/test_utils.h
--media/base/video_adapter_unittest.cc
 -media/engine/simulcast_encoder_adapter.cc
 -media/engine/simulcast_encoder_adapter_unittest.cc
 -media/engine/webrtc_media_engine.cc
@@ -617,7 +618,6 @@
 -rtc_tools/video_replay.cc
 -stats/rtc_stats_report_unittest.cc
 -stats/rtc_stats_unittest.cc
--stats/rtcstats_objects.cc
 -stats/test/rtc_test_stats.cc
 -test/call_test.cc
 -test/direct_transport.cc

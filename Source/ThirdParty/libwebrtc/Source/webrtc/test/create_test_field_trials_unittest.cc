@@ -15,6 +15,7 @@
 #include "absl/flags/declare.h"
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials.h"
 #include "test/gtest.h"
 
@@ -70,6 +71,21 @@ TEST(CreateTestFieldTrialsTest,
   EXPECT_EQ(field_trials.Lookup("TrialCommon"), "ValueC");
   EXPECT_EQ(field_trials.Lookup("TrialFlag"), "FlagValue");
   EXPECT_EQ(field_trials.Lookup("TrialConstructor"), "ConstructorValue");
+}
+
+TEST(CreateTestFieldTrialsTest, WorksWhenForceTestEnvironmentEnabled) {
+  struct ScopedForce {
+    ScopedForce() {
+      old_value = IsForceTestEnvironmentEnabled();
+      SetForceTestEnvironment(true);
+    }
+    ~ScopedForce() { SetForceTestEnvironment(old_value); }
+    bool old_value;
+  } force;
+
+  FieldTrials field_trials = CreateTestFieldTrials("Trial/Value/");
+  field_trials.RegisterKeysForTesting({"Trial"});
+  EXPECT_EQ(field_trials.Lookup("Trial"), "Value");
 }
 
 }  // namespace

@@ -2482,9 +2482,7 @@ TEST_F(PacingControllerTest, FlushesPacketsOnKeyFrames) {
   const uint32_t kSsrc = 12345;
   const uint32_t kRtxSsrc = 12346;
 
-  const FieldTrials trials =
-      CreateTestFieldTrials("WebRTC-Pacer-KeyframeFlushing/Enabled/");
-  auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials);
+  auto pacer = std::make_unique<PacingController>(&clock_, &callback_, trials_);
   EXPECT_CALL(callback_, GetRtxSsrcForMedia(kSsrc))
       .WillRepeatedly(Return(kRtxSsrc));
   pacer->SetPacerConfig(

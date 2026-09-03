@@ -16,9 +16,16 @@
 
 #include "absl/debugging/failure_signal_handler.h"
 #include "absl/debugging/symbolize.h"
+#include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "api/environment/force_test_environment.h"
 #include "test/gmock.h"
 #include "test/test_main_lib.h"
+
+ABSL_FLAG(bool,
+          force_test_environment,
+          true,
+          "Crash if non-test Environment or FieldTrials are created.");
 
 namespace {
 
@@ -58,6 +65,7 @@ int main(int argc, char* argv[]) {
   std::vector<std::string> new_argv = ReplaceDashesWithUnderscores(argc, argv);
   std::vector<char*> raw_new_argv = VectorOfStringsToVectorOfPointers(new_argv);
   absl::ParseCommandLine(argc, &raw_new_argv[0]);
+  webrtc::SetForceTestEnvironment(absl::GetFlag(FLAGS_force_test_environment));
 
 // This absl handler use unsupported features/instructions on Fuchsia
 #if !defined(WEBRTC_FUCHSIA)

@@ -10,6 +10,7 @@
 
 #include "modules/congestion_controller/scream/scream_network_controller.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "api/environment/environment.h"
@@ -675,6 +676,273 @@ TEST(ScreamControllerTest, IgnoreFeedbackWithoutReceivedPackets) {
   // Since this is the first feedback, the target rate should be the starting
   // rate.
   EXPECT_EQ(update.target_rate->target_rate, DataRate::KilobitsPerSec(300));
+}
+
+TEST(ScreamControllerTest, ReportsIsBandwidthLimited) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  NetworkControllerConfig config(env);
+  config.constraints.starting_rate = DataRate::KilobitsPerSec(100);
+  config.constraints.max_data_rate = DataRate::KilobitsPerSec(5000);
+  ScreamNetworkController scream_controller(config);
+
+  // Initially, is_bandwidth_limited should be true because
+  // is_application_limited starts as false.
+  NetworkControlUpdate update = scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+  ASSERT_TRUE(update.target_rate.has_value());
+  EXPECT_TRUE(update.target_rate->is_bandwidth_limited);
+
+  CcFeedbackGenerator feedback_generator(
+      {.network_config = {.queue_delay_ms = 10,
+                          .link_capacity = DataRate::KilobitsPerSec(2000)}});
+
+  DataRate target_rate = DataRate::KilobitsPerSec(100);
+  // Send at full BWE rate so we are not application limited.
+  for (int i = 0; i < 20; ++i) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            target_rate, clock,
+            [&](SentPacket packet) { scream_controller.OnSentPacket(packet); });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      target_rate = update.target_rate->target_rate;
+      EXPECT_TRUE(update.target_rate->is_bandwidth_limited);
+    }
+  }
+
+  // Now send at a very low rate (e.g. 50kbps) while BWE remains high.
+  // This should trigger application limited state.
+  bool alr_detected = false;
+  for (int i = 0; i < 50; ++i) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            DataRate::KilobitsPerSec(50), clock,
+            [&](SentPacket packet) { scream_controller.OnSentPacket(packet); });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      if (!update.target_rate->is_bandwidth_limited) {
+        alr_detected = true;
+        break;
+      }
+    }
+  }
+  EXPECT_TRUE(alr_detected);
+}
+
+TEST(ScreamControllerTest, ReportsIsBandwidthLimitedEvenIfTargetRateClamped) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  NetworkControllerConfig config(env);
+  config.constraints.starting_rate = DataRate::KilobitsPerSec(500);
+  config.constraints.min_data_rate = DataRate::KilobitsPerSec(500);
+  config.constraints.max_data_rate = DataRate::KilobitsPerSec(500);
+  ScreamNetworkController scream_controller(config);
+
+  NetworkControlUpdate update = scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+  ASSERT_TRUE(update.target_rate.has_value());
+  EXPECT_TRUE(update.target_rate->is_bandwidth_limited);
+  EXPECT_EQ(update.target_rate->target_rate, DataRate::KilobitsPerSec(500));
+
+  CcFeedbackGenerator feedback_generator(
+      {.network_config = {.queue_delay_ms = 150,
+                          .link_capacity = DataRate::KilobitsPerSec(2000)}});
+
+  // Warm up to build up data in flight so that we are not application limited.
+  for (int i = 0; i < 5; ++i) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            DataRate::KilobitsPerSec(500), clock,
+            [&](SentPacket packet) { scream_controller.OnSentPacket(packet); });
+    scream_controller.OnTransportPacketsFeedback(feedback);
+  }
+
+  // Now we should be actively sending near capacity (is_bandwidth_limited =
+  // true).
+  for (int i = 0; i < 15; ++i) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            DataRate::KilobitsPerSec(500), clock,
+            [&](SentPacket packet) { scream_controller.OnSentPacket(packet); });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      EXPECT_TRUE(update.target_rate->is_bandwidth_limited);
+      EXPECT_EQ(update.target_rate->target_rate, DataRate::KilobitsPerSec(500));
+    }
+  }
+
+  // Now send at a very low rate (50kbps).
+  // The target rate is clamped at 500kbps so it cannot change.
+  // We expect an update.target_rate to be generated anyway because
+  // is_bandwidth_limited changes to false.
+  bool alr_detected = false;
+  for (int i = 0; i < 50; ++i) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            DataRate::KilobitsPerSec(50), clock,
+            [&](SentPacket packet) { scream_controller.OnSentPacket(packet); });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      EXPECT_EQ(update.target_rate->target_rate, DataRate::KilobitsPerSec(500));
+      if (!update.target_rate->is_bandwidth_limited) {
+        alr_detected = true;
+        break;
+      }
+    }
+  }
+  EXPECT_TRUE(alr_detected);
+}
+
+TEST(ScreamControllerTest, AlrRecoversDuringPeriodicPadding) {
+  SimulatedClock clock(Timestamp::Zero());
+  // Set periodic padding and padding duration to 1s so it aligns exactly with
+  // warmup and activates repeatedly in the final loop.
+  Environment env = CreateTestEnvironment({.time = &clock});
+  CcFeedbackGenerator feedback_generator(CcFeedbackGenerator::Config{
+      .network_config = {.queue_delay_ms = 50,
+                         .link_capacity = DataRate::KilobitsPerSec(2000)}});
+
+  NetworkControllerConfig controller_config(env);
+  ScreamNetworkController scream_controller(controller_config);
+
+  StreamsConfig streams_config;
+  streams_config.max_total_allocated_bitrate = DataRate::KilobitsPerSec(10'000);
+  scream_controller.OnStreamsConfig(streams_config);
+
+  TargetRateConstraints rate_constraints;
+  rate_constraints.max_data_rate = DataRate::KilobitsPerSec(10'000);
+  rate_constraints.starting_rate = DataRate::KilobitsPerSec(300);
+  scream_controller.OnTargetRateConstraints(rate_constraints);
+
+  NetworkControlUpdate update = scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+  DataRate target_rate = DataRate::KilobitsPerSec(300);
+
+  // Warmup loop: allow BWE to adapt up to the 2 Mbps link capacity.
+  Timestamp warmup_start = clock.CurrentTime();
+  while (clock.CurrentTime() - warmup_start < TimeDelta::Seconds(10)) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            target_rate, clock, [&](const SentPacket& packet) {
+              scream_controller.OnSentPacket(packet);
+            });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      target_rate = update.target_rate->target_rate;
+    }
+  }
+  EXPECT_GE(target_rate, DataRate::KilobitsPerSec(1800));
+  EXPECT_LE(target_rate, DataRate::KilobitsPerSec(2100));
+
+  // ALR entry: ensure we enter ALR by sending below capacity.
+  bool alr_detected = false;
+  Timestamp alr_start = clock.CurrentTime();
+  while (clock.CurrentTime() - alr_start < TimeDelta::Seconds(1)) {
+    TransportPacketsFeedback feedback =
+        feedback_generator.ProcessUntilNextFeedback(
+            DataRate::KilobitsPerSec(100), clock,
+            [&](const SentPacket& packet) {
+              scream_controller.OnSentPacket(packet);
+            });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      target_rate = update.target_rate->target_rate;
+      if (!update.target_rate->is_bandwidth_limited) {
+        alr_detected = true;
+        break;
+      }
+    }
+  }
+  EXPECT_TRUE(alr_detected);
+
+  // Recovery loop: create a new channel with higher capacity (10 Mbps) and
+  // lower delay (5ms). Even though the application only sends at `target_rate`
+  // (which was frozen by ALR), active periodic padding automatically unblocks
+  // ALR, allowing BWE to adapt upwards close to the new 10 Mbps link capacity.
+  CcFeedbackGenerator high_cap_feedback_generator(CcFeedbackGenerator::Config{
+      .network_config = {.queue_delay_ms = 5,
+                         .link_capacity = DataRate::KilobitsPerSec(10'000)}});
+
+  bool alr_recovered = false;
+  Timestamp recovery_start = clock.CurrentTime();
+  DataRate padding_rate = DataRate::Zero();
+  while (clock.CurrentTime() - recovery_start < TimeDelta::Seconds(5)) {
+    TransportPacketsFeedback feedback =
+        high_cap_feedback_generator.ProcessUntilNextFeedback(
+            std::max(padding_rate, DataRate::KilobitsPerSec(100)), clock,
+            [&](const SentPacket& packet) {
+              scream_controller.OnSentPacket(packet);
+            });
+    update = scream_controller.OnTransportPacketsFeedback(feedback);
+    if (update.target_rate.has_value()) {
+      target_rate = update.target_rate->target_rate;
+      if (update.target_rate->is_bandwidth_limited) {
+        alr_recovered = true;
+      }
+    }
+    if (update.pacer_config.has_value()) {
+      padding_rate = update.pacer_config->pad_rate();
+    }
+  }
+
+  EXPECT_TRUE(alr_recovered);
+  EXPECT_GE(target_rate, DataRate::KilobitsPerSec(9800));
+}
+
+TEST(ScreamControllerTest, CwndReduceRatioSetWhenPacerQueueGrowsAndShrinks) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  NetworkControllerConfig config(env);
+  config.constraints.starting_rate = DataRate::KilobitsPerSec(1000);
+  ScreamNetworkController scream_controller(config);
+
+  scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+
+  // Starting rate is 1000 kbps, so pacing rate = 1.1 * 1000 kbps = 1100 kbps
+  // (137,500 bytes/sec). Pacer queue of 41250 bytes gives (41250/137500) =
+  // 300ms pacing delay. Expected ratio: (300ms - 100ms) / (500ms - 100ms) = 200
+  // / 400 = 0.5.
+  ProcessInterval msg1;
+  msg1.at_time = clock.CurrentTime();
+  msg1.pacer_queue = DataSize::Bytes(41250);
+
+  NetworkControlUpdate update1 = scream_controller.OnProcessInterval(msg1);
+  ASSERT_TRUE(update1.target_rate.has_value());
+  EXPECT_NEAR(update1.target_rate->cwnd_reduce_ratio, 0.5, 0.05);
+
+  // Send ProcessInterval with empty pacer queue -> cwnd_reduce_ratio drops back
+  // to 0.0.
+  clock.AdvanceTime(TimeDelta::Millis(100));
+  ProcessInterval msg2;
+  msg2.at_time = clock.CurrentTime();
+  msg2.pacer_queue = DataSize::Zero();
+
+  NetworkControlUpdate update2 = scream_controller.OnProcessInterval(msg2);
+  ASSERT_TRUE(update2.target_rate.has_value());
+  EXPECT_EQ(update2.target_rate->cwnd_reduce_ratio, 0.0);
+}
+
+TEST(ScreamControllerTest, CwndReduceRatioSetToOneWhenCongestionWindowIsFull) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  NetworkControllerConfig config(env);
+  config.constraints.starting_rate = DataRate::KilobitsPerSec(1000);
+  ScreamNetworkController scream_controller(config);
+
+  scream_controller.OnNetworkAvailability(
+      {.at_time = clock.CurrentTime(), .network_available = true});
+
+  // Send a packet where data_in_flight (12000 bytes) exceeds max_data_in_flight
+  // (~10000 bytes).
+  SentPacket sent_packet;
+  sent_packet.send_time = clock.CurrentTime();
+  sent_packet.data_in_flight = DataSize::Bytes(12000);
+
+  NetworkControlUpdate update = scream_controller.OnSentPacket(sent_packet);
+  ASSERT_TRUE(update.target_rate.has_value());
+  EXPECT_EQ(update.target_rate->cwnd_reduce_ratio, 1.0);
 }
 
 }  // namespace

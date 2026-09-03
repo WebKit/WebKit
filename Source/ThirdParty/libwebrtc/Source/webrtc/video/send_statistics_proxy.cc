@@ -315,27 +315,42 @@ void SendStatisticsProxy::UmaSamplesContainer::LogPsnrValues(
       psnr_counters.psnr_y.Avg(kMinRequiredPsnrSamples);
   if (psnr_y.has_value()) {
     uma_name.back() = 'Y';
-    metrics::HistogramAdd(metrics::HistogramFactoryGetCountsLinear(
-                              uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount),
-                          psnr_y.value() * kPsnrScalingFactor);
+    metrics::Histogram* histogram = metrics::HistogramFactoryGetCountsLinear(
+        uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount);
+    if (histogram) {
+      metrics::HistogramAdd(histogram, psnr_y.value() * kPsnrScalingFactor);
+    } else {
+      RTC_LOG(LS_WARNING) << "Failed to create histogram for " << uma_name
+                          << ". psnr_y = " << psnr_y.value();
+    }
   }
 
   std::optional<float> psnr_u =
       psnr_counters.psnr_u.Avg(kMinRequiredPsnrSamples);
   if (psnr_u.has_value()) {
     uma_name.back() = 'U';
-    metrics::HistogramAdd(metrics::HistogramFactoryGetCountsLinear(
-                              uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount),
-                          psnr_u.value() * kPsnrScalingFactor);
+    metrics::Histogram* histogram = metrics::HistogramFactoryGetCountsLinear(
+        uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount);
+    if (histogram) {
+      metrics::HistogramAdd(histogram, psnr_u.value() * kPsnrScalingFactor);
+    } else {
+      RTC_LOG(LS_WARNING) << "Failed to create histogram for " << uma_name
+                          << ". psnr_u = " << psnr_u.value();
+    }
   }
 
   std::optional<float> psnr_v =
       psnr_counters.psnr_v.Avg(kMinRequiredPsnrSamples);
   if (psnr_v.has_value()) {
     uma_name.back() = 'V';
-    metrics::HistogramAdd(metrics::HistogramFactoryGetCountsLinear(
-                              uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount),
-                          psnr_v.value() * kPsnrScalingFactor);
+    metrics::Histogram* histogram = metrics::HistogramFactoryGetCountsLinear(
+        uma_name, kPsnrMin, kPsnrMax, kPsnrBucketCount);
+    if (histogram) {
+      metrics::HistogramAdd(histogram, psnr_v.value() * kPsnrScalingFactor);
+    } else {
+      RTC_LOG(LS_WARNING) << "Failed to create histogram for " << uma_name
+                          << ". psnr_v = " << psnr_v.value();
+    }
   }
 }
 

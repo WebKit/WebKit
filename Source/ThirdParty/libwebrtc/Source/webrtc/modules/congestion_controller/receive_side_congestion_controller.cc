@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "api/environment/environment.h"
@@ -20,6 +21,7 @@
 #include "api/rtp_parameters.h"
 #include "api/sequence_checker.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "modules/congestion_controller/remb_throttler.h"
@@ -155,12 +157,20 @@ ReceiveSideCongestionController::GetCongestionControllerStatsPerSsrc() const {
 }
 
 void ReceiveSideCongestionController::OnBitrateChanged(int bitrate_bps) {
+  OnBitrateChanged(DataRate::BitsPerSec(bitrate_bps),
+                   /*is_bandwidth_limited=*/true,
+                   /*transport_overhead=*/std::nullopt);
+}
+
+void ReceiveSideCongestionController::OnBitrateChanged(
+    DataRate target_rate,
+    bool is_bandwidth_limited,
+    std::optional<DataSize> transport_overhead) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  DataRate send_bandwidth_estimate = DataRate::BitsPerSec(bitrate_bps);
   transport_sequence_number_feedback_generator_.OnSendBandwidthEstimateChanged(
-      send_bandwidth_estimate);
+      target_rate, is_bandwidth_limited, transport_overhead);
   congestion_control_feedback_generator_.OnSendBandwidthEstimateChanged(
-      send_bandwidth_estimate);
+      target_rate, is_bandwidth_limited, transport_overhead);
 }
 
 TimeDelta ReceiveSideCongestionController::MaybeProcess() {

@@ -57,11 +57,13 @@ in definitions for everything they declare.
 
 ### `TODO` comments
 
-Follow the [Google styleguide for `TODO` comments][goog-style-todo]. When
-referencing a WebRTC bug, prefer using the URL form (excluding the scheme part):
+Follow the [Google styleguide for `TODO` comments][goog-style-todo]. TODOs
+should have a syntax of the following form `TODO(<metadata,...>): <content>`
+When referencing a WebRTC bug, prefer using the URL form (excluding the scheme
+part):
 
 ```cpp
-// TODO: bugs.webrtc.org/12345 - Delete the hack when blocking bugs are resolved.
+// TODO(bugs.webrtc.org/42224904): Delete when blocking bugs are resolved.
 ```
 
 The short form used in commit messages, e.g. `webrtc:12345`, is discouraged.
@@ -93,10 +95,10 @@ NOTE 1: The annotation goes on the declaration in the `.h` file, not the
 definition in the `.cc` file!
 
 NOTE 2: In Chromium and WebRTC [ABSL_DEPRECATE_AND_INLINE] macro is patched not
-to add [[deprecated]] attribute. That allows to use the macro before all usage
+to add \[[deprecated]\] attribute. That allows to use the macro before all usage
 in Chromium and WebRTC are cleaned up to a non-deprecated variant.
 
-NOTE 3: In order to use the [[deprecated]] function without getting errors,
+NOTE 3: In order to use the \[[deprecated]\] function without getting errors,
 for example in a unit test, do something like this:
 
 ```cpp
@@ -130,11 +132,11 @@ allow the callee to change the array size.
 
 For example,
 
-| instead of | use |
-|-------------------------------------|----------------------|
-| `const std::vector<T>&` | `std::span<const T>` |
+| instead of                          | use                  |
+| ----------------------------------- | -------------------- |
+| `const std::vector<T>&`             | `std::span<const T>` |
 | `const T* ptr, size_t num_elements` | `std::span<const T>` |
-| `T* ptr, size_t num_elements` | `std::span<T>` |
+| `T* ptr, size_t num_elements`       | `std::span<T>`       |
 
 See the [cpp reference][span] for more detailed docs.
 
@@ -152,8 +154,8 @@ type has been migrated to std::span.
 WebRTC uses std::string, with content assumed to be UTF-8. Note that this has to
 be verified whenever accepting external input.
 
-For concatenation of strings, use `webrtc::StrJoin` or
-`webrtc::StringBuilder` directly.
+For concatenation of strings, use `webrtc::StrJoin` or `webrtc::StringBuilder`
+directly.
 
 For string views, use `absl::string_view`, not `std::string_view`. The former is
 heavily used in webrtc, and there are platforms we export to where the two are
@@ -197,9 +199,9 @@ more.
 occasion. Prefer to use interfaces when that makes sense.
 
 - Prefer `webrtc::FunctionView` for cases where the callee will not save the
-function object.
+  function object.
 - Prefer `absl::AnyInvocable` when you can accomplish the task by moving the
-callable instead of copying it.
+  callable instead of copying it.
 
 ### Forward declarations
 
@@ -261,20 +263,20 @@ builds).
 The general rule is for library targets is:
 
 1. Use `rtc_library`.
-1. If the library is a header only target use `rtc_source_set`.
-1. If you really need to generate a static library, use `rtc_static_library`
+2. If the library is a header only target use `rtc_source_set`.
+3. If you really need to generate a static library, use `rtc_static_library`
    (same for shared libraries, in such case use `rtc_shared_library`).
 
 To ensure that all our [GN targets][gn-target] are built with the same
 configuration, only use the following [GN templates][gn-templ].
 
-| instead of | use |
-|------------------|-----------------------------------------------------------------------------------------|
-| `executable` | `rtc_executable` |
-| `shared_library` | `rtc_shared_library` |
-| `source_set` | `rtc_library` (for header only libraries you may use `rtc_source_set`) |
+| instead of       | use                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| `executable`     | `rtc_executable`                                                                     |
+| `shared_library` | `rtc_shared_library`                                                                 |
+| `source_set`     | `rtc_library` (for header only libraries you may use `rtc_source_set`)               |
 | `static_library` | `rtc_static_library` (use `rtc_library` unless you really need `rtc_static_library`) |
-| `test` | `rtc_test` |
+| `test`           | `rtc_test`                                                                           |
 
 ### Target visibility and the native API
 
@@ -322,6 +324,10 @@ When combined with the `-Wundef` compiler option, this produces compile time
 warnings if preprocessor symbols are misspelled, or used without corresponding
 build rules to set them.
 
+### Markdown formatting
+
+Markdown formatting is enabled by adding .style.mdformat to the root, which
+means that all changes to .md files will be reformatted by "git cl format".
 
 [abseil]: https://abseil.io/about/
 [absl_deprecate_and_inline]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/abseil-cpp/absl/base/macros.h?q=ABSL_DEPRECATE_AND_INLINE

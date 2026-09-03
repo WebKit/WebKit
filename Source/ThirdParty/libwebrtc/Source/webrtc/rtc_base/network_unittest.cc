@@ -24,10 +24,8 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials.h"
 #include "api/sequence_checker.h"
-#include "api/test/rtc_error_matchers.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/logging.h"
@@ -38,6 +36,7 @@
 #include "rtc_base/network_monitor_factory.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket_address.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -330,8 +329,7 @@ class NetworkTest : public ::testing::Test {
 #endif  // defined(WEBRTC_POSIX)
 
  protected:
-  const FieldTrials field_trials_ = CreateTestFieldTrials();
-  const Environment env_ = CreateEnvironment(&field_trials_);
+  const Environment env_ = CreateTestEnvironment();
   test::RunLoop main_thread_;
   bool callback_called_ = false;
 };
@@ -966,6 +964,13 @@ TEST_F(NetworkTest, TestGetAdapterTypeFromNameMatching) {
   ClearNetworks(manager);
   ReleaseIfAddrs(addr_list);
 
+  // Tailscale interface; name is in form "tailscale<index>".
+  strcpy(if_name, "tailscale0");
+  addr_list = InstallIpv4Network(if_name, ipv4_address1, ipv4_mask, manager);
+  EXPECT_EQ(ADAPTER_TYPE_VPN, GetAdapterType(manager));
+  ClearNetworks(manager);
+  ReleaseIfAddrs(addr_list);
+
   strcpy(if_name, "lo0");
   addr_list = InstallIpv6Network(if_name, ipv6_address1, ipv6_mask, manager);
   EXPECT_EQ(ADAPTER_TYPE_LOOPBACK, GetAdapterType(manager));
@@ -1250,7 +1255,7 @@ TEST_F(NetworkTest, TestNetworkMonitoring) {
   manager.StartUpdating();
   FakeNetworkMonitor* network_monitor = GetNetworkMonitor(manager);
   EXPECT_TRUE(network_monitor && network_monitor->started());
-  EXPECT_THAT(WaitUntil([&] { return callback_called_; }, IsTrue()), IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return callback_called_; }));
   callback_called_ = false;
 
   // Clear the networks so that there will be network changes below.
@@ -1258,7 +1263,7 @@ TEST_F(NetworkTest, TestNetworkMonitoring) {
   // Network manager is started, so the callback is called when the network
   // monitor fires the network-change event.
   network_monitor->InovkeNetworksChangedCallbackForTesting();
-  EXPECT_THAT(WaitUntil([&] { return callback_called_; }, IsTrue()), IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return callback_called_; }));
 
   // Network manager is stopped.
   manager.StopUpdating();
@@ -1280,7 +1285,7 @@ TEST_F(NetworkTest, MAYBE_DefaultLocalAddress) {
                                   {this, [this]() { OnNetworksChanged(); }},
                                   &factory);
   manager.StartUpdating();
-  EXPECT_THAT(WaitUntil([&] { return callback_called_; }, IsTrue()), IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return callback_called_; }));
 
   // Make sure we can query default local address when an address for such
   // address family exists.
@@ -1417,12 +1422,13 @@ TEST_F(NetworkTest, IgnoresMACBasedIPv6Address) {
 }
 
 TEST_F(NetworkTest, WebRTC_AllowMACBasedIPv6Address) {
-  FieldTrials field_trials =
-      CreateTestFieldTrials("WebRTC-AllowMACBasedIPv6/Enabled/");
   std::string ipv6_address = "2607:fc20:f340:1dc8:214:22ff:fe01:2345";
   std::string ipv6_mask = "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF";
   PhysicalSocketServer socket_server;
-  BasicNetworkManager manager(CreateEnvironment(&field_trials), &socket_server);
+  BasicNetworkManager manager(
+      CreateTestEnvironment(
+          {.field_trials = "WebRTC-AllowMACBasedIPv6/Enabled/"}),
+      &socket_server);
   manager.StartUpdating();
 
   // IPSec interface; name is in form "ipsec<index>".

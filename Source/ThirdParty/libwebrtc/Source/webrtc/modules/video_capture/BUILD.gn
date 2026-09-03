@@ -59,9 +59,9 @@ if (!build_with_chromium || is_linux || is_chromeos) {
       "../../api:make_ref_counted",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
+      "../../api/video:video_common",
       "../../api/video:video_rtp_headers",
       "../../common_video",
-      "../../media:video_common",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:macromagic",
@@ -89,10 +89,7 @@ if (!build_with_chromium || is_linux || is_chromeos) {
         "linux/video_capture_v4l2.cc",
         "linux/video_capture_v4l2.h",
       ]
-      deps += [
-        "../../media:rtc_media_base",
-        "../../rtc_base:sanitizer",
-      ]
+      deps += [ "../../rtc_base:sanitizer" ]
 
       if (rtc_use_pipewire) {
         sources += [
@@ -113,7 +110,6 @@ if (!build_with_chromium || is_linux || is_chromeos) {
         deps += [
           "../../api:refcountedbase",
           "../../common_video",
-          "../../media:rtc_media_base",
           "../portal",
         ]
       }

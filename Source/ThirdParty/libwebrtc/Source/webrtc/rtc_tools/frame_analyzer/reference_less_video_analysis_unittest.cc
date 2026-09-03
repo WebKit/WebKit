@@ -15,15 +15,18 @@
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
+namespace webrtc {
+namespace {
+
 class ReferenceLessVideoAnalysisTest : public ::testing::Test {
  public:
   void SetUp() override {
-    video = webrtc::test::OpenY4mFile(
-        webrtc::test::ResourcePath("reference_less_video_test_file", "y4m"));
+    video = test::OpenY4mFile(
+        test::ResourcePath("reference_less_video_test_file", "y4m"));
     ASSERT_TRUE(video);
   }
 
-  webrtc::scoped_refptr<webrtc::test::Video> video;
+  scoped_refptr<test::Video> video;
   std::vector<double> psnr_per_frame;
   std::vector<double> ssim_per_frame;
 };
@@ -47,3 +50,6 @@ TEST_F(ReferenceLessVideoAnalysisTest, MatchIdenticalFrameClusters) {
   EXPECT_EQ(1, identical_frame_clusters[0]);
   EXPECT_EQ(1, identical_frame_clusters[4]);
 }
+
+}  // namespace
+}  // namespace webrtc

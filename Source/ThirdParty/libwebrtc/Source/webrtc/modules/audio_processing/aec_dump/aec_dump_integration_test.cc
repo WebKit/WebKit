@@ -15,10 +15,10 @@
 
 #include "api/audio/audio_processing.h"
 #include "api/audio/builtin_audio_processing_builder.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "modules/audio_processing/aec_dump/mock_aec_dump.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -32,7 +32,7 @@ namespace {
 webrtc::scoped_refptr<webrtc::AudioProcessing> CreateAudioProcessing() {
   webrtc::scoped_refptr<webrtc::AudioProcessing> apm =
       webrtc::BuiltinAudioProcessingBuilder().Build(
-          webrtc::CreateEnvironment());
+          webrtc::CreateTestEnvironment());
   RTC_DCHECK(apm);
   return apm;
 }

@@ -128,7 +128,10 @@ TEST(VideoFrameMetadataTest, FrameDependencies) {
   VideoFrameMetadata metadata;
   EXPECT_EQ(metadata.GetFrameId(), std::nullopt);
   EXPECT_EQ(metadata.GetDependencies(), std::nullopt);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   EXPECT_THAT(metadata.GetFrameDependencies(), IsEmpty());
+#pragma clang diagnostic pop
 
   metadata.SetFrameId(42);
   EXPECT_THAT(metadata.GetFrameId(), Optional(42));
@@ -136,9 +139,12 @@ TEST(VideoFrameMetadataTest, FrameDependencies) {
   const int64_t deps[] = {1, 2, 3};
   metadata.SetDependencies(deps);
   EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(1, 2, 3)));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   EXPECT_THAT(metadata.GetFrameDependencies(), ElementsAre(1, 2, 3));
   const int64_t other_deps[] = {4, 5};
   metadata.SetFrameDependencies(other_deps);
+#pragma clang diagnostic pop
   EXPECT_THAT(metadata.GetDependencies(), Optional(ElementsAre(4, 5)));
 
   metadata.SetDependencies(std::nullopt);

@@ -802,8 +802,9 @@ int32_t LibaomAv1Encoder::Encode(
           it != last_encoded_timestamp_by_sid_.end()) {
         // Get the time since the last encoded frame for this spatial layer.
         // Don't drop enhancement layer repeat frame if last encode was more
-        // than one second ago.
-        if ((frame.rtp_timestamp() - it->second) > kVideoPayloadTypeFrequency) {
+        // than 500ms ago.
+        if ((frame.rtp_timestamp() - it->second) >
+            kVideoPayloadTypeFrequency / 2) {
           all_layers_droppable = false;
           break;
         }

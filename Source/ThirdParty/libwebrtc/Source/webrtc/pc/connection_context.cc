@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/audio_options.h"
 #include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
@@ -223,6 +224,14 @@ MediaEngineInterface* ConnectionContext::media_engine_w() {
   return media_engine_.get();
 }
 
+void ConnectionContext::ApplyGlobalAudioOptions(const AudioOptions& options) {
+  RTC_DCHECK_RUN_ON(worker_thread());
+  global_audio_options_.SetAll(options);
+  if (media_engine_reference_count_ > 0) {
+    media_engine_->voice().ApplyGlobalOptions(global_audio_options_);
+  }
+}
+
 void ConnectionContext::AddRefMediaEngine() {
   RTC_DCHECK_RUN_ON(worker_thread());
   RTC_DCHECK_GE(media_engine_reference_count_, 0);
@@ -230,6 +239,7 @@ void ConnectionContext::AddRefMediaEngine() {
   ++media_engine_reference_count_;
   if (media_engine_reference_count_ == 1) {
     media_engine_->Init();
+    media_engine_->voice().ApplyGlobalOptions(global_audio_options_);
   }
 }
 

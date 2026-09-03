@@ -137,9 +137,6 @@ class VideoSendStreamImpl : public webrtc::VideoSendStream,
 
   std::map<uint32_t, RtpPayloadState> GetRtpPayloadStates() const;
 
-  const std::optional<float>& configured_pacing_factor() const {
-    return configured_pacing_factor_;
-  }
 
  private:
   friend class test::VideoSendStreamPeer;
@@ -163,7 +160,6 @@ class VideoSendStreamImpl : public webrtc::VideoSendStream,
     SendDelayStats& send_delay_stats_;
   };
 
-  std::optional<float> GetPacingFactorOverride() const;
   // Implements BitrateAllocatorObserver.
   uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override;
   std::optional<DataRate> GetUsedRate() const override;
@@ -260,7 +256,6 @@ class VideoSendStreamImpl : public webrtc::VideoSendStream,
   };
   std::optional<VbaSendContext> video_bitrate_allocation_context_
       RTC_GUARDED_BY(thread_checker_);
-  const std::optional<float> configured_pacing_factor_;
 };
 }  // namespace internal
 }  // namespace webrtc

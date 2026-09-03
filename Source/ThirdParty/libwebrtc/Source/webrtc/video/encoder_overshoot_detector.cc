@@ -71,6 +71,13 @@ void EncoderOvershootDetector::SetTargetRate(DataRate target_bitrate,
 }
 
 void EncoderOvershootDetector::OnEncodedFrame(size_t bytes, int64_t time_ms) {
+  if (bytes == 0) {
+    if (time_last_update_ms_ != -1) {
+      time_last_update_ms_ = std::max(time_last_update_ms_, time_ms);
+    }
+    return;
+  }
+
   // Leak bits from the virtual pacer buffer, according to the current target
   // bitrate.
   LeakBits(time_ms);

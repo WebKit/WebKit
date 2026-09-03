@@ -297,9 +297,7 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
   EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 
   // Server has pending connection, accept it.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -350,9 +348,7 @@ void SocketTest::ConnectWithDnsLookupInternal(const IPAddress& loopback,
   EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 
   // Server has pending connection, accept it.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -487,9 +483,7 @@ void SocketTest::ConnectWhileNotClosedInternal(const IPAddress& loopback) {
 
   // Accept the original connection.
   SocketAddress accept_addr;
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -533,9 +527,7 @@ void SocketTest::ServerCloseDuringConnectInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Close down the server while the socket is in the accept queue.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(server.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(server.get(), SSE_READ); }));
   server->Close();
 
   // This should fail the connection for the client. Clean up.
@@ -566,9 +558,7 @@ void SocketTest::ClientCloseDuringConnectInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Close down the client while the socket is in the accept queue.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(server.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(server.get(), SSE_READ); }));
   client->Close();
 
   // The connection should still be able to be accepted.
@@ -608,9 +598,7 @@ void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
@@ -629,9 +617,7 @@ void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
   EXPECT_EQ(Socket::CS_CLOSED, accepted->GetState());
 
   // Expect that the client is notified, and has not yet closed.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(client.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(client.get(), SSE_READ); }));
   EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(Socket::CS_CONNECTED, client->GetState());
 
@@ -694,9 +680,7 @@ void SocketTest::CloseInClosedCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
@@ -759,8 +743,7 @@ void SocketTest::DeleteInReadCallbackInternal(const IPAddress& loopback) {
   SocketDeleter deleter(std::move(socket2));
   socket1->SubscribeReadEvent(
       &deleter, [&deleter](Socket* socket) { deleter.Delete(socket); });
-  EXPECT_THAT(WaitUntil([&] { return deleter.deleted(); }, ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return deleter.deleted(); }));
 }
 
 void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
@@ -778,9 +761,7 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, server->Listen(5));
 
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
 
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
@@ -811,9 +792,8 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   EXPECT_FALSE(sink.Check(accepted.get(), SSE_READ));
 
   // But should signal when process_io is true.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(accepted.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(
+      WaitUntil([&] { return (sink.Check(accepted.get(), SSE_READ)); }));
   EXPECT_LT(0, accepted->Recv(buf, 1024, nullptr));
 }
 
@@ -839,9 +819,7 @@ void SocketTest::TcpInternal(const IPAddress& loopback,
   EXPECT_EQ(0, receiver->Connect(server->GetLocalAddress()));
 
   // Accept connection which will be used for sending.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> sender(server->Accept(&accept_addr));
   ASSERT_TRUE(sender);
   sink.Monitor(sender.get());
@@ -902,10 +880,8 @@ void SocketTest::TcpInternal(const IPAddress& loopback,
     while (recv_buffer.size() < sent_size) {
       if (!readable) {
         // Wait until data is available.
-        EXPECT_THAT(
-            WaitUntil([&] { return sink.Check(receiver.get(), SSE_READ); },
-                      ::testing::IsTrue()),
-            IsRtcOk());
+        EXPECT_TRUE(
+            WaitUntil([&] { return sink.Check(receiver.get(), SSE_READ); }));
         readable = true;
         recv_called = false;
       }
@@ -934,9 +910,8 @@ void SocketTest::TcpInternal(const IPAddress& loopback,
     // Once all that we've sent has been received, expect to be able to send
     // again.
     if (!writable) {
-      ASSERT_THAT(WaitUntil([&] { return sink.Check(sender.get(), SSE_WRITE); },
-                            ::testing::IsTrue()),
-                  IsRtcOk());
+      ASSERT_TRUE(
+          WaitUntil([&] { return sink.Check(sender.get(), SSE_WRITE); }));
       writable = true;
       send_called = false;
     }
@@ -976,9 +951,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_THAT(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return (sink.Check(server.get(), SSE_READ)); }));
   std::unique_ptr<Socket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
@@ -992,9 +965,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(accepted->GetRemoteAddress(), client->GetLocalAddress());
 
   // Expect a writable callback from the connect.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(accepted.get(), SSE_WRITE); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(accepted.get(), SSE_WRITE); }));
 
   // Fill the socket buffer.
   char buf[1024 * 16] = {0};
@@ -1004,9 +975,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   EXPECT_TRUE(accepted->IsBlocking());
 
   // Wait until data is available.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(client.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(client.get(), SSE_READ); }));
 
   // Pull data.
   for (int i = 0; i < sends; ++i) {
@@ -1014,9 +983,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   }
 
   // Expect at least one additional writable callback.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(accepted.get(), SSE_WRITE); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(accepted.get(), SSE_WRITE); }));
 
   // Adding data in response to the writeable callback shouldn't cause infinite
   // callbacks.
@@ -1232,9 +1199,7 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   socket->SendTo("foo", 3, address);
 
   // Wait until data is available.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); }));
   Buffer buffer;
   Socket::ReceiveBuffer receive_buffer_1(buffer);
   ASSERT_GT(socket->RecvFrom(receive_buffer_1), 0);
@@ -1245,9 +1210,7 @@ void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {
   int64_t send_time_2 = env_.clock().TimeInMicroseconds();
   socket->SendTo("bar", 3, address);
   // Wait until data is available.
-  EXPECT_THAT(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); },
-                        ::testing::IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sink.Check(socket.get(), SSE_READ); }));
   Socket::ReceiveBuffer receive_buffer_2(buffer);
   ASSERT_GT(socket->RecvFrom(receive_buffer_2), 0);
 
@@ -1300,10 +1263,8 @@ void SocketTest::SocketSendRecvWithEcn(const IPAddress& loopback) {
   Socket::ReceiveBuffer receive_buffer(buffer);
 
   sending_socket->SendTo("foo", 3, address);
-  EXPECT_THAT(
-      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
-                ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); }));
   ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kNotEct);
 
@@ -1311,28 +1272,22 @@ void SocketTest::SocketSendRecvWithEcn(const IPAddress& loopback) {
   receiving_socket->SetOption(Socket::OPT_RECV_ECN, 1);
 
   sending_socket->SendTo("bar", 3, address);
-  EXPECT_THAT(
-      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
-                ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); }));
   ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct1);
 
   sending_socket->SetOption(Socket::OPT_SEND_ECN, 2);  // Ect(0)
   sending_socket->SendTo("bar", 3, address);
-  EXPECT_THAT(
-      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
-                ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); }));
   ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kEct0);
 
   sending_socket->SetOption(Socket::OPT_SEND_ECN, 3);  // Ce
   sending_socket->SendTo("bar", 3, address);
-  EXPECT_THAT(
-      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); },
-                ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(
+      WaitUntil([&] { return sink.Check(receiving_socket.get(), SSE_READ); }));
   ASSERT_GT(receiving_socket->RecvFrom(receive_buffer), 0);
   EXPECT_EQ(receive_buffer.ecn, EcnMarking::kCe);
 }

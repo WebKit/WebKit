@@ -24,8 +24,8 @@
 #include <new>
 
 #include "api/sequence_checker.h"
+#include "api/video/video_common.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "media/base/video_common.h"
 #include "modules/video_capture/video_capture_defines.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "rtc_base/checks.h"

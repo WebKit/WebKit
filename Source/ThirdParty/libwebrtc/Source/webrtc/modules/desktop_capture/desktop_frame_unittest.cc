@@ -14,6 +14,7 @@
 #include <cstring>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <span>
 
 #include "modules/desktop_capture/desktop_geometry.h"
@@ -381,6 +382,41 @@ TEST(DesktopFrameTest, CopyIntersectingPixelsUncontainedRectsScaled) {
        .expected_overlap_rect = DesktopRect::MakeXYWH(0, 0, 0, 0)}};
 
   RunTests(tests);
+}
+
+TEST(DesktopFrameTest, SetFrameDataToBlackI420) {
+  const int width = 10;
+  const int height = 10;
+  auto frame = std::make_unique<BasicDesktopFrame>(DesktopSize(width, height),
+                                                   FOURCC_I420);
+
+  // Fill the frame with dummy non-black data (e.g. 0xff)
+  std::span<uint8_t> frame_data(
+      frame->data(),
+      static_cast<size_t>(frame->stride() * frame->size().height()));
+  std::ranges::fill(frame_data, 0xff);
+  EXPECT_FALSE(frame->FrameDataIsBlack());
+
+  frame->SetFrameDataToBlack();
+
+  EXPECT_TRUE(frame->FrameDataIsBlack());
+
+  // Verify it is YUV black (Y=0, U=128, V=128) using standard C++20 spans.
+  std::span<const uint8_t> full_span(
+      frame->data(),
+      static_cast<size_t>(frame->stride() * frame->size().height()));
+
+  const size_t y_size = static_cast<size_t>(width * height);
+  const size_t uv_size =
+      static_cast<size_t>(((width + 1) / 2) * ((height + 1) / 2)) * 2;
+
+  std::span<const uint8_t> y_plane = full_span.subspan(0u, y_size);
+  std::span<const uint8_t> uv_plane = full_span.subspan(y_size, uv_size);
+
+  EXPECT_TRUE(
+      std::ranges::all_of(y_plane, [](uint8_t p) { return p == 0x00; }));
+  EXPECT_TRUE(
+      std::ranges::all_of(uv_plane, [](uint8_t p) { return p == 0x80; }));
 }
 
 }  // namespace webrtc

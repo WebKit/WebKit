@@ -20,6 +20,7 @@
 #include "api/video_codecs/video_codec.h"
 #include "rtc_base/checks.h"
 #include "test/create_test_environment.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -39,7 +40,7 @@ using ::testing::Values;
 
 // Test that the number of speed levels increases with complexity.
 TEST(LibaomSpeedConfigFactoryTest, NumLevelsIncreaseWithComplexity) {
-  FieldTrials empty_trial("");
+  FieldTrials empty_trial = CreateTestFieldTrials("");
   LibaomSpeedConfigFactory factory_low(VideoCodecComplexity::kComplexityLow,
                                        VideoCodecMode::kRealtimeVideo);
   EncoderSpeedController::Config config_low =
@@ -74,11 +75,10 @@ TEST(LibaomSpeedConfigFactoryTest, NumLevelsIncreaseWithComplexity) {
 
 // Test that speeds within each level are monotonic.
 TEST(LibaomSpeedConfigFactoryTest, SpeedsAreMonotonic) {
-  FieldTrials empty_trial("");
   LibaomSpeedConfigFactory factory(VideoCodecComplexity::kComplexityMax,
                                    VideoCodecMode::kRealtimeVideo);
   EncoderSpeedController::Config config =
-      factory.GetSpeedConfig(1280, 720, 3, empty_trial);
+      factory.GetSpeedConfig(1280, 720, 3, CreateTestFieldTrials(""));
 
   for (const auto& level : config.speed_levels) {
     // Lower reference class index means more important, so speed should be
@@ -100,11 +100,10 @@ TEST(LibaomSpeedConfigFactoryTest, SpeedsAreMonotonic) {
 
 // Test that keyframe and base layer speeds between levels are monotonic.
 TEST(LibaomSpeedConfigFactoryTest, KeyAndMainSpeedsIncreaseBetweenLevels) {
-  FieldTrials empty_trial("");
   LibaomSpeedConfigFactory factory(VideoCodecComplexity::kComplexityMax,
                                    VideoCodecMode::kRealtimeVideo);
   EncoderSpeedController::Config config =
-      factory.GetSpeedConfig(1280, 720, 3, empty_trial);
+      factory.GetSpeedConfig(1280, 720, 3, CreateTestFieldTrials(""));
 
   for (size_t i = 0; i < config.speed_levels.size() - 1; ++i) {
     const auto& current_level = config.speed_levels[i];
@@ -141,9 +140,8 @@ TEST_P(LibaomSpeedConfigFactoryResolutionTest, GetSpeedConfigStartSpeedIndex) {
   const ResolutionParams& params = GetParam();
   LibaomSpeedConfigFactory factory(VideoCodecComplexity::kComplexityMax,
                                    VideoCodecMode::kRealtimeVideo);
-  FieldTrials empty_trial("");
-  EncoderSpeedController::Config config =
-      factory.GetSpeedConfig(params.width, params.height, 3, empty_trial);
+  EncoderSpeedController::Config config = factory.GetSpeedConfig(
+      params.width, params.height, 3, CreateTestFieldTrials(""));
   int expected_index =
       std::max(0, static_cast<int>(config.speed_levels.size()) -
                       params.expected_start_index_offset);
@@ -155,9 +153,8 @@ void CheckDistinctConfigs(LibaomSpeedConfigFactory& factory,
   RTC_DCHECK_GT(num_temporal_layers, 0);
   RTC_DCHECK_LE(num_temporal_layers, 3);
 
-  FieldTrials empty_trial("");
-  EncoderSpeedController::Config config =
-      factory.GetSpeedConfig(640, 360, num_temporal_layers, empty_trial);
+  EncoderSpeedController::Config config = factory.GetSpeedConfig(
+      640, 360, num_temporal_layers, CreateTestFieldTrials(""));
 
   std::set<EncoderSpeedController::Config::SpeedLevel> unique_configs(
       config.speed_levels.begin(), config.speed_levels.end());
@@ -183,9 +180,9 @@ TEST(LibaomSpeedConfigFactoryTest, DistinctConfigs3Tl) {
 }
 
 TEST(LibaomSpeedConfigFactoryTest, PropagatesPsnrExperimentSettings) {
-  const std::string kFieldTrials =
-      "WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:3000ms/";
-  Environment env = CreateTestEnvironment({.field_trials = kFieldTrials});
+  Environment env = CreateTestEnvironment(
+      {.field_trials =
+           "WebRTC-Video-CalculatePsnr/Enabled,sampling_interval:3000ms/"});
 
   LibaomSpeedConfigFactory factory(VideoCodecComplexity::kComplexityMax,
                                    VideoCodecMode::kRealtimeVideo);

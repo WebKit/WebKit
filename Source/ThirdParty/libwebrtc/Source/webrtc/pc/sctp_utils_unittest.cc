@@ -22,11 +22,14 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "test/gtest.h"
 
+namespace webrtc {
+namespace {
+
 class SctpUtilsTest : public ::testing::Test {
  public:
-  void VerifyOpenMessageFormat(const webrtc::CopyOnWriteBuffer& packet,
+  void VerifyOpenMessageFormat(const CopyOnWriteBuffer& packet,
                                const std::string& label,
-                               const webrtc::DataChannelInit& config) {
+                               const DataChannelInit& config) {
     uint8_t message_type;
     uint8_t channel_type;
     uint32_t reliability;
@@ -34,7 +37,7 @@ class SctpUtilsTest : public ::testing::Test {
     uint16_t label_length;
     uint16_t protocol_length;
 
-    webrtc::ByteBufferReader buffer(packet);
+    ByteBufferReader buffer(packet);
     ASSERT_TRUE(buffer.ReadUInt8(&message_type));
     EXPECT_EQ(0x03, message_type);
 
@@ -56,8 +59,7 @@ class SctpUtilsTest : public ::testing::Test {
       // all values defined are greater than zero.
       EXPECT_EQ(priority, config.priority->value());
     } else {
-      EXPECT_EQ(priority,
-                webrtc::PriorityValue(webrtc::Priority::kLow).value());
+      EXPECT_EQ(priority, PriorityValue(Priority::kLow).value());
     }
 
     ASSERT_TRUE(buffer.ReadUInt32(&reliability));
@@ -82,19 +84,19 @@ class SctpUtilsTest : public ::testing::Test {
 };
 
 TEST_F(SctpUtilsTest, WriteParseOpenMessageWithOrderedReliable) {
-  webrtc::DataChannelInit config;
+  DataChannelInit config;
   std::string label = "abc";
   config.protocol = "y";
 
-  webrtc::CopyOnWriteBuffer packet;
-  ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
+  CopyOnWriteBuffer packet;
+  ASSERT_TRUE(WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
 
   std::string output_label;
-  webrtc::DataChannelInit output_config;
-  ASSERT_TRUE(webrtc::ParseDataChannelOpenMessage(packet, &output_label,
-                                                  &output_config));
+  DataChannelInit output_config;
+  ASSERT_TRUE(
+      ParseDataChannelOpenMessage(packet, &output_label, &output_config));
 
   EXPECT_EQ(label, output_label);
   EXPECT_EQ(config.protocol, output_config.protocol);
@@ -104,21 +106,21 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithOrderedReliable) {
 }
 
 TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmitTime) {
-  webrtc::DataChannelInit config;
+  DataChannelInit config;
   std::string label = "abc";
   config.ordered = false;
   config.maxRetransmitTime = 10;
   config.protocol = "y";
 
-  webrtc::CopyOnWriteBuffer packet;
-  ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
+  CopyOnWriteBuffer packet;
+  ASSERT_TRUE(WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
 
   std::string output_label;
-  webrtc::DataChannelInit output_config;
-  ASSERT_TRUE(webrtc::ParseDataChannelOpenMessage(packet, &output_label,
-                                                  &output_config));
+  DataChannelInit output_config;
+  ASSERT_TRUE(
+      ParseDataChannelOpenMessage(packet, &output_label, &output_config));
 
   EXPECT_EQ(label, output_label);
   EXPECT_EQ(config.protocol, output_config.protocol);
@@ -128,20 +130,20 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmitTime) {
 }
 
 TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmits) {
-  webrtc::DataChannelInit config;
+  DataChannelInit config;
   std::string label = "abc";
   config.maxRetransmits = 10;
   config.protocol = "y";
 
-  webrtc::CopyOnWriteBuffer packet;
-  ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
+  CopyOnWriteBuffer packet;
+  ASSERT_TRUE(WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
 
   std::string output_label;
-  webrtc::DataChannelInit output_config;
-  ASSERT_TRUE(webrtc::ParseDataChannelOpenMessage(packet, &output_label,
-                                                  &output_config));
+  DataChannelInit output_config;
+  ASSERT_TRUE(
+      ParseDataChannelOpenMessage(packet, &output_label, &output_config));
 
   EXPECT_EQ(label, output_label);
   EXPECT_EQ(config.protocol, output_config.protocol);
@@ -151,20 +153,20 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithMaxRetransmits) {
 }
 
 TEST_F(SctpUtilsTest, WriteParseOpenMessageWithPriority) {
-  webrtc::DataChannelInit config;
+  DataChannelInit config;
   std::string label = "abc";
   config.protocol = "y";
-  config.priority = webrtc::PriorityValue(webrtc::Priority::kVeryLow);
+  config.priority = PriorityValue(Priority::kVeryLow);
 
-  webrtc::CopyOnWriteBuffer packet;
-  ASSERT_TRUE(webrtc::WriteDataChannelOpenMessage(label, config, &packet));
+  CopyOnWriteBuffer packet;
+  ASSERT_TRUE(WriteDataChannelOpenMessage(label, config, &packet));
 
   VerifyOpenMessageFormat(packet, label, config);
 
   std::string output_label;
-  webrtc::DataChannelInit output_config;
-  ASSERT_TRUE(webrtc::ParseDataChannelOpenMessage(packet, &output_label,
-                                                  &output_config));
+  DataChannelInit output_config;
+  ASSERT_TRUE(
+      ParseDataChannelOpenMessage(packet, &output_label, &output_config));
 
   EXPECT_EQ(label, output_label);
   ASSERT_TRUE(output_config.priority);
@@ -172,39 +174,42 @@ TEST_F(SctpUtilsTest, WriteParseOpenMessageWithPriority) {
 }
 
 TEST_F(SctpUtilsTest, WriteParseAckMessage) {
-  webrtc::CopyOnWriteBuffer packet;
-  webrtc::WriteDataChannelOpenAckMessage(&packet);
+  CopyOnWriteBuffer packet;
+  WriteDataChannelOpenAckMessage(&packet);
 
   uint8_t message_type;
-  webrtc::ByteBufferReader buffer(packet);
+  ByteBufferReader buffer(packet);
   ASSERT_TRUE(buffer.ReadUInt8(&message_type));
   EXPECT_EQ(0x02, message_type);
 
-  EXPECT_TRUE(webrtc::ParseDataChannelOpenAckMessage(packet));
+  EXPECT_TRUE(ParseDataChannelOpenAckMessage(packet));
 }
 
 TEST_F(SctpUtilsTest, TestIsOpenMessage) {
-  webrtc::CopyOnWriteBuffer open(1);
+  CopyOnWriteBuffer open(1);
   open.MutableData()[0] = 0x03;
-  EXPECT_TRUE(webrtc::IsOpenMessage(open));
+  EXPECT_TRUE(IsOpenMessage(open));
 
-  webrtc::CopyOnWriteBuffer openAck(1);
+  CopyOnWriteBuffer openAck(1);
   openAck.MutableData()[0] = 0x02;
-  EXPECT_FALSE(webrtc::IsOpenMessage(openAck));
+  EXPECT_FALSE(IsOpenMessage(openAck));
 
-  webrtc::CopyOnWriteBuffer invalid(1);
+  CopyOnWriteBuffer invalid(1);
   invalid.MutableData()[0] = 0x01;
-  EXPECT_FALSE(webrtc::IsOpenMessage(invalid));
+  EXPECT_FALSE(IsOpenMessage(invalid));
 
-  webrtc::CopyOnWriteBuffer empty;
-  EXPECT_FALSE(webrtc::IsOpenMessage(empty));
+  CopyOnWriteBuffer empty;
+  EXPECT_FALSE(IsOpenMessage(empty));
 }
 
 TEST(SctpSidTest, Basics) {
   // These static asserts are mostly here to aid with readability (i.e. knowing
   // what these constants represent).
-  static_assert(webrtc::kMinSctpSid == 0, "Min stream id should be 0");
-  static_assert(webrtc::kMaxSctpSid <= webrtc::kSpecMaxSctpSid, "");
-  static_assert(webrtc::kSpecMaxSctpSid == std::numeric_limits<uint16_t>::max(),
+  static_assert(kMinSctpSid == 0, "Min stream id should be 0");
+  static_assert(kMaxSctpSid <= kSpecMaxSctpSid, "");
+  static_assert(kSpecMaxSctpSid == std::numeric_limits<uint16_t>::max(),
                 "Max legal sctp stream value should be 0xffff");
 }
+
+}  // namespace
+}  // namespace webrtc

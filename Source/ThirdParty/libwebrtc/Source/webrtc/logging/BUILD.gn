@@ -514,6 +514,7 @@ if (rtc_enable_protobuf) {
       "../api:candidate",
       "../api:dtls_transport_interface",
       "../api:function_view",
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api/rtc_event_log",

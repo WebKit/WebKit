@@ -25,7 +25,7 @@
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
-#include "api/sframe/sframe_decrypter_interface.h"
+#include "api/sframe/sframe_decryptor_interface.h"
 #include "api/sframe/sframe_types.h"
 #include "pc/media_stream.h"
 #include "pc/media_stream_proxy.h"
@@ -92,8 +92,8 @@ void RtpReceiverBase::SetFrameTransformer(
   }
 }
 
-RTCErrorOr<scoped_refptr<SframeDecrypterInterface>>
-RtpReceiverBase::CreateSframeDecrypterOrError(SframeCipherSuite cipher_suite) {
+RTCErrorOr<scoped_refptr<SframeDecryptorInterface>>
+RtpReceiverBase::CreateSframeDecryptorOrError(SframeCipherSuite cipher_suite) {
   RTC_DCHECK_RUN_ON(&signaling_thread_checker_);
 
   if (!enable_sframe_at_owner_) {

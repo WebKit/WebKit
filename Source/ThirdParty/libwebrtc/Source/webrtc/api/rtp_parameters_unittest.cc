@@ -15,12 +15,19 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "rtc_base/checks.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
+
+using ::testing::Pair;
+using ::testing::UnorderedElementsAre;
 RtpParameters CreateRtpParametersWithCodecs(
     const std::vector<bool>& active,
     const std::vector<std::optional<RtpCodec>>& codecs) {
@@ -35,14 +42,15 @@ RtpParameters CreateRtpParametersWithCodecs(
   }
   return parameters;
 }
-}  // namespace
 
-static const char kExtensionUri1[] = "extension-uri1";
-static const char kExtensionUri2[] = "extension-uri2";
+const char kExtensionUri1[] = "extension-uri1";
+const char kExtensionUri2[] = "extension-uri2";
 
-static const RtpExtension kExtension1(kExtensionUri1, 1);
-static const RtpExtension kExtension1Encrypted(kExtensionUri1, 10, true);
-static const RtpExtension kExtension2(kExtensionUri2, 2);
+const RtpExtension kExtension1(kExtensionUri1, RtpHeaderExtensionId(1));
+const RtpExtension kExtension1Encrypted(kExtensionUri1,
+                                        RtpHeaderExtensionId(10),
+                                        true);
+const RtpExtension kExtension2(kExtensionUri2, RtpHeaderExtensionId(2));
 
 TEST(RtpExtensionTest, DeduplicateHeaderExtensions) {
   std::vector<RtpExtension> extensions;
@@ -135,30 +143,42 @@ TEST(RtpExtensionTest, DeduplicateHeaderExtensions) {
 // comparison).
 TEST(RtpExtensionTest, DeduplicateHeaderExtensionsSorted) {
   const std::vector<RtpExtension> extensions = {
-      RtpExtension("cde1", 11, false), RtpExtension("cde2", 12, true),
-      RtpExtension("abc1", 3, false),  RtpExtension("abc2", 4, true),
-      RtpExtension("cde3", 9, true),   RtpExtension("cde4", 10, false),
-      RtpExtension("abc3", 1, true),   RtpExtension("abc4", 2, false),
-      RtpExtension("bcd3", 7, false),  RtpExtension("bcd1", 8, true),
-      RtpExtension("bcd2", 5, true),   RtpExtension("bcd4", 6, false),
+      RtpExtension("cde1", RtpHeaderExtensionId(11), false),
+      RtpExtension("cde2", RtpHeaderExtensionId(12), true),
+      RtpExtension("abc1", RtpHeaderExtensionId(3), false),
+      RtpExtension("abc2", RtpHeaderExtensionId(4), true),
+      RtpExtension("cde3", RtpHeaderExtensionId(9), true),
+      RtpExtension("cde4", RtpHeaderExtensionId(10), false),
+      RtpExtension("abc3", RtpHeaderExtensionId(1), true),
+      RtpExtension("abc4", RtpHeaderExtensionId(2), false),
+      RtpExtension("bcd3", RtpHeaderExtensionId(7), false),
+      RtpExtension("bcd1", RtpHeaderExtensionId(8), true),
+      RtpExtension("bcd2", RtpHeaderExtensionId(5), true),
+      RtpExtension("bcd4", RtpHeaderExtensionId(6), false),
   };
 
   auto encrypted = RtpExtension::DeduplicateHeaderExtensions(
       extensions, RtpExtension::Filter::kRequireEncryptedExtension);
 
   const std::vector<RtpExtension> expected_sorted_encrypted = {
-      RtpExtension("abc2", 4, true),  RtpExtension("abc3", 1, true),
-      RtpExtension("bcd1", 8, true),  RtpExtension("bcd2", 5, true),
-      RtpExtension("cde2", 12, true), RtpExtension("cde3", 9, true)};
+      RtpExtension("abc2", RtpHeaderExtensionId(4), true),
+      RtpExtension("abc3", RtpHeaderExtensionId(1), true),
+      RtpExtension("bcd1", RtpHeaderExtensionId(8), true),
+      RtpExtension("bcd2", RtpHeaderExtensionId(5), true),
+      RtpExtension("cde2", RtpHeaderExtensionId(12), true),
+      RtpExtension("cde3", RtpHeaderExtensionId(9), true)};
   EXPECT_EQ(expected_sorted_encrypted, encrypted);
 
   auto unencypted = RtpExtension::DeduplicateHeaderExtensions(
       extensions, RtpExtension::Filter::kDiscardEncryptedExtension);
 
   const std::vector<RtpExtension> expected_sorted_unencrypted = {
-      RtpExtension("abc1", 3, false),  RtpExtension("abc4", 2, false),
-      RtpExtension("bcd3", 7, false),  RtpExtension("bcd4", 6, false),
-      RtpExtension("cde1", 11, false), RtpExtension("cde4", 10, false)};
+      RtpExtension("abc1", RtpHeaderExtensionId(3), false),
+      RtpExtension("abc4", RtpHeaderExtensionId(2), false),
+      RtpExtension("bcd3", RtpHeaderExtensionId(7), false),
+      RtpExtension("bcd4", RtpHeaderExtensionId(6), false),
+      RtpExtension("cde1", RtpHeaderExtensionId(11), false),
+      RtpExtension("cde4", RtpHeaderExtensionId(10), false)};
   EXPECT_EQ(expected_sorted_unencrypted, unencypted);
 }
 
@@ -376,4 +396,34 @@ TEST(RtpParametersTest, IsMixedCodec) {
   EXPECT_TRUE(parameters.IsMixedCodec());
 }
 
+TEST(RtpExtensionTest, ToStringAndStringifySanitize) {
+  RtpExtension ext("http://example.com/test\r\n\\foo", RtpHeaderExtensionId(1));
+
+  // ToString() should escape raw control characters and backslash
+  EXPECT_EQ(ext.ToString(),
+            "{uri: http://example.com/test\\r\\n\\\\foo, id: 1}");
+
+  // AbslStringify should do the same
+  EXPECT_EQ(absl::StrCat(ext), "[1 http://example.com/test\\r\\n\\\\foo]");
+}
+
+TEST(CodecParameterMapTest, InitializerListWithAbslStringView) {
+  absl::string_view key1 = "key1";
+  absl::string_view val1 = "val1";
+  absl::string_view key2 = "key2";
+  absl::string_view val2 = "val2";
+
+  // Test constructor
+  CodecParameterMap map1 = {{key1, val1}, {key2, val2}};
+  EXPECT_THAT(map1,
+              UnorderedElementsAre(Pair("key1", "val1"), Pair("key2", "val2")));
+
+  // Test assignment
+  CodecParameterMap map2;
+  map2 = {{key1, val2}, {key2, val1}};
+  EXPECT_THAT(map2,
+              UnorderedElementsAre(Pair("key1", "val2"), Pair("key2", "val1")));
+}
+
+}  // namespace
 }  // namespace webrtc

@@ -34,21 +34,45 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_library("test_unittest") {
+  rtc_library("audio_ring_buffer_unittest") {
     testonly = true
-
-    sources = [
-      "audio_ring_buffer_unittest.cc",
-      "blocker_unittest.cc",
-      "lapped_transform_unittest.cc",
-    ]
-
+    sources = [ "audio_ring_buffer_unittest.cc" ]
     deps = [
       ":test",
       "../../../../../common_audio",
+      "../../../../../test:test_support",
+    ]
+  }
+
+  rtc_library("blocker_unittest") {
+    testonly = true
+    sources = [ "blocker_unittest.cc" ]
+    deps = [
+      ":test",
+      "../../../../../common_audio",
+      "../../../../../test:test_support",
+    ]
+  }
+
+  rtc_library("lapped_transform_unittest") {
+    testonly = true
+    sources = [ "lapped_transform_unittest.cc" ]
+    deps = [
+      ":test",
       "../../../../../rtc_base:checks",
       "../../../../../test:test_support",
-      "//testing/gtest",
+    ]
+  }
+
+  rtc_library("test_unittest") {
+    testonly = true
+
+    sources = []
+
+    deps = [
+      ":audio_ring_buffer_unittest",
+      ":blocker_unittest",
+      ":lapped_transform_unittest",
     ]
   }
 }

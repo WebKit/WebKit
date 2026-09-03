@@ -312,9 +312,7 @@ RTCError MergeFlexfecCodec(const CodecConfiguration& config,
                            PayloadTypeSuggester& pt_suggester,
                            const FieldTrialsView& trials,
                            bool pick_from_top_of_range) {
-  if (!config.resiliency.flexfec || config.codec.type != Codec::Type::kVideo ||
-      (!trials.IsEnabled("WebRTC-FlexFEC-03-Advertised") &&
-       !trials.IsEnabled("WebRTC-FlexFEC-03"))) {
+  if (!config.resiliency.flexfec || config.codec.type != Codec::Type::kVideo) {
     return RTCError::OK();
   }
   auto fec_it = absl::c_find_if(offered_codecs, [&](const Codec& c) {
@@ -529,7 +527,7 @@ RTCError MergeCodecsLegacy(const CodecList& reference_codecs,
         }
         sb << matching_codec->id;
       }
-      red_codec.params[kCodecParamNotInNameValueFormat] = sb.Release();
+      red_codec.SetParam(kCodecParamNotInNameValueFormat, sb.Release());
       RTCErrorOr<PayloadType> suggestion = pt_suggester.SuggestPayloadType(
           mid, red_codec, pick_from_top_of_range);
       if (!suggestion.ok()) {
@@ -605,7 +603,8 @@ CodecList MatchCodecPreference(
               // For RED, do not insert the codec again if it was already
               // inserted. audio/red for opus gets enabled by having RED before
               // the primary codec.
-              auto fmtp = codec.params.find(kCodecParamNotInNameValueFormat);
+              auto fmtp = codec.params.find(
+                  std::string(kCodecParamNotInNameValueFormat));
               if (fmtp != codec.params.end()) {
                 std::vector<absl::string_view> redundant_payloads =
                     split(fmtp->second, '/');
@@ -695,8 +694,8 @@ void NegotiateVideoCodecLevelsForOffer(
 
           if (it != supported_h265_profiles.end() &&
               filtered_ptl->level != it->second) {
-            filtered_codec.params[kH265FmtpLevelId] =
-                H265LevelToString(it->second);
+            filtered_codec.SetParam(kH265FmtpLevelId,
+                                    H265LevelToString(it->second));
           }
         }
       }
@@ -726,14 +725,15 @@ RTCError NegotiateCodecs(const CodecList& local_codecs,
       negotiated.IntersectFeedbackParams(*theirs);
       if (negotiated.GetResiliencyType() == Codec::ResiliencyType::kRtx) {
         // We support parsing the declarative rtx-time parameter.
-        const auto rtx_time_it = theirs->params.find(kCodecParamRtxTime);
+        const auto rtx_time_it =
+            theirs->params.find(std::string(kCodecParamRtxTime));
         if (rtx_time_it != theirs->params.end()) {
           negotiated.SetParam(kCodecParamRtxTime, rtx_time_it->second);
         }
       } else if (negotiated.GetResiliencyType() ==
                  Codec::ResiliencyType::kRed) {
         const auto red_it =
-            theirs->params.find(kCodecParamNotInNameValueFormat);
+            theirs->params.find(std::string(kCodecParamNotInNameValueFormat));
         if (red_it != theirs->params.end()) {
           negotiated.SetParam(kCodecParamNotInNameValueFormat, red_it->second);
         }
@@ -917,7 +917,6 @@ RTCError CodecVendor::MergeCodecsByDirection(MediaType type,
   const std::vector<CodecConfiguration>& recv_configs =
       (type == MediaType::AUDIO) ? audio_recv_codecs_.configurations()
                                  : video_recv_codecs_.configurations();
-
   switch (direction) {
     case RtpTransceiverDirection::kSendRecv:
     case RtpTransceiverDirection::kStopped:
@@ -933,10 +932,36 @@ RTCError CodecVendor::MergeCodecsByDirection(MediaType type,
       std::vector<CodecConfiguration> intersected;
       for (const CodecConfiguration& send_config : send_configs) {
         for (const CodecConfiguration& recv_config : recv_configs) {
-          if (absl::EqualsIgnoreCase(send_config.codec.name,
-                                     recv_config.codec.name) &&
-              send_config.codec.clockrate == recv_config.codec.clockrate) {
-            intersected.push_back(send_config);
+          if (MatchesWithCodecRules(send_config.codec, recv_config.codec)) {
+            CodecConfiguration merged_config = recv_config;
+            merged_config.codec.IntersectFeedbackParams(send_config.codec);
+            NegotiatePacketization(send_config.codec, recv_config.codec,
+                                   &merged_config.codec);
+            merged_config.resiliency.red =
+                send_config.resiliency.red && recv_config.resiliency.red;
+            merged_config.resiliency.ulpfec =
+                send_config.resiliency.ulpfec && recv_config.resiliency.ulpfec;
+            merged_config.resiliency.flexfec = send_config.resiliency.flexfec &&
+                                               recv_config.resiliency.flexfec;
+            merged_config.resiliency.rtx =
+                send_config.resiliency.rtx && recv_config.resiliency.rtx;
+            if (absl::EqualsIgnoreCase(send_config.codec.name,
+                                       kH264CodecName)) {
+              H264GenerateProfileLevelIdForAnswer(send_config.codec.params,
+                                                  recv_config.codec.params,
+                                                  &merged_config.codec.params);
+            }
+#ifdef RTC_ENABLE_H265
+            if (absl::EqualsIgnoreCase(send_config.codec.name,
+                                       kH265CodecName)) {
+              H265GenerateProfileTierLevelForAnswer(
+                  send_config.codec.params, recv_config.codec.params,
+                  &merged_config.codec.params);
+              NegotiateTxMode(send_config.codec, recv_config.codec,
+                              &merged_config.codec);
+            }
+#endif
+            intersected.push_back(merged_config);
             break;
           }
         }
@@ -1222,10 +1247,7 @@ RTCErrorOr<Codecs> CodecVendor::GetNegotiatedCodecsForAnswer(
         }
       }
       if (payload_types_in_transport_) {
-        // Redesign path: Use configurations to merge supported codecs.
-        MergeCodecsByDirection(media_description_options.type, answer_rtd, mid,
-                               filtered_codecs, pt_suggester,
-                               /*pick_from_top_of_range=*/false);
+        filtered_codecs = supported_codecs;
       } else {
         // Merge other_codecs into filtered_codecs, resolving PT conflicts.
         MergeCodecsLegacy(supported_codecs, mid, filtered_codecs, pt_suggester);

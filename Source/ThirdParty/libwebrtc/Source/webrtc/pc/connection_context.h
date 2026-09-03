@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/audio_options.h"
 #include "api/environment/environment.h"
 #include "api/packet_socket_factory.h"
 #include "api/peer_connection_interface.h"
@@ -106,7 +107,7 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
     return default_socket_factory_.get();
   }
   MediaFactory* call_factory() {
-    RTC_DCHECK_RUN_ON(worker_thread());
+    RTC_DCHECK_RUN_ON(signaling_thread_);
     return call_factory_.get();
   }
   UniqueRandomIdGenerator* ssrc_generator() { return &ssrc_generator_; }
@@ -118,6 +119,9 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
 
   // For use by tests.
   void set_use_rtx(bool use_rtx) { use_rtx_ = use_rtx; }
+
+  // Apply global audio options. Must be called on the worker thread.
+  void ApplyGlobalAudioOptions(const AudioOptions& options);
 
  protected:
   friend class MediaEngineReference;
@@ -167,7 +171,7 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
   std::unique_ptr<NetworkManager> default_network_manager_
       RTC_GUARDED_BY(signaling_thread_);
   std::unique_ptr<MediaFactory> const call_factory_
-      RTC_GUARDED_BY(worker_thread());
+      RTC_GUARDED_BY(signaling_thread_);
 
   std::unique_ptr<PacketSocketFactory> default_socket_factory_
       RTC_GUARDED_BY(signaling_thread_);
@@ -176,6 +180,10 @@ class ConnectionContext final : public RefCountedNonVirtual<ConnectionContext> {
   // Controls whether to announce support for the the rfc4588 payload format
   // for retransmitted video packets.
   bool use_rtx_;
+
+  // Stored global audio options applied to the media engine upon
+  // initialization.
+  AudioOptions global_audio_options_ RTC_GUARDED_BY(worker_thread());
 };
 
 }  // namespace webrtc

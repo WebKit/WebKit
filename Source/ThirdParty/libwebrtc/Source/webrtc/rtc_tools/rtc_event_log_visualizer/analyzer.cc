@@ -94,7 +94,8 @@ void EventLogAnalyzer::CreateGraphsByName(const std::vector<std::string>& names,
 
 void EventLogAnalyzer::InitializeMapOfNamedGraphs(bool show_detector_state,
                                                   bool show_alr_state,
-                                                  bool show_link_capacity) {
+                                                  bool show_link_capacity,
+                                                  bool include_overhead) {
   plots_.RegisterPlot("incoming_packet_sizes", [this](Plot* plot) {
     this->CreatePacketGraph(kIncomingPacket, plot);
   });
@@ -148,15 +149,16 @@ void EventLogAnalyzer::InitializeMapOfNamedGraphs(bool show_detector_state,
   plots_.RegisterPlot("incoming_loss_rate", [this](Plot* plot) {
     this->CreateIncomingPacketLossGraph(plot);
   });
-  plots_.RegisterPlot("incoming_bitrate", [this](Plot* plot) {
-    this->CreateTotalIncomingBitrateGraph(plot);
+  plots_.RegisterPlot("incoming_bitrate", [this, include_overhead](Plot* plot) {
+    this->CreateTotalIncomingBitrateGraph(plot, include_overhead);
   });
-  plots_.RegisterPlot(
-      "outgoing_bitrate", [this, show_detector_state, show_alr_state,
-                           show_link_capacity](Plot* plot) {
-        this->CreateTotalOutgoingBitrateGraph(
-            plot, show_detector_state, show_alr_state, show_link_capacity);
-      });
+  plots_.RegisterPlot("outgoing_bitrate", [this, show_detector_state,
+                                           show_alr_state, show_link_capacity,
+                                           include_overhead](Plot* plot) {
+    this->CreateTotalOutgoingBitrateGraph(plot, show_detector_state,
+                                          show_alr_state, show_link_capacity,
+                                          include_overhead);
+  });
   plots_.RegisterPlot("incoming_stream_bitrate", [this](Plot* plot) {
     this->CreateStreamBitrateGraph(kIncomingPacket, plot);
   });
@@ -398,18 +400,22 @@ void EventLogAnalyzer::CreateFractionLossGraph(Plot* plot) const {
   webrtc::CreateFractionLossGraph(parsed_log_, config_, plot);
 }
 
-void EventLogAnalyzer::CreateTotalIncomingBitrateGraph(Plot* plot) const {
-  webrtc::CreateTotalIncomingBitrateGraph(parsed_log_, config_, plot);
+void EventLogAnalyzer::CreateTotalIncomingBitrateGraph(
+    Plot* plot,
+    bool include_overhead) const {
+  webrtc::CreateTotalIncomingBitrateGraph(parsed_log_, config_, plot,
+                                          include_overhead);
 }
 
 void EventLogAnalyzer::CreateTotalOutgoingBitrateGraph(
     Plot* plot,
     bool show_detector_state,
     bool show_alr_state,
-    bool show_link_capacity) const {
+    bool show_link_capacity,
+    bool include_overhead) const {
   webrtc::CreateTotalOutgoingBitrateGraph(parsed_log_, config_, plot,
                                           show_detector_state, show_alr_state,
-                                          show_link_capacity);
+                                          show_link_capacity, include_overhead);
 }
 
 void EventLogAnalyzer::CreateGoogCcSimulationGraph(Plot* plot) const {

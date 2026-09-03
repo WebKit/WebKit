@@ -15,6 +15,9 @@
 
 #include "absl/base/nullability.h"
 #include "api/audio/neural_residual_echo_estimator.h"
+#include "api/audio/tflite_model_handle.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
 #include "rtc_base/system/rtc_export.h"
 #include "third_party/tflite/src/tensorflow/lite/model_builder.h"
 
@@ -35,6 +38,18 @@ absl_nullable std::unique_ptr<NeuralResidualEchoEstimator>
 CreateNeuralResidualEchoEstimator(const tflite::FlatBufferModel* model,
                                   const tflite::OpResolver* absl_nonnull
                                       op_resolver);
+
+// Returns an instance of the WebRTC implementation of a residual echo detector
+// initialized asynchronously on a background thread.
+//
+// `model_handle` and `op_resolver` are used to load the model on a background
+// thread.
+RTC_EXPORT
+absl_nonnull std::unique_ptr<NeuralResidualEchoEstimator>
+CreateNeuralResidualEchoEstimatorAsync(
+    const Environment& env,
+    scoped_refptr<TfliteModelHandle> model_handle,
+    std::unique_ptr<tflite::OpResolver> op_resolver);
 
 }  // namespace webrtc
 

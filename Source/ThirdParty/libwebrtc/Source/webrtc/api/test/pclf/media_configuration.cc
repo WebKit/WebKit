@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_parameters.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
@@ -223,9 +224,8 @@ VideoConfig::VideoConfig(absl::string_view stream_label,
 VideoCodecConfig::VideoCodecConfig(absl::string_view name)
     : name(name), required_params() {}
 
-VideoCodecConfig::VideoCodecConfig(
-    absl::string_view name,
-    std::map<std::string, std::string> required_params)
+VideoCodecConfig::VideoCodecConfig(absl::string_view name,
+                                   CodecParameterMap required_params)
     : name(name), required_params(std::move(required_params)) {}
 
 std::optional<VideoResolution> VideoSubscription::GetMaxResolution(

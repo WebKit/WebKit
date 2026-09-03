@@ -20,7 +20,6 @@
 
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_header_extension_id.h"
 #include "api/rtp_packet_sender.h"
 #include "api/rtp_parameters.h"
@@ -41,6 +40,7 @@
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
 #include "rtc_base/rate_limiter.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -109,7 +109,7 @@ class RtpSenderTest : public ::testing::Test {
  protected:
   RtpSenderTest()
       : time_controller_(Timestamp::Millis(kStartTime)),
-        env_(CreateEnvironment(time_controller_.GetClock())),
+        env_(CreateTestEnvironment({.time = &time_controller_})),
         retransmission_rate_limiter_(&env_.clock(), 1000),
         flexfec_sender_(env_,
                         0,

@@ -164,6 +164,7 @@ class RTC_EXPORT Port : public PortInterface {
     absl::string_view content_name;
     LocalNetworkAccessPermissionFactoryInterface* lna_permission_factory =
         nullptr;
+    uint64_t ice_tiebreaker;
   };
 
  protected:
@@ -197,7 +198,6 @@ class RTC_EXPORT Port : public PortInterface {
              bool payload) override = 0;
   */
 
-  void SetIceTiebreaker(uint64_t tiebreaker) override;
   uint64_t IceTiebreaker() const override;
 
   bool SharedSocket() const override;
@@ -268,9 +268,6 @@ class RTC_EXPORT Port : public PortInterface {
 
   // Fired when candidates are discovered by the port. When all candidates
   // are discovered that belong to port SignalAddressReady is fired.
-  [[deprecated("Use SubscribeCandidateReadyCallback(const void* tag, ...)")]]
-  void SubscribeCandidateReadyCallback(
-      absl::AnyInvocable<void(Port*, const Candidate&)> callback);
   void SubscribeCandidateReadyCallback(
       const void* tag,
       absl::AnyInvocable<void(Port*, const Candidate&)> callback);
@@ -281,9 +278,7 @@ class RTC_EXPORT Port : public PortInterface {
   // Provides all of the above information in one handy object.
   const std::vector<Candidate>& Candidates() const override;
   // Fired when candidate discovery failed using certain server.
-  [[deprecated("Use SubscribeCandidateError(const void* tag, ...)")]]
-  void SubscribeCandidateError(
-      std::function<void(Port*, const IceCandidateErrorEvent&)> callback);
+
   void SubscribeCandidateError(
       const void* tag,
       std::function<void(Port*, const IceCandidateErrorEvent&)> callback);
@@ -291,8 +286,6 @@ class RTC_EXPORT Port : public PortInterface {
 
   // SignalPortComplete is sent when port completes the task of candidates
   // allocation.
-  [[deprecated("Use SubscribePortComplete(const void* tag, ...)")]]
-  void SubscribePortComplete(absl::AnyInvocable<void(Port*)> callback);
   void SubscribePortComplete(const void* tag,
                              absl::AnyInvocable<void(Port*)> callback);
   void NotifyPortComplete(Port* port) {
@@ -305,8 +298,6 @@ class RTC_EXPORT Port : public PortInterface {
   // and port fails to allocate one of the candidates, port shouldn't send
   // this signal as other candidates might be usefull in establishing the
   // connection.
-  [[deprecated("Use SubscribePortError(const void* tag, ...)")]]
-  void SubscribePortError(absl::AnyInvocable<void(Port*)> callback);
   void SubscribePortError(const void* tag,
                           absl::AnyInvocable<void(Port*)> callback);
   void NotifyPortError(Port* port) {
@@ -314,9 +305,6 @@ class RTC_EXPORT Port : public PortInterface {
     port_error_callback_list_.Send(this);
   }
 
-  [[deprecated("Use SubscribePortDestroyed(const void* tag, ...)")]]
-  void SubscribePortDestroyed(
-      std::function<void(PortInterface*)> callback) override;
   void SubscribePortDestroyed(
       const void* tag,
       std::function<void(PortInterface*)> callback) override;
@@ -419,14 +407,6 @@ class RTC_EXPORT Port : public PortInterface {
   void SubscribeRoleConflict(absl::AnyInvocable<void()> callback) override;
   void NotifyRoleConflict() override;
 
-  [[deprecated("Use SubscribeUnknownAddress(const void* tag, ...)")]]
-  void SubscribeUnknownAddress(
-      absl::AnyInvocable<void(PortInterface*,
-                              const SocketAddress&,
-                              ProtocolType,
-                              IceMessage*,
-                              const std::string&,
-                              bool)> callback) override;
   void SubscribeUnknownAddress(
       const void* tag,
       absl::AnyInvocable<void(PortInterface*,
@@ -444,11 +424,6 @@ class RTC_EXPORT Port : public PortInterface {
 
   // This function causes strange linker behavior if it's inlined,
   // otherwise it would have been ABSL_DEPRECATE_AND_INLINE.
-  [[deprecated("Use tagged version with span")]] void SubscribeReadPacket(
-      absl::AnyInvocable<
-          void(PortInterface*, const char*, size_t, const SocketAddress&)>
-          callback) override;
-
   void SubscribeReadPacket(
       const void* tag,
       absl::AnyInvocable<void(PortInterface*,
@@ -459,9 +434,6 @@ class RTC_EXPORT Port : public PortInterface {
                         std::span<const uint8_t> data,
                         const SocketAddress& remote_address) override;
 
-  [[deprecated("Use SubscribeSentPacket(const void* tag, ...)")]]
-  void SubscribeSentPacket(
-      absl::AnyInvocable<void(const SentPacketInfo&)> callback) override;
   void SubscribeSentPacket(
       const void* tag,
       absl::AnyInvocable<void(const SentPacketInfo&)> callback) override;
@@ -602,7 +574,8 @@ class RTC_EXPORT Port : public PortInterface {
   int timeout_delay_ RTC_GUARDED_BY(thread_);
   bool enable_port_packets_ RTC_GUARDED_BY(thread_);
   IceRole ice_role_ RTC_GUARDED_BY(thread_);
-  uint64_t tiebreaker_ RTC_GUARDED_BY(thread_);
+  // https://datatracker.ietf.org/doc/html/rfc5245#section-5.2
+  const uint64_t ice_tiebreaker_;
   bool shared_socket_ RTC_GUARDED_BY(thread_);
 
   // A virtual cost perceived by the user, usually based on the network type

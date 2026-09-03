@@ -45,6 +45,7 @@ class HaltonFrameSampler {
   HaltonFrameSampler& operator=(const HaltonFrameSampler&) = default;
   HaltonFrameSampler& operator=(HaltonFrameSampler&&) = default;
 
+  bool ShouldSampleFrame(bool is_key_frame, uint32_t rtp_timestamp);
   std::vector<Coordinates> GetSampleCoordinatesForFrameIfFrameShouldBeSampled(
       bool is_key_frame,
       uint32_t rtp_timestamp,

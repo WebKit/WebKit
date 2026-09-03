@@ -82,6 +82,11 @@ void LogScreamSimulation::OnPacketSent(const LoggedPacketInfo& packet) {
     scream_->OnPacketSent(packet_info->data_in_flight);
     data_in_flight_ = packet_info->data_in_flight;
   }
+
+  if (last_log_state_time_.IsInfinite() ||
+      packet.log_packet_time - last_log_state_time_ >= TimeDelta::Millis(25)) {
+    LogState(packet.log_packet_time);
+  }
 }
 
 void LogScreamSimulation::OnTransportFeedback(
@@ -93,7 +98,8 @@ void LogScreamSimulation::OnTransportFeedback(
                                                    feedback_time);
   if (msg.has_value()) {
     scream_->OnTransportPacketsFeedback(*msg);
-    LogState(*msg);
+    UpdateFeedbackHistory(*msg);
+    LogState(msg->feedback_time);
   }
 }
 
@@ -106,7 +112,8 @@ void LogScreamSimulation::OnCongestionControlFeedback(
           feedback.congestion_feedback, feedback_time);
   if (msg.has_value()) {
     scream_->OnTransportPacketsFeedback(*msg);
-    LogState(*msg);
+    UpdateFeedbackHistory(*msg);
+    LogState(msg->feedback_time);
   }
 }
 
@@ -161,7 +168,14 @@ void LogScreamSimulation::ProcessEventsInLog(
   processor.ProcessEventsInOrder();
 }
 
-void LogScreamSimulation::LogState(const TransportPacketsFeedback& msg) {
+void LogScreamSimulation::UpdateFeedbackHistory(
+    const TransportPacketsFeedback& msg) {
+  TimeDelta rtt = scream_->rtt();
+  while (!feedback_history_.empty() &&
+         feedback_history_.front().time < msg.feedback_time - rtt) {
+    feedback_history_.pop_front();
+  }
+
   int lost_count = 0;
   int recovered_count = 0;
   int ce_marked_count = 0;
@@ -183,13 +197,9 @@ void LogScreamSimulation::LogState(const TransportPacketsFeedback& msg) {
       .recovered_count = recovered_count,
       .ce_marked_count = ce_marked_count,
   });
+}
 
-  TimeDelta rtt = scream_->rtt();
-  while (!feedback_history_.empty() &&
-         feedback_history_.front().time < msg.feedback_time - rtt) {
-    feedback_history_.pop_front();
-  }
-
+void LogScreamSimulation::LogState(Timestamp log_time) {
   int total_lost = 0;
   int total_recovered = 0;
   int total_ce_marked = 0;
@@ -199,12 +209,19 @@ void LogScreamSimulation::LogState(const TransportPacketsFeedback& msg) {
     total_ce_marked += event.ce_marked_count;
   }
 
+  int last_feedback_lost_count =
+      feedback_history_.empty() ? 0 : feedback_history_.back().lost_count;
+  int last_feedback_recovered_count =
+      feedback_history_.empty() ? 0 : feedback_history_.back().recovered_count;
+  int last_feedback_ce_marked_count =
+      feedback_history_.empty() ? 0 : feedback_history_.back().ce_marked_count;
+
   state_.emplace_back(State{
-      .time = msg.feedback_time,
+      .time = log_time,
       .target_rate = scream_->target_rate(),
       .pacing_rate = scream_->pacing_rate(),
-      .send_rate =
-          send_rate_tracker_.Rate(msg.feedback_time).value_or(DataRate::Zero()),
+      .send_rate = send_rate_tracker_.Rate(log_time).value_or(DataRate::Zero()),
+      .received_rate = scream_->received_rate(),
       .ref_window = scream_->ref_window(),
       .ref_window_i = scream_->ref_window_i(),
       .max_allowed_ref_window = scream_->max_allowed_ref_window(),
@@ -234,10 +251,12 @@ void LogScreamSimulation::LogState(const TransportPacketsFeedback& msg) {
       .packets_lost_per_rtt = total_lost,
       .packets_recovered_per_rtt = total_recovered,
       .ce_marked_per_rtt = total_ce_marked,
-      .packets_lost_per_feedback = lost_count,
-      .packets_recovered_per_feedback = recovered_count,
-      .ce_marked_per_feedback = ce_marked_count,
+      .packets_lost_per_feedback = last_feedback_lost_count,
+      .packets_recovered_per_feedback = last_feedback_recovered_count,
+      .ce_marked_per_feedback = last_feedback_ce_marked_count,
   });
+
+  last_log_state_time_ = log_time;
 }
 
 }  // namespace webrtc

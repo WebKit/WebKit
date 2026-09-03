@@ -17,6 +17,7 @@
 #include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/public/dcsctp_options.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/socket/capabilities.h"
 #include "net/dcsctp/socket/mock_dcsctp_socket_callbacks.h"
 #include "net/dcsctp/socket/packet_sender.h"
@@ -78,7 +79,8 @@ TEST_F(TransmissionControlBlockTest, LogsAllCapabilitiesInToSring) {
   capabilities_.negotiated_maximum_outgoing_streams = 2000;
   capabilities_.message_interleaving = true;
   capabilities_.partial_reliability = true;
-  capabilities_.zero_checksum = true;
+  capabilities_.zero_checksum_method =
+      ZeroChecksumAlternateErrorDetectionMethod::LowerLayerDtls();
   capabilities_.reconfig = true;
 
   TransmissionControlBlock tcb(

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import java.util.ArrayList;
 import java.util.List;
+import org.jni_zero.NativeMethods;
 import org.webrtc.CalledByNative;
 
 public class VoipClient {
@@ -23,7 +24,7 @@ public class VoipClient {
 
   public VoipClient(Context applicationContext, OnVoipClientTaskCompleted listener) {
     this.listener = listener;
-    nativeClient = nativeCreateClient(applicationContext, this);
+    nativeClient = VoipClientJni.get().createClient(applicationContext, this);
   }
 
   private boolean isInitialized() {
@@ -32,7 +33,7 @@ public class VoipClient {
 
   public void getAndSetUpSupportedCodecs() {
     if (isInitialized()) {
-      nativeGetSupportedCodecs(nativeClient);
+      VoipClientJni.get().getSupportedCodecs(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -40,7 +41,7 @@ public class VoipClient {
 
   public void getAndSetUpLocalIPAddress() {
     if (isInitialized()) {
-      nativeGetLocalIPAddress(nativeClient);
+      VoipClientJni.get().getLocalIPAddress(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -48,7 +49,7 @@ public class VoipClient {
 
   public void setEncoder(String encoder) {
     if (isInitialized()) {
-      nativeSetEncoder(nativeClient, encoder);
+      VoipClientJni.get().setEncoder(nativeClient, encoder);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -56,7 +57,7 @@ public class VoipClient {
 
   public void setDecoders(List<String> decoders) {
     if (isInitialized()) {
-      nativeSetDecoders(nativeClient, decoders);
+      VoipClientJni.get().setDecoders(nativeClient, decoders);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -64,7 +65,7 @@ public class VoipClient {
 
   public void setLocalAddress(String ipAddress, int portNumber) {
     if (isInitialized()) {
-      nativeSetLocalAddress(nativeClient, ipAddress, portNumber);
+      VoipClientJni.get().setLocalAddress(nativeClient, ipAddress, portNumber);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -72,7 +73,7 @@ public class VoipClient {
 
   public void setRemoteAddress(String ipAddress, int portNumber) {
     if (isInitialized()) {
-      nativeSetRemoteAddress(nativeClient, ipAddress, portNumber);
+      VoipClientJni.get().setRemoteAddress(nativeClient, ipAddress, portNumber);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -80,7 +81,7 @@ public class VoipClient {
 
   public void startSession() {
     if (isInitialized()) {
-      nativeStartSession(nativeClient);
+      VoipClientJni.get().startSession(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -88,7 +89,7 @@ public class VoipClient {
 
   public void stopSession() {
     if (isInitialized()) {
-      nativeStopSession(nativeClient);
+      VoipClientJni.get().stopSession(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -96,7 +97,7 @@ public class VoipClient {
 
   public void startSend() {
     if (isInitialized()) {
-      nativeStartSend(nativeClient);
+      VoipClientJni.get().startSend(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -104,7 +105,7 @@ public class VoipClient {
 
   public void stopSend() {
     if (isInitialized()) {
-      nativeStopSend(nativeClient);
+      VoipClientJni.get().stopSend(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -112,7 +113,7 @@ public class VoipClient {
 
   public void startPlayout() {
     if (isInitialized()) {
-      nativeStartPlayout(nativeClient);
+      VoipClientJni.get().startPlayout(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
@@ -120,14 +121,14 @@ public class VoipClient {
 
   public void stopPlayout() {
     if (isInitialized()) {
-      nativeStopPlayout(nativeClient);
+      VoipClientJni.get().stopPlayout(nativeClient);
     } else {
       listener.onUninitializedVoipClient();
     }
   }
 
   public void close() {
-    nativeDelete(nativeClient);
+    VoipClientJni.get().delete(nativeClient);
     nativeClient = 0;
   }
 
@@ -171,21 +172,34 @@ public class VoipClient {
     listener.onStopPlayoutCompleted(isSuccessful);
   }
 
-  private static native long nativeCreateClient(
-      Context applicationContext, VoipClient javaVoipClient);
-  private static native void nativeGetSupportedCodecs(long nativeAndroidVoipClient);
-  private static native void nativeGetLocalIPAddress(long nativeAndroidVoipClient);
-  private static native void nativeSetEncoder(long nativeAndroidVoipClient, String encoder);
-  private static native void nativeSetDecoders(long nativeAndroidVoipClient, List<String> decoders);
-  private static native void nativeSetLocalAddress(
-      long nativeAndroidVoipClient, String ipAddress, int portNumber);
-  private static native void nativeSetRemoteAddress(
-      long nativeAndroidVoipClient, String ipAddress, int portNumber);
-  private static native void nativeStartSession(long nativeAndroidVoipClient);
-  private static native void nativeStopSession(long nativeAndroidVoipClient);
-  private static native void nativeStartSend(long nativeAndroidVoipClient);
-  private static native void nativeStopSend(long nativeAndroidVoipClient);
-  private static native void nativeStartPlayout(long nativeAndroidVoipClient);
-  private static native void nativeStopPlayout(long nativeAndroidVoipClient);
-  private static native void nativeDelete(long nativeAndroidVoipClient);
+  @NativeMethods
+  interface Natives {
+    long createClient(Context applicationContext, VoipClient javaVoipClient);
+
+    void getSupportedCodecs(long nativeAndroidVoipClient);
+
+    void getLocalIPAddress(long nativeAndroidVoipClient);
+
+    void setEncoder(long nativeAndroidVoipClient, String encoder);
+
+    void setDecoders(long nativeAndroidVoipClient, List<String> decoders);
+
+    void setLocalAddress(long nativeAndroidVoipClient, String ipAddress, int portNumber);
+
+    void setRemoteAddress(long nativeAndroidVoipClient, String ipAddress, int portNumber);
+
+    void startSession(long nativeAndroidVoipClient);
+
+    void stopSession(long nativeAndroidVoipClient);
+
+    void startSend(long nativeAndroidVoipClient);
+
+    void stopSend(long nativeAndroidVoipClient);
+
+    void startPlayout(long nativeAndroidVoipClient);
+
+    void stopPlayout(long nativeAndroidVoipClient);
+
+    void delete(long nativeAndroidVoipClient);
+  }
 }

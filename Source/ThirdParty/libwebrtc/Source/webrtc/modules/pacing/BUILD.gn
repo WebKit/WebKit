@@ -72,22 +72,85 @@ rtc_library("interval_budget") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("pacing_unittests") {
+  rtc_library("bitrate_prober_unittest") {
     testonly = true
-
-    sources = [
-      "bitrate_prober_unittest.cc",
-      "interval_budget_unittest.cc",
-      "pacing_controller_unittest.cc",
-      "packet_router_unittest.cc",
-      "prioritized_packet_queue_unittest.cc",
-      "task_queue_paced_sender_unittest.cc",
-    ]
+    sources = [ "bitrate_prober_unittest.cc" ]
     deps = [
-      ":interval_budget",
       ":pacing",
       "../../api:field_trials",
+      "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("interval_budget_unittest") {
+    testonly = true
+    sources = [ "interval_budget_unittest.cc" ]
+    deps = [
+      ":interval_budget",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("pacing_controller_unittest") {
+    testonly = true
+    sources = [ "pacing_controller_unittest.cc" ]
+    deps = [
+      ":pacing",
+      "../../api:field_trials",
+      "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../system_wrappers",
+      "../../test:create_test_field_trials",
+      "../../test:test_support",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+
+  rtc_library("packet_router_unittest") {
+    testonly = true
+    sources = [ "packet_router_unittest.cc" ]
+    deps = [
+      ":pacing",
+      "../../api:rtp_header_extension_id",
       "../../api:rtp_headers",
+      "../../api/transport:network_control",
+      "../../api/units:data_size",
+      "../../rtc_base:checks",
+      "../../test:test_support",
+      "../rtp_rtcp:mock_rtp_rtcp",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+
+  rtc_library("prioritized_packet_queue_unittest") {
+    testonly = true
+    sources = [ "prioritized_packet_queue_unittest.cc" ]
+    deps = [
+      ":pacing",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:checks",
+      "../../test:test_support",
+      "../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+
+  rtc_library("task_queue_paced_sender_unittest") {
+    testonly = true
+    sources = [ "task_queue_paced_sender_unittest.cc" ]
+    deps = [
+      ":pacing",
+      "../../api:field_trials",
       "../../api:sequence_checker",
       "../../api/task_queue",
       "../../api/transport:network_control",
@@ -95,15 +158,25 @@ if (rtc_include_tests) {
       "../../api/units:data_size",
       "../../api/units:time_delta",
       "../../api/units:timestamp",
-      "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_tests_utils",
-      "../../system_wrappers",
       "../../test:create_test_field_trials",
       "../../test:test_support",
       "../../test/time_controller",
-      "../rtp_rtcp:mock_rtp_rtcp",
       "../rtp_rtcp:rtp_rtcp_format",
       "//third_party/abseil-cpp/absl/cleanup",
+    ]
+  }
+
+  rtc_library("pacing_unittests") {
+    testonly = true
+
+    sources = []
+    deps = [
+      ":bitrate_prober_unittest",
+      ":interval_budget_unittest",
+      ":pacing_controller_unittest",
+      ":packet_router_unittest",
+      ":prioritized_packet_queue_unittest",
+      ":task_queue_paced_sender_unittest",
     ]
   }
 }

@@ -28,7 +28,7 @@ namespace dcsctp {
 // Do not trust anything in it; no pointers or anything like that.
 class StateCookie {
  public:
-  static constexpr size_t kCookieSize = 44;
+  static constexpr size_t kCookieSize = 48;
 
   StateCookie(VerificationTag peer_tag,
               VerificationTag my_tag,
@@ -36,14 +36,14 @@ class StateCookie {
               TSN my_initial_tsn,
               uint32_t a_rwnd,
               TieTag tie_tag,
-              Capabilities capabilities)
+              Capabilities peer_capabilities)
       : peer_tag_(peer_tag),
         my_tag_(my_tag),
         peer_initial_tsn_(peer_initial_tsn),
         my_initial_tsn_(my_initial_tsn),
         a_rwnd_(a_rwnd),
         tie_tag_(tie_tag),
-        capabilities_(capabilities) {}
+        peer_capabilities_(peer_capabilities) {}
 
   // Returns a serialized version of this cookie.
   std::vector<uint8_t> Serialize();
@@ -58,7 +58,7 @@ class StateCookie {
   TSN my_initial_tsn() const { return my_initial_tsn_; }
   uint32_t a_rwnd() const { return a_rwnd_; }
   TieTag tie_tag() const { return tie_tag_; }
-  const Capabilities& capabilities() const { return capabilities_; }
+  const Capabilities& peer_capabilities() const { return peer_capabilities_; }
 
  private:
   // Also called "Tag_A" in RFC4960.
@@ -69,7 +69,7 @@ class StateCookie {
   const TSN my_initial_tsn_;
   const uint32_t a_rwnd_;
   const TieTag tie_tag_;
-  const Capabilities capabilities_;
+  const Capabilities peer_capabilities_;
 };
 }  // namespace dcsctp
 

@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
+#include "api/environment/environment.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/units/data_rate.h"
@@ -39,6 +39,7 @@
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
@@ -63,7 +64,18 @@ WebRtcEncoderDecoderPicturePairProvider::
         VideoCodecType type,
         std::unique_ptr<VideoEncoderFactory> encoder_factory,
         std::unique_ptr<VideoDecoderFactory> decoder_factory)
-    : env_(CreateEnvironment()),
+    : WebRtcEncoderDecoderPicturePairProvider(CreateTestEnvironment(),
+                                              type,
+                                              std::move(encoder_factory),
+                                              std::move(decoder_factory)) {}
+
+WebRtcEncoderDecoderPicturePairProvider::
+    WebRtcEncoderDecoderPicturePairProvider(
+        const Environment& env,
+        VideoCodecType type,
+        std::unique_ptr<VideoEncoderFactory> encoder_factory,
+        std::unique_ptr<VideoDecoderFactory> decoder_factory)
+    : env_(env),
       type_(type),
       encoder_factory_(std::move(encoder_factory)),
       encoder_(encoder_factory_->Create(env_, GetSdpVideoFormat(type))),

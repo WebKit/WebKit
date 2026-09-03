@@ -11,9 +11,15 @@
 #ifndef API_FRAME_TRANSFORMER_FACTORY_H_
 #define API_FRAME_TRANSFORMER_FACTORY_H_
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 #include "api/frame_transformer_interface.h"
+#include "api/payload_type.h"
 #include "rtc_base/system/rtc_export.h"
 
 // This file contains EXPERIMENTAL functions to create video frames from
@@ -22,17 +28,24 @@
 // encoded frames from Javascript.
 namespace webrtc {
 
-// TODO(bugs.webrtc.org/14708): Add the required parameters to these APIs.
-std::unique_ptr<TransformableVideoFrameInterface> CreateVideoSenderFrame();
-// TODO(bugs.webrtc.org/14708): Consider whether Receiver frames ever make sense
-// to create.
-std::unique_ptr<TransformableVideoFrameInterface> CreateVideoReceiverFrame();
 // Creates a new frame with the same metadata as the original.
 // The original can be a sender or receiver frame.
 RTC_EXPORT std::unique_ptr<TransformableAudioFrameInterface> CloneAudioFrame(
     TransformableAudioFrameInterface* original);
 RTC_EXPORT std::unique_ptr<TransformableVideoFrameInterface> CloneVideoFrame(
     TransformableVideoFrameInterface* original);
+RTC_EXPORT std::unique_ptr<TransformableAudioFrameInterface>
+CreateOutgoingAudioFrame(TransformableAudioFrameInterface::FrameType frame_type,
+                         PayloadType payload_type,
+                         uint32_t rtp_timestamp_without_offset,
+                         const uint8_t* payload_data,
+                         size_t payload_size,
+                         std::optional<uint64_t> absolute_capture_timestamp_ms,
+                         uint32_t ssrc,
+                         const std::vector<uint32_t>& csrcs,
+                         const std::string& codec_mime_type,
+                         std::optional<uint16_t> sequence_number,
+                         std::optional<uint8_t> audio_level_dbov);
 }  // namespace webrtc
 
 #endif  // API_FRAME_TRANSFORMER_FACTORY_H_

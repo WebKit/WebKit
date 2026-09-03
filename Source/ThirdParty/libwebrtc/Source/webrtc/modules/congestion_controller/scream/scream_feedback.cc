@@ -48,6 +48,7 @@ ScreamFeedback ParseScreamFeedback(const TransportPacketsFeedback& msg) {
 
     // Update received-packet metrics.
     if (packet.IsReceived()) {
+      parsed.received += packet.sent_packet.size;
       parsed.num_received_packets++;
       if (packet.ecn == EcnMarking::kCe) {
         parsed.num_ce_marked_packets++;

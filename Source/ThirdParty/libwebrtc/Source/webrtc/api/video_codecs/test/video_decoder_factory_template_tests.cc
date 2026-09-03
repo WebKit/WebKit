@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
@@ -21,6 +20,7 @@
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
 #include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -65,7 +65,7 @@ struct BarDecoderTemplateAdapter {
 };
 
 TEST(VideoDecoderFactoryTemplate, OneTemplateAdapterCreateDecoder) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<FooDecoderTemplateAdapter> factory;
   EXPECT_THAT(factory.GetSupportedFormats(), UnorderedElementsAre(kFooSdp));
   EXPECT_THAT(factory.Create(env, kFooSdp), NotNull());
@@ -80,7 +80,7 @@ TEST(VideoDecoderFactoryTemplate, TwoTemplateAdaptersNoDuplicates) {
 }
 
 TEST(VideoDecoderFactoryTemplate, TwoTemplateAdaptersCreateDecoders) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<FooDecoderTemplateAdapter,
                               BarDecoderTemplateAdapter>
       factory;
@@ -94,7 +94,7 @@ TEST(VideoDecoderFactoryTemplate, TwoTemplateAdaptersCreateDecoders) {
 }
 
 TEST(VideoDecoderFactoryTemplate, LibvpxVp8) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<LibvpxVp8DecoderTemplateAdapter> factory;
   auto formats = factory.GetSupportedFormats();
   ASSERT_THAT(formats,
@@ -103,7 +103,7 @@ TEST(VideoDecoderFactoryTemplate, LibvpxVp8) {
 }
 
 TEST(VideoDecoderFactoryTemplate, LibvpxVp9) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<LibvpxVp9DecoderTemplateAdapter> factory;
   auto formats = factory.GetSupportedFormats();
   EXPECT_THAT(formats, Not(IsEmpty()));
@@ -115,7 +115,7 @@ TEST(VideoDecoderFactoryTemplate, LibvpxVp9) {
 //                              target remove this #ifdef.
 #if defined(WEBRTC_USE_H264)
 TEST(VideoDecoderFactoryTemplate, OpenH264) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<OpenH264DecoderTemplateAdapter> factory;
   auto formats = factory.GetSupportedFormats();
   EXPECT_THAT(formats, Not(IsEmpty()));
@@ -125,7 +125,7 @@ TEST(VideoDecoderFactoryTemplate, OpenH264) {
 #endif  // defined(WEBRTC_USE_H264)
 
 TEST(VideoDecoderFactoryTemplate, Dav1d) {
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   VideoDecoderFactoryTemplate<Dav1dDecoderTemplateAdapter> factory;
   auto formats = factory.GetSupportedFormats();
   EXPECT_THAT(formats, Not(IsEmpty()));

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/test/video/function_video_encoder_factory.h"
@@ -52,11 +53,8 @@ using ::testing::Not;
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-  kVideoRotationExtensionId,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
+constexpr RtpHeaderExtensionId kVideoRotationExtensionId(2);
 
 class FecEndToEndTest : public test::CallTest {
  public:
@@ -546,4 +544,5 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
 
   RunBaseTest(&test);
 }
+}  // namespace
 }  // namespace webrtc

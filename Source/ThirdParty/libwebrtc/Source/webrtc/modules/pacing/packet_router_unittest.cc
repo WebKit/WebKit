@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_size.h"
@@ -57,7 +58,8 @@ constexpr int kProbeMinBytes = 1000;
 class PacketRouterTest : public ::testing::Test {
  public:
   PacketRouterTest() {
-    extension_manager.Register<TransportSequenceNumber>(/*id=*/1);
+    extension_manager.Register<TransportSequenceNumber>(
+        RtpHeaderExtensionId(1));
   }
 
  protected:

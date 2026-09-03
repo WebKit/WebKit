@@ -11,6 +11,7 @@
 #include "api/audio_codecs/audio_format.h"
 
 #include <cstddef>
+#include <initializer_list>
 #include <utility>
 
 #include "absl/strings/match.h"
@@ -36,6 +37,17 @@ SdpAudioFormat::SdpAudioFormat(absl::string_view name,
       clockrate_hz(clockrate_hz),
       num_channels(num_channels),
       parameters(param) {}
+
+SdpAudioFormat::SdpAudioFormat(
+    absl::string_view name,
+    int clockrate_hz,
+    size_t num_channels,
+    std::initializer_list<std::pair<absl::string_view, absl::string_view>>
+        param)
+    : name(name),
+      clockrate_hz(clockrate_hz),
+      num_channels(num_channels),
+      parameters(param.begin(), param.end()) {}
 
 SdpAudioFormat::SdpAudioFormat(absl::string_view name,
                                int clockrate_hz,

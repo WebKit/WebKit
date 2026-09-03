@@ -118,12 +118,14 @@ struct VideoOptions {
     SetFrom(&video_noise_reduction, change.video_noise_reduction);
     SetFrom(&screencast_min_bitrate_kbps, change.screencast_min_bitrate_kbps);
     SetFrom(&is_screencast, change.is_screencast);
+    SetFrom(&allow_zero_hertz_video, change.allow_zero_hertz_video);
   }
 
   bool operator==(const VideoOptions& o) const {
     return video_noise_reduction == o.video_noise_reduction &&
            screencast_min_bitrate_kbps == o.screencast_min_bitrate_kbps &&
-           is_screencast == o.is_screencast;
+           is_screencast == o.is_screencast &&
+           allow_zero_hertz_video == o.allow_zero_hertz_video;
   }
   bool operator!=(const VideoOptions& o) const { return !(*this == o); }
 
@@ -134,6 +136,7 @@ struct VideoOptions {
     ost << ToStringIfSet("screencast min bitrate kbps",
                          screencast_min_bitrate_kbps);
     ost << ToStringIfSet("is_screencast ", is_screencast);
+    ost << ToStringIfSet("allow_zero_hertz_video ", allow_zero_hertz_video);
     ost << "}";
     return ost.Release();
   }
@@ -154,6 +157,9 @@ struct VideoOptions {
   // youtube video have different needs.
   std::optional<bool> is_screencast;
   VideoTrackInterface::ContentHint content_hint;
+  // Allows the zero-hertz feature to be enabled for regular video, false by
+  // default.
+  std::optional<bool> allow_zero_hertz_video;
 
  private:
   template <typename T>
@@ -215,7 +221,6 @@ class MediaSendChannelInterface {
   // in the same stream. The setter and getter must only be called from
   // worker_thread.
   virtual void SetExtmapAllowMixed(bool extmap_allow_mixed) = 0;
-  virtual bool ExtmapAllowMixed() const = 0;
 
   // Starts or stops transmission (and potentially capture) of local media.
   virtual bool SetSend(bool send) = 0;
@@ -253,7 +258,6 @@ class MediaSendChannelInterface {
   // thread state may be torn down asynchronously.
   virtual absl::AnyInvocable<RtpParameters(uint32_t)>
   GetRtpSendParametersCallback() const = 0;
-  virtual bool SendCodecHasNack() const = 0;
   // Called whenever the list of sending SSRCs changes.
   virtual void SetSsrcListChangedCallback(
       absl::AnyInvocable<void(const std::set<uint32_t>&)> callback) = 0;
@@ -943,7 +947,6 @@ class VoiceMediaSendChannelInterface : public MediaSendChannelInterface {
   GetStatsTask() = 0;
   virtual bool SenderNackEnabled() const = 0;
   virtual bool SenderNonSenderRttEnabled() const = 0;
-  virtual bool SetOptions(const AudioOptions& options) = 0;
 };
 
 class VoiceMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
@@ -972,11 +975,9 @@ class VoiceMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
   // may be torn down asynchronously.
   virtual absl::AnyInvocable<std::optional<VoiceMediaReceiveInfo>()>
   GetStatsTask(bool reset_legacy) = 0;
-  virtual enum RtcpMode RtcpMode() const = 0;
   virtual void SetRtcpMode(enum RtcpMode mode) = 0;
   virtual void SetReceiveNackEnabled(bool enabled) = 0;
   virtual void SetReceiveNonSenderRttEnabled(bool enabled) = 0;
-  virtual bool SetOptions(const AudioOptions& options) = 0;
 };
 
 struct VideoSenderParameters : SenderParameters {
@@ -1009,7 +1010,6 @@ class VideoMediaSendChannelInterface : public MediaSendChannelInterface {
   virtual bool SetVideoSend(uint32_t ssrc,
                             const VideoOptions* options,
                             VideoSourceInterface<VideoFrame>* source) = 0;
-  virtual bool SetOptions(const VideoOptions& options) = 0;
   // Cause generation of a keyframe for `ssrc` on a sending channel.
   virtual void GenerateSendKeyFrame(uint32_t ssrc,
                                     const std::vector<std::string>& rids) = 0;
@@ -1065,6 +1065,7 @@ class VideoMediaReceiveChannelInterface : public MediaReceiveChannelInterface {
   virtual absl::AnyInvocable<std::optional<VideoMediaReceiveInfo>()>
   GetStatsTask() = 0;
   virtual bool AddDefaultRecvStreamForTesting(const StreamParams& sp) = 0;
+  virtual void SetReceiveNonSenderRttEnabled(bool enabled) = 0;
 };
 
 }  // namespace webrtc

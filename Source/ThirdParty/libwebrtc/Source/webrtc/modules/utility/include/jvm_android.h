@@ -162,6 +162,8 @@ class JVM {
   // Gives access to the global Java VM interface pointer, which then can be
   // used to create a valid JNIEnvironment object or to get a JavaClass object.
   static JVM* GetInstance();
+  // Returns true if JVM has been initialized.
+  static bool IsInitialized();
 
   // Creates a JNIEnvironment object.
   // This method returns a NULL pointer if AttachCurrentThread() has not been

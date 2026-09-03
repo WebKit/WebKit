@@ -31,7 +31,7 @@
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/sframe/sframe_encrypter_interface.h"
+#include "api/sframe/sframe_encryptor_interface.h"
 #include "api/sframe/sframe_types.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/fake_frame_decryptor.h"
@@ -127,7 +127,7 @@ class RtpSenderReceiverTest
         fake_call_(env_, worker_thread_.get(), network_thread_.get()),
         local_stream_(MediaStream::Create(kStreamId1)) {
     rtp_dtls_transport_ = std::make_unique<FakeDtlsTransport>(
-        "fake_dtls_transport", ICE_CANDIDATE_COMPONENT_RTP);
+        env_, "fake_dtls_transport", ICE_CANDIDATE_COMPONENT_RTP);
     rtp_transport_ = CreateDtlsSrtpTransport();
 
     // Create the channels, discard the result; we get them later.
@@ -140,7 +140,7 @@ class RtpSenderReceiverTest
     voice_media_receive_channel_ = media_engine_->voice().CreateReceiveChannel(
         env_, &fake_call_, MediaConfig(), AudioOptions(), CryptoOptions());
     video_media_receive_channel_ = media_engine_->video().CreateReceiveChannel(
-        env_, &fake_call_, MediaConfig(), VideoOptions(), CryptoOptions());
+        env_, &fake_call_, MediaConfig(), CryptoOptions());
 
     // Create streams for predefined SSRCs. Streams need to exist in order
     // for the senders and receievers to apply parameters to them.
@@ -2124,7 +2124,7 @@ INSTANTIATE_TEST_SUITE_P(
     RtpSenderReceiverTest,
     ::testing::ValuesIn(kDisableSimulcastLayersParameters));
 
-TEST_F(RtpSenderReceiverTest, AudioSenderCreateSframeEncrypterInvokesCallback) {
+TEST_F(RtpSenderReceiverTest, AudioSenderCreateSframeEncryptorInvokesCallback) {
   bool callback_called = false;
   worker_thread_->BlockingCall([&]() {
     audio_rtp_sender_ = AudioRtpSender::Create(
@@ -2137,13 +2137,13 @@ TEST_F(RtpSenderReceiverTest, AudioSenderCreateSframeEncrypterInvokesCallback) {
         nullptr);
   });
 
-  SframeEncrypterInit options{SframeMode::kPerFrame,
+  SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
-  audio_rtp_sender_->CreateSframeEncrypterOrError(options);
+  audio_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_TRUE(callback_called);
 }
 
-TEST_F(RtpSenderReceiverTest, VideoSenderCreateSframeEncrypterInvokesCallback) {
+TEST_F(RtpSenderReceiverTest, VideoSenderCreateSframeEncryptorInvokesCallback) {
   bool callback_called = false;
   worker_thread_->BlockingCall([&]() {
     video_rtp_sender_ = VideoRtpSender::Create(
@@ -2157,14 +2157,14 @@ TEST_F(RtpSenderReceiverTest, VideoSenderCreateSframeEncrypterInvokesCallback) {
         /*simulcast_rejected=*/false, /*initial_simulcast_layers=*/{});
   });
 
-  SframeEncrypterInit options{SframeMode::kPerFrame,
+  SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
-  video_rtp_sender_->CreateSframeEncrypterOrError(options);
+  video_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_TRUE(callback_called);
 }
 
 TEST_F(RtpSenderReceiverTest,
-       SenderCreateSframeEncrypterPropagatesCallbackError) {
+       SenderCreateSframeEncryptorPropagatesCallbackError) {
   worker_thread_->BlockingCall([&]() {
     audio_rtp_sender_ = AudioRtpSender::Create(
         CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
@@ -2176,16 +2176,16 @@ TEST_F(RtpSenderReceiverTest,
         nullptr);
   });
 
-  SframeEncrypterInit options{SframeMode::kPerFrame,
+  SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
-  auto result = audio_rtp_sender_->CreateSframeEncrypterOrError(options);
+  auto result = audio_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::UNSUPPORTED_OPERATION);
   EXPECT_STREQ(result.error().message(), "Rejected for testing");
 }
 
 TEST_F(RtpSenderReceiverTest,
-       SenderCreateSframeEncrypterFailsWithNullCallback) {
+       SenderCreateSframeEncryptorFailsWithNullCallback) {
   worker_thread_->BlockingCall([&]() {
     audio_rtp_sender_ = AudioRtpSender::Create(
         CreateTestEnvironment(), signaling_thread_, worker_thread_.get(),
@@ -2193,15 +2193,15 @@ TEST_F(RtpSenderReceiverTest,
         /*enable_sframe_at_owner=*/nullptr, nullptr);
   });
 
-  SframeEncrypterInit options{SframeMode::kPerFrame,
+  SframeEncryptorInit options{SframeMode::kPerFrame,
                               SframeCipherSuite::kAes128GcmSha256_128};
-  auto result = audio_rtp_sender_->CreateSframeEncrypterOrError(options);
+  auto result = audio_rtp_sender_->CreateSframeEncryptorOrError(options);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::INTERNAL_ERROR);
 }
 
 TEST_F(RtpSenderReceiverTest,
-       AudioReceiverCreateSframeDecrypterInvokesCallback) {
+       AudioReceiverCreateSframeDecryptorInvokesCallback) {
   bool callback_called = false;
   auto receiver = make_ref_counted<AudioRtpReceiver>(
       worker_thread_.get(), kAudioTrackId, std::vector<std::string>(),
@@ -2210,13 +2210,13 @@ TEST_F(RtpSenderReceiverTest,
         return RTCError::OK();
       });
 
-  receiver->CreateSframeDecrypterOrError(
+  receiver->CreateSframeDecryptorOrError(
       SframeCipherSuite::kAes128GcmSha256_128);
   EXPECT_TRUE(callback_called);
 }
 
 TEST_F(RtpSenderReceiverTest,
-       VideoReceiverCreateSframeDecrypterInvokesCallback) {
+       VideoReceiverCreateSframeDecryptorInvokesCallback) {
   bool callback_called = false;
   auto receiver = make_ref_counted<VideoRtpReceiver>(
       worker_thread_.get(), kVideoTrackId, std::vector<std::string>(),
@@ -2225,13 +2225,13 @@ TEST_F(RtpSenderReceiverTest,
         return RTCError::OK();
       });
 
-  receiver->CreateSframeDecrypterOrError(
+  receiver->CreateSframeDecryptorOrError(
       SframeCipherSuite::kAes128GcmSha256_128);
   EXPECT_TRUE(callback_called);
 }
 
 TEST_F(RtpSenderReceiverTest,
-       ReceiverCreateSframeDecrypterPropagatesCallbackError) {
+       ReceiverCreateSframeDecryptorPropagatesCallbackError) {
   auto receiver = make_ref_counted<AudioRtpReceiver>(
       worker_thread_.get(), kAudioTrackId, std::vector<std::string>(),
       []() -> RTCError {
@@ -2239,7 +2239,7 @@ TEST_F(RtpSenderReceiverTest,
                         "Rejected for testing");
       });
 
-  auto result = receiver->CreateSframeDecrypterOrError(
+  auto result = receiver->CreateSframeDecryptorOrError(
       SframeCipherSuite::kAes128GcmSha256_128);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::UNSUPPORTED_OPERATION);
@@ -2247,12 +2247,12 @@ TEST_F(RtpSenderReceiverTest,
 }
 
 TEST_F(RtpSenderReceiverTest,
-       ReceiverCreateSframeDecrypterFailsWithNullCallback) {
+       ReceiverCreateSframeDecryptorFailsWithNullCallback) {
   auto receiver = make_ref_counted<AudioRtpReceiver>(
       worker_thread_.get(), kAudioTrackId, std::vector<std::string>(),
       /*enable_sframe_at_owner=*/nullptr);
 
-  auto result = receiver->CreateSframeDecrypterOrError(
+  auto result = receiver->CreateSframeDecryptorOrError(
       SframeCipherSuite::kAes128GcmSha256_128);
   EXPECT_FALSE(result.ok());
   EXPECT_EQ(result.error().type(), RTCErrorType::INTERNAL_ERROR);

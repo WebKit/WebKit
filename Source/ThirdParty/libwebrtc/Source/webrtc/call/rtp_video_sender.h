@@ -146,8 +146,6 @@ class RtpVideoSender : public RtpVideoSenderInterface,
       RTC_LOCKS_EXCLUDED(mutex_) override;
   void OnVideoLayersAllocationUpdated(
       const VideoLayersAllocation& layers) override;
-  void OnTransportOverheadChanged(size_t transport_overhead_bytes_per_packet)
-      RTC_LOCKS_EXCLUDED(mutex_) override;
   void OnBitrateUpdated(BitrateAllocationUpdate update, int framerate)
       RTC_LOCKS_EXCLUDED(mutex_) override;
   uint32_t GetPayloadBitrateBps() const RTC_LOCKS_EXCLUDED(mutex_) override;

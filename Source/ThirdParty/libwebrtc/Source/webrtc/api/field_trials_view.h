@@ -44,6 +44,10 @@ class RTC_EXPORT FieldTrialsView {
     return absl::StartsWith(Lookup(key), "Disabled");
   }
 
+  // Returns true if this view is of a registry that is suitable for use
+  // in a test environment.
+  virtual bool IsTest() const { return false; }
+
   // Create a copy of this view.
   //
   // This method can't be pure virtual, due to downstream projects

@@ -18,6 +18,7 @@
 #include <memory>
 #include <set>
 
+#include "api/video/video_codec_constants.h"
 #include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
@@ -39,7 +40,6 @@ class RtpVp8RefFinder {
   static constexpr int kMaxLayerInfo = 50;
   static constexpr int kMaxNotYetReceivedFrames = 100;
   static constexpr int kMaxStashedFrames = 100;
-  static constexpr int kMaxTemporalLayers = 5;
 
   struct UnwrappedTl0Frame {
     int64_t unwrapped_tl0;
@@ -72,7 +72,7 @@ class RtpVp8RefFinder {
 
   // Holds the information about the last completed frame for a given temporal
   // layer given an unwrapped Tl0 picture index.
-  std::map<int64_t, std::array<int64_t, kMaxTemporalLayers>> layer_info_;
+  std::map<int64_t, std::array<int64_t, kMaxTemporalStreams>> layer_info_;
 
   // Unwrapper used to unwrap VP8/VP9 streams which have their picture id
   // specified.

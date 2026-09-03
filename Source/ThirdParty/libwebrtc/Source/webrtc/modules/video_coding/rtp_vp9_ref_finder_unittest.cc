@@ -612,10 +612,9 @@ TEST_F(RtpVp9RefFinderTest, GofTl0Jump) {
 }
 
 TEST_F(RtpVp9RefFinderTest, GofTidTooHigh) {
-  const int kMaxTemporalLayers = 5;
   GofInfoVP9 ss;
   ss.SetGofInfoVP9(kTemporalStructureMode2);
-  ss.temporal_idx[1] = kMaxTemporalLayers;
+  ss.temporal_idx[1] = kMaxTemporalStreams;
 
   Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0).AsKeyFrame().NotAsInterPic().Gof(
       &ss));
@@ -666,14 +665,18 @@ TEST_F(RtpVp9RefFinderTest, StashedFramesDoNotWrapTl0Backwards) {
 }
 
 TEST_F(RtpVp9RefFinderTest, TemporalIndexTooHighDropsFrame) {
-  // kMaxTemporalLayers is 5.
-  Insert(Frame().Pid(0).SidAndTid(0, 5).AsKeyFrame());
+  Insert(Frame().Pid(0).SidAndTid(0, kMaxTemporalStreams).AsKeyFrame());
   EXPECT_THAT(frames_, SizeIs(0));
 
   // Using a GoF frame type.
   GofInfoVP9 ss;
   ss.SetGofInfoVP9(kTemporalStructureMode1);
-  Insert(Frame().Pid(1).SidAndTid(0, 5).Tl0(0).AsKeyFrame().Gof(&ss));
+  Insert(Frame()
+             .Pid(1)
+             .SidAndTid(0, kMaxTemporalStreams)
+             .Tl0(0)
+             .AsKeyFrame()
+             .Gof(&ss));
   EXPECT_THAT(frames_, SizeIs(0));
 }
 

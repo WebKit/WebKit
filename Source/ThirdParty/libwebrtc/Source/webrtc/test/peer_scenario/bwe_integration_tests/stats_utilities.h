@@ -59,6 +59,10 @@ int64_t GetPacketsReceived(const scoped_refptr<const RTCStatsReport>& report);
 
 int64_t GetPacketsLost(const scoped_refptr<const RTCStatsReport>& report);
 
+TimeDelta GetAveragePacingDelay(
+    const scoped_refptr<const RTCStatsReport>& report,
+    const scoped_refptr<const RTCStatsReport>& previous_report);
+
 }  // namespace test
 }  // namespace webrtc
 

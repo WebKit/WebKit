@@ -49,14 +49,8 @@ uint32_t EnoughTimeHasPassed(uint32_t from, uint32_t to) {
 HaltonFrameSampler::HaltonFrameSampler()
     : coordinate_sampler_prng_(HaltonSequence(2)) {}
 
-std::vector<HaltonFrameSampler::Coordinates>
-HaltonFrameSampler::GetSampleCoordinatesForFrameIfFrameShouldBeSampled(
-    bool is_key_frame,
-    uint32_t rtp_timestamp,
-    int num_samples) {
-  if (num_samples < 1) {
-    return {};
-  }
+bool HaltonFrameSampler::ShouldSampleFrame(bool is_key_frame,
+                                           uint32_t rtp_timestamp) {
   if (rtp_timestamp_last_frame_sampled_.has_value()) {
     RTC_CHECK_NE(*rtp_timestamp_last_frame_sampled_, rtp_timestamp);
   }
@@ -67,9 +61,23 @@ HaltonFrameSampler::GetSampleCoordinatesForFrameIfFrameShouldBeSampled(
         (kMaxFramesBetweenSamples - 1) - (frames_sampled_ % 8);
     ++frames_sampled_;
     rtp_timestamp_last_frame_sampled_ = rtp_timestamp;
-    return GetSampleCoordinatesForFrame(num_samples);
+    return true;
   }
   --frames_until_next_sample_;
+  return false;
+}
+
+std::vector<HaltonFrameSampler::Coordinates>
+HaltonFrameSampler::GetSampleCoordinatesForFrameIfFrameShouldBeSampled(
+    bool is_key_frame,
+    uint32_t rtp_timestamp,
+    int num_samples) {
+  if (num_samples < 1) {
+    return {};
+  }
+  if (ShouldSampleFrame(is_key_frame, rtp_timestamp)) {
+    return GetSampleCoordinatesForFrame(num_samples);
+  }
   return {};
 }
 

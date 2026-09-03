@@ -434,6 +434,21 @@ void EncoderBitrateAdjuster::OnEncodedFrame(DataSize size,
   }
 }
 
+void EncoderBitrateAdjuster::OnFrameDropped() {
+  for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
+    for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {
+      if (overshoot_detectors_[si][ti]) {
+        overshoot_detectors_[si][ti]->OnEncodedFrame(
+            /*bytes=*/0, clock_.TimeInMicroseconds() / 1000);
+      }
+    }
+    if (media_rate_trackers_[si]) {
+      media_rate_trackers_[si]->OnDataProduced(DataSize::Zero(),
+                                               clock_.CurrentTime());
+    }
+  }
+}
+
 void EncoderBitrateAdjuster::Reset() {
   for (size_t si = 0; si < kMaxSpatialLayers; ++si) {
     for (size_t ti = 0; ti < kMaxTemporalStreams; ++ti) {

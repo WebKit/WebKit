@@ -91,7 +91,7 @@ std::unique_ptr<Call> CreateCall(
     CallClientConfig config,
     LoggingNetworkControllerFactory* network_controller_factory,
     scoped_refptr<AudioState> audio_state) {
-  CallConfig call_config(env);
+  CallConfig call_config = CallConfig::CreateSingleThreaded(env);
   call_config.bitrate_config.max_bitrate_bps =
       config.transport.rates.max_rate.bps_or(-1);
   call_config.bitrate_config.min_bitrate_bps =

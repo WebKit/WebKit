@@ -17,6 +17,7 @@
 #include "absl/base/nullability.h"
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials_registry.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_map.h"
@@ -57,6 +58,10 @@ bool Parse(absl::string_view s,
 
 absl_nullable std::unique_ptr<FieldTrials> FieldTrials::Create(
     absl::string_view s) {
+  RTC_CHECK(!IsForceTestEnvironmentEnabled() ||
+            IsTestEnvironmentCheckBypassed())
+      << "FieldTrials::Create is not allowed in tests. Use "
+         "CreateTestFieldTrials.";
   flat_map<std::string, std::string> key_value_map;
   if (!Parse(s, key_value_map)) {
     return nullptr;
@@ -65,16 +70,22 @@ absl_nullable std::unique_ptr<FieldTrials> FieldTrials::Create(
   return absl::WrapUnique(new FieldTrials(std::move(key_value_map)));
 }
 
-FieldTrials::FieldTrials(absl::string_view s) {
+FieldTrials::FieldTrials(absl::string_view s, bool is_test)
+    : is_test_(is_test) {
+  RTC_CHECK(!IsForceTestEnvironmentEnabled() ||
+            IsTestEnvironmentCheckBypassed())
+      << "FieldTrials constructor is not allowed in tests. Use "
+         "CreateTestFieldTrials.";
   RTC_CHECK(Parse(s, key_value_map_));
 }
 
 FieldTrials::FieldTrials(const FieldTrials& other)
-    : FieldTrialsRegistry(other) {
+    : FieldTrialsRegistry(other), is_test_(other.is_test_) {
   key_value_map_ = other.key_value_map_;
 }
 
-FieldTrials::FieldTrials(FieldTrials&& other) : FieldTrialsRegistry(other) {
+FieldTrials::FieldTrials(FieldTrials&& other)
+    : FieldTrialsRegistry(other), is_test_(other.is_test_) {
   key_value_map_ = std::move(other.key_value_map_);
 }
 
@@ -83,6 +94,7 @@ FieldTrials& FieldTrials::operator=(const FieldTrials& other) {
     AssertGetValueNotCalled();
     FieldTrialsRegistry::operator=(other);
     key_value_map_ = other.key_value_map_;
+    is_test_ = other.is_test_;
   }
   return *this;
 }
@@ -92,6 +104,7 @@ FieldTrials& FieldTrials::operator=(FieldTrials&& other) {
     AssertGetValueNotCalled();
     FieldTrialsRegistry::operator=(other);
     key_value_map_ = std::move(other.key_value_map_);
+    is_test_ = other.is_test_;
   }
   return *this;
 }

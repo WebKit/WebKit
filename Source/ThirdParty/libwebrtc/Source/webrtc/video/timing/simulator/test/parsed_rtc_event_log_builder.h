@@ -21,7 +21,9 @@
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "system_wrappers/include/clock.h"
+#include "system_wrappers/include/ntp_time.h"
 
 namespace webrtc::video_timing_simulator {
 
@@ -37,6 +39,7 @@ class ParsedRtcEventLogBuilder {
   // Interactions with the `log_clock_`.
   // Note that this clock is different from the simulation clock!
   Timestamp CurrentTime();
+  NtpTime CurrentNtpTime();
   void AdvanceTime(TimeDelta duration);
 
   // Log specific events to the log.
@@ -45,6 +48,8 @@ class ParsedRtcEventLogBuilder {
   void LogRtpPacketIncoming(
       uint32_t ssrc,
       std::optional<uint16_t> rtx_original_sequence_number = std::nullopt);
+  void LogRtcpPacketOutgoing(const rtcp::RtcpPacket& rtcp_packet);
+  void LogRtcpPacketIncoming(const rtcp::RtcpPacket& rtcp_packet);
 
   // Returns the parsed log. Should only be called once.
   std::unique_ptr<ParsedRtcEventLog> Build();
@@ -59,8 +64,8 @@ class ParsedRtcEventLogBuilder {
   // the simulation.
   SimulatedClock log_clock_;
   const Environment log_env_;
-  std::unique_ptr<RtcEventLog> log_;
   std::unique_ptr<ParsedRtcEventLog> parsed_log_;
+  std::unique_ptr<RtcEventLog> log_;
 };
 
 }  // namespace webrtc::video_timing_simulator

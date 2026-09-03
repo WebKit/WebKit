@@ -11,8 +11,7 @@
 #ifndef API_MEDIA_TYPES_H_
 #define API_MEDIA_TYPES_H_
 
-#include <string>
-
+#include "absl/strings/string_view.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -25,7 +24,7 @@ enum class MediaType {
   ANY,
 };
 
-RTC_EXPORT std::string MediaTypeToString(MediaType type);
+RTC_EXPORT absl::string_view MediaTypeToString(MediaType type);
 
 template <typename Sink>
 void AbslStringify(Sink& sink, MediaType type) {

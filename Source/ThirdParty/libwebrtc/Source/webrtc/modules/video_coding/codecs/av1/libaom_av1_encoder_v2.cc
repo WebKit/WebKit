@@ -175,57 +175,58 @@ bool ValidateEncodeParams(
   for (size_t i = 0; i < frame_settings.size(); ++i) {
     const FrameEncodeSettings& settings = frame_settings[i];
 
-    if (!settings.frame_output) {
+    if (!settings.frame_output()) {
       RTC_LOG(LS_ERROR) << "No frame output provided.";
       return false;
     }
 
     if (!in_range(kMinEffortLevel, kMaxEffortLevel + 1,
-                  settings.effort_level)) {
-      RTC_LOG(LS_ERROR) << "Unsupported effort level " << settings.effort_level;
+                  settings.effort_level())) {
+      RTC_LOG(LS_ERROR) << "Unsupported effort level "
+                        << settings.effort_level();
       return false;
     }
 
-    if (!in_range(0, kMaxSpatialLayersLimit, settings.spatial_id)) {
-      RTC_LOG(LS_ERROR) << "invalid spatial id " << settings.spatial_id;
+    if (!in_range(0, kMaxSpatialLayersLimit, settings.spatial_id())) {
+      RTC_LOG(LS_ERROR) << "invalid spatial id " << settings.spatial_id();
       return false;
     }
 
-    if (!in_range(0, kMaxTemporalLayers, settings.temporal_id)) {
-      RTC_LOG(LS_ERROR) << "invalid temporal id " << settings.temporal_id;
+    if (!in_range(0, kMaxTemporalLayers, settings.temporal_id())) {
+      RTC_LOG(LS_ERROR) << "invalid temporal id " << settings.temporal_id();
       return false;
     }
 
-    if ((settings.frame_type == VideoEncoderInterface::FrameType::kKeyframe ||
-         settings.frame_type ==
+    if ((settings.frame_type() == VideoEncoderInterface::FrameType::kKeyframe ||
+         settings.frame_type() ==
              VideoEncoderInterface::FrameType::kStartFrame) &&
-        !settings.reference_buffers.empty()) {
+        !settings.reference_buffers().empty()) {
       RTC_LOG(LS_ERROR) << "Reference buffers can not be used for keyframes.";
       return false;
     }
 
-    if ((settings.frame_type == VideoEncoderInterface::FrameType::kKeyframe ||
-         settings.frame_type ==
+    if ((settings.frame_type() == VideoEncoderInterface::FrameType::kKeyframe ||
+         settings.frame_type() ==
              VideoEncoderInterface::FrameType::kStartFrame) &&
-        !settings.update_buffer) {
+        !settings.update_buffer()) {
       RTC_LOG(LS_ERROR)
           << "Buffer to update must be specified for keyframe/startframe";
       return false;
     }
 
-    if (settings.update_buffer &&
-        !in_range(0, kNumBuffers, *settings.update_buffer)) {
+    if (settings.update_buffer() &&
+        !in_range(0, kNumBuffers, *settings.update_buffer())) {
       RTC_LOG(LS_ERROR) << "Invalid update buffer id.";
       return false;
     }
 
-    if (settings.reference_buffers.size() > kMaxReferences) {
+    if (settings.reference_buffers().size() > kMaxReferences) {
       RTC_LOG(LS_ERROR) << "Too many referenced buffers.";
       return false;
     }
 
-    for (size_t j = 0; j < settings.reference_buffers.size(); ++j) {
-      if (!in_range(0, kNumBuffers, settings.reference_buffers[j])) {
+    for (size_t j = 0; j < settings.reference_buffers().size(); ++j) {
+      if (!in_range(0, kNumBuffers, settings.reference_buffers()[j])) {
         RTC_LOG(LS_ERROR) << "Invalid reference buffer id.";
         return false;
       }
@@ -237,13 +238,14 @@ bool ValidateEncodeParams(
 
       // Will some other frame in this temporal unit update the buffer?
       for (size_t k = 0; k < i; ++k) {
-        if (frame_settings[k].frame_type ==
+        if (frame_settings[k].frame_type() ==
             VideoEncoderInterface::FrameType::kKeyframe) {
           keyframe_on_previous_layer = true;
           referenced_resolution.reset();
         }
-        if (frame_settings[k].update_buffer == settings.reference_buffers[j]) {
-          referenced_resolution = frame_settings[k].resolution;
+        if (frame_settings[k].update_buffer() ==
+            settings.reference_buffers()[j]) {
+          referenced_resolution = frame_settings[k].resolution();
         }
       }
 
@@ -251,7 +253,7 @@ bool ValidateEncodeParams(
       // resolution of the last frame stored into that buffer?
       if (!referenced_resolution && !keyframe_on_previous_layer) {
         referenced_resolution =
-            last_resolution_in_buffer[settings.reference_buffers[j]];
+            last_resolution_in_buffer[settings.reference_buffers()[j]];
       }
 
       if (!referenced_resolution) {
@@ -259,14 +261,15 @@ bool ValidateEncodeParams(
         return false;
       }
 
-      if (!GetScalingFactor(*referenced_resolution, settings.resolution)) {
+      if (!GetScalingFactor(*referenced_resolution, settings.resolution())) {
         RTC_LOG(LS_ERROR)
             << "Required resolution scaling factor not supported.";
         return false;
       }
 
-      for (size_t l = i + 1; l < settings.reference_buffers.size(); ++l) {
-        if (settings.reference_buffers[i] == settings.reference_buffers[l]) {
+      for (size_t l = i + 1; l < settings.reference_buffers().size(); ++l) {
+        if (settings.reference_buffers()[i] ==
+            settings.reference_buffers()[l]) {
           RTC_LOG(LS_ERROR) << "Duplicate reference buffer specified.";
           return false;
         }
@@ -274,16 +277,16 @@ bool ValidateEncodeParams(
     }
 
     if ((rc_mode == AOM_CBR &&
-         std::holds_alternative<Cqp>(settings.rate_options)) ||
+         std::holds_alternative<Cqp>(settings.rate_options())) ||
         (rc_mode == AOM_Q &&
-         std::holds_alternative<Cbr>(settings.rate_options))) {
+         std::holds_alternative<Cbr>(settings.rate_options()))) {
       RTC_LOG(LS_ERROR) << "Invalid rate options, encoder configured with "
                         << (rc_mode == AOM_CBR ? "AOM_CBR" : "AOM_Q");
       return false;
     }
 
     for (size_t j = i + 1; j < frame_settings.size(); ++j) {
-      if (settings.spatial_id >= frame_settings[j].spatial_id) {
+      if (settings.spatial_id() >= frame_settings[j].spatial_id()) {
         RTC_LOG(LS_ERROR) << "Frame spatial id specified out of order.";
         return false;
       }
@@ -379,9 +382,10 @@ aom_svc_ref_frame_config_t GetSvcRefFrameConfig(
   std::span<int> refresh_view(ref_frame_config.refresh, 8);
 
   int alias_index = 0;
-  if (!settings.reference_buffers.empty()) {
-    for (size_t i = 0; i < settings.reference_buffers.size(); ++i) {
-      ref_idx_view[kPreferedAlias[alias_index]] = settings.reference_buffers[i];
+  if (!settings.reference_buffers().empty()) {
+    for (size_t i = 0; i < settings.reference_buffers().size(); ++i) {
+      ref_idx_view[kPreferedAlias[alias_index]] =
+          settings.reference_buffers()[i];
       reference_view[kPreferedAlias[alias_index]] = 1;
       alias_index++;
     }
@@ -389,23 +393,23 @@ aom_svc_ref_frame_config_t GetSvcRefFrameConfig(
     // Delta frames must not alias unused buffers, and since start frames only
     // update some buffers it is not safe to leave unused aliases to simply
     // point to buffer 0.
-    for (size_t i = settings.reference_buffers.size(); i < ref_idx_view.size();
-         ++i) {
-      ref_idx_view[kPreferedAlias[i]] = settings.reference_buffers.back();
+    for (size_t i = settings.reference_buffers().size();
+         i < ref_idx_view.size(); ++i) {
+      ref_idx_view[kPreferedAlias[i]] = settings.reference_buffers().back();
     }
   }
 
-  if (settings.update_buffer) {
-    if (!absl::c_linear_search(settings.reference_buffers,
-                               *settings.update_buffer)) {
-      ref_idx_view[kPreferedAlias[alias_index]] = *settings.update_buffer;
+  if (settings.update_buffer()) {
+    if (!absl::c_linear_search(settings.reference_buffers(),
+                               *settings.update_buffer())) {
+      ref_idx_view[kPreferedAlias[alias_index]] = *settings.update_buffer();
       alias_index++;
     }
-    refresh_view[*settings.update_buffer] = 1;
+    refresh_view[*settings.update_buffer()] = 1;
   }
 
   StringBuilder sb;
-  sb << " spatial_id=" << settings.spatial_id;
+  sb << " spatial_id=" << settings.spatial_id();
   sb << "  ref_idx=[ ";
   for (auto r : ref_frame_config.ref_idx) {
     sb << r << " ";
@@ -429,7 +433,7 @@ aom_svc_params_t GetSvcParams(
     const VideoFrameBuffer& frame_buffer,
     const std::vector<FrameEncodeSettings>& frame_settings) {
   aom_svc_params_t svc_params = {};
-  svc_params.number_spatial_layers = frame_settings.back().spatial_id + 1;
+  svc_params.number_spatial_layers = frame_settings.back().spatial_id() + 1;
   svc_params.number_temporal_layers = kMaxTemporalLayers;
 
   std::span<int> framerate_factor_view(svc_params.framerate_factor,
@@ -460,20 +464,21 @@ aom_svc_params_t GetSvcParams(
   for (const FrameEncodeSettings& settings : frame_settings) {
     std::optional<Rational> scaling_factor = GetScalingFactor(
         {.width = frame_buffer.width(), .height = frame_buffer.height()},
-        settings.resolution);
+        settings.resolution());
     RTC_CHECK(scaling_factor);
-    scaling_factor_num_view[settings.spatial_id] = scaling_factor->numerator;
-    scaling_factor_den_view[settings.spatial_id] = scaling_factor->denominator;
+    scaling_factor_num_view[settings.spatial_id()] = scaling_factor->numerator;
+    scaling_factor_den_view[settings.spatial_id()] =
+        scaling_factor->denominator;
 
     const int flat_layer_id =
-        settings.spatial_id * svc_params.number_temporal_layers +
-        settings.temporal_id;
+        settings.spatial_id() * svc_params.number_temporal_layers +
+        settings.temporal_id();
 
     RTC_LOG(LS_WARNING) << __FUNCTION__ << " flat_layer_id=" << flat_layer_id
                         << " num="
-                        << scaling_factor_num_view[settings.spatial_id]
+                        << scaling_factor_num_view[settings.spatial_id()]
                         << " den="
-                        << scaling_factor_den_view[settings.spatial_id];
+                        << scaling_factor_den_view[settings.spatial_id()];
 
     std::visit(
         [&](auto&& arg) {
@@ -484,7 +489,7 @@ aom_svc_params_t GetSvcParams(
             // layer. This means the bitrate for the top temporal layer always
             // has to be set even if that temporal layer is not being encoded.
             const int last_temporal_layer_in_spatial_layer_id =
-                settings.spatial_id * svc_params.number_temporal_layers +
+                settings.spatial_id() * svc_params.number_temporal_layers +
                 (kMaxTemporalLayers - 1);
             layer_target_bitrate_view[last_temporal_layer_in_spatial_layer_id] =
                 arg.target_bitrate.kbps();
@@ -510,7 +515,7 @@ aom_svc_params_t GetSvcParams(
                                 << flat_layer_id << "]=" << arg.target_qp;
           }
         },
-        settings.rate_options);
+        settings.rate_options());
   }
 
   StringBuilder sb;
@@ -551,23 +556,23 @@ bool LibaomAv1EncoderV2::InitEncode(
     return false;
   }
 
-  max_number_of_threads_ = settings.max_number_of_threads;
+  max_number_of_threads_ = settings.max_number_of_threads();
 
   // The encode resolution is set dynamically for each call to `Encode`, but for
   // `aom_codec_enc_init` to not fail we set it here as well.
-  cfg_.g_w = settings.max_encode_dimensions.width;
-  cfg_.g_h = settings.max_encode_dimensions.height;
+  cfg_.g_w = settings.max_encode_dimensions().width;
+  cfg_.g_h = settings.max_encode_dimensions().height;
   cfg_.g_timebase.num = 1;
   // TD: does 90khz timebase make sense, use microseconds instead maybe?
   cfg_.g_timebase.den = kRtpTicksPerSecond;
-  cfg_.g_input_bit_depth = settings.encoding_format.bit_depth;
+  cfg_.g_input_bit_depth = settings.encoding_format().bit_depth;
   cfg_.kf_mode = AOM_KF_DISABLED;
   // TD: rc_undershoot_pct and rc_overshoot_pct should probably be removed.
   cfg_.rc_undershoot_pct = 50;
   cfg_.rc_overshoot_pct = 50;
   auto* cbr =
       std::get_if<VideoEncoderFactoryInterface::StaticEncoderSettings::Cbr>(
-          &settings.rc_mode);
+          &settings.rc_mode());
   cfg_.rc_buf_initial_sz = cbr ? cbr->target_buffer_size.ms() : 600;
   cfg_.rc_buf_optimal_sz = cbr ? cbr->target_buffer_size.ms() : 600;
   cfg_.rc_buf_sz = cbr ? cbr->max_buffer_size.ms() : 1000;
@@ -632,8 +637,8 @@ void LibaomAv1EncoderV2::Encode(
   // were already called with an EncodedData result.
   absl::Cleanup on_return = [&] {
     for (FrameEncodeSettings& settings : frame_settings) {
-      if (settings.frame_output) {
-        settings.frame_output->EncodeComplete(
+      if (settings.frame_output()) {
+        settings.frame_output()->EncodeComplete(
             VideoEncoderInterface::EncodingError());
       }
     }
@@ -644,8 +649,8 @@ void LibaomAv1EncoderV2::Encode(
     return;
   }
 
-  if (current_content_type_ != tu_settings.content_hint) {
-    if (tu_settings.content_hint == VideoCodecMode::kScreensharing) {
+  if (current_content_type_ != tu_settings.content_hint()) {
+    if (tu_settings.content_hint() == VideoCodecMode::kScreensharing) {
       // TD: Set speed 11?
       SET_OR_RETURN(AV1E_SET_TUNE_CONTENT, AOM_CONTENT_SCREEN);
       SET_OR_RETURN(AV1E_SET_ENABLE_PALETTE, 1);
@@ -653,13 +658,13 @@ void LibaomAv1EncoderV2::Encode(
       SET_OR_RETURN(AV1E_SET_TUNE_CONTENT, AOM_CONTENT_DEFAULT);
       SET_OR_RETURN(AV1E_SET_ENABLE_PALETTE, 0);
     }
-    current_content_type_ = tu_settings.content_hint;
+    current_content_type_ = tu_settings.content_hint();
   }
 
   if (cfg_.rc_end_usage == AOM_CBR) {
     DataRate accum_rate = DataRate::Zero();
     for (const FrameEncodeSettings& settings : frame_settings) {
-      accum_rate += std::get<Cbr>(settings.rate_options).target_bitrate;
+      accum_rate += std::get<Cbr>(settings.rate_options()).target_bitrate;
     }
     cfg_.rc_target_bitrate = accum_rate.kbps();
     RTC_LOG(LS_WARNING) << __FUNCTION__
@@ -702,10 +707,10 @@ void LibaomAv1EncoderV2::Encode(
   settings_for_spatial_id.fill(nullptr);
   FrameEncodeSettings settings_for_unused_layer;
   for (FrameEncodeSettings& settings : frame_settings) {
-    settings_for_spatial_id[settings.spatial_id] = &settings;
+    settings_for_spatial_id[settings.spatial_id()] = &settings;
   }
 
-  for (int sid = frame_settings[0].spatial_id;
+  for (int sid = frame_settings[0].spatial_id();
        sid < svc_params.number_spatial_layers; ++sid) {
     const bool layer_enabled = settings_for_spatial_id[sid] != nullptr;
     FrameEncodeSettings& settings = layer_enabled
@@ -714,7 +719,7 @@ void LibaomAv1EncoderV2::Encode(
 
     aom_svc_layer_id_t layer_id = {
         .spatial_layer_id = sid,
-        .temporal_layer_id = settings.temporal_id,
+        .temporal_layer_id = settings.temporal_id(),
     };
     SET_OR_RETURN(AV1E_SET_SVC_LAYER_ID, &layer_id);
     aom_svc_ref_frame_config_t ref_config = GetSvcRefFrameConfig(settings);
@@ -724,33 +729,36 @@ void LibaomAv1EncoderV2::Encode(
     // not being encoded?
     TimeDelta duration = TimeDelta::Millis(1);
     if (layer_enabled) {
-      if (const Cbr* cbr = std::get_if<Cbr>(&settings.rate_options)) {
+      if (const Cbr* cbr = std::get_if<Cbr>(&settings.rate_options())) {
         duration = cbr->duration;
       } else {
         // TD: What should duration be when Cqp is used?
         duration = TimeDelta::Millis(1);
       }
 
-      if (settings.effort_level != current_effort_level_[settings.spatial_id]) {
+      if (settings.effort_level() !=
+          current_effort_level_[settings.spatial_id()]) {
         // For RTC we use speed level 5 to 11, with 9 being the default. Note
         // that low effort means higher speed.
-        SET_OR_RETURN(AOME_SET_CPUUSED, 9 - settings.effort_level);
-        current_effort_level_[settings.spatial_id] = settings.effort_level;
+        SET_OR_RETURN(AOME_SET_CPUUSED, 9 - settings.effort_level());
+        current_effort_level_[settings.spatial_id()] = settings.effort_level();
       }
     }
 
-    RTC_LOG(LS_WARNING)
-        << __FUNCTION__ << " timestamp="
-        << (tu_settings.presentation_timestamp.ms() * kRtpTicksPerSecond / 1000)
-        << "  duration=" << (duration.ms() * kRtpTicksPerSecond / 1000)
-        << "  type="
-        << (settings.frame_type == VideoEncoderInterface::FrameType::kKeyframe
-                ? "key"
-                : "delta");
+    RTC_LOG(LS_WARNING) << __FUNCTION__ << " timestamp="
+                        << (tu_settings.presentation_timestamp().ms() *
+                            kRtpTicksPerSecond / 1000)
+                        << "  duration="
+                        << (duration.ms() * kRtpTicksPerSecond / 1000)
+                        << "  type="
+                        << (settings.frame_type() ==
+                                    VideoEncoderInterface::FrameType::kKeyframe
+                                ? "key"
+                                : "delta");
     aom_codec_err_t ret = aom_codec_encode(
-        &ctx_, &*image_to_encode_, tu_settings.presentation_timestamp.ms() * 90,
-        duration.ms() * 90,
-        settings.frame_type == VideoEncoderInterface::FrameType::kKeyframe
+        &ctx_, &*image_to_encode_,
+        tu_settings.presentation_timestamp().ms() * 90, duration.ms() * 90,
+        settings.frame_type() == VideoEncoderInterface::FrameType::kKeyframe
             ? AOM_EFLAG_FORCE_KF
             : 0);
     if (ret != AOM_CODEC_OK) {
@@ -762,12 +770,13 @@ void LibaomAv1EncoderV2::Encode(
       continue;
     }
 
-    if (settings.frame_type == VideoEncoderInterface::FrameType::kKeyframe) {
+    if (settings.frame_type() == VideoEncoderInterface::FrameType::kKeyframe) {
       last_resolution_in_buffer_ = {};
     }
 
-    if (settings.update_buffer) {
-      last_resolution_in_buffer_[*settings.update_buffer] = settings.resolution;
+    if (settings.update_buffer()) {
+      last_resolution_in_buffer_[*settings.update_buffer()] =
+          settings.resolution();
     }
 
     VideoEncoderInterface::EncodedData result;
@@ -781,7 +790,7 @@ void LibaomAv1EncoderV2::Encode(
                                 ? VideoEncoderInterface::FrameType::kKeyframe
                                 : VideoEncoderInterface::FrameType::kDeltaFrame;
         std::span<uint8_t> output_buffer =
-            settings.frame_output->GetBitstreamOutputBuffer(
+            settings.frame_output()->GetBitstreamOutputBuffer(
                 DataSize::Bytes(pkt->data.frame.sz));
         if (output_buffer.size() != pkt->data.frame.sz) {
           return;
@@ -795,9 +804,9 @@ void LibaomAv1EncoderV2::Encode(
     if (!bitstream_produced) {
       return;
     } else {
-      RTC_CHECK(settings.frame_output);
-      settings.frame_output->EncodeComplete(result);
-      settings.frame_output = nullptr;
+      RTC_CHECK(settings.frame_output());
+      settings.frame_output()->EncodeComplete(result);
+      settings.set_frame_output(nullptr);
     }
   }
 }

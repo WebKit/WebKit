@@ -105,5 +105,84 @@ TEST(FrameInstrumentationDataTest,
               ElementsAre(0.1, 0.3, 2.1));
 }
 
+TEST(CombineAndDeleteFramesTest, AllowsUndefinedSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+
+  EXPECT_NE(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
+TEST(CombineAndDeleteFramesTest, AllowsIncreasingSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  frame1.SetSpatialIndex(0);
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+  frame2.SetSpatialIndex(1);
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+
+  EXPECT_NE(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
+TEST(CombineAndDeleteFramesTest, RejectsDecreasingSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  frame1.SetSpatialIndex(1);
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+  frame2.SetSpatialIndex(0);
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+
+  EXPECT_EQ(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
+TEST(CombineAndDeleteFramesTest, RejectsEqualSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  frame1.SetSpatialIndex(1);
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+  frame2.SetSpatialIndex(1);
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+
+  EXPECT_EQ(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
+TEST(CombineAndDeleteFramesTest, AllowsValidMixedSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  // nullopt (will be treated as 0)
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+  frame2.SetSpatialIndex(1);
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+
+  EXPECT_NE(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
+TEST(CombineAndDeleteFramesTest, RejectsInvalidMixedSpatialIndices) {
+  EncodedFrame frame1 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/1);
+  // nullopt (will be treated as 0)
+  EncodedFrame frame2 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/11);
+  frame2.SetSpatialIndex(1);
+  EncodedFrame frame3 = CreateEncodedImageOfSizeN(/*n=*/10, /*x=*/21);
+  // nullopt (will be treated as 0, which is <= 1)
+
+  absl::InlinedVector<std::unique_ptr<EncodedFrame>, 4> frames;
+  frames.push_back(std::make_unique<EncodedFrame>(frame1));
+  frames.push_back(std::make_unique<EncodedFrame>(frame2));
+  frames.push_back(std::make_unique<EncodedFrame>(frame3));
+
+  EXPECT_EQ(CombineAndDeleteFrames(std::move(frames)), nullptr);
+}
+
 }  // namespace
 }  // namespace webrtc

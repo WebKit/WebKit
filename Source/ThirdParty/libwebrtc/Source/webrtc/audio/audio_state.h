@@ -12,7 +12,6 @@
 #define AUDIO_AUDIO_STATE_H_
 
 #include <cstddef>
-#include <map>
 
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_processing.h"
@@ -20,6 +19,7 @@
 #include "audio/audio_transport_impl.h"
 #include "call/audio_state.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_map.h"
 #include "rtc_base/containers/flat_set.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/repeating_task.h"
@@ -50,13 +50,13 @@ class AudioState : public webrtc::AudioState {
 
   void SetStereoChannelSwapping(bool enable) override;
 
-  AudioDeviceModule* audio_device_module() {
+  AudioDeviceModule* audio_device_module() const {
     RTC_DCHECK(config_.audio_device_module);
     return config_.audio_device_module.get();
   }
 
-  void AddReceivingStream(webrtc::AudioReceiveStreamInterface* stream);
-  void RemoveReceivingStream(webrtc::AudioReceiveStreamInterface* stream);
+  void AddReceivingStream(AudioReceiveStreamInterface* stream);
+  void RemoveReceivingStream(AudioReceiveStreamInterface* stream);
 
   void AddSendingStream(webrtc::AudioSendStream* stream,
                         int sample_rate_hz,
@@ -64,16 +64,15 @@ class AudioState : public webrtc::AudioState {
   void RemoveSendingStream(webrtc::AudioSendStream* stream);
 
  private:
-  void UpdateAudioTransportWithSendingStreams();
-  void UpdateNullAudioPollerState() RTC_RUN_ON(&thread_checker_);
+  void UpdateAudioTransportWithSendingStreams()
+      RTC_RUN_ON(&worker_thread_checker_);
+  void UpdateNullAudioPollerState() RTC_RUN_ON(&worker_thread_checker_);
 
-  RTC_NO_UNIQUE_ADDRESS SequenceChecker thread_checker_{
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker worker_thread_checker_{
       SequenceChecker::kDetached};
-  RTC_NO_UNIQUE_ADDRESS SequenceChecker process_thread_checker_{
-      SequenceChecker::kDetached};
-  const webrtc::AudioState::Config config_;
-  bool recording_enabled_ = true;
-  bool playout_enabled_ = true;
+  const AudioState::Config config_;
+  bool recording_enabled_ RTC_GUARDED_BY(&worker_thread_checker_) = true;
+  bool playout_enabled_ RTC_GUARDED_BY(&worker_thread_checker_) = true;
 
   // Transports mixed audio from the mixer to the audio device and
   // recorded audio to the sending streams.
@@ -82,14 +81,17 @@ class AudioState : public webrtc::AudioState {
   // Null audio poller is used to continue polling the audio streams if audio
   // playout is disabled so that audio processing still happens and the audio
   // stats are still updated.
-  RepeatingTaskHandle null_audio_poller_ RTC_GUARDED_BY(&thread_checker_);
+  RepeatingTaskHandle null_audio_poller_
+      RTC_GUARDED_BY(&worker_thread_checker_);
 
-  webrtc::flat_set<webrtc::AudioReceiveStreamInterface*> receiving_streams_;
+  flat_set<AudioReceiveStreamInterface*> receiving_streams_
+      RTC_GUARDED_BY(&worker_thread_checker_);
   struct StreamProperties {
     int sample_rate_hz = 0;
     size_t num_channels = 0;
   };
-  std::map<webrtc::AudioSendStream*, StreamProperties> sending_streams_;
+  flat_map<webrtc::AudioSendStream*, StreamProperties> sending_streams_
+      RTC_GUARDED_BY(&worker_thread_checker_);
 };
 }  // namespace internal
 }  // namespace webrtc

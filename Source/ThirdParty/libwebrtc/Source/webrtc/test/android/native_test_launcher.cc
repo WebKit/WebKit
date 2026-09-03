@@ -60,11 +60,19 @@ void SignalHandler(int sig, siginfo_t* info, void* reserved) {
 
 }  // namespace
 
-static void JNI_NativeTestWebrtc_RunTests(JNIEnv* env,
-                                          std::string& command_line_flags,
-                                          std::string& command_line_file_path,
-                                          std::string& stdout_file_path,
-                                          std::string& test_data_dir) {
+static void JNI_NativeTestWebrtc_RunTests(
+    JNIEnv* env,
+    const jni_zero::JavaRef<jstring>& jcommand_line_flags,
+    const jni_zero::JavaRef<jstring>& jcommand_line_file_path,
+    const jni_zero::JavaRef<jstring>& jstdout_file_path,
+    const jni_zero::JavaRef<jstring>& jtest_data_dir) {
+  std::string command_line_flags =
+      jcommand_line_flags.ConvertTo<std::string>(env);
+  std::string command_line_file_path =
+      jcommand_line_file_path.ConvertTo<std::string>(env);
+  std::string stdout_file_path = jstdout_file_path.ConvertTo<std::string>(env);
+  std::string test_data_dir = jtest_data_dir.ConvertTo<std::string>(env);
+
   AndroidLog(
       ANDROID_LOG_INFO,
       "Entering JNI_NativeTestWebrtc_RunTests with command_line_flags=%s, "
@@ -122,3 +130,5 @@ void InstallHandlers() {
 }  // namespace android
 }  // namespace test
 }  // namespace webrtc
+
+DEFINE_JNI(NativeTestWebrtc)

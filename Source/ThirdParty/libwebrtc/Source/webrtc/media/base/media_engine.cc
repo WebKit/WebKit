@@ -78,14 +78,16 @@ RtpParameters CreateRtpParametersWithEncodings(StreamParams sp) {
   return parameters;
 }
 
-std::vector<RtpExtension> GetDefaultEnabledRtpHeaderExtensions(
+std::vector<RtpHeaderExtensionCapability>
+GetDefaultEnabledRtpHeaderCapabilities(
     const RtpHeaderExtensionQueryInterface& query_interface,
     const FieldTrialsView* field_trials) {
-  std::vector<RtpExtension> extensions;
-  for (const auto& entry :
+  std::vector<RtpHeaderExtensionCapability> extensions;
+  for (const RtpHeaderExtensionCapability& entry :
        query_interface.GetRtpHeaderExtensions(field_trials)) {
-    if (entry.direction != RtpTransceiverDirection::kStopped)
-      extensions.emplace_back(entry.uri, *entry.preferred_id);
+    if (entry.direction != RtpTransceiverDirection::kStopped) {
+      extensions.push_back(entry);
+    }
   }
   return extensions;
 }

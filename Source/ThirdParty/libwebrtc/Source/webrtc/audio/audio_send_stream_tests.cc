@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "call/audio_receive_stream.h"
@@ -32,10 +33,8 @@ namespace webrtc {
 namespace test {
 namespace {
 
-enum : int {  // The first valid value is 1.
-  kAudioLevelExtensionId = 1,
-  kTransportSequenceNumberExtensionId,
-};
+constexpr RtpHeaderExtensionId kAudioLevelExtensionId(1);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(2);
 
 class AudioSendTest : public SendTest {
  public:
@@ -45,7 +44,6 @@ class AudioSendTest : public SendTest {
   size_t GetNumAudioStreams() const override { return 1; }
   size_t GetNumFlexfecStreams() const override { return 0; }
 };
-}  // namespace
 
 using AudioSendStreamCallTest = CallTest;
 
@@ -251,5 +249,6 @@ TEST_F(AudioSendStreamCallTest, SendDtmf) {
   RunBaseTest(&test);
 }
 
+}  // namespace
 }  // namespace test
 }  // namespace webrtc

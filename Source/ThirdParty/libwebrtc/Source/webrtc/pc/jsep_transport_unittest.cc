@@ -23,7 +23,7 @@
 
 #include "api/candidate.h"
 #include "api/crypto/crypto_options.h"
-#include "api/field_trials.h"
+#include "api/environment/environment.h"
 #include "api/ice_transport_interface.h"
 #include "api/jsep.h"
 #include "api/make_ref_counted.h"
@@ -55,7 +55,7 @@
 #include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
 
@@ -104,7 +104,7 @@ class JsepTransport2Test : public ::testing::Test {
       PacketTransportInternal* rtp_packet_transport,
       PacketTransportInternal* rtcp_packet_transport) {
     auto srtp_transport = std::make_unique<SrtpTransport>(
-        rtcp_packet_transport == nullptr, field_trials_);
+        rtcp_packet_transport == nullptr, env_.field_trials());
 
     srtp_transport->SetRtpPacketTransport(rtp_packet_transport);
     if (rtcp_packet_transport) {
@@ -117,7 +117,7 @@ class JsepTransport2Test : public ::testing::Test {
       std::unique_ptr<DtlsTransportInternal> rtp_dtls_transport,
       std::unique_ptr<DtlsTransportInternal> rtcp_dtls_transport) {
     auto dtls_srtp_transport = std::make_unique<DtlsSrtpTransport>(
-        rtcp_dtls_transport == nullptr, field_trials_);
+        rtcp_dtls_transport == nullptr, env_.field_trials());
     dtls_srtp_transport->SetDtlsTransportsOwned(std::move(rtp_dtls_transport),
                                                 std::move(rtcp_dtls_transport));
     return dtls_srtp_transport;
@@ -127,7 +127,7 @@ class JsepTransport2Test : public ::testing::Test {
   // FakeIceTransportInternal.
   std::unique_ptr<JsepTransport> CreateJsepTransport2(bool rtcp_mux_enabled) {
     auto ice_internal = std::make_unique<FakeIceTransportInternal>(
-        kTransportName, ICE_CANDIDATE_COMPONENT_RTP);
+        env_, kTransportName, ICE_CANDIDATE_COMPONENT_RTP);
     auto ice = CreateIceTransport(std::move(ice_internal));
     auto rtp_dtls_transport = std::make_unique<FakeDtlsTransport>(ice);
 
@@ -136,7 +136,7 @@ class JsepTransport2Test : public ::testing::Test {
     scoped_refptr<IceTransportInterface> rtcp_ice;
     if (!rtcp_mux_enabled) {
       rtcp_ice_internal = std::make_unique<FakeIceTransportInternal>(
-          kTransportName, ICE_CANDIDATE_COMPONENT_RTCP);
+          env_, kTransportName, ICE_CANDIDATE_COMPONENT_RTCP);
       rtcp_ice = CreateIceTransport(std::move(rtcp_ice_internal));
       rtcp_dtls_transport = std::make_unique<FakeDtlsTransport>(rtcp_ice);
     }
@@ -190,9 +190,9 @@ class JsepTransport2Test : public ::testing::Test {
   void OnRtcpMuxActive() { signal_rtcp_mux_active_received_ = true; }
 
   test::RunLoop main_thread_;
+  const Environment env_ = CreateTestEnvironment();
   std::unique_ptr<JsepTransport> jsep_transport_;
   bool signal_rtcp_mux_active_received_ = false;
-  FieldTrials field_trials_ = CreateTestFieldTrials();
 };
 
 // The parameterized tests cover both cases when RTCP mux is enable and
@@ -496,9 +496,8 @@ TEST_P(JsepTransport2WithRtcpMux, VerifyCertificateFingerprint) {
         &digest_algorithm));
     ASSERT_FALSE(digest_algorithm.empty());
     std::unique_ptr<SSLFingerprint> good_fingerprint =
-        SSLFingerprint::CreateUnique(digest_algorithm,
-                                     *certificate->identity());
-    ASSERT_NE(nullptr, good_fingerprint);
+        SSLFingerprint::Create(digest_algorithm, *certificate->identity());
+    ASSERT_NE(good_fingerprint, nullptr);
 
     EXPECT_TRUE(jsep_transport_
                     ->VerifyCertificateFingerprint(certificate.get(),

@@ -11,6 +11,8 @@
 #ifndef MODULES_RTP_RTCP_SOURCE_SFRAME_DESCRIPTOR_H_
 #define MODULES_RTP_RTCP_SOURCE_SFRAME_DESCRIPTOR_H_
 
+#include <cstddef>
+
 namespace webrtc {
 
 // Encryption granularity signaled by the T bit in the SFrame descriptor.
@@ -36,7 +38,14 @@ enum class SframeEncryptionLevel {
 // E: End bit   — 1 if this is the last fragment of the SFrame frame.
 // T: Type bit  — 0 for raw (per-frame SFrame), 1 for packetized (per-packet).
 // x: Reserved, must be 0.
-struct SFrameDescriptor {
+struct SframeDescriptor {
+  // Wire-format constants for the 1-byte descriptor.
+  static constexpr size_t kSize = 1;
+  // Bit indices within the sframe header descriptor byte.
+  static constexpr size_t kSBit = 7;
+  static constexpr size_t kEBit = 6;
+  static constexpr size_t kTBit = 5;
+
   bool start = false;
   bool end = false;
   SframeEncryptionLevel encryption_level =

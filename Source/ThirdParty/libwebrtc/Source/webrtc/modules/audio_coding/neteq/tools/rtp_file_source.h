@@ -18,6 +18,7 @@
 #include <optional>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -47,7 +48,8 @@ class RtpFileSource : public PacketSource {
   RtpFileSource& operator=(const RtpFileSource&) = delete;
 
   // Registers an RTP header extension and binds it to `id`.
-  virtual bool RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);
+  virtual bool RegisterRtpHeaderExtension(RTPExtensionType type,
+                                          RtpHeaderExtensionId id);
 
   std::unique_ptr<RtpPacketReceived> NextPacket() override;
 

@@ -608,7 +608,6 @@ bool ZeroHertzAdapterMode::HasQualityConverged() const {
 
 void ZeroHertzAdapterMode::ResetQualityConvergenceInfo() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
-  RTC_DLOG(LS_INFO) << __func__ << " this " << this;
   for (auto& layer_tracker : layer_trackers_) {
     if (layer_tracker.quality_converged.has_value())
       layer_tracker.quality_converged = false;

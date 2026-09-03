@@ -31,7 +31,6 @@
 
 using ::testing::_;
 using ::testing::Eq;
-using ::testing::InvokeWithoutArgs;
 
 static const int kTimeOut = 100;
 static const double kDefaultVolume = 1;
@@ -74,10 +73,10 @@ TEST_F(AudioRtpReceiverTest, SetOutputVolumeIsCalled) {
   std::atomic_int set_volume_calls(0);
 
   EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kDefaultVolume))
-      .WillOnce(InvokeWithoutArgs([&] {
+      .WillOnce([&] {
         set_volume_calls++;
         return true;
-      }));
+      });
 
   receiver_->track();
   receiver_->track()->set_enabled(true);
@@ -86,11 +85,10 @@ TEST_F(AudioRtpReceiverTest, SetOutputVolumeIsCalled) {
   auto setup_task = receiver_->GetSetupForMediaChannel(kSsrc);
   worker_thread_->BlockingCall([&]() { std::move(setup_task)(); });
 
-  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolume))
-      .WillOnce(InvokeWithoutArgs([&] {
-        set_volume_calls++;
-        return true;
-      }));
+  EXPECT_CALL(receive_channel_, SetOutputVolume(kSsrc, kVolume)).WillOnce([&] {
+    set_volume_calls++;
+    return true;
+  });
 
   receiver_->OnSetVolume(kVolume);
   EXPECT_THAT(WaitUntil([&] { return set_volume_calls.load(); }, Eq(2),

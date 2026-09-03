@@ -926,7 +926,7 @@ class TestVp8ImplWithMaxFrameDropTrial
       public WithParamInterface<std::tuple<std::string, TimeDelta, TimeDelta>> {
  public:
   TestVp8ImplWithMaxFrameDropTrial() {
-    field_trials_.Merge(FieldTrials(std::get<0>(GetParam())));
+    field_trials_.Merge(CreateTestFieldTrials(std::get<0>(GetParam())));
   }
 };
 

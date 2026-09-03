@@ -25,6 +25,7 @@
 #include "absl/flags/flag.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "api/field_trials.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "modules/audio_coding/codecs/pcm16b/pcm16b.h"
@@ -39,6 +40,7 @@
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/arch.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -1005,10 +1007,11 @@ TEST(NetEqNoTimeStretchingMode, RunTest) {
       new TimeLimitedNetEqInput(std::move(input), 20000));
   std::unique_ptr<AudioSink> output(new VoidAudioSink);
   NetEqTest::Callbacks callbacks;
+  FieldTrials field_trials = CreateTestFieldTrials("");
   NetEqTest test(config, CreateBuiltinAudioDecoderFactory(), codecs,
                  /*text_log=*/nullptr, /*neteq_factory=*/nullptr,
                  /*input=*/std::move(input_time_limit), std::move(output),
-                 callbacks);
+                 callbacks, &field_trials);
   test.Run();
   const auto stats = test.SimulationStats();
   EXPECT_EQ(0, stats.accelerate_rate);

@@ -30,7 +30,7 @@
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
-#include "api/sframe/sframe_decrypter_interface.h"
+#include "api/sframe/sframe_decryptor_interface.h"
 #include "api/sframe/sframe_types.h"
 #include "media/base/media_channel.h"
 #include "rtc_base/system/no_unique_address.h"
@@ -113,8 +113,8 @@ class RtpReceiverInternal : public RtpReceiverInterface {
 
 class RtpReceiverBase : public RtpReceiverInternal {
  public:
-  RTCErrorOr<scoped_refptr<SframeDecrypterInterface>>
-  CreateSframeDecrypterOrError(SframeCipherSuite cipher_suite) override;
+  RTCErrorOr<scoped_refptr<SframeDecryptorInterface>>
+  CreateSframeDecryptorOrError(SframeCipherSuite cipher_suite) override;
 
   std::optional<uint32_t> ssrc() const override;
 

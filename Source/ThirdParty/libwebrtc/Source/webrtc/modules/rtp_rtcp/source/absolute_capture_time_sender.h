@@ -75,14 +75,6 @@ class AbsoluteCaptureTimeSender {
       std::optional<int64_t> estimated_capture_clock_offset,
       bool force = false);
 
-  // Returns a header extension to be sent, or `std::nullopt` if the header
-  // extension shouldn't be sent.
-  [[deprecated]] std::optional<AbsoluteCaptureTime> OnSendPacket(
-      uint32_t source,
-      uint32_t rtp_timestamp,
-      uint32_t rtp_clock_frequency,
-      uint64_t absolute_capture_timestamp,
-      std::optional<int64_t> estimated_capture_clock_offset);
 
  private:
   bool ShouldSendExtension(

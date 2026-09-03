@@ -479,7 +479,8 @@ VideoSendStreamImpl::VideoSendStreamImpl(
       encoder_feedback_(
           env_,
           SupportsPerLayerPictureLossIndication(
-              encoder_config.video_format.parameters),
+              encoder_config.video_format.parameters) ||
+              env_.field_trials().IsEnabled("WebRTC-Video-PerSsrcKeyframes"),
           config_.rtp.ssrcs,
           video_stream_encoder_.get(),
           [this](uint32_t ssrc, const std::vector<uint16_t>& seq_nums) {
@@ -516,11 +517,6 @@ VideoSendStreamImpl::VideoSendStreamImpl(
       encoder_bitrate_priority_(encoder_config.bitrate_priority),
       encoder_av1_priority_bitrate_override_bps_(
           GetEncoderPriorityBitrate(config_.rtp.payload_name,
-                                    env_.field_trials())),
-      configured_pacing_factor_(
-          GetConfiguredPacingFactor(config_,
-                                    content_type_,
-                                    pacing_config_,
                                     env_.field_trials())) {
   RTC_DCHECK_GE(config_.rtp.payload_type, 0);
   RTC_DCHECK_LE(config_.rtp.payload_type, 127);
@@ -533,9 +529,14 @@ VideoSendStreamImpl::VideoSendStreamImpl(
 
   std::optional<bool> enable_alr_bw_probing;
 
-  // If send-side BWE is enabled, check if we should apply updated probing and
-  // pacing settings.
-  if (configured_pacing_factor_) {
+  bool rfc8888_experiment_enabled =
+      env_.field_trials().IsEnabled("WebRTC-RFC8888CongestionControlFeedback");
+
+  // If send-side BWE, or RFC8888 congestion control feedback experiment is
+  // enabled, check if we should apply updated probing and pacing settings.
+  std::optional<float> pacing_factor_override = GetConfiguredPacingFactor(
+      config_, content_type_, pacing_config_, env_.field_trials());
+  if (pacing_factor_override.has_value() || rfc8888_experiment_enabled) {
     std::optional<AlrExperimentSettings> alr_settings =
         GetAlrSettings(env_.field_trials(), content_type_);
     int queue_time_limit_ms;
@@ -549,6 +550,11 @@ VideoSendStreamImpl::VideoSendStreamImpl(
     }
 
     transport_->SetQueueTimeLimit(queue_time_limit_ms);
+    if (!rfc8888_experiment_enabled) {
+      // In the RFC8888 experiment, the pacing factor is decided exclusively in
+      // the congestion controller, and SetPacingFactor is not allowed.
+      transport_->SetPacingFactor(*pacing_factor_override);
+    }
   }
 
   if (config_.periodic_alr_bandwidth_probing) {
@@ -559,13 +565,10 @@ VideoSendStreamImpl::VideoSendStreamImpl(
     transport->EnablePeriodicAlrProbing(*enable_alr_bw_probing);
   }
 
-  if (configured_pacing_factor_)
-    transport_->SetPacingFactor(*configured_pacing_factor_);
-
-  // Only request rotation at the source when we positively know that the remote
-  // side doesn't support the rotation extension. This allows us to prepare the
-  // encoder in the expectation that rotation is supported - which is the common
-  // case.
+  // Only request rotation at the source when we positively know that the
+  // remote side doesn't support the rotation extension. This allows us to
+  // prepare the encoder in the expectation that rotation is supported - which
+  // is the common case.
   bool rotation_applied = absl::c_none_of(
       config_.rtp.extensions, [](const RtpExtension& extension) {
         return extension.uri == RtpExtension::kVideoRotationUri;
@@ -645,11 +648,6 @@ void VideoSendStreamImpl::SetCsrcs(std::span<const uint32_t> csrcs) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
   rtp_video_sender_->SetCsrcs(csrcs);
 }
-
-std::optional<float> VideoSendStreamImpl::GetPacingFactorOverride() const {
-  return configured_pacing_factor_;
-}
-
 void VideoSendStreamImpl::StopPermanentlyAndGetRtpStates(
     VideoSendStreamImpl::RtpStateMap* rtp_state_map,
     VideoSendStreamImpl::RtpPayloadStateMap* payload_state_map) {
@@ -668,6 +666,10 @@ void VideoSendStreamImpl::StopPermanentlyAndGetRtpStates(
 void VideoSendStreamImpl::GenerateKeyFrame(
     const std::vector<std::string>& rids) {
   RTC_DCHECK_RUN_ON(&thread_checker_);
+  if (!video_stream_encoder_) {
+    return;
+  }
+
   // Map rids to layers. If rids is empty, generate a keyframe for all layers.
   std::vector<VideoFrameType> next_frames(config_.rtp.ssrcs.size(),
                                           VideoFrameType::kVideoFrameKey);
@@ -677,15 +679,16 @@ void VideoSendStreamImpl::GenerateKeyFrame(
     for (const auto& rid : rids) {
       for (size_t i = 0; i < config_.rtp.rids.size(); i++) {
         if (config_.rtp.rids[i] == rid) {
-          next_frames[i] = VideoFrameType::kVideoFrameKey;
+          if (i < next_frames.size()) {
+            next_frames[i] = VideoFrameType::kVideoFrameKey;
+          }
           break;
         }
       }
     }
   }
-  if (video_stream_encoder_) {
-    video_stream_encoder_->SendKeyFrame(next_frames);
-  }
+
+  video_stream_encoder_->SendKeyFrame(next_frames);
 }
 
 void VideoSendStreamImpl::DeliverRtcp(std::span<const uint8_t> packet) {

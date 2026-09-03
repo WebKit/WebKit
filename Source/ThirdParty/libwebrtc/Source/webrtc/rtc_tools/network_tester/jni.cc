@@ -14,59 +14,48 @@
 #include <string>
 
 #include "rtc_base/thread.h"
+#include "rtc_tools/network_tester/generated_jni/NetworkTester_jni.h"
 #include "rtc_tools/network_tester/test_controller.h"
 #include "test/create_test_environment.h"
+#include "third_party/jni_zero/jni_zero.h"
 
-#undef JNIEXPORT
-#define JNIEXPORT __attribute__((visibility("default")))
+namespace webrtc {
 
-extern "C" JNIEXPORT jlong JNICALL
-Java_com_google_media_networktester_NetworkTester_CreateTestController(
-    JNIEnv* jni,
-    jclass) {
-  webrtc::ThreadManager::Instance()->WrapCurrentThread();
-  return reinterpret_cast<intptr_t>(new webrtc::TestController(
-      webrtc::CreateTestEnvironment(), 0, 0,
-      "/mnt/sdcard/network_tester_client_config.dat",
-      "/mnt/sdcard/network_tester_client_packet_log.dat"));
+static jlong JNI_NetworkTester_CreateTestController(JNIEnv* jni) {
+  ThreadManager::Instance()->WrapCurrentThread();
+  return reinterpret_cast<intptr_t>(
+      new TestController(CreateTestEnvironment(), 0, 0,
+                         "/mnt/sdcard/network_tester_client_config.dat",
+                         "/mnt/sdcard/network_tester_client_packet_log.dat"));
 }
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_google_media_networktester_NetworkTester_TestControllerConnect(
-    JNIEnv* jni,
-    jclass,
-    jlong native_pointer) {
-  reinterpret_cast<webrtc::TestController*>(native_pointer)
+static void JNI_NetworkTester_TestControllerConnect(JNIEnv* jni,
+                                                    jlong native_pointer) {
+  reinterpret_cast<TestController*>(native_pointer)
       ->SendConnectTo("85.195.237.107", 9090);
 }
 
-extern "C" JNIEXPORT bool JNICALL
-Java_com_google_media_networktester_NetworkTester_TestControllerIsDone(
-    JNIEnv* jni,
-    jclass,
-    jlong native_pointer) {
-  return reinterpret_cast<webrtc::TestController*>(native_pointer)
-      ->IsTestDone();
+static jboolean JNI_NetworkTester_TestControllerIsDone(JNIEnv* jni,
+                                                       jlong native_pointer) {
+  return reinterpret_cast<TestController*>(native_pointer)->IsTestDone();
 }
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_google_media_networktester_NetworkTester_TestControllerRun(
-    JNIEnv* jni,
-    jclass,
-    jlong native_pointer) {
+static void JNI_NetworkTester_TestControllerRun(JNIEnv* jni,
+                                                jlong native_pointer) {
   // 100 ms arbitrary chosen, but it works well.
-  webrtc::Thread::Current()->ProcessMessages(/*cms=*/100);
+  Thread::Current()->ProcessMessages(/*cms=*/100);
 }
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_google_media_networktester_NetworkTester_DestroyTestController(
-    JNIEnv* jni,
-    jclass,
-    jlong native_pointer) {
-  webrtc::TestController* test_controller =
-      reinterpret_cast<webrtc::TestController*>(native_pointer);
+static void JNI_NetworkTester_DestroyTestController(JNIEnv* jni,
+                                                    jlong native_pointer) {
+  TestController* test_controller =
+      reinterpret_cast<TestController*>(native_pointer);
   if (test_controller) {
     delete test_controller;
   }
-  webrtc::ThreadManager::Instance()->UnwrapCurrentThread();
+  ThreadManager::Instance()->UnwrapCurrentThread();
 }
+
+}  // namespace webrtc
+
+DEFINE_JNI(NetworkTester)

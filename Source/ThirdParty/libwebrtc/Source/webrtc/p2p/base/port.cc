@@ -49,7 +49,6 @@
 #include "rtc_base/network/received_packet.h"
 #include "rtc_base/network/sent_packet.h"
 #include "rtc_base/socket_address.h"
-#include "rtc_base/span_helpers.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/string_utils.h"
 #include "rtc_base/strings/string_builder.h"
@@ -106,7 +105,7 @@ Port::Port(const PortParametersRef& args,
       timeout_delay_(kPortTimeoutDelay),
       enable_port_packets_(false),
       ice_role_(ICEROLE_UNKNOWN),
-      tiebreaker_(0),
+      ice_tiebreaker_(args.ice_tiebreaker),
       shared_socket_(shared_socket),
       network_cost_(args.network->GetCost(env_.field_trials())),
       role_conflict_callback_(nullptr),
@@ -162,14 +161,9 @@ void Port::SetIceRole(IceRole role) {
   ice_role_ = role;
 }
 
-void Port::SetIceTiebreaker(uint64_t tiebreaker) {
-  RTC_DCHECK_RUN_ON(thread_);
-  tiebreaker_ = tiebreaker;
-}
-
 uint64_t Port::IceTiebreaker() const {
   RTC_DCHECK_RUN_ON(thread_);
-  return tiebreaker_;
+  return ice_tiebreaker_;
 }
 
 bool Port::SharedSocket() const {
@@ -230,8 +224,7 @@ void Port::AddAddress(const SocketAddress& address,
               type, generation_, "", network_->id(), network_cost_);
   // Set the relay protocol before computing the foundation field.
   c.set_relay_protocol(relay_protocol);
-  // TODO(bugs.webrtc.org/14605): ensure IceTiebreaker() is set.
-  c.ComputeFoundation(base_address, tiebreaker_);
+  c.ComputeFoundation(base_address, ice_tiebreaker_);
 
   c.set_priority(
       c.GetPriority(type_preference, network_->preference(), relay_preference,
@@ -306,22 +299,10 @@ void Port::PostAddAddress(bool is_final) {
   }
 }
 
-[[deprecated]] void Port::SubscribePortComplete(
-    absl::AnyInvocable<void(Port*)> callback) {
-  RTC_DCHECK_RUN_ON(thread_);
-  port_complete_callback_list_.AddReceiver(std::move(callback));
-}
-
 void Port::SubscribePortComplete(const void* tag,
                                  absl::AnyInvocable<void(Port*)> callback) {
   RTC_DCHECK_RUN_ON(thread_);
   port_complete_callback_list_.AddReceiver(tag, std::move(callback));
-}
-
-[[deprecated]] void Port::SubscribeCandidateError(
-    std::function<void(Port*, const IceCandidateErrorEvent&)> callback) {
-  RTC_DCHECK_RUN_ON(thread_);
-  candidate_error_callback_list_.AddReceiver(std::move(callback));
 }
 
 void Port::SubscribeCandidateError(
@@ -336,23 +317,11 @@ void Port::SendCandidateError(const IceCandidateErrorEvent& event) {
   candidate_error_callback_list_.Send(this, event);
 }
 
-[[deprecated]] void Port::SubscribeCandidateReadyCallback(
-    absl::AnyInvocable<void(Port*, const Candidate&)> callback) {
-  RTC_DCHECK_RUN_ON(thread_);
-  candidate_ready_callback_list_.AddReceiver(std::move(callback));
-}
-
 void Port::SubscribeCandidateReadyCallback(
     const void* tag,
     absl::AnyInvocable<void(Port*, const Candidate&)> callback) {
   RTC_DCHECK_RUN_ON(thread_);
   candidate_ready_callback_list_.AddReceiver(tag, std::move(callback));
-}
-
-[[deprecated]] void Port::SubscribePortError(
-    absl::AnyInvocable<void(Port*)> callback) {
-  RTC_DCHECK_RUN_ON(thread_);
-  port_error_callback_list_.AddReceiver(std::move(callback));
 }
 
 void Port::SubscribePortError(const void* tag,
@@ -713,7 +682,7 @@ bool Port::MaybeIceRoleConflict(const SocketAddress& addr,
   switch (ice_role_) {
     case ICEROLE_CONTROLLING:
       if (ICEROLE_CONTROLLING == remote_ice_role) {
-        if (remote_tiebreaker >= tiebreaker_) {
+        if (remote_tiebreaker >= ice_tiebreaker_) {
           NotifyRoleConflict();
         } else {
           // Send Role Conflict (487) error response.
@@ -725,7 +694,7 @@ bool Port::MaybeIceRoleConflict(const SocketAddress& addr,
       break;
     case ICEROLE_CONTROLLED:
       if (ICEROLE_CONTROLLED == remote_ice_role) {
-        if (remote_tiebreaker < tiebreaker_) {
+        if (remote_tiebreaker < ice_tiebreaker_) {
           NotifyRoleConflict();
         } else {
           // Send Role Conflict (487) error response.
@@ -891,12 +860,6 @@ void Port::DestroyIfDead() {
   if (dead) {
     Destroy();
   }
-}
-
-[[deprecated]] void Port::SubscribePortDestroyed(
-    std::function<void(PortInterface*)> callback) {
-  RTC_DCHECK_RUN_ON(thread_);
-  port_destroyed_callback_list_.AddReceiver(std::move(callback));
 }
 
 void Port::SubscribePortDestroyed(
@@ -1086,16 +1049,6 @@ void Port::NotifyRoleConflict() {
   role_conflict_callback_();
 }
 
-[[deprecated]] void Port::SubscribeUnknownAddress(
-    absl::AnyInvocable<void(PortInterface*,
-                            const SocketAddress&,
-                            ProtocolType,
-                            IceMessage*,
-                            const std::string&,
-                            bool)> callback) {
-  unknown_address_callbacks_.AddReceiver(std::move(callback));
-}
-
 void Port::SubscribeUnknownAddress(const void* tag,
                                    absl::AnyInvocable<void(PortInterface*,
                                                            const SocketAddress&,
@@ -1115,19 +1068,6 @@ void Port::NotifyUnknownAddress(PortInterface* port,
   unknown_address_callbacks_.Send(port, address, proto, msg, rf, port_muxed);
 }
 
-// deprecated
-void Port::SubscribeReadPacket(
-    absl::AnyInvocable<
-        void(PortInterface*, const char*, size_t, const SocketAddress&)>
-        callback) {
-  SubscribeReadPacket(
-      nullptr, [cb = std::move(callback)](PortInterface* port,
-                                          std::span<const uint8_t> data,
-                                          const SocketAddress& addr) mutable {
-        cb(port, AsCharSpan(data).data(), data.size(), addr);
-      });
-}
-
 void Port::SubscribeReadPacket(
     const void* tag,
     absl::AnyInvocable<void(PortInterface*,
@@ -1140,12 +1080,6 @@ void Port::NotifyReadPacket(PortInterface* port,
                             std::span<const uint8_t> data,
                             const SocketAddress& remote_address) {
   read_packet_callbacks_.Send(port, data, remote_address);
-}
-
-[[deprecated]] void Port::SubscribeSentPacket(
-
-    absl::AnyInvocable<void(const SentPacketInfo&)> callback) {
-  sent_packet_callbacks_.AddReceiver(std::move(callback));
 }
 
 void Port::SubscribeSentPacket(

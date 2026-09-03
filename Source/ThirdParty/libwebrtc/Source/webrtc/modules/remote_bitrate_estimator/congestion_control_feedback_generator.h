@@ -26,6 +26,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/experiments/field_trial_parser.h"
+#include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
 
@@ -34,15 +35,19 @@ namespace webrtc {
 // https://datatracker.ietf.org/doc/rfc8888/
 
 // Min and max duration between feedback is configurable using field
-// trials, but per default, min is 25ms and max is 500ms.
+// trials, but per default, min is 25ms and max is 250ms.
 //
 // RTCP should not use more than 5% of the uplink link capacity.
 // However, there is no good way for a feedback sender to know the
-// link capacity unless media is sent in both directions. So we just assume that
-// the link capacity is 10 Mbit/s or more and allow sending 500 kbit/s of
+// link capacity unless media is sent in both directions. By default, we assume
+// that the link capacity is 10 Mbit/s or more and allow sending 500 kbit/s of
 // feedback packets. This allows an approximate receive rate of 200
 // Mbit/s with feedback every 25ms. (200 Mbit/s with average size of 800 bytes =
 // 31250 packets/s => 40 feedback packets/s with feedback of 780 packets each)
+//
+// The feedback capacity limit can be configured to be a fraction of the send
+// BWE when the link is bandwidth limited, using the "feedback_fraction" option
+// in the WebRTC-RFC8888CongestionControlFeedback field trial.
 
 // If possible, given the other constraints, feedback will be sent when a packet
 // with marker bit is received in order to provide feedback as soon as possible
@@ -60,7 +65,10 @@ class CongestionControlFeedbackGenerator
 
   void OnReceivedPacket(const RtpPacketReceived& packet) override;
 
-  void OnSendBandwidthEstimateChanged(DataRate estimate) override {}
+  void OnSendBandwidthEstimateChanged(
+      DataRate estimate,
+      bool is_bandwidth_limited,
+      std::optional<DataSize> transport_overhead) override;
 
   TimeDelta Process(Timestamp now) override;
 
@@ -80,8 +88,14 @@ class CongestionControlFeedbackGenerator
   const RtcpSender rtcp_sender_;
 
   FieldTrialParameter<TimeDelta> min_time_between_feedback_;
+  FieldTrialParameter<double> max_feedback_fraction_;
   FieldTrialParameter<TimeDelta> max_time_to_wait_for_packet_with_marker_;
   FieldTrialParameter<TimeDelta> max_time_between_feedback_;
+
+  std::optional<DataRate> send_bandwidth_estimate_
+      RTC_GUARDED_BY(sequence_checker_);
+  bool is_bandwidth_limited_ RTC_GUARDED_BY(sequence_checker_) = true;
+  std::optional<DataSize> transport_overhead_ RTC_GUARDED_BY(sequence_checker_);
 
   DataSize packet_overhead_ = DataSize::Zero();
   DataSize send_rate_debt_ = DataSize::Zero();

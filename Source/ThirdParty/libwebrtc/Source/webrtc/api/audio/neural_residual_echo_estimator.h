@@ -21,11 +21,17 @@ class Block;
 
 // Interface for a neural residual echo estimator module injected into the echo
 // canceller.
+//
 // This estimator estimates the echo residual that is not fully removed by the
 // linear AEC3 estimator.
 class NeuralResidualEchoEstimator {
  public:
   virtual ~NeuralResidualEchoEstimator() {}
+
+  // Returns true if the estimator is initialized and ready to produce
+  // real estimates. Processing function calls are still valid before
+  // initialization, but they do nothing.
+  virtual bool IsInitialized() = 0;
 
   // Estimates residual echo power spectrum in the signal after linear AEC
   // subtraction. Returns two estimates:

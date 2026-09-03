@@ -232,13 +232,10 @@ TEST_F(PeerConnectionPrAnswerSwitchTest, SendMediaNoDataChannel) {
         SetSdpType(sdp, SdpType::kPrAnswer);
       });
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return caller()->pc()->signaling_state() ==
-                           PeerConnectionInterface::kHaveRemotePrAnswer;
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] {
+    return caller()->pc()->signaling_state() ==
+           PeerConnectionInterface::kHaveRemotePrAnswer;
+  }));
   WaitConnected(/* prAnswer= */ true, caller(), callee());
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio();
@@ -246,15 +243,19 @@ TEST_F(PeerConnectionPrAnswerSwitchTest, SendMediaNoDataChannel) {
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
   // Send original offer to second callee and wait for settlement.
   second_callee->ReceiveSdpMessage(SdpType::kOffer, saved_offer);
-  EXPECT_THAT(
-      WaitUntil([&] { return caller()->SignalingStateStable(); }, IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return caller()->SignalingStateStable(); }));
   WaitConnected(/* prAnswer= */ false, caller(), second_callee.get());
   ASSERT_FALSE(HasFailure());
 }
 
 TEST_F(PeerConnectionPrAnswerSwitchTest, MediaWithCcfbFirstThenTwcc) {
-  SetFieldTrials("WebRTC-RFC8888CongestionControlFeedback/Enabled,offer:true/");
+  // CCFB negotiation is asymmetric: the generator sets the flag but doesn't
+  // add it to codecs' feedback_params, while the parser adds it to codecs'
+  // feedback_params. This causes false positive munging detection (71, 86)
+  // when the prAnswer is re-parsed.
+  SetFieldTrials(
+      "WebRTC-RFC8888CongestionControlFeedback/Enabled,offer:true/"
+      "WebRTC-NoSdpMangleAllowForTesting/Enabled,71,86/");
   SetFieldTrials("Callee2",
                  "WebRTC-RFC8888CongestionControlFeedback/Disabled/");
   std::unique_ptr<PeerConnectionIntegrationWrapper> second_callee =
@@ -270,13 +271,10 @@ TEST_F(PeerConnectionPrAnswerSwitchTest, MediaWithCcfbFirstThenTwcc) {
         SetSdpType(sdp, SdpType::kPrAnswer);
       });
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return caller()->pc()->signaling_state() ==
-                           PeerConnectionInterface::kHaveRemotePrAnswer;
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] {
+    return caller()->pc()->signaling_state() ==
+           PeerConnectionInterface::kHaveRemotePrAnswer;
+  }));
   WaitConnected(/* prAnswer= */ true, caller(), callee());
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio();
@@ -297,9 +295,7 @@ TEST_F(PeerConnectionPrAnswerSwitchTest, MediaWithCcfbFirstThenTwcc) {
   // The final answer does TWCC and send audio and video.
   second_callee->AddAudioVideoTracks();
   second_callee->ReceiveSdpMessage(SdpType::kOffer, saved_offer);
-  EXPECT_THAT(
-      WaitUntil([&] { return caller()->SignalingStateStable(); }, IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return caller()->SignalingStateStable(); }));
   WaitConnected(/* prAnswer= */ false, caller(), second_callee.get());
   ASSERT_FALSE(HasFailure());
 

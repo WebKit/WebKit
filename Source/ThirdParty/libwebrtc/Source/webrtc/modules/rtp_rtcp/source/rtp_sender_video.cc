@@ -710,8 +710,16 @@ bool RTPSenderVideo::SendVideo(int payload_type,
 
   const size_t num_packets = packetizer->NumPackets();
 
-  if (num_packets == 0)
+  if (num_packets == 0) {
+    Timestamp now = clock_->CurrentTime();
+    if (now >= last_fail_packetize_log_ + TimeDelta::Seconds(10)) {
+      RTC_LOG(LS_WARNING) << "Failed to packetize " << codec_type
+                          << " video frame of size " << payload.size()
+                          << ". Frame is dropped.";
+      last_fail_packetize_log_ = now;
+    }
     return false;
+  }
 
   bool first_frame = first_frame_sent_();
   std::vector<std::unique_ptr<RtpPacketToSend>> rtp_packets;

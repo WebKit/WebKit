@@ -36,6 +36,7 @@
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -61,6 +62,7 @@ class AudioChannelTest : public ::testing::Test {
       : fake_clock_(kStartTime),
         wave_generator_(1000.0, kAudioLevel),
         env_(CreateEnvironment(
+            CreateTestFieldTrialsPtr(),
             &fake_clock_,
             std::make_unique<MockTaskQueueFactory>(&task_queue_))) {
     audio_mixer_ = AudioMixerImpl::Create();

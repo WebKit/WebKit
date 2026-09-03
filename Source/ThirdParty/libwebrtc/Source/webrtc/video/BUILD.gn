@@ -186,10 +186,6 @@ rtc_library("video") {
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
   ]
-
-  if (!build_with_mozilla) {
-    deps += [ "../media:rtc_media_base" ]
-  }
 }
 
 rtc_library("null_video_decoder") {
@@ -305,8 +301,6 @@ rtc_library("video_stream_buffer_controller") {
     "../api/video:video_rtp_headers",
     "../modules/video_coding:frame_helpers",
     "../modules/video_coding:video_codec_interface",
-    "../modules/video_coding/timing:inter_frame_delay_variation_calculator",
-    "../modules/video_coding/timing:jitter_estimator",
     "../modules/video_coding/timing:timing_module",
     "../rtc_base:checks",
     "../rtc_base:logging",
@@ -469,6 +463,7 @@ rtc_library("video_stream_encoder_impl") {
     "../call/adaptation:resource_adaptation",
     "../common_video",
     "../media:media_channel",
+    "../media:media_channel_impl",
     "../modules:module_api_public",
     "../modules/video_coding",
     "../modules/video_coding:codec_globals_headers",
@@ -553,6 +548,7 @@ if (rtc_include_tests) {
         "../api:frame_generator_api",
         "../api:make_ref_counted",
         "../api:rtc_event_log_output_file",
+        "../api:rtp_header_extension_id",
         "../api:rtp_parameters",
         "../api:scoped_refptr",
         "../api:simulated_network_api",
@@ -689,6 +685,7 @@ if (rtc_include_tests) {
         "../api/units:time_delta",
         "../api/video_codecs:video_codecs_api",
         "../media:media_constants",
+        "../test:create_test_field_trials",
         "../test:fileutils",
         "../test:test_support",
         "../test/pc/e2e:network_quality_metrics_reporter",
@@ -920,9 +917,9 @@ if (rtc_include_tests) {
     deps = [
       ":video",
       ":video_mocks",
-      "../api/environment:environment_factory",
       "../api/video:video_frame_type",
       "../system_wrappers",
+      "../test:create_test_environment",
       "../test:test_support",
       "//call",
       "//call:call_interfaces",
@@ -932,11 +929,11 @@ if (rtc_include_tests) {
   rtc_cc_test("bandwidth_tests") {
     sources = [ "end_to_end_tests/bandwidth_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api/environment",
-      "../api/environment:environment_factory",
       "../api/task_queue",
       "../api/transport:bitrate_settings",
       "../api/units:time_delta",
@@ -953,6 +950,7 @@ if (rtc_include_tests) {
       "../rtc_base:task_queue_for_test",
       "../rtc_base:threading",
       "../rtc_base/synchronization:mutex",
+      "../test:create_test_environment",
       "../test:fake_video_codecs",
       "../test:rtp_test_utils",
       "../test:test_common",
@@ -972,6 +970,7 @@ if (rtc_include_tests) {
       "../api:frame_generator_api",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
+      "../api/task_queue",
       "../api/video:video_frame",
       "../rtc_base:rtc_event",
       "../rtc_base:task_queue_for_test",
@@ -990,6 +989,7 @@ if (rtc_include_tests) {
   rtc_cc_test("codec_tests") {
     sources = [ "end_to_end_tests/codec_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api/environment",
       "../api/test/video:function_video_factory",
@@ -1032,6 +1032,7 @@ if (rtc_include_tests) {
   rtc_cc_test("corruption_detection_tests") {
     sources = [ "end_to_end_tests/corruption_detection_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api/environment",
       "../api/task_queue",
@@ -1056,6 +1057,7 @@ if (rtc_include_tests) {
   rtc_cc_test("extended_reports_tests") {
     sources = [ "end_to_end_tests/extended_reports_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
@@ -1083,6 +1085,7 @@ if (rtc_include_tests) {
   rtc_cc_test("fec_tests") {
     sources = [ "end_to_end_tests/fec_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api/environment",
@@ -1118,6 +1121,7 @@ if (rtc_include_tests) {
       "../api:fake_frame_decryptor",
       "../api:fake_frame_encryptor",
       "../api:make_ref_counted",
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api/environment",
       "../api/test/video:function_video_factory",
@@ -1140,6 +1144,7 @@ if (rtc_include_tests) {
   rtc_cc_test("histogram_tests") {
     sources = [ "end_to_end_tests/histogram_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api/environment",
       "../api/test/video:function_video_factory",
@@ -1250,6 +1255,7 @@ if (rtc_include_tests) {
   rtc_cc_test("retransmission_tests") {
     sources = [ "end_to_end_tests/retransmission_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api:transport_api",
       "../api/environment",
@@ -1318,6 +1324,7 @@ if (rtc_include_tests) {
   rtc_cc_test("ssrc_tests") {
     sources = [ "end_to_end_tests/ssrc_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api/task_queue",
@@ -1343,6 +1350,7 @@ if (rtc_include_tests) {
   rtc_cc_test("stats_tests") {
     sources = [ "end_to_end_tests/stats_tests.cc" ]
     deps = [
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:scoped_refptr",
@@ -1386,6 +1394,7 @@ if (rtc_include_tests) {
     deps = [
       ":multi_stream_tester",
       ":multi_stream_tests",
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api:transport_api",
@@ -1645,6 +1654,7 @@ if (rtc_include_tests) {
       "../api:frame_transformer_interface",
       "../api:make_ref_counted",
       "../api:mock_frame_transformer",
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:scoped_refptr",
@@ -1791,7 +1801,6 @@ if (rtc_include_tests) {
       "../api:scoped_refptr",
       "../api:time_controller",
       "../api/environment",
-      "../api/environment:environment_factory",
       "../api/metronome/test:fake_metronome",
       "../api/transport/rtp:rtp_source",
       "../api/units:frequency",
@@ -1814,6 +1823,7 @@ if (rtc_include_tests) {
       "../modules/video_coding:nack_requester",
       "../rtc_base:logging",
       "../system_wrappers",
+      "../test:create_test_environment",
       "../test:create_test_field_trials",
       "../test:fake_encoded_frame",
       "../test:fake_video_codecs",
@@ -1850,6 +1860,7 @@ if (rtc_include_tests) {
       "../api:bitrate_allocation",
       "../api:field_trials",
       "../api:field_trials_view",
+      "../api:rtp_header_extension_id",
       "../api:rtp_parameters",
       "../api/environment:environment_factory",
       "../api/rtc_event_log",
@@ -1859,6 +1870,7 @@ if (rtc_include_tests) {
       "../api/units:timestamp",
       "../api/video:encoded_image",
       "../api/video:video_bitrate_allocation",
+      "../api/video:video_frame_type",
       "../api/video:video_layers_allocation",
       "../api/video_codecs:video_codecs_api",
       "../call:bitrate_allocator",
@@ -1891,13 +1903,13 @@ if (rtc_include_tests) {
       "../api:field_trials",
       "../api:field_trials_view",
       "../api:make_ref_counted",
+      "../api:rtp_header_extension_id",
       "../api:rtp_headers",
       "../api:rtp_parameters",
       "../api:scoped_refptr",
       "../api:sequence_checker",
       "../api:simulated_network_api",
       "../api/environment",
-      "../api/environment:environment_factory",
       "../api/task_queue",
       "../api/task_queue:pending_task_safety_flag",
       "../api/test/metrics:global_metrics_logger_and_exporter",
@@ -1944,6 +1956,7 @@ if (rtc_include_tests) {
       "../rtc_base:unique_id_generator",
       "../rtc_base/experiments:alr_experiment",
       "../rtc_base/synchronization:mutex",
+      "../test:create_test_environment",
       "../test:create_test_field_trials",
       "../test:encoder_settings",
       "../test:fake_video_codecs",
@@ -2036,6 +2049,7 @@ if (rtc_include_tests) {
       "../api/video:render_resolution",
       "../api/video:resolution",
       "../api/video:video_adaptation",
+      "../api/video:video_adapter",
       "../api/video:video_bitrate_allocation",
       "../api/video:video_bitrate_allocator",
       "../api/video:video_bitrate_allocator_factory",
@@ -2055,7 +2069,6 @@ if (rtc_include_tests) {
       "../common_video",
       "../common_video:corruption_score_calculator",
       "../media:rtc_audio_video",
-      "../media:video_adapter",
       "../modules/video_coding:video_codec_interface",
       "../modules/video_coding:video_coding_utility",
       "../modules/video_coding:webrtc_h264",
@@ -2076,6 +2089,7 @@ if (rtc_include_tests) {
       "../rtc_base/synchronization:mutex",
       "../system_wrappers",
       "../system_wrappers:metrics",
+      "../test:create_test_environment",
       "../test:create_test_field_trials",
       "../test:encoder_settings",
       "../test:fake_video_codecs",
@@ -2105,7 +2119,6 @@ if (rtc_include_tests) {
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api/environment",
-      "../api/environment:environment_factory",
       "../api/task_queue",
       "../api/test/video:function_video_factory",
       "../api/video:builtin_video_bitrate_allocator_factory",
@@ -2119,6 +2132,7 @@ if (rtc_include_tests) {
       "../modules/video_coding:webrtc_vp8",
       "../rtc_base:task_queue_for_test",
       "../rtc_base:threading",
+      "../test:create_test_environment",
       "../test:direct_transport",
       "../test:encoder_settings",
       "../test:frame_generator_capturer",
@@ -2137,7 +2151,6 @@ if (rtc_include_tests) {
       "../api:rtp_parameters",
       "../api:simulated_network_api",
       "../api/environment",
-      "../api/environment:environment_factory",
       "../api/task_queue",
       "../api/test/video:function_video_factory",
       "../api/units:time_delta",

@@ -16,12 +16,14 @@
 
 #include <optional>
 #include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
 #include "api/rtc_error.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_fingerprint.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -55,9 +57,13 @@ class RTC_EXPORT Candidate {
             uint32_t generation,
             absl::string_view foundation,
             uint16_t network_id = 0,
-            uint16_t network_cost = 0);
-  Candidate(const Candidate&);
-  ~Candidate();
+            uint16_t network_cost = 0,
+            std::optional<SSLFingerprint> fingerprint = std::nullopt);
+  Candidate(const Candidate&) = default;
+  Candidate(Candidate&&) = default;
+  Candidate& operator=(const Candidate&) = default;
+  Candidate& operator=(Candidate&&) = default;
+  ~Candidate() = default;
 
   // Parses the `candidate-attribute` as described in:
   // https://www.rfc-editor.org/rfc/rfc5245#section-15.1
@@ -207,6 +213,13 @@ class RTC_EXPORT Candidate {
     network_slice_ = network_slice;
   }
 
+  const std::optional<SSLFingerprint>& fingerprint() const {
+    return fingerprint_;
+  }
+  void set_fingerprint(std::optional<SSLFingerprint> fingerprint) {
+    fingerprint_ = std::move(fingerprint);
+  }
+
   // Determines whether this candidate is equivalent to the given one.
   bool IsEquivalent(const Candidate& c) const;
 
@@ -293,6 +306,7 @@ class RTC_EXPORT Candidate {
   uint16_t network_cost_;
   std::string url_;
   NetworkSlice network_slice_;
+  std::optional<SSLFingerprint> fingerprint_;
 };
 
 }  //  namespace webrtc

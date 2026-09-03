@@ -28,7 +28,6 @@
 #include "api/audio/audio_device.h"
 #include "api/audio/audio_device_defines.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -37,6 +36,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -484,8 +484,7 @@ class TestAudioTransport : public AudioTransport {
 
 TEST(TestAudioDeviceModuleTest, CreatedADMCanRecord) {
   GlobalSimulatedTimeController time_controller(kStartTime);
-  const Environment env = CreateEnvironment(
-      time_controller.GetClock(), time_controller.GetTaskQueueFactory());
+  const Environment env = CreateTestEnvironment({.time = &time_controller});
   TestAudioTransport audio_transport(TestAudioTransport::Mode::kRecording);
   std::unique_ptr<TestAudioDeviceModule::PulsedNoiseCapturer> capturer =
       TestAudioDeviceModule::CreatePulsedNoiseCapturer(
@@ -518,8 +517,7 @@ TEST(TestAudioDeviceModuleTest, CreatedADMCanRecord) {
 
 TEST(TestAudioDeviceModuleTest, CreatedADMCanPlay) {
   GlobalSimulatedTimeController time_controller(kStartTime);
-  const Environment env = CreateEnvironment(
-      time_controller.GetClock(), time_controller.GetTaskQueueFactory());
+  const Environment env = CreateTestEnvironment({.time = &time_controller});
   TestAudioTransport audio_transport(TestAudioTransport::Mode::kPlaying);
   std::unique_ptr<TestAudioDeviceModule::Renderer> renderer =
       TestAudioDeviceModule::CreateDiscardRenderer(

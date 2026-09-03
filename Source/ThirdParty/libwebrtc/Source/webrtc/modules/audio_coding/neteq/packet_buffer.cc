@@ -20,14 +20,17 @@
 #include <list>
 #include <memory>
 #include <optional>
+#include <string>
 #include <utility>
 
 #include "api/audio_codecs/audio_decoder.h"
+#include "api/field_trials_view.h"
 #include "api/neteq/tick_timer.h"
 #include "modules/audio_coding/neteq/decoder_database.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "modules/audio_coding/neteq/statistics_calculator.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 
@@ -45,12 +48,35 @@ class NewTimestampIsLarger {
   const Packet& new_packet_;
 };
 
+std::optional<SmartFlushingConfig> GetSmartflushingConfig(
+    const FieldTrialsView& field_trials) {
+  std::string field_trial_string =
+      field_trials.Lookup("WebRTC-Audio-NetEqSmartFlushing");
+  SmartFlushingConfig config;
+  bool enabled = false;
+  auto parser = StructParametersParser::Create(
+      "enabled", &enabled, "target_level_threshold_ms",
+      &config.target_level_threshold_ms, "target_level_multiplier",
+      &config.target_level_multiplier);
+  parser->Parse(field_trial_string);
+  if (!enabled) {
+    return std::nullopt;
+  }
+  RTC_LOG(LS_INFO) << "Using smart flushing, target_level_threshold_ms: "
+                   << config.target_level_threshold_ms
+                   << ", target_level_multiplier: "
+                   << config.target_level_multiplier;
+  return config;
+}
+
 }  // namespace
 
-PacketBuffer::PacketBuffer(size_t max_number_of_packets,
+PacketBuffer::PacketBuffer(const FieldTrialsView& field_trials,
+                           size_t max_number_of_packets,
                            const TickTimer* tick_timer,
                            StatisticsCalculator* stats)
-    : max_number_of_packets_(max_number_of_packets),
+    : smart_flushing_config_(GetSmartflushingConfig(field_trials)),
+      max_number_of_packets_(max_number_of_packets),
       tick_timer_(tick_timer),
       stats_(stats) {}
 
@@ -75,11 +101,39 @@ void PacketBuffer::Flush() {
   stats_->FlushedPacketBuffer();
 }
 
+void PacketBuffer::PartialFlush(int target_level_ms,
+                                size_t sample_rate,
+                                size_t last_decoded_length) {
+  // Make sure that at least half the packet buffer capacity will be available
+  // after the flush. This is done to avoid getting stuck if the target level is
+  // very high.
+  int target_level_samples = std::min(
+      target_level_ms * static_cast<int>(sample_rate) / 1000,
+      static_cast<int>(max_number_of_packets_ * last_decoded_length / 2));
+  // We should avoid flushing to very low levels.
+  if (smart_flushing_config_.has_value()) {
+    target_level_samples =
+        std::max(target_level_samples,
+                 smart_flushing_config_->target_level_threshold_ms *
+                     static_cast<int>(sample_rate) / 1000);
+  }
+  while (!buffer_.empty() &&
+         (GetSpanSamples(last_decoded_length, sample_rate, false) >
+              static_cast<size_t>(target_level_samples) ||
+          buffer_.size() > max_number_of_packets_ / 2)) {
+    LogPacketDiscarded(PeekNextPacket()->priority.codec_level);
+    buffer_.pop_front();
+  }
+}
+
 bool PacketBuffer::Empty() const {
   return buffer_.empty();
 }
 
-int PacketBuffer::InsertPacket(Packet&& packet) {
+int PacketBuffer::InsertPacket(Packet&& packet,
+                               size_t last_decoded_length,
+                               size_t sample_rate,
+                               int target_level_ms) {
   if (packet.empty()) {
     RTC_LOG(LS_WARNING) << "InsertPacket invalid packet";
     return kInvalidPacket;
@@ -92,11 +146,36 @@ int PacketBuffer::InsertPacket(Packet&& packet) {
 
   packet.waiting_time = tick_timer_->GetNewStopwatch();
 
-  if (buffer_.size() >= max_number_of_packets_) {
-    // Buffer is full.
-    Flush();
-    return_val = kFlushed;
-    RTC_LOG(LS_WARNING) << "Packet buffer flushed.";
+  // Perform a smart flush if the buffer size exceeds a multiple of the target
+  // level.
+  const size_t span_threshold =
+      smart_flushing_config_
+          ? static_cast<size_t>(
+                smart_flushing_config_->target_level_multiplier *
+                std::max(smart_flushing_config_->target_level_threshold_ms,
+                         target_level_ms) *
+                static_cast<int>(sample_rate) / 1000)
+          : 0;
+  const bool smart_flush =
+      smart_flushing_config_.has_value() &&
+      GetSpanSamples(last_decoded_length, sample_rate, false) >= span_threshold;
+  if (buffer_.size() >= max_number_of_packets_ || smart_flush) {
+    size_t buffer_size_before_flush = buffer_.size();
+    if (smart_flushing_config_.has_value()) {
+      // Flush down to the target level.
+      PartialFlush(target_level_ms, sample_rate, last_decoded_length);
+      return_val = kPartialFlush;
+      size_t discarded = buffer_size_before_flush - buffer_.size();
+      if (discarded > 0) {
+        RTC_LOG(LS_VERBOSE) << "Partial flushed " << discarded
+                            << " packets to reach target level.";
+      }
+    } else {
+      // Buffer is full.
+      Flush();
+      return_val = kFlushed;
+      RTC_LOG(LS_WARNING) << "Packet buffer fully flushed.";
+    }
   }
 
   // Get an iterator pointing to the place in the buffer where the new packet

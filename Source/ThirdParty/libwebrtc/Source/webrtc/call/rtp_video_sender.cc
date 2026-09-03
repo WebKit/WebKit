@@ -827,23 +827,22 @@ std::map<uint32_t, RtpPayloadState> RtpVideoSender::GetRtpPayloadStates()
   return payload_states;
 }
 
-void RtpVideoSender::OnTransportOverheadChanged(
-    size_t transport_overhead_bytes_per_packet) {
-  MutexLock lock(&mutex_);
-  transport_overhead_bytes_per_packet_ = transport_overhead_bytes_per_packet;
-
-  size_t max_rtp_packet_size =
-      std::min(rtp_config_.max_packet_size,
-               kPathMTU - transport_overhead_bytes_per_packet_);
-  for (const RtpStreamSender& stream : rtp_streams_) {
-    stream.rtp_rtcp->SetMaxRtpPacketSize(max_rtp_packet_size);
-  }
-}
-
 void RtpVideoSender::OnBitrateUpdated(BitrateAllocationUpdate update,
                                       int framerate) {
   // Substract overhead from bitrate.
   MutexLock lock(&mutex_);
+  if (transport_overhead_bytes_per_packet_ !=
+      update.packet_overhead.bytes<size_t>()) {
+    transport_overhead_bytes_per_packet_ =
+        update.packet_overhead.bytes<size_t>();
+    size_t max_rtp_packet_size =
+        std::min(rtp_config_.max_packet_size,
+                 kPathMTU - transport_overhead_bytes_per_packet_);
+    for (const RtpStreamSender& stream : rtp_streams_) {
+      stream.rtp_rtcp->SetMaxRtpPacketSize(max_rtp_packet_size);
+    }
+  }
+
   size_t num_active_streams = 0;
   size_t overhead_bytes_per_packet = 0;
   for (const auto& stream : rtp_streams_) {

@@ -10,23 +10,33 @@
 
 package com.google.media.networktester;
 
+import org.jni_zero.NativeMethods;
+
 public class NetworkTester extends Thread {
-  private native static long CreateTestController();
-  private native static void TestControllerConnect(long testController);
-  private native static void TestControllerRun(long testController);
-  private native static boolean TestControllerIsDone(long testController);
-  private native static void DestroyTestController(long testController);
   static {
     System.loadLibrary("network_tester_so");
   }
 
   @Override
   public void run() {
-    final long testController = CreateTestController();
-    TestControllerConnect(testController);
-    while (!Thread.interrupted() && !TestControllerIsDone(testController)) {
-      TestControllerRun(testController);
+    final long testController = NetworkTesterJni.get().createTestController();
+    NetworkTesterJni.get().testControllerConnect(testController);
+    while (!Thread.interrupted() && !NetworkTesterJni.get().testControllerIsDone(testController)) {
+      NetworkTesterJni.get().testControllerRun(testController);
     }
-    DestroyTestController(testController);
+    NetworkTesterJni.get().destroyTestController(testController);
+  }
+
+  @NativeMethods
+  interface Natives {
+    long createTestController();
+
+    void testControllerConnect(long testController);
+
+    void testControllerRun(long testController);
+
+    boolean testControllerIsDone(long testController);
+
+    void destroyTestController(long testController);
   }
 }

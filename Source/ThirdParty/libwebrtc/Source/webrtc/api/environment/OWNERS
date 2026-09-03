@@ -11,5 +11,4 @@ set noparent
 include ../../OWNERS_INFRA
 
 danilchap@webrtc.org
-hta@webrtc.org
 mbonadei@webrtc.org

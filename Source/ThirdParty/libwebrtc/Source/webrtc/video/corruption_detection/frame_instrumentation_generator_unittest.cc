@@ -99,6 +99,100 @@ TEST(FrameInstrumentationGeneratorTest,
 }
 
 TEST(FrameInstrumentationGeneratorTest,
+     ReturnsSyncMessageForKeyFrameWhenNoCapturedFrameProvided) {
+  const Environment env = CreateTestEnvironment();
+  FrameInstrumentationGeneratorImpl generator(
+      &env, VideoCodecType::kVideoCodecVP8, ScalabilityMode::kL1T1);
+
+  EncodedImage encoded_image;
+  encoded_image.SetRtpTimestamp(1);
+  encoded_image.set_frame_type(VideoFrameType::kVideoFrameKey);
+
+  std::optional<FrameInstrumentationData> data =
+      generator.OnEncodedImage(encoded_image);
+  ASSERT_TRUE(data.has_value());
+  EXPECT_TRUE(data->is_sync_only());
+  EXPECT_EQ(data->sequence_index(), 0);
+}
+
+TEST(FrameInstrumentationGeneratorTest,
+     EstablishesContextWithSyncMessageWhenCapturedFrameIsMissingOnKeyFrame) {
+  const Environment env = CreateTestEnvironment();
+  FrameInstrumentationGeneratorImpl generator(
+      &env, VideoCodecType::kVideoCodecVP8, ScalabilityMode::kL1T1);
+
+  // 1. Send KeyFrame without captured frame -> returns sync message.
+  EncodedImage key_image;
+  key_image.SetRtpTimestamp(1);
+  key_image.set_frame_type(VideoFrameType::kVideoFrameKey);
+  std::optional<FrameInstrumentationData> sync_data =
+      generator.OnEncodedImage(key_image);
+  ASSERT_TRUE(sync_data.has_value());
+  EXPECT_TRUE(sync_data->is_sync_only());
+
+  // 2. Send DeltaFrame WITH captured frame -> should succeed.
+  VideoFrame frame = VideoFrame::Builder()
+                         .set_video_frame_buffer(MakeDefaultI420FrameBuffer())
+                         .set_rtp_timestamp(90002)
+                         .build();
+  generator.OnCapturedFrame(frame);
+
+  EncodedImage delta_image;
+  delta_image.SetRtpTimestamp(90002);
+  delta_image.set_frame_type(VideoFrameType::kVideoFrameDelta);
+  delta_image.qp_ = 10;
+  delta_image._encodedWidth = kDefaultScaledWidth;
+  delta_image._encodedHeight = kDefaultScaledHeight;
+
+  std::optional<FrameInstrumentationData> delta_data =
+      generator.OnEncodedImage(delta_image);
+  EXPECT_TRUE(delta_data.has_value());
+}
+
+TEST(FrameInstrumentationGeneratorTest,
+     ReturnsSyncMessageForDeltaFrameWhenNoRawFrameButShouldBeInstrumented) {
+  const Environment env = CreateTestEnvironment();
+  FrameInstrumentationGeneratorImpl generator(
+      &env, VideoCodecType::kVideoCodecVP8, ScalabilityMode::kL1T1);
+
+  // 1. Send KeyFrame with captured frame (to establish context and set last
+  // sampled timestamp to 1).
+  VideoFrame key_frame =
+      VideoFrame::Builder()
+          .set_video_frame_buffer(MakeDefaultI420FrameBuffer())
+          .set_rtp_timestamp(1)
+          .build();
+  generator.OnCapturedFrame(key_frame);
+
+  EncodedImage key_image;
+  key_image.SetRtpTimestamp(1);
+  key_image.set_frame_type(VideoFrameType::kVideoFrameKey);
+  key_image.qp_ = 10;
+  key_image._encodedWidth = kDefaultScaledWidth;
+  key_image._encodedHeight = kDefaultScaledHeight;
+
+  std::optional<FrameInstrumentationData> key_data =
+      generator.OnEncodedImage(key_image);
+  ASSERT_TRUE(key_data.has_value());
+  EXPECT_FALSE(key_data->is_sync_only());
+
+  // 2. Send DeltaFrame WITHOUT captured frame, but with timestamp 90001
+  // (EnoughTimeHasPassed is true, should be instrumented).
+  EncodedImage delta_image;
+  delta_image.SetRtpTimestamp(90001);
+  delta_image.set_frame_type(VideoFrameType::kVideoFrameDelta);
+  delta_image.qp_ = 10;
+  delta_image._encodedWidth = kDefaultScaledWidth;
+  delta_image._encodedHeight = kDefaultScaledHeight;
+
+  std::optional<FrameInstrumentationData> delta_data =
+      generator.OnEncodedImage(delta_image);
+  ASSERT_TRUE(delta_data.has_value());
+  EXPECT_TRUE(delta_data->is_sync_only());
+  EXPECT_EQ(delta_data->sequence_index(), 13);
+}
+
+TEST(FrameInstrumentationGeneratorTest,
      ReturnsNothingWhenTheFirstFrameOfASpatialOrSimulcastLayerIsNotAKeyFrame) {
   const Environment env = CreateTestEnvironment();
   FrameInstrumentationGeneratorImpl generator(

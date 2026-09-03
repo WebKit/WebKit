@@ -40,17 +40,17 @@ namespace {
 // TODO(bugs.webrtc.org/15847): remove code duplication of IsSameCodecSpecific
 // in api/video_codecs/sdp_video_format.cc
 std::string GetFmtpParameterOrDefault(const CodecParameterMap& params,
-                                      const std::string& name,
+                                      absl::string_view name,
                                       const std::string& default_value) {
-  const auto it = params.find(name);
+  const auto it = params.find(std::string(name));
   if (it != params.end()) {
     return it->second;
   }
   return default_value;
 }
 
-bool HasParameter(const CodecParameterMap& params, const std::string& name) {
-  return params.find(name) != params.end();
+bool HasParameter(const CodecParameterMap& params, absl::string_view name) {
+  return params.find(std::string(name)) != params.end();
 }
 
 std::string H264GetPacketizationModeOrDefault(const CodecParameterMap& params) {
@@ -131,15 +131,15 @@ bool ReferencedCodecsMatch(const std::vector<Codec>& codecs1,
   return codec1 != nullptr && codec2 != nullptr && codec1->Matches(*codec2);
 }
 
-CodecParameterMap InsertDefaultParams(const std::string& name,
+CodecParameterMap InsertDefaultParams(absl::string_view name,
                                       const CodecParameterMap& params) {
   CodecParameterMap updated_params = params;
   if (absl::EqualsIgnoreCase(name, kVp9CodecName)) {
     if (!HasParameter(params, kVP9FmtpProfileId)) {
       if (std::optional<VP9Profile> default_profile =
               ParseSdpForVP9Profile({})) {
-        updated_params.insert(
-            {kVP9FmtpProfileId, VP9ProfileToString(*default_profile)});
+        updated_params.emplace(kVP9FmtpProfileId,
+                               VP9ProfileToString(*default_profile));
       }
     }
   }
@@ -147,21 +147,21 @@ CodecParameterMap InsertDefaultParams(const std::string& name,
     if (!HasParameter(params, kAv1FmtpProfile)) {
       if (std::optional<AV1Profile> default_profile =
               ParseSdpForAV1Profile({})) {
-        updated_params.insert(
-            {kAv1FmtpProfile, AV1ProfileToString(*default_profile).data()});
+        updated_params.emplace(kAv1FmtpProfile,
+                               AV1ProfileToString(*default_profile).data());
       }
     }
     if (!HasParameter(params, kAv1FmtpTier)) {
-      updated_params.insert({kAv1FmtpTier, AV1GetTierOrDefault({})});
+      updated_params.emplace(kAv1FmtpTier, AV1GetTierOrDefault({}));
     }
     if (!HasParameter(params, kAv1FmtpLevelIdx)) {
-      updated_params.insert({kAv1FmtpLevelIdx, AV1GetLevelIdxOrDefault({})});
+      updated_params.emplace(kAv1FmtpLevelIdx, AV1GetLevelIdxOrDefault({}));
     }
   }
   if (absl::EqualsIgnoreCase(name, kH264CodecName)) {
     if (!HasParameter(params, kH264FmtpPacketizationMode)) {
-      updated_params.insert(
-          {kH264FmtpPacketizationMode, H264GetPacketizationModeOrDefault({})});
+      updated_params.emplace(kH264FmtpPacketizationMode,
+                             H264GetPacketizationModeOrDefault({}));
     }
   }
 #ifdef RTC_ENABLE_H265
@@ -169,20 +169,20 @@ CodecParameterMap InsertDefaultParams(const std::string& name,
     if (std::optional<H265ProfileTierLevel> default_params =
             ParseSdpForH265ProfileTierLevel({})) {
       if (!HasParameter(params, kH265FmtpProfileId)) {
-        updated_params.insert(
-            {kH265FmtpProfileId, H265ProfileToString(default_params->profile)});
+        updated_params.emplace(kH265FmtpProfileId,
+                               H265ProfileToString(default_params->profile));
       }
       if (!HasParameter(params, kH265FmtpLevelId)) {
-        updated_params.insert(
-            {kH265FmtpLevelId, H265LevelToString(default_params->level)});
+        updated_params.emplace(kH265FmtpLevelId,
+                               H265LevelToString(default_params->level));
       }
       if (!HasParameter(params, kH265FmtpTierFlag)) {
-        updated_params.insert(
-            {kH265FmtpTierFlag, H265TierToString(default_params->tier)});
+        updated_params.emplace(kH265FmtpTierFlag,
+                               H265TierToString(default_params->tier));
       }
     }
     if (!HasParameter(params, kH265FmtpTxMode)) {
-      updated_params.insert({kH265FmtpTxMode, GetH265TxModeOrDefault({})});
+      updated_params.emplace(kH265FmtpTxMode, GetH265TxModeOrDefault({}));
     }
   }
 #endif
@@ -216,10 +216,10 @@ bool MatchesWithReferenceAttributesAndComparator(
                                 PayloadType(apt_value_2_int));
   }
   if (resiliency_type == Codec::ResiliencyType::kRed) {
-    auto red_parameters_1 =
-        codec_to_match.params.find(kCodecParamNotInNameValueFormat);
-    auto red_parameters_2 =
-        potential_match.params.find(kCodecParamNotInNameValueFormat);
+    auto red_parameters_1 = codec_to_match.params.find(
+        std::string(kCodecParamNotInNameValueFormat));
+    auto red_parameters_2 = potential_match.params.find(
+        std::string(kCodecParamNotInNameValueFormat));
     bool has_parameters_1 = red_parameters_1 != codec_to_match.params.end();
     bool has_parameters_2 = red_parameters_2 != potential_match.params.end();
 

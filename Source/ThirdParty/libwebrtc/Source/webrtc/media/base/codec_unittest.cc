@@ -234,20 +234,20 @@ TEST(CodecTest, TestValidateCodecFormat) {
 
   // Reject codecs with min bitrate > max bitrate.
   Codec incorrect_bitrates = codec;
-  incorrect_bitrates.params[kCodecParamMinBitrate] = "100";
-  incorrect_bitrates.params[kCodecParamMaxBitrate] = "80";
+  incorrect_bitrates.SetParam(kCodecParamMinBitrate, "100");
+  incorrect_bitrates.SetParam(kCodecParamMaxBitrate, "80");
   EXPECT_FALSE(incorrect_bitrates.ValidateCodecFormat());
 
   // Accept min bitrate == max bitrate.
   Codec equal_bitrates = codec;
-  equal_bitrates.params[kCodecParamMinBitrate] = "100";
-  equal_bitrates.params[kCodecParamMaxBitrate] = "100";
+  equal_bitrates.SetParam(kCodecParamMinBitrate, "100");
+  equal_bitrates.SetParam(kCodecParamMaxBitrate, "100");
   EXPECT_TRUE(equal_bitrates.ValidateCodecFormat());
 
   // Accept min bitrate < max bitrate.
   Codec different_bitrates = codec;
-  different_bitrates.params[kCodecParamMinBitrate] = "99";
-  different_bitrates.params[kCodecParamMaxBitrate] = "100";
+  different_bitrates.SetParam(kCodecParamMinBitrate, "99");
+  different_bitrates.SetParam(kCodecParamMaxBitrate, "100");
   EXPECT_TRUE(different_bitrates.ValidateCodecFormat());
 }
 
@@ -331,6 +331,34 @@ TEST(CodecTest, H264CostrainedBaselineNotAddedIfAlreadySpecified) {
   EXPECT_EQ(supported_formats[2], kExplicitlySupportedFormats[2]);
   EXPECT_EQ(supported_formats[3], kExplicitlySupportedFormats[3]);
   EXPECT_EQ(supported_formats.size(), kExplicitlySupportedFormats.size());
+}
+
+TEST(CodecTest, CreateH264ConstrainedBaselineProfileReturnsCbpForBaseline) {
+  SdpVideoFormat baseline_format = CreateH264Format(
+      H264Profile::kProfileBaseline, H264Level::kLevel3_1, "1");
+  SdpVideoFormat expected_cbp_format = CreateH264Format(
+      H264Profile::kProfileConstrainedBaseline, H264Level::kLevel3_1, "1");
+
+  std::optional<SdpVideoFormat> cbp_format =
+      CreateH264ConstrainedBaselineProfile(baseline_format);
+
+  ASSERT_TRUE(cbp_format.has_value());
+  EXPECT_EQ(*cbp_format, expected_cbp_format);
+}
+
+TEST(CodecTest, CreateH264ConstrainedBaselineProfileReturnsNulloptForCbp) {
+  SdpVideoFormat cbp_format = CreateH264Format(
+      H264Profile::kProfileConstrainedBaseline, H264Level::kLevel3_1, "1");
+
+  EXPECT_FALSE(CreateH264ConstrainedBaselineProfile(cbp_format).has_value());
+}
+
+TEST(CodecTest, CreateH264ConstrainedBaselineProfileReturnsNulloptForVp9) {
+  SdpVideoFormat vp9_format = {
+      kVp9CodecName,
+      {{kVP9FmtpProfileId, VP9ProfileToString(VP9Profile::kProfile0)}}};
+
+  EXPECT_FALSE(CreateH264ConstrainedBaselineProfile(vp9_format).has_value());
 }
 
 TEST(CodecTest, AbslStringify) {

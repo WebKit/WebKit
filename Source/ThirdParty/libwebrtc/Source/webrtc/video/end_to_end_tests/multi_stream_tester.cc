@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_parameters.h"
 #include "api/test/create_frame_generator.h"
 #include "api/test/simulated_network.h"
@@ -36,6 +35,7 @@
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/direct_transport.h"
 #include "test/encoder_settings.h"
 #include "test/frame_generator_capturer.h"
@@ -54,14 +54,17 @@ MultiStreamTester::MultiStreamTester() {
 MultiStreamTester::~MultiStreamTester() = default;
 
 void MultiStreamTester::RunTest() {
-  Environment env = CreateEnvironment();
+  Environment env = CreateTestEnvironment();
   // Use high prioirity since this task_queue used for fake network delivering
   // at correct time. Those test tasks should be prefered over code under test
   // to make test more stable.
   auto network_thread = Thread::CreateWithSocketServer();
   network_thread->Start();
-  CallConfig sender_config(env);
-  CallConfig receiver_config(env);
+  CallConfig sender_config = CallConfig::CreateWithJoinedWorkerAndNetworkQueue(
+      env, network_thread.get());
+  CallConfig receiver_config =
+      CallConfig::CreateWithJoinedWorkerAndNetworkQueue(env,
+                                                        network_thread.get());
   std::unique_ptr<Call> sender_call;
   std::unique_ptr<Call> receiver_call;
   std::unique_ptr<test::DirectTransport> sender_transport;

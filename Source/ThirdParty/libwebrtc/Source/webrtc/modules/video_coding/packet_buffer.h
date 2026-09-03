@@ -11,6 +11,7 @@
 #ifndef MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 #define MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -22,8 +23,8 @@
 #include "api/video/video_codec_type.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
-#include "rtc_base/numerics/sequence_number_util.h"
 
 namespace webrtc {
 namespace video_coding {
@@ -51,7 +52,7 @@ class PacketBuffer {
     bool is_last_packet_in_frame() const {
       return video_header.is_last_packet_in_frame;
     }
-    uint16_t seq_num() const { return static_cast<uint16_t>(sequence_number); }
+    int64_t seq_num() const { return sequence_number; }
 
     // If all its previous packets have been inserted into the packet buffer.
     // Set and used internally by the PacketBuffer.
@@ -78,8 +79,8 @@ class PacketBuffer {
 
   ABSL_MUST_USE_RESULT InsertResult
   InsertPacket(std::unique_ptr<Packet> packet);
-  ABSL_MUST_USE_RESULT InsertResult InsertPadding(uint16_t seq_num);
-  void ClearTo(uint16_t seq_num);
+  ABSL_MUST_USE_RESULT InsertResult InsertPadding(int64_t seq_num);
+  void ClearTo(int64_t seq_num);
   void Clear();
 
   void ForceSpsPpsIdrIsH264Keyframe();
@@ -92,19 +93,27 @@ class PacketBuffer {
   bool ExpandBufferSize();
 
   // Test if all previous packets has arrived for the given sequence number.
-  bool PotentialNewFrame(uint16_t seq_num) const;
+  bool PotentialNewFrame(int64_t seq_num) const;
 
   // Test if all packets of a frame has arrived, and if so, returns packets to
   // create frames.
-  std::vector<std::unique_ptr<Packet>> FindFrames(uint16_t seq_num);
+  std::vector<std::unique_ptr<Packet>> FindFrames(int64_t seq_num);
 
-  void UpdateMissingPackets(uint16_t seq_num);
+  void UpdateMissingPackets(int64_t seq_num);
+
+  static size_t Index(int64_t seq_num, size_t buffer_size) {
+    RTC_DCHECK(std::has_single_bit(buffer_size));
+    size_t mask = buffer_size - 1;
+    return seq_num & mask;
+  }
+
+  size_t Index(int64_t seq_num) const { return Index(seq_num, buffer_.size()); }
 
   // buffer_.size() and max_size_ must always be a power of two.
   const size_t max_size_;
 
   // The fist sequence number currently in the buffer.
-  uint16_t first_seq_num_;
+  int64_t first_seq_num_;
 
   // If the packet buffer has received its first packet.
   bool first_packet_received_;
@@ -116,10 +125,9 @@ class PacketBuffer {
   // determine continuity between them.
   std::vector<std::unique_ptr<Packet>> buffer_;
 
-  std::optional<uint16_t> newest_inserted_seq_num_;
-  std::set<uint16_t, DescendingSeqNumComp<uint16_t>> missing_packets_;
-
-  std::set<uint16_t, DescendingSeqNumComp<uint16_t>> received_padding_;
+  std::optional<int64_t> newest_inserted_seq_num_;
+  std::set<int64_t> missing_packets_;
+  std::set<int64_t> received_padding_;
 
   // Indicates if we should require SPS, PPS, and IDR for a particular
   // RTP timestamp to treat the corresponding frame as a keyframe.

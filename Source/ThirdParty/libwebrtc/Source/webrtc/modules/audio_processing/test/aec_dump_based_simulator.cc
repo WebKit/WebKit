@@ -62,16 +62,18 @@ bool VerifyFloatBitExactness(const audioproc::Stream& msg,
                              const StreamConfig& out_config,
                              const ChannelBuffer<float>& out_buf) {
   if (static_cast<size_t>(msg.output_channel_size()) !=
-          out_config.num_channels() ||
-      msg.output_channel(0).size() != out_config.num_frames()) {
+      out_config.num_channels()) {
     return false;
-  } else {
-    for (int ch = 0; ch < msg.output_channel_size(); ++ch) {
-      for (size_t sample = 0; sample < out_config.num_frames(); ++sample) {
-        if (msg.output_channel(ch).data()[sample] !=
-            out_buf.channels()[ch][sample]) {
-          return false;
-        }
+  }
+
+  for (int ch = 0; ch < msg.output_channel_size(); ++ch) {
+    if (msg.output_channel(ch).size() != out_config.num_frames()) {
+      return false;
+    }
+    for (size_t sample = 0; sample < out_config.num_frames(); ++sample) {
+      if (msg.output_channel(ch).data()[sample] !=
+          out_buf.channels()[ch][sample]) {
+        return false;
       }
     }
   }

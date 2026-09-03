@@ -14,6 +14,7 @@
 #include <optional>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -34,7 +35,7 @@ template <typename ExtensionType,
           typename ExtensionValue = ExtensionType::value_type>
 RtpPacketReceived CreateRtpPacketReceivedWithExtension(ExtensionValue value) {
   RtpHeaderExtensionMap extensions;
-  extensions.Register<ExtensionType>(5);
+  extensions.Register<ExtensionType>(RtpHeaderExtensionId(5));
   RtpPacketReceived packet(&extensions);
   RTC_CHECK(packet.SetExtension<ExtensionType>(value))
       << "Unable to set extension.";

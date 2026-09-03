@@ -230,7 +230,7 @@ static inline RTCRtpHeaderExtensionParameters toRTCHeaderExtensionParameters(con
     RTCRtpHeaderExtensionParameters parameters;
 
     parameters.uri = fromStdString(rtcParameters.uri);
-    parameters.id = rtcParameters.id;
+    parameters.id = rtcParameters.id.value();
     parameters.encrypted = rtcParameters.encrypt;
 
     return parameters;
@@ -241,7 +241,7 @@ static inline webrtc::RtpExtension fromRTCHeaderExtensionParameters(const RTCRtp
     webrtc::RtpExtension rtcParameters;
 
     rtcParameters.uri = parameters.uri.utf8().data();
-    rtcParameters.id = parameters.id;
+    rtcParameters.id = webrtc::RtpHeaderExtensionId { parameters.id };
     rtcParameters.encrypt = parameters.encrypted;
 
     return rtcParameters;

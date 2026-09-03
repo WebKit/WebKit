@@ -11,6 +11,7 @@
 #ifndef PC_SIMULCAST_SDP_SERIALIZER_H_
 #define PC_SIMULCAST_SDP_SERIALIZER_H_
 
+#include <cstddef>
 #include <string>
 
 #include "absl/strings/string_view.h"
@@ -20,6 +21,11 @@
 #include "pc/simulcast_description.h"
 
 namespace webrtc {
+
+// Generous upper bound on the number of parsed RIDs to prevent CPU/memory
+// exhaustion attacks from maliciously large inputs. Practical simulcast limits
+// are much lower (e.g. kMaxSimulcastStreams = 3).
+inline constexpr size_t kMaxSimulcastRids = 16;
 
 // This class serializes simulcast components of the SDP.
 // Example:

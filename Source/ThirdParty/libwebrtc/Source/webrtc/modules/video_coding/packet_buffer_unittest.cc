@@ -54,7 +54,7 @@ std::vector<uint16_t> StartSeqNums(
   for (const auto& packet : packets) {
     EXPECT_EQ(frame_boundary, packet->is_first_packet_in_frame());
     if (packet->is_first_packet_in_frame()) {
-      result.push_back(packet->seq_num());
+      result.push_back(static_cast<uint16_t>(packet->seq_num()));
     }
     frame_boundary = packet->is_last_packet_in_frame();
   }
@@ -706,6 +706,14 @@ TEST_P(PacketBufferH264ParameterizedTest, OneFrameMaxSeqNum) {
 TEST_P(PacketBufferH264ParameterizedTest, InsertTooOldPackets) {
   InsertH264(4660, kKeyFrame, kFirst, kNotLast, 1000);
   InsertH264(37429, kDeltaFrame, kFirst, kNotLast, 1000);
+  InsertH264(4662, kKeyFrame, kFirst, kLast, 1000);
+}
+
+TEST_P(PacketBufferH264ParameterizedTest, InsertMisOrderedPackets) {
+  InsertH264(4660, kKeyFrame, kFirst, kNotLast, 1000);
+  // packet (4661 + kStartSize) can use the same buffer slot as packet 4661,
+  // PacketBuffer need to be careful to detect they are not the same packet.
+  InsertH264(4661 + kStartSize, kDeltaFrame, kFirst, kNotLast, 1000);
   InsertH264(4662, kKeyFrame, kFirst, kLast, 1000);
 }
 

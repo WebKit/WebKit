@@ -11,10 +11,12 @@
 #ifndef CALL_FAKE_PAYLOAD_TYPE_SUGGESTER_H_
 #define CALL_FAKE_PAYLOAD_TYPE_SUGGESTER_H_
 
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "absl/strings/string_view.h"
 #include "api/payload_type.h"
@@ -50,12 +52,6 @@ class FakePayloadTypeSuggester : public PayloadTypeSuggester {
       return it->second;
     }
 
-    if (codec.id.IsSet() && !IsPayloadTypeConflict(mid, codec.id, codec)) {
-      pt_picker_.AddMapping(codec.id, codec);
-      recorder.AddMapping(codec.id, codec);
-      return codec.id;
-    }
-
     // There's only one PT picker, but multiple recorders.
     RTCErrorOr<PayloadType> suggested_result =
         pt_picker_.SuggestMapping(codec, &recorder, pick_from_top_of_range);
@@ -77,6 +73,19 @@ class FakePayloadTypeSuggester : public PayloadTypeSuggester {
         suggestion;
   }
 
+  void SetBundleGroups(
+      const std::vector<std::vector<std::string>>& bundle_groups) {
+    bundle_groups_ = bundle_groups;
+  }
+
+  bool HasMapping(absl::string_view mid, PayloadType payload_type) const {
+    const PayloadTypeRecorder* recorder = LookupRecorderConst(mid);
+    if (recorder) {
+      return recorder->LookupCodec(payload_type).ok();
+    }
+    return false;
+  }
+
   RTCError AddLocalMapping(absl::string_view mid,
                            PayloadType payload_type,
                            const Codec& codec) override {
@@ -84,22 +93,6 @@ class FakePayloadTypeSuggester : public PayloadTypeSuggester {
     return pt_picker_.AddMapping(payload_type, codec);
   }
 
-  RTCErrorOr<RtpHeaderExtensionId> SuggestRtpHeaderExtensionId(
-      absl::string_view mid,
-      const RtpExtension& extension,
-      RtpTransceiverIdDomain id_domain) override {
-    return rtp_extension_picker_.SuggestMapping(
-        extension.uri, extension.encrypt, extension.id, id_domain, nullptr);
-  }
-  [[nodiscard]] RTCError AddRtpHeaderExtensionMapping(
-      absl::string_view mid,
-      const RtpExtension& extension,
-      bool local) override {
-    return rtp_extension_picker_.AddMapping(extension.id, extension.uri,
-                                            extension.encrypt);
-  }
-
- private:
   bool IsPayloadTypeConflict(absl::string_view mid,
                              PayloadType payload_type,
                              const Codec& codec) const {
@@ -121,12 +114,52 @@ class FakePayloadTypeSuggester : public PayloadTypeSuggester {
     return false;
   }
 
+  RTCErrorOr<RtpHeaderExtensionId> SuggestRtpHeaderExtensionId(
+      absl::string_view mid,
+      const RtpExtension& extension,
+      RtpTransceiverIdDomain id_domain) override {
+    return rtp_extension_picker_.SuggestMapping(
+        extension.uri, extension.encrypt, extension.id, id_domain, nullptr);
+  }
+  [[nodiscard]] RTCError AddRtpHeaderExtensionMapping(
+      absl::string_view mid,
+      const RtpExtension& extension,
+      bool local) override {
+    return rtp_extension_picker_.AddMapping(extension.id, extension.uri,
+                                            extension.encrypt);
+  }
+
+ private:
+  const PayloadTypeRecorder* LookupRecorderConst(absl::string_view mid) const {
+    if (mid.empty())
+      return nullptr;
+    std::string transport_mapped_name = std::string(mid);
+    for (const std::vector<std::string>& group : bundle_groups_) {
+      if (std::find(group.begin(), group.end(), mid) != group.end()) {
+        transport_mapped_name = group[0];
+        break;
+      }
+    }
+    auto it = recorders_.find(transport_mapped_name);
+    if (it == recorders_.end()) {
+      return nullptr;
+    }
+    return it->second.get();
+  }
+
   PayloadTypeRecorder& LookupRecorder(absl::string_view mid) {
     RTC_CHECK(!mid.empty());
-    auto it = recorders_.find(mid);
+    std::string transport_mapped_name = std::string(mid);
+    for (const std::vector<std::string>& group : bundle_groups_) {
+      if (std::find(group.begin(), group.end(), mid) != group.end()) {
+        transport_mapped_name = group[0];
+        break;
+      }
+    }
+    auto it = recorders_.find(transport_mapped_name);
     if (it == recorders_.end()) {
       it = recorders_
-               .emplace(std::string(mid),
+               .emplace(transport_mapped_name,
                         std::make_unique<PayloadTypeRecorder>(pt_picker_))
                .first;
     }
@@ -138,6 +171,7 @@ class FakePayloadTypeSuggester : public PayloadTypeSuggester {
   flat_map<std::pair<std::string, std::string>, PayloadType>
       fallback_suggestions_;
   flat_map<std::string, std::unique_ptr<PayloadTypeRecorder>> recorders_;
+  std::vector<std::vector<std::string>> bundle_groups_;
 };
 
 }  // namespace webrtc

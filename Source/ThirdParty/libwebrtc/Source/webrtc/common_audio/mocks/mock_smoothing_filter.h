@@ -23,7 +23,6 @@ class MockSmoothingFilter : public SmoothingFilter {
  public:
   MOCK_METHOD(void, AddSample, (float, Timestamp), (override));
   MOCK_METHOD(std::optional<float>, GetAverage, (Timestamp), (override));
-  MOCK_METHOD(bool, SetTimeConstantMs, (int), (override));
 };
 
 }  // namespace webrtc

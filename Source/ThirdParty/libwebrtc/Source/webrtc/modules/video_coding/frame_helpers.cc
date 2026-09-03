@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "absl/container/inlined_vector.h"
@@ -66,6 +67,27 @@ std::unique_ptr<EncodedFrame> CombineAndDeleteFrames(
 
   if (frames.size() == 1) {
     return std::move(frames[0]);
+  }
+
+  // Check if any of the spatial layers explicitly define the spatial id.
+  // If they do the spatial ids must be strictly increasing.
+  bool any_spatial_index_defined = false;
+  for (const auto& frame : frames) {
+    if (frame->SpatialIndex().has_value()) {
+      any_spatial_index_defined = true;
+      break;
+    }
+  }
+
+  if (any_spatial_index_defined) {
+    for (size_t i = 1; i < frames.size(); ++i) {
+      if (frames[i]->SpatialIndex().value_or(0) <=
+          frames[i - 1]->SpatialIndex().value_or(0)) {
+        RTC_LOG(LS_ERROR)
+            << "Failed to combine frames - invalid spatial index order.";
+        return nullptr;
+      }
+    }
   }
 
   size_t total_length = 0;

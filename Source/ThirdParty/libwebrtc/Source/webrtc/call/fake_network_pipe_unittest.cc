@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/test/simulated_network.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
@@ -470,7 +471,7 @@ TEST_F(FakeNetworkPipeTest, DeliverRtpPacketPropagatesExtensions) {
   std::unique_ptr<FakeNetworkPipe> pipe(new FakeNetworkPipe(
       &fake_clock_, std::move(simulated_network), &receiver));
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<TransportSequenceNumber>(/*id=*/7);
+  extension_map.Register<TransportSequenceNumber>(RtpHeaderExtensionId(7));
 
   RtpPacketReceived packet(&extension_map, fake_clock_.CurrentTime());
   packet.SetExtension<TransportSequenceNumber>(123);

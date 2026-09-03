@@ -310,11 +310,7 @@ class RTC_EXPORT PortAllocatorSession {
   }
   // Candidates should be signaled to be removed when the port that generated
   // the candidates is removed.
-  [[deprecated]] void SubscribeCandidatesRemoved(
-      absl::AnyInvocable<void(PortAllocatorSession*,
-                              const std::vector<Candidate>&)> callback) {
-    candidates_removed_callbacks_.AddReceiver(std::move(callback));
-  }
+
   void SubscribeCandidatesRemoved(
       void* tag,
       absl::AnyInvocable<void(PortAllocatorSession*,
@@ -326,10 +322,6 @@ class RTC_EXPORT PortAllocatorSession {
     candidates_removed_callbacks_.Send(session, candidates);
   }
 
-  [[deprecated]] void SubscribeCandidatesAllocationDone(
-      absl::AnyInvocable<void(PortAllocatorSession*)> callback) {
-    candidates_allocation_done_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeCandidatesAllocationDone(
       void* tag,
       absl::AnyInvocable<void(PortAllocatorSession*)> callback) {
@@ -339,12 +331,6 @@ class RTC_EXPORT PortAllocatorSession {
     candidates_allocation_done_callbacks_.Send(session);
   }
 
-  [[deprecated("Use SubscribeIceRegathering(void* tag, ...)")]]
-  void SubscribeIceRegathering(
-      absl::AnyInvocable<void(PortAllocatorSession*, IceRegatheringReason)>
-          callback) {
-    ice_regathering_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeIceRegathering(
       void* tag,
       absl::AnyInvocable<void(PortAllocatorSession*, IceRegatheringReason)>

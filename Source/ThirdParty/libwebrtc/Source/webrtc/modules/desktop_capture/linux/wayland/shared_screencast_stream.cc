@@ -40,7 +40,7 @@
 #include <vector>
 
 #include "api/scoped_refptr.h"
-#include "media/base/video_common.h"
+#include "api/video/video_common.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"

@@ -14,6 +14,8 @@ pub struct TimeDelta {
     pub(crate) microseconds: i64,
 }
 
+// SAFETY: `TimeDelta` is `#[repr(transparent)]` over `i64`,
+// matching the layout of C++ `webrtc::TimeDelta`, which is a trivial type.
 unsafe impl ExternType for TimeDelta {
     type Id = type_id!("webrtc::TimeDelta");
     type Kind = cxx::kind::Trivial;

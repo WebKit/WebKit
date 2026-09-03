@@ -25,11 +25,11 @@
 #include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/fec_controller_override.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -92,7 +92,6 @@
 #include "modules/video_coding/svc/scalable_video_controller.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network_route.h"
 #include "rtc_base/rate_limiter.h"
@@ -101,9 +100,9 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/unique_id_generator.h"
 #include "test/call_test.h"
 #include "test/configurable_frame_size_encoder.h"
+#include "test/create_test_environment.h"
 #include "test/create_test_field_trials.h"
 #include "test/encoder_settings.h"
 #include "test/fake_encoder.h"
@@ -119,33 +118,15 @@
 #include "test/video_test_constants.h"
 #include "video/config/video_encoder_config.h"
 #include "video/transport_adapter.h"
-#include "video/video_send_stream_impl.h"
 
 namespace webrtc {
-namespace test {
-class VideoSendStreamPeer {
- public:
-  explicit VideoSendStreamPeer(VideoSendStream* base_class_stream)
-      : internal_stream_(
-            static_cast<internal::VideoSendStreamImpl*>(base_class_stream)) {}
-  std::optional<float> GetPacingFactorOverride() const {
-    return internal_stream_->GetPacingFactorOverride();
-  }
-
- private:
-  internal::VideoSendStreamImpl const* const internal_stream_;
-};
-}  // namespace test
-
 namespace {
-enum : int {  // The first valid value is 1.
-  kAbsSendTimeExtensionId = 1,
-  kTimestampOffsetExtensionId,
-  kTransportSequenceNumberExtensionId,
-  kVideoContentTypeExtensionId,
-  kVideoRotationExtensionId,
-  kVideoTimingExtensionId,
-};
+constexpr RtpHeaderExtensionId kAbsSendTimeExtensionId(1);
+constexpr RtpHeaderExtensionId kTimestampOffsetExtensionId(2);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(3);
+constexpr RtpHeaderExtensionId kVideoContentTypeExtensionId(4);
+constexpr RtpHeaderExtensionId kVideoRotationExtensionId(5);
+constexpr RtpHeaderExtensionId kVideoTimingExtensionId(6);
 
 // Readability convenience enum for `WaitBitrateChanged()`.
 enum class WaitUntil : bool { kZero = false, kNonZero = true };
@@ -178,7 +159,6 @@ std::string ParamInfoToStr(
   return sb.str();
 }
 
-}  // namespace
 
 class VideoSendStreamTest : public test::CallTest {
  public:
@@ -366,7 +346,8 @@ TEST_F(VideoSendStreamTest, SupportsTransmissionTimeOffset) {
 }
 
 TEST_F(VideoSendStreamTest, SupportsTransportWideSequenceNumbers) {
-  static const uint8_t kExtensionId = kTransportSequenceNumberExtensionId;
+  static constexpr RtpHeaderExtensionId kExtensionId =
+      kTransportSequenceNumberExtensionId;
   class TransportWideSequenceNumberObserver : public test::SendTest {
    public:
     TransportWideSequenceNumberObserver()
@@ -1114,7 +1095,7 @@ void VideoSendStreamTest::TestNackRetransmission(
       EXPECT_TRUE(Wait()) << "Timed out while waiting for NACK retransmission.";
     }
 
-    const Environment env_ = CreateEnvironment();
+    const Environment env_ = CreateTestEnvironment();
     std::unique_ptr<internal::TransportAdapter> transport_adapter_;
     int retransmit_count_;
     const uint32_t media_ssrc_;
@@ -1347,7 +1328,7 @@ void VideoSendStreamTest::TestPacketFragmentationSize(TestVideoFormat format,
       EXPECT_TRUE(Wait()) << "Timed out while observing incoming RTP packets.";
     }
 
-    const Environment env_ = CreateEnvironment();
+    const Environment env_ = CreateTestEnvironment();
     std::unique_ptr<internal::TransportAdapter> transport_adapter_;
     test::ConfigurableFrameSizeEncoder encoder_;
     test::VideoEncoderProxyFactory encoder_factory_;
@@ -1643,7 +1624,7 @@ TEST_F(VideoSendStreamTest, MinTransmitBitrateRespectsRemb) {
     }
 
     TaskQueueBase* const task_queue_;
-    const Environment env_ = CreateEnvironment();
+    const Environment env_ = CreateTestEnvironment();
     std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_;
     std::unique_ptr<internal::TransportAdapter> feedback_transport_;
     RateLimiter retranmission_rate_limiter_;
@@ -1658,7 +1639,8 @@ TEST_F(VideoSendStreamTest, MinTransmitBitrateRespectsRemb) {
 TEST_F(VideoSendStreamTest, ChangingNetworkRoute) {
   static const int kStartBitrateBps = 300000;
   static const int kNewMaxBitrateBps = 1234567;
-  static const uint8_t kExtensionId = kTransportSequenceNumberExtensionId;
+  static constexpr RtpHeaderExtensionId kExtensionId =
+      kTransportSequenceNumberExtensionId;
   class ChangingNetworkRouteTest : public test::EndToEndTest {
    public:
     explicit ChangingNetworkRouteTest(TaskQueueBase* task_queue)
@@ -1799,8 +1781,11 @@ TEST_F(VideoSendStreamTest, ChangingTransportOverhead) {
     void PerformTest() override {
       SendTask(task_queue_, [this]() {
         transport_overhead_ = 100;
-        call_->GetTransportControllerSend()->OnTransportOverheadChanged(
-            transport_overhead_);
+        NetworkRoute route;
+        route.connected = true;
+        route.packet_overhead = transport_overhead_;
+        call_->GetTransportControllerSend()->OnNetworkRouteChanged("transport",
+                                                                   route);
       });
 
       EXPECT_TRUE(Wait());
@@ -1812,8 +1797,11 @@ TEST_F(VideoSendStreamTest, ChangingTransportOverhead) {
 
       SendTask(task_queue_, [this]() {
         transport_overhead_ = 500;
-        call_->GetTransportControllerSend()->OnTransportOverheadChanged(
-            transport_overhead_);
+        NetworkRoute route;
+        route.connected = true;
+        route.packet_overhead = transport_overhead_;
+        call_->GetTransportControllerSend()->OnNetworkRouteChanged("transport",
+                                                                   route);
       });
 
       EXPECT_TRUE(Wait());
@@ -2104,7 +2092,7 @@ TEST_F(VideoSendStreamTest, CanReconfigureToUseStartBitrateAbovePreviousMax) {
     int start_bitrate_kbps_ RTC_GUARDED_BY(mutex_);
   };
 
-  CreateSenderCall();
+  CreateSenderCall(TaskQueueBase::Current());
 
   test::NullTransport transport;
   CreateSendConfig(1, 0, 0, &transport);
@@ -3584,14 +3572,14 @@ TEST_F(VideoSendStreamTest, MAYBE_Vp9FlexModeRefCount) {
 
 void VideoSendStreamTest::TestRequestSourceRotateVideo(
     bool support_orientation_ext) {
-  CreateSenderCall();
+  CreateSenderCall(TaskQueueBase::Current());
 
   test::NullTransport transport;
   CreateSendConfig(1, 0, 0, &transport);
   GetVideoSendConfig()->rtp.extensions.clear();
   if (support_orientation_ext) {
     GetVideoSendConfig()->rtp.extensions.push_back(
-        RtpExtension(RtpExtension::kVideoRotationUri, 1));
+        RtpExtension(RtpExtension::kVideoRotationUri, RtpHeaderExtensionId(1)));
   }
 
   CreateVideoStreams();
@@ -3706,7 +3694,11 @@ TEST_F(VideoSendStreamTest, RemoveOverheadFromBandwidth) {
       SendTask(task_queue_, [this, &bitrate_config]() {
         call_->GetTransportControllerSend()->SetSdpBitrateParameters(
             bitrate_config);
-        call_->GetTransportControllerSend()->OnTransportOverheadChanged(40);
+        NetworkRoute route;
+        route.connected = true;
+        route.packet_overhead = 40;
+        call_->GetTransportControllerSend()->OnNetworkRouteChanged("transport",
+                                                                   route);
       });
 
       // At a bitrate of 60kbps with a packet size of 1200B video and an
@@ -3732,89 +3724,7 @@ TEST_F(VideoSendStreamTest, RemoveOverheadFromBandwidth) {
   RunBaseTest(&test);
 }
 
-class PacingFactorObserver : public test::SendTest {
- public:
-  PacingFactorObserver(bool configure_send_side,
-                       std::optional<float> expected_pacing_factor)
-      : test::SendTest(test::VideoTestConstants::kDefaultTimeout),
-        configure_send_side_(configure_send_side),
-        expected_pacing_factor_(expected_pacing_factor) {}
 
-  void ModifyVideoConfigs(
-      VideoSendStream::Config* send_config,
-      std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
-      VideoEncoderConfig* encoder_config) override {
-    // Check if send-side bwe extension is already present, and remove it if
-    // it is not desired.
-    bool has_send_side = false;
-    for (auto it = send_config->rtp.extensions.begin();
-         it != send_config->rtp.extensions.end(); ++it) {
-      if (it->uri == RtpExtension::kTransportSequenceNumberUri) {
-        if (configure_send_side_) {
-          has_send_side = true;
-        } else {
-          send_config->rtp.extensions.erase(it);
-        }
-        break;
-      }
-    }
-
-    if (configure_send_side_ && !has_send_side) {
-      UniqueNumberGenerator<int> unique_id_generator;
-      unique_id_generator.AddKnownId(0);  // First valid RTP extension ID is 1.
-      for (const RtpExtension& extension : send_config->rtp.extensions) {
-        unique_id_generator.AddKnownId(extension.id.value());
-      }
-      // Want send side, not present by default, so add it.
-      send_config->rtp.extensions.emplace_back(
-          RtpExtension::kTransportSequenceNumberUri,
-          unique_id_generator.GenerateNumber());
-    }
-
-    // ALR only enabled for screenshare.
-    encoder_config->content_type = VideoEncoderConfig::ContentType::kScreen;
-  }
-
-  void OnVideoStreamsCreated(VideoSendStream* send_stream,
-                             const std::vector<VideoReceiveStreamInterface*>&
-                                 receive_streams) override {
-    auto internal_send_peer = test::VideoSendStreamPeer(send_stream);
-    // Video streams created, check that pacing factor is correctly configured.
-    EXPECT_EQ(expected_pacing_factor_,
-              internal_send_peer.GetPacingFactorOverride());
-    observation_complete_.Set();
-  }
-
-  void PerformTest() override {
-    EXPECT_TRUE(Wait()) << "Timed out while waiting for stream creation.";
-  }
-
- private:
-  const bool configure_send_side_;
-  const std::optional<float> expected_pacing_factor_;
-};
-
-constexpr absl::string_view kAlrProbingExperimentValue = "1.0,2875,80,40,-60,3";
-constexpr float kAlrProbingExperimentPaceMultiplier = 1.0f;
-
-TEST_F(VideoSendStreamTest, AlrConfiguredWhenSendSideOn) {
-  field_trials().Set(
-      AlrExperimentSettings::kScreenshareProbingBweExperimentName,
-      kAlrProbingExperimentValue);
-  // Send-side bwe on, use pacing factor from `kAlrProbingExperiment` above.
-  PacingFactorObserver test_with_send_side(true,
-                                           kAlrProbingExperimentPaceMultiplier);
-  RunBaseTest(&test_with_send_side);
-}
-
-TEST_F(VideoSendStreamTest, AlrNotConfiguredWhenSendSideOff) {
-  field_trials().Set(
-      AlrExperimentSettings::kScreenshareProbingBweExperimentName,
-      kAlrProbingExperimentValue);
-  // Send-side bwe off, use configuration should not be overridden.
-  PacingFactorObserver test_without_send_side(false, std::nullopt);
-  RunBaseTest(&test_without_send_side);
-}
 
 // Test class takes as argument a function pointer to reset the send
 // stream and call OnVideoStreamsCreated. This is necessary since you cannot
@@ -3878,16 +3788,7 @@ class ContentSwitchTest : public test::SendTest {
       if (done_)
         return;
 
-      auto internal_send_peer = test::VideoSendStreamPeer(send_stream_);
-      float pacing_factor =
-          internal_send_peer.GetPacingFactorOverride().value_or(0.0f);
-      float expected_pacing_factor = 1.1;  // Strict pacing factor.
-      VideoSendStream::Stats stats = send_stream_->GetStats();
-      if (stats.content_type == VideoContentType::SCREENSHARE) {
-        expected_pacing_factor = 1.0f;  // Currently used pacing factor in ALR.
-      }
 
-      EXPECT_NEAR(expected_pacing_factor, pacing_factor, 1e-6);
 
       // Wait until at least kMinPacketsToSend packets to be sent, so that
       // some frames would be encoded.
@@ -4271,4 +4172,5 @@ TEST_F(VideoSendStreamTest, TestTemporalLayersVp9) {
                      /*scalability_mode=*/{});
 }
 
+}  // namespace
 }  // namespace webrtc

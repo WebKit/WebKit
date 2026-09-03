@@ -165,5 +165,4 @@ TEST(RtpPacketSimulatorTest, SimulatesRtxOsnWhenLogged) {
 }
 
 }  // namespace
-
 }  // namespace webrtc::video_timing_simulator

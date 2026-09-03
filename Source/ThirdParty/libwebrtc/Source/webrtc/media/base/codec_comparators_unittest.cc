@@ -492,11 +492,11 @@ TEST(CodecTest, TestAV1CodecMatches) {
 
   Codec c_no_profile = CreateVideoCodec(95, kAv1CodecName);
   Codec c_profile0 = CreateVideoCodec(95, kAv1CodecName);
-  c_profile0.params[kAv1FmtpProfile] = kProfile0;
+  c_profile0.params[std::string(kAv1FmtpProfile)] = kProfile0;
   Codec c_profile1 = CreateVideoCodec(95, kAv1CodecName);
-  c_profile1.params[kAv1FmtpProfile] = kProfile1;
+  c_profile1.params[std::string(kAv1FmtpProfile)] = kProfile1;
   Codec c_profile2 = CreateVideoCodec(95, kAv1CodecName);
-  c_profile2.params[kAv1FmtpProfile] = kProfile2;
+  c_profile2.params[std::string(kAv1FmtpProfile)] = kProfile2;
 
   // An AV1 entry with no profile specified should be treated as profile-0.
   EXPECT_TRUE(c_profile0.Matches(c_no_profile));
@@ -510,14 +510,14 @@ TEST(CodecTest, TestAV1CodecMatches) {
   {
     // Two AV1 entries with profile 0 specified are treated as duplicates.
     Codec c_profile0_eq = CreateVideoCodec(95, kAv1CodecName);
-    c_profile0_eq.params[kAv1FmtpProfile] = kProfile0;
+    c_profile0_eq.params[std::string(kAv1FmtpProfile)] = kProfile0;
     EXPECT_TRUE(c_profile0.Matches(c_profile0_eq));
   }
 
   {
     // Two AV1 entries with profile 1 specified are treated as duplicates.
     Codec c_profile1_eq = CreateVideoCodec(95, kAv1CodecName);
-    c_profile1_eq.params[kAv1FmtpProfile] = kProfile1;
+    c_profile1_eq.params[std::string(kAv1FmtpProfile)] = kProfile1;
     EXPECT_TRUE(c_profile1.Matches(c_profile1_eq));
   }
 
@@ -531,20 +531,20 @@ TEST(CodecTest, TestAV1CodecMatches) {
 
   // AV1 entries with same profile and different tier are seen as equal.
   Codec c_tier0 = CreateVideoCodec(95, kAv1CodecName);
-  c_tier0.params[kAv1FmtpProfile] = kProfile0;
-  c_tier0.params[kAv1FmtpTier] = "0";
+  c_tier0.params[std::string(kAv1FmtpProfile)] = kProfile0;
+  c_tier0.params[std::string(kAv1FmtpTier)] = "0";
   Codec c_tier1 = CreateVideoCodec(95, kAv1CodecName);
-  c_tier1.params[kAv1FmtpProfile] = kProfile0;
-  c_tier1.params[kAv1FmtpTier] = "1";
+  c_tier1.params[std::string(kAv1FmtpProfile)] = kProfile0;
+  c_tier1.params[std::string(kAv1FmtpTier)] = "1";
   EXPECT_TRUE(c_tier0.Matches(c_tier1));
 
   // AV1 entries with profile and different level are seen as equal.
   Codec c_level0 = CreateVideoCodec(95, kAv1CodecName);
-  c_level0.params[kAv1FmtpProfile] = kProfile0;
-  c_level0.params[kAv1FmtpLevelIdx] = "0";
+  c_level0.params[std::string(kAv1FmtpProfile)] = kProfile0;
+  c_level0.params[std::string(kAv1FmtpLevelIdx)] = "0";
   Codec c_level1 = CreateVideoCodec(95, kAv1CodecName);
-  c_level1.params[kAv1FmtpProfile] = kProfile0;
-  c_level1.params[kAv1FmtpLevelIdx] = "1";
+  c_level1.params[std::string(kAv1FmtpProfile)] = kProfile0;
+  c_level1.params[std::string(kAv1FmtpLevelIdx)] = "1";
   EXPECT_TRUE(c_level0.Matches(c_level1));
 }
 
@@ -555,19 +555,19 @@ TEST(CodecTest, TestVP9CodecMatches) {
 
   Codec c_no_profile = CreateVideoCodec(95, kVp9CodecName);
   Codec c_profile0 = CreateVideoCodec(95, kVp9CodecName);
-  c_profile0.params[kVP9FmtpProfileId] = kProfile0;
+  c_profile0.SetParam(kVP9FmtpProfileId, kProfile0);
 
   EXPECT_TRUE(c_profile0.Matches(c_no_profile));
 
   {
     Codec c_profile0_eq = CreateVideoCodec(95, kVp9CodecName);
-    c_profile0_eq.params[kVP9FmtpProfileId] = kProfile0;
+    c_profile0_eq.SetParam(kVP9FmtpProfileId, kProfile0);
     EXPECT_TRUE(c_profile0.Matches(c_profile0_eq));
   }
 
   {
     Codec c_profile2 = CreateVideoCodec(95, kVp9CodecName);
-    c_profile2.params[kVP9FmtpProfileId] = kProfile2;
+    c_profile2.SetParam(kVP9FmtpProfileId, kProfile2);
     EXPECT_FALSE(c_profile0.Matches(c_profile2));
     EXPECT_FALSE(c_no_profile.Matches(c_profile2));
   }
@@ -586,12 +586,12 @@ TEST(CodecTest, TestH264CodecMatches) {
   const char kProfileLevelId3[] = "42e01e";
 
   Codec pli_1_pm_0 = CreateVideoCodec(95, "H264");
-  pli_1_pm_0.params[kH264FmtpProfileLevelId] = kProfileLevelId1;
-  pli_1_pm_0.params[kH264FmtpPacketizationMode] = "0";
+  pli_1_pm_0.SetParam(kH264FmtpProfileLevelId, kProfileLevelId1);
+  pli_1_pm_0.SetParam(kH264FmtpPacketizationMode, "0");
 
   {
     Codec pli_1_pm_blank = CreateVideoCodec(95, "H264");
-    pli_1_pm_blank.params[kH264FmtpProfileLevelId] = kProfileLevelId1;
+    pli_1_pm_blank.SetParam(kH264FmtpProfileLevelId, kProfileLevelId1);
     pli_1_pm_blank.params.erase(
         pli_1_pm_blank.params.find(kH264FmtpPacketizationMode));
 
@@ -605,8 +605,8 @@ TEST(CodecTest, TestH264CodecMatches) {
 
   {
     Codec pli_1_pm_1 = CreateVideoCodec(95, "H264");
-    pli_1_pm_1.params[kH264FmtpProfileLevelId] = kProfileLevelId1;
-    pli_1_pm_1.params[kH264FmtpPacketizationMode] = "1";
+    pli_1_pm_1.SetParam(kH264FmtpProfileLevelId, kProfileLevelId1);
+    pli_1_pm_1.SetParam(kH264FmtpPacketizationMode, "1");
 
     // Does not match since packetization-mode is different.
     EXPECT_FALSE(pli_1_pm_0.Matches(pli_1_pm_1));
@@ -616,9 +616,8 @@ TEST(CodecTest, TestH264CodecMatches) {
 
   {
     Codec pli_2_pm_0 = CreateVideoCodec(95, "H264");
-    pli_2_pm_0.params[kH264FmtpProfileLevelId] = kProfileLevelId2;
-    pli_2_pm_0.params[kH264FmtpPacketizationMode] = "0";
-
+    pli_2_pm_0.SetParam(kH264FmtpProfileLevelId, kProfileLevelId2);
+    pli_2_pm_0.SetParam(kH264FmtpPacketizationMode, "0");
     // Does not match since profile-level-id is different.
     EXPECT_FALSE(pli_1_pm_0.Matches(pli_2_pm_0));
 
@@ -627,8 +626,8 @@ TEST(CodecTest, TestH264CodecMatches) {
 
   {
     Codec pli_3_pm_0_asym = CreateVideoCodec(95, "H264");
-    pli_3_pm_0_asym.params[kH264FmtpProfileLevelId] = kProfileLevelId3;
-    pli_3_pm_0_asym.params[kH264FmtpPacketizationMode] = "0";
+    pli_3_pm_0_asym.SetParam(kH264FmtpProfileLevelId, kProfileLevelId3);
+    pli_3_pm_0_asym.SetParam(kH264FmtpPacketizationMode, "0");
 
     // Does match, profile-level-id is different but the level is not compared.
     // and the profile matches.
@@ -654,7 +653,7 @@ TEST(CodecTest, TestH265CodecMatches) {
 
   {
     Codec c_profile_1 = CreateVideoCodec(95, kH265CodecName);
-    c_profile_1.params[kH265FmtpProfileId] = kProfile1;
+    c_profile_1.SetParam(kH265FmtpProfileId, kProfile1);
 
     // Matches since profile-id unspecified defaults to "1".
     EXPECT_TRUE(c_ptl_blank.Matches(c_profile_1));
@@ -662,7 +661,7 @@ TEST(CodecTest, TestH265CodecMatches) {
 
   {
     Codec c_tier_flag_1 = CreateVideoCodec(95, kH265CodecName);
-    c_tier_flag_1.params[kH265FmtpTierFlag] = kTier1;
+    c_tier_flag_1.SetParam(kH265FmtpTierFlag, kTier1);
 
     // Does not match since profile-space unspecified defaults to "0".
     EXPECT_FALSE(c_ptl_blank.Matches(c_tier_flag_1));
@@ -670,7 +669,7 @@ TEST(CodecTest, TestH265CodecMatches) {
 
   {
     Codec c_level_id_3_1 = CreateVideoCodec(95, kH265CodecName);
-    c_level_id_3_1.params[kH265FmtpLevelId] = kLevel3_1;
+    c_level_id_3_1.SetParam(kH265FmtpLevelId, kLevel3_1);
 
     // Matches since level-id unspecified defaults to "93".
     EXPECT_TRUE(c_ptl_blank.Matches(c_level_id_3_1));
@@ -678,7 +677,7 @@ TEST(CodecTest, TestH265CodecMatches) {
 
   {
     Codec c_level_id_4 = CreateVideoCodec(95, kH265CodecName);
-    c_level_id_4.params[kH265FmtpLevelId] = kLevel4;
+    c_level_id_4.SetParam(kH265FmtpLevelId, kLevel4);
 
     // Matches since we ignore level-id when matching H.265 codecs.
     EXPECT_TRUE(c_ptl_blank.Matches(c_level_id_4));
@@ -686,7 +685,7 @@ TEST(CodecTest, TestH265CodecMatches) {
 
   {
     Codec c_tx_mode_mrst = CreateVideoCodec(95, kH265CodecName);
-    c_tx_mode_mrst.params[kH265FmtpTxMode] = kTxMrst;
+    c_tx_mode_mrst.SetParam(kH265FmtpTxMode, kTxMrst);
 
     // Does not match since tx-mode implies to "SRST" and must be not specified
     // when it is the only mode supported:

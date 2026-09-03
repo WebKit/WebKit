@@ -18,6 +18,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/call/bitrate_allocation.h"
+#include "api/units/data_rate.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
@@ -97,7 +98,9 @@ void AudioEncoder::OnReceivedUplinkRecoverablePacketLossFraction(
 }
 
 void AudioEncoder::OnReceivedTargetAudioBitrate(int target_audio_bitrate_bps) {
-  OnReceivedUplinkBandwidth(target_audio_bitrate_bps, std::nullopt);
+  BitrateAllocationUpdate update;
+  update.target_bitrate = DataRate::BitsPerSec(target_audio_bitrate_bps);
+  OnReceivedUplinkAllocation(update);
 }
 
 void AudioEncoder::OnReceivedUplinkBandwidth(
@@ -105,8 +108,10 @@ void AudioEncoder::OnReceivedUplinkBandwidth(
     std::optional<int64_t> /* bwe_period_ms */) {}
 
 void AudioEncoder::OnReceivedUplinkAllocation(BitrateAllocationUpdate update) {
-  OnReceivedUplinkBandwidth(update.target_bitrate.bps(),
-                            update.bwe_period.ms());
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  OnReceivedUplinkBandwidth(update.target_bitrate.bps(), std::nullopt);
+#pragma clang diagnostic pop
 }
 
 void AudioEncoder::OnReceivedRtt(int /* rtt_ms */) {}

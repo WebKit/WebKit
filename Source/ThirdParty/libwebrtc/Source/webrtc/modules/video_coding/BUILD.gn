@@ -476,9 +476,6 @@ rtc_library("webrtc_h264") {
     } else {
       deps += [ "//third_party/openh264:encoder" ]
     }
-    if (!build_with_mozilla) {
-      deps += [ "../../media:rtc_media_base" ]
-    }
   }
 }
 
@@ -713,6 +710,32 @@ if (rtc_include_tests) {
         "../../sdk/android:native_api_jni",
       ]
     }
+
+    rtc_test("videocodec_test_mediacodec") {
+      sources = [ "codecs/test/videocodec_test_mediacodec.cc" ]
+      deps = [
+        ":android_codec_factory_helper",
+        ":video_codecs_test_framework",
+        ":videocodec_test_impl",
+        "../../api:create_videocodec_test_fixture_api",
+        "../../api:videocodec_test_fixture_api",
+        "../../api/video_codecs:video_codecs_api",
+        "../../media:media_constants",
+        "../../rtc_base:stringutils",
+        "../../sdk/android:libjingle_peerconnection_java",
+        "../../test:fileutils",
+        "../../test:test_support",
+      ]
+      data = [
+        "../../resources/foreman_128x96.yuv",
+        "../../resources/foreman_160x120.yuv",
+        "../../resources/foreman_176x144.yuv",
+        "../../resources/foreman_240x136.yuv",
+        "../../resources/foreman_320x240.yuv",
+        "../../resources/foreman_480x272.yuv",
+      ]
+      data_deps = [ "../../resources:modules_tests_data" ]
+    }
   }
 
   if (is_ios || is_mac) {
@@ -771,7 +794,6 @@ if (rtc_include_tests) {
       "../../api:scoped_refptr",
       "../../api:simulcast_test_fixture_api",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/video:encoded_image",
       "../../api/video:video_bitrate_allocator",
       "../../api/video:video_frame",
@@ -779,6 +801,7 @@ if (rtc_include_tests) {
       "../../api/video:video_rtp_headers",
       "../../api/video_codecs:video_codecs_api",
       "../../rtc_base:checks",
+      "../../test:create_test_environment",
       "../../test:test_support",
     ]
   }
@@ -826,6 +849,7 @@ if (rtc_include_tests) {
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:no_unique_address",
+      "../../test:create_test_environment",
       "../../test:create_test_field_trials",
       "../../test:test_support",
       "../../test:video_frame_writer",
@@ -837,16 +861,6 @@ if (rtc_include_tests) {
   }
 
   video_coding_modules_tests_resources = []
-  if (is_android) {
-    video_coding_modules_tests_resources += [
-      "../../resources/foreman_128x96.yuv",
-      "../../resources/foreman_160x120.yuv",
-      "../../resources/foreman_176x144.yuv",
-      "../../resources/foreman_240x136.yuv",
-      "../../resources/foreman_320x240.yuv",
-      "../../resources/foreman_480x272.yuv",
-    ]
-  }
   if (!is_android) {
     video_coding_modules_tests_resources += [
       "../../resources/ConferenceMotion_1280_720_50.yuv",
@@ -961,7 +975,6 @@ if (rtc_include_tests) {
 
     deps = [
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/test/metrics:global_metrics_logger_and_exporter",
       "../../api/units:data_rate",
       "../../api/units:frequency",
@@ -973,6 +986,7 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:logging",
       "../../rtc_base:stringutils",
+      "../../test:create_test_environment",
       "../../test:create_test_field_trials",
       "../../test:fileutils",
       "../../test:test_flags",
@@ -984,12 +998,10 @@ if (rtc_include_tests) {
     ]
 
     if (is_android) {
-      use_default_launcher = false
       deps += [
         ":android_codec_factory_helper",
         "../../sdk/android:hwcodecs_java",
       ]
-      shard_timeout = 900
     }
 
     data = [ "../../resources/FourPeople_1280x720_30.yuv" ]
@@ -1076,12 +1088,7 @@ if (rtc_include_tests) {
     }
 
     if (is_android) {
-      sources += [ "codecs/test/videocodec_test_mediacodec.cc" ]
-
-      deps += [
-        ":android_codec_factory_helper",
-        "../../rtc_base:stringutils",
-      ]
+      deps += [ ":android_codec_factory_helper" ]
     }
 
     if (is_ios || is_mac) {
@@ -1252,6 +1259,10 @@ if (rtc_include_tests) {
       "timing:timing_module",
       "//third_party/abseil-cpp/absl/container:inlined_vector",
     ]
+    if (rtc_libvpx_build_vp9) {
+      sources += [ "codecs/vp9/vp9_frame_buffer_pool_unittest.cc" ]
+      deps += [ ":webrtc_vp9" ]
+    }
     if (rtc_build_libvpx) {
       deps += [ rtc_libvpx_dir ]
     }

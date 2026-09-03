@@ -26,6 +26,7 @@
 #include "api/scoped_refptr.h"
 #include "api/units/data_size.h"
 #include "api/units/frequency.h"
+#include "api/video/resolution.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video_codecs/scalability_mode.h"
 #include "api/video_codecs/scalability_mode_helper.h"
@@ -41,6 +42,7 @@ namespace webrtc {
 using PredictionConstraints =
     VideoEncoderFactoryInterface::Capabilities::PredictionConstraints;
 using FrameEncodeSettings = VideoEncoderInterface::FrameEncodeSettings;
+using TemporalUnitSettings = VideoEncoderInterface::TemporalUnitSettings;
 
 namespace {
 enum class Inter { kS, kL, kKey };
@@ -64,6 +66,7 @@ std::string SvcToString(int spatial_layers,
 
   return res;
 }
+
 }  // namespace
 
 // static
@@ -72,23 +75,24 @@ std::vector<std::string> SimpleEncoderWrapper::SupportedWebrtcSvcModes(
   std::vector<std::string> res;
 
   const int max_spatial_layers =
-      std::min(3, prediction_constraints.max_spatial_layers);
+      std::min(3, prediction_constraints.max_spatial_layers());
   const int max_temporal_layers =
-      std::min(3, prediction_constraints.max_temporal_layers);
+      std::min(3, prediction_constraints.max_temporal_layers());
   const bool scale_by_half =
-      absl::c_linear_search(prediction_constraints.scaling_factors,
+      absl::c_linear_search(prediction_constraints.scaling_factors(),
                             Rational{.numerator = 1, .denominator = 2});
   const bool scale_by_two_thirds =
-      absl::c_linear_search(prediction_constraints.scaling_factors,
+      absl::c_linear_search(prediction_constraints.scaling_factors(),
                             Rational{.numerator = 2, .denominator = 3});
   const bool inter_layer =
-      prediction_constraints.max_references > 1 &&
-      prediction_constraints.buffer_space_type !=
+      prediction_constraints.max_references() > 1 &&
+      prediction_constraints.buffer_space_type() !=
           PredictionConstraints::BufferSpaceType::kMultiInstance;
 
   for (int s = 1; s <= max_spatial_layers; ++s) {
     for (int t = 1; t <= max_temporal_layers; ++t) {
-      if (prediction_constraints.num_buffers > ((std::max(1, t - 1) * s) - 1)) {
+      if (prediction_constraints.num_buffers() >
+          ((std::max(1, t - 1) * s) - 1)) {
         if (s == 1 || inter_layer) {
           res.push_back(SvcToString(s, t, Inter::kL, Scaling::k1_2));
           if (s == 1) {
@@ -161,35 +165,35 @@ void SimpleEncoderWrapper::Encode(scoped_refptr<VideoFrameBuffer> frame_buffer,
       svc_controller_->NextFrameConfig(force_keyframe);
   std::vector<FrameEncodeSettings> encode_settings;
   std::vector<GenericFrameInfo> frame_infos;
+  const Resolution input_resolution{.width = frame_buffer->width(),
+                                    .height = frame_buffer->height()};
 
   for (size_t s = 0; s < configs.size(); ++s) {
     const ScalableVideoController::LayerFrameConfig& config = configs[s];
     frame_infos.push_back(svc_controller_->OnEncodeDone(config));
-    FrameEncodeSettings& settings = encode_settings.emplace_back();
-    settings.rate_options = VideoEncoderInterface::FrameEncodeSettings::Cqp{
-        .target_qp = target_qp_};
-    settings.spatial_id = config.SpatialId();
-    settings.temporal_id = config.TemporalId();
-    const int num = layer_configs_.scaling_factor_num[s];
-    const int den = layer_configs_.scaling_factor_den[s];
-    settings.resolution = {.width = (frame_buffer->width() * num / den),
-                           .height = (frame_buffer->height() * num / den)};
 
-    bool buffer_updated = false;
+    FrameEncodeSettings settings;
+    settings.set_cqp_options(target_qp_);
+    settings.set_spatial_id(config.SpatialId());
+    settings.set_temporal_id(config.TemporalId());
+    settings.set_resolution(
+        ScaleResolutionForSpatialLayer(input_resolution, s));
+
+    std::optional<int> update_buffer;
+    std::vector<int> reference_buffers;
     for (const CodecBufferUsage& buffer : config.Buffers()) {
       if (buffer.referenced) {
-        settings.reference_buffers.push_back(buffer.id);
+        reference_buffers.push_back(buffer.id);
       }
       if (buffer.updated) {
-        RTC_CHECK(!buffer_updated);
-        settings.update_buffer = buffer.id;
-        buffer_updated = true;
+        RTC_CHECK(!update_buffer.has_value());
+        update_buffer = buffer.id;
       }
     }
-
-    if (settings.reference_buffers.empty()) {
-      settings.frame_type = FrameType::kKeyframe;
-    }
+    settings.set_frame_type(reference_buffers.empty() ? FrameType::kKeyframe
+                                                      : FrameType::kDeltaFrame);
+    settings.set_reference_buffers(std::move(reference_buffers));
+    settings.set_update_buffer(update_buffer);
 
     struct FrameOut : public VideoEncoderInterface::FrameOutput {
       std::span<uint8_t> GetBitstreamOutputBuffer(DataSize size) override {
@@ -225,16 +229,29 @@ void SimpleEncoderWrapper::Encode(scoped_refptr<VideoFrameBuffer> frame_buffer,
     auto out = std::make_unique<FrameOut>();
 
     out->callback = callback;
-    out->frame_info = std::move(frame_infos[settings.spatial_id]);
+    out->frame_info = std::move(frame_infos[config.SpatialId()]);
     out->svc_controller = svc_controller_.get();
 
-    settings.frame_output = std::move(out);
+    settings.set_frame_output(std::move(out));
+
+    encode_settings.push_back(std::move(settings));
   }
 
   encoder_->Encode(std::move(frame_buffer),
-                   {.presentation_timestamp = presentation_timestamp_},
+                   TemporalUnitSettings(presentation_timestamp_),
                    std::move(encode_settings));
   presentation_timestamp_ += 1 / Frequency::Hertz(fps_);
+}
+
+Resolution SimpleEncoderWrapper::ScaleResolutionForSpatialLayer(
+    Resolution resolution,
+    int layer_index) const {
+  return {.width = (resolution.width *
+                    layer_configs_.scaling_factor_num[layer_index] /
+                    layer_configs_.scaling_factor_den[layer_index]),
+          .height = (resolution.height *
+                     layer_configs_.scaling_factor_num[layer_index] /
+                     layer_configs_.scaling_factor_den[layer_index])};
 }
 
 }  // namespace webrtc

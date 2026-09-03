@@ -46,6 +46,14 @@ std::unique_ptr<ReassemblyStreams> CreateStreams(
   return std::make_unique<TraditionalReassemblyStreams>(
       log_prefix, std::move(on_assembled_message));
 }
+
+size_t ForwardTsnCost(size_t num_streams) {
+  // Treat forward-TSN message as payload. size is calculated based on
+  // wire size rather than used memory size: 32bit for TSN + 16+16 bits for
+  // each skipped stream entry.
+  return (1 + num_streams) * 4;
+}
+
 }  // namespace
 
 ReassemblyQueue::ReassemblyQueue(absl::string_view log_prefix,
@@ -188,10 +196,13 @@ void ReassemblyQueue::HandleForwardTsn(
       tsn > deferred_reset_streams_->sender_last_assigned_tsn) {
     RTC_DLOG(LS_VERBOSE) << log_prefix_ << "ForwardTSN to " << *tsn.Wrap()
                          << "- deferring.";
+
+    queued_bytes_ += ForwardTsnCost(skipped_streams.size());
     deferred_reset_streams_->deferred_actions.emplace_back(
         [this, new_cumulative_tsn,
          streams = std::vector<AnyForwardTsnChunk::SkippedStream>(
              skipped_streams.begin(), skipped_streams.end())] {
+          queued_bytes_ -= ForwardTsnCost(streams.size());
           HandleForwardTsn(new_cumulative_tsn, streams);
         });
     RTC_DCHECK(IsConsistent());

@@ -111,7 +111,9 @@ class RtpTransceiver : public RtpTransceiverInterface {
                  MediaType media_type,
                  ConnectionContext* context,
                  CodecLookupHelper* codec_lookup_helper,
-                 LegacyStatsCollectorInterface* legacy_stats);
+                 LegacyStatsCollectorInterface* legacy_stats,
+                 const AudioOptions& audio_options,
+                 const VideoOptions& video_options);
   // Construct a Unified Plan-style RtpTransceiver with the given sender and
   // receiver. The media type will be derived from the media types of the sender
   // and receiver. The sender and receiver should have the same media type.
@@ -124,7 +126,9 @@ class RtpTransceiver : public RtpTransceiverInterface {
       ConnectionContext* context,
       CodecLookupHelper* codec_lookup_helper,
       std::vector<RtpHeaderExtensionCapability> HeaderExtensionsToNegotiate,
-      absl::AnyInvocable<void()> on_negotiation_needed);
+      absl::AnyInvocable<void()> on_negotiation_needed,
+      const AudioOptions& audio_options,
+      const VideoOptions& video_options);
   RtpTransceiver(
       const Environment& env,
       Call* call,
@@ -164,8 +168,6 @@ class RtpTransceiver : public RtpTransceiverInterface {
       const MediaConfig& media_config,
       bool srtp_required,
       CryptoOptions crypto_options,
-      const AudioOptions& audio_options,
-      const VideoOptions& video_options,
       VideoBitrateAllocatorFactory* video_bitrate_allocator_factory,
       absl::AnyInvocable<RtpTransportInternal*() &&> transport_lookup,
       ScopedOperationsBatcher& worker_tasks,
@@ -357,7 +359,7 @@ class RtpTransceiver : public RtpTransceiverInterface {
   std::optional<RtpTransceiverDirection> fired_direction() const override;
   // Records the user's intent to use Sframe and fires negotiation needed.
   // Triggered by the sender/receiver when
-  // CreateSframeEncrypterOrError/CreateSframeDecrypterOrError is called.
+  // CreateSframeEncryptorOrError/CreateSframeDecryptorOrError is called.
   // Returns an error if Sframe has already been locked to false by a
   // completed negotiation.
   RTCError TryToEnableSframe();
@@ -575,6 +577,8 @@ class RtpTransceiver : public RtpTransceiverInterface {
   absl::AnyInvocable<void()> on_negotiation_needed_;
   std::unique_ptr<MediaSendChannelInterface> owned_send_channel_;
   std::unique_ptr<MediaReceiveChannelInterface> owned_receive_channel_;
+  const AudioOptions audio_options_;
+  const VideoOptions video_options_;
 };
 
 BEGIN_PRIMARY_PROXY_MAP(RtpTransceiver)

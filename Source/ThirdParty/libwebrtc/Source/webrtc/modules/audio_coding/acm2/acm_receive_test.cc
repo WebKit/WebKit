@@ -17,7 +17,6 @@
 
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/scoped_refptr.h"
@@ -25,6 +24,7 @@
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -37,9 +37,10 @@ AcmReceiveTestOldApi::AcmReceiveTestOldApi(
     NumOutputChannels exptected_output_channels,
     scoped_refptr<AudioDecoderFactory> decoder_factory)
     : clock_(0),
-      neteq_(DefaultNetEqFactory().Create(CreateEnvironment(&clock_),
-                                          NetEq::Config(),
-                                          std::move(decoder_factory))),
+      neteq_(
+          DefaultNetEqFactory().Create(CreateTestEnvironment({.time = &clock_}),
+                                       NetEq::Config(),
+                                       std::move(decoder_factory))),
       packet_source_(packet_source),
       audio_sink_(audio_sink),
       output_freq_hz_(output_freq_hz),

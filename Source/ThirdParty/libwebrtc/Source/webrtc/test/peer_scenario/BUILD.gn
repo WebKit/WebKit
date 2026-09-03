@@ -50,7 +50,6 @@ if (rtc_include_tests) {
       "../../api:set_remote_description_observer_interface",
       "../../api:time_controller",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/rtc_event_log:rtc_event_log_factory",
       "../../api/test/network_emulation",
       "../../api/transport:datagram_transport_interface",

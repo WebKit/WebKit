@@ -11,17 +11,21 @@
 #include "rtc_base/openssl_utility.h"
 
 #include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <openssl/ssl3.h>
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
 #include <cstddef>
 #include <cstdint>
+#include <iterator>
 
 #include "absl/strings/string_view.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/openssl.h"
 #include "rtc_base/ssl_identity.h"
+#include "rtc_base/strings/string_builder.h"
 
 #ifdef OPENSSL_IS_BORINGSSL
 #include <openssl/pool.h>
@@ -237,6 +241,36 @@ void LogSSLErrors(absl::string_view prefix) {
   while ((err = ERR_get_error()) != 0) {
     ERR_error_string_n(err, error_buf, sizeof(error_buf));
     RTC_LOG(LS_ERROR) << prefix << ": " << error_buf << "\n";
+  }
+}
+
+void SSLInfoCallback(const SSL* ssl, int where, int ret) {
+  switch (where) {
+    case SSL_CB_LOOP:
+    case SSL_CB_READ:
+    case SSL_CB_WRITE:
+      return;
+    default:
+      break;
+  }
+  StringBuilder ss;
+  ss << SSL_state_string_long(ssl);
+  if (ret == 0) {
+    RTC_LOG(LS_ERROR) << "Error during " << ss.str() << "\n";
+    return;
+  }
+  // See SSL_alert_type_string_long.
+  int severity_class = where >> 8;
+  switch (severity_class) {
+    case SSL3_AL_WARNING:
+    case SSL3_AL_FATAL:
+      ss << " " << SSL_alert_type_string_long(ret);
+      ss << " " << SSL_alert_desc_string_long(ret);
+      RTC_LOG(LS_WARNING) << ss.str();
+      break;
+    default:
+      RTC_LOG(LS_INFO) << ss.str();
+      break;
   }
 }
 

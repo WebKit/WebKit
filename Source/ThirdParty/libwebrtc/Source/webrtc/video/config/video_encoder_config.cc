@@ -72,6 +72,7 @@ VideoEncoderConfig::VideoEncoderConfig()
       number_of_streams(0),
       legacy_conference_mode(false),
       is_quality_scaling_allowed(false),
+      allow_zero_hertz_video(false),
       max_qp(-1) {}
 
 VideoEncoderConfig::VideoEncoderConfig(VideoEncoderConfig&&) = default;
@@ -97,6 +98,7 @@ std::string VideoEncoderConfig::ToString() const {
   ss << ", number_of_streams: " << number_of_streams;
   ss << ", legacy_conference_mode: " << legacy_conference_mode;
   ss << ", is_quality_scaling_allowed: " << is_quality_scaling_allowed;
+  ss << ", allow_zero_hertz_video: " << allow_zero_hertz_video;
   ss << ", max_qp: " << max_qp;
   for (size_t n = 0; n < simulcast_layers.size(); ++n) {
     ss << ", simulcast_layers[" << n << "]: " << simulcast_layers[n].ToString();

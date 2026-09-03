@@ -22,7 +22,6 @@
 #include "absl/memory/memory.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/field_trials_view.h"
 #include "api/frame_transformer_factory.h"
 #include "api/frame_transformer_interface.h"
@@ -71,6 +70,7 @@
 #include "rtc_base/rate_limiter.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
@@ -191,7 +191,7 @@ class RtpSenderVideoTest : public ::testing::Test {
  public:
   explicit RtpSenderVideoTest(bool raw_packetization = false)
       : fake_clock_(kStartTime),
-        env_(CreateEnvironment(&fake_clock_)),
+        env_(CreateTestEnvironment({.time = &fake_clock_})),
         retransmission_rate_limiter_(&fake_clock_, 1000),
         rtp_module_(ModuleRtpRtcpImpl2::CreateSendModule(
             env_,
@@ -1573,8 +1573,7 @@ class RtpSenderVideoWithFrameTransformerTest : public ::testing::Test {
  public:
   RtpSenderVideoWithFrameTransformerTest()
       : time_controller_(kStartTime),
-        env_(CreateEnvironment(time_controller_.GetClock(),
-                               time_controller_.GetTaskQueueFactory())),
+        env_(CreateTestEnvironment({.time = &time_controller_})),
         retransmission_rate_limiter_(time_controller_.GetClock(), 1000),
         rtp_module_(ModuleRtpRtcpImpl2::CreateSendModule(
             env_,

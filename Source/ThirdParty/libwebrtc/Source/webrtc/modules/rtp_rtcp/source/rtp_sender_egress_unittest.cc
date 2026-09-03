@@ -20,7 +20,7 @@
 
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
@@ -36,6 +36,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -57,12 +58,10 @@ constexpr uint16_t kStartSequenceNumber = 33;
 constexpr uint32_t kSsrc = 725242;
 constexpr uint32_t kRtxSsrc = 12345;
 constexpr uint32_t kFlexFecSsrc = 23456;
-enum : int {
-  kTransportSequenceNumberExtensionId = 1,
-  kAbsoluteSendTimeExtensionId,
-  kTransmissionOffsetExtensionId,
-  kVideoTimingExtensionId,
-};
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
+constexpr RtpHeaderExtensionId kAbsoluteSendTimeExtensionId(2);
+constexpr RtpHeaderExtensionId kTransmissionOffsetExtensionId(3);
+constexpr RtpHeaderExtensionId kVideoTimingExtensionId(4);
 
 class MockSendPacketObserver : public SendPacketObserver {
  public:
@@ -134,7 +133,7 @@ class RtpSenderEgressTest : public ::testing::Test {
  protected:
   RtpSenderEgressTest()
       : time_controller_(kStartTime),
-        env_(CreateEnvironment(time_controller_.GetClock())),
+        env_(CreateTestEnvironment({.time = &time_controller_})),
         transport_(&header_extensions_),
         packet_history_(env_,
                         RtpPacketHistory::PaddingMode::kRecentLargePacket),

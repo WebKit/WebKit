@@ -19,7 +19,6 @@
 #include "api/rtc_error.h"
 #include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -30,10 +29,7 @@ ScopedOperationsBatcher::ScopedOperationsBatcher(Thread* target_thread)
 }
 
 ScopedOperationsBatcher::~ScopedOperationsBatcher() {
-  RTCError error = Run();
-  if (!error.ok()) {
-    RTC_LOG(LS_ERROR) << "Batcher failed: " << error.message();
-  }
+  Run();
 }
 
 RTCError ScopedOperationsBatcher::Run() {
@@ -58,6 +54,7 @@ RTCError ScopedOperationsBatcher::Run() {
 
   RTCError error = RTCError::OK();
   while (task_idx < tasks_.size()) {
+    size_t previous_task_idx = task_idx;
     target_thread_->BlockingCall([&] {
       while (task_idx < tasks_.size()) {
         if (auto* void_task = std::get_if<SimpleBatchTask>(&tasks_[task_idx])) {
@@ -87,7 +84,16 @@ RTCError ScopedOperationsBatcher::Run() {
         }
       }
     });
+    // If the target thread dropped the task (e.g. because it is quitting),
+    // task_idx will not have advanced. Abort to prevent an infinite busy-loop.
+    // This is not expected to happen under normal circumstances but if the
+    // integrating application prematurely terminates the target thread, that's
+    // when it can. However, doing so, breaks design assumptions.
+    if (error.ok() && task_idx == previous_task_idx) {
+      error = RTCError::InternalError("Thread was prematurely terminated");
+    }
     if (!error.ok()) {
+      RTC_LOG_ERROR(error);
       break;
     }
   }
@@ -104,6 +110,11 @@ RTCError ScopedOperationsBatcher::Run() {
   RTC_DCHECK_BLOCK_COUNT_NO_MORE_THAN(expected_block_count);
 #endif
   return error;
+}
+
+bool ScopedOperationsBatcher::IsEmpty() const {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  return tasks_.empty();
 }
 
 void ScopedOperationsBatcher::Add(SimpleBatchTask task) {

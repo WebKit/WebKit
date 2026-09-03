@@ -393,5 +393,20 @@ TEST_F(ReassemblyQueueTest, IForwardTSNRemoveALotOrdered) {
               ElementsAre(SctpMessageIs(kStreamID, kPPID, kMessage2Payload)));
 }
 
+TEST_F(ReassemblyQueueTest, AccountForwardTSNSizeInDeferredReset) {
+  ReassemblyQueue reasm("log: ", kBufferSize);
+
+  reasm.EnterDeferredReset(TSN(12), {{StreamID(1)}});
+
+  EXPECT_EQ(reasm.queued_bytes(), 0u);
+  reasm.HandleForwardTsn(TSN(13), {{{IsUnordered(false), kStreamID, MID(0)}}});
+  EXPECT_GT(reasm.queued_bytes(), 0u);
+
+  // When deferred Forward TSN are processed, queued_bytes should return to
+  // the earlier value.
+  reasm.ResetStreamsAndLeaveDeferredReset({{StreamID(1)}});
+  EXPECT_EQ(reasm.queued_bytes(), 0u);
+}
+
 }  // namespace
 }  // namespace dcsctp

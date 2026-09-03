@@ -47,8 +47,7 @@ rtc_library("logging_delay_variation_calculator") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("jitter_unittests") {
-    testonly = true
+  rtc_cc_test("jitter_unittests") {
     sources = [
       "delay_variation_calculator_unittest.cc",
       "logging_delay_variation_calculator_unittest.cc",

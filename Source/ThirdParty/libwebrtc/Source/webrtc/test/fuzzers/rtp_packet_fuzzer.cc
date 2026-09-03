@@ -55,7 +55,8 @@ void FuzzOneInput(FuzzDataHelper fuzz_data) {
       // Extensions are registered with an ID, which you signal to the
       // peer so they know what to expect. This code only cares about
       // parsing so the value of the ID isn't relevant.
-      extensions.RegisterByType(local_id++, extension_type);
+      extensions.RegisterByType(RtpHeaderExtensionId(local_id++),
+                                extension_type);
     }
   }
 

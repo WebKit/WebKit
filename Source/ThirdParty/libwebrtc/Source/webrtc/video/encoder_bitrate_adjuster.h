@@ -64,6 +64,7 @@ class EncoderBitrateAdjuster {
   // simulcast and SVC we'll also need to consider the case where we have both
   // simulcast and spatial indices.
   void OnEncodedFrame(DataSize size, int stream_index, int temporal_index);
+  void OnFrameDropped();
 
   void Reset();
 

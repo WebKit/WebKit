@@ -472,18 +472,18 @@ class UnitTest(unittest.TestCase):
             '--tsan=0',
         ])
 
-    def test_isolate_windowed_test_launcher_linux(self):
+    def test_gen_console_test_launcher_with_xvfb(self):
         test_files = {
             '/tmp/swarming_targets':
             'foo_unittests\n',
             '/fake_src/testing/buildbot/gn_isolate_map.pyl':
             ("{'foo_unittests': {"
              "  'label': '//foo:foo_unittests',"
-             "  'type': 'windowed_test_launcher',"
+             "  'type': 'console_test_launcher',"
+             "  'use_xvfb': True,"
              "}}\n"),
             '/fake_src/out/Default/foo_unittests.runtime_deps':
-            ("foo_unittests\n"
-             "some_resource_file\n"),
+            ("foo_unittests\n"),
         }
         mbw = self.check([
             'gen', '-c', 'debug_goma', '//out/Default',
@@ -507,7 +507,6 @@ class UnitTest(unittest.TestCase):
             '../../third_party/gtest-parallel/gtest_parallel.py',
             '../../tools_webrtc/gtest-parallel-wrapper.py',
             'foo_unittests',
-            'some_resource_file',
         ])
         self.assertEqual(command, [
             'vpython3',
@@ -517,59 +516,6 @@ class UnitTest(unittest.TestCase):
             '--gtest_color=no',
             '--retry_failed=3',
             './foo_unittests',
-            '--asan=0',
-            '--lsan=0',
-            '--msan=0',
-            '--tsan=0',
-        ])
-
-    def test_gen_windowed_test_launcher_win(self):
-        files = {
-            'c:\\fake_src\\out\\Default\\tmp\\swarming_targets':
-            'unittests\n',
-            'c:\\fake_src\\testing\\buildbot\\gn_isolate_map.pyl':
-            ("{'unittests': {"
-             "  'label': '//somewhere:unittests',"
-             "  'type': 'windowed_test_launcher',"
-             "}}\n"),
-            r'c:\fake_src\out\Default\unittests.exe.runtime_deps':
-            ("unittests.exe\n"
-             "some_dependency\n"),
-        }
-        mbw = CreateFakeMBW(files=files, win32=True)
-        self.check([
-            'gen', '-c', 'debug_goma', '--swarming-targets-file',
-            'c:\\fake_src\\out\\Default\\tmp\\swarming_targets',
-            '--isolate-map-file',
-            'c:\\fake_src\\testing\\buildbot\\gn_isolate_map.pyl',
-            '//out/Default'
-        ],
-                   mbw=mbw,
-                   ret=0)
-
-        isolate_file = mbw.files[
-            'c:\\fake_src\\out\\Default\\unittests.isolate']
-        isolate_file_contents = ast.literal_eval(isolate_file)
-        files = isolate_file_contents['variables']['files']
-        command = isolate_file_contents['variables']['command']
-
-        self.assertEqual(files, [
-            '../../.vpython3',
-            '../../testing/test_env.py',
-            '../../third_party/gtest-parallel/gtest-parallel',
-            '../../third_party/gtest-parallel/gtest_parallel.py',
-            '../../tools_webrtc/gtest-parallel-wrapper.py',
-            'some_dependency',
-            'unittests.exe',
-        ])
-        self.assertEqual(command, [
-            'vpython3',
-            '../../testing/test_env.py',
-            '../../tools_webrtc/gtest-parallel-wrapper.py',
-            '--output_dir=${ISOLATED_OUTDIR}/test_logs',
-            '--gtest_color=no',
-            '--retry_failed=3',
-            r'.\unittests.exe',
             '--asan=0',
             '--lsan=0',
             '--msan=0',

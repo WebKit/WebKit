@@ -20,8 +20,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
-#include "api/field_trials.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_encoder.h"
@@ -180,11 +178,10 @@ TEST(LibaomAv1Test, EncodeDecode) {
 }
 
 TEST(LibaomAv1Test, EncodeDecodeWithSpeedController) {
-  EnvironmentFactory factory;
-  factory.Set(std::make_unique<FieldTrials>(
-      "WebRTC-EncoderSpeed/"
-      "dynamic_speed:true,av1_camera:high,av1_screenshare:low/"));
-  const Environment env = factory.Create();
+  const Environment env = CreateTestEnvironment(
+      {.field_trials =
+           "WebRTC-EncoderSpeed/"
+           "dynamic_speed:true,av1_camera:high,av1_screenshare:low/"});
 
   TestAv1Decoder decoder(env, /*decoder_id=*/0);
   std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
@@ -213,11 +210,10 @@ TEST(LibaomAv1Test, EncodeDecodeWithSpeedController) {
 }
 
 TEST(LibaomAv1Test, InitReleaseRepeatedly) {
-  EnvironmentFactory factory;
-  factory.Set(FieldTrials::Create(
-      "WebRTC-EncoderSpeed/"
-      "dynamic_speed:true,av1_camera:high,av1_screenshare:low/"));
-  const Environment env = factory.Create();
+  const Environment env = CreateTestEnvironment(
+      {.field_trials =
+           "WebRTC-EncoderSpeed/"
+           "dynamic_speed:true,av1_camera:high,av1_screenshare:low/"});
 
   std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder(env);
   VideoCodec codec_settings = DefaultCodecSettings();

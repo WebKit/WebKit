@@ -170,11 +170,16 @@ EncoderSpeedControllerImpl::GetEncodeSettings(
   settings.baseline_comparison_speed = std::nullopt;
   settings.calculate_psnr = false;
 
+  // Always treat first frame and keyframes as non-repeat.
+  const bool is_repeat_frame =
+      frame_info.is_repeat_frame && num_samples_ > 0 &&
+      frame_info.reference_type != ReferenceClass::kKey;
+
   if (config_.psnr_probing_settings.has_value() &&
       frame_info.timestamp.IsFinite() &&
       (frame_info.reference_type == ReferenceClass::kMain ||
        frame_info.reference_type == ReferenceClass::kKey) &&
-      !frame_info.is_repeat_frame) {
+      !is_repeat_frame) {
     bool regular_sampling_due =
         config_.psnr_probing_settings->mode ==
             EncoderSpeedController::Config::PsnrProbingSettings::Mode::
@@ -253,17 +258,16 @@ void EncoderSpeedControllerImpl::OnEncodedFrame(
     encode_tims_ms /= kKeyframeEncodeTimeCompensator;
   }
 
+  const bool is_repeat_frame =
+      results.frame_info.is_repeat_frame &&
+      results.frame_info.reference_type != ReferenceClass::kKey;
+
   if (num_samples_ == 0) {
-    if (results.frame_info.is_repeat_frame) {
-      RTC_LOG(LS_WARNING) << "EncoderSpeedController: Try to start "
-                             "measurements with a repeat frame.";
-      return;
-    }
     slow_filtered_encode_time_ms_ = encode_tims_ms;
     fast_filtered_encode_time_ms_ = encode_tims_ms;
     filtered_qp_ = results.qp;
     ++num_samples_;
-  } else if (!results.frame_info.is_repeat_frame) {
+  } else if (!is_repeat_frame) {
     // Add encode time measurement to filtered members. Don't count repeat
     // frames as they have artificially low complexity due to zero movement.
     ++num_samples_;

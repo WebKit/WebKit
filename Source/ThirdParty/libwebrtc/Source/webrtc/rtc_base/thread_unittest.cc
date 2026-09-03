@@ -561,7 +561,7 @@ void DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(FakeClock& clock,
 }
 
 TEST(ThreadTest, DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder) {
-  ScopedBaseFakeClock clock;
+  ScopedFakeClock clock;
   Thread q(CreateDefaultSocketServer(), true);
   q.Start();
   DelayedPostsWithIdenticalTimesAreProcessedInFifoOrder(clock, q);
@@ -873,6 +873,7 @@ TEST(ThreadPostDelayedTaskTest, InvokesInDelayOrder) {
   first.Set();
   // Only if the chain is invoked in delay order will the last event be set.
   clock.AdvanceTime(TimeDelta::Millis(11));
+  ThreadManager::ProcessAllMessageQueuesForTesting();
   EXPECT_TRUE(fourth.Wait(TimeDelta::Zero()));
 }
 

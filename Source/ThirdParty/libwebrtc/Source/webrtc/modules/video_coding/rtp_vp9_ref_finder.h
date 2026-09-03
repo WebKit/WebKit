@@ -18,6 +18,7 @@
 #include <memory>
 #include <set>
 
+#include "api/video/video_codec_constants.h"
 #include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "modules/video_coding/rtp_frame_reference_finder.h"
@@ -40,7 +41,6 @@ class RtpVp9RefFinder {
   static constexpr int kMaxLayerInfo = 50;
   static constexpr int kMaxNotYetReceivedFrames = 100;
   static constexpr int kMaxStashedFrames = 100;
-  static constexpr int kMaxTemporalLayers = 5;
 
   enum FrameDecision { kStash, kHandOff, kDrop };
 
@@ -93,7 +93,7 @@ class RtpVp9RefFinder {
 
   // For every temporal layer, keep a set of which frames that are missing.
   std::array<std::set<uint16_t, DescendingSeqNumComp<uint16_t, kFrameIdLength>>,
-             kMaxTemporalLayers>
+             kMaxTemporalStreams>
       missing_frames_for_layer_;
 
   // Unwrapper used to unwrap VP8/VP9 streams which have their picture id

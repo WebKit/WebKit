@@ -157,7 +157,7 @@ bool AddTime(CBB* cbb, time_t time) {
   }
 
   unsigned tag;
-  switch (asn1_time->type) {
+  switch (ASN1_STRING_type(asn1_time.get())) {
     case V_ASN1_UTCTIME:
       tag = CBS_ASN1_UTCTIME;
       break;
@@ -170,7 +170,8 @@ bool AddTime(CBB* cbb, time_t time) {
 
   CBB child;
   if (!CBB_add_asn1(cbb, &child, tag) ||
-      !CBB_add_bytes(&child, asn1_time->data, asn1_time->length) ||
+      !CBB_add_bytes(&child, ASN1_STRING_get0_data(asn1_time.get()),
+                     ASN1_STRING_length(asn1_time.get())) ||
       !CBB_flush(cbb)) {
     return false;
   }

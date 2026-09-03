@@ -83,7 +83,8 @@ struct CallHelper {
             : make_ref_counted<NiceMock<MockAudioProcessing>>();
     audio_state_config.audio_device_module =
         make_ref_counted<MockAudioDeviceModule>();
-    CallConfig config(CreateTestEnvironment({.event_log = &log_}));
+    CallConfig config = CallConfig::CreateSingleThreaded(
+        CreateTestEnvironment({.event_log = &log_}));
     config.audio_state = AudioState::Create(audio_state_config);
     call_ = Call::Create(std::move(config));
   }
@@ -626,7 +627,7 @@ TEST(CallTest, HandlesAudioSyncGroupUpdate) {
   audio_state_config.audio_mixer = make_ref_counted<MockAudioMixer>();
   audio_state_config.audio_device_module =
       make_ref_counted<MockAudioDeviceModule>();
-  CallConfig config(env);
+  CallConfig config = CallConfig::CreateSingleThreaded(env);
   config.audio_state = AudioState::Create(audio_state_config);
   std::unique_ptr<Call> call(Call::Create(std::move(config)));
 

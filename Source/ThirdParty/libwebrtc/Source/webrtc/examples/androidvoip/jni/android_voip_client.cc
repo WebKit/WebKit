@@ -566,3 +566,5 @@ static jlong JNI_VoipClient_CreateClient(
 }
 
 }  // namespace webrtc_examples
+
+DEFINE_JNI(VoipClient)

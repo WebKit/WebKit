@@ -11,9 +11,13 @@
 #include "api/audio/neural_residual_echo_estimator_creator.h"
 
 #include <memory>
+#include <utility>
 
 #include "absl/base/nullability.h"
 #include "api/audio/neural_residual_echo_estimator.h"
+#include "api/audio/tflite_model_handle.h"
+#include "api/environment/environment.h"
+#include "api/scoped_refptr.h"
 #include "modules/audio_processing/aec3/neural_residual_echo_estimator/neural_residual_echo_estimator_impl.h"
 #include "rtc_base/checks.h"
 #include "third_party/tflite/src/tensorflow/lite/model_builder.h"
@@ -27,6 +31,18 @@ CreateNeuralResidualEchoEstimator(const tflite::FlatBufferModel* model,
                                       op_resolver) {
   RTC_CHECK(op_resolver);
   return NeuralResidualEchoEstimatorImpl::Create(model, *op_resolver);
+}
+
+absl_nonnull std::unique_ptr<NeuralResidualEchoEstimator>
+CreateNeuralResidualEchoEstimatorAsync(
+    const Environment& env,
+    scoped_refptr<TfliteModelHandle> model_handle,
+    std::unique_ptr<tflite::OpResolver> op_resolver) {
+  RTC_CHECK(model_handle);
+  RTC_CHECK(op_resolver);
+  return NeuralResidualEchoEstimatorImpl::CreateAsync(env.task_queue_factory(),
+                                                      std::move(op_resolver),
+                                                      std::move(model_handle));
 }
 
 }  // namespace webrtc

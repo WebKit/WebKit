@@ -68,18 +68,23 @@ PacingController::PacingController(Clock* clock,
           field_trials.IsEnabled("WebRTC-Pacer-IgnoreTransportOverhead")),
       fast_retransmissions_(
           field_trials.IsEnabled("WebRTC-Pacer-FastRetransmissions")),
-      keyframe_flushing_(
-          configuration.keyframe_flushing ||
-          field_trials.IsEnabled("WebRTC-Pacer-KeyframeFlushing")),
       transport_overhead_per_packet_(DataSize::Zero()),
-      send_burst_interval_(configuration.send_burst_interval),
+      send_burst_interval_(configuration.initial_pacer_config
+                               ? configuration.initial_pacer_config->time_window
+                               : configuration.send_burst_interval),
       last_timestamp_(clock_->CurrentTime()),
       paused_(false),
       media_debt_(DataSize::Zero()),
       padding_debt_(DataSize::Zero()),
-      pacing_rate_(DataRate::Zero()),
-      adjusted_media_rate_(DataRate::Zero()),
-      padding_rate_(DataRate::Zero()),
+      pacing_rate_(configuration.initial_pacer_config
+                       ? configuration.initial_pacer_config->data_rate()
+                       : DataRate::Zero()),
+      adjusted_media_rate_(pacing_rate_),
+      padding_rate_(
+          configuration.initial_pacer_config
+              ? std::min(configuration.initial_pacer_config->pad_rate(),
+                         configuration.initial_pacer_config->data_rate())
+              : DataRate::Zero()),
       prober_(field_trials),
       probing_send_failure_(false),
       last_process_time_(clock->CurrentTime()),
@@ -194,8 +199,7 @@ void PacingController::EnqueuePacket(std::unique_ptr<RtpPacketToSend> packet) {
       << "SetPacingRate must be called before InsertPacket.";
   RTC_CHECK(packet->packet_type());
 
-  if (keyframe_flushing_ &&
-      packet->packet_type() == RtpPacketMediaType::kVideo &&
+  if (packet->packet_type() == RtpPacketMediaType::kVideo &&
       packet->is_key_frame() && packet->is_first_packet_of_frame() &&
       !packet_queue_.HasKeyframePackets(packet->Ssrc())) {
     // First packet of a keyframe (and no keyframe packets currently in the

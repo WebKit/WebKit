@@ -34,13 +34,20 @@ RtpFrameReferenceFinder::ReturnVector RtpGenericFrameRefFinder::ManageFrame(
                         << " is unsupported.";
     return res;
   }
+  if (descriptor.temporal_index != kNoTemporalIdx &&
+      descriptor.temporal_index >= int{kMaxTemporalStreams}) {
+    RTC_LOG(LS_WARNING) << "Temporal index " << descriptor.temporal_index
+                        << " is unsupported.";
+    return res;
+  }
 
   // Frame IDs are unwrapped in the RtpVideoStreamReceiver, no need to unwrap
   // them here.
   frame->SetId(descriptor.frame_id);
   frame->SetSpatialIndex(descriptor.spatial_index);
-  if (descriptor.temporal_index != kNoTemporalIdx)
+  if (descriptor.temporal_index != kNoTemporalIdx) {
     frame->SetTemporalIndex(descriptor.temporal_index);
+  }
 
   if (EncodedFrame::kMaxFrameReferences < descriptor.dependencies.size()) {
     RTC_LOG(LS_WARNING) << "Too many dependencies in generic descriptor.";

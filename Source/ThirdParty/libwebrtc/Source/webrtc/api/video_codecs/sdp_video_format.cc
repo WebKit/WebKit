@@ -10,12 +10,15 @@
 
 #include "api/video_codecs/sdp_video_format.h"
 
+#include <initializer_list>
 #include <optional>
 #include <span>
 #include <string>
+#include <utility>
 
 #include "absl/container/inlined_vector.h"
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/rtp_parameters.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/av1_profile.h"
@@ -116,27 +119,41 @@ bool IsSameCodecSpecific(const std::string& name1,
 
 }  // namespace
 
-SdpVideoFormat::SdpVideoFormat(const std::string& name) : name(name) {}
+SdpVideoFormat::SdpVideoFormat(absl::string_view name) : name(name) {}
 
-SdpVideoFormat::SdpVideoFormat(const std::string& name,
+SdpVideoFormat::SdpVideoFormat(absl::string_view name,
                                const CodecParameterMap& parameters)
     : name(name), parameters(parameters) {}
 
 SdpVideoFormat::SdpVideoFormat(
-    const std::string& name,
+    absl::string_view name,
+    std::initializer_list<std::pair<absl::string_view, absl::string_view>>
+        parameters)
+    : name(name), parameters(parameters.begin(), parameters.end()) {}
+
+SdpVideoFormat::SdpVideoFormat(
+    absl::string_view name,
     const CodecParameterMap& parameters,
-    const absl::InlinedVector<ScalabilityMode, kScalabilityModeCount>&
-        scalability_modes)
+    std::span<const ScalabilityMode> scalability_modes)
     : name(name),
       parameters(parameters),
-      scalability_modes(scalability_modes) {}
+      scalability_modes(scalability_modes.begin(), scalability_modes.end()) {}
+
+SdpVideoFormat::SdpVideoFormat(
+    absl::string_view name,
+    std::initializer_list<std::pair<absl::string_view, absl::string_view>>
+        parameters,
+    std::span<const ScalabilityMode> scalability_modes)
+    : name(name),
+      parameters(parameters.begin(), parameters.end()),
+      scalability_modes(scalability_modes.begin(), scalability_modes.end()) {}
 
 SdpVideoFormat::SdpVideoFormat(
     const SdpVideoFormat& format,
-    const absl::InlinedVector<ScalabilityMode, kScalabilityModeCount>& modes)
-    : SdpVideoFormat(format) {
-  scalability_modes = modes;
-}
+    std::span<const ScalabilityMode> scalability_modes)
+    : name(format.name),
+      parameters(format.parameters),
+      scalability_modes(scalability_modes.begin(), scalability_modes.end()) {}
 
 SdpVideoFormat::SdpVideoFormat(const SdpVideoFormat&) = default;
 SdpVideoFormat::SdpVideoFormat(SdpVideoFormat&&) = default;

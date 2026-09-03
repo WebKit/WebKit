@@ -233,9 +233,8 @@ TEST_F(AudioEncoderCngTest, CheckFrameSizePropagation) {
 
 TEST_F(AudioEncoderCngTest, CheckTargetAudioBitratePropagation) {
   CreateCng(MakeCngConfig());
-  EXPECT_CALL(*mock_encoder_,
-              OnReceivedUplinkBandwidth(4711, std::optional<int64_t>()));
-  cng_->OnReceivedUplinkBandwidth(4711, std::nullopt);
+  EXPECT_CALL(*mock_encoder_, OnReceivedUplinkAllocation(_));
+  cng_->OnReceivedTargetAudioBitrate(4711);
 }
 
 TEST_F(AudioEncoderCngTest, CheckPacketLossFractionPropagation) {

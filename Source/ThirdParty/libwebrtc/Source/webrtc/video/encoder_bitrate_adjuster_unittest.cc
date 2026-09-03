@@ -302,6 +302,31 @@ TEST_P(EncoderBitrateAdjusterTest, SingleLayerOveruse) {
              current_adjusted_allocation_, 0.01);
 }
 
+TEST_P(EncoderBitrateAdjusterTest, SingleLayerOvershootWithDroppedFrames) {
+  current_input_allocation_.SetBitrate(0, 0, 300000);
+  target_framerate_fps_ = 30;
+  SetUpAdjuster(1, 1, false);
+
+  const int64_t start_us = time_controller_.GetClock()->TimeInMicroseconds();
+  while (time_controller_.GetClock()->TimeInMicroseconds() <
+         start_us + (kWindowSizeMs * 1000)) {
+    time_controller_.AdvanceTime(TimeDelta::Seconds(1) / target_framerate_fps_);
+    adjuster_->OnFrameDropped();
+
+    time_controller_.AdvanceTime(TimeDelta::Seconds(1) / target_framerate_fps_);
+    uint32_t layer_bitrate_bps = current_adjusted_allocation_.GetBitrate(0, 0);
+    size_t frame_size_bytes =
+        2 * (layer_bitrate_bps / 8.0) / target_framerate_fps_;
+    adjuster_->OnEncodedFrame(DataSize::Bytes(frame_size_bytes), 0, 0);
+  }
+
+  current_adjusted_allocation_ =
+      adjuster_->AdjustRateAllocation(VideoEncoder::RateControlParameters(
+          current_input_allocation_, target_framerate_fps_));
+  ExpectNear(MultiplyAllocation(current_input_allocation_, 0.5),
+             current_adjusted_allocation_, 0.01);
+}
+
 TEST_P(EncoderBitrateAdjusterTest, SingleLayerUnderuse) {
   // Single layer, well behaved encoder.
   current_input_allocation_.SetBitrate(0, 0, 300000);

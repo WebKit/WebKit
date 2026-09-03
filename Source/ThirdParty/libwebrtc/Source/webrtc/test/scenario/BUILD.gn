@@ -90,6 +90,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../api:libjingle_logging_api",
       "../../api:make_ref_counted",
       "../../api:network_emulation_manager_api",
+      "../../api:rtp_header_extension_id",
       "../../api:rtp_headers",
       "../../api:rtp_parameters",
       "../../api:scoped_refptr",
@@ -193,7 +194,7 @@ if (rtc_include_tests && !build_with_chromium) {
       deps += [ ":scenario_resources_bundle_data" ]
     }
   }
-  rtc_library("scenario_unittests") {
+  rtc_cc_test("scenario_unittests") {
     testonly = true
     sources = [
       "performance_stats_unittest.cc",

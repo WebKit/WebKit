@@ -196,24 +196,6 @@ rtc_source_set("rnn_vad_symmetric_matrix_buffer") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("test_utils") {
-    testonly = true
-    sources = [
-      "test_utils.cc",
-      "test_utils.h",
-    ]
-    deps = [
-      ":rnn_vad",
-      ":rnn_vad_common",
-      "../../../../api:scoped_refptr",
-      "../../../../rtc_base:checks",
-      "../../../../rtc_base:safe_compare",
-      "../../../../test:fileutils",
-      "../../../../test:test_support",
-      "//third_party/abseil-cpp/absl/strings:string_view",
-    ]
-  }
-
   unittest_resources = [
     "../../../../resources/audio_processing/agc2/rnn_vad/band_energies.dat",
     "../../../../resources/audio_processing/agc2/rnn_vad/pitch_buf_24k.dat",
@@ -231,65 +213,243 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_library("unittests") {
+  rtc_library("test_utils") {
     testonly = true
     sources = [
-      "auto_correlation_unittest.cc",
-      "features_extraction_unittest.cc",
-      "lp_residual_unittest.cc",
-      "pitch_search_internal_unittest.cc",
-      "pitch_search_unittest.cc",
-      "ring_buffer_unittest.cc",
-      "rnn_fc_unittest.cc",
-      "rnn_gru_unittest.cc",
-      "rnn_unittest.cc",
-      "rnn_vad_unittest.cc",
-      "sequence_buffer_unittest.cc",
-      "spectral_features_internal_unittest.cc",
-      "spectral_features_unittest.cc",
-      "symmetric_matrix_buffer_unittest.cc",
-      "vector_math_unittest.cc",
+      "test_utils.cc",
+      "test_utils.h",
     ]
-
-    defines = []
-    if (rtc_build_with_neon && current_cpu != "arm64") {
-      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
-      cflags = [ "-mfpu=neon" ]
-    }
-
     deps = [
       ":rnn_vad",
-      ":rnn_vad_auto_correlation",
       ":rnn_vad_common",
-      ":rnn_vad_layers",
-      ":rnn_vad_lp_residual",
-      ":rnn_vad_pitch",
-      ":rnn_vad_ring_buffer",
-      ":rnn_vad_sequence_buffer",
-      ":rnn_vad_spectral_features",
-      ":rnn_vad_symmetric_matrix_buffer",
-      ":test_utils",
-      ":vector_math",
-      "..:cpu_features",
-      "../..:audioproc_test_utils",
-      "../../../../common_audio/",
+      "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
-      "../../../../rtc_base:logging",
       "../../../../rtc_base:safe_compare",
-      "../../../../rtc_base:safe_conversions",
-      "../../../../rtc_base:stringutils",
-      "../../../../rtc_base/system:arch",
+      "../../../../test:fileutils",
       "../../../../test:test_support",
-      "../../utility:pffft_wrapper",
-      "//third_party/rnnoise:rnn_vad",
+      "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-    if (current_cpu == "x86" || current_cpu == "x64") {
-      deps += [ ":vector_math_avx2" ]
-    }
     data = unittest_resources
     if (is_ios) {
       deps += [ ":unittests_bundle_data" ]
     }
+  }
+
+  rtc_library("auto_correlation_unittest") {
+    testonly = true
+    sources = [ "auto_correlation_unittest.cc" ]
+    deps = [
+      ":rnn_vad_auto_correlation",
+      ":rnn_vad_common",
+      ":rnn_vad_pitch",
+      ":test_utils",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("features_extraction_unittest") {
+    testonly = true
+    sources = [ "features_extraction_unittest.cc" ]
+    deps = [
+      ":rnn_vad",
+      ":rnn_vad_common",
+      "..:cpu_features",
+      "../../../../rtc_base:safe_compare",
+      "../../../../rtc_base:safe_conversions",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("lp_residual_unittest") {
+    testonly = true
+    sources = [ "lp_residual_unittest.cc" ]
+    deps = [
+      ":rnn_vad_common",
+      ":rnn_vad_lp_residual",
+      ":test_utils",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("pitch_search_internal_unittest") {
+    testonly = true
+    sources = [ "pitch_search_internal_unittest.cc" ]
+    deps = [
+      ":rnn_vad_common",
+      ":rnn_vad_pitch",
+      ":test_utils",
+      "..:cpu_features",
+      "../../../../rtc_base:stringutils",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("pitch_search_unittest") {
+    testonly = true
+    sources = [ "pitch_search_unittest.cc" ]
+    deps = [
+      ":rnn_vad_common",
+      ":rnn_vad_pitch",
+      ":test_utils",
+      "..:cpu_features",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("ring_buffer_unittest") {
+    testonly = true
+    sources = [ "ring_buffer_unittest.cc" ]
+    deps = [
+      ":rnn_vad_ring_buffer",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("rnn_fc_unittest") {
+    testonly = true
+    sources = [ "rnn_fc_unittest.cc" ]
+    deps = [
+      ":rnn_vad_layers",
+      ":test_utils",
+      "..:cpu_features",
+      "../..:audioproc_test_utils",
+      "../../../../rtc_base:logging",
+      "../../../../test:test_support",
+      "//third_party/rnnoise:rnn_vad",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("rnn_gru_unittest") {
+    testonly = true
+    sources = [ "rnn_gru_unittest.cc" ]
+    deps = [
+      ":rnn_vad_layers",
+      ":test_utils",
+      "..:cpu_features",
+      "../..:audioproc_test_utils",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:logging",
+      "../../../../rtc_base:safe_conversions",
+      "../../../../test:test_support",
+      "//third_party/rnnoise:rnn_vad",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("rnn_unittest") {
+    testonly = true
+    sources = [ "rnn_unittest.cc" ]
+    deps = [
+      ":rnn_vad",
+      ":rnn_vad_common",
+      "..:cpu_features",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("rnn_vad_unittest") {
+    testonly = true
+    sources = [ "rnn_vad_unittest.cc" ]
+    deps = [
+      ":rnn_vad",
+      ":rnn_vad_common",
+      ":test_utils",
+      "..:cpu_features",
+      "../..:audioproc_test_utils",
+      "../../../../common_audio",
+      "../../../../rtc_base:logging",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("sequence_buffer_unittest") {
+    testonly = true
+    sources = [ "sequence_buffer_unittest.cc" ]
+    deps = [
+      ":rnn_vad_sequence_buffer",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("spectral_features_internal_unittest") {
+    testonly = true
+    sources = [ "spectral_features_internal_unittest.cc" ]
+    deps = [
+      ":rnn_vad_common",
+      ":rnn_vad_spectral_features",
+      ":test_utils",
+      "../../../../rtc_base:safe_compare",
+      "../../../../test:test_support",
+      "../../utility:pffft_wrapper",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("spectral_features_unittest") {
+    testonly = true
+    sources = [ "spectral_features_unittest.cc" ]
+    deps = [
+      ":rnn_vad_common",
+      ":rnn_vad_spectral_features",
+      ":test_utils",
+      "../../../../rtc_base:safe_compare",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("symmetric_matrix_buffer_unittest") {
+    testonly = true
+    sources = [ "symmetric_matrix_buffer_unittest.cc" ]
+    deps = [
+      ":rnn_vad_ring_buffer",
+      ":rnn_vad_symmetric_matrix_buffer",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("vector_math_unittest") {
+    testonly = true
+    sources = [ "vector_math_unittest.cc" ]
+    deps = [
+      ":vector_math",
+      "..:cpu_features",
+      "../../../../test:test_support",
+    ]
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+  }
+
+  rtc_library("unittests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":auto_correlation_unittest",
+      ":features_extraction_unittest",
+      ":lp_residual_unittest",
+      ":pitch_search_internal_unittest",
+      ":pitch_search_unittest",
+      ":ring_buffer_unittest",
+      ":rnn_fc_unittest",
+      ":rnn_gru_unittest",
+      ":rnn_unittest",
+      ":rnn_vad_unittest",
+      ":sequence_buffer_unittest",
+      ":spectral_features_internal_unittest",
+      ":spectral_features_unittest",
+      ":symmetric_matrix_buffer_unittest",
+      ":vector_math_unittest",
+    ]
   }
 
   if (!build_with_chromium) {

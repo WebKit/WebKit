@@ -169,6 +169,20 @@ rtc_source_set("neural_residual_echo_estimator_api") {
   deps = [ ":aec3_config" ]
 }
 
+rtc_source_set("tflite_model_handle") {
+  visibility = [ "*" ]
+  sources = [ "tflite_model_handle.h" ]
+  deps = [
+    "..:ref_count",
+    "../:refcountedbase",
+  ]
+  if (build_with_chromium) {
+    deps += [ "//third_party/tflite" ]
+  } else {
+    deps += [ "//third_party/tflite:tflite_standalone" ]
+  }
+}
+
 if (rtc_enable_protobuf) {
   rtc_library("neural_residual_echo_estimator_creator") {
     visibility = [ "*" ]
@@ -180,9 +194,12 @@ if (rtc_enable_protobuf) {
     ]
     deps = [
       ":neural_residual_echo_estimator_api",
+      ":tflite_model_handle",
+      "..:scoped_refptr",
       "../../modules/audio_processing/aec3/neural_residual_echo_estimator:neural_residual_echo_estimator_impl",
       "../../rtc_base:checks",
       "../../rtc_base/system:rtc_export",
+      "../environment",
       "//third_party/abseil-cpp/absl/base:nullability",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
@@ -225,7 +242,6 @@ if (rtc_include_tests) {
       "../../test:create_test_environment",
       "../../test:test_support",
       "../environment",
-      "../environment:environment_factory",
       "test:audio_api_unittests",
     ]
   }

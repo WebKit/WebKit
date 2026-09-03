@@ -87,5 +87,14 @@ TEST(GetRtxOsnLoggingStatusTest, TwoPacketsWithRtxOsnIskAllRtxOsnLogged) {
             RtxOsnLoggingStatus::kAllRtxOsnLogged);
 }
 
+TEST(GetRtxOsnLoggingStatusTest, RtxSsrc0IsExcluded) {
+  ParsedRtcEventLogBuilder builder;
+  builder.LogVideoRecvConfig(kSsrc, /*rtx_ssrc=*/0);
+  builder.LogRtpPacketIncoming(/*ssrc=*/0, std::nullopt);
+  std::unique_ptr<ParsedRtcEventLog> parsed_log = builder.Build();
+
+  EXPECT_EQ(GetRtxOsnLoggingStatus(*parsed_log), std::nullopt);
+}
+
 }  // namespace
 }  // namespace webrtc::video_timing_simulator

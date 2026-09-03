@@ -14,6 +14,7 @@
 #include <memory>
 #include <span>
 #include <utility>
+#include <variant>
 
 #include "api/frame_transformer_factory.h"
 #include "api/frame_transformer_interface.h"
@@ -349,6 +350,49 @@ TEST(ChannelReceiveFrameTransformerDelegateTest, SetAudioLevel) {
   // Audio level is clamped to the range [0, 127].
   audio_frame->SetAudioLevel(128u);
   EXPECT_EQ(audio_frame->AudioLevel(), 127u);
+}
+
+TEST(ChannelReceiveFrameTransformerDelegateTest, GetAndSetRtpTimestampInfo) {
+  test::RunLoop main_thread;
+  scoped_refptr<MockFrameTransformer> mock_frame_transformer =
+      make_ref_counted<NiceMock<MockFrameTransformer>>();
+  scoped_refptr<ChannelReceiveFrameTransformerDelegate> delegate =
+      make_ref_counted<ChannelReceiveFrameTransformerDelegate>(
+          /*receive_frame_callback=*/nullptr, mock_frame_transformer,
+          main_thread.task_queue());
+  delegate->Init();
+
+  const uint8_t data[] = {1, 2, 3, 4};
+  std::span<const uint8_t> packet(data, sizeof(data));
+  RTPHeader header;
+  header.timestamp = 987654u;
+
+  std::unique_ptr<TransformableFrameInterface> frame;
+  ON_CALL(*mock_frame_transformer, Transform)
+      .WillByDefault(
+          [&](std::unique_ptr<TransformableFrameInterface> transform_frame) {
+            frame = std::move(transform_frame);
+          });
+  delegate->Transform(packet, header, /*ssrc=*/1111, /*mimeType=*/"audio/opus",
+                      kFakeReceiveTimestamp);
+
+  ASSERT_TRUE(frame);
+  auto* audio_frame =
+      static_cast<TransformableAudioFrameInterface*>(frame.get());
+  EXPECT_TRUE(std::holds_alternative<RtpTimestampWithOffset>(
+      audio_frame->GetRtpTimestampInfo()));
+  EXPECT_EQ(
+      std::get<RtpTimestampWithOffset>(audio_frame->GetRtpTimestampInfo()),
+      987654u);
+
+  // Test the SetRTPTimestamp setter
+  uint32_t new_timestamp = 112233u;
+  audio_frame->SetRTPTimestamp(new_timestamp);
+  EXPECT_TRUE(std::holds_alternative<RtpTimestampWithOffset>(
+      audio_frame->GetRtpTimestampInfo()));
+  EXPECT_EQ(
+      std::get<RtpTimestampWithOffset>(audio_frame->GetRtpTimestampInfo()),
+      new_timestamp);
 }
 
 TEST(ChannelReceiveFrameTransformerDelegateTest,

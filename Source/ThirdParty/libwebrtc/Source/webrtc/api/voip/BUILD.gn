@@ -69,9 +69,8 @@ if (rtc_include_tests) {
       "../../modules/audio_device:mock_audio_device",
       "../../modules/audio_processing:mocks",
       "../../test:audio_codec_mocks",
-      "../../test:create_test_field_trials",
+      "../../test:create_test_environment",
       "../../test:test_support",
-      "../environment:environment_factory",
     ]
   }
 

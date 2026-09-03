@@ -32,7 +32,6 @@
 #include "api/audio_codecs/g722/audio_encoder_g722.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "common_audio/vad/include/vad.h"
@@ -41,14 +40,14 @@
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "rtc_base/strings/string_builder.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
 namespace webrtc {
 
 TestRedFec::TestRedFec()
-    : env_(CreateEnvironment(CreateTestFieldTrialsPtr())),
+    : env_(CreateTestEnvironment()),
       encoder_factory_(CreateAudioEncoderFactory<AudioEncoderG711,
                                                  AudioEncoderG722,
                                                  AudioEncoderL16,

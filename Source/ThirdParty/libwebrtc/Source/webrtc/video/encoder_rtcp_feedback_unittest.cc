@@ -13,9 +13,9 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
 #include "api/video/video_frame_type.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "video/test/mock_video_stream_encoder.h"
@@ -31,11 +31,12 @@ class VideoEncoderFeedbackKeyframeTestBase : public ::testing::Test {
                                        std::vector<uint32_t> ssrcs)
       : simulated_clock_(123456789),
         encoder_(),
-        encoder_rtcp_feedback_(CreateEnvironment(&simulated_clock_),
-                               per_layer_pli_handling,
-                               ssrcs,
-                               &encoder_,
-                               nullptr) {}
+        encoder_rtcp_feedback_(
+            CreateTestEnvironment({.time = &simulated_clock_}),
+            per_layer_pli_handling,
+            ssrcs,
+            &encoder_,
+            nullptr) {}
 
  protected:
   static const uint32_t kSsrc = 1234;

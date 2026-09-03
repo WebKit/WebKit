@@ -1,6 +1,6 @@
 <!-- go/cmark -->
 
-<!--* freshness: {owner: 'hta' reviewed: '2026-04-16'} *-->
+<!--* freshness: {owner: 'solenberg' reviewed: '2026-06-17'} *-->
 
 # Organizational contributors to WebRTC
 

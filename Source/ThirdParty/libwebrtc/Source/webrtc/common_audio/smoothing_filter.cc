@@ -33,9 +33,8 @@ SmoothingFilterImpl::SmoothingFilterImpl(int init_time_ms)
       init_const_(init_time_ms_ == 0
                       ? 0.0f
                       : init_time_ms_ -
-                            powf(init_time_ms_, 1.0f - 1.0f / init_time_ms_)) {
-  UpdateAlpha(init_time_ms_);
-}
+                            powf(init_time_ms_, 1.0f - 1.0f / init_time_ms_)),
+      alpha_(init_time_ms == 0 ? 0.0f : std::exp(-1.0f / init_time_ms)) {}
 
 SmoothingFilterImpl::~SmoothingFilterImpl() = default;
 
@@ -62,18 +61,6 @@ std::optional<float> SmoothingFilterImpl::GetAverage(Timestamp now) {
   }
   ExtrapolateLastSample(now.ms());
   return state_;
-}
-
-bool SmoothingFilterImpl::SetTimeConstantMs(int time_constant_ms) {
-  if (!init_end_time_ms_ || last_state_time_ms_ < *init_end_time_ms_) {
-    return false;
-  }
-  UpdateAlpha(time_constant_ms);
-  return true;
-}
-
-void SmoothingFilterImpl::UpdateAlpha(int time_constant_ms) {
-  alpha_ = time_constant_ms == 0 ? 0.0f : std::exp(-1.0f / time_constant_ms);
 }
 
 void SmoothingFilterImpl::ExtrapolateLastSample(int64_t time_ms) {

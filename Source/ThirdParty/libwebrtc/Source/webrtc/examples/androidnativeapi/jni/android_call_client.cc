@@ -307,3 +307,5 @@ static jlong JNI_CallClient_CreateClient(JNIEnv* env) {
 }
 
 }  // namespace webrtc_examples
+
+DEFINE_JNI(CallClient)

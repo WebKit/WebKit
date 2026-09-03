@@ -19,12 +19,14 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 
+namespace webrtc {
 namespace {
 
 using ::testing::_;
 using ::testing::MockFunction;
-using ::webrtc::rtcp::ReceiverReport;
-using ::webrtc::rtcp::ReportBlock;
+
+using rtcp::ReceiverReport;
+using rtcp::ReportBlock;
 
 constexpr uint32_t kSenderSsrc = 0x12345678;
 
@@ -45,3 +47,5 @@ TEST(RtcpPacketTest, BuildWithTooSmallBuffer) {
 }
 
 }  // namespace
+
+}  // namespace webrtc

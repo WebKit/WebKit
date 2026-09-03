@@ -54,22 +54,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "//testing/gtest",
     ]
 
-    if (rtc_desktop_capture_supported) {
-      deps += [ "desktop_capture:desktop_capture_modules_tests" ]
-    }
-
     data_deps = [ "../resources:modules_tests_data" ]
-
-    if (is_android) {
-      use_default_launcher = false
-      deps += [
-        # NOTE(brandtr): Including Java classes seems only to be possible from
-        # rtc_test targets. Therefore we include this target here, instead of
-        # in video_coding_modules_tests, where it is actually used.
-        "../sdk/android:libjingle_peerconnection_java",
-      ]
-      shard_timeout = 900
-    }
 
     if (is_ios) {
       deps += [ "../resources:modules_tests_bundle_data" ]
@@ -95,6 +80,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "pacing:pacing_unittests",
       "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
       "rtp_rtcp:rtp_rtcp_unittests",
+      "sframe:sframe_unittests",
       "video_coding:video_coding_unittests",
       "video_coding/timing:timing_unittests",
     ]
@@ -102,16 +88,11 @@ if (rtc_include_tests && !build_with_chromium) {
     if (rtc_enable_protobuf) {
       deps += [ "audio_processing/aec3/neural_residual_echo_estimator:neural_residual_echo_estimator_unittest" ]
     }
-    if (rtc_desktop_capture_supported) {
-      deps += [ "desktop_capture:desktop_capture_unittests" ]
-    }
 
     data_deps = [ "../resources:modules_unittests_data" ]
 
     if (is_android) {
-      use_default_launcher = false
       deps += [ "../sdk/android:libjingle_peerconnection_java" ]
-      shard_timeout = 900
     }
     if (is_ios) {
       info_plist = "../test/ios/Info.plist"

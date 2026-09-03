@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/metrics/metric.h"
 #include "api/test/simulated_network.h"
@@ -35,10 +36,10 @@
 
 namespace webrtc {
 
-static const int kTransmissionTimeOffsetExtensionId = 6;
-static const int kAbsSendTimeExtensionId = 7;
-static const int kTransportSequenceNumberExtensionId = 8;
-static const unsigned int kSingleStreamTargetBps = 1000000;
+constexpr RtpHeaderExtensionId kTransmissionTimeOffsetExtensionId(6);
+constexpr RtpHeaderExtensionId kAbsSendTimeExtensionId(7);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(8);
+constexpr unsigned int kSingleStreamTargetBps = 1000000;
 
 class Clock;
 

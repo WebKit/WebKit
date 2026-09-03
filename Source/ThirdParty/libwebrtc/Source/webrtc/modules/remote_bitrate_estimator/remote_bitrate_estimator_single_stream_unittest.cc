@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include "api/environment/environment_factory.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_unittest_helper.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -29,7 +29,7 @@ class RemoteBitrateEstimatorSingleTest : public RemoteBitrateEstimatorTest {
 
   void SetUp() override {
     bitrate_estimator_ = std::make_unique<RemoteBitrateEstimatorSingleStream>(
-        CreateEnvironment(&clock_), bitrate_observer_.get());
+        CreateTestEnvironment({.time = &clock_}), bitrate_observer_.get());
   }
 };
 

@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/field_trials.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_decoder_factory.h"
@@ -50,6 +49,7 @@
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
 #include "test/create_test_environment.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "video/corruption_detection/evaluation/picture_pair_provider.h"
@@ -175,7 +175,7 @@ class WebRtcPicturePairProviderTest : public TestWithParam<VideoCodecType> {
   void CreatePicturePairProvider(VideoCodecType codec_type) {
     picture_pair_provider_ =
         std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-            codec_type, std::move(encoder_factory_),
+            CreateTestEnvironment(), codec_type, std::move(encoder_factory_),
             std::move(decoder_factory_));
   }
 
@@ -380,7 +380,7 @@ TEST_P(WebRtcPicturePairProviderTest, SetRatesWithSvcRateAllocator) {
   codec_config.spatialLayers[0].maxBitrate = bitrate_kbps;
   codec_config.spatialLayers[0].active = true;
 
-  SvcRateAllocator svc_rate_allocator(codec_config, FieldTrials(""));
+  SvcRateAllocator svc_rate_allocator(codec_config, CreateTestFieldTrials(""));
   VideoEncoder::RateControlParameters rate_params =
       VideoEncoder::RateControlParameters(
           svc_rate_allocator.GetAllocation(kDefaultBitrate.bps(), kFramerate),
@@ -593,12 +593,12 @@ TEST_P(WebRtcPicturePairProviderEnd2EndTest, PsnrIsInExpectedRange) {
   std::unique_ptr<WebRtcEncoderDecoderPicturePairProvider> webrtc_provider;
   if (codec_type_ != VideoCodecType::kVideoCodecAV1) {
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_, CreateBuiltinVideoEncoderFactory(),
-        CreateBuiltinVideoDecoderFactory());
+        CreateTestEnvironment(), codec_type_,
+        CreateBuiltinVideoEncoderFactory(), CreateBuiltinVideoDecoderFactory());
   } else {
     // AV1 is injectible
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_,
+        CreateTestEnvironment(), codec_type_,
         std::make_unique<
             VideoEncoderFactoryTemplate<LibaomAv1EncoderTemplateAdapter>>(),
         std::make_unique<
@@ -633,12 +633,12 @@ TEST_P(WebRtcPicturePairProviderEnd2EndTest, PsnrIsGoodWhenBitrateIsHigh) {
   std::unique_ptr<WebRtcEncoderDecoderPicturePairProvider> webrtc_provider;
   if (codec_type_ != VideoCodecType::kVideoCodecAV1) {
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_, CreateBuiltinVideoEncoderFactory(),
-        CreateBuiltinVideoDecoderFactory());
+        CreateTestEnvironment(), codec_type_,
+        CreateBuiltinVideoEncoderFactory(), CreateBuiltinVideoDecoderFactory());
   } else {
     // AV1 is injectible
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_,
+        CreateTestEnvironment(), codec_type_,
         std::make_unique<
             VideoEncoderFactoryTemplate<LibaomAv1EncoderTemplateAdapter>>(),
         std::make_unique<
@@ -672,12 +672,12 @@ TEST_P(WebRtcPicturePairProviderEnd2EndTest, Y4mVideoTest) {
   std::unique_ptr<WebRtcEncoderDecoderPicturePairProvider> webrtc_provider;
   if (codec_type_ != VideoCodecType::kVideoCodecAV1) {
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_, CreateBuiltinVideoEncoderFactory(),
-        CreateBuiltinVideoDecoderFactory());
+        CreateTestEnvironment(), codec_type_,
+        CreateBuiltinVideoEncoderFactory(), CreateBuiltinVideoDecoderFactory());
   } else {
     // AV1 is injectible
     webrtc_provider = std::make_unique<WebRtcEncoderDecoderPicturePairProvider>(
-        codec_type_,
+        CreateTestEnvironment(), codec_type_,
         std::make_unique<
             VideoEncoderFactoryTemplate<LibaomAv1EncoderTemplateAdapter>>(),
         std::make_unique<

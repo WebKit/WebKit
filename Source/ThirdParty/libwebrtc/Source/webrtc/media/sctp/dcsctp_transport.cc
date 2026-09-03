@@ -44,6 +44,7 @@
 #include "p2p/base/packet_transport_internal.h"
 #include "p2p/dtls/dtls_transport_internal.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
@@ -751,13 +752,29 @@ void DcSctpTransport::OnTransportReadPacket(
   }
 
   RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnTransportReadPacket(), length="
-                       << packet.payload().size();
-  if (socket_) {
+                       << packet.payload().size() << " socket=" << !!socket_;
+  // With SNAP the socket is created (in Start()) before it is connected (in
+  // MaybeConnectSocket(), once the transport is writable). Buffer packets that
+  // arrive in that window; delivering them to the still-closed socket would
+  // have it reject them as having an invalid verification tag.
+  bool snap_pending_connect = socket_ != nullptr && local_init_.has_value() &&
+                              remote_init_.has_value() &&
+                              socket_->state() == dcsctp::SocketState::kClosed;
+  if (socket_ && !snap_pending_connect) {
     socket_->ReceivePacket(packet.payload());
+    return;
   }
+
+  // Buffering decrypted packets is only required in an edge case of SNAP.
+  if (early_received_packets_.size() >= kMaxEarlyReceivedPackets) {
+    early_received_packets_.erase(early_received_packets_.begin());
+  }
+  early_received_packets_.emplace_back(packet.payload().data(),
+                                       packet.payload().size());
 }
 
 void DcSctpTransport::MaybeConnectSocket() {
+  RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DLOG(LS_VERBOSE)
       << debug_name_ << "->MaybeConnectSocket(), writable="
       << (transport_ ? std::to_string(transport_->writable()) : "UNSET")
@@ -767,9 +784,17 @@ void DcSctpTransport::MaybeConnectSocket() {
   if (transport_ && transport_->writable() && socket_ &&
       socket_->state() == dcsctp::SocketState::kClosed) {
     if (!(local_init_.has_value() && remote_init_.has_value())) {
-      return socket_->Connect();
+      socket_->Connect();
+      return;
     }
     socket_->ConnectWithConnectionToken(*local_init_, *remote_init_);
+    // Replay any datachannel packets that arrived before the socket existed.
+    std::vector<webrtc::Buffer> packets = std::move(early_received_packets_);
+    early_received_packets_.clear();
+    for (const webrtc::Buffer& packet : packets) {
+      socket_->ReceivePacket(
+          std::span<const uint8_t>(packet.data(), packet.size()));
+    }
   }
 }
 
@@ -804,6 +829,11 @@ std::vector<uint8_t> DcSctpTransport::GenerateConnectionToken(
       [&random](uint32_t low, uint32_t high) {
         return random.Rand(low, high);
       });
+}
+
+size_t DcSctpTransport::EarlyReceivedPacketCountForTesting() const {
+  RTC_DCHECK_RUN_ON(network_thread_);
+  return early_received_packets_.size();
 }
 
 }  // namespace webrtc

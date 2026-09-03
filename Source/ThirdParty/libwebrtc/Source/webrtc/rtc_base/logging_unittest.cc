@@ -347,6 +347,8 @@ TEST(LogTest, CheckTagAddedToStringInDefaultOnLogMessageAndroid) {
   RTC_LOG_TAG(LS_INFO, "my_tag") << "INFO";
   EXPECT_THAT(str, HasSubstr("INFO"));
   EXPECT_THAT(str, HasSubstr("my_tag"));
+
+  LogMessage::RemoveLogToStream(&stream);
 }
 #endif
 

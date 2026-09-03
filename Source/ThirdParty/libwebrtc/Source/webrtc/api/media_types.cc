@@ -10,8 +10,7 @@
 
 #include "api/media_types.h"
 
-#include <string>
-
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -20,7 +19,7 @@ const char kMediaTypeVideo[] = "video";
 const char kMediaTypeAudio[] = "audio";
 const char kMediaTypeData[] = "data";
 
-std::string MediaTypeToString(MediaType type) {
+absl::string_view MediaTypeToString(MediaType type) {
   switch (type) {
     case MediaType::AUDIO:
       return kMediaTypeAudio;
@@ -28,7 +27,8 @@ std::string MediaTypeToString(MediaType type) {
       return kMediaTypeVideo;
     case MediaType::DATA:
       return kMediaTypeData;
-    default:
+    case MediaType::UNSUPPORTED:
+    case MediaType::ANY:
       // Unsupported media stores the m=<mediatype> differently.
       RTC_DCHECK_NOTREACHED();
       return "";

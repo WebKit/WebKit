@@ -218,8 +218,9 @@ class RtpRtcpInterface : public RtcpFeedbackSenderInterface {
                                           RtpHeaderExtensionId id) = 0;
   // Backwards compatibility overload.
   // TODO: bugs.webrtc.org/514817938 - Remove when downstream is updated.
-  ABSL_DEPRECATE_AND_INLINE()
-  void RegisterRtpHeaderExtension(absl::string_view uri, int id) {
+  [[deprecated]] ABSL_REFACTOR_INLINE void RegisterRtpHeaderExtension(
+      absl::string_view uri,
+      int id) {
     RegisterRtpHeaderExtension(uri, RtpHeaderExtensionId(id));
   }
 

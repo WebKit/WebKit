@@ -32,6 +32,7 @@
 #include "api/field_trials_view.h"
 #include "api/media_types.h"
 #include "api/payload_type.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_transceiver_direction.h"
 #include "api/sctp_transport_interface.h"
@@ -105,6 +106,10 @@ class CodecLookupHelperForTesting : public CodecLookupHelper {
     return &payload_type_suggester_;
   }
 
+  FakePayloadTypeSuggester* fake_payload_type_suggester() {
+    return &payload_type_suggester_;
+  }
+
   CodecVendor* GetCodecVendor() override {
     if (!codec_vendor_) {
       codec_vendor_.reset(
@@ -116,7 +121,8 @@ class CodecLookupHelperForTesting : public CodecLookupHelper {
   void RegisterExpectations(absl::string_view mid,
                             std::span<const Codec> codecs) {
     for (const Codec& c : codecs) {
-      if (c.id.IsSet()) {
+      if (c.id.IsSet() && !payload_type_suggester_.HasMapping(mid, c.id) &&
+          !payload_type_suggester_.IsPayloadTypeConflict(mid, c.id, c)) {
         RTC_CHECK(payload_type_suggester_.AddLocalMapping(mid, c.id, c).ok());
       }
     }
@@ -299,145 +305,214 @@ inline auto NamesMatch(std::vector<std::string> expected_names) {
 }
 
 const std::array kAudioRtpExtension1 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
-    RtpExtension("http://google.com/testing/audio_something", 10),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(10)),
 };
 
 const std::array kAudioRtpExtensionEncrypted1 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
-    RtpExtension("http://google.com/testing/audio_something", 11, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(11),
+                 true),
 };
 
 const std::array kAudioRtpExtension2 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 2),
-    RtpExtension("http://google.com/testing/audio_something_else", 8),
-    RtpExtension("http://google.com/testing/both_audio_and_video", 7),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(2)),
+    RtpExtension("http://google.com/testing/audio_something_else",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/both_audio_and_video",
+                 RtpHeaderExtensionId(7)),
 };
 
 const std::array kAudioRtpExtensionEncrypted2 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 2),
-    RtpExtension("http://google.com/testing/audio_something", 13, true),
-    RtpExtension("http://google.com/testing/audio_something_else", 5, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(2)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(13),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something_else",
+                 RtpHeaderExtensionId(5),
+                 true),
 };
 
 const std::array kAudioRtpExtension3 = {
-    RtpExtension("http://google.com/testing/audio_something", 2),
-    RtpExtension("http://google.com/testing/both_audio_and_video", 3),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(2)),
+    RtpExtension("http://google.com/testing/both_audio_and_video",
+                 RtpHeaderExtensionId(3)),
 };
 
 const std::array kAudioRtpExtensionMixedEncryption1 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
-    RtpExtension("http://google.com/testing/audio_something", 9),
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 10, true),
-    RtpExtension("http://google.com/testing/audio_something", 11, true),
-    RtpExtension("http://google.com/testing/audio_something_else", 12, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(9)),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(10),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(11),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something_else",
+                 RtpHeaderExtensionId(12),
+                 true),
 };
 
 const std::array kAudioRtpExtensionMixedEncryption2 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 5),
-    RtpExtension("http://google.com/testing/audio_something", 6),
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 7, true),
-    RtpExtension("http://google.com/testing/audio_something", 8, true),
-    RtpExtension("http://google.com/testing/audio_something_else", 9),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(5)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(6)),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(7),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(8),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something_else",
+                 RtpHeaderExtensionId(9)),
 };
 
 const std::array kAudioRtpExtensionAnswer = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
 };
 
 const std::array kAudioRtpExtensionEncryptedAnswer = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
-    RtpExtension("http://google.com/testing/audio_something", 11, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(11),
+                 true),
 };
 
 const std::array kAudioRtpExtensionMixedEncryptionAnswerEncryptionEnabled = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 10, true),
-    RtpExtension("http://google.com/testing/audio_something", 11, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(10),
+                 true),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(11),
+                 true),
 };
 
 const std::array kAudioRtpExtensionMixedEncryptionAnswerEncryptionDisabled = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level", 8),
-    RtpExtension("http://google.com/testing/audio_something", 9),
+    RtpExtension("urn:ietf:params:rtp-hdrext:ssrc-audio-level",
+                 RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/audio_something",
+                 RtpHeaderExtensionId(9)),
 };
 
 const std::array kVideoRtpExtension1 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
-    RtpExtension("http://google.com/testing/video_something", 13),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(13)),
 };
 
 const std::array kVideoRtpExtensionEncrypted1 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
-    RtpExtension("http://google.com/testing/video_something", 7, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(7),
+                 true),
 };
 
 const std::array kVideoRtpExtension2 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 2),
-    RtpExtension("http://google.com/testing/video_something_else", 14),
-    RtpExtension("http://google.com/testing/both_audio_and_video", 7),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", RtpHeaderExtensionId(2)),
+    RtpExtension("http://google.com/testing/video_something_else",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/both_audio_and_video",
+                 RtpHeaderExtensionId(7)),
 };
 
 const std::array kVideoRtpExtensionEncrypted2 = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 8),
-    RtpExtension("http://google.com/testing/video_something", 10, true),
-    RtpExtension("http://google.com/testing/video_something_else", 4, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", RtpHeaderExtensionId(8)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(10),
+                 true),
+    RtpExtension("http://google.com/testing/video_something_else",
+                 RtpHeaderExtensionId(4),
+                 true),
 };
 
 const std::array kVideoRtpExtension3 = {
-    RtpExtension("http://google.com/testing/video_something", 4),
-    RtpExtension("http://google.com/testing/both_audio_and_video", 5),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(4)),
+    RtpExtension("http://google.com/testing/both_audio_and_video",
+                 RtpHeaderExtensionId(5)),
 };
 
 const std::array kVideoRtpExtensionMixedEncryption = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
-    RtpExtension("http://google.com/testing/video_something", 13),
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 15, true),
-    RtpExtension("http://google.com/testing/video_something", 16, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(13)),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(15),
+                 true),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(16),
+                 true),
 };
 
 const std::array kVideoRtpExtensionAnswer = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
 };
 
 const std::array kVideoRtpExtensionEncryptedAnswer = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
-    RtpExtension("http://google.com/testing/video_something", 7, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(7),
+                 true),
 };
 
 const std::array kVideoRtpExtensionMixedEncryptionAnswerEncryptionEnabled = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 15, true),
-    RtpExtension("http://google.com/testing/video_something", 16, true),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(15),
+                 true),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(16),
+                 true),
 };
 
 const std::array kVideoRtpExtensionMixedEncryptionAnswerEncryptionDisabled = {
-    RtpExtension("urn:ietf:params:rtp-hdrext:toffset", 14),
-    RtpExtension("http://google.com/testing/video_something", 13),
+    RtpExtension("urn:ietf:params:rtp-hdrext:toffset",
+                 RtpHeaderExtensionId(14)),
+    RtpExtension("http://google.com/testing/video_something",
+                 RtpHeaderExtensionId(13)),
 };
 
 const std::array kRtpExtensionTransportSequenceNumber01 = {
     RtpExtension("http://www.ietf.org/id/"
                  "draft-holmer-rmcat-transport-wide-cc-extensions-01",
-                 1),
+                 RtpHeaderExtensionId(1)),
 };
 
 const std::array kRtpExtensionTransportSequenceNumber01And02 = {
     RtpExtension("http://www.ietf.org/id/"
                  "draft-holmer-rmcat-transport-wide-cc-extensions-01",
-                 1),
+                 RtpHeaderExtensionId(1)),
     RtpExtension(
         "http://www.webrtc.org/experiments/rtp-hdrext/transport-wide-cc-02",
-        2),
+        RtpHeaderExtensionId(2)),
 };
 
 const std::array kRtpExtensionTransportSequenceNumber02 = {
     RtpExtension(
         "http://www.webrtc.org/experiments/rtp-hdrext/transport-wide-cc-02",
-        2),
+        RtpHeaderExtensionId(2)),
 };
 
 const std::array kRtpExtensionGenericFrameDescriptorUri00 = {
     RtpExtension("http://www.webrtc.org/experiments/rtp-hdrext/"
                  "generic-frame-descriptor-00",
-                 3),
+                 RtpHeaderExtensionId(3)),
 };
 
 constexpr uint32_t kSimulcastParamsSsrc[] = {10, 11, 20, 21, 30, 31};
@@ -495,6 +570,16 @@ RtpTransceiverDirection GetMediaDirection(const ContentInfo* content) {
 void AddRtxCodec(const Codec& rtx_codec, std::vector<Codec>* codecs) {
   RTC_LOG(LS_VERBOSE) << "Adding RTX codec " << FullMimeType(rtx_codec);
   ASSERT_FALSE(FindCodecById(*codecs, rtx_codec.id));
+  auto apt_it = rtx_codec.params.find(kCodecParamAssociatedPayloadType);
+  if (apt_it != rtx_codec.params.end()) {
+    int apt = FromString<int>(apt_it->second);
+    auto it =
+        absl::c_find_if(*codecs, [apt](const Codec& c) { return c.id == apt; });
+    if (it != codecs->end()) {
+      codecs->insert(it + 1, rtx_codec);
+      return;
+    }
+  }
   codecs->push_back(rtx_codec);
 }
 
@@ -953,6 +1038,40 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioOffer) {
   EXPECT_EQ(acd->protocol(), kMediaProtocolDtlsSavpf);
 }
 
+// With the RRTR field trial enabled (default), an offer enables non-sender
+// RTT on the negotiated description. The wire-format translation (rtcp-xr and
+// the legacy rtcp-fb rrtr) is covered in webrtc_sdp_unittest.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       CreateAudioOfferEnablesReceiveNonSenderRtt) {
+  std::unique_ptr<SessionDescription> offer =
+      f1_.CreateOfferOrError(CreateAudioMediaSession(), nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const MediaContentDescription* acd =
+      GetFirstAudioContentDescription(offer.get());
+  ASSERT_TRUE(acd);
+  EXPECT_TRUE(acd->receive_non_sender_rtt());
+}
+
+class MediaSessionDescriptionFactoryRcvrRttDisabledTest
+    : public MediaSessionDescriptionFactoryTest {
+ protected:
+  MediaSessionDescriptionFactoryRcvrRttDisabledTest()
+      : MediaSessionDescriptionFactoryTest(
+            "WebRTC-RtcpXrReceiverReferenceTime/Disabled/") {}
+};
+
+// With the field trial disabled, the offer must not enable non-sender RTT.
+TEST_F(MediaSessionDescriptionFactoryRcvrRttDisabledTest,
+       CreateAudioOfferDoesNotEnableReceiveNonSenderRtt) {
+  std::unique_ptr<SessionDescription> offer =
+      f1_.CreateOfferOrError(CreateAudioMediaSession(), nullptr).MoveValue();
+  ASSERT_TRUE(offer.get());
+  const MediaContentDescription* acd =
+      GetFirstAudioContentDescription(offer.get());
+  ASSERT_TRUE(acd);
+  EXPECT_FALSE(acd->receive_non_sender_rtt());
+}
+
 // Create an offer with just Opus and RED.
 TEST_F(MediaSessionDescriptionFactoryTest,
        TestCreateAudioOfferWithJustOpusAndRed) {
@@ -1134,6 +1253,8 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestBundleOfferWithSameCodecPlType) {
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
   opts.bundle_enabled = true;
+  codec_lookup_helper_2_.fake_payload_type_suggester()->SetBundleGroups(
+      {{kAudioMid, kVideoMid}});
   std::unique_ptr<SessionDescription> offer =
       f2_.CreateOfferOrError(opts, nullptr).MoveValue();
   const VideoContentDescription* vcd =
@@ -2070,11 +2191,13 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  RtpExtension offer_dd(RtpExtension::kDependencyDescriptorUri, 7);
+  RtpExtension offer_dd(RtpExtension::kDependencyDescriptorUri,
+                        RtpHeaderExtensionId(7));
   SetAudioVideoRtpHeaderExtensions({}, RtpHeaderExtensions{offer_dd}, &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
-  RtpExtension local_tsn(RtpExtension::kTransportSequenceNumberUri, 5);
+  RtpExtension local_tsn(RtpExtension::kTransportSequenceNumberUri,
+                         RtpHeaderExtensionId(5));
   SetAudioVideoRtpHeaderExtensions({}, RtpHeaderExtensions{local_tsn}, &opts);
   std::unique_ptr<SessionDescription> answer =
       f2_.CreateAnswerOrError(offer.get(), opts, nullptr).MoveValue();
@@ -2088,8 +2211,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  RtpExtension offer_dd(RtpExtension::kDependencyDescriptorUri, 7);
-  RtpExtension local_dd(RtpExtension::kDependencyDescriptorUri, 5);
+  RtpExtension offer_dd(RtpExtension::kDependencyDescriptorUri,
+                        RtpHeaderExtensionId(7));
+  RtpExtension local_dd(RtpExtension::kDependencyDescriptorUri,
+                        RtpHeaderExtensionId(5));
   SetAudioVideoRtpHeaderExtensions({}, RtpHeaderExtensions{offer_dd}, &opts);
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2106,10 +2231,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  const RtpHeaderExtensions offered_extensions = {
-      RtpExtension(RtpExtension::kAbsoluteCaptureTimeUri, 7)};
-  const RtpHeaderExtensions local_extensions = {
-      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 5)};
+  const RtpHeaderExtensions offered_extensions = {RtpExtension(
+      RtpExtension::kAbsoluteCaptureTimeUri, RtpHeaderExtensionId(7))};
+  const RtpHeaderExtensions local_extensions = {RtpExtension(
+      RtpExtension::kTransportSequenceNumberUri, RtpHeaderExtensionId(5))};
   SetAudioVideoRtpHeaderExtensions(offered_extensions, offered_extensions,
                                    &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -2130,10 +2255,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  const RtpHeaderExtensions offered_extensions = {
-      RtpExtension(RtpExtension::kAbsoluteCaptureTimeUri, 7)};
-  const RtpHeaderExtensions local_extensions = {
-      RtpExtension(RtpExtension::kAbsoluteCaptureTimeUri, 5)};
+  const RtpHeaderExtensions offered_extensions = {RtpExtension(
+      RtpExtension::kAbsoluteCaptureTimeUri, RtpHeaderExtensionId(7))};
+  const RtpHeaderExtensions local_extensions = {RtpExtension(
+      RtpExtension::kAbsoluteCaptureTimeUri, RtpHeaderExtensionId(5))};
   SetAudioVideoRtpHeaderExtensions(offered_extensions, offered_extensions,
                                    &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -2154,10 +2279,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   MediaSessionOptions opts;
   AddAudioVideoSections(RtpTransceiverDirection::kRecvOnly, &opts);
 
-  const RtpHeaderExtensions offered_extensions = {
-      RtpExtension(RtpExtension::kTransportSequenceNumberUri, 7)};
-  const RtpHeaderExtensions local_extensions = {
-      RtpExtension(RtpExtension::kAbsoluteCaptureTimeUri, 5)};
+  const RtpHeaderExtensions offered_extensions = {RtpExtension(
+      RtpExtension::kTransportSequenceNumberUri, RtpHeaderExtensionId(7))};
+  const RtpHeaderExtensions local_extensions = {RtpExtension(
+      RtpExtension::kAbsoluteCaptureTimeUri, RtpHeaderExtensionId(5))};
   SetAudioVideoRtpHeaderExtensions(offered_extensions, offered_extensions,
                                    &opts);
   std::unique_ptr<SessionDescription> offer =
@@ -2180,17 +2305,17 @@ TEST_F(MediaSessionDescriptionFactoryTest,
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kStopped),
-      RtpHeaderExtensionCapability("uri2", 3,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(3),
                                    RtpTransceiverDirection::kSendOnly)};
   AddMediaDescriptionOptions(MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kStopped),
-      RtpHeaderExtensionCapability("uri3", 7,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(7),
                                    RtpTransceiverDirection::kSendOnly)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2214,17 +2339,17 @@ TEST_F(MediaSessionDescriptionFactoryTest,
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendOnly),
-      RtpHeaderExtensionCapability("uri2", 3,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(3),
                                    RtpTransceiverDirection::kStopped)};
   AddMediaDescriptionOptions(MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri42", 42,
+      RtpHeaderExtensionCapability("uri42", RtpHeaderExtensionId(42),
                                    RtpTransceiverDirection::kSendRecv),
-      RtpHeaderExtensionCapability("uri3", 7,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(7),
                                    RtpTransceiverDirection::kSendOnly)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2250,17 +2375,17 @@ TEST_F(MediaSessionDescriptionFactoryTest,
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 5,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(5),
                                    RtpTransceiverDirection::kSendOnly),
-      RtpHeaderExtensionCapability("uri2", 7,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(7),
                                    RtpTransceiverDirection::kSendRecv)};
   AddMediaDescriptionOptions(MediaType::VIDEO, "video1",
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri42", 42,
+      RtpHeaderExtensionCapability("uri42", RtpHeaderExtensionId(42),
                                    RtpTransceiverDirection::kSendRecv),
-      RtpHeaderExtensionCapability("uri3", 7,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(7),
                                    RtpTransceiverDirection::kStopped)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2285,24 +2410,24 @@ TEST_F(MediaSessionDescriptionFactoryTest, AnswersUnstoppedExtensions) {
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 4,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(4),
                                    RtpTransceiverDirection::kStopped),
-      RtpHeaderExtensionCapability("uri2", 3,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(3),
                                    RtpTransceiverDirection::kSendOnly),
-      RtpHeaderExtensionCapability("uri3", 2,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(2),
                                    RtpTransceiverDirection::kRecvOnly),
-      RtpHeaderExtensionCapability("uri4", 1,
+      RtpHeaderExtensionCapability("uri4", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendRecv)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 4,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(4),
                                    RtpTransceiverDirection::kSendOnly),
-      RtpHeaderExtensionCapability("uri2", 3,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(3),
                                    RtpTransceiverDirection::kRecvOnly),
-      RtpHeaderExtensionCapability("uri3", 2,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(2),
                                    RtpTransceiverDirection::kStopped),
-      RtpHeaderExtensionCapability("uri4", 1,
+      RtpHeaderExtensionCapability("uri4", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendRecv)};
   std::unique_ptr<SessionDescription> answer =
       f2_.CreateAnswerOrError(offer.get(), opts, nullptr).MoveValue();
@@ -2322,18 +2447,18 @@ TEST_F(MediaSessionDescriptionFactoryTest,
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendRecv)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 2,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(2),
                                    RtpTransceiverDirection::kSendRecv),
-      RtpHeaderExtensionCapability("uri2", 3,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(3),
                                    RtpTransceiverDirection::kRecvOnly),
-      RtpHeaderExtensionCapability("uri3", 5,
+      RtpHeaderExtensionCapability("uri3", RtpHeaderExtensionId(5),
                                    RtpTransceiverDirection::kStopped),
-      RtpHeaderExtensionCapability("uri4", 6,
+      RtpHeaderExtensionCapability("uri4", RtpHeaderExtensionId(6),
                                    RtpTransceiverDirection::kSendRecv)};
   auto offer2 = f1_.CreateOfferOrError(opts, offer.get()).MoveValue();
   EXPECT_THAT(
@@ -2353,9 +2478,9 @@ TEST_F(MediaSessionDescriptionFactoryTest,
                              RtpTransceiverDirection::kSendRecv, kActive,
                              &opts);
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendRecv),
-      RtpHeaderExtensionCapability("uri2", 2,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(2),
                                    RtpTransceiverDirection::kSendRecv)};
   std::unique_ptr<SessionDescription> offer =
       f1_.CreateOfferOrError(opts, nullptr).MoveValue();
@@ -2363,9 +2488,9 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // Check that a subsequent offer after setting "uri2" to stopped no longer
   // contains the extension.
   opts.media_description_options.back().header_extensions = {
-      RtpHeaderExtensionCapability("uri1", 1,
+      RtpHeaderExtensionCapability("uri1", RtpHeaderExtensionId(1),
                                    RtpTransceiverDirection::kSendRecv),
-      RtpHeaderExtensionCapability("uri2", 2,
+      RtpHeaderExtensionCapability("uri2", RtpHeaderExtensionId(2),
                                    RtpTransceiverDirection::kStopped)};
   auto offer2 = f1_.CreateOfferOrError(opts, offer.get()).MoveValue();
   EXPECT_THAT(
@@ -3573,8 +3698,9 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   int new_h264_pl_type = updated_vcd->codecs()[0].id;
   EXPECT_NE(used_pl_type, new_h264_pl_type);
   Codec rtx = updated_vcd->codecs()[1];
-  int pt_referenced_by_rtx =
-      FromString<int>(rtx.params[kCodecParamAssociatedPayloadType]);
+  int pt_referenced_by_rtx;
+  EXPECT_TRUE(
+      rtx.GetParam(kCodecParamAssociatedPayloadType, &pt_referenced_by_rtx));
   EXPECT_EQ(new_h264_pl_type, pt_referenced_by_rtx);
 }
 
@@ -3616,8 +3742,15 @@ TEST_F(MediaSessionDescriptionFactoryTest,
       GetFirstVideoContentDescription(updated_offer.get());
 
   // New offer should attempt to add H263, and RTX for H264.
-  expected_codecs.push_back(kVideoCodecs2[1]);
-  AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[1].id), &expected_codecs);
+  if (env_.field_trials().IsEnabled("WebRTC-PayloadTypesInTransport")) {
+    AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[1].id),
+                &expected_codecs);
+    expected_codecs.push_back(kVideoCodecs2[1]);
+  } else {
+    expected_codecs.push_back(kVideoCodecs2[1]);
+    AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[1].id),
+                &expected_codecs);
+  }
   EXPECT_THAT(updated_vcd->codecs(),
               CodecListsMatch(expected_codecs, &env_.field_trials()));
 }
@@ -3766,7 +3899,7 @@ TEST_F(MediaSessionDescriptionFactoryTest, AddSecondRtxInNewOffer) {
   ASSERT_TRUE(updated_offer);
   vcd = GetFirstVideoContentDescription(updated_offer.get());
 
-  AddRtxCodec(CreateVideoRtxCodec(125, kVideoCodecs1[0].id), &expected_codecs);
+  expected_codecs.push_back(CreateVideoRtxCodec(125, kVideoCodecs1[0].id));
   EXPECT_THAT(vcd->codecs(),
               CodecListsMatch(expected_codecs, &env_.field_trials()));
 }
@@ -3938,7 +4071,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // `f1_` for another extensions, it is changed to 13.
   const std::vector<RtpExtension> kUpdatedAudioRtpExtensions = {
       kAudioRtpExtensionAnswer[0],
-      RtpExtension(kAudioRtpExtension2[1].uri, 13),
+      RtpExtension(kAudioRtpExtension2[1].uri, RtpHeaderExtensionId(13)),
       kAudioRtpExtension2[2],
   };
 
@@ -3946,7 +4079,7 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // `f1_` for another extensions, is is changed to 12.
   const std::vector<RtpExtension> kUpdatedVideoRtpExtensions = {
       kVideoRtpExtensionAnswer[0],
-      RtpExtension(kVideoRtpExtension2[1].uri, 12),
+      RtpExtension(kVideoRtpExtension2[1].uri, RtpHeaderExtensionId(12)),
       kVideoRtpExtension2[2],
   };
 
@@ -4608,7 +4741,7 @@ INSTANTIATE_TEST_SUITE_P(Sframe,
                          SframeMediaTypeTest,
                          ::testing::Values(MediaType::AUDIO, MediaType::VIDEO),
                          [](const ::testing::TestParamInfo<MediaType>& info) {
-                           return MediaTypeToString(info.param);
+                           return std::string(MediaTypeToString(info.param));
                          });
 
 TEST_F(MediaSessionDescriptionFactoryTest,
@@ -5013,11 +5146,11 @@ TEST_F(MediaSessionDescriptionFactoryTest,
   // Create two H264 codecs with the same profile level ID and different
   // packetization modes.
   Codec h264_pm0 = CreateVideoCodec(96, "H264");
-  h264_pm0.params[kH264FmtpProfileLevelId] = "42c01f";
-  h264_pm0.params[kH264FmtpPacketizationMode] = "0";
+  h264_pm0.SetParam(kH264FmtpProfileLevelId, "42c01f");
+  h264_pm0.SetParam(kH264FmtpPacketizationMode, "0");
   Codec h264_pm1 = CreateVideoCodec(97, "H264");
-  h264_pm1.params[kH264FmtpProfileLevelId] = "42c01f";
-  h264_pm1.params[kH264FmtpPacketizationMode] = "1";
+  h264_pm1.SetParam(kH264FmtpProfileLevelId, "42c01f");
+  h264_pm1.SetParam(kH264FmtpPacketizationMode, "1");
 
   // Offerer will send both codecs, answerer should choose the one with matching
   // packetization mode (and not the first one it sees).
@@ -5682,10 +5815,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -5745,10 +5878,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -5818,10 +5951,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -5881,10 +6014,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -5944,10 +6077,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6004,10 +6137,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6064,10 +6197,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6124,10 +6257,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6184,10 +6317,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6244,10 +6377,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6304,10 +6437,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6364,10 +6497,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6424,10 +6557,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6484,10 +6617,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,
@@ -6540,10 +6673,10 @@ TEST_F(VideoCodecsOfferH265LevelIdTest,
                                               offerer_recv_codecs);
   codec_lookup_helper_answerer_.SetVideoCodecs(answerer_send_codecs,
                                                answerer_recv_codecs);
-  EXPECT_EQ(offerer_sendrecv_codecs,
-            codec_lookup_helper_offerer_.GetCodecVendor()
-                ->video_sendrecv_codecs()
-                .codecs());
+  EXPECT_THAT(codec_lookup_helper_offerer_.GetCodecVendor()
+                  ->video_sendrecv_codecs()
+                  .codecs(),
+              CodecListsMatch(offerer_sendrecv_codecs, &env_.field_trials()));
 
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MediaType::VIDEO, kVideoMid,

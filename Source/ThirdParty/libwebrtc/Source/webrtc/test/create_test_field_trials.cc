@@ -14,19 +14,22 @@
 
 #include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials.h"
 
 ABSL_FLAG(std::string,
           force_fieldtrials,
           "",
           "Field trials control experimental feature code which can be forced. "
-          "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enable/"
-          " will assign the group Enable to field trial WebRTC-FooFeature.");
+          "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enabled/"
+          " will assign the group Enabled to field trial WebRTC-FooFeature.");
 
 namespace webrtc {
 
 FieldTrials CreateTestFieldTrials(absl::string_view s) {
-  FieldTrials result(absl::GetFlag(FLAGS_force_fieldtrials));
+  AutoBypassTestEnvironmentCheck bypass;
+  FieldTrials result(absl::GetFlag(FLAGS_force_fieldtrials),
+                     /* is_test= */ true);
   result.Merge(FieldTrials(s));
   return result;
 }

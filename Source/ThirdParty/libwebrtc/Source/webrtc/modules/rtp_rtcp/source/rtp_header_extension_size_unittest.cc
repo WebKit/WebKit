@@ -9,22 +9,19 @@
  */
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 
+#include "api/rtp_header_extension_id.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "test/gtest.h"
 
+namespace webrtc {
 namespace {
 
-using ::webrtc::RtpExtensionSize;
-using ::webrtc::RtpHeaderExtensionMap;
-using ::webrtc::RtpHeaderExtensionSize;
-using ::webrtc::RtpMid;
-using ::webrtc::RtpStreamId;
 
 // id for 1-byte header extension. actual value is irrelevant for these tests.
-constexpr int kId = 1;
+constexpr RtpHeaderExtensionId kId(1);
 // id that forces to use 2-byte header extension.
-constexpr int kIdForceTwoByteHeader = 15;
+constexpr RtpHeaderExtensionId kIdForceTwoByteHeader(15);
 
 TEST(RtpHeaderExtensionSizeTest, ReturnsZeroIfNoExtensionsAreRegistered) {
   constexpr RtpExtensionSize kExtensionSizes[] = {
@@ -63,7 +60,7 @@ TEST(RtpHeaderExtensionSizeTest, SumsSeveralExtensions) {
       {.type = RtpStreamId::kId, .value_size = 2}};
   RtpHeaderExtensionMap registered;
   registered.Register<RtpMid>(kId);
-  registered.Register<RtpStreamId>(14);
+  registered.Register<RtpStreamId>(RtpHeaderExtensionId(14));
 
   // 4 bytes for extension block header + 18 bytes of value +
   // 2 bytes for two headers
@@ -88,8 +85,8 @@ TEST(RtpHeaderExtensionSizeTest, LargeValueForce2BytesHeader) {
       {.type = RtpMid::kId, .value_size = 17},
       {.type = RtpStreamId::kId, .value_size = 4}};
   RtpHeaderExtensionMap registered;
-  registered.Register<RtpMid>(1);
-  registered.Register<RtpStreamId>(2);
+  registered.Register<RtpMid>(RtpHeaderExtensionId(1));
+  registered.Register<RtpStreamId>(RtpHeaderExtensionId(2));
 
   // 4 bytes for extension block header + 21 bytes of value +
   // 2*2 bytes for two headers + 3 byte of padding.
@@ -97,3 +94,5 @@ TEST(RtpHeaderExtensionSizeTest, LargeValueForce2BytesHeader) {
 }
 
 }  // namespace
+
+}  // namespace webrtc

@@ -30,6 +30,7 @@
 #include "api/field_trials_view.h"
 #include "api/make_ref_counted.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/pending_task_safety_flag.h"
@@ -92,11 +93,7 @@ using test::GetGlobalMetricsLogger;
 using test::ImprovementDirection;
 using test::Unit;
 
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-};
-
-}  // namespace
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
 
 class CallPerfTest : public test::CallTest {
  public:
@@ -1081,4 +1078,5 @@ TEST_F(CallPerfTest, TestEncodeFramerateVp8SimulcastLowerInputFps) {
                       /*max_framerates=*/{14, 20});
 }
 
+}  // namespace
 }  // namespace webrtc

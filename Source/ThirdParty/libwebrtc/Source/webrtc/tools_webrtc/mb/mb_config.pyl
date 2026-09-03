@@ -73,9 +73,9 @@
       'Linux64 Release (Libfuzzer)': 'libfuzzer_asan_release_bot_x64',
 
       # Mac
-      'Mac Asan': 'mac_asan_clang_release_bot_x64',
-      'Mac64 Debug': 'debug_bot_x64',
-      'Mac64 Release': 'release_bot_x64',
+      'Mac Asan': 'mac_asan_clang_release_bot_arm64',
+      'Mac64 Debug': 'debug_bot_arm64',
+      'Mac64 Release': 'release_bot_arm64',
       'MacARM64 M1 Release': 'release_bot_arm64',
       'MacArm64 Builder': 'release_bot_arm64',
 
@@ -175,12 +175,12 @@
       'linux_x86_rel': 'release_bot_x86',
 
       # Mac
-      'mac_asan': 'mac_asan_clang_release_bot_x64',
-      'mac_compile_dbg': 'debug_bot_x64',
-      'mac_compile_rel': 'pure_release_bot_x64',
-      'mac_dbg': 'debug_bot_x64',
+      'mac_asan': 'mac_asan_clang_release_bot_arm64',
+      'mac_compile_dbg': 'debug_bot_arm64',
+      'mac_compile_rel': 'pure_release_bot_arm64',
+      'mac_dbg': 'debug_bot_arm64',
       'mac_dbg_m1': 'debug_bot_arm64',
-      'mac_rel': 'release_bot_x64',
+      'mac_rel': 'release_bot_arm64',
       'mac_rel_m1': 'release_bot_arm64',
 
       # Windows
@@ -319,12 +319,12 @@
       'x64',
     ],
     'libstdcpp_x64': ['debug_bot', 'x64', 'no_custom_libcxx'],
-    'mac_asan_clang_release_bot_x64': [
+    'mac_asan_clang_release_bot_arm64': [
       'asan',
       'clang',
       'openh264',
       'pure_release_bot',
-      'x64',
+      'arm64',
       'h265',
     ],
     'msan_clang_release_bot_x64':
@@ -341,6 +341,7 @@
     ],
     'perfetto_x64': ['x64', 'perfetto', 'release_bot'],
     'perfetto_x86': ['x86', 'perfetto', 'release_bot'],
+    'pure_release_bot_arm64': ['openh264', 'pure_release_bot', 'arm64', 'h265'],
     'pure_release_bot_x64': ['openh264', 'pure_release_bot', 'x64', 'h265'],
     'pure_release_bot_x86': ['openh264', 'pure_release_bot', 'x86', 'h265'],
     'release_bot_arm': ['openh264', 'release_bot', 'arm', 'h265'],

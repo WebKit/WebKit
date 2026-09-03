@@ -31,21 +31,23 @@
 namespace webrtc {
 
 // Deprecated, prefer SrtpCryptoSuiteToName.
+// https://www.iana.org/assignments/sdp-security-descriptions/sdp-security-descriptions.xhtml
 const char kCsAesCm128HmacSha1_80[] = "AES_CM_128_HMAC_SHA1_80";
 const char kCsAesCm128HmacSha1_32[] = "AES_CM_128_HMAC_SHA1_32";
 const char kCsAeadAes128Gcm[] = "AEAD_AES_128_GCM";
 const char kCsAeadAes256Gcm[] = "AEAD_AES_256_GCM";
 
+// https://www.iana.org/assignments/srtp-protection/srtp-protection.xhtml
 std::string SrtpCryptoSuiteToName(int crypto_suite) {
   switch (crypto_suite) {
     case kSrtpAes128CmSha1_80:
-      return "AES_CM_128_HMAC_SHA1_80";
+      return "SRTP_AES128_CM_HMAC_SHA1_80";
     case kSrtpAes128CmSha1_32:
-      return "AES_CM_128_HMAC_SHA1_32";
+      return "SRTP_AES128_CM_HMAC_SHA1_32";
     case kSrtpAeadAes128Gcm:
-      return "AEAD_AES_128_GCM";
+      return "SRTP_AEAD_AES_128_GCM";
     case kSrtpAeadAes256Gcm:
-      return "AEAD_AES_256_GCM";
+      return "SRTP_AEAD_AES_256_GCM";
     default:
       return std::string();
   }

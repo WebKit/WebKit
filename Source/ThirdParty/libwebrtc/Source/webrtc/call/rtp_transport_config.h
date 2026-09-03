@@ -14,6 +14,7 @@
 
 #include "api/environment/environment.h"
 #include "api/network_state_predictor.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
@@ -37,6 +38,8 @@ struct RtpTransportConfig {
 
   // Time window used for calculating how send packets are paced.
   TimeDelta default_pacing_time_window = PacerConfig::kDefaultTimeInterval;
+
+  TaskQueueBase* const worker_thread;
 };
 }  // namespace webrtc
 

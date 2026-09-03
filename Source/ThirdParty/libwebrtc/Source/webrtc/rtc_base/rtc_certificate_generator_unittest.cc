@@ -16,13 +16,11 @@
 #include <utility>
 
 #include "api/scoped_refptr.h"
-#include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/thread.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
 #include "test/wait_until.h"
@@ -98,9 +96,8 @@ TEST_F(RTCCertificateGeneratorTest, GenerateAsyncECDSA) {
   // posted to this thread (which is done by `EXPECT_TRUE_WAIT`).
   EXPECT_FALSE(fixture_.GenerateAsyncCompleted());
   EXPECT_FALSE(fixture_.certificate());
-  EXPECT_THAT(WaitUntil([&] { return fixture_.GenerateAsyncCompleted(); },
-                        ::testing::IsTrue(), {.timeout = kGenerationTimeoutMs}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return fixture_.GenerateAsyncCompleted(); },
+                        {.timeout = kGenerationTimeoutMs}));
   EXPECT_TRUE(fixture_.certificate());
 }
 
@@ -140,9 +137,8 @@ TEST_F(RTCCertificateGeneratorTest, GenerateWithInvalidParamsShouldFail) {
 
   fixture_.generator()->GenerateCertificateAsync(invalid_params, std::nullopt,
                                                  fixture_.OnGenerated());
-  EXPECT_THAT(WaitUntil([&] { return fixture_.GenerateAsyncCompleted(); },
-                        ::testing::IsTrue(), {.timeout = kGenerationTimeoutMs}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return fixture_.GenerateAsyncCompleted(); },
+                        {.timeout = kGenerationTimeoutMs}));
   EXPECT_FALSE(fixture_.certificate());
 }
 

@@ -68,6 +68,7 @@ class FakeSctpTransport : public webrtc::SctpTransportInternal {
   size_t buffered_amount(int sid) const override { return 0; }
   size_t buffered_amount_low_threshold(int sid) const override { return 0; }
   void SetBufferedAmountLowThreshold(int sid, size_t bytes) override {}
+  size_t EarlyReceivedPacketCountForTesting() const override { return 0; }
   int local_port() const {
     RTC_DCHECK(local_port_);
     return *local_port_;

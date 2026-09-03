@@ -59,6 +59,7 @@
 #include "rtc_base/stream.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/create_test_environment.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -127,13 +128,14 @@ class DtlsTestClient {
 
     CryptoOptions crypto_options;
     if (pqc_) {
-      FieldTrials field_trials("WebRTC-EnableDtlsPqc/Enabled/");
+      FieldTrials field_trials =
+          CreateTestFieldTrials("WebRTC-EnableDtlsPqc/Enabled/");
       crypto_options.ephemeral_key_exchange_cipher_groups.Update(&field_trials);
     }
 
     auto fake_ice_transport = std::make_unique<FakeIceTransportInternal>(
-        absl::StrCat("fake-", name_), 0,
-        /* network_thread= */ nullptr, /* field_trials_string= */ "");
+        env, absl::StrCat("fake-", name_), 0,
+        /* network_thread= */ nullptr);
     if (rtt_estimate) {
       fake_ice_transport->set_rtt_estimate(
           async_delay_ms_ ? std::optional<int>(async_delay_ms_) : std::nullopt,
@@ -179,6 +181,7 @@ class DtlsTestClient {
   }
 
   DtlsTransportInternalImpl* dtls_transport() { return dtls_transport_.get(); }
+  void ResetDtlsTransport() { dtls_transport_ = nullptr; }
 
   // Simulate fake ICE transports connecting.
   bool Connect(DtlsTestClient* peer, bool asymmetric) {
@@ -829,6 +832,22 @@ TEST_F(DtlsTransportInternalImplTest, TestSendSrtpBypassPacketWithOptions) {
   // Now check the sent packet info on client1.
   EXPECT_EQ(kFakePacketId, client1_.sent_packet().packet_id);
   EXPECT_GE(client1_.sent_packet().send_time_ms, 0);
+}
+
+TEST_F(DtlsTransportInternalImplTest,
+       DestructionDeregistersCallbacksFromIceTransport) {
+  PrepareDtls(KT_DEFAULT);
+  ASSERT_TRUE(Connect());
+  client1_.ResetDtlsTransport();
+  client1_.fake_ice_transport()->NotifyWritableState(
+      client1_.fake_ice_transport());
+  client1_.fake_ice_transport()->NotifyReceivingState(
+      client1_.fake_ice_transport());
+  client1_.fake_ice_transport()->NotifyReadyToSend(
+      client1_.fake_ice_transport());
+  client1_.fake_ice_transport()->NotifySentPacket(client1_.fake_ice_transport(),
+                                                  SentPacketInfo(0, 0));
+  client1_.fake_ice_transport()->NotifyNetworkRouteChanged(std::nullopt);
 }
 
 TEST_F(DtlsTransportInternalImplTest, TestWriteError) {
