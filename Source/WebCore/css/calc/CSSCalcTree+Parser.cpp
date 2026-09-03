@@ -1614,7 +1614,26 @@ std::optional<TypedChild> parseCalcNumber(const CSSParserToken& token, ParserSta
 
 std::optional<TypedChild> parseCalcPercentage(const CSSParserToken& token, ParserState& state)
 {
-    auto child = Percentage { .value = token.numericValue(), .hint = Type::determinePercentHint(state.parserOptions.category) };
+    auto category = state.parserOptions.category;
+
+    // Per https://drafts.csswg.org/css-values-4/#calc-context, percentages are
+    // only valid in calculation contexts that define how they resolve.
+    // Dimension types without a percentage variant (<length>, <angle>, <time>,
+    // <frequency>, <resolution>, <flex>) have no calculation context for
+    // percentages, so they must be rejected at parse time.
+    switch (category) {
+    case CSS::Category::Length:
+    case CSS::Category::Angle:
+    case CSS::Category::Time:
+    case CSS::Category::Frequency:
+    case CSS::Category::Resolution:
+    case CSS::Category::Flex:
+        return std::nullopt;
+    default:
+        break;
+    }
+
+    auto child = Percentage { .value = token.numericValue(), .hint = Type::determinePercentHint(category) };
     auto type = getType(child);
 
     return TypedChild { makeChild(WTF::move(child)), type };
