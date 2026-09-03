@@ -1,0 +1,4 @@
+
+PASS 'load' fires for each new external href, not only the first
+PASS 'load' fires after a prior external load failed and href was changed to a valid URL
+

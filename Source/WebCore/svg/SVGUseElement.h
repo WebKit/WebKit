@@ -81,6 +81,7 @@ private:
 
     Document* NODELETE externalDocument() const;
     void updateExternalDocument();
+    void resetLoadEventStatus();
 
     FloatRect getBBox(StyleUpdateStrategy = StyleUpdateStrategy::Allow) final;
 
