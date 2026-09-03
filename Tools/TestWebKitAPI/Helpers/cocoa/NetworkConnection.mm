@@ -126,11 +126,17 @@ void Connection::receiveHTTPMessagingRequest(CompletionHandler<void(HTTPRequestD
                         });
                         if (RetainPtr fields = adoptNS(nw_http_request_copy_header_fields(request.get()))) {
                             nw_http_fields_enumerate(fields.get(), ^bool(const char* name, size_t nameLength, const char* value, size_t valueLength) {
+                                String fieldName = String::fromUTF8(std::span(name, nameLength));
                                 String fieldValue = String::fromUTF8(std::span(value, valueLength));
-                                auto addResult = blockPartial.headerFields.add(String::fromUTF8(std::span(name, nameLength)), fieldValue);
-                                // RFC 7230 3.2.2: repeated fields with the same name are combined by joining with a comma.
-                                if (!addResult.isNewEntry)
-                                    addResult.iterator->value = makeString(addResult.iterator->value, ", "_s, fieldValue);
+                                auto addResult = blockPartial.headerFields.add(fieldName, fieldValue);
+                                if (!addResult.isNewEntry) {
+                                    // RFC 7540 8.1.2.5: cookie crumbling splits a single Cookie header into multiple
+                                    // header fields on the wire, which must be rejoined with "; " to reconstruct the
+                                    // original Cookie header value. All other repeated fields are combined per RFC
+                                    // 7230 3.2.2 by joining with a comma.
+                                    ASCIILiteral separator = fieldName == "cookie"_s ? "; "_s : ", "_s;
+                                    addResult.iterator->value = makeString(addResult.iterator->value, separator, fieldValue);
+                                }
                                 return true;
                             });
                         }
