@@ -65,17 +65,6 @@ private:
         template<typename> friend class InstructionStream;
 
     public:
-        BaseRef(const BaseRef<InstructionBuffer>& other)
-            : m_instructions(other.m_instructions)
-            ,  m_index(other.m_index)
-        { }
-
-        void operator=(const BaseRef<InstructionBuffer>& other)
-        {
-            m_instructions = other.m_instructions;
-            m_index = other.m_index;
-        }
-
         inline const InstructionType* operator->() const { return unwrap(); }
         inline const InstructionType* ptr() const { return unwrap(); }
 
@@ -94,11 +83,11 @@ private:
 
         bool isValid() const
         {
-            return m_index < m_instructions.size();
+            return m_index < m_instructions.get().size();
         }
 
     private:
-        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions[m_index]); }
+        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions.get()[m_index]); }
 
     protected:
         BaseRef(InstructionBuffer& instructions, size_t index)
@@ -106,7 +95,7 @@ private:
             , m_index(index)
         { }
 
-        InstructionBuffer& m_instructions;
+        std::reference_wrapper<InstructionBuffer> m_instructions;
         Offset m_index;
     };
 
@@ -133,8 +122,8 @@ public:
         }
 
     private:
-        inline InstructionType* unwrap() { return reinterpret_cast<InstructionType*>(&m_instructions[m_index]); }
-        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions[m_index]); }
+        inline InstructionType* unwrap() { return reinterpret_cast<InstructionType*>(&m_instructions.get()[m_index]); }
+        inline const InstructionType* unwrap() const { return reinterpret_cast<const InstructionType*>(&m_instructions.get()[m_index]); }
     };
 
 private:
