@@ -793,8 +793,12 @@ Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectFor
 
 Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL(CanvasRenderingContext& context)
 {
-    auto surfaceBuffer = context.compositingResultsNeedUpdating() ? CanvasRenderingContext::SurfaceBuffer::DrawingBuffer : CanvasRenderingContext::SurfaceBuffer::DisplayBufferForInspector;
-    return encodeDataURL(context.surfaceBufferToImageBuffer(surfaceBuffer), "image/png"_s);
+    RefPtr<NativeImage> image;
+    if (context.compositingResultsNeedUpdating())
+        image = context.canvasBase().copyNativeImage();
+    else
+        image = context.surfaceBufferToNativeImage(CanvasRenderingContext::SurfaceBuffer::DisplayBufferForInspector);
+    return encodeDataURL(WTF::move(image), "image/png"_s);
 }
 
 Inspector::Protocol::ErrorStringOr<String> InspectorCanvas::getContentAsDataURL()
