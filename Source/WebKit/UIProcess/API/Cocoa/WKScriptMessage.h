@@ -44,7 +44,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  @discussion Allowed types are NSNumber, NSString, NSDate, NSArray,
  NSDictionary, and NSNull.
  */
-@property (nonatomic, readonly, copy) id body;
+@property (nonatomic, readonly, nullable) id body;
 
 /*! @abstract The web view sending the message. */
 @property (nullable, nonatomic, readonly, weak) WKWebView *webView;
