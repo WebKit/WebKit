@@ -9630,7 +9630,8 @@ UseSystemAppearance:
 
 UseUIProcessForBackForwardItemLoading:
   type: bool
-  status: unstable
+  status: testable
+  category: security
   exposed: [ WebKit ]
   humanReadableName: "Use UIProcess for Back/Forward Item Loading"
   humanReadableDescription: "Enable UIProcess-side BackForwardListFrameItem lookup for child frames during Back/Forward navigation"
