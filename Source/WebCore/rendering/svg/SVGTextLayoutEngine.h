@@ -67,6 +67,7 @@ private:
     void NODELETE updateRelativePositionAdjustmentsIfNeeded(float dx, float dy);
 
     void recordTextFragment(InlineIterator::SVGTextBoxIterator, const Vector<SVGTextMetrics>&);
+    void computeCurrentFragmentMetrics(InlineIterator::SVGTextBoxIterator);
     bool parentDefinesTextLength(RenderObject*) const;
 
     void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const Style::ComputedStyle&);
