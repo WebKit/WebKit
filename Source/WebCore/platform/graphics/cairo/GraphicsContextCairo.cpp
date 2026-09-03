@@ -145,7 +145,7 @@ void GraphicsContextCairo::drawRect(const FloatRect& rect, float borderThickness
 void GraphicsContextCairo::drawNativeImage(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     auto& state = this->state();
-    Cairo::drawPlatformImage(*this, nativeImage.platformImage().get(), destRect, srcRect, { options, state.imageInterpolationQuality() }, state.alpha(), Cairo::ShadowState(state));
+    Cairo::drawPlatformImage(*this, nativeImage.platformImage().get(), destRect, srcRect, { options, imageInterpolationQualityForOptions(options) }, state.alpha(), Cairo::ShadowState(state));
 }
 
 // This is only used to draw borders, so we should not draw shadows.
@@ -372,7 +372,7 @@ void GraphicsContextCairo::drawPattern(const NativeImage& nativeImage, const Flo
     if (!patternTransform.isInvertible())
         return;
 
-    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, spacing, options);
+    Cairo::drawPattern(*this, nativeImage.platformImage().get(), nativeImage.size(), destRect, tileRect, patternTransform, phase, spacing, { options, imageInterpolationQualityForOptions(options) });
 }
 
 RenderingMode GraphicsContextCairo::renderingMode() const

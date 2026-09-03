@@ -95,6 +95,8 @@ ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const Fl
 {
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    if (options.interpolationQuality() != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(options.interpolationQuality());
     context.clip(dstRect);
     context.translate(dstRect.location());
     if (dstRect.size() != srcRect.size() && !srcRect.isEmpty())

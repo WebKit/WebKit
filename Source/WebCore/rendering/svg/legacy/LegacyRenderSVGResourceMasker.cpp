@@ -159,6 +159,8 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoContext(GraphicsContext& cont
     GraphicsContextStateSaver stateSaver(context);
 
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    if (options.interpolationQuality() != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(options.interpolationQuality());
 
     context.translate(destinationRect.location());
 

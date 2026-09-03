@@ -298,8 +298,8 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
     MonotonicTime startTime = MonotonicTime::now();
 #endif
 
-    auto shouldUseSubimage = [](CGInterpolationQuality interpolationQuality, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& transform) -> bool {
-        if (interpolationQuality == kCGInterpolationNone)
+    auto shouldUseSubimage = [](InterpolationQuality interpolationQuality, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& transform) -> bool {
+        if (interpolationQuality == InterpolationQuality::DoNotInterpolate)
             return false;
         if (transform.isRotateOrShear())
             return true;
@@ -349,12 +349,14 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
 
+    auto oldInterpolationQuality = imageInterpolationQuality();
+    auto interpolationQuality = imageInterpolationQualityForOptions(options);
+
     auto subImage = image;
 
     auto adjustedDestRect = normalizedDestRect;
 
     if (normalizedSrcRect != imageRect) {
-        CGInterpolationQuality interpolationQuality = CGContextGetInterpolationQuality(context);
         auto scale = normalizedDestRect.size() / normalizedSrcRect.size();
 
         if (shouldUseSubimage(interpolationQuality, normalizedDestRect, normalizedSrcRect, transform)) {
@@ -392,6 +394,9 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
     auto oldCompositeOperator = compositeOperation();
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
+
+    if (interpolationQuality != oldInterpolationQuality)
+        CGContextSetInterpolationQuality(context, toCGInterpolationQuality(interpolationQuality));
 
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
@@ -438,6 +443,8 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
+        if (interpolationQuality != oldInterpolationQuality)
+            CGContextSetInterpolationQuality(context, toCGInterpolationQuality(oldInterpolationQuality));
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
         CGContextSetContentToneMappingInfo(context, oldToneMappingInfo);
         CGContextSetEDRTargetHeadroom(context, oldHeadroom);
@@ -472,6 +479,10 @@ void GraphicsContextCG::drawPattern(const NativeImage& nativeImage, const FloatR
     CGContextClipToRect(context, destRect);
 
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
+
+    auto interpolationQuality = imageInterpolationQualityForOptions(options);
+    if (interpolationQuality != imageInterpolationQuality())
+        CGContextSetInterpolationQuality(context, toCGInterpolationQuality(interpolationQuality));
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);

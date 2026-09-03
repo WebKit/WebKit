@@ -141,6 +141,8 @@ ImageDrawResult CustomPaintImage::draw(GraphicsContext& destContext, const Float
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
+    if (options.interpolationQuality() != InterpolationQuality::Default)
+        destContext.setImageInterpolationQuality(options.interpolationQuality());
     destContext.clip(destRect);
     destContext.translate(destRect.location());
     if (destRect.size() != srcRect.size())

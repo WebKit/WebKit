@@ -140,6 +140,8 @@ ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, cons
 
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator());
+    if (options.interpolationQuality() != InterpolationQuality::Default)
+        context.setImageInterpolationQuality(options.interpolationQuality());
 
     context.clip(destinationRect);
 

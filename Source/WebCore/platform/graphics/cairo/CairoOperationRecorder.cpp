@@ -633,7 +633,7 @@ void OperationRecorder::drawNativeImage(const NativeImage& nativeImage, const Fl
     };
 
     auto& state = this->state();
-    append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
+    append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, imageInterpolationQualityForOptions(options)), state.alpha(), Cairo::ShadowState(state)));
 }
 
 void OperationRecorder::drawPattern(const NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)

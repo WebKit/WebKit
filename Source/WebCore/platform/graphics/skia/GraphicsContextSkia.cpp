@@ -329,14 +329,15 @@ void GraphicsContextSkia::drawNativeImage(const NativeImage& nativeImage, const 
     // However, if we have to make a raster copy (see the hasDropShadow() case below), then imageForDrawing will point to the raster copy instead.
     // This is the image we have to pass on to m_canvas.drawImageRect(...) below.
     auto* imageForDrawing = imageInThisThread.get();
+    auto samplingOptions = toSkSamplingOptions(imageInterpolationQualityForOptions(options));
 
     if (hasDropShadow()) {
         inExtraTransparencyLayer = drawOutsetShadow(paint, [&](const SkPaint& paint) {
-            m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
+            m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, samplingOptions, &paint, clampingConstraint);
         });
     }
 
-    m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, toSkSamplingOptions(m_state.imageInterpolationQuality()), &paint, clampingConstraint);
+    m_canvas.drawImageRect(imageForDrawing, normalizedSrcRect, normalizedDestRect, samplingOptions, &paint, clampingConstraint);
     if (inExtraTransparencyLayer)
         restoreLayer();
 
@@ -1151,7 +1152,7 @@ void GraphicsContextSkia::drawPattern(const NativeImage& nativeImage, const Floa
     SkMatrix phaseMatrix;
     phaseMatrix.setTranslate(phaseOffset.x(), phaseOffset.y());
     SkMatrix shaderMatrix = SkMatrix::Concat(phaseMatrix, patternTransform);
-    auto samplingOptions = toSkSamplingOptions(m_state.imageInterpolationQuality());
+    auto samplingOptions = toSkSamplingOptions(imageInterpolationQualityForOptions(options));
 
     SkPaint paint = createFillPaint();
     paint.setBlendMode(SkiaUtilities::toSkiaBlendMode(options.blendMode(), options.compositeOperator()));

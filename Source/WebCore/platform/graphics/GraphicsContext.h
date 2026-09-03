@@ -375,6 +375,15 @@ public:
 #endif
 
 protected:
+    // Returns the interpolation quality a draw operation should use. InterpolationQuality::Default
+    // in the options means the context image interpolation quality is used.
+    InterpolationQuality imageInterpolationQualityForOptions(ImagePaintingOptions options) const
+    {
+        if (options.interpolationQuality() == InterpolationQuality::Default)
+            return imageInterpolationQuality();
+        return options.interpolationQuality();
+    }
+
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
