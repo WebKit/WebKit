@@ -7007,9 +7007,12 @@ void HTMLMediaElement::scheduleUpdateAcceleratedRenderingState()
 
 void HTMLMediaElement::checkForAudioAndVideo()
 {
+    bool hadAudio = m_hasEverHadAudio;
+    bool hadVideo = m_hasEverHadVideo;
     m_hasEverHadAudio |= hasAudio();
     m_hasEverHadVideo |= hasVideo();
-    canProduceAudioChanged();
+    if (m_hasEverHadAudio != hadAudio || m_hasEverHadVideo != hadVideo)
+        canProduceAudioChanged();
 }
 
 void HTMLMediaElement::setPlaying(bool playing)
