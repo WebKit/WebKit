@@ -1,0 +1,10 @@
+
+PASS Set leftmargin first, then marginwidth — marginwidth takes precedence
+PASS Set marginwidth first, then leftmargin — marginwidth still takes precedence
+PASS Remove marginwidth — leftmargin takes effect again
+PASS Set topmargin first, then marginheight — marginheight takes precedence
+PASS Set marginheight first, then topmargin — marginheight still takes precedence
+PASS Remove marginheight — topmargin takes effect again
+PASS rightmargin attribute is ignored (not in spec)
+PASS bottommargin attribute is ignored (not in spec)
+
