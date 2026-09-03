@@ -88,6 +88,7 @@ public:
     void inspectedFrameDestroyed();
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+    WebInjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager.get(); }
 
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;

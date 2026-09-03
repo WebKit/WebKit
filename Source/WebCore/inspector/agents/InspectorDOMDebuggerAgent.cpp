@@ -32,18 +32,23 @@
 #include "config.h"
 #include "InspectorDOMDebuggerAgent.h"
 
+#include "Document.h"
 #include "Event.h"
 #include "EventTarget.h"
+#include "FrameDebuggerAgent.h"
+#include "FrameInspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapperCache.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
+#include "LocalFrame.h"
 #include "RegisteredEventListener.h"
 #include "ResourceRequest.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptExecutionContext.h"
+#include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -69,6 +74,37 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, I
 }
 
 InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent() = default;
+
+// FIXME: <https://webkit.org/b/298981> Remove once DOMDebugger is served by a frame target agent.
+// Under frame targets PageDebugger is attached to nothing, so pauses scheduled on the page's debugger
+// agent are silently dropped; the frame's FrameDebugger is the attached one.
+Inspector::InspectorDebuggerAgent* InspectorDOMDebuggerAgent::pausingDebuggerAgentForFrame(LocalFrame* frame) const
+{
+    if (frame) {
+        if (auto* frameDebuggerAgent = frame->inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
+            return frameDebuggerAgent;
+    }
+    return m_debuggerAgent;
+}
+
+Inspector::InspectorDebuggerAgent* InspectorDOMDebuggerAgent::pausingDebuggerAgent(ScriptExecutionContext& context) const
+{
+    RefPtr document = dynamicDowncast<Document>(context);
+    return pausingDebuggerAgentForFrame(document ? document->frame() : nullptr);
+}
+
+// `$event` is read back by evaluateOnCallFrame on the paused call frame's target, so it must be written
+// to that target's manager; FrameInspectorController owns one separate from the page's.
+Inspector::InjectedScriptManager& InspectorDOMDebuggerAgent::injectedScriptManagerForContext(ScriptExecutionContext& context) const
+{
+    if (RefPtr document = dynamicDowncast<Document>(context)) {
+        if (RefPtr frame = document->frame()) {
+            if (frame->inspectorController().instrumentingAgents().enabledFrameDebuggerAgent())
+                return frame->inspectorController().injectedScriptManager();
+        }
+    }
+    return m_injectedScriptManager.get();
+}
 
 bool InspectorDOMDebuggerAgent::enabled() const
 {
@@ -276,7 +312,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
     // `scriptExecutionContext` parameter will always match in companion calls to `willHandleEvent` and
     // `didHandleEvent`, and will not be null.
     auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
-    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
+    auto injectedScript = injectedScriptManagerForContext(scriptExecutionContext).injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
 
@@ -287,7 +323,8 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
         injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
     }
 
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     Ref agents = m_instrumentingAgents.get();
@@ -316,7 +353,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }
 
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
+    debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
 }
 
 void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
@@ -325,18 +362,29 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     // could also be nullptr. The passed `scriptExecutionContext` parameter here will always match in companion calls to
     // `willHandleEvent` and `didHandleEvent`, and will not be null.
     auto state = globalObjectFor(scriptExecutionContext, registeredEventListener.callback());
-    auto injectedScript = m_injectedScriptManager->injectedScriptFor(state);
+    auto injectedScript = injectedScriptManagerForContext(scriptExecutionContext).injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
 
-    // Clear Web Inspector console command line `$event` getter.
+    // Clear Web Inspector console command line `$event` getter. As with the cancel below, the frame's
+    // Debugger domain may have been enabled since willHandleEvent resolved a manager, so clear both
+    // candidates rather than leaking a stale event object past the dispatch.
     {
         JSC::JSLockHolder lock(state);
 
         injectedScript.clearEventValue();
+
+        auto pageInjectedScript = m_injectedScriptManager->injectedScriptFor(state);
+        if (!pageInjectedScript.hasNoValue())
+            pageInjectedScript.clearEventValue();
     }
 
-    if (!m_debuggerAgent->breakpointsActive())
+    // The frame's Debugger domain can be enabled between will/did (an iframe created from a listener
+    // reaches Debugger.enable), so cancel on both candidates; an uncancelled arm wedges that debugger
+    // for good. Cancelling an agent that never armed this breakpoint is a no-op.
+    auto* debuggerAgent = pausingDebuggerAgent(scriptExecutionContext);
+    auto* fallbackDebuggerAgent = m_debuggerAgent != debuggerAgent ? m_debuggerAgent : nullptr;
+    if (!debuggerAgent->breakpointsActive() && !(fallbackDebuggerAgent && fallbackDebuggerAgent->breakpointsActive()))
         return;
 
     auto breakpoint = m_pauseOnAllListenersBreakpoint;
@@ -357,12 +405,15 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    if (fallbackDebuggerAgent)
+        fallbackDebuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
-void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
+void InspectorDOMDebuggerAgent::willFireTimer(ScriptExecutionContext& context, bool oneShot)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgent(context);
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     auto breakpoint = oneShot ? m_pauseOnAllTimeoutsBreakpoint : m_pauseOnAllIntervalsBreakpoint;
@@ -370,56 +421,67 @@ void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
         return;
 
     auto breakReason = oneShot ? Inspector::DebuggerFrontendDispatcher::Reason::Timeout : Inspector::DebuggerFrontendDispatcher::Reason::Interval;
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, breakReason);
+    debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, breakReason);
 }
 
-void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
+void InspectorDOMDebuggerAgent::didFireTimer(ScriptExecutionContext& context, bool oneShot)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    // See didHandleEvent: the resolved agent can differ from the one willFireTimer armed.
+    auto* debuggerAgent = pausingDebuggerAgent(context);
+    auto* fallbackDebuggerAgent = m_debuggerAgent != debuggerAgent ? m_debuggerAgent : nullptr;
+    if (!debuggerAgent->breakpointsActive() && !(fallbackDebuggerAgent && fallbackDebuggerAgent->breakpointsActive()))
         return;
 
     auto breakpoint = oneShot ? m_pauseOnAllTimeoutsBreakpoint : m_pauseOnAllIntervalsBreakpoint;
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    if (fallbackDebuggerAgent)
+        fallbackDebuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
-void InspectorDOMDebuggerAgent::willFireAnimationFrame()
+void InspectorDOMDebuggerAgent::willFireAnimationFrame(ScriptExecutionContext& context)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgent(context);
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
+    debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
 }
 
-void InspectorDOMDebuggerAgent::didFireAnimationFrame()
+void InspectorDOMDebuggerAgent::didFireAnimationFrame(ScriptExecutionContext& context)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    // See didHandleEvent: the resolved agent can differ from the one willFireAnimationFrame armed.
+    auto* debuggerAgent = pausingDebuggerAgent(context);
+    auto* fallbackDebuggerAgent = m_debuggerAgent != debuggerAgent ? m_debuggerAgent : nullptr;
+    if (!debuggerAgent->breakpointsActive() && !(fallbackDebuggerAgent && fallbackDebuggerAgent->breakpointsActive()))
         return;
 
     auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    if (fallbackDebuggerAgent)
+        fallbackDebuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
-void InspectorDOMDebuggerAgent::willSendRequest(ResourceRequest& request)
+void InspectorDOMDebuggerAgent::willSendRequest(LocalFrame* frame, ResourceRequest& request)
 {
     if (request.requester() == ResourceRequestRequester::XHR || request.requester() == ResourceRequestRequester::Fetch)
         return;
 
-    breakOnURLIfNeeded(request.url().string());
+    breakOnURLIfNeeded(frame, request.url().string());
 }
 
-void InspectorDOMDebuggerAgent::willSendRequestOfType(ResourceRequest& request)
+void InspectorDOMDebuggerAgent::willSendRequestOfType(LocalFrame* frame, ResourceRequest& request)
 {
-    willSendRequest(request);
+    willSendRequest(frame, request);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
@@ -462,9 +524,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBre
     return { };
 }
 
-void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
+void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(LocalFrame* frame, const String& url)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgentForFrame(frame);
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     // FIXME: <https://webkit.org/b/245053> Web Inspector: URL breakpoints should still be able to pause when script is disallowed
@@ -488,17 +551,19 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("breakpointURL"_s, breakpointURL);
     eventData->setString("url"_s, url);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::URL, WTF::move(eventData), WTF::move(breakpoint));
+    debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::URL, WTF::move(eventData), WTF::move(breakpoint));
 }
 
-void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
+void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(ScriptExecutionContext& context, const String& url)
 {
-    breakOnURLIfNeeded(url);
+    RefPtr document = dynamicDowncast<Document>(context);
+    breakOnURLIfNeeded(document ? document->frame() : nullptr, url);
 }
 
-void InspectorDOMDebuggerAgent::willFetch(const String& url)
+void InspectorDOMDebuggerAgent::willFetch(ScriptExecutionContext& context, const String& url)
 {
-    breakOnURLIfNeeded(url);
+    RefPtr document = dynamicDowncast<Document>(context);
+    breakOnURLIfNeeded(document ? document->frame() : nullptr, url);
 }
 
 bool InspectorDOMDebuggerAgent::EventBreakpoint::matches(const String& eventName)
