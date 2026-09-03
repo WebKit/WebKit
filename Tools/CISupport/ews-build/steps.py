@@ -3745,7 +3745,11 @@ class RunJavaScriptCoreTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, Sh
         # only stress failures, so the database holds no binary-test row to match one against.
         checked = stress_test_failures[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
         unexplained = [test for test in checked if test in self.stressTestFailures_filtered]
-        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(unexplained, configuration=configuration, suite='javascriptcore-tests')
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(
+            unexplained, configuration=configuration, suite='javascriptcore-tests',
+            authors=self.getProperty('owners', []),
+            pr_number=self.getProperty('github.number', None),
+        )
         if flake_logs:
             yield self._addToLog(self.results_db_log_name, flake_logs)
 

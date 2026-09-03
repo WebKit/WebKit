@@ -2297,7 +2297,22 @@ class TestFilterJSCTestFailuresUsingResultsDB(BuildStepMixinAdditions, unittest.
         self.assertEqual(tests, [
             'stress/force-error.js.bytecode-cache', 'stress/dfg-osr-entry-hoisted-clobber.js.default',
         ])
-        self.assertEqual(kwargs, {'configuration': {'platform': 'mac', 'style': 'release'}, 'suite': 'javascriptcore-tests'})
+        self.assertEqual(kwargs, {
+            'configuration': {'platform': 'mac', 'style': 'release'}, 'suite': 'javascriptcore-tests',
+            'authors': [], 'pr_number': None,
+        })
+
+    @defer.inlineCallbacks
+    def test_the_jsc_read_forwards_the_change_identity(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(set())
+        self.setProperty('owners', ['jappleseed'])
+        self.setProperty('github.number', 42)
+
+        yield step.filter_failures_using_results_db(['stress/force-error.js.bytecode-cache'], ['testapi'])
+
+        self.assertEqual(len(self.flake_queries), 1)
+        _, kwargs = self.flake_queries[0]
+        self.assertEqual((kwargs['authors'], kwargs['pr_number']), (['jappleseed'], 42))
 
     @defer.inlineCallbacks
     def test_caps_the_number_of_flake_verdict_queries(self) -> Generator[Any, Any, None]:
