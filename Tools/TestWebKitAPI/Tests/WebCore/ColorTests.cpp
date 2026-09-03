@@ -324,7 +324,7 @@ TEST(Color, MoveConstructor)
     EXPECT_FALSE(c1.isValid());
 
     auto [colorSpace, components] = c2.colorSpaceAndResolvedColorComponents();
-    EXPECT_EQ(colorSpace, ColorSpace::DisplayP3);
+    EXPECT_EQ(colorSpace, ColorSpaceName::DisplayP3);
 
     auto [r, g, b, alpha] = components;
 
@@ -356,7 +356,7 @@ TEST(Color, MoveAssignment)
     EXPECT_FALSE(c1.isValid());
 
     auto [colorSpace, components] = c2.colorSpaceAndResolvedColorComponents();
-    EXPECT_EQ(colorSpace, ColorSpace::DisplayP3);
+    EXPECT_EQ(colorSpace, ColorSpaceName::DisplayP3);
 
     auto [r, g, b, alpha] = components;
 
@@ -437,7 +437,7 @@ TEST(Color, ColorWithAlphaMultipliedBy)
     {
         Color colorWithAlphaMultipliedBy = color.colorWithAlphaMultipliedBy(0.5);
         auto [colorSpace, components] = colorWithAlphaMultipliedBy.colorSpaceAndResolvedColorComponents();
-        EXPECT_EQ(colorSpace, ColorSpace::SRGB);
+        EXPECT_EQ(colorSpace, ColorSpaceName::SRGB);
         auto [r, g, b, a] = components;
         EXPECT_FLOAT_EQ(r, 0.);
         EXPECT_FLOAT_EQ(g, 0.);
@@ -448,7 +448,7 @@ TEST(Color, ColorWithAlphaMultipliedBy)
     {
         Color colorWithAlphaMultipliedBy = color.colorWithAlphaMultipliedBy(0.);
         auto [colorSpace, components] = colorWithAlphaMultipliedBy.colorSpaceAndResolvedColorComponents();
-        EXPECT_EQ(colorSpace, ColorSpace::SRGB);
+        EXPECT_EQ(colorSpace, ColorSpaceName::SRGB);
         auto [r, g, b, a] = components;
         EXPECT_FLOAT_EQ(r, 0.);
         EXPECT_FLOAT_EQ(g, 0.);

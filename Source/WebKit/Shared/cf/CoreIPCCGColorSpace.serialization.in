@@ -46,6 +46,6 @@ webkit_platform_headers: "CoreIPCCGColorSpace.h"
     WebKit::CGColorSpaceSerialization m_cgColorSpace;
 }
 
-using WebKit::CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
+using WebKit::CGColorSpaceSerialization = Variant<WebCore::ColorSpaceName, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
 
 #endif

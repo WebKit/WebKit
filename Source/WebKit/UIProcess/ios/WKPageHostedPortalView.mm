@@ -263,7 +263,7 @@
 
         if (backgroundColor && backgroundColor->isValid()) {
             auto opaqueColor = backgroundColor->opaqueColor();
-            auto [r, g, b, a] = opaqueColor.toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::LinearSRGB);
+            auto [r, g, b, a] = opaqueColor.toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::LinearSRGB);
             clearColorComponents = simd_make_float3(r, g, b);
             RELEASE_LOG_INFO(ModelElement, "WKPageHostedPortalView applyBackgroundColor: %f, %f, %f (%@)", clearColorComponents.x, clearColorComponents.y, clearColorComponents.z, self);
         }

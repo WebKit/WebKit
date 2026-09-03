@@ -175,45 +175,45 @@ String serializationForRenderTreeAsText(const Color& color)
     });
 }
 
-ASCIILiteral serialization(ColorSpace colorSpace)
+ASCIILiteral serialization(ColorSpaceName colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::A98RGB:
-    case ColorSpace::ExtendedA98RGB:
+    case ColorSpaceName::A98RGB:
+    case ColorSpaceName::ExtendedA98RGB:
         return "a98-rgb"_s;
-    case ColorSpace::DisplayP3:
-    case ColorSpace::ExtendedDisplayP3:
+    case ColorSpaceName::DisplayP3:
+    case ColorSpaceName::ExtendedDisplayP3:
         return "display-p3"_s;
-    case ColorSpace::HSL:
+    case ColorSpaceName::HSL:
         return "hsl"_s;
-    case ColorSpace::HWB:
+    case ColorSpaceName::HWB:
         return "hwb"_s;
-    case ColorSpace::LCH:
+    case ColorSpaceName::LCH:
         return "lch"_s;
-    case ColorSpace::Lab:
+    case ColorSpaceName::Lab:
         return "lab"_s;
-    case ColorSpace::LinearDisplayP3:
-    case ColorSpace::ExtendedLinearDisplayP3:
+    case ColorSpaceName::LinearDisplayP3:
+    case ColorSpaceName::ExtendedLinearDisplayP3:
         return "display-p3-linear"_s;
-    case ColorSpace::LinearSRGB:
-    case ColorSpace::ExtendedLinearSRGB:
+    case ColorSpaceName::LinearSRGB:
+    case ColorSpaceName::ExtendedLinearSRGB:
         return "srgb-linear"_s;
-    case ColorSpace::OKLCH:
+    case ColorSpaceName::OKLCH:
         return "oklch"_s;
-    case ColorSpace::OKLab:
+    case ColorSpaceName::OKLab:
         return "oklab"_s;
-    case ColorSpace::ProPhotoRGB:
-    case ColorSpace::ExtendedProPhotoRGB:
+    case ColorSpaceName::ProPhotoRGB:
+    case ColorSpaceName::ExtendedProPhotoRGB:
         return "prophoto-rgb"_s;
-    case ColorSpace::Rec2020:
-    case ColorSpace::ExtendedRec2020:
+    case ColorSpaceName::Rec2020:
+    case ColorSpaceName::ExtendedRec2020:
         return "rec2020"_s;
-    case ColorSpace::SRGB:
-    case ColorSpace::ExtendedSRGB:
+    case ColorSpaceName::SRGB:
+    case ColorSpaceName::ExtendedSRGB:
         return "srgb"_s;
-    case ColorSpace::XYZ_D50:
+    case ColorSpaceName::XYZ_D50:
         return "xyz-d50"_s;
-    case ColorSpace::XYZ_D65:
+    case ColorSpaceName::XYZ_D65:
         return "xyz-d65"_s;
     }
 

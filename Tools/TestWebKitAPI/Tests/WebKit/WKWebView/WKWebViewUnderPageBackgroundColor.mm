@@ -50,7 +50,7 @@ static RetainPtr<CGColor> defaultBackgroundColor()
 #endif
 
     // Some of the above can sometimes be a monochrome color, so convert it to sRGB so the comparisons below work.
-    // `WebCore::ColorSpace` doesn't have an equivalent monochrome enum value, but treats `CGColor` with only two components as monochrome and converts them to `SRGB`.
+    // `WebCore::ColorSpaceName` doesn't have an equivalent monochrome enum value, but treats `CGColor` with only two components as monochrome and converts them to `SRGB`.
     RetainPtr sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     RetainPtr sRGBColor = adoptCF(CGColorCreateCopyByMatchingToColorSpace(sRGBColorSpace.get(), kCGRenderingIntentDefault, [color CGColor], NULL));
     return sRGBColor.get();

@@ -250,7 +250,7 @@ const aliases = {
 // which IPC.serializedSRGBColorSpace() obtains from the real serializer.
 export function sRGBColorSpace() {
     if ('WebKit::CoreIPCCGColorSpace' in CoreIPC.typeInfo)
-        return { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } }; // WebCore::ColorSpace::SRGB
+        return { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpaceName', variant: 19 } } } } } }; // WebCore::ColorSpaceName::SRGB
 
     if ('sk_sp<SkColorSpace>' in CoreIPC.typeInfo)
         return { serializableColorSpace: { alias: { dataReference: IPC.serializedSRGBColorSpace() } } };

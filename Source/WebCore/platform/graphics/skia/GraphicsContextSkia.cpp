@@ -70,20 +70,20 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-static sk_sp<SkColorSpace> skColorSpaceForColorSpace(ColorSpace colorSpace)
+static sk_sp<SkColorSpace> skColorSpaceForColorSpace(ColorSpaceName colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::SRGB:
+    case ColorSpaceName::SRGB:
         return sRGBColorSpaceSingleton();
-    case ColorSpace::LinearSRGB:
-    case ColorSpace::ExtendedLinearSRGB:
+    case ColorSpaceName::LinearSRGB:
+    case ColorSpaceName::ExtendedLinearSRGB:
         return linearSRGBColorSpaceSingleton();
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-    case ColorSpace::DisplayP3:
-    case ColorSpace::ExtendedDisplayP3:
+    case ColorSpaceName::DisplayP3:
+    case ColorSpaceName::ExtendedDisplayP3:
         return displayP3ColorSpaceSingleton();
-    case ColorSpace::LinearDisplayP3:
-    case ColorSpace::ExtendedLinearDisplayP3:
+    case ColorSpaceName::LinearDisplayP3:
+    case ColorSpaceName::ExtendedLinearDisplayP3:
         return linearDisplayP3ColorSpaceSingleton();
 #endif
     default:

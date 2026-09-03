@@ -1111,7 +1111,7 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
 
     if (reasons.contains(CompositionReason::AsyncScrolling)) {
         if (backgroundColor) {
-            auto [r, g, b, a] = backgroundColor->toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::SRGB);
+            auto [r, g, b, a] = backgroundColor->toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::SRGB);
             glClearColor(r, g, b, a);
         } else
             glClearColor(1, 1, 1, 1);

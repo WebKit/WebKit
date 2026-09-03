@@ -91,7 +91,7 @@ AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& fram
     , m_useExplicitSync(useExplicitSync())
 {
     auto color = webPage.backgroundColor();
-    m_backgroundColor = color ? color->toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::SRGB) : white;
+    m_backgroundColor = color ? color->toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::SRGB) : white;
 
 #if USE(WPE_RENDERER)
     if (m_swapChain.type() == SwapChain::Type::WPEBackend)
@@ -326,7 +326,7 @@ void AcceleratedSurface::backgroundColorDidChange()
     const auto& color = m_webPage->backgroundColor();
 
     bool wasOpaque = isColorOpaque(m_backgroundColor);
-    m_backgroundColor = color ? color->toResolvedColorComponentsInColorSpace(WebCore::ColorSpace::SRGB) : white;
+    m_backgroundColor = color ? color->toResolvedColorComponentsInColorSpace(WebCore::ColorSpaceName::SRGB) : white;
     bool isOpaque = isColorOpaque(m_backgroundColor);
 
     if (isOpaque == wasOpaque)

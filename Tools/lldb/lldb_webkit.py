@@ -723,7 +723,7 @@ class WebCoreColorProvider:
 
         color_space = self._color_space(rgba_and_flags)
 
-        # From ColorSpace.h.
+        # From ColorSpaceName.h.
         color_spaces = [
             'A98RGB',
             'DisplayP3',

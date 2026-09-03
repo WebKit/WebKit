@@ -27,7 +27,7 @@
 #pragma once
 
 #include <WebCore/ColorConversion.h>
-#include <WebCore/ColorSpace.h>
+#include <WebCore/ColorSpaceName.h>
 #include <WebCore/ColorUtilities.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
@@ -52,7 +52,7 @@ namespace WebCore {
 class DestinationColorSpace;
 
 struct OutOfLineColorDataForIPC {
-    ColorSpace colorSpace;
+    ColorSpaceName colorSpace;
     float c1;
     float c2;
     float c3;
@@ -108,7 +108,7 @@ public:
     bool isSemantic() const;
     bool usesColorFunctionSerialization() const;
 
-    ColorSpace colorSpace() const;
+    ColorSpaceName colorSpace() const;
     WEBCORE_EXPORT std::optional<ColorDataForIPC> data() const;
 
     bool isOpaque() const { return isOutOfLine() ? asOutOfLine().resolvedAlpha() == 1.0 : asInline().resolved().alpha == 255; }
@@ -132,10 +132,10 @@ public:
     // from the underlying type into any analogous components in ColorType.
     template<typename ColorType> ColorType toColorTypeLossyCarryingForwardMissing() const;
 
-    WEBCORE_EXPORT ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpace) const;
+    WEBCORE_EXPORT ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(ColorSpaceName) const;
     ColorComponents<float, 4> toResolvedColorComponentsInColorSpace(const DestinationColorSpace&) const;
 
-    WEBCORE_EXPORT std::pair<ColorSpace, ColorComponents<float, 4>> colorSpaceAndResolvedColorComponents() const;
+    WEBCORE_EXPORT std::pair<ColorSpaceName, ColorComponents<float, 4>> colorSpaceAndResolvedColorComponents() const;
 
     WEBCORE_EXPORT Color lightened() const;
     WEBCORE_EXPORT Color darkened() const;
@@ -233,7 +233,7 @@ private:
 
         ColorComponents<float, 4> m_components;
     };
-    Color(Ref<OutOfLineComponents>&&, ColorSpace, OptionSet<Flags> = { });
+    Color(Ref<OutOfLineComponents>&&, ColorSpaceName, OptionSet<Flags> = { });
 
 #if USE(CG)
     WEBCORE_EXPORT static Color createAndLosslesslyConvertToSupportedColorSpace(CGColorRef, OptionSet<Flags> = { });
@@ -256,7 +256,7 @@ private:
     bool isInline() const;
 
     void setColor(SRGBA<uint8_t>, OptionSet<FlagsIncludingPrivate> = { });
-    void setOutOfLineComponents(Ref<OutOfLineComponents>&&, ColorSpace, OptionSet<FlagsIncludingPrivate> = { });
+    void setOutOfLineComponents(Ref<OutOfLineComponents>&&, ColorSpaceName, OptionSet<FlagsIncludingPrivate> = { });
 
     SRGBA<uint8_t> asInline() const;
     PackedColor::RGBA asPackedInline() const;
@@ -271,18 +271,18 @@ private:
     static constexpr uint64_t colorValueMask = (1ULL << maxNumberOfBitsInPointer) - 1;
     static constexpr uint64_t flagsSize = sizeof(FlagsIncludingPrivate) * 8;
     static constexpr uint64_t flagsShift = maxNumberOfBitsInPointer;
-    static constexpr uint64_t colorSpaceSize = sizeof(ColorSpace) * 8;
+    static constexpr uint64_t colorSpaceSize = sizeof(ColorSpaceName) * 8;
     static constexpr uint64_t colorSpaceShift = flagsShift + flagsSize;
     static_assert(flagsSize + colorSpaceSize + maxNumberOfBitsInPointer <= 64);
 
     static uint64_t encodedFlags(OptionSet<FlagsIncludingPrivate>);
-    static uint64_t encodedColorSpace(ColorSpace);
+    static uint64_t encodedColorSpace(ColorSpaceName);
     static uint64_t encodedInlineColor(SRGBA<uint8_t>);
     static uint64_t encodedPackedInlineColor(PackedColor::RGBA);
     static uint64_t encodedOutOfLineComponents(Ref<OutOfLineComponents>&&);
 
     static OptionSet<FlagsIncludingPrivate> decodedFlags(uint64_t);
-    static ColorSpace decodedColorSpace(uint64_t);
+    static ColorSpaceName decodedColorSpace(uint64_t);
     static SRGBA<uint8_t> decodedInlineColor(uint64_t);
     static PackedColor::RGBA decodedPackedInlineColor(uint64_t);
     static OutOfLineComponents& decodedOutOfLineComponents(uint64_t);
@@ -308,7 +308,7 @@ bool outOfLineComponentsEqualIgnoringSemanticColor(const Color&, const Color&);
 #if USE(CG)
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColor(const Color&);
 WEBCORE_EXPORT RetainPtr<CGColorRef> cachedCGColorInDestinationStandardRange(const Color&, const DestinationColorSpace&);
-WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpace, ColorComponents<float, 4>, const DestinationColorSpace&);
+WEBCORE_EXPORT ColorComponents<float, 4> platformConvertColorComponents(ColorSpaceName, ColorComponents<float, 4>, const DestinationColorSpace&);
 WEBCORE_EXPORT std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef);
 #endif
 
@@ -376,7 +376,7 @@ inline Color::Color(const std::optional<ColorType>& color, OptionSet<Flags> flag
         setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(color->unresolved())), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
 }
 
-inline Color::Color(Ref<OutOfLineComponents>&& outOfLineComponents, ColorSpace colorSpace, OptionSet<Flags> flags)
+inline Color::Color(Ref<OutOfLineComponents>&& outOfLineComponents, ColorSpaceName colorSpace, OptionSet<Flags> flags)
 {
     setOutOfLineComponents(WTF::move(outOfLineComponents), colorSpace, toFlagsIncludingPrivate(flags));
 }
@@ -439,7 +439,7 @@ inline Color::~Color()
     secureZeroBytes(m_colorAndFlags);
 }
 
-inline ColorSpace Color::colorSpace() const
+inline ColorSpaceName Color::colorSpace() const
 {
     return decodedColorSpace(m_colorAndFlags);
 }
@@ -579,7 +579,7 @@ inline uint64_t Color::encodedFlags(OptionSet<FlagsIncludingPrivate> flags)
     return static_cast<uint64_t>(flags.toRaw()) << flagsShift;
 }
 
-inline uint64_t Color::encodedColorSpace(ColorSpace colorSpace)
+inline uint64_t Color::encodedColorSpace(ColorSpaceName colorSpace)
 {
     return static_cast<uint64_t>(colorSpace) << colorSpaceShift;
 }
@@ -608,9 +608,9 @@ inline OptionSet<Color::FlagsIncludingPrivate> Color::decodedFlags(uint64_t valu
     return OptionSet<Color::FlagsIncludingPrivate>::fromRaw(static_cast<uint8_t>(value >> flagsShift));
 }
 
-inline ColorSpace Color::decodedColorSpace(uint64_t value)
+inline ColorSpaceName Color::decodedColorSpace(uint64_t value)
 {
-    return static_cast<ColorSpace>(static_cast<uint8_t>(value >> colorSpaceShift));
+    return static_cast<ColorSpaceName>(static_cast<uint8_t>(value >> colorSpaceShift));
 }
 
 inline SRGBA<uint8_t> Color::decodedInlineColor(uint64_t value)
@@ -635,11 +635,11 @@ inline Color::OutOfLineComponents& Color::decodedOutOfLineComponents(uint64_t va
 inline void Color::setColor(SRGBA<uint8_t> color, OptionSet<FlagsIncludingPrivate> flags)
 {
     flags.add({ FlagsIncludingPrivate::Valid });
-    m_colorAndFlags = encodedInlineColor(color) | encodedColorSpace(ColorSpace::SRGB) | encodedFlags(flags);
+    m_colorAndFlags = encodedInlineColor(color) | encodedColorSpace(ColorSpaceName::SRGB) | encodedFlags(flags);
     ASSERT(isInline());
 }
 
-inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, ColorSpace colorSpace, OptionSet<FlagsIncludingPrivate> flags)
+inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, ColorSpaceName colorSpace, OptionSet<FlagsIncludingPrivate> flags)
 {
     flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::OutOfLine });
     m_colorAndFlags = encodedOutOfLineComponents(WTF::move(color)) | encodedColorSpace(colorSpace) | encodedFlags(flags);

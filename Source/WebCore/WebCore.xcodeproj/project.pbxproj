@@ -3845,7 +3845,7 @@
 		937FF3D51A1012D6008EBA31 /* DictionaryLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = 937FF3D41A1012D6008EBA31 /* DictionaryLookup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9382AAB40D8C386100F357A6 /* NodeWithIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382AAB10D8C386100F357A6 /* NodeWithIndex.h */; };
-		9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382DF5710A8D5C900925652 /* ColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9382DF5810A8D5C900925652 /* ColorSpaceName.h in Headers */ = {isa = PBXBuildFile; fileRef = 9382DF5710A8D5C900925652 /* ColorSpaceName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		938430B42475DE40003F9617 /* DictationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 938430B22475DE3F003F9617 /* DictationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93849C1F24BE404B00448D5A /* EmptyScriptExecutionContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */; };
 		93849C2324BEDD8900448D5A /* JSIDBSerializationGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 93849C2124BEDD8800448D5A /* JSIDBSerializationGlobalObject.h */; };
@@ -16488,7 +16488,7 @@
 		9380F47709A11ACC001FDB34 /* WidgetMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WidgetMac.mm; sourceTree = "<group>"; };
 		9381B94123F9B0E0007118B4 /* RadioNodeList.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RadioNodeList.idl; sourceTree = "<group>"; };
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
-		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
+		9382DF5710A8D5C900925652 /* ColorSpaceName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpaceName.h; sourceTree = "<group>"; };
 		938430B22475DE3F003F9617 /* DictationContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DictationContext.h; sourceTree = "<group>"; };
 		93849C1624BE12E500448D5A /* JSIDBSerializationGlobalObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBSerializationGlobalObject.cpp; sourceTree = "<group>"; };
 		93849C1E24BE404A00448D5A /* EmptyScriptExecutionContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyScriptExecutionContext.h; sourceTree = "<group>"; };
@@ -20324,7 +20324,7 @@
 		BCAE822F2E7C70EF00F30967 /* IntersectionObserverMarginBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntersectionObserverMarginBox.h; sourceTree = "<group>"; };
 		BCAE825B2E7DC4A500F30967 /* StyleShadowInterpolation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleShadowInterpolation.h; sourceTree = "<group>"; };
 		BCAE82672E7DF01300F30967 /* BoxExtents.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BoxExtents.cpp; sourceTree = "<group>"; };
-		BCAFEDAF25966D050030E6AA /* ColorSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorSpace.cpp; sourceTree = "<group>"; };
+		BCAFEDAF25966D050030E6AA /* ColorSpaceName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorSpaceName.cpp; sourceTree = "<group>"; };
 		BCAFEDB225968D0B0030E6AA /* ColorSpaceCG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorSpaceCG.h; sourceTree = "<group>"; };
 		BCAFEDB325968D0B0030E6AA /* ColorSpaceCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ColorSpaceCG.cpp; sourceTree = "<group>"; };
 		BCB025982C87927E00ACC2B3 /* CSSPropertyParserConsumer+Timeline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Timeline.h"; sourceTree = "<group>"; };
@@ -36845,8 +36845,8 @@
 				BCB2F88D275BEE57007231BF /* ColorNormalization.h */,
 				7CD1E69224ABF6240089C419 /* ColorSerialization.cpp */,
 				7CD1E69124ABF6240089C419 /* ColorSerialization.h */,
-				BCAFEDAF25966D050030E6AA /* ColorSpace.cpp */,
-				9382DF5710A8D5C900925652 /* ColorSpace.h */,
+				BCAFEDAF25966D050030E6AA /* ColorSpaceName.cpp */,
+				9382DF5710A8D5C900925652 /* ColorSpaceName.h */,
 				BC10137E25C3631600DC773C /* ColorTransferFunctions.h */,
 				7C029C6D2493C8F800268204 /* ColorTypes.h */,
 				0FE6C76B1FBFB7A60025C053 /* ColorUtilities.cpp */,
@@ -44820,8 +44820,8 @@
 				BC10137C25C3624B00DC773C /* ColorModels.h in Headers */,
 				BCB2F88E275BEE58007231BF /* ColorNormalization.h in Headers */,
 				7CD1E69324ABF6240089C419 /* ColorSerialization.h in Headers */,
-				9382DF5810A8D5C900925652 /* ColorSpace.h in Headers */,
 				BCAFEDB425968D0B0030E6AA /* ColorSpaceCG.h in Headers */,
+				9382DF5810A8D5C900925652 /* ColorSpaceName.h in Headers */,
 				BC10137F25C3631600DC773C /* ColorTransferFunctions.h in Headers */,
 				7C029C6E2493C8F800268204 /* ColorTypes.h in Headers */,
 				0FEAF66B23BFC39E004030DA /* ColorUtilities.h in Headers */,

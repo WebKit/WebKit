@@ -28,7 +28,7 @@
 
 #include "Color.h"
 #include "ColorNormalization.h"
-#include "ColorSpace.h"
+#include "ColorSpaceName.h"
 #include "DestinationColorSpace.h"
 #include <numeric>
 #include <wtf/MathExtras.h>
@@ -355,7 +355,7 @@ OKLab<float> ColorConversion<OKLab<float>, OKLCHA<float>>::convert(const OKLCHA<
 
 // MARK: Conversion functions for raw color components with associated color spaces.
 
-ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpace outputColorSpace)
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, ColorSpaceName outputColorSpace)
 {
     return callWithColorType<float>(inputColorSpace, [&]<typename InputColorType>() {
         auto inputColor = makeFromComponents<InputColorType>(inputColorComponents);
@@ -365,7 +365,7 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
     });
 }
 
-ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
+ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpaceName inputColorSpace, ColorComponents<float, 4> inputColorComponents, const DestinationColorSpace& outputColorSpace)
 {
 #if USE(CG)
     return platformConvertColorComponents(inputColorSpace, inputColorComponents, outputColorSpace);

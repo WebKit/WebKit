@@ -1371,7 +1371,7 @@ class WebCore::BlobPart {
     Variant<Vector<uint8_t>, Ref<WebCore::SharedBuffer>, URL> m_dataOrURL;
 };
 
-[WebKitPlatform] enum class WebCore::ColorSpace : uint8_t {
+[WebKitPlatform] enum class WebCore::ColorSpaceName : uint8_t {
     A98RGB,
     DisplayP3,
     ExtendedA98RGB,
@@ -1403,7 +1403,7 @@ header: <WebCore/ColorTypes.h>
 
 header: <WebCore/Color.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder, WebKitPlatform] struct WebCore::OutOfLineColorDataForIPC {
-    WebCore::ColorSpace colorSpace;
+    WebCore::ColorSpaceName colorSpace;
     float c1;
     float c2;
     float c3;

@@ -2501,7 +2501,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ColorModels.h
     platform/graphics/ColorNormalization.h
     platform/graphics/ColorSerialization.h
-    platform/graphics/ColorSpace.h
+    platform/graphics/ColorSpaceName.h
     platform/graphics/ColorTransferFunctions.h
     platform/graphics/ColorTypes.h
     platform/graphics/ColorUtilities.h

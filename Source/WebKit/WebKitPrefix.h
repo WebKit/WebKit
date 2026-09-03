@@ -280,7 +280,7 @@
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorMatrix.h>
 #include <WebCore/ColorModels.h>
-#include <WebCore/ColorSpace.h>
+#include <WebCore/ColorSpaceName.h>
 #include <WebCore/ColorTransferFunctions.h>
 #include <WebCore/ColorTypes.h>
 #include <WebCore/ColorUtilities.h>

@@ -134,56 +134,56 @@ CGColorSpaceRef xyzD50ColorSpaceSingleton()
 
 // FIXME: Figure out how to create a CoreGraphics XYZ-D65 color space and add a xyzD65ColorSpaceRef(). Perhaps CGColorSpaceCreateCalibratedRGB() with identify black point, D65 white point, and identity matrix.
 
-std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
+std::optional<ColorSpaceName> colorSpaceForCGColorSpace(CGColorSpaceRef colorSpace)
 {
     // First test for the four most common spaces, sRGB, Extended sRGB, DisplayP3 and Linear sRGB, and then test
     // the reset in alphabetical order.
     // FIXME: Consider using a HashMap (with CFHash based keys) rather than the linear set of tests.
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, sRGBColorSpaceSingleton()))
-        return ColorSpace::SRGB;
+        return ColorSpaceName::SRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedSRGBColorSpaceSingleton()))
-        return ColorSpace::ExtendedSRGB;
+        return ColorSpaceName::ExtendedSRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, displayP3ColorSpaceSingleton()))
-        return ColorSpace::DisplayP3;
+        return ColorSpaceName::DisplayP3;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, linearSRGBColorSpaceSingleton()))
-        return ColorSpace::LinearSRGB;
+        return ColorSpaceName::LinearSRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, adobeRGB1998ColorSpaceSingleton()))
-        return ColorSpace::A98RGB;
+        return ColorSpaceName::A98RGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedAdobeRGB1998ColorSpaceSingleton()))
-        return ColorSpace::ExtendedA98RGB;
+        return ColorSpaceName::ExtendedA98RGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedDisplayP3ColorSpaceSingleton()))
-        return ColorSpace::ExtendedDisplayP3;
+        return ColorSpaceName::ExtendedDisplayP3;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearDisplayP3ColorSpaceSingleton()))
-        return ColorSpace::ExtendedLinearDisplayP3;
+        return ColorSpaceName::ExtendedLinearDisplayP3;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedLinearSRGBColorSpaceSingleton()))
-        return ColorSpace::ExtendedLinearSRGB;
+        return ColorSpaceName::ExtendedLinearSRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedITUR_2020ColorSpaceSingleton()))
-        return ColorSpace::ExtendedRec2020;
+        return ColorSpaceName::ExtendedRec2020;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, extendedROMMRGBColorSpaceSingleton()))
-        return ColorSpace::ExtendedProPhotoRGB;
+        return ColorSpaceName::ExtendedProPhotoRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, ITUR_2020ColorSpaceSingleton()))
-        return ColorSpace::Rec2020;
+        return ColorSpaceName::Rec2020;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, linearDisplayP3ColorSpaceSingleton()))
-        return ColorSpace::LinearDisplayP3;
+        return ColorSpaceName::LinearDisplayP3;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, ROMMRGBColorSpaceSingleton()))
-        return ColorSpace::ProPhotoRGB;
+        return ColorSpaceName::ProPhotoRGB;
 
     if (CGColorSpaceEqualToColorSpace(colorSpace, xyzD50ColorSpaceSingleton()))
-        return ColorSpace::XYZ_D50;
+        return ColorSpaceName::XYZ_D50;
 
     // FIXME: Add support for remaining color spaces to support more direct conversions.
 

@@ -26,7 +26,7 @@
 #pragma once
 
 #include <CoreGraphics/CoreGraphics.h>
-#include <WebCore/ColorSpace.h>
+#include <WebCore/ColorSpaceName.h>
 #include <optional>
 #include <wtf/cf/TypeCastsCF.h>
 
@@ -34,10 +34,10 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGColorSpace);
 
 namespace WebCore {
 
-template<ColorSpace> struct CGColorSpaceMapping;
+template<ColorSpaceName> struct CGColorSpaceMapping;
 
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::SRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::SRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return sRGBColorSpaceSingleton();
@@ -45,7 +45,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::SRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef adobeRGB1998ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::A98RGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::A98RGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return adobeRGB1998ColorSpaceSingleton();
@@ -53,7 +53,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::A98RGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::DisplayP3> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::DisplayP3> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return displayP3ColorSpaceSingleton();
@@ -61,7 +61,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::DisplayP3> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedAdobeRGB1998ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedA98RGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedA98RGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedAdobeRGB1998ColorSpaceSingleton();
@@ -69,7 +69,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedA98RGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedDisplayP3ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedDisplayP3> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedDisplayP3> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedDisplayP3ColorSpaceSingleton();
@@ -77,7 +77,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedDisplayP3> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedITUR_2020ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedRec2020> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedRec2020> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedITUR_2020ColorSpaceSingleton();
@@ -85,7 +85,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedRec2020> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedLinearDisplayP3ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedLinearDisplayP3> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedLinearDisplayP3> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedLinearDisplayP3ColorSpaceSingleton();
@@ -93,7 +93,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedLinearDisplayP3> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedLinearSRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedLinearSRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedLinearSRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedLinearSRGBColorSpaceSingleton();
@@ -101,7 +101,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedLinearSRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedROMMRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedProPhotoRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedProPhotoRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedROMMRGBColorSpaceSingleton();
@@ -109,7 +109,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedProPhotoRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ExtendedSRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ExtendedSRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return extendedSRGBColorSpaceSingleton();
@@ -117,7 +117,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ExtendedSRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef ITUR_2020ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::Rec2020> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::Rec2020> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return ITUR_2020ColorSpaceSingleton();
@@ -125,7 +125,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::Rec2020> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef linearDisplayP3ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::LinearDisplayP3> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::LinearDisplayP3> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return linearDisplayP3ColorSpaceSingleton();
@@ -133,7 +133,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::LinearDisplayP3> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef linearSRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::LinearSRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::LinearSRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return linearSRGBColorSpaceSingleton();
@@ -141,7 +141,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::LinearSRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef ROMMRGBColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::ProPhotoRGB> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::ProPhotoRGB> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return ROMMRGBColorSpaceSingleton();
@@ -149,7 +149,7 @@ template<> struct CGColorSpaceMapping<ColorSpace::ProPhotoRGB> {
 };
 
 WEBCORE_EXPORT CGColorSpaceRef xyzD50ColorSpaceSingleton();
-template<> struct CGColorSpaceMapping<ColorSpace::XYZ_D50> {
+template<> struct CGColorSpaceMapping<ColorSpaceName::XYZ_D50> {
     static CGColorSpaceRef colorSpaceSingleton()
     {
         return xyzD50ColorSpaceSingleton();
@@ -157,82 +157,82 @@ template<> struct CGColorSpaceMapping<ColorSpace::XYZ_D50> {
 };
 
 // FIXME: Add support for these once/if CoreGraphics adds support for them.
-template<> struct CGColorSpaceMapping<ColorSpace::HSL> { };
-template<> struct CGColorSpaceMapping<ColorSpace::HWB> { };
-template<> struct CGColorSpaceMapping<ColorSpace::LCH> { };
-template<> struct CGColorSpaceMapping<ColorSpace::Lab> { };
-template<> struct CGColorSpaceMapping<ColorSpace::OKLab> { };
-template<> struct CGColorSpaceMapping<ColorSpace::OKLCH> { };
-template<> struct CGColorSpaceMapping<ColorSpace::XYZ_D65> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::HSL> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::HWB> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::LCH> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::Lab> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::OKLab> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::OKLCH> { };
+template<> struct CGColorSpaceMapping<ColorSpaceName::XYZ_D65> { };
 
 
-WEBCORE_EXPORT std::optional<ColorSpace> colorSpaceForCGColorSpace(CGColorSpaceRef);
+WEBCORE_EXPORT std::optional<ColorSpaceName> colorSpaceForCGColorSpace(CGColorSpaceRef);
 
 
-template<ColorSpace, typename = void> inline constexpr bool HasCGColorSpaceMapping = false;
-template<ColorSpace space> inline constexpr bool HasCGColorSpaceMapping<space, std::void_t<decltype(CGColorSpaceMapping<space>::colorSpaceSingleton())>> = true;
-static_assert(HasCGColorSpaceMapping<ColorSpace::SRGB>, "An SRGB color space mapping must be supported on all platforms.");
+template<ColorSpaceName, typename = void> inline constexpr bool HasCGColorSpaceMapping = false;
+template<ColorSpaceName space> inline constexpr bool HasCGColorSpaceMapping<space, std::void_t<decltype(CGColorSpaceMapping<space>::colorSpaceSingleton())>> = true;
+static_assert(HasCGColorSpaceMapping<ColorSpaceName::SRGB>, "An SRGB color space mapping must be supported on all platforms.");
 
-template<ColorSpace space, bool = HasCGColorSpaceMapping<space>> struct CGColorSpaceMappingOrNullGetter { static CGColorSpaceRef colorSpaceSingleton() { return nullptr; } };
-template<ColorSpace space> struct CGColorSpaceMappingOrNullGetter<space, true> { static CGColorSpaceRef colorSpaceSingleton() { return CGColorSpaceMapping<space>::colorSpaceSingleton(); } };
+template<ColorSpaceName space, bool = HasCGColorSpaceMapping<space>> struct CGColorSpaceMappingOrNullGetter { static CGColorSpaceRef colorSpaceSingleton() { return nullptr; } };
+template<ColorSpaceName space> struct CGColorSpaceMappingOrNullGetter<space, true> { static CGColorSpaceRef colorSpaceSingleton() { return CGColorSpaceMapping<space>::colorSpaceSingleton(); } };
 
-template<ColorSpace space> CGColorSpaceRef cachedCGColorSpaceSingleton()
+template<ColorSpaceName space> CGColorSpaceRef cachedCGColorSpaceSingleton()
 {
     return CGColorSpaceMapping<space>::colorSpaceSingleton();
 }
 
-template<ColorSpace space> CGColorSpaceRef cachedNullableCGColorSpaceSingleton()
+template<ColorSpaceName space> CGColorSpaceRef cachedNullableCGColorSpaceSingleton()
 {
     return CGColorSpaceMappingOrNullGetter<space>::colorSpaceSingleton();
 }
 
-inline CGColorSpaceRef cachedNullableCGColorSpaceSingleton(ColorSpace colorSpace)
+inline CGColorSpaceRef cachedNullableCGColorSpaceSingleton(ColorSpaceName colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::A98RGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::A98RGB>();
-    case ColorSpace::DisplayP3:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::DisplayP3>();
-    case ColorSpace::ExtendedA98RGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedA98RGB>();
-    case ColorSpace::ExtendedDisplayP3:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedDisplayP3>();
-    case ColorSpace::ExtendedLinearDisplayP3:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedLinearDisplayP3>();
-    case ColorSpace::ExtendedLinearSRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedLinearSRGB>();
-    case ColorSpace::ExtendedProPhotoRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedProPhotoRGB>();
-    case ColorSpace::ExtendedRec2020:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedRec2020>();
-    case ColorSpace::ExtendedSRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ExtendedSRGB>();
-    case ColorSpace::HSL:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::HSL>();
-    case ColorSpace::HWB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::HWB>();
-    case ColorSpace::LCH:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::LCH>();
-    case ColorSpace::Lab:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::Lab>();
-    case ColorSpace::LinearDisplayP3:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::LinearDisplayP3>();
-    case ColorSpace::LinearSRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::LinearSRGB>();
-    case ColorSpace::OKLCH:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::OKLCH>();
-    case ColorSpace::OKLab:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::OKLab>();
-    case ColorSpace::ProPhotoRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::ProPhotoRGB>();
-    case ColorSpace::Rec2020:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::Rec2020>();
-    case ColorSpace::SRGB:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::SRGB>();
-    case ColorSpace::XYZ_D50:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::XYZ_D50>();
-    case ColorSpace::XYZ_D65:
-        return cachedNullableCGColorSpaceSingleton<ColorSpace::XYZ_D65>();
+    case ColorSpaceName::A98RGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::A98RGB>();
+    case ColorSpaceName::DisplayP3:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::DisplayP3>();
+    case ColorSpaceName::ExtendedA98RGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedA98RGB>();
+    case ColorSpaceName::ExtendedDisplayP3:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedDisplayP3>();
+    case ColorSpaceName::ExtendedLinearDisplayP3:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedLinearDisplayP3>();
+    case ColorSpaceName::ExtendedLinearSRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedLinearSRGB>();
+    case ColorSpaceName::ExtendedProPhotoRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedProPhotoRGB>();
+    case ColorSpaceName::ExtendedRec2020:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedRec2020>();
+    case ColorSpaceName::ExtendedSRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ExtendedSRGB>();
+    case ColorSpaceName::HSL:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::HSL>();
+    case ColorSpaceName::HWB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::HWB>();
+    case ColorSpaceName::LCH:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::LCH>();
+    case ColorSpaceName::Lab:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::Lab>();
+    case ColorSpaceName::LinearDisplayP3:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::LinearDisplayP3>();
+    case ColorSpaceName::LinearSRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::LinearSRGB>();
+    case ColorSpaceName::OKLCH:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::OKLCH>();
+    case ColorSpaceName::OKLab:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::OKLab>();
+    case ColorSpaceName::ProPhotoRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::ProPhotoRGB>();
+    case ColorSpaceName::Rec2020:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::Rec2020>();
+    case ColorSpaceName::SRGB:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::SRGB>();
+    case ColorSpaceName::XYZ_D50:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::XYZ_D50>();
+    case ColorSpaceName::XYZ_D65:
+        return cachedNullableCGColorSpaceSingleton<ColorSpaceName::XYZ_D65>();
     }
 
     ASSERT_NOT_REACHED();

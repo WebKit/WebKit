@@ -24,79 +24,79 @@
  */
 
 #include "config.h"
-#include "ColorSpace.h"
+#include "ColorSpaceName.h"
 
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, ColorSpace colorSpace)
+TextStream& operator<<(TextStream& ts, ColorSpaceName colorSpace)
 {
     switch (colorSpace) {
-    case ColorSpace::A98RGB:
+    case ColorSpaceName::A98RGB:
         ts << "A98-RGB"_s;
         break;
-    case ColorSpace::DisplayP3:
+    case ColorSpaceName::DisplayP3:
         ts << "DisplayP3"_s;
         break;
-    case ColorSpace::ExtendedA98RGB:
+    case ColorSpaceName::ExtendedA98RGB:
         ts << "Extended A98-RGB"_s;
         break;
-    case ColorSpace::ExtendedDisplayP3:
+    case ColorSpaceName::ExtendedDisplayP3:
         ts << "Extended DisplayP3"_s;
         break;
-    case ColorSpace::ExtendedLinearDisplayP3:
+    case ColorSpaceName::ExtendedLinearDisplayP3:
         ts << "Extended Linear DisplayP3"_s;
         break;
-    case ColorSpace::ExtendedLinearSRGB:
+    case ColorSpaceName::ExtendedLinearSRGB:
         ts << "Extended Linear sRGB"_s;
         break;
-    case ColorSpace::ExtendedProPhotoRGB:
+    case ColorSpaceName::ExtendedProPhotoRGB:
         ts << "Extended ProPhotoRGB"_s;
         break;
-    case ColorSpace::ExtendedRec2020:
+    case ColorSpaceName::ExtendedRec2020:
         ts << "Extended Rec2020"_s;
         break;
-    case ColorSpace::ExtendedSRGB:
+    case ColorSpaceName::ExtendedSRGB:
         ts << "Extended sRGB"_s;
         break;
-    case ColorSpace::HSL:
+    case ColorSpaceName::HSL:
         ts << "HSL"_s;
         break;
-    case ColorSpace::HWB:
+    case ColorSpaceName::HWB:
         ts << "HWB"_s;
         break;
-    case ColorSpace::LCH:
+    case ColorSpaceName::LCH:
         ts << "LCH"_s;
         break;
-    case ColorSpace::Lab:
+    case ColorSpaceName::Lab:
         ts << "Lab"_s;
         break;
-    case ColorSpace::LinearDisplayP3:
+    case ColorSpaceName::LinearDisplayP3:
         ts << "Linear DisplayP3"_s;
         break;
-    case ColorSpace::LinearSRGB:
+    case ColorSpaceName::LinearSRGB:
         ts << "Linear sRGB"_s;
         break;
-    case ColorSpace::OKLCH:
+    case ColorSpaceName::OKLCH:
         ts << "OKLCH"_s;
         break;
-    case ColorSpace::OKLab:
+    case ColorSpaceName::OKLab:
         ts << "OKLab"_s;
         break;
-    case ColorSpace::ProPhotoRGB:
+    case ColorSpaceName::ProPhotoRGB:
         ts << "ProPhotoRGB"_s;
         break;
-    case ColorSpace::Rec2020:
+    case ColorSpaceName::Rec2020:
         ts << "Rec2020"_s;
         break;
-    case ColorSpace::SRGB:
+    case ColorSpaceName::SRGB:
         ts << "sRGB"_s;
         break;
-    case ColorSpace::XYZ_D50:
+    case ColorSpaceName::XYZ_D50:
         ts << "XYZ-D50"_s;
         break;
-    case ColorSpace::XYZ_D65:
+    case ColorSpaceName::XYZ_D65:
         ts << "XYZ-D65"_s;
         break;
     }

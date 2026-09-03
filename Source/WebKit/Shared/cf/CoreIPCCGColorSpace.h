@@ -30,8 +30,8 @@
 #import "ArgumentCodersCocoa.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/Color.h>
-#import <WebCore/ColorSpace.h>
 #import <WebCore/ColorSpaceCG.h>
+#import <WebCore/ColorSpaceName.h>
 #import <wtf/Box.h>
 #import <wtf/RetainPtr.h>
 
@@ -63,7 +63,7 @@ struct IndexedColorSpace {
     Box<CoreIPCCGColorSpace> colorSpace;
 };
 
-using CGColorSpaceSerialization = Variant<WebCore::ColorSpace, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
+using CGColorSpaceSerialization = Variant<WebCore::ColorSpaceName, RetainPtr<CFStringRef>, WebKit::ICCData, WebKit::IndexedColorSpace>;
 
 class CoreIPCCGColorSpace {
 public:

@@ -68,7 +68,7 @@ CGColorSpaceSerialization CoreIPCCGColorSpace::serializableColorSpace(CGColorSpa
         }
     }
     // FIXME: This should be removed once we can prove only non-null cgColorSpaces.
-    return WebCore::ColorSpace::SRGB;
+    return WebCore::ColorSpaceName::SRGB;
 }
 
 CoreIPCCGColorSpace::CoreIPCCGColorSpace(CGColorSpaceRef cgColorSpace)
@@ -84,7 +84,7 @@ CoreIPCCGColorSpace::CoreIPCCGColorSpace(CGColorSpaceSerialization data)
 RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
 {
     auto colorSpace = WTF::switchOn(m_cgColorSpace,
-    [](WebCore::ColorSpace colorSpace) -> RetainPtr<CGColorSpaceRef> {
+    [](WebCore::ColorSpaceName colorSpace) -> RetainPtr<CGColorSpaceRef> {
         return RetainPtr { cachedNullableCGColorSpaceSingleton(colorSpace) };
     },
     [](RetainPtr<CFStringRef> name) -> RetainPtr<CGColorSpaceRef> {
