@@ -32,19 +32,9 @@
 
 namespace WTF {
 
-size_t vmPageSize()
-{
-#if PLATFORM(IOS_FAMILY)
-    return vm_kernel_page_size;
-#else
-    static size_t cached = sysconf(_SC_PAGESIZE);
-    return cached;
-#endif
-}
-
 void logFootprintComparison(const std::array<TagInfo, 256>& before, const std::array<TagInfo, 256>& after)
 {
-    const size_t pageSize = vmPageSize();
+    const size_t pageSize = vm_kernel_page_size;
 
     WTFLogAlways("Per-tag breakdown of memory reclaimed by pressure handler:");
     WTFLogAlways("  ## %16s %10s %10s %10s", "VM Tag", "Before", "After", "Diff");
@@ -119,7 +109,7 @@ std::array<TagInfo, 256> pagesPerVMTag()
 
         tags[info.user_tag].regionCount++;
 
-        tags[info.user_tag].reserved += size / vmPageSize();
+        tags[info.user_tag].reserved += size / vm_kernel_page_size;
 
         if (purgeableState == VM_PURGABLE_VOLATILE) {
             tags[info.user_tag].reclaimable += info.pages_resident;
@@ -127,7 +117,7 @@ std::array<TagInfo, 256> pagesPerVMTag()
         }
 
         if (purgeableState == VM_PURGABLE_EMPTY) {
-            tags[info.user_tag].reclaimable += size / vmPageSize();
+            tags[info.user_tag].reclaimable += size / vm_kernel_page_size;
             continue;
         }
 
