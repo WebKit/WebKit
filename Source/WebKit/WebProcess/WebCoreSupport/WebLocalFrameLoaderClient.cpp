@@ -2174,7 +2174,14 @@ bool WebLocalFrameLoaderClient::siteIsolationEnabled() const
 RefPtr<WebCore::HistoryItem> WebLocalFrameLoaderClient::createHistoryItemTree(bool clipAtTarget, WebCore::BackForwardItemIdentifier itemID) const
 {
     Ref frame = m_localFrame.get();
-    return frame->loader().history().createItemTree(frame, clipAtTarget, itemID);
+    RefPtr localMainFrame = frame->localMainFrame();
+
+    if (!localMainFrame) {
+        LOG_ERROR("WebLocalFrameLoaderClient::createHistoryItemTree - Main frame not available to create history item tree");
+        return frame->loader().history().createItemTree(frame, clipAtTarget, itemID);
+    }
+
+    return localMainFrame->loader().history().createItemTree(frame, clipAtTarget, itemID);
 }
 
 RefPtr<WebCore::Frame> WebLocalFrameLoaderClient::provisionalParentFrame() const
