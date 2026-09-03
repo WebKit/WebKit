@@ -887,6 +887,50 @@ void TextureMtl::deallocateNativeStorage(bool keepImages)
     }
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+void TextureMtl::invalidateRenderTargets(GLuint cubeFaceOrZero, GLuint glLevel)
+{
+    // Must be called wherever mTexImageDefs[cubeFaceOrZero][glLevel] is replaced, because these
+    // caches hold the image that was there before. Entries are reset rather than erased because a
+    // framebuffer may still hold a pointer to them; getRenderTarget() re-seats a reset entry
+    // lazily. Both are keyed by the exact gl::ImageIndex a framebuffer attached with, which names
+    // a single layer for 3D and 2D array textures, so match on level and cube face.
+    const bool isCubeMap = mState.getType() == gl::TextureType::CubeMap;
+
+    auto matchesImage = [&](const gl::ImageIndex &cachedIndex) {
+        if (cachedIndex.getLevelIndex() != static_cast<GLint>(glLevel))
+        {
+            return false;
+        }
+        return !isCubeMap || GetImageCubeFaceIndexOrZeroFrom(cachedIndex) == cubeFaceOrZero;
+    };
+
+    for (auto &samplesMapRenderTargets : mRenderTargets)
+    {
+        if (!matchesImage(samplesMapRenderTargets.first))
+        {
+            continue;
+        }
+        for (RenderTargetMtl &perSampleCountRenderTarget : samplesMapRenderTargets.second)
+        {
+            perSampleCountRenderTarget.reset();
+        }
+    }
+
+    for (auto &samplesMapMSTextures : mImplicitMSTextures)
+    {
+        if (!matchesImage(samplesMapMSTextures.first))
+        {
+            continue;
+        }
+        for (mtl::TextureRef &perSampleCountMSTexture : samplesMapMSTextures.second)
+        {
+            perSampleCountMSTexture.reset();
+        }
+    }
+}
+
+#endif
 GLuint TextureMtl::getStorageMipLevelCount(ImageMipLevels mipLevels) const
 {
     switch (mipLevels)
@@ -921,6 +965,9 @@ angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context,
             {
                 GLuint imageMipLevel = mNativeTextureStorage->getGLLevel(actualMip);
                 mTexImageDefs[face][imageMipLevel].image = nullptr;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                invalidateRenderTargets(face, imageMipLevel);
+#endif
             }
         }
     };
@@ -995,6 +1042,9 @@ angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context,
                 // Invalidate texture image definition at this index so that we can make it a
                 // view of the native texture at this index later.
                 mTexImageDefs[face][imageMipLevel] = {};
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                invalidateRenderTargets(face, imageMipLevel);
+#endif
             }
         }
     }
@@ -1371,6 +1421,22 @@ angle::Result TextureMtl::getRenderTarget(ContextMtl *context,
             : static_cast<gl::RenderToTextureImageIndex>(PackSampleCount(implicitSamples));
 
     RenderTargetMtl &rtt = mRenderTargets[imageIndex][renderToTextureIndex];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // RenderTargetMtl holds its texture weakly, but something else (e.g.
+    // FramebufferMtl::mRenderPassDesc) can keep a replaced image's texture alive, so a stale entry
+    // does not always expire on its own. Compare identity, not extents: an image can be replaced
+    // by a different texture of the same size, and reusing it would be silently wrong. Any path
+    // that replaces an image without calling invalidateRenderTargets() lands here and fails the
+    // check below rather than reading or writing the wrong texture.
+    if (mtl::TextureRef cachedTexture = rtt.getTexture())
+    {
+        if (cachedTexture != getImageDefinition(imageIndex).image)
+        {
+            rtt.reset();
+            mImplicitMSTextures[imageIndex][renderToTextureIndex].reset();
+        }
+    }
+#endif
     if (!rtt.getTexture())
     {
         auto &imageDef = getImageDefinition(imageIndex);
@@ -1693,6 +1759,9 @@ angle::Result TextureMtl::generateMipmap(const gl::Context *context)
             GLuint level = mNativeTextureStorage->getGLLevel(mip);
             // Recreate views conservatively. All views should point to mNativeTextureStorage.
             mTexImageDefs[face][level] = {};
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            invalidateRenderTargets(face, level);
+#endif
         }
     }
     
@@ -2070,6 +2139,11 @@ angle::Result TextureMtl::redefineImage(const gl::Context *context,
     GLuint glLevel               = index.getLevelIndex();
     ImageDefinitionMtl &imageDef = mTexImageDefs[cubeFaceOrZero][glLevel];
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Called before the early-returns below so that every path invalidates.
+    invalidateRenderTargets(cubeFaceOrZero, glLevel);
+
+#endif
     if (mNativeTextureStorage && mNativeTextureStorage->isGLLevelSupported(glLevel))
     {
         // mNativeTextureStorage stores the complete mipmap chain when present.
