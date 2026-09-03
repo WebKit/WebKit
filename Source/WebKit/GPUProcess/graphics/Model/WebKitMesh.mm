@@ -628,11 +628,12 @@ static NSArray<WKBridgeVertexLayout *> *convert(const Vector<VertexLayout>& layo
     return result;
 }
 
-static WKBridgeMeshDescriptor *convert(const MeshDescriptor& descriptor)
+static WKBridgeMeshDescriptor *convert(const std::optional<MeshDescriptor>& optionalDescriptor)
 {
-    if (!descriptor.vertexBufferCount)
+    if (!optionalDescriptor)
         return nil;
 
+    auto& descriptor = *optionalDescriptor;
     return [WebKit::allocWKBridgeMeshDescriptorInstance() initWithVertexBufferCount:descriptor.vertexBufferCount
         vertexCapacity:descriptor.vertexCapacity
         vertexAttributes:convert(descriptor.vertexAttributes)
@@ -976,7 +977,6 @@ void WebMesh::render(uint32_t textureIndex, Function<void(bool)>&& completionHan
 static WKBridgeUpdateMesh *convert(const WebModel::UpdateMeshDescriptor& input)
 {
     return [WebKit::allocWKBridgeUpdateMeshInstance() initWithIdentifier:convert(input.identifier)
-        updateType:static_cast<WKBridgeDataUpdateType>(input.updateType)
         descriptor:WebModel::convert(input.descriptor)
         parts:WebModel::convert(input.parts)
         indexData:WebModel::convert(input.indexData)
