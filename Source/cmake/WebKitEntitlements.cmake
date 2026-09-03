@@ -6,14 +6,19 @@
 #   [BUNDLE_IDENTIFIER <bundle id>]         # if different from target name
 #   [PRODUCT_NAME <product name>]           # if different from bundle identifier
 #   [VARIANT <variant>]                     # XPC service variant to base extra entitlements off of
+#   [NAME <name>]                           # names the generating target; needed when one target
+#                                           # needs more than one entitlements file
 #   [OUTPUT <output path>]                  # if unspecified, a default will be used and set as <target>'s CODE_SIGN_ENTITLEMENTS path
 # )
 
 function(WEBKIT_GENERATE_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "EXTENSION" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "" ${ARGN})
+    cmake_parse_arguments(_arg "EXTENSION" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT;NAME" "" ${ARGN})
+    if (NOT _arg_NAME)
+        set(_arg_NAME ${_target})
+    endif ()
     if (NOT _arg_OUTPUT)
-        set(_arg_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
-        set(${_target}_CODE_SIGN_ENTITLEMENTS ${_arg_OUTPUT} PARENT_SCOPE)
+        set(_arg_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_arg_NAME}.entitlements)
+        set(${_arg_NAME}_CODE_SIGN_ENTITLEMENTS ${_arg_OUTPUT} PARENT_SCOPE)
     endif ()
     if (NOT _arg_BUNDLE_IDENTIFIER)
         set(_arg_BUNDLE_IDENTIFIER ${_target})
@@ -60,6 +65,6 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
         DEPENDS ${_script} ${_additional_entitlements_script}
         VERBATIM
     )
-    add_custom_target(${_target}Entitlements DEPENDS ${_arg_OUTPUT})
-    add_dependencies(${_target} ${_target}Entitlements)
+    add_custom_target(${_arg_NAME}Entitlements DEPENDS ${_arg_OUTPUT})
+    add_dependencies(${_target} ${_arg_NAME}Entitlements)
 endfunction()
