@@ -142,7 +142,7 @@ enum class Order : bool;
 enum class OutlineStyle : uint8_t;
 enum class Overflow : uint8_t;
 enum class OverflowAnchor : bool;
-enum class OverflowContinue : bool;
+enum class OverflowContinue : uint8_t;
 enum class OverflowWrap : uint8_t;
 enum class OverscrollBehavior : uint8_t;
 enum class PaginationMode : uint8_t;

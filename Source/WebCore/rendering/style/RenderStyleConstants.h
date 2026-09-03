@@ -781,9 +781,10 @@ enum class TransformBox : uint8_t {
     ViewBox
 };
 
-enum class OverflowContinue : bool {
+enum class OverflowContinue : uint8_t {
     Auto,
-    Discard
+    Discard,
+    WebkitLegacy
 };
 
 enum class Hyphens : uint8_t {

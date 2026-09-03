@@ -1369,6 +1369,9 @@ TextStream& operator<<(TextStream& ts, OverflowContinue overflowContinue)
     case OverflowContinue::Discard:
         ts << "discard"_s;
         break;
+    case OverflowContinue::WebkitLegacy:
+        ts << "-webkit-legacy"_s;
+        break;
     }
     return ts;
 }

@@ -2297,7 +2297,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE OverflowContinue
-#define FOR_EACH(CASE) CASE(Auto) CASE(Discard)
+#define FOR_EACH(CASE) CASE(Auto) CASE(Discard) CASE(WebkitLegacy)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

@@ -435,7 +435,8 @@
             "initial": "auto",
             "values": [
                 "auto",
-                "discard"
+                "discard",
+                "-webkit-legacy"
             ],
             "codegen-properties": {
                 "settings-flag": "cssLineClampEnabled",
