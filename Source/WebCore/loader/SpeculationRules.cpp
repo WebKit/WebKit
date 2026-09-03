@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
@@ -170,13 +171,13 @@ static std::optional<SpeculationRules::DocumentPredicate> parseDocumentPredicate
 // https://html.spec.whatwg.org/C#parse-a-speculation-rule
 static std::optional<SpeculationRules::Rule> parseSingleRule(const JSON::Object& input, const String& rulesetLevelTag, const URL& rulesetBaseURL, const URL& documentBaseURL)
 {
-    const HashSet<String> allowedKeys = {
+    static NeverDestroyed<HashSet<String>> allowedKeys = std::initializer_list<String> {
         "source"_s, "urls"_s, "where"_s, "requires"_s, "target_hint"_s,
         "referrer_policy"_s, "relative_to"_s, "eagerness"_s,
         "expects_no_vary_search"_s, "tag"_s
     };
     for (const auto& key : input.keys()) {
-        if (!allowedKeys.contains(key))
+        if (!allowedKeys->contains(key))
             return std::nullopt;
     }
 
