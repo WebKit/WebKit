@@ -163,7 +163,7 @@
     ],
     "From GL_ANGLE_depth_texture and OES_depth_texture":
     [
-        [ "GL_DEPTH_COMPONENT32_OES",  "GL_DEPTH_COMPONENT", "GL_UNSIGNED_INT_24_8" ],
+        [ "GL_DEPTH_COMPONENT32_OES",  "GL_DEPTH_COMPONENT", "GL_UNSIGNED_INT" ],
         [ "GL_DEPTH_COMPONENT",        "GL_DEPTH_COMPONENT", "GL_UNSIGNED_SHORT" ],
         [ "GL_DEPTH_COMPONENT",        "GL_DEPTH_COMPONENT", "GL_UNSIGNED_INT" ]
     ],
