@@ -1024,6 +1024,10 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("weebly.com"_s),
         .behaviors = { ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk } },
 
+    // wellnessliving.com rdar://185639386
+    { .match = URLMatch::hostOrSubdomainOf("wellnessliving.com"_s),
+        .behaviors = { NeedsPartitionedCookiesQuirk } },
+
     { .match = URLMatch::domain("wikipedia.org"_s),
         .behaviors = {
             // wikipedia.org rdar://54856323
