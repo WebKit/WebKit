@@ -3313,6 +3313,10 @@ LoadImageFunctionInfo RGB8_to_R8G8B8A8_UNORM(GLenum type)
             return LoadImageFunctionInfo(LoadToNative3To4<GLubyte, 0xFF>, true);
         case GL_UNSIGNED_INT_2_10_10_10_REV:
             return LoadImageFunctionInfo(LoadRGB10A2ToRGBA8, true);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        case GL_UNSIGNED_SHORT_5_6_5:
+            return LoadImageFunctionInfo(LoadR5G6B5ToRGBA8, true);
+#endif
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
