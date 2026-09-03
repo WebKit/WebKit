@@ -1008,6 +1008,26 @@ void Adjuster::adjustSVGElementStyle(Style::ComputedStyle& style, const SVGEleme
         style.setFontDescription(WTF::move(fontDescription));
     }
 
+    // Per SVG spec (https://w3c.github.io/svgwg/svg2-draft/render.html#OverflowAndClipProperties),
+    // for text, pattern, marker, symbol, and image elements:
+    //   overflow: scroll resolves to hidden
+    //   overflow: auto resolves to visible
+    if (svgElement.hasTagName(SVGNames::textTag)
+        || svgElement.hasTagName(SVGNames::patternTag)
+        || svgElement.hasTagName(SVGNames::markerTag)
+        || svgElement.hasTagName(SVGNames::symbolTag)
+        || svgElement.hasTagName(SVGNames::imageTag)) {
+        auto adjustOverflow = [](Overflow overflow) {
+            if (overflow == Overflow::Scroll)
+                return Overflow::Hidden;
+            if (overflow == Overflow::Auto)
+                return Overflow::Visible;
+            return overflow;
+        };
+        style.setOverflowX(adjustOverflow(style.overflowX()));
+        style.setOverflowY(adjustOverflow(style.overflowY()));
+    }
+
     // SVG text layout code expects us to be a block-level style element.
     // While in theory any block level element would work (flex, grid etc), since we construct RenderBlockFlow for both foreign object and svg text,
     // in practice only block layout happens here.
