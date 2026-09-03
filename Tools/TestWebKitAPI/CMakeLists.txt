@@ -12,6 +12,7 @@ endif ()
 
 set(TestWebKitAPI_DISABLED_WARNINGS
     -Wno-dangling-else
+    -Wno-deprecated-declarations
     -Wno-sign-compare
     -Wno-undef
     -Wno-unused-parameter
