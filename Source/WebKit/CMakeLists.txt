@@ -1466,6 +1466,12 @@ endif ()
 
 list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
+# Subtargets #include generated headers (MessageNames.h, *Messages.h, GeneratedSerializers*.h),
+# but CMake only sees the generators feeding the main WebKit target, so a subtarget's prefix
+# header can compile before the generators run. Order every subtarget after them explicitly.
+add_custom_target(WebKit_DerivedSourcesOrder DEPENDS ${WebKit_DERIVED_SOURCES})
+list(APPEND WebKit_DEPENDENCIES WebKit_DerivedSourcesOrder)
+
 WEBKIT_COMPUTE_SOURCES(WebKit)
 if (DEFINED WebKit_SWIFT_INTEROP_SOURCES)
     list(REMOVE_ITEM WebKit_SOURCES ${WebKit_SWIFT_INTEROP_SOURCES})

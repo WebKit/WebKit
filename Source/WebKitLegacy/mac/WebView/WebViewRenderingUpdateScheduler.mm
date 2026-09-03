@@ -40,6 +40,10 @@
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSWindowSPI.h>
+
+@interface NSWindow (WebNSWindowDetails)
+- (void)_enableScreenUpdatesIfNeeded;
+@end
 #endif
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebViewRenderingUpdateScheduler);
