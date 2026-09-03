@@ -539,6 +539,11 @@ static bool rendererIsFragmented(const RenderLayerModelObject& renderer)
     // https://drafts.csswg.org/css-view-transitions-1/#capture-old-state-algorithm
     // View transitions explicitly excludes splitting of inline boxes across lines.
 
+    // https://drafts.csswg.org/css-break-4/#fragmentation-model
+    // A box can be broken into multiple fragments by block-in-inline splitting.
+    if (renderer.hasContinuationChainNode() || renderer.isContinuation())
+        return true;
+
     CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
     if (!box)
         return false;
