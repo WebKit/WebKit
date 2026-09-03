@@ -1820,7 +1820,7 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
 RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
     if (fileName.isNull() && attachmentType.isNull() && title.isNull())
-        return IconAndSize { nil, FloatSize() };
+        return { };
 
     if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title)) {
         RetainPtr image = icon->image();
@@ -1828,7 +1828,7 @@ RenderThemeCocoa::IconAndSize RenderThemeMac::iconForAttachment(const String& fi
         return IconAndSize { WTF::move(image), FloatSize(size) };
     }
 
-    return IconAndSize { nil, FloatSize() };
+    return { };
 }
 
 static void paintAttachmentIconBackground(const RenderAttachment& attachment, GraphicsContext& context, AttachmentLayout& layout)
