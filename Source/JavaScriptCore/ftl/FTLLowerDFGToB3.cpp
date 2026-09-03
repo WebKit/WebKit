@@ -4328,7 +4328,6 @@ private:
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 JIT_COMMENT(jit, "AssertNotEmpty");
-                AllowMacroScratchRegisterUsage allowScratch(jit);
                 GPRReg input = params[0].gpr();
                 CCallHelpers::Jump done = jit.branchIfNotEmpty(input);
                 jit.breakpoint();
@@ -27770,7 +27769,10 @@ IGNORE_CLANG_WARNINGS_END
         unsigned nodeIndex = node ? node->index() : UINT_MAX;
 #if !ASSERT_ENABLED
         auto nodeOp = node ? node->op() : LastNodeType;
-        m_out.patchpoint(Void)->setGenerator(
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->clobber(RegisterSet::macroClobberedGPRs());
+        patchpoint->clobber(RegisterSet { GPRInfo::regT0, GPRInfo::regT1, GPRInfo::regT2 });
+        patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams&) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
