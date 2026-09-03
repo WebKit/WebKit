@@ -216,6 +216,12 @@ WTFLogChannel& MediaSourcePrivateAVFObjC::logChannel() const
 {
     return LogMediaSource;
 }
+
+uint64_t MediaSourcePrivateAVFObjC::nextSourceBufferLogIdentifier()
+{
+    static std::atomic<uint64_t> s_nextSourceBufferID = 0;
+    return childLogIdentifier(m_logIdentifier, ++s_nextSourceBufferID);
+}
 #endif
 
 void MediaSourcePrivateAVFObjC::failedToCreateRenderer(RendererType type)
