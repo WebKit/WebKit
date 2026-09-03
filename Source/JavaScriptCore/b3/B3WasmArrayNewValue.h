@@ -30,6 +30,7 @@
 #include "B3Effects.h"
 #include "B3HeapRange.h"
 #include "B3Value.h"
+#include "WasmExceptionType.h"
 #include "WasmTypeDefinition.h"
 #include <wtf/StdLibExtras.h>
 
@@ -60,6 +61,8 @@ public:
     // Offset from instance for allocator lookup (pre-computed from ModuleInformation)
     int32_t allocatorsBaseOffset() const { return m_allocatorsBaseOffset; }
 
+    Wasm::ExceptionType allocationFailure() const { return m_allocationFailure; }
+
     // The GC state that a collection triggered by this allocation may mutate.
     const HeapRange& range() const { return m_range; }
     void setRange(HeapRange range) { m_range = range; }
@@ -77,21 +80,23 @@ private:
     static Opcode opcodeFromConstructor(Arguments...) { return WasmArrayNew; }
 
     // 3-child constructor (no init value -- for addArrayNewFixed)
-    WasmArrayNewValue(Origin origin, Type resultType, Ref<const Wasm::RTT> rtt, uint32_t typeIndex, int32_t allocatorsBaseOffset, Value* instance, Value* structureID, Value* size)
+    WasmArrayNewValue(Origin origin, Type resultType, Ref<const Wasm::RTT> rtt, uint32_t typeIndex, int32_t allocatorsBaseOffset, Value* instance, Value* structureID, Value* size, Wasm::ExceptionType allocationFailure = Wasm::ExceptionType::BadArrayNew)
         : Value(CheckedOpcode, WasmArrayNew, resultType, Three, origin, instance, structureID, size)
         , m_rtt(WTF::move(rtt))
         , m_typeIndex(typeIndex)
         , m_allocatorsBaseOffset(allocatorsBaseOffset)
+        , m_allocationFailure(allocationFailure)
         , m_hasInitValue(false)
     {
     }
 
     // 4-child constructor (with init value -- for addArrayNew/addArrayNewDefault)
-    WasmArrayNewValue(Origin origin, Type resultType, Ref<const Wasm::RTT> rtt, uint32_t typeIndex, int32_t allocatorsBaseOffset, Value* instance, Value* structureID, Value* size, Value* initValue)
+    WasmArrayNewValue(Origin origin, Type resultType, Ref<const Wasm::RTT> rtt, uint32_t typeIndex, int32_t allocatorsBaseOffset, Value* instance, Value* structureID, Value* size, Value* initValue, Wasm::ExceptionType allocationFailure = Wasm::ExceptionType::BadArrayNew)
         : Value(CheckedOpcode, WasmArrayNew, resultType, Four, origin, instance, structureID, size, initValue)
         , m_rtt(WTF::move(rtt))
         , m_typeIndex(typeIndex)
         , m_allocatorsBaseOffset(allocatorsBaseOffset)
+        , m_allocationFailure(allocationFailure)
         , m_hasInitValue(true)
     {
     }
@@ -99,6 +104,7 @@ private:
     const Ref<const Wasm::RTT> m_rtt;
     uint32_t m_typeIndex;
     int32_t m_allocatorsBaseOffset;
+    Wasm::ExceptionType m_allocationFailure;
     HeapRange m_range { HeapRange::top() };
     bool m_hasInitValue;
 };
