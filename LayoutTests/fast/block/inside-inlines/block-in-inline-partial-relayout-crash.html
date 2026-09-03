@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<style>
+#outer { width: 200px; font-family: Ahem; font-size: 10px; }
+</style>
+<div id=outer><span>aa bb cc<div id=inner>xx<br id=br>yy zz ww vv</div>dd ee ff</span></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Initial layout: outer IFC contains a block-in-inline (#inner) that establishes its own IFC.
+document.body.offsetHeight;
+
+// Remove a leaf from the inner IFC via a partial-invalidation-eligible mutation. The removed
+// renderer's Layout::Box is retained by InlineDamage while the previous inline display content
+// (which still holds a CheckedPtr to it) is kept for partial layout.
+br.remove();
+document.body.offsetHeight;
+
+// Force another full layout of the outer IFC so that inner's LineLayout::layout() runs
+// clearInlineContent() again on the previous display boxes.
+outer.style.width = '190px';
+document.body.offsetHeight;
+
+document.body.textContent = 'PASS if no crash.';
+</script>

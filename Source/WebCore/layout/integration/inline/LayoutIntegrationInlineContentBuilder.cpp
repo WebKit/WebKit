@@ -337,15 +337,22 @@ FloatRect InlineContentBuilder::handlePartialDisplayContentUpdate(Layout::Inline
         return { boxCount };
     }();
 
+    auto damagedRect = FloatRect { };
+
     if (!firstDamagedLineIndex || !numberOfDamagedLines || !firstDamagedBoxIndex || !numberOfDamagedBoxes) {
         ASSERT_NOT_REACHED();
-        return { };
+        // We failed to compute the damaged range. The existing display content may still hold references to
+        // layout boxes that were detached (see InlineDamage::m_detachedLayoutBoxes) and will be destroyed as
+        // soon as line damage is released. Do not leave those stale display boxes in place.
+        for (auto& line : inlineContent.displayContent().lines)
+            damagedRect.unite(line.inkOverflow());
+        inlineContent.displayContent().clear();
+        return damagedRect;
     }
 
     auto numberOfNewLines = layoutResult.displayContent.lines.size();
     auto numberOfNewBoxes = layoutResult.displayContent.boxes.size();
 
-    auto damagedRect = FloatRect { };
     auto adjustDamagedRectWithLineRange = [&](size_t firstLineIndex, size_t lineCount) {
         auto& lines = inlineContent.displayContent().lines;
         ASSERT(firstLineIndex + lineCount <= lines.size());
