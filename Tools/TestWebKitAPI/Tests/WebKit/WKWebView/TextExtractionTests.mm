@@ -1347,6 +1347,46 @@ TEST(TextExtractionTests, SkipNearlyTransparentContentByDefault)
     EXPECT_FALSE([defaultText containsString:@"unlabeled transparent field"]);
 }
 
+TEST(TextExtractionTests, ExtractTransparentCheckboxOverVisualProxy)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+        .control { position: relative; width: 40px; height: 40px; }
+        .control input { position: absolute; inset: 0; width: 40px; height: 40px; margin: 0; opacity: 0; }
+        .box { position: absolute; left: 11px; top: 11px; width: 18px; height: 18px; border: 2px solid #5f6368; border-radius: 2px; }
+        </style>
+        </head>
+        <body>
+            <div class="control">
+                <input type="checkbox" aria-label="Select photos" checked>
+                <div class="box"><svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14"><path d="M1 12 8 19 22 4"></path></svg></div>
+            </div>
+            <input type="checkbox" aria-label="Genuinely invisible" style="opacity: 0">
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr defaultText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([defaultText containsString:@"Select photos"]);
+    EXPECT_TRUE([defaultText containsString:@"checkbox"]);
+    EXPECT_TRUE([defaultText containsString:@"checked"]);
+    EXPECT_FALSE([defaultText containsString:@"Genuinely invisible"]);
+    EXPECT_FALSE([defaultText containsString:@"image"]);
+}
+
 TEST(TextExtractionTests, MinimalHTMLOutput)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{

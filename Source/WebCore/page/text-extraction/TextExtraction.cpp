@@ -301,6 +301,7 @@ struct TraversalContext {
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> enclosingBlocks;
     HashMap<Ref<Node>, unsigned> enclosingBlockNumberMap;
     HashSet<Ref<Node>> additionalContainersToCollect;
+    HashSet<Ref<Node>> visualProxiesToSkip;
     unsigned inAdditionalContainerToCollectCount { 0 };
     unsigned depth { 0 };
     Vector<bool, 1> hasOverflowItemsStack;
@@ -457,7 +458,7 @@ static inline void merge(Item& destinationItem, Item&& sourceItem)
     }
 }
 
-static inline FloatRect rootViewBounds(Node& node)
+static inline FloatRect rootViewBounds(const Node& node)
 {
     RefPtr view = node.document().view();
     if (!view) [[unlikely]]
@@ -527,6 +528,80 @@ static inline std::optional<FloatRect> visibleAssociatedLabelBounds(HTMLElement&
     }
 
     return std::nullopt;
+}
+
+static bool hasVisuallyDistinctStyling(const Style::ComputedStyle&);
+
+static inline bool paintsVisibleContent(const RenderObject& renderer)
+{
+    CheckedRef style = renderer.style();
+    if (style->usedVisibility() != Visibility::Visible)
+        return false;
+
+    if (style->opacity() < minOpacityToConsiderVisible)
+        return false;
+
+    if (CheckedPtr text = dynamicDowncast<RenderText>(renderer))
+        return text->hasRenderedText();
+
+    return renderer.isRenderReplaced() || hasVisuallyDistinctStyling(protect(style));
+}
+
+static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputElement& input)
+{
+    if (!input.isCheckbox() && !input.isRadioButton())
+        return { };
+
+    CheckedPtr inputRenderer = input.renderer();
+    if (!inputRenderer)
+        return { };
+
+    static constexpr auto minTransparentControlLength = 8;
+    static constexpr auto maxTransparentControlLength = 96;
+    auto inputBounds = rootViewBounds(input);
+    if (inputBounds.width() < minTransparentControlLength || inputBounds.height() < minTransparentControlLength)
+        return { };
+
+    if (inputBounds.width() > maxTransparentControlLength || inputBounds.height() > maxTransparentControlLength)
+        return { };
+
+    static constexpr auto maxAncestorHopsToFindVisualProxy = 3;
+    static constexpr auto maxProxyContainerAreaRatio = 4;
+    static constexpr auto minProxyOverlapRatio = 0.5;
+    auto inputArea = inputBounds.area();
+    RefPtr ancestor = input.parentElement();
+    for (unsigned hop = 0; ancestor && hop < maxAncestorHopsToFindVisualProxy; ++hop, ancestor = ancestor->parentElement()) {
+        CheckedPtr ancestorRenderer = ancestor->renderer();
+        if (!ancestorRenderer)
+            break;
+
+        if (rootViewBounds(*ancestor).area() > maxProxyContainerAreaRatio * inputArea)
+            break;
+
+        for (CheckedRef descendant : descendantsOfType<RenderObject>(*ancestorRenderer)) {
+            if (descendant.ptr() == inputRenderer.get() || descendant->isDescendantOf(inputRenderer.get()))
+                continue;
+
+            if (!paintsVisibleContent(descendant))
+                continue;
+
+            RefPtr proxyNode = descendant->node();
+            if (!proxyNode)
+                continue;
+
+            auto proxyBounds = rootViewBounds(*proxyNode);
+            auto proxyArea = proxyBounds.area();
+            if (proxyArea <= 0)
+                continue;
+
+            if (intersection(proxyBounds, inputBounds).area() < minProxyOverlapRatio * proxyArea)
+                continue;
+
+            return proxyNode;
+        }
+    }
+
+    return { };
 }
 
 template<typename T>
@@ -603,8 +678,17 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
         return { SkipExtraction::SelfAndSubtree };
 
     if (context.skipNearlyTransparentContent && renderer->style().opacity() < minOpacityToConsiderVisible) {
-        if (RefPtr input = dynamicDowncast<HTMLInputElement>(node); !input || !visibleAssociatedLabelBounds(*input))
+        RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+        if (!input)
             return { SkipExtraction::SelfAndSubtree };
+
+        if (!visibleAssociatedLabelBounds(*input)) {
+            RefPtr proxy = visualProxyForTransparentControl(*input);
+            if (!proxy)
+                return { SkipExtraction::SelfAndSubtree };
+
+            context.visualProxiesToSkip.add(proxy.releaseNonNull());
+        }
     }
 
     if (renderer->style().usedVisibility() == Visibility::Hidden)
@@ -1075,7 +1159,7 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
     if (context.depth >= maxExtractionRecursionDepth)
         return;
 
-    if (context.nodesToSkip.contains(node))
+    if (context.nodesToSkip.contains(node) || context.visualProxiesToSkip.contains(node))
         return;
 
     ++context.depth;
@@ -1728,6 +1812,7 @@ Result extractItem(Request&& request, LocalFrame& frame)
             .enclosingBlocks = { },
             .enclosingBlockNumberMap = { },
             .additionalContainersToCollect = WTF::move(additionalContainersToCollect),
+            .visualProxiesToSkip = { },
             .inAdditionalContainerToCollectCount = 0,
             .depth = 0,
             .hasOverflowItemsStack = { false },
