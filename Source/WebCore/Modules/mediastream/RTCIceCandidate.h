@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +66,8 @@ public:
     std::optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
 
     String usernameFragment() const { return m_fields.usernameFragment; }
+    std::optional<RTCIceServerTransportProtocol> relayProtocol() const { return m_fields.relayProtocol; }
+    String url() const { return m_fields.url; }
     RTCIceCandidateInit toJSON() const;
 
 private:

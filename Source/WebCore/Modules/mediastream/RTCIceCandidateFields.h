@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #include <WebCore/RTCIceCandidateType.h>
 #include <WebCore/RTCIceComponent.h>
 #include <WebCore/RTCIceProtocol.h>
+#include <WebCore/RTCIceServerTransportProtocol.h>
 #include <WebCore/RTCIceTcpCandidateType.h>
 #include <optional>
 #include <wtf/text/WTFString.h>
@@ -45,8 +46,10 @@ struct RTCIceCandidateFields {
     String relatedAddress;
     std::optional<unsigned short> relatedPort;
     String usernameFragment;
+    std::optional<RTCIceServerTransportProtocol> relayProtocol;
+    String url;
 
-    RTCIceCandidateFields isolatedCopy() && { return { WTF::move(foundation).isolatedCopy(), component, priority, WTF::move(address).isolatedCopy(), protocol, port, type, tcpType, WTF::move(relatedAddress).isolatedCopy(), relatedPort, WTF::move(usernameFragment).isolatedCopy() }; }
+    RTCIceCandidateFields isolatedCopy() && { return { WTF::move(foundation).isolatedCopy(), component, priority, WTF::move(address).isolatedCopy(), protocol, port, type, tcpType, WTF::move(relatedAddress).isolatedCopy(), relatedPort, WTF::move(usernameFragment).isolatedCopy(), relayProtocol, WTF::move(url).isolatedCopy() }; }
 };
 
 std::optional<RTCIceCandidateFields> parseIceCandidateSDP(const String&);
