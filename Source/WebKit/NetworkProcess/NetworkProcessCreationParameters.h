@@ -62,6 +62,8 @@ struct NetworkProcessCreationParameters {
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
+    int latencyQOS { 0 };
+    int throughputQOS { 0 };
     RetainPtr<CFDataRef> networkATSContext;
     bool isParentProcessFullWebBrowserOrRunningTest { false };
 #endif

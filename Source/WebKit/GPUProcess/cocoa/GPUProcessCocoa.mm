@@ -106,6 +106,8 @@ void GPUProcess::ensureAVCaptureServerConnection()
 
 void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters& parameters)
 {
+    setQOS(parameters.latencyQOS, parameters.throughputQOS);
+
 #if PLATFORM(MAC)
     auto launchServicesExtension = SandboxExtension::create(WTF::move(parameters.launchServicesExtensionHandle));
     if (launchServicesExtension) {

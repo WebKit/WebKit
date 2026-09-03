@@ -38,6 +38,8 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier
+    int latencyQOS
+    int throughputQOS
     RetainPtr<CFDataRef> networkATSContext
     bool isParentProcessFullWebBrowserOrRunningTest
 #endif

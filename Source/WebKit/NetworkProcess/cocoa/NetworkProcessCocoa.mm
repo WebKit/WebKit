@@ -122,6 +122,8 @@ static void blockNetworkAccessIfNeeded(IPC::Connection* parentProcessConnection)
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+    setQOS(parameters.latencyQOS, parameters.throughputQOS);
+
     m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
 #if PLATFORM(IOS_FAMILY)
     m_containerTemporaryDirectory = parameters.containerTemporaryDirectory;
