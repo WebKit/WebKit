@@ -11,6 +11,7 @@ function eventhandler1() {
 function eventhandler2() {
     label.addEventListener("DOMSubtreeModified", eventhandler1);
     label.appendChild(embed);
+    setTimeout(eventhandler3, 0);
 }
 
 function eventhandler3() {
@@ -19,6 +20,6 @@ function eventhandler3() {
 }
 </script>
 
-<style onload="setTimeout(eventhandler3, 0)">AA</style>
+<style>AA</style>
 <label id="label">This test passes if it doesn't crash.</label>
 <embed id="embed" src="data:text/html,foo" onload="eventhandler2()">AA</embed>

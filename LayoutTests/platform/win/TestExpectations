@@ -1391,8 +1391,6 @@ fast/dom/Window/window-focus-self.html [ Failure ]
 fast/dom/Window/window-resize-and-move-arguments.html [ Failure ]
 fast/dom/Window/window-resize.html [ Failure ]
 
-webkit.org/b/290021 fast/dom/move-embedded-during-update.html [ Skip ] # Pass Timeout
-
 webkit.org/b/288006 http/tests/dom/noreferrer-window-not-targetable.html [ Failure Pass ]
 webkit.org/b/288006 http/tests/dom/noopener-window-not-targetable.html [ Failure Pass ]
 
