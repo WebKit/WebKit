@@ -206,7 +206,10 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     if (tilesToCreate.isEmpty() && tilesToUpdate.isEmpty() && tilesToRemove.isEmpty())
         return result;
 
-    result.add(UpdateResult::TilesChanged);
+    const bool isPendingTileCreationOnlyUpdate = std::exchange(m_isPendingTileCreationUpdate, false) && tilesToCreate.size() == tilesToUpdate.size() && tilesToRemove.isEmpty();
+    if (!isPendingTileCreationOnlyUpdate)
+        result.add(UpdateResult::TilesChanged);
+
     {
         Locker locker { m_update.lock };
         m_update.pending.appendUpdate(WTF::move(tilesToCreate), WTF::move(tilesToUpdate), WTF::move(tilesToRemove));
@@ -382,6 +385,7 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& unscaledV
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
+    m_isPendingTileCreationUpdate = shortestDistance > 0;
 }
 
 // This is based on the same heuristics used by chromium to compute the tile size.
