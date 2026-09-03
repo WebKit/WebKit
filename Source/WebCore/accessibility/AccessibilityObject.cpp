@@ -2194,23 +2194,23 @@ static RenderListItem* NODELETE renderListItemContainer(Node* node)
 }
 
 // Returns the text representing a list marker taking into account the position of the text in the line of text.
-static StringView lineStartListMarkerText(const RenderListItem* listItem, const VisiblePosition& startVisiblePosition, std::optional<StringView> markerText = std::nullopt)
+static String lineStartListMarkerText(const RenderListItem* listItem, const VisiblePosition& startVisiblePosition, String markerText = { })
 {
     if (!listItem)
         return { };
 
-    if (!markerText)
+    if (markerText.isNull())
         markerText = listItem->markerText();
-    if (markerText->isEmpty())
+    if (markerText.isEmpty())
         return { };
 
     // Only include the list marker if the range includes the line start (where the marker would be), and is in the same line as the marker.
     if (!isStartOfLine(startVisiblePosition) || !inSameLine(startVisiblePosition, firstPositionInNode(protect(*listItem->element()))))
         return { };
-    return *markerText;
+    return markerText;
 }
 
-StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
+String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Position&& startPosition)
 {
     CheckedPtr listItem = renderListItemContainer(node);
     if (!listItem)
@@ -2220,7 +2220,7 @@ StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Pos
     auto markerText = listItem->markerText();
     if (markerText.isEmpty())
         return { };
-    return lineStartListMarkerText(listItem.get(), startPosition, markerText);
+    return lineStartListMarkerText(listItem.get(), startPosition, WTF::move(markerText));
 }
 
 String AccessibilityObject::textContentPrefixFromListMarker() const

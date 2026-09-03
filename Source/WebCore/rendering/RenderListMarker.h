@@ -31,6 +31,8 @@ class RenderBlockFlow;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
+enum class ListMarkerIncludeSuffix : bool { No, Yes };
+
 struct ListMarkerTextContent {
     String textWithSuffix;
     uint32_t textWithoutSuffixLength { 0 };
@@ -54,7 +56,7 @@ public:
     RenderListMarker(RenderListItem&, Style::ComputedStyle&&);
     virtual ~RenderListMarker();
 
-    enum class IncludeSuffix : bool { No, Yes };
+    using IncludeSuffix = ListMarkerIncludeSuffix;
     String textContent(IncludeSuffix includeSuffix = IncludeSuffix::Yes) const
     {
         return includeSuffix == IncludeSuffix::Yes ? m_textContent.textWithSuffix : m_textContent.textWithoutSuffix().toString();
@@ -145,6 +147,13 @@ private:
     std::optional<ExcludedPosition> m_excludedPosition;
     bool m_shouldCollapseAnonymousBlockParent { false };
 };
+
+// The room an image marker keeps between itself and the content it labels.
+constexpr int listMarkerImagePadding = 7;
+ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
+bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle);
+bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
+void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
 
 } // namespace WebCore
 

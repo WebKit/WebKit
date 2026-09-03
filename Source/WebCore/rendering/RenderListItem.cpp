@@ -387,13 +387,18 @@ void RenderListItem::updateValue()
     }
 }
 
+void RenderListItem::updateMarkerContent()
+{
+    if (CheckedPtr marker = m_marker.get())
+        marker->updateInlineMarginsAndContent();
+}
+
 void RenderListItem::updateValueAndMarkerContent()
 {
     updateValue();
     // Nothing is changing the render tree here, so there is nothing to wait for: fill the marker's text in right away
     // rather than leave it to layout (see RenderTreeBuilder::updateListMarkerContents()).
-    if (m_marker)
-        m_marker->updateInlineMarginsAndContent();
+    updateMarkerContent();
 }
 
 void RenderListItem::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
@@ -455,19 +460,23 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // The marker box paints before our content, so content overlapping it (a negative margin pulling the first line
-    // over the marker) covers it rather than the other way around.
     if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->hasSelfPaintingLayer())
         excludedMarker->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*excludedMarker, paintOffset));
 
     RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
 
-String RenderListItem::markerText(RenderListMarker::IncludeSuffix includeSuffix) const
+String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
 {
-    if (!m_marker)
+    CheckedPtr marker = m_marker.get();
+    if (!marker)
         return { };
-    return m_marker->textContent(includeSuffix);
+
+    if (marker->style().content().isData())
+        return { };
+
+    auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));
+    return includeSuffix == ListMarkerIncludeSuffix::Yes ? textContent.textWithSuffix : textContent.textWithoutSuffix().toString();
 }
 
 void RenderListItem::usedCounterDirectivesChanged()
@@ -484,7 +493,7 @@ void RenderListItem::usedCounterDirectivesChanged()
         item->updateValueAndMarkerContent();
 }
 
-Vector<CheckedRef<RenderListMarker>> RenderListItem::updateListMarkerNumbers()
+Vector<CheckedRef<RenderListItem>> RenderListItem::updateListMarkerNumbers()
 {
     RefPtr list = enclosingList(*this);
     if (!list)
@@ -498,15 +507,14 @@ Vector<CheckedRef<RenderListMarker>> RenderListItem::updateListMarkerNumbers()
 
     // If an item has been marked for update before, we know that all following items have, too.
     // This gives us the opportunity to stop and avoid marking the same nodes again.
-    Vector<CheckedRef<RenderListMarker>> markersNeedingContentUpdate;
+    Vector<CheckedRef<RenderListItem>> itemsNeedingMarkerUpdate;
     auto* item = this;
     auto subsequentListItem = isInReversedOrderedList ? previousListItem : nextListItem;
     while ((item = subsequentListItem(*list, *item)) && item->m_value) {
         item->updateValue();
-        if (CheckedPtr marker = item->m_marker.get())
-            markersNeedingContentUpdate.append(*marker);
+        itemsNeedingMarkerUpdate.append(*item);
     }
-    return markersNeedingContentUpdate;
+    return itemsNeedingMarkerUpdate;
 }
 
 bool RenderListItem::isInReversedOrderedList() const

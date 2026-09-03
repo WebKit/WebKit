@@ -201,18 +201,18 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::addListMarkerNeedingContentUpdate(RenderListMarker& marker)
+void RenderTreeBuilder::addListItemNeedingMarkerUpdate(RenderListItem& listItem)
 {
-    m_listMarkersNeedingContentUpdate.add(marker);
+    m_listItemsNeedingMarkerUpdate.add(listItem);
 }
 
 void RenderTreeBuilder::updateListMarkerContents()
 {
     // A marker's text is made of its list item's list-item counter value, which is only settled once the tree is done
     // changing: inserting or removing a list item renumbers every item after it.
-    while (!m_listMarkersNeedingContentUpdate.isEmptyIgnoringNullReferences()) {
-        for (auto& marker : std::exchange(m_listMarkersNeedingContentUpdate, { }))
-            marker.updateInlineMarginsAndContent();
+    while (!m_listItemsNeedingMarkerUpdate.isEmptyIgnoringNullReferences()) {
+        for (auto& listItem : std::exchange(m_listItemsNeedingMarkerUpdate, { }))
+            listItem.updateMarkerContent();
     }
 }
 
@@ -506,8 +506,8 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
         if (CheckedPtr fragmentedFlow = dynamicDowncast<RenderMultiColumnFlow>(newChild->enclosingFragmentedFlow()))
             multiColumnBuilder().multiColumnDescendantInserted(*fragmentedFlow, *newChild);
         if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(*newChild)) {
-            for (auto& marker : listItemRenderer->updateListMarkerNumbers())
-                addListMarkerNeedingContentUpdate(marker);
+            for (auto& listItem : listItemRenderer->updateListMarkerNumbers())
+                addListItemNeedingMarkerUpdate(listItem);
         }
     }
 
@@ -1062,8 +1062,8 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
         resetRendererStateOnDetach(parent, child, willBeDestroyed);
 
     if (CheckedPtr listItemRenderer = dynamicDowncast<RenderListItem>(child); listItemRenderer && child.everHadLayout() && m_internalMovesType == IsInternalMove::No) {
-        for (auto& marker : listItemRenderer->updateListMarkerNumbers())
-            addListMarkerNeedingContentUpdate(marker);
+        for (auto& listItem : listItemRenderer->updateListMarkerNumbers())
+            addListItemNeedingMarkerUpdate(listItem);
     }
 
     if (m_tearDownType == RenderTreeBuilder::TearDownType::Root || is<RenderInline>(m_subtreeDestroyRoot)) {

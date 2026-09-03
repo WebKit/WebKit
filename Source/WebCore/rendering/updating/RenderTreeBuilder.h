@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class RenderGrid;
+class RenderListItem;
 class RenderListMarker;
 class RenderTreeUpdater;
 
@@ -76,7 +77,7 @@ public:
 private:
     // Collected while the tree is being built: a marker's text is made of its list item's list-item counter value,
     // which is only settled once the tree is done changing.
-    void addListMarkerNeedingContentUpdate(RenderListMarker&);
+    void addListItemNeedingMarkerUpdate(RenderListItem&);
 
     static void markBoxForRelayoutAfterSplit(RenderBoxModelObject&);
 
@@ -140,7 +141,7 @@ private:
 
     WidgetHierarchyUpdatesSuspensionScope m_widgetHierarchyUpdatesSuspensionScope;
     RenderView& m_view;
-    SingleThreadWeakHashSet<RenderListMarker> m_listMarkersNeedingContentUpdate;
+    SingleThreadWeakHashSet<RenderListItem> m_listItemsNeedingMarkerUpdate;
     RenderTreeBuilder* m_previous { nullptr };
     static RenderTreeBuilder* s_current;
 
