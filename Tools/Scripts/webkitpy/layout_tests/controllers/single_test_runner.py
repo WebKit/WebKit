@@ -383,6 +383,11 @@ class SingleTestRunner(object):
         failures = []
         failures.extend(self._handle_error(driver_output))
 
+        if driver_output.sequence_mismatch:
+            failures.append(test_failures.FailureSequenceMismatch(
+                driver_output.expected_sequence, driver_output.actual_sequence))
+            return TestResult(self._test_input, failures, driver_output.test_time, driver_output.has_stderr(), pid=driver_output.pid)
+
         if driver_output.crash:
             # Don't continue any more if we already have a crash.
             # In case of timeouts, we continue since we still want to see the text and image output.
@@ -680,8 +685,18 @@ class SingleTestRunner(object):
             # Don't continue any more if we already have crash or timeout.
             return TestResult(self._test_input, failures, total_test_time, has_stderr)
 
+        if actual_driver_output.sequence_mismatch:
+            failures.append(test_failures.FailureSequenceMismatch(
+                actual_driver_output.expected_sequence, actual_driver_output.actual_sequence))
+            return TestResult(self._test_input, failures, total_test_time, has_stderr, pid=actual_driver_output.pid)
+
         failures.extend(self._handle_error(reference_driver_output, reference_filename=reference_filename))
         if failures:
+            return TestResult(self._test_input, failures, total_test_time, has_stderr, pid=actual_driver_output.pid)
+
+        if reference_driver_output.sequence_mismatch:
+            failures.append(test_failures.FailureSequenceMismatch(
+                reference_driver_output.expected_sequence, reference_driver_output.actual_sequence))
             return TestResult(self._test_input, failures, total_test_time, has_stderr, pid=actual_driver_output.pid)
 
         if not reference_driver_output.image_hash and not actual_driver_output.image_hash:

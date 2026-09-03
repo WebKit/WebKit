@@ -114,7 +114,7 @@ private:
     bool resolveForceImmediateCompletion(bool canCompleteSynchronously);
 
     void dumpResults();
-    static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
+    static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false, uint64_t testSequenceNumber = 0);
     enum class SnapshotResultType { WebView, WebContents };
     void dumpPixelsAndCompareWithExpected(SnapshotResultType, WKArrayRef repaintRects, WKImageRef = nullptr);
     void dumpAudio(WKDataRef);

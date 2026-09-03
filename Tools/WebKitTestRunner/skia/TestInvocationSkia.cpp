@@ -60,12 +60,12 @@ static std::string computeSHA1HashStringForPixmap(const SkPixmap& pixmap)
     return result;
 }
 
-static void dumpPixmap(const SkPixmap& pixmap, const std::string& checksum)
+static void dumpPixmap(const SkPixmap& pixmap, const std::string& checksum, uint64_t testSequenceNumber)
 {
     SkDynamicMemoryWStream stream;
     SkPngEncoder::Encode(&stream, pixmap, { });
     auto data = stream.detachAsData();
-    printPNG(data->bytes(), data->size(), checksum.c_str());
+    printPNG(data->bytes(), data->size(), checksum.c_str(), testSequenceNumber);
 }
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapshotType, WKArrayRef repaintRects, WKImageRef webImage)
@@ -103,7 +103,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
 
     auto snapshotHash = computeSHA1HashStringForPixmap(pixmap);
     if (!compareActualHashToExpectedAndDumpResults(snapshotHash))
-        dumpPixmap(pixmap, snapshotHash);
+        dumpPixmap(pixmap, snapshotHash, m_identifier);
 }
 
 } // namespace WTR

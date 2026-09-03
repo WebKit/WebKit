@@ -81,7 +81,8 @@ class TestFailuresTest(unittest.TestCase):
             FailureMissingAudio,
             FailureAudioMismatch,
             FailureDocumentLeak,
-            FailureEarlyExit)
+            FailureEarlyExit,
+            FailureSequenceMismatch)
         self.assertEqual(failure_classes, ALL_FAILURE_CLASSES)
 
     def test_equals(self):

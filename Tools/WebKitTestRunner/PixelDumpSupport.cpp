@@ -67,12 +67,13 @@ static size_t offsetAfterIHDRChunk(const unsigned char* data, const size_t dataL
     return pngHeaderLength + pngIHDRChunkLength;
 }
 
-void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum)
+void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum, uint64_t testSequenceNumber)
 {
     Vector<unsigned char> bytesToAdd;
     convertChecksumToPNGComment(checksum, bytesToAdd);
 
     printf("Content-Type: %s\n", "image/png");
+    printf("Test-Sequence: %llu\n", testSequenceNumber);
     printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength + bytesToAdd.size()));
 
     size_t insertOffset = offsetAfterIHDRChunk(data, dataLength);

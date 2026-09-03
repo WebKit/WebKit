@@ -193,6 +193,9 @@ static RetainPtr<NSString> toNS(const std::string& string)
 
 static void runTest(const std::string& testURL);
 
+// Global test sequence counter for detecting off-by-one issues
+uint64_t gTestSequenceNumber = 0;
+
 // Deciding when it's OK to dump out the state is a bit tricky.  All these must be true:
 // - There is no load in progress
 // - There is no work queued up (see workQueue var, below)
@@ -1059,6 +1062,7 @@ static bool handleControlCommand(std::span<const char> command)
         // DumpRenderTree does not support checking for world leaks or listing child processes.
         WTF::String result("\n"_s);
         unsigned resultLength = result.length();
+        printf("Test-Sequence: %llu\n", gTestSequenceNumber);
         printf("Content-Type: text/plain\n");
         printf("Content-Length: %u\n", resultLength);
         fwrite(result.utf8().data(), 1, resultLength, stdout);
@@ -1087,6 +1091,7 @@ static void runTestingServerLoop()
         if (handleControlCommand(std::span { filenameBuffer }))
             continue;
 
+        ++gTestSequenceNumber;
         runTest(filenameBuffer.data());
 
         if (printTestCount) {
@@ -1654,6 +1659,7 @@ void dump()
         if (resultString && !resultData)
             resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
 
+        printf("Test-Sequence: %llu\n", gTestSequenceNumber);
         printf("Content-Type: %s\n", [resultMimeType UTF8String]);
 
         WTF::FastMallocStatistics mallocStats = WTF::fastMallocStatistics();

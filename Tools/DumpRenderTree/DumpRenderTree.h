@@ -48,6 +48,7 @@ class TestRunner;
 
 extern volatile bool done;
 extern bool gUsingServerMode;
+extern uint64_t gTestSequenceNumber;
 
 // FIXME: This is a bad abstraction.  We should insted pass this to other controller objects which need access to it.
 extern RefPtr<TestRunner> gTestRunner;

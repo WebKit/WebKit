@@ -88,7 +88,8 @@ class DriverOutput(object):
 
     def __init__(self, text, image, image_hash, audio, crash=False,
             test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
-            crashed_pid=None, crash_log=None, pid=None):
+            crashed_pid=None, crash_log=None, pid=None, sequence_mismatch=False,
+            expected_sequence=None, actual_sequence=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = string_utils.decode(text, target_type=str) if text else None
         self.image = image  # May be empty-string if the test crashes.
@@ -104,6 +105,9 @@ class DriverOutput(object):
         self.timeout = timeout
         self.error = error  # stderr output
         self.pid = pid
+        self.sequence_mismatch = sequence_mismatch
+        self.expected_sequence = expected_sequence
+        self.actual_sequence = actual_sequence
 
     def has_stderr(self):
         return bool(self.error)
@@ -182,6 +186,9 @@ class Driver(object):
         self.error_from_test = ''
         self.err_seen_eof = False
 
+        self._expected_test_sequence = 0
+        self._actual_test_sequence = None
+
         self._server_name = self._port.driver_name()
         self._server_process = None
 
@@ -220,6 +227,8 @@ class Driver(object):
         self._crash_report_from_driver = None
         self.error_from_test = ''
         self.err_seen_eof = False
+        self._actual_test_sequence = None
+        self._expected_test_sequence += 1
 
         command = self._command_from_driver_input(driver_input)
 
@@ -241,10 +250,15 @@ class Driver(object):
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
         driver_timed_out = self._driver_timed_out
+        sequence_mismatch = (
+            False
+            if self._actual_test_sequence is None
+            else self._actual_test_sequence != self._expected_test_sequence
+        )
         pid = self._server_process.pid()
 
-        if stop_when_done or crashed or timed_out:
-            if stop_when_done and not (crashed or timed_out):
+        if stop_when_done or crashed or timed_out or sequence_mismatch:
+            if stop_when_done and not (crashed or timed_out or sequence_mismatch):
                 self.do_post_tests_work()
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
             # In the timeout case, we kill the hung process as well.
@@ -279,7 +293,9 @@ class Driver(object):
             crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
             timeout=timed_out or driver_timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
-            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
+            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid,
+            sequence_mismatch=sequence_mismatch, expected_sequence=self._expected_test_sequence,
+            actual_sequence=self._actual_test_sequence)
 
     def do_post_tests_work(self):
         if not self._server_process:
@@ -529,6 +545,7 @@ class Driver(object):
         self._crashed_pid = None
         self._server_process = self._port._test_runner_process_constructor(self._port, self._server_name, self.cmd_line(pixel_tests, per_test_args), environment, target_host=self._target_host)
         self._server_process.start()
+        self._expected_test_sequence = 0
 
     def _run_post_start_tasks(self):
         # Remote drivers may override this to delay post-start tasks until the server has ack'd.
@@ -733,6 +750,7 @@ class Driver(object):
             (b'ActualHash: ', 'content_hash', None),
             (b'DumpMalloc: ', 'malloc', None),
             (b'DumpJSHeap: ', 'js_heap', None),
+            (b'Test-Sequence: ', 'test_sequence', int),
         ]:
             if self._read_header(block, line, header[0], header[1], header[2]):
                 return
@@ -810,6 +828,12 @@ class Driver(object):
             self._crashed_process_name = self._server_process.process_name()
             self._crashed_pid = self._server_process.system_pid()
 
+        if block.test_sequence is not None:
+            self._actual_test_sequence = block.test_sequence
+            if block.test_sequence != self._expected_test_sequence:
+                _log.debug('Test sequence mismatch for %s: expected %d, got %d',
+                           test_name, self._expected_test_sequence, block.test_sequence)
+
         block.decode_content()
         return block
 
@@ -826,6 +850,7 @@ class ContentBlock(object):
         self.encoding = None
         self.content_hash = None
         self._content_length = None
+        self.test_sequence = None
         # Content is treated as binary data even though the text output is usually UTF-8.
         self.content = b''
         self.decoded_content = None

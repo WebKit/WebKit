@@ -114,6 +114,7 @@ void printPNG(const unsigned char* data, const size_t dataLength, const char* ch
     Vector<unsigned char> bytesToAdd;
     convertChecksumToPNGComment(checksum, bytesToAdd);
 
+    fprintf(testResult, "Test-Sequence: %llu\n", gTestSequenceNumber);
     fprintf(testResult, "Content-Type: image/png\n");
     fprintf(testResult, "Content-Length: %lu\n", static_cast<unsigned long>(dataLength + bytesToAdd.size()));
 

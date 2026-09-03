@@ -134,7 +134,7 @@ static std::optional<std::string> hashForBlackImageOfSize(WKSize size)
 }
 #endif // PLATFORM(MAC)
 
-static void dumpBitmap(CGContextRef bitmapContext, const std::string& checksum, WKSize imageSize, WKSize windowSize)
+static void dumpBitmap(CGContextRef bitmapContext, const std::string& checksum, WKSize imageSize, WKSize windowSize, uint64_t testSequenceNumber)
 {
     auto image = adoptCF(CGBitmapContextCreateImage(bitmapContext));
     auto imageData = adoptCF(CFDataCreateMutable(0, 0));
@@ -154,7 +154,7 @@ static void dumpBitmap(CGContextRef bitmapContext, const std::string& checksum, 
     const unsigned char* data = CFDataGetBytePtr(imageData.get());
     const size_t dataLength = CFDataGetLength(imageData.get());
 
-    printPNG(data, dataLength, checksum.c_str());
+    printPNG(data, dataLength, checksum.c_str(), testSequenceNumber);
 }
 
 static void paintRepaintRectOverlay(CGContextRef context, WKSize imageSize, WKArrayRef repaintRects)
@@ -253,7 +253,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(SnapshotResultType snapsho
     } while (gotBlackSnapshot && numTries++ < maxNumTries);
 
     if (!compareActualHashToExpectedAndDumpResults(snapshotHash))
-        dumpBitmap(context.get(), snapshotHash, imageSize, windowSize);
+        dumpBitmap(context.get(), snapshotHash, imageSize, windowSize, m_identifier);
 }
 
 } // namespace WTR

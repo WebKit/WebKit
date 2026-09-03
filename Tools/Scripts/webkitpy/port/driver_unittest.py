@@ -295,6 +295,82 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(port._filesystem.written_files, {})
         self.assertEqual(port._filesystem.last_tmpdir, None)
 
+    def test_run_test_sequence_correct(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        self.proc = None
+
+        def make_proc(port, nm, cmd, env, target_host, crash_message=None):
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=[
+                'Test-Sequence: 1',
+                'Content-Type: text/plain',
+                'some test output',
+                '#EOF',
+                '#EOF',  # Second block (optional image block)
+            ], err_lines=[
+                '#EOF',  # Need stderr EOF for optional image block
+            ])
+            return self.proc
+        port._test_runner_process_constructor = make_proc
+
+        driver_input = DriverInput('test.html', 1000, None, False)
+        result = driver.run_test(driver_input, True)
+
+        self.assertFalse(result.sequence_mismatch)
+        self.assertEqual(result.expected_sequence, 1)
+        self.assertEqual(result.actual_sequence, 1)
+        self.proc = None
+
+    def test_run_test_sequence_mismatch_detection(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        self.proc = None
+
+        def make_proc(port, nm, cmd, env, target_host, crash_message=None):
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=[
+                'Test-Sequence: 5',
+                'Content-Type: text/plain',
+                'some test output',
+                '#EOF',
+                '#EOF',  # Second block (optional image block)
+            ], err_lines=[
+                '#EOF',  # Need stderr EOF for optional image block
+            ])
+            return self.proc
+
+        port._test_runner_process_constructor = make_proc
+
+        driver._expected_test_sequence = 0
+        driver_input = DriverInput('test.html', 1000, None, False)
+        result = driver.run_test(driver_input, True)
+
+        self.assertTrue(result.sequence_mismatch)
+        self.assertEqual(result.expected_sequence, 1)
+        self.assertEqual(result.actual_sequence, 5)
+        self.proc = None
+
+    def test_test_sequence_backward_compatibility(self):
+        port = TestWebKitPort()
+        driver = Driver(port, 0, pixel_tests=False)
+        driver._server_process = MockServerProcess(lines=[
+            'Content-Type: text/plain',
+            '#EOF',
+        ])
+
+        # Test that missing sequence (old DRT/WKTR) doesn't cause issues
+        driver._expected_test_sequence = 5
+        driver._actual_test_sequence = None
+
+        # Read a block without Test-Sequence header
+        content_block = driver._read_block(0, "test.html")
+
+        # Should not set _actual_test_sequence when Test-Sequence header is missing
+        # This simulates the behavior when older DRT/WKTR versions don't emit Test-Sequence header
+        self.assertEqual(driver._actual_test_sequence, None)
+        self.assertEqual(driver._expected_test_sequence, 5)
+
+        driver._server_process = None
+
     def test_stop_cleans_up_properly(self):
         port = TestWebKitPort()
         port._test_runner_process_constructor = MockServerProcess

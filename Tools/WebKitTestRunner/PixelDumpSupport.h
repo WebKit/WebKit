@@ -29,6 +29,6 @@
 #ifndef PixelDumpSupport_h
 #define PixelDumpSupport_h
 
-void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum);
+void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum, uint64_t testSequenceNumber = 0);
 
 #endif // PixelDumpSupport_h
