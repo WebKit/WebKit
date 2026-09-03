@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>CSS Test: Collapsed border with colspan in RTL — single cell border should not bleed across colspanned cell</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://www.w3.org/TR/CSS22/tables.html#border-conflict-resolution">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=20840">
+<link rel="match" href="collapsed-border-colspan-004-ref.html">
+<meta name="assert" content="In a border-collapsed RTL table, when a cell with a thick top border shares an edge with a colspanned cell above, only the border segment directly above that cell should be thick.">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; direction: rtl; }
+  td { border: 1px solid orange; padding: 5px; }
+</style>
+
+<p>The bottom border of the top cell should be thick black only above "def" (rightmost cell in RTL), and thin orange above "ghi" and "jkl".</p>
+
+<table>
+  <tr>
+    <td colspan="3">abc</td>
+  </tr>
+  <tr>
+    <td style="border-top: 5px solid black;">def</td>
+    <td>ghi</td>
+    <td>jkl</td>
+  </tr>
+</table>

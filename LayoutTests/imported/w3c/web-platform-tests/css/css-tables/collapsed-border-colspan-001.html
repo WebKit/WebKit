@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>CSS Test: Collapsed border with colspan — single cell border should not bleed across colspanned cell</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://www.w3.org/TR/CSS22/tables.html#border-conflict-resolution">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=20840">
+<link rel="match" href="collapsed-border-colspan-001-ref.html">
+<meta name="assert" content="In a border-collapsed table, when a cell with a thick top border shares an edge with a colspanned cell above, only the border segment directly above that cell should be thick. The remaining segments of the colspanned cell's bottom border should retain the thin border.">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; }
+  td { border: 1px solid orange; padding: 5px; }
+</style>
+
+<p>The bottom border of the top cell should be thick black only above "def", and thin orange above "ghi" and "jkl".</p>
+
+<table>
+  <tr>
+    <td colspan="3">abc</td>
+  </tr>
+  <tr>
+    <td style="border-top: 5px solid black;">def</td>
+    <td>ghi</td>
+    <td>jkl</td>
+  </tr>
+</table>

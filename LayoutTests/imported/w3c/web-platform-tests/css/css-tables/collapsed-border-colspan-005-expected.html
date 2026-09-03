@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<title>CSS Test Reference</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; writing-mode: vertical-rl; }
+  td { border: 1px solid orange; padding: 5px; }
+</style>
+
+<p>The border of the colspanned cell should be thick black only adjacent to "def", and thin orange adjacent to "ghi" and "jkl".</p>
+
+<table>
+  <tr>
+    <td style="border-left: 5px solid black; border-bottom-style: none;">abc</td>
+    <td style="border-top-style: none; border-bottom-style: none;"></td>
+    <td style="border-top-style: none;"></td>
+  </tr>
+  <tr>
+    <td style="border-right: 5px solid black;">def</td>
+    <td>ghi</td>
+    <td>jkl</td>
+  </tr>
+</table>

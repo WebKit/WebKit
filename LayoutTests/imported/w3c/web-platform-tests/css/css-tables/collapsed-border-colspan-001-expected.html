@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<title>CSS Test Reference</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; }
+  td { border: 1px solid orange; padding: 5px; }
+</style>
+
+<p>The bottom border of the top cell should be thick black only above "def", and thin orange above "ghi" and "jkl".</p>
+
+<!-- Reference: three separate cells in row 0 (no colspan) with internal
+     vertical borders removed via border-style:none. This avoids the colspan
+     border resolution bug while producing the correct segmented border visual.
+     Cell 1 has a thick black bottom border (matching the conflict with def's
+     thick top border). Cells 2 and 3 keep the default thin orange border. -->
+<table>
+  <tr>
+    <td style="border-bottom: 5px solid black; border-right-style: none;">abc</td>
+    <td style="border-left-style: none; border-right-style: none;"></td>
+    <td style="border-left-style: none;"></td>
+  </tr>
+  <tr>
+    <td style="border-top: 5px solid black;">def</td>
+    <td>ghi</td>
+    <td>jkl</td>
+  </tr>
+</table>
