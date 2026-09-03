@@ -127,7 +127,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
             GST_TRACE("Audio buffer will contain silence");
             webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);
         } else {
-            GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
+            GstMappedBuffer inMap(inBuffer, GST_MAP_READWRITE);
 
             gpointer in[1] = { inMap.data() };
             gpointer out[1] = { m_audioBuffer.mutableSpan().data() };
