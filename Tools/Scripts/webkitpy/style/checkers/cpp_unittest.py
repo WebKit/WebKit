@@ -242,6 +242,17 @@ class CppFunctionsTest(unittest.TestCase):
         self.assertEqual(error_collector.results(),
                           'The parameter name "ooF" adds no information, so it should be removed.  [readability/parameter_name] [5]')
 
+        error_collector = ErrorCollector(self.assertTrue)
+        parameter_less_than = cpp_style.Parameter('Type <', 5, 1)
+        print(parameter_less_than.lower_with_underscores_name())
+        self.assertTrue(cpp_style._check_parameter_name_against_text(parameter_less_than, '<', error_collector))
+        self.assertEqual(error_collector.results(), '')
+
+        error_collector = ErrorCollector(self.assertTrue)
+        parameter_bracket = cpp_style.Parameter('Type ]', 5, 1)
+        self.assertTrue(cpp_style._check_parameter_name_against_text(parameter_bracket, ']', error_collector))
+        self.assertEqual(error_collector.results(), '')
+
 
 class CppStyleTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpp_style tests.

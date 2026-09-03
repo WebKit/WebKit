@@ -1872,7 +1872,7 @@ def _check_parameter_name_against_text(parameter, text, error):
     # case insensitive while still retaining word breaks. (This ensures that
     # 'elate' doesn't look like it is duplicating of 'NateLate'.)
     canonical_parameter_name = parameter.lower_with_underscores_name()
-    if canonical_parameter_name == "]":
+    if canonical_parameter_name in (']', '<'):
         return True  # Work around a bug parsing some Objective-C code.
 
     # Appends "object" to all text to catch variables that did the same (but only
