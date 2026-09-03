@@ -1115,6 +1115,12 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
         export *
     }
 
+    module UIWindowScene_Extras {
+        requires objc
+        header \"${WEBKIT_DIR}/UIProcess/Cocoa/UIWindowScene+Extras.h\"
+        export *
+    }
+
     module JavaScriptEvaluationResult {
         requires cplusplus20
         header \"${WEBKIT_DIR}/Shared/JavaScriptEvaluationResult.h\"
@@ -2315,6 +2321,43 @@ set_target_properties(WebKitSwift PROPERTIES
     BUILD_WITH_INSTALL_NAME_DIR ON
     INSTALL_NAME_DIR "/System/Library/Frameworks/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
 )
+
+# WebKitAdditions ships these Swift sources with a .swift.in extension so that a
+# build without the internal SDK leaves them out. Copy each one into the derived
+# sources directory and compile it, as DerivedSources.make does for the Xcode
+# build. Without this the declarations they implement, such as
+# -[UIWindowScene setUsesDefaultGeometry:], resolve at compile time through
+# UIWindowScene+Extras.h but have no implementation at runtime.
+if (USE_APPLE_INTERNAL_SDK)
+    foreach (_additions_swift_source
+        AppKitGesturesExtras
+        TestWebKitAPILibraryAdditions
+        UIWindowScene+Extras
+        WKSExperienceController+Transitions
+        WKWebView+SystemTextExtraction)
+        add_custom_command(
+            OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${WebKitAdditions_HEADERS_DIR}/${_additions_swift_source}.swift.in
+                ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
+            DEPENDS
+                ${WebKitAdditions_HEADERS_DIR}/${_additions_swift_source}.swift.in
+                WebKitAdditions_CopyHeaders
+            COMMENT "Copying ${_additions_swift_source}.swift"
+            VERBATIM
+        )
+    endforeach ()
+
+    list(APPEND WebKit_SOURCES
+        ${WebKit_DERIVED_SOURCES_DIR}/AppKitGesturesExtras.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/TestWebKitAPILibraryAdditions.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/UIWindowScene+Extras.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/WKWebView+SystemTextExtraction.swift
+    )
+    target_sources(WebKitSwift PRIVATE
+        ${WebKit_DERIVED_SOURCES_DIR}/WKSExperienceController+Transitions.swift
+    )
+endif ()
 
 target_include_directories(WebKitSwift PRIVATE
     ${_wks_dir}

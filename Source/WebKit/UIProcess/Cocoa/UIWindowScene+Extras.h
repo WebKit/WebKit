@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if ENABLE(SCENE_GEOMETRY_UPDATE)
 
 #import <Foundation/Foundation.h>
