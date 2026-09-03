@@ -161,6 +161,49 @@ test(() => {
     const newSource = model.insertBefore(makeSource("model-child-2.usdz", "model/vnd.usdz+zip"), model.firstChild);
     assert_equals(model.currentSrc, newSource.src);
 }, "An inserted <source> with a supported type is selected.");
+
+test(() => {
+    const model = document.createElement("model");
+    const initialSource = model.appendChild(makeSource("model-initial.usdz"));
+    assert_equals(model.currentSrc, initialSource.src);
+
+    const container = document.createElement("div");
+    const newSource = container.appendChild(makeSource("model-moved.usdz"));
+    model.moveBefore(newSource, initialSource);
+    assert_equals(model.currentSrc, newSource.src);
+}, "Moving a <source> before the current source with moveBefore() updates currentSrc.");
+
+test(() => {
+    const model = document.createElement("model");
+    const source = model.appendChild(makeSource("model.usdz"));
+    assert_equals(model.currentSrc, source.src);
+
+    const container = document.createElement("div");
+    container.moveBefore(source, null);
+    assert_equals(model.currentSrc, "");
+}, "Moving the <source> out of the <model> with moveBefore() changes the currentSrc property.");
+
+test(() => {
+    const model = document.createElement("model");
+    const firstSource = model.appendChild(makeSource("model-1.usdz"));
+    const secondSource = model.appendChild(makeSource("model-2.usdz"));
+    assert_equals(model.currentSrc, firstSource.src);
+
+    model.moveBefore(secondSource, firstSource);
+    assert_equals(model.currentSrc, secondSource.src);
+}, "Reordering <source> children within the same <model> via moveBefore() updates currentSrc.");
+
+test(() => {
+    const firstModel = document.createElement("model");
+    const secondModel = document.createElement("model");
+    const source = firstModel.appendChild(makeSource("model.usdz"));
+    assert_equals(firstModel.currentSrc, source.src);
+    assert_equals(secondModel.currentSrc, "");
+
+    secondModel.moveBefore(source, null);
+    assert_equals(firstModel.currentSrc, "", "source is no longer considered by the first <model>");
+    assert_equals(secondModel.currentSrc, source.src, "source is picked up by the second <model>");
+}, "Moving a <source> from one <model> to another with moveBefore() updates currentSrc on both.");
 </script>
 </body>
 </html>

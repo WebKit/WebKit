@@ -1,0 +1,3 @@
+
+PASS NOT invoking resource selection by moving <source> into a <div> in <video>
+
