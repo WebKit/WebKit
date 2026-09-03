@@ -568,7 +568,14 @@ void Buffer::takeSlowIndexValidationPath(CommandBuffer& commandBuffer, uint32_t 
 #endif
         commandBuffer.addPostCommitHandler([queue, priorData = WTF::move(priorData), protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
             [mtlCommandBuffer waitUntilCompleted];
+#ifdef RC_REMOVE_SEC_ACCEL_3
             queue->writeBuffer(*protectedThis.ptr(), 0, priorData.mutableSpan());
+#else
+            // priorData goes out of scope with this handler, but a restore this large is staged through a
+            // newBufferWithBytesNoCopy MTLBuffer the GPU reads after the commit, so hand the bytes
+            // over instead of lending them.
+            queue->writeBuffer(*protectedThis.ptr(), 0, WTF::move(priorData));
+#endif
         });
     }
 }
@@ -607,7 +614,15 @@ void Buffer::takeSlowIndirectIndexValidationPath(CommandBuffer& commandBuffer, B
         commandBuffer.addPostCommitHandler([queue, priorData = WTF::move(priorData), protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
             [mtlCommandBuffer waitUntilCompleted];
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
             queue->writeBuffer(*protectedThis.ptr(), 0, priorData.mutableSpan());
+#else
+            // As in takeSlowIndexValidationPath() above: nothing bounds an indirect buffer below
+            // maxBufferSize, so this restore can be large enough to be staged through a
+            // newBufferWithBytesNoCopy MTLBuffer the GPU reads after the commit. Hand the bytes over
+            // instead of lending them, since priorData goes out of scope with this handler.
+            queue->writeBuffer(*protectedThis.ptr(), 0, WTF::move(priorData));
+#endif
         });
     }
 }

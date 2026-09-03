@@ -97,6 +97,18 @@ id<MTLBlitCommandEncoder> Queue::ensureBlitCommandEncoder()
 void Queue::finalizeBlitCommandEncoder()
 {
     if (m_blitCommandEncoder) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        // Hand the command buffer any bytes its copies only alias, before it is committed: Metal
+        // accepts completed handlers on uncommitted command buffers only. Nothing is parked unless a
+        // writeBuffer() staged a copy through a newBufferWithBytesNoCopy MTLBuffer, so this is a
+        // no-op for every other caller. Mirrors the noCopy tail of writeTexture().
+        if (!m_noCopyStagingSource.isEmpty()) {
+            __block Vector<uint8_t> retainedStagingSource = WTF::move(m_noCopyStagingSource);
+            [m_commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
+                retainedStagingSource = { };
+            }];
+        }
+#endif
         endEncoding(m_blitCommandEncoder, m_commandBuffer);
         commitMTLCommandBuffer(m_commandBuffer);
         m_blitCommandEncoder = nil;
@@ -588,6 +600,28 @@ void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, std::span<uint8_t
     }
     writeBuffer(buffer.buffer(), bufferOffset, data);
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+void Queue::writeBuffer(Buffer& buffer, uint64_t bufferOffset, Vector<uint8_t>&& data)
+{
+    // Below largeBufferSize newTemporaryBufferWithBytes() memcpys into a Metal-owned staging buffer,
+    // so the encoded copy no longer refers to `data` once we return.
+    if (data.size() < largeBufferSize) {
+        writeBuffer(buffer, bufferOffset, data.mutableSpan());
+        return;
+    }
+
+    // At or above it the staged copy reads straight out of `data` through a newBufferWithBytesNoCopy
+    // MTLBuffer, which aliases those bytes without owning them, and is committed without waiting. Park
+    // them where finalizeBlitCommandEncoder() can hand them to that command buffer, so they outlive
+    // the GPU's read even though `data` dies with this call.
+    ASSERT(m_noCopyStagingSource.isEmpty());
+    m_noCopyStagingSource = WTF::move(data);
+    writeBuffer(buffer, bufferOffset, m_noCopyStagingSource.mutableSpan());
+    // Still holding them means no staged copy was encoded, so nothing needs them now.
+    m_noCopyStagingSource = { };
+}
+#endif
 
 static std::span<uint8_t> span(id<MTLBuffer> buffer)
 {
