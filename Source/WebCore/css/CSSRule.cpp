@@ -34,6 +34,9 @@ namespace WebCore {
 struct SameSizeAsCSSRule : public RefCountedAndCanMakeWeakPtr<SameSizeAsCSSRule> {
     virtual ~SameSizeAsCSSRule();
     unsigned char bitfields;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Lock opaqueRootLockForGC;
+#endif
     void* pointerUnion;
 };
 
