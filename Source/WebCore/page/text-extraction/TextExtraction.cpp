@@ -549,7 +549,8 @@ static inline bool paintsVisibleContent(const RenderObject& renderer)
 
 static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputElement& input)
 {
-    if (!input.isCheckbox() && !input.isRadioButton())
+    bool isCheckboxOrRadio = input.isCheckbox() || input.isRadioButton();
+    if (!isCheckboxOrRadio && !input.isTextField())
         return { };
 
     CheckedPtr inputRenderer = input.renderer();
@@ -562,7 +563,10 @@ static inline RefPtr<Node> visualProxyForTransparentControl(const HTMLInputEleme
     if (inputBounds.width() < minTransparentControlLength || inputBounds.height() < minTransparentControlLength)
         return { };
 
-    if (inputBounds.width() > maxTransparentControlLength || inputBounds.height() > maxTransparentControlLength)
+    if (inputBounds.height() > maxTransparentControlLength)
+        return { };
+
+    if (isCheckboxOrRadio && inputBounds.width() > maxTransparentControlLength)
         return { };
 
     static constexpr auto maxAncestorHopsToFindVisualProxy = 3;
@@ -687,7 +691,8 @@ static inline Variant<SkipExtraction, ItemData, URL, Editable> extractItemData(N
             if (!proxy)
                 return { SkipExtraction::SelfAndSubtree };
 
-            context.visualProxiesToSkip.add(proxy.releaseNonNull());
+            if (!input->isTextField())
+                context.visualProxiesToSkip.add(proxy.releaseNonNull());
         }
     }
 

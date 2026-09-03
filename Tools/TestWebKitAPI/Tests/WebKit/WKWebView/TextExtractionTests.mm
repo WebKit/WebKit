@@ -1387,6 +1387,48 @@ TEST(TextExtractionTests, ExtractTransparentCheckboxOverVisualProxy)
     EXPECT_FALSE([defaultText containsString:@"image"]);
 }
 
+TEST(TextExtractionTests, ExtractTransparentOneTimeCodeFieldOverVisualProxies)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+    [webView synchronouslyLoadHTMLString:@R"HTML(
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+        .otp { position: relative; width: 336px; height: 48px; }
+        .otp input { position: absolute; inset: 0; width: 336px; height: 48px; margin: 0; opacity: 0.02; color: transparent; }
+        .otp .box { position: absolute; top: 0; width: 46px; height: 48px; border: 1px solid #5f6368; background-color: #171920; }
+        </style>
+        </head>
+        <body>
+            <div class="otp">
+                <input type="text" autocomplete="one-time-code" aria-label="Security code">
+                <div class="box" aria-hidden="true" style="left: 0"></div>
+                <div class="box" aria-hidden="true" style="left: 58px"></div>
+                <div class="box" aria-hidden="true" style="left: 116px"></div>
+                <div class="box" aria-hidden="true" style="left: 174px"></div>
+                <div class="box" aria-hidden="true" style="left: 232px"></div>
+                <div class="box" aria-hidden="true" style="left: 290px"></div>
+            </div>
+            <input type="text" autocomplete="one-time-code" aria-label="Genuinely invisible code" style="opacity: 0.02">
+        </body>
+        </html>
+    )HTML"];
+
+    RetainPtr defaultText = [webView synchronouslyGetDebugText:^{
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration.autorelease();
+    }()];
+
+    EXPECT_TRUE([defaultText containsString:@"Security code"]);
+    EXPECT_FALSE([defaultText containsString:@"Genuinely invisible code"]);
+}
+
 TEST(TextExtractionTests, MinimalHTMLOutput)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
