@@ -189,19 +189,22 @@ WI.TargetManager = class TargetManager extends WI.Object
     _createTarget(parentTarget, targetInfo, connection)
     {
         // COMPATIBILITY (iOS 13.0): `Target.TargetInfo.isProvisional` and `Target.TargetInfo.isPaused` did not exist yet.
-        let {targetId, type, isProvisional, isPaused} = targetInfo;
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): `Target.TargetInfo.processId` did not exist yet.
+        let {targetId, type, isProvisional, isPaused, processId} = targetInfo;
 
         switch (type) {
         case InspectorBackend.Enum.Target.TargetInfoType.Page:
-            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection, {isProvisional, isPaused});
+            return new WI.PageTarget(parentTarget, targetId, WI.UIString("Page"), connection, {isProvisional, isPaused, processId});
+        // `WI.WorkerTarget` takes a URL and a display name separately, and a `Target.TargetInfo`
+        // carries no URL, so the name goes in the display name position.
         case InspectorBackend.Enum.Target.TargetInfoType.Worker:
-            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("Worker"), connection, {isPaused});
+            return new WI.WorkerTarget(parentTarget, targetId, null, WI.UIString("Worker"), connection, {isPaused, processId});
         case "serviceworker": // COMPATIBILITY (iOS 13): "serviceworker" was renamed to "service-worker".
         case InspectorBackend.Enum.Target.TargetInfoType.ServiceWorker:
-            return new WI.WorkerTarget(parentTarget, targetId, WI.UIString("ServiceWorker"), connection, {isPaused});
+            return new WI.WorkerTarget(parentTarget, targetId, null, WI.UIString("ServiceWorker"), connection, {isPaused, processId});
         case InspectorBackend.Enum.Target.TargetInfoType.Frame:
             // FIXME: <https://webkit.org/b/298977> Consider setting a more meaningful name for the frame target.
-            return new WI.FrameTarget(parentTarget, targetId, WI.UIString("Frame"), connection, {isProvisional, isPaused});
+            return new WI.FrameTarget(parentTarget, targetId, WI.UIString("Frame"), connection, {isProvisional, isPaused, processId});
         }
 
         throw "Unknown Target type: " + type;

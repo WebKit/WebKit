@@ -1,0 +1,112 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+
+<script>
+    // An eval'd function with no URL, so only its script identifier can ever resolve it. It is
+    // compiled in the main frame's global object, so the main frame's target is what owns it.
+    window.parentEvalFunction = eval("(function parentEvalFunction(callback) { callback(); })");
+
+    function test() {
+        let suite = InspectorTest.createAsyncSuite("SiteIsolation.Target.ProcessId");
+
+        let mainFrameTarget = null;
+        let sameOriginTarget = null;
+        let crossOriginTarget = null;
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProcessId.SharedWithinAProcess",
+            description: "Targets report which process hosts them: the page target, the main frame target, and a same-origin iframe's target share one, and a cross-origin iframe's target has its own.",
+            async test() {
+                let frameTargets = WI.targets.filter((target) => target.type === WI.TargetType.Frame);
+                let urlTargetMap = await fetchDocumentURLsForTargets(frameTargets);
+                mainFrameTarget = urlTargetMap.get(WI.networkManager.mainFrame.url);
+                sameOriginTarget = await frameTargetForURLContaining("same-origin-frame.html");
+                crossOriginTarget = await frameTargetForURLContaining("debugger-frame.html");
+
+                InspectorTest.expectNotNull(mainFrameTarget, "Should find the main frame's target.");
+                InspectorTest.expectNotNull(sameOriginTarget, "Should find the same-origin iframe's target.");
+                InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin iframe's target.");
+
+                InspectorTest.expectNotNull(WI.pageTarget.processId, "Page target should have a process identifier.");
+                InspectorTest.expectNotNull(mainFrameTarget.processId, "Main frame target should have a process identifier.");
+                InspectorTest.expectNotNull(crossOriginTarget.processId, "Cross-origin frame target should have a process identifier.");
+
+                // The page target's backend connection only ever reaches the main frame's process.
+                InspectorTest.expectEqual(WI.pageTarget.processId, mainFrameTarget.processId, "Page target and main frame target should share a process.");
+                InspectorTest.expectEqual(sameOriginTarget.processId, mainFrameTarget.processId, "Same-origin frame target should share the main frame's process.");
+                InspectorTest.expectNotEqual(crossOriginTarget.processId, mainFrameTarget.processId, "Cross-origin frame target should be in its own process.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProcessId.ResolvesScriptOwnedByAnotherTargetInTheSameProcess",
+            description: "A script identifier delivered on the page target resolves against the main frame target, which is what owns scripts under Site Isolation.",
+            async test() {
+                let scripts = WI.debuggerManager.dataForTarget(mainFrameTarget).scripts;
+                InspectorTest.expectGreaterThan(scripts.length, 0, "Main frame target should have at least one parsed script.");
+
+                let script = scripts[0];
+                InspectorTest.expectNull(WI.debuggerManager.scriptForIdentifier(script.id, WI.pageTarget), "Page target should own no scripts of its own.");
+                InspectorTest.expectEqual(WI.debuggerManager.scriptForIdentifierInSameProcess(script.id, WI.pageTarget), script, "Widening the search to the page target's process should find the script.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProcessId.NeverResolvesScriptFromAnotherProcess",
+            description: "Script identifiers come from a process-global counter and collide across processes, so widening the search must never cross a process boundary.",
+            async test() {
+                let scripts = WI.debuggerManager.dataForTarget(crossOriginTarget).scripts;
+                let crossOriginScript = scripts.find((script) => script.url && script.url.includes("debugger-frame-script.js"));
+                InspectorTest.expectNotNull(crossOriginScript, "Cross-origin frame target should have the debugger-frame-script.js script.");
+
+                // Asserting "not this script" rather than "null" on purpose: the identifier may well
+                // also name an unrelated script in the main frame's process, which is the collision
+                // this scoping exists to survive.
+                let resolved = WI.debuggerManager.scriptForIdentifierInSameProcess(crossOriginScript.id, WI.pageTarget);
+                InspectorTest.expectNotEqual(resolved, crossOriginScript, "Lookup from the page target should not reach a script in the cross-origin iframe's process.");
+            }
+        });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Target.ProcessId.ResolvesScriptAcrossFrameTargetsInOneProcess",
+            description: "A synchronous same-origin call puts the parent's script on a stack trace that is delivered on the child's frame target, so resolution has to cross targets even once no domain reports on the page target.",
+            async test() {
+                // Match on the message text rather than taking the first MessageAdded, so an
+                // unrelated log from either frame cannot resolve this early.
+                let messagePromise = new Promise((resolve) => {
+                    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, function listener(event) {
+                        if (event.data.message.messageText !== "cross-frame")
+                            return;
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+                        resolve(event.data.message);
+                    });
+                });
+                InspectorTest.evaluateInPage(`document.getElementById("same-origin-frame").contentWindow.triggerCrossFrameTrace()`);
+                let message = await messagePromise;
+
+                InspectorTest.expectEqual(message.target, sameOriginTarget, "Console message should be delivered on the same-origin frame's target.");
+
+                let callFrame = message.stackTrace.callFrames.find((frame) => frame.functionName === "parentEvalFunction");
+                InspectorTest.expectNotNull(callFrame, "Stack trace should contain the parent's eval'd function.");
+                InspectorTest.expectFalse(callFrame.nativeCode, "The parent's frame should resolve to a source location rather than native code.");
+                InspectorTest.expectNotNull(callFrame.sourceCodeLocation, "The parent's frame should have a source location.");
+
+                // The narrow lookup is what the frontend used before process scoping existed, and it
+                // is what a reader might reach for again once the page target is gone. It misses here.
+                let script = callFrame.sourceCodeLocation.sourceCode;
+                InspectorTest.expectEmpty(script.url, "The parent's script should have no URL, so only its identifier can resolve it.");
+                InspectorTest.expectEqual(WI.debuggerManager.scriptForIdentifier(script.id, mainFrameTarget), script, "The parent's script should be owned by the main frame's target.");
+                InspectorTest.expectNull(WI.debuggerManager.scriptForIdentifier(script.id, sameOriginTarget), "The same-origin frame target should not own the parent's script.");
+                InspectorTest.expectEqual(WI.debuggerManager.scriptForIdentifierInSameProcess(script.id, sameOriginTarget), script, "Widening the search within the process should find the parent's script.");
+            }
+        });
+
+        suite.runTestCasesAndFinish();
+    }
+</script>
+
+<body onload="runTest()">
+<p>Test that targets report which process hosts them, and that script lookup widens only within a process.</p>
+<iframe id="same-origin-frame" src="resources/same-origin-frame.html"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/debugger-frame.html"></iframe>
+</body>

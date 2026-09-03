@@ -25,7 +25,7 @@
 
 WI.Target = class Target extends WI.Object
 {
-    constructor(parentTarget, identifier, name, type, connection, {isPaused, isProvisional} = {})
+    constructor(parentTarget, identifier, name, type, connection, {isPaused, isProvisional, processId} = {})
     {
         console.assert(parentTarget === null || parentTarget instanceof WI.Target);
         console.assert(!isPaused || parentTarget.hasCommand("Target.setPauseOnStart"));
@@ -38,6 +38,12 @@ WI.Target = class Target extends WI.Object
         this._connection = connection;
         this._isPaused = !!isPaused;
         this._isProvisional = !!isProvisional;
+
+        // Targets the backend creates from another target rather than from a `Target.TargetInfo`
+        // (workers) are untagged, and run in their parent's process. Stays `undefined` when nothing
+        // in the chain knows, which leaves process-scoped lookups inert rather than wrong.
+        this._processId = processId ?? parentTarget?.processId;
+
         this._executionContext = null;
         this._mainResource = null;
         this._resourceCollection = new WI.ResourceCollection;
@@ -56,12 +62,8 @@ WI.Target = class Target extends WI.Object
         this._connection.target = this;
 
         // Agents we always expect in every target.
-        if (this.type !== WI.TargetType.Frame) {
-            // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
-            // FIXME: <https://webkit.org/b/298909> Add Debugger support for FrameTarget.
-            console.assert(this.hasDomain("Target") || this.hasDomain("Runtime"));
-            console.assert(this.hasDomain("Target") || this.hasDomain("Debugger"));
-        }
+        console.assert(this.hasDomain("Target") || this.hasDomain("Runtime"));
+        console.assert(this.hasDomain("Target") || this.hasDomain("Debugger"));
     }
 
     // Target
@@ -210,6 +212,10 @@ WI.Target = class Target extends WI.Object
     get type() { return this._type; }
     get connection() { return this._connection; }
     get executionContext() { return this._executionContext; }
+
+    // Opaque identifier of the process hosting this target. Only meaningful when compared for
+    // equality against another target's, to tell whether the two share a process.
+    get processId() { return this._processId; }
 
     get resourceCollection() { return this._resourceCollection; }
     get extraScriptCollection() { return this._extraScriptCollection; }

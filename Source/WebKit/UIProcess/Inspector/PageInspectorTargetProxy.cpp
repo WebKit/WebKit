@@ -114,4 +114,17 @@ bool PageInspectorTargetProxy::isProvisional() const
     return !!m_provisionalPage;
 }
 
+String PageInspectorTargetProxy::processId() const
+{
+    // Deliberately takes the same branch as connect() and sendMessageToTargetBackend(), so the
+    // reported process cannot drift from the one this target's messages actually travel to.
+    if (RefPtr provisionalPage = m_provisionalPage.get())
+        return toProcessID(protect(provisionalPage->process())->coreProcessIdentifier());
+
+    Ref page = m_page.get();
+    if (!page->hasRunningProcess())
+        return { };
+    return toProcessID(protect(page->legacyMainFrameProcess())->coreProcessIdentifier());
+}
+
 } // namespace WebKit
