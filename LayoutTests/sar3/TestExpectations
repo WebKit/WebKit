@@ -1,1 +1,4 @@
 streams/transform-stream-poisoned-iterator-crash.html [ Failure ]
+http/wpt/webrtc/av1-packetizer-large-encoded-frame-no-crash.html [ Pass ]
+http/wpt/webrtc/script-transform-oversized-frame.html [ Pass ]
+

@@ -140,6 +140,9 @@ ipc/restrictedendpoints/mac [ Skip ]
 webanimations/threaded-animations [ Skip ]
 tiled-drawing/mac [ Skip ]
 
+http/wpt/webrtc/av1-packetizer-large-encoded-frame-no-crash.html [ Skip ]
+http/wpt/webrtc/script-transform-oversized-frame.html [ Skip ]
+
 # Requires async overflow scrolling
 compositing/shared-backing/overflow-scroll [ Skip ]
 compositing/scrolling/async-overflow-scrolling [ Skip ]
