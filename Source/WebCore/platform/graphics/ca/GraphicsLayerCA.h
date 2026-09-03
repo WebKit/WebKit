@@ -103,6 +103,7 @@ public:
 
     WEBCORE_EXPORT void setPreserves3D(bool) override;
     WEBCORE_EXPORT void setMasksToBounds(bool) override;
+    WEBCORE_EXPORT void setMasksTopOverflow(bool) override;
     WEBCORE_EXPORT void setDrawsContent(bool) override;
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT void setDrawsHDRContent(bool) override;
@@ -506,6 +507,7 @@ private:
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();
+    void updateTopOverflowClipLayer();
     void updateContentsVisibility();
     void updateContentsOpaque(float pageScaleFactor);
     void updateBackfaceVisibility();
@@ -686,6 +688,7 @@ private:
         TonemappingEnabledChanged               = 1LLU << 48,
 #endif
         ShadowPathChanged                       = 1LLU << 49,
+        TopOverflowClipChanged                  = 1LLU << 50,
     };
     typedef uint64_t LayerChangeFlags;
     static ASCIILiteral layerChangeAsString(LayerChange);
@@ -715,6 +718,7 @@ private:
     RefPtr<PlatformCALayer> m_contentsLayer; // A layer used for inner content, like image and video
     RefPtr<PlatformCALayer> m_contentsShapeMaskLayer; // Used to clip the content layer with non-trivial corner radii.
     RefPtr<PlatformCALayer> m_backdropLayer; // The layer used for backdrop rendering, if necessary.
+    RefPtr<PlatformCALayer> m_topOverflowClipLayer; // Used to clip content above the layer's top edge.
 
     // References to clones of our layers, for replicated layers.
     struct LayerClones {
@@ -727,6 +731,7 @@ private:
         LayerMap shapeMaskLayerClones;
         LayerMap backdropLayerClones;
         LayerMap backdropClippingLayerClones;
+        LayerMap topOverflowClipLayerClones;
     };
 
     std::unique_ptr<LayerClones> m_layerClones;

@@ -2056,8 +2056,11 @@ void Page::setHasRefreshController(bool hasRefreshController)
     m_hasRefreshController = hasRefreshController;
 
     RefPtr localMainFrame = this->localMainFrame();
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
+    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr) {
         view->updateExtendBackgroundIfNecessary();
+        if (CheckedPtr renderView = view->renderView())
+            renderView->compositor().updateRootContentLayerClipping();
+    }
 }
 #endif
 
