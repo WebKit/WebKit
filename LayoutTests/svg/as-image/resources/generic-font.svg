@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px">
+  <text font-size="20" x="0" y="20" fill="green" style="font-family:serif">Fail</text>
+  <text font-size="20" x="0" y="40" fill="green" style="font-family:san-serif">Fail</text>
+  <text font-size="20" x="0" y="60" fill="green" style="font-family:monospace">Fail</text>
+  <text font-size="20" x="0" y="80" fill="green" style="font-family:cursive">Fail</text>
+  <text font-size="20" x="0" y="100" fill="green" style="font-family:fantasy">Fail</text>
+</svg>
