@@ -844,6 +844,10 @@ public:
     String currentValue() const;
     virtual bool supportsKeyShortcuts() const = 0;
     virtual String keyShortcuts() const = 0;
+#if PLATFORM(COCOA)
+    // keyShortcuts(), with the modifier keys renamed to match the labels printed on Apple keyboards.
+    String keyShortcutsPlatformString() const;
+#endif
 
     virtual bool isModalNode() const = 0;
 

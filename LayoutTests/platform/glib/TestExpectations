@@ -1000,6 +1000,8 @@ accessibility/table-cell-hit-test-not-column.html [ Skip ]
 
 accessibility/aria-owns-crash-after-subtree-update.html [ Skip ]
 
+accessibility/aria-keyshortcuts-platform-modifier-names.html [ Skip ]
+
 # installImageOverlay is a no-op on platforms without IMAGE_ANALYSIS.
 accessibility/image-overlay-elements-presentational.html [ Skip ]
 

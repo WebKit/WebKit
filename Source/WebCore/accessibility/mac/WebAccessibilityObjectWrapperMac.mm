@@ -2224,7 +2224,7 @@ static id handleAssociatedPluginParentAttribute(WebAccessibilityObjectWrapper* w
 
 static id handleKeyShortcutsAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)
 {
-    return backingObject.keyShortcuts().createNSString().autorelease();
+    return backingObject.keyShortcutsPlatformString().createNSString().autorelease();
 }
 
 static id handleIsInDescriptionListTermAttribute(WebAccessibilityObjectWrapper*, AXCoreObject& backingObject)

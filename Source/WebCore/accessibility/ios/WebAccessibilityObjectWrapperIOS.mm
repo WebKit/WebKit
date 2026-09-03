@@ -3471,7 +3471,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return protect(self.axBackingObject)->keyShortcuts().createNSString().autorelease();
+    return protect(self.axBackingObject)->keyShortcutsPlatformString().createNSString().autorelease();
 }
 
 - (NSArray *)_associatedActionElements

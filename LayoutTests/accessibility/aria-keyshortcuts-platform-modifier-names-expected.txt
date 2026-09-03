@@ -1,0 +1,33 @@
+This test ensures the platform-neutral aria-keyshortcuts modifier names Meta and Alt are exposed with the names printed on Apple keyboards.
+
+PASS: metaButton.stringAttributeValue('AXKeyShortcutsValue') === 'Command+Shift+M'
+PASS: altButton.stringAttributeValue('AXKeyShortcutsValue') === 'Option+Shift+M'
+
+Modifiers Apple keyboards label the same way are left alone.
+PASS: controlButton.stringAttributeValue('AXKeyShortcutsValue') === 'Control+Shift+X'
+PASS: altGraphButton.stringAttributeValue('AXKeyShortcutsValue') === 'AltGraph+Q'
+
+Every shortcut in a space-delimited list is mapped, and key names match case-insensitively.
+PASS: multipleShortcutsButton.stringAttributeValue('AXKeyShortcutsValue') === 'Command+k Option+P'
+
+Malformed shortcuts are passed through as authored. Only whole key names are renamed, so
+neither Alt-Q nor Metadata+Alternate+Q is rewritten.
+PASS: hyphenDelimitedButton.stringAttributeValue('AXKeyShortcutsValue') === 'Alt-Q'
+PASS: spaceDelimitedButton.stringAttributeValue('AXKeyShortcutsValue') === 'Shift Q'
+PASS: surroundingWhitespaceButton.stringAttributeValue('AXKeyShortcutsValue') === ' Shift Plus Q '
+PASS: emptyKeyButton.stringAttributeValue('AXKeyShortcutsValue') === 'Command++Q'
+PASS: modifierNamePrefixButton.stringAttributeValue('AXKeyShortcutsValue') === 'Metadata+Alternate+Q'
+
+Set aria-keyshortcuts to Alt+Meta+Z for #dynamic
+PASS: dynamicButton.stringAttributeValue('AXKeyShortcutsValue') === 'Option+Command+Z'
+
+Update aria-keyshortcuts to Meta+Shift+Z for #dynamic
+PASS: dynamicButton.stringAttributeValue('AXKeyShortcutsValue') === 'Command+Shift+Z'
+
+Update aria-keyshortcuts to a newline-delimited list for #dynamic
+PASS: dynamicButton.stringAttributeValue('AXKeyShortcutsValue') === 'Command+K\nOption+P'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+a b c d e f g h i j k
