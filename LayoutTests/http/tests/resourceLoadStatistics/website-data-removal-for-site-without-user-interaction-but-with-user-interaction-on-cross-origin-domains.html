@@ -5,7 +5,7 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout('runTest()', 0)">
-<div id="description">Check that script-writeable website data does not get removed for sites with user interaction.</div>
+<div id="description">Verify that when clearing script-writable data for an inactive first-party site, only storage tied to that first-party (including its partitioned third-party data) is removed, and storage for the same third-party under other active first-parties is preserved.</div>
 <iframe src="http://localhost:8000/resourceLoadStatistics/resources/iframe-with-storage.html"></iframe>
 <div id="output"></div>
 <br>
@@ -16,14 +16,13 @@
     const httpOnlyCookieName = "http-only-cookie";
     const serverSideCookieName = "server-side-cookie";
     const clientSideCookieName = "client-side-cookie";
-    
+
     internals.settings.setStorageBlockingPolicy('BlockThirdParty');
 
     const iframe = document.getElementsByTagName("iframe")[0];
     let popup;
 
     const dbName = "TestDatabase";
-
     const objectStoreName = "TestObjectStore";
     const storageKey = "key";
     const storageValue = "value";
@@ -33,9 +32,9 @@
     function runTest() {
         setEnableFeature(true, function () {
             testRunner.setStatisticsFirstPartyWebsiteDataRemovalMode(true, function() {
-                testRunner.setStatisticsHasHadUserInteraction(originUnderTest, true, function() {
-                    if (!testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
-                        addOutput("FAIL: " + originUnderTest + " did not get logged for user interaction.");
+                testRunner.setStatisticsHasHadUserInteraction(originUnderTest, false, function() {
+                    if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
+                        addOutput("FAIL: " + originUnderTest + " got logged for user interaction.");
                     window.addEventListener("message", e => {
                         testRunner.setStatisticsHasHadUserInteraction(crossOrigin, true, function() {
                             if (!testRunner.isStatisticsHasHadUserInteraction(crossOrigin))
