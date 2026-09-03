@@ -94,7 +94,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceSecretTok
 std::expected<PCM::DestinationSecretToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, PCM::DestinationUnlinkableToken& unlinkableToken)
 {
     PCM::DestinationSecretToken secretToken;
-    auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, unlinkableToken, secretToken, "source"_s);
+    auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, unlinkableToken, secretToken, "destination"_s);
     if (errorMessage)
         return makeUnexpected(*errorMessage);
     return secretToken;
