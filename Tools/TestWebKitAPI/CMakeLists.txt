@@ -1,4 +1,15 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+
+# Cocoa uses a single TestWebKitAPI binary combining WebCore, WebKitLegacy,
+# JavaScriptCore and Misc tests into one executable. The other ports produce
+# multiple executables. run-api-tests expects this discrepancy; see
+# API_TEST_BINARY_NAMES in webkitpy/port/glib.py and webkitpy/port/win.py.
+if (APPLE AND ENABLE_WEBKIT)
+    set(TESTWEBKITAPI_MERGED_BINARY ON)
+else ()
+    set(TESTWEBKITAPI_MERGED_BINARY OFF)
+endif ()
+
 set(TestWebKitAPI_DISABLED_WARNINGS
     -Wno-dangling-else
     -Wno-sign-compare
@@ -209,7 +220,9 @@ if (ENABLE_JAVASCRIPTCORE)
         ${TESTWEBKITAPI_DIR}
     )
 
-    WEBKIT_EXECUTABLE_DECLARE(TestJavaScriptCore)
+    if (NOT TESTWEBKITAPI_MERGED_BINARY)
+        WEBKIT_EXECUTABLE_DECLARE(TestJavaScriptCore)
+    endif ()
 endif ()
 
 # TestWebCore definitions
@@ -313,10 +326,11 @@ if (ENABLE_WEBCORE)
         ${TESTWEBKITAPI_DIR}
     )
 
-    WEBKIT_EXECUTABLE_DECLARE(TestWebCore)
-    # TestWebCore gains Swift sources via WEBKIT_TEST_ENABLE_SWIFT.
-    webkit_target_compile_definitions(TestWebCore PUBLIC
-        "WEBKIT_SRC_DIR=\"${CMAKE_SOURCE_DIR}\"")
+    if (NOT TESTWEBKITAPI_MERGED_BINARY)
+        WEBKIT_EXECUTABLE_DECLARE(TestWebCore)
+        webkit_target_compile_definitions(TestWebCore PUBLIC
+            "WEBKIT_SRC_DIR=\"${CMAKE_SOURCE_DIR}\"")
+    endif ()
 endif ()
 
 # TestWebKitLegacy definitions
@@ -345,7 +359,9 @@ if (ENABLE_WEBKIT_LEGACY)
         ${TESTWEBKITAPI_DIR}
     )
 
-    WEBKIT_EXECUTABLE_DECLARE(TestWebKitLegacy)
+    if (NOT TESTWEBKITAPI_MERGED_BINARY)
+        WEBKIT_EXECUTABLE_DECLARE(TestWebKitLegacy)
+    endif ()
 endif ()
 
 # TestWebKit definitions
@@ -597,21 +613,54 @@ endif ()
 # Include platform specific files
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
+if (TESTWEBKITAPI_MERGED_BINARY)
+    list(APPEND TestWebKit_SOURCES
+        ${TestWebCore_SOURCES}
+        ${TestJavaScriptCore_SOURCES}
+        ${TestWebKitLegacy_SOURCES}
+    )
+    list(REMOVE_DUPLICATES TestWebKit_SOURCES)
+
+    # Already in the TestWebKitAPIBase static library that TestWebKit links.
+    list(REMOVE_ITEM TestWebKit_SOURCES Runner/TestsController.cpp)
+
+    list(APPEND TestWebKit_FRAMEWORKS
+        ${TestWebCore_FRAMEWORKS}
+        ${TestJavaScriptCore_FRAMEWORKS}
+        ${TestWebKitLegacy_FRAMEWORKS}
+    )
+    list(REMOVE_DUPLICATES TestWebKit_FRAMEWORKS)
+
+    list(APPEND TestWebKit_LIBRARIES
+        ${TestWebCore_LIBRARIES}
+        ${TestJavaScriptCore_LIBRARIES}
+        ${TestWebKitLegacy_LIBRARIES}
+    )
+    list(REMOVE_DUPLICATES TestWebKit_LIBRARIES)
+
+    list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
+        ${TestWebCore_PRIVATE_INCLUDE_DIRECTORIES}
+        ${TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES}
+        ${TestWebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES}
+    )
+    list(REMOVE_DUPLICATES TestWebKit_PRIVATE_INCLUDE_DIRECTORIES)
+endif ()
+
 # TestWTF target
 WEBKIT_TEST(TestWTF)
 
 # TestJavaScriptCore target
-if (ENABLE_JAVASCRIPTCORE)
+if (ENABLE_JAVASCRIPTCORE AND NOT TESTWEBKITAPI_MERGED_BINARY)
     WEBKIT_TEST(TestJavaScriptCore)
 endif ()
 
 # TestWebCore target
-if (ENABLE_WEBCORE)
+if (ENABLE_WEBCORE AND NOT TESTWEBKITAPI_MERGED_BINARY)
     WEBKIT_TEST(TestWebCore)
 endif ()
 
 # TestWebKitLegacy target
-if (ENABLE_WEBKIT_LEGACY)
+if (ENABLE_WEBKIT_LEGACY AND NOT TESTWEBKITAPI_MERGED_BINARY)
     WEBKIT_TEST(TestWebKitLegacy)
 endif ()
 

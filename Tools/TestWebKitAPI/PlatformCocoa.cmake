@@ -187,6 +187,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
     Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
 
+    Tests/Misc/TestRunnerTests.cpp
+
     Tests/WebCore/ASN1Utilities.cpp
     Tests/WebCore/CachedMatchFinder.cpp
     Tests/WebCore/TestPlatformStrategies.cpp
@@ -632,6 +634,7 @@ list(APPEND TestWebKitLegacy_SOURCES
 )
 
 # TestWebKit
+# generic/main.cpp is also in the lists above; the merge deduplicates.
 list(APPEND TestWebKit_SOURCES
     ${_test_main_SOURCES}
     Helpers/cocoa/UtilitiesCocoa.mm
@@ -718,8 +721,6 @@ endif ()
 
 set_target_properties(TestWebKit PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(TestWTF PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(TestWebCore PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(TestWebKitLegacy PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(TestWebKitAPIInjectedBundle PROPERTIES LINKER_LANGUAGE CXX)
 
 endif ()
