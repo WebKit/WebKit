@@ -562,11 +562,11 @@ def generate_lldbinit(source_dir: Path, build_dir: Path) -> str:
 
 
 def default_build_dir(source_dir: Path) -> Path:
-    for cfg in ("Debug", "RelWithDebInfo", "Release"):
-        candidate = source_dir / "WebKitBuild" / "cmake-mac" / cfg
+    for cfg in ("Debug", "Release"):
+        candidate = source_dir / "WebKitBuild" / cfg
         if (candidate / "CMakeCache.txt").exists():
             return candidate
-    return source_dir / "WebKitBuild" / "cmake-mac" / "Release"
+    return source_dir / "WebKitBuild" / "Release"
 
 
 def main():
@@ -577,7 +577,7 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("build_dir", nargs="?",
                     help="CMake binary dir (default: first configured "
-                         "WebKitBuild/cmake-mac/{Debug,RelWithDebInfo,Release})")
+                         "WebKitBuild/{Debug,Release})")
     args = ap.parse_args()
 
     if args.build_dir:

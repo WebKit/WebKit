@@ -115,6 +115,10 @@ Usage: $programName [options] [options to pass to build system]
   --generate-project-only           Only generate project files
   --debug                           Compile with Debug configuration
   --release                         Compile with Release configuration
+  --cmake                           Build with CMake (Apple platforms only)
+  --xcode                           Build with Xcode (Apple platforms only)
+                                    A CMake build leaves its cache in the build directory, so builds
+                                    there keep using CMake unless --xcode is given each time.
   --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
   --architecture=<architecture>     Compile for a specific architecture (or architectures)
   --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)

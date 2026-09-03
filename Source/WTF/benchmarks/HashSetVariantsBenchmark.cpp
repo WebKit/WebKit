@@ -28,13 +28,13 @@
 //     Source/WTF/benchmarks/HashSetVariantsBenchmark.cpp \
 //     -std=c++23 -O3 -DNDEBUG=1 -fno-exceptions -fno-rtti \
 //     -ISource/WTF \
-//     -IWebKitBuild/cmake-mac/Release \
-//     -IWebKitBuild/cmake-mac/Release/WTF/DerivedSources \
-//     -FWebKitBuild/cmake-mac/Release \
+//     -IWebKitBuild/Release \
+//     -IWebKitBuild/Release/WTF/DerivedSources \
+//     -FWebKitBuild/Release \
 //     -framework JavaScriptCore -framework Foundation
 //
 // Run:
-//   DYLD_FRAMEWORK_PATH=WebKitBuild/cmake-mac/Release ./HashSetVariantsBenchmark
+//   DYLD_FRAMEWORK_PATH=WebKitBuild/Release ./HashSetVariantsBenchmark
 //
 // Optional first arg: filter substring (matches container, op, or key type).
 // Optional second arg: a multiplier for repetitions (default 1.0).

@@ -126,7 +126,7 @@
             "name": "mac-release",
             "displayName": "macOS Release",
             "inherits": ["mac", "release"],
-            "binaryDir": "WebKitBuild/cmake-mac/Release",
+            "binaryDir": "WebKitBuild/Release",
             "cacheVariables": {
                 "CMAKE_C_FLAGS_RELEASE": {
                     "type": "STRING",
@@ -150,7 +150,7 @@
             "name": "mac-debug",
             "displayName": "macOS Debug",
             "inherits": ["mac", "debug"],
-            "binaryDir": "WebKitBuild/cmake-mac/Debug"
+            "binaryDir": "WebKitBuild/Debug"
         },
         {
             "name": "mac-performance",
@@ -181,7 +181,7 @@
             "name": "mac-dev-debug-o3",
             "displayName": "macOS Development (Debug O3 optimization, ccache, compile_commands)",
             "inherits": ["mac-debug", "dev"],
-            "binaryDir": "WebKitBuild/cmake-mac/DebugO3",
+            "binaryDir": "WebKitBuild/Debug",
             "cacheVariables": {
                 "CMAKE_C_FLAGS_DEBUG": {
                     "type": "STRING",
@@ -209,7 +209,7 @@
             "name": "mac-dev-relwithdebinfo",
             "displayName": "macOS Development (RelWithDebInfo -- optimized + debuggable)",
             "inherits": ["mac", "dev"],
-            "binaryDir": "WebKitBuild/cmake-mac/RelWithDebInfo",
+            "binaryDir": "WebKitBuild/Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": {
                     "type": "STRING",
@@ -237,7 +237,7 @@
             "name": "mac-asan",
             "displayName": "macOS ASan (AddressSanitizer, RelWithDebInfo, ccache)",
             "inherits": ["mac", "dev"],
-            "binaryDir": "WebKitBuild/cmake-mac/ASan",
+            "binaryDir": "WebKitBuild/Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": {
                     "type": "STRING",
@@ -257,7 +257,7 @@
             "name": "mac-tsan",
             "displayName": "macOS TSan (ThreadSanitizer, RelWithDebInfo, ccache)",
             "inherits": ["mac", "dev"],
-            "binaryDir": "WebKitBuild/cmake-mac/TSan",
+            "binaryDir": "WebKitBuild/Release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": {
                     "type": "STRING",
@@ -292,13 +292,13 @@
             "name": "ios-release",
             "displayName": "iOS Release",
             "inherits": ["ios", "release"],
-            "binaryDir": "WebKitBuild/cmake-iphoneos/Release"
+            "binaryDir": "WebKitBuild/Release-iphoneos"
         },
         {
             "name": "ios-debug",
             "displayName": "iOS Debug",
             "inherits": ["ios", "debug"],
-            "binaryDir": "WebKitBuild/cmake-iphoneos/Debug"
+            "binaryDir": "WebKitBuild/Debug-iphoneos"
         },
         {
             "name": "ios-dev-release",
@@ -331,7 +331,7 @@
             "name": "ios-sim-debug",
             "displayName": "iOS Simulator Debug",
             "inherits": ["ios-sim", "debug"],
-            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Debug"
+            "binaryDir": "WebKitBuild/Debug-iphonesimulator"
         },
         {
             "name": "ios-sim-dev-debug",
@@ -342,7 +342,7 @@
             "name": "ios-sim-release",
             "displayName": "iOS Simulator Release",
             "inherits": ["ios-sim", "release"],
-            "binaryDir": "WebKitBuild/cmake-iphonesimulator/Release"
+            "binaryDir": "WebKitBuild/Release-iphonesimulator"
         },
         {
             "name": "ios-sim-dev-release",
@@ -364,13 +364,13 @@
             "name": "tvos-release",
             "displayName": "tvOS Release",
             "inherits": ["tvos", "release"],
-            "binaryDir": "WebKitBuild/cmake-appletvos/Release"
+            "binaryDir": "WebKitBuild/Release-appletvos"
         },
         {
             "name": "tvos-debug",
             "displayName": "tvOS Debug",
             "inherits": ["tvos", "debug"],
-            "binaryDir": "WebKitBuild/cmake-appletvos/Debug"
+            "binaryDir": "WebKitBuild/Debug-appletvos"
         },
         {
             "name": "tvos-sim",
@@ -387,13 +387,13 @@
             "name": "tvos-sim-release",
             "displayName": "tvOS Simulator Release",
             "inherits": ["tvos-sim", "release"],
-            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Release"
+            "binaryDir": "WebKitBuild/Release-appletvsimulator"
         },
         {
             "name": "tvos-sim-debug",
             "displayName": "tvOS Simulator Debug",
             "inherits": ["tvos-sim", "debug"],
-            "binaryDir": "WebKitBuild/cmake-appletvsimulator/Debug"
+            "binaryDir": "WebKitBuild/Debug-appletvsimulator"
         },
         {
             "name": "watchos",
@@ -410,13 +410,13 @@
             "name": "watchos-release",
             "displayName": "watchOS Release",
             "inherits": ["watchos", "release"],
-            "binaryDir": "WebKitBuild/cmake-watchos/Release"
+            "binaryDir": "WebKitBuild/Release-watchos"
         },
         {
             "name": "watchos-debug",
             "displayName": "watchOS Debug",
             "inherits": ["watchos", "debug"],
-            "binaryDir": "WebKitBuild/cmake-watchos/Debug"
+            "binaryDir": "WebKitBuild/Debug-watchos"
         },
         {
             "name": "watchos-sim",
@@ -433,13 +433,13 @@
             "name": "watchos-sim-release",
             "displayName": "watchOS Simulator Release",
             "inherits": ["watchos-sim", "release"],
-            "binaryDir": "WebKitBuild/cmake-watchsimulator/Release"
+            "binaryDir": "WebKitBuild/Release-watchsimulator"
         },
         {
             "name": "watchos-sim-debug",
             "displayName": "watchOS Simulator Debug",
             "inherits": ["watchos-sim", "debug"],
-            "binaryDir": "WebKitBuild/cmake-watchsimulator/Debug"
+            "binaryDir": "WebKitBuild/Debug-watchsimulator"
         },
         {
             "name": "xros",
@@ -456,13 +456,13 @@
             "name": "xros-release",
             "displayName": "visionOS Release",
             "inherits": ["xros", "release"],
-            "binaryDir": "WebKitBuild/cmake-xros/Release"
+            "binaryDir": "WebKitBuild/Release-xros"
         },
         {
             "name": "xros-debug",
             "displayName": "visionOS Debug",
             "inherits": ["xros", "debug"],
-            "binaryDir": "WebKitBuild/cmake-xros/Debug"
+            "binaryDir": "WebKitBuild/Debug-xros"
         },
         {
             "name": "xros-sim",
@@ -479,13 +479,13 @@
             "name": "xros-sim-release",
             "displayName": "visionOS Simulator Release",
             "inherits": ["xros-sim", "release"],
-            "binaryDir": "WebKitBuild/cmake-xrsimulator/Release"
+            "binaryDir": "WebKitBuild/Release-xrsimulator"
         },
         {
             "name": "xros-sim-debug",
             "displayName": "visionOS Simulator Debug",
             "inherits": ["xros-sim", "debug"],
-            "binaryDir": "WebKitBuild/cmake-xrsimulator/Debug"
+            "binaryDir": "WebKitBuild/Debug-xrsimulator"
         },
         {
             "name": "wpe",

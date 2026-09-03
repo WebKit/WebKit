@@ -83,7 +83,7 @@ DISABLE_CATEGORIES = 'alpha,apiModeling,core,cplusplus,deadcode,debug,fuchsia,nu
 SOURCE_EXT = {'.cpp', '.cc', '.cxx', '.c', '.mm', '.m'}
 HEADER_EXT = {'.h', '.hpp', '.hxx'}
 
-DEFAULT_BUILD_DIR = os.path.join(WEBKIT_ROOT, 'WebKitBuild', 'cmake-mac', 'Debug')
+DEFAULT_BUILD_DIR = os.path.join(WEBKIT_ROOT, 'WebKitBuild', 'Debug')
 TOOLCHAIN_DIRS = [
     os.path.expanduser('~/Library/Developer/Toolchains'),
     '/Library/Developer/Toolchains',

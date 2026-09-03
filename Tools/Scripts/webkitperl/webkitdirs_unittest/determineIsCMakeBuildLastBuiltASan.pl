@@ -23,9 +23,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Unit test for webkitdirs::determineIsCMakeBuild last-built tiebreaker with a
-# sanitizer build: a CMake ASan build lands in cmake-mac/ASan, so when ASan is
-# enabled the tiebreaker must inspect that tree. Each scenario lives in its own
-# .pl file because determineIsCMakeBuild caches its answer in a script-global.
+# sanitizer build: ASan is a build setting rather than a tree of its own, so an
+# ASan build lands in the plain configuration directory and that is the tree the
+# tiebreaker must inspect. Each scenario lives in its own .pl file because
+# determineIsCMakeBuild caches its answer in a script-global.
 use strict;
 use warnings;
 use File::Path qw(make_path);
@@ -34,7 +35,7 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 1);
+plan(tests => 2);
 
 # The tiebreaker is gated on isAppleCocoaWebKit(); force it on so the test
 # is platform-independent (webkitperl runs on non-Cocoa bots too).
@@ -50,20 +51,18 @@ open(my $asanFh, ">", File::Spec->catfile($base, "ASan")) or die "Could not crea
 print $asanFh "YES\n";
 close($asanFh);
 
-# The CMake ASan build lands in cmake-mac/ASan; Xcode toggles ASan within the
-# Debug tree. Both tree dirs must exist for the tiebreaker to run.
-my $cmakeMarker = File::Spec->catfile($base, "cmake-mac", "ASan", ".ninja_log");
+my $cmakeCache = File::Spec->catfile($base, $configuration, "CMakeCache.txt");
+my $cmakeMarker = File::Spec->catfile($base, $configuration, ".ninja_log");
 my $xcodeMarker = File::Spec->catfile($base, "XCBuildData", "build.db");
-make_path(File::Spec->catdir($base, $configuration));
 
-for my $marker ($cmakeMarker, $xcodeMarker) {
+for my $marker ($cmakeCache, $cmakeMarker, $xcodeMarker) {
     my ($volume, $dir, $file) = File::Spec->splitpath($marker);
     make_path(File::Spec->catpath($volume, $dir, ""));
     open(my $fh, ">", $marker) or die "Could not create $marker: $!";
     close($fh);
 }
 
-# Make the CMake ASan build log the more recently built one.
+# Make the CMake build log the more recently built one.
 my $now = time();
 utime($now - 100, $now - 100, $xcodeMarker);
 utime($now, $now, $cmakeMarker);
@@ -75,4 +74,5 @@ enableLastBuiltTiebreaker();
 @ARGV = ();
 webkitdirs::determineIsCMakeBuild();
 
-ok(isCMakeBuild(), "last-built tiebreaker inspects cmake-mac/ASan when ASan is enabled");
+ok(isCMakeBuild(), "last-built tiebreaker inspects the configuration tree when ASan is enabled");
+is(productDir(), File::Spec->catdir($base, $configuration), "an ASan build uses the plain configuration directory");

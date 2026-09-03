@@ -34,10 +34,10 @@ regardless of core count.
 
 The analysis assumes .ninja_log covers exactly one cold build:
 
-    rm WebKitBuild/cmake-mac/ASan/.ninja_log
-    ninja -C WebKitBuild/cmake-mac/ASan
-    Tools/Scripts/cmake-build-analysis WebKitBuild/cmake-mac/ASan
-    open WebKitBuild/cmake-mac/ASan/build-analysis.html
+    rm WebKitBuild/Release/.ninja_log
+    ninja -C WebKitBuild/Release
+    Tools/Scripts/cmake-build-analysis WebKitBuild/Release
+    open WebKitBuild/Release/build-analysis.html
 
 Multi-run logs are refused rather than guessed at: ninja compacts the log in
 place (discarding completion order), so once two runs are interleaved there is
@@ -485,7 +485,7 @@ def write_html(path: Path, edges, wall, cpu, ncpu, peak, build_dir):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("build_dir", nargs="?", default="WebKitBuild/cmake-mac/ASan")
+    ap.add_argument("build_dir", nargs="?", default="WebKitBuild/Release")
     ap.add_argument("--top", type=int, default=20, help="rows in slowest-edge table")
     ap.add_argument("--html", metavar="PATH",
                     help="write Gantt to PATH (default: <build-dir>/build-analysis.html)")

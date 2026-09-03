@@ -197,14 +197,15 @@ if (APPLE)
         if (NOT EXISTS "${_webgpu_fw}/Versions/Current")
             file(CREATE_LINK "A" "${_webgpu_fw}/Versions/Current" SYMBOLIC)
         endif ()
-        if (NOT EXISTS "${_webgpu_fw}/Versions/A/PrivateHeaders")
-            file(CREATE_LINK "${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebGPU"
-                             "${_webgpu_fw}/Versions/A/PrivateHeaders" SYMBOLIC)
-        endif ()
-        if (NOT EXISTS "${_webgpu_fw}/Versions/A/Modules")
-            file(CREATE_LINK "${CMAKE_BINARY_DIR}/WebGPU/Modules"
-                             "${_webgpu_fw}/Versions/A/Modules" SYMBOLIC)
-        endif ()
+        foreach (_name PrivateHeaders Modules)
+            if (IS_SYMLINK "${_webgpu_fw}/Versions/A/${_name}")
+                file(REMOVE "${_webgpu_fw}/Versions/A/${_name}")
+            endif ()
+        endforeach ()
+        file(COPY "${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebGPU/"
+             DESTINATION "${_webgpu_fw}/Versions/A/PrivateHeaders")
+        file(COPY "${CMAKE_BINARY_DIR}/WebGPU/Modules/"
+             DESTINATION "${_webgpu_fw}/Versions/A/Modules")
         if (NOT EXISTS "${_webgpu_fw}/PrivateHeaders")
             file(CREATE_LINK "Versions/Current/PrivateHeaders"
                              "${_webgpu_fw}/PrivateHeaders" SYMBOLIC)

@@ -9,7 +9,7 @@ allowed-tools: Bash, Read, Edit, Write, Agent
 
 ```sh
 brew install llvm                         # → /opt/homebrew/opt/llvm/bin/clang-include-cleaner
-BUILD=WebKitBuild/cmake-mac/Debug         # mac-dev-debug preset's binaryDir
+BUILD=WebKitBuild/Debug                   # mac-dev-debug preset's binaryDir
 cmake --preset mac-dev-debug              # emits $BUILD/compile_commands.json
 cmake --build --preset mac-dev-debug      # generated/forwarding headers + .ninja_deps must exist before analysis
 ```
@@ -32,7 +32,7 @@ mkdir -p /tmp/cdb-optimize
 python3 - "$RES" <<'PY'
 import json, re, sys
 res = sys.argv[1]
-src = json.load(open("WebKitBuild/cmake-mac/Debug/compile_commands.json"))
+src = json.load(open("WebKitBuild/Debug/compile_commands.json"))
 DROP = re.compile(r"-fcas-\S+|-fno-odr-hash-protocols|-clang-vendor-feature=\S+|"
                   r"-Wno-error=allocator-wrappers|-mllvm|-cas-friendly-debug-info|-Winvalid-pch")
 out = []

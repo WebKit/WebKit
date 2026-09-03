@@ -77,15 +77,15 @@ xc = _load_sibling("generate-cmake-xcode-project")
 
 
 def default_build_dir(source_dir: Path) -> Path:
-    for cfg in ("ASan", "Debug", "RelWithDebInfo", "TSan", "Release"):
-        candidate = source_dir / "WebKitBuild" / "cmake-mac" / cfg
+    for cfg in ("Debug", "Release"):
+        candidate = source_dir / "WebKitBuild" / cfg
         if (candidate / "CMakeCache.txt").exists():
             return candidate
-    return source_dir / "WebKitBuild" / "cmake-mac" / "ASan"
+    return source_dir / "WebKitBuild" / "Release"
 
 
 def launch_env(build_dir: Path, is_bundle: bool):
-    """Sanitizer tuning only. The cmake-mac build bakes an absolute LC_RPATH to
+    """Sanitizer tuning only. The CMake build bakes an absolute LC_RPATH to
     the build dir into every executable and XPC service, so DYLD_FRAMEWORK_PATH
     (and the __XPC_ forwarding dance run-minibrowser does for the xcodebuild
     layout) is unnecessary -- @rpath/WebKit.framework already resolves to the
@@ -214,7 +214,7 @@ def main():
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("build_dir", nargs="?",
                     help="CMake binary dir (default: first configured "
-                         "WebKitBuild/cmake-mac/{Debug,RelWithDebInfo,Release,ASan})")
+                         "WebKitBuild/{Debug,Release})")
     args = ap.parse_args()
 
     if args.build_dir:

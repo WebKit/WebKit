@@ -73,7 +73,7 @@ The trace directory should contain .json files produced by clang's -ftime-trace
 flag (searched recursively), typically found at:
     WebKitBuild/WebCore.build/Release/WebCore.build/Objects-normal/arm64e/
 or for CMake builds:
-    WebKitBuild/cmake-mac/Release/Source/WebCore/CMakeFiles/WebCore.dir/
+    WebKitBuild/Release/Source/WebCore/CMakeFiles/WebCore.dir/
 
 Examples:
     # Show top 30 headers by exclusive (self) parse time

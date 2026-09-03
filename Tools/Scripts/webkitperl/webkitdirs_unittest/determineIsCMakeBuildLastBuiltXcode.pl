@@ -23,11 +23,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Unit test for webkitdirs::determineIsCMakeBuild last-built tiebreaker:
-# when both trees exist and the Xcode build database (XCBuildData/build.db) is
-# newer than the CMake tree's Ninja build log (.ninja_log) (or the CMake log is
-# absent), the pre-existing "Xcode wins" default should hold. The function
-# caches its answer in a script-global, so each scenario lives in its own .pl
-# file (test-webkitperl runs each in a fresh process).
+# when the Xcode build database (XCBuildData/build.db) is newer than the Ninja
+# build log (.ninja_log) left in the product directory by a previous CMake
+# build, the tree goes back to Xcode. The function caches its answer in a
+# script-global, so each scenario lives in its own .pl file (test-webkitperl
+# runs each in a fresh process).
 use strict;
 use warnings;
 use File::Path qw(make_path);
@@ -46,14 +46,14 @@ use warnings qw(redefine prototype);
 
 my $configuration = "Debug";
 my $base = tempdir(CLEANUP => 1);
-# The tiebreaker compares each build system's own build log: .ninja_log in the
-# CMake tree vs. the shared XCBuildData/build.db for Xcode. It only runs when
-# both tree directories exist, so create the (otherwise empty) Xcode tree dir.
-my $cmakeMarker = File::Spec->catfile($base, "cmake-mac", $configuration, ".ninja_log");
+# A CMakeCache.txt in the product directory marks the tree as CMake's. The
+# tiebreaker then compares each build system's own build log: .ninja_log in the
+# product directory vs. the shared XCBuildData/build.db for Xcode.
+my $cmakeCache = File::Spec->catfile($base, $configuration, "CMakeCache.txt");
+my $cmakeMarker = File::Spec->catfile($base, $configuration, ".ninja_log");
 my $xcodeMarker = File::Spec->catfile($base, "XCBuildData", "build.db");
-make_path(File::Spec->catdir($base, $configuration));
 
-for my $marker ($cmakeMarker, $xcodeMarker) {
+for my $marker ($cmakeCache, $cmakeMarker, $xcodeMarker) {
     my ($volume, $dir, $file) = File::Spec->splitpath($marker);
     make_path(File::Spec->catpath($volume, $dir, ""));
     open(my $fh, ">", $marker) or die "Could not create $marker: $!";

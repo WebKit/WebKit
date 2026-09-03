@@ -855,7 +855,6 @@ sub argumentsForConfiguration()
     push(@args, '--visionos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'xrsimulator');
     push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'maccatalyst');
     push(@args, '--32-bit') if ($architecture eq "x86");
-    push(@args, '--cmake') if (isAppleCocoaWebKit() && isCMakeBuild());
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
@@ -1191,18 +1190,8 @@ sub usesPerConfigurationBuildDirectory
     return (defined $ENV{"WEBKIT_OUTPUTDIR"});
 }
 
-# The CMake tree of the platform being built, matching the binaryDir of the
-# presets in CMakePresets.json: cmake-mac, cmake-iphoneos, cmake-iphonesimulator.
-sub cmakeCocoaTreeName
-{
-    determineXcodeSDKPlatformName();
-    return "cmake-mac" if $xcodeSDKPlatformName eq "macosx";
-    return "cmake-$xcodeSDKPlatformName";
-}
-
-# The directory Xcode builds into, whether or not this invocation selected the
-# CMake tree. Products only Xcode knows how to build (Safari and the frameworks
-# above WebKit) live here even when WebKit itself came from the CMake tree.
+# The directory the Cocoa build products live in, whichever build system made
+# them. It matches the binaryDir of the Cocoa presets in CMakePresets.json.
 sub xcodeConfigurationProductDir
 {
     determineBaseProductDir();
@@ -1224,12 +1213,6 @@ sub determineConfigurationProductDir
         $configurationProductDir = "$baseProductDir";
     } elsif (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
         $configurationProductDir = "$baseProductDir/$portName/$configuration";
-    } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
-        # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
-        my $cmakeConfiguration = $configuration;
-        $cmakeConfiguration = "ASan" if asanIsEnabled();
-        $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), $cmakeConfiguration);
     } else {
         $configurationProductDir = xcodeConfigurationProductDir();
     }
@@ -1620,11 +1603,6 @@ sub safariPath
         # Use Safari.app in product directory if present (good for Safari development team).
         if (-d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
-        } else {
-            # Safari is built by Xcode, so with --cmake the product directory holds
-            # no Safari.app. Fall back to the Xcode tree before the installed Safari.
-            my $xcodeProductDir = xcodeConfigurationProductDir();
-            $safariBundle = "$xcodeProductDir/Safari.app" if -d "$xcodeProductDir/Safari.app";
         }
     }
 
@@ -2789,6 +2767,13 @@ sub shouldRemoveCMakeCache(@)
         my $flagValue = $ENV{$envFlag} || "";
             $buildArgsEnv .= "\n" . $envFlag . "=" . $flagValue;
     }
+    # set-webkit-configuration records the sanitizers in a file rather than in @ARGV,
+    # and they all build into the same directory, so track them here to reconfigure
+    # when one is turned on or off.
+    $buildArgsEnv .= "\nSANITIZERS=" . join(" ", grep { $_ } (asanIsEnabled() ? "address" : "",
+                                                              tsanIsEnabled() ? "thread" : "",
+                                                              ubsanIsEnabled() ? "undefined" : "",
+                                                              libFuzzerIsEnabled() ? "fuzzer" : ""));
     if (isCachedArgumentfileOutOfDate($optionsCache, $buildArgsEnv)) {
         File::Path::mkpath($productDir) unless -d $productDir;
         open(CACHED_ARGUMENTS, ">", $optionsCache);
@@ -3206,45 +3191,25 @@ sub determineIsCMakeBuild()
         return;
     }
 
-    # CMake presets build into WebKitBuild/cmake-<platform>/<Configuration>. When
-    # both trees exist, Xcode wins unless a caller opts into the last-built
-    # tiebreaker via enableLastBuiltTiebreaker() (build drivers do not, so they
-    # never auto-flip).
+    # A CMakeCache.txt in the product directory means the tree belongs to CMake.
     if (isAppleCocoaWebKit()) {
         determineBaseProductDir();
         determineConfiguration();
 
-        # CMake sanitizer presets build into cmake-mac/ASan or cmake-mac/TSan, so
-        # resolve the tree the way determineConfigurationProductDir() does. Xcode
-        # toggles ASan within Debug/Release, so its path is unchanged.
-        my $cmakeConfiguration = $configuration;
-        $cmakeConfiguration = "ASan" if asanIsEnabled();
-        $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        my $cmakeTreeName = cmakeCocoaTreeName();
-        my $cmakeBuild = File::Spec->catdir($baseProductDir, $cmakeTreeName, $cmakeConfiguration);
-        my $xcodeBuild = xcodeConfigurationProductDir();
+        my $productDir = xcodeConfigurationProductDir();
+        $isCMakeBuild = -f File::Spec->catfile($productDir, "CMakeCache.txt") ? 1 : 0;
+        return unless $isCMakeBuild && $shouldPickLastBuilt;
 
-        if (-f File::Spec->catfile($cmakeBuild, "CMakeCache.txt") && !-d $xcodeBuild) {
-            $isCMakeBuild = 1;
-            return;
-        }
-
-        # Prefer whichever tree was built most recently, comparing each build
-        # system's log rather than a product binary (which goes stale after a
-        # partial build like JSC-only): the CMake tree's .ninja_log vs Xcode's
-        # XCBuildData/build.db. A missing log is mtime 0, degrading to the
-        # Xcode-wins default. build.db is shared across Xcode configurations.
-        if ($shouldPickLastBuilt && -d $cmakeBuild && -d $xcodeBuild) {
-            my $cmakeMarker = File::Spec->catfile($cmakeBuild, ".ninja_log");
-            my $xcodeMarker = File::Spec->catfile($baseProductDir, "XCBuildData", "build.db");
-            my $cmakeMtime = -f $cmakeMarker ? stat($cmakeMarker)->mtime : 0;
-            my $xcodeMtime = -f $xcodeMarker ? stat($xcodeMarker)->mtime : 0;
-            if ($cmakeMtime > $xcodeMtime) {
-                $isCMakeBuild = 1;
-                print STDERR "Using last-built tree: $cmakeTreeName/$cmakeConfiguration (CMake)\n";
-            } elsif ($xcodeMtime && $cmakeMtime) {
-                print STDERR "Using last-built tree: " . basename($xcodeBuild) . " (Xcode)\n";
-            }
+        # Compare each build system's log rather than a product binary (which goes
+        # stale after a partial build like JSC-only): the CMake tree's .ninja_log vs
+        # Xcode's XCBuildData/build.db, which is shared across configurations.
+        my $cmakeMarker = File::Spec->catfile($productDir, ".ninja_log");
+        my $xcodeMarker = File::Spec->catfile($baseProductDir, "XCBuildData", "build.db");
+        my $cmakeMtime = -f $cmakeMarker ? stat($cmakeMarker)->mtime : 0;
+        my $xcodeMtime = -f $xcodeMarker ? stat($xcodeMarker)->mtime : 0;
+        if ($xcodeMtime > $cmakeMtime) {
+            $isCMakeBuild = 0;
+            print STDERR "Using last-built tree: " . basename($productDir) . " (Xcode)\n";
         }
     }
 }
@@ -3305,7 +3270,6 @@ Usage: @{[basename($0)]} [options] <application-path>
   --help                            Show this help message
   --no-saved-state                  Launch the application without state restoration
   --debug|release                   build configuration
-  --cmake                           Use the CMake build
   --xcode                           Use the Xcode build
 
 Options specific to macOS:
@@ -3344,7 +3308,7 @@ sub argumentsForRunAndDebugMacWebKitApp()
     return @args;
 }
 
-sub prependMacWebKitDyldPaths($)
+sub setupMacWebKitEnvironment($)
 {
     my ($dyldFrameworkPath) = @_;
 
@@ -3354,13 +3318,6 @@ sub prependMacWebKitDyldPaths($)
     prependToEnvironmentVariableList("__XPC_DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("DYLD_LIBRARY_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("__XPC_DYLD_LIBRARY_PATH", $dyldFrameworkPath);
-}
-
-sub setupMacWebKitEnvironment
-{
-    # Prepended in reverse so the first path given ends up searched first.
-    prependMacWebKitDyldPaths($_) for reverse @_;
-
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();
@@ -3714,29 +3671,14 @@ sub commandLineArgumentsForRestrictedEnvironmentVariables($)
     return map { ($prefix, "$_=$ENV{$_}") } grep { /^DYLD_/ } keys %ENV;
 }
 
-sub dyldFrameworkPathsForMacWebKitApp($)
-{
-    my ($appPath) = @_;
-    my @paths = (productDir());
-
-    # An app taken from the Xcode tree while WebKit came from cmake-mac needs both:
-    # WebKit and friends from the CMake tree, everything above WebKit (SafariShared,
-    # SafariSharedUI, ...) from the Xcode one. Listed second so the CMake tree wins
-    # for the frameworks both trees provide.
-    my $xcodeProductDir = xcodeConfigurationProductDir();
-    push(@paths, $xcodeProductDir) if $xcodeProductDir ne $paths[0] && index($appPath, "$xcodeProductDir/") == 0;
-
-    return @paths;
-}
-
 sub runMacWebKitApp($;$$)
 {
     my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
-    my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
-    print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
+    my $productDir = productDir();
+    print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 
     local %ENV = %ENV;
-    setupMacWebKitEnvironment(@frameworkPaths);
+    setupMacWebKitEnvironment($productDir);
 
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
         my $appPathForOpen = $appPath;
@@ -3777,11 +3719,11 @@ sub execMacWebKitAppForDebugging($)
     chomp $debuggerPath;
     die "Can't find the lldb executable.\n" unless -x $debuggerPath;
 
-    my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
-    setupMacWebKitEnvironment(@frameworkPaths);
+    my $productDir = productDir();
+    setupMacWebKitEnvironment($productDir);
 
     my @architectureFlags = ($architectureSwitch, architecture());
-    print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
+    print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
     exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 
