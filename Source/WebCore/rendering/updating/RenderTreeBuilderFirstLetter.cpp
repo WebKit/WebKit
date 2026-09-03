@@ -74,7 +74,7 @@ static std::optional<Style::ComputedStyle> styleForFirstLetter(const RenderEleme
         auto newFontDescription = firstLetterStyle.fontDescription();
         float capRatio = firstLetterStyle.metricsOfPrimaryFont().capHeight().value() / firstLetterStyle.usedFontSize();
         float startingFontSize = ((firstLetterStyle.initialLetter().height() - 1) * lineHeight + paragraph->style().metricsOfPrimaryFont().intCapHeight()) / capRatio;
-        newFontDescription.setSpecifiedSize(startingFontSize);
+        newFontDescription.setComputedSize(startingFontSize);
         newFontDescription.setUsedSize(startingFontSize);
         firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
 
@@ -82,7 +82,7 @@ static std::optional<Style::ComputedStyle> styleForFirstLetter(const RenderEleme
         int actualCapHeight = firstLetterStyle.metricsOfPrimaryFont().intCapHeight();
         while (actualCapHeight > desiredCapHeight) {
             auto newFontDescription = firstLetterStyle.fontDescription();
-            newFontDescription.setSpecifiedSize(newFontDescription.specifiedSize() - 1);
+            newFontDescription.setComputedSize(newFontDescription.computedSize() - 1);
             newFontDescription.setUsedSize(newFontDescription.usedSize() - 1);
             firstLetterStyle.setFontDescription(WTF::move(newFontDescription));
             actualCapHeight = firstLetterStyle.metricsOfPrimaryFont().intCapHeight();

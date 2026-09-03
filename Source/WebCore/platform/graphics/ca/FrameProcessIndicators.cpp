@@ -116,7 +116,7 @@ FontCascade FrameProcessIndicators::makeFont()
 {
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
-    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 
     FontCascade font(WTF::move(fontDescription));

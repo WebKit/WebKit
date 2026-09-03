@@ -42,13 +42,13 @@ namespace WebCore {
 
 namespace Style {
 
-float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const SettingsValues& settings)
+float usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const SettingsValues& settings)
 {
     // Text with a 0px font size should not be visible and therefore needs to be
     // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
     // rendering. This is also compatible with other browsers that have minimum
     // font size settings (e.g. Firefox).
-    if (std::abs(specifiedSize) < std::numeric_limits<float>::epsilon())
+    if (std::abs(computedSize) < std::numeric_limits<float>::epsilon())
         return 0.0f;
 
     // We support two types of minimum font size. The first is a hard override that applies to
@@ -62,11 +62,11 @@ float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, fl
     // since sites will mis-render otherwise (e.g., http://www.gamespot.com with a 9px minimum).
 
     if (minimumSizeRule == MinimumFontSizeRule::None)
-        return specifiedSize;
+        return computedSize;
 
     int minSize = settings.minimumFontSize;
     int minLogicalSize = settings.minimumLogicalFontSize;
-    float zoomedSize = specifiedSize * zoomFactor;
+    float zoomedSize = computedSize * zoomFactor;
 
     // Apply the hard minimum first. We only apply the hard minimum if after zooming we're still too small.
     zoomedSize = std::max(zoomedSize, static_cast<float>(minSize));
@@ -75,7 +75,7 @@ float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, fl
     // after zooming. The font size must either be relative to the user default or the original size
     // must have been acceptable. In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
-    if (minimumSizeRule == MinimumFontSizeRule::AbsoluteAndRelative && (specifiedSize >= minLogicalSize || !isAbsoluteSize)) {
+    if (minimumSizeRule == MinimumFontSizeRule::AbsoluteAndRelative && (computedSize >= minLogicalSize || !isAbsoluteSize)) {
         // The smart minimum is a logical (pre-zoom) readability floor, not a device-space floor. When
         // zooming the page out, scale it by the zoom factor so small text still shrinks proportionally
         // with the page (as other engines do) instead of being pinned to a minLogicalSize device floor
@@ -90,7 +90,7 @@ float usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, fl
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
-UsedFontSize usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle& style, const Document& document)
+UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle& style, const Document& document)
 {
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
@@ -99,12 +99,12 @@ UsedFontSize usedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteS
         if (frame && style.textZoom() != TextZoom::Reset)
             zoomFactor *= frame->textZoomFactor();
     }
-    return { usedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
+    return { usedFontSizeFromComputedSize(computedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
 }
 
-float usedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
+float usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
 {
-    return usedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
+    return usedFontSizeFromComputedSize(computedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
 }
 
 constexpr int fontSizeTableMax = 16;

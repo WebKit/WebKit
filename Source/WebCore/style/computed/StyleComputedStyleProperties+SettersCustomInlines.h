@@ -127,9 +127,6 @@ inline void ComputedStyleProperties::setTextAutospace(TextAutospace value)
 
 inline void ComputedStyleProperties::setFontSize(float size)
 {
-    // size must be specifiedSize if Text Autosizing is enabled, but computedSize if text
-    // zoom is enabled (if neither is enabled it's irrelevant as they're probably the same).
-
     ASSERT(std::isfinite(size));
     if (!std::isfinite(size) || size < 0)
         size = 0;
@@ -137,7 +134,7 @@ inline void ComputedStyleProperties::setFontSize(float size)
         size = std::min(maximumAllowedFontSize, size);
 
     auto description = fontDescription();
-    description.setSpecifiedSize(size);
+    description.setComputedSize(size);
     description.setUsedSize(size, description.usedZoomFactor());
     setFontDescription(WTF::move(description));
 

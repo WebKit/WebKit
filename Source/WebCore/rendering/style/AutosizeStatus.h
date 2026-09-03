@@ -50,7 +50,7 @@ public:
     constexpr bool contains(Fields) const;
 
     bool isIdempotentTextAutosizingCandidate(const Style::ComputedStyle&);
-    static float idempotentTextSize(float specifiedSize, float pageScale);
+    static float idempotentTextSize(float size, float pageScale);
     static bool probablyContainsASmallFixedNumberOfLines(const Style::ComputedStyle&);
 
     constexpr bool operator==(const AutosizeStatus&) const = default;

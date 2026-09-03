@@ -320,9 +320,9 @@ inline void BuilderCustom::applyInitialLineHeight(BuilderState& builderState)
     builderState.style().setSpecifiedLineHeight(ComputedStyle::initialSpecifiedLineHeight());
 }
 
-static inline float computeBaseSpecifiedFontSize(const Document& document, const ComputedStyle& style)
+static inline float computeBaseComputedFontSize(const Document& document, const ComputedStyle& style)
 {
-    float result = style.specifiedFontSize();
+    float result = style.fontSize();
     auto* frame = document.frame();
     if (frame && style.textZoom() != TextZoom::Reset)
         result *= frame->textZoomFactor();
@@ -337,10 +337,10 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value); primitiveValue && primitiveValue->isLength()) {
         auto minimumFontSize = document.settings().minimumFontSize();
         if (minimumFontSize > 0) {
-            auto specifiedFontSize = computeBaseSpecifiedFontSize(document, style);
+            auto computedFontSize = computeBaseComputedFontSize(document, style);
             // Small font sizes cause a preposterously large (near infinity) line-height. Add a fuzz-factor of 1px which opts out of
             // boosted line-height.
-            if (specifiedFontSize < minimumFontSize && specifiedFontSize >= 1) {
+            if (computedFontSize < minimumFontSize && computedFontSize >= 1) {
                 // FIXME: There are two settings which are relevant here: minimum font size, and minimum logical font size (as
                 // well as things like the zoom property, text zoom on the page, and text autosizing). The minimum logical font
                 // size is nonzero by default, and already incorporated into the computed font size, so if we just use the ratio
@@ -351,7 +351,7 @@ static inline float computeLineHeightMultiplierDueToFontSize(const Document& doc
 
                 // This calculation matches the line-height computed size calculation in
                 // TextAutoSizing::Value::adjustTextNodeSizes().
-                auto scaleChange = minimumFontSize / specifiedFontSize;
+                auto scaleChange = minimumFontSize / computedFontSize;
                 return scaleChange;
             }
         }
@@ -469,7 +469,7 @@ inline void BuilderCustom::applyInitialFontSize(BuilderState& builderState)
 inline void BuilderCustom::applyInheritFontSize(BuilderState& builderState)
 {
     const auto& parentFontDescription = builderState.parentStyle().fontDescription();
-    float size = parentFontDescription.specifiedSize();
+    float size = parentFontDescription.computedSize();
 
     if (size < 0)
         return;
@@ -579,7 +579,7 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     auto& fontDescription = builderState.fontDescription();
     builderState.setFontDescriptionKeywordSizeFromIdentifier(CSSValueInvalid);
 
-    float parentSize = builderState.parentStyle().fontDescription().specifiedSize();
+    float parentSize = builderState.parentStyle().fontDescription().computedSize();
     bool parentIsAbsoluteSize = builderState.parentStyle().fontDescription().isAbsoluteSize();
 
     float size = 0;

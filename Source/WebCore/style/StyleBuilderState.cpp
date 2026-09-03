@@ -209,14 +209,14 @@ void BuilderState::updateFontForTextSizeAdjust()
         return;
 
     auto newFontDescription = m_style.fontDescription();
-    auto baseSize = newFontDescription.specifiedSize();
+    auto baseSize = newFontDescription.computedSize();
     if (!m_style.textSizeAdjust().isNone())
         baseSize *= m_style.textSizeAdjust().multiplier();
 
     float zoomFactor = m_style.usedZoom();
     if (auto* frame = document().frame(); frame && m_style.textZoom() != TextZoom::Reset)
         zoomFactor *= frame->textZoomFactor();
-    newFontDescription.setSpecifiedSize(baseSize);
+    newFontDescription.setComputedSize(baseSize);
     newFontDescription.setUsedSize(baseSize * zoomFactor, zoomFactor);
 
     m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
@@ -241,7 +241,7 @@ void BuilderState::updateFontForZoomChange()
         return;
 #endif
 
-    setFontDescriptionFontSize(m_style.fontDescription().specifiedSize());
+    setFontDescriptionFontSize(m_style.fontDescription().computedSize());
 }
 
 void BuilderState::updateFontForGenericFamilyChange()
@@ -266,7 +266,7 @@ void BuilderState::updateFontForGenericFamilyChange()
         auto fixedSize =  document().settings().defaultFixedFontSize();
         auto defaultSize =  document().settings().defaultFontSize();
         float fixedScaleFactor = (fixedSize && defaultSize) ? static_cast<float>(fixedSize) / defaultSize : 1;
-        return parentFont.useFixedDefaultSize() ? childFont.specifiedSize() / fixedScaleFactor : childFont.specifiedSize() * fixedScaleFactor;
+        return parentFont.useFixedDefaultSize() ? childFont.computedSize() / fixedScaleFactor : childFont.computedSize() * fixedScaleFactor;
     }();
 
     auto newFontDescription = childFont;
@@ -296,8 +296,8 @@ void BuilderState::updateFontForSizeChange()
 
 void BuilderState::setFontSize(FontCascadeDescription& fontDescription, float size)
 {
-    fontDescription.setSpecifiedSize(size);
-    auto usedFontSize = Style::usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), style(), document());
+    fontDescription.setComputedSize(size);
+    auto usedFontSize = Style::usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), useSVGZoomRules(), style(), document());
     fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
 }
 

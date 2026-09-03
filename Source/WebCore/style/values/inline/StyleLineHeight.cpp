@@ -173,7 +173,7 @@ auto Evaluation<LineHeight, float>::operator()(
             return evaluate<LayoutUnit>(length, zoom).toFloat();
         },
         [&](const LineHeight::Number& number) {
-            return LayoutUnit { number.value * LayoutUnit { context.computedFontSize } }.toFloat();
+            return LayoutUnit { number.value * LayoutUnit { context.fontSize } }.toFloat();
         }
     );
 }

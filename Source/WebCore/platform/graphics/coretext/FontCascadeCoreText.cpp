@@ -49,7 +49,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
     RetainPtr ctFont = fontData.ctFont();
 
-    m_fontDescription.setSpecifiedSize(CTFontGetSize(ctFont.get()));
+    m_fontDescription.setComputedSize(CTFontGetSize(ctFont.get()));
     m_fontDescription.setUsedSize(CTFontGetSize(ctFont.get()));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(ctFont.get()) & kCTFontTraitItalic);
     m_fontDescription.setWeight((CTFontGetSymbolicTraits(ctFont.get()) & kCTFontTraitBold) ? boldWeightValue() : normalWeightValue());

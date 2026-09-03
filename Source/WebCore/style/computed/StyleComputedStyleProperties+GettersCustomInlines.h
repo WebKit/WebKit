@@ -131,9 +131,9 @@ inline TextOrientation ComputedStyleProperties::computedTextOrientation() const
 
 // FIXME: Support font properties.
 
-float ComputedStyleProperties::specifiedFontSize() const
+float ComputedStyleProperties::fontSize() const
 {
-    return fontDescription().specifiedSize();
+    return fontDescription().computedSize();
 }
 
 inline FontFamilies ComputedStyleProperties::fontFamily() const

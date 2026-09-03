@@ -72,12 +72,12 @@ inline void BuilderState::setFontDescriptionIsAbsoluteSize(bool isAbsoluteSize)
 
 inline void BuilderState::setFontDescriptionFontSize(float fontSize)
 {
-    if (m_style.fontDescription().specifiedSize() != fontSize) {
+    if (m_style.fontDescription().computedSize() != fontSize) {
         m_fontDirty = true;
-        m_style.mutableFontDescriptionWithoutUpdate().setSpecifiedSize(fontSize);
+        m_style.mutableFontDescriptionWithoutUpdate().setComputedSize(fontSize);
     }
 
-    SUPPRESS_UNCOUNTED_ARG auto usedFontSize = Style::usedFontSizeFromSpecifiedSize(fontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), style(), document());
+    SUPPRESS_UNCOUNTED_ARG auto usedFontSize = Style::usedFontSizeFromComputedSize(fontSize, m_style.fontDescription().isAbsoluteSize(), useSVGZoomRules(), style(), document());
     if (m_style.fontDescription().usedSize() != usedFontSize.size || m_style.fontDescription().usedZoomFactor() != usedFontSize.zoomFactor) {
         m_fontDirty = true;
         m_style.mutableFontDescriptionWithoutUpdate().setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);

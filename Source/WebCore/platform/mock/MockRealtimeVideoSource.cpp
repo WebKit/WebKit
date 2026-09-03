@@ -104,7 +104,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::timeFont()
         return *m_timeFont;
 
     auto& description = fontDescription();
-    description.setSpecifiedSize(m_baseFontSize);
+    description.setComputedSize(m_baseFontSize);
     description.setUsedSize(m_baseFontSize);
     m_timeFont = { FontCascadeDescription { description } };
     m_timeFont->update(nullptr);
@@ -118,7 +118,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::bipBopFont()
         return *m_bipBopFont;
 
     auto& description = fontDescription();
-    description.setSpecifiedSize(m_bipBopFontSize);
+    description.setComputedSize(m_bipBopFontSize);
     description.setUsedSize(m_bipBopFontSize);
     m_bipBopFont = { FontCascadeDescription { description } };
     m_bipBopFont->update(nullptr);
@@ -132,7 +132,7 @@ const FontCascade& MockRealtimeVideoSource::DrawingState::statsFont()
         return *m_statsFont;
 
     auto& description = fontDescription();
-    description.setSpecifiedSize(m_statsFontSize);
+    description.setComputedSize(m_statsFontSize);
     description.setUsedSize(m_statsFontSize);
     m_statsFont = { FontCascadeDescription { description } };
     m_statsFont->update(nullptr);

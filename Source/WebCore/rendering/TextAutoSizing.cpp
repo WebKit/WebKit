@@ -109,7 +109,7 @@ static unsigned computeFontHash(const FontCascade& font)
     // FIXME: Would be better to hash the family name rather than hashing a hash of the family name. Also, should this use FontCascadeDescription::familyNameHash?
     return computeHash(
         ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily().name),
-        font.fontDescription().specifiedSize()
+        font.fontDescription().computedSize()
     );
 }
 
@@ -223,13 +223,13 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         if (renderer.style().fontDescription().usedSize() == averageSize)
             continue;
 
-        float specifiedSize = renderer.style().fontDescription().specifiedSize();
+        float computedSize = renderer.style().fontDescription().computedSize();
         float maxScaleIncrease = renderer.settings().maxTextAutosizingScaleIncrease();
-        float scaleChange = averageSize / specifiedSize;
+        float scaleChange = averageSize / computedSize;
         if (scaleChange > maxScaleIncrease && firstPass) {
             firstPass = false;
-            averageSize = std::round(specifiedSize * maxScaleIncrease);
-            scaleChange = averageSize / specifiedSize;
+            averageSize = std::round(computedSize * maxScaleIncrease);
+            scaleChange = averageSize / computedSize;
         }
 
         LOG(TextAutosizing, "  adjust node size %p firstPass=%d averageSize=%f scaleChange=%f", node.ptr(), firstPass, averageSize, scaleChange);
@@ -264,7 +264,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
                 return Style::evaluate<LayoutUnit>(length, Style::ZoomFactor::none()).toInt();
             },
             [&](const Style::LineHeight::Number& number) {
-                return LayoutUnit { number.value * LayoutUnit { fontDescription.specifiedSize() } }.toInt();
+                return LayoutUnit { number.value * LayoutUnit { fontDescription.computedSize() } }.toInt();
             }
         );
 
@@ -297,7 +297,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             if (!firstLetterStyle)
                 continue;
             auto fontDescription = firstLetterStyle->fontDescription();
-            fontDescription.setUsedSize(averageSize * fontDescription.specifiedSize() / parentStyle.fontDescription().specifiedSize());
+            fontDescription.setUsedSize(averageSize * fontDescription.computedSize() / parentStyle.fontDescription().computedSize());
             firstLetterStyle->setFontDescription(FontCascadeDescription { fontDescription });
         }
 
@@ -325,7 +325,7 @@ void TextAutoSizingValue::reset()
 
         // Reset the font size back to the original specified size
         auto fontDescription = renderer->style().fontDescription();
-        float originalSize = fontDescription.specifiedSize();
+        float originalSize = fontDescription.computedSize();
         if (fontDescription.usedSize() != originalSize) {
             fontDescription.setUsedSize(originalSize);
             auto style = cloneRenderStyleWithState(renderer->style());

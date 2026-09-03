@@ -356,7 +356,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     ASSERT(protectedContext->cssFontSelector());
 
     // Map the font property longhands into the style.
-    float parentSize = fontDescription.specifiedSize();
+    float parentSize = fontDescription.computedSize();
 
     auto useFixedDefaultSize = [](const FontCascadeDescription& fontDescription) {
         return fontDescription.familyCount() == 1
@@ -376,8 +376,8 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     if (useFixedDefaultSize(fontDescription) != oldFamilyUsedFixedDefaultSize) {
         if (auto sizeIdentifier = fontDescription.keywordSizeAsIdentifier()) {
             auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, protectedContext->settingsValues());
-            fontDescription.setSpecifiedSize(size);
-            fontDescription.setUsedSize(usedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, protectedContext->settingsValues()));
+            fontDescription.setComputedSize(size);
+            fontDescription.setUsedSize(usedFontSizeFromComputedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, protectedContext->settingsValues()));
         }
     }
 
@@ -394,7 +394,7 @@ std::optional<FontCascade> resolveForUnresolvedFont(const CSSPropertyParserHelpe
     auto resolvedSize = fontSizeFromUnresolvedFontSize(unresolvedFont.size, parentSize, fontDescription, protectedContext);
     fontDescription.setKeywordSizeFromIdentifier(resolvedSize.keyword);
     if (resolvedSize.size > 0) {
-        fontDescription.setSpecifiedSize(resolvedSize.size);
+        fontDescription.setComputedSize(resolvedSize.size);
         fontDescription.setUsedSize(resolvedSize.size);
     }
 

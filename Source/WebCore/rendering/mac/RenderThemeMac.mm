@@ -1225,7 +1225,7 @@ static void setFontFromControlSize(Style::ComputedStyle& style, NSControlSize co
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
     fontDescription.setOneFamily("-apple-system"_s);
     fontDescription.setUsedSize([font pointSize] * style.usedZoom(), style.usedZoom());
-    fontDescription.setSpecifiedSize([font pointSize]);
+    fontDescription.setComputedSize([font pointSize]);
 
     // Reset line height
     style.setLineHeight(Style::ComputedStyle::initialLineHeight());
@@ -1638,7 +1638,7 @@ std::optional<FontCascadeDescription> RenderThemeMac::controlFont(StyleAppearanc
         NSFont* nsFont = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSizeForFont(font)]];
         fontDescription.setOneFamily("-apple-system"_s);
         fontDescription.setUsedSize([nsFont pointSize] * zoomFactor, zoomFactor);
-        fontDescription.setSpecifiedSize([nsFont pointSize]);
+        fontDescription.setComputedSize([nsFont pointSize]);
         return fontDescription;
     }
     default:

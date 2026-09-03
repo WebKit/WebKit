@@ -101,7 +101,7 @@ template<> struct Blending<LineHeight> {
 // MARK: - Evaluation
 
 struct LineHeightEvaluationContext {
-    float computedFontSize;
+    float fontSize;
     float lineSpacing;
 };
 

@@ -293,7 +293,7 @@ public:
 
     bool equals(const Style::ComputedStyle& a, const Style::ComputedStyle& b) const final
     {
-        return a.specifiedFontSize() == b.specifiedFontSize();
+        return a.fontSize() == b.fontSize();
     }
 };
 

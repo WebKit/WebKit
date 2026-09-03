@@ -79,7 +79,7 @@ public:
     unsigned effectiveFamilyCount() const;
     FontFamilySpecification effectiveFamilyAt(unsigned) const;
 
-    float specifiedSize() const { return m_specifiedSize; }
+    float computedSize() const { return m_computedSize; }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     FontSelectionValue lighterWeight() const { return lighterWeight(weight()); }
     FontSelectionValue bolderWeight() const { return bolderWeight(weight()); }
@@ -113,7 +113,7 @@ public:
     void setFamilies(const Vector<FontFamily>& families) { m_families = RefCountedFixedVector<FontFamily>::createFromVector(families); }
     void setFamilies(RefCountedFixedVector<FontFamily>& families) { m_families = families; }
     void setFamilies(Ref<RefCountedFixedVector<FontFamily>>&& families) { m_families = WTF::move(families); }
-    void setSpecifiedSize(float s) { m_specifiedSize = clampToFloat(s); }
+    void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setKerning(Kerning kerning) { m_kerning = static_cast<unsigned>(kerning); }
     void setKeywordSize(unsigned size)
@@ -137,7 +137,7 @@ public:
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const
     {
         return familiesEqualForTextAutoSizing(other)
-            && m_specifiedSize == other.m_specifiedSize
+            && m_computedSize == other.m_computedSize
             && variantSettings() == other.variantSettings()
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
@@ -148,8 +148,8 @@ public:
 private:
     Ref<RefCountedFixedVector<FontFamily>> m_families;
 
-    // Specified CSS value. Independent of rendering issues such as integer rounding, minimum font sizes, and zooming.
-    float m_specifiedSize { 0 };
+    // Computed CSS value. Independent of rendering issues such as integer rounding, minimum font sizes, and zooming. Used for "em" and "rem" units and CSS inheritance.
+    float m_computedSize { 0 };
     // Whether or not CSS specified an explicit size (logical sizes like "medium" don't count).
     unsigned m_isAbsoluteSize : 1;
     unsigned m_kerning : 2; // Kerning
@@ -166,7 +166,7 @@ inline bool FontCascadeDescription::operator==(const FontCascadeDescription& oth
 {
     return static_cast<const FontDescription&>(*this) == static_cast<const FontDescription&>(other)
         && arePointingToEqualData(m_families, other.m_families)
-        && m_specifiedSize == other.m_specifiedSize
+        && m_computedSize == other.m_computedSize
         && m_isAbsoluteSize == other.m_isAbsoluteSize
         && m_kerning == other.m_kerning
         && m_keywordSize == other.m_keywordSize

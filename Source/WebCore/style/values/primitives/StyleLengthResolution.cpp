@@ -66,7 +66,7 @@ static double unzoomFontMetric(double metric, const FontDescription& fontDescrip
 static double resolveEm(const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
-    return fontDescription.specifiedSize();
+    return fontDescription.computedSize();
 }
 
 // Resolve the "ex" and "rex" units.
@@ -79,7 +79,7 @@ static double resolveEx(const FontCascade& fontCascadeForUnit)
     if (fontMetrics.xHeight())
         return unzoomFontMetric(fontMetrics.xHeight().value(), fontDescription);
 
-    return fontDescription.specifiedSize() / 2.0;
+    return fontDescription.computedSize() / 2.0;
 }
 
 // Resolve the "cap" and "rcap" units.
@@ -126,7 +126,7 @@ static double resolveLh(const ComputedStyle* style, const FontCascade& fallbackF
         return evaluate<float>(
             style->specifiedLineHeight(),
             LineHeightEvaluationContext {
-                fontDescription.specifiedSize(),
+                fontDescription.computedSize(),
                 static_cast<float>(unzoomFontMetric(fontCascade.metricsOfPrimaryFont().lineSpacing(), fontDescription)),
             },
             ZoomFactor::none()
@@ -707,7 +707,7 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
 
     if (styleA.fontDescription().usedSize() != styleB.fontDescription().usedSize())
         return false;
-    if (styleA.fontDescription().specifiedSize() != styleB.fontDescription().specifiedSize())
+    if (styleA.fontDescription().computedSize() != styleB.fontDescription().computedSize())
         return false;
     if (styleA.metricsOfPrimaryFont().xHeight() != styleB.metricsOfPrimaryFont().xHeight())
         return false;
@@ -727,7 +727,7 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
 
 double emToPxDouble(double value, const ComputedStyle& style)
 {
-    return value * style.fontCascade().fontDescription().specifiedSize();
+    return value * style.fontCascade().fontDescription().computedSize();
 }
 
 double emToPxDoubleZoomed(double value, const ComputedStyle& style)

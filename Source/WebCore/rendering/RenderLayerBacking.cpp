@@ -4467,7 +4467,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 
         FontCascadeDescription fontDescription;
         fontDescription.setOneFamily("Helvetica"_s);
-        fontDescription.setSpecifiedSize(10);
+        fontDescription.setComputedSize(10);
         fontDescription.setUsedSize(10);
         fontDescription.setWeight(FontSelectionValue(500));
         FontCascade font(WTF::move(fontDescription));

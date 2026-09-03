@@ -698,7 +698,6 @@
                 "style-extractor-custom": true,
                 "high-priority": true,
                 "skip-computed-style-initial": true,
-                "computed-style-getter": "specifiedFontSize",
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "computed-style-type": "float",

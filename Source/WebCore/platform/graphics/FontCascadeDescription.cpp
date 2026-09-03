@@ -178,7 +178,7 @@ TextStream& operator<<(TextStream& ts, const FontCascadeDescription& fontCascade
         first = false;
     }
 
-    ts << ", specified size "_s << fontCascadeDescription.specifiedSize();
+    ts << ", specified size "_s << fontCascadeDescription.computedSize();
     ts << ", used size "_s << fontCascadeDescription.usedSize();
     ts << ", is absolute size "_s << fontCascadeDescription.isAbsoluteSize();
     if (fontCascadeDescription.kerning() != Kerning::Auto)

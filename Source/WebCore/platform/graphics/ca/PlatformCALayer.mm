@@ -87,7 +87,7 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
 
     FontCascadeDescription fontDescription;
     fontDescription.setOneFamily("Helvetica"_s);
-    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setComputedSize(fontSize);
     fontDescription.setUsedSize(fontSize);
 
     FontCascade cascade(WTF::move(fontDescription));

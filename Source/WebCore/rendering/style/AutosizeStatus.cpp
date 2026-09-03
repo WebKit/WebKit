@@ -43,7 +43,7 @@ auto AutosizeStatus::compute(const Style::ComputedStyle& style) -> AutosizeStatu
 
         const float maximumDifferenceBetweenFixedLineHeightAndFontSize = 5;
         auto& lineHeight = style.specifiedLineHeight();
-        if (auto fixedLineHeight = lineHeight.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(style.usedZoomForLength()) - style.specifiedFontSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
+        if (auto fixedLineHeight = lineHeight.tryFixed(); fixedLineHeight && fixedLineHeight->resolveZoom(style.usedZoomForLength()) - style.fontSize() > maximumDifferenceBetweenFixedLineHeightAndFontSize)
             return false;
 
         if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::Collapse && style.textWrapMode() == TextWrapMode::NoWrap)
@@ -78,8 +78,8 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedSt
     if (fields.contains(AutosizeStatus::Fields::AvoidSubtree))
         return false;
 
-    constexpr auto smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText = 5.0f;
-    constexpr auto largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText = 25.0f;
+    constexpr auto smallMinimumDifferenceThresholdBetweenLineHeightAndComputedFontSizeForBoostingText = 5.0f;
+    constexpr auto largeMinimumDifferenceThresholdBetweenLineHeightAndComputedFontSizeForBoostingText = 25.0f;
 
     if (fields.contains(AutosizeStatus::Fields::FixedHeight)) {
         if (fields.contains(AutosizeStatus::Fields::FixedWidth)) {
@@ -88,9 +88,9 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedSt
                     return false;
                 if (auto fixedHeight = style.height().tryFixed(); fixedHeight && style.specifiedLineHeight().isFixed()) {
                     if (auto fixedSpecifiedLineHeight = style.specifiedLineHeight().tryFixed()) {
-                        auto specifiedSize = style.specifiedFontSize();
+                        auto size = style.fontSize();
                         auto zoomFactor = style.usedZoomForLength();
-                        if (fixedHeight->resolveZoom(zoomFactor) == specifiedSize && fixedSpecifiedLineHeight->resolveZoom(zoomFactor) == specifiedSize)
+                        if (fixedHeight->resolveZoom(zoomFactor) == size && fixedSpecifiedLineHeight->resolveZoom(zoomFactor) == size)
                             return false;
                     }
                 }
@@ -99,10 +99,10 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedSt
             if (fields.contains(AutosizeStatus::Fields::Floating)) {
                 if (auto fixedHeight = style.height().tryFixed(); style.specifiedLineHeight().isFixed() && fixedHeight) {
                     if (auto fixedSpecifiedLineHeight = style.specifiedLineHeight().tryFixed()) {
-                        auto specifiedSize = style.specifiedFontSize();
+                        auto size = style.fontSize();
                         auto zoomFactor = style.usedZoomForLength();
-                        if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
-                            && fixedHeight->resolveZoom(zoomFactor) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
+                        if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomFactor { 1.0f }) - size > smallMinimumDifferenceThresholdBetweenLineHeightAndComputedFontSizeForBoostingText
+                            && fixedHeight->resolveZoom(zoomFactor) - size > smallMinimumDifferenceThresholdBetweenLineHeightAndComputedFontSizeForBoostingText)
                             return true;
                     }
                 }
@@ -131,7 +131,7 @@ auto AutosizeStatus::isIdempotentTextAutosizingCandidate(const Style::ComputedSt
             return true;
         if (fields.contains(AutosizeStatus::Fields::FixedWidth))
             return true;
-        if (auto fixedSpecifiedLineHeight = style.specifiedLineHeight().tryFixed(); fixedSpecifiedLineHeight && fixedSpecifiedLineHeight->resolveZoom(style.usedZoomForLength()) - style.specifiedFontSize() > largeMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
+        if (auto fixedSpecifiedLineHeight = style.specifiedLineHeight().tryFixed(); fixedSpecifiedLineHeight && fixedSpecifiedLineHeight->resolveZoom(style.usedZoomForLength()) - style.fontSize() > largeMinimumDifferenceThresholdBetweenLineHeightAndComputedFontSizeForBoostingText)
             return true;
         return false;
     }
@@ -165,7 +165,7 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::Compu
     if (heightOrMaxHeight <= 0)
         return false;
 
-    float approximateLineHeight = lineHeightAsNumber ? lineHeightAsNumber->value * style.specifiedFontSize() : lineHeightAsLength->resolveZoom(zoomFactor);
+    float approximateLineHeight = lineHeightAsNumber ? lineHeightAsNumber->value * style.fontSize() : lineHeightAsLength->resolveZoom(zoomFactor);
     if (approximateLineHeight <= 0)
         return false;
 
@@ -180,10 +180,10 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const Style::Compu
         && approximateNumberOfLines - std::floor(approximateNumberOfLines) <= thresholdForConsideringAnApproximateNumberOfLinesToBeCloseToAnInteger;
 }
 
-float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
+float AutosizeStatus::idempotentTextSize(float size, float pageScale)
 {
     if (pageScale >= 1)
-        return specifiedSize;
+        return size;
 
     // This describes a piecewise curve when the page scale is 2/3.
     static constexpr std::array points = {
@@ -202,21 +202,21 @@ float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
         return point;
     };
 
-    if (specifiedSize <= 0)
+    if (size <= 0)
         return 0;
 
     float result = scalePoint(points.back()).y();
     for (size_t i = 1; i < points.size(); ++i) {
-        if (points[i].x() < specifiedSize)
+        if (points[i].x() < size)
             continue;
         auto leftPoint = scalePoint(points[i - 1]);
         auto rightPoint = scalePoint(points[i]);
-        float fraction = (specifiedSize - leftPoint.x()) / (rightPoint.x() - leftPoint.x());
+        float fraction = (size - leftPoint.x()) / (rightPoint.x() - leftPoint.x());
         result = leftPoint.y() + fraction * (rightPoint.y() - leftPoint.y());
         break;
     }
 
-    return std::max(std::round(result), specifiedSize);
+    return std::max(std::round(result), size);
 }
 
 } // namespace WebCore

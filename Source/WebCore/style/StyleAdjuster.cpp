@@ -1003,7 +1003,7 @@ void Adjuster::adjustSVGElementStyle(Style::ComputedStyle& style, const SVGEleme
         // children inherit the correct (unzoomed) computed size. The SVG root transform handles
         // the zoom scaling, consistent with other SVG content.
         auto fontDescription = style.fontDescription();
-        auto usedFontSize = usedFontSizeFromSpecifiedSize(fontDescription.specifiedSize(), fontDescription.isAbsoluteSize(), /*useSVGZoomRules=*/true, style, protect(svgElement.document()));
+        auto usedFontSize = usedFontSizeFromComputedSize(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), /*useSVGZoomRules=*/true, style, protect(svgElement.document()));
         fontDescription.setUsedSize(usedFontSize.size, usedFontSize.zoomFactor);
         style.setFontDescription(WTF::move(fontDescription));
     }
@@ -1399,20 +1399,20 @@ auto Adjuster::adjustmentForTextAutosizing(const Style::ComputedStyle& style, co
 
     auto& fontDescription = style.fontDescription();
     auto initialUsedFontSize = fontDescription.usedSize();
-    auto specifiedFontSize = fontDescription.specifiedSize();
+    auto computedFontSize = fontDescription.computedSize();
 
     bool isCandidate = newStatus.isIdempotentTextAutosizingCandidate(style);
-    if (!isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, specifiedFontSize))
+    if (!isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, computedFontSize))
         return adjustmentForTextAutosizing;
 
-    auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.specifiedSize(), initialScale);
+    auto adjustedFontSize = AutosizeStatus::idempotentTextSize(fontDescription.computedSize(), initialScale);
     if (isCandidate && WTF::areEssentiallyEqual(initialUsedFontSize, adjustedFontSize))
         return adjustmentForTextAutosizing;
 
     if (!hasTextChild(element))
         return adjustmentForTextAutosizing;
 
-    adjustmentForTextAutosizing.newFontSize = isCandidate ? adjustedFontSize : specifiedFontSize;
+    adjustmentForTextAutosizing.newFontSize = isCandidate ? adjustedFontSize : computedFontSize;
 
     // FIXME: We should restore computed line height to its original value in the case where the element is not
     // an idempotent text autosizing candidate; otherwise, if an element that is a text autosizing candidate contains
