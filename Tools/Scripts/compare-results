@@ -37,13 +37,13 @@ from webkitpy.benchmark_runner.benchmark_json_merge import mergeJSONs
 try:
     from scipy import stats
 except:
-    print("ERROR: scipy package is not installed. Run `pip install scipy`")
+    print("ERROR: scipy package is not installed. Run `pip3 install scipy`")
     sys.exit(1)
 
 try:
     import numpy
 except:
-    print("ERROR: numpy package is not installed. Run `pip install numpy`")
+    print("ERROR: numpy package is not installed. Run `pip3 install numpy`")
     sys.exit(1)
 
 
