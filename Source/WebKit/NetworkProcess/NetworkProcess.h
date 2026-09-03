@@ -31,6 +31,7 @@
 #include "DataTaskIdentifier.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
+#include "LoadedWebArchive.h"
 #include "NetworkActivityTracker.h"
 #include "NetworkContentRuleListManager.h"
 #include "QuotaIncreaseRequestIdentifier.h"
@@ -52,6 +53,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <WebCore/Site.h>
 #include <memory>
 #include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadTask.h>
@@ -125,7 +127,6 @@ class SandboxExtensionHandle;
 class WebPageNetworkParameters;
 enum class CallDownloadDidStart : bool;
 enum class DidFilterKnownLinkDecoration : bool;
-enum class LoadedWebArchive : bool;
 enum class RemoteWorkerType : uint8_t;
 enum class ShouldGrandfatherStatistics : bool;
 enum class StorageAccessStatus : uint8_t;
@@ -487,7 +488,12 @@ public:
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
-    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
+
+    // Unlike allowsFirstPartyForCookies, this compares the scheme as well as the registrable domain.
+    bool allowsFirstPartySite(WebCore::ProcessIdentifier, const WebCore::Site&) const;
+
+    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::Site&&, LoadedWebArchive, CompletionHandler<void()>&&);
+    void addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
 
     // Per-process allow-list of WebPageProxyIdentifiers the WebContent process is permitted to reference. Fed by the
     // (trusted) UIProcess as it associates a process with a page, and used to reject a process that supplies a
@@ -666,7 +672,12 @@ private:
 
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
-    HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    struct AllowedFirstParties {
+        LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
+        HashSet<WebCore::RegistrableDomain> domains;
+        HashSet<WebCore::Site> sites;
+    };
+    HashMap<WebCore::ProcessIdentifier, AllowedFirstParties> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<WebPageProxyIdentifier>> m_allowedWebPageProxyIdentifiers;
     HashMap<DownloadID, WebCore::ProcessIdentifier> m_authorizedDownloads;
 
