@@ -76,7 +76,7 @@ private:
     WebAssemblyModuleRecord(VM&, Structure*, const Identifier&);
 
     void finishCreation(JSGlobalObject*, VM&, const Wasm::ModuleInformation&);
-    JSValue evaluateConstantExpression(JSGlobalObject*, uint64_t constantExpressionIndex, Wasm::Type, uint64_t&);
+    JSValue evaluateConstantExpression(JSGlobalObject*, uint64_t constantExpressionIndex, uint64_t&);
 
     WriteBarrier<JSWebAssemblyInstance> m_instance;
     WriteBarrier<JSObject> m_startFunction;

@@ -760,23 +760,23 @@ void JSWebAssemblyInstance::copyElementSegment(JSWebAssemblyArray* array, const 
     }
 }
 
-std::expected<uint64_t, String> JSWebAssemblyInstance::evaluateConstantExpression(uint64_t constantExpressionIndex, Type expectedType)
+std::expected<uint64_t, String> JSWebAssemblyInstance::evaluateConstantExpression(uint64_t constantExpressionIndex)
 {
     const auto& constantExpression = m_moduleInformation->constantExpressions[constantExpressionIndex];
-    return evaluateExtendedConstExpr(constantExpression, this, m_moduleInformation.get(), expectedType);
+    return evaluateExtendedConstExpr(constantExpression, this, m_moduleInformation.get());
 }
 
 bool JSWebAssemblyInstance::ensureConstantExpressionValue(uint64_t constantExpressionIndex, Type expectedType, uint64_t& result)
 {
     // The memo is scanned by the GC as a JSValue, so only reference-typed results may go in it.
-    ASSERT(isRefType(expectedType));
+    ASSERT_UNUSED(expectedType, isRefType(expectedType));
 
     if (auto found = m_constantExpressionValues.getOptional(constantExpressionIndex)) {
         result = JSValue::encode(found.value().get());
         return true;
     }
 
-    auto evalResult = evaluateConstantExpression(constantExpressionIndex, expectedType);
+    auto evalResult = evaluateConstantExpression(constantExpressionIndex);
     if (!evalResult.has_value()) [[unlikely]]
         return false;
     result = evalResult.value();

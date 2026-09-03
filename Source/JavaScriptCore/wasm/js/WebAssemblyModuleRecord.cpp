@@ -604,7 +604,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             case Wasm::TableInformation::FromExtendedExpression: {
                 ASSERT(initialBitsOrImportNumber < moduleInformation.constantExpressions.size());
                 uint64_t constantExpressionIndex = initialBitsOrImportNumber;
-                evaluateConstantExpression(globalObject, constantExpressionIndex, moduleInformation.tables[i].wasmType(), initialBitsOrImportNumber);
+                evaluateConstantExpression(globalObject, constantExpressionIndex, initialBitsOrImportNumber);
                 RETURN_IF_EXCEPTION(scope, void());
                 break;
             }
@@ -666,7 +666,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 initialBits = JSValue::encode(m_instance->ensureFunctionWrapper(functionSpaceIndex));
             } else if (global.initializationType == Wasm::GlobalInformation::FromExtendedExpression) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.constantExpressions.size());
-                evaluateConstantExpression(globalObject, global.initialBits.initialBitsOrImportNumber, global.type, initialBits);
+                evaluateConstantExpression(globalObject, global.initialBits.initialBitsOrImportNumber, initialBits);
                 RETURN_IF_EXCEPTION(scope, void());
             } else
                 initialBits = global.initialBits.initialBitsOrImportNumber;
@@ -831,12 +831,12 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     }
 }
 
-JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* globalObject, uint64_t constantExpressionIndex, Wasm::Type expectedType, uint64_t& result)
+JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* globalObject, uint64_t constantExpressionIndex, uint64_t& result)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto evalResult = m_instance->evaluateConstantExpression(constantExpressionIndex, expectedType);
+    auto evalResult = m_instance->evaluateConstantExpression(constantExpressionIndex);
     if (!evalResult.has_value()) [[unlikely]]
         return JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("couldn't evaluate constant expression: "_s, evalResult.error()))));
 
@@ -890,7 +890,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                     elementIndex = static_cast<uint32_t>(offset.constValue());
             } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, offset.constantExpressionIndex(), isTable64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, offset.constantExpressionIndex(), result);
                 RETURN_IF_EXCEPTION(scope, void());
                 elementIndex = isTable64 ? result : static_cast<uint32_t>(result);
             }
@@ -926,7 +926,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                     offset = static_cast<uint32_t>(segment->offsetIfActive()->constValue());
             } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, segment->offsetIfActive()->constantExpressionIndex(), isMemory64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, segment->offsetIfActive()->constantExpressionIndex(), result);
                 RETURN_IF_EXCEPTION(scope, void());
                 offset = isMemory64 ? result : static_cast<uint32_t>(result);
             }
