@@ -599,6 +599,196 @@ TEST_P(EmbeddedPDFFitsToFrame, Test)
 
 INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFFitsToFrame, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFFitsToFrame::testNameGenerator);
 
+#if PLATFORM(MAC)
+
+// UnifiedPDFPlugin::ContextMenuItemTag::DictionaryLookup. The title is localized, so match the tag.
+static constexpr NSInteger dictionaryLookupContextMenuItemTag = 2;
+
+using EmbeddedPDFLookUpParams = std::tuple<bool, bool, bool>;
+
+class EmbeddedPDFLookUp : public testing::TestWithParam<EmbeddedPDFLookUpParams> {
+public:
+    bool crossOrigin() const { return std::get<0>(GetParam()); }
+    bool siteIsolationEnabled() const { return std::get<1>(GetParam()); }
+    bool siteIsolationSharedProcessEnabled() const { return std::get<2>(GetParam()); }
+
+    // Large enough that the offset is unmissable if the conversion is skipped.
+    static constexpr int iframeLeft = 100;
+    static constexpr int iframeTop = 120;
+    static constexpr int iframeWidth = 400;
+    static constexpr int iframeHeight = 300;
+    static constexpr NSRect iframeFrame { { iframeLeft, iframeTop }, { iframeWidth, iframeHeight } };
+
+    void SetUp() override
+    {
+        auto pdfURL = makeString("https://"_s, crossOrigin() ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s);
+        // The spacer makes the main frame scrollable for TextIndicatorRectAccountsForMainFrameScroll.
+        auto mainHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft,
+            "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
+            "px; border:0' src='"_s, pdfURL, "'></iframe><div style='height:2000px'></div>"_s);
+
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML } },
+            { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        configuration = configurationForWebViewTestingUnifiedPDF();
+        [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            NSString *key = feature.key;
+            if ([key isEqualToString:@"SiteIsolationEnabled"])
+                [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
+            else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
+                [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
+        }
+
+        navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+        [webView _setWindowOcclusionDetectionEnabled:NO];
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+    }
+
+    // Returns a point over the PDF's text, in web view coordinates. The PDF's sole annotation is the
+    // link over "our website", so its center is on text whatever the plugin's layout. Annotation
+    // rects are in plugin coordinates, which are the generated <embed>'s content box.
+    NSPoint loadAndFindPointOverPDFText()
+    {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr<NSArray> center;
+        bool foundAnnotation = TestWebKitAPI::Util::waitFor([&] {
+            center = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+                "  const plugin = document.querySelector('embed');"
+                "  const rects = plugin ? internals.pdfAnnotationRectsForTesting(plugin) : [];"
+                "  if (!rects.length) return null;"
+                "  const box = plugin.getBoundingClientRect();"
+                "  return [box.x + rects[0].x + rects[0].width / 2, box.y + rects[0].y + rects[0].height / 2];"
+                "})()" inFrame:[webView firstChildFrame]]);
+            return !!center;
+        });
+        EXPECT_TRUE(foundAnnotation);
+        if (!foundAnnotation)
+            return NSZeroPoint;
+
+        [webView waitForNextPresentationUpdate];
+        return NSMakePoint(iframeLeft + [[center objectAtIndex:0] doubleValue], iframeTop + [[center objectAtIndex:1] doubleValue]);
+    }
+
+    // Right-clicks and picks Look Up, returning the text indicator's bounding rect in root view
+    // coordinates. The menu is a plain NSMenu from the UI process, so swizzling is the only way in.
+    NSRect lookUpAtPoint(NSPoint pointInWebView)
+    {
+        __block bool lookedUp = false;
+        __block RetainPtr<NSString> lookedUpText;
+        __block NSRect textBoundingRect = NSZeroRect;
+        [webView _setDidPerformDictionaryLookupHandlerForTesting:^(NSString *text, CGRect rect) {
+            lookedUpText = text;
+            textBoundingRect = rect;
+            lookedUp = true;
+        }];
+
+        __block bool selectedLookUp = false;
+        InstanceMethodSwizzler popUpSwizzler {
+            object_getClass([NSMenu class]),
+            @selector(popUpContextMenu:withEvent:forView:),
+            imp_implementationWithBlock(^(id, NSMenu *menu, NSEvent *, NSView *) {
+                NSInteger index = [menu indexOfItemWithTag:dictionaryLookupContextMenuItemTag];
+                if (index == -1)
+                    return;
+                [menu performActionForItemAtIndex:index];
+                selectedLookUp = true;
+            })
+        };
+
+        // Right-clicking selects the word under the cursor, which puts Look Up in the plugin's menu.
+        [webView rightClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
+        bool didLookUp = TestWebKitAPI::Util::runFor(&lookedUp, 5_s);
+        [webView _setDidPerformDictionaryLookupHandlerForTesting:nil];
+
+        EXPECT_TRUE(selectedLookUp);
+        EXPECT_TRUE(didLookUp);
+        EXPECT_GT([lookedUpText length], 0u);
+        return textBoundingRect;
+    }
+
+    static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFLookUpParams> info)
+    {
+        return std::string { std::get<0>(info.param) ? "CrossOrigin" : "SameOrigin" }
+            + "_SiteIsolation" + (std::get<1>(info.param) ? "Enabled" : "Disabled")
+            + "_SiteIsolationSharedProcess" + (std::get<2>(info.param) ? "Enabled" : "Disabled");
+    }
+
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
+};
+
+TEST_P(EmbeddedPDFLookUp, ContextMenuIsPositionedAtTheClick)
+{
+    auto pointInWindow = [webView convertPoint:loadAndFindPointOverPDFText() toView:nil];
+
+    __block bool poppedUpMenu = false;
+    __block NSPoint menuLocationInWindow = NSZeroPoint;
+    InstanceMethodSwizzler popUpSwizzler {
+        object_getClass([NSMenu class]),
+        @selector(popUpContextMenu:withEvent:forView:),
+        imp_implementationWithBlock(^(id, NSMenu *, NSEvent *event, NSView *) {
+            menuLocationInWindow = [event locationInWindow];
+            poppedUpMenu = true;
+        })
+    };
+
+    [webView rightClickAtPoint:pointInWindow];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&poppedUpMenu, 10_s));
+
+    // The position round-trips through root view, screen and window conversions, each rounding.
+    EXPECT_NEAR(menuLocationInWindow.x, pointInWindow.x, 2);
+    EXPECT_NEAR(menuLocationInWindow.y, pointInWindow.y, 2);
+}
+
+TEST_P(EmbeddedPDFLookUp, TextIndicatorRectCoversTheLookedUpWord)
+{
+    auto pointInWebView = loadAndFindPointOverPDFText();
+    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+
+    EXPECT_FALSE(NSIsEmptyRect(textBoundingRect));
+    // Containment in the iframe is not enough on its own: the iframe is exactly the plugin's size, so
+    // an unconverted rect is still inside it and only misses the click.
+    EXPECT_TRUE(NSPointInRect(pointInWebView, textBoundingRect));
+    EXPECT_TRUE(NSContainsRect(iframeFrame, textBoundingRect));
+}
+
+TEST_P(EmbeddedPDFLookUp, TextIndicatorRectAccountsForMainFrameScroll)
+{
+    auto pointInWebView = loadAndFindPointOverPDFText();
+
+    static constexpr int scrollOffset = 40;
+    bool scrolled = TestWebKitAPI::Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 40)"];
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == scrollOffset;
+    });
+    EXPECT_TRUE(scrolled);
+    [webView waitForNextPresentationUpdate];
+
+    pointInWebView.y -= scrollOffset;
+    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+
+    // Scrolling does not change the plugin's transform, so the offset has to come from the
+    // conversion. A sign error moves the highlight down instead of up, off the word.
+    EXPECT_FALSE(NSIsEmptyRect(textBoundingRect));
+    EXPECT_TRUE(NSPointInRect(pointInWebView, textBoundingRect));
+    EXPECT_TRUE(NSContainsRect(NSOffsetRect(iframeFrame, 0, -scrollOffset), textBoundingRect));
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUp, testing::Combine(testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFLookUp::testNameGenerator);
+
+#endif // PLATFORM(MAC)
+
 #if ENABLE(PDF_HUD)
 
 UNIFIED_PDF_TEST(SetPageZoomFactorDoesNotBailIncorrectly)

@@ -73,6 +73,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PageIdentifier.h>
@@ -719,6 +720,46 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
 #endif
 
     return true;
+}
+
+RefPtr<LocalFrameView> PDFPluginBase::localRootFrameView() const
+{
+    RefPtr frame = m_frame.get();
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    if (!coreFrame)
+        return nullptr;
+
+    return Ref { coreFrame->rootFrame() }->view();
+}
+
+FloatPoint PDFPluginBase::convertFromLocalRootViewToRootView(FloatPoint point) const
+{
+    RefPtr view = localRootFrameView();
+    return view ? view->convertToRootViewAcrossIsolatedFrames(point) : point;
+}
+
+FloatRect PDFPluginBase::convertFromLocalRootViewToRootView(FloatRect rect) const
+{
+    RefPtr view = localRootFrameView();
+    return view ? view->convertToRootViewAcrossIsolatedFrames(rect) : rect;
+}
+
+void PDFPluginBase::convertTextIndicatorRectsFromLocalRootViewToRootView(TextIndicator& textIndicator) const
+{
+    auto boundingRect = textIndicator.textBoundingRectInRootViewCoordinates();
+    auto boundingRectInRootView = convertFromLocalRootViewToRootView(boundingRect);
+
+    textIndicator.setTextBoundingRectInRootViewCoordinates(boundingRectInRootView);
+    textIndicator.setSelectionRectInRootViewCoordinates(convertFromLocalRootViewToRootView(textIndicator.selectionRectInRootViewCoordinates()));
+    textIndicator.setContentImageWithoutSelectionRectInRootViewCoordinates(convertFromLocalRootViewToRootView(textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates()));
+
+    // These are offsets from the bounding rect, so convert them absolutely and re-relativize.
+    textIndicator.setTextRectsInBoundingRectCoordinates(textIndicator.textRectsInBoundingRectCoordinates().map([&](auto rect) {
+        rect.moveBy(boundingRect.location());
+        rect = convertFromLocalRootViewToRootView(rect);
+        rect.moveBy(-boundingRectInRootView.location());
+        return rect;
+    }));
 }
 
 #if ENABLE(PDF_HUD)
