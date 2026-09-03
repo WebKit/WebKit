@@ -12138,14 +12138,15 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to build and analyze WebKit')
         rc = self.run_step()
-        expected_steps = [
-            GenerateS3URL('mac-tahoe-arm64-release-scan-build', extension='txt', content_type='text/plain'),
-            UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
-            ValidateChange(verifyBugClosed=False, addURLs=False),
-            RevertAppliedChanges(exclude=['new*', 'scan-build-output*']),
-            ScanBuildWithoutChange(analyze_safercpp_results=False)
-        ]
-        self.assertEqual(expected_steps, next_steps)
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            expected_steps = [
+                GenerateS3URL('mac-tahoe-arm64-release-scan-build', extension='txt', additions=f'{self.build.number}', content_type='text/plain'),
+                UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
+                ValidateChange(verifyBugClosed=False, addURLs=False),
+                RevertAppliedChanges(exclude=['new*', 'scan-build-output*']),
+                ScanBuildWithoutChange(analyze_safercpp_results=False)
+            ]
+            self.assertEqual(expected_steps, next_steps)
         return rc
 
     @expectedFailure
@@ -12167,14 +12168,15 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
             .exit(0)
         )
         self.expect_outcome(result=SUCCESS, state_string='Found 0 issues')
-        rc = self.run_step()
-        expected_steps = [
-            GenerateS3URL('mac-arm64-release-scan-build', extension='txt', content_type='text/plain'),
-            UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
-            ParseStaticAnalyzerResults(),
-            FindUnexpectedStaticAnalyzerResults()
-        ]
-        self.assertEqual(expected_steps, next_steps)
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+            expected_steps = [
+                GenerateS3URL('mac-arm64-release-scan-build', extension='txt', additions=f'{self.build.number}', content_type='text/plain'),
+                UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
+                ParseStaticAnalyzerResults(),
+                FindUnexpectedStaticAnalyzerResults()
+            ]
+            self.assertEqual(expected_steps, next_steps)
         return rc
 
     @expectedFailure
@@ -12196,14 +12198,15 @@ class TestScanBuild(BuildStepMixinAdditions, unittest.TestCase):
             .exit(0)
         )
         self.expect_outcome(result=SUCCESS, state_string='Found 300 issues')
-        rc = self.run_step()
-        expected_steps = [
-            GenerateS3URL('mac-arm64-release-scan-build', extension='txt', content_type='text/plain'),
-            UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
-            ParseStaticAnalyzerResults(),
-            FindUnexpectedStaticAnalyzerResults()
-        ]
-        self.assertEqual(expected_steps, next_steps)
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+            expected_steps = [
+                GenerateS3URL('mac-arm64-release-scan-build', extension='txt', additions=f'{self.build.number}', content_type='text/plain'),
+                UploadFileToS3('build-log.txt', links={'scan-build': 'Full build log'}, content_type='text/plain'),
+                ParseStaticAnalyzerResults(),
+                FindUnexpectedStaticAnalyzerResults()
+            ]
+            self.assertEqual(expected_steps, next_steps)
         return rc
 
     def test_success_ios(self):
@@ -12301,12 +12304,13 @@ class TestScanBuildWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
             .exit(0)
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to build and analyze WebKit')
-        rc = self.run_step()
-        expected_steps = [
-            GenerateS3URL('mac-tahoe-arm64-release-scan-build-without-change', extension='txt', content_type='text/plain'),
-            UploadFileToS3('build-log.txt', links={'scan-build-without-change': 'Full build log'}, content_type='text/plain'),
-        ]
-        self.assertEqual(expected_steps, next_steps)
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+            expected_steps = [
+                GenerateS3URL('mac-tahoe-arm64-release-scan-build-without-change', extension='txt', additions=f'{self.build.number}', content_type='text/plain'),
+                UploadFileToS3('build-log.txt', links={'scan-build-without-change': 'Full build log'}, content_type='text/plain'),
+            ]
+            self.assertEqual(expected_steps, next_steps)
         return rc
 
     @expectedFailure
@@ -12328,14 +12332,15 @@ class TestScanBuildWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
             .exit(0)
         )
         self.expect_outcome(result=SUCCESS, state_string='Found 300 issues')
-        rc = self.run_step()
-        expected_steps = [
-            GenerateS3URL('mac-arm64-release-scan-build-without-change', extension='txt', content_type='text/plain'),
-            UploadFileToS3('build-log.txt', links={'scan-build-without-change': 'Full build log'}, content_type='text/plain'),
-            ParseStaticAnalyzerResultsWithoutChange(),
-            FindUnexpectedStaticAnalyzerResultsWithoutChange()
-        ]
-        self.assertEqual(expected_steps, next_steps)
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            rc = self.run_step()
+            expected_steps = [
+                GenerateS3URL('mac-arm64-release-scan-build-without-change', extension='txt', additions=f'{self.build.number}', content_type='text/plain'),
+                UploadFileToS3('build-log.txt', links={'scan-build-without-change': 'Full build log'}, content_type='text/plain'),
+                ParseStaticAnalyzerResultsWithoutChange(),
+                FindUnexpectedStaticAnalyzerResultsWithoutChange()
+            ]
+            self.assertEqual(expected_steps, next_steps)
         return rc
 
 
