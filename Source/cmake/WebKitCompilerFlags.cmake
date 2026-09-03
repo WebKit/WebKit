@@ -268,6 +268,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
       endif ()
     endif ()
 
+    WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-missing-field-initializers)
     WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-noexcept-type)
 
     # These GCC warnings produce too many false positives to be useful. We'll

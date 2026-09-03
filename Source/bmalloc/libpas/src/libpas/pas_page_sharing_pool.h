@@ -82,7 +82,6 @@ static inline void pas_page_sharing_participant_set_index(pas_page_sharing_parti
     pas_page_sharing_participant_get_payload(*ptr)->index_in_sharing_pool_min_heap = (unsigned)index;
 }
 
-PAS_IGNORE_WARNINGS_BEGIN("missing-field-initializers")
 PAS_CREATE_MIN_HEAP(
     pas_page_sharing_pool_min_heap,
     pas_page_sharing_participant,
@@ -90,7 +89,6 @@ PAS_CREATE_MIN_HEAP(
     .compare = pas_page_sharing_participant_compare,
     .get_index = pas_page_sharing_participant_get_index,
     .set_index = pas_page_sharing_participant_set_index);
-PAS_IGNORE_WARNINGS_END
 
 struct PAS_ALIGNED(sizeof(pas_versioned_field)) pas_page_sharing_pool {
     pas_versioned_field first_delta;

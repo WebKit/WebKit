@@ -674,7 +674,6 @@ endif ()
 
 set(bmalloc_COMPILE_OPTIONS
     -Wno-cast-align
-    -Wno-missing-field-initializers
 )
 
 set(bmalloc_INTERFACE_LIBRARIES bmalloc)
@@ -733,5 +732,4 @@ if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))
     target_include_directories(mbmalloc PRIVATE ${bmalloc_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(mbmalloc Threads::Threads bmalloc)
     set_target_properties(mbmalloc PROPERTIES COMPILE_DEFINITIONS "BUILDING_mbmalloc")
-    WEBKIT_ADD_TARGET_CXX_FLAGS(mbmalloc -Wno-missing-field-initializers)
 endif ()

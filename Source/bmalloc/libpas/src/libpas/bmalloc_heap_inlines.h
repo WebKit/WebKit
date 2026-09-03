@@ -30,8 +30,6 @@
 
 #if LIBPAS_ENABLED
 
-PAS_IGNORE_WARNINGS_BEGIN("missing-field-initializers")
-
 #include "bmalloc_heap.h"
 #include "bmalloc_heap_config.h"
 #include "bmalloc_heap_innards.h"
@@ -384,8 +382,6 @@ static PAS_ALWAYS_INLINE void bmalloc_deallocate_inline(void* ptr)
 PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */
-
-PAS_IGNORE_WARNINGS_END
 
 #endif /* LIBPAS_ENABLED */
 #endif /* BMALLOC_HEAP_INLINES_H */
