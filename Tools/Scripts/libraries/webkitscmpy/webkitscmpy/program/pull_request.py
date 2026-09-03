@@ -169,6 +169,10 @@ class PullRequest(Command):
 
         # Then, see if we already have a commit associated with this branch we need to modify
         has_commit = repository.commit(include_log=False, include_identifier=False).branch == repository.branch and repository.branch != repository.default_branch
+        print(f'\nhas_commit={has_commit}, modified={modified}')
+        print(f'\nremote: {repository.remote()}, url={repository.url()}')
+        print(f'\nbranch1: {repository.commit(include_log=False, include_identifier=False).branch}, branch2: {repository.branch}, default: {repository.default_branch}')
+
         if not modified and has_commit:
             if not getattr(args, '_bug_urls', None) or os.environ.get('COMMIT_MESSAGE_REVERT'):
                 log.info('Using committed changes...')
