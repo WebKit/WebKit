@@ -1,0 +1,173 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true WebGPUEnabled=true ] -->
+<body>
+<p>This test passes if RemoteBindGroup::UpdateExternalTextures only rewrites the bind group's
+argument buffer for the ExternalTexture it was created with, and only while no command encoder has
+made that ExternalTexture resident.</p>
+<pre id="log"></pre>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+function log(message)
+{
+    document.getElementById("log").textContent += message + "\n";
+}
+
+function freshId()
+{
+    return Math.floor(Math.random() * 0x7fffffff) + 1;
+}
+
+(async () => {
+    if (!window.IPC) {
+        log("PASS: IPC testing API unavailable");
+        window.testRunner?.notifyDone();
+        return;
+    }
+
+    const { CoreIPC, StreamConnection } = await import("./coreipc.js");
+
+    // Make the GPU process connection exist so WebGPUEnabled propagates to it.
+    try { await navigator.gpu?.requestAdapter(); } catch (e) { }
+
+    const backendId = freshId();
+    const backendConnection = new StreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+        renderingBackendIdentifier: backendId,
+        connectionHandle: backendConnection,
+    });
+    const didInitialize = backendConnection.connection.waitForMessage(backendId, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+    if (!didInitialize) {
+        log("PASS: no rendering backend");
+        window.testRunner?.notifyDone();
+        return;
+    }
+    backendConnection.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
+
+    const gpuId = freshId();
+    const gpuConnection = new StreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateGPU(0, {
+        identifier: gpuId,
+        renderingBackendIdentifier: backendId,
+        serverConnection: gpuConnection,
+    });
+    const wasCreated = gpuConnection.connection.waitForMessage(gpuId, IPC.messages.RemoteGPUProxy_WasCreated.name, 5);
+    if (!wasCreated || !wasCreated[0].value) {
+        log("PASS: no GPU");
+        window.testRunner?.notifyDone();
+        return;
+    }
+    gpuConnection.connection.setSemaphores(wasCreated[1].value, wasCreated[2].value);
+    const remoteGPU = gpuConnection.newInterface("RemoteGPU", gpuId);
+
+    const adapterId = freshId();
+    let hasAdapter = false;
+    remoteGPU.RequestAdapter({
+        options: { powerPreference: { }, forceFallbackAdapter: false, xrCompatible: false },
+        identifier: adapterId,
+    }, () => { hasAdapter = true; });
+    if (!hasAdapter) {
+        log("PASS: no adapter");
+        window.testRunner?.notifyDone();
+        return;
+    }
+
+    const deviceId = freshId();
+    let hasDevice = false;
+    gpuConnection.newInterface("RemoteAdapter", adapterId).RequestDevice({
+        deviceDescriptor: { label: "device", requiredFeatures: [], requiredLimits: [] },
+        identifier: deviceId,
+        queueIdentifier: freshId(),
+    }, () => { hasDevice = true; });
+    if (!hasDevice) {
+        log("PASS: no device");
+        window.testRunner?.notifyDone();
+        return;
+    }
+    const remoteDevice = gpuConnection.newInterface("RemoteDevice", deviceId);
+
+    // WebCore::WebGPU::PredefinedColorSpace is an alias struct on some branches and a bare enum on others.
+    const sRGB = IPC.serializedTypeInfo["WebCore::WebGPU::PredefinedColorSpace"] ? { alias: 0 } : 0;
+
+    // Two ExternalTextures: boundTextureId is bound into the bind group below, unboundTextureId never is.
+    const boundTextureId = freshId();
+    const unboundTextureId = freshId();
+    for (const identifier of [boundTextureId, unboundTextureId]) {
+        remoteDevice.ImportExternalTextureFromVideoFrame({
+            descriptor: { label: "externalTexture", mediaIdentifier: { }, colorSpace: sRGB, sharedFrame: { } },
+            identifier,
+        });
+    }
+
+    const bindGroupLayoutId = freshId();
+    remoteDevice.CreateBindGroupLayout({
+        descriptor: {
+            label: "bindGroupLayout",
+            entries: [{
+                binding: { alias: 0 },
+                visibility: { alias: 4 }, // ShaderStage::Compute
+                buffer: { },
+                sampler: { },
+                texture: { },
+                storageTexture: { },
+                externalTexture: { optionalValue: { } },
+            }],
+        },
+        identifier: bindGroupLayoutId,
+    });
+
+    const bindGroupId = freshId();
+    remoteDevice.CreateBindGroup({
+        descriptor: {
+            label: "bindGroup",
+            bindGroupLayout: bindGroupLayoutId,
+            entries: [{
+                binding: { alias: 0 },
+                bufferBinding: { buffer: boundTextureId, offset: { alias: 0 }, size: { } },
+                identifier: boundTextureId,
+                type: 4, // BindingResourceType::ExternalTexture
+            }],
+        },
+        identifier: bindGroupId,
+    });
+
+    const remoteBindGroup = gpuConnection.newInterface("RemoteBindGroup", bindGroupId);
+    function updateExternalTextures(externalTextureIdentifier) {
+        let success = "<no reply>";
+        remoteBindGroup.UpdateExternalTextures({ externalTextureIdentifier }, (reply) => { success = reply?.success; });
+        return success;
+    }
+
+    // The legitimate case: the bind group's own ExternalTexture, with no command encoder holding it.
+    log("bound ExternalTexture, no open encoder: " + updateExternalTextures(boundTextureId));
+
+    // An ExternalTexture which was never bound into this bind group. Rewriting the argument buffer
+    // for it would store MTLTextures which are absent from the bind group's resource usage list.
+    log("unbound ExternalTexture, no open encoder: " + updateExternalTextures(unboundTextureId));
+
+    // Open a compute pass and record setBindGroup(), making the bound ExternalTexture's textures
+    // resident on the encoder. Rewriting the argument buffer now would bind textures which were
+    // never passed to useResources: for this encoder.
+    const commandEncoderId = freshId();
+    remoteDevice.CreateCommandEncoder({
+        descriptor: { optionalValue: { label: "commandEncoder" } },
+        identifier: commandEncoderId,
+    });
+    const computePassId = freshId();
+    gpuConnection.newInterface("RemoteCommandEncoder", commandEncoderId).BeginComputePass({
+        descriptor: { },
+        identifier: computePassId,
+    });
+    gpuConnection.newInterface("RemoteComputePassEncoder", computePassId).SetBindGroup({
+        index: { alias: 0 },
+        identifier: { optionalValue: bindGroupId },
+        dynamicOffsets: { },
+    });
+
+    log("bound ExternalTexture, open encoder: " + updateExternalTextures(boundTextureId));
+    log("unbound ExternalTexture, open encoder: " + updateExternalTextures(unboundTextureId));
+
+    window.testRunner?.notifyDone();
+})();
+</script>
+</body>
