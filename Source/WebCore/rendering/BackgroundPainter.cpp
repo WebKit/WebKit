@@ -678,6 +678,9 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
                 LayoutRect extendedBackgroundRect = protect(view)->frameView().extendedBackgroundRectForPainting();
                 left += (renderer.marginLeft() - extendedBackgroundRect.x());
                 top += (renderer.marginTop() - extendedBackgroundRect.y());
+            } else {
+                left += renderer.marginLeft();
+                top += renderer.marginTop();
             }
         } else {
             positioningAreaSize = borderBoxRect.size() - LayoutSize(left + right, top + bottom);
