@@ -1182,8 +1182,8 @@ class ShowWebKitVersion(shell.ShellCommand, ShellMixin):
 
 class InstallHooks(steps.ShellSequence):
     name = 'install-hooks'
-    flunkOnFailure = False
-    haltOnFailure = False
+    flunkOnFailure = True
+    haltOnFailure = True
 
     def __init__(self, **kwargs):
         super().__init__(timeout=30, logEnviron=False, **kwargs)
