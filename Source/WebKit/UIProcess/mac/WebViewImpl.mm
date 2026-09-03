@@ -5088,6 +5088,7 @@ void WebViewImpl::setPromisedDataForImage(Ref<WebCore::Image>&& image, const Str
     String filenameWithExtension = filename;
     if (!matchesExtensionOrEquivalent(filename, extension))
         filenameWithExtension = makeString(filename, '.', extension);
+    filenameWithExtension = filenameByFixingIllegalCharacters(filenameWithExtension.createNSString());
 
     String uti = image->uti();
 
