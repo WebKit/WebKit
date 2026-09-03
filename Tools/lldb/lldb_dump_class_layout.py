@@ -386,19 +386,55 @@ class LLDBDebuggerInstance:
         if not self.target:
             print("Failed to make target for " + self.binary_path)
 
-        self.module = self.target.GetModuleAtIndex(0)
-        if not self.module:
-            print("Failed to get first module in " + self.binary_path)
+        self.archive_member_specs = self._archive_member_specs()
+        self.search_start_index = 0
+
+        self.module = None
+        if not self.archive_member_specs:
+            self.module = self.target.GetModuleAtIndex(0)
+            if not self.module:
+                print("Failed to get first module in " + self.binary_path)
 
     def __del__(self):
         if lldb:
             lldb.SBDebugger.Destroy(self.debugger)
 
-    def layout_for_classname(self, classname, skip_nested=False):
-        types = self.module.FindTypes(classname)
-        if types.GetSize():
-            # There can be more that one type with a given name, but for now just return the first one.
-            return ClassLayout(self.target, types.GetTypeAtIndex(0), skip_nested=skip_nested)
+    # A static library is an ar archive of object files, each of which carries its own debug
+    # info. lldb models each member as a separate module, so an archive needs its members
+    # enumerated and searched one at a time. Returns [] for a single Mach-O binary.
+    def _archive_member_specs(self):
+        specs = lldb.SBModuleSpecList.GetModuleSpecifications(str(self.binary_path))
+        members = [specs.GetSpecAtIndex(i) for i in range(specs.GetSize())]
+        members = [spec for spec in members if spec.GetObjectName()]
+        if not members:
+            return []
 
-        print('error: no type matches "%s" in "%s"' % (classname, self.module.file))
+        # A fat archive lists every member once per architecture; only search one of them.
+        architecture = self.architecture if self.architecture else members[0].GetTriple().split('-')[0]
+        return [spec for spec in members if spec.GetTriple().split('-')[0] == architecture]
+
+    def _modules_to_search(self):
+        if not self.archive_member_specs:
+            yield self.module
+            return
+
+        # Adding a member evicts the previously added one, since all members share the archive's
+        # path. Resume from the member that satisfied the previous lookup: consecutive lookups
+        # usually land in the same member, and scanning a large archive is slow.
+        count = len(self.archive_member_specs)
+        for i in range(count):
+            index = (self.search_start_index + i) % count
+            module = self.target.AddModule(self.archive_member_specs[index])
+            if module:
+                self.search_start_index = index
+                yield module
+
+    def layout_for_classname(self, classname, skip_nested=False):
+        for module in self._modules_to_search():
+            types = module.FindTypes(classname)
+            if types.GetSize():
+                # There can be more that one type with a given name, but for now just return the first one.
+                return ClassLayout(self.target, types.GetTypeAtIndex(0), skip_nested=skip_nested)
+
+        print('error: no type matches "%s" in "%s"' % (classname, self.binary_path))
         return None

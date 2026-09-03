@@ -46,10 +46,32 @@ def webkit_build_dir():
     scriptpath = os.path.dirname(os.path.realpath(__file__))
     return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).decode().strip()
 
+def find_binary(build_dir, config, name):
+    if os.path.isfile(name):
+        return name
+
+    candidates = [
+        os.path.join(name + ".framework", name),  # Framework.
+        "lib" + name + ".a",                      # Static library, named as the build system names it.
+        name + ".a",
+        "lib" + name + ".dylib",
+        name + ".dylib",
+        name,                                     # Executable.
+    ]
+
+    configuration_dir = os.path.join(build_dir, config)
+    for candidate in candidates:
+        path = os.path.join(configuration_dir, candidate)
+        if os.path.isfile(path):
+            return path
+
+    print('error: found no framework, library or executable named "%s" in "%s"' % (name, configuration_dir))
+    sys.exit(1)
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description='Dumps the in-memory layout of the given class or classes, showing padding holes.')
-    parser.add_argument('framework', metavar='framework',
-        help='name of the framework containing the class (e.g. "WebCore")')
+    parser.add_argument('binary', metavar='binary',
+        help='name of the framework, static library or executable containing the class (e.g. "WebCore", "JavaScriptCoreTools"), or a path to one')
     parser.add_argument('classname', metavar='classname', nargs='+',
         help='name of the class or struct to dump (may specify multiple classes)')
 
@@ -80,8 +102,7 @@ def main(argv=None):
     if args.target_path is not None:
         target_path = args.target_path
     else:
-        target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
-    
+        target_path = find_binary(build_dir, args.config, args.binary)
     lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
 
     # Check if stdout is a TTY to determine if we should use colors
