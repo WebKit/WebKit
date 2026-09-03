@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+#outer { position: relative; width: 100%; height: 100%; z-index: 0; }
+#sibling { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #357; }
+#inner-wrapper { position: absolute; top: 100px; left: 0; right: 0; height: 200px; z-index: 2; }
+#scroller { height: 100%; overflow-x: auto; display: flex; background: #fff; }
+.item { height: 180px; min-width: 70px; margin: 10px 3px; background: #888; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="outer">
+    <div id="sibling"></div>
+    <div id="inner-wrapper">
+        <div id="scroller"></div>
+    </div>
+</div>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+const sibling = document.getElementById("sibling");
+
+for (let i = 0; i < 200; i++) {
+    const d = document.createElement("div");
+    d.className = "item";
+    scroller.appendChild(d);
+}
+
+let toggleCount = 0;
+scroller.addEventListener("scroll", () => {
+    if (Math.floor(scroller.scrollLeft / 15) % 2 === 0) {
+        sibling.style.willChange = "transform";
+        sibling.style.transform = "translateZ(0)";
+    } else {
+        sibling.style.willChange = "auto";
+        sibling.style.transform = "none";
+    }
+    toggleCount++;
+});
+
+addEventListener("load", async () => {
+    description("Verifies momentum scroll is preserved in a nested stacking context scenario: outer z-index:0, inner z-index:2, sibling toggles compositing. The nested structure creates multiple compositing layers that must remain stable.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const rect = scroller.getBoundingClientRect();
+    const startX = rect.left + rect.width * 0.75;
+    const y = rect.top + rect.height / 2;
+    await UIHelper.dragFromPointToPoint(startX, y, startX - 250, y, 0.08);
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    shouldBeGreaterThanOrEqual("scroller.scrollLeft", "150");
+    shouldBeGreaterThanOrEqual("toggleCount", "3");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

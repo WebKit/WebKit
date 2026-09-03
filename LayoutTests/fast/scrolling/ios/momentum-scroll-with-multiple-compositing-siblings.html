@@ -1,0 +1,92 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; }
+
+#container { width: 100%; height: 100%; position: relative; }
+
+.sibling {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+}
+#sibling1 { background: rgba(200, 0, 0, 0.1); }
+#sibling2 { background: rgba(0, 200, 0, 0.1); }
+#sibling3 { background: rgba(0, 0, 200, 0.1); }
+
+#scroller-wrapper {
+    position: absolute; top: 200px; left: 0; right: 0; height: 120px;
+    z-index: 1;
+}
+
+#scroller { height: 100%; overflow-x: auto; display: flex; }
+.item { height: 100px; min-width: 60px; margin: 10px 2px; background: #444; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="container">
+    <div id="sibling1" class="sibling"></div>
+    <div id="sibling2" class="sibling"></div>
+    <div id="sibling3" class="sibling"></div>
+    <div id="scroller-wrapper">
+        <div id="scroller"></div>
+    </div>
+</div>
+<p id="description"></p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+
+const scroller = document.getElementById("scroller");
+const siblings = [
+    document.getElementById("sibling1"),
+    document.getElementById("sibling2"),
+    document.getElementById("sibling3"),
+];
+
+for (let i = 0; i < 200; i++) {
+    const d = document.createElement("div");
+    d.className = "item";
+    scroller.appendChild(d);
+}
+
+let toggleCount = 0;
+scroller.addEventListener("scroll", () => {
+    const phase = Math.floor(scroller.scrollLeft / 10) % 6;
+    siblings.forEach((s, i) => {
+        if (phase === i * 2) {
+            s.style.willChange = "transform";
+            s.style.transform = "translateZ(0)";
+        } else {
+            s.style.willChange = "auto";
+            s.style.transform = "none";
+        }
+    });
+    toggleCount++;
+});
+
+addEventListener("load", async () => {
+    description("Stress test: multiple siblings rapidly toggling compositing during scroll. Each scroll event toggles a different sibling's compositing state. Momentum must be preserved.");
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+
+    const rect = scroller.getBoundingClientRect();
+    const startX = rect.left + rect.width * 0.75;
+    const y = rect.top + rect.height / 2;
+    await UIHelper.dragFromPointToPoint(startX, y, startX - 250, y, 0.08);
+
+    await UIHelper.waitForTargetScrollAnimationToSettle(scroller);
+
+    shouldBeGreaterThanOrEqual("scroller.scrollLeft", "150");
+    shouldBeGreaterThanOrEqual("toggleCount", "5");
+
+    finishJSTest();
+});
+</script>
+</body>
+</html>

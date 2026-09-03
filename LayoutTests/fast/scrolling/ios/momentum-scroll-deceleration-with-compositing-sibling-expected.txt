@@ -1,0 +1,11 @@
+Verifies that deceleration (momentum phase) continues after touch release when a sibling toggles compositing during the scroll. The test counts scroll events that fire after the touch ends.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS scrollEventsAfterRelease is >= 3
+PASS scroller.scrollLeft is >= 150
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
