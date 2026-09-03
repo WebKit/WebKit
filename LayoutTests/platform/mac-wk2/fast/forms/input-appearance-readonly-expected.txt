@@ -12,5 +12,4 @@ layer at (15,30) size 140x13
   RenderBlock {DIV} at (7,4) size 140x13
     RenderText {#text} at (0,0) size 63x13
       text run at (0,0) width 63: "Test Passed"
-selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of body
-selection end:   position 11 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of body
+caret: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 2 {INPUT} of body
