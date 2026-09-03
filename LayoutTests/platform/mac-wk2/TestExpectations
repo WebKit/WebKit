@@ -793,8 +793,6 @@ http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
 
-webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure Crash ]
-
 webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pass Timeout ]
 
 webkit.org/b/179352 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure Slow ]
