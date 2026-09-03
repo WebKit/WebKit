@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        font: 40px Ahem;
+    }
+
+    .box {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+    }
+
+    span {
+        color: green;
+        filter: blur(10px);
+    }
+
+    .before {
+        color: red;
+    }
+</style>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+<script>
+function repaintTest()
+{
+    document.querySelector("span").classList.remove("before");
+}
+</script>
+</head>
+<body onload="runRepaintTest()">
+    <div class="box"><span class="before">AAAA</span></div>
+</body>
+</html>

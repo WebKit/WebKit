@@ -902,20 +902,22 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
     CheckedPtr<const RenderLayerModelObject> repaintContainer;
     auto fullRepaintAlreadyScheduled = false;
 
-    if (view().usesCompositing()) {
+    auto usesCompositing = view().usesCompositing();
+    auto hasRenderersWithPixelMovingFilter = view().hasRenderersWithPixelMovingFilter();
+    if (usesCompositing || hasRenderersWithPixelMovingFilter) {
         if (CheckedPtr enclosingLayer = this->enclosingLayer()) {
-            auto compLayerStatus = enclosingLayer->enclosingCompositingLayerForRepaint();
-            if (compLayerStatus.layer) {
-                repaintContainer = &compLayerStatus.layer->renderer();
-                fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled && canRelyOnAncestorLayerFullRepaint(*this, *compLayerStatus.layer);
+            if (usesCompositing) {
+                auto compLayerStatus = enclosingLayer->enclosingCompositingLayerForRepaint();
+                if (compLayerStatus.layer) {
+                    repaintContainer = &compLayerStatus.layer->renderer();
+                    fullRepaintAlreadyScheduled = compLayerStatus.fullRepaintAlreadyScheduled && canRelyOnAncestorLayerFullRepaint(*this, *compLayerStatus.layer);
+                }
             }
-        }
-    }
-    if (view().hasSoftwareFilters()) {
-        if (CheckedPtr parentLayer = enclosingLayer()) {
-            if (CheckedPtr enclosingFilterLayer = parentLayer->enclosingFilterLayer()) {
-                fullRepaintAlreadyScheduled = parentLayer->needsFullRepaint() && canRelyOnAncestorLayerFullRepaint(*this, *parentLayer);
-                return { fullRepaintAlreadyScheduled, &enclosingFilterLayer->renderer() };
+            if (hasRenderersWithPixelMovingFilter) {
+                if (CheckedPtr pixelMovingFilterLayer = enclosingLayer->enclosingPixelMovingFilterLayer()) {
+                    fullRepaintAlreadyScheduled = enclosingLayer->needsFullRepaint() && canRelyOnAncestorLayerFullRepaint(*this, *enclosingLayer);
+                    return { fullRepaintAlreadyScheduled, &pixelMovingFilterLayer->renderer() };
+                }
             }
         }
     }
@@ -972,7 +974,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
+void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, ClipRepaintToLayer clipRepaintToLayer, RepaintRectIsPartial rectIsPartial) const
 {
     if (r.isEmpty())
         return;
@@ -991,7 +993,11 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     propagateRepaintToParentWithOutlineAutoIfNeeded(*repaintContainer, r);
 
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
-        protect(repaintContainer->layer())->setFilterBackendNeedsRepaintingInRect(r);
+        // The full repaint rect of a RenderBox is its visual overflow, which already includes the filter outsets.
+        auto useFilterOutsets = RenderLayer::UseFilterOutsets::Add;
+        if (rectIsPartial == RepaintRectIsPartial::No && repaintContainer.get() == this && is<RenderBox>(*this))
+            useFilterOutsets = RenderLayer::UseFilterOutsets::AlreadyIncluded;
+        protect(repaintContainer->layer())->setFilterBackendNeedsRepaintingInRect(r, useFilterOutsets);
         return;
     }
 
@@ -1011,7 +1017,7 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     if (view().usesCompositing()) {
         ASSERT(repaintContainer->isComposited());
         if (CheckedPtr layer = repaintContainer->layer())
-            layer->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ShouldClipToLayer::Clip : GraphicsLayer::ShouldClipToLayer::DoNotClip);
+            layer->setBackingNeedsRepaintInRect(r, clipRepaintToLayer == ClipRepaintToLayer::Yes ? GraphicsLayer::ShouldClipToLayer::Clip : GraphicsLayer::ShouldClipToLayer::DoNotClip);
     }
 }
 
@@ -1044,7 +1050,7 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     } else
         repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer.get());
 
-    repaintUsingContainer(repaintContainer.renderer.get(), repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
+    repaintUsingContainer(repaintContainer.renderer.get(), repaintRect, clipRepaintToLayer, partialRepaintRect ? RepaintRectIsPartial::Yes : RepaintRectIsPartial::No);
 }
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
@@ -1088,17 +1094,17 @@ void RenderObject::repaintSlowRepaintObject() const
 
     CheckedPtr repaintContainer = containerForRepaint().renderer;
 
-    bool shouldClipToLayer = true;
+    auto clipRepaintToLayer = ClipRepaintToLayer::Yes;
     IntRect repaintRect;
     // If this is the root background, we need to check if there is an extended background rect. If
     // there is, then we should not allow painting to clip to the layer size.
     if (isDocumentElementRenderer() || isBody()) {
-        shouldClipToLayer = !protect(view->frameView())->hasExtendedBackgroundRectForPainting();
+        clipRepaintToLayer = protect(view->frameView())->hasExtendedBackgroundRectForPainting() ? ClipRepaintToLayer::No : ClipRepaintToLayer::Yes;
         repaintRect = snappedIntRect(view->backgroundRect());
     } else
         repaintRect = snappedIntRect(clippedOverflowRectForRepaint(repaintContainer.get()));
 
-    repaintUsingContainer(repaintContainer.get(), repaintRect, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer.get(), repaintRect, clipRepaintToLayer);
 }
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const

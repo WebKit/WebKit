@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nested pixel moving filters must both expand the repaint of the innermost content</title>
+<link rel="match" href="filter-repaint-blur-nested-pixel-moving-filter-expected.html">
+<script src="../../resources/ui-helper.js"></script>
+<style>
+    body {
+        margin: 0;
+    }
+
+    .outer-blur {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        width: 200px;
+        height: 200px;
+        filter: blur(10px);
+    }
+
+    .inner-blur {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 200px;
+        height: 200px;
+        filter: blur(5px);
+    }
+
+    .inner {
+        position: absolute;
+        left: 50px;
+        top: 50px;
+        width: 100px;
+        height: 100px;
+        background-color: red;
+    }
+</style>
+<script>
+window.testRunner?.waitUntilDone();
+window.testRunner?.dontForceRepaint();
+
+async function runTest()
+{
+    await UIHelper.renderingUpdate();
+    document.querySelector(".inner").style.backgroundColor = "green";
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    window.testRunner?.notifyDone();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</head>
+<body>
+    <div class="outer-blur">
+        <div class="inner-blur">
+            <div class="inner"></div>
+        </div>
+    </div>
+</body>
+</html>

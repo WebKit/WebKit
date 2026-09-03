@@ -594,7 +594,7 @@ void RenderLayer::removeOnlyThisLayer()
         m_parent->addChild(*current, nextSib);
         current->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
         if (isComposited())
-            current->computeRepaintRectsIncludingDescendants();
+            current->updateRepaintRectsIncludingDescendants(RepaintRectsUpdate::Recompute);
         current = next;
     }
 
@@ -1051,14 +1051,18 @@ bool RenderLayer::canRender3DTransforms() const
 
 bool RenderLayer::shouldPaintWithFilters(OptionSet<PaintBehavior> paintBehavior) const
 {
-    const auto& filter = renderer().style().filter();
+    return shouldPaintWithFilters(renderer().style().filter(), paintBehavior);
+}
+
+bool RenderLayer::shouldPaintWithFilters(const Style::Filter& filter, OptionSet<PaintBehavior> paintBehavior) const
+{
     if (filter.isNone())
         return false;
 
     if (renderer().isLegacyRenderSVGRoot() && filter.isReferenceFilter())
         return false;
 
-    if (RenderLayerFilters::isIdentity(renderer()))
+    if (CSSFilterRenderer::isIdentity(renderer(), filter))
         return false;
 
     if (paintBehavior & PaintBehavior::FlattenCompositingLayers)
@@ -1072,10 +1076,15 @@ bool RenderLayer::shouldPaintWithFilters(OptionSet<PaintBehavior> paintBehavior)
 
 bool RenderLayer::requiresFullLayerImageForFilters() const
 {
-    if (!shouldPaintWithFilters())
+    return requiresFullLayerImageForFilters(renderer().style().filter());
+}
+
+bool RenderLayer::requiresFullLayerImageForFilters(const Style::Filter& filter) const
+{
+    if (!shouldPaintWithFilters(filter))
         return false;
 
-    return m_filters && m_filters->hasFilterThatMovesPixels();
+    return filter.hasFilterThatMovesPixels();
 }
 
 OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLayerPositions(RenderLayer& startingLayer)
@@ -1526,22 +1535,27 @@ void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintConta
     m_repaintContainer = repaintContainer;
 }
 
-void RenderLayer::computeRepaintRectsIncludingDescendants()
+void RenderLayer::updateRepaintRectsIncludingDescendants(RepaintRectsUpdate update)
 {
     // FIXME: computeRepaintRects() has to walk up the parent chain for every layer to compute the rects.
     // We should make this more efficient.
-    computeRepaintRects(renderer().containerForRepaint().renderer.get());
-    clearClipRects(PaintingClipRects);
+    if (update == RepaintRectsUpdate::Recompute) {
+        computeRepaintRects(renderer().containerForRepaint().renderer.get());
+        clearClipRects(PaintingClipRects);
+    } else {
+        clearRepaintRects();
+        m_repaintContainer = renderer().containerForRepaint().renderer.get();
+    }
 
     for (RenderLayer* layer = firstChild(); layer; layer = layer->nextSibling())
-        layer->computeRepaintRectsIncludingDescendants();
+        layer->updateRepaintRectsIncludingDescendants(update);
 }
 
 void RenderLayer::compositingStatusChanged(LayoutUpToDate layoutUpToDate)
 {
     updateDescendantDependentFlags();
     if (parent() || isRenderViewLayer())
-        computeRepaintRectsIncludingDescendants();
+        updateRepaintRectsIncludingDescendants(RepaintRectsUpdate::Recompute);
     if (layoutUpToDate == LayoutUpToDate::No)
         setSelfAndDescendantsNeedPositionUpdate();
 }
@@ -2500,7 +2514,7 @@ RenderLayer::EnclosingCompositingLayerStatus RenderLayer::enclosingCompositingLa
     return { };
 }
 
-RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) const
+RenderLayer* RenderLayer::enclosingPixelMovingFilterLayer(IncludeSelfOrNot includeSelf) const
 {
     const RenderLayer* curr = (includeSelf == IncludeSelf) ? this : parent();
     for (; curr; curr = curr->parent()) {
@@ -2521,18 +2535,19 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 }
 
 // FIXME: This needs a better name.
-void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
+void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, UseFilterOutsets useFilterOutsets)
 {
     ASSERT(requiresFullLayerImageForFilters());
-    ASSERT(m_filters);
 
     if (rect.isEmpty())
         return;
     
     LayoutRect rectForRepaint = rect;
-    rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
+    if (useFilterOutsets == UseFilterOutsets::Add)
+        rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
 
-    m_filters->expandDirtySourceRect(rectForRepaint);
+    if (m_filters)
+        m_filters->expandDirtySourceRect(rectForRepaint);
     
     RenderLayer* parentLayer = enclosingFilterRepaintLayer();
     ASSERT(parentLayer);
@@ -6431,15 +6446,20 @@ void RenderLayer::updateFiltersAfterStyleChange(Style::Difference diff, const St
     else if (m_filters)
         m_filters->removeReferenceFilterClients();
 
+    bool filterValueChanged = oldStyle && oldStyle->filter() != renderer().style().filter();
+
+    if (filterValueChanged && requiresFullLayerImageForFilters(oldStyle->filter()) != requiresFullLayerImageForFilters())
+        updateRepaintRectsIncludingDescendants(RepaintRectsUpdate::Discard);
+
     auto filterChanged = [&] {
         if (!m_filters)
             return false;
         if (diff < Style::DifferenceResult::RepaintLayer)
             return false;
+        if (filterValueChanged)
+            return true;
         if (!oldStyle)
             return false;
-        if (oldStyle->filter() != renderer().style().filter())
-            return true;
         auto currentColorChanged = oldStyle->color() != renderer().style().color();
         if (currentColorChanged && oldStyle->filter().hasFilterThatRequiresRepaintForCurrentColorChange())
             return true;
@@ -6500,10 +6520,7 @@ IntOutsets RenderLayer::filterOutsets() const
     if (m_filters)
         return m_filters->calculateOutsets(renderer(), localBoundingBox());
 
-    if (CheckedPtr boxRenderer = renderBox())
-        return boxRenderer->computeFilterOutsets();
-
-    return { };
+    return renderer().computeFilterOutsets();
 }
 
 void RenderLayer::clearFilters()

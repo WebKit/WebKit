@@ -70,7 +70,6 @@ public:
     void updateReferenceFilterClients(const Style::Filter&);
     void removeReferenceFilterClients();
 
-    static bool isIdentity(RenderElement&);
     static IntOutsets calculateOutsets(RenderElement&, const FloatRect& targetBoundingBox);
 
     // Per render

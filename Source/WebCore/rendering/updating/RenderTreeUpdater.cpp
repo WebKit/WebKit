@@ -836,7 +836,7 @@ static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingB
             auto cachedRepaintRect = layer->cachedClippedOverflowRect();
             if (!cachedRepaintRect)
                 return false;
-            destroyRoot.repaintUsingContainer(layer->repaintContainer(), *cachedRepaintRect, false);
+            destroyRoot.repaintUsingContainer(layer->repaintContainer(), *cachedRepaintRect, RenderObject::ClipRepaintToLayer::No);
             return true;
         };
         if (repaintUsingCachedRectIfNeeded())

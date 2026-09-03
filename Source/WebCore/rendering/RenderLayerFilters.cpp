@@ -142,12 +142,6 @@ void RenderLayerFilters::removeReferenceFilterClients()
     m_internalSVGReferences.clear();
 }
 
-bool RenderLayerFilters::isIdentity(RenderElement& renderer)
-{
-    const auto& filter = renderer.style().filter();
-    return CSSFilterRenderer::isIdentity(renderer, filter);
-}
-
 IntOutsets RenderLayerFilters::calculateOutsets(RenderElement& renderer, const FloatRect& targetBoundingBox)
 {
     const auto& filter = renderer.style().filter();

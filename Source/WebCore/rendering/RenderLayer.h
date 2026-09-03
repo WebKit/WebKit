@@ -75,6 +75,7 @@ namespace WebCore {
 
 namespace Style {
 class ComputedStyle;
+struct Filter;
 enum class TransformResolverOption : uint8_t;
 }
 
@@ -682,9 +683,10 @@ public:
     // Ancestor compositing layer, excluding this.
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(ExcludeSelf); }
 
-    RenderLayer* enclosingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
+    RenderLayer* enclosingPixelMovingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
     RenderLayer* enclosingFilterRepaintLayer() const;
-    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
+    enum class UseFilterOutsets : bool { Add, AlreadyIncluded };
+    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, UseFilterOutsets = UseFilterOutsets::Add);
 
     inline bool NODELETE canUseOffsetFromAncestor() const;
     bool NODELETE canUseOffsetFromAncestor(const RenderLayer& ancestor) const;
@@ -1026,9 +1028,12 @@ public:
         CheckedPtr<RegionContext> regionContext;
     };
 
-    void computeRepaintRectsIncludingDescendants();
-
 private:
+    enum class RepaintRectsUpdate : bool { Recompute, Discard };
+    void updateRepaintRectsIncludingDescendants(RepaintRectsUpdate);
+
+    bool shouldPaintWithFilters(const Style::Filter&, OptionSet<PaintBehavior> = { }) const;
+    bool requiresFullLayerImageForFilters(const Style::Filter&) const;
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
     void setPreviousSibling(RenderLayer* prev) { m_previous = prev; }
