@@ -1121,6 +1121,10 @@ CSSDocumentation = {
         "description": "Controls the maximum brightness of high dynamic range (HDR) content.",
         "syntax": "standard | no-limit"
     },
+    "dynamic-range-limit": {
+        "description": "Controls the maximum brightness of high dynamic range (HDR) content.",
+        "syntax": "standard | no-limit"
+    },
     "empty-cells": {
         "description": "In the separated borders model, this property controls the rendering of borders and backgrounds around cells that have no visible content.",
         "syntax": "show | hide",
