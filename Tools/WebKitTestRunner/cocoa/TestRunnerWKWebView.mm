@@ -495,7 +495,7 @@ IGNORE_WARNINGS_END
     }
 
     self.zoomToScaleCompletionHandler = completionHandler;
-    [self.scrollView setZoomScale:scale animated:animated];
+    [self _setZoomScaleForTesting:scale animated:animated];
 }
 
 - (void)_keyboardWillHide

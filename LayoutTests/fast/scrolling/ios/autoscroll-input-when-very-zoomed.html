@@ -22,7 +22,7 @@
         await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
 
         await UIHelper.immediateZoomToScale(3.284);
-        await UIHelper.immediateScrollTo(390, 500);
+        await UIHelper.immediateScrollTo(350, 500);
 
         await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensureStablePresentationUpdate()]);
 
@@ -85,7 +85,7 @@ the first text input so that the input element in is visible again, but should n
 scroll more than once, as it should be visible after the first scroll. On iPad, the
 input should not scroll at all, as the iPad is larger and should not need to scroll
 for the input element to be visible. The test results should reflect these expectations.
-<div id="testArea"><input id="editable" type="text" value="Test text"></input></div>
+<div id="testArea"><input id="editable" type="text" value="Test text"></div>
 </body>
 </html>
 

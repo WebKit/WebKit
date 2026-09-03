@@ -59,6 +59,16 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
 
 @implementation WKWebView (WKTestingIOS)
 
+- (void)_setZoomScaleForTesting:(CGFloat)scale animated:(BOOL)animated
+{
+    // We have to pretend this is user-originated zooming to avoid WebPage::viewportConfigurationChanged() resetting back to the initial scale.
+    _page->willStartUserTriggeredZooming();
+    [self.scrollView setZoomScale:scale animated:animated];
+    // For animated zooms, didEndUserTriggeredZooming() is always called from -[WKWebView scrollViewDidEndZooming:withView:atScale:].
+    if (!animated)
+        _page->didEndUserTriggeredZooming();
+}
+
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler
 {
     // Adjust returned bounding rects to be in WKWebView coordinates.
