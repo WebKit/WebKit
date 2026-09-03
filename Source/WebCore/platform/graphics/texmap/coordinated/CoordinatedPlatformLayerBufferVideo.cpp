@@ -36,6 +36,13 @@
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
+#else
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorSpace.h>
+#include <skia/core/SkImage.h>
+#include <skia/core/SkPixmap.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 #if USE(GSTREAMER_GL)
@@ -143,6 +150,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     UNUSED_PARAM(gstGLEnabled);
 #endif
 
+#if USE(TEXTURE_MAPPER)
     // When not having a texture, we map the frame here and upload the pixels to a texture in the
     // compositor thread, in paintToTextureMapper(), which also allows us to use the texture mapper
     // bitmap texture pool.
@@ -155,6 +163,23 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 
     if (GST_VIDEO_INFO_HAS_ALPHA(m_mappedVideoFrame->info()))
         m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
+#else
+    auto mappedFrame = makeUnique<GstMappedFrame>(sample, GST_MAP_READ);
+    if (!mappedFrame->isValid())
+        return nullptr;
+
+    if (GST_VIDEO_INFO_HAS_ALPHA(mappedFrame->info()))
+        m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
+    auto alphaType = GST_VIDEO_INFO_HAS_ALPHA(mappedFrame->info()) ? kUnpremul_SkAlphaType : kOpaque_SkAlphaType;
+    auto imageInfo = SkImageInfo::Make(mappedFrame->width(), mappedFrame->height(), kBGRA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
+    SkPixmap pixmap(imageInfo, mappedFrame->planeData(0).data(), mappedFrame->planeStride(0));
+    auto image = SkImages::RasterFromPixmap(pixmap, [](const void*, void* userData) {
+        std::unique_ptr<GstMappedFrame> mappedFrame(static_cast<GstMappedFrame*>(userData));
+    }, mappedFrame.release());
+    if (!image)
+        return nullptr;
+    return CoordinatedPlatformLayerBufferSkiaImage::create(image, nullptr);
+#endif
 
     return nullptr;
 }
@@ -267,6 +292,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 }
 #endif
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
 {
     if (!m_mappedVideoFrame)
@@ -308,7 +334,6 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
     m_mappedVideoFrame = std::nullopt;
 }
 
-#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     createBufferFromMappedFrameIfNeeded();
@@ -321,7 +346,15 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
 
 sk_sp<SkImage> CoordinatedPlatformLayerBufferVideo::skiaImage()
 {
-    createBufferFromMappedFrameIfNeeded();
+#if USE(GSTREAMER_GL)
+    if (m_mappedVideoFrame && m_videoDecoderPlatform != GstVideoDecoderPlatform::OpenMAX) {
+        if (auto* meta = gst_buffer_get_gl_sync_meta(m_mappedVideoFrame->get()->buffer)) {
+            GstMemory* memory = gst_buffer_peek_memory(m_mappedVideoFrame->get()->buffer, 0);
+            GstGLContext* context = reinterpret_cast<GstGLBaseMemory*>(memory)->context;
+            gst_gl_sync_meta_wait_cpu(meta, context);
+        }
+    }
+#endif
 
     if (m_buffer)
         return m_buffer->skiaImage();
