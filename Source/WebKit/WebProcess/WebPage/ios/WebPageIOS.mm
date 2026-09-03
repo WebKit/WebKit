@@ -1350,7 +1350,7 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
     });
 
     RefPtr targetNode = hitTest.targetNode();
-    if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
+    if (targetNode && !EventHandler::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
         return { std::nullopt, SelectionWasFlipped::No };
 
     VisiblePosition result;
