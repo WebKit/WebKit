@@ -95,10 +95,10 @@ public:
 
     // initialValue has to agree with what the element passes to SVGAnimatedInteger::create(): that
     // is what the property is born with, and this is only the way back to it.
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property, int initialValue = 0>
-    static void registerProperty()
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property>
+    static void registerProperty(int initialValue = 0)
     {
-        registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property, initialValue>());
+        registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>(initialValue));
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedLength> OwnerType::*property>
@@ -113,10 +113,10 @@ public:
         registerProperty(attributeName, SVGAnimatedLengthListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property, float initialValue = 0.0f>
-    static void registerProperty()
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property>
+    static void registerProperty(float initialValue = 0)
     {
-        registerProperty(attributeName, SVGAnimatedNumberAccessor<OwnerType>::template singleton<property, initialValue>());
+        registerProperty(attributeName, SVGAnimatedNumberAccessor<OwnerType>::template singleton<property>(initialValue));
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumberList> OwnerType::*property>
@@ -167,16 +167,16 @@ public:
         registerProperty(attributeName, SVGAnimatedTransformListAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property1, const Ref<SVGAnimatedInteger> OwnerType::*property2, int initialValue1 = 0, int initialValue2 = 0>
-    static void registerProperty()
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedInteger> OwnerType::*property1, const Ref<SVGAnimatedInteger> OwnerType::*property2>
+    static void registerProperty(int initialValue1 = 0, int initialValue2 = 0)
     {
-        registerProperty(attributeName, SVGAnimatedIntegerPairAccessor<OwnerType>::template singleton<property1, property2, initialValue1, initialValue2>());
+        registerProperty(attributeName, SVGAnimatedIntegerPairAccessor<OwnerType>::template singleton<property1, property2>(initialValue1, initialValue2));
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property1, const Ref<SVGAnimatedNumber> OwnerType::*property2, float initialValue1 = 0.0f, float initialValue2 = 0.0f>
-    static void registerProperty()
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, const Ref<SVGAnimatedNumber> OwnerType::*property1, const Ref<SVGAnimatedNumber> OwnerType::*property2>
+    static void registerProperty(float initialValue1 = 0, float initialValue2 = 0)
     {
-        registerProperty(attributeName, SVGAnimatedNumberPairAccessor<OwnerType>::template singleton<property1, property2, initialValue1, initialValue2>());
+        registerProperty(attributeName, SVGAnimatedNumberPairAccessor<OwnerType>::template singleton<property1, property2>(initialValue1, initialValue2));
     }
 
     // Enumerate all the SVGMemberAccessors recursively. The functor will be called and will

@@ -45,8 +45,8 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDiffuseLightingElement::m_in1>();
-        PropertyRegistry::registerProperty<SVGNames::diffuseConstantAttr, &SVGFEDiffuseLightingElement::m_diffuseConstant, initialDiffuseConstantValue>();
-        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFEDiffuseLightingElement::m_surfaceScale, initialSurfaceScaleValue>();
+        PropertyRegistry::registerProperty<SVGNames::diffuseConstantAttr, &SVGFEDiffuseLightingElement::m_diffuseConstant>(initialDiffuseConstantValue);
+        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFEDiffuseLightingElement::m_surfaceScale>(initialSurfaceScaleValue);
         PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFEDiffuseLightingElement::m_kernelUnitLengthX, &SVGFEDiffuseLightingElement::m_kernelUnitLengthY>();
     }
 }

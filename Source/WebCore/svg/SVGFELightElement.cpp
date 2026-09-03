@@ -58,7 +58,7 @@ SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& doc
         PropertyRegistry::registerProperty<SVGNames::pointsAtXAttr, &SVGFELightElement::m_pointsAtX>();
         PropertyRegistry::registerProperty<SVGNames::pointsAtYAttr, &SVGFELightElement::m_pointsAtY>();
         PropertyRegistry::registerProperty<SVGNames::pointsAtZAttr, &SVGFELightElement::m_pointsAtZ>();
-        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent, initialSpecularExponentValue>();
+        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent>(initialSpecularExponentValue);
         PropertyRegistry::registerProperty<SVGNames::limitingConeAngleAttr, &SVGFELightElement::m_limitingConeAngle>();
     }
 }

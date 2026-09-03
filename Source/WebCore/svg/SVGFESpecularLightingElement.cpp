@@ -47,9 +47,9 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFESpecularLightingElement::m_in1>();
-        PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant, initialSpecularConstantValue>();
-        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent, initialSpecularExponentValue>();
-        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale, initialSurfaceScaleValue>();
+        PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant>(initialSpecularConstantValue);
+        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent>(initialSpecularExponentValue);
+        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale>(initialSurfaceScaleValue);
         PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFESpecularLightingElement::m_kernelUnitLengthX, &SVGFESpecularLightingElement::m_kernelUnitLengthY>();
     }
 }

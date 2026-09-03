@@ -45,9 +45,9 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     if (!didRegistration) [[unlikely]] {
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
-        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx, initialDxValue>();
-        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy, initialDyValue>();
-        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY, initialStdDeviationValue, initialStdDeviationValue>();
+        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx>(initialDxValue);
+        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy>(initialDyValue);
+        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY>(initialStdDeviationValue, initialStdDeviationValue);
     }
 }
 

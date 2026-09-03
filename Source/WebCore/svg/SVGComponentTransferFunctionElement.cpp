@@ -43,10 +43,10 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
         didRegistration = true;
         PropertyRegistry::registerProperty<SVGNames::typeAttr, ComponentTransferType, &SVGComponentTransferFunctionElement::m_type>();
         PropertyRegistry::registerProperty<SVGNames::tableValuesAttr, &SVGComponentTransferFunctionElement::m_tableValues>();
-        PropertyRegistry::registerProperty<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope, initialSlopeValue>();
+        PropertyRegistry::registerProperty<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope>(initialSlopeValue);
         PropertyRegistry::registerProperty<SVGNames::interceptAttr, &SVGComponentTransferFunctionElement::m_intercept>();
-        PropertyRegistry::registerProperty<SVGNames::amplitudeAttr, &SVGComponentTransferFunctionElement::m_amplitude, initialAmplitudeValue>();
-        PropertyRegistry::registerProperty<SVGNames::exponentAttr, &SVGComponentTransferFunctionElement::m_exponent, initialExponentValue>();
+        PropertyRegistry::registerProperty<SVGNames::amplitudeAttr, &SVGComponentTransferFunctionElement::m_amplitude>(initialAmplitudeValue);
+        PropertyRegistry::registerProperty<SVGNames::exponentAttr, &SVGComponentTransferFunctionElement::m_exponent>(initialExponentValue);
         PropertyRegistry::registerProperty<SVGNames::offsetAttr, &SVGComponentTransferFunctionElement::m_offset>();
     };
 }
