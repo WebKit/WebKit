@@ -1,0 +1,61 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("With two same-site cross-origin iframes at different positions on the page, tapping a button in the first should show a tap highlight over that button, not at the second iframe's position.");
+jsTestIsAsync = true;
+
+const frameATop = 20;
+const frameBTop = 400;
+let highlightTop;
+let highlightLeft;
+let highlightWidth;
+let highlightHeight;
+let buttonWasClicked = false;
+let readyCount = 0;
+
+async function waitForTapHighlightToAppear()
+{
+    let rect;
+    for (let i = 0; i < 100; i++) {
+        rect = await UIHelper.tapHighlightViewRect();
+        if (rect.width > 0 && rect.height > 0)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return rect;
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "clicked") {
+        buttonWasClicked = true;
+        return;
+    }
+    if (event.data !== "ready")
+        return;
+
+    if (++readyCount < 2)
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    const a = document.getElementById("frameA").getBoundingClientRect();
+    await UIHelper.activateAt(a.left + 100, a.top + 30);
+
+    const rect = await waitForTapHighlightToAppear();
+    highlightTop = rect.top;
+    highlightLeft = rect.left;
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+
+    shouldBeTrue("buttonWasClicked");
+    shouldBeGreaterThan("highlightWidth", "0");
+    shouldBeGreaterThan("highlightHeight", "0");
+    shouldBeTrue("highlightTop < frameBTop - 100");
+    shouldBeGreaterThanOrEqual("highlightTop", "frameATop - 20");
+
+    finishJSTest();
+});
+</script>
+<iframe id="frameA" style="position: absolute; left: 100px; top: 20px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>
+<iframe id="frameB" style="position: absolute; left: 300px; top: 400px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>

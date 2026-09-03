@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping a button inside a cross-origin iframe that has a scale transform should show a tap highlight over the button, scaled to match it.");
+jsTestIsAsync = true;
+
+const iframeTop = 100;
+const expectedWidthScaled = 100;
+const expectedHeightScaled = 30;
+let highlightWidth;
+let highlightHeight;
+let highlightTop;
+let buttonWasClicked = false;
+
+async function waitForTapHighlightToAppear()
+{
+    let rect;
+    for (let i = 0; i < 100; i++) {
+        rect = await UIHelper.tapHighlightViewRect();
+        if (rect.width > 0 && rect.height > 0)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return rect;
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "clicked") {
+        buttonWasClicked = true;
+        return;
+    }
+    if (event.data !== "ready")
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateAt(100, 115);
+
+    const rect = await waitForTapHighlightToAppear();
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+    highlightTop = rect.top;
+
+    shouldBeTrue("buttonWasClicked");
+    shouldBeGreaterThan("highlightWidth", "0");
+    shouldBeGreaterThan("highlightHeight", "0");
+    shouldBeGreaterThan("highlightTop", "iframeTop - 20");
+    shouldBeTrue("highlightWidth < expectedWidthScaled + 40");
+    shouldBeTrue("highlightHeight < expectedHeightScaled + 40");
+    shouldBeTrue("highlightTop < 160");
+
+    finishJSTest();
+});
+</script>
+<iframe style="position: absolute; left: 50px; top: 100px; width: 400px; height: 300px; border: none; transform: scale(0.5); transform-origin: 0 0;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>
