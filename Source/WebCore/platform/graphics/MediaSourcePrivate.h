@@ -210,6 +210,7 @@ protected:
 private:
     void updateBufferedRanges();
     void updateTracksType();
+    void notifySeekableRangesChanged();
     bool canCompleteWaitForTarget() const WTF_REQUIRES_CAPABILITY(m_dispatcher.get());
     void completeWaitForTarget() WTF_REQUIRES_CAPABILITY(m_dispatcher.get());
     void tryCompleteWaitForTarget() WTF_REQUIRES_CAPABILITY(m_dispatcher.get());

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+      var source;
+
+      function isMP4Supported()
+      {
+        return MediaSource.isTypeSupported('video/mp4;codecs="avc1.4D4001,mp4a.40.2"');
+      }
+
+      function isWebMVP9Supported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="vp9,opus"');
+      }
+
+      function isWebMOpusSupported()
+      {
+        return MediaSource.isTypeSupported('video/webm;codecs="opus"');
+      }
+
+      function mediaType()
+      {
+        if (isMP4Supported())
+          return 'video/mp4;codecs="avc1.4D4001,mp4a.40.2"';
+        if (isWebMVP9Supported())
+          return 'video/webm;codecs="vp9,opus"';
+        return 'video/webm;codecs="opus"';
+      }
+
+      function mediaFile()
+      {
+        if (isMP4Supported())
+          return 'test-mse.mp4';
+        if (isWebMVP9Supported())
+          return 'test-mse.webm';
+        return 'test-mse-audio.webm';
+      }
+
+      function fetchMedia()
+      {
+        return new Promise((resolve, reject) => {
+          var request = new XMLHttpRequest();
+          request.responseType = 'arraybuffer';
+          request.open('GET', mediaFile(), true);
+          request.addEventListener('load', () => resolve(request.response));
+          request.addEventListener('error', reject);
+          request.send();
+        });
+      }
+
+      async function playVideo()
+      {
+        var data = await fetchMedia();
+        var video = document.getElementsByTagName('video')[0];
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await new Promise(resolve => source.addEventListener('sourceopen', resolve, { once: true }));
+
+        var sourceBuffer = source.addSourceBuffer(mediaType());
+        sourceBuffer.appendBuffer(data);
+        await new Promise(resolve => sourceBuffer.addEventListener('updateend', resolve, { once: true }));
+
+        await video.play();
+        return true;
+      }
+
+      function setDuration(duration)
+      {
+        source.duration = duration;
+      }
+  </script>
+</head>
+<body>
+    <video width=640 height=480></video>
+</body>
+</html>

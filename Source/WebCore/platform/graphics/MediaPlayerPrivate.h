@@ -67,6 +67,7 @@ public:
     virtual void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) = 0;
     virtual void readyStateFromMediaSourceChanged() { }
     virtual void characteristicsFromMediaSourceChanged() { }
+    virtual void seekableRangesFromMediaSourceChanged() { }
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate&) = 0;

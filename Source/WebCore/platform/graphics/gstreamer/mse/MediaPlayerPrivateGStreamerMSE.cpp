@@ -683,6 +683,13 @@ void MediaPlayerPrivateGStreamerMSE::characteristicsFromMediaSourceChanged()
         player->characteristicChanged();
 }
 
+void MediaPlayerPrivateGStreamerMSE::seekableRangesFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->seekableTimeRangesChanged();
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore.

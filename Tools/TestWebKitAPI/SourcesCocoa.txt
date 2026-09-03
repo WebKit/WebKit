@@ -245,6 +245,7 @@ Tests/WebKit/WKWebView/PasteWebArchive.mm @nonARC
 Tests/WebKit/WKWebView/PermissionsAPI.mm @nonARC
 Tests/WebKit/WKWebView/PictureInPictureDelegate.mm @nonARC
 Tests/WebKit/WKWebView/PitchShiftAudioUnitTests.cpp
+Tests/WebKit/WKWebView/PlaybackSessionSeekableRanges.mm @nonARC
 Tests/WebKit/WKWebView/Preconnect.mm @nonARC
 Tests/WebKit/WKWebView/Preferences.mm @nonARC
 Tests/WebKit/WKWebView/PreferredAudioBufferSize.mm @nonARC

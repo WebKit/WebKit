@@ -1160,6 +1160,18 @@ bool PlaybackSessionManagerProxy::wirelessVideoPlaybackDisabled()
     return protect(std::get<0>(it->value))->wirelessVideoPlaybackDisabled();
 }
 
+WebCore::PlatformTimeRanges PlaybackSessionManagerProxy::seekableRanges()
+{
+    if (!m_controlsManagerContextId)
+        return { };
+
+    auto it = m_contextMap.find(*m_controlsManagerContextId);
+    if (it == m_contextMap.end())
+        return { };
+
+    return protect(std::get<0>(it->value))->seekableRanges();
+}
+
 void PlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (RefPtr page = m_page.get(); page && m_controlsManagerContextId)

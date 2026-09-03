@@ -91,6 +91,10 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @property (nonatomic, setter=_setMediaCaptureReportingDelayForTesting:) double _mediaCaptureReportingDelayForTesting WK_API_AVAILABLE(macos(12.0), ios(15.0));
 @property (nonatomic, readonly) BOOL _wirelessVideoPlaybackDisabled;
 
+// Highest end time of the seekable ranges the playback controls manager knows about, NaN when it
+// has none. An empty range here is what leaves the fullscreen scrubber disabled.
+@property (nonatomic, readonly) double _maximumSeekableTime;
+
 - (void)_setIndexOfGetDisplayMediaDeviceSelectedForTesting:(nullable NSNumber *)index;
 - (void)_setSystemCanPromptForGetDisplayMediaForTesting:(BOOL)canPrompt;
 

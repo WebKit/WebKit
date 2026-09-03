@@ -161,6 +161,9 @@ private:
     void videoTrackConfigurationChanged();
     void captionTracksChanged() final;
     void captionsEnabledChanged() final;
+    void seekableRangesChanged() final;
+
+    void updateSeekableRanges();
 
 #if !RELEASE_LOG_DISABLED
     uint64_t logIdentifier() const final;
@@ -176,6 +179,9 @@ private:
     Vector<Ref<AudioTrack>> m_audioTracksForMenu;
     AudioSessionSoundStageSize m_soundStageSize;
     std::optional<ImmersiveVideoMetadata> m_immersiveVideoMetadata;
+    std::optional<PlatformTimeRanges> m_lastSeekableRanges;
+    double m_lastSeekableTimeRangesLastModifiedTime { 0 };
+    double m_lastLiveUpdateInterval { 0 };
 
     const Ref<Observer<void()>> m_videoTrackConfigurationObserver;
 };

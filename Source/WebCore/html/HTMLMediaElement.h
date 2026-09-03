@@ -162,6 +162,8 @@ public:
     virtual void captionTracksChanged() { }
     virtual void captionsEnabledChanged() { }
 
+    virtual void seekableRangesChanged() { }
+
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     virtual void hasObjectViewBoxChanged(bool) { }
 #endif
@@ -773,6 +775,8 @@ public:
     void mediaSessionCaptionTracksChanged();
     void mediaSessionCaptionsEnabledChanged();
 
+    void seekableRangesChanged();
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -950,6 +954,7 @@ private:
     const std::optional<Vector<FourCC>>& allowedMediaCaptionFormatTypes() const final;
 
     void mediaPlayerBufferedTimeRangesChanged() final;
+    void mediaPlayerSeekableTimeRangesChanged() final;
 
     bool mediaPlayerShouldDisableHDR() const final { return shouldDisableHDR(); }
 

@@ -617,6 +617,10 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     const Seconds playbackQualityMetricsTimeout = 30_s;
 
     m_cachedState.duration = state.duration;
+    bool seekableRangesChanged = m_cachedState.minTimeSeekable != state.minTimeSeekable
+        || m_cachedState.maxTimeSeekable != state.maxTimeSeekable
+        || m_cachedState.seekableTimeRangesLastModifiedTime != state.seekableTimeRangesLastModifiedTime
+        || m_cachedState.liveUpdateInterval != state.liveUpdateInterval;
     m_cachedState.minTimeSeekable = state.minTimeSeekable;
     m_cachedState.maxTimeSeekable = state.maxTimeSeekable;
     m_cachedState.networkState = state.networkState;
@@ -652,6 +656,11 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 
     if (state.bufferedRanges)
         m_cachedBufferedTimeRanges = *state.bufferedRanges;
+
+    if (seekableRangesChanged) {
+        if (RefPtr player = m_player)
+            player->seekableTimeRangesChanged();
+    }
 }
 
 void MediaPlayerPrivateRemote::updatePlaybackQualityMetrics(VideoPlaybackQualityMetrics&& metrics)

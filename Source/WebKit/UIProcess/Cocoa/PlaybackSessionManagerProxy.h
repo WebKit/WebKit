@@ -271,6 +271,7 @@ public:
 
     // For testing.
     bool wirelessVideoPlaybackDisabled();
+    WebCore::PlatformTimeRanges seekableRanges();
 
 private:
     friend class PlaybackSessionModelContext;

@@ -166,6 +166,13 @@ void MockMediaPlayerMediaSource::characteristicsFromMediaSourceChanged()
         player->characteristicChanged();
 }
 
+void MockMediaPlayerMediaSource::seekableRangesFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->seekableTimeRangesChanged();
+}
+
 void MockMediaPlayerMediaSource::setPageIsVisible(bool)
 {
 }
