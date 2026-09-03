@@ -25,6 +25,7 @@ from buildbot.process import buildstep, logobserver, properties, remotecommand
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
+from dataclasses import replace
 from datetime import date
 from shlex import quote
 from typing import Any, Generator
@@ -34,7 +35,7 @@ from twisted.internet import defer, reactor, task
 
 from .layout_test_failures import LayoutTestFailures
 from .send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
-from .results_db import FlakyVerdict, ResultsDatabase
+from .results_db import EWSPayload, EWSRowDetails, FlakyVerdict, ResultsDatabase
 from .twisted_additions import TwistedAdditions
 from .utils import load_password, get_custom_suffix
 
@@ -599,18 +600,18 @@ class ResultsDBReportMixin(abc.ABC):
             'is_simulator': 'simulator' in (self.getProperty('fullPlatform', '') or ''),
         }
 
-    def results_db_details(self):
+    def results_db_details(self) -> EWSRowDetails:
         """Extra build metadata folded into each row's `details` blob, non-queryable."""
         authors = self.getProperty('owners', [])
-        return {
-            'worker': self.getProperty('workername', None),
-            'remote': self.getProperty('remote', None),
-            'pr_number': self.getProperty('github.number', None),
-            'commit_hash': self.getProperty('github.head.sha', None),
-            'retry_count': self.getProperty('retry_count', 0),
-            'authors': [author for author in authors if author],
-            'build_url': f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}',
-        }
+        return EWSRowDetails(
+            worker=self.getProperty('workername', None),
+            remote=self.getProperty('remote', None),
+            pr_number=self.getProperty('github.number', None),
+            commit_hash=self.getProperty('github.head.sha', None),
+            retry_count=self.getProperty('retry_count', 0),
+            authors=[author for author in authors if author],
+            build_url=f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}',
+        )
 
     def merged_results(self, test_filter, runs):
         """
@@ -675,13 +676,15 @@ class ResultsDBReportMixin(abc.ABC):
 
         try:
             reported = yield ResultsDatabase.report_ews(
-                configuration=config,
-                suite=self.suite,
-                commits=[commit],
-                flaky_type=flaky_type,
-                results=results,
-                timestamp=getattr(self, 'run_started_at', None) or int(time.time()),
-                details={**self.results_db_details(), 'stage': stage},
+                EWSPayload(
+                    configuration=config,
+                    suite=self.suite,
+                    commits=[commit],
+                    flaky_type=flaky_type,
+                    results=results,
+                    timestamp=getattr(self, 'run_started_at', None) or int(time.time()),
+                    details=replace(self.results_db_details(), stage=stage),
+                ),
                 logger=lambda log: self._addToLog(self.results_db_log_name, log),
             )
         except Exception as error:

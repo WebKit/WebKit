@@ -30,7 +30,7 @@ import shutil
 import sys
 import tempfile
 import time
-from typing import Any, Generator, Iterable, Optional
+from typing import Any, Callable, Generator, Iterable, Optional
 from unittest import skip as skipTest
 from unittest.mock import call, create_autospec, patch
 
@@ -50,7 +50,7 @@ from Shared.steps import *
 
 from . import send_email
 from .layout_test_failures import LayoutTestFailures
-from .results_db import FlakyVerdict
+from .results_db import EWSPayload, EWSRowDetails, FlakyVerdict
 from .steps import *
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -157,10 +157,12 @@ class BuildStepMixinAdditions(BuildStepMixin, TestReactorMixin):
         # rather than each step that makes it.
         self.results_db_reports = []
 
-        def record_report_ews(suite=None, results=None, flaky_type=None, commits=None, configuration=None, details=None, timestamp=None, logger=None):
+        def record_report_ews(payload: EWSPayload, logger: Optional[Callable[[str], None]] = None) -> defer.Deferred:
+            # details is recorded as the blob that would be uploaded, so assertions can subscript it.
             self.results_db_reports.append(dict(
-                suite=suite, results=results, flaky_type=flaky_type, commits=commits,
-                configuration=configuration, details=details, timestamp=timestamp,
+                suite=payload.suite, results=payload.results, flaky_type=payload.flaky_type,
+                commits=payload.commits, configuration=payload.configuration,
+                details=payload.details.to_json(), timestamp=payload.timestamp,
             ))
             return defer.succeed(True)
 
@@ -4209,7 +4211,7 @@ class TestReportToResultsDB(BuildStepMixinAdditions, unittest.TestCase):
     @defer.inlineCallbacks
     def test_an_unreachable_results_database_does_not_fail_the_step(self):
         # Reporting runs inside the steps whose verdict gates the pull request.
-        def explode(**kwargs):
+        def explode(*args: Any, **kwargs: Any) -> None:
             raise RuntimeError('results.webkit.org is unreachable')
 
         step = self.configureStep()
@@ -13102,7 +13104,7 @@ class TestTrigger(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestResultsDatabaseFailureHandling(unittest.TestCase):
-    def _mock_twisted_request(self, response):
+    def _mock_twisted_request(self, response: Optional['TwistedAdditions.Response']) -> Any:
         return patch('ews-build.results_db.TwistedAdditions.request', lambda *args, **kwargs: defer.succeed(response))
 
     def _ok_response(self, payload):
@@ -13142,9 +13144,11 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
         logs = []
         with self._mock_twisted_request(response):
             reported = yield ResultsDatabase.report_ews(
-                suite='layout-tests', results=self.REPORTED_RESULTS, flaky_type=flaky_type,
-                configuration=self.COMPLETE_CONFIGURATION, commits=self.REPORTED_COMMITS,
-                timestamp=1600000000, details={'stage': 'first-run'},
+                EWSPayload(
+                    suite='layout-tests', results=self.REPORTED_RESULTS, flaky_type=flaky_type,
+                    configuration=self.COMPLETE_CONFIGURATION, commits=self.REPORTED_COMMITS,
+                    timestamp=1600000000, details=EWSRowDetails(stage='first-run'),
+                ),
                 logger=lambda log: logs.append(log),
             )
         return (reported, ''.join(logs))
@@ -13165,7 +13169,8 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
                 'status': 'ok', 'tests': ['fast/a.html', 'fast/b.html'],
             }))
         self.assertTrue(reported)
-        self.assertIn('"api_key": "<redacted>"', logs)
+        self.assertIn('Request:\n{', logs)
+        self.assertNotIn('api_key', logs)
         self.assertNotIn('super-secret', logs)
         self.assertIn('"suite": "layout-tests"', logs)
         self.assertIn('(200):', logs)
