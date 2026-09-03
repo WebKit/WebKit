@@ -88,3 +88,25 @@ test(() => {
     0, 0,
   ], 'only 3 middle elements are copied');
 }, 'Test that AudioData.copyTo copies frameCount amount of interleaved stereo frames from frameOffset');
+
+// Per the "Compute Copy Element Count" algorithm step 7
+// (https://www.w3.org/TR/webcodecs/#compute-copy-element-count):
+// "If options.frameOffset is greater than or equal to frameCount, throw a RangeError."
+test(() => {
+  const data = new AudioData({
+    format: 'f32',
+    sampleRate: 48000,
+    numberOfChannels: 1,
+    numberOfFrames: 5,
+    data: new Float32Array([1, 2, 3, 4, 5]),
+    timestamp: 0,
+  });
+  const output = new Float32Array(5);
+  assert_throws_js(RangeError, () => {
+    data.copyTo(output, { planeIndex: 0, frameOffset: 5 });
+  }, 'frameOffset == numberOfFrames must throw RangeError');
+  assert_throws_js(RangeError, () => {
+    data.copyTo(output, { planeIndex: 0, frameOffset: 6 });
+  }, 'frameOffset > numberOfFrames must throw RangeError');
+  data.close();
+}, 'AudioData.copyTo throws RangeError when frameOffset >= frameCount');
