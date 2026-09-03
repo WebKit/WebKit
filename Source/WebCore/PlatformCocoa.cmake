@@ -151,7 +151,8 @@ if (ACCESSIBILITYSUPPORT_LIBRARY)
 endif ()
 
 if (USE_LIBWEBRTC)
-    list(APPEND WebCore_PRIVATE_LIBRARIES webrtc opus vpx webm yuv libsrtp webrtc_objc_categories)
+    # The static archives are rolled into libwebrtc.dylib, which WebCore
+    # weak-links; see the target_link_options call after WEBKIT_FRAMEWORK(WebCore).
 else ()
     set(_webm_parser_dir "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/third_party/libwebm/webm_parser")
     file(GLOB _webm_parser_srcs "${_webm_parser_dir}/src/*.cc")
