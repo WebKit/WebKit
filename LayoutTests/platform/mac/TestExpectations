@@ -2538,9 +2538,6 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 # rdar://179279626 ([macOS 26.x and later] http/tests/inspector/target/pause-on-inline-debugger-statement.html is a flaky Crash Timeout)
 [ Tahoe+ ] http/tests/inspector/target/pause-on-inline-debugger-statement.html [ Pass Crash Timeout ]
 
-# rdar://181739903 (REGRESSION(314678@main): [macOS 26 and later] http/tests/websocket/tests/hybi/inspector/before-load.html is a constant TEXT failure)
-[ Tahoe+ ] http/tests/websocket/tests/hybi/inspector/before-load.html [ Failure ]
-
 # rdar://184139090 ([macOS 27] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html is a flaky test failure)
 [ Tahoe+ ] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
 
