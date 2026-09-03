@@ -1,0 +1,4 @@
+This test passes if the border image is applied and there's a repaint of the image
+
+PASS: border image applied
+Paints happened and overlap 0 0 784 18: PASS

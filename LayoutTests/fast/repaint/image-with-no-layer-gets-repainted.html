@@ -1,0 +1,51 @@
+<style>
+  #label {
+    border: 1px solid white;
+  }
+</style>
+<script>
+  window.testRunner?.dumpAsText();
+  //window.testRunner?.waitUntilDone();
+
+  function testRect(rects) {
+    const regex = /\(rect\s(\d+)\s(\d+)\s(\d+)\s(\d+)\)/;
+    const match = rects.match(regex);
+
+    if (match) {
+      const x = parseInt(match[1], 10);
+      const y = parseInt(match[2], 10);
+      const width = parseInt(match[3], 10);
+      const height = parseInt(match[4], 10);
+
+      if (x < 784 && (x + width) > 0 && y < 18 && (y + height) > 0) {
+        return "PASS";
+      } else {
+        return "FAIL";
+      }
+    }
+  }
+
+  function test() {
+    window.internals?.startTrackingRepaints();
+    label.style.borderImageSource = "url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==)";
+    computedStyle = getComputedStyle(label);
+    borderImageSource = computedStyle.borderImageSource;
+    var repaintRectsAfter = window.internals?.repaintRectsAsText();
+    window.internals.stopTrackingRepaints();
+
+    if (borderImageSource.includes("data:image/gif")) {
+      res.textContent = "PASS: border image applied";
+    } else {
+      res.textContent = "FAIL: border image not applied.";
+    }
+    repaints.textContent = "Paints happened and overlap 0 0 784 18: " + testRect(repaintRectsAfter);
+
+    window.testRunner?.notifyDone();
+  }
+</script>
+<body onload="test()">
+  <label id="label"></label>
+  <p>This test passes if the border image is applied and there's a repaint of the image</p>
+  <pre id="res"></pre>
+  <pre id="repaints"></pre>
+</body>

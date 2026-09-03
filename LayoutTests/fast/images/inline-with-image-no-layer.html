@@ -1,0 +1,24 @@
+<style>
+  * {
+        outline-offset: 1em;
+        border-image-source: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==");
+    }
+</style>
+<script>
+  window.testRunner?.dumpAsText();
+  window.testRunner?.waitUntilDone();
+  function test() {
+        var00038 = label.style;
+        label.appendChild(dialog);
+        var00169 = document.execCommand("selectAll", false);
+        var00038.setProperty("position", "relative");
+        window.testRunner?.notifyDone();
+        res.append("PASS");
+    }
+</script>
+<body onload="test()">
+  <label id="label"></label>
+  <dialog id="dialog" open="true"></dialog>
+  <p>This test passes if WebKit does not crash</p>
+  <div id="res"></div>
+</body>
