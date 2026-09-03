@@ -1,0 +1,20 @@
+<!doctype html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
+    <style>
+        td::selection {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <table style="width: 580px;">
+        <td id="target" style="font-family: 'Arvo', serif;">
+            This allows you, our attendees, to complain efficiently about CSS problems in many browsers at once, while their representatives smile, take .
+        </td>
+    </table>
+    <script>
+        getSelection().selectAllChildren(document.getElementById("target"));
+    </script>
+</body>
