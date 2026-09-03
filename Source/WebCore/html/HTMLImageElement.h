@@ -273,6 +273,8 @@ private:
     WeakPtr<HTMLSourceElement, WeakPtrImplWithEventTargetData> m_sourceElement;
 
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
+    bool m_sizesUseViewportUnits { false };
+    std::optional<FloatSize> m_lastViewportSizeForSizes;
 
     friend class HTMLPictureElement;
 };

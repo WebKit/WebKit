@@ -2587,7 +2587,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/src-repeated-in-ancestor.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/srcset/srcset-w-reselect-on-resize.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-events.html [ Skip ]
 
 # These tests time out (fail) because they only work in engines that support Ogg Vorbis video.

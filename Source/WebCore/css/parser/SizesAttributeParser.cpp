@@ -114,7 +114,12 @@ std::optional<float> SizesAttributeParser::parse(CSSParserTokenRange tokens, con
         auto length = parseLength(lengthTokenStart.rangeUntil(lengthTokenEnd), context);
         if (!length)
             continue;
-        auto mediaCondition = MQ::MediaQueryParser::parseCondition(mediaConditionStart.rangeUntil(lengthTokenStart), context);
+
+        auto mediaConditionRange = mediaConditionStart.rangeUntil(lengthTokenStart);
+        if (mediaConditionRange.atEnd())
+            return length;
+
+        auto mediaCondition = MQ::MediaQueryParser::parseCondition(mediaConditionRange, context);
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);
@@ -137,6 +142,9 @@ std::optional<float> SizesAttributeParser::parseDimension(CSSParserTokenRange to
     auto unit = CSS::toLengthUnit(token.unitType());
     if (!unit)
         return std::nullopt;
+
+    if (CSS::isViewportPercentageLength(*unit))
+        m_usesViewportRelativeUnits = true;
 
     auto conversionData = this->conversionData();
     if (!conversionData)

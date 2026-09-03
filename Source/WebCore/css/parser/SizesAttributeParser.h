@@ -50,6 +50,7 @@ public:
     bool isAuto() const { return m_isAuto; }
 
     const Vector<MQ::MediaQueryResult>& dynamicMediaQueryResults() const LIFETIME_BOUND { return m_dynamicMediaQueryResults; }
+    bool usesViewportRelativeUnits() const { return m_usesViewportRelativeUnits; }
 
 private:
     std::optional<float> parse(CSSParserTokenRange, const CSSParserContext&);
@@ -67,6 +68,7 @@ private:
     Vector<MQ::MediaQueryResult> m_dynamicMediaQueryResults;
     std::optional<float> m_result;
     bool m_isAuto { false };
+    bool m_usesViewportRelativeUnits { false };
 };
 
 } // namespace WebCore
