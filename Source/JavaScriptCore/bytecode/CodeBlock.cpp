@@ -2901,15 +2901,13 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 
 void CodeBlock::didInstallDFGCode()
 {
-#if PLATFORM(MAC)
-    // Always reset — allows quick tier-up recovery after reinstall.
-    // Enable this only on macOS due to perf regression on iOS.
-    unlinkedCodeBlock()->setQuickDFGTierUp(TriState::True);
-#else
-    // Restore old one-shot behavior — once failed, stays disabled.
-    if (!unlinkedCodeBlock()->hasQuickDFGTierUpUpdated())
+    // High-core-count devices retry quick DFG tier-up on each reinstall.
+    // Lower-core-count devices regress if retried, so keep it one-shot:
+    // once disabled, leave it off.
+    if (WTF::numberOfProcessorCores() > 6)
         unlinkedCodeBlock()->setQuickDFGTierUp(TriState::True);
-#endif
+    else if (!unlinkedCodeBlock()->hasQuickDFGTierUpUpdated())
+        unlinkedCodeBlock()->setQuickDFGTierUp(TriState::True);
 }
 
 void CodeBlock::didDFGJettison(Profiler::JettisonReason reason)
