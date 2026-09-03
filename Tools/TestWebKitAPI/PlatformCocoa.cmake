@@ -92,7 +92,49 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 # TestWTF
 list(APPEND TestWTF_SOURCES
     Helpers/cocoa/UtilitiesCocoa.mm
+
+    Tests/WTF/cf/RetainPtr.cpp
+    Tests/WTF/cf/RetainPtrHashing.cpp
+    Tests/WTF/cf/RetainRef.cpp
+    Tests/WTF/cf/StringCF.cpp
+    Tests/WTF/cf/VectorCF.cpp
+
+    Tests/WTF/cocoa/BlockPtr.mm
+    Tests/WTF/cocoa/ContextualizedNSString.mm
+    Tests/WTF/cocoa/LoggerCocoa.mm
+    Tests/WTF/cocoa/RetainPtr.mm
+    Tests/WTF/cocoa/RetainPtrARC.mm
+    Tests/WTF/cocoa/RetainPtrHashingCocoa.mm
+    Tests/WTF/cocoa/RetainPtrHashingCocoaARC.mm
+    Tests/WTF/cocoa/RetainRef.mm
+    Tests/WTF/cocoa/RetainRefARC.mm
+    Tests/WTF/cocoa/TextStreamCocoa.cpp
+    Tests/WTF/cocoa/TextStreamCocoa.mm
+    Tests/WTF/cocoa/TypeCastsCocoa.mm
+    Tests/WTF/cocoa/TypeCastsCocoaARC.mm
+    Tests/WTF/cocoa/UUIDCocoa.mm
+    Tests/WTF/cocoa/VectorCocoa.mm
+
+    Tests/WTF/darwin/MachSendRight.cpp
+    Tests/WTF/darwin/OSObjectPtr.cpp
+    Tests/WTF/darwin/OSObjectPtrCocoa.mm
+    Tests/WTF/darwin/OSObjectPtrCocoaARC.mm
+    Tests/WTF/darwin/TypeCastsOSObjectCF.cpp
+    Tests/WTF/darwin/TypeCastsOSObjectCocoa.mm
+    Tests/WTF/darwin/TypeCastsOSObjectCocoaARC.mm
 )
+
+# The shared prefix header is precompiled without ARC, so these can't reuse it.
+set_source_files_properties(
+    Tests/WTF/cocoa/RetainPtrARC.mm
+    Tests/WTF/cocoa/RetainPtrHashingCocoaARC.mm
+    Tests/WTF/cocoa/RetainRefARC.mm
+    Tests/WTF/cocoa/TypeCastsCocoaARC.mm
+    Tests/WTF/darwin/OSObjectPtrCocoaARC.mm
+    Tests/WTF/darwin/TypeCastsOSObjectCocoaARC.mm
+    PROPERTIES
+    COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_CURRENT_SOURCE_DIR}/Helpers/TestWebKitAPIPrefix.h"
+    SKIP_PRECOMPILE_HEADERS ON)
 
 list(APPEND TestWTF_LIBRARIES
     ${CARBON_LIBRARY}
@@ -100,14 +142,56 @@ list(APPEND TestWTF_LIBRARIES
     "-framework CoreFoundation"
 )
 
+# Tests/WTF/{cf,cocoa,darwin} include headers from Tests/WTF by name.
+list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
+    ${TESTWEBKITAPI_DIR}/Tests/WTF
+)
+
 # TestJavaScriptCore
 list(APPEND TestJavaScriptCore_SOURCES
+    Tests/JavaScriptCore/JSRunLoopTimer.mm
 )
 
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
     Helpers/cocoa/TestNSBundleExtras.m
     Helpers/cocoa/UtilitiesCocoa.mm
+
+    Tests/WebCore/ContentExtensions.cpp
+    Tests/WebCore/HysteresisActivityTests.cpp
+    Tests/WebCore/ISOBox.cpp
+    Tests/WebCore/Logging.cpp
+    Tests/WebCore/PlatformCAAnimationKeyPath.cpp
+    Tests/WebCore/StringUtilities.mm
+    Tests/WebCore/TextBoundaries.cpp
+    Tests/WebCore/UserAgentStringParser.cpp
+    Tests/WebCore/YouTubePluginReplacement.cpp
+
+    Tests/WebCore/cocoa/AttributedStringFontCache.mm
+    Tests/WebCore/cocoa/AudioStreamDescriptionCocoa.mm
+    Tests/WebCore/cocoa/AudioVideoRendererAVFObjCTests.mm
+    Tests/WebCore/cocoa/BifurcatedGraphicsContextTestsCG.cpp
+    Tests/WebCore/cocoa/CaptionPreferencesTests.mm
+    Tests/WebCore/cocoa/CoreMediaUtilities.mm
+    Tests/WebCore/cocoa/GraphicsContextCGTests.mm
+    Tests/WebCore/cocoa/H264UtilitiesCocoaTests.mm
+    Tests/WebCore/cocoa/IOSurfaceTests.mm
+    Tests/WebCore/cocoa/ImageRotationSessionVT.cpp
+    Tests/WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm
+    Tests/WebCore/cocoa/MediaRecorderPrivateWriterTests.cpp
+    Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm
+    Tests/WebCore/cocoa/ResourceMonitor.mm
+    Tests/WebCore/cocoa/ScrollbarWidthCrash.mm
+    Tests/WebCore/cocoa/SerializedCryptoKeyWrap.mm
+    Tests/WebCore/cocoa/ShareableSpatialImageTests.mm
+    Tests/WebCore/cocoa/SharedBuffer.mm
+    Tests/WebCore/cocoa/SharedVideoFrame.mm
+    Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm
+    Tests/WebCore/cocoa/TestUTIRegistry.cpp
+    Tests/WebCore/cocoa/TestUTIUtilities.cpp
+    Tests/WebCore/cocoa/WebCoreDecompressionSessionTests.mm
+    Tests/WebCore/cocoa/WebCoreNSURLSession.mm
+    Tests/WebCore/cocoa/XMLParsing.mm
 )
 
 list(APPEND TestWebCore_LIBRARIES
@@ -117,6 +201,22 @@ list(APPEND TestWebCore_LIBRARIES
 # TestWebKitLegacy
 list(APPEND TestWebKitLegacy_SOURCES
     Helpers/cocoa/TestNSBundleExtras.m
+
+    Tests/WebKitLegacy/cocoa/WebPreferencesTest.mm
+
+    Tests/WebKitLegacy/mac/AccessingPastedImage.mm
+    Tests/WebKitLegacy/mac/ClosingWebView.mm
+    Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme.mm
+    Tests/WebKitLegacy/mac/CustomProtocolsTest.mm
+    Tests/WebKitLegacy/mac/DeallocWebViewInEventListener.mm
+    Tests/WebKitLegacy/mac/DownloadThread.mm
+    Tests/WebKitLegacy/mac/EarlyKVOCrash.mm
+    Tests/WebKitLegacy/mac/EmbeddedPrintPagination.mm
+    Tests/WebKitLegacy/mac/PDFEmbeddedPrintScript.mm
+    Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm
+    Tests/WebKitLegacy/mac/URLExtras.mm
+    Tests/WebKitLegacy/mac/UserContentTest.mm
+    Tests/WebKitLegacy/mac/WKBrowsingContextLoadDelegateTest.mm
 )
 
 list(APPEND TestWebKitLegacy_LIBRARIES
@@ -187,6 +287,8 @@ list(APPEND TestWebKit_SOURCES
     Helpers/mac/GamepadMappings/SteelSeriesNimbus.mm
     Helpers/mac/GamepadMappings/SunLightApplicationGenericNES.mm
 
+    Tests/TestWebKitAPIAdditionsHook.mm
+
     Tests/Misc/TestRunnerTests.cpp
 
     Tests/WebCore/ASN1Utilities.cpp
@@ -196,7 +298,83 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebCore/cocoa/ISOBMFFTrackInfoParserTests.cpp
     Tests/WebCore/cocoa/PlatformScreenTests.mm
 
+    Tests/WebKit/DeviceIdHashSaltStorage.cpp
+
+    Tests/WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache.cpp
+    Tests/WebKit/WKPage/EnvironmentUtilitiesTest.cpp
+    Tests/WebKit/WKPage/MenuTypesForMouseEvents.cpp
+    Tests/WebKit/WKPage/ModalAlertsSPI.cpp
+    Tests/WebKit/WKPage/NavigationClientDefaultCrypto.cpp
+    Tests/WebKit/WKPage/RestoreSessionState.cpp
+    Tests/WebKit/WKPage/ShouldKeepCurrentBackForwardListItemInList.cpp
+    Tests/WebKit/WKPage/WKImageCreateCGImageCrash.cpp
+    Tests/WebKit/WKPage/WKPageIsPlayingAudio.cpp
+    Tests/WebKit/WKPage/WebArchive.cpp
+
+    Tests/WebKit/WKPage/cocoa/AccessibilityIncreaseContrast.mm
+    Tests/WebKit/WKPage/cocoa/AccessibilityReduceMotion.mm
+    Tests/WebKit/WKPage/cocoa/AccessibilityRemoteUIApp.mm
+    Tests/WebKit/WKPage/cocoa/AttributedSubstringForProposedRangeCAPI.mm
+    Tests/WebKit/WKPage/cocoa/Battery.mm
+    Tests/WebKit/WKPage/cocoa/ContextMenuDownload.mm
+    Tests/WebKit/WKPage/cocoa/ContextMenuImgWithVideo.mm
+    Tests/WebKit/WKPage/cocoa/CustomBundleObject.mm
+    Tests/WebKit/WKPage/cocoa/CustomBundleParameter.mm
+    Tests/WebKit/WKPage/cocoa/EditorCommands.mm
+    Tests/WebKit/WKPage/cocoa/EnableAccessibility.mm
+    Tests/WebKit/WKPage/cocoa/FetchLocalFile.mm
+    Tests/WebKit/WKPage/cocoa/FindMatches.mm
+    Tests/WebKit/WKPage/cocoa/FontRegistrySandboxCheck.mm
+    Tests/WebKit/WKPage/cocoa/ForceLightAppearanceInBundle.mm
+    Tests/WebKit/WKPage/cocoa/GetBackingScaleFactor.mm
+    Tests/WebKit/WKPage/cocoa/GetPIDAfterAbortedProcessLaunch.cpp
+    Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent.cpp
+    Tests/WebKit/WKPage/cocoa/LogForwarding.mm
+    Tests/WebKit/WKPage/cocoa/MediaSessionCoordinatorTest.mm
+    Tests/WebKit/WKPage/cocoa/MobileAssetSandboxCheck.mm
+    Tests/WebKit/WKPage/cocoa/NetworkProcessCrashWithPendingConnection.mm
+    Tests/WebKit/WKPage/cocoa/OverrideAppleLanguagesPreference.mm
+    Tests/WebKit/WKPage/cocoa/PasteboardNotifications.mm
+    Tests/WebKit/WKPage/cocoa/PictureInPictureSupport.mm
+    Tests/WebKit/WKPage/cocoa/PreferenceChanges.mm
+    Tests/WebKit/WKPage/cocoa/ResponsivenessTimerCrash.mm
+    Tests/WebKit/WKPage/cocoa/RestoreStateAfterTermination.mm
+    Tests/WebKit/WKPage/cocoa/ScrollPinningBehaviors.mm
+    Tests/WebKit/WKPage/cocoa/SleepDisabler.mm
+    Tests/WebKit/WKPage/cocoa/SyscallUnixSandboxCheck.mm
+    Tests/WebKit/WKPage/cocoa/SystemBeep.mm
+    Tests/WebKit/WKPage/cocoa/WeakObjCPtr.mm
+    Tests/WebKit/WKPage/cocoa/XPCEndpoint.mm
+
+    Tests/WebKit/WKPage/mac/CustomProtocolsSyncXHRTest.mm
+    Tests/WebKit/WKPage/mac/DeferredViewInWindowStateChange.mm
+    Tests/WebKit/WKPage/mac/WKThumbnailView.mm
+
+    Tests/WebKit/WKWebView/AnimationControl.mm
+    Tests/WebKit/WKWebView/FullscreenLifecycle.mm
+    Tests/WebKit/WKWebView/GetUserMediaNavigation.mm
+    Tests/WebKit/WKWebView/InjectedBundleHitTest.mm
+    Tests/WebKit/WKWebView/InstanceMethodSwizzler.mm
+    Tests/WebKit/WKWebView/MSEIsTypeSupportedCaching.mm
+    Tests/WebKit/WKWebView/MediaStreamTrackDetached.mm
+    Tests/WebKit/WKWebView/MediaStreamingActivitySuspended.mm
+    Tests/WebKit/WKWebView/NoHistoryItemScrollToFragment.mm
+    Tests/WebKit/WKWebView/NowPlayingMetadataObserver.mm
+    Tests/WebKit/WKWebView/OrthogonalFlowAvailableSize.mm
+    Tests/WebKit/WKWebView/ParentalControlsContentFilteringTests.mm
+    Tests/WebKit/WKWebView/SmartLists.mm
+    Tests/WebKit/WKWebView/SpatialAudioExperience.mm
     Tests/WebKit/WKWebView/WKBackForwardListTests.mm
+    Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.mm
+    Tests/WebKit/WKWebView/WKWebViewLogging.mm
+    Tests/WebKit/WKWebView/WKWebViewSpatialTrackingLabels.mm
+    Tests/WebKit/WKWebView/WebRTC.mm
+
+    Tests/WebKit/WKWebView/mac/AttributedSubstringForProposedRange.mm
+    Tests/WebKit/WKWebView/mac/GrammarMarkerPrecedence.mm
+    Tests/WebKit/WKWebView/mac/NSRefreshControllerTests.mm
+    Tests/WebKit/WKWebView/mac/RunningBoardManagement.mm
+    Tests/WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm
 )
 
 list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
@@ -218,10 +396,14 @@ list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/ios
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/mac
     ${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source
+    ${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/webrtc
+    ${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/third_party/abseil-cpp
     ${WEBKIT_DIR}/Platform/spi/Cocoa
     ${WEBKIT_DIR}/Platform/IPC
     ${WEBKIT_DIR}/Platform/IPC/cocoa
     ${WEBKIT_DIR}/Shared
+    ${WEBKIT_DIR}/Shared/Cocoa
+    ${WEBKIT_DIR}/UIProcess
     ${WebKit_DERIVED_SOURCES_DIR}
     ${WebKit_DERIVED_SOURCES_DIR}/IPC
     ${WEBKIT_DIR}/Platform/cocoa
@@ -241,7 +423,10 @@ list(APPEND TestWebKit_LIBRARIES
     ${CARBON_LIBRARY}
 )
 
-set_source_files_properties(Helpers/cocoa/WebExtensionUtilities.mm PROPERTIES
+set_source_files_properties(
+    Helpers/cocoa/WebExtensionUtilities.mm
+    Tests/WebKit/WKWebView/WKWebExtensionAPILocalization.mm
+    PROPERTIES
     COMPILE_FLAGS "-fobjc-arc -include ${CMAKE_CURRENT_SOURCE_DIR}/Helpers/TestWebKitAPIPrefix.h"
     SKIP_PRECOMPILE_HEADERS ON)
 
@@ -392,6 +577,18 @@ target_sources(TestWebKitAPIInjectedBundle PRIVATE
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/UtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/InjectedBundle/mac/InjectedBundleControllerMac.mm
     ${TESTWEBKITAPI_DIR}/Helpers/mac/PlatformUtilitiesMac.mm
+
+    # CustomBundleObject.mm is also in TestWebKit; both targets compile it.
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/CustomBundleObject.mm
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/CustomBundleParameter_Bundle.mm
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/ForceLightAppearanceInBundle_Bundle.mm
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/GetBackingScaleFactor_Bundle.mm
+    ${TESTWEBKITAPI_DIR}/Tests/InjectInternals_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/PasteboardNotifications_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/CustomProtocolsInvalidScheme_Bundle.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/mac/PreventImageLoadWithAutoResizing_Bundle.cpp
 )
 
 target_include_directories(TestWebKitAPIInjectedBundle PRIVATE
