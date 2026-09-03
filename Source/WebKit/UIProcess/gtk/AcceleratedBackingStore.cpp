@@ -282,9 +282,13 @@ void AcceleratedBackingStore::Buffer::paint(cairo_t* cr, const IntRect& clipRect
 
     if (auto* surface = this->surface()) {
         cairo_save(cr);
-        cairo_matrix_t transform;
-        cairo_matrix_init(&transform, 1, 0, 0, -1, 0, static_cast<float>(m_size.height() / m_webPage->deviceScaleFactor()));
-        cairo_transform(cr, &transform);
+#if USE(GBM)
+        if (type() == Type::Gbm) {
+            cairo_matrix_t transform;
+            cairo_matrix_init(&transform, 1, 0, 0, -1, 0, static_cast<float>(m_size.height() / m_webPage->deviceScaleFactor()));
+            cairo_transform(cr, &transform);
+        }
+#endif
         cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
         cairo_set_source_surface(cr, surface, 0, 0);
         cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
