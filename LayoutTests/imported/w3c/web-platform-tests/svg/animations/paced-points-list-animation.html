@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>calcMode=paced on a point list spaces segments by distance</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50">
+    <polyline id="target" points="0,0 0,0" fill="none" stroke="black">
+        <animate attributeName="points" calcMode="paced"
+                 values="0,0 0,0; 0,0 5,0; 0,0 100,0" begin="0s" dur="10s"/>
+    </polyline>
+</svg>
+
+<script>
+async_test(t => {
+    window.onload = () => {
+        const svg = document.querySelector("svg");
+        svg.pauseAnimations();
+        svg.setCurrentTime(5);
+        requestAnimationFrame(t.step_func_done(() => {
+            assert_approx_equals(document.getElementById("target").getBBox().width, 50, 1);
+        }));
+    };
+}, "calcMode=paced on a point list spaces segments by distance, not uniformly");
+</script>
