@@ -59,7 +59,7 @@ private:
 };
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
-class HTMLCollection : public NodeList {
+class HTMLCollection : public NodeList, public CanMakeWeakPtr<HTMLCollection> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT virtual ~HTMLCollection();
