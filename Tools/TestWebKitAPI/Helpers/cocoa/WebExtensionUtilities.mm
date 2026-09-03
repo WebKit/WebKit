@@ -558,6 +558,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     return _webView;
 }
 
+- (NSURL *)urlForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return _overrideURL ?: _webView.URL;
+}
+
 - (BOOL)isReaderModeActiveForWebExtensionContext:(WKWebExtensionContext *)context
 {
     return _showingReaderMode;

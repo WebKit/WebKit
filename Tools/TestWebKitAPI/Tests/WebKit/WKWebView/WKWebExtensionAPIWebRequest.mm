@@ -942,6 +942,134 @@ TEST(WKWebExtensionAPIWebRequest, WebRequestFiresForDeclarativeNetRequestBlocked
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, WebRequestFiresForTabsCreate)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<html><body>hi</body></html>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const expectedEvents = ['onBeforeRequest', 'onBeforeSendHeaders', 'onSendHeaders', 'onHeadersReceived', 'onResponseStarted', 'onCompleted']",
+        @"const firedEvents = []",
+        @"const filter = { urls: [ '<all_urls>' ] }",
+
+        @"function recordEvent(name, details) {",
+        @"  if (details?.type !== 'main_frame')",
+        @"    return",
+        @"  if (!details?.url?.includes('http://localhost'))",
+        @"    return",
+
+        @"  firedEvents.push(name)",
+
+        @"  if (name !== 'onCompleted')",
+        @"    return",
+
+        @"  browser.test.assertEq(JSON.stringify(firedEvents), JSON.stringify(expectedEvents), 'all main_frame webRequest events should fire in order')",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.webRequest.onBeforeRequest.addListener((details) => recordEvent('onBeforeRequest', details), filter)",
+        @"browser.webRequest.onBeforeSendHeaders.addListener((details) => recordEvent('onBeforeSendHeaders', details), filter)",
+        @"browser.webRequest.onSendHeaders.addListener((details) => recordEvent('onSendHeaders', details), filter)",
+        @"browser.webRequest.onHeadersReceived.addListener((details) => recordEvent('onHeadersReceived', details), filter)",
+        @"browser.webRequest.onResponseStarted.addListener((details) => recordEvent('onResponseStarted', details), filter)",
+        @"browser.webRequest.onCompleted.addListener((details) => recordEvent('onCompleted', details), filter)",
+        @"browser.webRequest.onErrorOccurred.addListener((details) => { if (details?.type === 'main_frame') browser.test.notifyFail('unexpected onErrorOccurred') }, filter)",
+
+        [NSString stringWithFormat:@"browser.tabs.create({ url: '%@' })", urlRequest.URL.absoluteString]
+    ]);
+
+    auto manager = Util::loadExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto *tabDocumentURLWithoutAccess = [NSURL URLWithString:@"https://webkit.org/"];
+
+    __weak TestWebExtensionManager *weakManager = manager.get();
+    manager.get().internalDelegate.openNewTab = ^(WKWebExtensionTabConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionTab>, NSError *)) {
+        auto *newTab = [weakManager.defaultWindow openNewTabAtIndex:configuration.index];
+        newTab.overrideURL = tabDocumentURLWithoutAccess;
+
+        if (configuration.url) {
+            [newTab changeWebViewIfNeededForURL:configuration.url forExtensionContext:context];
+            [newTab.webView loadRequest:[NSURLRequest requestWithURL:configuration.url]];
+        }
+
+        completionHandler(newTab, nil);
+    };
+
+    [manager run];
+}
+
+#if PLATFORM(MAC)
+TEST(WKWebExtensionAPIWebRequest, WebRequestFiresForWindowsCreate)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<html><body>hi</body></html>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const expectedEvents = ['onBeforeRequest', 'onBeforeSendHeaders', 'onSendHeaders', 'onHeadersReceived', 'onResponseStarted', 'onCompleted']",
+        @"const firedEvents = []",
+        @"const filter = { urls: [ '<all_urls>' ] }",
+
+        @"function recordEvent(name, details) {",
+        @"  if (details?.type !== 'main_frame')",
+        @"    return",
+        @"  if (!details?.url?.includes('http://localhost'))",
+        @"    return",
+
+        @"  firedEvents.push(name)",
+
+        @"  if (name !== 'onCompleted')",
+        @"    return",
+
+        @"  browser.test.assertEq(JSON.stringify(firedEvents), JSON.stringify(expectedEvents), 'all main_frame webRequest events should fire in order')",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        @"browser.webRequest.onBeforeRequest.addListener((details) => recordEvent('onBeforeRequest', details), filter)",
+        @"browser.webRequest.onBeforeSendHeaders.addListener((details) => recordEvent('onBeforeSendHeaders', details), filter)",
+        @"browser.webRequest.onSendHeaders.addListener((details) => recordEvent('onSendHeaders', details), filter)",
+        @"browser.webRequest.onHeadersReceived.addListener((details) => recordEvent('onHeadersReceived', details), filter)",
+        @"browser.webRequest.onResponseStarted.addListener((details) => recordEvent('onResponseStarted', details), filter)",
+        @"browser.webRequest.onCompleted.addListener((details) => recordEvent('onCompleted', details), filter)",
+        @"browser.webRequest.onErrorOccurred.addListener((details) => { if (details?.type === 'main_frame') browser.test.notifyFail('unexpected onErrorOccurred') }, filter)",
+
+        [NSString stringWithFormat:@"browser.windows.create({ url: '%@' })", urlRequest.URL.absoluteString]
+    ]);
+
+    auto manager = Util::loadExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto *tabDocumentURLWithoutAccess = [NSURL URLWithString:@"https://webkit.org/"];
+
+    __weak TestWebExtensionManager *weakManager = manager.get();
+    manager.get().internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+        auto *newWindow = [weakManager openNewWindowUsingPrivateBrowsing:configuration.shouldBePrivate];
+        auto *newTab = newWindow.tabs.firstObject;
+        newTab.overrideURL = tabDocumentURLWithoutAccess;
+
+        NSURL *url = configuration.tabURLs.firstObject;
+        if (url) {
+            [newTab changeWebViewIfNeededForURL:url forExtensionContext:context];
+            [newTab.webView loadRequest:[NSURLRequest requestWithURL:url]];
+        }
+
+        completionHandler(newWindow, nil);
+    };
+
+    [manager run];
+}
+#endif
+
 TEST(WKWebExtensionAPIWebRequest, RedirectOccurredEvent)
 {
     TestWebKitAPI::HTTPServer server({

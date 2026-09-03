@@ -1737,7 +1737,8 @@ bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* ta
     if (!hasPermission(WebExtensionPermission::webRequest(), tab))
         return false;
 
-    if (!tab->extensionHasPermission())
+    bool isMainFrameNavigation = loadInfo.type == ResourceLoadInfo::Type::Document && !loadInfo.parentFrameID;
+    if (!isMainFrameNavigation && !tab->extensionHasPermission())
         return false;
 
     if (resourceURL.isValid() && !hasPermission(resourceURL, tab))

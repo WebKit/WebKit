@@ -91,6 +91,7 @@
 
 @property (nonatomic, weak) TestWebExtensionWindow *window;
 @property (nonatomic, strong) WKWebView *webView;
+@property (nonatomic, copy) NSURL *overrideURL;
 
 - (void)changeWebViewIfNeededForURL:(NSURL *)url forExtensionContext:(WKWebExtensionContext *)context;
 
