@@ -46,7 +46,7 @@ std::unique_ptr<ImageBufferDisplayListBackend> ImageBufferDisplayListBackend::cr
 ImageBufferDisplayListBackend::ImageBufferDisplayListBackend(const Parameters& parameters, ControlFactory& controlFactory)
     : ImageBufferBackend(parameters)
     , m_controlFactory(controlFactory)
-    , m_drawingContext(parameters.backendSize)
+    , m_drawingContext(FloatRect { { }, parameters.backendSize })
 {
 }
 

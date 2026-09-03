@@ -37,10 +37,11 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
     WEBCORE_EXPORT RecorderImpl(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);
-    RecorderImpl(FloatSize initialClipSize)
-        : RecorderImpl({ }, { { }, initialClipSize }, { }, DestinationColorSpace::SRGB(), DrawGlyphsMode::Normal)
+    RecorderImpl(const FloatRect& initialClip)
+        : RecorderImpl(GraphicsContextState::initialIndeterminate(), initialClip, { }, DestinationColorSpace::SRGB(), DrawGlyphsMode::Normal)
     {
     }
+
     WEBCORE_EXPORT virtual ~RecorderImpl();
 
     WEBCORE_EXPORT Ref<const DisplayList> takeDisplayList();
