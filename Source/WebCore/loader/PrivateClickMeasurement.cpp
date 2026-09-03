@@ -355,26 +355,26 @@ void PrivateClickMeasurement::setEphemeralSourceNonce(PCM::EphemeralNonce&& nonc
     m_ephemeralSourceNonce = WTF::move(nonce);
 }
 
-const std::optional<const URL> PrivateClickMeasurement::tokenPublicKeyURL(const RegistrableDomain& registrableDomain)
+std::optional<URL> PrivateClickMeasurement::tokenPublicKeyURL(const RegistrableDomain& registrableDomain)
 {
     if (registrableDomain.isEmpty())
         return std::nullopt;
     return makeValidURL(registrableDomain, privateClickMeasurementTokenPublicKeyPath);
 }
 
-const std::optional<const URL> PrivateClickMeasurement::tokenPublicKeyURL() const
+std::optional<URL> PrivateClickMeasurement::tokenPublicKeyURL() const
 {
     return tokenPublicKeyURL(m_sourceSite.registrableDomain);
 }
 
-const std::optional<const URL> PrivateClickMeasurement::tokenSignatureURL(const RegistrableDomain& registrableDomain)
+std::optional<URL> PrivateClickMeasurement::tokenSignatureURL(const RegistrableDomain& registrableDomain)
 {
     if (registrableDomain.isEmpty())
         return std::nullopt;
     return makeValidURL(registrableDomain, privateClickMeasurementTokenSignaturePath);
 }
 
-const std::optional<const URL> PrivateClickMeasurement::tokenSignatureURL() const
+std::optional<URL> PrivateClickMeasurement::tokenSignatureURL() const
 {
     if (!m_ephemeralSourceNonce || !m_ephemeralSourceNonce->isValid())
         return std::nullopt;

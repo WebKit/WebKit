@@ -62,8 +62,8 @@ struct AttributionTriggerData {
         destinationUnlinkableToken->valueBase64URL = value;
     }
     void setDestinationSecretToken(const DestinationSecretToken& token) { destinationSecretToken = token; }
-    WEBCORE_EXPORT const std::optional<const URL> tokenPublicKeyURL() const;
-    WEBCORE_EXPORT const std::optional<const URL> tokenSignatureURL() const;
+    WEBCORE_EXPORT std::optional<URL> tokenPublicKeyURL() const;
+    WEBCORE_EXPORT std::optional<URL> tokenSignatureURL() const;
     WEBCORE_EXPORT Ref<JSON::Object> tokenSignatureJSON() const;
 
     uint8_t data { 0 };

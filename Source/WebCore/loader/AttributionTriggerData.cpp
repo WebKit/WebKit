@@ -30,12 +30,12 @@
 
 namespace WebCore::PCM {
 
-const std::optional<const URL> AttributionTriggerData::tokenPublicKeyURL() const
+std::optional<URL> AttributionTriggerData::tokenPublicKeyURL() const
 {
     return destinationSite ? PrivateClickMeasurement::tokenPublicKeyURL(*destinationSite) : URL();
 }
 
-const std::optional<const URL> AttributionTriggerData::tokenSignatureURL() const
+std::optional<URL> AttributionTriggerData::tokenSignatureURL() const
 {
     return destinationSite ? PrivateClickMeasurement::tokenSignatureURL(*destinationSite) : URL();
 }
