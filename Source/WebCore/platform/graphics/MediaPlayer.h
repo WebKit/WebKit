@@ -774,6 +774,7 @@ public:
     void audioOutputDeviceChanged();
 
     std::optional<MediaPlayerIdentifier> identifier() const;
+    bool isHostedInGPUProcess() const;
     bool hasMediaEngine() const;
 
     std::optional<VideoFrameMetadata> videoFrameMetadata();

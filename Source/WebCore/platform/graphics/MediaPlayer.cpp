@@ -2041,6 +2041,11 @@ std::optional<MediaPlayerIdentifier> MediaPlayer::identifier() const
     return protect(m_private)->identifier();
 }
 
+bool MediaPlayer::isHostedInGPUProcess() const
+{
+    return protect(m_private)->mediaPlayerType() == MediaPlayerType::Remote;
+}
+
 std::optional<VideoFrameMetadata> MediaPlayer::videoFrameMetadata()
 {
     return protect(m_private)->videoFrameMetadata();

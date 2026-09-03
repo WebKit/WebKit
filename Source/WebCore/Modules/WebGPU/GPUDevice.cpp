@@ -506,7 +506,6 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
     if (RefPtr externalTexture = externalTextureForDescriptor(externalTextureDescriptor)) {
-        externalTexture->undestroy();
 #if ENABLE(WEB_CODECS)
         Ref videoElementRef = std::get<Ref<HTMLVideoElement>>(externalTextureDescriptor.source);
 #else
@@ -515,8 +514,9 @@ ExceptionOr<Ref<GPUExternalTexture>> GPUDevice::importExternalTexture(GPUExterna
         if (auto exception = checkVideoElementOriginTaint(videoElementRef))
             return WTF::move(*exception);
 
-        m_videoElementToExternalTextureMap.remove(videoElementRef);
         if (auto optionalMediaIdentifier = externalTextureDescriptor.mediaIdentifier()) {
+            externalTexture->undestroy();
+            m_videoElementToExternalTextureMap.remove(videoElementRef);
             m_backing->updateExternalTexture(externalTexture->backing(), *optionalMediaIdentifier);
             return externalTexture.releaseNonNull();
         }

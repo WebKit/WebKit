@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: PASS: the video element's frame was sampled through the external texture
+This test passes if it prints PASS: a video element whose media player runs in the web process must still deliver its frame to an imported external texture.

@@ -53,11 +53,15 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 #if ENABLE(WEB_CODECS)
         return WTF::switchOn(videoSource,
             [&](const Ref<HTMLVideoElement>& videoElement) -> WebGPU::VideoSourceIdentifier {
-                if (auto playerIdentifier = videoElement->playerIdentifier())
-                    return playerIdentifier;
+                RefPtr player = videoElement->player();
+                // Player needs to run in the GPU process to use the accelerated path
+                if (player && player->isHostedInGPUProcess()) {
+                    if (auto playerIdentifier = videoElement->playerIdentifier())
+                        return playerIdentifier;
+                }
                 RefPtr<WebCore::VideoFrame> result;
-                if (videoElement->player())
-                    result = protect(videoElement->player())->videoFrameForCurrentTime();
+                if (player)
+                    result = player->videoFrameForCurrentTime();
                 return result;
             },
             [&](const Ref<WebCodecsVideoFrame>& videoFrame) -> WebGPU::VideoSourceIdentifier {
@@ -74,6 +78,9 @@ struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
 #if ENABLE(WEB_CODECS)
         return WTF::switchOn(source,
             [&](const Ref<HTMLVideoElement>& videoElement) -> std::optional<WebCore::MediaPlayerIdentifier> {
+                RefPtr player = videoElement->player();
+                if (!player || !player->isHostedInGPUProcess())
+                    return std::nullopt;
                 return videoElement->playerIdentifier();
             },
             [&](const Ref<WebCodecsVideoFrame>&) -> std::optional<WebCore::MediaPlayerIdentifier> {
