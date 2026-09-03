@@ -133,6 +133,7 @@ private:
     void removeFromParent();
     bool isVisible() const;
     bool isLeafOf3DRenderingContext() const { return !m_preserves3D && (m_parent && m_parent->m_preserves3D); }
+    bool isPartOf3DRenderingContext() const { return m_preserves3D || isLeafOf3DRenderingContext(); }
     bool isReplica() const { return !!m_replicatedLayer; }
     // Contents are painted into m_contentsRect, which the layer bounds do not have to contain.
     bool paintsContentsRect() const { return m_contentsBuffer || m_imageBackingStore || (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()); }
