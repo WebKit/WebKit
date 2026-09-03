@@ -1846,6 +1846,11 @@ private:
                 break;
             }
             case ValueRep::LateRegister:
+                // A LateRegister input becomes an Arg::LateUse, whose live range covers both the
+                // early and the late point, so it interferes with either clobber set. Register
+                // becomes an early Arg::Use, which only reaches the early one.
+                stackmap->lateClobbered().remove(value.rep().reg());
+                [[fallthrough]];
             case ValueRep::Register: {
                 stackmap->earlyClobbered().remove(value.rep().reg());
                 Tmp dstTmp = Tmp(value.rep().reg());

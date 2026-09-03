@@ -5678,8 +5678,8 @@ private:
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(base);
         patchpoint->appendSomeRegister(value);
-        patchpoint->append(m_notCellMask, ValueRep::reg(GPRInfo::notCellMaskRegister));
-        patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
+        patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
+        patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
         patchpoint->clobber(RegisterSet::macroClobberedGPRs());
         patchpoint->numGPScratchRegisters = Options::useHandlerICInFTL() ? 3 : 0;
 

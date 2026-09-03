@@ -119,6 +119,8 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
     if (argIndex <= returnCount) {
         switch (inst.origin->as<PatchpointValue>()->resultConstraints[argIndex - 1].kind()) {
         case ValueRep::WarmAny:
+        case ValueRep::ColdAny:
+        case ValueRep::LateColdAny:
         case ValueRep::StackArgument:
             return true;
         case ValueRep::SomeRegister:
