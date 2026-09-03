@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("This test validates the refactored processEndTag() function for optgroup elements in HTMLTreeBuilder.cpp. The parser should directly pop elements from the stack instead of calling processFakeEndTag().");
+
+function runTests() {
+    debug('Test 1: Optgroup with unclosed option element');
+    select1 = document.getElementById('select1');
+    optgroups1 = select1.querySelectorAll('optgroup');
+    options1 = select1.querySelectorAll('option');
+
+    shouldBe('optgroups1.length', '2');
+    shouldBe('options1.length', '3');
+
+    // Verify proper nesting
+    group1Options = optgroups1[0].querySelectorAll('option');
+    group2Options = optgroups1[1].querySelectorAll('option');
+    shouldBe('group1Options.length', '2');
+    shouldBe('group2Options.length', '1');
+
+    // Verify all options are children of optgroups
+    allOptionsParented = Array.from(options1).every(opt => opt.parentElement.tagName === 'OPTGROUP');
+    shouldBeTrue('allOptionsParented');
+
+    debug('');
+
+    debug('Test 2: Multiple optgroups with auto-closed options');
+    select2 = document.getElementById('select2');
+    optgroups2 = select2.querySelectorAll('optgroup');
+    options2 = select2.querySelectorAll('option');
+
+    shouldBe('optgroups2.length', '3');
+    shouldBe('options2.length', '5');
+
+    // Verify no orphaned options
+    directOptions = Array.from(select2.children).filter(c => c.tagName === 'OPTION');
+    shouldBe('directOptions.length', '0');
+
+    debug('');
+
+    debug('Test 3: Unclosed optgroups (parser generates implied end tags)');
+    select3 = document.getElementById('select3');
+    optgroups3 = select3.querySelectorAll('optgroup');
+
+    // Check for improper nesting (optgroups should not be nested)
+    hasNestedOptgroups = Array.from(optgroups3).some(grp => grp.querySelectorAll('optgroup').length > 0);
+    shouldBeFalse('hasNestedOptgroups');
+    shouldBe('optgroups3.length', '2');
+
+    debug('');
+    debug('Tests exercise processEndTag() for optgroup which calls:');
+    debug('  m_tree.openElements().pop() when option is inside optgroup');
+    debug('  Direct stack manipulation instead of processFakeEndTag()');
+}
+</script>
+</head>
+<body onload="runTests()">
+
+<!-- Test 1: Optgroup with unclosed option -->
+<select id="select1">
+    <optgroup label="Group 1">
+        <option>Option 1</option>
+        <option>Option 2
+    </optgroup>
+    <optgroup label="Group 2">
+        <option>Option 3</option>
+    </optgroup>
+</select>
+
+<!-- Test 2: Multiple optgroups with unclosed options -->
+<select id="select2">
+    <optgroup label="Fruits">
+        <option>Apple</option>
+        <option>Banana
+    </optgroup>
+    <optgroup label="Vegetables">
+        <option>Carrot</option>
+        <option>Lettuce
+    </optgroup>
+    <optgroup label="Grains">
+        <option>Rice</option>
+    </optgroup>
+</select>
+
+<!-- Test 3: Unclosed optgroups -->
+<select id="select3">
+    <optgroup label="Category A">
+        <option>Item A1
+        <option>Item A2
+    <optgroup label="Category B">
+        <option>Item B1
+</select>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

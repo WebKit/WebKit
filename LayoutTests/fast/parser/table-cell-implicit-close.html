@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("This test validates the refactored closeTheCell() function in HTMLTreeBuilder.cpp. The parser should implicitly close TD/TH cells when encountering new table rows.");
+
+function runTests() {
+    debug('Test 1: TD cell implicit closure when encountering new TR');
+    container1 = document.getElementById('container1');
+    table1 = container1.querySelector('table');
+    rows1 = table1.querySelectorAll('tr');
+    cells1 = table1.querySelectorAll('td');
+
+    shouldBe('rows1.length', '2');
+
+    // Verify rows are siblings, not nested
+    firstCell = rows1[0].querySelector('td');
+    nestedRows = firstCell.querySelectorAll('tr');
+    shouldBe('nestedRows.length', '0');
+
+    debug('');
+
+    debug('Test 2: TH cell implicit closure');
+    container2 = document.getElementById('container2');
+    table2 = container2.querySelector('table');
+    rows2 = table2.querySelectorAll('tr');
+    thCells = table2.querySelectorAll('th');
+    tdCells = table2.querySelectorAll('td');
+
+    shouldBe('rows2.length', '2');
+    shouldBe('thCells.length', '2');
+    shouldBe('tdCells.length', '2');
+
+    // Verify TH cells are only in first row
+    firstRowCellTypes = Array.from(rows2[0].children).every(c => c.tagName === 'TH');
+    secondRowCellTypes = Array.from(rows2[1].children).every(c => c.tagName === 'TD');
+    shouldBeTrue('firstRowCellTypes');
+    shouldBeTrue('secondRowCellTypes');
+
+    debug('');
+
+    debug('Test 3: Nested table with proper cell closure');
+    container3 = document.getElementById('container3');
+    outerTable = container3.querySelector('table');
+    innerTable = outerTable.querySelector('table');
+    allCells = container3.querySelectorAll('td');
+    outerCells = Array.from(outerTable.querySelectorAll(':scope > tbody > tr > td'));
+
+    shouldBe('allCells.length', '3');
+    shouldBeTrue('innerTable && outerCells[0] && outerCells[0].contains(innerTable)');
+
+    debug('');
+    debug('All tests exercise closeTheCell() which calls:');
+    debug('  m_tree.generateImpliedEndTags()');
+    debug('  m_tree.openElements().popUntilPopped()');
+    debug('  m_tree.activeFormattingElements().clearToLastMarker()');
+}
+</script>
+</head>
+<body onload="runTests()">
+
+<!-- Test 1: Unclosed TD followed by new TR -->
+<div id="container1">
+<table>
+    <tr>
+        <td>Cell 1
+        <tr><td>Cell 2 - Forces closeTheCell()</td></tr>
+    </tr>
+</table>
+</div>
+
+<!-- Test 2: Unclosed TH cells -->
+<div id="container2">
+<table>
+    <tr>
+        <th>Header 1
+        <th>Header 2
+    </tr>
+    <tr>
+        <td>Data 1</td>
+        <td>Data 2</td>
+    </tr>
+</table>
+</div>
+
+<!-- Test 3: Nested table -->
+<div id="container3">
+<table>
+    <tbody>
+        <tr>
+            <td>Outer Cell
+                <table>
+                    <tr><td>Inner Cell</td></tr>
+                </table>
+            </td>
+            <td>Another Cell</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

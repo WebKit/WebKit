@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+// Generate HTML with many table cells that require implicit closing
+function generateTableHTML(rows, cellsPerRow) {
+    var html = '<table>';
+    for (var i = 0; i < rows; i++) {
+        html += '<tr>';
+        for (var j = 0; j < cellsPerRow; j++) {
+            // Unclosed TD - forces parser to call closeTheCell() when encountering next TR
+            html += '<td>Cell ' + (i * cellsPerRow + j);
+        }
+        // No closing tags - parser must implicitly close cells
+    }
+    html += '</table>';
+    return html;
+}
+
+// Generate HTML with TH cells that need implicit closing
+function generateTableWithHeaders(rows) {
+    var html = '<table><tr>';
+    // Multiple unclosed TH cells
+    for (var i = 0; i < 10; i++) {
+        html += '<th>Header ' + i;
+    }
+    html += '</tr>';
+
+    for (var i = 0; i < rows; i++) {
+        html += '<tr>';
+        for (var j = 0; j < 10; j++) {
+            html += '<td>Data ' + (i * 10 + j);
+        }
+    }
+    html += '</table>';
+    return html;
+}
+
+// Generate nested tables with cell closure
+function generateNestedTables(depth, width) {
+    if (depth === 0) {
+        return '<td>Leaf cell</td>';
+    }
+
+    var html = '<table><tr>';
+    for (var i = 0; i < width; i++) {
+        html += '<td>Outer ' + i + '<table><tr>' + generateNestedTables(depth - 1, width) + '</tr></table></td>';
+    }
+    html += '</tr></table>';
+    return html;
+}
+
+var div = document.createElement("div");
+document.body.appendChild(div);
+
+// Test 1: Many unclosed TD cells (exercises closeTheCell() heavily)
+var tableHTML = generateTableHTML(100, 20); // 100 rows * 20 cells = 2000 cell closures
+
+// Test 2: Headers with unclosed TH cells
+var headerTableHTML = generateTableWithHeaders(50); // 10 TH + 500 TD
+
+// Test 3: Nested tables
+var nestedTableHTML = generateNestedTables(3, 5);
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark tests HTML table cell parsing performance when cells require implicit closing (closeTheCell()). Tests the refactored code path that uses direct stack operations.",
+    run: function() {
+        // Test unclosed TD cells
+        div.innerHTML = tableHTML;
+        div.innerHTML = "";
+
+        // Test unclosed TH cells
+        div.innerHTML = headerTableHTML;
+        div.innerHTML = "";
+
+        // Test nested tables with cell closure
+        div.innerHTML = nestedTableHTML;
+        div.innerHTML = "";
+    }
+});
+</script>
+</body>
+</html>

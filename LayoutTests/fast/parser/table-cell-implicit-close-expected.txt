@@ -1,0 +1,34 @@
+This test validates the refactored closeTheCell() function in HTMLTreeBuilder.cpp. The parser should implicitly close TD/TH cells when encountering new table rows.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test 1: TD cell implicit closure when encountering new TR
+PASS rows1.length is 2
+PASS nestedRows.length is 0
+
+Test 2: TH cell implicit closure
+PASS rows2.length is 2
+PASS thCells.length is 2
+PASS tdCells.length is 2
+PASS firstRowCellTypes is true
+PASS secondRowCellTypes is true
+
+Test 3: Nested table with proper cell closure
+PASS allCells.length is 3
+PASS innerTable && outerCells[0] && outerCells[0].contains(innerTable) is true
+
+All tests exercise closeTheCell() which calls:
+  m_tree.generateImpliedEndTags()
+  m_tree.openElements().popUntilPopped()
+  m_tree.activeFormattingElements().clearToLastMarker()
+Cell 1
+Cell 2 - Forces closeTheCell()
+Header 1	Header 2
+Data 1	Data 2
+Outer Cell
+Inner Cell
+Another Cell

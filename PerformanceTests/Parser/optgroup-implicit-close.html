@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+// Generate select with many optgroups and unclosed options
+function generateSelectHTML(numGroups, optionsPerGroup) {
+    var html = '<select>';
+    for (var i = 0; i < numGroups; i++) {
+        html += '<optgroup label="Group ' + i + '">';
+        for (var j = 0; j < optionsPerGroup; j++) {
+            // Unclosed option - forces parser to call pop() when encountering next optgroup
+            html += '<option>Option ' + (i * optionsPerGroup + j);
+        }
+        // No closing tags - parser must implicitly close options and optgroup
+    }
+    html += '</select>';
+    return html;
+}
+
+// Generate select with mixed closed and unclosed options
+function generateMixedSelectHTML(numGroups) {
+    var html = '<select>';
+    for (var i = 0; i < numGroups; i++) {
+        html += '<optgroup label="Category ' + i + '">';
+        html += '<option>Item 1';  // Unclosed
+        html += '<option>Item 2</option>';  // Closed
+        html += '<option>Item 3';  // Unclosed
+        html += '<option>Item 4';  // Unclosed
+        // Unclosed optgroup - parser auto-closes
+    }
+    html += '</select>';
+    return html;
+}
+
+// Generate deeply nested structure with multiple selects
+function generateMultipleSelects(count) {
+    var html = '';
+    for (var i = 0; i < count; i++) {
+        html += '<select>';
+        html += '<optgroup label="A">';
+        html += '<option>A1<option>A2';
+        html += '<optgroup label="B">';
+        html += '<option>B1<option>B2<option>B3';
+        html += '</select>';
+    }
+    return html;
+}
+
+var div = document.createElement("div");
+document.body.appendChild(div);
+
+// Test 1: Many unclosed options (exercises processEndTag() for optgroup heavily)
+var selectHTML = generateSelectHTML(50, 20); // 50 groups * 20 options = 1000 option closures
+
+// Test 2: Mixed closed/unclosed options
+var mixedHTML = generateMixedSelectHTML(100); // 100 groups * 4 options each
+
+// Test 3: Multiple select elements
+var multipleSelectsHTML = generateMultipleSelects(30); // 30 selects * 2 optgroups * options
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark tests HTML optgroup/option parsing performance when elements require implicit closing (processEndTag()). Tests the refactored code path that uses direct stack operations instead of processFakeEndTag().",
+    run: function() {
+        // Test many unclosed options in optgroups
+        div.innerHTML = selectHTML;
+        div.innerHTML = "";
+
+        // Test mixed closed/unclosed options
+        div.innerHTML = mixedHTML;
+        div.innerHTML = "";
+
+        // Test multiple select elements
+        div.innerHTML = multipleSelectsHTML;
+        div.innerHTML = "";
+    }
+});
+</script>
+</body>
+</html>
