@@ -1560,6 +1560,14 @@ AXTextRuns AccessibilityRenderObject::textRuns()
             return { };
     }
 
+    for (CheckedPtr ancestor = renderText->parent(); ancestor && !ancestor->element(); ancestor = ancestor->parent()) {
+        // A marker that needs renderers for its content (a synthesized glyph, bidi text, or a `content`
+        // value) puts them in an anonymous inline-block inside the RenderListMarker, and that anonymous
+        // style carries no pseudo type for the ::marker case above to catch. We do so here instead.
+        if (ancestor->isRenderListMarker())
+            return { };
+    }
+
     // FIXME: Need to handle PseudoElementType::FirstLetter. Right now, it will be chopped off from the other
     // other text in the line, and AccessibilityRenderObject::computeIsIgnored ignores the
     // first-letter RenderText, meaning we can't recover it later by combining text across AX objects.
