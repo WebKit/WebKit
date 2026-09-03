@@ -245,6 +245,7 @@ Ref<DocumentParser> ImageDocument::createParser()
 void ImageDocument::createDocumentStructure()
 {
     Ref rootElement = HTMLHtmlElement::create(*this);
+    rootElement->setAttribute(styleAttr, "color-scheme: light dark"_s);
     appendChild(rootElement);
     rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::Percentage);
 
