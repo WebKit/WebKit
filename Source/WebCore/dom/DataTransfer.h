@@ -117,6 +117,10 @@ public:
     void didAddFileToItemList();
     void updateFileList(ScriptExecutionContext*);
 
+    bool typesCacheIsValid() const { return m_typesCacheIsValid; }
+    void didCacheTypes() { m_typesCacheIsValid = true; }
+    void incrementTypesVersion() { ++m_typesVersion; m_typesCacheIsValid = false; }
+
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
     DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, String&& effectAllowed = "uninitialized"_s);
@@ -152,6 +156,8 @@ private:
     const std::unique_ptr<DataTransferItemList> m_itemList;
 
     mutable RefPtr<FileList> m_fileList;
+    uint64_t m_typesVersion { 0 };
+    bool m_typesCacheIsValid { false };
 
 #if ENABLE(DRAG_SUPPORT)
     Type m_type;

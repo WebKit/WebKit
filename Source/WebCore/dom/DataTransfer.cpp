@@ -176,12 +176,34 @@ void DataTransfer::clearData(const String& type)
         return;
 
     String normalizedType = normalizeType(type);
+    // Track whether the item list actually changes so we can conditionally
+    // increment the types version and invalidate any cached FrozenArray.
+    bool itemListChanged = false;
+    if (m_itemList) {
+        auto& items = m_itemList->items();
+        if (normalizedType.isNull())
+            itemListChanged = !items.isEmpty();
+        else
+            itemListChanged = items.containsIf([&](auto& item) {
+                return !item->isFile() && item->type() == normalizedType;
+            });
+    } else {
+        // Item list not yet constructed; check the pasteboard directly.
+        if (normalizedType.isNull())
+            itemListChanged = !m_pasteboard->typesSafeForBindings(m_originIdentifier).isEmpty();
+        else
+            itemListChanged = m_pasteboard->typesSafeForBindings(m_originIdentifier).contains(normalizedType);
+    }
+
     if (normalizedType.isNull())
         m_pasteboard->clear();
     else
         m_pasteboard->clear(normalizedType);
     if (m_itemList)
         m_itemList->didClearStringData(normalizedType);
+
+    if (itemListChanged)
+        incrementTypesVersion();
 }
 
 static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard, Function<bool(const String&)>&& shouldIncludeURL)
@@ -297,6 +319,7 @@ void DataTransfer::setData(Document& document, const String& type, const String&
     setDataFromItemList(document, normalizedType, data);
     if (m_itemList)
         m_itemList->didSetStringData(normalizedType);
+    incrementTypesVersion();
 }
 
 void DataTransfer::setDataFromItemList(Document& document, const String& type, const String& data)
@@ -388,21 +411,22 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
     auto fileContentState = m_pasteboard->fileContentState();
     if (hasFileBackedItem || fileContentState != Pasteboard::FileContentState::NoFileOrImageData) {
         Vector<String> types;
+
+        if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths)
+            types.appendVector(WTF::move(safeTypes));
+        else {
+            if (safeTypes.contains("text/uri-list"_s))
+                types.append("text/uri-list"_s);
+            if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
+                types.append(textHTMLContentTypeAtom());
+        }
+
         if (!hideFilesType && addFilesType == AddFilesType::Yes) {
             types.append("Files"_s);
             if (document.quirks().needsMozillaFileTypeForDataTransfer())
                 types.append("application/x-moz-file"_s);
         }
 
-        if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths) {
-            types.appendVector(WTF::move(safeTypes));
-            return types;
-        }
-
-        if (safeTypes.contains("text/uri-list"_s))
-            types.append("text/uri-list"_s);
-        if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
-            types.append(textHTMLContentTypeAtom());
         return types;
     }
 

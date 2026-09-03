@@ -93,6 +93,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(Document& docume
     dataTransfer->setDataFromItemList(document, lowercasedType, data);
     ASSERT(m_items);
     m_items->append(DataTransferItem::create(*this, lowercasedType, DataTransferItem::Kind::String));
+    dataTransfer->incrementTypesVersion();
     return m_items->last().ptr();
 }
 
@@ -104,6 +105,7 @@ RefPtr<DataTransferItem> DataTransferItemList::add(Ref<File>&& file)
 
     ensureItems().append(DataTransferItem::create(*this, file->type(), file.copyRef()));
     dataTransfer->didAddFileToItemList();
+    dataTransfer->incrementTypesVersion();
     return m_items->last().ptr();
 }
 
@@ -126,12 +128,16 @@ ExceptionOr<void> DataTransferItemList::remove(unsigned index)
     if (removedItem->isFile())
         dataTransfer->updateFileList(protect(scriptExecutionContext()).get());
 
+    dataTransfer->incrementTypesVersion();
     return { };
 }
 
 void DataTransferItemList::clear()
 {
     Ref dataTransfer = m_dataTransfer.get();
+    // Populate m_items before clearing so we can correctly detect whether there
+    // were any items (including string items backed only by the pasteboard).
+    bool hadItems = !ensureItems().isEmpty();
     dataTransfer->pasteboard().clear();
     bool removedItemContainingFile = false;
     if (m_items) {
@@ -144,6 +150,9 @@ void DataTransferItemList::clear()
 
     if (removedItemContainingFile)
         dataTransfer->updateFileList(protect(scriptExecutionContext()).get());
+
+    if (hadItems)
+        dataTransfer->incrementTypesVersion();
 }
 
 Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const

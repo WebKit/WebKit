@@ -784,6 +784,7 @@ bindings/js/JSDOMWindowProperties.cpp
 bindings/js/JSDOMWrapper.cpp
 bindings/js/JSDOMWrapperCache.cpp
 bindings/js/JSDeprecatedCSSOMValueCustom.cpp
+bindings/js/JSDataTransferCustom.cpp
 bindings/js/JSDocumentCustom.cpp
 bindings/js/JSElementCustom.cpp
 bindings/js/JSElementInternalsCustom.cpp
