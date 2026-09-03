@@ -145,6 +145,10 @@ bool GraphicsContextGLANGLE::makeContextCurrent()
 
 void GraphicsContextGLANGLE::checkGPUStatus()
 {
+    if (m_failNextStatusCheck) {
+        m_failNextStatusCheck = false;
+        forceContextLost();
+    }
 }
 
 void GraphicsContextGLANGLE::platformReleaseThreadResources()
