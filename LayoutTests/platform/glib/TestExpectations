@@ -5321,6 +5321,9 @@ webkit.org/b/323003 [ Release ] imported/w3c/web-platform-tests/webrtc-stats/har
 webkit.org/b/323003 [ Release ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-connectionState.https.html [ Crash Pass ]
 webkit.org/b/314218 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-enter-seeking.html [ Failure Pass ]
 
+webkit.org/b/323308 http/tests/web-locks/web-lock-in-third-party-serviceworker.html [ Failure Pass ]
+webkit.org/b/323309 ipc/getpixelbuffer-layerbacking-heap-disclosure.html [ Pass Timeout ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
