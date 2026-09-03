@@ -34,6 +34,7 @@
 #include "JITCode.h"
 #include "Options.h"
 #include "PerfLog.h"
+#include "SourceCodeDumpUtils.h"
 #include "WasmCallee.h"
 #include "YarrJIT.h"
 #include <wtf/ScopedPrintStream.h>
@@ -88,42 +89,48 @@ void LinkBuffer::logJITCodeForJITDump(CodeRef<LinkBufferPtrTag>& codeRef, ASCIIL
             out.print(simpleName);
     };
 
-    StringPrintStream out;
-    out.print("JSC-", profileName(m_profile), ": ");
+    CString finalName;
     switch (m_profile) {
     case Profile::Baseline:
     case Profile::DFG:
     case Profile::FTL: {
-        if (m_ownerUID)
-            static_cast<CodeBlock*>(m_ownerUID)->dumpSimpleName(out);
-        else
-            dumpSimpleName(out, simpleName);
-        break;
+        if (m_ownerUID) {
+            finalName = functionNameForJITDump(m_profile, static_cast<CodeBlock*>(m_ownerUID));
+            break;
+        }
+        [[fallthrough]];
     }
+    default: {
+        StringPrintStream out;
+        out.print("JSC-", profileName(m_profile), ": ");
+        switch (m_profile) {
 #if ENABLE(WEBASSEMBLY)
-    case Profile::WasmOMG:
-    case Profile::WasmBBQ: {
-        if (m_ownerUID)
-            uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->dumpSimpleName(out);
-        else
-            dumpSimpleName(out, simpleName);
-        break;
-    }
+        case Profile::WasmOMG:
+        case Profile::WasmBBQ: {
+            if (m_ownerUID)
+                uncheckedDowncast<Wasm::Callee>(reinterpret_cast<NativeCallee*>(m_ownerUID))->dumpSimpleName(out);
+            else
+                dumpSimpleName(out, simpleName);
+            break;
+        }
 #endif
 #if ENABLE(YARR_JIT)
-    case Profile::YarrJIT: {
-        if (m_ownerUID)
-            static_cast<Yarr::YarrCodeBlock*>(m_ownerUID)->dumpSimpleName(out);
-        else
-            dumpSimpleName(out, simpleName);
-        break;
-    }
+        case Profile::YarrJIT: {
+            if (m_ownerUID)
+                static_cast<Yarr::YarrCodeBlock*>(m_ownerUID)->dumpSimpleName(out);
+            else
+                dumpSimpleName(out, simpleName);
+            break;
+        }
 #endif
-    default:
-        dumpSimpleName(out, simpleName);
+        default:
+            dumpSimpleName(out, simpleName);
+            break;
+        }
+        finalName = out.toCString();
         break;
     }
-    auto finalName = out.toCString();
+    }
 
     if (Options::useGdbJITInfo()) [[unlikely]]
         GdbJIT::log(finalName, codeRef);
