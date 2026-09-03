@@ -37,6 +37,8 @@
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/MediaSessionManagerIOS.h>
@@ -160,7 +162,7 @@ private:
     HashSet<WebCore::PageIdentifier> m_remoteSessionManagerPages;
 
 #if PLATFORM(COCOA)
-    RefPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;
+    ThreadSafeWeakPtr<RemoteMediaSessionManagerAudioHardwareListener> m_audioHardwareListenerProxy;
 #endif
 
 #if USE(AUDIO_SESSION)
