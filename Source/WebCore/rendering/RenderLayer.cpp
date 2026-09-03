@@ -5426,6 +5426,17 @@ LayoutRect RenderLayer::clipRectRelativeToAncestor(const RenderLayer* ancestor, 
         options.add(ClipRectsOption::Temporary);
     ClipRectsContext clipRectsContext(ancestor, PaintingClipRects, options);
     auto backgroundRect = calculateBackgroundRect(clipRectsContext, offsetFromAncestor);
+
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(renderer())) {
+        auto& style = box->style();
+        bool hasSingleAxisOverflowClip = (style.overflowX() == Overflow::Clip && style.overflowY() == Overflow::Visible)
+            || (style.overflowY() == Overflow::Clip && style.overflowX() == Overflow::Visible);
+        if (hasSingleAxisOverflowClip) {
+            auto foregroundRect = calculateForegroundRect(clipRectsContext, offsetFromAncestor);
+            return intersection(unionRect(backgroundRect.rect(), foregroundRect.rect()), constrainingRect);
+        }
+    }
+
     return intersection(backgroundRect.rect(), constrainingRect);
 }
 
