@@ -214,15 +214,6 @@ struct TextRunWithUnderlyingString {
     operator const TextRun&() const { return textRun; }
 };
 
-static FontCascade disclosureMarkerFontCascade(const Style::ComputedStyle& style, Document& document)
-{
-    auto fontDescription = FontCascadeDescription { style.fontDescription() };
-    fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
-    auto fontCascade = FontCascade(WTF::move(fontDescription));
-    fontCascade.update(&document.fontSelector());
-    return fontCascade;
-}
-
 static auto textRunForContent(ListMarkerTextContent textContent, const Style::ComputedStyle& style) -> TextRunWithUnderlyingString
 {
     ASSERT(!textContent.isEmpty());
@@ -230,14 +221,6 @@ static auto textRunForContent(ListMarkerTextContent textContent, const Style::Co
     auto textForRun = textContent.textWithSuffix;
     auto textRun = RenderBlock::constructTextRun(textForRun, style);
     return { WTF::move(textRun), WTF::move(textForRun) };
-}
-
-void RenderListMarker::paintDisclosureMarker(GraphicsContext& context, const FloatRect& markerRect)
-{
-    auto systemUIFontCascade = disclosureMarkerFontCascade(style(), protect(document()));
-    auto textOrigin = FloatPoint { markerRect.x(), markerRect.y() + systemUIFontCascade.metricsOfPrimaryFont().ascent() };
-    textOrigin = roundPointToDevicePixels(LayoutPoint(textOrigin), protect(document())->deviceScaleFactor(), writingMode().isLogicalLeftInlineStart());
-    context.drawText(systemUIFontCascade, textRunForContent(m_textContent, style()), textOrigin);
 }
 
 void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -322,11 +305,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         context.translate(markerRect.x(), markerRect.maxY());
         context.rotate(static_cast<float>(deg2rad(90.)));
         context.translate(-markerRect.x(), -markerRect.maxY());
-    }
-
-    if (isDisclosureMarker()) {
-        paintDisclosureMarker(context, markerRect);
-        return;
     }
 
     if (writingMode().isHorizontal()) {
@@ -540,12 +518,7 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
 
     ASSERT(!hasContentProperty());
 
-    std::optional<FontCascade> systemUIFontCascade;
-    // Use system-ui font for disclosure triangles
-    if (isDisclosureMarker())
-        systemUIFontCascade = disclosureMarkerFontCascade(style(), protect(document()));
-
-    auto& font = systemUIFontCascade ? *systemUIFontCascade : style().fontCascade();
+    auto& font = style().fontCascade();
 
     LayoutUnit logicalWidth;
     if (!m_textContent.isEmpty())
@@ -658,21 +631,8 @@ FloatRect RenderListMarker::relativeMarkerRect()
     if (m_textContent.isEmpty())
         return { };
 
-    FloatRect relativeRect;
-    if (isDisclosureMarker()) {
-        // Use system-ui font for disclosure triangles
-        auto systemUIFontCascade = disclosureMarkerFontCascade(style(), protect(document()));
-        auto& fontMetrics = style().metricsOfPrimaryFont();
-        auto& systemUIFontMetrics = systemUIFontCascade.metricsOfPrimaryFont();
-        auto width = systemUIFontCascade.width(textRunForContent(m_textContent, style()));
-        auto height = systemUIFontMetrics.height();
-        // Center vertically within the original font metrics
-        auto yOffset = (fontMetrics.height() - height) / 2.0f;
-        relativeRect = { 0.f, yOffset, width, height };
-    } else {
-        auto& font = style().fontCascade();
-        relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), font.metricsOfPrimaryFont().height() };
-    }
+    auto& font = style().fontCascade();
+    auto relativeRect = FloatRect { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), font.metricsOfPrimaryFont().height() };
 
     if (!writingMode().isHorizontal()) {
         relativeRect = relativeRect.transposedRect();

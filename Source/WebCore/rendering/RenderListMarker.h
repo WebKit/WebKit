@@ -131,7 +131,6 @@ private:
 
     FloatRect relativeMarkerRect();
     LayoutRect NODELETE localSelectionRect();
-    void paintDisclosureMarker(GraphicsContext&, const FloatRect& markerRect);
 
     RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
     bool textNeedsBidiResolution() const;

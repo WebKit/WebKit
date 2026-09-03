@@ -26,6 +26,7 @@
 
 #include "ContainerNodeInlines.h"
 #include "CSSFontSelector.h"
+#include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
 #include "HTMLNames.h"
@@ -182,6 +183,15 @@ Style::ComputedStyle RenderListItem::computeMarkerStyle() const
         markerStyle.setTextTransform({ });
         return markerStyle;
     }();
+
+    // A disclosure triangle is drawn from the system font rather than from the one the marker inherited, so that is the
+    // font the marker has: it is what the glyph is measured with too, the way it is for every other marker.
+    if (listMarkerIsDisclosure(markerStyle, protect(document()))) {
+        auto fontDescription = FontCascadeDescription { markerStyle.fontDescription() };
+        fontDescription.setFamilies({ { "system-ui"_s, FontFamilyKind::Generic } });
+        markerStyle.setFontDescription(WTF::move(fontDescription));
+        markerStyle.fontCascade().update(&protect(document())->fontSelector());
+    }
 
     // The marker box is a text-decoration boundary: the originating element's text-decoration must
     // not propagate into the marker's generated contents, matching list-style-type markers which are

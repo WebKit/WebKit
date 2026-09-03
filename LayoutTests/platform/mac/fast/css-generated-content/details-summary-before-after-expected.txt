@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x130
-  RenderBlock {HTML} at (0,0) size 800x130
-    RenderBody {BODY} at (8,8) size 784x114
-      RenderBlock {DETAILS} at (0,0) size 784x114 [border: (1px solid #000000)]
+layer at (0,0) size 800x131
+  RenderBlock {HTML} at (0,0) size 800x132
+    RenderBody {BODY} at (8,8) size 784x116
+      RenderBlock {DETAILS} at (0,0) size 784x116 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x18
           RenderInline (generated) at (0,0) size 41x18
             RenderText at (0,0) size 41x18
               text run at (0,0) width 41: "before"
-        RenderListItem {SUMMARY} at (1,19) size 782x58 [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 780x18
-            RenderListMarker at (0,0) size 17x18: "\x{25BC}"
-            RenderInline (generated) at (16,0) size 42x18
-              RenderText at (16,0) size 42x18
-                text run at (16,0) width 42: "before"
-            RenderText {#text} at (57,0) size 63x18
-              text run at (57,0) width 63: "Summary"
-          RenderBlock {DIV} at (1,19) size 780x20 [border: (1px solid #000000)]
+        RenderListItem {SUMMARY} at (1,19) size 782x60 [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 780x20
+            RenderListMarker at (0,-1) size 17x19: "\x{25BC}"
+            RenderInline (generated) at (16,1) size 42x19
+              RenderText at (16,1) size 42x19
+                text run at (16,1) width 42: "before"
+            RenderText {#text} at (57,1) size 63x19
+              text run at (57,1) width 63: "Summary"
+          RenderBlock {DIV} at (1,20) size 780x21 [border: (1px solid #000000)]
             RenderText {#text} at (1,1) size 62x18
               text run at (1,1) width 62: "Inner Div"
-          RenderBlock (anonymous) at (1,39) size 780x18
+          RenderBlock (anonymous) at (1,40) size 780x19
             RenderInline (generated) at (0,0) size 30x18
               RenderText at (0,0) size 30x18
                 text run at (0,0) width 30: "after"
-        RenderBlock {SLOT} at (1,77) size 782x18
+        RenderBlock {SLOT} at (1,78) size 782x19
           RenderText {#text} at (0,0) size 46x18
             text run at (0,0) width 46: "Details"
-        RenderBlock (anonymous) at (1,95) size 782x18
+        RenderBlock (anonymous) at (1,96) size 782x19
           RenderInline (generated) at (0,0) size 30x18
             RenderText at (0,0) size 30x18
               text run at (0,0) width 30: "after"
