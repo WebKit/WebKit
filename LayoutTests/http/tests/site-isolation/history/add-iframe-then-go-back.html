@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that back navigation restores the correct frame tree even when an iframe was dynamically added before navigating away.");
+jsTestIsAsync = true;
+
+var loadCount = 0;
+var iframeAUrl = "";
+
+onmessage = (event) => {
+    var url = event.data;
+    if (url.includes("id=a"))
+        iframeAUrl = url;
+    loadCount++;
+
+    if (sessionStorage.verifyPhase) {
+        // After back, the page should be restored to the state when we left.
+        // The dynamically added iframe should NOT be present (it was added after the
+        // back/forward list entry was created for iframe A's navigation).
+        // Only iframe A (from the HTML source) should be restored.
+        shouldBeTrue("iframeAUrl.includes('id=a&navigated=true')");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (loadCount === 1) {
+        // Original iframe loaded. Navigate it.
+        document.getElementById("a").src =
+            "http://localhost:8000/site-isolation/history/resources/report-url.html?id=a&navigated=true";
+    } else if (loadCount === 2) {
+        // iframe A navigated. Dynamically add a second iframe.
+        var iframe = document.createElement("iframe");
+        iframe.id = "dynamic";
+        iframe.src = "http://localhost:8000/site-isolation/history/resources/report-url.html?id=dynamic";
+        document.body.appendChild(iframe);
+    } else if (loadCount === 3) {
+        // Dynamic iframe loaded. Navigate main frame away.
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="a" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=a"></iframe>
