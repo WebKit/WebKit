@@ -891,18 +891,32 @@ void LineLayout::preparePlacedFloats()
             return LayoutRect { logicalLeft, logicalTop, logicalWidth, logicalHeight };
         }();
 
-        boxGeometry.setTopLeft(logicalRect.location());
-        boxGeometry.setContentBoxWidth(logicalRect.width());
-        boxGeometry.setContentBoxHeight(logicalRect.height());
+        auto logicalMargin = [&]() -> Layout::BoxGeometry::Edges {
+            auto borderBoxLogicalSize = floatingObject->renderer()->borderBoxSize();
+            if (!isHorizontalWritingMode)
+                borderBoxLogicalSize = borderBoxLogicalSize.transposedSize();
+            auto marginOffset = floatingObject->marginOffset();
+            auto marginBefore = isHorizontalWritingMode ? marginOffset.height() : marginOffset.width();
+            auto marginOnLogicalLeft = isHorizontalWritingMode ? marginOffset.width() : marginOffset.height();
+            auto marginOnLogicalRight = logicalRect.width() - marginOnLogicalLeft - borderBoxLogicalSize.width();
+            if (!placedFloatsIsLeftToRight)
+                std::swap(marginOnLogicalLeft, marginOnLogicalRight);
+            return { { marginOnLogicalLeft, marginOnLogicalRight }, { marginBefore, logicalRect.height() - marginBefore - borderBoxLogicalSize.height() } };
+        }();
+        auto borderBoxLogicalTopLeft = logicalRect.location() + LayoutSize { logicalMargin.horizontal.start, logicalMargin.vertical.before };
+
+        boxGeometry.setTopLeft(borderBoxLogicalTopLeft);
+        boxGeometry.setContentBoxWidth(logicalRect.width() - logicalMargin.width());
+        boxGeometry.setContentBoxHeight(logicalRect.height() - logicalMargin.height());
         boxGeometry.setBorder({ });
         boxGeometry.setPadding({ });
-        boxGeometry.setHorizontalMargin({ });
-        boxGeometry.setVerticalMargin({ });
+        boxGeometry.setHorizontalMargin(logicalMargin.horizontal);
+        boxGeometry.setVerticalMargin(logicalMargin.vertical);
 
         auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
-        placedFloats.add({ logicalPosition, boxGeometry, logicalRect.location(), WTF::move(shape) });
+        placedFloats.add({ logicalPosition, boxGeometry, borderBoxLogicalTopLeft, WTF::move(shape) });
     }
 }
 

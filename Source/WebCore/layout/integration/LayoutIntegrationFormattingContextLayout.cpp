@@ -143,20 +143,24 @@ static inline void populateIFCWithNewlyPlacedFloats(auto& blockRenderer, auto& p
 
         auto floatRect = floatingObject->frameRect();
 
+        auto borderBoxSize = floatingObject->renderer()->borderBoxSize();
+        auto marginOffset = floatingObject->marginOffset();
+        auto borderBoxTopLeft = floatRect.location() + marginOffset;
+
         auto boxGeometry = Layout::BoxGeometry { };
-        boxGeometry.setTopLeft(blockLogicalTopLeft + floatRect.location());
-        boxGeometry.setContentBoxWidth(floatRect.width());
-        boxGeometry.setContentBoxHeight(floatRect.height());
+        boxGeometry.setTopLeft(blockLogicalTopLeft + borderBoxTopLeft);
+        boxGeometry.setContentBoxWidth(borderBoxSize.width());
+        boxGeometry.setContentBoxHeight(borderBoxSize.height());
         boxGeometry.setBorder({ });
         boxGeometry.setPadding({ });
-        boxGeometry.setHorizontalMargin({ });
-        boxGeometry.setVerticalMargin({ });
+        boxGeometry.setHorizontalMargin({ marginOffset.width(), floatRect.width() - marginOffset.width() - borderBoxSize.width() });
+        boxGeometry.setVerticalMargin({ marginOffset.height(), floatRect.height() - marginOffset.height() - borderBoxSize.height() });
 
         auto shapeOutsideInfo = floatingObject->renderer()->shapeOutsideInfo();
         RefPtr shape = shapeOutsideInfo ? &shapeOutsideInfo->computedShape() : nullptr;
 
         auto usedPosition = Style::ComputedStyle::usedFloat(*floatingObject->renderer()) == UsedFloat::Left ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
-        placedFloats.add({ usedPosition, boxGeometry, floatRect.location(), WTF::move(shape) });
+        placedFloats.add({ usedPosition, boxGeometry, borderBoxTopLeft, WTF::move(shape) });
     }
 }
 
