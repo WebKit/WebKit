@@ -314,6 +314,9 @@ sub main() {
         } elsif ($line =~ /^(Setting fixed entry values for )(\S+)/) {
             my ($file) = basename($2);
             printLine("$1 $file", $target, $project, STYLE_PLAIN);
+        } elsif ($line =~ /^xcrun clang -x (\S+) -target \S+ -std=(\S+) .*-Wsystem-headers-in-module=(\S+)/) {
+            my ($lang, $std, $module) = ($1, $2, $3);
+            printLine("VerifyModule $module ($lang, $std)", $target, $project, STYLE_PLAIN);
         } else {
             # This only gets hit if stderr is redirected to stdout.
             if (($line =~ /\*\* BUILD FAILED \*\*/) || ($line =~ /^Build FAILED./)) {
@@ -572,6 +575,13 @@ sub shouldIgnoreLine($$)
 
     # FIXME: rdar://106775772
     return 1 if $line =~ /DVTAssertions/;
+
+    # Strip module verifier noise, get the useful info from xcrun clang lines instead.
+    return 1 if $line =~ /^Verifying clang module /;
+    return 1 if $line =~ /^validation skipped$/;
+    return 1 if $line =~ /^Generating inputs for module verifier/;
+    return 1 if $line =~ /^Generated inputs for module verifier/;
+    return 1 if $line =~ /^Verified module!$/;
 
     return 0;
 }
