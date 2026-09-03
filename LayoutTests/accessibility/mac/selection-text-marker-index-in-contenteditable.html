@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div contenteditable id="editor"></div>
+
+<script>
+output = "This test verifies that selection text marker indices are correctly reported via AXSelectedTextChanged notifications on a contenteditable element.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    function retrieveSelectionInfo(editor) {
+        selectionRange = editor.selectedTextMarkerRange();
+        startMarker = editor.startTextMarkerForTextMarkerRange(selectionRange);
+        target = editor.accessibilityElementForTextMarker(startMarker);
+        markerIndex = target.indexForTextMarker(startMarker);
+        output += `target: ${target.role}, marker index: ${markerIndex}\n`;
+    }
+
+    notificationReceived = false;
+    accessibilityController.addNotificationListener((element, notification) => {
+        if (notification === "AXSelectedTextChanged")
+            notificationReceived = true;
+    });
+
+    setTimeout(async () => {
+        editor = accessibilityController.accessibleElementById("editor");
+        editorElement = document.getElementById("editor");
+
+        // Case 1: Empty contenteditable.
+        editorElement.focus();
+        notificationReceived = false;
+        selection = window.getSelection();
+        range = document.createRange();
+        range.setStart(editorElement, 0);
+        range.setEnd(editorElement, 0);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        await waitFor(() => notificationReceived);
+        output += `Empty contenteditable:\n`;
+        retrieveSelectionInfo(editor);
+
+        // Case 2: Contenteditable with just a br.
+        notificationReceived = false;
+        editorElement.innerHTML = "<br>";
+        selection.removeAllRanges();
+        range = document.createRange();
+        range.setStart(editorElement, 0);
+        range.setEnd(editorElement, 0);
+        selection.addRange(range);
+        await waitFor(() => notificationReceived);
+        output += `\nContenteditable with just a br:\n`;
+        retrieveSelectionInfo(editor);
+
+        // Case 3: After inserting 'hello'.
+        notificationReceived = false;
+        editorElement.innerHTML = "";
+        editorElement.focus();
+        document.execCommand("insertText", false, "hello");
+        await waitFor(() => notificationReceived);
+        output += `\nAfter inserting 'hello':\n`;
+        retrieveSelectionInfo(editor);
+
+        // Case 4: After inserting a line break.
+        notificationReceived = false;
+        document.execCommand("insertLineBreak");
+        await waitFor(() => notificationReceived);
+        output += `\nAfter inserting line break:\n`;
+        retrieveSelectionInfo(editor);
+
+        accessibilityController.removeNotificationListener();
+        editorElement.style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
