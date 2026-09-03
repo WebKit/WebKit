@@ -22,6 +22,7 @@
 
 #include "GRefPtrGStreamer.h"
 #include <gst/gst.h>
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 G_BEGIN_DECLS
@@ -39,7 +40,7 @@ typedef struct _WebKitAudioSinkPrivate WebKitAudioSinkPrivate;
 struct _WebKitAudioSink {
     GstBin parent;
 
-    WebKitAudioSinkPrivate *priv;
+    WebKitAudioSinkPrivate* priv;
 };
 
 struct _WebKitAudioSinkClass {
@@ -50,7 +51,13 @@ GType webkit_audio_sink_get_type(void);
 
 G_END_DECLS
 
-GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
+using AudioSinkStartedCallback = Function<void(const String&)>;
+void webkitAudioSinkSetStartedCallback(WebKitAudioSink*, AudioSinkStartedCallback&&);
+
+using AudioSinkStoppedCallback = Function<void(const String&)>;
+void webkitAudioSinkSetStoppedCallback(WebKitAudioSink*, AudioSinkStoppedCallback&&);
+
+GstElement* webkitAudioSinkNew(const String& role, const String& deviceId = { }, const GRefPtr<GstDevice>& = { }, String&& socketPath = { });
 bool webkitAudioSinkSetDevice(GstElement*, const String& deviceId = { }, const GRefPtr<GstDevice>& = { });
 
 #endif // USE(GSTREAMER)

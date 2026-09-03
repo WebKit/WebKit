@@ -125,6 +125,9 @@ enum {
     EVENT,
     TOPLEVEL_STATE_CHANGED,
     PREFERRED_BUFFER_FORMATS_CHANGED,
+    REQUEST_AUDIO_SINK_SOCKET,
+    AUDIO_SINK_STARTED,
+    AUDIO_SINK_STOPPED,
 
     LAST_SIGNAL
 };
@@ -501,6 +504,50 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
         0, nullptr, nullptr,
         g_cclosure_marshal_generic,
         G_TYPE_NONE, 0);
+
+    /**
+     * WPEView::request-audio-sink-socket:
+     * @view: a #WPEView
+     *
+     * Since: 2.52
+     */
+    signals[REQUEST_AUDIO_SINK_SOCKET] = g_signal_new(
+        "request-audio-sink-socket",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_STRING, 0);
+
+    /**
+     * WPEView::audio-sink-started:
+     * @view: a #WPEView
+     * @path: a socket path
+     *
+     * Since: 2.52
+     */
+    signals[AUDIO_SINK_STARTED] = g_signal_new(
+        "audio-sink-started",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1, G_TYPE_STRING);
+
+    /**
+     * WPEView::audio-sink-stopped:
+     * @view: a #WPEView
+     * @path: a socket path
+     *
+     * Since: 2.52
+     */
+    signals[AUDIO_SINK_STOPPED] = g_signal_new(
+        "audio-sink-stopped",
+        G_TYPE_FROM_CLASS(viewClass),
+        G_SIGNAL_RUN_LAST,
+        0, nullptr, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
 void wpeViewToplevelStateChanged(WPEView* view, WPEToplevelState state)
@@ -531,6 +578,72 @@ void wpeViewScreenChanged(WPEView* view)
 void wpeViewPreferredBufferFormatsChanged(WPEView* view)
 {
     g_signal_emit(view, signals[PREFERRED_BUFFER_FORMATS_CHANGED], 0);
+}
+
+/**
+ * wpe_view_audio_request_audio_sink_socket:
+ * @view: A #WPEView
+ *
+ * Returns: (transfer full) (nullable): A filesystem path to the Unix socket file, or %NULL
+ *
+ * Since: 2.52
+ */
+gchar* wpe_view_request_audio_sink_socket(WPEView* view)
+{
+    GValue args[1] = { G_VALUE_INIT };
+    GValue ret = G_VALUE_INIT;
+    gchar* path = nullptr;
+
+    g_value_init(&args[0], WPE_TYPE_VIEW);
+    g_value_set_object(&args[0], view);
+
+    g_value_init(&ret, G_TYPE_STRING);
+
+    g_signal_emitv(args, signals[REQUEST_AUDIO_SINK_SOCKET], 0, &ret);
+    g_value_unset(&args[0]);
+
+    path = g_value_dup_string(&ret);
+    g_value_unset(&ret);
+
+    return path;
+}
+
+/**
+ * wpe_view_audio_sink_started:
+ * @view: A #WPEView
+ * @path: Path of the Unix socket file
+ *
+ * Since: 2.52
+ */
+void wpe_view_audio_sink_started(WPEView* view, const gchar* path)
+{
+    GValue args[2] = { G_VALUE_INIT, G_VALUE_INIT };
+    g_value_init(&args[0], WPE_TYPE_VIEW);
+    g_value_set_object(&args[0], view);
+    g_value_init(&args[1], G_TYPE_STRING);
+    g_value_set_string(&args[1], path);
+    g_signal_emitv(args, signals[AUDIO_SINK_STARTED], 0, nullptr);
+    g_value_unset(&args[0]);
+    g_value_unset(&args[1]);
+}
+
+/**
+ * wpe_view_audio_sink_stopped:
+ * @view: A #WPEView
+ * @path: Path of the Unix socket file
+ *
+ * Since: 2.52
+ */
+void wpe_view_audio_sink_stopped(WPEView* view, const gchar* path)
+{
+    GValue args[2] = { G_VALUE_INIT, G_VALUE_INIT };
+    g_value_init(&args[0], WPE_TYPE_VIEW);
+    g_value_set_object(&args[0], view);
+    g_value_init(&args[1], G_TYPE_STRING);
+    g_value_set_string(&args[1], path);
+    g_signal_emitv(args, signals[AUDIO_SINK_STOPPED], 0, nullptr);
+    g_value_unset(&args[0]);
+    g_value_unset(&args[1]);
 }
 
 /**

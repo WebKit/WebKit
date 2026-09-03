@@ -119,11 +119,22 @@ void DefaultAudioDestinationNode::createDestination()
 {
     ALWAYS_LOG(LOGIDENTIFIER, "contextSampleRate = ", sampleRate(), ", hardwareSampleRate = ", AudioDestination::hardwareSampleRate());
     ASSERT(!m_destination);
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    AudioSinkStartedCallback audioSinkStartedCallback = [&](const auto& path) {
+        audioSinkStarted(path);
+    };
+    AudioSinkDisposedCallback audioSinkStoppedCallback = [&](const auto& path) {
+        audioSinkStopped(path);
+    };
+#endif
     m_destination = platformStrategies()->mediaStrategy()->createAudioDestination({ *this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), sampleRate()
 #if PLATFORM(IOS_FAMILY)
         , context().sceneIdentifier()
 #endif
-        });
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+        , requestAudioSinkSocket(), audioSinkStartedCallback, audioSinkStoppedCallback
+#endif
+    });
 }
 
 void DefaultAudioDestinationNode::recreateDestination()

@@ -1411,6 +1411,12 @@ public:
     bool requiresUserGestureForAudioPlayback() const;
     bool requiresUserGestureForVideoPlayback() const;
 
+#if ENABLE(WPE_PLATFORM)
+    String requestAudioSinkSocket();
+    void audioSinkStarted(const String&);
+    void audioSinkStopped(const String&);
+#endif
+
 #if HAVE(SUPPORT_HDR_DISPLAY)
     WEBCORE_EXPORT bool drawsHDRContent() const;
     Headroom displayEDRHeadroom() const { return m_displayEDRHeadroom; }

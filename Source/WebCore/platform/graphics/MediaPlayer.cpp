@@ -1837,6 +1837,23 @@ RefPtr<CoordinatedPlatformLayerBufferProxy> MediaPlayer::platformLayerBufferProx
 #endif
 #endif
 
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+String MediaPlayer::requestAudioSinkSocket()
+{
+    return client().requestAudioSinkSocket();
+}
+
+void MediaPlayer::audioSinkStarted(const String& path)
+{
+    client().audioSinkStarted(path);
+}
+
+void MediaPlayer::audioSinkStopped(const String& path)
+{
+    client().audioSinkStopped(path);
+}
+#endif
+
 String MediaPlayer::languageOfPrimaryAudioTrack() const
 {
     RefPtr playerPrivate = m_private;

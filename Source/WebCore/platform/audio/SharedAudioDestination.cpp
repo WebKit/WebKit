@@ -137,6 +137,11 @@ SharedAudioDestinationAdapter::SharedAudioDestinationAdapter(const CreationOptio
 #if PLATFORM(IOS_FAMILY)
         , options.sceneIdentifier.isNull() ? emptyString() : options.sceneIdentifier
 #endif
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+        , options.audioSinkSocketPath
+        , options.audioSinkStarted
+        , options.audioSinkStopped
+#endif
         }) }
     , m_workBus { AudioBus::create(options.numberOfOutputChannels, AudioUtilities::renderQuantumSize) }
     , m_ensureFunction { WTF::move(ensureFunction) }

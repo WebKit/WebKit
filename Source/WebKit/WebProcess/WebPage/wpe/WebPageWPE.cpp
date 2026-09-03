@@ -52,4 +52,23 @@ void WebPage::preferredBufferFormatsDidChange(Vector<RendererBufferFormat>&& pre
 }
 #endif
 
+#if ENABLE(WPE_PLATFORM)
+String WebPage::requestAudioSinkSocket()
+{
+    auto sendResult = sendSync(Messages::WebPageProxy::RequestAudioSinkSocket());
+    auto [result] = sendResult.takeReplyOr(String { });
+    return result;
+}
+
+void WebPage::audioSinkStarted(const String& path)
+{
+    send(Messages::WebPageProxy::AudioSinkStarted(path));
+}
+
+void WebPage::audioSinkStopped(const String& path)
+{
+    send(Messages::WebPageProxy::AudioSinkStopped(path));
+}
+#endif
+
 } // namespace WebKit
