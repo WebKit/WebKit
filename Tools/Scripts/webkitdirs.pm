@@ -3927,6 +3927,9 @@ sub formatBuildTime($)
 
 sub runGitUpdate()
 {
+    # Fetch all remotes and prune stale references
+    system("git", "fetch", "--prune", "--all") == 0 or die;
+
     # This will die if branch.$BRANCHNAME.merge isn't set, which is
     # almost certainly what we want.
     system("git", "pull", "--autostash") == 0 or die;
