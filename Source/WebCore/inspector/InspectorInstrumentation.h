@@ -416,8 +416,8 @@ private:
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
     static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClass);
 
-    static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
-    static void willFetchImpl(InstrumentingAgents&, const String& url);
+    static void willSendXMLHttpRequestImpl(InstrumentingAgents&, ScriptExecutionContext&, const String& url);
+    static void willFetchImpl(InstrumentingAgents&, ScriptExecutionContext&, const String& url);
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext&);
     static void didRemoveTimerImpl(InstrumentingAgents&, int timerId);
 
@@ -441,8 +441,8 @@ private:
     static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
     static void willEvaluateScriptImpl(InstrumentingAgents&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScriptImpl(InstrumentingAgents&);
-    static void willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
-    static void didFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
+    static void willFireTimerImpl(InstrumentingAgents&, ScriptExecutionContext&, int timerId, bool oneShot);
+    static void didFireTimerImpl(InstrumentingAgents&, ScriptExecutionContext&, int timerId, bool oneShot);
     static void willInvalidateLayoutImpl(InstrumentingAgents&, const RenderObject&);
     static void didScheduleLayoutImpl(InstrumentingAgents&, const RenderElement& layoutRoot);
     static void willLayoutImpl(InstrumentingAgents&);
@@ -461,8 +461,8 @@ private:
     static void flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents&, const RenderObject&);
     static void flexibleBoxRendererWrappedToNextLineImpl(InstrumentingAgents&, const RenderObject&, size_t lineStartItemIndex);
 
-    static void willSendRequestImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
-    static void willSendRequestOfTypeImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
+    static void willSendRequestImpl(InstrumentingAgents&, LocalFrame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse, const CachedResource*, ResourceLoader*);
+    static void willSendRequestOfTypeImpl(InstrumentingAgents&, LocalFrame*, ResourceLoaderIdentifier, DocumentLoader*, ResourceRequest&, Inspector::UncachedLoadType);
     static void markResourceAsCachedImpl(InstrumentingAgents&, ResourceLoaderIdentifier);
     static void didLoadResourceFromMemoryCacheImpl(InstrumentingAgents&, DocumentLoader*, CachedResource*);
     static void didReceiveResourceResponseImpl(InstrumentingAgents&, ResourceLoaderIdentifier, DocumentLoader*, const ResourceResponse&, ResourceLoader*);
@@ -518,8 +518,8 @@ private:
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, ScriptExecutionContext&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId);
-    static void willFireAnimationFrameImpl(InstrumentingAgents&, int callbackId);
-    static void didFireAnimationFrameImpl(InstrumentingAgents&, int callbackId);
+    static void willFireAnimationFrameImpl(InstrumentingAgents&, ScriptExecutionContext&, int callbackId);
+    static void didFireAnimationFrameImpl(InstrumentingAgents&, ScriptExecutionContext&, int callbackId);
 
     static void willFireObserverCallbackImpl(InstrumentingAgents&, const String&);
     static void didFireObserverCallbackImpl(InstrumentingAgents&);
@@ -855,15 +855,17 @@ inline void InspectorInstrumentation::characterDataModified(Document& document, 
 inline void InspectorInstrumentation::willSendXMLHttpRequest(ScriptExecutionContext* context, const String& url)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (!context)
+        return;
     if (RefPtr agents = instrumentingAgents(context))
-        willSendXMLHttpRequestImpl(*agents, url);
+        willSendXMLHttpRequestImpl(*agents, *context, url);
 }
 
 inline void InspectorInstrumentation::willFetch(ScriptExecutionContext& context, const String& url)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(context))
-        willFetchImpl(*agents, url);
+        willFetchImpl(*agents, context, url);
 }
 
 inline void InspectorInstrumentation::didInstallTimer(ScriptExecutionContext& context, int timerId, Seconds timeout, bool singleShot)
@@ -1028,14 +1030,14 @@ inline void InspectorInstrumentation::willFireTimer(ScriptExecutionContext& cont
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(context))
-        willFireTimerImpl(*agents, timerId, oneShot);
+        willFireTimerImpl(*agents, context, timerId, oneShot);
 }
 
 inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(context))
-        didFireTimerImpl(*agents, timerId, oneShot);
+        didFireTimerImpl(*agents, context, timerId, oneShot);
 }
 
 inline void InspectorInstrumentation::willInvalidateLayout(const RenderObject& renderer)
@@ -1141,20 +1143,20 @@ inline void InspectorInstrumentation::willSendRequest(LocalFrame* frame, Resourc
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(frame))
-        willSendRequestImpl(*agents, identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
+        willSendRequestImpl(*agents, frame, identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
 }
 
 inline void InspectorInstrumentation::willSendRequest(ServiceWorkerGlobalScope& globalScope, ResourceLoaderIdentifier identifier, ResourceRequest& request)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    willSendRequestImpl(protect(instrumentingAgents(globalScope)), identifier, nullptr, request, ResourceResponse { }, nullptr, nullptr);
+    willSendRequestImpl(protect(instrumentingAgents(globalScope)), nullptr, identifier, nullptr, request, ResourceResponse { }, nullptr, nullptr);
 }
 
 inline void InspectorInstrumentation::willSendRequestOfType(LocalFrame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(frame))
-        willSendRequestOfTypeImpl(*agents, identifier, loader, request, loadType);
+        willSendRequestOfTypeImpl(*agents, frame, identifier, loader, request, loadType);
 }
 
 inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page& page, DocumentLoader* loader, CachedResource* resource)
@@ -1839,14 +1841,14 @@ inline void InspectorInstrumentation::willFireAnimationFrame(ScriptExecutionCont
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(scriptExecutionContext))
-        willFireAnimationFrameImpl(*agents, callbackId);
+        willFireAnimationFrameImpl(*agents, scriptExecutionContext, callbackId);
 }
 
 inline void InspectorInstrumentation::didFireAnimationFrame(ScriptExecutionContext& scriptExecutionContext, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(scriptExecutionContext))
-        didFireAnimationFrameImpl(*agents, callbackId);
+        didFireAnimationFrameImpl(*agents, scriptExecutionContext, callbackId);
 }
 
 inline void InspectorInstrumentation::willFireObserverCallback(ScriptExecutionContext& context, const String& callbackType)

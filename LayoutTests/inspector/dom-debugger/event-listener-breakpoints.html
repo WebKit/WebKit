@@ -72,7 +72,7 @@ function test() {
                 logActiveStackTrace();
 
                 InspectorTest.log("Disabling breakpoints...");
-                DebuggerAgent.setBreakpointsActive(false)
+                InspectorTest.mainFrameTarget.DebuggerAgent.setBreakpointsActive(false)
                 .then(() => WI.debuggerManager.resume())
                 .catch(reject);
             });
@@ -83,7 +83,7 @@ function test() {
 
                 WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
 
-                DebuggerAgent.setBreakpointsActive(true)
+                InspectorTest.mainFrameTarget.DebuggerAgent.setBreakpointsActive(true)
                 .then(resolve, reject);
             });
 
