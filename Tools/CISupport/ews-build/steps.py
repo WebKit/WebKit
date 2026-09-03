@@ -6975,7 +6975,6 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                         Canonicalize(),
                         ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, verifyObsolete=False, enableSkipEWSLabel=False),
                         PushPullRequestBranch(),
-                        UpdatePullRequest(),
                         PushCommitToWebKitRepo(),
                     ])
                 return defer.returnValue(rc)
@@ -7734,11 +7733,12 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
 class PushPullRequestBranch(shell.ShellCommand):
     name = 'push-pull-request-branch'
-    haltOnFailure = True
+    warnOnFailure = True
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
+    @defer.inlineCallbacks
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
         remote, repo_name = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/', 1)
         if '-' in repo_name:
@@ -7750,13 +7750,17 @@ class PushPullRequestBranch(shell.ShellCommand):
         self.env['GIT_USER'] = username
         self.env['GIT_PASSWORD'] = access_token
 
-        return super().run()
+        rc = yield super().run()
+        if rc == SUCCESS:
+            self.build.addStepsAfterCurrentStep([UpdatePullRequest()])
+        elif rc == FAILURE:
+            rc = WARNINGS
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Pushed to pull request branch'}
-        if self.results == FAILURE:
-            self.setProperty('build_summary', '')
+        if self.results == WARNINGS:
             return {'step': 'Failed to push to pull request branch'}
         return super().getResultSummary()
 
