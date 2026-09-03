@@ -27,6 +27,8 @@
 
 #include <WebCore/QuirkTable.h>
 #include <WebCore/Quirks.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/SecurityOriginData.h>
 #include <array>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
@@ -49,7 +51,7 @@ static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 
 static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
 {
-    return WebCore::resolveSiteSpecificQuirks(URL { urlString }, URL { urlString }, WebCore::IsTopDocument::Yes);
+    return WebCore::resolveTopURLQuirks(URL { urlString });
 }
 
 static bool matchesTopURL(const WebCore::QuirkURLMatch& match, ASCIILiteral urlString)
@@ -125,6 +127,8 @@ TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
     EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
 
     EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube-nocookie.com/embed/abc"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
 }
 #endif
 
@@ -178,6 +182,71 @@ TEST_F(QuirksTest, NeedsIPhoneUserAgent)
 
     EXPECT_FALSE(WebCore::Quirks::needsIPhoneUserAgent(URL { "https://www.example.com/"_s }));
 }
+
+TEST_F(QuirksTest, ShouldTranscodeHeicImagesForURL)
+{
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.zillow.com/"_s }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com/homes"_s }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.canva.com/design"_s }));
+    EXPECT_TRUE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://member.uhc.com/"_s }));
+
+    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://www.example.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::shouldTranscodeHeicImagesForURL(URL { "https://zillow.com.example.com/"_s }));
+}
+
+TEST_F(QuirksTest, IsMicrosoftTeamsRedirectURL)
+{
+    auto isRedirect = [](ASCIILiteral urlString) {
+        return resolveQuirksForTopURL(urlString).quirkIsEnabled(WebCore::SiteSpecificQuirk::IsMicrosoftTeamsRedirectURLQuirk);
+    };
+
+    EXPECT_TRUE(isRedirect("https://teams.microsoft.com/?error=Retried+3+times+without+success"_s));
+
+    EXPECT_FALSE(isRedirect("https://teams.microsoft.com/"_s));
+    EXPECT_FALSE(isRedirect("https://teams.live.com/?error=Retried+3+times+without+success"_s));
+    EXPECT_FALSE(isRedirect("https://www.example.com/?error=Retried+3+times+without+success"_s));
+}
+
+TEST_F(QuirksTest, ShouldAllowNavigationToCustomProtocolWithoutUserGesture)
+{
+    auto allows = [](ASCIILiteral protocol, ASCIILiteral originURL) {
+        return WebCore::Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(protocol, WebCore::SecurityOriginData::fromURL(URL { originURL }));
+    };
+
+    EXPECT_TRUE(allows("msteams"_s, "https://teams.live.com/"_s));
+    EXPECT_TRUE(allows("msteams"_s, "https://teams.microsoft.com/v2/"_s));
+
+    EXPECT_FALSE(allows("msteams"_s, "https://www.example.com/"_s));
+    EXPECT_FALSE(allows("msteams"_s, "https://microsoft.com/"_s));
+    EXPECT_FALSE(allows("mailto"_s, "https://teams.microsoft.com/"_s));
+}
+
+TEST_F(QuirksTest, NeedsPartitionedCookies)
+{
+    auto needsPartitionedCookies = [](ASCIILiteral urlString, bool isTopSite) {
+        WebCore::ResourceRequest request { URL { urlString } };
+        request.setIsTopSite(isTopSite);
+        return WebCore::Quirks::needsPartitionedCookies(request);
+    };
+
+    EXPECT_TRUE(needsPartitionedCookies("https://biller.billpaysite.com/pay"_s, false));
+
+    EXPECT_FALSE(needsPartitionedCookies("https://biller.billpaysite.com/pay"_s, true));
+    EXPECT_FALSE(needsPartitionedCookies("https://notbillpaysite.com/"_s, false));
+    EXPECT_FALSE(needsPartitionedCookies("https://billpaysite.com.example.com/"_s, false));
+    EXPECT_FALSE(needsPartitionedCookies("https://www.example.com/"_s, false));
+}
+
+#if ENABLE(TOUCH_EVENTS)
+TEST_F(QuirksTest, ShouldOmitTouchEventDOMAttributesForDesktopWebsite)
+{
+    EXPECT_TRUE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://secure.chase.com/web/auth/dashboard"_s }));
+
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.chase.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://chase.com/"_s }));
+    EXPECT_FALSE(WebCore::Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(URL { "https://www.example.com/"_s }));
+}
+#endif // ENABLE(TOUCH_EVENTS)
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideNotAffected)
 {

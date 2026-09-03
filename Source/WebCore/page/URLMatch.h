@@ -147,7 +147,15 @@ struct PathStartsWith {
     ASCIILiteral prefix;
 };
 
+struct PathIs {
+    ASCIILiteral path;
+};
+
 struct PathOrFragmentContains {
+    ASCIILiteral substring;
+};
+
+struct QueryContains {
     ASCIILiteral substring;
 };
 
@@ -169,7 +177,17 @@ constexpr PathStartsWith pathStartsWith(ASCIILiteral prefix)
     return { prefix };
 }
 
+constexpr PathIs pathIs(ASCIILiteral path)
+{
+    return { path };
+}
+
 constexpr PathOrFragmentContains pathOrFragmentContains(ASCIILiteral substring)
+{
+    return { substring };
+}
+
+constexpr QueryContains queryContains(ASCIILiteral substring)
 {
     return { substring };
 }
@@ -256,12 +274,14 @@ private:
     enum class PathComparison : uint8_t {
         PathContains,
         PathStartsWith,
+        PathIs,
         PathOrFragmentContains,
     };
 
     struct RefinementSet {
         PathComparison pathComparison { PathComparison::PathContains };
         ASCIILiteral pathPattern;
+        ASCIILiteral queryPattern;
         std::optional<URLEnvironment> environment;
         URLPatternList hosts;
 
@@ -288,9 +308,20 @@ private:
         setPathPattern(set, PathComparison::PathStartsWith, refinement.prefix);
     }
 
+    static constexpr void applyRefinement(RefinementSet& set, URLRefinement::PathIs refinement)
+    {
+        setPathPattern(set, PathComparison::PathIs, refinement.path);
+    }
+
     static constexpr void applyRefinement(RefinementSet& set, URLRefinement::PathOrFragmentContains refinement)
     {
         setPathPattern(set, PathComparison::PathOrFragmentContains, refinement.substring);
+    }
+
+    static constexpr void applyRefinement(RefinementSet& set, URLRefinement::QueryContains refinement)
+    {
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(set.queryPattern.isNull());
+        set.queryPattern = refinement.substring;
     }
 
     static constexpr void applyRefinement(RefinementSet& set, URLRefinement::HostIs refinement)

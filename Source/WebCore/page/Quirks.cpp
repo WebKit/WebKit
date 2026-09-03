@@ -207,6 +207,11 @@ static inline String NODELETE standardUserAgentWithApplicationNameIncludingCompa
 #endif
 #endif
 
+static bool urlHasQuirk(const URL& url, SiteSpecificQuirk quirk)
+{
+    return resolveTopURLQuirks(url).quirkIsEnabled(quirk);
+}
+
 Quirks::Quirks(Document& document)
     : m_document(document)
 {
@@ -958,21 +963,7 @@ bool Quirks::shouldUseLayoutViewportForClientRects() const
 // which do not support HEIC.
 bool Quirks::shouldTranscodeHeicImagesForURL(const URL& url)
 {
-    auto quirksDomain = RegistrableDomain(url);
-
-    // zillow.com rdar://79872092
-    if (quirksDomain.string() == "zillow.com"_s)
-        return true;
-
-    // canva.com https://webkit.org/b/293886
-    if (quirksDomain.string() == "canva.com"_s)
-        return true;
-
-    // uhc.com rdar://173206598
-    if (quirksDomain.string() == "uhc.com"_s)
-        return true;
-
-    return false;
+    return urlHasQuirk(url, SiteSpecificQuirk::ShouldTranscodeHeicImagesQuirk);
 }
 
 // att.com rdar://55185021
@@ -1354,7 +1345,7 @@ static bool isKinjaLoginAvatarElement(const Element& element)
 // teams.microsoft.com https://bugs.webkit.org/show_bug.cgi?id=219505
 bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
 {
-    return url.host() == "teams.microsoft.com"_s && url.query().contains("Retried+3+times+without+success"_s);
+    return urlHasQuirk(url, SiteSpecificQuirk::IsMicrosoftTeamsRedirectURLQuirk);
 }
 
 static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
@@ -1649,7 +1640,9 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
 // teams.microsoft.com rdar://90434296
 bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView protocol, const SecurityOriginData& requesterOrigin)
 {
-    return protocol == "msteams"_s && (requesterOrigin.host() == "teams.live.com"_s || requesterOrigin.host() == "teams.microsoft.com"_s);
+    if (protocol != "msteams"_s)
+        return false;
+    return urlHasQuirk(requesterOrigin.toURL(), SiteSpecificQuirk::ShouldAllowMSTeamsProtocolWithoutUserGestureQuirk);
 }
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
@@ -1919,28 +1912,17 @@ bool Quirks::shouldAvoidProgrammaticScrollClamping() const
 // to deactivate them for testing.
 bool Quirks::needsIPadMiniUserAgent(const URL& url)
 {
-    auto host = url.host();
-
-    // FIXME: Remove this quirk when <rdar://problem/61733101> is complete.
-    if (host == "roblox.com"_s || host.endsWith(".roblox.com"_s))
-        return true;
-
-    // FIXME: Remove this quirk once <rdar://113978106> is no longer happening.
-    if (host == "www.indiatimes.com"_s)
-        return true;
-
-    return false;
+    return urlHasQuirk(url, SiteSpecificQuirk::NeedsIPadMiniUserAgentQuirk);
 }
 
 bool Quirks::needsIPhoneUserAgent(const URL& url)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (url.host() == "shopee.sg"_s && url.path() == "/payment/account-linking/landing"_s)
-        return true;
+    return urlHasQuirk(url, SiteSpecificQuirk::NeedsIPhoneUserAgentQuirk);
 #else
     UNUSED_PARAM(url);
-#endif
     return false;
+#endif
 }
 
 std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const String& applicationNameForUserAgent, const String& currentUserAgent)
@@ -2006,7 +1988,7 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
 {
     if (request.isTopSite())
         return false;
-    return request.url().protocolIsInHTTPFamily() && request.url().host().endsWith(".billpaysite.com"_s);
+    return urlHasQuirk(request.url(), SiteSpecificQuirk::NeedsPartitionedCookiesQuirk);
 }
 
 // premierleague.com: rdar://123721211
@@ -2194,7 +2176,7 @@ bool Quirks::implicitMuteWhenVolumeSetToZero() const
 
 bool Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL& requestURL)
 {
-    return requestURL.host() == "secure.chase.com"_s;
+    return urlHasQuirk(requestURL, SiteSpecificQuirk::ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk);
 }
 
 // netflix.com: rdar://155498882

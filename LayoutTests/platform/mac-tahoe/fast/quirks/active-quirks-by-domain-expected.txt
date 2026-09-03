@@ -302,6 +302,7 @@ https://www.youtube-nocookie.com/
     (none)
 https://www.zillow.com/
     ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk
+    ShouldTranscodeHeicImagesQuirk
 https://www.zomato.com/
     NeedsZomatoEmailLoginLabelQuirk
 https://zoom.us/

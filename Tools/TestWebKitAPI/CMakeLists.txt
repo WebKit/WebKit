@@ -269,6 +269,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PlatformMediaSessionManagerTests.cpp
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/PushMessageCrypto.cpp
+        Tests/WebCore/Quirks.cpp
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp
@@ -280,6 +281,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TimeRanges.cpp
         Tests/WebCore/TransformationMatrix.cpp
+        Tests/WebCore/URLMatch.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/URLPatternTests.cpp
         Tests/WebCore/WebTransportHeaderValidation.cpp
@@ -350,9 +352,6 @@ endif ()
 if (ENABLE_WEBKIT)
     set(TestWebKit_SOURCES
         Helpers/Utilities.cpp
-
-        Tests/WebCore/Quirks.cpp
-        Tests/WebCore/URLMatch.cpp
 
         Tests/WebKit/WKPage/AboutBlankLoad.cpp
         Tests/WebKit/WKPage/CanHandleRequest.cpp

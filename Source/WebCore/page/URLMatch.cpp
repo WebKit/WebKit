@@ -84,6 +84,8 @@ bool URLMatch::RefinementSet::matchesPathPattern(const URL& url) const
         return url.path().contains(pathPattern);
     case PathComparison::PathStartsWith:
         return startsWithLettersIgnoringASCIICase(url.path(), pathPattern);
+    case PathComparison::PathIs:
+        return url.path() == pathPattern;
     case PathComparison::PathOrFragmentContains:
         return url.path().contains(pathPattern) || url.fragmentIdentifier().contains(pathPattern);
     }
@@ -95,6 +97,9 @@ bool URLMatch::RefinementSet::matchesPathPattern(const URL& url) const
 bool URLMatch::RefinementSet::matches(const URLMatchContext& context) const
 {
     if (!pathPattern.isNull() && !matchesPathPattern(context.url()))
+        return false;
+
+    if (!queryPattern.isNull() && !context.url().query().contains(queryPattern))
         return false;
 
     if (environment && !evaluateURLEnvironment(*environment))

@@ -342,6 +342,7 @@ https://www.youtube-nocookie.com/
 https://www.zillow.com/
     ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk
     ShouldSilenceResizeObservers
+    ShouldTranscodeHeicImagesQuirk
 https://www.zomato.com/
     (none)
 https://zoom.us/

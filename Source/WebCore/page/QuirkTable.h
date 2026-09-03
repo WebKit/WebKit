@@ -99,4 +99,7 @@ struct Quirk {
 
 WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
 
+// For callers with no Document, which therefore only see top-URL quirks.
+WEBCORE_EXPORT QuirksData resolveTopURLQuirks(const URL&);
+
 } // namespace WebCore
