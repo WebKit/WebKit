@@ -8,7 +8,7 @@ PASS Can set 'overflow-clip-margin' to the 'border-box' keyword: border-box
 PASS Can set 'overflow-clip-margin' to the 'content-box' keyword: content-box
 PASS Can set 'overflow-clip-margin' to the 'padding-box' keyword: padding-box
 PASS Can set 'overflow-clip-margin' to a length: 0px
-FAIL Can set 'overflow-clip-margin' to a length: -3.14em Invalid values
+PASS Can set 'overflow-clip-margin' to a length: -3.14em
 PASS Can set 'overflow-clip-margin' to a length: 3.14cm
 PASS Can set 'overflow-clip-margin' to a length: calc(0px + 0em)
 PASS Setting 'overflow-clip-margin' to a percent: 0% throws TypeError

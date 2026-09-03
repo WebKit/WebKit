@@ -39,7 +39,7 @@ namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
-    // <'overflow-clip-margin'> = <visual-box> || <length [0,∞]>
+    // <'overflow-clip-margin'> = <visual-box> || <length>
     // https://drafts.csswg.org/css-overflow/#overflow-clip-margin
     RefPtr<CSSValue> visualBox;
     auto tryConsumeVisualBox = [&visualBox](CSSParserTokenRange& range) -> bool {
@@ -52,7 +52,7 @@ RefPtr<CSSValue> consumeOverflowClipMargin(CSSParserTokenRange& range, CSS::Prop
     RefPtr<CSSPrimitiveValue> length;
     auto tryConsumeLength = [&length](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> bool {
         auto consumeLength = [](CSSParserTokenRange& range, CSS::PropertyParserState& state) -> RefPtr<CSSPrimitiveValue> {
-            return CSSPrimitiveValueResolver<CSS::Length<CSS::Nonnegative>>::consumeAndResolve(range, state);
+            return CSSPrimitiveValueResolver<CSS::Length<CSS::All, float>>::consumeAndResolve(range, state);
         };
         if (length)
             return false;

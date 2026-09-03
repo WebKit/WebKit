@@ -1,8 +1,10 @@
 
 PASS e.style['overflow-clip-margin'] = "10px" should set the property value
+PASS e.style['overflow-clip-margin'] = "-10px" should set the property value
 PASS e.style['overflow-clip-margin'] = "content-box" should set the property value
 PASS e.style['overflow-clip-margin'] = "content-box 10px" should set the property value
 PASS e.style['overflow-clip-margin'] = "10px content-box" should set the property value
+PASS e.style['overflow-clip-margin'] = "-10px content-box" should set the property value
 PASS e.style['overflow-clip-margin'] = "0px content-box" should set the property value
 PASS e.style['overflow-clip-margin'] = "padding-box" should set the property value
 PASS e.style['overflow-clip-margin'] = "padding-box 0px" should set the property value
@@ -12,8 +14,10 @@ PASS e.style['overflow-clip-margin'] = "border-box" should set the property valu
 PASS e.style['overflow-clip-margin'] = "border-box 0px" should set the property value
 PASS e.style['overflow-clip-margin'] = "border-box 10px" should set the property value
 PASS e.style['overflow-clip-margin'] = "10px border-box" should set the property value
+PASS e.style['overflow-clip-margin'] = "-10px border-box" should set the property value
 PASS e.style['overflow-clip-margin'] = "calc(100px - 50px)" should set the property value
 PASS e.style['overflow-clip-margin'] = "calc(100px - 100px)" should set the property value
+PASS e.style['overflow-clip-margin'] = "calc(100px - 150px)" should set the property value
 PASS e.style['overflow-clip-margin'] = "calc(0.5em - 100px)" should set the property value
 PASS e.style['overflow-clip-margin'] = "calc(100% - 0.5em)" should not set the property value
 PASS e.style['overflow-clip-margin'] = "calc(100% - 50px)" should not set the property value

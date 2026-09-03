@@ -34,10 +34,10 @@
 namespace WebCore {
 namespace Style {
 
-// <'overflow-clip-margin'> = <visual-box> || <length [0,∞]>
+// <'overflow-clip-margin'> = <visual-box> || <length>
 // https://drafts.csswg.org/css-overflow/#overflow-clip-margin
 struct OverflowClipMargin {
-    using Length = Style::Length<CSS::Nonnegative, float>;
+    using Length = Style::Length<CSS::All, float>;
 
     OverflowClipMargin(CSS::ValueLiteral<CSS::LengthUnit::Px> length)
         : m_value { length }

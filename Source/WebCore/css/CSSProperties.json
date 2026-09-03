@@ -7490,7 +7490,7 @@
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::OverflowClipMargin",
                 "parser-function": "consumeOverflowClipMargin",
-                "parser-grammar-unused": "<visual-box> || <length [0,inf]>",
+                "parser-grammar-unused": "<visual-box> || <length>",
                 "parser-grammar-unused-reason": "Needs support for transforming parsed input to minimal form and default values in '||' groups.",
                 "settings-flag": "cssOverflowClipMarginEnabled"
             },
