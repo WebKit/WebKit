@@ -9,7 +9,7 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).family
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).style", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).weight", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).stretch", "normal");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).unicodeRange", "U+0-10ffff");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).unicodeRange", "U+0-10FFFF");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {}).featureSettings", "normal");
 
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 'normal'}).style", "normal");
@@ -25,7 +25,7 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight':
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'inherit'}).status", "error");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'stretch': 'ultra-expanded'}).stretch", "ultra-expanded");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+0-7F'}).unicodeRange", "U+0-7f");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+0-7F'}).unicodeRange", "U+0-7F");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'featureSettings': '\\'titl\\''}).featureSettings", "\"titl\"");
 
 var everything = new FontFace('family_name', 'url(\'asdf\')', {'style': 'italic', 'weight': 'bold', 'stretch': 'extra-expanded', 'unicodeRange': 'U+26', 'featureSettings': '\'titl\''});
@@ -44,7 +44,7 @@ shouldBeEqualToString("everything.weight", "300");
 everything.stretch = "condensed";
 shouldBeEqualToString("everything.stretch", "condensed");
 everything.unicodeRange = "U+0-7F";
-shouldBeEqualToString("everything.unicodeRange", "U+0-7f");
+shouldBeEqualToString("everything.unicodeRange", "U+0-7F");
 everything.featureSettings = "'smcp'";
 shouldBeEqualToString("everything.featureSettings", "\"smcp\"");
 

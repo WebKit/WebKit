@@ -34,9 +34,9 @@ namespace WebCore {
 String CSSUnicodeRangeValue::customCSSText(const CSS::SerializationContext&) const
 {
     if (m_from == m_to)
-        return makeString("U+"_s, hex(m_from, Lowercase));
+        return makeString("U+"_s, hex(m_from));
 
-    return makeString("U+"_s, hex(m_from, Lowercase), '-', hex(m_to, Lowercase));
+    return makeString("U+"_s, hex(m_from), '-', hex(m_to));
 }
 
 bool CSSUnicodeRangeValue::equals(const CSSUnicodeRangeValue& other) const
