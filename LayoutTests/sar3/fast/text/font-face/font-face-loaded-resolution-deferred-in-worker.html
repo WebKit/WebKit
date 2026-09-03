@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const workerSource = `
+const face = new FontFace('testFace', 'local(Helvetica)');
+void face.loaded;
+self.fonts.add(face);
+
+let ranDuringFontSelection = false;
+let inFontSelection = false;
+let thenLookups = 0;
+
+Object.defineProperty(face, 'then', {
+    configurable: true,
+    get() {
+        ++thenLookups;
+        if (inFontSelection)
+            ranDuringFontSelection = true;
+        return undefined;
+    }
+});
+
+const context = new OffscreenCanvas(10, 10).getContext('2d');
+context.font = '10px testFace';
+
+inFontSelection = true;
+context.measureText('a');
+inFontSelection = false;
+
+postMessage('script ran during font selection: ' + ranDuringFontSelection
+    + ', face.status: ' + face.status);
+
+setTimeout(function () {
+    postMessage('FontFace.loaded resolved after a turn: ' + (thenLookups > 0));
+}, 0);
+`;
+
+function finish(message)
+{
+    document.body.appendChild(document.createTextNode(message + '\n'));
+}
+
+const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: 'application/javascript' })));
+let messageCount = 0;
+worker.onmessage = function (event) {
+    finish(event.data);
+    if (++messageCount === 2 && window.testRunner)
+        testRunner.notifyDone();
+};
+worker.onerror = function (event) {
+    finish('FAIL: worker error: ' + event.message);
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
