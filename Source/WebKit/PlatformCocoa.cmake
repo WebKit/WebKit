@@ -1927,27 +1927,28 @@ with open(sys.argv[2], 'wb') as f:
         endif ()
     endfunction()
 
-    WEBKIT_RESOLVE_ENTITLEMENTS(_webcontent_xpc_ents "WebContentXPCService.entitlements")
+    # Sign the bundles with the entitlements webkit_generate_entitlements()
+    # produced above, not with the checked-in stubs: those hold two keys for
+    # WebContent, one for GPU and none for Networking, and a process missing
+    # com.apple.developer.hardened-process is killed as it launches on a device.
     WEBKIT_IOS_XPC_SERVICE(WebProcess
         "com.apple.WebKit.WebContent"
         ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
         ${WebProcess_OUTPUT_NAME}
-        ${_webcontent_xpc_ents})
+        ${WebProcess_CODE_SIGN_ENTITLEMENTS})
 
-    WEBKIT_RESOLVE_ENTITLEMENTS(_networking_xpc_ents "NetworkingXPCService.entitlements")
     WEBKIT_IOS_XPC_SERVICE(NetworkProcess
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist
         ${NetworkProcess_OUTPUT_NAME}
-        ${_networking_xpc_ents})
+        ${NetworkProcess_CODE_SIGN_ENTITLEMENTS})
 
     if (ENABLE_GPU_PROCESS)
-        WEBKIT_RESOLVE_ENTITLEMENTS(_gpu_xpc_ents "GPUXPCService.entitlements")
         WEBKIT_IOS_XPC_SERVICE(GPUProcess
             "com.apple.WebKit.GPU"
             ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist
             ${GPUProcess_OUTPUT_NAME}
-            ${_gpu_xpc_ents})
+            ${GPUProcess_CODE_SIGN_ENTITLEMENTS})
     endif ()
 
     function(WEBKIT_IOS_WEBCONTENT_VARIANT _variant)
@@ -1960,11 +1961,14 @@ with open(sys.argv[2], 'wb') as f:
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
         target_compile_options(${_target} PRIVATE -Wno-unused-parameter)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_exec_name})
+        WEBKIT_GENERATE_ENTITLEMENTS(${_target}
+            USING Scripts/process-entitlements.sh
+            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant})
         WEBKIT_IOS_XPC_SERVICE(${_target}
             "com.apple.WebKit.WebContent.${_variant}"
             ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
             ${_exec_name}
-            ${_webcontent_xpc_ents})
+            ${${_target}_CODE_SIGN_ENTITLEMENTS})
     endfunction()
     WEBKIT_IOS_WEBCONTENT_VARIANT(EnhancedSecurity)
     WEBKIT_IOS_WEBCONTENT_VARIANT(CaptivePortal)
