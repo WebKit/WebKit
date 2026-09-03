@@ -349,16 +349,20 @@ class _InvestigateDrawer {
             unexpected: [this.willFilterExpected],
             uuid: [this.agregate.uuid],
         }
-        if (this.agregate.start_time) {
-            params.before_time = [this.agregate.start_time];
-            params.after_time = [this.agregate.start_time];
+        const startTimes = this.data.map(datum => datum.start_time).filter(startTime => startTime);
+        if (startTimes.length) {
+            params.after_time = [Math.min(...startTimes)];
+            params.before_time = [Math.max(...startTimes)];
         }
         if (branch)
             params.branch = [branch];
 
+        // Leave members that differ between the aggregated runs unset so every matching run is returned
+        const queryConfiguration = Configuration.combine(...this.data.map(datum => datum.configuration));
+
         Failures.fromEndpoint(
             this.suite,
-            this.agregate.configuration,
+            queryConfiguration,
             params,
         ).then(failures => {
             this.agregate.failures = Failures.combine(...failures);
