@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 include(VersioningUtils)
 
-SET_PROJECT_VERSION(2 53 91)
+SET_PROJECT_VERSION(2 53 92)
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
