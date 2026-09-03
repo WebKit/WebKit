@@ -111,6 +111,20 @@ Wasm::Module& JSWebAssemblyModule::module()
     return m_module.get();
 }
 
+std::span<const JSWebAssemblyModule::ImportName> JSWebAssemblyModule::importNames(VM& vm)
+{
+    const auto& imports = moduleInformation().imports;
+    if (m_importNames.size() != imports.size()) {
+        m_importNames = FixedVector<ImportName>::map(imports, [&](const Wasm::Import& import) {
+            return ImportName {
+                Identifier::fromString(vm, makeAtomString(import.module)),
+                Identifier::fromString(vm, makeAtomString(import.field)),
+            };
+        });
+    }
+    return m_importNames.span();
+}
+
 template<typename Visitor>
 void JSWebAssemblyModule::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

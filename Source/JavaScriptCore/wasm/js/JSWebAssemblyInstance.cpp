@@ -355,10 +355,12 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, Structure* insta
 
     // For each import i in module.imports:
     {
+        const auto importNames = jsModule->importNames(vm);
         IdentifierSet specifiers;
-        for (auto& import : moduleInformation.imports) {
-            auto moduleName = Identifier::fromString(vm, makeAtomString(import.module));
-            auto fieldName = Identifier::fromString(vm, makeAtomString(import.field));
+        for (size_t importIndex = 0; importIndex < moduleInformation.imports.size(); ++importIndex) {
+            const auto& import = moduleInformation.imports[importIndex];
+            const auto& moduleName = importNames[importIndex].module;
+            const auto& fieldName = importNames[importIndex].field;
             bool skipRequestedModule = false;
             if (fromModuleLoader) {
                 if (startsWith(import.module.span(), "wasm-js:"_s))

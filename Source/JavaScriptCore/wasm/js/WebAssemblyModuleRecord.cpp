@@ -169,11 +169,10 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
         return makeString(before, ' ', import.module, ':', import.field, ' ', after);
     };
 
-    for (const auto& import : moduleInformation.imports) {
-        AtomString moduleNameString = makeAtomString(import.module);
-        Identifier moduleName = Identifier::fromString(vm, moduleNameString);
-        // Do not create a fieldName identifier at this point.
-        // If it's an importedStringConstant, it's a waste to make it an atom string.
+    const auto importNames = module->importNames(vm);
+    for (size_t importIndex = 0; importIndex < moduleInformation.imports.size(); ++importIndex) {
+        const auto& import = moduleInformation.imports[importIndex];
+        const Identifier& moduleName = importNames[importIndex].module;
 
         // Imports related to builtins or importedStringConstants are special and bypass
         // the normal procedure of looking up a value in importObject.
@@ -191,7 +190,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             continue;
         }
 
-        Identifier fieldName = Identifier::fromString(vm, makeAtomString(import.field));
+        const Identifier& fieldName = importNames[importIndex].field;
         JSValue value;
         if (creationMode == Wasm::CreationMode::FromJS) {
             // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
