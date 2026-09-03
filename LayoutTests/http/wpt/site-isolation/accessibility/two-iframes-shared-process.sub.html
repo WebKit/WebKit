@@ -58,6 +58,12 @@ function countWebAreas(element) {
 var allowedRoles = ["AXWebArea", "AXButton", "AXHeading"];
 function dumpFilteredAccessibilityTree(element, indent) {
     var role = element.role;
+    if (role === null) {
+        for (var i = 0; i < indent; i++)
+            output += "    ";
+        output += "<element with null role, childrenCount=" + element.childrenCount + ">\n";
+        return;
+    }
     var matched = allowedRoles.some(r => role.endsWith(r));
     if (matched) {
         for (var i = 0; i < indent; i++)
