@@ -313,9 +313,6 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     if (!SubframeLoadingDisabler::canLoadFrame(ownerElement))
         return nullptr;
 
-    if (!frame->page() || frame->page()->subframeCount() >= Page::maxNumberOfFrames)
-        return nullptr;
-
     if (!canCreateSubFrame())
         return nullptr;
 
@@ -358,7 +355,7 @@ RefPtr<LocalFrame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerEleme
     document->decrementLoadEventDelayCount();
 
     // The frame's onload handler may have removed it from the document.
-    if (!subFrame || !subFrame->tree().parent()) {
+    if (!subFrame->tree().parent()) {
         frame->loader().checkCallImplicitClose();
         return nullptr;
     }
