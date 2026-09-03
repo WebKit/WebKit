@@ -570,6 +570,13 @@ class ResultsDBReportMixin(abc.ABC):
     """
     results_db_log_name = 'results-db'
     reports_to_results_db = True
+    INCLUDED_FLAKY_VERDICTS = frozenset({
+        ResultsDatabase.CLEAN_TREE_VERDICT,
+        ResultsDatabase.DIRTY_TREE_VERDICT,
+        ResultsDatabase.BETWEEN_BUILDS_VERDICT,
+    })
+    MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
+    prefix = ''
 
     # From Tools/Scripts/libraries/resultsdbpy/resultsdbpy/controller/configuration.py
     RESULTS_REQUIRED_CONFIG = ['platform', 'is_simulator', 'version', 'architecture']
@@ -699,6 +706,56 @@ class ResultsDBReportMixin(abc.ABC):
         if self.flaky_failures_in_results_db:
             parts.append(f"flaky tests: {', '.join(sorted(self.flaky_failures_in_results_db))}")
         return f"Ignored {'; '.join(parts)} based on results-db"
+
+    @defer.inlineCallbacks
+    def flaky_new_failures_using_results_db(self, new_failures: set[str]) -> Generator[Any, Any, set[str]]:
+        """
+        The subset of `new_failures` whose results-database verdict is in INCLUDED_FLAKY_VERDICTS.
+        Only the first MAX_FAILURES_TO_CHECK_RESULTS_DB names, sorted, are queried; the rest are
+        absent from the result rather than reported as unexcused.
+        """
+        tests = sorted(new_failures)[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
+        configuration = self.results_db_query_configuration()
+        yield self._addToLog(self.results_db_log_name, f'Checking Results database for flakiness of {len(tests)} new failure(s). Configuration: {configuration}\n')
+
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(
+            tests, configuration=configuration, suite=self.suite,
+            authors=self.getProperty('owners', []),
+            pr_number=self.getProperty('github.number', None),
+        )
+        if flake_logs:
+            yield self._addToLog(self.results_db_log_name, flake_logs)
+
+        flaky, unsupported, unknown, ignored, shadowed = {}, [], [], [], []
+        for test in tests:
+            flake = flakes.get(test, FlakyVerdict(request_failed=True))
+            flake_summary = 'False'
+            if flake.is_flaky:
+                flaky[test] = flake.flaky_type
+                if flake.flaky_type == ResultsDatabase.BETWEEN_BUILDS_VERDICT and not flake.intra_build_evidence:
+                    unsupported.append(test)
+                flake_summary = f'{flake.flaky_type}: {flake.evidence}'
+                if flake.flaky_type in self.INCLUDED_FLAKY_VERDICTS and test not in unsupported:
+                    ignored.append(test)
+                else:
+                    shadowed.append(test)
+            elif flake.request_failed:
+                unknown.append(test)
+                flake_summary = 'Unknown'
+
+            yield self._addToLog(self.results_db_log_name, f'\n{test}: pre-existing-flake={flake_summary}\n')
+
+        self.setProperty('results-db_' + self.prefix + 'flaky', flaky)
+        self.setProperty('results-db_' + self.prefix + 'flaky_unsupported', sorted(unsupported))
+        self.setProperty('results-db_' + self.prefix + 'flaky_unknown', sorted(unknown))
+
+        for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
+            if acted_on:
+                yield self._addToLog(
+                    self.results_db_log_name,
+                    f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
+                )
+        defer.returnValue(set(ignored))
 
 
 class Contributors(object):
@@ -5832,6 +5889,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
     suffix = 'api_first_run'
+    prefix = 'api_'
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
     command = ['python3', 'Tools/Scripts/run-api-tests', '--timestamps', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
@@ -5846,6 +5904,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
         super().__init__(logEnviron=False, timeout=20 * 60, **kwargs)
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
+        self.flaky_failures_in_results_db = {}
         self.steps_to_add = []
 
     @defer.inlineCallbacks
@@ -5925,7 +5984,7 @@ class RunAPITests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
             self.build.results = SUCCESS
             self.setProperty('build_summary', message)
         else:
-            self.doOnFailure()
+            yield self.doOnFailure()
 
         self.build.addStepsAfterCurrentStep(self.steps_to_add)
         defer.returnValue(rc)
@@ -6067,7 +6126,44 @@ class ReRunAPITests(RunAPITests):
             yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
         defer.returnValue(failures)
 
-    def doOnFailure(self):
+    def failures_in_both_dirty_runs(self) -> set[str]:
+        """
+        The failures AnalyzeAPITestsResults would attribute to the change, before the clean-tree run
+        subtracts its own from them.
+        """
+        first_run_failures = self.getProperty('api_first_run_failures_filtered', None)
+        if first_run_failures is None:
+            first_run_failures = self.getProperty('api_first_run_failures', [])
+        second_run_failures = self.getProperty('api_second_run_failures_filtered', None)
+        if second_run_failures is None:
+            second_run_failures = self.getProperty('api_second_run_failures', [])
+        return set(first_run_failures) & set(second_run_failures)
+
+    @defer.inlineCallbacks
+    def doOnFailure(self) -> Generator[Any, Any, None]:
+        is_main = self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH
+        if is_main and (candidates := self.failures_in_both_dirty_runs()):
+            # parse_and_set_failures has already reported this build's BetweenStepsDirtyTree
+            # evidence, the only evidence the revert and clean-tree run would have added.
+            excused = yield self.flaky_new_failures_using_results_db(candidates)
+            if excused == candidates:
+                flaky = self.getProperty('results-db_api_flaky', {})
+                self.flaky_failures_in_results_db = {test: flaky.get(test) for test in excused}
+                message = self.results_db_ignore_message()
+                self.descriptionDone = message
+                self.build.results = SUCCESS
+                self.setProperty('force_build_success', True)
+                self.setProperty('build_summary', message)
+
+                # AnalyzeAPITestsResults never runs on this path, so nothing else reports these
+                # candidates.
+                results = self.merged_results(candidates, {
+                    'first-run': 'api_first_run_results',
+                    'second-run': 'api_second_run_results',
+                })
+                yield self.report_to_results_db(results)
+                return
+
         self.steps_to_add += [RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False)]
         platform = self.getProperty('platform')
         if platform == 'wpe':
@@ -6104,11 +6200,7 @@ class AnalyzeAPITestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLog
     descriptionDone = ['analyze-api-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 50
-    INCLUDED_FLAKY_VERDICTS = frozenset({
-        ResultsDatabase.CLEAN_TREE_VERDICT,
-        ResultsDatabase.DIRTY_TREE_VERDICT,
-        ResultsDatabase.BETWEEN_BUILDS_VERDICT,
-    })
+    prefix = 'api_'
 
     @defer.inlineCallbacks
     def run(self):
@@ -6190,55 +6282,6 @@ class AnalyzeAPITestsResults(ResultsDBReportMixin, buildstep.BuildStep, AddToLog
                 self.setProperty('build_summary', message.strip())
             self.build.buildFinished([message], SUCCESS)
             defer.returnValue(SUCCESS)
-
-    @defer.inlineCallbacks
-    def flaky_new_failures_using_results_db(self, new_failures: set[str]) -> Generator[Any, Any, set[str]]:
-        """
-        Verdicts for the failures the clean-tree run did not explain, returning the ones with a
-        verdict in INCLUDED_FLAKY_VERDICTS.
-        """
-        tests = sorted(new_failures)[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
-        configuration = self.results_db_query_configuration()
-        yield self._addToLog(self.results_db_log_name, f'Checking Results database for flakiness of {len(tests)} new failure(s). Configuration: {configuration}\n')
-
-        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(
-            tests, configuration=configuration, suite=self.suite,
-            authors=self.getProperty('owners', []),
-            pr_number=self.getProperty('github.number', None),
-        )
-        if flake_logs:
-            yield self._addToLog(self.results_db_log_name, flake_logs)
-
-        flaky, unsupported, unknown, ignored, shadowed = {}, [], [], [], []
-        for test in tests:
-            flake = flakes.get(test, FlakyVerdict(request_failed=True))
-            flake_summary = 'False'
-            if flake.is_flaky:
-                flaky[test] = flake.flaky_type
-                if flake.flaky_type == ResultsDatabase.BETWEEN_BUILDS_VERDICT and not flake.intra_build_evidence:
-                    unsupported.append(test)
-                flake_summary = f'{flake.flaky_type}: {flake.evidence}'
-                if flake.flaky_type in self.INCLUDED_FLAKY_VERDICTS and test not in unsupported:
-                    ignored.append(test)
-                else:
-                    shadowed.append(test)
-            elif flake.request_failed:
-                unknown.append(test)
-                flake_summary = 'Unknown'
-
-            yield self._addToLog(self.results_db_log_name, f'\n{test}: pre-existing-flake={flake_summary}\n')
-
-        self.setProperty('results-db_api_flaky', flaky)
-        self.setProperty('results-db_api_flaky_unsupported', sorted(unsupported))
-        self.setProperty('results-db_api_flaky_unknown', sorted(unknown))
-
-        for action, acted_on in (('Ignored', ignored), ('Would have ignored', shadowed)):
-            if acted_on:
-                yield self._addToLog(
-                    self.results_db_log_name,
-                    f"\n{action} {len(acted_on)} flaky test(s): {', '.join(sorted(acted_on))}\n",
-                )
-        defer.returnValue(set(ignored))
 
     def send_email_for_flaky_failure(self, test_name):
         try:

@@ -4273,9 +4273,9 @@ class TestReportToResultsDB(BuildStepMixinAdditions, unittest.TestCase):
 
 
 class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.TestCase):
-    """The read lives in AnalyzeAPITestsResults: excusing a failure in the first run's step would
-    empty its filtered failures, so the clean-tree run that produces the evidence for the verdict
-    would never be queued."""
+    """The earliest the read can happen is ReRunAPITests, which is where the build's only derivable
+    evidence, BetweenStepsDirtyTree, has just been reported. AnalyzeAPITestsResults reads again for
+    the failures the clean-tree run did not explain."""
 
     def setUp(self) -> defer.Deferred:
         self.longMessage = True
@@ -4423,6 +4423,235 @@ class TestAPITestFlakinessReadUsingResultsDB(BuildStepMixinAdditions, unittest.T
         yield step.run()
 
         self.assertEqual([(authors, pr_number) for _, _, _, authors, pr_number in queried], [(['jappleseed'], 42)])
+
+
+class TestReRunAPITestsExcusesKnownFlakes(BuildStepMixinAdditions, unittest.TestCase):
+    """The revert, the rebuild without the change, the clean-tree run and the analyze step exist to
+    decide the failures that survived both dirty runs, so a results-db verdict for every one of them
+    makes all four unnecessary."""
+
+    LADDER = [
+        RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False),
+        CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False),
+        KillOldProcesses(), RunAPITestsWithoutChange(), AnalyzeAPITestsResults(),
+    ]
+
+    def setUp(self) -> defer.Deferred:
+        self.longMessage = True
+        return self.setup_test_build_step()
+
+    def tearDown(self) -> defer.Deferred:
+        return self.tear_down_test_build_step()
+
+    def configureStep(self, first_run: list, second_run: list, filtered: bool = True) -> ReRunAPITests:
+        self.setup_step(ReRunAPITests())
+        self.setProperty('platform', 'mac')
+        self.setProperty('configuration', 'release')
+        self.setProperty('fullPlatform', 'mac-sonoma')
+        self.setProperty('os_version', '14.6.1')
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('api_first_run_failures', first_run)
+        self.setProperty('api_second_run_failures', second_run)
+        if filtered:
+            self.setProperty('api_first_run_failures_filtered', first_run)
+            self.setProperty('api_second_run_failures_filtered', second_run)
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        return step
+
+    @defer.inlineCallbacks
+    def test_a_verdict_for_every_candidate_skips_the_revert_and_the_clean_tree_run(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, [])
+        self.assertEqual(step.build.results, SUCCESS)
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored flaky tests: suite.flaky based on results-db')
+        self.assertEqual(self.getProperty('force_build_success'), True)
+        self.assertEqual(step.descriptionDone, 'Ignored flaky tests: suite.flaky based on results-db')
+
+    @defer.inlineCallbacks
+    def test_a_pull_request_against_a_branch_still_queues_the_whole_ladder(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+        self.setProperty('github.base.ref', 'safari-7620-branch')
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+        self.assertIsNone(self.getProperty('force_build_success'))
+
+    @defer.inlineCallbacks
+    def test_one_candidate_without_a_verdict_queues_the_whole_ladder(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky', 'suite.new'], ['suite.flaky', 'suite.new'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertIsNone(self.getProperty('build_summary'))
+        self.assertIsNone(self.getProperty('force_build_success'))
+
+    @defer.inlineCallbacks
+    def test_a_verdict_the_analyze_step_would_not_excuse_queues_the_ladder(self) -> Generator[Any, Any, None]:
+        # BetweenBuilds without intra-build evidence is the bucket the analyze step shadows rather
+        # than ignores, so the early exit must not act on it either.
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='BetweenBuilds')}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertEqual(self.getProperty('results-db_api_flaky_unsupported'), ['suite.flaky'])
+
+    @defer.inlineCallbacks
+    def test_a_failed_request_queues_the_ladder(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({test: FlakyVerdict(request_failed=True) for test in tests}, ''))))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertEqual(self.getProperty('results-db_api_flaky_unknown'), ['suite.flaky'])
+
+    @defer.inlineCallbacks
+    def test_only_the_failures_of_both_dirty_runs_are_candidates(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.both', 'suite.first_only'], ['suite.both', 'suite.second_only'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.both': FlakyVerdict(flaky_type='DirtyTree')}, queried))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(queried, [(['suite.both'], {'platform': 'mac', 'style': 'release'}, 'api-tests', [], None)])
+        self.assertEqual(step.steps_to_add, [])
+
+    @defer.inlineCallbacks
+    def test_a_pre_existing_failure_filtered_out_of_a_run_is_not_a_candidate(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.flaky', 'suite.pre_existing'], ['suite.flaky', 'suite.pre_existing'], filtered=False)
+        self.setProperty('api_first_run_failures_filtered', ['suite.flaky'])
+        self.setProperty('api_second_run_failures_filtered', ['suite.flaky'])
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}, queried))
+
+        yield step.doOnFailure()
+
+        self.assertEqual([tests for tests, _, _, _, _ in queried], [['suite.flaky']])
+        self.assertEqual(step.steps_to_add, [])
+
+    @defer.inlineCallbacks
+    def test_an_unparsed_run_queries_nothing_and_queues_the_ladder(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.flaky'], [], filtered=False)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}, queried))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(queried, [])
+        self.assertEqual(step.steps_to_add, self.LADDER)
+
+    @defer.inlineCallbacks
+    def test_the_early_read_forwards_the_change_identity(self) -> Generator[Any, Any, None]:
+        queried = []
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.setProperty('owners', ['jappleseed'])
+        self.setProperty('github.number', 42)
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}, queried))
+
+        yield step.doOnFailure()
+
+        self.assertEqual([(authors, pr_number) for _, _, _, authors, pr_number in queried], [(['jappleseed'], 42)])
+
+    @defer.inlineCallbacks
+    def test_a_gtk_build_still_installs_its_dependencies_before_the_rebuild(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.new'], ['suite.new'])
+        self.setProperty('platform', 'gtk')
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts({}))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, [
+            RevertAppliedChanges(), CleanWorkingDirectory(), ValidateChange(verifyBugClosed=False, addURLs=False), InstallGtkDependencies(),
+            CompileWebKitWithoutChange(retry_build_on_failure=True), ValidateChange(verifyBugClosed=False, addURLs=False), KillOldProcesses(), RunAPITestsWithoutChange(),
+            AnalyzeAPITestsResults(),
+        ])
+
+    @defer.inlineCallbacks
+    def test_a_whole_step_run_excuses_its_failure_and_queues_nothing(self) -> Generator[Any, Any, None]:
+        step = self.configureStep(['suite.flaky'], [], filtered=False)
+        self.setProperty('api_first_run_failures_filtered', ['suite.flaky'])
+        self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(
+            lambda cls, test, **kwargs: defer.succeed({'is_existing_failure': False, 'pass_rate': 0.98, 'raw_data': '', 'logs': ''})))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', f'python3 Tools/Scripts/run-api-tests --timestamps --no-build --release --verbose --json-output=api_test_results.json 2>&1 | Tools/Scripts/filter-test-logs api'],
+                        logfiles={'json': 'api_test_results.json'},
+                        timeout=20 * 60,
+                        )
+            .log('json', stdout='{"Failed":[{"name":"suite.flaky"}],"Timedout":[],"Crashed":[],"results":{"suite.flaky":{"actual":"FAIL"}}}')
+            .log('stdio', stdout='Ran 2 tests of 2 with 1 successful')
+            .exit(1),
+        )
+        self.expect_outcome(result=FAILURE, state_string='1 api test failed or timed out')
+
+        yield self.run_step()
+
+        self.assertEqual([queued for queued in step.steps_to_add if queued in self.LADDER], [])
+        self.assertEqual(self.getProperty('build_summary'), 'Ignored flaky tests: suite.flaky based on results-db')
+        self.assertEqual(self.getProperty('force_build_success'), True)
+
+    @defer.inlineCallbacks
+    def test_the_early_exit_reports_the_candidates_to_the_results_db(self) -> Generator[Any, Any, None]:
+        # AnalyzeAPITestsResults never runs on this path, so nothing else reports the intersection
+        # failures the build is about to excuse; a pre-existing BetweenStepsDirtyTree report is
+        # seeded here to prove the two stay disjoint rather than being merged or deduplicated.
+        step = self.configureStep(['suite.flaky'], ['suite.flaky'])
+        self.setProperty('api_first_run_results', {'suite.flaky': {'actual': 'FAIL'}})
+        self.setProperty('api_second_run_results', {'suite.flaky': {'actual': 'CRASH'}})
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+        between_steps_report = {'suite.betweensteps': {'actual': 'FAIL'}}
+        self.results_db_reports.append(dict(between_steps_report))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(len(self.results_db_reports), 2)
+        self.assertEqual(self.results_db_reports[0], between_steps_report)
+        report = self.results_db_reports[1]
+        self.assertIsNone(report['flaky_type'])
+        self.assertEqual(report['results'], {
+            'suite.flaky': {'actual': 'FAIL CRASH', 'actual_by_run': {'first-run': 'FAIL', 'second-run': 'CRASH'}},
+        })
+
+    @defer.inlineCallbacks
+    def test_the_ladder_path_leaves_the_between_steps_report_untouched(self) -> Generator[Any, Any, None]:
+        # The ladder still hands the decision to AnalyzeAPITestsResults, so doOnFailure must not add
+        # its own report here; a pre-existing BetweenStepsDirtyTree report is seeded to prove it is
+        # left exactly as parse_and_set_failures left it, on this path too.
+        step = self.configureStep(['suite.flaky', 'suite.new'], ['suite.flaky', 'suite.new'])
+        self.setProperty('api_first_run_results', {'suite.flaky': {'actual': 'FAIL'}, 'suite.new': {'actual': 'FAIL'}})
+        self.setProperty('api_second_run_results', {'suite.flaky': {'actual': 'FAIL'}, 'suite.new': {'actual': 'FAIL'}})
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', TestAPITestFlakinessReadUsingResultsDB.fake_verdicts(
+            {'suite.flaky': FlakyVerdict(flaky_type='DirtyTree')}))
+        between_steps_report = {'suite.betweensteps': {'actual': 'FAIL'}}
+        self.results_db_reports.append(dict(between_steps_report))
+
+        yield step.doOnFailure()
+
+        self.assertEqual(step.steps_to_add, self.LADDER)
+        self.assertEqual(self.results_db_reports, [between_steps_report])
 
 
 class TestAPITestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestCase):
