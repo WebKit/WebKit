@@ -314,6 +314,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                     results.summary.modifyHeadersActions.append(action);
                 }
             }, [&] (const RedirectAction& redirectAction) {
+                if (results.summary.redirected)
+                    return;
+
                 if (initiatingDocumentLoader.allowsActiveContentRuleListActionsForURL(contentRuleListIdentifier, url)) {
                     if (results.summary.blockedLoad)
                         return;
