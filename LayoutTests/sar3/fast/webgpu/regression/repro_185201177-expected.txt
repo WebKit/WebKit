@@ -1,0 +1,3 @@
+PASS the shader never observed another binding's arrayLength
+PASS each group bound with its own auto-generated layout reads its own arrayLength
+
