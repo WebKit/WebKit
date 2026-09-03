@@ -2126,6 +2126,13 @@ void WebPage::setTextAsync(const String& text)
         input->setValueForUser(text);
         return;
     }
+    if (RefPtr input = dynamicDowncast<HTMLTextAreaElement>(m_focusedElement)) {
+        input->setValue(text,
+            TextFieldEventBehavior::DispatchInputAndChangeEvent,
+            TextControlSetValueSelection::DoNotSet
+        );
+        return;
+    }
 
     ASSERT_NOT_REACHED();
 }
