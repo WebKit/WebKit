@@ -23,6 +23,7 @@
 import sys
 
 from webkitbugspy import Tracker, radar
+from webkitcorepy import run
 from .command import Command
 from .. import local
 from ..commit import Commit
@@ -103,6 +104,16 @@ class Conflict(Command):
         full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
         print('Found conflict branch {}'.format(full_branch))
         checkout_response = repository.checkout(full_branch)
+
+        grep_result = run(
+            [local.Git.executable(), 'grep', '-l', '^<<<<<<<'],
+            capture_output=True, encoding='utf-8', cwd=repository.root_path,
+        )
+        if grep_result.returncode == 0 and grep_result.stdout.strip():
+            conflicted_files = grep_result.stdout.strip().splitlines()
+            print('\nFiles with conflict markers:')
+            for f in conflicted_files:
+                print('  {}'.format(f))
 
         msg = "\n\n-------------------------------------------------------"
         msg += "\nYou are now checked out into the conflict branch.\n"
