@@ -8463,9 +8463,6 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-co
 # https://bugs.webkit.org/show_bug.cgi?id=301243 [ iOS 26 ] imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html is a flaky text failure
 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Pass Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=301246 [ iOS 26 ] scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html is a constant text failure
-scrollingcoordinator/ios/fixed-scrolling-with-keyboard.html [ Pass Failure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=301247 [ iOS 26 ] fast/forms/ios/inputmode-removing-none.html is a constant text failure
 fast/forms/ios/inputmode-removing-none.html [ Pass Failure ]
 
