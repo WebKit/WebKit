@@ -26,7 +26,6 @@ inspector/agents/page/PageDOMDebuggerAgent.cpp
 loader/NetscapePlugInStreamLoader.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
-page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/PreviewConverter.cpp
