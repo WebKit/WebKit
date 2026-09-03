@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Link Parameters - currentcolor as a parameter value resolves against the linking element</title>
+<link rel="author" title="Taher Ali" href="mailto:taher_ali@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-link-params/#link-param-prop">
+<link rel="match" href="circle-green-ref.html"/>
+<style>
+  img {
+    color: green;
+    link-parameters: param(--color, currentcolor);
+  }
+</style>
+
+<img src="circle-with-parameters.svg">
