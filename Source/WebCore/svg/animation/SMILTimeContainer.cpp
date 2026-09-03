@@ -247,7 +247,10 @@ void SMILTimeContainer::sortByPriority(AnimationsVector& animations, SMILTime el
 {
     if (m_documentOrderIndexesDirty)
         updateDocumentOrderIndexes();
-    std::ranges::sort(animations, PriorityCompare(elapsed));
+
+    // Only sort if not already sorted.
+    if (!std::ranges::is_sorted(animations, PriorityCompare(elapsed))) [[unlikely]]
+        std::ranges::sort(animations, PriorityCompare(elapsed));
 }
 
 void SMILTimeContainer::processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>& callback)
