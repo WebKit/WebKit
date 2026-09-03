@@ -135,15 +135,38 @@ bool OSAllocator::tryProtect(void* address, size_t bytes, bool readable, bool wr
 {
     if (!bytes)
         return true;
+    if (!readable && !writable) {
+        MEMORY_BASIC_INFORMATION pageInfo;
+        SIZE_T queried = VirtualQuery(address, &pageInfo, sizeof(pageInfo));
+        if (!queried)
+            return false;
+        // Assert that the region size is at least the size we're trying to protect.
+        ASSERT(pageInfo.RegionSize >= bytes);
+        if (pageInfo.RegionSize < bytes) {
+            // if the region size is less than the size we're trying to protect, return false.
+            return false;
+        }
+        if (pageInfo.State == MEM_FREE) {
+            // Memory is not reserved, so its reserved as noaccess.
+            return VirtualAlloc(address, bytes, MEM_RESERVE, PAGE_NOACCESS);
+        }
+        if (pageInfo.State == MEM_RESERVE) {
+            // Memory is reserved, so its already noaccess.
+            return true;
+        }
+        if (pageInfo.State == MEM_COMMIT) {
+            // Memory is committed, so its protection is flipped to noaccess.
+            DWORD oldProtection;
+            return VirtualProtect(address, bytes, PAGE_NOACCESS, &oldProtection);
+        }
+        return false;
+    }
     DWORD protection = 0;
     if (readable) {
         if (writable)
             protection = PAGE_READWRITE;
         else
             protection = PAGE_READONLY;
-    } else {
-        ASSERT(!readable && !writable);
-        protection = PAGE_NOACCESS;
     }
 
     // VirtualAlloc(MEM_COMMIT) cannot span multiple MEM_RESERVE regions, so walk

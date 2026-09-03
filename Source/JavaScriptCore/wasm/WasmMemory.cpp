@@ -198,6 +198,11 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     }
     
     if (fastMemory) {
+#if OS(WINDOWS)
+        // The region is only reserved; commit the in-use bytes before the no-access guard below.
+        if (initialBytes)
+            OSAllocator::commit(fastMemory, initialBytes, /* writable */ true, /* executable */ false);
+#endif
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(fastMemory + initialBytes, BufferMemoryHandle::fastMappedBytes() - initialBytes, readable, writable);
@@ -249,6 +254,10 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
             return nullptr;
         }
 
+#if OS(WINDOWS)
+        if (initialBytes)
+            OSAllocator::commit(slowMemory, initialBytes, /* writable */ true, /* executable */ false);
+#endif
         constexpr bool readable = false;
         constexpr bool writable = false;
         OSAllocator::protect(slowMemory + initialBytes, reservedMaximumBytes - initialBytes, readable, writable);
