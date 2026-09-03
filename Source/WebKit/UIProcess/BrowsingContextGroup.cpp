@@ -191,6 +191,11 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
     auto createRemotePageIfNeeded = [&](WebPageProxy& page, const Site& site) {
         if (!functor(page))
             return;
+
+        // The process is hosting main frame so it does not need remote page.
+        if (page.legacyMainFrameProcess().coreProcessIdentifier() == processProxy->coreProcessIdentifier())
+            return;
+
         auto& set = m_remotePages.ensure(page, [] {
             return HashSet<Ref<RemotePageProxy>> { };
         }).iterator->value;
@@ -201,6 +206,7 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
             ASSERT(existingPage->page() == newRemotePage->page());
         }
 #endif
+
         // Register before injecting, so creation parameters can resolve this page's identifier in the
         // new process via webPageIDInProcess().
         set.add(newRemotePage.copyRef());
@@ -208,12 +214,14 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
     };
 
     if (process.isSharedProcess()) {
-        Ref processProxy = process.process();
+        // RemotePageProxy currently requires a site, but it has no meaning under shared process mode since
+        // one process/RemotePageProxy can represent multiple sites, so we just pick the first site as a
+        // placeholder value.
+        auto& representativeSite = *m_sharedProcessSites.begin();
         for (Ref page : m_pages) {
             if (!m_pagesInSharedProcess.add(page).isNewEntry)
                 continue;
-            for (auto site : m_sharedProcessSites)
-                createRemotePageIfNeeded(page, site);
+            createRemotePageIfNeeded(page, representativeSite);
         }
         return;
     }
@@ -222,13 +230,10 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
     auto& site = *process.site();
     for (Ref page : m_pages) {
         // Under site isolation, a same-site page should be hosted in the same process and
-        // shouldn't need a remote page. Empty sites are the exception as they can span
-        // multiple processes but they appear as same-site.
-        // So for an empty site, only skip when the page really is in this process.
+        // shouldn't need a remote page. Empty sites are the exception, as they can compare equal
+        // for pages that are not actually co-located in the same process.
         bool sameSite = site == Site(URL(page->currentURL()));
-        RefPtr mainFrame = page->mainFrame();
-        bool pageIsInThisProcess = mainFrame && mainFrame->process().coreProcessIdentifier() == process.process().coreProcessIdentifier();
-        if (sameSite && (!site.isEmpty() || pageIsInThisProcess))
+        if (sameSite && !site.isEmpty())
             continue;
         createRemotePageIfNeeded(page, site);
     }
@@ -296,17 +301,12 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
     auto& set = m_remotePages.ensure(page, [] {
         return HashSet<Ref<RemotePageProxy>> { };
     }).iterator->value;
-    m_processMap.removeIf([&] (auto& pair) {
-        auto& site = pair.key;
-        auto& process = pair.value;
-        if (!process) {
-            ASSERT_NOT_REACHED_WITH_MESSAGE("FrameProcess should remove itself in the destructor so we should never find a null WeakPtr");
-            return true;
-        }
 
-        if (process->process().coreProcessIdentifier() == page.legacyMainFrameProcess().coreProcessIdentifier())
-            return false;
-        Ref processProxy = process->process();
+    auto createRemotePageIfNeeded = [&, page = Ref { page }](WebProcessProxy& processProxy, const Site& site) {
+        // A page whose main frame is already hosted directly by this process doesn't need a
+        // RemotePageProxy to reach itself.
+        if (page->legacyMainFrameProcess().coreProcessIdentifier() == processProxy.coreProcessIdentifier())
+            return;
         Ref newRemotePage = RemotePageProxy::create(page, processProxy, site);
 #if ASSERT_ENABLED
         for (auto& existingPage : set) {
@@ -316,6 +316,20 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
 #endif
         set.add(newRemotePage.copyRef());
         newRemotePage->injectPageIntoNewProcess();
+    };
+
+    if (RefPtr sharedProcess = m_sharedProcess.get(); sharedProcess && m_pagesInSharedProcess.add(page).isNewEntry)
+        createRemotePageIfNeeded(sharedProcess->process(), *m_sharedProcessSites.begin());
+
+    m_processMap.removeIf([&] (auto& pair) {
+        auto& site = pair.key;
+        auto& process = pair.value;
+        if (!process) {
+            ASSERT_NOT_REACHED_WITH_MESSAGE("FrameProcess should remove itself in the destructor so we should never find a null WeakPtr");
+            return true;
+        }
+
+        createRemotePageIfNeeded(process->process(), site);
         return false;
     });
 }

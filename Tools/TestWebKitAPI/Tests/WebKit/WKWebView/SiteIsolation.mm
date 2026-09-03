@@ -3147,7 +3147,48 @@ TEST(SiteIsolation, OpenerProcessSharing)
         { "/opened_iframe"_s, { "<script>alert('done')</script>"_s } }
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto [webView, delegate] = siteIsolatedViewAndDelegate(server);
+    auto [webView, delegate] = siteIsolatedViewAndDelegateWithoutSharedProcess(server);
+
+    __block RetainPtr<TestWKWebView> openedWebView;
+    __block RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    webView.get().UIDelegate = uiDelegate.get();
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        static RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [openedNavigationDelegate allowAnyTLSCertificate];
+        openedWebView.get().navigationDelegate = openedNavigationDelegate.get();
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        return openedWebView.get();
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [delegate waitForDidFinishNavigation];
+    [webView evaluateJavaScript:@"w = window.open('/opened')" completionHandler:nil];
+    EXPECT_WK_STREQ([uiDelegate waitForAlert], "done");
+
+    auto openerMainFrame = [webView mainFrame];
+    auto openedMainFrame = [openedWebView mainFrame];
+    pid_t openerMainFramePid = openerMainFrame.info._processIdentifier;
+    pid_t openedMainFramePid = openedMainFrame.info._processIdentifier;
+    pid_t openerIframePid = openerMainFrame.childFrames.firstObject.info._processIdentifier;
+    pid_t openedIframePid = openedMainFrame.childFrames.firstObject.info._processIdentifier;
+
+    EXPECT_EQ(openerMainFramePid, openedMainFramePid);
+    EXPECT_NE(openerMainFramePid, 0);
+    EXPECT_EQ(openerIframePid, openedIframePid);
+    EXPECT_NE(openerIframePid, 0);
+}
+
+TEST(SiteIsolation, OpenerProcessSharingWithSharedProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/opener_iframe'></iframe>"_s } },
+        { "/opened"_s, { "<iframe src='https://webkit.org/opened_iframe'></iframe>"_s } },
+        { "/opener_iframe"_s, { "hello"_s } },
+        { "/opened_iframe"_s, { "<script>alert('done')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, delegate] = siteIsolatedViewWithSharedProcess(server);
 
     __block RetainPtr<TestWKWebView> openedWebView;
     __block RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
