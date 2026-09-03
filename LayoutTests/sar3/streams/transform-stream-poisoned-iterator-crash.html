@@ -17,7 +17,7 @@ if (window.testRunner) {
 // the C++ side then treats those objects as JSReadableStream/JSWritableStream
 // and dereferences attacker-controlled memory.
 
-function check(label, fn, isTypeErrorExpected) {
+function check(label, fn) {
     let result;
     let message;
     try {

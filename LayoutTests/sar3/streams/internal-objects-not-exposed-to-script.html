@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Internal stream objects must not be exposed to script</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+function makeStream()
+{
+    const source = { };
+    source.stream = new ReadableStream({ start: controller => source.controller = controller });
+    return source;
+}
+
+function poisonedPropertyTest(name, description, action)
+{
+    test(() => {
+        const captured = [];
+        Object.defineProperty(Object.prototype, name, {
+            configurable: true,
+            set(value) { captured.push(this); },
+            get() { return undefined; },
+        });
+        try {
+            action();
+        } finally {
+            delete Object.prototype[name];
+        }
+        assert_equals(captured.length, 0, "Object.prototype '" + name + "' setter must not fire");
+    }, description);
+}
+
+for (const name of ["cancelPromiseCapability", "branch1", "branch2"]) {
+    poisonedPropertyTest(name, "readableStreamTee() does not leak teeState through an Object.prototype '" + name + "' setter", () => {
+        makeStream().stream.tee();
+        // Response.clone() tees with shouldClone set to true.
+        new Response(makeStream().stream).clone();
+    });
+}
+
+for (const name of ["start", "transform", "flush"]) {
+    poisonedPropertyTest(name, "TransformStream construction does not leak transformerDict through an Object.prototype '" + name + "' setter", () => {
+        new TransformStream({ start() {}, transform() {}, flush() {} });
+    });
+}
+
+for (const name of ["start", "write", "close", "abort"]) {
+    poisonedPropertyTest(name, "WritableStream construction does not leak underlyingSinkDict through an Object.prototype '" + name + "' setter", () => {
+        new WritableStream({ start() {}, write() {}, close() {}, abort() {} });
+    });
+}
+
+test(t => {
+    const observed = [];
+    const originalIterator = Array.prototype[Symbol.iterator];
+    Array.prototype[Symbol.iterator] = function () {
+        observed.push(this.length);
+        return originalIterator.call(this);
+    };
+    t.add_cleanup(() => { Array.prototype[Symbol.iterator] = originalIterator; });
+
+    makeStream().stream.tee();
+    new Response(makeStream().stream).clone();
+    new TransformStream();
+    new TextDecoderStream();
+    new TextEncoderStream();
+    new CompressionStream("gzip");
+    new DecompressionStream("gzip");
+
+    assert_array_equals(observed, [], "internal builtin results must not be read through Array.prototype[Symbol.iterator]");
+}, "Internal builtin results are not iterated through Array.prototype[Symbol.iterator]");
+</script>
+</body>
+</html>

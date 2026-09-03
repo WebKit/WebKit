@@ -50,7 +50,12 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     if (writableStrategy === @undefined)
         writableStrategy = { };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     let transformerDict = { };
+#else
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
+    let transformerDict = { __proto__: null };
+#endif
     if (transformer !== null) {
         if ("start" in transformer) {
             transformerDict["start"] = transformer["start"];
@@ -82,7 +87,11 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
 
     const internalTransformStream = {};
     const startPromiseCapability = @newPromiseCapability(@Promise);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#else
+    const streams = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#endif
     @setUpTransformStreamDefaultControllerFromTransformer(internalTransformStream, transformer, transformerDict);
 
     if ("start" in transformerDict) {
@@ -97,7 +106,11 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     } else
         startPromiseCapability.resolve.@call();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return [internalTransformStream, readable, writable];
+#else
+    return [internalTransformStream, streams[0], streams[1]];
+#endif
 }
 
 function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
@@ -115,7 +128,11 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
 
     const stream = {};
     const startPromiseCapability = @newPromiseCapability(@Promise);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const [readable, writable] = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#else
+    const streams = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+#endif
 
     const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
@@ -126,7 +143,11 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
         startPromiseCapability.reject.@call(@undefined, error);
     });
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return [stream, readable, writable];
+#else
+    return [stream, streams[0], streams[1]];
+#endif
 }
 
 function initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)

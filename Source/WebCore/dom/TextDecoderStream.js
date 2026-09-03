@@ -64,7 +64,14 @@ function initializeTextDecoderStream()
         return @promiseResolve(@Promise, @undefined);
     };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const [transform, readable, writable] = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+#else
+    const streams = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+    const transform = streams[0];
+    const readable = streams[1];
+    const writable = streams[2];
+#endif
     @putByIdDirectPrivate(this, "textDecoderStreamTransform", transform);
     @putByIdDirectPrivate(this, "readable", readable);
     @putByIdDirectPrivate(this, "writable", writable);
