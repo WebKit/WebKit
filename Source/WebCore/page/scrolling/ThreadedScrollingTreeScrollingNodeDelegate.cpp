@@ -65,8 +65,15 @@ void ThreadedScrollingTreeScrollingNodeDelegate::updateSnapScrollState()
     Ref scrollingNode = this->scrollingNode();
     scrollingNode->setScrollSnapInProgress(m_scrollController.isScrollSnapInProgress());
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (m_scrollController.activeScrollSnapIndexDidChange())
         scrollingTree()->setActiveScrollSnapIndices(scrollingNode->scrollingNodeID(), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+#else
+    if (m_scrollController.activeScrollSnapIndexDidChange()) {
+        if (RefPtr scrollingTree = this->scrollingTree())
+            scrollingTree->setActiveScrollSnapIndices(scrollingNode->scrollingNodeID(), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal), m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
+    }
+#endif
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::updateUserScrollInProgressForEvent(const PlatformWheelEvent& wheelEvent)
@@ -99,7 +106,15 @@ std::unique_ptr<ScrollingEffectsControllerTimer> ThreadedScrollingTreeScrollingN
 {
     // This is only used for a scroll snap timer.
     return WTF::makeUnique<ScrollingEffectsControllerTimer>(RunLoop::currentSingleton(), [function = WTF::move(function), scrollingNode = this->scrollingNode()] {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         Locker locker { scrollingNode->scrollingTree()->treeLock() };
+#else
+        RefPtr scrollingTree = scrollingNode->scrollingTree();
+        if (!scrollingTree)
+            return;
+
+        Locker locker { scrollingTree->treeLock() };
+#endif
         function();
     });
 }
@@ -203,20 +218,38 @@ ScrollExtents ThreadedScrollingTreeScrollingNodeDelegate::scrollExtents() const
 
 void ThreadedScrollingTreeScrollingNodeDelegate::deferWheelEventTestCompletionForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason reason) const
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!scrollingTree()->isMonitoringWheelEvents())
+#else
+    RefPtr scrollingTree = this->scrollingTree();
+    if (!scrollingTree || !scrollingTree->isMonitoringWheelEvents())
+#endif
         return;
 
     // Just use the scrolling node ID as the identifier, since we know this is coming from a ScrollingEffectsController associated with this node.
+#ifdef RC_REMOVE_SEC_ACCEL_3
     scrollingTree()->deferWheelEventTestCompletionForReason(scrollingNode()->scrollingNodeID(), reason);
+#else
+    scrollingTree->deferWheelEventTestCompletionForReason(scrollingNode()->scrollingNodeID(), reason);
+#endif
 }
 
 void ThreadedScrollingTreeScrollingNodeDelegate::removeWheelEventTestCompletionDeferralForReason(ScrollingNodeID, WheelEventTestMonitor::DeferReason reason) const
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!scrollingTree()->isMonitoringWheelEvents())
+#else
+    RefPtr scrollingTree = this->scrollingTree();
+    if (!scrollingTree || !scrollingTree->isMonitoringWheelEvents())
+#endif
         return;
 
     // Just use the scrolling node ID as the identifier, since we know this is coming from a ScrollingEffectsController associated with this node.
+#ifdef RC_REMOVE_SEC_ACCEL_3
     scrollingTree()->removeWheelEventTestCompletionDeferralForReason(scrollingNode()->scrollingNodeID(), reason);
+#else
+    scrollingTree->removeWheelEventTestCompletionDeferralForReason(scrollingNode()->scrollingNodeID(), reason);
+#endif
 }
 
 FloatPoint ThreadedScrollingTreeScrollingNodeDelegate::adjustedScrollPosition(const FloatPoint& position) const
