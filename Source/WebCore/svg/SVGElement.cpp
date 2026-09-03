@@ -71,9 +71,9 @@
 #include "ShadowRoot.h"
 #include "StyleAdjuster.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleDocumentScope.h"
 #include "StyleExtractor.h"
 #include "StyleKeyword+Mappings.h"
-#include "StyleResolver.h"
 #include "StyleUpdate.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
@@ -668,13 +668,13 @@ void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
 
 std::optional<Style::UnadjustedStyle> SVGElement::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const Style::ComputedStyle*)
 {
-    // If the element is in a <use> tree we get the style from the definition tree.
-    if (RefPtr styleElement = this->correspondingElement()) {
-        auto styleElementResolutionContext = resolutionContext;
-        // Can't use the state since we are going to another part of the tree.
-        styleElementResolutionContext.selectorMatchingState = nullptr;
-        styleElementResolutionContext.isSVGUseTreeRoot = true;
-        return styleElement->resolveStyle(styleElementResolutionContext);
+    // If the element is in a <use> tree, resolve style using the document's
+    // resolver (for author rules) but on the clone (for correct ancestor chain).
+    if (this->correspondingElement()) {
+        auto cloneResolutionContext = resolutionContext;
+        cloneResolutionContext.selectorMatchingState = nullptr;
+        cloneResolutionContext.isSVGUseTreeRoot = true;
+        return document().styleScope().resolver().unadjustedStyleForElement(const_cast<SVGElement&>(*this), cloneResolutionContext);
     }
 
     return resolveStyle(resolutionContext);

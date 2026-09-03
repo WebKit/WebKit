@@ -2674,7 +2674,6 @@ imported/w3c/web-platform-tests/svg/animations/switch-animation-02.html [ ImageO
 imported/w3c/web-platform-tests/svg/embedded/image-crossorigin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/svg/embedded/image-fractional-width-vertical-fidelity.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/interact/scripted/tabindex-focus-flag.svg [ Skip ]
-imported/w3c/web-platform-tests/svg/linking/reftests/use-descendant-combinator-003.html [ Skip ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001.svg [ ImageOnlyFailure ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002.svg [ ImageOnlyFailure ]
 webkit.org/b/269522 imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-003.svg [ ImageOnlyFailure ]
