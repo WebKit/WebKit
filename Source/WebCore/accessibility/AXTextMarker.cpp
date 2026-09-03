@@ -1138,8 +1138,16 @@ unsigned AXTextMarker::offsetFromRoot() const
     if (!isValid())
         return 0;
     auto target = toTextRunMarker();
-    if (!target.isValid())
-        return 0;
+    if (!target.isValid()) {
+        // Nothing at or after this marker has text (e.g. it points at an empty text field that ends
+        // the document), so toTextRunMarker() had nothing to anchor to. Anchor backwards instead, as
+        // every character in the document precedes this position, so its index is the end of the
+        // last run before it.
+        RefPtr previous = findObjectWithRuns(*isolatedObject(), AXDirection::Previous);
+        if (!previous)
+            return 0;
+        target = AXTextMarker { *previous, previous->textRuns()->totalLength() };
+    }
 
     RefPtr tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
     RefPtr root = tree ? tree->rootNode() : nullptr;
