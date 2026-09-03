@@ -758,26 +758,26 @@ void JSWebAssemblyInstance::copyElementSegment(JSWebAssemblyArray* array, const 
     }
 }
 
-bool JSWebAssemblyInstance::evaluateConstantExpression(uint64_t index, Type expectedType, uint64_t& result)
+std::expected<uint64_t, String> JSWebAssemblyInstance::evaluateConstantExpression(uint64_t constantExpressionIndex, Type expectedType)
 {
-    const auto& constantExpression = m_moduleInformation->constantExpressions[index];
-    auto evalResult = evaluateExtendedConstExpr(constantExpression, this, m_moduleInformation.get(), expectedType);
-    if (!evalResult.has_value()) [[unlikely]]
-        return false;
-
-    result = evalResult.value();
-    return true;
+    const auto& constantExpression = m_moduleInformation->constantExpressions[constantExpressionIndex];
+    return evaluateExtendedConstExpr(constantExpression, this, m_moduleInformation.get(), expectedType);
 }
 
 bool JSWebAssemblyInstance::ensureConstantExpressionValue(uint64_t constantExpressionIndex, Type expectedType, uint64_t& result)
 {
+    // The memo is scanned by the GC as a JSValue, so only reference-typed results may go in it.
+    ASSERT(isRefType(expectedType));
+
     if (auto found = m_constantExpressionValues.getOptional(constantExpressionIndex)) {
         result = JSValue::encode(found.value().get());
         return true;
     }
 
-    if (!evaluateConstantExpression(constantExpressionIndex, expectedType, result)) [[unlikely]]
+    auto evalResult = evaluateConstantExpression(constantExpressionIndex, expectedType);
+    if (!evalResult.has_value()) [[unlikely]]
         return false;
+    result = evalResult.value();
 
     Locker locker { cellLock() };
     m_constantExpressionValues.set(constantExpressionIndex, WriteBarrier<Unknown>(vm(), this, JSValue::decode(result)));

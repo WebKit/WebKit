@@ -197,6 +197,8 @@ public:
     bool copyDataSegment(JSWebAssemblyArray*, uint32_t segmentIndex, uint32_t offset, uint32_t lengthInBytes, uint8_t* values);
     void copyElementSegment(JSWebAssemblyArray*, const Wasm::Element& segment, uint32_t srcOffset, uint32_t length, uint64_t* values);
 
+    std::expected<uint64_t, String> evaluateConstantExpression(uint64_t constantExpressionIndex, Wasm::Type expectedType);
+
     bool isImportFunction(uint32_t functionIndex) const
     {
         return functionIndex < calleeGroup()->functionImportCount();
@@ -480,7 +482,6 @@ private:
     void finishCreation(VM&);
 
     static size_t allocationSize(const Wasm::ModuleInformation&);
-    bool evaluateConstantExpression(uint64_t, Wasm::Type, uint64_t&);
     bool ensureConstantExpressionValue(uint64_t constantExpressionIndex, Wasm::Type, uint64_t&);
 
     VM* const m_vm;

@@ -40,7 +40,6 @@
 #include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
 #include "VariableWriteFireDetailInlines.h"
-#include "WasmConstExprGenerator.h"
 #include "WasmOperationsInlines.h"
 #include "WasmTypeDefinitionInlines.h"
 #include "WebAssemblyBuiltin.h"
@@ -605,7 +604,8 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             }
             case Wasm::TableInformation::FromExtendedExpression: {
                 ASSERT(initialBitsOrImportNumber < moduleInformation.constantExpressions.size());
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[initialBitsOrImportNumber], moduleInformation, moduleInformation.tables[i].wasmType(), initialBitsOrImportNumber);
+                uint64_t constantExpressionIndex = initialBitsOrImportNumber;
+                evaluateConstantExpression(globalObject, constantExpressionIndex, moduleInformation.tables[i].wasmType(), initialBitsOrImportNumber);
                 RETURN_IF_EXCEPTION(scope, void());
                 break;
             }
@@ -667,7 +667,7 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 initialBits = JSValue::encode(m_instance->ensureFunctionWrapper(functionSpaceIndex));
             } else if (global.initializationType == Wasm::GlobalInformation::FromExtendedExpression) {
                 ASSERT(global.initialBits.initialBitsOrImportNumber < moduleInformation.constantExpressions.size());
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[global.initialBits.initialBitsOrImportNumber], moduleInformation, global.type, initialBits);
+                evaluateConstantExpression(globalObject, global.initialBits.initialBitsOrImportNumber, global.type, initialBits);
                 RETURN_IF_EXCEPTION(scope, void());
             } else
                 initialBits = global.initialBits.initialBitsOrImportNumber;
@@ -832,12 +832,12 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     }
 }
 
-JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* globalObject, const Wasm::ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, const Wasm::ModuleInformation& info, Wasm::Type expectedType, uint64_t& result)
+JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* globalObject, uint64_t constantExpressionIndex, Wasm::Type expectedType, uint64_t& result)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto evalResult = Wasm::evaluateExtendedConstExpr(constantExpressionAndSourceOffset, m_instance.get(), info, expectedType);
+    auto evalResult = m_instance->evaluateConstantExpression(constantExpressionIndex, expectedType);
     if (!evalResult.has_value()) [[unlikely]]
         return JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("couldn't evaluate constant expression: "_s, evalResult.error()))));
 
@@ -891,7 +891,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                     elementIndex = static_cast<uint32_t>(offset.constValue());
             } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[offset.constantExpressionIndex()], moduleInformation, isTable64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, offset.constantExpressionIndex(), isTable64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
                 RETURN_IF_EXCEPTION(scope, void());
                 elementIndex = isTable64 ? result : static_cast<uint32_t>(result);
             }
@@ -927,7 +927,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
                     offset = static_cast<uint32_t>(segment->offsetIfActive()->constValue());
             } else {
                 uint64_t result;
-                evaluateConstantExpression(globalObject, moduleInformation.constantExpressions[segment->offsetIfActive()->constantExpressionIndex()], moduleInformation, isMemory64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
+                evaluateConstantExpression(globalObject, segment->offsetIfActive()->constantExpressionIndex(), isMemory64 ? Wasm::Types::I64 : Wasm::Types::I32, result);
                 RETURN_IF_EXCEPTION(scope, void());
                 offset = isMemory64 ? result : static_cast<uint32_t>(result);
             }

@@ -758,10 +758,9 @@ std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> sour
 
 std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info, Type expectedType)
 {
-    auto constantExpression = constantExpressionAndSourceOffset.first;
     size_t offsetInSource = constantExpressionAndSourceOffset.second;
     ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, offsetInSource, info, instance);
-    FunctionParser<ConstExprGenerator> parser(generator, constantExpression, BlockSignature { expectedType }, info);
+    FunctionParser<ConstExprGenerator> parser(generator, constantExpressionAndSourceOffset.first.span(), BlockSignature { expectedType }, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 
     ConstExprGenerator::ExpressionType result = generator.result();
