@@ -100,7 +100,7 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--no-history', '--pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--no-history', '--pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -149,7 +149,7 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-pr', '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-pr', '-v', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -157,7 +157,7 @@ class TestRevert(testing.PathTestCase):
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
-                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+                result = program.main(args=('pull-request', '-v', '--no-history', '--no-wpt-export'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -202,7 +202,7 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--no-pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--no-pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -210,7 +210,7 @@ class TestRevert(testing.PathTestCase):
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, 'Unreviewed, reverting 5@main (d8bce26fa65c)' in repo.head.message)
             with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
-                result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+                result = program.main(args=('pull-request', '-v', '--no-history', '--no-wpt-export'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 
@@ -253,7 +253,7 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-issue', '-v', '--no-pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--no-issue', '-v', '--no-pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -286,7 +286,7 @@ index 05e8751..0bf3c85 100644
 """
             }
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-i', 'pr-branch', '-v', '--pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(1, result)
@@ -306,13 +306,13 @@ index 05e8751..0bf3c85 100644
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '-v', '--pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
             with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA)):
                 result = program.main(
-                    args=('pull-request', '-v', '--no-history'),
+                    args=('pull-request', '-v', '--no-history', '--no-wpt-export'),
                     path=self.path,
                 )
             self.assertEqual(0, result)
@@ -371,7 +371,7 @@ index 05e8751..0bf3c85 100644
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--pr'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v', '--pr', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -405,7 +405,7 @@ index 05e8751..0bf3c85 100644
         ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
 
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--safe'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--safe', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -452,7 +452,7 @@ index 05e8751..0bf3c85 100644
         ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
 
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--unsafe'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=1'.format(self.BUGZILLA), '-v', '--unsafe', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)

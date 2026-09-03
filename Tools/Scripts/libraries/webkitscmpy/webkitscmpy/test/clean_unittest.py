@@ -76,7 +76,7 @@ class TestClean(testing.PathTestCase):
         ) as repo, mocks.local.Svn():
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '--no-wpt-export'),
                 path=self.path,
             ))
 
@@ -95,7 +95,7 @@ class TestClean(testing.PathTestCase):
         ) as repo, mocks.local.Svn():
             repo.staged['added.txt'] = 'added'
             self.assertEqual(0, program.main(
-                args=('pull-request', '-i', 'pr-branch'),
+                args=('pull-request', '-i', 'pr-branch', '--no-wpt-export'),
                 path=self.path,
             ))
             remote.pull_requests[-1]['state'] = 'closed'

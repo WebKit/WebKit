@@ -46,7 +46,7 @@ class TestSquash(testing.PathTestCase):
         ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             repo.checkout('eng/squash-branch')
             result = program.main(
-                args=('pull-request', '-v', '--squash', '--no-history'),
+                args=('pull-request', '-v', '--squash', '--no-history', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -91,7 +91,7 @@ class TestSquash(testing.PathTestCase):
         ) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []):
             repo.checkout('eng/squash-branch')
             result = program.main(
-                args=('pull-request', '-v', '--squash', '--no-history', '--new-message'),
+                args=('pull-request', '-v', '--squash', '--no-history', '--new-message', '--no-wpt-export'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -143,7 +143,7 @@ class TestSquash(testing.PathTestCase):
             self.assertDictEqual(repo.modified, dict())
             self.assertDictEqual(repo.staged, dict())
             self.assertEqual(True, '[Testing] Creating commits' in repo.head.message)
-            result = program.main(args=('pull-request', '-v', '--no-history'), path=self.path)
+            result = program.main(args=('pull-request', '-v', '--no-history', '--no-wpt-export'), path=self.path)
             self.assertEqual(0, result)
             self.assertEqual(local.Git(self.path).remote().pull_requests.get(1).draft, False)
 

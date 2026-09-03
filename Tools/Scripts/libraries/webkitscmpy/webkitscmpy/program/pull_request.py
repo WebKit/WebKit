@@ -152,6 +152,12 @@ class PullRequest(Command):
             default=False,
             help='Force the a PR onto a secure remote, regardless of the current branch and issue state.',
         )
+        parser.add_argument(
+            '--wpt-export', '--no-wpt-export',
+            dest='export_wpt', default=True,
+            help='Enable or disable exporting WPT changes found in the PR',
+            action=arguments.NoAction,
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -468,7 +474,7 @@ class PullRequest(Command):
             print('Posted pull request link to {}'.format(issue.link))
 
     @classmethod
-    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None):
+    def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None, export_wpt=False):
         if update_issue is None:
             update_issue = getattr(args, 'update_issue', True)
         source_remote = args.remote or repository.default_remote
@@ -840,8 +846,37 @@ class PullRequest(Command):
             if args.open:
                 Terminal.open_url(pr.url)
 
+        commit_for_export = commits[0].hash
+        if export_wpt and cls.export_to_wpt(commit_for_export):
+            sys.stderr.write(f'Failed to export WPT changes. If your PR contains WPT changes, please run `export-w3c-test-changes --git-commit {commit_for_export} --create-pr`.\n')
+
         if callback:
             return callback(pr)
+        return 0
+
+    @classmethod
+    def import_test_exporter(cls):
+        try:
+            from webkitpy.w3c.test_exporter import WebPlatformTestExporter, parse_args
+            from webkitpy.common.host import Host
+            return WebPlatformTestExporter, Host, parse_args
+        except ImportError as e:
+            sys.stderr.write(f'Could not import from webkitpy: {e.msg}.\n')
+            return None, None, None
+
+    @classmethod
+    def export_to_wpt(cls, commit_for_export):
+        WebPlatformTestExporter, Host, parse_args = cls.import_test_exporter()
+        if not WebPlatformTestExporter:
+            return 1
+
+        options = parse_args(['--git-commit', commit_for_export, '--create-pr'])
+        wpt_exporter = WebPlatformTestExporter(Host(), options)
+        if wpt_exporter.has_wpt_changes():
+            try:
+                wpt_exporter.do_export()
+            except Exception:
+                return 1
         return 0
 
     @classmethod
@@ -871,4 +906,4 @@ class PullRequest(Command):
             if result:
                 return result
 
-        return cls.create_pull_request(repository, args, branch_point)
+        return cls.create_pull_request(repository, args, branch_point, export_wpt=args.export_wpt)

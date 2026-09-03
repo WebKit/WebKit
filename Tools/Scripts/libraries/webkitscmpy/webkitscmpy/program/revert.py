@@ -312,6 +312,24 @@ class Revert(Command):
             if cls.relate_issues(args, repository, issue, commit_issues, revert_reason):
                 return 1
 
+        if args.export_wpt:
+            commit_for_export = repository.commit().hash
+            WebPlatformTestExporter, Host, parse_args = PullRequest.import_test_exporter()
+            if not WebPlatformTestExporter:
+                sys.stderr.write(f'Failed to check for WPT changes. If your revert contains WPT changes, please run `export-w3c-test-changes --git-commit {commit_for_export} --create-pr`.\n')
+
+            wpt_exporter = WebPlatformTestExporter(Host(), parse_args(['--git-commit', commit_for_export, '--create-pr']))
+            if wpt_exporter.has_wpt_changes():
+                if Terminal.choose(
+                    prompt=f'Your revert contains WPT changes. Would you like to export them?',
+                    options=['Yes', 'No'],
+                    default='No'
+                ) == 'Yes':
+                    try:
+                        wpt_exporter.do_export()
+                    except Exception:
+                        sys.stderr.write(f'Failed to export WPT changes. Please run `export-w3c-test-changes --git-commit {commit_for_export} --create-pr` if you would like to export this revert.\n')
+
         if args.safe is not None:
             if args.pr is False:
                 response = Terminal.choose(

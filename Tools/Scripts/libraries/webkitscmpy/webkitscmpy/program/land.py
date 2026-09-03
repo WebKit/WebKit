@@ -117,6 +117,7 @@ class Land(Command):
             callback=callback,
             unblock=True if merge_type == 'unsafe' else False,
             update_issue=False,  # If we're immediately landing, no reason to track the code change as a WIP
+            export_wpt=args.export_wpt
         )
 
     @classmethod
