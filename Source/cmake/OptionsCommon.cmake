@@ -195,6 +195,42 @@ if (CLANG_TIME_TRACE AND COMPILER_IS_CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-trace")
 endif ()
 
+option(SWIFT_NINJA_TRACE "Collect ninja and swift driver execution data and produce a Perfetto-style trace" OFF)
+if (SWIFT_NINJA_TRACE)
+    # Tracing replaces the normal swiftc-wrapper with a harness that collects
+    # extra information from swift's driver. It has a finalizer step that
+    # correlates this info with .ninja_log, so it must be run manually.
+    set(SWIFT_JOBS_LOG "${CMAKE_BINARY_DIR}/swift-jobs.jsonl")
+    set(SWIFT_STATS_DIR "${CMAKE_BINARY_DIR}/swift-stats")
+    set(SWIFT_NINJA_TRACE_FINALIZE "${CMAKE_BINARY_DIR}/swift-trace-finalize.sh")
+    add_compile_options($<$<COMPILE_LANGUAGE:Swift>:--jobs-log=${SWIFT_JOBS_LOG}>)
+    add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-stats-output-dir ${SWIFT_STATS_DIR}>")
+
+    file(MAKE_DIRECTORY ${SWIFT_STATS_DIR})
+    file(GENERATE
+        OUTPUT ${SWIFT_NINJA_TRACE_FINALIZE}
+        CONTENT "#!/bin/sh -ex
+${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/ninja_build_trace.py \
+--ninja-log ${CMAKE_BINARY_DIR}/.ninja_log \
+--jobs-log ${SWIFT_JOBS_LOG} \
+--stats-dir ${SWIFT_STATS_DIR} $@"
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+            GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    )
+    # Defer to print this instructional message at the end of configuration.
+cmake_language(DEFER CALL message NOTICE "\
+============================
+Swift+Ninja tracing enabled!
+============================
+Perform a clean build (cmake --build ... --clean-first). Then finalize the
+trace by running:
+
+    ${SWIFT_NINJA_TRACE_FINALIZE} -o trace.json
+
+and load the result into <https://ui.perfetto.dev>.
+")
+endif ()
+
 set(GCC_OFFLINEASM_SOURCE_MAP_DEFAULT OFF)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set(GCC_OFFLINEASM_SOURCE_MAP_DEFAULT ON)

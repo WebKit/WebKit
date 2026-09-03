@@ -70,6 +70,7 @@ def main():
     AutoInstall.register(Package('pathspec', Version(0, 12, 1)))
 
     tester = Tester()
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'swift')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'test262'), 'test262')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitcorepy'), 'webkitcorepy')
