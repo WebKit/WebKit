@@ -85,6 +85,8 @@ namespace WebCore {
             return (index < m_frameBufferCache.size() && m_frameBufferCache[index].isComplete());
         }
 
+        ScalableImageDecoderFrame* firstFrameBuffer();
+
     private:
         PNGImageDecoder(AlphaOption, GammaAndColorProfileOption);
         void tryDecodeSize(bool allDataReceived) override { decode(true, 0, allDataReceived); }

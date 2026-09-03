@@ -92,6 +92,12 @@ public:
     const IntSize& size() const { return m_size; }
     const IntRect& frameRect() const { return m_frameRect; }
 
+    uint32_t& pixelAt(int x, int y)
+    {
+        ASSERT(inBounds(IntPoint(x, y)));
+        return m_pixelsSpan[y * m_size.width() + x];
+    }
+
     void clear()
     {
         zeroSpan(m_pixelsSpan);
@@ -144,12 +150,6 @@ public:
     {
         ASSERT(inBounds(IntPoint(x, y)));
         return m_pixelsSpan.subspan(y * m_size.width() + x);
-    }
-
-    uint32_t& pixelAt(int x, int y)
-    {
-        ASSERT(inBounds(IntPoint(x, y)));
-        return m_pixelsSpan[y * m_size.width() + x];
     }
 
     void setPixel(uint32_t& destination, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -212,7 +212,7 @@ private:
         : m_premultiplyAlpha(premultiplyAlpha)
     {
         ASSERT(!size.isEmpty() && !isOverSize(size));
-        setSize(size);
+        RELEASE_ASSERT(setSize(size));
     }
 
     ImageBackingStore(const ImageBackingStore& other)
