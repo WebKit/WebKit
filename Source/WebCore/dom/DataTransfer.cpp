@@ -388,21 +388,22 @@ Vector<String> DataTransfer::types(Document& document, AddFilesType addFilesType
     auto fileContentState = m_pasteboard->fileContentState();
     if (hasFileBackedItem || fileContentState != Pasteboard::FileContentState::NoFileOrImageData) {
         Vector<String> types;
+        if (fileContentState == Pasteboard::FileContentState::MayContainFilePaths) {
+            if (safeTypes.contains("text/uri-list"_s))
+                types.append("text/uri-list"_s);
+            if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
+                types.append(textHTMLContentTypeAtom());
+        } else
+            types = WTF::move(safeTypes);
+
+        // Per the steps to update the types array in https://html.spec.whatwg.org/multipage/dnd.html#the-datatransfer-interface,
+        // the type strings of the text items are added to L first, and only then is "Files" added, so
+        // "Files" must be the last entry.
         if (!hideFilesType && addFilesType == AddFilesType::Yes) {
             types.append("Files"_s);
             if (document.quirks().needsMozillaFileTypeForDataTransfer())
                 types.append("application/x-moz-file"_s);
         }
-
-        if (fileContentState != Pasteboard::FileContentState::MayContainFilePaths) {
-            types.appendVector(WTF::move(safeTypes));
-            return types;
-        }
-
-        if (safeTypes.contains("text/uri-list"_s))
-            types.append("text/uri-list"_s);
-        if (safeTypes.contains(textHTMLContentTypeAtom()) && DeprecatedGlobalSettings::customPasteboardDataEnabled())
-            types.append(textHTMLContentTypeAtom());
         return types;
     }
 

@@ -1,0 +1,7 @@
+
+PASS "Files" is last when the File is added before the text item
+PASS "Files" is last when the File is added after the text item
+PASS The text item types keep their relative order and "Files" comes after all of them
+PASS Multiple File items add a single trailing "Files" entry
+PASS The order of types does not have to match the order of the item list
+
