@@ -29,6 +29,7 @@
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
+#include "WebFrameProxy.h"
 #include "WebProcessProxy.h"
 #include <cstdint>
 #include <wtf/Function.h>
@@ -71,6 +72,16 @@ using WebBackForwardListItemFilter = WTF::RefCountable<WTF::Function<bool (WebKi
 inline WebKit::FrameState* getFrameState(WebKit::WebBackForwardListFrameItem& item)
 {
     return &item.frameState();
+}
+
+inline WebCore::ProcessIdentifier frameProcessIdentifier(WebKit::WebFrameProxy& frame)
+{
+    return frame.process().coreProcessIdentifier();
+}
+
+inline WebCore::ProcessIdentifier frameProvisionalLoadProcessIdentifier(WebKit::WebFrameProxy& frame)
+{
+    return frame.provisionalLoadProcess().coreProcessIdentifier();
 }
 
 void setFrameStateBackForwardItemIdentifier(WebKit::FrameState&, const WebCore::BackForwardItemIdentifier&);

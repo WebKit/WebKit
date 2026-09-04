@@ -1254,11 +1254,38 @@ final class WebBackForwardList {
         }
     }
 
+    // Mirror of C++ WebBackForwardList::canSendFrameStateToProcess.
+    private func canSendFrameStateToProcess(
+        connection: IPC.Connection,
+        frameID: WebCore.FrameIdentifier
+    ) -> Bool {
+        guard let listPage = page.get(), let frame = WebKit.WebFrameProxy.webFrame(.init(frameID)), let framePage = frame.page() else {
+            return false
+        }
+
+        // We can't use == here due to rdar://162357139.
+        guard contentsMatch(framePage.identifier(), listPage.identifier()) else {
+            return false
+        }
+
+        // The process accessors need shims due to rdar://168057355.
+        let processID = WebKit.WebProcessProxy.fromConnection(connection).ptr().coreProcessIdentifier()
+        return contentsMatch(frameProcessIdentifier(frame), processID)
+            || contentsMatch(frameProvisionalLoadProcessIdentifier(frame), processID)
+            || frame.isMainFrame()
+    }
+
     @used
     func backForwardAllItems(
+        connection: IPC.Connection,
         frameID: WebCore.FrameIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardAllItemsCompletionHandler
     ) {
+        guard canSendFrameStateToProcess(connection: connection, frameID: frameID) else {
+            completionHandler.pointee(consuming: WebKit.VectorRefFrameState())
+            return
+        }
+
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
@@ -1284,13 +1311,19 @@ final class WebBackForwardList {
             return
         }
 
-        // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+        guard canSendFrameStateToProcess(connection: connection, frameID: frameID) else {
+            completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
+            return
+        }
+
         let delta = Int(delta)
         guard let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
             return
         }
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
+            // A restored item records no FrameIdentifier, so every lookup misses and the sender needs
+            // the tree to match children by unique name; see the C++ receiver.
             completionHandler.pointee(consuming: WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr()))
             return
         }

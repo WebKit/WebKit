@@ -924,8 +924,39 @@ void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier ite
     goToItem(*item);
 }
 
-void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+// The provisional-load allowance is needed because the hosting process changes mid-navigation. The
+// main-frame allowance is needed because a site-isolated subframe resolves history navigations against
+// the main frame's item tree; see BackForwardController::itemAtIndex.
+//
+// FIXME: This is not a process boundary for FrameState. A process swap leaves the new process able to
+// read the origins the frame visited earlier, and a main-frame request still returns the whole item
+// tree. Closing either one needs these messages removed rather than filtered, which
+// UseUIProcessForBackForwardItemLoading makes possible by driving back/forward loading from the UI
+// process.
+static bool webProcessCanAccessFrameState(WebProcessProxy& process, WebFrameProxy& frame)
 {
+    return &frame.process() == &process
+        || &frame.provisionalLoadProcess() == &process
+        || frame.isMainFrame();
+}
+
+// A frame whose process is shutting down has already cleared its page (WebFrameProxy::webProcessWillShutDown),
+// so a page mismatch is reachable during teardown and must not be a fatal message check.
+bool WebBackForwardList::canSendFrameStateToProcess(IPC::Connection& connection, FrameIdentifier frameID)
+{
+    RefPtr page = m_page.get();
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!page || !frame || frame->page() != page)
+        return false;
+
+    return webProcessCanAccessFrameState(WebProcessProxy::fromConnection(connection), *frame);
+}
+
+void WebBackForwardList::backForwardAllItems(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+{
+    if (!canSendFrameStateToProcess(connection, frameID))
+        return completionHandler({ });
+
     auto frameItems = WTF::compactMap(entries(), [frameID](const auto& item) -> RefPtr<WebBackForwardListFrameItem> {
         return item->mainFrameItem().childItemForFrameID(frameID);
     });
@@ -939,10 +970,15 @@ void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& co
 {
     MESSAGE_CHECK_COMPLETION_BASE(delta != std::numeric_limits<int32_t>::min(), connection, completionHandler(nullptr));
 
-    // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+    if (!canSendFrameStateToProcess(connection, frameID))
+        return completionHandler(nullptr);
+
     if (RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No)) {
         if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
             return completionHandler(frameItem->copyFrameStateWithChildren());
+        // A restored item records no FrameIdentifier, so every lookup misses and the sender needs the
+        // tree to match children by unique name; see FrameLoader::loadChildHistoryItemIntoFrame. This
+        // returns no more than a request for the main frame already returns.
         completionHandler(item->copyMainFrameStateWithChildren());
     } else
         completionHandler(nullptr);
