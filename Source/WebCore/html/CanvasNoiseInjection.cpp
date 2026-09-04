@@ -96,7 +96,7 @@ static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int i
     auto bufferSize = bytes.size_bytes();
     auto pixelIndex = index / bytesPerPixel;
     bool isInTopRow = pixelIndex < static_cast<size_t>(size.width());
-    bool isInBottomRow = pixelIndex > static_cast<size_t>((size.height() - 1) * size.width());
+    bool isInBottomRow = pixelIndex >= static_cast<size_t>((size.height() - 1) * size.width());
     bool isInLeftColumn = !(pixelIndex % size.width());
     bool isInRightColumn = (pixelIndex % size.width()) == static_cast<unsigned>(size.width()) - 1;
     bool isInTopLeftCorner = isInTopRow && isInLeftColumn;
