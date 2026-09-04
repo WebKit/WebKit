@@ -63,21 +63,12 @@ ImageBufferSkiaUnacceleratedBackend::~ImageBufferSkiaUnacceleratedBackend() = de
 
 RefPtr<NativeImage> ImageBufferSkiaUnacceleratedBackend::copyNativeImage()
 {
-    SkPixmap pixmap;
-    if (m_surface->peekPixels(&pixmap))
-        return NativeImage::create(SkImages::RasterFromPixmapCopy(pixmap));
-    return nullptr;
+    return NativeImage::create(m_surface->makeImageSnapshot());
 }
 
 RefPtr<NativeImage> ImageBufferSkiaUnacceleratedBackend::createNativeImageReference()
 {
-    SkPixmap pixmap;
-    if (m_surface->peekPixels(&pixmap)) {
-        return NativeImage::create(SkImages::RasterFromPixmap(pixmap, [](const void*, void* context) {
-            static_cast<SkSurface*>(context)->unref();
-        }, SkSafeRef(m_surface.get())));
-    }
-    return nullptr;
+    return NativeImage::create(m_surface->makeTemporaryImage());
 }
 
 void ImageBufferSkiaUnacceleratedBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
