@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml">
+  <metadata>
+    <title>Reference: hanging baseline applied directly on &#x3c;text&#x3e;</title>
+    <h:link rel="stylesheet" type="text/css" href="/fonts/ahem.css"/>
+  </metadata>
+  <text dominant-baseline="hanging" fill="green" font-size="50" font-family="Ahem" x="10" y="10">X</text>
+</svg>

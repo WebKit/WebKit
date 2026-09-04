@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml">
+  <metadata>
+    <title>'dominant-baseline: hanging' on &#x3c;text&#x3e; applies to &#x3c;tspan&#x3e; child with auto</title>
+    <h:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#DominantBaselineProperty"/>
+    <h:link rel="match" href="dominant-baseline-hanging-on-tspan-expected.svg"/>
+    <h:link rel="stylesheet" type="text/css" href="/fonts/ahem.css"/>
+  </metadata>
+  <!-- 'auto' on the tspan must keep the parent text element's hanging baseline,
+       so the glyph top edge aligns with y=10 rather than the alphabetic baseline. -->
+  <text dominant-baseline="hanging" fill="green" font-size="50" font-family="Ahem">
+    <tspan x="10" y="10">X</tspan>
+  </text>
+</svg>
