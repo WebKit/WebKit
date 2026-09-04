@@ -8454,7 +8454,8 @@ SiteIsolationEnabled:
 
 SiteIsolationHighValueFraudTargetDomainsEnabled:
   type: bool
-  status: unstable
+  status: internal
+  defaultsOverridable: true
   category: security
   humanReadableName: "High-value fraud target domains for Site Isolation"
   humanReadableDescription: "Exclude sites on the high-value fraud target domains list from the shared web process"
@@ -8472,12 +8473,12 @@ SiteIsolationSharedProcessEnabled:
   defaultsOverridable: true
   category: security
   humanReadableName: "Shared process for Site Isolation"
-  humanReadableDescription: "Put cross-site frames in a shared Web process"
+  humanReadableDescription: "Put cross-site frames in a shared web process"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
