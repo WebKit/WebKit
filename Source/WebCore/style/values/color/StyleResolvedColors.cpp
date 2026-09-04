@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,57 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "ColorInterpolationMethod.h"
-#include "StyleColor.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
-#include <wtf/UniqueRef.h>
+#include "config.h"
+#include "StyleResolvedColors.h"
 
 namespace WebCore {
-
-class Color;
-
-namespace CSS {
-struct ColorMix;
-}
-
 namespace Style {
 
-struct ColorResolutionState;
-
-struct ColorMix {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
-
-    struct Component {
-        using Percentage = Style::Percentage<CSS::Range{0, 100}>;
-
-        Color color;
-        std::optional<Percentage> percentage;
-
-        bool operator==(const Component&) const = default;
-    };
-
-    ColorInterpolationMethod colorInterpolationMethod;
-    CommaSeparatedVector<Component> components;
-
-    bool operator==(const ColorMix&) const = default;
-};
-
-inline bool operator==(const UniqueRef<ColorMix>& a, const UniqueRef<ColorMix>& b)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor)
+    : m_currentColor(currentColor)
 {
-    return a.get() == b.get();
 }
 
-Color toStyleColor(const CSS::ColorMix&, ColorResolutionState&);
-WebCore::Color resolveColor(const ColorMix&, const ResolvedColors&);
-bool containsCurrentColor(const ColorMix&);
+ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
+{
+    return ResolvedColors(style.color());
+}
 
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const ColorMix&);
+ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
+{
+    return ResolvedColors(style.visitedLinkColorResolvingCurrentColor());
+}
 
 } // namespace Style
 } // namespace WebCore

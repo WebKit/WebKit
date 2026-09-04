@@ -73,11 +73,11 @@ Color toStyleColor(const CSS::RelativeAlphaColor& unresolved, ColorResolutionSta
 
 // MARK: - Resolve
 
-WebCore::Color resolveColor(const RelativeAlphaColor& value, const WebCore::Color& currentColor)
+WebCore::Color resolveColor(const RelativeAlphaColor& value, const ResolvedColors& resolvedColors)
 {
     return resolveNoConversionDataRequired(
         CSS::RelativeAlphaColorResolver {
-            .origin = value.origin.resolveColor(currentColor),
+            .origin = value.origin.resolveColor(resolvedColors),
             .alpha = value.alpha
         }
     );

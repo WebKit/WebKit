@@ -58,6 +58,7 @@
 #include "StylePrimitiveNumericOrKeyword+CSSValueConversion.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
 #include "StyleResolveForFont.h"
+#include "StyleResolvedColors.h"
 #include "StyleResolver.h"
 #include "StyleTextEdge+CSSValueConversion.h"
 #include "StyleValueTypes+CSSValueConversion.h"
@@ -676,11 +677,11 @@ inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
 
     if (builderState.applyPropertyToRegularStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::No);
-        builderState.style().setColor(styleColor.resolveColor(builderState.parentStyle().color()));
+        builderState.style().setColor(styleColor.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle())));
     }
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto styleColor = toStyle(initialColor, builderState, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(styleColor.resolveColor(builderState.parentStyle().visitedLinkColor()));
+        builderState.style().setVisitedLinkColor(styleColor.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle())));
     }
 
     builderState.style().setDisallowsFastPathInheritance();
@@ -692,11 +693,11 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 {
     if (builderState.applyPropertyToRegularStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::No);
-        builderState.style().setColor(color.resolveColor(builderState.parentStyle().color()));
+        builderState.style().setColor(color.resolveColor(ResolvedColors::fromStyle(builderState.parentStyle())));
     }
     if (builderState.applyPropertyToVisitedLinkStyle()) {
         auto color = toStyleFromCSSValue<Color>(builderState, value, ForVisitedLink::Yes);
-        builderState.style().setVisitedLinkColor(color.resolveColor(builderState.parentStyle().visitedLinkColor()));
+        builderState.style().setVisitedLinkColor(color.resolveColor(ResolvedColors::fromVisitedLinkStyle(builderState.parentStyle())));
     }
 
     builderState.style().setDisallowsFastPathInheritance();

@@ -28,6 +28,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/StyleAppleColorFilter.h>
 #include <WebCore/StyleComputedStyle.h>
+#include <WebCore/StyleResolvedColors.h>
 
 namespace WebCore {
 namespace Style {
@@ -110,7 +111,7 @@ WebCore::Color ColorPropertyResolver<ColorTraits>::colorResolvingCurrentColor() 
     else if constexpr (ImplementsColorResolvingCurrentColor<ColorTraits>)
         return ColorTraits::colorResolvingCurrentColor(m_style);
     else
-        return ColorTraits::color(m_style).resolveColor(m_style->color());
+        return ColorTraits::color(m_style).resolveColor(ResolvedColors::fromStyle(m_style));
 }
 
 template<typename ColorTraits>
@@ -130,7 +131,7 @@ WebCore::Color ColorPropertyResolver<ColorTraits>::visitedLinkColorResolvingCurr
     else if constexpr (ImplementsVisitedLinkColorResolvingCurrentColor<ColorTraits>)
         return ColorTraits::visitedLinkColorResolvingCurrentColor(m_style);
     else
-        return ColorTraits::visitedLinkColor(m_style).resolveColor(m_style->visitedLinkColor());
+        return ColorTraits::visitedLinkColor(m_style).resolveColor(ResolvedColors::fromVisitedLinkStyle(m_style));
 }
 
 template<typename ColorTraits>

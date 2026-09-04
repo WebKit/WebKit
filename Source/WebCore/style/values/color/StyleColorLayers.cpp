@@ -71,13 +71,13 @@ Color toStyleColor(const CSS::ColorLayers& unresolved, ColorResolutionState& sta
 
 // MARK: Resolve
 
-WebCore::Color resolveColor(const ColorLayers& colorLayers, const WebCore::Color& currentColor)
+WebCore::Color resolveColor(const ColorLayers& colorLayers, const ResolvedColors& resolvedColors)
 {
     return blendSourceOver(
         CSS::ColorLayersResolver {
             .blendMode = colorLayers.blendMode,
             .colors = colorLayers.colors.map([&](auto& color) {
-                return color.resolveColor(currentColor);
+                return color.resolveColor(resolvedColors);
             })
         }
     );
