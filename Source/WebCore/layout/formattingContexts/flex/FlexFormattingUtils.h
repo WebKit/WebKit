@@ -129,6 +129,7 @@ public:
     static bool isWrapReverse(const RenderFlexibleBox&);
     static bool isMultiline(const RenderFlexibleBox&);
     static bool isBalance(const RenderFlexibleBox&);
+    static size_t minimumLineCount(const RenderFlexibleBox&);
     bool isLeftToRightFlow() const;
     static bool mainAxisIsFlexItemInlineAxis(const RenderBox& flexItem);
     bool mainAxisIsFlexItemInlineAxis(const FlexLayoutItem&) const;

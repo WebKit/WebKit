@@ -777,6 +777,7 @@
 				WebCore/DocumentOrder.cpp,
 				WebCore/FidoHidMessageTest.cpp,
 				WebCore/FileMonitor.cpp,
+				WebCore/FlexLineBreakerTests.cpp,
 				WebCore/FloatPointTests.cpp,
 				WebCore/FloatQuadTests.cpp,
 				WebCore/FloatRectTests.cpp,

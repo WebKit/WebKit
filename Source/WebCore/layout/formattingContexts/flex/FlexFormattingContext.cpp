@@ -168,7 +168,7 @@ FlexFormattingContext::FlexLines FlexFormattingContext::computeFlexLines(const F
         if (!m_constraints.isMultiline)
             return { flexItems.size() };
         if (m_constraints.isBalance)
-            return balancedLineBreaks(itemMainAxisSizes.span(), mainAxisAvailableSpace, gapBetweenItems);
+            return balancedLineBreaks(itemMainAxisSizes.span(), mainAxisAvailableSpace, gapBetweenItems, m_constraints.minimumLineCount);
         return greedyLineBreaks(itemMainAxisSizes.span(), mainAxisAvailableSpace, gapBetweenItems);
     }();
 
