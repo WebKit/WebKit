@@ -40,7 +40,6 @@
 #include "YarrJITRegisters.h"
 #include "YarrMatchingContextHolder.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/Bag.h>
 #include <wtf/BitVector.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ListDump.h>
@@ -5759,92 +5758,6 @@ class YarrGenerator final : public YarrJITInfo {
         m_ops[parenEnd].m_checkedOffset = checkedOffset;
     }
 
-    // Used for lookbehinds and for lookaheads inside lookbehinds, whose terms the parser
-    // numbers in pattern order. Returns a copy whose terms are in the order the JIT matches
-    // them (reversed for backward alternatives) with inputPosition counted from origin in
-    // that order. The original is left untouched so the interpreter can still use it if we bail.
-    PatternDisjunction* copyDisjunctionInMatchOrder(PatternDisjunction* disjunction, unsigned origin)
-    {
-        if (!isSafeToRecurse()) [[unlikely]] {
-            m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
-            return nullptr;
-        }
-
-        PatternDisjunction* copiedDisjunction = m_copiedDisjunctions.add();
-        copiedDisjunction->m_minimumSize = disjunction->m_minimumSize;
-        copiedDisjunction->m_callFrameSize = disjunction->m_callFrameSize;
-        copiedDisjunction->m_hasFixedSize = disjunction->m_hasFixedSize;
-
-        for (auto& alternative : disjunction->m_alternatives) {
-            MatchDirection direction = alternative->matchDirection();
-            PatternAlternative* copiedAlternative = copiedDisjunction->addNewAlternative(alternative->m_firstSubpatternId, direction);
-            copiedAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-            copiedAlternative->m_minimumSize = alternative->m_minimumSize;
-            copiedAlternative->m_hasFixedSize = alternative->m_hasFixedSize;
-            copiedAlternative->m_isLastAlternative = alternative->m_isLastAlternative;
-            size_t termCount = alternative->m_terms.size();
-            copiedAlternative->m_terms.reserveInitialCapacity(termCount);
-            unsigned inputPosition = origin;
-            for (size_t i = 0; i < termCount; ++i) {
-                PatternTerm term = alternative->m_terms[direction == Backward ? termCount - 1 - i : i];
-                switch (term.type) {
-                case PatternTerm::Type::AssertionBOL:
-                case PatternTerm::Type::AssertionEOL:
-                case PatternTerm::Type::AssertionBOI:
-                case PatternTerm::Type::AssertionEOI:
-                case PatternTerm::Type::AssertionWordBoundary:
-                case PatternTerm::Type::NumberedBackReference:
-                case PatternTerm::Type::NamedBackReference:
-                    term.inputPosition = inputPosition;
-                    break;
-
-                case PatternTerm::Type::NumberedForwardReference:
-                case PatternTerm::Type::NamedForwardReference:
-                    break;
-
-                case PatternTerm::Type::PatternCharacter:
-                    term.inputPosition = inputPosition;
-                    if (term.quantityType == QuantifierType::FixedCount)
-                        inputPosition += term.quantityMaxCount.value() * (m_pattern.eitherUnicode() ? U16_LENGTH(term.patternCharacter) : 1);
-                    break;
-
-                case PatternTerm::Type::CharacterClass:
-                    term.inputPosition = inputPosition;
-                    if (term.quantityType == QuantifierType::FixedCount)
-                        inputPosition += term.quantityMaxCount.value() * (m_pattern.eitherUnicode() && term.isFixedWidthCharacterClass() && term.characterClass->hasNonBMPCharacters() ? 2 : 1);
-                    break;
-
-                case PatternTerm::Type::ParenthesesSubpattern: {
-                    ASSERT(!term.parentheses.isStringList && !term.parentheses.isTerminal);
-                    term.parentheses.disjunction = copyDisjunctionInMatchOrder(term.parentheses.disjunction, inputPosition);
-                    if (!term.parentheses.disjunction)
-                        return nullptr;
-                    if (term.quantityMaxCount == 1 && !term.parentheses.isCopy && term.quantityType == QuantifierType::FixedCount)
-                        inputPosition += term.parentheses.disjunction->m_minimumSize;
-                    term.inputPosition = inputPosition;
-                    break;
-                }
-
-                case PatternTerm::Type::ParentheticalAssertion:
-                    if (direction == Forward && term.matchDirection() == Forward) {
-                        term.parentheses.disjunction = copyDisjunctionInMatchOrder(term.parentheses.disjunction, inputPosition);
-                        if (!term.parentheses.disjunction)
-                            return nullptr;
-                    }
-                    term.inputPosition = inputPosition;
-                    break;
-
-                case PatternTerm::Type::DotStarEnclosure:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
-                copiedAlternative->m_terms.append(term);
-            }
-            ASSERT(inputPosition - origin == alternative->m_minimumSize);
-        }
-
-        return copiedDisjunction;
-    }
-
     // opCompileParentheticalAssertion
     // Emits ops for a parenthetical assertion. These consist of an
     // YarrOpCode::SimpleNestedAlternativeBegin/Next/End set of nodes wrapping
@@ -5863,9 +5776,13 @@ class YarrGenerator final : public YarrJITInfo {
         PatternDisjunction* disjunction = term->parentheses.disjunction;
         bool isBackward = term->matchDirection() == Backward || m_direction == Backward;
         if (isBackward) {
-            disjunction = copyDisjunctionInMatchOrder(disjunction, 0);
-            if (!disjunction)
+            disjunction = m_pattern.copyDisjunctionInMatchOrder(disjunction, 0, [&] {
+                return isSafeToRecurse();
+            });
+            if (!disjunction) {
+                m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
                 return;
+            }
         }
 
         auto originalCheckedOffset = checkedOffset;
@@ -7767,7 +7684,6 @@ private:
     MacroAssembler::JumpList m_inlinedFailedMatch;
 
     MatchDirection m_direction { Forward };
-    Bag<PatternDisjunction> m_copiedDisjunctions;
 
     // The regular expression expressed as a linear sequence of operations.
     Vector<YarrOp, 128> m_ops;

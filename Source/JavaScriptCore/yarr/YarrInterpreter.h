@@ -98,13 +98,23 @@ struct ByteTerm {
         PatternCharacterFixed,
         PatternCharacterGreedy,
         PatternCharacterNonGreedy,
+        PatternCharacterOnceBackward,
+        PatternCharacterFixedBackward,
+        PatternCharacterGreedyBackward,
+        PatternCharacterNonGreedyBackward,
         // Cased Characeter Types
         PatternCasedCharacterOnce,
         PatternCasedCharacterFixed,
         PatternCasedCharacterGreedy,
         PatternCasedCharacterNonGreedy,
+        PatternCasedCharacterOnceBackward,
+        PatternCasedCharacterFixedBackward,
+        PatternCasedCharacterGreedyBackward,
+        PatternCasedCharacterNonGreedyBackward,
         CharacterClass,
+        CharacterClassBackward,
         BackReference,
+        BackReferenceBackward,
         ParenthesesSubpattern,
         ParenthesesSubpatternOnceBegin,
         ParenthesesSubpatternOnceEnd,
@@ -113,25 +123,29 @@ struct ByteTerm {
         ParentheticalAssertionBegin,
         ParentheticalAssertionEnd,
         CheckInput,
-        UncheckInput,
-        HaveCheckedInput,
         DotStarEnclosure,
     };
+
+    static constexpr Type directed(Type forwardType, Type backwardType, MatchDirection matchDirection)
+    {
+        return matchDirection == Forward ? forwardType : backwardType;
+    }
     Type type;
     OptionSet<Flags> m_flags;
     bool m_capture : 1;
     bool m_invert : 1;
     bool m_withOptionalLineTerminator : 1;
-    MatchDirection m_matchDirection : 1;
+    MatchDirection m_matchDirection : 1 { Forward };
+    MatchDirection m_parentMatchDirection : 1 { Forward };
     unsigned inputPosition { 0 };
 
-    ByteTerm(char32_t ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType, OptionSet<Flags> flags)
+    ByteTerm(char32_t ch, MatchDirection matchDirection, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType, OptionSet<Flags> flags)
         : frameLocation(frameLocation)
         , m_flags(flags)
         , m_capture(false)
         , m_invert(false)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
+        , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
         atom.patternCharacter = ch;
@@ -141,39 +155,45 @@ struct ByteTerm {
 
         switch (quantityType) {
         case QuantifierType::FixedCount:
-            type = (quantityCount == 1) ? ByteTerm::Type::PatternCharacterOnce : ByteTerm::Type::PatternCharacterFixed;
+            if (quantityCount == 1)
+                type = directed(Type::PatternCharacterOnce, Type::PatternCharacterOnceBackward, matchDirection);
+            else
+                type = directed(Type::PatternCharacterFixed, Type::PatternCharacterFixedBackward, matchDirection);
             break;
         case QuantifierType::Greedy:
             atom.quantityMinCount = 0;
-            type = ByteTerm::Type::PatternCharacterGreedy;
+            type = directed(Type::PatternCharacterGreedy, Type::PatternCharacterGreedyBackward, matchDirection);
             break;
         case QuantifierType::NonGreedy:
             atom.quantityMinCount = 0;
-            type = ByteTerm::Type::PatternCharacterNonGreedy;
+            type = directed(Type::PatternCharacterNonGreedy, Type::PatternCharacterNonGreedyBackward, matchDirection);
             break;
         }
     }
 
-    ByteTerm(char32_t lo, char32_t hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType, OptionSet<Flags> flags)
+    ByteTerm(char32_t lo, char32_t hi, MatchDirection matchDirection, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType, OptionSet<Flags> flags)
         : frameLocation(frameLocation)
         , m_flags(flags)
         , m_capture(false)
         , m_invert(false)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
+        , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
         switch (quantityType) {
         case QuantifierType::FixedCount:
-            type = (quantityCount == 1) ? ByteTerm::Type::PatternCasedCharacterOnce : ByteTerm::Type::PatternCasedCharacterFixed;
+            if (quantityCount == 1)
+                type = directed(Type::PatternCasedCharacterOnce, Type::PatternCasedCharacterOnceBackward, matchDirection);
+            else
+                type = directed(Type::PatternCasedCharacterFixed, Type::PatternCasedCharacterFixedBackward, matchDirection);
             atom.quantityMinCount = quantityCount;
             break;
         case QuantifierType::Greedy:
-            type = ByteTerm::Type::PatternCasedCharacterGreedy;
+            type = directed(Type::PatternCasedCharacterGreedy, Type::PatternCasedCharacterGreedyBackward, matchDirection);
             atom.quantityMinCount = 0;
             break;
         case QuantifierType::NonGreedy:
-            type = ByteTerm::Type::PatternCasedCharacterNonGreedy;
+            type = directed(Type::PatternCasedCharacterNonGreedy, Type::PatternCasedCharacterNonGreedyBackward, matchDirection);
             atom.quantityMinCount = 0;
             break;
         }
@@ -184,13 +204,13 @@ struct ByteTerm {
         atom.quantityMaxCount = quantityCount;
     }
 
-    ByteTerm(CharacterClass* characterClass, bool invert, unsigned inputPos, OptionSet<Flags> flags)
-        : type(ByteTerm::Type::CharacterClass)
+    ByteTerm(CharacterClass* characterClass, bool invert, MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
+        : type(directed(Type::CharacterClass, Type::CharacterClassBackward, matchDirection))
         , m_flags(flags)
         , m_capture(false)
         , m_invert(invert)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
+        , m_matchDirection(matchDirection)
         , inputPosition(inputPos)
     {
         atom.characterClass = characterClass;
@@ -205,7 +225,6 @@ struct ByteTerm {
         , m_capture(capture)
         , m_invert(false)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         atom.parenIds.subpatternId = subpatternId;
@@ -216,13 +235,13 @@ struct ByteTerm {
         atom.quantityMaxCount = 1;
     }
     
-    ByteTerm(Type type, OptionSet<Flags> flags, bool invert = false)
+    ByteTerm(Type type, OptionSet<Flags> flags, bool invert = false, MatchDirection matchDirection = Forward)
         : type(type)
         , m_flags(flags)
         , m_capture(false)
         , m_invert(invert)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
+        , m_matchDirection(matchDirection)
     {
         atom.quantityType = QuantifierType::FixedCount;
         atom.quantityMinCount = 1;
@@ -235,7 +254,6 @@ struct ByteTerm {
         , m_capture(capture)
         , m_invert(invert)
         , m_withOptionalLineTerminator(false)
-        , m_matchDirection(Forward)
         , inputPosition(inputPos)
     {
         atom.parenIds.subpatternId = subpatternId;
@@ -261,51 +279,37 @@ struct ByteTerm {
         atom.quantityMaxCount = 1;
     }
 
-    static ByteTerm BOL(unsigned inputPos, OptionSet<Flags> flags)
+    static ByteTerm BOL(MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::AssertionBOL, flags);
+        ByteTerm term(Type::AssertionBOL, flags, false, matchDirection);
         term.inputPosition = inputPos;
         return term;
     }
 
-    static ByteTerm BOI(unsigned inputPos, OptionSet<Flags> flags)
+    static ByteTerm BOI(MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::AssertionBOI, flags);
+        ByteTerm term(Type::AssertionBOI, flags, false, matchDirection);
         term.inputPosition = inputPos;
         return term;
     }
 
-    static ByteTerm CheckInput(Checked<unsigned> count, OptionSet<Flags> flags)
+    static ByteTerm CheckInput(MatchDirection matchDirection, Checked<unsigned> count, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::CheckInput, flags);
+        ByteTerm term(Type::CheckInput, flags, false, matchDirection);
         term.checkInputCount = count;
         return term;
     }
 
-    static ByteTerm UncheckInput(Checked<unsigned> count, OptionSet<Flags> flags)
+    static ByteTerm EOL(MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::UncheckInput, flags);
-        term.checkInputCount = count;
-        return term;
-    }
-    
-    static ByteTerm HaveCheckedInput(Checked<unsigned> count, OptionSet<Flags> flags)
-    {
-        ByteTerm term(Type::HaveCheckedInput, flags);
-        term.checkInputCount = count;
-        return term;
-    }
-
-    static ByteTerm EOL(unsigned inputPos, OptionSet<Flags> flags)
-    {
-        ByteTerm term(Type::AssertionEOL, flags);
+        ByteTerm term(Type::AssertionEOL, flags, false, matchDirection);
         term.inputPosition = inputPos;
         return term;
     }
 
-    static ByteTerm EOI(unsigned inputPos, OptionSet<Flags> flags, bool withOptionalLineTerminator)
+    static ByteTerm EOI(MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags, bool withOptionalLineTerminator)
     {
-        ByteTerm term(Type::AssertionEOI, flags);
+        ByteTerm term(Type::AssertionEOI, flags, false, matchDirection);
         term.inputPosition = inputPos;
         term.m_withOptionalLineTerminator = withOptionalLineTerminator;
         return term;
@@ -313,15 +317,14 @@ struct ByteTerm {
 
     static ByteTerm WordBoundary(bool invert, MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::AssertionWordBoundary, flags, invert);
-        term.m_matchDirection = matchDirection;
+        ByteTerm term(Type::AssertionWordBoundary, flags, invert, matchDirection);
         term.inputPosition = inputPos;
         return term;
     }
     
     static ByteTerm BackReference(unsigned subpatternId, MatchDirection matchDirection, unsigned inputPos, OptionSet<Flags> flags)
     {
-        return ByteTerm(Type::BackReference, subpatternId, false, false, matchDirection, inputPos, flags);
+        return ByteTerm(directed(Type::BackReference, Type::BackReferenceBackward, matchDirection), subpatternId, false, false, matchDirection, inputPos, flags);
     }
 
     static ByteTerm BodyAlternativeBegin(bool onceThrough, OptionSet<Flags> flags)
@@ -388,22 +391,20 @@ struct ByteTerm {
         return ByteTerm(Type::SubpatternEnd, flags);
     }
 
-    static ByteTerm ParentheticalAssertionBegin(unsigned firstSubpatternId, bool invert, MatchDirection matchDirection, OptionSet<Flags> flags)
+    static ByteTerm ParentheticalAssertionBegin(unsigned firstSubpatternId, bool invert, MatchDirection matchDirection, MatchDirection parentMatchDirection, unsigned uncheckAmount, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::ParentheticalAssertionBegin, flags);
+        ByteTerm term(Type::ParentheticalAssertionBegin, flags, invert, matchDirection);
         term.atom.assertionIds.firstSubpatternId = firstSubpatternId;
-        term.m_invert = invert;
-        term.m_matchDirection = matchDirection;
+        term.m_parentMatchDirection = parentMatchDirection;
+        term.inputPosition = uncheckAmount;
         return term;
     }
 
     static ByteTerm ParentheticalAssertionEnd(unsigned firstSubpatternId, unsigned lastSubpatternId, bool invert, MatchDirection matchDirection, OptionSet<Flags> flags)
     {
-        ByteTerm term(Type::ParentheticalAssertionEnd, flags);
+        ByteTerm term(Type::ParentheticalAssertionEnd, flags, invert, matchDirection);
         term.atom.assertionIds.firstSubpatternId = firstSubpatternId;
         term.atom.assertionIds.lastSubpatternId = lastSubpatternId;
-        term.m_invert = invert;
-        term.m_matchDirection = matchDirection;
         return term;
     }
 
@@ -417,17 +418,22 @@ struct ByteTerm {
 
     bool isCharacterType()
     {
-        return type >= Type::PatternCharacterOnce && type <= Type::PatternCharacterNonGreedy;
+        return type >= Type::PatternCharacterOnce && type <= Type::PatternCharacterNonGreedyBackward;
     }
 
     bool isCasedCharacterType()
     {
-        return type >= Type::PatternCasedCharacterOnce && type <= Type::PatternCasedCharacterNonGreedy;
+        return type >= Type::PatternCasedCharacterOnce && type <= Type::PatternCasedCharacterNonGreedyBackward;
     }
 
     bool isCharacterClass()
     {
-        return type == Type::CharacterClass;
+        return type == Type::CharacterClass || type == Type::CharacterClassBackward;
+    }
+
+    bool isBackReference()
+    {
+        return type == Type::BackReference || type == Type::BackReferenceBackward;
     }
 
     bool containsAnyCaptures()
@@ -464,6 +470,12 @@ struct ByteTerm {
     MatchDirection matchDirection()
     {
         return m_matchDirection;
+    }
+
+    MatchDirection parentMatchDirection()
+    {
+        ASSERT(type == Type::ParentheticalAssertionBegin);
+        return m_parentMatchDirection;
     }
 
     bool capture()
