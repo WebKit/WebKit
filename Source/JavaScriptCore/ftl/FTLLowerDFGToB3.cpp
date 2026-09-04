@@ -1667,6 +1667,9 @@ private:
         case ArrayIsArray:
             compileArrayIsArray();
             break;
+        case ObjectIsExtensible:
+            compileObjectIsExtensible();
+            break;
         case MapHash:
             compileMapHash();
             break;
@@ -16199,6 +16202,89 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, notCellResult, arrayResult, otherCellResult, slowResult));
+    }
+
+    void compileObjectIsExtensible()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        if (m_node->child1().useKind() == ObjectUse) {
+            LValue value = lowCell(m_node->child1());
+
+            LBasicBlock fastCase = m_out.newBlock();
+            LBasicBlock slowPathBlock = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LBasicBlock lastNext = m_out.insertNewBlocksBefore(fastCase);
+            LValue type = m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType);
+            static_assert(GlobalProxyType == ProxyObjectType + 1);
+            LValue typeBiased = m_out.sub(type, m_out.constInt32(ProxyObjectType));
+            m_out.branch(m_out.belowOrEqual(typeBiased, m_out.constInt32(GlobalProxyType - ProxyObjectType)),
+                rarely(slowPathBlock), usually(fastCase));
+
+            m_out.appendTo(fastCase, slowPathBlock);
+            LValue structure = loadStructure(value);
+            LValue structureFlags = m_out.load32(structure, m_heaps.Structure_bitField);
+            ValueFromBlock fastResult = m_out.anchor(m_out.testIsZero32(structureFlags, m_out.constInt32(Structure::s_didPreventExtensionsBits)));
+            m_out.jump(continuation);
+
+            m_out.appendTo(slowPathBlock, continuation);
+            VM& vm = this->vm();
+            LValue slowResultValue = lazySlowPath(
+                [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                    return createLazyCallGenerator(vm,
+                        operationObjectIsExtensible, locations[0].directGPR(),
+                        CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
+                }, value);
+            ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setBoolean(m_out.phi(Int32, fastResult, slowResult));
+            return;
+        }
+
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock proxyCheckBlock = m_out.newBlock();
+        LBasicBlock fastCase = m_out.newBlock();
+        LBasicBlock slowPathBlock = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        ValueFromBlock notCellResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(continuation));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, proxyCheckBlock);
+        LValue type = m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType);
+        ValueFromBlock notObjectResult = m_out.anchor(m_out.booleanFalse);
+        m_out.branch(m_out.below(type, m_out.constInt32(ObjectType)),
+            rarely(continuation), usually(proxyCheckBlock));
+
+        m_out.appendTo(proxyCheckBlock, fastCase);
+        LValue typeBiased = m_out.sub(type, m_out.constInt32(ProxyObjectType));
+        m_out.branch(m_out.belowOrEqual(typeBiased, m_out.constInt32(GlobalProxyType - ProxyObjectType)),
+            rarely(slowPathBlock), usually(fastCase));
+
+        m_out.appendTo(fastCase, slowPathBlock);
+        LValue structure = loadStructure(value);
+        LValue structureFlags = m_out.load32(structure, m_heaps.Structure_bitField);
+        ValueFromBlock fastResult = m_out.anchor(m_out.testIsZero32(structureFlags, m_out.constInt32(Structure::s_didPreventExtensionsBits)));
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowPathBlock, continuation);
+        VM& vm = this->vm();
+        LValue slowResultValue = lazySlowPath(
+            [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
+                return createLazyCallGenerator(vm,
+                    operationObjectIsExtensible, locations[0].directGPR(),
+                    CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
+            }, value);
+        ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setBoolean(m_out.phi(Int32, notCellResult, notObjectResult, fastResult, slowResult));
     }
 
     void compileIsObject()

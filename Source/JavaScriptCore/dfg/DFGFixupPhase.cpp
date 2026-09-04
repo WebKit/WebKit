@@ -2979,6 +2979,11 @@ private:
             break;
         }
 
+        case ObjectIsExtensible: {
+            fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case HasStructureWithFlags: {
             fixEdge<KnownCellUse>(node->child1());
             break;

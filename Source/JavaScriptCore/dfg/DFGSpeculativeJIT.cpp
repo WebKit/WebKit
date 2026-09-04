@@ -4797,6 +4797,71 @@ void SpeculativeJIT::compileArrayIsArray(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileObjectIsExtensible(Node* node)
+{
+    if (node->child1().useKind() == ObjectUse) {
+        SpeculateCellOperand value(this, node->child1());
+        GPRTemporary result(this);
+#if USE(JSVALUE32_64)
+        GPRTemporary valueTag(this);
+        GPRReg valueTagGPR = valueTag.gpr();
+#endif
+
+        GPRReg valueGPR = value.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        speculateObject(node->child1(), valueGPR);
+
+#if USE(JSVALUE32_64)
+        move(TrustedImm32(JSValue::CellTag), valueTagGPR);
+#endif
+        load8(Address(valueGPR, JSCell::typeInfoTypeOffset()), resultGPR);
+        sub32(TrustedImm32(ProxyObjectType), resultGPR);
+        static_assert(GlobalProxyType == ProxyObjectType + 1);
+        Jump isProxyLike = branch32(BelowOrEqual, resultGPR, TrustedImm32(GlobalProxyType - ProxyObjectType));
+
+        emitLoadStructure(vm(), valueGPR, resultGPR);
+        test32(Zero, Address(resultGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didPreventExtensionsBits), resultGPR);
+        Jump done = jump();
+
+#if USE(JSVALUE32_64)
+        addSlowPathGenerator(slowPathCall(isProxyLike, this, operationObjectIsExtensible, resultGPR, LinkableConstant::globalObject(*this, node), JSValueRegs(valueTagGPR, valueGPR)));
+#else
+        addSlowPathGenerator(slowPathCall(isProxyLike, this, operationObjectIsExtensible, resultGPR, LinkableConstant::globalObject(*this, node), JSValueRegs(valueGPR)));
+#endif
+
+        done.link(this);
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    JSValueOperand value(this, node->child1());
+    GPRTemporary result(this);
+
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg resultGPR = result.gpr();
+
+    Jump isNotCell = branchIfNotCell(valueRegs);
+
+    load8(Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()), resultGPR);
+    Jump isNotObject = branch32(Below, resultGPR, TrustedImm32(ObjectType));
+    sub32(TrustedImm32(ProxyObjectType), resultGPR);
+    Jump isProxyLike = branch32(BelowOrEqual, resultGPR, TrustedImm32(GlobalProxyType - ProxyObjectType));
+
+    emitLoadStructure(vm(), valueRegs.payloadGPR(), resultGPR);
+    test32(Zero, Address(resultGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didPreventExtensionsBits), resultGPR);
+    Jump done = jump();
+
+    isNotCell.link(this);
+    isNotObject.link(this);
+    move(TrustedImm32(0), resultGPR);
+
+    addSlowPathGenerator(slowPathCall(isProxyLike, this, operationObjectIsExtensible, resultGPR, LinkableConstant::globalObject(*this, node), valueRegs));
+
+    done.link(this);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileHasStructureWithFlags(Node* node)
 {
     SpeculateCellOperand object(this, node->child1());
