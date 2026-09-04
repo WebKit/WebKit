@@ -3866,8 +3866,29 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
     if (auto styleable = Styleable::fromRenderer(renderer)) {
         if (styleable->hasRunningAcceleratedAnimations())
             return true;
+
         if (auto* effectsStack = styleable->keyframeEffectStack()) {
+            auto requiresCompositingForAcceleratedClipPath = [] (const RenderLayerModelObject& renderer, const KeyframeEffectStack& effectsStack) {
+                // We only support accelerated clip-path on iOS, on MacOS it is not supported due to lack of support for the "path" key in CAPresentationModifier.
+#if PLATFORM(IOS_FAMILY)
+                Ref settings = renderer.settings();
+                if (!settings->acceleratedClipPathAnimationEnabled())
+                    return false;
+#else
+                return false;
+#endif
+                CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+                if (!box)
+                    return false;
+                constexpr unsigned maxSupportedAcceleratedClipPathArea = 100 * 100;
+                if (!effectsStack.isCurrentlyAffectingProperty(CSSPropertyClipPath))
+                    return false;
+                float boxArea = box->borderBoxWidth() * box->borderBoxHeight();
+                return boxArea <= maxSupportedAcceleratedClipPathArea;
+            };
+
             return (effectsStack->isCurrentlyAffectingProperty(CSSPropertyOpacity) && (usesCompositing() || (m_compositingTriggers & ChromeClient::AnimatedOpacityTrigger)))
+                || requiresCompositingForAcceleratedClipPath(renderer, *effectsStack)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyFilter)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyBackdropFilter)
                 || effectsStack->isCurrentlyAffectingProperty(CSSPropertyWebkitBackdropFilter)
