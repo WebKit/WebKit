@@ -28,6 +28,7 @@
 #include <WebCore/Element.h>
 #include <WebCore/Node.h>
 #include <WebCore/RenderImage.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -72,7 +73,13 @@ bool hasARIAAccNameAttribute(Element&);
 
 bool isNodeFocused(Node&);
 
-bool needsLayoutOrStyleRecalc(const Document&);
+enum class DocumentNeeds : uint8_t {
+    Layout = 1 << 0,
+    StyleRecalc = 1 << 1,
+};
+// Whether the document needs some action before being considered clean enough to update the
+// accessibility tree from. Returns an empty set if the document is clean.
+OptionSet<DocumentNeeds> needsLayoutOrStyleRecalc(const Document&);
 
 bool NODELETE isRenderHidden(const Style::ComputedStyle*);
 // Checks both CSS display properties, and CSS visibility properties.

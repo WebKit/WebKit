@@ -520,13 +520,16 @@ String roleToString(AccessibilityRole role)
     return ""_s;
 }
 
-bool needsLayoutOrStyleRecalc(const Document& document)
+OptionSet<DocumentNeeds> needsLayoutOrStyleRecalc(const Document& document)
 {
+    OptionSet<DocumentNeeds> needs;
     if (RefPtr frameView = document.view()) {
         if (frameView->needsLayout() || frameView->layoutContext().isLayoutPending())
-            return true;
+            needs.add(DocumentNeeds::Layout);
     }
-    return document.hasPendingStyleRecalc();
+    if (document.hasPendingStyleRecalc())
+        needs.add(DocumentNeeds::StyleRecalc);
+    return needs;
 }
 
 std::optional<CursorType> cursorTypeFrom(const StyleProperties& properties)

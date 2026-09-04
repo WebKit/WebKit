@@ -5693,7 +5693,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     if (!document->view())
         return;
 
-    if (needsLayoutOrStyleRecalc(*document)) {
+    if (auto documentNeeds = needsLayoutOrStyleRecalc(*document)) {
         // Layout became dirty while waiting to performDeferredCacheUpdate, and we require clean layout
         // to update the accessibility tree correctly in this function.
         if ((m_cacheUpdateDeferredCount >= 3 || forceLayout == ForceLayout::Yes) && !Accessibility::inRenderTreeOrStyleUpdate(*document)) {
@@ -5701,8 +5701,12 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
             m_cacheUpdateDeferredCount = 0;
             document->updateLayoutIgnorePendingStylesheets();
         } else {
-            // Wait for layout to trigger another async cache update.
             ++m_cacheUpdateDeferredCount;
+            if (!documentNeeds.contains(DocumentNeeds::Layout) && !m_performCacheUpdateTimer.isActive()) {
+                // A pending style recalc may not necessarily trigger layout, so restart the timer explicitly
+                // to avoid stranding deferred changes.
+                m_performCacheUpdateTimer.startOneShot(0_s);
+            }
             return;
         }
     }
