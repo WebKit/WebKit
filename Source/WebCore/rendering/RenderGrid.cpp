@@ -1871,6 +1871,40 @@ bool RenderGrid::aspectRatioPrefersInline(const RenderBox& gridItem, bool blockF
     return !selfAlignmentForGridItem(gridItem, containingAxis, StretchingMode::Explicit).isStretch();
 }
 
+void RenderGrid::stretchBlockSizeForGridItem(RenderBox& gridItem, LayoutUnit alignmentContainerSize, RenderGridLayoutState& gridLayoutState)
+{
+    auto stretchedLogicalHeight = GridLayoutFunctions::availableAlignmentSpaceForGridItemBeforeStretching(*this, alignmentContainerSize, gridItem, Style::GridTrackSizingDirection::Rows);
+    auto desiredLogicalHeight = gridItem.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
+    gridItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
+
+    auto itemNeedsRelayoutForStretchAlignment = [&]() {
+        if (desiredLogicalHeight != gridItem.logicalHeight())
+            return true;
+
+        if (canSetColumnAxisStretchRequirementForItem(gridItem))
+            return gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
+
+        return is<RenderBlock>(gridItem) && downcast<RenderBlock>(gridItem).hasPercentHeightDescendants();
+    }();
+    // Checking the logical-height of a grid item isn't enough. Setting an override logical-height
+    // changes the definiteness, resulting in percentages to resolve differently.
+    //
+    // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
+    if (itemNeedsRelayoutForStretchAlignment) {
+        gridItem.setLogicalHeight(0_lu);
+        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    }
+}
+
+void RenderGrid::stretchInlineSizeForGridItem(RenderBox& gridItem, LayoutUnit alignmentContainerSize)
+{
+    auto stretchedLogicalWidth = GridLayoutFunctions::availableAlignmentSpaceForGridItemBeforeStretching(*this, alignmentContainerSize, gridItem, Style::GridTrackSizingDirection::Columns);
+    auto desiredLogicalWidth = gridItem.constrainLogicalWidthByMinMax(stretchedLogicalWidth, contentBoxWidth(), *this);
+    gridItem.setOverridingBorderBoxLogicalWidth(desiredLogicalWidth);
+    if (desiredLogicalWidth != gridItem.logicalWidth())
+        gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+}
+
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
 void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, RenderGridLayoutState& gridLayoutState)
 {
@@ -1886,38 +1920,14 @@ void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, Re
     bool willStretchBlockSize = blockFlowIsColumnAxis
         ? willStretchItem(gridItem, LogicalBoxAxis::Block) : willStretchItem(gridItem, LogicalBoxAxis::Inline);
     if (willStretchBlockSize && !aspectRatioPrefersInline(gridItem, blockFlowIsColumnAxis)) {
-        auto overridingContainingBlockContentSizeForGridItem = GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, gridItemBlockDirection);
-        ASSERT(overridingContainingBlockContentSizeForGridItem && *overridingContainingBlockContentSizeForGridItem);
-        LayoutUnit stretchedLogicalHeight = GridLayoutFunctions::availableAlignmentSpaceForGridItemBeforeStretching(*this, overridingContainingBlockContentSizeForGridItem->value(), gridItem, Style::GridTrackSizingDirection::Rows);
-        LayoutUnit desiredLogicalHeight = gridItem.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
-        gridItem.setOverridingBorderBoxLogicalHeight(desiredLogicalHeight);
-
-        auto itemNeedsRelayoutForStretchAlignment = [&]() {
-            if (desiredLogicalHeight != gridItem.logicalHeight())
-                return true;
-
-            if (canSetColumnAxisStretchRequirementForItem(gridItem))
-                return gridLayoutState.containsLayoutRequirementForGridItem(gridItem, ItemLayoutRequirement::NeedsColumnAxisStretchAlignment);
-
-            return is<RenderBlock>(gridItem) && downcast<RenderBlock>(gridItem).hasPercentHeightDescendants();
-        }();
-        // Checking the logical-height of a grid item isn't enough. Setting an override logical-height
-        // changes the definiteness, resulting in percentages to resolve differently.
-        //
-        // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-        if (itemNeedsRelayoutForStretchAlignment) {
-            gridItem.setLogicalHeight(0_lu);
-            gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
-        }
+        auto gridAreaSize = GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, gridItemBlockDirection);
+        ASSERT(gridAreaSize && *gridAreaSize);
+        stretchBlockSizeForGridItem(gridItem, gridAreaSize->value(), gridLayoutState);
     } else if (!willStretchBlockSize && willStretchItem(gridItem, LogicalBoxAxis::Inline)) {
         auto gridItemInlineDirection = Style::orthogonalDirection(gridItemBlockDirection);
-        auto overridingContainingBlockContentSizeForGridItem = GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection);
-        ASSERT(overridingContainingBlockContentSizeForGridItem && *overridingContainingBlockContentSizeForGridItem);
-        LayoutUnit stretchedLogicalWidth = GridLayoutFunctions::availableAlignmentSpaceForGridItemBeforeStretching(*this, overridingContainingBlockContentSizeForGridItem->value(), gridItem, Style::GridTrackSizingDirection::Columns);
-        LayoutUnit desiredLogicalWidth = gridItem.constrainLogicalWidthByMinMax(stretchedLogicalWidth, contentBoxWidth(), *this);
-        gridItem.setOverridingBorderBoxLogicalWidth(desiredLogicalWidth);
-        if (desiredLogicalWidth != gridItem.logicalWidth())
-            gridItem.setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+        auto gridAreaSize = GridLayoutFunctions::overridingContainingBlockContentSizeForGridItem(gridItem, gridItemInlineDirection);
+        ASSERT(gridAreaSize && *gridAreaSize);
+        stretchInlineSizeForGridItem(gridItem, gridAreaSize->value());
     }
 }
 
