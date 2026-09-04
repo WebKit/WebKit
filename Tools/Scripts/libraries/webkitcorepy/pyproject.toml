@@ -1,0 +1,4 @@
+[tool.vendoring]
+destination = "webkitcorepy/_vendored/"
+requirements = "vendor.txt"
+namespace = "webkitcorepy._vendored"
