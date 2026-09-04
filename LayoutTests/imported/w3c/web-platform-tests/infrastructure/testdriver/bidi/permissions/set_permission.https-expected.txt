@@ -1,0 +1,5 @@
+
+FAIL Grant Permission promise_test: Unhandled rejection with value: object "Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js"
+FAIL Deny Permission promise_test: Unhandled rejection with value: object "Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js"
+FAIL Grant Permissions for different origins promise_test: Unhandled rejection with value: object "Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js"
+

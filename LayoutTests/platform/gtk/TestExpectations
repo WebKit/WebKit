@@ -439,8 +439,6 @@ webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Time
 # TypeError: Argument 1 ('node') to Internals.markerCountForNode must be an instance of Node.
 webkit.org/b/186673 editing/spelling/spellcheck-async-mutation.html [ Skip ] # Timeout.
 
-webkit.org/b/188042 imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure Timeout ]
-
 webkit.org/b/190703 [ Release ] inspector/worker/debugger-pause.html [ Failure Pass Timeout ]
 
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ Failure ]

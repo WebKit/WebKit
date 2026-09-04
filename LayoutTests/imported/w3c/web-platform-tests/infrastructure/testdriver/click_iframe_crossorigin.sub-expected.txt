@@ -1,0 +1,4 @@
+
+
+PASS TestDriver click on a document in an iframe
+

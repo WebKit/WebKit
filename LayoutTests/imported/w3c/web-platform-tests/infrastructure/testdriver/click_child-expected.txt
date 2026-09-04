@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x53
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,8) size 784x38
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderButton {BUTTON} at (0,1) size 51x19 [color=#000000D8] [bgcolor=#C0C0C0] [border: none (2px outset #C0C0C0) none (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,2) size 35x13
+            RenderText {#text} at (0,0) size 35x13
+              text run at (0,0) width 35: "Button"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,19) size 784x19
+        RenderText {#text} at (0,0) size 35x18
+          text run at (0,0) width 35: "FAIL"

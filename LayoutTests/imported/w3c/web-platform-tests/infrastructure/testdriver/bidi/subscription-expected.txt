@@ -1,0 +1,6 @@
+
+FAIL Assert testdriver can subscribe without arguments promise_test: Unhandled rejection with value: object "Error: bidi.log.entry_added.subscribe is not implemented by testdriver-vendor.js"
+FAIL Assert testdriver can subscribe for current window promise_test: Unhandled rejection with value: object "Error: bidi.log.entry_added.subscribe is not implemented by testdriver-vendor.js"
+FAIL Assert testdriver can subscribe for another window promise_test: Unhandled rejection with value: object "Error: bidi.log.entry_added.subscribe is not implemented by testdriver-vendor.js"
+FAIL Assert testdriver can subscribe globally promise_test: Unhandled rejection with value: object "Error: bidi.log.entry_added.subscribe is not implemented by testdriver-vendor.js"
+

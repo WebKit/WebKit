@@ -2643,23 +2643,7 @@ imported/w3c/web-platform-tests/images [ Skip ]
 imported/w3c/web-platform-tests/tools [ Skip ]
 
 # Skip WPT infrastructure tests using expectation manifest.
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/browsers/firefox [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail/failing-test.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/expected-fail/timeout.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_and_fail.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_cycle_fail.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_match_fail.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_mismatch_fail.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_ref_timeout.html [ Skip ]
-webkit.org/b/187003 imported/w3c/web-platform-tests/infrastructure/reftest/reftest_timeout.html [ Skip ]
-
-# WPT infrastructure tests failing.
-imported/w3c/web-platform-tests/infrastructure/assumptions/ahem.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/infrastructure/assumptions/min-font-size.html [ ImageOnlyFailure ]
-webkit.org/b/197011 imported/w3c/web-platform-tests/infrastructure/testdriver [ Skip ] # largely supported; some actions need interactive window
-imported/w3c/web-platform-tests/infrastructure/testdriver/key-source-pause.html [ Pass ] # does not need an interactive window
-webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Skip ]
-imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html [ Skip ] # non deterministic URL in text dump
+imported/w3c/web-platform-tests/infrastructure/metadata/infrastructure/wpt-metadata [ Skip ]
 
 # application-xml.xml doesn't dispatch load event
 imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html [ Skip ]

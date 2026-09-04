@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Error: bidi.bluetooth.request_device_prompt_updated.subscribe is not implemented by testdriver-vendor.js
+
+NOTRUN accept upon request_device_prompt_updated event
+NOTRUN cancel upon request_device_prompt_updated event
+

@@ -1,0 +1,4 @@
+
+
+FAIL File upload using testdriver assert_equals: expected "PASS" but got "{\"error\": {\"code\": 500, \"message\": \"Internal server error loading http://web-platform.test:8800/infrastructure/testdriver/file_upload.py:\\n  Traceback (most recent call last):\\n    File \\\"/Volumes/Data/worker/macOS-Sequoia-Release-WK2-Tests-EWS/build/LayoutTests/imported/w3c/web-platform-tests/tools/wptserve/wptserve/handlers.py\\\", line 373, in __call__\\n    rv = self.func(request, response)\\n\\n    File \\\"/Volumes/Data/worker/macOS-Sequoia-Release-WK2-Tests-EWS/build/LayoutTests/imported/w3c/web-platform-tests/infrastructure/testdriver/file_upload.py\\\", line 2, in main\\n    return b\\\"PASS\\\" if request.POST[b\\\"file_input\\\"].file.read() == b\\\"File to upload\\\\n\\\" else b\\\"FAIL\\\"\\n  AttributeError: 'bytes' object has no attribute 'file'\\n\"}}"
+

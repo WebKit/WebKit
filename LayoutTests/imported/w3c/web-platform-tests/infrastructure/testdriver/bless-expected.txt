@@ -1,0 +1,9 @@
+
+PASS functions in the absence of a `body` element
+PASS user activation
+PASS no action function provided
+PASS synchronous return value
+PASS synchronous error
+PASS asynchronous return value
+PASS asynchronous error
+

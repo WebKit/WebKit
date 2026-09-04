@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_fail_0-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_fail_0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_mismatch-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_mismatch_0-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_mismatch_0.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_and_mismatch_1.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_0-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_1-ref-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_1-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_fail-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_fail.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_fail_0-ref-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/reftest/legacy/reftest_cycle_fail_0-ref.html

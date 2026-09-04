@@ -1,0 +1,5 @@
+
+FAIL simulate bluetooth adapter 'absent' promise_test: Unhandled rejection with value: object "Error: bidi.bluetooth.simulate_adapter is not implemented by testdriver-vendor.js"
+FAIL simulate bluetooth adapter 'powered-off' promise_test: Unhandled rejection with value: object "Error: bidi.bluetooth.simulate_adapter is not implemented by testdriver-vendor.js"
+FAIL simulate bluetooth adapter 'powered-on' promise_test: Unhandled rejection with value: object "Error: bidi.bluetooth.simulate_adapter is not implemented by testdriver-vendor.js"
+

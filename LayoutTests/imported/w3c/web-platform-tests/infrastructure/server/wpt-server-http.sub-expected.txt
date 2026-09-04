@@ -21,4 +21,11 @@ PASS HTTPS protocol, punycode subdomain #1
 PASS HTTPS protocol, punycode subdomain #2
 PASS HTTPS protocol, non-existent domain, port #1
 PASS HTTPS protocol, non-existent domain, port #2
+PASS H2 protocol, no subdomain
+PASS H2 protocol, www subdomain #1
+PASS H2 protocol, www subdomain #2
+PASS H2 protocol, www subdomain #3
+PASS H2 protocol, punycode subdomain #1
+PASS H2 protocol, punycode subdomain #2
+PASS H2 protocol, non-existent domain, port #1
 

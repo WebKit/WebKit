@@ -1,0 +1,7 @@
+
+PASS Fetch from https-local port works.
+PASS Fetch from http-local port works.
+PASS Fetch from https-public port works.
+PASS Fetch from http-public port works.
+FAIL Fetch from http-public to local http fails. assert_equals: expected "failure: error = TypeError" but got "success: status = 200"
+

@@ -1,0 +1,5 @@
+Button a Button b
+
+FAIL TestDriver actions: event order assert_array_equals: lengths differ, expected array ["a", "b"] length 2, got ["b"] length 1
+FAIL indivisible actions on the same track dispatch events in series assert_equals: expected "abcdefghijklmnopqrstuvwxyz" but got "z"
+

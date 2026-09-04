@@ -10,14 +10,18 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/context.any.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/http2-context.sub.h2.any.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/http2-websocket.sub.h2.any.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/order-of-metas.any.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/order-of-metas.window.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/secure-context.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/subdomain-flag.www.sub.window.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/test-pac.html
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/title.any.js
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/webtransport-h3.https.sub.any.js
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/wpt-server-http.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/infrastructure/server/wpt-server-wpt-flags.sub.html

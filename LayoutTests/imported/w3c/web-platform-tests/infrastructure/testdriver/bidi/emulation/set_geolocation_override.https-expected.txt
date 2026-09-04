@@ -1,0 +1,7 @@
+
+Harness Error (FAIL), message = Error: bidi.permissions.set_permission() is not implemented by testdriver-vendor.js
+
+NOTRUN emulate geolocation and clear override
+NOTRUN emulate geolocation position unavailable
+NOTRUN cannot set `coordinates` and `error` simultaneously
+

@@ -1,0 +1,5 @@
+
+FAIL prefetch_status_updated event subscription and structure validation promise_test: Unhandled rejection with value: object "Error: bidi.speculation.prefetch_status_updated.subscribe is not implemented by testdriver-vendor.js"
+FAIL prefetch_status_updated event with navigation to success promise_test: Unhandled rejection with value: object "Error: bidi.speculation.prefetch_status_updated.subscribe is not implemented by testdriver-vendor.js"
+FAIL prefetch_status_updated event with prefetch failure promise_test: Unhandled rejection with value: object "Error: bidi.speculation.prefetch_status_updated.subscribe is not implemented by testdriver-vendor.js"
+

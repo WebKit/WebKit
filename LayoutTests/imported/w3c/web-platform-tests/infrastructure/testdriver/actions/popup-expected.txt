@@ -1,0 +1,3 @@
+
+FAIL Actions go to the popup and not the test window promise_test: Unhandled rejection with value: "actions failed"
+

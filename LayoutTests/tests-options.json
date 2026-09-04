@@ -4394,6 +4394,30 @@
     "imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/actions/pause.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_characteristic.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_characteristic_response.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_descriptor.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_descriptor_response.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_gatt_connection_response.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_gatt_disconnection.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/infrastructure/testdriver/bidi/bluetooth/simulate_service.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/intersection-observer/scroll-margin-propagation.html": [
         "slow"
     ],
