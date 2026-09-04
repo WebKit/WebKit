@@ -26,7 +26,7 @@
 #import "config.h"
 #import <WebKit/WKFoundation.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
@@ -41,8 +41,8 @@ TEST(WebKit, GetPDFResourceData)
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
     __block bool isDone;
-    [webView _getMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
-        EXPECT_NULL(data);
+    [webView fetchMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
+        EXPECT_TRUE(!data || !data.length);
         isDone = true;
     }];
     TestWebKitAPI::Util::run(&isDone);
@@ -53,7 +53,7 @@ TEST(WebKit, GetPDFResourceData)
 
     [webView _test_waitForDidFinishNavigation];
 
-    [webView _getMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
+    [webView fetchMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
         EXPECT_EQ(data.length, 10820UL);
         isDone = true;
     }];
@@ -72,10 +72,12 @@ TEST(WebKit, GetPDFResourceDataInUnparentedWebView)
     [webView _test_waitForDidFinishNavigation];
 
     __block bool isDone;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [webView _getMainResourceDataWithCompletionHandler:^(NSData *data, NSError *error) {
         EXPECT_EQ(data.length, 10820UL);
         isDone = true;
     }];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     TestWebKitAPI::Util::run(&isDone);
 }
