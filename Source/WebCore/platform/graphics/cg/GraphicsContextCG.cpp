@@ -1085,6 +1085,16 @@ IntRect GraphicsContextCG::clipBounds() const
     return enclosingIntRect(CGContextGetClipBoundingBox(platformContext()));
 }
 
+void GraphicsContextCG::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+{
+    auto textDrawingMode = this->textDrawingMode();
+    if (textDrawingMode.contains(TextDrawingMode::Fill) && fillPattern())
+        applyFillPattern();
+    if (textDrawingMode.contains(TextDrawingMode::Stroke) && strokePattern())
+        applyStrokePattern();
+    FontCascade::drawGlyphs(*this, font, glyphs, advances, point, fontSmoothingMode);
+}
+
 void GraphicsContextCG::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);

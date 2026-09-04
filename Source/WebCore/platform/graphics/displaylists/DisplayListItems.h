@@ -1300,26 +1300,6 @@ private:
     ControlStyle m_style;
 };
 
-#if USE(CG)
-
-class ApplyStrokePattern {
-public:
-    static constexpr char name[] = "apply-stroke-pattern";
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
-};
-
-class ApplyFillPattern {
-public:
-    static constexpr char name[] = "apply-fill-pattern";
-
-    WEBCORE_EXPORT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const { }
-};
-
-#endif
-
 class ApplyDeviceScaleFactor {
 public:
     static constexpr char name[] = "apply-device-scale-factor";

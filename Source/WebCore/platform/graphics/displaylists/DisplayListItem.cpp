@@ -57,12 +57,6 @@ bool shouldDumpItem(const Item& item, OptionSet<AsTextFlag> flags)
                 return true;
             // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
             return item.state().changes() != GraphicsContextState::Change::ShouldSubpixelQuantizeFonts;
-#if USE(CG)
-        }, [&](const ApplyFillPattern&) -> bool {
-            return !flags.contains(AsTextFlag::IncludePlatformOperations);
-        }, [&](const ApplyStrokePattern&) -> bool {
-            return !flags.contains(AsTextFlag::IncludePlatformOperations);
-#endif
         }, [&](const auto&) -> bool {
             return true;
         }

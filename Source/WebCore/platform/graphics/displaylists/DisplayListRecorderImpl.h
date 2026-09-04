@@ -107,10 +107,6 @@ public:
     void strokePath(const Path&) final;
     void clearRect(const FloatRect&) final;
     void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
-#if USE(CG)
-    void applyStrokePattern() final;
-    void applyFillPattern() final;
-#endif
     void applyDeviceScaleFactor(float) final;
 
     void beginPage(const FloatRect&) final;

@@ -744,19 +744,6 @@ void EndTransparencyLayer::apply(GraphicsContext& context) const
         context.endTransparencyLayer();
 }
 
-#if USE(CG)
-
-void ApplyStrokePattern::apply(GraphicsContext& context) const
-{
-    context.applyStrokePattern();
-}
-
-void ApplyFillPattern::apply(GraphicsContext& context) const
-{
-    context.applyFillPattern();
-}
-#endif
-
 void ApplyDeviceScaleFactor::apply(GraphicsContext& context) const
 {
     context.applyDeviceScaleFactor(m_scaleFactor);

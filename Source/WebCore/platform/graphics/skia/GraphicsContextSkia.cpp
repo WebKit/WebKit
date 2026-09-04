@@ -200,6 +200,7 @@ void GraphicsContextSkia::restore(GraphicsContextState::Purpose purpose)
     popSkiaState();
 }
 
+
 // Draws a filled rectangle with a stroked border.
 void GraphicsContextSkia::drawRect(const FloatRect& rect, float borderThickness)
 {

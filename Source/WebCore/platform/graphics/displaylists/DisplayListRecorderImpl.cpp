@@ -458,22 +458,6 @@ void RecorderImpl::drawControlPart(ControlPart& part, const FloatRoundedRect& bo
     m_items.append(DrawControlPart(part, borderRect, deviceScaleFactor, style));
 }
 
-#if USE(CG)
-
-void RecorderImpl::applyStrokePattern()
-{
-    appendStateChangeItemIfNecessary();
-    m_items.append(ApplyStrokePattern());
-}
-
-void RecorderImpl::applyFillPattern()
-{
-    appendStateChangeItemIfNecessary();
-    m_items.append(ApplyFillPattern());
-}
-
-#endif // USE(CG)
-
 void RecorderImpl::applyDeviceScaleFactor(float scaleFactor)
 {
     updateStateForApplyDeviceScaleFactor(scaleFactor);

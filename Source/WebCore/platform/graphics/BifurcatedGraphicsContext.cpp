@@ -107,24 +107,6 @@ void BifurcatedGraphicsContext::drawEllipse(const FloatRect& rect)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-#if USE(CG)
-void BifurcatedGraphicsContext::applyStrokePattern()
-{
-    m_primaryContext.applyStrokePattern();
-    m_secondaryContext.applyStrokePattern();
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::applyFillPattern()
-{
-    m_primaryContext.applyFillPattern();
-    m_secondaryContext.applyFillPattern();
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-#endif
-
 void BifurcatedGraphicsContext::drawPath(const Path& path)
 {
     m_primaryContext.drawPath(path);
