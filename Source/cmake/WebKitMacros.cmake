@@ -1390,6 +1390,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # which is also Swift-only) can set
         # ${_target}_SWIFT_INTEROP_MODULE_PATH_SWIFT_ONLY to TRUE.
         list(APPEND _swift_options "-cxx-interoperability-mode=default" "-Xcc" "-std=c++2b")
+        if (CMAKE_Swift_COMPILER_TARGET)
+            list(APPEND _swift_options "-clang-target" "${CMAKE_Swift_COMPILER_TARGET}")
+        endif ()
         _WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS(_shared_cc_flags)
         foreach (_f IN LISTS _shared_cc_flags)
             list(APPEND _swift_options "-Xcc" "${_f}")
