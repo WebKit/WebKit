@@ -3,8 +3,11 @@
 # Always pass --sdk to xcrun explicitly -- otherwise, toolchain and SDK
 # are not guaranteed to match.
 
-# Sets CMAKE_OSX_SYSROOT, WEBKIT_SDK_NAME, and WEBKIT_SDK_VERSION in the caller's scope.
+# Sets CMAKE_OSX_SYSROOT and WEBKIT_SDK_VERSION in the caller's scope, and
+# caches WEBKIT_SDK_NAME. The SDK it was asked for is remembered so that the
+# path can be re-resolved on later configures.
 function(WEBKIT_RESOLVE_SDK)
+    set(WEBKIT_SDK_REQUEST "${ARGN}" CACHE INTERNAL "")
     foreach (_sdk IN LISTS ARGN)
         execute_process(COMMAND xcrun --sdk ${_sdk} --show-sdk-path
             OUTPUT_VARIABLE _sdk_path
@@ -19,8 +22,9 @@ function(WEBKIT_RESOLVE_SDK)
 
             message(STATUS "Xcode SDK: ${_sdk_canonical_name} at ${_sdk_path}")
             set(WEBKIT_SDK_VERSION "${_sdk_version}" PARENT_SCOPE)
-            set(WEBKIT_SDK_NAME "${_platform_name}" PARENT_SCOPE)
+            set(WEBKIT_SDK_NAME "${_platform_name}" CACHE INTERNAL "")
             set(CMAKE_OSX_SYSROOT "${_sdk_path}" CACHE PATH "" FORCE)
+            set(WEBKIT_SDK_RESOLVED "${_sdk_path}" CACHE INTERNAL "")
             if (_sdk_path MATCHES "\\.[Ii]nternal.sdk$")
                 set(USE_APPLE_INTERNAL_SDK ON CACHE BOOL "" FORCE)
             else ()
@@ -91,13 +95,24 @@ function(WEBKIT_XCRUN OUTPUT_VAR)
 endfunction()
 
 function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
+    # A tool the developer pointed outside the Xcode is not ours to replace.
     if (DEFINED ${OUTPUT_VAR} AND EXISTS "${${OUTPUT_VAR}}")
-        return()
+        set(_stale OFF)
+        if (WEBKIT_OLD_XCODE)
+            string(FIND "${${OUTPUT_VAR}}" "${WEBKIT_OLD_XCODE}/" _found_at)
+            if (_found_at EQUAL 0)
+                set(_stale ON)
+            endif ()
+        endif ()
+        if (NOT _stale)
+            return()
+        endif ()
     endif ()
     WEBKIT_XCRUN(_path -f ${_tool})
     if (NOT EXISTS "${_path}")
         message(SEND_ERROR "Cannot find ${_tool} in the active SDK and "
             "toolchain (${CMAKE_OSX_SYSROOT})")
+        set(WEBKIT_TOOLCHAIN_INCOMPLETE ON PARENT_SCOPE)
     else ()
         set(${OUTPUT_VAR} "${_path}" CACHE STRING "" FORCE)
     endif ()
@@ -108,8 +123,15 @@ endfunction()
 # tools from the SDK.
 # ----------------------------------------------------------------------------
 
-if (CMAKE_OSX_SYSROOT)
-    WEBKIT_RESOLVE_SDK(${CMAKE_OSX_SYSROOT})
+# CMAKE_OSX_SYSROOT is both the request ("macosx.internal;macosx") and, once
+# resolved, the answer, which resolves to itself forever. Recover the request.
+set(_sdk_request "${CMAKE_OSX_SYSROOT}")
+if (_sdk_request STREQUAL "$CACHE{WEBKIT_SDK_RESOLVED}")
+    set(_sdk_request "$CACHE{WEBKIT_SDK_REQUEST}")
+endif ()
+
+if (_sdk_request)
+    WEBKIT_RESOLVE_SDK(${_sdk_request})
 elseif (PORT STREQUAL "Mac" OR PORT STREQUAL "Cocoa" OR PORT STREQUAL "JSCOnly" OR NOT PORT)
     WEBKIT_RESOLVE_SDK(macosx.internal macosx)
 elseif (PORT STREQUAL "IOS" AND CMAKE_IOS_SIMULATOR)
@@ -216,6 +238,19 @@ endif ()
 # use the selected SDK and toolchain.
 set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
 
+# An Xcode can move on every update while the old paths stay resolvable, so an
+# EXISTS check cannot tell a live pin from a stale one. Compare Xcodes instead,
+# taking the previous one from the compiler we pinned last time.
+WEBKIT_XCRUN(_clang -f clang)
+if (NOT EXISTS "${_clang}")
+    message(FATAL_ERROR "xcrun could not find clang in ${CMAKE_OSX_SYSROOT}")
+endif ()
+string(REGEX REPLACE "/Contents/Developer/.*$" "/Contents/Developer" _new_xcode "${_clang}")
+string(REGEX REPLACE "/Contents/Developer/.*$" "/Contents/Developer" _old_xcode "$CACHE{CMAKE_C_COMPILER}")
+if (_old_xcode MATCHES "/Contents/Developer$" AND NOT _old_xcode STREQUAL _new_xcode)
+    set(WEBKIT_OLD_XCODE "${_old_xcode}")
+endif ()
+
 WEBKIT_RESOLVE_TOOL(CMAKE_C_COMPILER "clang")
 WEBKIT_RESOLVE_TOOL(CMAKE_ASM_COMPILER "clang")
 WEBKIT_RESOLVE_TOOL(CMAKE_CXX_COMPILER "clang++")
@@ -228,3 +263,23 @@ WEBKIT_RESOLVE_TOOL(CMAKE_LINKER "ld")
 # language.
 WEBKIT_RESOLVE_TOOL(GPERF_EXECUTABLE "gperf")
 WEBKIT_RESOLVE_TOOL(Mig_EXECUTABLE "mig")
+
+# Acted on only once everything above resolved: build.ninja lists
+# CMakeFiles/${CMAKE_VERSION} among its regeneration inputs, so removing it
+# without reaching generation would leave Ninja unable to recover.
+#
+# CMake wipes the whole cache -- preset values included -- when it notices
+# CMAKE_C_COMPILER moving, so drop its detection results and let it re-detect.
+# CMake never re-validates a populated find_* entry either, so the framework,
+# .tbd and binutil paths into the old Xcode have to go by hand.
+if (WEBKIT_OLD_XCODE AND NOT WEBKIT_TOOLCHAIN_INCOMPLETE)
+    message(STATUS "Xcode moved; dropping paths under ${WEBKIT_OLD_XCODE}")
+    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/CMakeFiles/${CMAKE_VERSION}")
+    get_cmake_property(_cache_vars CACHE_VARIABLES)
+    foreach (_cache_var IN LISTS _cache_vars)
+        string(FIND "$CACHE{${_cache_var}}" "${WEBKIT_OLD_XCODE}/" _found_at)
+        if (_found_at EQUAL 0)
+            unset(${_cache_var} CACHE)
+        endif ()
+    endforeach ()
+endif ()
