@@ -6862,6 +6862,7 @@ webkit.org/b/285971 imported/w3c/web-platform-tests/css/css-tables/table-as-item
 webkit.org/b/285971 imported/w3c/web-platform-tests/css/css-tables/table-as-item-cell-percentage-004.html [ ImageOnlyFailure ]
 webkit.org/b/285971 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-border-spacing-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-3.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-001.html [ ImageOnlyFailure ]
 
 # New failures after re-importing css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/margin-block-end-scroll-area-001.html [ Skip ]

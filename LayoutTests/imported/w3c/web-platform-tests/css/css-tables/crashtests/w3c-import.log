@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/WEB_FEATURES.yml
@@ -37,8 +35,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/negative_caption_margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-borders.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/orthogonal-cell-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/remove-table-column-group.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/row-size-distribution-rowspan-sorting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/rtl-replace-cells-with-colspan-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/table-column-display-change-chrome-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/table-content-size-blending-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/textarea-intrinsic-size-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/transition-table-row-group-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/uninitialized_read_crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/vertical_percentage_crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/crashtests/webkit-background-clip-on-row-crash.html

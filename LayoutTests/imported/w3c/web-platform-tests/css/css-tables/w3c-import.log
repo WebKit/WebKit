@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/META.yml
@@ -112,6 +110,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-color-change-with-compositing-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-color-change-with-compositing-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-color-change-with-compositing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-large-rowgroup-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-paint-phase-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-paint-phase-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-paint-phase-002-expected.xht
@@ -134,6 +138,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-remove-row-group-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-remove-row-group-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-remove-row-group.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-sideways-rl-rtl-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-sideways-rl-rtl-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-sideways-rl-rtl-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-lr-rtl-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-lr-rtl-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-lr-rtl-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-rtl-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-rtl-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-vertical-rtl-overflow.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-border-writing-mode-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/collapsed-scroll-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/colspan-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/colspan-002.html
@@ -142,6 +156,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/colspan-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/colspan-zero-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/column-track-merging.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-003-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/display-contents-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/dynamic-rowspan-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/dynamic-table-cell-height-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/dynamic-table-cell-height.html
@@ -173,6 +195,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/iframe-display-table-content-insertion-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/iframe-display-table-content-insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-col-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-col-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-col.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-colgroup-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-colgroup-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/insert-after-colgroup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/internal-containing-block-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/internal-containing-block-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/max-height-table-expected.html
@@ -281,6 +309,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-overflow-explicit-height-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-overflow-explicit-height-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-scroll-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-width-0-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-width-0-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-width-0.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-cell-writing-mode-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-collapsed-row-or-column-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-colspan-percent-auto-expected.html
@@ -301,6 +332,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-model-fixup-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-model-fixup.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-position-sticky-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-row-group-color-inheritance-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-row-group-color-inheritance-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-row-group-nested-anonymous-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-row-group-nested-anonymous-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table-row-group-nested-anonymous-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-tables/table_grid_size_col_colspan.html

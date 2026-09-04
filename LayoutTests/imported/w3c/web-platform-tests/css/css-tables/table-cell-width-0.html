@@ -1,41 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>Tests if cell with width:'0' uses intrinsic content size for width</title>
+<link rel="help"  href="https://html.spec.whatwg.org/multipage/tables.html">
 <link rel="match" href="table-cell-width-0-ref.html">
 <style>
 table {
   border-collapse: collapse;
   border: 2px solid black;
 }
+
 .zero {
   width: 0;
-  background: lightblue;
+  background:lightblue;
 }
 
-.positive-width 
-{
+.positive-width {
   width: 2px;
-  background: lightblue; 
+  background:lightblue;
 }
 
-.big-positive-width 
-{
+.big-positive-width {
   width: 20px;
-  background: lightblue; 
+  background:lightblue;
 }
 
 .normal {
-  background: lightgreen;
+ background:lightgreen;
 }
 
-.percent-width
-{
+.percent-width {
   width: 100%;
 }
 
-.fixed-width 
-{
+.fixed-width {
   width: 100px;
 }
 
@@ -63,7 +62,7 @@ table {
     <td class="normal">2</td>
   </tr>
 </table>
-<br> 
+<br>
 <!-- width:100% -->
 <table class="percent-width">
   <tr>
