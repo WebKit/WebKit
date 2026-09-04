@@ -27,9 +27,30 @@
 
 #include "ArrayProfile.h"
 #include "BytecodeStructs.h"
+#include "ScopeOffset.h"
 #include "ValueProfile.h"
+#include <wtf/BitVector.h>
 
 namespace JSC {
+
+// FIXME: Pass the rank to the functor so callers stop tracking m_valueProfile themselves, and so
+// Graph::methodOfGettingAValueProfileFor can invert a scope offset without scanning the bit vector.
+template<typename Block, typename Bytecode, typename Functor>
+void forEachLiveGeneratorLocal(Block* codeBlock, const Bytecode& bytecode, const Functor& functor)
+{
+    unsigned slot = 0;
+    codeBlock->bitVector(bytecode.m_liveLocals).forEachSetBit([&](size_t index) {
+        functor(virtualRegisterForLocal(index), ScopeOffset(bytecode.m_firstScopeOffset + slot++));
+    });
+}
+
+template<typename Block, typename Functor>
+void forEachClearedGeneratorSlot(Block* codeBlock, const OpSaveGeneratorLocals& bytecode, const Functor& functor)
+{
+    unsigned liveLocals = codeBlock->bitVector(bytecode.m_liveLocals).bitCount();
+    for (unsigned slot = liveLocals; slot < bytecode.m_numberOfSlots; ++slot)
+        functor(ScopeOffset(bytecode.m_firstScopeOffset + slot));
+}
 
 template <typename Bytecode>
 unsigned valueProfileOffsetFor(const Bytecode& bytecode, unsigned checkpointIndex)

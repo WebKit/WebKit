@@ -770,6 +770,16 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             break;
         }
 
+        case op_save_generator_locals: {
+            m_bytecodeCost += bitVector(instruction->as<OpSaveGeneratorLocals>().m_liveLocals).bitCount() * (opcodeLengths[op_put_to_scope] + 1);
+            break;
+        }
+
+        case op_restore_generator_locals: {
+            m_bytecodeCost += bitVector(instruction->as<OpRestoreGeneratorLocals>().m_liveLocals).bitCount() * (opcodeLengths[op_get_from_scope] + 1);
+            break;
+        }
+
         default:
             break;
         }
