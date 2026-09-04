@@ -1398,6 +1398,13 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # apinotes version is keyed off the effective Swift language mode, so
         # this also keeps PAL/WebGPU/WebKit on the same module-cache hash.
         list(APPEND _swift_options "-swift-version" "6")
+        # Load WebKit's Swift macro plugin (Source/WebKitSwiftMacros). The plugin
+        # is a host dylib built by a custom command, so the dependency has to be
+        # declared by hand.
+        if (WEBKIT_SWIFT_MACRO_PLUGIN)
+            list(APPEND _swift_options "-load-plugin-library" "${WEBKIT_SWIFT_MACRO_PLUGIN}")
+            add_dependencies(${_target} WebKitSwiftMacros)
+        endif ()
         if (APPLE)
             # Swift modules extend their underlying ObjC++ module.
             list(APPEND _swift_options "-import-underlying-module")

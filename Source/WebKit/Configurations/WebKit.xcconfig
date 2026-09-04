@@ -377,7 +377,12 @@ SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_ = $(inherited);
 SWIFT_OBJC_INTERFACE_HEADER_NAME = WebKit-Swift-Generated.h;
 
 // FIXME: (rdar://149474443) Swift/Cxx interop does not respect CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
-OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) -enable-experimental-feature RequiresObjC=Foundation;
+OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP)) -enable-experimental-feature RequiresObjC=Foundation $(WK_SWIFT_MACRO_PLUGIN_FLAGS);
+
+// WebKitSwiftMacros is a macosx target in WTF.xcodeproj, so its product lands in
+// $(SYMROOT)/$(CONFIGURATION) with no platform suffix even when this build is
+// cross-compiling.
+WK_SWIFT_MACRO_PLUGIN_FLAGS = -load-plugin-library $(SYMROOT)/$(CONFIGURATION)/libWebKitSwiftMacros.dylib;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b $(OTHER_SWIFT_FLAGS_MIN_ACCESS);
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
 OTHER_SWIFT_FLAGS_MIN_ACCESS = -Xfrontend -emit-clang-header-min-access -Xfrontend internal;

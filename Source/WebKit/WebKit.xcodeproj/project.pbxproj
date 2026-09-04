@@ -2117,6 +2117,7 @@
 		AE5E15BD2D935B9D00BB117E /* AuthenticationServices.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = AE5E15BC2D935B9D00BB117E /* AuthenticationServices.framework */; };
 		AE7319DC2F08713300DE5A36 /* CredentialUpdaterShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7319DB2F08712C00DE5A36 /* CredentialUpdaterShim.swift */; };
 		B0447A843DDAFA1CEF0B3F50 /* GeneratedSerializersWebProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = F63855BEB2200C51A99E3053 /* GeneratedSerializersWebProcess.mm */; };
+		B38C1025826F25B3D657B097 /* CxxMacros.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD57583D78757FC855E780F8 /* CxxMacros.swift */; };
 		B6058CEC2B6D636E006D4C77 /* WKWebExtensionDataRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC44A9B2AD7477200E20494 /* WKWebExtensionDataRecord.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B6058CEE2B6D637C006D4C77 /* WKWebExtensionDataRecordInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC44A9F2AD7494900E20494 /* WKWebExtensionDataRecordInternal.h */; };
 		B6058CEF2B6D6382006D4C77 /* WKWebExtensionDataRecordPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC44AA12AD7495E00E20494 /* WKWebExtensionDataRecordPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9361,6 +9362,7 @@
 		FC7104532E0ED23800CC0B24 /* WebInspectorBackendProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebInspectorBackendProxy.h; sourceTree = "<group>"; };
 		FC7104552E0ED24400CC0B24 /* WebInspectorUIProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIProxy.h; sourceTree = "<group>"; };
 		FC7104572E0ED24D00CC0B24 /* WebInspectorUIProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebInspectorUIProxy.messages.in; sourceTree = "<group>"; };
+		FD57583D78757FC855E780F8 /* CxxMacros.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CxxMacros.swift; sourceTree = "<group>"; };
 		FEDBDCD41E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
 		FEDBDCD51E68D19C00A59F8F /* WebInspectorInterruptDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcherMessages.h; sourceTree = "<group>"; };
 		FEE43FD01E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorInterruptDispatcher.cpp; sourceTree = "<group>"; };
@@ -10422,6 +10424,7 @@
 				46EA625A2B1FE13200DC5E39 /* ContextMenuContextData.serialization.in */,
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
 				2D9BECF52B30931B00D0AE99 /* CoordinateSystem.serialization.in */,
+				FD57583D78757FC855E780F8 /* CxxMacros.swift */,
 				5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
@@ -22253,6 +22256,7 @@
 				522F792C28D531970069B45B /* CtapAuthenticator.cpp in Sources */,
 				526C5723284ADCBC00E08955 /* CtapCcidDriver.cpp in Sources */,
 				522F792B28D5318A0069B45B /* CtapHidDriver.cpp in Sources */,
+				B38C1025826F25B3D657B097 /* CxxMacros.swift in Sources */,
 				2D0C56FE229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm in Sources */,
 				E382D57F2C21D500005F7653 /* DownloadProxyCocoa.mm in Sources */,
 				CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */,
