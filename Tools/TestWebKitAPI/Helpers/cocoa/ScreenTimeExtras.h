@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)
+
 #if ENABLE(SCREEN_TIME)
 
 #import <ScreenTime/STWebpageController.h>
@@ -33,4 +35,6 @@
 @property (setter=setURLIsBlocked:) BOOL URLIsBlocked;
 @end
 
-#endif
+#endif // ENABLE(SCREEN_TIME)
+
+#endif // !PLATFORM(IOS_SIMULATOR) || !__has_feature(modules)
