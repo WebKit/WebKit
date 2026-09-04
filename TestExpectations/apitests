@@ -325,6 +325,8 @@ rdar://137088246 [ mac debug ] TestWebKitAPI.WKInspectorExtension.ExtensionTabIs
 webkit.org/b/257332 [ mac ] TestWebKitAPI.WKInspectorExtensionDelegate.ExtensionTabNavigatedCallbacks [ Skip ]
 webkit.org/b/257332 [ mac ] TestWebKitAPI.WKInspectorExtensionDelegate.InspectedPageNavigatedCallbacks [ Skip ]
 webkit.org/b/231847 [ mac ] TestWebKitAPI.WKInspectorExtensionDelegate.ShowAndHideTabCallbacks [ Skip ]
+webkit.org/b/321949 [ mac ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackAfterTerminateProcess [ Failure ]
+webkit.org/b/321949 [ ios ] TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackAfterTerminateProcess [ Failure Timeout ]
 webkit.org/b/293286 TestWebKitAPI.WKNavigation.PreferredHTTPSPolicyAutomaticHTTPFallbackRedirectNo3SecondTimeout [ Skip ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtension.ContentScriptImport [ Pass Timeout ]
 webkit.org/b/318821 [ sequoia ] TestWebKitAPI.WKWebExtension.ContentScriptNotInjectedForExcludedMatchPattern [ Pass Timeout ]
