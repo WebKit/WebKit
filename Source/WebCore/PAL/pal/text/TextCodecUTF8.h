@@ -39,6 +39,8 @@ public:
     static void registerCodecs(TextCodecRegistrar);
 
     static Vector<uint8_t> encodeUTF8(StringView);
+    // Returns std::nullopt if a buffer large enough to hold the encoded bytes cannot be allocated.
+    static std::optional<Vector<uint8_t>> tryEncodeUTF8(StringView);
     static std::unique_ptr<TextCodecUTF8> codec();
 
 private:

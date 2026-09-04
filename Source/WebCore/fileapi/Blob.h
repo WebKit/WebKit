@@ -52,6 +52,7 @@ namespace WebCore {
 
 class Blob;
 class BlobLoader;
+class BlobPart;
 class DeferredPromise;
 class FragmentedSharedBuffer;
 class ReadableStream;
@@ -79,12 +80,7 @@ public:
         return blob;
     }
 
-    static Ref<Blob> create(ScriptExecutionContext& context, std::optional<Vector<BlobPartVariant>>&& blobPartVariants, const BlobPropertyBag& propertyBag)
-    {
-        Ref blob = adoptRef(*new Blob(context, WTF::move(blobPartVariants), propertyBag));
-        blob->suspendIfNeeded();
-        return blob;
-    }
+    static ExceptionOr<Ref<Blob>> create(ScriptExecutionContext&, std::optional<Vector<BlobPartVariant>>&&, const BlobPropertyBag&);
 
     static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     {
@@ -144,9 +140,13 @@ public:
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
-    Blob(ScriptExecutionContext&, std::optional<Vector<BlobPartVariant>>&&, const BlobPropertyBag&);
+    Blob(ScriptExecutionContext&, Vector<BlobPart>&&, size_t memoryCost, const BlobPropertyBag&);
     Blob(ScriptExecutionContext*, Vector<uint8_t>&&, const String& contentType);
     Blob(ScriptExecutionContext*, Ref<FragmentedSharedBuffer>&&, const String& contentType);
+
+    // Buffers the blob parts, or returns an exception if they are too large to buffer.
+    static ExceptionOr<Vector<BlobPart>> blobDataForParts(std::optional<Vector<BlobPartVariant>>&&, const BlobPropertyBag&);
+    static size_t memoryCostForParts(const std::optional<Vector<BlobPartVariant>>&);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };
     Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext*, const Blob&);
