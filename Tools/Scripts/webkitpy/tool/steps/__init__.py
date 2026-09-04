@@ -29,18 +29,9 @@
 
 # FIXME: Is this the right way to do this?
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
-from webkitpy.tool.steps.build import Build
 from webkitpy.tool.steps.checkstyle import CheckStyle
-from webkitpy.tool.steps.commit import Commit
 from webkitpy.tool.steps.confirmdiff import ConfirmDiff
-from webkitpy.tool.steps.createbug import CreateBug
 from webkitpy.tool.steps.discardlocalchanges import DiscardLocalChanges
-from webkitpy.tool.steps.editchangelog import EditChangeLog
 from webkitpy.tool.steps.formatcppfiles import FormatCppFiles
 from webkitpy.tool.steps.options import Options
-from webkitpy.tool.steps.postdiffforrevert import PostDiffForRevert
-from webkitpy.tool.steps.preparechangelogforrevert import PrepareChangeLogForRevert
-from webkitpy.tool.steps.reopenbugafterrevert import ReopenBugAfterRevert
-from webkitpy.tool.steps.revertrevision import RevertRevision
 from webkitpy.tool.steps.sortxcodeprojectfiles import SortXcodeProjectFiles
-from webkitpy.tool.steps.update import Update
