@@ -2229,7 +2229,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                     prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(),
                         "Using target back/forward item's process and suspended page"_s, isolatedProcessType,
                         site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
-                        WTF::move(dataStore), WTF::move(completionHandler));
+                        WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler));
                     return;
                 }
             }
@@ -2239,7 +2239,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                     prepareProcessForNavigation(process.releaseNonNull(), page, nullptr,
                         "Using target back/forward item's process (in-process BFCache)"_s, isolatedProcessType,
                         site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive,
-                        WTF::move(dataStore), WTF::move(completionHandler));
+                        WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler));
                     return;
                 }
             }
@@ -2290,21 +2290,31 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(WTF::move(process), suspendedPage.get(), reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
-    prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(), reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), WTF::move(completionHandler));
+    prepareProcessForNavigation(WTF::move(process), page, suspendedPage.get(), reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler));
 }
 
 void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& site, const Site& mainFrameSite,
-    const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, LoadedWebArchive loadedWebArchive, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
+    const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, LoadedWebArchive loadedWebArchive, Ref<WebsiteDataStore>&& dataStore, BrowsingContextGroup& browsingContextGroup, WebProcessProxy& sourceProcess, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
 {
     static constexpr unsigned maximumNumberOfAttempts = 3;
     auto preventProcessShutdownScope = process->shutdownPreventingScope();
-    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), page = protect(page), navigation = protect(navigation), process, preventProcessShutdownScope = WTF::move(preventProcessShutdownScope), reason, dataStore, lockdownMode, enhancedSecurity, loadedWebArchive, previousAttemptsCount, isolatedProcessType, site, mainFrameSite](SuspendedPageProxy* suspendedPage) mutable {
+
+    RefPtr<FrameProcess> reservedFrameProcess;
+    if (protect(page.preferences())->siteIsolationEnabled() && !site.isEmpty() && !suspendedPage && process.ptr() != &sourceProcess && !browsingContextGroup.processForSite(site)) {
+        // BrowsingContextGroup's process map holds the FrameProcess weakly, so this strong reference is captured in the completion handler lambda below.
+        reservedFrameProcess = browsingContextGroup.ensureProcessForSite(site, mainFrameSite, process, protect(page.preferences()), loadedWebArchive, BrowsingContextGroupUpdate::None);
+        browsingContextGroup.addFrameProcessAndInjectPageContextIf(*reservedFrameProcess, [navigatingPage = Ref { page }](WebPageProxy& otherPage) {
+            return navigatingPage.ptr() != &otherPage;
+        });
+    }
+
+    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), page = protect(page), navigation = protect(navigation), process, preventProcessShutdownScope = WTF::move(preventProcessShutdownScope), reason, dataStore, lockdownMode, enhancedSecurity, loadedWebArchive, previousAttemptsCount, isolatedProcessType, site, mainFrameSite, browsingContextGroup = Ref { browsingContextGroup }, sourceProcess = Ref { sourceProcess }, reservedFrameProcess = WTF::move(reservedFrameProcess)](SuspendedPageProxy* suspendedPage) mutable {
         // Since the IPC is asynchronous, make sure the destination process and suspended page are still valid.
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
             ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
             Ref fallbackProcess = processForSite(dataStore, isolatedProcessType, site, mainFrameSite, lockdownMode, enhancedSecurity, page->configuration(), WebCore::ProcessSwapDisposition::None);
-            prepareProcessForNavigation(WTF::move(fallbackProcess), page, nullptr, reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), WTF::move(completionHandler), previousAttemptsCount + 1);
+            prepareProcessForNavigation(WTF::move(fallbackProcess), page, nullptr, reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), browsingContextGroup, sourceProcess, WTF::move(completionHandler), previousAttemptsCount + 1);
             return;
         }
         if (suspendedPage) {

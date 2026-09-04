@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(async (t) => {
+    assert_true(!!window.internals, "This test requires internals API");
+
+    const crossSiteURL = "http://localhost:8000/site-isolation/resources/report-process-id.html";
+
+    const pids = [];
+    const gotBothPIDs = new Promise((resolve, reject) => {
+        const timeout = t.step_timeout(() => reject(new Error("Timed out waiting for both popups to report a process ID")), 8000);
+        const onMessage = (event) => {
+            if (event.data && event.data.type === "processId") {
+                pids.push(event.data.pid);
+                if (pids.length === 2) {
+                    clearTimeout(timeout);
+                    window.removeEventListener("message", onMessage);
+                    resolve();
+                }
+            }
+        };
+        window.addEventListener("message", onMessage);
+    });
+
+    const firstPopup = window.open();
+    const secondPopup = window.open();
+    t.add_cleanup(() => { firstPopup.close(); secondPopup.close(); });
+    firstPopup.location = crossSiteURL;
+    secondPopup.location = crossSiteURL;
+
+    await gotBothPIDs;
+
+    assert_equals(pids[0], pids[1], "Concurrent navigations to the same site should share one process");
+    assert_not_equals(pids[0], internals.processIdentifier, "The cross-site popups should not be in the opener's process");
+}, "Concurrent navigations to the same site use the same process");
+</script>
+</body>
+</html>
