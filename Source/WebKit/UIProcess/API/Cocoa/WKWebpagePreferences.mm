@@ -880,6 +880,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)setSecurityRestrictionMode:(WKSecurityRestrictionMode)mode
 {
     switch (mode) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     case WKSecurityRestrictionModeNone:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
         _websitePolicies->setLockdownModeEnabled(false);
@@ -888,6 +889,15 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         _websitePolicies->setIsEnhancedSecurityEnabled(true);
         _websitePolicies->setLockdownModeEnabled(false);
         break;
+#else
+    // Leaving lockdownModeEnabled unset lets it fall through to lockdownModeEnabledBySystem().
+    case WKSecurityRestrictionModeNone:
+        _websitePolicies->setIsEnhancedSecurityEnabled(false);
+        break;
+    case WKSecurityRestrictionModeMaximizeCompatibility:
+        _websitePolicies->setIsEnhancedSecurityEnabled(true);
+        break;
+#endif // RC_REMOVE_SEC_ACCEL_3
     case WKSecurityRestrictionModeLockdown:
         _websitePolicies->setIsEnhancedSecurityEnabled(false);
         _websitePolicies->setLockdownModeEnabled(true);
