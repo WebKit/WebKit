@@ -598,9 +598,12 @@ webkit.org/b/165799 fast/mediastream/device-change-event-2.html [ Skip ]
 # AutoFill button is not supported
 fast/forms/auto-fill-button/mouse-down-input-mouse-release-auto-fill-button.html
 
+# SecureEventInput is not supported on iOS.
+editing/secure-input [ Skip ]
+http/tests/secure-input [ Skip ]
+
 # Mouse events are not supported on iOS
 editing/deleting/smart-delete-across-editable-boundaries-2.html [ Skip ]
-editing/secure-input/password-input-focusing-to-different-frame.html [ Skip ]
 editing/selection/4895428-1.html [ Skip ]
 editing/selection/4895428-4.html [ Skip ]
 editing/selection/5195166-1.html [ Skip ]
@@ -5601,10 +5604,6 @@ editing/inserting/insert-tab-001.html [ Failure ]
 editing/inserting/insert-tab-002.html [ Failure ]
 editing/inserting/insert-tab-004.html [ Failure ]
 editing/inserting/typing-around-br-001.html [ Failure ]
-editing/secure-input/password-input-changed-type.html [ Failure ]
-editing/secure-input/password-input-focusing.html [ Failure ]
-editing/secure-input/removed-password-input.html [ Failure ]
-editing/secure-input/reset-state-on-navigation.html [ Failure ]
 editing/selection/caret-in-empty-inline-1.html [ Failure ]
 editing/selection/caret-in-empty-inline-2.html [ Failure ]
 editing/selection/click-in-margins-inside-editable-div.html [ Failure ]

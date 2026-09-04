@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../http/tests/secure-input/resources/secure-input-helper.js"></script>
+</head>
+<body>
+<input id="input" type=password>
+<iframe id="iframe" src="about:blank"></iframe>
+<script>
+jsTestIsAsync = true;
+
+description("Verify that committing a load in a subframe does not disable secure input state while the main frame's password input is focused.");
+
+window.addEventListener("load", async () => {
+    debug("A password input in the main frame is focused:");
+    input.focus();
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("testRunner.secureEventInputIsEnabled", "true");
+
+    debug("\nThe subframe commits a new document:");
+    iframe.src = "resources/empty-frame.html";
+    await waitForIframeLoad(iframe);
+
+    await UIHelper.ensurePresentationUpdate();
+    shouldBe("document.activeElement", "input");
+    shouldBe("testRunner.secureEventInputIsEnabled", "true");
+    finishJSTest();
+});
+</script>
+</body>
+</html>
