@@ -46,18 +46,26 @@ enum JavaScriptEvaluationCodableValue<ID: Hashable & Sendable>: Sendable, Hashab
     case object([ObjectEntry])
 }
 
+extension JavaScriptEvaluationCodableValue.EmptyType {
+    fileprivate init(_ emptyType: WebKit.JavaScriptEvaluationResult.EmptyType) {
+        self = emptyType == .Null ? .null : .undefined
+    }
+}
+
 extension JavaScriptEvaluationCodableValue {
     init(_ value: borrowing WebKit.JavaScriptEvaluationResult.Value) {
+        typealias Cxx = WebKit.CxxInteropSupport
+
         self =
             switch unsafe value.index() {
-            case 0: // EmptyType
-                fatalError("not yet implemented")
-            case WebKit.CxxInteropSupport.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CBool.self):
-                unsafe .bool(WebKit.CxxInteropSupport.alternativeForVariant(value, Alternative: CBool.self))
-            case 2: // double
-                fatalError("not yet implemented")
-            case 3: // String
-                fatalError("not yet implemented")
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: WebKit.JavaScriptEvaluationResult.EmptyType.self):
+                unsafe .empty(.init(Cxx.alternativeForVariant(value)))
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CBool.self):
+                unsafe .bool(Cxx.alternativeForVariant(value))
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CDouble.self):
+                unsafe .number(Cxx.alternativeForVariant(value))
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: WTF.String.self):
+                unsafe .string((Cxx.alternativeForVariant(value) as WTF.String).description)
             case 4: // Seconds
                 fatalError("not yet implemented")
             case 5: // Vector<JSObjectID>

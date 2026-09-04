@@ -50,32 +50,7 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
         self.codingPath = codingPath
     }
 
-    private func decodePrimitive<T>(
-        _ type: T.Type = T.self,
-        resolve: (JavaScriptEvaluationCodableValue<ID>) -> T?
-    ) throws(CodingError.Decoding) -> T {
-        guard let value = storage.value.map[id] else {
-            throw CodingError.dataCorrupted(
-                at: codingPath,
-                debugDescription: "No entry for \(id)."
-            )
-        }
-
-        guard let resolvedValue = resolve(value) else {
-            throw CodingError.typeMismatch(
-                expectedTypeDescription: "\(T.self)",
-                actualValueDescription: "\(value)",
-                at: codingPath
-            )
-        }
-
-        return resolvedValue
-    }
-
-    @_lifetime(self: copy self)
-    mutating func decode<T: CommonDecodable>(_: T.Type) throws(CodingError.Decoding) -> T {
-        fatalError("\(#function) is not implemented")
-    }
+    // Intentionally does not implement the `mutating func decode<T: CommonDecodable>(_: T.Type) throws(CodingError.Decoding) -> T` requirement; the default implementation is sound.
 
     @_lifetime(self: copy self)
     mutating func decodeStruct<T: ~Copyable>(
@@ -132,94 +107,127 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int.Type) throws(CodingError.Decoding) -> Int {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int8.Type) throws(CodingError.Decoding) -> Int8 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int16.Type) throws(CodingError.Decoding) -> Int16 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int32.Type) throws(CodingError.Decoding) -> Int32 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int64.Type) throws(CodingError.Decoding) -> Int64 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Int128.Type) throws(CodingError.Decoding) -> Int128 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt.Type) throws(CodingError.Decoding) -> UInt {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt8.Type) throws(CodingError.Decoding) -> UInt8 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt16.Type) throws(CodingError.Decoding) -> UInt16 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt32.Type) throws(CodingError.Decoding) -> UInt32 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt64.Type) throws(CodingError.Decoding) -> UInt64 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: UInt128.Type) throws(CodingError.Decoding) -> UInt128 {
-        fatalError("\(#function) is not implemented")
+        try decodeInteger()
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Float.Type) throws(CodingError.Decoding) -> Float {
-        fatalError("\(#function) is not implemented")
+        let double = try decodeNumber(narrowingTo: Float.self)
+        let float = Float(double)
+
+        func isOrdinary(_ value: some FloatingPoint) -> Bool {
+            value.isFinite && !value.isZero
+        }
+
+        // A finite, nonzero value is the only kind narrowing can damage; +/-0, +/-infinity and
+        // NaN all convert exactly.
+        guard isOrdinary(float) || !isOrdinary(double) else {
+            throw CodingError.dataCorrupted(
+                at: codingPath,
+                debugDescription: "\(double) is not representable in Float."
+            )
+        }
+
+        return float
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_ hint: Double.Type) throws(CodingError.Decoding) -> Double {
-        fatalError("\(#function) is not implemented")
+        try decodeNumber(narrowingTo: Double.self)
     }
 
     @_lifetime(self: copy self)
     mutating func decode(_: String.Type) throws(CodingError.Decoding) -> String {
-        fatalError("\(#function) is not implemented")
+        try decodePrimitive {
+            guard case .string(let value) = $0 else {
+                return nil
+            }
+
+            return value
+        }
     }
 
     @_lifetime(self: copy self)
     mutating func decodeString<V: DecodingStringVisitor & ~Copyable>(
         _ visitor: borrowing V
     ) throws(CodingError.Decoding) -> V.DecodedValue {
-        fatalError("\(#function) is not implemented")
+        try visitor.visitString(decode(String.self))
     }
 
     @_lifetime(self: copy self)
     mutating func decodeNil() throws(CodingError.Decoding) -> Bool {
-        fatalError("\(#function) is not implemented")
+        try decodePrimitive {
+            guard case .empty = $0 else {
+                return false
+            }
+
+            // `undefined` counts as nil alongside `null`.
+            return true
+        }
     }
 
     @_lifetime(self: copy self)
     mutating func decodeOptional(_ closure: (inout Self) throws(CodingError.Decoding) -> Void) throws(CodingError.Decoding) {
-        fatalError("\(#function) is not implemented")
+        if try decodeNil() {
+            return
+        }
+
+        try closure(&self)
     }
 
     @_lifetime(self: copy self)
@@ -236,6 +244,63 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
     @_lifetime(self: copy self)
     mutating func decode<D: Decodable>(_: D.Type) throws(CodingError.Decoding) -> D {
         fatalError("\(#function) is not implemented")
+    }
+}
+
+extension JavaScriptEvaluationGraphDecoder {
+    private func codableValue() throws(CodingError.Decoding) -> JavaScriptEvaluationCodableValue<ID> {
+        guard let value = storage.value.map[id] else {
+            throw CodingError.dataCorrupted(
+                at: codingPath,
+                debugDescription: "No entry for \(id)."
+            )
+        }
+
+        return value
+    }
+
+    private func decodePrimitive<T>(
+        _ type: T.Type = T.self,
+        resolve: (JavaScriptEvaluationCodableValue<ID>) -> T?
+    ) throws(CodingError.Decoding) -> T {
+        let value = try codableValue()
+
+        guard let resolvedValue = resolve(value) else {
+            throw CodingError.typeMismatch(
+                expectedTypeDescription: "\(T.self)",
+                actualValueDescription: "\(value)",
+                at: codingPath
+            )
+        }
+
+        return resolvedValue
+    }
+
+    private func decodeNumber<T>(narrowingTo type: T.Type) throws(CodingError.Decoding) -> Double {
+        let value = try codableValue()
+
+        guard case .number(let number) = value else {
+            throw CodingError.typeMismatch(
+                expectedTypeDescription: "\(T.self)",
+                actualValueDescription: "\(value)",
+                at: codingPath
+            )
+        }
+
+        return number
+    }
+
+    private func decodeInteger<T: FixedWidthInteger>(_ type: T.Type = T.self) throws(CodingError.Decoding) -> T {
+        let value = try decodeNumber(narrowingTo: T.self)
+
+        guard let integer = T(exactly: value) else {
+            throw CodingError.dataCorrupted(
+                at: codingPath,
+                debugDescription: "\(value) is not representable in \(T.self)."
+            )
+        }
+
+        return integer
     }
 }
 

@@ -95,7 +95,7 @@ namespace WebKit::CxxInteropSupport {
 
 // FIXME: Generalize this once rdar://186426517 is fixed.
 template<typename Alternative>
-inline bool alternativeForVariant(const JavaScriptEvaluationResult::Value& value)
+inline Alternative alternativeForVariant(const JavaScriptEvaluationResult::Value& value)
 {
     return std::get<Alternative>(value);
 }
