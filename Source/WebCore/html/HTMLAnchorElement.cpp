@@ -129,8 +129,8 @@ bool HTMLAnchorElement::isKeyboardFocusable(const FocusEventData& focusEventData
     if (!isFocusable())
         return false;
 
-    // Anchor is focusable if the base element supports focus and is focusable.
-    if (isFocusable() && Element::supportsFocus())
+    // Anchor is keyboard focusable if the base element supports focus.
+    if (Element::supportsFocus())
         return HTMLElement::isKeyboardFocusable(focusEventData);
 
     RefPtr frame = document().frame();

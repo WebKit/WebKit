@@ -202,7 +202,11 @@ bool SVGAElement::isMouseFocusable() const
 
 bool SVGAElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
 {
-    if (isFocusable() && Element::supportsFocus())
+    if (!isFocusable())
+        return false;
+
+    // Anchor is keyboard focusable if the base element supports focus.
+    if (Element::supportsFocus())
         return SVGElement::isKeyboardFocusable(focusEventData);
 
     RefPtr frame = document().frame();
