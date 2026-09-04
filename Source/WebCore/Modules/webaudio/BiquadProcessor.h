@@ -53,7 +53,7 @@ public:
 
     // Get the magnitude and phase response of the filter at the given
     // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
+    void getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse);
 
     void checkForDirtyCoefficients();
     

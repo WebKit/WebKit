@@ -129,7 +129,7 @@ void BiquadProcessor::setType(BiquadFilterType type)
     }
 }
 
-void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void BiquadProcessor::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Compute the frequency response on a separate temporary kernel
     // to avoid interfering with the processing running in the audio
@@ -145,7 +145,7 @@ void BiquadProcessor::getFrequencyResponse(unsigned nFrequencies, std::span<cons
     float detune = parameter4().value();
 
     responseKernel->updateCoefficients(1, singleElementSpan(cutoffFrequency), singleElementSpan(q), singleElementSpan(gain), singleElementSpan(detune));
-    responseKernel->getFrequencyResponse(nFrequencies, frequencyHz, magResponse, phaseResponse);
+    responseKernel->getFrequencyResponse(frequencyHz, magResponse, phaseResponse);
 }
 
 } // namespace WebCore

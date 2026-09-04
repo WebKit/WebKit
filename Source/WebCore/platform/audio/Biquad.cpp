@@ -552,7 +552,7 @@ void Biquad::setBandpassParams(size_t index, double frequency, double Q)
     }
 }
 
-void Biquad::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
+void Biquad::getFrequencyResponse(std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Evaluate the Z-transform of the filter at given normalized
     // frequency from 0 to 1. (1 corresponds to the Nyquist
@@ -577,7 +577,7 @@ void Biquad::getFrequencyResponse(unsigned nFrequencies, std::span<const float> 
     double a1 = m_a1[0];
     double a2 = m_a2[0];
     
-    for (unsigned k = 0; k < nFrequencies; ++k) {
+    for (size_t k = 0; k < frequency.size(); ++k) {
         if (frequency[k] < 0 || frequency[k] > 1) {
             // Out-of-bounds frequencies should return NaN.
             magResponse[k] = std::nanf("");

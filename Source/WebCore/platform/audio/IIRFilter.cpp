@@ -123,7 +123,7 @@ void IIRFilter::process(std::span<const float> source, std::span<float> destinat
     }
 }
 
-void IIRFilter::getFrequencyResponse(unsigned length, std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
+void IIRFilter::getFrequencyResponse(std::span<const float> frequency, std::span<float> magResponse, std::span<float> phaseResponse)
 {
     // Evaluate the z-transform of the filter at the given normalized frequencies
     // from 0 to 1. (One corresponds to the Nyquist frequency.)
@@ -139,7 +139,7 @@ void IIRFilter::getFrequencyResponse(unsigned length, std::span<const float> fre
     // the sums in H(z) is equivalent to evaluating a polynomial at the point
     // 1/z.
 
-    for (unsigned k = 0; k < length; ++k) {
+    for (size_t k = 0; k < frequency.size(); ++k) {
         if (frequency[k] < 0 || frequency[k] > 1) {
             // Out-of-bounds frequencies should return NaN.
             magResponse[k] = std::nanf("");

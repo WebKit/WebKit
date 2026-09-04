@@ -35,7 +35,6 @@
 #include "FloatConversion.h"
 #include <limits.h>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/Vector.h>
 
 #if CPU(X86_SSE2)
 #include <immintrin.h>
@@ -210,23 +209,24 @@ void BiquadDSPKernel::process(std::span<const float> source, std::span<float> de
     m_biquad.process(source, destination);
 }
 
-void BiquadDSPKernel::getFrequencyResponse(unsigned nFrequencies, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void BiquadDSPKernel::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
-    bool isGood = nFrequencies > 0 && frequencyHz.data() && magResponse.data() && phaseResponse.data();
+    bool isGood = !frequencyHz.empty() && magResponse.size() >= frequencyHz.size() && phaseResponse.size() >= frequencyHz.size();
     ASSERT(isGood);
     if (!isGood)
         return;
 
-    Vector<float> frequency(nFrequencies);
-
     double nyquist = this->nyquist();
 
-    // Convert from frequency in Hz to normalized frequency (0 -> 1),
-    // with 1 equal to the Nyquist frequency.
-    for (unsigned k = 0; k < nFrequencies; ++k)
-        frequency[k] = frequencyHz[k] / nyquist;
+    // Convert from frequency in Hz to normalized frequency (0 -> 1), with 1 equal to the Nyquist frequency.
+    std::array<float, AudioUtilities::renderQuantumSize> frequency;
+    for (size_t offset = 0; offset < frequencyHz.size(); offset += frequency.size()) {
+        auto chunk = std::span { frequency }.first(std::min(frequency.size(), frequencyHz.size() - offset));
+        for (size_t k = 0; k < chunk.size(); ++k)
+            chunk[k] = frequencyHz[offset + k] / nyquist;
 
-    m_biquad.getFrequencyResponse(nFrequencies, frequency.span(), magResponse, phaseResponse);
+        m_biquad.getFrequencyResponse(chunk, magResponse.subspan(offset, chunk.size()), phaseResponse.subspan(offset, chunk.size()));
+    }
 }
 
 double BiquadDSPKernel::tailTime() const
