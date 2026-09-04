@@ -118,10 +118,7 @@ void DOMAudioSession::applyTypeToAudioSessionCategoryOverride(Type type)
 DOMAudioSession::Type DOMAudioSession::type() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());
-    if (document && !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
-        return DOMAudioSession::Type::Auto;
-
-    if (!document)
+    if (!document || !PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, *document, PermissionsPolicy::ShouldReportViolation::No))
         return DOMAudioSession::Type::Auto;
 
     if (auto* page = document->page())
