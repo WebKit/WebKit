@@ -423,7 +423,7 @@ void Clipboard::ItemWriter::didSetAllData()
 
     Vector<PasteboardCustomData> customData;
     customData.reserveInitialCapacity(dataToWrite.size());
-    for (auto data : dataToWrite) {
+    for (auto&& data : WTF::move(dataToWrite)) {
         if (!data) {
             reject();
             return;
@@ -445,7 +445,7 @@ void Clipboard::ItemWriter::didSetAllData()
             }
         }
 
-        customData.append(*data);
+        customData.append(WTF::move(*data));
     }
 
     m_pasteboard->writeCustomData(WTF::move(customData), PasteboardWriteType::AsyncClipboard);
