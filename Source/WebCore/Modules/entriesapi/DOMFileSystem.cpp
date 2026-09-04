@@ -106,8 +106,8 @@ static bool isValidPathSegment(StringView segment)
     if (segment.isEmpty() || segment == "."_s || segment == ".."_s)
         return true;
 
-    for (unsigned i = 0; i < segment.length(); ++i) {
-        if (!isValidPathNameCharacter(segment[i]))
+    for (auto character : segment.codeUnits()) {
+        if (!isValidPathNameCharacter(character))
             return false;
     }
     return true;
