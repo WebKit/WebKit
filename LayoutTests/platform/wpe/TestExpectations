@@ -500,6 +500,7 @@ webkit.org/b/301555 transforms/2d/zoom-menulist.html [ Skip ]
 
 webkit.org/b/309377 [ arm64 ] http/wpt/webcodecs/videoFrame-video-element-compressed.html [ Failure Pass ]
 webkit.org/b/312138 [ Release ] http/wpt/mediasession/setCaptureState.html [ Pass Failure ]
+webkit.org/b/309377 [ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure Pass ]
 
 webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Pass ]
 
@@ -1086,6 +1087,8 @@ webkit.org/b/308479 imported/w3c/web-platform-tests/html/canvas/element/manual/d
 
 webkit.org/b/308540 fast/repaint/border-radius-partial-repaint-corner.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/310411 [ arm64 ] fast/events/event-timing-back-forward-cache-duration.html [ Pass Failure ]
+
 webkit.org/b/309369 [ arm64 ] svg/custom/use-on-symbol-inside-pattern.svg [ Failure ]
 webkit.org/b/309369 [ arm64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failure ]
 
@@ -1106,6 +1109,8 @@ webkit.org/b/309633 [ arm64 ] fast/text/hyphenate-locale.html [ Failure ]
 webkit.org/b/309634 [ arm64 ] http/tests/xmlhttprequest/binary-x-user-defined.html [ Failure ]
 
 webkit.org/b/313803 webkit.org/b/309635 [ arm64 ] webgl/2.0.y/conformance2/textures/video/tex-2d-r8-red-unsigned_byte.html [ Timeout ]
+
+webkit.org/b/309636 [ arm64 ] webgl/tex-2d-video-no-change-wrap.html [ Pass Failure ]
 
 webkit.org/b/312150 [ arm64 ] imported/w3c/web-platform-tests/encoding/textdecoder-mistakes.any.html [ Failure ]
 webkit.org/b/312150 [ arm64 ] imported/w3c/web-platform-tests/encoding/textdecoder-mistakes.any.worker.html [ Failure ]
@@ -1130,6 +1135,7 @@ webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/fullscr
 webkit.org/b/311857 [ arm64 ] imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-right.html [ Pass ImageOnlyFailure ]
 webkit.org/b/311859 [ arm64 ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Pass Failure ]
 webkit.org/b/313034 [ Release ] http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass Failure ]
+webkit.org/b/311864 [ arm64 ] fast/events/monotonic-event-time-real-gap.html [ Pass Failure ]
 webkit.org/b/311865 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob.window.html [ Pass Failure ]
 
 # This might not be a regression since the GStreamer 1.28 deployment because this test was flaky before.
@@ -1140,6 +1146,7 @@ webkit.org/b/312138 [ Debug ] media/media-event-listeners.html [ Failure Pass ]
 
 webkit.org/b/313036 imported/w3c/web-platform-tests/editing/other/copy-elements-with-css-vars.tentative.html [ Pass Failure ]
 
+webkit.org/b/313054 [ arm64 ] compositing/backing/animate-into-view-with-descendant.html [ Pass Failure ]
 webkit.org/b/160119 [ arm64 ] editing/selection/caret-at-bidi-boundary.html [ Pass Timeout ]
 
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
@@ -1164,6 +1171,7 @@ webkit.org/b/316585 [ arm64 ] fullscreen/full-screen-disables-viewport-clipping.
 webkit.org/b/316572 [ x86_64 ] webaudio/require-transient-activation.html [ Pass Crash ]
 webkit.org/b/316574 fast/parser/entities-in-html.html [ Pass Timeout ]
 
+webkit.org/b/309744 [ arm64 ] fast/events/monotonic-event-time.html [ Pass Failure ]
 webkit.org/b/311654 imported/w3c/web-platform-tests/event-timing/gap-keydown-keyup.html [ Pass Failure ]
 webkit.org/b/252878 [ arm64 ] fast/frames/lots-of-objects.html [ Pass Timeout ]
 webkit.org/b/317021 [ arm64 ] fast/parser/elementstack-nesting-depth.html [ Pass Timeout ]
@@ -1232,6 +1240,7 @@ webkit.org/b/277912 [ arm64 ] imported/w3c/web-platform-tests/css/css-borders/co
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
 webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
 
+webkit.org/b/321450 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas.html [ Failure Pass ]
 webkit.org/b/316453 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-auto-placed-subgrid-inherited-tracks-001.html [ Crash Timeout ]
 [ arm64 ] webrtc/video-rotation.html [ Failure Pass ]
 
