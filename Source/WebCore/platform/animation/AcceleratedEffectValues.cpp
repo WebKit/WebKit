@@ -173,12 +173,15 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
             auto computedTransformOrigin = boundingBox.location() + transformOrigin.value;
 
             // FIXME: It is a layering violation to use `MotionPath::applyMotionPathTransform` here, as it is defined in the rendering directory.
+            // FIXME: The path is walked here for its length on every frame, even though the constructor
+            // already walked it for the same value. Carrying the length would need it serialized with the rest.
             MotionPath::applyMotionPathTransform(
                 matrix,
                 *transformOperationData,
                 computedTransformOrigin,
                 toTransformBox(transformBox),
                 *path,
+                path->length(),
                 offsetAnchor.value,
                 offsetDistance.value,
                 offsetRotate.angle,

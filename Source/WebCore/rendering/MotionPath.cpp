@@ -135,9 +135,8 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
     return data;
 }
 
-static PathTraversalState traversalStateAtDistance(const Path& path, float distanceValue)
+static PathTraversalState traversalStateAtDistance(const Path& path, float distanceValue, float pathLength)
 {
-    auto pathLength = path.length();
     float resolvedLength = 0;
     if (path.isClosed()) {
         if (pathLength) {
@@ -152,7 +151,7 @@ static PathTraversalState traversalStateAtDistance(const Path& path, float dista
     return path.traversalStateAtLength(resolvedLength);
 }
 
-void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, FloatPoint transformOrigin, TransformBox transformBox, const Path& offsetPath, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto)
+void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const TransformOperationData& transformData, FloatPoint transformOrigin, TransformBox transformBox, const Path& offsetPath, float offsetPathLength, std::optional<FloatPoint> offsetAnchor, float offsetDistance, float offsetRotate, bool offsetRotateHasAuto)
 {
     auto boundingBox = transformData.boundingBox;
     auto anchor = transformOrigin;
@@ -165,7 +164,7 @@ void MotionPath::applyMotionPathTransform(TransformationMatrix& matrix, const Tr
     if (transformData.isSVGRenderer && transformBox != TransformBox::ViewBox)
         anchor += boundingBox.location();
 
-    auto traversalState = traversalStateAtDistance(offsetPath, offsetDistance);
+    auto traversalState = traversalStateAtDistance(offsetPath, offsetDistance, offsetPathLength);
     matrix.translate(traversalState.current().x(), traversalState.current().y());
 
     // Shift element to the anchor specified by offset-anchor.
