@@ -58,7 +58,12 @@ public:
     Seconds willEvaluateScript() final;
     void didEvaluateScript(Seconds, JSC::ProfilingReason) final;
 
+    // Called when a debugger comes into existence after tracking has already started, so that
+    // scripts evaluated against it are recorded for the rest of the session.
+    void installProfilingClientIfTracking(JSC::Debugger&);
+
 private:
+    void setProfilingClientOnCoveredDebuggers(bool install);
     void addEvent(Seconds startTime, Seconds endTime, JSC::ProfilingReason);
     void trackingComplete();
     void stopSamplingWhenDisconnecting();
