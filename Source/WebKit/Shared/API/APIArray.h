@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include <ranges>
 #include <wtf/Forward.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/Vector.h>
 
 namespace API {
@@ -88,20 +87,8 @@ private:
     }
 
     Vector<RefPtr<Object>> m_elements;
-} SWIFT_SHARED_REFERENCE(refArray, derefArray) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
-
-using RefAPIArray = Ref<Array>;
+};
 
 } // namespace API
-
-inline void refArray(API::Array* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefArray(API::Array* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 SPECIALIZE_TYPE_TRAITS_API_OBJECT(Array);

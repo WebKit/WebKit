@@ -52,7 +52,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -709,18 +708,8 @@ private:
 
     RemoveDataTaskCounter m_removeDataTaskCounter;
     uint64_t m_cookiesVersion { 0 };
-} SWIFT_SHARED_REFERENCE(refDataStore, derefDataStore) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
-}
-
-inline void refDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefDataStore(WebKit::WebsiteDataStore* WTF_NONNULL obj)
-{
-    obj->deref();
 }
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebsiteDataStore)

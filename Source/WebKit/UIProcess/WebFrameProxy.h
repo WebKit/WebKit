@@ -43,7 +43,6 @@
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/ProcessID.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -392,19 +391,9 @@ private:
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
     RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
     HashSet<WebCore::SecurityOriginData> m_cspOriginsThatUpgradeInsecureNavigations;
-} SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
 } // namespace WebKit
-
-inline void refWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefWebFrameProxy(WebKit::WebFrameProxy* WTF_NONNULL obj)
-{
-    obj->deref();
-}
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebFrameProxy)
     static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Frame; }

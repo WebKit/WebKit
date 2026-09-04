@@ -918,7 +918,7 @@ def generate_messages_header(receiver):
         result.append('    ' + forwarder_class + '(' + handler_namespace + '::' + weak_ref_class + '* _Nonnull);\n')
         result.append('    std::unique_ptr<' + handler_namespace + '::' + class_name + '> getMessageTarget();\n')
         result.append('    std::unique_ptr<' + handler_namespace + '::' + weak_ref_class + '> m_handler;\n')
-        result.append('} SWIFT_SHARED_REFERENCE(.ref, .deref);\n\n')
+        result.append('};\n\n')
         result.append('}\n')
         result.append('\n')
         result.append('using %s = Ref<WebKit::%s>;\n' % (ref_forwarder_class, forwarder_class))

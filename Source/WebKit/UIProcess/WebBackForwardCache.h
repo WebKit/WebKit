@@ -28,7 +28,6 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -77,16 +76,6 @@ private:
     WeakRef<WebProcessPool> m_processPool;
     unsigned m_capacity { 0 };
     WeakListHashSet<WebBackForwardListItem> m_itemsWithCachedPage;
-} SWIFT_SHARED_REFERENCE(refWebBackForwardCache, derefWebBackForwardCache) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+};
 
 } // namespace WebKit
-
-inline void refWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL obj)
-{
-    obj->ref();
-}
-
-inline void derefWebBackForwardCache(WebKit::WebBackForwardCache* WTF_NONNULL obj)
-{
-    obj->deref();
-}
