@@ -463,6 +463,25 @@ JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, con
     return resultPromise;
 }
 
+// https://html.spec.whatwg.org/multipage/webappapis.html#module-type-allowed
+static bool moduleTypeIsAllowed(JSGlobalObject* globalObject, ScriptFetchParameters::Type type)
+{
+    switch (type) {
+    case ScriptFetchParameters::JavaScript:
+    case ScriptFetchParameters::WebAssembly:
+    case ScriptFetchParameters::JSON:
+    case ScriptFetchParameters::Text:
+    case ScriptFetchParameters::None:
+        return true;
+
+    default:
+        if (globalObject->globalObjectMethodTable()->moduleTypeIsAllowed)
+            return globalObject->globalObjectMethodTable()->moduleTypeIsAllowed(type);
+
+        return false;
+    };
+}
+
 JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer, bool deferred)
 {
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [import] ", printableModuleKey(globalObject, moduleName));
@@ -475,6 +494,12 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
 
     auto type = retrieveTypeImportAttribute(globalObject, attributes);
     RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (type && !moduleTypeIsAllowed(globalObject, *type)) {
+        auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        promise->reject(vm, createTypeError(globalObject, "Module type not supported by environment"_s));
+        RELEASE_AND_RETURN(scope, promise);
+    }
 
     RefPtr<ScriptFetchParameters> fetchParams;
     if (type)
@@ -521,6 +546,13 @@ JSPromise* JSModuleLoader::fetch(JSGlobalObject* globalObject, JSValue key, cons
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetching-scripts:module-type-allowed
+    // Assert: the result of running the module type allowed steps given moduleType and settingsObject is true.
+    // Otherwise, we would not have reached this point because a failure would have been raised when inspecting
+    // moduleRequest.[[Attributes]] in HostLoadImportedModule or fetch a single imported module script.
+    if (parameters)
+        ASSERT(moduleTypeIsAllowed(globalObject, parameters->type()));
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderFetch)
         RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderFetch(globalObject, this, key, referrer, WTF::move(parameters), WTF::move(scriptFetcher)));
@@ -605,6 +637,22 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     ModuleRegistryEntry* mapEntry = nullptr;
     const Identifier& specifier = moduleRequest.m_specifier;
     auto type = moduleRequest.type();
+
+    // Step 14 calls for calling "fetch a single imported module script"
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-imported-module-script
+    // 3. If the result of running the module type allowed steps given moduleType and settingsObject is false,
+    //    then run onComplete given null, and return.
+    if (!moduleTypeIsAllowed(globalObject, type)) {
+        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+        auto error = createTypeError(globalObject, "Module type not supported by environment"_s);
+        promise->reject(vm, error);
+
+        auto exception = Exception::create(vm, error);
+        finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, exception, scriptFetcher);
+
+        RELEASE_AND_RETURN(scope, promise);
+    }
 
     ModuleMapKey moduleMapKey { specifier.impl(), type };
 

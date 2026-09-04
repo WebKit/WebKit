@@ -95,6 +95,7 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
         shouldInterruptScript,
         javaScriptRuntimeFlags,
         shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleTypeIsAllowed
         moduleLoaderImportModule,
         moduleLoaderResolve,
         moduleLoaderFetch,

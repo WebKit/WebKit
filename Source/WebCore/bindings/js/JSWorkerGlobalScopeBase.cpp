@@ -57,6 +57,7 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleTypeIsAllowed
         &moduleLoaderImportModule,
         &moduleLoaderResolve,
         &moduleLoaderFetch,

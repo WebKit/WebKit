@@ -43,6 +43,7 @@ const GlobalObjectMethodTable* JSAPIGlobalObject::globalObjectMethodTable()
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleTypeIsAllowed
         nullptr, // moduleLoaderImportModule
         nullptr, // moduleLoaderResolve
         nullptr, // moduleLoaderFetch

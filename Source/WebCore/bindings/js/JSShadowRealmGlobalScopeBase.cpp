@@ -51,6 +51,7 @@ const GlobalObjectMethodTable* JSShadowRealmGlobalScopeBase::globalObjectMethodT
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleTypeIsAllowed
         &moduleLoaderImportModule,
         &moduleLoaderResolve,
         &moduleLoaderFetch,

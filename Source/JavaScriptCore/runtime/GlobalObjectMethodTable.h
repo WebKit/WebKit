@@ -22,6 +22,7 @@
 #pragma once
 
 #include <JavaScriptCore/Exception.h>
+#include <JavaScriptCore/ScriptFetchParameters.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
@@ -42,7 +43,6 @@ class JSValue;
 class Microtask;
 class RuntimeFlags;
 class ScriptFetcher;
-class ScriptFetchParameters;
 class SourceOrigin;
 class Structure;
 class QueuedTask;
@@ -60,6 +60,11 @@ struct GlobalObjectMethodTable {
     bool (*shouldInterruptScript)(const JSGlobalObject*);
     RuntimeFlags (*javaScriptRuntimeFlags)(const JSGlobalObject*);
     bool (*shouldInterruptScriptBeforeTimeout)(const JSGlobalObject*);
+
+    // Allows the host to define which module type is allowed (can be handled by the host)
+    // besides JS/WASM/JSON/text, which are handled by JSC.
+    // https://html.spec.whatwg.org/multipage/webappapis.html#module-type-allowed
+    bool (*moduleTypeIsAllowed)(ScriptFetchParameters::Type);
 
     JSPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
     Identifier (*moduleLoaderResolve)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, bool useImportMap);

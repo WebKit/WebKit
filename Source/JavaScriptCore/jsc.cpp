@@ -978,6 +978,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &shouldInterruptScript,
     &javaScriptRuntimeFlags,
     &shouldInterruptScriptBeforeTimeout,
+    nullptr, // moduleTypeIsAllowed
     &moduleLoaderImportModule,
     &moduleLoaderResolve,
     &moduleLoaderFetch,

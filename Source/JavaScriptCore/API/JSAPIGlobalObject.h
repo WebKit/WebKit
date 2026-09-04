@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSGlobalObject.h"
+#include "ScriptFetchParameters.h"
 #include <wtf/RefPtr.h>
 
 OBJC_CLASS JSScript;
@@ -33,7 +34,6 @@ OBJC_CLASS JSScript;
 namespace JSC {
 
 class ScriptFetcher;
-class ScriptFetchParameters;
 
 class JSAPIGlobalObject final : public JSGlobalObject {
 public:

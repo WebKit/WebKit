@@ -49,6 +49,7 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         &shouldInterruptScriptBeforeTimeout,
+        nullptr, // moduleTypeIsAllowed
         &moduleLoaderImportModule,
         &moduleLoaderResolve,
         &moduleLoaderFetch,
