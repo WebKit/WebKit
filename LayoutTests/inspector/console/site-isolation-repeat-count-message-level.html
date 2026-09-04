@@ -1,0 +1,80 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+// Utilities for page code.
+function addSubframe() {
+    const iframe = document.createElement("iframe");
+    iframe.src = "resources/site-isolation-console-subframe.html";
+    document.body.appendChild(iframe);
+}
+
+function tellSubframe(what) {
+    frames[0].postMessage(what, "*");
+}
+
+function mainFrameError() {
+    console.error("main-frame-error");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console.RepeatCountMessageLevel");
+
+    // Each frame's console agent dedups against its own store, so a repeat must be counted at
+    // the level of that target's last message, not the globally-last one.
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.RepeatCountMessageLevel.InterleavedTargets",
+        description: "A repeated message's level must be taken from its own target, not from the globally-last message.",
+        async test() {
+            InspectorTest.expectTrue(WI.isSiteIsolationEnabled(), "Site Isolation should be enabled.");
+
+            let mainFrameTarget = WI.targets.find((target) => target.type === WI.TargetType.Frame);
+            InspectorTest.expectThat(mainFrameTarget, "The main frame should have a frame target.");
+
+            let [readyEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`addSubframe()`),
+            ]);
+            let subframeTarget = readyEvent.data.message.target;
+            InspectorTest.expectEqual(readyEvent.data.message.messageText, "subframe-ready", "The subframe should have loaded and logged.");
+            InspectorTest.expectNotEqual(subframeTarget, mainFrameTarget, "The subframe should have its own target, distinct from the main frame's.");
+
+            let errorCountBefore = WI.consoleManager.errorCount;
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`mainFrameError()`),
+            ]);
+            InspectorTest.expectEqual(WI.consoleManager.errorCount - errorCountBefore, 1, "The first console.error() should be counted.");
+
+            // A different level from another target, which moved the old global "last level".
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`tellSubframe("log")`),
+            ]);
+
+            // The main frame's agent still matches, so the backend sends a repeat count update.
+            let [repeatEvent] = await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated),
+                InspectorTest.evaluateInPage(`mainFrameError()`),
+            ]);
+
+            InspectorTest.expectEqual(repeatEvent.data.count, 2, "The repeat should be reported with count 2.");
+            InspectorTest.expectEqual(repeatEvent.data.target, mainFrameTarget, "The repeat should be attributed to the main frame's target.");
+
+            InspectorTest.expectEqual(WI.consoleManager.errorCount - errorCountBefore, 2, "errorCount should count both console.error() calls.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Same-process variant: under Site Isolation a same-origin subframe still gets its own console agent, so a repeated message's level must be counted from its own target.</p>
+</body>
+</html>
