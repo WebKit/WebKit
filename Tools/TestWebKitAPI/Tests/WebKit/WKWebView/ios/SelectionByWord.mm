@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,14 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/Utilities.h"
+#import "InstanceMethodSwizzler.h"
 #import "TestInputDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/WeakObjCPtr.h>
 
 TEST(SelectionTests, ByWordAtEndOfDocument)
 {
@@ -194,6 +198,59 @@ TEST(SelectionTests, SelectedTextAfterSelectingWordForReplacement)
     TestWebKitAPI::Util::run(&selectionWillChange);
     TestWebKitAPI::Util::run(&selectionDidChange);
     EXPECT_WK_STREQ("Hello", [contentView textInRange:contentView.selectedTextRange]);
+}
+
+@interface UIView (WKContentViewTextInteractionTestSupport)
+- (void)cleanUpInteraction;
+@end
+
+TEST(SelectionTests, TextInteractionWrapperOutlivesTextInteractionTearDown)
+{
+    Class wrapperClass = NSClassFromString(@"WKTextInteractionWrapper");
+    EXPECT_TRUE(!!wrapperClass);
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 320)]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable><p>Hello world</p></body><script>document.body.focus()</script>"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr contentView = [webView textInputContentView];
+    __unsafe_unretained UIView *unretainedContentView = contentView.get();
+
+    static WeakObjCPtr<id> weakWrapper;
+    weakWrapper = nil;
+
+    __block bool shouldTearDownTextInteraction = true;
+    __block bool didTearDownTextInteraction = false;
+    __block bool wrapperSurvivedTearDown = false;
+
+    @autoreleasepool {
+        // Stand in for UIKit tearing down the text interaction mid-callout. Keep the
+        // receiver unretained: under ARC a strong parameter would itself mask the bug.
+        InstanceMethodSwizzler selectionChangedSwizzler {
+            wrapperClass,
+            @selector(selectionChanged),
+            imp_implementationWithBlock(^(__unsafe_unretained id wrapper) {
+                if (!shouldTearDownTextInteraction)
+                    return;
+                shouldTearDownTextInteraction = false;
+                weakWrapper = wrapper;
+                [unretainedContentView cleanUpInteraction];
+                wrapperSurvivedTearDown = !!weakWrapper;
+                didTearDownTextInteraction = true;
+            })
+        };
+
+        [contentView selectWordForReplacement];
+        [webView waitForNextPresentationUpdate];
+
+        EXPECT_TRUE(TestWebKitAPI::Util::runFor(&didTearDownTextInteraction, 5_s));
+        EXPECT_TRUE(wrapperSurvivedTearDown);
+    }
+
+    @autoreleasepool {
+        // The caller's reference was the last one, so the wrapper should be gone by now.
+        EXPECT_NULL(weakWrapper.getAutoreleased());
+    }
 }
 
 #endif // PLATFORM(IOS_FAMILY)
