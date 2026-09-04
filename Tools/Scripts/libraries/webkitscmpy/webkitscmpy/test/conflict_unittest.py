@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import re
 import time
 from unittest.mock import Mock, patch
 
@@ -29,6 +30,7 @@ from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 
 from webkitscmpy import Commit, Contributor, local, mocks, program
+from webkitscmpy.program.conflict import Conflict
 
 
 class TestConflict(testing.PathTestCase):
@@ -54,6 +56,83 @@ class TestConflict(testing.PathTestCase):
         rdar.source_changes = rdar.sourceChanges.splitlines()
         rdar.id = 1234
         return rdar
+
+    RDAR_LINK_RE = re.compile(r'rdar://(\d+)$')
+
+    @staticmethod
+    def _mock_radar(id, related=None):
+        rdar = bmocks.Radar()
+        rdar.sourceChanges = 'WebKit, merge, sha123'
+        rdar.source_changes = rdar.sourceChanges.splitlines()
+        rdar.id = id
+        rdar.related = related or {}
+        return rdar
+
+    @staticmethod
+    def _mock_tracker_from_string(primary):
+        # Stands in for `Tracker.from_string`: resolves `rdar://<id>` links the way the real
+        # tracker would, returning `primary` for its own id and a minimal stub (only `.id` is
+        # ever read by `radar_ids_from_text`) for any other radar referenced in PR titles.
+        def _response(string, *args, **kwargs):
+            match = TestConflict.RDAR_LINK_RE.match(string)
+            if not match:
+                return None
+            id = int(match.group(1))
+            return primary if id == primary.id else Mock(id=id)
+        return _response
+
+    @staticmethod
+    def _mock_remote():
+        remote = Mock()
+        remote.name = 'WebKit'
+        return remote
+
+    def test_find_conflict_pr_ambiguous_resolved_by_own_radar_id(self):
+        # Two candidate PRs share the same sha-prefix (as would happen when the same source
+        # change conflicts on two target branches), but only one references the radar we asked
+        # for in its title -- that one should be picked without prompting.
+        prs = [
+            Mock(head='integration/conflict/sha123_sha123_main', title='Cherry-pick sha123. rdar://184745333'),
+            Mock(head='integration/conflict/sha123_sha123_su-branch', title='Cherry-pick sha123. rdar://184747345'),
+        ]
+        radar_obj = TestConflict._mock_radar(184747345)
+        with (
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_tracker_from_string(radar_obj)),
+            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda remote: prs),
+        ):
+            self.assertIs(prs[1], Conflict.find_conflict_pr(TestConflict._mock_remote(), 184747345))
+
+    def test_find_conflict_pr_ambiguous_resolved_by_clone_relationship(self):
+        # rdar://184747345 is a clone of rdar://184745333; the correct conflict PR's title only
+        # references the clone-parent's id, so disambiguation must walk the clone relationship.
+        parent = Mock(id=184745333)
+        prs = [
+            Mock(head='integration/conflict/sha123_sha123_main', title='Cherry-pick sha123. rdar://999999'),
+            Mock(head='integration/conflict/sha123_sha123_su-branch', title='Cherry-pick sha123. rdar://184745333'),
+        ]
+        radar_obj = TestConflict._mock_radar(184747345, related={'clone-of': [parent], 'cloned-to': []})
+        with (
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_tracker_from_string(radar_obj)),
+            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda remote: prs),
+        ):
+            self.assertIs(prs[1], Conflict.find_conflict_pr(TestConflict._mock_remote(), 184747345))
+
+    def test_find_conflict_pr_ambiguous_prompts_user(self):
+        # Neither candidate's title references the radar (or a clone relative), so there's no way
+        # to disambiguate automatically -- the user should be prompted to pick.
+        prs = [
+            Mock(head='integration/conflict/sha123_sha123_main', title='Cherry-pick sha123.'),
+            Mock(head='integration/conflict/sha123_sha123_su-branch', title='Cherry-pick sha123.'),
+        ]
+        radar_obj = TestConflict._mock_radar(184747345)
+        with (
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_tracker_from_string(radar_obj)),
+            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda remote: prs),
+            patch('webkitscmpy.program.conflict.Terminal.choose') as choose,
+        ):
+            choose.return_value = '{} ({})'.format(prs[1].head, prs[1].title)
+            self.assertIs(prs[1], Conflict.find_conflict_pr(TestConflict._mock_remote(), 184747345))
+            self.assertTrue(choose.called)
 
     def test_conflict_not_found(self):
         with (

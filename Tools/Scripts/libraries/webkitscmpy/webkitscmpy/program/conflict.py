@@ -23,6 +23,7 @@
 import sys
 
 from webkitbugspy import Tracker, radar
+from webkitcorepy import Terminal
 from .command import Command
 from .. import local
 from ..commit import Commit
@@ -42,11 +43,29 @@ class Conflict(Command):
         )
 
     @classmethod
+    def radar_ids_from_text(cls, text):
+        ids = set()
+        for word in (text or '').split():
+            issue = Tracker.from_string(word)
+            if issue:
+                ids.add(issue.id)
+        return ids
+
+    @classmethod
+    def related_radar_ids(cls, radar_obj):
+        # a PR may be titled with a clone/clone-parent's id instead of radar_obj's own id
+        ids = {radar_obj.id}
+        related = radar_obj.related or {}
+        for relationship in ('clone-of', 'cloned-to'):
+            for related_radar in related.get(relationship) or []:
+                ids.add(related_radar.id)
+        return ids
+
+    @classmethod
     def find_conflict_pr(cls, remote, radar_id):
         """
-        Because we don't know what the target branch was just given the radar id,
-        we need to search for PRs with branches that start with the integration prefix
-        and have the first and last sha.
+        We don't know the target branch just from a radar id, so we match PRs by sha prefix
+        alone, then disambiguate any resulting duplicates by the radar id in the PR title.
         """
         radar_obj = Tracker.from_string(f'rdar://{radar_id}')
         assert radar_obj, 'Could not fetch radar object for id {}'.format(radar_id)
@@ -66,10 +85,32 @@ class Conflict(Command):
         for prefix in ('ci', 'conflict'):
             integration_branches.append("{}/{}/{}_{}".format(cls.INTEGRATION_BRANCH_PREFIX, prefix, shas[0][:Commit.HASH_LABEL_SIZE], shas[-1][:Commit.HASH_LABEL_SIZE]))
 
+        candidates = []
         for pr in cls.get_open_integration_prs(remote):
             for branch in integration_branches:
                 if pr.head.startswith(branch):
-                    return pr
+                    candidates.append(pr)
+                    break
+
+        if len(candidates) <= 1:
+            return candidates[0] if candidates else None
+
+        # exact id wins outright; only widen to clone relatives if nothing matched exactly
+        exact = [pr for pr in candidates if radar_obj.id in cls.radar_ids_from_text(pr.title)]
+        if len(exact) == 1:
+            return exact[0]
+
+        related_ids = cls.related_radar_ids(radar_obj)
+        matched = exact or [pr for pr in candidates if cls.radar_ids_from_text(pr.title) & related_ids]
+        if len(matched) == 1:
+            return matched[0]
+        if matched:
+            candidates = matched
+
+        print(f'Found {len(candidates)} conflict pull requests matching rdar://{radar_id}; could not disambiguate by radar id in PR title.', file=sys.stderr)
+        options = ['{} ({})'.format(pr.head, pr.title) for pr in candidates]
+        choice = Terminal.choose('Which conflict pull request would you like to check out?', options=options, default=options[0], numbered=True)
+        return candidates[options.index(choice)]
 
     @classmethod
     def get_open_integration_prs(cls, remote):
