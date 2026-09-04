@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<style>
+.container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  border: solid 3px;
+}
+
+.vrl {
+  writing-mode: vertical-rl;
+}
+
+.anchor {
+  position: absolute;
+  anchor-name: --a;
+  width: 25px;
+  height: 25px;
+  background: dodgerblue;
+}
+
+.anchored {
+  position: absolute;
+  position-anchor: --a;
+  width: 15px;
+  height: 15px;
+  background: green;
+}
+</style>
+
+<!-- Row 1: position-area + horizontal-tb container -->
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<br>
+
+<!-- Row 2: position-area + vertical-rl container -->
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<br>
+
+<!-- Row 3: anchor() + horizontal-tb container -->
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<div class="container">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom right"></div>
+</div>
+
+<br>
+
+<!-- Row 4: anchor() + vertical-rl container -->
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>
+
+<div class="container vrl">
+  <div class="anchor"></div>
+  <div class="anchored" style="position-area: bottom left"></div>
+</div>

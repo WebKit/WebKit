@@ -50,6 +50,7 @@
 #include "StyleDocumentScope.h"
 #include "StyleableInlines.h"
 #include "WritingMode.h"
+#include "rendering/style/RenderStyleConstants.h"
 #include <ranges>
 
 namespace WebCore {
@@ -651,9 +652,10 @@ static CSSPropertyID NODELETE getOppositeInset(CSSPropertyID propertyID)
     }
 }
 
-static std::pair<CSSPropertyID, bool> applyTryTacticsToInset(CSSPropertyID propertyID, WritingMode writingMode, const BuilderPositionTryFallback& fallback)
+static std::pair<CSSPropertyID, bool> applyTryTacticsToInset(CSSPropertyID propertyID, const BuilderPositionTryFallback& fallback)
 {
     bool isFlipped = false;
+    auto writingMode = fallback.containingBlockWritingMode;
     for (auto tactic : fallback.tactics) {
         switch (tactic) {
         case PositionTryFallback::Tactic::FlipInline:
@@ -722,12 +724,11 @@ static std::pair<CSSPropertyID, bool> applyTryTacticsToInset(CSSPropertyID prope
 // See: https://drafts.csswg.org/css-anchor-position-1/#anchor-pos
 static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<const RenderBoxModelObject> anchorBox, CheckedRef<const RenderBox> anchorPositionedRenderer, AnchorPositionEvaluator::Side anchorSide, const std::optional<BuilderPositionTryFallback>& positionTryFallback)
 {
-    auto writingMode = anchorPositionedRenderer->writingMode();
     bool isFlipped = false;
     if (positionTryFallback)
-        std::tie(insetPropertyID, isFlipped) = applyTryTacticsToInset(insetPropertyID, writingMode, *positionTryFallback);
+        std::tie(insetPropertyID, isFlipped) = applyTryTacticsToInset(insetPropertyID, *positionTryFallback);
 
-    auto selfLogicalAxis = mapInsetPropertyToLogicalAxis(insetPropertyID, writingMode);
+    auto selfLogicalAxis = mapInsetPropertyToLogicalAxis(insetPropertyID, anchorPositionedRenderer->writingMode());
     PositionedLayoutConstraints constraints(anchorPositionedRenderer, selfLogicalAxis);
 
     auto anchorPercentage = [&]() -> double {
@@ -959,7 +960,7 @@ static AnchorSizeDimension NODELETE defaultDimensionForPropertyID(CSSPropertyID 
 }
 
 // Convert anchor size dimension to the physical dimension (width or height).
-static BoxAxis NODELETE anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, const Style::ComputedStyle& style, const Style::ComputedStyle& containerStyle)
+static BoxAxis NODELETE anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, WritingMode selfWritingMode, WritingMode containingBlockWritingMode)
 {
     switch (dimension) {
     case AnchorSizeDimension::Width:
@@ -967,13 +968,13 @@ static BoxAxis NODELETE anchorSizeDimensionToPhysicalDimension(AnchorSizeDimensi
     case AnchorSizeDimension::Height:
         return BoxAxis::Vertical;
     case AnchorSizeDimension::Block:
-        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Block);
+        return mapAxisLogicalToPhysical(containingBlockWritingMode, LogicalBoxAxis::Block);
     case AnchorSizeDimension::Inline:
-        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Inline);
+        return mapAxisLogicalToPhysical(containingBlockWritingMode, LogicalBoxAxis::Inline);
     case AnchorSizeDimension::SelfBlock:
-        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Block);
+        return mapAxisLogicalToPhysical(selfWritingMode, LogicalBoxAxis::Block);
     case AnchorSizeDimension::SelfInline:
-        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Inline);
+        return mapAxisLogicalToPhysical(selfWritingMode, LogicalBoxAxis::Inline);
     }
 
     ASSERT_NOT_REACHED();
@@ -1021,7 +1022,7 @@ std::optional<double> AnchorPositionEvaluator::evaluateSize(BuilderState& builde
     ASSERT(anchorPositionedContainerRenderer);
 
     auto resolvedDimension = dimension.value_or(defaultDimensionForPropertyID(propertyID));
-    auto physicalDimension = anchorSizeDimensionToPhysicalDimension(resolvedDimension, anchorPositionedRenderer->style(), anchorPositionedContainerRenderer->style());
+    auto physicalDimension = anchorSizeDimensionToPhysicalDimension(resolvedDimension, anchorPositionedRenderer->style().writingMode(), anchorPositionedContainerRenderer->style().writingMode());
 
     if (builderState.positionTryFallback()) {
         // "For sizing properties, change the specified axis in anchor-size() functions to maintain the same relative relationship to the new direction that they had to the old."
@@ -1550,9 +1551,11 @@ static CSSPropertyID flipStart(CSSPropertyID propertyID, WritingMode writingMode
     return CSSProperty::resolveDirectionAwareProperty(flippedLogical(), writingMode);
 }
 
-CSSPropertyID AnchorPositionEvaluator::resolvePositionTryFallbackProperty(CSSPropertyID propertyID, WritingMode writingMode, const BuilderPositionTryFallback& fallback)
+CSSPropertyID AnchorPositionEvaluator::resolvePositionTryFallbackProperty(CSSPropertyID propertyID, const BuilderPositionTryFallback& fallback)
 {
     ASSERT(!CSSProperty::isDirectionAwareProperty(propertyID));
+    
+    auto writingMode = fallback.containingBlockWritingMode;
 
     for (auto tactic : fallback.tactics) {
         switch (tactic) {
@@ -1576,7 +1579,7 @@ CSSPropertyID AnchorPositionEvaluator::resolvePositionTryFallbackProperty(CSSPro
     return propertyID;
 }
 
-CSSValueID AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID propertyID, CSSValueID position, WritingMode writingMode, const BuilderPositionTryFallback& fallback)
+CSSValueID AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPosition(CSSPropertyID propertyID, CSSValueID position, const BuilderPositionTryFallback& fallback)
 {
     // Implements the bullet starting "For the self-alignment properties" from step 4 of https://drafts.csswg.org/css-anchor-position-1/#swap-due-to-a-try-tactic.
 
@@ -1622,6 +1625,8 @@ CSSValueID AnchorPositionEvaluator::resolvePositionTryFallbackValueForSelfPositi
             return position;
         }
     };
+    
+    auto writingMode = fallback.containingBlockWritingMode;
 
     for (auto tactic : fallback.tactics) {
         switch (tactic) {
