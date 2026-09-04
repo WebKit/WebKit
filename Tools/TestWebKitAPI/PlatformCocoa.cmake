@@ -54,6 +54,11 @@ set(TESTWEBKITAPI_SWIFT_FLAGS
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}>"
 )
 
+if (CMAKE_Swift_COMPILER_TARGET)
+    list(APPEND TESTWEBKITAPI_SWIFT_FLAGS
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-clang-target ${CMAKE_Swift_COMPILER_TARGET}>")
+endif ()
+
 foreach (_f IN LISTS _test_swift_cc_flags)
     list(APPEND TESTWEBKITAPI_SWIFT_FLAGS "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc ${_f}>")
 endforeach ()
