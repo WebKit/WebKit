@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<fieldset id="fieldset" disabled>
+<legend><input id="in-legend"></legend>
+<input id="in-fieldset">
+</fieldset>
+<input id="outside">
+
+<script>
+var output = "This test ensures disabled on a fieldset reaches every descendant control's accessibility enabled state, except a control in the fieldset's first legend, which HTML exempts.\n\n";
+
+function isEnabled(id)
+{
+    return accessibilityController.accessibleElementById(id).isEnabled;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("isEnabled('in-fieldset')", "false");
+    output += expect("isEnabled('in-legend')", "true");
+    output += expect("isEnabled('outside')", "true");
+
+    setTimeout(async function() {
+        document.getElementById("fieldset").disabled = false;
+
+        output += "\nRemoving disabled from the fieldset re-enables the descendant.\n";
+        output += await expectAsync("isEnabled('in-fieldset')", "true");
+
+        document.getElementById("fieldset").style.display = "none";
+        document.getElementById("outside").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

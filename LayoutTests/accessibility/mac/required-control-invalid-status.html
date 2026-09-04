@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="target" required>
+
+<script>
+var output = "This test ensures a control that fails native constraint validation reports AXInvalid true without the author setting aria-invalid, and that AXInvalid and checkValidity() agree as the control becomes valid.\n\n";
+
+function invalidStatus()
+{
+    return accessibilityController.accessibleElementById("target").stringAttributeValue("AXInvalid");
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var target = document.getElementById("target");
+
+    output += "A required control left empty is invalid to both the DOM and accessibility.\n";
+    output += expect("target.checkValidity()", "false");
+    output += expect("invalidStatus()", "'true'");
+
+    setTimeout(async function() {
+        target.value = "supplied";
+
+        output += "\nSatisfying the constraint clears both.\n";
+        output += expect("target.checkValidity()", "true");
+        output += await expectAsync("invalidStatus()", "'false'");
+
+        target.setAttribute("aria-invalid", "spelling");
+
+        output += "\naria-invalid is authored, so it wins over the native state.\n";
+        output += expect("target.checkValidity()", "true");
+        output += await expectAsync("invalidStatus()", "'spelling'");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
