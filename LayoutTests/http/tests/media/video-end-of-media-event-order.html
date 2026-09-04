@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Event order when the current playback position reaches the end of the media resource</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/media.html#reaching-the-end-of-the-media-resource">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/media.html#dom-media-seek">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+// "When the current playback position reaches the end of the media resource when the
+// direction of playback is forwards" the user agent must, in this order:
+//   3. Queue a task to fire an event named timeupdate,
+//   4. ... set paused to true and fire an event named pause,
+//   5. Queue a task to fire an event named ended.
+// The end can be reached either by ordinary playback or by seeking to the duration; the
+// seek algorithm sets the current playback position in step 11, which "can immediately
+// trigger other conditions, such as the rules regarding when playback reaches the end of
+// the media resource".
+
+const LOGGED_EVENTS = ["seeking", "seeked", "timeupdate", "pause", "ended"];
+
+function setupVideo(t) {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.preload = "auto";
+    document.body.appendChild(video);
+    t.add_cleanup(() => {
+        video.pause();
+        video.removeAttribute("src");
+        video.remove();
+    });
+
+    const log = [];
+    for (const type of LOGGED_EVENTS)
+        video.addEventListener(type, () => log.push(type));
+
+    return { video, log };
+}
+
+function waitForEvent(video, type) {
+    return new Promise(resolve => video.addEventListener(type, resolve, { once: true }));
+}
+
+// The number of periodic 'timeupdate' events is not observable behaviour, but their
+// position relative to 'seeked', 'pause' and 'ended' is; collapse runs of one event type
+// down to a single entry before comparing sequences.
+function collapseRuns(log) {
+    return log.filter((type, index) => type !== log[index - 1]);
+}
+
+async function playFromLoadedData(video) {
+    video.src = "resources/test.mp4";
+    // Deliberately not awaiting the play() promise: a seek issued while playback is still
+    // getting under way is what makes the seek completion and the end of the media resource
+    // be handled in the same turn.
+    video.play().catch(() => { });
+    await waitForEvent(video, "loadeddata");
+    assert_false(video.paused, "video is playing");
+    assert_less_than(video.currentTime, video.duration, "playback position is before the end");
+}
+
+promise_test(async t => {
+    const { video, log } = setupVideo(t);
+    await playFromLoadedData(video);
+
+    // Play out the last fraction of a second rather than the whole resource.
+    video.currentTime = Math.max(0, video.duration - 0.3);
+    await waitForEvent(video, "ended");
+
+    assert_true(video.ended, "ended is true");
+    assert_true(video.paused, "paused is true");
+    assert_array_equals(collapseRuns(log).slice(-3), ["timeupdate", "pause", "ended"],
+        `'timeupdate', 'pause' then 'ended' must end the sequence, got: ${log.join(" ")}`);
+}, "Reaching the end of the media resource by playing fires timeupdate, pause, then ended");
+
+promise_test(async t => {
+    const { video, log } = setupVideo(t);
+    await playFromLoadedData(video);
+
+    video.currentTime = video.duration;
+    await waitForEvent(video, "ended");
+
+    // The end-of-media 'timeupdate' (step 3 of reaching the end of the media resource) is
+    // distinct from the seek algorithm's own 'timeupdate' (step 16), and both precede
+    // 'pause': the seek completes, and only then is the end of the resource reached.
+    const seekedIndex = log.indexOf("seeked");
+    const pauseIndex = log.indexOf("pause");
+    assert_not_equals(seekedIndex, -1, `'seeked' must fire, got: ${log.join(" ")}`);
+    assert_not_equals(pauseIndex, -1, `'pause' must fire, got: ${log.join(" ")}`);
+    assert_true(log.slice(seekedIndex + 1, pauseIndex).includes("timeupdate"),
+        `a 'timeupdate' must fire between 'seeked' and 'pause', got: ${log.join(" ")}`);
+
+    assert_array_equals(collapseRuns(log.slice(log.indexOf("seeking"))),
+        ["seeking", "timeupdate", "seeked", "timeupdate", "pause", "ended"],
+        `unexpected event sequence: ${log.join(" ")}`);
+}, "Reaching the end of the media resource by seeking to the duration fires timeupdate, pause, then ended");
+
+promise_test(async t => {
+    const { video } = setupVideo(t);
+    await playFromLoadedData(video);
+
+    video.currentTime = video.duration;
+
+    // Setting currentTime updates the official playback position synchronously, but the
+    // current playback position is only set in step 11 of the seek algorithm, which runs
+    // after the script continues. Ended playback is defined in terms of the current
+    // playback position, so it cannot have become true yet.
+    assert_true(video.seeking, "seeking is true");
+    assert_equals(video.currentTime, video.duration, "currentTime is the official playback position");
+    assert_false(video.ended, "ended is false while the seek to the duration is pending");
+
+    await waitForEvent(video, "seeked");
+}, "ended is false while a seek to the duration is still pending");
+</script>

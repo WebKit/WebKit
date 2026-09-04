@@ -6304,6 +6304,16 @@ void HTMLMediaElement::handlePlaybackPositionChanged()
 
             ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, ") or <= 0, pausing");
 
+            // Queue a task to fire a simple event named timeupdate at the media element.
+            // This is the first step of the "reached the end of the media resource" steps, so it
+            // must precede 'pause' and 'ended'. In the ordinary playback case mediaPlayerTimeChanged()
+            // has already scheduled this timeupdate for the same movie time, and the movie time filter
+            // in scheduleTimeupdateEvent() drops this one; when the end is reached by seeking to the
+            // duration, the seek callback calls us directly and this is the only site that queues it.
+            // (Reaching the earliest possible position while playing backwards queues a timeupdate and
+            // nothing else, which is also covered here.)
+            scheduleTimeupdateEvent(false);
+
             // If the media element does not have a current media controller, and the media element
             // has still ended playback and paused is false,
             if (!m_mediaController && !m_paused) {
@@ -6772,6 +6782,17 @@ bool HTMLMediaElement::endedPlayback() const
     // A media element is said to have ended playback when the element's
     // readyState attribute is HAVE_METADATA or greater,
     if (m_readyState < HAVE_METADATA)
+        return false;
+
+    // A seek that is still in flight has not moved the current playback position yet:
+    // currentMediaTime() reports the seek target while m_seeking is set, which is the official
+    // playback position (updated before the script continues), not the current playback
+    // position (set in 4.8.10.9 Seeking, step 11). Ended playback is defined in terms of the
+    // latter, and the element learns of it when the media engine reports the seek complete and
+    // finishSeek() runs the steps for reaching the end of the media resource. Reporting ended
+    // before that would make 'ended' true as soon as a seek to the duration was started, and
+    // would depend on how promptly the engine's reported time caught up with the target.
+    if (m_seeking)
         return false;
 
     // and the current playback position is the end of the media resource and the direction
