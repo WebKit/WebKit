@@ -122,6 +122,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         if (!frameDocument || !frameDocument.documentURL)
             return;
 
+        // A frame with no owner element has no `contentDocument` slot to fill. Queueing it would
+        // strand it here and needlessly force the page body's children to load early.
+        if (frameDocument.frame && !frameDocument.frame.parentFrame)
+            return;
+
         if (this._trySpliceFrameDocumentIntoNode(frameDocument))
             return;
 
@@ -132,9 +137,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._unsplicedFrameDocuments.push(frameDocument);
     }
 
-    // FIXME: <https://webkit.org/b/298980> URL-based matching is fragile (breaks with redirects,
-    // blob: URLs, about:srcdoc, query strings). Use frame identity information (frame ID or target ID)
-    // threaded through Target.targetCreated to directly look up the parent iframe element.
+    // FIXME: <https://webkit.org/b/320933> Match on the document's frameId instead. URL-based
+    // matching breaks with redirects, blob: URLs, about:srcdoc, and query strings.
     _trySpliceFrameDocumentIntoNode(frameDocument)
     {
         let frameDocURL = frameDocument.documentURL;
