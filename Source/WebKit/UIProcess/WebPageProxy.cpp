@@ -10400,7 +10400,11 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
     auto sender = PolicyDecisionSender::create(WTF::move(reply));
 
     auto navigationID = data.navigationID;
-    decidePolicyForNavigationAction(WTF::move(process), *frame, WTF::move(data), [sender] (auto&& policyDecision) {
+    auto url = data.request.url();
+    decidePolicyForNavigationAction(process.copyRef(), *frame, WTF::move(data), [sender, process, url = WTF::move(url)] (auto&& policyDecision) mutable {
+        if (policyDecision.policyAction == PolicyAction::Use && url.protocolIsFile())
+            process->addPreviouslyApprovedFileURL(url);
+
         sender->send(WTF::move(policyDecision));
     });
 

@@ -1697,6 +1697,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setShouldReplaceDocumentIfJavaScriptURL(frameLoadRequest.shouldReplaceDocumentIfJavaScriptURL());
     action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setIsFromNavigationAPI(frameLoadRequest.isFromNavigationAPI());
+    action.setNeedsSynchronousPolicyDecision(frameLoadRequest.needsSynchronousPolicyDecision());
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
     auto historyHandling = frameLoadRequest.navigationHistoryBehavior();
     RefPtr document = m_frame->document();
@@ -2044,7 +2045,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         return;
     }
 
-    auto policyDecisionMode = loader->triggeringAction().isFromNavigationAPI() ? PolicyDecisionMode::Synchronous : PolicyDecisionMode::Asynchronous;
+    auto policyDecisionMode = loader->triggeringAction().needsSynchronousPolicyDecision() ? PolicyDecisionMode::Synchronous : PolicyDecisionMode::Asynchronous;
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker().loadType()) || history().provisionalItem());
     policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTF::move(formSubmission), [
         this,
@@ -4021,6 +4022,10 @@ bool FrameLoader::shouldClose()
             if (!targetFrames[i]->tree().isDescendantOf(frame.ptr()))
                 continue;
             if (RefPtr localTargetFrame = dynamicDowncast<LocalFrame>(targetFrames[i])) {
+                // A beforeunload handler may navigate an ancestor frame, which prompts to unload
+                // this subtree again. Don't dispatch beforeunload re-entrantly for such a frame.
+                if (localTargetFrame->loader().pageDismissalEventBeingDispatched() != PageDismissalType::None)
+                    continue;
                 if (!localTargetFrame->loader().dispatchBeforeUnloadEvent(page->chrome(), this))
                     break;
             } else if (RefPtr remoteTargetFrame = dynamicDowncast<RemoteFrame>(targetFrames[i])) {

@@ -33,12 +33,15 @@
 #include "NavigationScheduler.h"
 
 #include "BackForwardController.h"
+#include "Chrome.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
 #include "Event.h"
+#include "EventNames.h"
+#include "EventTargetInlines.h"
 #include "FormState.h"
 #include "FormSubmission.h"
 #include "FrameInlines.h"
@@ -58,6 +61,7 @@
 #include "PolicyChecker.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "Site.h"
 #include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Ref.h>
@@ -247,11 +251,12 @@ private:
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, bool hasDispatchedNavigateEvent, CompletionHandler<void(bool)>&& completionHandler)
+    ScheduledLocationChange(Document& initiatingDocument, SecurityOrigin* securityOrigin, const URL& url, const String& referrer, LockHistory lockHistory, LockBackForwardList lockBackForwardList, bool duringLoad, NavigationHistoryBehavior navigationHandling, bool hasDispatchedNavigateEvent, bool needsSynchronousPolicyDecision, CompletionHandler<void(bool)>&& completionHandler)
         : ScheduledURLNavigation(initiatingDocument, 0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true)
         , m_completionHandler(WTF::move(completionHandler))
         , m_navigationHistoryBehavior(navigationHandling)
         , m_hasDispatchedNavigateEvent(hasDispatchedNavigateEvent)
+        , m_needsSynchronousPolicyDecision(needsSynchronousPolicyDecision)
     {
     }
 
@@ -273,6 +278,7 @@ public:
         frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLs());
         frameLoadRequest.setNavigationHistoryBehavior(m_navigationHistoryBehavior);
         frameLoadRequest.setSkipNavigateEvent(m_hasDispatchedNavigateEvent);
+        frameLoadRequest.setNeedsSynchronousPolicyDecision(m_needsSynchronousPolicyDecision);
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
         frame.changeLocation(WTF::move(frameLoadRequest));
@@ -283,6 +289,7 @@ private:
     CompletionHandler<void(bool)> m_completionHandler;
     NavigationHistoryBehavior m_navigationHistoryBehavior;
     bool m_hasDispatchedNavigateEvent { false };
+    bool m_needsSynchronousPolicyDecision { false };
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
@@ -655,6 +662,47 @@ inline bool NavigationScheduler::shouldScheduleNavigation() const
     return m_frame->page();
 }
 
+// Whether dispatching beforeunload for a navigation of `frame` could run script. This mirrors the
+// set of frames FrameLoader::shouldClose() dispatches the event to.
+static bool subtreeHasBeforeUnloadHandler(LocalFrame& frame)
+{
+    RefPtr page = frame.page();
+    if (!page || !page->chrome().canRunBeforeUnloadConfirmPanel())
+        return false;
+
+    auto hasHandler = [](Frame& candidate) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(candidate);
+        if (!localFrame)
+            return false;
+        RefPtr document = localFrame->document();
+        if (!document || !document->bodyOrFrameset())
+            return false;
+        RefPtr window = document->window();
+        return window && window->hasEventListeners(eventNames().beforeunloadEvent);
+    };
+
+    if (hasHandler(frame))
+        return true;
+    for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().traverseNext(&frame)) {
+        if (hasHandler(*child))
+            return true;
+    }
+    return false;
+}
+
+// Whether the navigation stays within the current document's site. Cross-site navigations are the
+// ones a process swap is keyed on, and a synchronous policy decision cannot express a swap: the UI
+// process decides that asynchronously, and its synchronous reply path falls back to
+// PolicyAction::Use, which would leave this process continuing a load meant to move elsewhere.
+// about:blank and empty URLs are committed without a network load and stay put.
+static bool isSameSiteNavigation(LocalFrame& frame, const URL& url)
+{
+    if (url.isEmpty() || url.isAboutBlank() || url.isAboutSrcDoc())
+        return true;
+    RefPtr document = frame.document();
+    return document && Site { protect(document->securityOrigin())->data() } == Site { url };
+}
+
 inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
 {
     if (!shouldScheduleNavigation())
@@ -757,9 +805,25 @@ void NavigationScheduler::scheduleLocationChange(Document& initiatingDocument, S
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = loader && !loader->stateMachine().committedFirstRealDocumentLoad();
 
-    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, historyHandling, hasDispatchedNavigateEvent, [completionHandler = WTF::move(completionHandler)] (bool hasStarted) mutable {
+    // "Prompt to unload" has to run before the script that started the navigation continues, so
+    // that beforeunload is observable there, as it is in other engines.
+    // https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate
+    bool needsSynchronousPolicyDecision = localFrame && !url.protocolIsJavaScript() && isSameSiteNavigation(*localFrame, url) && subtreeHasBeforeUnloadHandler(*localFrame);
+
+    schedule(makeUnique<ScheduledLocationChange>(initiatingDocument, &securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, historyHandling, hasDispatchedNavigateEvent, needsSynchronousPolicyDecision, [completionHandler = WTF::move(completionHandler)] (bool hasStarted) mutable {
         completionHandler(hasStarted ? ScheduleLocationChangeResult::Started : ScheduleLocationChangeResult::Stopped);
     }));
+
+    // schedule() has done its bookkeeping; collapse the zero-delay timer so that the navigation,
+    // and therefore beforeunload, happens in this task. The load itself still starts from a task,
+    // see DocumentLoader::startLoadingMainResource().
+    // Not while loading is deferred, since timerFired() would decline to fire and leave the
+    // navigation waiting for an unrelated startTimer(): keep the timer for it in that case.
+    RefPtr page = m_frame->page();
+    if (needsSynchronousPolicyDecision && m_redirect && page && !page->defersLoading()) {
+        m_timer.stop();
+        timerFired();
+    }
 }
 
 void NavigationScheduler::scheduleFormSubmission(Ref<FormSubmission>&& submission)
