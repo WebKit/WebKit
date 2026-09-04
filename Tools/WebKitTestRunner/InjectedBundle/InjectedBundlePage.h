@@ -41,6 +41,9 @@ public:
 
     WKBundlePageRef page() const { return m_page; }
 
+    WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
+    void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
+
     void notifyDone();
     void forceImmediateCompletion();
     void dump();
@@ -122,6 +125,7 @@ private:
     void frameDidChangeLocation(WKBundleFrameRef);
 
     WKBundlePageRef m_page;
+    WKBundleFrameRef m_topLoadingFrame { nullptr };
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     bool m_didCommitMainFrameLoad { false };
 };

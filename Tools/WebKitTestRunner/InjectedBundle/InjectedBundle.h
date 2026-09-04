@@ -73,9 +73,6 @@ public:
 
     bool isTestRunning() { return !!testRunner(); }
 
-    WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
-    void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
-
     bool shouldDumpPixels() const { return m_dumpPixels; }
 
     enum class IsFinalTestOutput : bool { No, Yes };
@@ -187,8 +184,6 @@ private:
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;
     RefPtr<TextInputController> m_textInputController;
-
-    WKBundleFrameRef m_topLoadingFrame { nullptr };
 
     bool m_dumpPixels { false };
     bool m_pixelResultIsPending { false };

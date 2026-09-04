@@ -286,7 +286,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     }
 
     if (WKStringIsEqualToUTF8CString(messageName, "WorkQueueProcessedCallback")) {
-        if (!topLoadingFrame() && m_testRunner && !m_testRunner->shouldWaitUntilDone())
+        if (m_testRunner && !m_testRunner->shouldWaitUntilDone() && InjectedBundle::page() && !InjectedBundle::page()->topLoadingFrame())
             InjectedBundle::page()->dump();
         return;
     }
@@ -396,7 +396,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
 void InjectedBundle::done()
 {
-    setTopLoadingFrame(0);
+    for (auto& page : m_pages)
+        page->setTopLoadingFrame(nullptr);
 
     m_accessibilityController->resetToConsistentState();
 

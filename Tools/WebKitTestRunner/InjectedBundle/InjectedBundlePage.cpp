@@ -275,6 +275,7 @@ void InjectedBundlePage::resetAfterTest()
     InjectedBundle::singleton().resetUserScriptInjectedCount();
 
     m_didCommitMainFrameLoad = false;
+    m_topLoadingFrame = nullptr;
 }
 
 // Loader Client Callbacks
@@ -386,8 +387,8 @@ void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)
     if (testRunner->shouldDumpFrameLoadCallbacks())
         dumpLoadEvent(frame, "didStartProvisionalLoadForFrame"_s);
 
-    if (!injectedBundle.topLoadingFrame())
-        injectedBundle.setTopLoadingFrame(frame);
+    if (!m_topLoadingFrame)
+        setTopLoadingFrame(frame);
 
     if (testRunner->shouldStopProvisionalFrameLoads())
         dumpLoadEvent(frame, "stopping load in didStartProvisionalLoadForFrame callback"_s);
@@ -1092,10 +1093,13 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
         return;
     }
 
-    if (frame != injectedBundle.topLoadingFrame())
+    if (frame != m_topLoadingFrame)
         return;
 
-    injectedBundle.setTopLoadingFrame(nullptr);
+    setTopLoadingFrame(nullptr);
+
+    if (injectedBundle.page() != this)
+        return;
 
     if (testRunner->shouldDisplayOnLoadFinish()) {
         if (auto page = InjectedBundle::singleton().page())
@@ -1126,7 +1130,7 @@ void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
 
 void InjectedBundlePage::notifyDone()
 {
-    if (InjectedBundle::singleton().topLoadingFrame())
+    if (m_topLoadingFrame)
         return;
     forceImmediateCompletion();
 }
