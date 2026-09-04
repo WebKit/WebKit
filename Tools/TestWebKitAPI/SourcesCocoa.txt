@@ -156,6 +156,7 @@ Tests/WebKit/WKWebView/FullscreenRemoveNodeBeforeEnter.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenScrollAndResize.mm @nonARC
 Tests/WebKit/WKWebView/FullscreenVideoTextRecognition.mm @nonARC
 Tests/WebKit/WKWebView/GPUProcess.mm @nonARC
+Tests/WebKit/WKWebView/GPUProcessWebGLRecovery.mm @nonARC
 Tests/WebKit/WKWebView/Geolocation.mm @nonARC
 Tests/WebKit/WKWebView/GetComputedStyleAfterIframeRemoval.mm @nonARC
 Tests/WebKit/WKWebView/GetDisplayMedia.mm @nonARC

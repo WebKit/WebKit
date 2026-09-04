@@ -566,7 +566,11 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, ProcessTerminationRe
     for (Ref process : processes)
         process->gpuProcessExited(reason);
 
-    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive) {
+    // RequestedByGPUProcess here means the GPU process asked to be reset because
+    // GraphicsContextGL creation kept failing. Count it like a crash so that an
+    // environment where creation never succeeds (e.g. a VM with no usable GPU) does
+    // not relaunch the GPU process indefinitely; the shared backstop stops the loop.
+    if (reason == ProcessTerminationReason::Crash || reason == ProcessTerminationReason::Unresponsive || reason == ProcessTerminationReason::RequestedByGPUProcess) {
         if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
             m_resetGPUProcessCrashCountTimer.stop();

@@ -166,6 +166,7 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler;
 - (void)_gpuToWebProcessConnectionCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
+- (void)_setGPUProcessCreatesFailingWebGLContextsForTesting:(BOOL)value completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 

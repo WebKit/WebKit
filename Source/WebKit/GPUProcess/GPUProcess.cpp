@@ -819,6 +819,29 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
 }
 
+void GPUProcess::setCreatesFailingWebGLContextsForTesting(bool value, CompletionHandler<void()>&& completionHandler)
+{
+    m_createsFailingWebGLContextsForTesting = value;
+    completionHandler();
+}
+
+void GPUProcess::didSucceedGraphicsContextGLCreation()
+{
+    assertIsMainRunLoop();
+    m_consecutiveGraphicsContextGLCreationFailures = 0;
+}
+
+void GPUProcess::didFailGraphicsContextGLCreation()
+{
+    assertIsMainRunLoop();
+    if (++m_consecutiveGraphicsContextGLCreationFailures < maxConsecutiveGraphicsContextGLCreationFailures)
+        return;
+
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcess::didFailGraphicsContextGLCreation: GraphicsContextGL creation failed %u consecutive times, requesting GPU process termination to recover", this, m_consecutiveGraphicsContextGLCreationFailures);
+    m_consecutiveGraphicsContextGLCreationFailures = 0;
+    protect(parentProcessConnection())->send(Messages::GPUProcessProxy::TerminateForGraphicsContextGLFailures(), 0);
+}
+
 void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier, IPC::MessageName invalidMessageName)
 {
     protect(parentProcessConnection())->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier, invalidMessageName), 0);

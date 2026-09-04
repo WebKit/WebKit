@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(COCOA)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "IPCUtilities.h"
 #include "RemoteSharedResourceCache.h"
 #include <WebCore/ProcessIdentity.h>
@@ -99,6 +100,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGLCocoa);
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, RemoteGraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
 {
     auto instance = adoptRef(*new RemoteGraphicsContextGLCocoa(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTF::move(streamConnection)));
+    if (gpuConnectionToWebProcess.gpuProcess().createsFailingWebGLContextsForTesting())
+        instance->setCreatesFailingContextForTesting();
     instance->initialize(WTF::move(attributes));
     return instance;
 }

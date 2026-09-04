@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "Logging.h"
 #include "RemoteGraphicsContextGLInitializationState.h"
 #include "RemoteGraphicsContextGLMessages.h"
@@ -131,7 +132,8 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
     assertIsCurrent(workQueue());
-    platformWorkQueueInitialize(WTF::move(attributes));
+    if (!m_createsFailingContextForTesting)
+        platformWorkQueueInitialize(WTF::move(attributes));
     m_connection->open(*this, m_workQueue);
     if (RefPtr context = m_context) {
         context->setClient(this);
@@ -164,6 +166,17 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
         m_connection->startReceivingMessages(*this, Messages::RemoteGraphicsContextGL::messageReceiverName(), m_identifier.toUInt64());
     } else
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(std::nullopt));
+
+    bool created = !!m_context;
+    callOnMainRunLoop([weakGPUConnectionToWebProcess = m_gpuConnectionToWebProcess, created] {
+        RefPtr gpuConnectionToWebProcess = weakGPUConnectionToWebProcess.get();
+        if (!gpuConnectionToWebProcess)
+            return;
+        if (created)
+            gpuConnectionToWebProcess->gpuProcess().didSucceedGraphicsContextGLCreation();
+        else
+            gpuConnectionToWebProcess->gpuProcess().didFailGraphicsContextGLCreation();
+    });
 }
 
 void RemoteGraphicsContextGL::workQueueUninitialize()
