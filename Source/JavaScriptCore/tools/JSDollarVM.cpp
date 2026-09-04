@@ -3992,8 +3992,6 @@ JSC_DEFINE_HOST_FUNCTION(functionWarmUpMarkedBlockState, (JSGlobalObject* global
             return "stopped"_s;
         case WarmUpMarkedBlockPhase::Armed:
             return "armed"_s;
-        case WarmUpMarkedBlockPhase::StandingDown:
-            return "standingDown"_s;
         }
         RELEASE_ASSERT_NOT_REACHED();
     }();

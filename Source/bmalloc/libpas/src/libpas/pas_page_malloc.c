@@ -64,6 +64,18 @@ size_t pas_page_malloc_cached_alignment_shift;
 bool pas_page_malloc_decommit_zero_fill = false;
 #endif /* PAS_OS(DARWIN) */
 
+void pas_page_malloc_populate(void* base, size_t size)
+{
+    size_t page_size;
+    size_t offset;
+    volatile char* bytes;
+
+    page_size = pas_page_malloc_alignment();
+    bytes = (volatile char*)base;
+    for (offset = 0; offset < size; offset += page_size)
+        bytes[offset] = 0;
+}
+
 #if PAS_USE_MADV_ZERO
 /* It is possible that MADV_ZERO is defined but still not supported by the
  * running OS. In this case, we check once to see if we get ENOSUP, and if

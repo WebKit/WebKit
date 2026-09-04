@@ -24,6 +24,7 @@ set_source_files_properties(
     src/libpas/bmalloc_heap_flex.c
     src/libpas/bmalloc_heap_iso.c
     src/libpas/bmalloc_heap_utils.c
+    src/libpas/bmalloc_prefault_supply.c
     src/libpas/hotbit_heap.c
     src/libpas/hotbit_heap_config.c
     src/libpas/iso_heap.c

@@ -40,6 +40,10 @@ PAS_API extern size_t pas_page_malloc_cached_alignment_shift;
 PAS_API extern bool pas_page_malloc_decommit_zero_fill;
 #endif /* PAS_OS(DARWIN) */
 
+/* Writes one byte per page so that the physical memory is in place before anyone reads or writes
+   the range for real. */
+PAS_API void pas_page_malloc_populate(void* base, size_t size);
+
 PAS_API PAS_NEVER_INLINE size_t pas_page_malloc_alignment_slow(void);
 
 static inline size_t pas_page_malloc_alignment(void)
