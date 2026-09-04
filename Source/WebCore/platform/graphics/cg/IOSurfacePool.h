@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class DestinatationColorSpace;
+class ColorSpace;
 
 class IOSurfacePool : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<IOSurfacePool> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(IOSurfacePool, WEBCORE_EXPORT);
