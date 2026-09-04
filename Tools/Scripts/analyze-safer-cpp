@@ -273,7 +273,18 @@ def rewrite_argv(entry, absSrc, clang, checkers, header_only=False):
     return out, entry['directory']
 
 
-def filter_diagnostics(stderr, requestedPaths, expectations, ignoreExpectations):
+def trace_includes_requested_file(block, requestedPaths):
+    for line in block['lines'][1:]:
+        m = DIAG_RE.match(line)
+        if not m or m.group('kind') != 'note':
+            continue
+        if os.path.realpath(m.group('path')) in requestedPaths:
+            return True
+    return False
+
+
+def filter_diagnostics(stderr, requestedPaths, expectations, ignoreExpectations,
+                       includeReachable):
     lines = stderr.splitlines()
     blocks = []
     current = None
@@ -303,7 +314,11 @@ def filter_diagnostics(stderr, requestedPaths, expectations, ignoreExpectations)
         diagPath = m.group('path')
         diagAbs = os.path.realpath(diagPath)
         if diagAbs not in requestedPaths:
-            continue
+            # This warning came from a file that was not requested to be
+            # analyzed. Hide it unless --include-reachable was passed.
+            if not includeReachable or not trace_includes_requested_file(
+                    block, requestedPaths):
+                continue
         if not ignoreExpectations:
             short = checker.rsplit('.', 1)[-1]
             project, root = project_for_path(diagAbs)
@@ -386,9 +401,15 @@ def normalize_checkers(values, parser):
             result.append(v)
         elif v in shortNames:
             result.append(shortNames[v])
+        elif '.' in v or v.islower():
+            # Not a SaferCPP checker. clang names are either package.Checker
+            # or a bare lowercase package, so pass those through and let clang
+            # reject anything it does not know.
+            result.append(v)
         else:
-            parser.error("unknown checker '{}'; valid names: {}".format(
-                v, ', '.join(sorted(shortNames))))
+            parser.error("unknown checker '{}'; pass a SaferCPP checker ({}) "
+                         'or a fully-qualified upstream checker name such as '
+                         'cplusplus.Move'.format(v, ', '.join(sorted(shortNames))))
     return result
 
 
@@ -492,11 +513,13 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         usage='%(prog)s [-h] [--base BASE] [--clang CLANG] [--download-toolchain]\n'
               '                         [--cmake-preset CMAKE_PRESET | --compile-commands PATH]\n'
-              '                         [--checker NAME] [--ignore-expectations] [-j N] [-v]\n'
+              '                         [--checker NAME] [--include-reachable]\n'
+              '                         [--ignore-expectations] [-j N] [-v]\n'
               '                         [--changed-files | FILE ...]',
         epilog='examples:\n'
                '  analyze-safer-cpp Source/WebCore/dom/Document.cpp\n'
-               '  analyze-safer-cpp --changed-files -j 12\n')
+               '  analyze-safer-cpp --changed-files -j 12\n'
+               '  analyze-safer-cpp --checker cplusplus.Move --changed-files\n')
     parser.add_argument('files', nargs='*', metavar='FILE',
                         help='source or header files to analyze')
     parser.add_argument('--changed-files', action='store_true',
@@ -515,7 +538,12 @@ def parse_args():
     where.add_argument('--compile-commands', metavar='PATH',
                        help='path to a compile_commands.json file')
     parser.add_argument('--checker', action='append', dest='checkers', metavar='NAME',
-                        help='restrict to one checker (repeatable; short or full name)')
+                        help='restrict to one checker (repeatable). A SaferCPP '
+                             'checker by short or full name, or any upstream '
+                             'checker/package, e.g. cplusplus.Move')
+    parser.add_argument('--include-reachable', action='store_true',
+                        help='also report issues in files you did not list, when '
+                             'their trace reaches one you did')
     parser.add_argument('--ignore-expectations', action='store_true',
                         help='show all checker warnings, ignoring SaferCPPExpectations')
     parser.add_argument('-j', type=int, default=os.cpu_count(), metavar='N',
@@ -605,7 +633,8 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.j)) as pool:
         for tu, returncode, stderr, header_only in pool.map(runOne, workItems):
             blocks, unexpected, errors = filter_diagnostics(
-                stderr, requestedPaths, expectations, args.ignore_expectations)
+                stderr, requestedPaths, expectations, args.ignore_expectations,
+                args.include_reachable)
             label = repo_relative(tu) + ' (header-only)' if header_only else repo_relative(tu)
             print('==> {}'.format(label))
             if returncode != 0 and not errors:
