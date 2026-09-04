@@ -36,6 +36,15 @@ PAS_BAPI size_t tagged_bmalloc_heap_ref_get_type_size(pas_heap_ref* heap_ref);
 PAS_API pas_heap* tagged_bmalloc_get_heap(void* ptr);
 PAS_BAPI size_t tagged_bmalloc_get_allocation_size(void* ptr);
 
+/* Returns true if ptr was allocated from the tagged bmalloc heap, and false if it came
+   from the untagged one (or is not a libpas object at all).
+
+   Callers that hold an object but not the mode/size it was allocated with need this,
+   because libpas can only find an object in the heap config it is asked about. Only
+   meaningful when MTE is enabled; when it isn't, nothing is ever allocated from the
+   tagged heap and this is always false. */
+PAS_API bool tagged_bmalloc_owns_object(void* ptr);
+
 PAS_END_EXTERN_C;
 
 #endif /* PAS_ENABLE_BMALLOC */

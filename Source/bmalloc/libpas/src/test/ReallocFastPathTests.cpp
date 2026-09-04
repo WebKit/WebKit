@@ -60,7 +60,7 @@ void testReallocFastPathGrowWithinSizeClass()
     // A 10-byte request rounds up to some usable size >= 10. As long as the
     // new request still fits within that slot the fast path must return the
     // same pointer.
-    void* ptr = bmalloc_try_allocate(10, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(10);
     CHECK(ptr);
 
     size_t usable = bmalloc_get_allocation_size(ptr);
@@ -69,14 +69,14 @@ void testReallocFastPathGrowWithinSizeClass()
     fillPattern(ptr, 10, 0xA1);
 
     void* grown = bmalloc_try_reallocate(
-        ptr, usable, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, usable, pas_reallocate_free_if_successful);
     CHECK_EQUAL(grown, ptr);
     checkPattern(grown, 10, 0xA1);
 }
 
 void testReallocFastPathShrinkWithinSizeClass()
 {
-    void* ptr = bmalloc_try_allocate(200, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(200);
     CHECK(ptr);
 
     size_t usable = bmalloc_get_allocation_size(ptr);
@@ -86,21 +86,21 @@ void testReallocFastPathShrinkWithinSizeClass()
 
     size_t shrink_to = usable / 2 + 1;
     void* shrunk = bmalloc_try_reallocate(
-        ptr, shrink_to, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, shrink_to, pas_reallocate_free_if_successful);
     CHECK_EQUAL(shrunk, ptr);
     checkPattern(shrunk, std::min(shrink_to, static_cast<size_t>(200)), 0x5A);
 }
 
 void testReallocFastPathToExactUsableSize()
 {
-    void* ptr = bmalloc_try_allocate(100, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(100);
     CHECK(ptr);
 
     size_t usable = bmalloc_get_allocation_size(ptr);
     fillPattern(ptr, usable, 0x33);
 
     void* result = bmalloc_try_reallocate(
-        ptr, usable, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, usable, pas_reallocate_free_if_successful);
     CHECK_EQUAL(result, ptr);
     checkPattern(result, usable, 0x33);
 }
@@ -109,7 +109,7 @@ void testReallocGrowBeyondSizeClassCopiesData()
 {
     // Force a real move: ask for a new size that clearly does not fit in the
     // original slot. The fast path must not trigger; data must survive the copy.
-    void* ptr = bmalloc_try_allocate(32, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(32);
     CHECK(ptr);
 
     size_t usable = bmalloc_get_allocation_size(ptr);
@@ -117,7 +117,7 @@ void testReallocGrowBeyondSizeClassCopiesData()
 
     size_t grown_size = usable * 16 + 1;
     void* grown = bmalloc_try_reallocate(
-        ptr, grown_size, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, grown_size, pas_reallocate_free_if_successful);
     CHECK(grown);
     checkPattern(grown, 32, 0xC7);
 }
@@ -131,7 +131,7 @@ void testReallocFastPathSweepAcrossSizes()
     };
 
     for (size_t request : request_sizes) {
-        void* ptr = bmalloc_try_allocate(request, pas_non_compact_allocation_mode);
+        void* ptr = bmalloc_try_allocate(request);
         CHECK(ptr);
 
         size_t usable = bmalloc_get_allocation_size(ptr);
@@ -145,7 +145,7 @@ void testReallocFastPathSweepAcrossSizes()
             if (!candidate || candidate > usable || candidate < min_in_place)
                 continue;
             void* after = bmalloc_try_reallocate(
-                ptr, candidate, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+                ptr, candidate, pas_reallocate_free_if_successful);
             CHECK_EQUAL(after, ptr);
         }
 
@@ -163,7 +163,7 @@ void testReallocBitfitFastPath()
     bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
     bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
 
-    void* ptr = bmalloc_try_allocate(8192, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(8192);
     CHECK(ptr);
 
     size_t usable = bmalloc_get_allocation_size(ptr);
@@ -172,12 +172,12 @@ void testReallocBitfitFastPath()
     fillPattern(ptr, 8192, 0x77);
 
     void* grown = bmalloc_try_reallocate(
-        ptr, usable, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, usable, pas_reallocate_free_if_successful);
     CHECK_EQUAL(grown, ptr);
     checkPattern(grown, 8192, 0x77);
 
     void* shrunk = bmalloc_try_reallocate(
-        ptr, usable / 2 + 1, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, usable / 2 + 1, pas_reallocate_free_if_successful);
     CHECK_EQUAL(shrunk, ptr);
     checkPattern(shrunk, usable / 2 + 1, 0x77);
 }
@@ -189,7 +189,7 @@ void testReallocExcessiveShrinkForcesCopy()
     // pin a much larger slot for a tiny request. We can't assert the pointer
     // moved (the freed slot could be reused), but the data must survive and
     // the new usable size must actually be smaller than the old slot.
-    void* ptr = bmalloc_try_allocate(4096, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(4096);
     CHECK(ptr);
 
     size_t old_usable = bmalloc_get_allocation_size(ptr);
@@ -201,7 +201,7 @@ void testReallocExcessiveShrinkForcesCopy()
     CHECK_GREATER_EQUAL(shrink_to, static_cast<size_t>(1));
 
     void* shrunk = bmalloc_try_reallocate(
-        ptr, shrink_to, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, shrink_to, pas_reallocate_free_if_successful);
     CHECK(shrunk);
     checkPattern(shrunk, std::min(shrink_to, static_cast<size_t>(64)), 0xE3);
 
@@ -218,12 +218,12 @@ void testReallocLargeDataPreserved()
     const size_t small_size = 1024 * 1024;
     const size_t large_size = small_size * 4;
 
-    void* ptr = bmalloc_try_allocate(small_size, pas_non_compact_allocation_mode);
+    void* ptr = bmalloc_try_allocate(small_size);
     CHECK(ptr);
     fillPattern(ptr, small_size, 0x19);
 
     void* grown = bmalloc_try_reallocate(
-        ptr, large_size, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        ptr, large_size, pas_reallocate_free_if_successful);
     CHECK(grown);
     checkPattern(grown, small_size, 0x19);
 }
@@ -233,7 +233,7 @@ void testReallocFromNullAllocates()
     // realloc(NULL, n) must behave like malloc(n); it must not crash on the
     // same-size-class lookup.
     void* ptr = bmalloc_try_reallocate(
-        nullptr, 128, pas_non_compact_allocation_mode, pas_reallocate_free_if_successful);
+        nullptr, 128, pas_reallocate_free_if_successful);
     CHECK(ptr);
     fillPattern(ptr, 128, 0x2D);
     checkPattern(ptr, 128, 0x2D);

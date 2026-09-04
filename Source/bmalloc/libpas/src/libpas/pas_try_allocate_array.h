@@ -54,7 +54,6 @@ pas_try_allocate_array_impl_casual_case_with_heap(pas_heap_ref* heap_ref,
                                                   pas_heap* heap,
                                                   size_t size,
                                                   size_t alignment,
-                                                  pas_allocation_mode allocation_mode,
                                                   pas_heap_config config,
                                                   pas_try_allocate_common try_allocate_common)
 {
@@ -76,7 +75,7 @@ pas_try_allocate_array_impl_casual_case_with_heap(pas_heap_ref* heap_ref,
         && alignment > pas_local_allocator_alignment((pas_local_allocator*)allocator.allocator))
         allocator.did_succeed = false;
     
-    return try_allocate_common(heap_ref, aligned_size, alignment, allocation_mode, allocator);
+    return try_allocate_common(heap_ref, aligned_size, alignment, allocator);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
@@ -84,7 +83,6 @@ pas_try_allocate_array_impl_inline_only_with_heap(
     pas_heap* heap,
     size_t size,
     size_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_heap_config config,
     pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only)
 {
@@ -116,7 +114,7 @@ pas_try_allocate_array_impl_inline_only_with_heap(
             && alignment > pas_local_allocator_alignment((pas_local_allocator*)allocator.allocator)))
         return pas_allocation_result_create_failure();
     
-    return try_allocate_common_fast_inline_only((pas_local_allocator*)allocator.allocator, allocation_mode);
+    return try_allocate_common_fast_inline_only((pas_local_allocator*)allocator.allocator);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
@@ -124,7 +122,6 @@ pas_try_allocate_array_impl_inline_only(
     pas_heap_ref* heap_ref,
     size_t size,
     size_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_heap_config config,
     pas_try_allocate_common_fast_inline_only try_allocate_common_fast_inline_only)
 {
@@ -135,7 +132,7 @@ pas_try_allocate_array_impl_inline_only(
         return pas_allocation_result_create_failure();
 
     return pas_try_allocate_array_impl_inline_only_with_heap(
-        heap, size, alignment, allocation_mode, config, try_allocate_common_fast_inline_only);
+        heap, size, alignment, config, try_allocate_common_fast_inline_only);
 }
 
 #define PAS_CREATE_TRY_ALLOCATE_ARRAY(name, heap_config, runtime_config, allocator_counts, result_filter) \
@@ -149,58 +146,58 @@ pas_try_allocate_array_impl_inline_only(
         (result_filter)); \
     \
     static PAS_NEVER_INLINE pas_allocation_result name ## _casual_case_with_heap( \
-        pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment) \
     { \
         return pas_try_allocate_array_impl_casual_case_with_heap( \
-            heap_ref, heap, size, alignment, allocation_mode, (heap_config), name ## _impl); \
+            heap_ref, heap, size, alignment, (heap_config), name ## _impl); \
     } \
     \
     static PAS_NEVER_INLINE pas_allocation_result name ## _casual_case( \
-        pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, size_t size, size_t alignment) \
     { \
         return name ## _casual_case_with_heap( \
             heap_ref, \
             pas_ensure_heap( \
                 heap_ref, pas_normal_heap_ref_kind, (heap_config).config_ptr, (runtime_config)), \
-            size, alignment, allocation_mode); \
+            size, alignment); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _inline_only_with_heap( \
-        pas_heap* heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap* heap, size_t size, size_t alignment) \
     { \
         return pas_try_allocate_array_impl_inline_only_with_heap( \
-            heap, size, alignment, allocation_mode, (heap_config), name ## _impl_fast_inline_only); \
+            heap, size, alignment, (heap_config), name ## _impl_fast_inline_only); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _inline_only( \
-        pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, size_t size, size_t alignment) \
     { \
         return pas_try_allocate_array_impl_inline_only( \
-            heap_ref, size, alignment, allocation_mode, (heap_config), name ## _impl_fast_inline_only); \
+            heap_ref, size, alignment, (heap_config), name ## _impl_fast_inline_only); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _with_heap( \
-        pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment) \
     { \
         pas_allocation_result result; \
-        result = name ## _inline_only_with_heap(heap, size, alignment, allocation_mode); \
+        result = name ## _inline_only_with_heap(heap, size, alignment); \
         if (PAS_LIKELY(result.did_succeed)) \
             return result; \
-        return name ## _casual_case_with_heap(heap_ref, heap, size, alignment, allocation_mode); \
+        return name ## _casual_case_with_heap(heap_ref, heap, size, alignment); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _by_size( \
-        pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, size_t size, size_t alignment) \
     { \
         pas_allocation_result result; \
-        result = name ## _inline_only(heap_ref, size, alignment, allocation_mode); \
+        result = name ## _inline_only(heap_ref, size, alignment); \
         if (PAS_LIKELY(result.did_succeed)) \
             return result; \
-        return name ## _casual_case(heap_ref, size, alignment, allocation_mode); \
+        return name ## _casual_case(heap_ref, size, alignment); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _by_count( \
-        pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, size_t count, size_t alignment) \
     { \
         const pas_heap_type* type; \
         size_t type_size; \
@@ -212,28 +209,28 @@ pas_try_allocate_array_impl_inline_only(
         if (__builtin_mul_overflow(count, type_size, &size)) \
             return pas_allocation_result_create_failure(); \
         \
-        return name ## _by_size(heap_ref, size, alignment, allocation_mode); \
+        return name ## _by_size(heap_ref, size, alignment); \
     } \
     \
     static PAS_UNUSED PAS_NEVER_INLINE pas_allocation_result name ## _for_realloc( \
-        pas_heap_ref* heap_ref, pas_heap* heap, size_t size, pas_allocation_mode allocation_mode) \
+        pas_heap_ref* heap_ref, pas_heap* heap, size_t size) \
     { \
-        return name ## _with_heap(heap_ref, heap, size, 1, allocation_mode); \
+        return name ## _with_heap(heap_ref, heap, size, 1); \
     } \
     \
     struct pas_dummy
     
 typedef pas_allocation_result (*pas_try_allocate_array_with_heap)(
-    pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, pas_heap* heap, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_array_by_size)(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_array_by_count)(
-    pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, size_t count, size_t alignment);
 
 typedef pas_allocation_result (*pas_try_allocate_array_for_realloc)(
-    pas_heap_ref* heap_ref, pas_heap* heap, size_t size, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, pas_heap* heap, size_t size);
 
 PAS_END_EXTERN_C;
 

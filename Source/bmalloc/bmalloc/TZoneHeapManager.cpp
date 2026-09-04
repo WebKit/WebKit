@@ -123,6 +123,11 @@ void determineTZoneMallocFallback()
         return;
     }
 
+    if (isMTEEnabled()) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceFastMalloc;
+        return;
+    }
+
     const char* env = getenv("bmalloc_TZoneHeap");
     if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
         tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
@@ -590,7 +595,6 @@ TZoneHeapManager::Group* TZoneHeapManager::populateGroupBuckets(LockHolder& lock
     group->nonCompactBucket.type.alignment = spec.alignment;
     group->nonCompactBucket.type.name = group->nonCompactBucket.typeName;
     group->nonCompactBucket.heapref.type = (const pas_heap_type*)(&group->nonCompactBucket.type);
-    group->nonCompactBucket.heapref.is_non_compact_heap = true;
 
     for (unsigned i = 0; i < bucketCount; ++i) {
 #if TZONE_VERBOSE_DEBUG
@@ -605,7 +609,6 @@ TZoneHeapManager::Group* TZoneHeapManager::populateGroupBuckets(LockHolder& lock
         group->buckets[i].type.name = group->buckets[i].typeName;
 
         group->buckets[i].heapref.type = (const pas_heap_type*)(&group->buckets[i].type);
-        group->buckets[i].heapref.is_non_compact_heap = false;
     }
 
     m_groupByDescriptor.set(descriptor, group);

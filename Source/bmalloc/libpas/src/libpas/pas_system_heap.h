@@ -26,7 +26,6 @@
 #ifndef PAS_SYSTEM_HEAP_H
 #define PAS_SYSTEM_HEAP_H
 
-#include "pas_allocation_mode.h"
 #include "pas_allocation_result.h"
 #include "pas_heap_config_kind.h"
 #include "pas_log.h"
@@ -52,9 +51,9 @@ BEXPORT extern bool pas_system_heap_should_supplant_bmalloc(pas_heap_config_kind
 BEXPORT extern void* pas_system_heap_malloc(size_t);
 BEXPORT extern void* pas_system_heap_memalign(size_t alignment, size_t);
 BEXPORT extern void* pas_system_heap_realloc(void* ptr, size_t);
-BEXPORT extern void* pas_system_heap_malloc_compact(size_t);
-BEXPORT extern void* pas_system_heap_memalign_compact(size_t alignment, size_t);
-BEXPORT extern void* pas_system_heap_realloc_compact(void* ptr, size_t);
+BEXPORT extern void* pas_system_heap_malloc_untagged(size_t);
+BEXPORT extern void* pas_system_heap_memalign_untagged(size_t alignment, size_t);
+BEXPORT extern void* pas_system_heap_realloc_untagged(void* ptr, size_t);
 BEXPORT extern void pas_system_heap_free(void* ptr);
 
 #else /* PAS_BMALLOC -> so !PAS_BMALLOC */
@@ -94,14 +93,14 @@ static inline void* pas_system_heap_realloc(void* ptr, size_t size)
     return NULL;
 }
 
-static inline void* pas_system_heap_malloc_compact(size_t size)
+static inline void* pas_system_heap_malloc_untagged(size_t size)
 {
     PAS_UNUSED_PARAM(size);
     PAS_ASSERT_NOT_REACHED();
     return NULL;
 }
 
-static inline void* pas_system_heap_memalign_compact(size_t alignment, size_t size)
+static inline void* pas_system_heap_memalign_untagged(size_t alignment, size_t size)
 {
     PAS_UNUSED_PARAM(alignment);
     PAS_UNUSED_PARAM(size);
@@ -109,7 +108,7 @@ static inline void* pas_system_heap_memalign_compact(size_t alignment, size_t si
     return NULL;
 }
 
-static inline void* pas_system_heap_realloc_compact(void* ptr, size_t size)
+static inline void* pas_system_heap_realloc_untagged(void* ptr, size_t size)
 {
     PAS_UNUSED_PARAM(ptr);
     PAS_UNUSED_PARAM(size);
@@ -125,7 +124,7 @@ static inline void pas_system_heap_free(void* ptr)
 
 #endif /* PAS_BMALLOC -> so end of !PAS_BMALLOC */
 
-static inline pas_allocation_result pas_system_heap_allocate(size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+static inline pas_allocation_result pas_system_heap_allocate(size_t size, size_t alignment, bool may_be_mte_tagged)
 {
     static const bool verbose = false;
 
@@ -135,15 +134,15 @@ static inline pas_allocation_result pas_system_heap_allocate(size_t size, size_t
     if (alignment > sizeof(void*)) {
         if (verbose)
             pas_log("Going down debug memalign path.\n");
-        raw_result = allocation_mode == pas_non_compact_allocation_mode
+        raw_result = may_be_mte_tagged
             ? pas_system_heap_memalign(alignment, size)
-            : pas_system_heap_memalign_compact(alignment, size);
+            : pas_system_heap_memalign_untagged(alignment, size);
     } else {
         if (verbose)
             pas_log("Going down debug malloc path.\n");
-        raw_result = allocation_mode == pas_non_compact_allocation_mode
+        raw_result = may_be_mte_tagged
             ? pas_system_heap_malloc(size)
-            : pas_system_heap_malloc_compact(size);
+            : pas_system_heap_malloc_untagged(size);
     }
 
     if (verbose)
