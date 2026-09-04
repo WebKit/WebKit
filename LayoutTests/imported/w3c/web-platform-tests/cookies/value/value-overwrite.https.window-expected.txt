@@ -1,0 +1,27 @@
+
+PASS Overwrite value via separate responses with 'Path=/'
+PASS Overwrite value via a single response with 'Path=/'
+PASS Overwrite value via separate responses with 'Path=/; Secure'
+PASS Overwrite value via a single response with 'Path=/; Secure'
+PASS Overwrite value via separate responses with 'Path=/; HttpOnly'
+PASS Overwrite value via a single response with 'Path=/; HttpOnly'
+PASS Overwrite value via separate responses with 'Path=/; SameSite=Strict'
+PASS Overwrite value via a single response with 'Path=/; SameSite=Strict'
+PASS Overwrite value via separate responses with 'Path=/; SameSite=Lax'
+PASS Overwrite value via a single response with 'Path=/; SameSite=Lax'
+PASS Overwrite value via separate responses with 'Path=/; SameSite=None; Secure'
+PASS Overwrite value via a single response with 'Path=/; SameSite=None; Secure'
+PASS Overwrite value via separate responses with 'Path=/; Expires=Fri, 01 Jan 2100 00:00:00 GMT'
+PASS Overwrite value via a single response with 'Path=/; Expires=Fri, 01 Jan 2100 00:00:00 GMT'
+PASS Overwrite value via separate responses with 'Path=/; Secure; HttpOnly; SameSite=Strict; Expires=Fri, 01 Jan 2100 00:00:00 GMT'
+PASS Overwrite value via a single response with 'Path=/; Secure; HttpOnly; SameSite=Strict; Expires=Fri, 01 Jan 2100 00:00:00 GMT'
+PASS Overwrite value via a single response with 'Path=/; Max-Age=1000'
+PASS Overwrite value with the empty value
+PASS Overwrite the empty value with a value
+PASS Overwrite value via document.cookie with 'Path=/'
+PASS Overwrite value via document.cookie with 'Path=/; Secure'
+PASS Overwrite value via document.cookie with 'Path=/; SameSite=Strict'
+PASS Overwrite value via document.cookie with 'Path=/; SameSite=Lax'
+PASS Overwrite value via document.cookie with 'Path=/; SameSite=None; Secure'
+PASS Overwrite value via document.cookie with 'Path=/; Expires=Fri, 01 Jan 2100 00:00:00 GMT'
+

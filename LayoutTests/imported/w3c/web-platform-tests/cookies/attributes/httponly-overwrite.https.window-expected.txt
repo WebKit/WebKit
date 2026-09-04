@@ -1,0 +1,10 @@
+
+PASS A cookie set without HttpOnly is not http-only
+PASS A cookie set with HttpOnly is http-only
+PASS Adding HttpOnly to a cookie with an unchanged value makes it http-only
+PASS Removing HttpOnly from a cookie with an unchanged value makes it not http-only
+PASS Adding HttpOnly through a second Set-Cookie in the same response
+PASS Removing HttpOnly through a second Set-Cookie in the same response
+FAIL Adding HttpOnly to a cookie with an unchanged value hides it from document.cookie assert_equals: The cookie is no longer exposed to document.cookie expected (object) null but got (string) "1"
+PASS Removing HttpOnly from a cookie with an unchanged value exposes it to document.cookie
+

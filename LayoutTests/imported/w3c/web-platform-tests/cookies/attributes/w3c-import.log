@@ -10,14 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/expires.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/httponly-overwrite.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/max-age.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/attributes/path-redirect.html

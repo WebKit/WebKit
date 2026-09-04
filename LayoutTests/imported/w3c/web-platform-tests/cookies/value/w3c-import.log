@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/value/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/cookies/value/value-ctl.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/value/value-overwrite.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/value/value.html

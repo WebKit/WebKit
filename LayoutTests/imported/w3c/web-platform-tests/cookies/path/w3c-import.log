@@ -10,10 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/path/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/cookies/path/default.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/path/match-percent-encoded.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/cookies/path/match-segment-boundaries.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/path/match.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/path/non-ascii-path-attribute.https.window.js

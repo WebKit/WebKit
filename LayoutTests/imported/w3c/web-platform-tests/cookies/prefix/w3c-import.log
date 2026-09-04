@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/WEB_FEATURES.yml
@@ -19,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__Http.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.document-cookie.https.html
+/LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.explicit-path.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.header.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__host.header.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookies/prefix/__secure.document-cookie.html
