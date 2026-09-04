@@ -88,7 +88,7 @@ The debugger uses a sophisticated virtual address encoding system to present Web
 ```txt
 Address Format (64-bit):
 - Bits 63-62: Address Type (2 bits)
-- Bits 61-32: ID (30 bits) - ModuleID for code, InstanceID for memory  
+- Bits 61-32: ID (30 bits) - ModuleID for code, InstanceID for memory
 - Bits 31-0:  Offset (32 bits)
 
 Address Types:
@@ -99,7 +99,7 @@ Address Types:
 
 Virtual Memory Layout:
 - 0x0000000000000000 - 0x3FFFFFFFFFFFFFFF: Memory regions
-- 0x4000000000000000 - 0x7FFFFFFFFFFFFFFF: Module regions  
+- 0x4000000000000000 - 0x7FFFFFFFFFFFFFFF: Module regions
 - 0x8000000000000000 - 0xFFFFFFFFFFFFFFFF: Invalid regions
 ```
 
@@ -213,20 +213,29 @@ See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions
 
 The following references correspond to the numbered citations used throughout the WebAssembly debugger implementation:
 
-- [1] [Interrupts](https://sourceware.org/gdb/onlinedocs/gdb/Interrupts.html)  
-- [2] [Packet Acknowledgment](https://sourceware.org/gdb/onlinedocs/gdb/Packet-Acknowledgment.html)  
-- [3] [Packets](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Packets.html)  
+- [1] [Interrupts](https://sourceware.org/gdb/onlinedocs/gdb/Interrupts.html)
+- [2] [Packet Acknowledgment](https://sourceware.org/gdb/onlinedocs/gdb/Packet-Acknowledgment.html)
+- [3] [Packets](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Packets.html)
 - [4] [General Query Packets](https://sourceware.org/gdb/current/onlinedocs/gdb.html/General-Query-Packets.html)
 - [5] [Standard Replies](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Standard-Replies.html#Standard-Replies)
-- [6] [Packet Acknowledgment](https://sourceware.org/gdb/onlinedocs/gdb/Packet-Acknowledgment.html)  
-- [7] [qSupported](https://sourceware.org/gdb/current/onlinedocs/gdb.html/General-Query-Packets.html#qSupported)  
-- [8] [qProcessInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qprocessinfo)  
-- [9] [qHostInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qhostinfo)  
-- [10] [qRegisterInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qregisterinfo-hex-reg-id)  
-- [11] [qListThreadsInStopReply](https://lldb.llvm.org/resources/lldbgdbremote.html#qlistthreadsinstopreply)  
-- [12] [qEnableErrorStrings](https://lldb.llvm.org/resources/lldbgdbremote.html#qenableerrorstrings)  
-- [13] [qThreadStopInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qthreadstopinfo-tid)  
-- [14] [qXfer:library-list:read](https://sourceware.org/gdb/onlinedocs/gdb/General-Query-Packets.html#qXfer-library-list-read)  
-- [15] [qWasmCallStack](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmcallstack)  
-- [16] [qWasmLocal](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmlocal)  
+- [6] [Packet Acknowledgment](https://sourceware.org/gdb/onlinedocs/gdb/Packet-Acknowledgment.html)
+- [7] [qSupported](https://sourceware.org/gdb/current/onlinedocs/gdb.html/General-Query-Packets.html#qSupported)
+- [8] [qProcessInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qprocessinfo)
+- [9] [qHostInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qhostinfo)
+- [10] [qRegisterInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qregisterinfo-hex-reg-id)
+- [11] [qListThreadsInStopReply](https://lldb.llvm.org/resources/lldbgdbremote.html#qlistthreadsinstopreply)
+- [12] [qEnableErrorStrings](https://lldb.llvm.org/resources/lldbgdbremote.html#qenableerrorstrings)
+- [13] [qThreadStopInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qthreadstopinfo-tid)
+- [14] [qXfer:library-list:read](https://sourceware.org/gdb/onlinedocs/gdb/General-Query-Packets.html#qXfer-library-list-read)
+- [15] [qWasmCallStack](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmcallstack)
+- [16] [qWasmLocal](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmlocal)
 - [17] [qMemoryRegionInfo](https://lldb.llvm.org/resources/lldbgdbremote.html#qmemoryregioninfo-addr)
+- [18] [qWasmGlobal](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmglobal)
+- [19] [qWasmInstance](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasminstance-qsupported-feature) —
+  advertised in the `qSupported` reply to opt into naming a module instance in a Wasm query. It
+  adds the form `qWasmGlobal:<global-index>;instance:<instance-id>;`, which reads a global from a
+  named instance rather than from the instance a stack frame is executing. The instance id is the
+  id a Wasm virtual address carries in bits 61:32, which is a module id. Added to LLDB by
+  [llvm/llvm-project#213176](https://github.com/llvm/llvm-project/pull/213176), resolving
+  [llvm/llvm-project#212833](https://github.com/llvm/llvm-project/issues/212833). A module with no
+  live instance, or with more than one, has no single value to report and answers with an error.

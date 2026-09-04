@@ -94,7 +94,7 @@ public:
     std::unique_ptr<MergedProfile> createMergedProfile(const IPIntCallee&);
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    uint32_t NODELETE debugId() const;
+    JS_EXPORT_PRIVATE uint32_t NODELETE debugId() const;
     void NODELETE setDebugId(uint32_t);
 #endif
 

@@ -30,6 +30,30 @@ from pathlib import Path
 # Root directory of the debugger test suite (contains test-wasm-debugger.py)
 _TESTS_ROOT = Path(__file__).parent.parent
 
+# This checkout, and the path fragment that locates the suite inside any checkout.
+_CHECKOUT_ROOT = _TESTS_ROOT.parents[2]
+_SUITE_FRAGMENT = b"/JSTests/wasm/debugger/"
+
+
+def _source_map_command(resource_dir):
+    """LLDB command remapping a .wasm's build-time checkout onto this one.
+
+    The .wasm resources are checked in prebuilt, so their DWARF records absolute
+    source paths from whichever checkout produced them. Without the remap LLDB
+    resolves line numbers but prints no source.
+    """
+    for wasm in sorted(Path(resource_dir).glob("*.wasm")):
+        data = wasm.read_bytes()
+        end = data.find(_SUITE_FRAGMENT)
+        if end == -1:
+            continue
+        # DWARF strings are NUL-terminated and NUL-separated.
+        build_root = data[data.rfind(b"\0", 0, end) + 1:end].decode()
+        if build_root != str(_CHECKOUT_ROOT):
+            return f"settings set target.source-map {build_root} {_CHECKOUT_ROOT}"
+    return None
+
+
 # Default wait patterns for commands that change process state.
 # Tests that need different patterns pass them explicitly.
 _DEFAULT_PATTERNS = {
@@ -109,8 +133,13 @@ class DebugSession:
             # Step 3 — all modules are loaded; connect LLDB now. Any module-load
             # notifications that fired before this point are irrelevant to LLDB.
             connect_cmd = f"process connect --plugin wasm connect://localhost:{port}"
+            lldb_cmd = [str(lldb_path)]
+            source_map_cmd = _source_map_command(cwd)
+            if source_map_cmd:
+                lldb_cmd += ["-o", source_map_cmd]
+            lldb_cmd += ["-o", connect_cmd]
             self._lldb = subprocess.Popen(
-                [str(lldb_path), "-o", connect_cmd],
+                lldb_cmd,
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 text=True, bufsize=1,
             )

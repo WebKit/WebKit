@@ -165,6 +165,39 @@ JSWebAssemblyInstance* ModuleManager::jsInstance(uint32_t instanceId)
     return instance;
 }
 
+// Null when a module has no live instance, or more than one: globals are per-instance, so an
+// ambiguous module has no single value to report.
+// FIXME: Workaround until we hand out module instance IDs instead of module IDs.
+JSWebAssemblyInstance* ModuleManager::soleInstanceOfModule(uint32_t moduleId)
+{
+    Locker locker { m_lock };
+    amortizedCleanupIfNeeded();
+
+    JSWebAssemblyInstance* found = nullptr;
+    for (const auto& pair : m_instanceIdToInstance) {
+        RefPtr<InstanceAnchor> anchor = pair.value.get();
+        if (!anchor)
+            continue;
+
+        Locker anchorLocker { anchor->m_lock };
+        JSWebAssemblyInstance* instance = anchor->instance();
+        if (!instance || instance->module().debugId() != moduleId)
+            continue;
+
+        if (found) {
+            dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][soleInstanceOfModule] - more than one live instance for module ID: ", moduleId);
+            return nullptr;
+        }
+
+        RELEASE_ASSERT(instance->vm().debugState()->isStopped, "Instance exists but VM is not stopped");
+        found = instance;
+    }
+
+    if (!found)
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleManager][soleInstanceOfModule] - no live instance for module ID: ", moduleId);
+    return found;
+}
+
 String ModuleManager::generateLibrariesXML() const
 {
     Locker locker { m_lock };

@@ -62,6 +62,7 @@ public:
 
     uint32_t registerInstance(JSWebAssemblyInstance*);
     JSWebAssemblyInstance* jsInstance(uint32_t instanceId);
+    JSWebAssemblyInstance* soleInstanceOfModule(uint32_t moduleId);
     uint32_t nextInstanceId() const;
 
     String generateLibrariesXML() const;

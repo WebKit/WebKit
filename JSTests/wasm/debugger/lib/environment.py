@@ -11,7 +11,7 @@ from .utils import log_info, log_warning, log_error, log_success, log_verbose
 class WebKitEnvironment:
     """Detects JSC and LLDB paths and sets up DYLD_FRAMEWORK_PATH."""
 
-    def __init__(self, script_path: Path, build_config: str = None):
+    def __init__(self, script_path: Path, build_config: str = None, lldb_path: str = None):
         # script_path is test-wasm-debugger.py
         # debugger/ -> wasm/ -> JSTests/ -> OpenSource/ (webkit_root)
         self.webkit_root = script_path.resolve().parent.parent.parent.parent
@@ -23,7 +23,9 @@ class WebKitEnvironment:
         self.env["VM"] = str(self.vm_path)
         self.env["DYLD_FRAMEWORK_PATH"] = str(self.vm_path)
 
-        self.lldb_path = self._find_lldb_path()
+        self.lldb_path = lldb_path or self._find_lldb_path()
+        if lldb_path:
+            log_info(f"Using LLDB at: {lldb_path}")
 
     def _find_jsc_path(self):
         if self.build_config:

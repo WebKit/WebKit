@@ -236,6 +236,53 @@ String multiVMSameModuleSameFunction()
     return *cachedScript;
 }
 
+// Multi-VM test script: creates 5 VMs (main + 4 workers) all running WASM in infinite loops
+// Each worker holds two live instances of its module, so a module lookup can be ambiguous.
+String multiVMMultipleInstancesPerModule()
+{
+    static String* cachedScript = nullptr;
+    static std::once_flag once;
+
+    std::call_once(once, [] {
+        cachedScript = new String(makeString(R"script(
+            const wasm = new Uint8Array([)script"_s,
+                wasmBytesToJSArray(wasmMultiFunctionModuleBytes),
+            R"script(]);
+
+            const module = new WebAssembly.Module(wasm);
+            const instance = new WebAssembly.Instance(module, { });
+
+            const NUM_WORKERS = 4;
+
+            // Worker script - two live instances of one module, only the first runs
+            const workerScript = `
+                const wasm = new Uint8Array([)script"_s,
+                    wasmBytesToJSArray(wasmMultiFunctionModuleBytes),
+                    R"script(]);
+                const module = new WebAssembly.Module(wasm);
+                const instance = new WebAssembly.Instance(module, { });
+                const idleInstance = new WebAssembly.Instance(module, { });
+
+                while (!$.shouldExit())
+                    instance.exports.func1();
+
+                // Keep the second instance alive for the whole run
+                idleInstance.exports.func1();
+            `;
+
+            // Start worker threads via $.agent.start()
+            for (let i = 0; i < NUM_WORKERS; i++)
+                $.agent.start(workerScript);
+
+            // Main thread also runs func1 in loop until $.shouldExit() returns true
+            while (!$.shouldExit())
+                instance.exports.func1();
+        )script"_s));
+    });
+
+    return *cachedScript;
+}
+
 // ========== Test Script Registry ==========
 
 static const TestScript allScripts[] = {
@@ -244,13 +291,21 @@ static const TestScript allScripts[] = {
         .description = "5 VMs (1 main + 4 workers) running different WASM functions from same module"_s,
         .scriptGenerator = multiVMSameModuleDifferentFunction,
         .expectedVMs = 5,
+        .expectedInstances = 5,
         .expectedFunctions = 5
-    },
-    {
+    }, {
         .name = "MultiVMSameModuleSameFunction"_s,
         .description = "5 VMs (1 main + 4 workers) all running same WASM function"_s,
         .scriptGenerator = multiVMSameModuleSameFunction,
         .expectedVMs = 5,
+        .expectedInstances = 5,
+        .expectedFunctions = 5
+    }, {
+        .name = "MultiVMMultipleInstancesPerModule"_s,
+        .description = "5 VMs (1 main + 4 workers), each worker holding two live instances of its module"_s,
+        .scriptGenerator = multiVMMultipleInstancesPerModule,
+        .expectedVMs = 5,
+        .expectedInstances = 9,
         .expectedFunctions = 5
     },
 };

@@ -83,6 +83,8 @@ def main():
                         help="List available test cases and exit")
     parser.add_argument("--parallel", "-p", type=int, nargs="?", const=-1, metavar="N",
                         help="Parallel workers (omit N for auto-detect)")
+    parser.add_argument("--lldb", metavar="PATH",
+                        help="LLDB to test against (default: xcrun --find lldb)")
 
     build_group = parser.add_mutually_exclusive_group()
     build_group.add_argument("--debug",   action="store_true", help="Use Debug build")
@@ -95,7 +97,7 @@ def main():
     set_verbose(verbose)
 
     build_config = "Debug" if args.debug else "Release" if args.release else None
-    env = WebKitEnvironment(Path(__file__), build_config)
+    env = WebKitEnvironment(Path(__file__), build_config, args.lldb)
 
     all_tests = list(ALL_TESTS) + [JavaScriptCoreTestCase]
 
