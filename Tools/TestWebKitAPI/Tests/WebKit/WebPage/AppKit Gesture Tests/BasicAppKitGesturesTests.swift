@@ -1430,20 +1430,60 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == .range(base: .init(in: "before", at: 6), extent: .init(in: "after", at: 0)))
     }
 
+    @Test(
+        .bug("rdar://185339162", "Fast flicks whose event deliveries coalesce should start momentum scrolling")
+    )
+    func quickFlickWithCoalescedEventDeliveriesStillFlings() async throws {
+        try await loadTallDocument()
+        await page.waitForNextPresentationUpdate()
+
+        let dragDistance = 250.0
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let end = CGPoint(x: center.x, y: center.y - dragDistance)
+
+        await recap.play { composer in
+            composer._wk_eventFrequency = coalescedFlickEventFrequency
+            composer._wk_drag(withStart: center, end: end, duration: coalescedFlickDuration, release: false)
+            composer._wk_mouseUp()
+        }
+
+        let settled = try await settledScrollPosition()
+
+        // The gesture itself only accounts for `dragDistance`; anything well beyond it came from momentum.
+        #expect(settled.y > dragDistance * 2)
+    }
+
+    @Test(
+        .bug("rdar://185339162", "A flick that comes to rest before liftoff should not start momentum scrolling")
+    )
+    func quickFlickThatRestsBeforeLiftoffDoesNotFling() async throws {
+        try await loadTallDocument()
+        await page.waitForNextPresentationUpdate()
+
+        let dragDistance = 250.0
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let end = CGPoint(x: center.x, y: center.y - dragDistance)
+
+        await recap.play { composer in
+            composer._wk_eventFrequency = coalescedFlickEventFrequency
+            composer._wk_drag(withStart: center, end: end, duration: coalescedFlickDuration, release: false)
+            composer.advanceTime(0.5)
+            composer._wk_mouseUp()
+        }
+
+        let settled = try await settledScrollPosition()
+
+        #expect(settled.y < dragDistance * 1.5)
+    }
+
     @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
-        let html = """
-            <body style="margin: 0; width: 100%; height: 200000px;
-                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
-            </body>
-            """
-
         let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
         let down = CGPoint(x: center.x, y: center.y - 250)
         let up = CGPoint(x: center.x, y: center.y + 250)
 
         func finalFlingDistance(flicks count: Int, reverseLast: Bool = false) async throws -> Double {
-            try await page.load(html: html).wait()
+            try await loadTallDocument()
             await page.waitForNextPresentationUpdate()
 
             await recap.play { composer in
@@ -1633,6 +1673,9 @@ extension AppKitGesturesTests.Basic {
     }
 }
 
+private let coalescedFlickEventFrequency = 20
+private let coalescedFlickDuration = Duration.seconds(0.1)
+
 nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () async -> Void) async {
     typealias CompletionHandler = @convention(block) () -> Void
     typealias ObjCImplementation = @convention(block) (NSMenu.Type, NSMenu, _NSViewMenuContext, NSView, CompletionHandler?) -> Void
@@ -1708,6 +1751,15 @@ extension AppKitGesturesTests.Basic {
         let html = """
             <body style="margin: 0; width: 5000px; height: 20000px;
                          background: repeating-linear-gradient(45deg, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+        try await page.load(html: html).wait()
+    }
+
+    private func loadTallDocument() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 200000px;
+                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
             </body>
             """
         try await page.load(html: html).wait()

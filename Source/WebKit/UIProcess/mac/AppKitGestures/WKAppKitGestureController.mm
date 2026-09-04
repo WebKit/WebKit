@@ -109,11 +109,6 @@ static WebKit::WebEventPhase toWebEventPhase(NSGestureRecognizerState state)
     }
 }
 
-static WebCore::FloatSize velocityInView(NSPanGestureRecognizer *gesture, WKWebView *view)
-{
-    return WebCore::toFloatSize(WebCore::FloatPoint { [gesture velocityInView:view] });
-}
-
 static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
 {
     // rawPlatformDelta uses IOHIDEvent coordinate conventions, which have the opposite
@@ -1565,7 +1560,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (![self supportsMomentumScroll:gesture])
         return;
 
-    auto unfilteredVelocity = velocityInView(gesture, webView.get());
+    auto unfilteredVelocity = WebCore::toFloatSize(WebCore::FloatPoint { [self panVelocityInView:webView.get()] });
 
     // Continue the scroll along the same axis the drag was locked to rather than reintroducing
     // diagonal drift; also keeps _fastScrollTracker's velocity heuristics off-axis-clean.
