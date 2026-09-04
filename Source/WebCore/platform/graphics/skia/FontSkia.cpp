@@ -96,7 +96,7 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     return SkScalarToFloat(width);
 }
 
-void Font::platformInit()
+void FontBase::platformInit()
 {
     if (!m_platformData.size())
         return;
@@ -150,6 +150,10 @@ void Font::platformCharWidthInit()
     m_avgCharWidth = 0.f;
     m_maxCharWidth = 0.f;
     initCharWidths();
+}
+
+void Font::platformCharHeightInit()
+{
 }
 
 RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleFactor) const
@@ -223,7 +227,7 @@ static inline SkFont::Edging edgingForFontSmoothingMode(const SkFont& font, Font
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-sk_sp<SkTextBlob> Font::buildTextBlob(std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, FontSmoothingMode smoothingMode) const
+sk_sp<SkTextBlob> FontBase::buildTextBlob(std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, FontSmoothingMode smoothingMode) const
 {
     if (!m_platformData.size() || !glyphs.size())
         return nullptr;
@@ -262,7 +266,7 @@ sk_sp<SkTextBlob> Font::buildTextBlob(std::span<const GlyphBufferGlyph> glyphs, 
     return builder.make();
 }
 
-bool Font::enableAntialiasing(FontSmoothingMode smoothingMode) const
+bool FontBase::enableAntialiasing(FontSmoothingMode smoothingMode) const
 {
     return allowsAntialiasing() && edgingForFontSmoothingMode(m_platformData.skFont(), smoothingMode) != SkFont::Edging::kAlias;
 }

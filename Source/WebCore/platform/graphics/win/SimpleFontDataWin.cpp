@@ -47,7 +47,7 @@ void Font::platformCharWidthInit()
     initCharWidths();
 }
 
-void Font::platformInit()
+void FontBase::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 
@@ -111,6 +111,10 @@ void Font::platformInit()
     m_fontMetrics.setXHeight(xHeight);
     m_avgCharWidth = metrics.otmTextMetrics.tmAveCharWidth * metricsMultiplier;
     m_maxCharWidth = metrics.otmTextMetrics.tmMaxCharWidth * metricsMultiplier;
+}
+
+void Font::platformCharHeightInit()
+{
 }
 
 void Font::platformDestroy()

@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include <WebCore/Font.h>
 #include <WebCore/Glyph.h>
 #include <WebCore/TextFlags.h>
 #include <unicode/utypes.h>
@@ -39,6 +38,8 @@
 #include <wtf/Ref.h>
 
 namespace WebCore {
+
+class Font;
 
 // Holds the glyph index and the corresponding Font information for a given
 // character.

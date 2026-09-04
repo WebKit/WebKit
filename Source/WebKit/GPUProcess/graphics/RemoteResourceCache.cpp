@@ -29,11 +29,11 @@
 #if ENABLE(GPU_PROCESS)
 
 #include <WebCore/Filter.h>
-#include <WebCore/Font.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
+#include <WebCore/ThreadSafeFont.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -103,7 +103,7 @@ RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier ide
     return m_filters.get(identifier);
 }
 
-bool RemoteResourceCache::cacheFont(Ref<Font>&& font)
+bool RemoteResourceCache::cacheFont(Ref<ThreadSafeFont>&& font)
 {
     auto identifier = font->renderingResourceIdentifier();
     return m_fonts.add(identifier, WTF::move(font)).isNewEntry;
@@ -114,7 +114,7 @@ bool RemoteResourceCache::releaseFont(RenderingResourceIdentifier identifier)
     return m_fonts.remove(identifier);
 }
 
-RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identifier) const
+RefPtr<ThreadSafeFont> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identifier) const
 {
     return m_fonts.get(identifier);
 }

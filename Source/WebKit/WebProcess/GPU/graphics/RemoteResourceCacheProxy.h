@@ -43,7 +43,7 @@
 
 namespace WebCore {
 class Filter;
-class Font;
+class FontBase;
 struct FontCustomPlatformData;
 }
 
@@ -71,7 +71,7 @@ public:
     // into its own cache.
     RemoteNativeImageReadReference recordSharedNativeImageUse(RemoteNativeImageProxy&);
     RemotePathImplIdentifier recordPathImplUse(const WebCore::PathImpl&);
-    void recordFontUse(WebCore::Font&);
+    void recordFontUse(WebCore::FontBase&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);

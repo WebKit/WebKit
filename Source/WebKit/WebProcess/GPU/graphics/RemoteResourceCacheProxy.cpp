@@ -185,7 +185,7 @@ RemoteNativeImageReadReference RemoteResourceCacheProxy::recordSharedNativeImage
     return image.newReadReference();
 }
 
-void RemoteResourceCacheProxy::recordFontUse(Font& font)
+void RemoteResourceCacheProxy::recordFontUse(FontBase& font)
 {
     if (RefPtr platformData = font.platformData().customPlatformData())
         recordFontCustomPlatformDataUse(*platformData);

@@ -308,6 +308,8 @@ public:
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 
     WEBCORE_EXPORT virtual void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
+    // Currently needed in the base class because CoreText DrawGlyphsRecorder must use GraphicsContext instead of a DisplayList::Recorder.
+    WEBCORE_EXPORT virtual void drawGlyphsImmediate(const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
     WEBCORE_EXPORT void drawDisplayList(const DisplayList::DisplayList&);
     WEBCORE_EXPORT virtual void drawDisplayList(const DisplayList::DisplayList&, ControlFactory&);
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
@@ -387,8 +389,6 @@ protected:
     WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
-    // Currently needed in the base class because CoreText DrawGlyphsRecorder must use GraphicsContext instead of a DisplayList::Recorder.
-    WEBCORE_EXPORT virtual void drawGlyphsImmediate(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatRect&, bool printing, Color&);
 

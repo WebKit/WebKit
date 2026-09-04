@@ -76,7 +76,7 @@ AffineTransform NODELETE computeBaseOverallTextMatrix(const std::optional<Affine
     return result;
 }
 
-AffineTransform computeOverallTextMatrix(const Font& font)
+AffineTransform computeOverallTextMatrix(const FontBase& font)
 {
     std::optional<AffineTransform> syntheticOblique;
     auto& platformData = font.platformData();
@@ -106,7 +106,7 @@ AffineTransform NODELETE computeBaseVerticalTextMatrix(const AffineTransform& pr
     return rotateLeftTransform() * previousTextMatrix;
 }
 
-AffineTransform NODELETE computeVerticalTextMatrix(const Font& font, const AffineTransform& previousTextMatrix)
+AffineTransform NODELETE computeVerticalTextMatrix(const FontBase& font, const AffineTransform& previousTextMatrix)
 {
     ASSERT_UNUSED(font, font.platformData().orientation() == FontOrientation::Vertical);
     return computeBaseVerticalTextMatrix(previousTextMatrix);
@@ -265,7 +265,7 @@ static void fillVectorWithVerticalGlyphPositions(Vector<CGPoint, 256>& positions
     }
 }
 
-static void showGlyphsWithAdvances(const FloatPoint& point, const Font& font, CGContextRef context, std::span<const CGGlyph> glyphs, std::span<const CGSize> advances, const AffineTransform& textMatrix)
+static void showGlyphsWithAdvances(const FloatPoint& point, const FontBase& font, CGContextRef context, std::span<const CGGlyph> glyphs, std::span<const CGSize> advances, const AffineTransform& textMatrix)
 {
     if (glyphs.empty())
         return;
@@ -302,7 +302,7 @@ static void setCGFontRenderingMode(GraphicsContext& context)
     CGContextSetShouldSubpixelQuantizeFonts(cgContext.get(), doSubpixelQuantization);
 }
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
+void FontCascade::drawGlyphs(GraphicsContext& context, const FontBase& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
     const auto& platformData = font.platformData();
     if (!platformData.size())

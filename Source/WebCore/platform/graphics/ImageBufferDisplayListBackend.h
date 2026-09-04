@@ -54,9 +54,6 @@ private:
 
     RefPtr<SharedBuffer> sinkIntoPDFDocument() final;
 
-    void replaceFontsWithRebuildData() final;
-    void rebuildFonts() final;
-
     String debugDescription() const final;
 
     const Ref<WebCore::ControlFactory> m_controlFactory;

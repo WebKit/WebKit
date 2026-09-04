@@ -43,10 +43,6 @@
 #include "GlyphPage.h"
 #include "SharedBuffer.h"
 
-#if ENABLE(MATHML)
-#include "OpenTypeMathData.h"
-#endif
-
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -94,20 +90,13 @@ Ref<Font> Font::create(FontInternalAttributes&& attributes, FontPlatformData&& p
 }
 
 Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial interstitial, Visibility visibility, IsOrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
-    : m_platformData(platformData)
-    , m_attributes({ renderingResourceIdentifier, origin, interstitial, visibility, orientationFallback })
+    : FontBase(platformData, origin, interstitial, visibility, orientationFallback, renderingResourceIdentifier)
     , m_treatAsFixedPitch(false)
     , m_isBrokenIdeographFallback(false)
-    , m_hasVerticalGlyphs(false)
-    , m_isUsedInSystemFallbackFontCache(false)
-    , m_allowsAntialiasing(true)
-#if PLATFORM(IOS_FAMILY)
-    , m_shouldNotBeUsedForArabic(false)
-#endif
 {
-    platformInit();
     platformGlyphInit();
     platformCharWidthInit();
+    platformCharHeightInit();
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback()) {
         m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
@@ -115,13 +104,6 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     }
 #endif
     applyFontMetricsOverrides();
-}
-
-Font::Font(IsSystemFallbackFontPlaceholder isSystemFontFallbackPlaceholder)
-    : m_isSystemFontFallbackPlaceholder(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes)
-{
-    // This ctor is to be used only for representing a system font fallback placeholder (createSystemFallbackFontPlaceholder)
-    ASSERT(isSystemFontFallbackPlaceholder == IsSystemFallbackFontPlaceholder::Yes);
 }
 
 void Font::applyFontMetricsOverrides()
@@ -234,18 +216,6 @@ Font::~Font()
 {
     if (auto* cache = SystemFallbackFontCache::forCurrentThreadIfExists())
         cache->remove(this);
-}
-
-RenderingResourceIdentifier Font::renderingResourceIdentifier() const
-{
-    return m_attributes.ensureRenderingResourceIdentifier();
-}
-
-RenderingResourceIdentifier FontInternalAttributes::ensureRenderingResourceIdentifier() const
-{
-    if (!renderingResourceIdentifier)
-        renderingResourceIdentifier = RenderingResourceIdentifier::generate();
-    return *renderingResourceIdentifier;
 }
 
 static bool fillGlyphPage(GlyphPage& pageToFill, std::span<const char16_t> buffer, const Font& font)
@@ -596,20 +566,6 @@ String Font::description() const
         return "[custom font]"_s;
 
     return platformData().description();
-}
-#endif
-
-#if ENABLE(MATHML)
-const OpenTypeMathData* Font::mathData() const
-{
-    if (isInterstitial())
-        return nullptr;
-    if (!m_mathData) {
-        Ref mathData = OpenTypeMathData::create(m_platformData);
-        if (mathData->hasMathData())
-            m_mathData = WTF::move(mathData);
-    }
-    return m_mathData.get();
 }
 #endif
 
