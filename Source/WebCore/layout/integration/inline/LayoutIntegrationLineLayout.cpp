@@ -550,6 +550,9 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
     // (right in a right to left inline direction) a nesting list item's marker may go. An intruding float is the usual
     // reason for it to be non zero.
     auto lineStartInset = isLeftToRight ? lineBoxLogicalRect.x() : flow().contentBoxLogicalWidth() - lineBoxLogicalRect.maxX();
+    // text-indent is a margin on the line box, not content the marker hangs off.
+    ASSERT(m_inlineContentConstraints);
+    auto textIndent = Layout::InlineFormattingUtils::computedTextIndentForFirstLine(rootLayoutBox(), m_inlineContentConstraints->horizontal().logicalWidth);
     for (auto& marker : excludedMarkers) {
         // Vertical: baseline aligned, with the ascent the inline formatting context would have given it.
         auto markerAscent = [&]() -> float {
@@ -562,8 +565,8 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         // inline direction (the marker's start margin is what holds the gap, hence negative).
         auto markerLogicalLeft = [&]() -> float {
             if (isLeftToRight)
-                return lineBoxLogicalRect.x() + marker->marginStart();
-            return lineBoxLogicalRect.maxX() - marker->marginStart() - marker->logicalWidth();
+                return lineBoxLogicalRect.x() - textIndent + marker->marginStart();
+            return lineBoxLogicalRect.maxX() + textIndent - marker->marginStart() - marker->logicalWidth();
         }();
         auto topLeft = FloatPoint { markerLogicalLeft, lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent };
         marker->setExcludedPosition({ flow(), topLeft, lineStartInset });
