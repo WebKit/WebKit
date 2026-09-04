@@ -241,15 +241,33 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
             auto textRun = TextRun(text);
             float textWidth = font.width(textRun);
 
-            // FIXME: This looks very inefficient.
             if (maximumLineWidth && currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth) {
-                text = makeString(text, ellipsis);
-                while (currentLineWidth + textWidth + (labelPadding * 2) > maximumLineWidth && text.length() > 1) {
-                    // Remove the second from last character (the character before the ellipsis) and remeasure.
-                    text = makeStringByRemoving(text, text.length() - 2, 1);
-                    textRun = TextRun(text);
-                    textWidth = font.width(textRun);
+                // Binary search for the longest prefix of `text` that, with an ellipsis appended, fits within
+                // maximumLineWidth. Each candidate is remeasured before being accepted, so the result never
+                // overflows even if width isn't strictly monotonic in prefix length.
+                auto widthWithEllipsis = [&](unsigned prefixLength) {
+                    textRun = TextRun(makeString(StringView(text).left(prefixLength), ellipsis));
+                    return font.width(textRun);
+                };
+
+                unsigned bestPrefixLength = 0;
+                unsigned low = 0;
+                unsigned high = text.length();
+                while (low <= high) {
+                    unsigned mid = low + (high - low) / 2;
+                    if (currentLineWidth + widthWithEllipsis(mid) + (labelPadding * 2) <= maximumLineWidth) {
+                        bestPrefixLength = mid;
+                        low = mid + 1;
+                    } else {
+                        if (!mid)
+                            break;
+                        high = mid - 1;
+                    }
                 }
+
+                text = makeString(StringView(text).left(bestPrefixLength), ellipsis);
+                textRun = TextRun(text);
+                textWidth = font.width(textRun);
             }
 
             computedContentRuns.append({ textRun, content.textColor, content.decoration, startsNewLine, textWidth });
