@@ -32,6 +32,7 @@
 #endif
 
 class WPEQtViewLoadRequest;
+class WPEQtViewContextMenuRequest;
 class WPEQtViewPrivate;
 
 class QT_WPE_EXPORT WPEQtView : public QQuickItem {
@@ -83,6 +84,7 @@ Q_SIGNALS:
     void titleChanged();
     void loadingChanged(WPEQtViewLoadRequest* loadRequest);
     void loadProgressChanged();
+    void contextMenuRequested(WPEQtViewContextMenuRequest);
 
 protected:
     bool errorOccured() const;
@@ -123,6 +125,7 @@ private:
     static void notifyLoadProgressCallback(WPEQtView*);
     static void notifyLoadChangedCallback(WebKitWebView*, WebKitLoadEvent, WPEQtView*);
     static void notifyLoadFailedCallback(WebKitWebView*, WebKitLoadEvent, const gchar* failingURI, GError*, WPEQtView*);
+    static gboolean notifyContextMenuCallback(WebKitWebView*, WebKitContextMenu*, WebKitHitTestResult*, WPEQtView*);
 
     Q_DECLARE_PRIVATE(WPEQtView)
     QScopedPointer<WPEQtViewPrivate> d_ptr;
