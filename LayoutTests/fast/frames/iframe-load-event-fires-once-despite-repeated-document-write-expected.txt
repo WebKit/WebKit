@@ -1,0 +1,6 @@
+Tests that an iframe's "load" event cannot be made to refire by document.write().
+
+
+
+PASS document.write()-ing an <audio> element from an iframe's onload handler must not cause the owner element's load event to refire on its own
+
