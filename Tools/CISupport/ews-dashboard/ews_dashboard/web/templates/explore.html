@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+{% from 'parts.html' import window_chooser, suite_chooser, queue_dropdown, staleness, rate %}
+
+{% block title %}EWS flake detection — explore{% endblock %}
+
+{% block content %}
+{% set selected_build = detail.build['build_id'] if detail else None %}
+{# Everything a link has to keep hold of to leave the page reading as it did: the builds filter and
+   the build open beside it. #}
+{# The default two noise states hold no `state` param of their own, so a link built from them stays
+   a default link and the pane stays quiet after it is followed; an explicit "every state" has to
+   spell itself out again as {{ any_state }}, since an empty list here reads as the default rather
+   than as a reader's own choice. #}
+{% set held_state = () if build_filter.defaulted else (build_filter.states or (any_state,)) %}
+{% set filter_args = {'state': held_state, 'min_shown': build_filter.min_shown, 'max_shown': build_filter.max_shown, 'build': selected_build, 'test': test_filter, 'group': group, 'version': version, 'builder': builder} %}
+{% set held_args = filter_args %}
+{# Every form on this page carries the state it is not editing, since a GET form sends its own fields
+   and nothing else: a filter submitted from the builds pane would otherwise clear the detail pane's. #}
+{% macro held_fields(include_queue=True) %}
+<input type="hidden" name="days" value="{{ window.days }}">
+{%- if suite %}<input type="hidden" name="suite" value="{{ suite }}">{% endif %}
+{%- if include_queue %}
+{%- for chosen in group %}<input type="hidden" name="group" value="{{ chosen }}">{% endfor %}
+{%- for chosen in version %}<input type="hidden" name="version" value="{{ chosen }}">{% endfor %}
+{%- for chosen in builder %}<input type="hidden" name="builder" value="{{ chosen }}">{% endfor %}
+{%- endif %}
+{%- endmacro %}
+{# The queue picker's own form is not one of the builds-pane's or the detail-pane's own filter
+   forms, so unlike them it never adds the build filter's fields itself: without these it would
+   submit and silently drop whatever state/min_shown/max_shown/build/test the reader had set. Its
+   `include_queue` passes straight through to `held_fields()`: the picker's own checkboxes are the
+   queue selection, so its form must be the one caller that leaves those three fields out. #}
+{% macro queue_held_fields(include_queue=True) %}
+{{ held_fields(include_queue) }}
+{%- for chosen in held_state %}<input type="hidden" name="state" value="{{ chosen }}">{% endfor %}
+{%- if build_filter.min_shown is not none %}<input type="hidden" name="min_shown" value="{{ build_filter.min_shown }}">{% endif %}
+{%- if build_filter.max_shown is not none %}<input type="hidden" name="max_shown" value="{{ build_filter.max_shown }}">{% endif %}
+{%- if selected_build %}<input type="hidden" name="build" value="{{ selected_build }}">{% endif %}
+{%- if test_filter %}<input type="hidden" name="test" value="{{ test_filter }}">{% endif %}
+{%- endmacro %}
+{{ staleness(freshness, freshness_dismissed) }}
+
+<div class="row headline">
+  <div class="col-4">
+    <span class="text large">Explore</span>
+    <span class="text tiny">{% if suite %}{{ suite }}, {% endif %}{{ queue_summary }}, last {{ window.days }} days</span>
+  </div>
+  <div class="col-8">
+    <div class="chooser groups">
+      {{ queue_dropdown('explore', queue_tree, group, version, builder, queue_summary, queue_held_fields(include_queue=False)) }}
+      {{ suite_chooser('explore', window, suite_choices, suite, filter_args=filter_args) }}
+      {{ window_chooser('explore', window, window_choices, suite=suite, filter_args=filter_args) }}
+    </div>
+  </div>
+</div>
+
+<div class="row metrics">
+  <div class="col-4 metric">
+    <div class="text tiny label">Builds that blamed an author for noise</div>
+    {{ rate(counts.author_fp_rate_pct, counts.partial_fp + counts.false_red, counts.classifiable, 'failing builds') }}
+  </div>
+  <div class="col-4 metric">
+    <div class="text tiny label">Author-visible failures already failing on main</div>
+    {{ rate(counts.blame_noise_rate_pct, counts.surfaced_pre_existing, counts.surfaced_total, 'tests shown') }}
+  </div>
+  <div class="col-4 metric">
+    <div class="text tiny label">Not classified yet</div>
+    <span class="value">{{ counts.unclassified | count }}</span>
+    <span class="text tiny denominator">failing builds awaiting a refresh</span>
+  </div>
+</div>
+
+<div class="panes">
+  <div class="pane builds">
+    <div class="head">
+      <span class="name">Failing builds</span>
+      {% if builds_matched is not none %}
+      {% set shown = builds | length %}
+      <span class="tally">{{ shown }} shown of {{ builds_matched | count }} matching</span>
+      {% else %}
+      <span class="tally">{{ builds | length }}{% if builds_total > builds | length %} of {{ builds_total | count }}{% endif %}</span>
+      {% endif %}
+      {# A details rather than a menu, and a GET form rather than a handler: this app needs no
+         JavaScript, so the dropdown is markup the browser opens and a filtered pane is a URL. #}
+      {%- set builds_filter_active = build_filter.narrowing and not build_filter.defaulted %}
+      {%- set builds_filter_count = (1 if build_filter.states and not build_filter.defaulted else 0) + (1 if build_filter.min_shown is not none else 0) + (1 if build_filter.max_shown is not none else 0) %}
+      <details class="builds-filter"{{ ' open' if builds_filter_active }}>
+        <summary class="{{ 'active' if builds_filter_active }}" aria-label="Filter">⇅{% if builds_filter_active %}{{ builds_filter_count }}{% endif %}</summary>
+        <form class="filter-form" method="get" action="{{ url_for('explore') }}">
+          {{ held_fields() }}
+          {% if detail %}<input type="hidden" name="build" value="{{ detail.build['build_id'] }}">{% endif %}
+          {% if test_filter %}<input type="hidden" name="test" value="{{ test_filter }}">{% endif %}
+          <span class="states">
+            {% for choice in state_choices %}
+            <label><input type="checkbox" name="state" value="{{ choice }}"{{ ' checked' if choice in build_filter.states }}>{{ choice | state }}</label>
+            {% endfor %}
+          </span>
+          <span class="range">
+            <input type="number" name="min_shown" min="0" value="{{ build_filter.min_shown if build_filter.min_shown is not none }}" placeholder="min" aria-label="Fewest failures shown">
+            <span class="text tiny">to</span>
+            <input type="number" name="max_shown" min="0" value="{{ build_filter.max_shown if build_filter.max_shown is not none }}" placeholder="max" aria-label="Most failures shown">
+            <span class="text tiny">shown</span>
+          </span>
+          <span class="actions">
+            <button type="submit">Filter</button>
+            <a class="badge{{ ' active' if not build_filter.states }}" href="{{ url_for('explore', days=window.days, suite=suite, **dict(filter_args, state=any_state)) }}">all states</a>
+            {% if build_filter.narrowing and not build_filter.defaulted %}<a class="badge" href="{{ url_for('explore', days=window.days, suite=suite, **dict(filter_args, state=None, min_shown=None, max_shown=None)) }}">clear</a>{% endif %}
+          </span>
+        </form>
+      </details>
+    </div>
+    <div class="body">
+      {% if not builds %}
+      <div class="placeholder">{% if build_filter.defaulted %}No {{ build_filter.states | map('state') | join(' or ') }} builds in this window.{% elif build_filter.narrowing %}No failing builds in this window match this filter.{% else %}No failing builds in this window.{% endif %}</div>
+      {% endif %}
+      {% for summary in builds %}
+      <a class="entry{{ ' selected' if detail and detail.build['build_id'] == summary.build['build_id'] }}{{ ' noise' if summary.state in blames_noise }}" href="{{ url_for('explore', days=window.days, suite=suite, **dict(held_args, build=summary.build['build_id'])) }}">
+        <span class="line">
+          <span class="label">{{ summary.build['builder'] }} #{{ summary.build['build_number'] }}</span>
+          <span class="when">{{ summary.build['started_at'] | moment }}</span>
+        </span>
+        <span class="sub">
+          <span class="state {{ summary.state | state_class }}">{{ summary.state | state }}</span>
+          {% if summary.surfaced_total %}{{ summary.surfaced_total | count }} shown{% endif %}
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="pane detail">
+    {% if not detail %}
+    <div class="head"><span class="name">Build</span></div>
+    <div class="placeholder">Pick a build to see the tests it showed its author, and which of them were already failing on main.</div>
+    {% else %}
+    <div class="breadcrumb">
+      <a href="{{ url_for('explore', days=window.days, suite=suite, **dict(filter_args, group=(), version=(), builder=())) }}">all queues</a>
+      <span class="separator">/</span>
+      <a href="{{ url_for('explore', days=window.days, suite=suite, **dict(filter_args, group=(), version=(), builder=(detail.build['builder'],))) }}">{{ detail.build['builder'] }}</a>
+      <span class="separator">/</span>
+      <a href="{{ links.build(detail.build['builder_id'], detail.build['build_number']) }}">#{{ detail.build['build_number'] }}</a>
+      <span class="state {{ detail.state | state_class }}">{{ detail.state | state }}</span>
+    </div>
+    <div class="kv">
+      <div>
+        <span class="k">Pull request</span>
+        <span class="v">{% if detail.build['pr_id'] %}<a href="{{ links.pull_request(detail.build['pr_id']) }}">PR {{ detail.build['pr_id'] }}</a>{% else %}—{% endif %}</span>
+      </div>
+      <div>
+        <span class="k">Rebased onto</span>
+        <span class="v">{{ detail.build['identifier'] or '—' }}</span>
+      </div>
+      <div>
+        <span class="k">Configuration</span>
+        <span class="v">{{ detail.build['platform'] or '—' }} {{ detail.build['style'] or '' }} {{ detail.build['flavor'] or '' }}</span>
+      </div>
+      <div>
+        <span class="k">Suite</span>
+        <span class="v">{{ detail.build['suite'] }}</span>
+      </div>
+      <div>
+        <span class="k">Started</span>
+        <span class="v">{{ detail.build['started_at'] | moment }}</span>
+      </div>
+      <div>
+        <span class="k">Shown to author</span>
+        <span class="v">{{ detail.tests | length | count }} tests</span>
+      </div>
+    </div>
+    {% if detail.undetermined_reason %}
+    <p class="note">Nothing here could be checked against main: {{ reason_descriptions[detail.undetermined_reason] }}.</p>
+    {% elif not detail.classification %}
+    <p class="note">No refresh has classified this build yet, so nothing below has been looked up.</p>
+    {% endif %}
+    {% if detail.tests %}
+    <form class="filter-form" method="get" action="{{ url_for('explore') }}">
+      {{ held_fields() }}
+      <input type="hidden" name="build" value="{{ detail.build['build_id'] }}">
+      {% for chosen in held_state %}<input type="hidden" name="state" value="{{ chosen }}">{% endfor %}
+      {% if build_filter.min_shown is not none %}<input type="hidden" name="min_shown" value="{{ build_filter.min_shown }}">{% endif %}
+      {% if build_filter.max_shown is not none %}<input type="hidden" name="max_shown" value="{{ build_filter.max_shown }}">{% endif %}
+      <input type="search" name="test" value="{{ test_filter or '' }}" placeholder="filter these tests by name" aria-label="Filter tests by name">
+      <button type="submit">Filter</button>
+      {% if test_filter %}<a class="badge" href="{{ url_for('explore', days=window.days, suite=suite, **dict(held_args, test=None)) }}">clear</a>{% endif %}
+    </form>
+    {% endif %}
+    <div class="body">
+      {% if not detail.tests %}
+      <div class="placeholder">This build showed its author no new failures.</div>
+      {% elif not detail.matching %}
+      <div class="placeholder">None of the {{ detail.tests | length | count }} tests this build showed its author match “{{ test_filter }}”.</div>
+      {% else %}
+      <table class="table full-width">
+        <thead>
+          <tr><th>Test</th><th>On main</th><th class="numeric">Passes on main</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          {% for test in detail.matching %}
+          <tr>
+            <td><a href="{{ links.test_history(detail.configuration, test.name) }}">{{ test.name }}</a></td>
+            <td><span class="state {{ test.verdict | state_class }}">{{ test.verdict | state }}</span></td>
+            <td class="numeric">{{ test.pass_rate | percent }}</td>
+            <td class="text tiny">{{ verdict_descriptions[test.verdict] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="text tiny caption">Only a layout-test run that failed on a pull request against main asks about flakiness, so a queue at zero may simply have had no failing builds, and an api-tests queue never asks at all.</div>
+
+<details class="section legend-pane" open>
+  <summary class="header"><span class="title">Legend</span></summary>
+  <div class="content">
+    <div class="legend-group">
+      <div class="legend-group-title text tiny">Build state — what a whole build showed its author</div>
+      <table class="table full-width">
+        <thead><tr><th>State</th><th>What it means</th><th class="numeric">Builds</th></tr></thead>
+        <tbody>
+          {% for choice in state_choices %}
+          <tr>
+            <td>
+              <a class="legend-entry" href="{{ url_for('explore', days=window.days, suite=suite, **dict(filter_args, state=choice)) }}">
+                <span class="state {{ choice | state_class }}">{{ choice | state }}</span>
+              </a>
+            </td>
+            <td class="text tiny">{{ bucket_descriptions[choice] }}</td>
+            <td class="numeric">{{ state_counts[choice] | count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="legend-group">
+      <div class="legend-group-title text tiny">Test verdict — why one surfaced test landed where it did</div>
+      <table class="table full-width">
+        <thead><tr><th>Verdict</th><th>What it means</th></tr></thead>
+        <tbody>
+          {% for verdict in verdict_choices %}
+          <tr>
+            <td><span class="state {{ verdict | state_class }}">{{ verdict | state }}</span></td>
+            <td class="text tiny">{{ verdict_descriptions[verdict] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</details>
+
+{% endblock %}
