@@ -29,22 +29,22 @@ from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.test_context import Expectations
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class SuiteContextTest(WaitForDockerTestCase):
+class SuiteContextTest(CassandraTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, test_results=None):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext, test_results=None):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_results(self.model, test_results=test_results)
             MockModelFactory.process_results(self.model)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_all(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -55,7 +55,7 @@ class SuiteContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_by_commit(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -69,7 +69,7 @@ class SuiteContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_by_time(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -82,7 +82,7 @@ class SuiteContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_all_successful(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -117,7 +117,7 @@ class SuiteContextTest(WaitForDockerTestCase):
             expected=Expectations.TIMEOUT,
             time=1.2,
         )
-        self.init_database(redis=redis, cassandra=cassandra, test_results=test_results)
+        self.reset_database(redis=redis, cassandra=cassandra, test_results=test_results)
 
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
@@ -153,7 +153,7 @@ class SuiteContextTest(WaitForDockerTestCase):
             expected=Expectations.FAIL,
             time=1.2,
         )
-        self.init_database(redis=redis, cassandra=cassandra, test_results=test_results)
+        self.reset_database(redis=redis, cassandra=cassandra, test_results=test_results)
 
         results = self.model.suite_context.find_by_start_time(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],

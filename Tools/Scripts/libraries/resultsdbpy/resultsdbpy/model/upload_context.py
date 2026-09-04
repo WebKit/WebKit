@@ -284,15 +284,13 @@ class UploadContext(object):
                 result.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
                     self.UploadsByConfigurationLegacy.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
-                    uuid__gte=CommitContext.convert_to_uuid(begin),
-                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()), limit=limit,
+                    **CommitContext.uuid_range_kwargs(begin, end), limit=limit,
                 ).items()})
 
                 result.update({config: [value.unpack() for value in values] for config, values in self.configuration_context.select_from_table_with_configurations(
                     self.UploadsByConfiguration.__table_name__, configurations=[configuration], recent=recent,
                     suite=suite, sdk=configuration.sdk, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY,
-                    uuid__gte=CommitContext.convert_to_uuid(begin),
-                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()), limit=limit,
+                    **CommitContext.uuid_range_kwargs(begin, end), limit=limit,
                 ).items()})
             return result
 

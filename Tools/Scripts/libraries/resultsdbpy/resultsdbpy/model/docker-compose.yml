@@ -31,6 +31,7 @@ services:
       - "127.0.0.1:7199:7199"
     volumes:
       - cassandradata:/data/cassandra
+    command: ["bash", "-c", "sed -i 's/sasi_indexes_enabled: false/sasi_indexes_enabled: true/' /etc/cassandra/cassandra.yaml && docker-entrypoint.sh cassandra -f"]
 
   redis:
     image: redis

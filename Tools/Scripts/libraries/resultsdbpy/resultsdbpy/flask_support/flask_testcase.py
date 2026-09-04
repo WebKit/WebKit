@@ -29,10 +29,11 @@ from flask import Flask
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from resultsdbpy.flask_support.flask_test_context import FlaskTestContext
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase
 from webkitflaskpy import Response
 
 
-class FlaskTestCase(unittest.TestCase):
+class FlaskTestCase(CassandraTestCase):
     URL = f'http://localhost:{FlaskTestContext.PORT}'
 
     _driver = None

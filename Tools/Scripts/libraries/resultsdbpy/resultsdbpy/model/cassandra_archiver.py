@@ -29,7 +29,7 @@ from resultsdbpy.model.archiver import Archiver
 
 class CassandraArchiver(Archiver):
     MAX_ARCHIVE = 500 * 1024 * 1024  # Archives should be smaller than 500 MB
-    CHUNK_SIZE = 10 * 1024 * 1024    # Cassandra doesn't do well with data blobs of more than 10 MB
+    CHUNK_SIZE = 5 * 1024 * 1024     # Blobs are hex-encoded in CQL, so 5 MB becomes ~10 MB on the wire (under Cassandra's 16 MB frame limit)
 
     # According to https://cwiki.apache.org/confluence/display/CASSANDRA2/CassandraLimitations, we should shard
     # large data blobs.

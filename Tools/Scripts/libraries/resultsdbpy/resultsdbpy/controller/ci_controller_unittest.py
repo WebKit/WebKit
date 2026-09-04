@@ -42,7 +42,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with URLFactoryTest.mock(), MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             model.ci_context.add_url_factory(BuildbotURLFactory(master='build.webkit.org', redis=model.redis))
             app.register_blueprint(APIRoutes(model))
@@ -117,7 +117,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_all_builds_list_by_time(self, client, **kwargs):
-        response = client.get(self.URL + f'/api/urls?after_time={time.time() - 2}')
+        response = client.get(self.URL + f'/api/urls?after_time={time.time() - 120}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 4)
         for data in response.json():

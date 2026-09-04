@@ -26,15 +26,15 @@ from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class FailureContextTest(WaitForDockerTestCase):
+class FailureContextTest(CassandraTestCase):
     KEYSPACE = 'failure_context_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_results(self.model, test_results=dict(
                 details=dict(link='dummy-link'),
@@ -54,7 +54,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_failures_collapsed(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.failure_context.failures_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True, unexpected=False,
@@ -65,7 +65,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_unexpected_failures_collapsed(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.failure_context.failures_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True,
@@ -76,7 +76,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_failures(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.failure_context.failures_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True, collapsed=False, unexpected=False,
@@ -93,7 +93,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_unexpected_failures(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.failure_context.failures_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True, collapsed=False
@@ -110,7 +110,7 @@ class FailureContextTest(WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_no_failures(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             MockModelFactory.add_mock_results(self.model)
             MockModelFactory.process_results(self.model)
@@ -122,7 +122,7 @@ class FailureContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_no_test_runs(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         results = self.model.failure_context.failures_by_commit(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True, end=0,

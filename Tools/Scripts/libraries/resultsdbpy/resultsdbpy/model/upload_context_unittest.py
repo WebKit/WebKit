@@ -27,15 +27,15 @@ from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.upload_context import UploadContext
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 
-class UploadContextTest(WaitForDockerTestCase):
+class UploadContextTest(CassandraTestCase):
     KEYSPACE = 'upload_context_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext, async_processing=False):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(
                 redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
                 async_processing=async_processing,
@@ -48,7 +48,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_suite_list(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         MockModelFactory.add_mock_results(self.model)
         for suites in self.model.upload_context.find_suites(configurations=[Configuration()], recent=True).values():
@@ -66,7 +66,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_result_retrieval(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='Mac')], suite='layout-tests', recent=True)
@@ -79,7 +79,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_result_retrieval_limit(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='Mac')], suite='layout-tests', limit=2, recent=True)
@@ -87,7 +87,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_result_retrieval_branch(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', is_simulator=True)], suite='layout-tests', branch='branch-a', recent=True)
@@ -100,7 +100,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_result_retrieval_by_sdk(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         self.assertEqual(0, len(self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', sdk='15A432')], suite='layout-tests', recent=True)))
@@ -114,7 +114,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_sdk_differentiation(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
@@ -132,7 +132,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_callback(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
         with MockModelFactory.safari(), MockModelFactory.webkit():
@@ -151,7 +151,7 @@ class UploadContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_async_callback(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        self.reset_database(redis=redis, cassandra=cassandra, async_processing=True)
         MockModelFactory.add_mock_results(self.model)
 
         with MockModelFactory.safari(), MockModelFactory.webkit():

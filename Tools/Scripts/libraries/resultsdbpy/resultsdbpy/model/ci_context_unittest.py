@@ -30,7 +30,7 @@ from resultsdbpy.model.ci_context import BuildbotURLFactory
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
-from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
+from resultsdbpy.model.wait_for_docker_test_case import CassandraTestCase, WaitForDockerTestCase
 
 from webkitcorepy import mocks
 
@@ -243,12 +243,12 @@ class URLFactoryTest(WaitForDockerTestCase):
             self.assertEqual('https://build.webkit.org/#/workers/1', factory.url(build_number=1, worker_name='builder1', should_fetch=True))
 
 
-class CIContextTest(WaitForDockerTestCase):
+class CIContextTest(CassandraTestCase):
     KEYSPACE = 'suite_context_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.webkit(), MockModelFactory.safari(), URLFactoryTest.mock():
-            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
             self.model.ci_context.add_url_factory(BuildbotURLFactory(master='build.webkit.org', redis=self.model.redis))
 
@@ -281,19 +281,19 @@ class CIContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_builder_for_single_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         urls = self.model.ci_context.find_urls_by_queue(configurations=[Configuration(version_name='Mojave', flavor='wk2')], suite='layout-tests')
         self.assertEqual(sorted(urls.values()), ['https://build.webkit.org/#/builders/2'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_builder_for_multiple_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         urls = self.model.ci_context.find_urls_by_queue(configurations=[Configuration(version_name='Catalina')], suite='layout-tests')
         self.assertEqual(sorted(urls.values()), ['https://build.webkit.org/#/builders/5', 'https://build.webkit.org/#/builders/6'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_url_for_commit(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         urls = self.model.ci_context.find_urls_by_commit(
             configurations=[Configuration(version_name='Mojave', flavor='wk2')],
             suite='layout-tests',
@@ -307,7 +307,7 @@ class CIContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_by_time(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         urls = self.model.ci_context.find_urls_by_commit(
             configurations=[Configuration(version_name='Catalina')],
             suite='layout-tests',
@@ -319,7 +319,7 @@ class CIContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_find_no_tests_by_time(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         urls = self.model.ci_context.find_urls_by_commit(
             configurations=[Configuration(version_name='Mojave')],
             suite='layout-tests',

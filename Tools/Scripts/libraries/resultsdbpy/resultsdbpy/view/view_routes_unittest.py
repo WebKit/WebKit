@@ -55,7 +55,7 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             redis_instance = redis()
 
             model = Model(

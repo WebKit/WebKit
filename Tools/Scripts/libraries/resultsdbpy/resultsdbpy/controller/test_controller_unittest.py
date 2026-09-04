@@ -39,7 +39,7 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @classmethod
     def setup_webserver(cls, app, redis=StrictRedis, cassandra=CassandraContext):
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
+            cassandra.truncate_keyspace_tables(keyspace=cls.KEYSPACE)
             model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True))
             app.register_blueprint(APIRoutes(model))
 
@@ -173,6 +173,21 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
             'timeout': 0,
             'warning': 0,
         })
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_branch(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?branch=main').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_repository_id(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?repository_id=webkit').status_code)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_list_rejects_recent(self, client, **kwargs):
+        self.assertEqual(400, client.get(self.URL + '/api/layout-tests/tests?recent=False').status_code)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()

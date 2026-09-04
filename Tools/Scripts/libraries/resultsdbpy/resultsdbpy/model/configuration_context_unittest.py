@@ -62,7 +62,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone Xs', style='Asan'),
     ]
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def reset_database(self, redis=StrictRedis, cassandra=CassandraContext):
         cassandra.drop_keyspace(keyspace=self.KEYSPACE)
         self.database = ConfigurationContext(
             redis=redis(),
@@ -82,7 +82,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_invalid_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         with self.assertRaises(TypeError):
             self.database.register_configuration('invalid object')
@@ -175,7 +175,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_no_style_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
 
         self.database.register_configuration(Configuration(
             platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64',
@@ -183,7 +183,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_platform(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(platform='Mac', style='Debug')
@@ -194,7 +194,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_platform_with_flavor(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(platform='Mac', style='Debug', flavor='wk1')
@@ -205,7 +205,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_platform_and_version(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(platform='Mac', version='10.13', style='Release')
@@ -216,7 +216,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_model(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
         configuration_to_search_for = Configuration(model='iPhone 8')
         matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
@@ -226,7 +226,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_configuration_by_architecture(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(architecture='x86_64', style='Release')
@@ -237,7 +237,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_recent_configurations(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         recent_configurations = self.database.search_for_recent_configuration()
@@ -245,7 +245,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_expired_configurations(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         recent_configurations = self.database.search_for_configuration()
@@ -253,7 +253,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_recent_configurations_constrained(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(architecture='arm64', style='Release')
@@ -263,7 +263,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_recent_configurations_constrained_by_version(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         configuration_to_search_for = Configuration(version='12', is_simulator=True)
@@ -274,7 +274,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_repopulate_recent(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         self.database.redis.flushdb()
@@ -284,7 +284,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_partition_by_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         class ExampleModel(ClusteredByConfiguration):
@@ -307,7 +307,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_partition_by_partial_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
-        self.init_database(redis=redis, cassandra=cassandra)
+        self.reset_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
         class ExampleModel(ClusteredByConfiguration):
