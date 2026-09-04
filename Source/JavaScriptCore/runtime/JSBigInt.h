@@ -543,6 +543,12 @@ private:
     template<size_t N>
     static std::span<Digit, N * 2> squareCombaFixed(std::span<const Digit, N> x, std::span<Digit, N * 2> result);
     static std::span<Digit> multiplyDigitsInto(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void multiplyZeroPadded(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static std::span<Digit> multiplyKaratsuba(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result);
+    static void karatsubaStart(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t k);
+    static void karatsubaChunk(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch);
+    static void karatsubaMain(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t n);
+    static void karatsubaAbsoluteDifference(std::span<Digit> result, std::span<const Digit> x, std::span<const Digit> y, bool& negative);
 
     static std::span<Digit> NODELETE divideSingle(std::span<Digit> q, Digit& remainder, std::span<const Digit>, Digit);
     static std::tuple<std::span<Digit>, std::span<Digit>> divideSchoolbook(std::span<Digit> q, std::span<Digit> r, std::span<const Digit>, std::span<const Digit>);
@@ -598,6 +604,8 @@ private:
 
     static Digit NODELETE inplaceAdd(std::span<Digit> z, std::span<const Digit> x);
     static Digit NODELETE inplaceSub(std::span<Digit> z, std::span<const Digit> x);
+    static Digit NODELETE inplaceAddAndPropagate(std::span<Digit> z, std::span<const Digit> x);
+    static Digit NODELETE inplaceSubAndPropagate(std::span<Digit> z, std::span<const Digit> x);
 
     static constexpr unsigned maxCachedModDivisorSize = 32; // 2048-bit divisors on 64-bit
     static constexpr unsigned maxFixedCachedModDivisorSize = 4;

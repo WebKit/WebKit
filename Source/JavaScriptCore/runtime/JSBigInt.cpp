@@ -1191,6 +1191,180 @@ ALWAYS_INLINE void JSBigInt::multiplySpecialLowFixed(std::span<const Digit, XSiz
     }
 }
 
+// Karatsuba multiplication, ported from V8 [1], which is in turn based on Go's math/big [2].
+//
+// [1]: https://source.chromium.org/chromium/chromium/src/+/main:v8/src/bigint/mul-karatsuba.cc
+// [2]: https://go.dev/src/math/big/nat.go
+static constexpr size_t karatsubaThreshold = 44;
+
+static size_t karatsubaRoundUpLength(size_t length)
+{
+    if (length <= 36)
+        return roundUpToMultipleOf<2>(length);
+    unsigned shift = std::bit_width(length) - 5;
+    if ((length >> shift) >= 0x18)
+        shift++;
+    size_t additive = (static_cast<size_t>(1) << shift) - 1;
+    if (shift >= 2 && (length & additive) < (static_cast<size_t>(1) << (shift - 2)))
+        return length;
+    return ((length + additive) >> shift) << shift;
+}
+
+static size_t karatsubaLength(size_t n)
+{
+    n = karatsubaRoundUpLength(n);
+    unsigned i = 0;
+    while (n > karatsubaThreshold) {
+        n >>= 1;
+        i++;
+    }
+    return n << i;
+}
+
+template<typename DigitType>
+static std::span<DigitType> clampedSubspan(std::span<DigitType> x, size_t offset, size_t length)
+{
+    if (offset >= x.size())
+        return { };
+    return x.subspan(offset, std::min(length, x.size() - offset));
+}
+
+JSBigInt::Digit JSBigInt::inplaceAddAndPropagate(std::span<Digit> z, std::span<const Digit> x)
+{
+    x = normalize(x);
+    Digit carry = inplaceAdd(z, x);
+    for (size_t i = x.size(); i < z.size() && carry; i++) {
+        Digit newCarry = 0;
+        z[i] = digitAdd(z[i], carry, newCarry);
+        carry = newCarry;
+    }
+    return carry;
+}
+
+JSBigInt::Digit JSBigInt::inplaceSubAndPropagate(std::span<Digit> z, std::span<const Digit> x)
+{
+    x = normalize(x);
+    Digit borrow = inplaceSub(z, x);
+    for (size_t i = x.size(); i < z.size() && borrow; i++) {
+        Digit newBorrow = 0;
+        z[i] = digitSub(z[i], borrow, newBorrow);
+        borrow = newBorrow;
+    }
+    return borrow;
+}
+
+void JSBigInt::karatsubaAbsoluteDifference(std::span<Digit> result, std::span<const Digit> x, std::span<const Digit> y, bool& negative)
+{
+    x = normalize(x);
+    y = normalize(y);
+    if (compareDigits(x, y) == ComparisonResult::LessThan) {
+        negative = !negative;
+        std::swap(x, y);
+    }
+    auto difference = subSchoolbook(x, y, result);
+    zeroSpan(result.subspan(difference.size()));
+}
+
+void JSBigInt::multiplyZeroPadded(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
+{
+    auto product = multiplyDigits(x, y, result);
+    zeroSpan(result.subspan(product.size()));
+}
+
+void JSBigInt::karatsubaMain(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t n)
+{
+    if (n < karatsubaThreshold) {
+        multiplyZeroPadded(x, y, z.first(2 * n));
+        return;
+    }
+    ASSERT(scratch.size() >= 4 * n);
+    ASSERT(!(n & 1));
+    size_t n2 = n >> 1;
+    auto x0 = clampedSubspan(x, 0, n2);
+    auto x1 = clampedSubspan(x, n2, n2);
+    auto y0 = clampedSubspan(y, 0, n2);
+    auto y1 = clampedSubspan(y, n2, n2);
+    auto scratchForRecursion = scratch.subspan(2 * n, 2 * n);
+
+    auto p0 = scratch.first(n);
+    karatsubaMain(p0, x0, y0, scratchForRecursion, n2);
+    memcpySpan(z.first(n), p0);
+
+    auto p2 = scratch.subspan(n, n);
+    karatsubaMain(p2, x1, y1, scratchForRecursion, n2);
+    auto z2 = clampedSubspan(z, n, n);
+    memcpySpan(z2, p2.first(z2.size()));
+    ASSERT(normalize(p2).size() <= z2.size());
+
+    Digit overflow = inplaceAddAndPropagate(z.subspan(n2), p0);
+    overflow += inplaceAddAndPropagate(z.subspan(n2), p2);
+
+    auto xDifference = scratch.first(n2);
+    auto yDifference = scratch.subspan(n2, n2);
+    bool negative = false;
+    karatsubaAbsoluteDifference(xDifference, x1, x0, negative);
+    karatsubaAbsoluteDifference(yDifference, y0, y1, negative);
+    auto p1 = scratch.subspan(n, n);
+    karatsubaMain(p1, xDifference, yDifference, scratchForRecursion, n2);
+    if (negative)
+        overflow -= inplaceSubAndPropagate(z.subspan(n2), p1);
+    else
+        overflow += inplaceAddAndPropagate(z.subspan(n2), p1);
+    ASSERT_UNUSED(overflow, !overflow);
+}
+
+void JSBigInt::karatsubaChunk(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch)
+{
+    x = normalize(x);
+    y = normalize(y);
+    if (x.size() < y.size())
+        std::swap(x, y);
+    if (y.size() < karatsubaThreshold) {
+        multiplyZeroPadded(x, y, z);
+        return;
+    }
+    karatsubaStart(z, x, y, scratch, karatsubaLength(y.size()));
+}
+
+void JSBigInt::karatsubaStart(std::span<Digit> z, std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> scratch, size_t k)
+{
+    karatsubaMain(z, x, y, scratch, k);
+    if (z.size() > 2 * k)
+        zeroSpan(z.subspan(2 * k));
+    if (k >= x.size())
+        return;
+
+    Vector<Digit> chunkProduct(2 * k);
+    auto product = chunkProduct.mutableSpan();
+    auto x0 = x.first(k);
+    auto y0 = clampedSubspan(y, 0, k);
+    auto y1 = clampedSubspan(y, k, y.size());
+    if (!y1.empty()) {
+        karatsubaChunk(product, x0, y1, scratch);
+        inplaceAddAndPropagate(z.subspan(k), product);
+    }
+    for (size_t i = k; i < x.size(); i += k) {
+        auto xi = clampedSubspan(x, i, k);
+        karatsubaChunk(product, xi, y0, scratch);
+        inplaceAddAndPropagate(z.subspan(i), product);
+        if (!y1.empty()) {
+            karatsubaChunk(product, xi, y1, scratch);
+            inplaceAddAndPropagate(z.subspan(i + k), product);
+        }
+    }
+}
+
+std::span<JSBigInt::Digit> JSBigInt::multiplyKaratsuba(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
+{
+    ASSERT(x.size() >= y.size());
+    RELEASE_ASSERT(result.size() >= x.size() + y.size());
+    size_t k = karatsubaLength(y.size());
+    Vector<Digit> scratch(4 * k);
+    auto z = result.first(x.size() + y.size());
+    karatsubaStart(z, x, y, scratch.mutableSpan(), k);
+    return z;
+}
+
 ALWAYS_INLINE std::span<JSBigInt::Digit> JSBigInt::multiplyDigitsInto(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
 {
     ASSERT(!y.empty());
@@ -1225,6 +1399,8 @@ ALWAYS_INLINE std::span<JSBigInt::Digit> JSBigInt::multiplyDigitsInto(std::span<
     }
     if (y.size() == 1)
         return multiplySingle(x, y[0], result);
+    if (y.size() >= karatsubaThreshold)
+        return multiplyKaratsuba(x, y, result);
     if (shouldUseComba(x.size(), y.size()))
         return multiplyComba(x, y, result);
     return multiplySchoolbook(x, y, result);
