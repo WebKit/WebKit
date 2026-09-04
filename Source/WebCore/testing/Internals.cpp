@@ -6685,6 +6685,11 @@ double Internals::privatePlayerCurrentTime(HTMLMediaElement& media)
     return media.mediaPlayerCurrentTime();
 }
 
+void Internals::seekMediaElementToFindMatch(HTMLMediaElement& media, double time)
+{
+    media.seekToFindMatch(MediaTime::createWithDouble(time));
+}
+
 #endif
 
 ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(std::optional<bool> isPlaying)

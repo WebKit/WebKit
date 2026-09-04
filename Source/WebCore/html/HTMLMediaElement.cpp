@@ -102,6 +102,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaResourceLoader.h"
 #include "MediaSession.h"
+#include "MediaSessionActionDetails.h"
 #include "MessageClientForTesting.h"
 #include "Navigator.h"
 #include "NavigatorMediaDevices.h"
@@ -4328,6 +4329,28 @@ void HTMLMediaElement::setCurrentTime(const MediaTime& time)
         return;
 
     seekInternal(time);
+}
+
+void HTMLMediaElement::seekToFindMatch(const MediaTime& time)
+{
+#if ENABLE(MEDIA_SESSION)
+    // Some sites ignore direct seeking, so prefer their "seekto" handler when available.
+    if (RefPtr window = document().window()) {
+        RefPtr navigator = window->optionalNavigator();
+        RefPtr session = navigator ? NavigatorMediaSession::mediaSessionIfExists(*navigator) : nullptr;
+        if (session && session->hasActionHandler(MediaSessionAction::Seekto)) {
+            RefPtr active = session->activeMediaElement();
+            if (!active || active == this) {
+                MediaSessionActionDetails details;
+                details.action = MediaSessionAction::Seekto;
+                details.seekTime = time.toDouble();
+                if (session->callActionHandler(details, MediaSession::TriggerGestureIndicator::Yes))
+                    return;
+            }
+        }
+    }
+#endif
+    setCurrentTime(time);
 }
 
 ExceptionOr<void> HTMLMediaElement::setCurrentTimeForBindings(double time)
