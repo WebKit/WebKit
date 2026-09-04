@@ -289,7 +289,7 @@ class SingleTestRunner(object):
         ):
             # The baseline path applying to the Port.
             output_dir = fs.join(
-                port.baseline_platform_dir(), fs.dirname(self._test_name)
+                port.baseline_platform_dir_for_test(self._test_name), fs.dirname(self._test_name)
             )
         else:
             # The directory containing the test.
@@ -307,7 +307,7 @@ class SingleTestRunner(object):
                 fs.join(p, fs.dirname(self._test_name))
                 for p in (
                     port.baseline_search_path(device_type=device_type)
-                    + [port.layout_tests_dir()]
+                    + port.layout_tests_dirs()
                 )
             ]
             seen_output_dir = False

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -265,13 +265,60 @@ class Port(object):
         """Return the absolute path to the default (version-independent) platform-specific results."""
         return self._filesystem.join(self.layout_tests_dir(), 'platform', self.port_name)
 
+    def baseline_platform_dir_for_test(self, test_name):
+        """Version-independent, port-specific directory to store new platform baselines for a test.
+
+        Baselines are written under the platform/<port> directory of the test's own root,
+        so a test discovered from an additional root (see layout_tests_dirs()) keeps its
+        platform baselines within that root."""
+        return self._filesystem.join(self._test_root(test_name), 'platform', self.port_name)
+
+    def _test_root(self, test_name):
+        """The layout tests root (see layout_tests_dirs()) that test_name is discovered from."""
+        (test_name, _) = Port.test_name_and_variant(test_name)
+        abspath = self.abspath_for_test(test_name)
+        sep = self._filesystem.sep
+        for root in self.additional_layout_tests_dirs():
+            if abspath == root or abspath.startswith(root + sep):
+                return root
+        return self.layout_tests_dir()
+
     def baseline_version_dir(self, device_type=None):
         """Return the absolute path to the platform-and-version-specific results."""
         baseline_search_paths = self.baseline_search_path(device_type=device_type)
         return baseline_search_paths[0]
 
     def baseline_search_path(self, device_type=None):
-        return self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path(device_type=device_type)
+        search_paths = self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path(device_type=device_type)
+        return self._with_additional_root_baselines(search_paths)
+
+    def _with_additional_root_baselines(self, search_paths):
+        """Mirror each open-source platform baseline dir into every additional test root.
+
+        A test in an additional root (see layout_tests_dirs()) can carry platform-specific
+        baselines under <root>/platform/<name>, searched just before the corresponding
+        open-source LayoutTests/platform/<name> directory."""
+        additional_roots = self.additional_layout_tests_dirs()
+        if not additional_roots:
+            return search_paths
+        fs = self._filesystem
+        platform_prefix = fs.join(self.layout_tests_dir(), 'platform') + fs.sep
+        result = []
+        for path in search_paths:
+            if path.startswith(platform_prefix):
+                name = path[len(platform_prefix):]
+                for root in additional_roots:
+                    result.append(fs.join(root, 'platform', name))
+            result.append(path)
+        return result
+
+    def _additional_root_platform_baselines(self):
+        """All existing <additional root>/platform/* baseline directories."""
+        fs = self._filesystem
+        result = set()
+        for root in self.additional_layout_tests_dirs():
+            result |= set(fs.glob(fs.join(root, 'platform', '*')))
+        return result
 
     def default_baseline_search_path(self, device_type=None):
         """Return a list of absolute paths to directories to search under for
@@ -297,6 +344,7 @@ class Port(object):
             set(self.get_option("additional_platform_directory", []))
             | set(self._compare_baseline())
             | set(self._filesystem.glob(self._webkit_baseline_path("*")))
+            | self._additional_root_platform_baselines()
         )
 
         assert {p for p in paths if self._filesystem.isdir(p)}.issuperset(
@@ -461,7 +509,7 @@ class Port(object):
         return self.determine_driver_name(self._options)
 
     def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
-        baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
+        baseline_search_path = self.baseline_search_path(device_type=device_type) + self.layout_tests_dirs()
         fs = self._filesystem
 
         (test_name, variant) = Port.test_name_and_variant(test_name)
@@ -542,7 +590,9 @@ class Port(object):
         """
         platform_dir, baseline_filename = self.expected_baselines(test_name, suffix, device_type=device_type)[0]
         if platform_dir or return_default:
-            return self._filesystem.join(platform_dir or self.layout_tests_dir(), baseline_filename)
+            # Fall back to the generic baseline location in the test's own root, so a test
+            # discovered from an additional root keeps its generic baseline within that root.
+            return self._filesystem.join(platform_dir or self._test_root(test_name), baseline_filename)
         return None
 
     def is_unexpected_crash(self, test_name):
@@ -642,6 +692,17 @@ class Port(object):
             return self._layout_tests_dir
         return self._filesystem.join(self.webkit_base(), "LayoutTests")
 
+    @memoized
+    def additional_layout_tests_dirs(self):
+        additions = port_config.apple_additions()
+        if additions and getattr(additions, 'additional_layout_tests_dirs', None):
+            return [self._filesystem.abspath(d) for d in additions.additional_layout_tests_dirs()]
+        return []
+
+    def layout_tests_dirs(self):
+        """All roots to discover layout tests in, most specific first."""
+        return self.additional_layout_tests_dirs() + [self.layout_tests_dir()]
+
     def perf_tests_dir(self):
         return self._filesystem.join(self.webkit_base(), "PerformanceTests")
 
@@ -731,17 +792,25 @@ class Port(object):
         directory. Ports may legitimately return abspaths here if no relpath makes sense."""
         # Ports that run on windows need to override this method to deal with
         # filenames with backslashes in them.
-        if filename.startswith(self.layout_tests_dir()):
-            return self.host.filesystem.relpath(filename, self.layout_tests_dir()).replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
-        else:
-            return self.host.filesystem.abspath(filename)
+        for root in self.layout_tests_dirs():
+            if filename.startswith(root):
+                return self.host.filesystem.relpath(filename, root).replace(self.host.filesystem.sep, self.TEST_PATH_SEPARATOR)
+        return self.host.filesystem.abspath(filename)
 
     @memoized
     def abspath_for_test(self, test_name, target_host=None):
         """Returns the full path to the file for a given test name. This is the
         inverse of relative_test_filename() if no target_host is specified."""
         host = target_host or self.host
-        return host.filesystem.join(host.filesystem.map_base_host_path(self.layout_tests_dir()), test_name.replace(self.TEST_PATH_SEPARATOR, self.host.filesystem.sep))
+        relative_path = test_name.replace(self.TEST_PATH_SEPARATOR, self.host.filesystem.sep)
+        # A test name may resolve into any test root; tests in alternative roots override
+        # tests in the default root.
+        roots = self.layout_tests_dirs()
+        for root in roots[:-1]:
+            candidate = host.filesystem.join(host.filesystem.map_base_host_path(root), relative_path)
+            if host.filesystem.exists(candidate):
+                return candidate
+        return host.filesystem.join(host.filesystem.map_base_host_path(roots[-1]), relative_path)
 
     def results_directory(self):
         """Absolute path to the place to store the test results (uses --results-directory)."""
