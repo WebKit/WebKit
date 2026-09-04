@@ -165,8 +165,8 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
 
     return Inspector::Protocol::Network::ResourceTiming::create()
         .setStartTime(elapsedTimeSince(resourceLoader.loadTiming().startTime()))
-        .setRedirectStart(elapsedTimeSince(timing.redirectStart))
-        .setRedirectEnd(elapsedTimeSince(timing.fetchStart))
+        .setRedirectStart(timing.redirectCount ? elapsedTimeSince(timing.redirectStart) : 0.0)
+        .setRedirectEnd(timing.redirectCount ? elapsedTimeSince(timing.fetchStart) : 0.0)
         .setFetchStart(elapsedTimeSince(timing.fetchStart))
         .setDomainLookupStart(millisecondsSinceFetchStart(timing.domainLookupStart))
         .setDomainLookupEnd(millisecondsSinceFetchStart(timing.domainLookupEnd))
