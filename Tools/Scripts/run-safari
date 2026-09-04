@@ -38,6 +38,11 @@ printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
 
 setConfiguration();
 
+# WebKit is taken from the build that was recorded last, while --debug and
+# --release name the Safari to run above it, which Xcode built into a directory of
+# its own.
+setConfigurationProductDir(webkitProductDir());
+
 # Check to see that all the frameworks are built.
 checkBuild();
 

@@ -37,11 +37,6 @@ use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-# Opt this read-only path resolver into the last-built tiebreaker. Build
-# drivers (build-webkit, set-webkit-configuration) never call this, so they
-# keep the "Xcode wins when both trees exist" default.
-enableLastBuiltTiebreaker();
-
 my $showConfigurationDirectory = 0;
 my $showExecutablePath = 0;
 my $showHelp = 0;
@@ -56,7 +51,9 @@ Usage: $programName [options]
   -h|--help             Show this help message
   --top-level           Show the top-level build directory
 
-  --asan                Select the ASan (AddressSanitizer) build tree (with --cmake: WebKitBuild/cmake-mac/ASan)
+  --asan                Select the ASan (AddressSanitizer) build tree (with CMake: WebKitBuild/cmake-mac/ASan)
+  --cmake               Select the CMake build tree, overriding set-webkit-configuration
+  --xcode               Select the Xcode build tree, overriding set-webkit-configuration
   --gtk                 Find the build directory for the GTK+ port
   --win                 Find the build directory for Windows port
 
