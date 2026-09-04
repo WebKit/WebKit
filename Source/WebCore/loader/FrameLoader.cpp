@@ -5094,7 +5094,8 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
     if (!request.frameName().isEmpty() && !isBlankTargetFrameName(request.frameName())) {
         if (RefPtr frame = openerFrame.loader().findFrameForNavigation(request.frameName(), protect(openerFrame.document()).get())) {
             if (!isSelfTargetFrameName(request.frameName())) {
-                if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame))
+                RefPtr openerWindow = openerFrame.window();
+                if (RefPtr page = frame->page(); page && isInVisibleAndActivePage(openerFrame) && openerWindow && openerWindow->consumeTransientActivation())
                     page->chrome().focus();
             }
             if (!features.wantsNoOpener())
