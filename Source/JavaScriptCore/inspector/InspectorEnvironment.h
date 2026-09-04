@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/CallData.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -55,6 +56,13 @@ public:
     virtual void frontendInitialized() = 0;
     virtual WTF::Stopwatch& executionStopwatch() const = 0;
     virtual JSC::Debugger* debugger() = 0;
+
+    virtual void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>& functor)
+    {
+        if (auto* debugger = this->debugger())
+            functor(*debugger);
+    }
+
     virtual JSC::VM& vm() = 0;
 };
 
