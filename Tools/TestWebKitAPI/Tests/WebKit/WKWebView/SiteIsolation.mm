@@ -10316,6 +10316,80 @@ TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
 
 #endif
 
+TEST(SiteIsolation, FileOpenPanelRequestWhileAnotherFramesPanelIsOpen)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://domain2.com/subframe'></iframe><iframe src='https://domain3.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<input type='file'><script>window.cancelCount = 0; document.querySelector('input').addEventListener('cancel', () => { window.cancelCount++; });</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    __block unsigned openPanelCount = 0;
+    __block RetainPtr<WKFrameInfo> openPanelFrame;
+    __block BlockPtr<void(NSArray<NSURL *> *)> completeOpenPanel;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    [uiDelegate setRunOpenPanelWithParameters:^(WKWebView *, WKOpenPanelParameters *, WKFrameInfo *frame, void (^completionHandler)(NSArray<NSURL *> *)) {
+        openPanelCount++;
+        openPanelFrame = frame;
+        completeOpenPanel = makeBlockPtr(completionHandler);
+    }];
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    while ([webView mainFrame].childFrames.count < 2)
+        Util::spinRunLoop();
+
+    RetainPtr firstFrame = [webView mainFrame].childFrames[0].info;
+    RetainPtr secondFrame = [webView mainFrame].childFrames[1].info;
+    EXPECT_NE([firstFrame _processIdentifier], [secondFrame _processIdentifier]);
+
+    auto showPicker = [&](WKFrameInfo *frame) {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('input').showPicker()" inFrame:frame];
+    };
+    auto waitForOpenPanelCount = [&](unsigned count) {
+        EXPECT_TRUE(Util::waitFor([&] {
+            return openPanelCount >= count;
+        }));
+    };
+    // A cancel event means that frame's process is no longer waiting on a panel.
+    auto waitForCancelCount = [&](WKFrameInfo *frame, int count) {
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView objectByEvaluatingJavaScript:@"window.cancelCount" inFrame:frame] intValue] >= count;
+        }));
+    };
+
+    showPicker(firstFrame.get());
+    waitForOpenPanelCount(1);
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain2.com");
+
+    // The second frame's request is refused, and the open panel is left alone.
+    showPicker(secondFrame.get());
+    waitForCancelCount(secondFrame.get(), 1);
+    EXPECT_EQ(openPanelCount, 1u);
+
+    // The open panel still delivers its files to the frame that opened it.
+    RetainPtr file = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SiteIsolationOpenPanel.txt"]];
+    [@"upload" writeToURL:file.get() atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    completeOpenPanel(@[ file.get() ]);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.querySelector('input').files.length" inFrame:firstFrame.get()] intValue] == 1;
+    }));
+
+    // Both processes can still open a panel.
+    showPicker(secondFrame.get());
+    waitForOpenPanelCount(2);
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain3.com");
+    completeOpenPanel(nil);
+
+    showPicker(firstFrame.get());
+    waitForOpenPanelCount(3);
+    EXPECT_WK_STREQ([openPanelFrame securityOrigin].host, "domain2.com");
+    completeOpenPanel(nil);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 TEST(SiteIsolation, SelectMultiplePickerLocationInCrossOriginIframe)

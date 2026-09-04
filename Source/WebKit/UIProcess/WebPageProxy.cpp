@@ -11690,14 +11690,32 @@ void WebPageProxy::setHasModelElement(bool hasModelElement)
 
 void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, const FileChooserSettings& settings)
 {
-    if (RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr))
-        openPanelResultListener->invalidate();
+    // A process that hears nothing back keeps its listener and can never open another panel.
+    auto cancelRequest = [&] {
+        Ref process = WebProcessProxy::fromConnection(connection);
+        process->send(Messages::WebPage::DidCancelForOpenPanel(), webPageIDInProcess(process));
+    };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
+    if (!frame) {
+        cancelRequest();
         return;
+    }
     MESSAGE_CHECK_BASE(frame->page() == this, connection);
     MESSAGE_CHECK_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection);
+
+    if (RefPtr pendingListener = m_openPanelResultListener) {
+        // Refuse rather than replace the open panel.
+        RefPtr pendingProcess = pendingListener->process();
+        if (pendingProcess && pendingProcess->hasConnection()) {
+            cancelRequest();
+            return;
+        }
+
+        // That process is gone, so its panel can never complete.
+        m_openPanelResultListener = nullptr;
+        pendingListener->invalidate();
+    }
 
     Ref parameters = API::OpenPanelParameters::create(settings);
     Ref openPanelResultListener = WebOpenPanelResultListenerProxy::create(this, protect(frame->process()));
@@ -11706,6 +11724,8 @@ void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier fra
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = configuration().processPool().automationSession())
             automationSession->handleRunOpenPanel(*this, *frame, parameters.get(), openPanelResultListener);
+        else
+            didCancelForOpenPanel();
 
         // Don't show a file chooser, since automation will be unable to interact with it.
         return;

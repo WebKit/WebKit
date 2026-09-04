@@ -847,8 +847,7 @@ bool PageClientImpl::handleRunOpenPanel(const WebPageProxy& page, const WebFrame
     }
 #endif
 
-    [contentView() _showRunOpenPanel:&parameters frameInfo:frameInfo resultListener:&listener];
-    return true;
+    return [contentView() _showRunOpenPanel:&parameters frameInfo:frameInfo resultListener:&listener];
 }
 
 bool PageClientImpl::showShareSheet(ShareDataWithParsedURL&& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
