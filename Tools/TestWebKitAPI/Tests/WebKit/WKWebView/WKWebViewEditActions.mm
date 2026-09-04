@@ -28,6 +28,7 @@
 #import "ClassMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import "PDFTestHelpers.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 
@@ -400,12 +401,15 @@ TEST(WebKit, CanInvokeTranslateWithTextSelection)
 
 #else
 
-TEST(WKWebViewEditActions, CopyMenuItemDisabledWithNoSelection)
+static void validateCopyMenuItem(WKWebViewConfiguration *webViewConfiguration, void (^prepareContent)(TestWKWebView *webView), bool copyAllowed)
 {
-    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
-    [webView synchronouslyLoadHTMLString:@"<p>Hello, WebKit</p>"];
-    [webView becomeFirstResponder];
-    [webView waitForNextPresentationUpdate];
+    NSRect frame = NSMakeRect(0, 0, 400, 400);
+    RetainPtr<TestWKWebView> webView;
+    if (webViewConfiguration)
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame configuration:webViewConfiguration]);
+    else
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame]);
+    prepareContent(webView);
 
     auto validateCopyItem = [&] -> BOOL {
         RetainPtr menu = adoptNS([NSMenu new]);
@@ -418,14 +422,33 @@ TEST(WKWebViewEditActions, CopyMenuItemDisabledWithNoSelection)
         return [item isEnabled];
     };
 
-    // With no selection the Copy menu item must be disabled.
     [webView stringByEvaluatingJavaScript:@"getSelection().removeAllRanges()"];
     EXPECT_FALSE(validateCopyItem());
 
-    // With a range selection the Copy menu item must be enabled.
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    EXPECT_TRUE(validateCopyItem());
+    EXPECT_EQ(validateCopyItem(), copyAllowed);
+}
+
+TEST(WKWebViewEditActions, CopyMenuItemDisabledWithNoSelection)
+{
+    validateCopyMenuItem(nil, ^(TestWKWebView *webView) {
+        [webView synchronouslyLoadHTMLString:@"<p>Hello, WebKit</p>"];
+        [webView becomeFirstResponder];
+        [webView waitForNextPresentationUpdate];
+    }, true);
+}
+
+TEST(WKWebViewEditActions, CopyMenuItemDisabledInCopyDisallowedPDF)
+{
+    validateCopyMenuItem(configurationForWebViewTestingUnifiedPDF(), ^(TestWKWebView *webView) {
+        RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"copying-disabled" withExtension:@"pdf"]];
+        [webView waitForNextPresentationUpdate];
+        [[webView window] makeFirstResponder:webView];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+        [webView sendClickAtPoint:NSMakePoint(100, 100)];
+    }, false);
 }
 
 TEST(WKWebViewEditActions, ModifyTextWritingDirection)
