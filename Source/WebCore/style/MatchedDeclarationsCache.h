@@ -29,12 +29,23 @@
 #include "StyleComputedStyle.h"
 #include "Timer.h"
 #include <wtf/CanMakeWeakPtr.h>
+#include <wtf/SharedCacheBudget.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 namespace Style {
+
+namespace MatchedDeclarationsCacheDefaults {
+#if PLATFORM(WPE)
+static constexpr size_t maximumSize = 1024;
+static constexpr size_t maximumSharedSize = maximumSize * 4;
+#else
+static constexpr size_t maximumSize = 16 * 1024;
+static constexpr size_t maximumSharedSize = maximumSize * 1024;
+#endif
+}
 
 class Resolver;
 
@@ -77,6 +88,8 @@ private:
     void removeAllMatching(const Callback& matches);
 
     void sweep();
+
+    static WTF::SharedCacheBudget s_budget;
 
     SingleThreadWeakRef<const Resolver> m_owner;
     HashMap<unsigned, Vector<Entry>, AlreadyHashed> m_entries;
