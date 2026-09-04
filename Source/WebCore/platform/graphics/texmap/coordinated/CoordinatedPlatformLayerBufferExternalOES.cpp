@@ -33,6 +33,14 @@
 
 #if USE(TEXTURE_MAPPER)
 #include "TextureMapper.h"
+#else
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#endif
 #endif
 
 #if USE(GSTREAMER) && USE(GBM)

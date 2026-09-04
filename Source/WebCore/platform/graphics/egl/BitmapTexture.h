@@ -33,6 +33,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(TEXTURE_MAPPER)
 #include "ClipStack.h"
