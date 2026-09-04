@@ -1,10 +1,8 @@
 
 done
 
-Harness Error (FAIL), message = Unhandled rejection: assert_unreached: missing pointermove event Reached unreachable code
-
 PASS Test pointer events in the main document
-FAIL Test pointer events in an iframe assert_unreached: missing pointerover event Reached unreachable code
+PASS Test pointer events in an iframe
 PASS mouse pointerover event is a PointerEvent event
 PASS mouse pointerover.isTrusted value is true
 PASS mouse pointerover.composed value is valid
@@ -55,4 +53,54 @@ PASS mouse pointerleave.bubbles value is valid
 PASS mouse pointerleave.cancelable value is valid
 PASS mouse pointerleave.pressure value is valid
 PASS mouse pointerleave properties for pointerType = mouse
+PASS Inner Frame mouse pointerover event is a PointerEvent event
+PASS Inner Frame mouse pointerover.isTrusted value is true
+PASS Inner Frame mouse pointerover.composed value is valid
+PASS Inner Frame mouse pointerover.bubbles value is valid
+PASS Inner Frame mouse pointerover.cancelable value is valid
+PASS Inner Frame mouse pointerover.pressure value is valid
+PASS Inner Frame mouse pointerover properties for pointerType = mouse
+PASS Inner Frame mouse pointerenter event is a PointerEvent event
+PASS Inner Frame mouse pointerenter.isTrusted value is true
+PASS Inner Frame mouse pointerenter.composed value is valid
+PASS Inner Frame mouse pointerenter.bubbles value is valid
+PASS Inner Frame mouse pointerenter.cancelable value is valid
+PASS Inner Frame mouse pointerenter.pressure value is valid
+PASS Inner Frame mouse pointerenter properties for pointerType = mouse
+PASS Inner Frame mouse pointermove event is a PointerEvent event
+PASS Inner Frame mouse pointermove.isTrusted value is true
+PASS Inner Frame mouse pointermove.composed value is valid
+PASS Inner Frame mouse pointermove.bubbles value is valid
+PASS Inner Frame mouse pointermove.cancelable value is valid
+PASS Inner Frame mouse pointermove.pressure value is valid
+PASS Inner Frame mouse pointermove properties for pointerType = mouse
+PASS Inner Frame mouse pointerdown event is a PointerEvent event
+PASS Inner Frame mouse pointerdown.isTrusted value is true
+PASS Inner Frame mouse pointerdown.composed value is valid
+PASS Inner Frame mouse pointerdown.bubbles value is valid
+PASS Inner Frame mouse pointerdown.cancelable value is valid
+PASS Inner Frame mouse pointerdown.pressure value is valid
+PASS Inner Frame mouse pointerdown properties for pointerType = mouse
+PASS Inner Frame mouse pointerup event is a PointerEvent event
+PASS Inner Frame mouse pointerup.isTrusted value is true
+PASS Inner Frame mouse pointerup.composed value is valid
+PASS Inner Frame mouse pointerup.bubbles value is valid
+PASS Inner Frame mouse pointerup.cancelable value is valid
+PASS Inner Frame mouse pointerup.pressure value is valid
+PASS Inner Frame mouse pointerup properties for pointerType = mouse
+PASS Inner Frame mouse pointerup properties for pointerup
+PASS Inner Frame mouse pointerout event is a PointerEvent event
+PASS Inner Frame mouse pointerout.isTrusted value is true
+PASS Inner Frame mouse pointerout.composed value is valid
+PASS Inner Frame mouse pointerout.bubbles value is valid
+PASS Inner Frame mouse pointerout.cancelable value is valid
+PASS Inner Frame mouse pointerout.pressure value is valid
+PASS Inner Frame mouse pointerout properties for pointerType = mouse
+PASS Inner Frame mouse pointerleave event is a PointerEvent event
+PASS Inner Frame mouse pointerleave.isTrusted value is true
+PASS Inner Frame mouse pointerleave.composed value is valid
+PASS Inner Frame mouse pointerleave.bubbles value is valid
+PASS Inner Frame mouse pointerleave.cancelable value is valid
+PASS Inner Frame mouse pointerleave.pressure value is valid
+PASS Inner Frame mouse pointerleave properties for pointerType = mouse
 
