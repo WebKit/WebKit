@@ -1,0 +1,14 @@
+text
+
+FAIL "::highlight(*)" should be a valid selector '::highlight(*)' is not a valid selector.
+FAIL "div::highlight(*)" should be a valid selector 'div::highlight(*)' is not a valid selector.
+FAIL ":root::highlight(*)" should be a valid selector ':root::highlight(*)' is not a valid selector.
+PASS "::highlight()" should be an invalid selector
+PASS "::highlight(* foo)" should be an invalid selector
+PASS "::highlight(*.class)" should be an invalid selector
+PASS "::highlight(foo*)" should be an invalid selector
+PASS "::highlight(**)" should be an invalid selector
+FAIL named highlight merges with the universal base on the same element assert_equals: expected "rgb(255, 255, 0)" but got "rgba(0, 0, 0, 0)"
+FAIL named highlight without its own rule falls back to the universal style assert_equals: expected "rgb(255, 0, 0)" but got "rgb(0, 0, 0)"
+FAIL ::highlight(*) computed style is exposed assert_equals: expected "rgb(255, 0, 0)" but got ""
+

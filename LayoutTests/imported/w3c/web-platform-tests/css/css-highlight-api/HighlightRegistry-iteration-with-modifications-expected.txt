@@ -5,4 +5,6 @@ PASS HighlightRegistry iteration skips Highlights deleted before being visited (
 PASS HighlightRegistry iteration skips Highlights deleted before being visited even when other Highlights remain (Map-like behavior)
 PASS HighlightRegistry iteration is not modified when a Highlight that was already visited is deleted and there are still Highlights to visit
 PASS HighlightRegistry iteration skips all Highlights when .clear() is called before visiting them (Map-like behavior)
+PASS HighlightRegistry iteration doesn't visit a highlight name again when it is overwritten with .set() after being visited (Map-like behavior)
+PASS HighlightRegistry iteration terminates when every visited highlight name is overwritten with .set() (Map-like behavior)
 

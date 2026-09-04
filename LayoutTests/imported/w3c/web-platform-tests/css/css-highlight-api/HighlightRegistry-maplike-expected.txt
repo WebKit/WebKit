@@ -1,4 +1,5 @@
 
 PASS HighlightRegistry initializes as it should.
 PASS HighlightRegistry has a maplike interface.
+PASS HighlightRegistry.set() with an existing name preserves the insertion order (Map-like behavior)
 

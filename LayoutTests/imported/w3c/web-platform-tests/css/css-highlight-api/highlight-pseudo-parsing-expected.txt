@@ -5,6 +5,9 @@ PASS "div ::highlight(foo)" should be a valid selector
 PASS "::part(my-part)::highlight(foo)" should be a valid selector
 PASS "::highlight(multi\\ word)" should be a valid selector
 PASS "::highlight(\\31\\32\\33)" should be a valid selector
+FAIL "::highlight(\\*)" should be a valid selector assert_equals: serialization should be canonical expected "::highlight(\\*)" but got "::highlight(*)"
+FAIL "div::highlight(\\*)" should be a valid selector assert_equals: serialization should be canonical expected "div::highlight(\\*)" but got "div::highlight(*)"
+FAIL ":root::highlight(\\*)" should be a valid selector assert_equals: serialization should be canonical expected ":root::highlight(\\*)" but got ":root::highlight(*)"
 PASS "::highlight" should be an invalid selector
 PASS "::before::highlight(foo)" should be an invalid selector
 PASS "::highlight(foo).a" should be an invalid selector
