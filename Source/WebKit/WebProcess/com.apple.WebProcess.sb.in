@@ -637,14 +637,6 @@
             (allow file-read* (subpath path))
             (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path))))))
 
-(define (allow-read-write-directory-and-issue-read-write-extensions path)
-    (if path
-        (begin
-            (allow file-read* (subpath path))
-            (allow file-write* (with report) (with telemetry-backtrace) (subpath path))
-            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read") (subpath path)))
-            (allow file-issue-extension (require-all (extension-class "com.apple.app-sandbox.read-write") (subpath path))))))
-
 ;; Remove when <rdar://problem/29646094> is fixed.
 (define (HEX-pattern-match-generator pattern-descriptor)
     (letrec ((pattern-string ""))
@@ -765,11 +757,13 @@
         (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
 
 #if USE(SANDBOX_PARAMS)
-(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
+(when (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file-read* (subpath (param "DARWIN_USER_CACHE_DIR")))
+    (allow file-write* (with telemetry-backtrace) (subpath (param "DARWIN_USER_CACHE_DIR"))))
 
-(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
-    (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
+(when (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-read* (subpath (param "DARWIN_USER_TEMP_DIR")))
+    (allow file-write* (with telemetry-backtrace) (subpath (param "DARWIN_USER_TEMP_DIR"))))
 #endif
 
 ;; IOKit user clients
