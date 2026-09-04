@@ -131,7 +131,9 @@ static inline bool NODELETE pageIsBeingDismissed(Document& document)
 // https://html.spec.whatwg.org/multipage/images.html#updating-the-image-data:list-of-available-images
 static bool canReuseFromListOfAvailableImages(const CachedResourceRequest& request, Document& document)
 {
-    RefPtr resource = MemoryCache::singleton().resourceForRequest(request.resourceRequest(), document.page()->sessionID());
+    auto resourceRequest = request.resourceRequest();
+    resourceRequest.setDomainForCachePartition(document.domainForCachePartition());
+    RefPtr resource = MemoryCache::singleton().resourceForRequest(resourceRequest, document.page()->sessionID());
     if (!resource || resource->stillNeedsLoad() || resource->isPreloaded())
         return false;
 
