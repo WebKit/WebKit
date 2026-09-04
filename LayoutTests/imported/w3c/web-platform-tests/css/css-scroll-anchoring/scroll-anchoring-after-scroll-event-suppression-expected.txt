@@ -1,0 +1,3 @@
+
+PASS Scroll anchoring still functions after an adjustment is suppressed inside a scroll event handler
+
