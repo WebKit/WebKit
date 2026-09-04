@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-replacement-has-smaller-gop</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 2)');
+        await sourceBufferAppend(1, [[0, 9]]);
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(2, [[0, 3], [3, 6], [6, 9]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+        consoleWrite("<br>Samples with DTS < 3 must belong to generation 1. Samples with DTS >= 3 must belong to generation 2.")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

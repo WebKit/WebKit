@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-smooth-switch-replacement-has-bigger-gop</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="smooth-switch-test.js"></script>
+    <script>
+    smoothSwitchTest(async () => {
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, 5)');
+        await sourceBufferAppend(1, [[0, 3], [3, 6], [6, 9]]);
+        await showEnqueuedSamples();
+
+        await sourceBufferAppend(2, [[0, 12]]);
+        run('internals.setMaximumQueueDepthForTrackID(sourceBuffer, TRACK_ID, QUEUE_DEPTH_UNLIMITED)');
+        consoleWrite("<br>Non-displaying samples are needed to catchup. All samples of generation 2, including the sync sample, must be present.")
+        await showEnqueuedSamples();
+        await showBufferedSamples();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
