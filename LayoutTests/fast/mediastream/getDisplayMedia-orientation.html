@@ -1,0 +1,39 @@
+<!doctype html><!-- webkit-test-runner [ UseGPUProcessForDisplayCapture=true ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia stream delivers frames through device orientation changes</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async t => {
+    if (!window.internals)
+        return;
+
+    const stream = await callGetDisplayMedia({ video: true });
+    t.add_cleanup(() => stream.getTracks().forEach(track => track.stop()));
+
+    const [track] = stream.getVideoTracks();
+    internals.observeMediaStreamTrack(track);
+
+    while (!internals.trackVideoSampleCount)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+    const countBefore = internals.trackVideoSampleCount;
+
+    for (const [intDeg, trDeg] of [[90, 90], [-90, 270], [180, 180], [0, 0]]) {
+        internals.setCameraMediaStreamTrackOrientation(track, intDeg);
+        if (window.testRunner) testRunner.setMockCameraOrientation(trDeg, "");
+    }
+
+    let counter = 100;
+    while (internals.trackVideoSampleCount === countBefore && --counter > 0)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_greater_than(counter, 0, "stream delivers frames after orientation changes");
+}, "getDisplayMedia stream continues delivering frames through device orientation changes");
+        </script>
+    </body>
+</html>
