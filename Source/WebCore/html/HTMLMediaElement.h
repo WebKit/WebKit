@@ -609,6 +609,10 @@ public:
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT void setMediaControlsMaximumRightContainerButtonCountOverride(size_t);
     WEBCORE_EXPORT void setMediaControlsHidePlaybackRates(bool);
+    WEBCORE_EXPORT void setCaptionFindMatchTimes(Vector<MediaTime>&&);
+    const Vector<MediaTime>& captionFindMatchTimes() const LIFETIME_BOUND { return m_captionFindMatchTimes; }
+    WEBCORE_EXPORT void setCaptionFindMatchSelectedIndex(std::optional<unsigned>);
+    std::optional<unsigned> captionFindMatchSelectedIndex() const { return m_captionFindMatchSelectedIndex; }
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
@@ -1467,6 +1471,10 @@ private:
 
     RefPtr<MediaElementSession> m_mediaSession;
     size_t m_reportedExtraMemoryCost { 0 };
+
+    Vector<MediaTime> m_captionFindMatchTimes;
+    unsigned m_captionFindMatchStateGeneration { 0 };
+    std::optional<unsigned> m_captionFindMatchSelectedIndex;
 
     friend class MediaControlsHost;
     const std::unique_ptr<MediaControlsHost> m_mediaControlsHost;

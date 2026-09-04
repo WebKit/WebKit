@@ -548,6 +548,7 @@ public:
 #if ENABLE(VIDEO)
     ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
     void clearFindCaptionTracks();
+    std::optional<unsigned> selectedCaptionFindMatchIndex(const HTMLMediaElement&);
 #endif
 
     unsigned numberOfScrollableAreas();

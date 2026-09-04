@@ -1365,6 +1365,13 @@ void Page::clearFindCaptionTracks()
         element.clearFindCaptionTrack();
     });
 }
+
+void Page::clearCaptionFindMatchIndicators()
+{
+    forEachMediaElement([](HTMLMediaElement& element) {
+        element.setCaptionFindMatchTimes({ });
+    });
+}
 #endif // ENABLE(VIDEO)
 
 std::optional<SimpleRange> Page::rangeOfString(const String& target, const std::optional<SimpleRange>& referenceRange, FindOptions options)

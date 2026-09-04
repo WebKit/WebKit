@@ -137,6 +137,9 @@ public:
     Vector<String, 2> shadowRootStyleSheets() const;
     static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
 
+    Vector<double> captionFindMatchTimes() const;
+    std::optional<unsigned> captionFindMatchSelectedIndex() const;
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
     Vector<MediaControlsContextMenuItem> mediaControlsContextMenuItemsForBindings(String&& optionsJSONString);
     Ref<DOMRect> mediaControlsContextMenuAnchorRectForBindings(HTMLElement&);

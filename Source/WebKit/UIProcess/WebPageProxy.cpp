@@ -12764,6 +12764,11 @@ void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, S
     m_findMatchesClient->didGetImageForMatchResult(this, image.ptr(), matchIndex);
 }
 
+void WebPageProxy::didUpdateFoundMatchIndex(const String& string, uint32_t matchCount, int32_t matchIndex)
+{
+    findClient().didFindString(this, string, { }, matchCount, matchIndex, false);
+}
+
 #if !PLATFORM(COCOA)
 void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)
 {
