@@ -1,0 +1,168 @@
+Tests DOMStorage get/set/remove/clear commands against a cross-origin iframe's storage under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.DOMStorage.Commands
+-- Running test case: Setup
+PASS: Should find the cross-origin frame target.
+PASS: The iframe should be cross-origin to the main frame.
+PASS: The frame target should expose the DOMStorage domain.
+PASS: getDOMStorageItems should be available on a frame target.
+PASS: setDOMStorageItem should be available on a frame target.
+PASS: removeDOMStorageItem should be available on a frame target.
+PASS: clearDOMStorageItems should be available on a frame target.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Session.getDOMStorageItems
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: Should have a DOMStorageObject for the iframe's sessionStorage.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Session.setDOMStorageItem
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Setting key 'asd' with value 'new'...
+
+Getting DOM storage entries...
+[
+  [
+    "asd",
+    "new"
+  ],
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: The value should be readable from inside the cross-origin frame itself.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Session.removeDOMStorageItem
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Removing 'foo'...
+
+Getting DOM storage entries...
+[]
+
+PASS: 'foo' should be gone inside the cross-origin frame itself.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Session.clearDOMStorageItems
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Clearing storage...
+
+Getting DOM storage entries...
+[]
+
+PASS: The cross-origin frame's storage should be empty in its own process.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Session.DoesNotTouchMainFrame
+PASS: The iframe should have its own key.
+PASS: The iframe should NOT see the main frame's key.
+PASS: The main frame should NOT see the iframe's key.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Local.getDOMStorageItems
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: Should have a DOMStorageObject for the iframe's localStorage.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Local.setDOMStorageItem
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Setting key 'asd' with value 'new'...
+
+Getting DOM storage entries...
+[
+  [
+    "asd",
+    "new"
+  ],
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+PASS: The value should be readable from inside the cross-origin frame itself.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Local.removeDOMStorageItem
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Removing 'foo'...
+
+Getting DOM storage entries...
+[]
+
+PASS: 'foo' should be gone inside the cross-origin frame itself.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Local.clearDOMStorageItems
+
+Getting DOM storage entries...
+[
+  [
+    "foo",
+    "bar"
+  ]
+]
+
+Clearing storage...
+
+Getting DOM storage entries...
+[]
+
+PASS: The cross-origin frame's storage should be empty in its own process.
+
+-- Running test case: SiteIsolation.DOMStorage.Commands.Local.DoesNotTouchMainFrame
+PASS: The iframe should have its own key.
+PASS: The iframe should NOT see the main frame's key.
+PASS: The main frame should NOT see the iframe's key.
+

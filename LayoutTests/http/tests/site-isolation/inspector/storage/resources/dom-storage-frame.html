@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+<p>Cross-origin frame that owns its own DOM storage.</p>
+<script>
+// Runs in the cross-origin iframe's own process, so these areas exist only there.
+
+// Matches clearStorages() in LayoutTests/inspector/storage/resources/storage-utilities.js.
+function clearStorages() {
+    sessionStorage.clear();
+    sessionStorage.setItem("foo", "bar");
+
+    localStorage.clear();
+    localStorage.setItem("foo", "bar");
+}
+
+// Used by the events test: a seeding write would emit a stray ItemAdded.
+function resetStorages() {
+    sessionStorage.clear();
+    localStorage.clear();
+}
+
+function addItem(storage) {
+    storage.setItem("added", "value1");
+}
+
+function updateItem(storage) {
+    storage.setItem("added", "value2");
+}
+
+function removeItem(storage) {
+    storage.removeItem("added");
+}
+
+function clearItems(storage) {
+    // Clearing an already-empty area dispatches no event.
+    storage.setItem("toClear", "value");
+    storage.clear();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+Tests that DOMStorage change events from a cross-origin iframe reach the frontend under Site Isolation, exactly once, and without crossing origins.
+
+
+
+== Running test suite: SiteIsolation.DOMStorage.Events
+-- Running test case: Setup
+PASS: Should find the cross-origin frame target.
+PASS: The iframe should be cross-origin to the main frame.
+PASS: Should have a DOMStorageObject for the iframe's sessionStorage.
+PASS: The iframe's sessionStorage object should be bound to the cross-origin frame target.
+PASS: Should have a separate DOMStorageObject for the main frame's sessionStorage.
+PASS: Should have a DOMStorageObject for the iframe's localStorage.
+PASS: The iframe's localStorage object should be bound to the cross-origin frame target.
+PASS: Should have a separate DOMStorageObject for the main frame's localStorage.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.ItemAdded
+PASS: Should add key 'added'.
+PASS: Should have value 'value1'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.ItemUpdated
+PASS: Should update key 'added'.
+PASS: Should have oldValue 'value1'.
+PASS: Should have newValue 'value2'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.ItemRemoved
+PASS: Should remove key 'added'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.ItemsCleared
+PASS: Should fire ItemsCleared.
+PASS: Entries should be empty after clear.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.DeliveredExactlyOnce
+PASS: The iframe's object should receive exactly one ItemAdded.
+PASS: The main frame's object should receive no event for the iframe's write.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Session.MainFrameStillWorks
+PASS: The main frame's object should receive its own write.
+PASS: The iframe's object should not receive the main frame's write.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.ItemAdded
+PASS: Should add key 'added'.
+PASS: Should have value 'value1'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.ItemUpdated
+PASS: Should update key 'added'.
+PASS: Should have oldValue 'value1'.
+PASS: Should have newValue 'value2'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.ItemRemoved
+PASS: Should remove key 'added'.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.ItemsCleared
+PASS: Should fire ItemsCleared.
+PASS: Entries should be empty after clear.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.DeliveredExactlyOnce
+PASS: The iframe's object should receive exactly one ItemAdded.
+PASS: The main frame's object should receive no event for the iframe's write.
+
+-- Running test case: SiteIsolation.DOMStorage.Events.Local.MainFrameStillWorks
+PASS: The main frame's object should receive its own write.
+PASS: The iframe's object should not receive the main frame's write.
+
