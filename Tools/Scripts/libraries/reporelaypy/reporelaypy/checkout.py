@@ -30,6 +30,8 @@ import time
 from webkitcorepy import run
 from webkitscmpy import local, remote
 
+NOTHING_TO_PUSH = 'nothing-to-push'
+
 
 class Checkout(object):
     REMOTE = 'origin'
@@ -225,7 +227,7 @@ class Checkout(object):
 
     def push_update(self, branch=None, tag=None, remote=None, track=False, dest_branch=None):
         if not remote or remote in ('fork',):
-            return False
+            return NOTHING_TO_PUSH
 
         if tag:
             return not run(
@@ -235,7 +237,7 @@ class Checkout(object):
 
         branch = branch or self.repository.default_branch
         if not track and self.is_updated(branch, remote=remote):
-            return False
+            return NOTHING_TO_PUSH
 
         # Make an attempt to push commits one-at-a-time to ensure we get CI jobs for each commit
         # Only push commits one-at-a-time if we are a) on main or b) have less than 50 individual commits.
@@ -259,22 +261,39 @@ class Checkout(object):
             cwd=self.repository.root_path,
         ).returncode
 
-    def forward_update(self, branch=None, tag=None, remote=None, track=False):
-        did_succeed = True
+    def forwarding_targets(self, remote=None, branch=None, tag=None):
+        """[(target_remote, dest_branch), ...] for a ref arriving from `remote`.
 
+        Encodes the routing rules in self.forwarding, including their two subtleties:
+        only the *first* matching rule applies, and a 'target:name' entry renames the
+        ref on the way out. Callers must not iterate self.remotes directly -- the
+        rules deliberately do not send every ref to every mirror.
+
+        dest_branch is None when the ref keeps its name.
+        """
         for match, tos in self.forwarding:
             if match not in (remote, '{}:{}'.format(remote, branch or tag)):
                 continue
+            targets = []
             for to in tos:
                 split = to.split(':', 1)
-                did_succeed = did_succeed and self.push_update(
-                    branch=branch,
-                    tag=tag,
-                    remote=split[0],
-                    track=track,
-                    dest_branch=split[1] if len(split) > 1 else None,
-                )
-            return did_succeed
+                targets.append((split[0], split[1] if len(split) > 1 else None))
+            return targets
+        return []
+
+    def forward_update(self, branch=None, tag=None, remote=None, track=False):
+        did_succeed = True
+
+        for target, dest_branch in self.forwarding_targets(remote=remote, branch=branch, tag=tag):
+            pushed = self.push_update(
+                branch=branch,
+                tag=tag,
+                remote=target,
+                track=track,
+                dest_branch=dest_branch,
+            )
+            did_succeed = (pushed is NOTHING_TO_PUSH or bool(pushed)) and did_succeed
+
         return did_succeed
 
     def fetch(self, remote=REMOTE):
