@@ -293,7 +293,12 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return parsedRectOrExtension.releaseException();
 
     auto parsedRect = parsedRectOrExtension.releaseReturnValue();
-    auto layoutOrException = computeLayoutAndAllocationSize(defaultRect, init.layout, pixelFormat);
+    // The buffer is laid out for the coded size and visibleRect only crops the output. Compute the
+    // plane layout over the coded extent but anchored at the visible origin, so each plane's
+    // sourceTop/sourceLeftBytes carry the visibleRect crop while sourceHeight, stride and the
+    // allocation size stay coded (matching the coded-size buffer the caller provided).
+    DOMRectInit sourceRect { parsedRect.x, parsedRect.y, static_cast<double>(init.codedWidth), static_cast<double>(init.codedHeight) };
+    auto layoutOrException = computeLayoutAndAllocationSize(sourceRect, init.layout, pixelFormat);
     if (layoutOrException.hasException())
         return layoutOrException.releaseException();
 

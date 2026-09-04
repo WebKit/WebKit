@@ -419,3 +419,55 @@ promise_test(async t => {
 
   assert_array_equals(copied_data, packed_data, `Copied frame data incorrect.`);
 }, 'copyTo from byte data with codedHeight larger than visibleRect height');
+
+promise_test(async t => {
+  // Companion to the codedHeight case: a non-zero visibleRect origin must offset
+  // the source read. Here codedHeight == visibleRect.height so only the
+  // horizontal crop (visibleRect.x / sourceLeftBytes) is exercised. The visible
+  // region must be read starting at x, not from the coded left edge.
+  let init = {
+    format: 'I420',
+    timestamp: 1234,
+    codedWidth: 8,
+    codedHeight: 4,
+    visibleRect: {
+      x: 2,
+      y: 0,
+      width: 4,
+      height: 4,
+    },
+    colorSpace: {
+      primaries: 'smpte170m',
+      transfer: 'smpte170m',
+      matrix: 'smpte170m',
+      fullRange: false,
+    }
+  };
+
+  // Define YUV values for BT.601 red.
+  const redY = 76;
+  const redU = 84;
+  const redV = 255;
+
+  const ySize = init.codedWidth * init.codedHeight;
+  const uvSize = ySize / 4;
+  let data = new Uint8Array(ySize + 2 * uvSize);
+  fillYUV(data, init.codedWidth, init.codedHeight, init.visibleRect, redY, redU,
+          redV);
+
+  let frame = new VideoFrame(data, init);
+  assert_equals(frame.codedWidth, init.visibleRect.width);
+  assert_equals(frame.codedHeight, init.visibleRect.height);
+  assert_equals(frame.visibleRect.width, init.visibleRect.width);
+  assert_equals(frame.visibleRect.height, init.visibleRect.height);
+
+  let options = {rect: frame.visibleRect};
+  let copied_data = new Uint8Array(frame.allocationSize(options));
+  await frame.copyTo(copied_data, options);
+
+  let packed_data = new Uint8Array(frame.allocationSize(options));
+  fillYUV(packed_data, frame.codedWidth, frame.codedHeight, frame.visibleRect,
+          redY, redU, redV);
+
+  assert_array_equals(copied_data, packed_data, `Copied frame data incorrect.`);
+}, 'copyTo from byte data with non-zero visibleRect x origin');

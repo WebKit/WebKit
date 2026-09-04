@@ -97,10 +97,18 @@ static bool copyI420BufferToPixelBuffer(CVPixelBufferRef pixelBuffer, const uint
 
     auto* sourceEnd = buffer + length;
     size_t sourceULength, sourceVLength, sourceYLength = 0;
-    if (__builtin_mul_overflow(sourceHeightUV, layout.strideU, &sourceULength)
-        || __builtin_mul_overflow(sourceHeightUV, layout.strideV, &sourceVLength)
-        || __builtin_mul_overflow(sourceHeightY, layout.strideY, &sourceYLength))
+    // libyuv reads the visible row width from each plane and steps by the row stride, so the last
+    // row only needs its visible bytes, not a full trailing stride. Computing the extent from the
+    // full stride would reject a frame cropped from a larger coded size, whose plane offsets carry
+    // the visibleRect origin (a non-zero visibleRect x/y leaves less than one stride after the last
+    // visible row).
+    if (__builtin_mul_overflow(sourceHeightUV ? sourceHeightUV - 1 : 0, layout.strideU, &sourceULength)
+        || __builtin_mul_overflow(sourceHeightUV ? sourceHeightUV - 1 : 0, layout.strideV, &sourceVLength)
+        || __builtin_mul_overflow(sourceHeightY ? sourceHeightY - 1 : 0, layout.strideY, &sourceYLength))
         return false;
+    sourceYLength += sourceHeightY ? sourceWidthY : 0;
+    sourceULength += sourceHeightUV ? sourceWidthUV : 0;
+    sourceVLength += sourceHeightUV ? sourceWidthUV : 0;
 
     RTC_DCHECK(sourceEnd >= sourceY + sourceYLength);
     RTC_DCHECK(sourceEnd >= sourceU + sourceULength);
