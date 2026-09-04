@@ -845,18 +845,13 @@
     "imported/w3c/webdriver/tests/classic/perform_actions/pointer_contextmenu.py": {
         "subtests": {
             "test_control_click[\\ue051-ctrlKey]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+                "expected": {"wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_release_control_click": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213060"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_dblclick.py": {
-        "subtests": {
-            "test_dblclick_at_coordinates[200]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/322119"}}
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213060"},
+                    "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213060"}
+                }
             }
         }
     },
@@ -1182,14 +1177,6 @@
             },
             "test_grapheme_cluster[\\u0e01\\u0e33]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
-            }
-        }
-    },
-
-    "imported/w3c/webdriver/tests/classic/perform_actions/pointer_modifier_click.py": {
-        "subtests": {
-            "test_modifier_click[\\ue052-altKey]": {
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             }
         }
     },

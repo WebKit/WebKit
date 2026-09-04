@@ -33,6 +33,7 @@
 #include "WebEventModifier.h"
 #include "WebPageProxy.h"
 #include <optional>
+#include <tuple>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -124,7 +125,7 @@ static unsigned libWPEStateModifierForWPEButton(unsigned button)
     return state;
 }
 
-static void doMouseEvent(WebPageProxy& page, const WebCore::IntPoint& location, unsigned button, bool isPressed, uint32_t modifiers)
+static void doMouseEvent(WebPageProxy& page, const WebCore::IntPoint& location, unsigned button, bool isPressed, uint32_t modifiers, unsigned pressCount)
 {
     auto* view = page.wpeView();
     auto buttonModifiers =  libWPEStateModifierForWPEButton(button);
@@ -132,7 +133,6 @@ static void doMouseEvent(WebPageProxy& page, const WebCore::IntPoint& location, 
         modifiers |= buttonModifiers;
     else
         modifiers &= ~buttonModifiers;
-    unsigned pressCount = isPressed ? wpe_view_compute_press_count(view, location.x(), location.y(), button, 0) : 0;
     GRefPtr<WPEEvent> event = adoptGRef(wpe_event_pointer_button_new(isPressed ? WPE_EVENT_POINTER_DOWN : WPE_EVENT_POINTER_UP, view, WPE_INPUT_SOURCE_MOUSE,
         0, static_cast<WPEModifiers>(modifiers), button, location.x(), location.y(), pressCount));
     wpe_view_event(view, event.get());
@@ -177,6 +177,29 @@ static unsigned libWPEMouseButtonToWPEButton(MouseButton button)
         return 1;
     }
 }
+
+static std::optional<std::pair<Seconds, int>> getDoubleClickTimeAndDistance(WebPageProxy& page)
+{
+    auto* view = page.wpeView();
+    if (!view)
+        return std::nullopt;
+    auto* display = wpe_view_get_display(view);
+    if (!display)
+        return std::nullopt;
+    auto* settings = wpe_display_get_settings(display);
+    if (!settings)
+        return std::nullopt;
+    GUniqueOutPtr<GError> error;
+    uint32_t doubleClickDistance = wpe_settings_get_uint32(settings, WPE_SETTING_DOUBLE_CLICK_DISTANCE, &error.outPtr());
+    if (error)
+        return std::nullopt;
+    uint32_t doubleClickTime = wpe_settings_get_uint32(settings, WPE_SETTING_DOUBLE_CLICK_TIME, &error.outPtr());
+    if (error)
+        return std::nullopt;
+
+    return std::make_pair(Seconds::fromMilliseconds(doubleClickTime), static_cast<int>(doubleClickDistance));
+}
+
 #endif // ENABLE(WPE_PLATFORM)
 
 void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, MouseInteraction interaction, MouseButton button, const WebCore::IntPoint& locationInView, OptionSet<WebEventModifier> keyModifiers, const String& pointerType)
@@ -196,6 +219,14 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
     unsigned wpeButton = libWPEMouseButtonToWPEButton(button);
     auto modifier = libWPEStateModifierForWPEButton(wpeButton);
     uint32_t state = modifiersToEventState(keyModifiers) | m_currentModifiers;
+    // Fallback defaults from WPESettings.cpp
+    Seconds doubleClickTime = Seconds::fromMilliseconds(400);
+    int doubleClickDistance = 5;
+
+    if (auto doubleClickTimeAndDistance = getDoubleClickTimeAndDistance(page))
+        std::tie(doubleClickTime, doubleClickDistance) = *doubleClickTimeAndDistance;
+    else
+        LOG(Automation, "WebAutomationSession::platformSimulateMouseInteraction: Failed to get double click configuration. Using defaults.");
 
     switch (interaction) {
     case MouseInteraction::Move:
@@ -203,23 +234,27 @@ void WebAutomationSession::platformSimulateMouseInteraction(WebPageProxy& page, 
         break;
     case MouseInteraction::Down:
         m_currentModifiers |= modifier;
-        doMouseEvent(page, location, wpeButton, true, state | modifier);
+        updateClickCount(button, location, doubleClickTime, doubleClickDistance);
+        doMouseEvent(page, location, wpeButton, true, state | modifier, m_clickCount);
         break;
     case MouseInteraction::Up:
         m_currentModifiers &= ~modifier;
-        doMouseEvent(page, location, wpeButton, false, state & ~modifier);
+        doMouseEvent(page, location, wpeButton, false, state & ~modifier, 0);
         break;
     case MouseInteraction::SingleClick:
-        doMouseEvent(page, location, wpeButton, true, state | modifier);
-        doMouseEvent(page, location, wpeButton, false, state);
+        doMouseEvent(page, location, wpeButton, true, state | modifier, 1);
+        doMouseEvent(page, location, wpeButton, false, state, 0);
         break;
     case MouseInteraction::DoubleClick:
-        doMouseEvent(page, location, wpeButton, true, state | modifier);
-        doMouseEvent(page, location, wpeButton, false, state);
-        doMouseEvent(page, location, wpeButton, true, state | modifier);
-        doMouseEvent(page, location, wpeButton, false, state);
+        doMouseEvent(page, location, wpeButton, true, state | modifier, 1);
+        doMouseEvent(page, location, wpeButton, false, state, 0);
+        doMouseEvent(page, location, wpeButton, true, state | modifier, 2);
+        doMouseEvent(page, location, wpeButton, false, state, 0);
         break;
     }
+    // Check whether it should cancel pending multi-clicks when any interaction moves the pointer too much
+    // in-between clicks.
+    updateLastPosition(location, doubleClickDistance);
 #endif // ENABLE(WPE_PLATFORM)
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
