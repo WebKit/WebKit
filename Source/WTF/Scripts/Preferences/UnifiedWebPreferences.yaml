@@ -10192,7 +10192,8 @@ WebAssemblyESMIntegrationEnabled:
   category: javascript
   humanReadableName: "WebAssembly ES module integration support"
   humanReadableDescription: "Support for allowing WebAssembly modules to integrate as ES modules"
-  condition: ENABLE(WEBASSEMBLY)
+  jscOptionName: useWebAssemblyESMIntegration
+  sharedPreferenceForWebProcess: true
   defaultValue:
     WebKitLegacy:
       default: false
