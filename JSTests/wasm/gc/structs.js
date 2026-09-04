@@ -273,7 +273,8 @@ function testStructNew() {
       (type $Point (struct (field $x i32) (field $y i32)))
       (func (export "main")
         unreachable
-        struct.new $Point (i32.const 19) (i32.const 37)
+        (drop
+          (struct.new $Point (i32.const 19) (i32.const 37)))
       )
     )
   `);

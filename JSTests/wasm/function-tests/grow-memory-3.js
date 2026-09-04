@@ -17,10 +17,12 @@ import * as assert from '../assert.js';
             .Function("foo", {params: [], ret: "void"})
                 .Unreachable()
                 .GrowMemory(0)
+                .Drop()
             .End()
             .Function("bar", {params: [], ret: "void"})
                 .Unreachable()
                 .CurrentMemory(0)
+                .Drop()
             .End()
         .End();
 
