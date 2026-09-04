@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="target" role="tablist">
+<button role="tab">First</button>
+<button role="tab">Second</button>
+<button>Not a tab</button>
+</div>
+
+<script>
+var output = "This test ensures a tab list's AXTabs is only its tab items, and that AXContents reports the same set, so a non-tab child of a tab list is not offered as a tab.\n\n";
+
+function titlesOf(attributeName)
+{
+    var elements = tabList.uiElementArrayAttributeValue(attributeName);
+    return elements.map(element => element.title.replace("AXTitle: ", "")).join(", ");
+}
+
+function lengthOf(attributeName)
+{
+    return tabList.uiElementArrayAttributeValue(attributeName).length;
+}
+
+if (window.accessibilityController) {
+    var tabList = accessibilityController.accessibleElementById("target");
+
+    output += expect("lengthOf('AXChildren')", "3");
+    output += expect("titlesOf('AXChildren')", "'First, Second, Not a tab'");
+    output += expect("titlesOf('AXTabs')", "'First, Second'");
+    output += expect("titlesOf('AXContents')", "'First, Second'");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

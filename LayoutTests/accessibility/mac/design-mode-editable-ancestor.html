@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">Text that design mode makes editable.</p>
+
+<script>
+var output = "This test ensures turning on design mode gives content an editable ancestor even though no element carries contenteditable, because the web area itself becomes the editable root.\n\n";
+
+function editableAncestorRole()
+{
+    var ancestor = accessibilityController.accessibleElementById("target").editableAncestor();
+    return ancestor ? ancestor.role : "none";
+}
+
+function highestEditableAncestorRole()
+{
+    var ancestor = accessibilityController.accessibleElementById("target").highestEditableAncestor();
+    return ancestor ? ancestor.role : "none";
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "With design mode off nothing above the paragraph is editable.\n";
+    output += expect("editableAncestorRole()", "'none'");
+
+    setTimeout(async function() {
+        document.designMode = "on";
+
+        output += "\nWith design mode on the web area is the editable root.\n";
+        output += await expectAsync("editableAncestorRole()", "'AXRole: AXWebArea'");
+        output += expect("highestEditableAncestorRole()", "'AXRole: AXWebArea'");
+
+        document.designMode = "off";
+
+        output += "\nTurning it back off removes the editable ancestor again.\n";
+        output += await expectAsync("editableAncestorRole()", "'none'");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

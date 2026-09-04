@@ -1,0 +1,11 @@
+This test ensures the scroll view's AXContents is its children with the scroll bars removed, so an assistive technology asking for content does not get the scroll bars back.
+
+PASS: countOfRole('AXChildren', 'AXScrollBar') === 2
+PASS: countOfRole('AXContents', 'AXScrollBar') === 0
+PASS: countOfRole('AXContents', 'AXWebArea') === 1
+PASS: lengthOf('AXContents') === lengthOf('AXChildren') - 2 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
