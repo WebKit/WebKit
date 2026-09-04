@@ -560,7 +560,6 @@ static WeakListHashSet<WebPageProxy>& NODELETE leastRecentlyHiddenPages()
 static bool shouldUseEnhancedSecurityHeuristics(const Ref<WebPreferences>& preferences)
 {
     return preferences->enhancedSecurityHeuristicsEnabled()
-        && !preferences->siteIsolationEnabled()
         && !preferences->enhancedSecurityForceDisabled();
 }
 

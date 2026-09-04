@@ -271,7 +271,7 @@ TEST(EnhancedSecurityPolicies, test_name) \
 } \
 
 #define TEST_WITH_SITE_ISOLATION(test_name) \
-TEST(EnhancedSecurityPolicies, DISABLED_##test_name##WithSiteIsolation) \
+TEST(EnhancedSecurityPolicies, test_name##WithSiteIsolation) \
 { \
     run##test_name(true); \
 }

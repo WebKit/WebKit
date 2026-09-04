@@ -240,15 +240,22 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
 }
 
 #if ASSERT_ENABLED
-// True when the previous FrameProcess registered for a site can be safely replaced.
+// True when the previous FrameProcess registered for a site can be safely replaced by the
+// replacement one (null when the entry is simply being dropped).
 // In addition to the obvious terminated case, sites with an empty registrable domain
 // (e.g. data:, blob:, file:) all collapse to the same key in m_processMap, so they
 // never represented a unique site-to-process binding; replacing them is benign.
-static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, FrameProcess& existing)
+// Enhanced security is a second dimension of process separation on top of the site, so a
+// change of enhanced security state forces a process swap even when the site is unchanged
+// (see WebProcessPool::processForNavigationInternal). The two processes are legitimately
+// distinct and the site's binding moves to the new one.
+static bool canReplaceFrameProcessInProcessMap(const WebCore::Site& site, const FrameProcess& existing, const FrameProcess* replacement)
 {
     if (existing.process().state() == WebProcessProxy::State::Terminated)
         return true;
     if (site.isEmpty())
+        return true;
+    if (replacement && !enhancedSecurityStatesAreConsistent(existing.process().enhancedSecurity(), replacement->process().enhancedSecurity()))
         return true;
     return false;
 }
@@ -259,7 +266,7 @@ bool BrowsingContextGroup::addFrameProcessWithoutInjectingPageContext(FrameProce
     auto& site = *process.site();
     if (m_processMap.get(site) == &process)
         return false;
-    ASSERT(!m_processMap.get(site) || canReplaceFrameProcessInProcessMap(site, *m_processMap.get(site)));
+    ASSERT(!m_processMap.get(site) || canReplaceFrameProcessInProcessMap(site, *m_processMap.get(site), &process));
     m_processMap.set(site, process);
     return true;
 }
@@ -274,7 +281,7 @@ void BrowsingContextGroup::removeFrameProcess(FrameProcess& process)
         // Either we are still the current entry for this site (normal teardown), or a
         // later navigation already replaced us under the same conditions used by
         // addFrameProcess.
-        ASSERT(m_processMap.get(site) == &process || canReplaceFrameProcessInProcessMap(site, process));
+        ASSERT(m_processMap.get(site) == &process || canReplaceFrameProcessInProcessMap(site, process, m_processMap.get(site)));
         if (m_processMap.get(site) == &process)
             m_processMap.remove(site);
     }
