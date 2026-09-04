@@ -48,7 +48,7 @@ public:
     ~PDFJSDocument();
 
     void updateDuringParsing();
-    void finishedParsing();
+    void didFinishParsingPDF();
     void injectStyleAndContentScript();
 
     void postMessageToIframe(const String& name, JSC::JSObject* data);
