@@ -105,11 +105,6 @@ private:
 
 constexpr char kDav1dName[] = "dav1d";
 
-// Calling `dav1d_data_wrap` requires a `free_callback` to be registered.
-static void NODELETE NullFreeCallback(const uint8_t*, void*)
-{
-}
-
 Dav1dDecoder::Dav1dDecoder()
     : m_bufferPool(false, 150)
 {
@@ -177,7 +172,23 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
         RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode decoding failed as data is empty");
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
-    dav1d_data_wrap(&dav1dData, data, size, &NullFreeCallback, nullptr);
+
+    auto* bitstreamBuffer =
+        encodedImage.GetEncodedData().release();
+    int error = dav1d_data_wrap(
+        &dav1dData, encodedImage.data(), encodedImage.size(),
+        /* free callback= */
+        [](const uint8_t* /* buffer */, void* userData) {
+            auto* buffer = static_cast<webrtc::EncodedImageBufferInterface*>(userData);
+            buffer->Release();
+        },
+        /*user_data=*/bitstreamBuffer);
+
+    if (error) {
+        bitstreamBuffer->Release();
+        RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode dav1d_data_wrap failed with error code %d", error);
+        return WEBRTC_VIDEO_CODEC_ERROR;
+    }
 
     if (int res = dav1d_send_data(m_context, &dav1dData)) {
         RELEASE_LOG_ERROR(WebRTC, "Dav1dDecoder::Decode decoding failed with error code %d", res);

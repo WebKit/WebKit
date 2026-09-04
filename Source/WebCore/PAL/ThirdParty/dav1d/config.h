@@ -37,7 +37,11 @@
 #define ARCH_ARM 1
 #endif
 
+#define ARCH_LOONGARCH 0
+
 #define ARCH_PPC64LE 0
+
+#define ARCH_RISCV 0
 
 #define ARCH_X86 0
 
@@ -67,8 +71,22 @@
 
 #define HAVE_ASM 0
 
+#define HAVE_ELF_AUX_INFO 0
+
+#define HAVE_GETAUXVAL 0
+
 #define HAVE_CLOCK_GETTIME 1
+
+#define HAVE_MEMALIGN 0
 
 #define HAVE_POSIX_MEMALIGN 1
 
+#define HAVE_PTHREAD_GETAFFINITY_NP 1
+
+#define HAVE_PTHREAD_NP_H 0
+
+#define HAVE_PTHREAD_SETNAME_NP 1
+
 #define HAVE_UNISTD_H 1
+
+#define TRIM_DSP_FUNCTIONS 1

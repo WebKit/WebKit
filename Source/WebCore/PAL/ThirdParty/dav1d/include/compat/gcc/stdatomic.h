@@ -40,9 +40,11 @@ typedef unsigned int atomic_uint;
 #define atomic_load(p_a)              __atomic_load_n(p_a, __ATOMIC_SEQ_CST)
 #define atomic_load_explicit(p_a, mo) __atomic_load_n(p_a, mo)
 #define atomic_fetch_add(p_a, inc)    __atomic_fetch_add(p_a, inc, __ATOMIC_SEQ_CST)
+#define atomic_fetch_add_explicit(p_a, inc, mo) __atomic_fetch_add(p_a, inc, mo)
 #define atomic_fetch_sub(p_a, dec)    __atomic_fetch_sub(p_a, dec, __ATOMIC_SEQ_CST)
 #define atomic_exchange(p_a, v)       __atomic_exchange_n(p_a, v, __ATOMIC_SEQ_CST)
 #define atomic_fetch_or(p_a, v)       __atomic_fetch_or(p_a, v, __ATOMIC_SEQ_CST)
+#define atomic_compare_exchange_strong(p_a, expected, desired) __atomic_compare_exchange_n(p_a, expected, desired, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
 
 #endif /* !defined(__cplusplus) */
 
