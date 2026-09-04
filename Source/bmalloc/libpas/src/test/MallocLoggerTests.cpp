@@ -186,7 +186,7 @@ void checkDealloc(const Event& event, void* ptr)
     CHECK_EQUAL(event.arg3, 0);
     CHECK_EQUAL(event.result, 0);
     CHECK_EQUAL(event.numHotFramesToSkip, 0);
-    // CHECK_NOT_EQUAL(event.objectKind, pas_not_an_object_kind);
+    CHECK_NOT_EQUAL(event.objectKind, pas_not_an_object_kind);
 }
 
 pas_object_kind allocateAndDeallocate(size_t requestedSize)
