@@ -77,6 +77,13 @@ def run_test_parallel_safety_single_iteration(test_name):
         _log.error(f'Error in test-parallel-safety iteration for {test_name}: {e}')
         raise  # Re-raise so TaskPool can handle the error appropriately
 
+
+class EarlyExitException(Exception):
+    def __init__(self, failure_count):
+        self.failure_count = failure_count
+        super().__init__(f'Exiting early after {failure_count} failures.')
+
+
 def report_result(worker, test, status, output, elapsed=None):
     if elapsed < Runner.ELAPSED_THRESHOLD and status == Runner.STATUS_PASSED and (not output or Runner.instance.port.get_option('quiet')):
         Runner.instance.printer.write_update(f'{worker} {test} {Runner.NAME_FOR_STATUS[status]}')
@@ -89,6 +96,11 @@ def report_result(worker, test, status, output, elapsed=None):
             Runner.instance.results[test] = status, output, elapsed
     else:
         Runner.instance.results[test] = status, output, elapsed
+
+    if status in (Runner.STATUS_FAILED, Runner.STATUS_CRASHED, Runner.STATUS_TIMEOUT):
+        Runner.instance._failure_count += 1
+        if Runner.instance.exit_after_n_failures and Runner.instance._failure_count >= Runner.instance.exit_after_n_failures:
+            raise EarlyExitException(Runner.instance._failure_count)
 
 
 def teardown_shard():
@@ -124,6 +136,8 @@ class Runner(object):
         self._has_logged_for_test = True  # Suppress an empty line between "Running tests" and the first test's output.
         self.results = {}
         self.expectations = expectations
+        self.exit_after_n_failures = None
+        self._failure_count = 0
 
     # FIXME API tests should run as an app, we won't need this function <https://bugs.webkit.org/show_bug.cgi?id=175204>
     @staticmethod

@@ -23,8 +23,9 @@
 """Unit tests for runner.py."""
 
 import unittest
+from unittest.mock import MagicMock
 
-from webkitpy.api_tests.runner import Runner
+from webkitpy.api_tests.runner import EarlyExitException, Runner, report_result
 
 
 class RunnerTest(unittest.TestCase):
@@ -59,6 +60,53 @@ class RunnerTest(unittest.TestCase):
         runnable, disabled = Runner._partition_parallel_safety_tests(supplied)
         self.assertEqual(runnable, supplied)
         self.assertEqual(disabled, [])
+
+
+class ReportResultEarlyExitTest(unittest.TestCase):
+    def setUp(self):
+        self._saved_instance = Runner.instance
+        fake = MagicMock()
+        fake.port.get_option.return_value = False
+        fake.results = {}
+        fake.exit_after_n_failures = None
+        fake._failure_count = 0
+        Runner.instance = fake
+        self.fake = fake
+
+    def tearDown(self):
+        Runner.instance = self._saved_instance
+
+    def _fail(self, name):
+        report_result('worker', name, Runner.STATUS_FAILED, output='err', elapsed=0.1)
+
+    def test_no_early_exit_when_disabled(self):
+        self.fake.exit_after_n_failures = None
+        for i in range(20):
+            self._fail(f'T{i}')
+        self.assertEqual(self.fake._failure_count, 20)
+
+    def test_raises_when_threshold_reached(self):
+        self.fake.exit_after_n_failures = 3
+        self._fail('T1')
+        self._fail('T2')
+        with self.assertRaises(EarlyExitException) as ctx:
+            self._fail('T3')
+        self.assertEqual(ctx.exception.failure_count, 3)
+        self.assertEqual(self.fake._failure_count, 3)
+
+    def test_crash_and_timeout_count_as_failures(self):
+        self.fake.exit_after_n_failures = 3
+        report_result('w', 'T1', Runner.STATUS_CRASHED, output='c', elapsed=0.1)
+        report_result('w', 'T2', Runner.STATUS_TIMEOUT, output='t', elapsed=0.1)
+        with self.assertRaises(EarlyExitException):
+            report_result('w', 'T3', Runner.STATUS_FAILED, output='f', elapsed=0.1)
+
+    def test_pass_and_disabled_do_not_count(self):
+        self.fake.exit_after_n_failures = 2
+        report_result('w', 'P1', Runner.STATUS_PASSED, output='', elapsed=0.1)
+        report_result('w', 'D1', Runner.STATUS_DISABLED, output='', elapsed=0.1)
+        report_result('w', 'P2', Runner.STATUS_PASSED, output='', elapsed=0.1)
+        self.assertEqual(self.fake._failure_count, 0)
 
 
 if __name__ == '__main__':
