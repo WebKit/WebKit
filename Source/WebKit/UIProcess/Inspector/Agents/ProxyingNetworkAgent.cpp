@@ -36,6 +36,7 @@
 #include "ProxyingNetworkAgentMessages.h"
 #include "WebInspectorBackendMessages.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -244,12 +245,14 @@ void ProxyingNetworkAgent::disableInstrumentationForProcess(WebKit::WebProcessPr
 
 CommandResult<void> ProxyingNetworkAgent::enable()
 {
-    // FIXME: <https://webkit.org/b/308890> Only needed under Site Isolation; without it,
-    // InspectorNetworkAgent in the single WebContent process handles network events.
+    // FIXME: <https://webkit.org/b/308890> Serve Network from here for every inspection. Until the
+    // proxy is complete, the in-process InspectorNetworkAgent in the single WebContent process handles
+    // network events whenever Site Isolation is off, and this agent stays inert. Reporting that as an
+    // error (rather than silently succeeding) is how the frontend learns which of the two owns the
+    // Network domain; see NetworkManager.initializeTarget.
     Ref inspectedPage = m_inspectedPage.get();
-    Ref prefs = inspectedPage->preferences();
-    if (!prefs->siteIsolationEnabled())
-        return { };
+    if (!protect(inspectedPage->preferences())->siteIsolationEnabled())
+        return makeUnexpected("The Network domain is served by the page target while Site Isolation is disabled"_s);
 
     m_enabled = true;
 

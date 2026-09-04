@@ -718,7 +718,7 @@ void FrameCSSAgent::reset()
 // FIXME: <https://webkit.org/b/320938> Remove once the frontend sources local content from frame targets.
 bool FrameCSSAgent::documentIsReportedByPageCSSAgent() const
 {
-    return !!protect(m_instrumentingAgents)->enabledCSSAgent();
+    return !!protect(m_instrumentingAgents)->persistentCSSAgent();
 }
 
 RefPtr<Element> FrameCSSAgent::elementForId(Inspector::Protocol::ErrorString& errorString, Inspector::Protocol::DOM::NodeId nodeId)

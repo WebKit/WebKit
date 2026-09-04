@@ -971,7 +971,12 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebPreferences::forceSiteIsolationAlwaysOnForTesting();
 
     updatePreferences(parameters.store);
-    if (page->settings().siteIsolationEnabled()) {
+    // Switch the inspector to the identifier scheme that frame targets require: frame and loader IDs
+    // become process-qualified and deterministic, so a frame target's own agents (for example
+    // FrameRuntimeAgent, which always mints its frameId this way) name a frame exactly as the Page
+    // domain does. Also creates the main frame's per-frame console agent, which its
+    // FrameInspectorController constructor could not do yet because the settings arrive here.
+    if (usesInspectorFrameTargets(page->settings())) {
         page->inspectorController().siteIsolationFirstEnabled();
         if (RefPtr frame = page->localMainFrame())
             frame->inspectorController().siteIsolationFirstEnabled();
