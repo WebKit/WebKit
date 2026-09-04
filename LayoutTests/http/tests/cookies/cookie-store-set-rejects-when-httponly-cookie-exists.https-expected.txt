@@ -1,0 +1,22 @@
+Tests that the Cookie Store API set() rejects, and does not leave a phantom entry visible to document.cookie, when an HttpOnly cookie of the same name already exists. RFC 6265bis section 5.6 requires a cookie received from a non-HTTP API to be ignored entirely in that case.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+An HttpOnly cookie of the same name already exists:
+PASS cookieStore.set() rejected.
+PASS The existing HttpOnly cookie is unchanged in the cookie store.
+PASS document.cookie does not expose a phantom entry.
+No cookie of that name exists:
+PASS cookieStore.set() resolved.
+PASS The cookie is in the cookie store.
+A cookie of the same name exists and is not HttpOnly:
+PASS cookieStore.set() resolved.
+PASS The cookie was overwritten in the cookie store.
+A set() whose expiry is already in the past is a deletion:
+PASS cookieStore.set() resolved.
+PASS The cookie was removed from the cookie store.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
