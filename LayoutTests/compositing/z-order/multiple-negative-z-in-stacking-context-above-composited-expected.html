@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .stacking-context {
+            position: relative;
+            z-index: 1;
+        }
+
+        .neg-child {
+            position: absolute;
+            left: 0;
+            width: 400px;
+            height: 50px;
+            background-color: limegreen;
+        }
+
+        .neg-1 {
+            top: 30px;
+        }
+
+        .neg-2 {
+            top: 90px;
+        }
+
+        .neg-3 {
+            top: 150px;
+        }
+
+        .behind {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            height: 300px;
+            width: 300px;
+            background-color: cyan;
+        }
+    </style>
+</head>
+<body>
+    <p>All three green bars should paint in front of the cyan box.</p>
+    <div class="stacking-context">
+        <div class="neg-child neg-1"></div>
+        <div class="neg-child neg-2"></div>
+        <div class="neg-child neg-3"></div>
+    </div>
+    <div class="behind"></div>
+</body>
+</html>

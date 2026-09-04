@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Two negative z-index children in a stacking context: one overlaps a composited
+           layer outside the stacking context and must paint in front of it, the other
+           overlaps nothing and must render normally.
+
+           Whether the non-overlapping child avoids unnecessary compositing cannot be
+           observed by a reference test; that is covered by
+           compositing/layer-creation/no-compositing-for-overlapping-negative-z-siblings.html. */
+        .parent {
+            position: relative;
+            z-index: 1;
+        }
+
+        .neg-overlapping {
+            position: absolute;
+            z-index: -1;
+            top: 20px;
+            left: 200px;
+            width: 300px;
+            height: 100px;
+            background-color: limegreen;
+        }
+
+        .neg-non-overlapping {
+            position: absolute;
+            z-index: -1;
+            top: 250px;
+            left: 0;
+            width: 200px;
+            height: 50px;
+            background-color: blue;
+        }
+
+        .composited {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            transform: translateZ(0);
+            height: 200px;
+            width: 200px;
+            background-color: cyan;
+        }
+    </style>
+</head>
+<body>
+    <p>The green box should paint in front of the cyan box. The blue box overlaps nothing.</p>
+    <div class="parent">
+        <div class="neg-overlapping"></div>
+        <div class="neg-non-overlapping"></div>
+    </div>
+    <div class="composited"></div>
+</body>
+</html>

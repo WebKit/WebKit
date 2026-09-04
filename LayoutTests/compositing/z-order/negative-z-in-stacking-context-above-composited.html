@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* A stacking context with z-index: 1 containing a negative z-index child.
+           The negative z-index child should still appear in front of a composited
+           sibling with z-index: auto (0), because it's inside the z-index: 1 context.
+
+           The composited box must not cover the stacking context's own top-left corner:
+           the header has no in-flow content, so its overlap rect is an empty rect inflated
+           to 1x1 at its origin, and if the composited box covered that point the header
+           itself would be composited for overlap before its negative z-order children are
+           visited, so the negative z-index child would never be overlap-tested. */
+        header {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-search {
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 140px;
+            background-color: limegreen;
+        }
+
+        .composited {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            transform: translateZ(0);
+            height: 400px;
+            width: 400px;
+            background-color: cyan;
+        }
+    </style>
+</head>
+<body>
+    <p>The green bar should paint in front of the cyan box.</p>
+    <header>
+        <div class="header-search"></div>
+    </header>
+    <div class="composited"></div>
+</body>
+</html>

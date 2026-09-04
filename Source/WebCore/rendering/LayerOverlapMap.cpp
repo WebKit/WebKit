@@ -311,10 +311,14 @@ void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, co
 
 bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect& bounds, const LayerAndBoundsVector& enclosingClippingLayers) const
 {
-    if (m_speculativeOverlapStack.isEmpty())
-        return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);
-    ASSERT(m_speculativeOverlapStack.last()->isEmpty());
-    return false;
+    // Negative z-order children are traversed with a speculative compositing container live, but they
+    // still have to be tested against layers that were already composited earlier in paint order,
+    // otherwise they never composite for overlap and paint behind those layers' GraphicsLayers. The
+    // top of m_overlapStack is untouched for the lifetime of the speculative container, so it is the
+    // overlap state as of the speculative push: it has the already-composited layers, but nothing the
+    // negative z-order children contribute, so they still don't force each other to composite.
+    ASSERT(m_speculativeOverlapStack.isEmpty() || m_speculativeOverlapStack.last()->isEmpty());
+    return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);
 }
 
 void LayerOverlapMap::pushCompositingContainer(const RenderLayer& layer)

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* #ancestor is composited and is not the root layer, so non-composited layers inside it
+           do get added to the overlap map, including while the speculative overlap container
+           pushed for #stacking-context (which has negative z-order children) is live.
+
+           Nothing composited overlaps #n1 or #n2, so neither of them nor #stacking-context should
+           be composited. In particular #n1 must not be visible to #n2's overlap test: layers only
+           contribute overlap once their composited ancestor has been popped, and #n1 is not
+           composited at all. */
+        #ancestor {
+            transform: translateZ(0);
+            width: 300px;
+            height: 300px;
+            background-color: silver;
+        }
+
+        #stacking-context {
+            position: relative;
+            z-index: 1;
+        }
+
+        .negative {
+            position: absolute;
+            z-index: -1;
+            left: 0;
+            width: 100px;
+            height: 100px;
+        }
+
+        #n1 {
+            top: 0;
+            background-color: limegreen;
+        }
+
+        #n2 {
+            top: 50px;
+            background-color: blue;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        window.addEventListener('load', () => {
+            if (window.testRunner)
+                document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="ancestor">
+        <div id="stacking-context">
+            <div id="n1" class="negative"></div>
+            <div id="n2" class="negative"></div>
+        </div>
+    </div>
+    <pre id="layers">Layer tree goes here</pre>
+</body>
+</html>

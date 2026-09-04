@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        header {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-search {
+            position: absolute;
+            width: 100%;
+            height: 140px;
+            background-color: limegreen;
+        }
+
+        .behind {
+            position: absolute;
+            top: 20px;
+            left: 200px;
+            height: 400px;
+            width: 400px;
+            background-color: cyan;
+        }
+    </style>
+</head>
+<body>
+    <p>The green bar should paint in front of the cyan box.</p>
+    <header>
+        <div class="header-search"></div>
+    </header>
+    <div class="behind"></div>
+</body>
+</html>
