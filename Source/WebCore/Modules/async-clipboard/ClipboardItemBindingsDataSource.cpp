@@ -147,14 +147,14 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
     m_writingDestination = destination;
     m_numberOfPendingClipboardTypes = m_itemPromises.size();
     m_itemTypeLoaders = m_itemPromises.map([&](auto& typeAndItem) {
-        auto type = typeAndItem.key;
+        auto& type = typeAndItem.key;
         auto itemTypeLoader = ClipboardItemTypeLoader::create(destination, type, [this, protectedItem = Ref { m_item.get() }] {
             ASSERT(m_numberOfPendingClipboardTypes);
             if (!--m_numberOfPendingClipboardTypes)
                 invokeCompletionHandler();
         });
 
-        auto promise = typeAndItem.value;
+        auto& promise = typeAndItem.value;
         /* hack: gcc 8.4 will segfault if the WeakPtr is instantiated within the lambda captures */
         auto wl = WeakPtr { itemTypeLoader };
         promise->whenSettledWithResult([this, protectedItem = Ref { m_item.get() }, destination = m_writingDestination, type, weakItemTypeLoader = WTF::move(wl)] (auto* globalObject, bool, JSC::JSValue result) mutable {
