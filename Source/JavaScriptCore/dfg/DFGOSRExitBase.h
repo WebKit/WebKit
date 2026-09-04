@@ -50,7 +50,6 @@ struct OSRExitBase {
         ASSERT(m_codeOriginForExitProfile.isSet());
     }
 
-    uint32_t m_count { 0 };
     ExitKind m_kind;
     bool m_wasHoisted;
     
@@ -85,14 +84,7 @@ struct OSRExitBase {
     }
 
 protected:
-    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
-    {
-        if (m_count)
-            considerAddingAsFrequentExitSiteSlow(profiledCodeBlock, jitType);
-    }
-
-private:
-    void considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType);
+    void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType);
 };
 
 } } // namespace JSC::DFG
