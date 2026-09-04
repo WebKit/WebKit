@@ -59,7 +59,6 @@ absl_cc_library(
     "internal/memutil.h"
     "internal/stringify_sink.h"
     "internal/stringify_sink.cc"
-    "internal/stl_type_traits.h"
     "internal/str_join_internal.h"
     "internal/str_split_internal.h"
     "match.cc"
@@ -88,7 +87,6 @@ absl_cc_library(
     absl::nullability
     absl::raw_logging_internal
     absl::source_location
-    absl::strings
     absl::throw_delegate
     absl::type_traits
   PUBLIC
@@ -247,7 +245,9 @@ absl_cc_test(
   COPTS
     ${ABSL_TEST_COPTS}
   DEPS
+    absl::charset
     absl::strings
+    absl::str_format
     absl::core_headers
     absl::fixed_array
     GTest::gmock_main
@@ -470,6 +470,7 @@ absl_cc_test(
   COPTS
     ${ABSL_TEST_COPTS}
   DEPS
+    absl::cleanup
     absl::config
     absl::core_headers
     absl::int128
@@ -1164,6 +1165,7 @@ absl_cc_test(
     absl::endian
     absl::fixed_array
     absl::function_ref
+    absl::hardening
     absl::hash
     absl::hash_testing
     absl::no_destructor
@@ -1313,12 +1315,13 @@ absl_cc_test(
     ${ABSL_TEST_COPTS}
   DEPS
     absl::base
+    absl::cleanup
     absl::config
     absl::flat_hash_map
     absl::generic_printer_internal
-    absl::log
     absl::status
     absl::statusor
+    absl::str_format
     absl::strings
     GTest::gmock_main
 )

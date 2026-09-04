@@ -38,7 +38,7 @@ template <class Policy, class = void>
  private:
   struct ReturnKey {
     template <class Key,
-              std::enable_if_t<std::is_lvalue_reference<Key>::value, int> = 0>
+              std::enable_if_t<std::is_lvalue_reference_v<Key>, int> = 0>
     static key_type& Impl(Key&& k, int) {
       return *std::launder(
           const_cast<key_type*>(std::addressof(std::forward<Key>(k))));
@@ -76,8 +76,8 @@ template <class Policy, class = void>
   using init_type = typename Policy::init_type;
 
   using reference = decltype(Policy::element(std::declval<slot_type*>()));
-  using pointer = typename std::remove_reference<reference>::type*;
-  using value_type = typename std::remove_reference<reference>::type;
+  using pointer = std::remove_reference_t<reference>*;
+  using value_type = std::remove_reference_t<reference>;
 
   // Policies can set this variable to tell raw_hash_set that all iterators
   // should be constant, even `iterator`. This is useful for set-like

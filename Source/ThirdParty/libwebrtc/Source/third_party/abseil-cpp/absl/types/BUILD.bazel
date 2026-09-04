@@ -24,7 +24,7 @@ load(
 )
 
 package(
-    default_visibility = ["//visibility:public"],
+    default_visibility = ["//visibility:private"],
     features = [
         "header_modules",
         "layering_check",
@@ -39,6 +39,7 @@ cc_library(
     hdrs = ["any.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
@@ -47,16 +48,12 @@ cc_library(
 )
 
 cc_library(
-    name = "bad_any_cast",
-    deprecation = "bad_any_cast dependency is empty can be removed",
-)
-
-cc_library(
     name = "source_location",
     srcs = ["source_location.cc"],
     hdrs = ["source_location.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
@@ -89,6 +86,7 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/algorithm",
         "//absl/base:config",
@@ -112,6 +110,7 @@ cc_test(
         "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/base:exception_testing",
+        "//absl/base:hardening",
         "//absl/container:fixed_array",
         "//absl/container:inlined_vector",
         "//absl/hash",
@@ -131,6 +130,7 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
@@ -154,6 +154,7 @@ cc_test(
         "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/base:exception_testing",
+        "//absl/base:hardening",
         "//absl/base:raw_logging_internal",
         "//absl/hash:hash_testing",
         "//absl/meta:type_traits",
@@ -185,16 +186,12 @@ cc_library(
     hdrs = ["optional.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/utility",
     ],
-)
-
-cc_library(
-    name = "bad_optional_access",
-    deprecation = "bad_optional_access dependency is empty can be removed",
 )
 
 cc_library(
@@ -202,16 +199,12 @@ cc_library(
     hdrs = ["variant.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
         "//absl/utility",
     ],
-)
-
-cc_library(
-    name = "bad_variant_access",
-    deprecation = "bad_variant_access dependency is empty can be removed",
 )
 
 cc_test(
@@ -232,6 +225,7 @@ cc_library(
     hdrs = ["compare.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",
@@ -259,6 +253,7 @@ cc_library(
     hdrs = ["optional_ref.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
+    visibility = ["//visibility:public"],
     deps = [
         "//absl/base:config",
         "//absl/base:core_headers",

@@ -71,11 +71,9 @@ using ::absl::cord_internal::CordRepFlat;
 using ::absl::cord_internal::CordRepSubstring;
 using ::absl::cord_internal::CordzUpdateTracker;
 using ::absl::cord_internal::InlineData;
+using ::absl::cord_internal::kMaxBytesToCopy;
 using ::absl::cord_internal::kMaxFlatLength;
 using ::absl::cord_internal::kMinFlatLength;
-
-using ::absl::cord_internal::kInlinedVectorSize;
-using ::absl::cord_internal::kMaxBytesToCopy;
 
 static void DumpNode(CordRep* absl_nonnull nonnull_rep, bool include_data,
                      std::ostream* absl_nonnull os, int indent = 0);
@@ -162,35 +160,6 @@ static CordRep* absl_nonnull CordRepFromString(std::string&& src) {
 
 // --------------------------------------------------------------------
 // Cord::InlineRep functions
-
-inline void Cord::InlineRep::set_data(const char* absl_nullable data,
-                                      size_t n) {
-  static_assert(kMaxInline == 15, "set_data is hard-coded for a length of 15");
-  assert(data != nullptr || n == 0);
-  data_.set_inline_data(data, n);
-}
-
-inline char* absl_nonnull Cord::InlineRep::set_data(size_t n) {
-  assert(n <= kMaxInline);
-  ResetToEmpty();
-  set_inline_size(n);
-  return data_.as_chars();
-}
-
-inline void Cord::InlineRep::reduce_size(size_t n) {
-  size_t tag = inline_size();
-  assert(tag <= kMaxInline);
-  assert(tag >= n);
-  tag -= n;
-  memset(data_.as_chars() + tag, 0, n);
-  set_inline_size(tag);
-}
-
-inline void Cord::InlineRep::remove_prefix(size_t n) {
-  cord_internal::SmallMemmove(data_.as_chars(), data_.as_chars() + n,
-                              inline_size() - n);
-  reduce_size(n);
-}
 
 // Returns `rep` converted into a CordRepBtree.
 // Directly returns `rep` if `rep` is already a CordRepBtree.
@@ -486,6 +455,9 @@ inline void Cord::AppendImpl(C&& src) {
 
   contents_.MaybeRemoveEmptyCrcNode();
   if (src.empty()) return;
+  ABSL_RAW_CHECK(src.contents_.size() <=
+                     std::numeric_limits<size_t>::max() - contents_.size(),
+                 "Cord length overflow");
 
   if (empty()) {
     // Since destination is empty, we can avoid allocating a node,
@@ -597,6 +569,9 @@ template void Cord::Append(std::string&& src);
 void Cord::Prepend(const Cord& src) {
   contents_.MaybeRemoveEmptyCrcNode();
   if (src.empty()) return;
+  ABSL_RAW_CHECK(src.contents_.size() <=
+                     std::numeric_limits<size_t>::max() - contents_.size(),
+                 "Cord length overflow");
 
   CordRep* src_tree = src.contents_.tree();
   if (src_tree != nullptr) {

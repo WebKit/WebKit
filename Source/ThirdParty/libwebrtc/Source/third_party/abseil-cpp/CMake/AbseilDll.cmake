@@ -13,12 +13,15 @@ set(ABSL_INTERNAL_DLL_FILES
   "base/dynamic_annotations.h"
   "base/fast_type_id.h"
   "base/internal/atomic_hook.h"
+  "base/internal/cpu_detect.cc"
+  "base/internal/cpu_detect.h"
   "base/internal/cycleclock.cc"
   "base/internal/cycleclock.h"
   "base/internal/cycleclock_config.h"
   "base/internal/direct_mmap.h"
   "base/internal/endian.h"
   "base/internal/errno_saver.h"
+  "base/internal/hardening.cc"
   "base/internal/hardening.h"
   "base/internal/hide_ptr.h"
   "base/internal/iterator_traits.h"
@@ -104,8 +107,6 @@ set(ABSL_INTERNAL_DLL_FILES
   "container/node_hash_set.h"
   "crc/crc32c.cc"
   "crc/crc32c.h"
-  "crc/internal/cpu_detect.cc"
-  "crc/internal/cpu_detect.h"
   "crc/internal/crc.cc"
   "crc/internal/crc.h"
   "crc/internal/crc32_x86_arm_combined_simd.h"
@@ -350,7 +351,6 @@ set(ABSL_INTERNAL_DLL_FILES
   "strings/internal/pow10_helper.cc"
   "strings/internal/pow10_helper.h"
   "strings/internal/resize_uninitialized.h"
-  "strings/internal/stl_type_traits.h"
   "strings/internal/str_format/arg.cc"
   "strings/internal/str_format/arg.h"
   "strings/internal/str_format/bind.cc"
@@ -469,12 +469,14 @@ set(ABSL_INTERNAL_DLL_FILES
   "strings/string_view.h"
 )
 
-if(MSVC)
+if(WIN32)
   list(APPEND ABSL_INTERNAL_DLL_FILES
     "time/internal/cctz/src/time_zone_name_win.cc"
     "time/internal/cctz/src/time_zone_name_win.h"
   )
-else()
+endif()
+
+if(NOT MSVC)
   list(APPEND ABSL_INTERNAL_DLL_FILES
     "flags/commandlineflag.cc"
     "flags/commandlineflag.h"

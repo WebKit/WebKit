@@ -19,8 +19,16 @@ absl_source_set("errno_saver") {
   visibility = [ "//third_party/abseil-cpp/absl/*" ]
 }
 
+absl_source_set("cpu_detect") {
+  public = [ "internal/cpu_detect.h" ]
+  sources = [ "internal/cpu_detect.cc" ]
+  deps = [ ":config" ]
+  visibility = [ "//third_party/abseil-cpp/absl/*" ]
+}
+
 absl_source_set("hardening") {
   public = [ "internal/hardening.h" ]
+  sources = [ "internal/hardening.cc" ]
   deps = [
     ":config",
     ":core_headers",
@@ -442,6 +450,14 @@ absl_test("sysinfo_test") {
   deps = [
     ":base",
     "//third_party/abseil-cpp/absl/synchronization",
+  ]
+}
+
+absl_test("cpu_detect_test") {
+  sources = [ "internal/cpu_detect_test.cc" ]
+  deps = [
+    ":config",
+    ":cpu_detect",
   ]
 }
 

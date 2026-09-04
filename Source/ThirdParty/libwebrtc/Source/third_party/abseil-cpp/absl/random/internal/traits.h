@@ -37,15 +37,13 @@ struct is_urbg : std::false_type {};
 template <typename URBG>
 struct is_urbg<
     URBG,
-    std::enable_if_t<std::is_same<
-        typename URBG::result_type,
-        typename std::decay<decltype((URBG::min)())>::type>::value>,
-    std::enable_if_t<std::is_same<
-        typename URBG::result_type,
-        typename std::decay<decltype((URBG::max)())>::type>::value>,
-    std::enable_if_t<std::is_same<
-        typename URBG::result_type,
-        typename std::decay<decltype(std::declval<URBG>()())>::type>::value>>
+    std::enable_if_t<std::is_same_v<typename URBG::result_type,
+                                    std::decay_t<decltype((URBG::min)())>>>,
+    std::enable_if_t<std::is_same_v<typename URBG::result_type,
+                                    std::decay_t<decltype((URBG::max)())>>>,
+    std::enable_if_t<
+        std::is_same_v<typename URBG::result_type,
+                       std::decay_t<decltype(std::declval<URBG>()())>>>>
     : std::true_type {};
 
 // random_internal::is_widening_convertible<A, B>

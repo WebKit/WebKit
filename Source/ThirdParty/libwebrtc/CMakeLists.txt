@@ -38,6 +38,7 @@ endif ()
 
 set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/base/internal/atomic_hook_test_helper.cc
+    Source/third_party/abseil-cpp/absl/base/internal/cpu_detect.cc
     Source/third_party/abseil-cpp/absl/base/internal/cycleclock.cc
     Source/third_party/abseil-cpp/absl/base/internal/exception_safety_testing.cc
     Source/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc
@@ -58,7 +59,6 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc
     Source/third_party/abseil-cpp/absl/container/internal/test_instance_tracker.cc
     Source/third_party/abseil-cpp/absl/crc/crc32c.cc
-    Source/third_party/abseil-cpp/absl/crc/internal/cpu_detect.cc
     Source/third_party/abseil-cpp/absl/crc/internal/crc.cc
     Source/third_party/abseil-cpp/absl/crc/internal/crc_cord_state.cc
     Source/third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc

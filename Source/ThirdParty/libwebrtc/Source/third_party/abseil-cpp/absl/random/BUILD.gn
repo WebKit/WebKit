@@ -87,12 +87,6 @@ absl_source_set("bit_gen_ref") {
     "//third_party/abseil-cpp/absl/random/internal:fast_uniform_bits",
     "//third_party/abseil-cpp/absl/random/internal:traits",
   ]
-
-  # TODO: crbug.com/500291117 - Remove this extra dependencies.
-  deps += [
-    "//third_party/abseil-cpp/absl/random/internal:distribution_caller",
-    "//third_party/abseil-cpp/absl/random/internal:mock_helpers",
-  ]
 }
 
 absl_source_set("mock_distributions") {

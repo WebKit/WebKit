@@ -282,7 +282,7 @@ testing::AssertionResult VerifyTypeImplementsAbslHashCorrectly(
 
 template <typename... T>
 struct TypeSet {
-  template <typename U, bool = std::disjunction<std::is_same<T, U>...>::value>
+  template <typename U, bool = std::disjunction_v<std::is_same<T, U>...>>
   struct Insert {
     using type = TypeSet<U, T...>;
   };
@@ -302,7 +302,7 @@ struct MakeTypeSet<T, Ts...> : MakeTypeSet<Ts...>::template Insert<T>::type {};
 
 template <typename... T>
 using VariantForTypes = typename MakeTypeSet<
-    const typename std::decay<T>::type*...>::template apply<std::variant>;
+    const std::decay_t<T>*...>::template apply<std::variant>;
 
 template <typename Container>
 struct ContainerAsVector {

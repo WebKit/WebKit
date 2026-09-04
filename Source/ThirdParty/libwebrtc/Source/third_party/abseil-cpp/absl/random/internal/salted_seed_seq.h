@@ -73,10 +73,10 @@ class SaltedSeedSeq {
     // to uint arrays. Such contiguous memory regions may be optimized,
     // which we detect here.
     using TagType = std::conditional_t<
-        (std::is_same<U, uint32_t>::value &&
-         (std::is_pointer<RandomAccessIterator>::value ||
-          std::is_same<RandomAccessIterator,
-                       typename std::vector<U>::iterator>::value)),
+        (std::is_same_v<U, uint32_t> &&
+         (std::is_pointer_v<RandomAccessIterator> ||
+          std::is_same_v<RandomAccessIterator,
+                         typename std::vector<U>::iterator>)),
         ContiguousAndUint32Tag, DefaultTag>;
     if (begin != end) {
       generate_impl(TagType{}, begin, end, std::distance(begin, end));
@@ -132,8 +132,8 @@ struct is_salted_seed_seq : public std::false_type {};
 
 template <typename T>
 struct is_salted_seed_seq<
-    T, typename std::enable_if<std::is_same<
-           T, SaltedSeedSeq<typename T::inner_sequence_type>>::value>::type>
+    T, std::enable_if_t<
+           std::is_same_v<T, SaltedSeedSeq<typename T::inner_sequence_type>>>>
     : public std::true_type {};
 
 // MakeSaltedSeedSeq returns a salted variant of the seed sequence.
@@ -150,8 +150,8 @@ SSeq MakeSaltedSeedSeq(SSeq&& seq) {
 template <
     typename SSeq,  //
     typename EnableIf = std::enable_if_t<!is_salted_seed_seq<SSeq>::value>>
-SaltedSeedSeq<typename std::decay<SSeq>::type> MakeSaltedSeedSeq(SSeq&& seq) {
-  using sseq_type = typename std::decay<SSeq>::type;
+SaltedSeedSeq<std::decay_t<SSeq>> MakeSaltedSeedSeq(SSeq&& seq) {
+  using sseq_type = std::decay_t<SSeq>;
   using result_type = typename sseq_type::result_type;
 
   absl::InlinedVector<result_type, 8> data;

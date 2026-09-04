@@ -82,26 +82,24 @@ template <typename C>
 using ElementT = typename ElementType<C>::type;
 
 template <typename T>
-using EnableIfMutable =
-    typename std::enable_if<!std::is_const<T>::value, int>::type;
+using EnableIfMutable = std::enable_if_t<!std::is_const_v<T>, int>;
 
 template <template <typename> class SpanT, typename T>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 bool EqualImpl(SpanT<T> a, SpanT<T> b) {
-  static_assert(std::is_const<T>::value, "");
+constexpr bool EqualImpl(SpanT<T> a, SpanT<T> b) {
+  static_assert(std::is_const_v<T>, "");
   return std::equal(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <template <typename> class SpanT, typename T>
-ABSL_INTERNAL_CONSTEXPR_SINCE_CXX20 bool LessThanImpl(SpanT<T> a, SpanT<T> b) {
+constexpr bool LessThanImpl(SpanT<T> a, SpanT<T> b) {
   // We can't use value_type since that is remove_cv_t<T>, so we go the long way
   // around.
-  static_assert(std::is_const<T>::value, "");
+  static_assert(std::is_const_v<T>, "");
   return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
 }
 
 template <typename From, typename To>
-using EnableIfConvertibleTo =
-    typename std::enable_if<std::is_convertible<From, To>::value>::type;
+using EnableIfConvertibleTo = std::enable_if_t<std::is_convertible_v<From, To>>;
 
 // IsView is true for types where the return type of .data() is the same for
 // mutable and const instances. This isn't foolproof, but it's only used to
@@ -122,7 +120,7 @@ struct IsView<
   using MutData = decltype(span_internal::GetData(std::declval<Container&>()));
 
  public:
-  static constexpr bool value = std::is_same<ConstData, MutData>::value;
+  static constexpr bool value = std::is_same_v<ConstData, MutData>;
 };
 
 // These enablers result in 'int' so they can be used as typenames or defaults

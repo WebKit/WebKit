@@ -75,11 +75,10 @@ namespace random_internal {
 // absl::Uniform() will be discarded, and the call will be ill-formed.
 // Return-type for absl::Uniform() when the return-type is inferred.
 template <typename A, typename B>
-using uniform_inferred_return_t =
-    std::enable_if_t<std::disjunction<is_widening_convertible<A, B>,
-                                        is_widening_convertible<B, A>>::value,
-                      typename std::conditional<
-                          is_widening_convertible<A, B>::value, B, A>::type>;
+using uniform_inferred_return_t = std::enable_if_t<
+    std::disjunction_v<is_widening_convertible<A, B>,
+                       is_widening_convertible<B, A>>,
+    std::conditional_t<is_widening_convertible<A, B>::value, B, A>>;
 
 // The functions
 //    uniform_lower_bound(tag, a, b)
@@ -99,10 +98,10 @@ using uniform_inferred_return_t =
 //
 template <typename IntType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         IsIntegral<IntType>,
         std::disjunction<std::is_same<Tag, IntervalOpenClosedTag>,
-                          std::is_same<Tag, IntervalOpenOpenTag>>>::value,
+                         std::is_same<Tag, IntervalOpenOpenTag>>>,
     IntType>
 uniform_lower_bound(Tag, IntType a, IntType) {
   return a < (std::numeric_limits<IntType>::max)() ? (a + 1) : a;
@@ -110,10 +109,10 @@ uniform_lower_bound(Tag, IntType a, IntType) {
 
 template <typename FloatType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         std::is_floating_point<FloatType>,
         std::disjunction<std::is_same<Tag, IntervalOpenClosedTag>,
-                          std::is_same<Tag, IntervalOpenOpenTag>>>::value,
+                         std::is_same<Tag, IntervalOpenOpenTag>>>,
     FloatType>
 uniform_lower_bound(Tag, FloatType a, FloatType b) {
   return std::nextafter(a, b);
@@ -121,8 +120,8 @@ uniform_lower_bound(Tag, FloatType a, FloatType b) {
 
 template <typename NumType, typename Tag>
 typename std::enable_if_t<
-    std::disjunction<std::is_same<Tag, IntervalClosedClosedTag>,
-                      std::is_same<Tag, IntervalClosedOpenTag>>::value,
+    std::disjunction_v<std::is_same<Tag, IntervalClosedClosedTag>,
+                       std::is_same<Tag, IntervalClosedOpenTag>>,
     NumType>
 uniform_lower_bound(Tag, NumType a, NumType) {
   return a;
@@ -130,10 +129,10 @@ uniform_lower_bound(Tag, NumType a, NumType) {
 
 template <typename IntType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         IsIntegral<IntType>,
         std::disjunction<std::is_same<Tag, IntervalClosedOpenTag>,
-                          std::is_same<Tag, IntervalOpenOpenTag>>>::value,
+                         std::is_same<Tag, IntervalOpenOpenTag>>>,
     IntType>
 uniform_upper_bound(Tag, IntType, IntType b) {
   return b > (std::numeric_limits<IntType>::min)() ? (b - 1) : b;
@@ -141,10 +140,10 @@ uniform_upper_bound(Tag, IntType, IntType b) {
 
 template <typename FloatType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         std::is_floating_point<FloatType>,
         std::disjunction<std::is_same<Tag, IntervalClosedOpenTag>,
-                          std::is_same<Tag, IntervalOpenOpenTag>>>::value,
+                         std::is_same<Tag, IntervalOpenOpenTag>>>,
     FloatType>
 uniform_upper_bound(Tag, FloatType, FloatType b) {
   return b;
@@ -152,10 +151,10 @@ uniform_upper_bound(Tag, FloatType, FloatType b) {
 
 template <typename IntType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         IsIntegral<IntType>,
         std::disjunction<std::is_same<Tag, IntervalClosedClosedTag>,
-                          std::is_same<Tag, IntervalOpenClosedTag>>>::value,
+                         std::is_same<Tag, IntervalOpenClosedTag>>>,
     IntType>
 uniform_upper_bound(Tag, IntType, IntType b) {
   return b;
@@ -163,10 +162,10 @@ uniform_upper_bound(Tag, IntType, IntType b) {
 
 template <typename FloatType, typename Tag>
 typename std::enable_if_t<
-    std::conjunction<
+    std::conjunction_v<
         std::is_floating_point<FloatType>,
         std::disjunction<std::is_same<Tag, IntervalClosedClosedTag>,
-                          std::is_same<Tag, IntervalOpenClosedTag>>>::value,
+                         std::is_same<Tag, IntervalOpenClosedTag>>>,
     FloatType>
 uniform_upper_bound(Tag, FloatType, FloatType b) {
   return std::nextafter(b, (std::numeric_limits<FloatType>::max)());
@@ -195,7 +194,7 @@ uniform_upper_bound(Tag, FloatType, FloatType b) {
 // (0, 0] is not legal, but (0, 0+epsilon] is.
 //
 template <typename FloatType>
-std::enable_if_t<std::is_floating_point<FloatType>::value, bool>
+std::enable_if_t<std::is_floating_point_v<FloatType>, bool>
 is_uniform_range_valid(FloatType a, FloatType b) {
   return a <= b && std::isfinite(b - a);
 }
@@ -210,9 +209,9 @@ std::enable_if_t<IsIntegral<IntType>::value, bool> is_uniform_range_valid(
 // or absl::uniform_real_distribution depending on the NumType parameter.
 template <typename NumType>
 using UniformDistribution =
-    typename std::conditional<IsIntegral<NumType>::value,
-                              absl::uniform_int_distribution<NumType>,
-                              absl::uniform_real_distribution<NumType>>::type;
+    std::conditional_t<IsIntegral<NumType>::value,
+                       absl::uniform_int_distribution<NumType>,
+                       absl::uniform_real_distribution<NumType>>;
 
 // UniformDistributionWrapper is used as the underlying distribution type
 // by the absl::Uniform template function. It selects the proper Abseil

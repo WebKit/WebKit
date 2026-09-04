@@ -38,6 +38,7 @@
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
 #include "absl/base/internal/endian.h"
+#include "absl/base/internal/hardening.h"
 #include "absl/base/macros.h"
 #include "absl/base/no_destructor.h"
 #include "absl/base/options.h"
@@ -244,8 +245,6 @@ class CordTestPeer {
 
 ABSL_NAMESPACE_END
 }  // namespace absl
-
-
 
 // The CordTest fixture runs all tests with and without expected CRCs being set
 // on the subject Cords.
@@ -1649,8 +1648,8 @@ void CompareOperators() {
   EXPECT_TRUE(a == a);
   // For pointer type (i.e. `const char*`), operator== compares the address
   // instead of the string, so `a == const char*("a")` isn't necessarily true.
-  EXPECT_TRUE(std::is_pointer<T1>::value || a == T1("a"));
-  EXPECT_TRUE(std::is_pointer<T2>::value || a == T2("a"));
+  EXPECT_TRUE(std::is_pointer_v<T1> || a == T1("a"));
+  EXPECT_TRUE(std::is_pointer_v<T2> || a == T2("a"));
   EXPECT_FALSE(a == b);
 
   EXPECT_TRUE(a != b);
@@ -2365,36 +2364,34 @@ TEST_P(CordTest, MakeFragmentedCordFromVector) {
 }
 
 TEST_P(CordTest, CordChunkIteratorTraits) {
-  static_assert(std::is_copy_constructible<absl::Cord::ChunkIterator>::value,
-                "");
-  static_assert(std::is_copy_assignable<absl::Cord::ChunkIterator>::value, "");
+  static_assert(std::is_copy_constructible_v<absl::Cord::ChunkIterator>, "");
+  static_assert(std::is_copy_assignable_v<absl::Cord::ChunkIterator>, "");
 
   // Move semantics to satisfy swappable via std::swap
-  static_assert(std::is_move_constructible<absl::Cord::ChunkIterator>::value,
-                "");
-  static_assert(std::is_move_assignable<absl::Cord::ChunkIterator>::value, "");
+  static_assert(std::is_move_constructible_v<absl::Cord::ChunkIterator>, "");
+  static_assert(std::is_move_assignable_v<absl::Cord::ChunkIterator>, "");
 
   static_assert(
-      std::is_same<
+      std::is_same_v<
           std::iterator_traits<absl::Cord::ChunkIterator>::iterator_category,
-          std::input_iterator_tag>::value,
+          std::input_iterator_tag>,
       "");
+  static_assert(std::is_same_v<
+                    std::iterator_traits<absl::Cord::ChunkIterator>::value_type,
+                    absl::string_view>,
+                "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::ChunkIterator>::value_type,
-                   absl::string_view>::value,
-      "");
-  static_assert(
-      std::is_same<
+      std::is_same_v<
           std::iterator_traits<absl::Cord::ChunkIterator>::difference_type,
-          ptrdiff_t>::value,
+          ptrdiff_t>,
       "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::ChunkIterator>::pointer,
-                   const absl::string_view*>::value,
+      std::is_same_v<std::iterator_traits<absl::Cord::ChunkIterator>::pointer,
+                     const absl::string_view*>,
       "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::ChunkIterator>::reference,
-                   absl::string_view>::value,
+      std::is_same_v<std::iterator_traits<absl::Cord::ChunkIterator>::reference,
+                     absl::string_view>,
       "");
 }
 
@@ -2554,36 +2551,34 @@ TEST_P(CordTest, AdvanceAndReadOnSubstringDataEdge) {
 }
 
 TEST_P(CordTest, CharIteratorTraits) {
-  static_assert(std::is_copy_constructible<absl::Cord::CharIterator>::value,
-                "");
-  static_assert(std::is_copy_assignable<absl::Cord::CharIterator>::value, "");
+  static_assert(std::is_copy_constructible_v<absl::Cord::CharIterator>, "");
+  static_assert(std::is_copy_assignable_v<absl::Cord::CharIterator>, "");
 
   // Move semantics to satisfy swappable via std::swap
-  static_assert(std::is_move_constructible<absl::Cord::CharIterator>::value,
-                "");
-  static_assert(std::is_move_assignable<absl::Cord::CharIterator>::value, "");
+  static_assert(std::is_move_constructible_v<absl::Cord::CharIterator>, "");
+  static_assert(std::is_move_assignable_v<absl::Cord::CharIterator>, "");
 
   static_assert(
-      std::is_same<
+      std::is_same_v<
           std::iterator_traits<absl::Cord::CharIterator>::iterator_category,
-          std::input_iterator_tag>::value,
+          std::input_iterator_tag>,
       "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::CharIterator>::value_type,
-                   char>::value,
+      std::is_same_v<std::iterator_traits<absl::Cord::CharIterator>::value_type,
+                     char>,
       "");
   static_assert(
-      std::is_same<
+      std::is_same_v<
           std::iterator_traits<absl::Cord::CharIterator>::difference_type,
-          ptrdiff_t>::value,
+          ptrdiff_t>,
       "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::CharIterator>::pointer,
-                   const char*>::value,
+      std::is_same_v<std::iterator_traits<absl::Cord::CharIterator>::pointer,
+                     const char*>,
       "");
   static_assert(
-      std::is_same<std::iterator_traits<absl::Cord::CharIterator>::reference,
-                   const char&>::value,
+      std::is_same_v<std::iterator_traits<absl::Cord::CharIterator>::reference,
+                     const char&>,
       "");
 }
 
@@ -2832,6 +2827,7 @@ TEST_P(CordTest, Hardening) {
   }());
   if (!test_hardening) return;
 
+  absl::base_internal::ScopedSetAbslHardeningForTesting hardener(true);
   EXPECT_DEATH_IF_SUPPORTED(cord[5], "");
   EXPECT_DEATH_IF_SUPPORTED(*cord.chunk_end(), "");
   EXPECT_DEATH_IF_SUPPORTED(static_cast<void>(cord.chunk_end()->empty()), "");

@@ -44,10 +44,7 @@ absl_source_set("conditions") {
 
 absl_source_set("config") {
   public = [ "config.h" ]
-  deps = [
-    "//third_party/abseil-cpp/absl/base:config",
-    "//third_party/abseil-cpp/absl/base:core_headers",
-  ]
+  deps = [ "//third_party/abseil-cpp/absl/base:config" ]
 }
 
 absl_source_set("flags") {
@@ -322,11 +319,11 @@ absl_source_set("vlog_config") {
   deps = [
     ":fnmatch",
     "//third_party/abseil-cpp/absl/base",
+    "//third_party/abseil-cpp/absl/base:base_internal",
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/base:no_destructor",
     "//third_party/abseil-cpp/absl/base:nullability",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/synchronization",
   ]
