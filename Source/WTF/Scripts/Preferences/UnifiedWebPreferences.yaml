@@ -1147,6 +1147,20 @@ CSSCalcMixEnabled:
     WebCore:
       default: true
 
+CSSCalcSizeFunctionEnabled:
+  type: bool
+  category: css
+  status: testable
+  humanReadableName: "CSS calc-size()"
+  humanReadableDescription: "Enable support for CSS calc-size()"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSColorLayersEnabled:
   type: bool
   category: css

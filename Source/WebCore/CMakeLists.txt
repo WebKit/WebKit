@@ -124,6 +124,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/css/values/non-standard"
     "${WEBCORE_DIR}/css/values/primitives"
     "${WEBCORE_DIR}/css/values/shapes"
+    "${WEBCORE_DIR}/css/values/sizing"
     "${WEBCORE_DIR}/css/values/text-decoration"
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"

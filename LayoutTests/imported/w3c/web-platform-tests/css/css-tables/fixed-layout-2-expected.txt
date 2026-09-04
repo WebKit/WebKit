@@ -7,55 +7,120 @@ Table-layout:fixed does apply to width:10px tables
 
 10px
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(10px, size) tables
+
+calc-size(10px, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:100% tables
 
 100%
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(100%, size) tables
+
+calc-size(100%, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:calc(10px + 100%) tables
 
 calc(10px + 100%)
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(calc(10px + 100%), size) tables
+
+calc-size(calc(10px + 100%), size)
 This should be a 100x50 cyan rectangle:
 Table-layout:fixed does NOT apply to width:auto tables
 
 auto
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(auto, size) tables
+
+calc-size(auto, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:min-content tables
 
 min-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(min-content, size) tables
+
+calc-size(min-content, size)
 This should be a 100x50 cyan rectangle:
 Table-layout:fixed does NOT apply to width:max-content tables
 
 max-content
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(max-content, size) tables
+
+calc-size(max-content, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:fit-content tables
 
 fit-content
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(fit-content, size) tables
+
+calc-size(fit-content, size)
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(any, 10px + 100%) tables
+
+calc-size(any, 10px + 100%)
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(calc-size(any, 10px + 100%), size) tables
+
+calc-size(calc-size(any, 10px + 100%), size)
 This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:stretch tables
 
 stretch
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(stretch, size) tables
+
+calc-size(stretch, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:-webkit-fill-available tables
 
 -webkit-fill-available
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(-webkit-fill-available, size) tables
+
+calc-size(-webkit-fill-available, size)
 This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:intrinsic tables
 
 intrinsic
 This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(intrinsic, size) tables
+
+calc-size(intrinsic, size)
+This should be a 50x50 cyan square:
 Table-layout:fixed does apply to width:min-intrinsic tables
 
 min-intrinsic
+This should be a 50x50 cyan square:
+Table-layout:fixed does apply to width:calc-size(min-intrinsic, size) tables
+
+calc-size(min-intrinsic, size)
 
 PASS 10px
+PASS calc-size(10px, size)
 PASS 100%
+PASS calc-size(100%, size)
 PASS calc(10px + 100%)
+PASS calc-size(calc(10px + 100%), size)
 PASS auto
+FAIL calc-size(auto, size) assert_equals: Table is in fixed mode expected 50 but got 100
 PASS min-content
+PASS calc-size(min-content, size)
 PASS max-content
+FAIL calc-size(max-content, size) assert_equals: Table is in fixed mode expected 50 but got 100
 PASS fit-content
+PASS calc-size(fit-content, size)
+PASS calc-size(any, 10px + 100%)
+PASS calc-size(calc-size(any, 10px + 100%), size)
 PASS stretch
+PASS calc-size(stretch, size)
 PASS -webkit-fill-available
+PASS calc-size(-webkit-fill-available, size)
 FAIL intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
+FAIL calc-size(intrinsic, size) assert_equals: Table is in fixed mode expected 50 but got 100
 FAIL min-intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
+FAIL calc-size(min-intrinsic, size) assert_equals: Table is in fixed mode expected 50 but got 100
 

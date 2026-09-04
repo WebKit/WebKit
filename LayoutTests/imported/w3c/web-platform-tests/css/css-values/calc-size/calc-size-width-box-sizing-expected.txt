@@ -10,8 +10,8 @@ FAIL resolved width with styles {"width":"calc-size(min-content, size * 2)"} ass
 FAIL resolved width with styles {"width":"calc-size(fit-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "38px" but got "19px"
 FAIL resolved width with styles {"min-width":"calc-size(min-content, size * 2)"} assert_equals: getComputedStyle(target).width expected "14px" but got "7px"
 FAIL resolved width with styles {"min-width":"calc-size(max-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "38px" but got "19px"
-FAIL resolved width with styles {"width":"200px","max-width":"calc-size(max-content, size * 2)"} assert_equals: getComputedStyle(target).width expected "14px" but got "200px"
-FAIL resolved width with styles {"width":"200px","max-width":"calc-size(min-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "38px" but got "200px"
-FAIL resolved width with styles {"width":"calc-size(11px, size * 2)"} assert_equals: getComputedStyle(target).width expected "22px" but got "7px"
-FAIL resolved width with styles {"width":"calc-size(11px, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "22px" but got "19px"
+FAIL resolved width with styles {"width":"200px","max-width":"calc-size(max-content, size * 2)"} assert_equals: getComputedStyle(target).width expected "14px" but got "7px"
+FAIL resolved width with styles {"width":"200px","max-width":"calc-size(min-content, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "38px" but got "19px"
+FAIL resolved width with styles {"width":"calc-size(11px, size * 2)"} assert_equals: getComputedStyle(target).width expected "22px" but got "11px"
+FAIL resolved width with styles {"width":"calc-size(11px, size * 2)","box-sizing":"border-box"} assert_equals: getComputedStyle(target).width expected "22px" but got "12px"
 

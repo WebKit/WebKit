@@ -6,31 +6,31 @@ PASS resolved value for height resulting from flex-basis: fit-content
 PASS resolved value for height resulting from flex-basis: max-content
 PASS resolved value for height resulting from flex-basis: content
 PASS resolved value for height resulting from flex-basis: auto
-FAIL resolved value for height resulting from flex-basis: calc-size(any, 357px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(any, 220%) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(max-content, 350%) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, 172px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(37px, 193px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(83px, size * 3) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(min-content, size / 0.25) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(max-content, size * 5.2) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, size / 4 + 60px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(stretch, size * 2 - 10%) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(30px, 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(any, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, size), size * 3) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(auto, size) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 1.6 + 23px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(content, size) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(content, size * 1.6 + 23px) assert_not_equals: flex-basis value is accepted got disallowed value ""
+PASS resolved value for height resulting from flex-basis: calc-size(any, 357px)
+PASS resolved value for height resulting from flex-basis: calc-size(any, 220%)
+FAIL resolved value for height resulting from flex-basis: calc-size(max-content, 350%) assert_equals: resulting height is correct expected "700px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, 172px) assert_equals: resulting height is correct expected "172px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(37px, 193px) assert_equals: resulting height is correct expected "193px" but got "37px"
+FAIL resolved value for height resulting from flex-basis: calc-size(83px, size * 3) assert_equals: resulting height is correct expected "249px" but got "83px"
+FAIL resolved value for height resulting from flex-basis: calc-size(min-content, size / 0.25) assert_equals: resulting height is correct expected "80px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(max-content, size * 5.2) assert_equals: resulting height is correct expected "104px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, size / 4 + 60px) assert_equals: resulting height is correct expected "65px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(stretch, size * 2 - 10%) assert_equals: resulting height is correct expected "380px" but got "200px"
+FAIL resolved value for height resulting from flex-basis: calc-size(30px, 15em) assert_equals: resulting height is correct expected "300px" but got "30px"
+FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(any, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "30px"
+FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "192px"
+FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, size), size * 3) assert_equals: resulting height is correct expected "60px" but got "20px"
+PASS resolved value for height resulting from flex-basis: calc-size(auto, size)
+FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 1.6 + 23px) assert_equals: resulting height is correct expected "103px" but got "50px"
+PASS resolved value for height resulting from flex-basis: calc-size(content, size)
+FAIL resolved value for height resulting from flex-basis: calc-size(content, size * 1.6 + 23px) assert_equals: resulting height is correct expected "55px" but got "20px"
 PASS resolved value for height resulting from flex-basis: auto and height: auto
-FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 3) and height: auto assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: auto and height: calc-size(auto, size * 7) assert_not_equals: height value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 7) and height: calc-size(auto, size * 3) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: auto and height: calc-size(max-content, size + 12px) assert_not_equals: height value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(auto, size + 4px) and height: calc-size(fit-content, size + 12px) assert_not_equals: flex-basis value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: 372px and height: calc-size(fit-content, size + 12px) assert_not_equals: height value is accepted got disallowed value ""
-FAIL resolved value for height resulting from flex-basis: calc-size(content, size * 7) and height: 321px assert_not_equals: flex-basis value is accepted got disallowed value ""
+FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 3) and height: auto assert_equals: resulting height is correct expected "60px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: auto and height: calc-size(auto, size * 7) assert_equals: resulting height is correct expected "140px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(auto, size * 7) and height: calc-size(auto, size * 3) assert_equals: resulting height is correct expected "420px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: auto and height: calc-size(max-content, size + 12px) assert_equals: resulting height is correct expected "32px" but got "20px"
+FAIL resolved value for height resulting from flex-basis: calc-size(auto, size + 4px) and height: calc-size(fit-content, size + 12px) assert_equals: resulting height is correct expected "36px" but got "20px"
+PASS resolved value for height resulting from flex-basis: 372px and height: calc-size(fit-content, size + 12px)
+FAIL resolved value for height resulting from flex-basis: calc-size(content, size * 7) and height: 321px assert_equals: resulting height is correct expected "140px" but got "20px"
 

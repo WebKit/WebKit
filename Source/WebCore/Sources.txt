@@ -958,6 +958,7 @@ css/CSSBorderImageSliceValue.cpp
 css/CSSBorderImageSourceValue.cpp
 css/CSSBorderImageWidthValue.cpp
 css/CSSBoxShadowPropertyValue.cpp
+css/CSSCalcSizeValue.cpp
 css/CSSCanvasValue.cpp
 css/CSSClipValue.cpp
 css/CSSColorImageValue.cpp
@@ -1137,6 +1138,7 @@ css/parser/CSSPropertyParserConsumer+Anchor.cpp
 css/parser/CSSPropertyParserConsumer+Animations.cpp
 css/parser/CSSPropertyParserConsumer+Background.cpp
 css/parser/CSSPropertyParserConsumer+Box.cpp
+css/parser/CSSPropertyParserConsumer+CalcSize.cpp
 css/parser/CSSPropertyParserConsumer+Color.cpp @cost:7
 css/parser/CSSPropertyParserConsumer+ColorAdjust.cpp
 css/parser/CSSPropertyParserConsumer+ColorInterpolationMethod.cpp
@@ -1303,6 +1305,7 @@ css/values/primitives/CSSSymbol.cpp
 css/values/primitives/CSSURL.cpp
 css/values/primitives/CSSURLModifiers.cpp
 css/values/primitives/CSSUnevaluatedCalc.cpp
+css/values/sizing/CSSCalcSizeFunction.cpp
 css/values/shapes/CSSCircleFunction.cpp
 css/values/shapes/CSSEllipseFunction.cpp
 css/values/shapes/CSSInsetFunction.cpp

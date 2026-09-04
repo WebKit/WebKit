@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcSizeValue.h"
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericOrKeyword.h"
@@ -68,11 +69,9 @@ static auto processKeywordForCSSValueConversion(const K& keyword, CSSValueID val
     return false;
 }
 
-template<PrimitiveNumericOrKeywordDerived StyleType, typename... Rest>
-auto convertPrimitiveNumericOrKeywordFromCSSValue(const CSSKeywordValue& value, Rest&&...) -> std::optional<StyleType>
+template<PrimitiveNumericOrKeywordDerived StyleType>
+static auto convertKeywordIDForCSSValueConversion(CSSValueID valueID) -> std::optional<StyleType>
 {
-    auto valueID = value.valueID();
-
     constexpr auto keywordsTuple = StyleType::Keywords::tuple;
 
     return std::apply([&](const auto& ...keyword) {
@@ -80,6 +79,43 @@ auto convertPrimitiveNumericOrKeywordFromCSSValue(const CSSKeywordValue& value, 
         (processKeywordForCSSValueConversion<StyleType>(keyword, valueID, result) || ...);
         return result;
     }, keywordsTuple);
+}
+
+template<PrimitiveNumericOrKeywordDerived StyleType, typename... Rest>
+auto convertPrimitiveNumericOrKeywordFromCSSValue(const CSSKeywordValue& value, Rest&&...) -> std::optional<StyleType>
+{
+    return convertKeywordIDForCSSValueConversion<StyleType>(value.valueID());
+}
+
+// MARK: <calc-size()> conversion
+
+// FIXME: calc-size() is not resolved at used value time yet, so for now it takes on the behavior of
+// whatever it is based on. A keyword basis degrades to that keyword, which gives the right layout
+// behavior but ignores the calculation. The bases that carry no keyword are equivalent to a plain
+// calculation and resolve exactly: the basis itself for a <calc-sum> basis, and the calculation for
+// an `any` basis.
+template<LengthPercentageOrKeywordDerived StyleType, typename ConversionState, typename... Rest>
+auto convertCalcSizeForCSSValueConversion(ConversionState& conversionState, const CSS::CalcSize& calcSize, Rest&&... rest) -> std::optional<StyleType>
+{
+    using CSSRaw = typename StyleType::Specified::CSS::Raw;
+
+    auto convertCalculation = [&](const Ref<CSSCalc::Value>& calculation) -> std::optional<StyleType> {
+        return StyleType { toStyle(CSS::UnevaluatedCalc<CSSRaw> { Ref { calculation } }, conversionState, std::forward<Rest>(rest)...) };
+    };
+
+    return WTF::switchOn(calcSize.basis,
+        [&](CSSValueID keyword) -> std::optional<StyleType> {
+            if (keyword == CSSValueAny)
+                return convertCalculation(calcSize.calculation);
+            return convertKeywordIDForCSSValueConversion<StyleType>(keyword);
+        },
+        [&](const Ref<CSSCalc::Value>& basis) -> std::optional<StyleType> {
+            return convertCalculation(basis);
+        },
+        [&](const UniqueRef<CSS::CalcSize>& nested) -> std::optional<StyleType> {
+            return convertCalcSizeForCSSValueConversion<StyleType>(conversionState, nested.get(), std::forward<Rest>(rest)...);
+        }
+    );
 }
 
 template<PrimitiveNumericOrKeywordDerived StyleType, typename... Rest>
@@ -169,6 +205,9 @@ auto convertPrimitiveNumericOrKeywordFromCSSValue(const CSSToLengthConversionDat
         if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
             return convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(conversionData, *primitiveValue, std::forward<Rest>(rest)...);
 
+        if (RefPtr calcSizeValue = dynamicDowncast<CSSCalcSizeValue>(value))
+            return convertCalcSizeForCSSValueConversion<StyleType>(conversionData, calcSizeValue->calcSize(), std::forward<Rest>(rest)...);
+
         RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value);
         if (!keywordValue)
             return std::nullopt;
@@ -189,6 +228,13 @@ auto convertPrimitiveNumericOrKeywordFromCSSValue(BuilderState& state, const CSS
     } else {
         if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
             return convertPrimitiveNumericOrKeywordFromCSSValue<StyleType>(state, *primitiveValue, std::forward<Rest>(rest)...);
+
+        if (RefPtr calcSizeValue = dynamicDowncast<CSSCalcSizeValue>(value)) {
+            if (auto result = convertCalcSizeForCSSValueConversion<StyleType>(state, calcSizeValue->calcSize(), std::forward<Rest>(rest)...))
+                return *result;
+            state.setCurrentPropertyInvalidAtComputedValueTime();
+            return 0_css_px;
+        }
 
         RefPtr keywordValue = requiredDowncast<CSSKeywordValue>(state, value);
         if (!keywordValue)
