@@ -220,9 +220,7 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     , m_initial(initial)
     , m_maximum(maximum)
 {
-    if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
-        ASSERT(mappedCapacity == size);
-    else {
+    if (sharingMode != MemorySharingMode::Default || mode != MemoryMode::BoundsChecking || mappedCapacity != size) {
 #if ENABLE(WEBASSEMBLY)
         Wasm::activateSignalingMemory();
 #endif
@@ -261,25 +259,16 @@ BufferMemoryHandle::~BufferMemoryHandle()
             break;
         }
         case MemoryMode::BoundsChecking: {
-            switch (m_sharingMode) {
-            case MemorySharingMode::Default: {
-                if (memory == nullBasePointer() && !m_size)
-                    return;
-                Gigacage::freeVirtualPages(Gigacage::Primitive, memory, m_size);
-                break;
+            if (memory == nullBasePointer() && !m_mappedCapacity) {
+                ASSERT(!m_size);
+                return;
             }
-            case MemorySharingMode::Shared: {
-                if (memory == nullBasePointer() && !m_mappedCapacity) {
-                    ASSERT(!m_size);
-                    return;
-                }
-                constexpr bool readable = true;
-                constexpr bool writable = true;
-                OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
-                BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
-                break;
-            }
-            }
+            ASSERT(m_mappedCapacity >= m_size);
+            ASSERT(!(m_mappedCapacity % PageCount::pageSize));
+            constexpr bool readable = true;
+            constexpr bool writable = true;
+            OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
+            BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
             break;
         }
         }

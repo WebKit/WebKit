@@ -224,43 +224,57 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
     if (Options::crashIfWasmCantFastMemory()) [[unlikely]]
         webAssemblyCouldntGetFastMemory();
 
-    switch (sharingMode) {
-    case MemorySharingMode::Default: {
-        if (!initialBytes)
-            return adoptRef(new Memory(initial, maximum, MemorySharingMode::Default, addressType, WTF::move(growSuccessCallback)));
-
-        void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialBytes);
-        if (!slowMemory) {
-            BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
+    auto tryAllocateGrowableBoundsCheckingMemory = [&] (size_t capacityBytes) -> char* {
+        if (!capacityBytes)
             return nullptr;
-        }
-        return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, initialBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, WTF::move(growSuccessCallback));
-    }
-    case MemorySharingMode::Shared: {
         char* slowMemory = nullptr;
         tryAllocate(vm,
             [&] () -> BufferMemoryResult::Kind {
-                auto result = BufferMemoryManager::singleton().tryAllocateGrowableBoundsCheckingMemory(reservedMaximumBytes);
+                auto result = BufferMemoryManager::singleton().tryAllocateGrowableBoundsCheckingMemory(capacityBytes);
                 slowMemory = std::bit_cast<char*>(result.basePtr);
                 return result.kind;
             });
-        if (!slowMemory) {
+        if (!slowMemory)
+            return nullptr;
+        if (capacityBytes > initialBytes) {
+            constexpr bool readable = false;
+            constexpr bool writable = false;
+            OSAllocator::protect(slowMemory + initialBytes, capacityBytes - initialBytes, readable, writable);
+        }
+        return slowMemory;
+    };
+
+    auto createFromGrowableBoundsCheckingMemory = [&] (char* slowMemory, size_t mappedCapacity) -> RefPtr<Memory> {
+        if (sharingMode == MemorySharingMode::Shared) {
+            Ref handle = adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, mappedCapacity, initial, maximum, MemorySharingMode::Shared, MemoryMode::BoundsChecking));
+            auto span = handle->mutableSpan();
+            auto content = SharedArrayBufferContents::create(span, mappedCapacity, WTF::move(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
+            return Memory::create(WTF::move(content), addressType, WTF::move(growSuccessCallback));
+        }
+        return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, mappedCapacity, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, WTF::move(growSuccessCallback));
+    };
+
+    if (reservedMaximumBytes && (sharingMode == MemorySharingMode::Shared || Options::useWasmFaultSignalHandler())) {
+        if (char* slowMemory = tryAllocateGrowableBoundsCheckingMemory(reservedMaximumBytes))
+            return createFromGrowableBoundsCheckingMemory(slowMemory, reservedMaximumBytes);
+        if (sharingMode == MemorySharingMode::Shared) {
             BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
             return nullptr;
         }
-
-        constexpr bool readable = false;
-        constexpr bool writable = false;
-        OSAllocator::protect(slowMemory + initialBytes, reservedMaximumBytes - initialBytes, readable, writable);
-
-        Ref handle = adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, reservedMaximumBytes, initial, maximum, MemorySharingMode::Shared, MemoryMode::BoundsChecking));
-        auto span = handle->mutableSpan();
-        auto content = SharedArrayBufferContents::create(span, reservedMaximumBytes, WTF::move(handle), nullptr, SharedArrayBufferContents::Mode::WebAssembly);
-        return Memory::create(WTF::move(content), addressType, WTF::move(growSuccessCallback));
     }
+
+    // A shared memory must declare a maximum, so it either reserved above or already returned.
+    RELEASE_ASSERT(sharingMode == MemorySharingMode::Default);
+
+    if (!initialBytes)
+        return adoptRef(new Memory(initial, maximum, MemorySharingMode::Default, addressType, WTF::move(growSuccessCallback)));
+
+    void* slowMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, initialBytes);
+    if (!slowMemory) {
+        BufferMemoryManager::singleton().freePhysicalBytes(initialBytes);
+        return nullptr;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    return Memory::create(adoptRef(*new BufferMemoryHandle(slowMemory, initialBytes, initialBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, WTF::move(growSuccessCallback));
 }
 
 Memory::~Memory() = default;
@@ -370,32 +384,8 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
     size_t desiredSize = newPageCount.bytes();
     RELEASE_ASSERT(desiredSize <= allocatableBytes);
     RELEASE_ASSERT(desiredSize > size());
-    switch (mode()) {
-    case MemoryMode::BoundsChecking: {
-        bool allocationSuccess = tryAllocate(vm,
-            [&] () -> BufferMemoryResult::Kind {
-                return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(desiredSize);
-            });
-        if (!allocationSuccess)
-            return makeUnexpected(GrowFailReason::OutOfMemory);
 
-        RELEASE_ASSERT(maximum().bytes() != 0);
-
-        void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
-        if (!newMemory) {
-            BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
-            return makeUnexpected(GrowFailReason::OutOfMemory);
-        }
-
-        memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredSize), m_handle->mutableSpan());
-        Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
-        m_handle->transferAnchors(newHandle.get());
-        m_handle = WTF::move(newHandle);
-
-        ASSERT(basePointer() == newMemory);
-        return success();
-    }
-    case MemoryMode::Signaling: {
+    auto growInPlace = [&] () -> std::expected<PageCount, GrowFailReason> {
         size_t extraBytes = desiredSize - size();
         RELEASE_ASSERT(extraBytes);
         bool allocationSuccess = tryAllocate(vm,
@@ -407,21 +397,40 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         void* memory = this->basePointer();
         RELEASE_ASSERT(memory);
-
-        // Signaling memory must have been pre-allocated virtually.
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + size();
-        
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);
         m_handle->updateSize(desiredSize);
         return success();
-    }
+    };
+
+    if (mode() == MemoryMode::Signaling || desiredSize <= m_handle->mappedCapacity())
+        return growInPlace();
+
+    RELEASE_ASSERT(mode() == MemoryMode::BoundsChecking);
+
+    bool allocationSuccess = tryAllocate(vm,
+        [&] () -> BufferMemoryResult::Kind {
+            return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(desiredSize);
+        });
+    if (!allocationSuccess)
+        return makeUnexpected(GrowFailReason::OutOfMemory);
+
+    void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
+    if (!newMemory) {
+        BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
+        return makeUnexpected(GrowFailReason::OutOfMemory);
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
-    return oldPageCount;
+    memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), size()), unsafeMakeSpan(static_cast<uint8_t*>(basePointer()), size()));
+    Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
+    m_handle->transferAnchors(newHandle.get());
+    m_handle = WTF::move(newHandle);
+
+    ASSERT(basePointer() == newMemory);
+    return success();
 }
 
 bool Memory::init(uint64_t offset, const uint8_t* data, uint32_t length)
