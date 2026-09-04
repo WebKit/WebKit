@@ -1,0 +1,24 @@
+
+RUN(internals.settings.setShouldDisplayTrackKind("Captions", true))
+RUN(internals.setCaptionDisplayMode("ForcedOnly"))
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplay)
+RUN(host = internals.controlsHostForMediaElement(video))
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (internals.captionDisplayMode == 'forcedonly') OK
+EVENT(fullscreenchange)
+EXPECTED (host.inWindowFullscreen == 'true') OK
+RUN(trackTitle = host.displayNameForTrack(video.textTracks[0]))
+EXPECTED (selectMediaControlsMenuItem(trackTitle) == 'true') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (internals.captionDisplayMode == 'alwayson') OK
+RUN(document.webkitCancelFullScreen())
+EVENT(fullscreenchange)
+EXPECTED (host.inWindowFullscreen == 'false') OK
+RUN(host.presentationModeChanged())
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+EXPECTED (internals.captionDisplayMode == 'forcedonly') OK
+EXPECTED (host.captionMenuOffItem.mode == 'disabled') OK
+EXPECTED (host.captionMenuAutomaticItem.mode == 'disabled') OK
+END OF TEST
+
