@@ -98,7 +98,8 @@ void* thingy_try_reallocate_primitive(void* old_ptr, size_t new_size, pas_alloca
         THINGY_HEAP_CONFIG,
         try_allocate_primitive_for_realloc,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_identity).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE(
@@ -160,7 +161,8 @@ void* thingy_try_reallocate_array(
                                                     try_allocate_array_for_realloc,
                                                     &thingy_typed_runtime_config.base,
                                                     pas_reallocate_disallow_heap_teleport,
-                                                    pas_reallocate_free_if_successful).begin;
+                                                    pas_reallocate_free_if_successful,
+                                                    pas_allocation_result_identity).begin;
 }
 
 void thingy_deallocate(void* ptr)

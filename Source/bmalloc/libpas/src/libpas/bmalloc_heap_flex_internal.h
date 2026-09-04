@@ -129,7 +129,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_flex_inline(
         bmalloc_try_allocate_flex_impl_for_realloc,
         &bmalloc_flex_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_reallocate_flex_inline(
@@ -144,7 +145,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_reallocate_flex_inline(
         bmalloc_allocate_flex_impl_for_realloc,
         &bmalloc_flex_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_END_EXTERN_C;

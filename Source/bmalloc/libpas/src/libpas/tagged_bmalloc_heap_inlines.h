@@ -169,7 +169,8 @@ tagged_bmalloc_try_reallocate_inline(void* old_ptr, size_t new_size,
         TAGGED_BMALLOC_HEAP_CONFIG,
         tagged_bmalloc_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -184,7 +185,8 @@ tagged_bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
         TAGGED_BMALLOC_HEAP_CONFIG,
         tagged_bmalloc_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 static PAS_ALWAYS_INLINE void tagged_bmalloc_deallocate_inline(void* ptr)

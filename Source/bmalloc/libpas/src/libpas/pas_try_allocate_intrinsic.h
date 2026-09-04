@@ -96,7 +96,8 @@ pas_try_allocate_intrinsic_impl_casual_case(
     pas_heap_config config,
     pas_try_allocate_common_fast try_allocate_common_fast,
     pas_try_allocate_common_slow try_allocate_common_slow,
-    pas_intrinsic_heap_designation_mode designation_mode)
+    pas_intrinsic_heap_designation_mode designation_mode,
+    pas_allocation_result_filter result_filter)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
@@ -115,7 +116,7 @@ pas_try_allocate_intrinsic_impl_casual_case(
         return pas_allocation_result_create_failure();
 
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind)))
-        return pas_system_heap_allocate(size, alignment, allocation_mode);
+        return result_filter(pas_system_heap_allocate(size, alignment, allocation_mode));
 
     if (verbose)
         pas_log("not doing system heap in impl_casual_case for %s\n", pas_heap_config_kind_get_string(config.kind));
@@ -293,7 +294,7 @@ pas_try_allocate_intrinsic_impl_inline_only(
     { \
         return pas_try_allocate_intrinsic_impl_casual_case( \
             (heap), size, alignment, allocation_mode, (heap_support), (heap_config), \
-            name ## _impl_fast, name ## _impl_slow, (designation_mode)); \
+            name ## _impl_fast, name ## _impl_slow, (designation_mode), (result_filter)); \
     } \
     \
     static PAS_ALWAYS_INLINE pas_allocation_result name ## _inline_only(size_t size, size_t alignment, pas_allocation_mode allocation_mode) \

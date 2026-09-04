@@ -134,7 +134,8 @@ iso_try_reallocate_common_primitive_inline(void* old_ptr, size_t new_size,
         ISO_HEAP_CONFIG,
         iso_try_allocate_common_primitive_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_set_errno).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -149,7 +150,8 @@ iso_reallocate_common_primitive_inline(void* old_ptr, size_t new_size,
         ISO_HEAP_CONFIG,
         iso_allocate_common_primitive_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE(
@@ -243,7 +245,8 @@ static PAS_ALWAYS_INLINE void* iso_try_reallocate_array_by_count_inline(void* ol
         iso_try_allocate_array_impl_for_realloc,
         &iso_typed_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_set_errno).begin;
 }
 
 static PAS_ALWAYS_INLINE void* iso_reallocate_array_by_count_inline(void* old_ptr, pas_heap_ref* heap_ref,
@@ -260,7 +263,8 @@ static PAS_ALWAYS_INLINE void* iso_reallocate_array_by_count_inline(void* old_pt
         iso_allocate_array_impl_for_realloc,
         &iso_typed_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(
@@ -338,7 +342,8 @@ static PAS_ALWAYS_INLINE void* iso_try_reallocate_primitive_inline(void* old_ptr
         iso_try_allocate_primitive_impl_for_realloc,
         &iso_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_set_errno).begin;
 }
 
 static PAS_ALWAYS_INLINE void* iso_reallocate_primitive_inline(void* old_ptr,
@@ -356,7 +361,8 @@ static PAS_ALWAYS_INLINE void* iso_reallocate_primitive_inline(void* old_ptr,
         iso_allocate_primitive_impl_for_realloc,
         &iso_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_PRIMITIVE(

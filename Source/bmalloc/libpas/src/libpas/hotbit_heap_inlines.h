@@ -83,7 +83,8 @@ hotbit_try_reallocate_inline(void* old_ptr, size_t new_size,
         HOTBIT_HEAP_CONFIG,
         hotbit_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void hotbit_deallocate_inline(void* ptr)

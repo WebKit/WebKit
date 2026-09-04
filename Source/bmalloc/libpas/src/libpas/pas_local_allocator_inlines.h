@@ -1255,8 +1255,8 @@ pas_local_allocator_try_allocate(pas_local_allocator* allocator,
     }
 
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config.kind)))
-        return pas_system_heap_allocate(size, alignment, allocation_mode);
-    
+        return result_filter(pas_system_heap_allocate(size, alignment, allocation_mode));
+
     if (config.small_segregated_config.base.is_enabled &&
         allocator->config_kind == pas_local_allocator_config_kind_create_normal(
             config.small_segregated_config.kind)) {

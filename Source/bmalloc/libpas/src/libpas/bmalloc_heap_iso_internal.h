@@ -190,7 +190,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_size_inline(
         bmalloc_try_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_size_inline(
@@ -205,7 +206,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_size_inline(
         bmalloc_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_count_inline(
@@ -220,7 +222,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_count_inline(
         bmalloc_try_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_count_inline(
@@ -235,7 +238,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_count_inline(
         bmalloc_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
         pas_reallocate_disallow_heap_teleport,
-        pas_reallocate_free_if_successful).begin;
+        pas_reallocate_free_if_successful,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_END_EXTERN_C;

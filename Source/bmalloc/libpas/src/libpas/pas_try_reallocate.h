@@ -215,7 +215,8 @@ pas_try_reallocate(void* old_ptr,
                    pas_reallocate_heap_teleport_rule teleport_rule,
                    pas_reallocate_free_mode free_mode,
                    pas_try_reallocate_allocate_callback allocate_callback,
-                   void* allocate_callback_arg)
+                   void* allocate_callback_arg,
+                   pas_allocation_result_filter result_filter)
 {
     uintptr_t begin;
     begin = (uintptr_t)old_ptr;
@@ -325,7 +326,7 @@ pas_try_reallocate(void* old_ptr,
                 result.did_succeed = true;
             }
 
-            return result;
+            return result_filter(result);
         }
 
         pas_heap_lock_lock();
@@ -399,12 +400,13 @@ pas_try_reallocate_intrinsic(
     pas_heap_config config,
     pas_try_allocate_intrinsic_for_realloc try_allocate_intrinsic,
     pas_reallocate_heap_teleport_rule teleport_rule,
-    pas_reallocate_free_mode free_mode)
+    pas_reallocate_free_mode free_mode,
+    pas_allocation_result_filter result_filter)
 {
     pas_try_reallocate_intrinsic_allocate_data data;
-    
+
     data.try_allocate_intrinsic = try_allocate_intrinsic;
-    
+
     return pas_try_reallocate(
         old_ptr,
         heap,
@@ -414,7 +416,8 @@ pas_try_reallocate_intrinsic(
         teleport_rule,
         free_mode,
         pas_try_reallocate_intrinsic_allocate_callback,
-        &data);
+        &data,
+        result_filter);
 }
 
 typedef struct {
@@ -450,13 +453,14 @@ pas_try_reallocate_single(
     pas_try_allocate try_allocate,
     pas_heap_runtime_config* runtime_config,
     pas_reallocate_heap_teleport_rule teleport_rule,
-    pas_reallocate_free_mode free_mode)
+    pas_reallocate_free_mode free_mode,
+    pas_allocation_result_filter result_filter)
 {
     pas_try_reallocate_single_allocate_data data;
-    
+
     data.heap_ref = heap_ref;
     data.try_allocate = try_allocate;
-    
+
     return pas_try_reallocate(
         old_ptr,
         pas_ensure_heap(heap_ref,
@@ -469,7 +473,8 @@ pas_try_reallocate_single(
         teleport_rule,
         free_mode,
         pas_try_reallocate_single_allocate_callback,
-        &data);
+        &data,
+        result_filter);
 }
 
 typedef struct {
@@ -504,13 +509,14 @@ pas_try_reallocate_array_by_size(
     pas_try_allocate_array_for_realloc try_allocate_array,
     pas_heap_runtime_config* runtime_config,
     pas_reallocate_heap_teleport_rule teleport_rule,
-    pas_reallocate_free_mode free_mode)
+    pas_reallocate_free_mode free_mode,
+    pas_allocation_result_filter result_filter)
 {
     pas_try_reallocate_array_allocate_data data;
-    
+
     data.try_allocate_array = try_allocate_array;
     data.heap_ref = heap_ref;
-    
+
     return pas_try_reallocate(
         old_ptr,
         pas_ensure_heap(heap_ref,
@@ -523,7 +529,8 @@ pas_try_reallocate_array_by_size(
         teleport_rule,
         free_mode,
         pas_try_reallocate_array_allocate_callback,
-        &data);
+        &data,
+        result_filter);
 }
 
 static PAS_ALWAYS_INLINE pas_allocation_result
@@ -536,20 +543,21 @@ pas_try_reallocate_array_by_count(
     pas_try_allocate_array_for_realloc try_allocate_array,
     pas_heap_runtime_config* runtime_config,
     pas_reallocate_heap_teleport_rule teleport_rule,
-    pas_reallocate_free_mode free_mode)
+    pas_reallocate_free_mode free_mode,
+    pas_allocation_result_filter result_filter)
 {
     const pas_heap_type* type;
     size_t type_size;
     size_t new_size;
-    
+
     type = heap_ref->type;
     type_size = config.get_type_size(type);
-    
+
     if (__builtin_mul_overflow(new_count, type_size, &new_size))
         return pas_allocation_result_create_failure();
 
     return pas_try_reallocate_array_by_size(
-        old_ptr, heap_ref, new_size, allocation_mode, config, try_allocate_array, runtime_config, teleport_rule, free_mode);
+        old_ptr, heap_ref, new_size, allocation_mode, config, try_allocate_array, runtime_config, teleport_rule, free_mode, result_filter);
 }
 
 typedef struct {
@@ -591,13 +599,14 @@ pas_try_reallocate_primitive(
     pas_try_allocate_primitive_for_realloc try_allocate_primitive,
     pas_heap_runtime_config* runtime_config,
     pas_reallocate_heap_teleport_rule teleport_rule,
-    pas_reallocate_free_mode free_mode)
+    pas_reallocate_free_mode free_mode,
+    pas_allocation_result_filter result_filter)
 {
     pas_try_reallocate_primitive_allocate_data data;
-    
+
     data.heap_ref = heap_ref;
     data.try_allocate_primitive = try_allocate_primitive;
-    
+
     return pas_try_reallocate(
         old_ptr,
         pas_ensure_heap(&heap_ref->base,
@@ -610,7 +619,8 @@ pas_try_reallocate_primitive(
         teleport_rule,
         free_mode,
         pas_try_reallocate_primitive_allocate_callback,
-        &data);
+        &data,
+        result_filter);
 }
 
 PAS_END_EXTERN_C;

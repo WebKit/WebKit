@@ -187,7 +187,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_reallocate_auxiliary_inline(
         bmalloc_try_allocate_auxiliary_impl_for_realloc,
         &bmalloc_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_reallocate_auxiliary_inline(void* old_ptr,
@@ -205,7 +206,8 @@ static PAS_ALWAYS_INLINE void* bmalloc_reallocate_auxiliary_inline(void* old_ptr
         bmalloc_allocate_auxiliary_impl_for_realloc,
         &bmalloc_primitive_runtime_config.base,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_CREATE_TRY_ALLOCATE_INTRINSIC(
@@ -351,7 +353,8 @@ bmalloc_try_reallocate_inline(void* old_ptr, size_t new_size,
         BMALLOC_HEAP_CONFIG,
         bmalloc_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_identity).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
@@ -369,7 +372,8 @@ bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
         BMALLOC_HEAP_CONFIG,
         bmalloc_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
-        free_mode).begin;
+        free_mode,
+        pas_allocation_result_crash_on_error).begin;
 }
 
 PAS_API PAS_PRESERVE_MOST void bmalloc_deallocate_casual(void* ptr);
