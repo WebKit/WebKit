@@ -18,6 +18,10 @@ log = logging.getLogger('measure-build-time')
 
 SCRIPTS = Path(__file__).parent
 
+# Written into the build directory by -DSWIFT_NINJA_TRACE=ON, and already bound
+# to that build's swift jobs log and stats directory.
+TRACE_FINALIZE_SCRIPT = 'swift-trace-finalize.sh'
+
 # --- Tests and subtests -----------------------------------------------------
 
 class Task:
@@ -30,6 +34,7 @@ class Task:
     stdout_filter: str | None
     build_dir: Path
     source_dir: Path
+    trace_dir: Path | None
 
     result: TestResult | None
 
@@ -38,6 +43,7 @@ class Task:
         self.stdout_filter = args.stdout_filter
         self.source_dir = args.source_dir
         self.build_dir = args.build_dir
+        self.trace_dir = args.trace_dir if args.trace else None
 
     def __enter__(self):
         pass
@@ -48,7 +54,10 @@ class Task:
     def run(self):
         log.info('--- %s %s', self.name, '-' * (74 - len(self.name)))
         with self:
+            started_epoch_ms = int(time.time() * 1000)
             self.result = run_test(self.name, self.build_command, self.stdout_filter)
+        if self.trace_dir:
+            write_build_trace(self.build_dir, self.trace_dir, self.name, started_epoch_ms)
         return self.result
 
 
@@ -367,6 +376,27 @@ def run_test(name: str, command: str, stdout_filter: str | None = None) -> TestR
     return build_type_result(wall_time_ms, timing_summary)
 
 
+def write_build_trace(build_dir: Path, trace_dir: Path, name: str,
+                      since_epoch_ms: int) -> Path | None:
+    finalize = build_dir / TRACE_FINALIZE_SCRIPT
+    if not finalize.exists():
+        log.warning('No %s; configure with -DSWIFT_NINJA_TRACE=ON to trace builds', finalize)
+        return None
+    trace_dir.mkdir(parents=True, exist_ok=True)
+    output = trace_dir / f'{name}.json.gz'
+    trace = subprocess.run((str(finalize), '--relative',
+                            f'--since-epoch-ms={since_epoch_ms}', '-o', str(output)))
+    if trace.returncode:
+        log.warning('%s exited %d, so %s has no build trace',
+                    finalize, trace.returncode, name)
+        return None
+    if not output.exists():
+        log.info('No ninja invocation to trace for %s', name)
+        return None
+    log.info('Wrote build trace %s', output)
+    return output
+
+
 # --- Test runner ------------------------------------------------------------
 
 DEFAULT_MAKE_COMMAND = (
@@ -396,6 +426,9 @@ class Arguments(argparse.Namespace):
     tests: list[str]
     unapply_patch: bool
     keep_going: bool
+
+    trace: bool | None
+    trace_dir: Path
 
     stdout_filter: str | None
     output: str
@@ -433,12 +466,20 @@ def get_args() -> Arguments:
     parser.add_argument('--metric-key',
                         help='Top-level test key in the results. '
                         'Can be omitted, but must be provided when emitting a real benchmark score.')
+    parser.add_argument('--trace', action=argparse.BooleanOptionalAction, default=None,
+                        help='Write a Perfetto trace of each build to --trace-dir '
+                        '(default: on for --cmake). Configures with -DSWIFT_NINJA_TRACE=ON.')
+    parser.add_argument('--trace-dir', type=Path, default=Path('build-time-traces'),
+                        help='Directory to write build traces into (default: build-time-traces)')
     parser.add_argument('--stdout-filter', default=None,
                         help='Shell command to filter build stdout through (e.g. filter-build-webkit)')
     parser.add_argument('--output', '-o', default='build-time-results.json',
                         help='Output JSON file path (default: build-time-results.json)')
 
     args = parser.parse_args(namespace=Arguments())
+
+    if args.trace is None:
+        args.trace = args.cmake
 
     if not args.build_dir:
         args.build_dir = Path(subprocess.check_output(
@@ -490,6 +531,8 @@ def get_args() -> Arguments:
             preset=cmake_preset,
             sdk_version=sdk_version,
         )
+        if args.trace:
+            args.configure_command += ' -DSWIFT_NINJA_TRACE=ON'
     if not args.metric_key:
         # e.g. "BuildTime-Debug"
         args.metric_key = f'BuildTime-{args.configuration.capitalize()}'
@@ -502,6 +545,12 @@ def main():
     )
 
     args = get_args()
+
+    if args.trace:
+        # A CI workdir outlives the build, and a test that produces no trace this
+        # time would otherwise leave the last run's behind to be collected.
+        for stale in args.trace_dir.glob('*.json.gz'):
+            stale.unlink()
 
     # Read each test's `depends` lists to compute a topological order to run
     # all the tests. Ties are broken by AVAILABLE_TESTS order, so the plan is

@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import gzip
 import json
 import os
 import re
@@ -1325,7 +1326,13 @@ def main(argv: list[str] | None = None) -> int:
         help="a swiftc_job_recorder.py log; adds the explicit-module-build jobs that "
         "write no stats file",
     )
-    parser.add_argument("-o", "--out", type=Path, default=None, help="output JSON (default stdout)")
+    parser.add_argument(
+        "-o",
+        "--out",
+        type=Path,
+        default=None,
+        help="output JSON (default stdout); a .gz suffix writes gzip, which Perfetto reads",
+    )
     parser.add_argument(
         "--cores", type=int, default=os.cpu_count() or 1, help="core budget for oversubscription"
     )
@@ -1340,6 +1347,13 @@ def main(argv: list[str] | None = None) -> int:
         choices=("last", "all"),
         default="last",
         help="which ninja invocation in the log to emit (default: last)",
+    )
+    parser.add_argument(
+        "--since-epoch-ms",
+        type=float,
+        default=None,
+        help="ignore ninja invocations, stats files and recorded jobs from before this "
+        "epoch time; picks one build out of logs that accumulate across builds",
     )
     parser.add_argument(
         "--relative",
@@ -1364,6 +1378,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: no usable records in {args.ninja_log}", file=sys.stderr)
         return 1
     runs, undated = group_runs(edges)
+    if args.since_epoch_ms is not None:
+        recent = [r for r in runs if r.anchor_ms >= args.since_epoch_ms]
+        if not recent:
+            print(
+                f"note: none of the {len(runs)} ninja invocation(s) in {args.ninja_log} "
+                "started at or after --since-epoch-ms; nothing to trace",
+                file=sys.stderr,
+            )
+            return 0
+        runs = recent
     if not runs:
         if args.anchor_epoch_ms is None:
             print(
@@ -1385,6 +1409,10 @@ def main(argv: list[str] | None = None) -> int:
 
     jobs = load_stats_dir(args.stats_dir, args.verbose) if args.stats_dir else []
     recorded = load_jobs_log(args.jobs_log) if args.jobs_log else []
+    if args.since_epoch_ms is not None:
+        since_us = args.since_epoch_ms * 1000.0
+        jobs = [j for j in jobs if j.start_us >= since_us]
+        recorded = [i for i in recorded if i.start_us >= since_us]
 
     if args.run == "all":
         run = merge_runs(runs)
@@ -1486,7 +1514,11 @@ def main(argv: list[str] | None = None) -> int:
 
     text = json.dumps(trace)
     if args.out:
-        args.out.write_text(text)
+        if args.out.suffix == ".gz":
+            with gzip.open(args.out, "wt", encoding="utf-8") as f:
+                f.write(text)
+        else:
+            args.out.write_text(text)
         print(f"wrote {args.out} ({len(trace['traceEvents'])} events)", file=sys.stderr)
     else:
         sys.stdout.write(text)

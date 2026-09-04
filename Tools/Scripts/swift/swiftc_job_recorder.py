@@ -41,11 +41,7 @@ With no --jobs-log it execs the compiler unchanged, so leaving the recorder
 configured costs nothing (and configure-time probes stay untouched).
 
 Timestamps come from when each message reaches this process, which means nothing
-between here and the driver may buffer stderr. If your build already wraps
-swiftc in a script that captures stderr and re-emits it after the child exits
-(WebKit's Tools/Scripts/swift/swiftc-wrapper.py did), every message arrives at
-once and the spans collapse -- make that wrapper stream stderr line by line, or
-put this recorder below it.
+between here and the driver may buffer stderr.
 """
 
 from __future__ import annotations
@@ -57,14 +53,6 @@ import sys
 import time
 
 MESSAGE_KEYS = ("kind", "name", "pid")
-
-# swiftc-wrapper.py's own dependency-tracking flags for functionality that the
-# recorder does not implement.
-IGNORED_WRAPPER_FLAGS = (
-    "--emit-ninja-depfile=",
-    "--ninja-depfile-target=",
-    "--ninja-depfile-exclude=",
-)
 
 
 def log_line(handle, payload: dict) -> None:
@@ -141,8 +129,6 @@ def parse_args(argv: list[str]) -> tuple[str, str | None, list[str]]:
             compiler = arg[len("--original-swift-compiler="):]
         elif arg.startswith("--jobs-log="):
             jobs_log = arg[len("--jobs-log="):]
-        elif arg.startswith(IGNORED_WRAPPER_FLAGS):
-            pass
         else:
             compiler_args.append(arg)
     return compiler, jobs_log, compiler_args

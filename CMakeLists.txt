@@ -47,10 +47,6 @@ if (SWIFT_REQUIRED)
         # Avoid cmd.exe due to command-line length limits.
         set(CMAKE_Swift_COMPILER "${Python_EXECUTABLE}")
         set(CMAKE_Swift_COMPILER_ARG1 "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.py")
-    elseif (SWIFT_NINJA_TRACE)
-        # The rest of the tracing logic is in OptionsCommon.cmake, but the
-        # compiler override needs to be given up front.
-        set(CMAKE_Swift_COMPILER "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc_job_recorder.py")
     else ()
         set(CMAKE_Swift_COMPILER "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/swiftc-wrapper.py")
     endif ()

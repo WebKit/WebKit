@@ -4,6 +4,8 @@
 #   - relays the command line through a response file on Windows
 #   - forwards the MSVC-style linker switches that CMake's own defaults inject
 #   - merges per-frontend depfiles into one depfile for the whole module
+#   - optionally runs another wrapper in the compiler's place, so a tool that
+#     needs to spawn swiftc itself can be nested below this one
 #
 # Flags that swiftc cannot accept are kept off the Swift command line by the
 # CMake configuration, using $<COMPILE_LANGUAGE:Swift> / $<LINK_LANGUAGE:Swift>
@@ -171,9 +173,12 @@ def main(argv):
     depfile_path = None
     depfile_target = None
     depfile_excludes = []
+    inner_wrapper = None
     for arg in argv:
         if arg.startswith("--original-swift-compiler="):
             real_swiftc = arg[len("--original-swift-compiler="):]
+        elif arg.startswith("--swift-wrapper="):
+            inner_wrapper = arg[len("--swift-wrapper="):]
         elif arg.startswith("--emit-ninja-depfile="):
             depfile_path = arg[len("--emit-ninja-depfile="):]
         elif arg.startswith("--ninja-depfile-target="):
@@ -192,12 +197,16 @@ def main(argv):
     if depfile_path and depfile_target and not linking:
         depfile = DepfileRequest(depfile_path, depfile_target, frozenset(depfile_excludes))
 
-    flat_command = [real_swiftc] + args
+    if inner_wrapper:
+        flat_command = [inner_wrapper, f"--original-swift-compiler={real_swiftc}"] + args
+    else:
+        flat_command = [real_swiftc] + args
 
-    if os.name == "nt" and "-explicit-module-build" not in args:
+    if os.name == "nt" and "-explicit-module-build" not in args and not inner_wrapper:
         # WebKit's swiftc invocations run tens of thousands of characters long
         # (hundreds of -I flags); Windows' CreateProcess caps a command line at
-        # ~32767 characters
+        # ~32767 characters. An inner wrapper is excluded because it would have
+        # to expand the response file itself.
         response_file = write_response_file(args)
         command = [real_swiftc, "@" + response_file]
     else:
@@ -206,8 +215,8 @@ def main(argv):
             if len(cmdline) >= 32767:
                 sys.stderr.write(
                     f"swiftc-wrapper: command line is {len(cmdline)} characters, "
-                    "over the Windows 32767 limit, and -explicit-module-build "
-                    "prevents relaying it through a response file\n")
+                    "over the Windows 32767 limit, and a response file cannot be "
+                    "used here\n")
                 return 1
         command = flat_command
         response_file = None

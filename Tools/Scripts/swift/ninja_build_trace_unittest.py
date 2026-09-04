@@ -7,6 +7,7 @@ Run with: Tools/Scripts/test-webkitpy swift
 from __future__ import annotations
 
 import contextlib
+import gzip
 import io
 import json
 import tempfile
@@ -898,6 +899,77 @@ class MainTest(ScratchDirectoryTest):
             self.assertEqual(nbt.main(["--ninja-log", str(log)]), 1)
         self.assertIn("no usable records", stderr.getvalue())
 
+    def _two_invocation_log(self):
+        """A big first invocation carrying all the stats, then a small later one."""
+        first_ns, second_ns = 1_700_000_000_000_000_000, 1_700_003_600_000_000_000
+        log = self.tmp_path / ".ninja_log"
+        log.write_text(
+            ninja_log(
+                [
+                    f"0\t1000\t{first_ns}\tA.swiftmodule\tabc",
+                    f"0\t2000\t{first_ns}\tB.swiftmodule\tdef",
+                    f"0\t500\t{second_ns}\tC.swiftmodule\tghi",
+                ]
+            )
+        )
+        stats = self.tmp_path / "stats"
+        stats.mkdir()
+        write_stats(stats, 1_700_000_000_100_000, 0.5)
+        write_stats(stats, 1_700_000_000_200_000, 0.5, aux=AUX.replace("Demo", "Demo2"))
+        return log, stats
+
+    def _run_main(self, extra: list[str]) -> str:
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            self.assertEqual(nbt.main(extra), 0)
+        return stderr.getvalue()
+
+    def test_the_busiest_invocation_wins_when_nothing_bounds_the_time(self):
+        log, stats = self._two_invocation_log()
+        stderr = self._run_main(
+            ["--ninja-log", str(log), "--stats-dir", str(stats), "-o", str(self.tmp_path / "t.json")]
+        )
+        self.assertIn("ninja run: 2 edges", stderr)
+
+    def test_since_epoch_ms_picks_the_later_invocation(self):
+        # Logs accumulate across builds, so without a lower bound the invocation
+        # the stats files came from beats the one that just ran.
+        log, stats = self._two_invocation_log()
+        out = self.tmp_path / "t.json"
+        stderr = self._run_main(
+            [
+                "--ninja-log", str(log),
+                "--stats-dir", str(stats),
+                "--since-epoch-ms", "1700003000000",
+                "-o", str(out),
+            ]
+        )
+        self.assertIn("ninja run: 1 edges", stderr)
+        names = {e["name"] for e in json.loads(out.read_text())["traceEvents"] if e["ph"] == "X"}
+        self.assertEqual(names, {"C.swiftmodule"})
+
+    def test_since_epoch_ms_after_every_invocation_writes_nothing(self):
+        log, stats = self._two_invocation_log()
+        out = self.tmp_path / "t.json"
+        stderr = self._run_main(
+            [
+                "--ninja-log", str(log),
+                "--stats-dir", str(stats),
+                "--since-epoch-ms", "1700007200000",
+                "-o", str(out),
+            ]
+        )
+        self.assertIn("nothing to trace", stderr)
+        self.assertFalse(out.exists())
+
+    def test_a_gz_suffix_writes_a_gzipped_trace(self):
+        log, stats = self._two_invocation_log()
+        out = self.tmp_path / "t.json.gz"
+        self._run_main(["--ninja-log", str(log), "--stats-dir", str(stats), "-o", str(out)])
+        with gzip.open(out, "rt") as f:
+            trace = json.load(f)
+        self.assertEqual(trace["displayTimeUnit"], "ms")
+
 
 # ---------------------------------------------------------------------------
 # The recorder
@@ -947,19 +1019,13 @@ class RecorderTest(unittest.TestCase):
         self.assertIsNone(jobs_log)
         self.assertEqual(args, ["-emit-library", "-static"])
 
-    def test_recorder_drops_only_the_wrapper_flags_it_knows(self):
-        # The recorder stands in for swiftc-wrapper.py, so the wrapper's flags ride
-        # along in CMAKE_Swift_FLAGS and swiftc would reject them.
+    def test_recorder_forwards_every_flag_it_does_not_own(self):
+        # swiftc-wrapper.py runs above the recorder and consumes its own flags
+        # before they reach here, so anything left over belongs to the compiler.
         _, _, args = recorder.parse_args(
-            [
-                "-c",
-                "--emit-ninja-depfile=/tmp/t.d",
-                "--ninja-depfile-target=/tmp/t.stamp",
-                "--ninja-depfile-exclude=/tmp/t.swiftmodule",
-                "f0.swift",
-            ]
+            ["-c", "--emit-ninja-depfile=/tmp/t.d", "f0.swift"]
         )
-        self.assertEqual(args, ["-c", "f0.swift"])
+        self.assertEqual(args, ["-c", "--emit-ninja-depfile=/tmp/t.d", "f0.swift"])
         # Dropping every `--` argument instead would eat the version probe in
         # WebKitFeatures.cmake, and the operand of an `-Xcc --foo` pair.
         _, _, args = recorder.parse_args(["--version"])

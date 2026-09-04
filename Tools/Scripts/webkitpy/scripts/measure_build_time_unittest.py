@@ -28,6 +28,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -55,7 +56,7 @@ class MeasureBuildTimeTest(unittest.TestCase):
             if extra_args:
                 cmd.extend(extra_args)
 
-            proc = subprocess.run(cmd, stdin=subprocess.DEVNULL,
+            proc = subprocess.run(cmd, stdin=subprocess.DEVNULL, cwd=tmpdir,
                                   capture_output=True, text=True)
             results = None
             if os.path.exists(output_file):
@@ -124,3 +125,83 @@ class MeasureBuildTimeTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0)
         self.assertIn('BuildTime-Release', results)
         self.assertNotIn('BuildTime-Debug', results)
+
+
+# The trace finalizer CMake generates when configured with -DSWIFT_NINJA_TRACE=ON.
+# The stub records its argv and produces the file it was asked for.
+TRACE_FINALIZE_STUB = textwrap.dedent('''\
+    #!/bin/sh
+    echo "$@" >> "$(dirname "$0")/finalize-argv.txt"
+    while [ $# -gt 1 ]; do shift; done
+    : > "$1"
+''')
+
+
+class MeasureBuildTimeTraceTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.tmpdir = Path(directory.name)
+        self.build_dir = self.tmpdir / 'Build'
+        self.build_dir.mkdir()
+        self.traces = self.tmpdir / 'build-time-traces'
+
+        self.stub = self.tmpdir / 'finalize-stub.sh'
+        self.stub.write_text(TRACE_FINALIZE_STUB)
+        self.stub.chmod(0o755)
+
+    @property
+    def finalizer(self):
+        return self.build_dir / 'swift-trace-finalize.sh'
+
+    def _run_script(self, tests, extra_args=()):
+        cmd = [
+            sys.executable, SCRIPT,
+            '--build-command', 'echo ok',
+            '--build-dir', str(self.build_dir),
+            '--source-dir', str(self.tmpdir),
+            '--output', str(self.tmpdir / 'results.json'),
+            '--tests', *tests,
+            *extra_args,
+        ]
+        return subprocess.run(cmd, stdin=subprocess.DEVNULL, cwd=self.tmpdir,
+                              capture_output=True, text=True)
+
+    def test_a_trace_is_written_for_each_test(self):
+        # The clean test deletes the build directory, so the finalizer arrives the
+        # way CMake writes it: at configure time.
+        proc = self._run_script(['clean', 'null'], [
+            '--trace',
+            '--configure-command',
+            f'mkdir -p {self.build_dir} && cp {self.stub} {self.finalizer}',
+        ])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+        self.assertEqual(sorted(p.name for p in self.traces.iterdir()),
+                         ['clean.json.gz', 'null.json.gz'])
+
+        invocations = (self.build_dir / 'finalize-argv.txt').read_text().splitlines()
+        self.assertEqual(len(invocations), 2)
+        for argv in invocations:
+            # The build's logs accumulate across builds, so each trace has to be
+            # bounded to the ninja invocation this test just ran.
+            self.assertIn('--since-epoch-ms=', argv)
+
+    def test_stale_traces_do_not_survive_a_later_run(self):
+        self.traces.mkdir()
+        (self.traces / 'webcore-header.json.gz').write_text('stale')
+
+        self._run_script(['null'], ['--trace'])
+        self.assertEqual(list(self.traces.iterdir()), [])
+
+    def test_an_untraced_build_directory_only_warns(self):
+        proc = self._run_script(['null'], ['--trace'])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn('SWIFT_NINJA_TRACE', proc.stderr)
+        self.assertFalse(self.traces.exists())
+
+    def test_tracing_is_off_without_cmake(self):
+        shutil.copy(self.stub, self.finalizer)
+        proc = self._run_script(['null'])
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertFalse((self.build_dir / 'finalize-argv.txt').exists())
