@@ -42,6 +42,9 @@ public:
     Path layoutPath() const;
     const SVGLengthValue& NODELETE startOffset() const LIFETIME_BOUND;
 
+    // Per SVG2, side="right" lays text out along the reversed path.
+    bool isLayoutPathReversed() const;
+
 private:
     void graphicsElement() const = delete;
 

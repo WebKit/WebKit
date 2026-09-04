@@ -115,6 +115,7 @@ private:
     float m_textPathCurrentOffset { 0.0f };
     float m_textPathSpacing { 0.0f };
     float m_textPathScaling { 1.0f };
+    bool m_textPathReversed { false };
 };
 
 } // namespace WebCore

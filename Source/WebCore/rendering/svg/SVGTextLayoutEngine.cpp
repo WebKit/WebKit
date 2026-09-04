@@ -167,6 +167,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(const RenderSVGTextPath& textPath,
 
     // Precompute the arc-length table once so per-glyph queries are O(log n), not a full re-walk each (webkit.org/b/318396).
     m_textPathMapper = m_textPath.arcLengthMapper();
+    m_textPathReversed = textPath.isLayoutPathReversed();
 
     const auto& startOffset = textPath.startOffset();
     m_textPathLength = m_textPathMapper.totalLength();
@@ -221,6 +222,7 @@ void SVGTextLayoutEngine::endTextPathLayout()
     m_textPathCurrentOffset = 0;
     m_textPathSpacing = 0;
     m_textPathScaling = 1;
+    m_textPathReversed = false;
 }
 
 void SVGTextLayoutEngine::layoutInlineTextBox(InlineIterator::SVGTextBoxIterator textBox)
@@ -604,13 +606,18 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
             if (textPathOffset > m_textPathLength)
                 break;
 
-            auto position = m_textPathMapper.positionAtLength(textPathOffset);
+            // For side="right", text is laid out along the reversed path: sample the
+            // forward path at the mirrored arc length and flip each glyph by 180 degrees.
+            float sampledOffset = m_textPathReversed ? m_textPathLength - textPathOffset : textPathOffset;
+            auto position = m_textPathMapper.positionAtLength(sampledOffset);
 
             x = position.point.x();
             y = position.point.y();
 
             // Compose with rotate attribute per SVG 2 §11.2.1.
             angle += position.angleInDegrees;
+            if (m_textPathReversed)
+                angle += 180;
 
             // For vertical text on path, the actual angle has to be rotated 90 degrees anti-clockwise, not the orientation angle!
             if (m_isVerticalText)
