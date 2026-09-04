@@ -7991,9 +7991,10 @@ void WebPageProxy::preferencesDidChange()
     protect(websiteDataStore())->propagateSettingUpdates();
 }
 
-void WebPageProxy::didCreateSubframe(IPC::Untrusted<FrameIdentifier>&& untrustedParentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
+void WebPageProxy::didCreateSubframe(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedParentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
 {
-    auto parentID = WTF::move(untrustedParentID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, parentID, untrustedParentID, FrameHostedBySenderAuthority { process, *this });
 
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     if (!parent)
@@ -8003,6 +8004,11 @@ void WebPageProxy::didCreateSubframe(IPC::Untrusted<FrameIdentifier>&& untrusted
 
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID)
 {
+    // FIXME: This wants FrameHostedBySenderAuthority too, but validating it changes teardown as
+    // well as rejecting forgeries. A process running a provisional load holds a frame with the
+    // committed frame's identifier, so when that load is abandoned this arrives from a process that
+    // does not host the frame, and treating it as a lost race would stop disconnecting a frame that
+    // is disconnected today. That needs its own change, with tests.
     auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
 
 #if ENABLE(WEB_AUTHN)
@@ -8307,7 +8313,8 @@ void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::Fram
 
 void WebPageProxy::updateOpener(IPC::Connection& connection, IPC::Untrusted<WebCore::FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::FrameIdentifier> newOpener)
 {
-    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
 
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->updateOpener(newOpener);
@@ -8466,13 +8473,13 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 
 void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, URL&& url, String&& mimeType)
 {
-    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
 
-    Ref process = WebProcessProxy::fromConnection(connection);
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, url)) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring WebPageProxy::DidExplicitOpenForFrame() IPC from the WebContent process because the file URL is outside the sandbox");
         return;

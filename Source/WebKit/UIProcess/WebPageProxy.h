@@ -3143,7 +3143,7 @@ private:
     static bool hasMouseDevice();
 #endif
 
-    void didCreateSubframe(IPC::Untrusted<WebCore::FrameIdentifier>&& parent, WebCore::FrameIdentifier newFrameID, String&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
+    void didCreateSubframe(IPC::Connection&, IPC::Untrusted<WebCore::FrameIdentifier>&& parent, WebCore::FrameIdentifier newFrameID, String&& frameName, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode);
 
     void didStartProvisionalLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, std::optional<WebCore::NavigationIdentifier>, URL&&, URL&& unreachableURL, const UserData&, WallTime);
     void didReceiveServerRedirectForProvisionalLoadForFrame(IPC::Connection&, WebCore::FrameIdentifier, std::optional<WebCore::NavigationIdentifier>, WebCore::ResourceRequest&&, const UserData&);
