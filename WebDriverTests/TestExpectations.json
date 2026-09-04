@@ -3419,11 +3419,10 @@
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/format.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
     },
-    "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/invalid.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
-    },
     "imported/w3c/webdriver/tests/bidi/browsing_context/capture_screenshot/origin.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}
+        "subtests": {
+            "test_origin": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288325"}}}
+        }
     },
     "imported/w3c/webdriver/tests/bidi/browsing_context/close/prompt_unload.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288326"}}

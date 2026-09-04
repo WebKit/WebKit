@@ -156,7 +156,7 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:
-        return "stale element reference"_s;
+        return "no such node"_s;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier:
         return "no such element"_s;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidElementState:

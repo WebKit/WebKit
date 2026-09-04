@@ -20,6 +20,30 @@
             "enum": [ "tab", "window" ]
         },
         {
+            "id": "ImageFormat",
+            "description": "The format of a captured screenshot image.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "description": "The MIME type of the image format, e.g. 'image/png'." },
+                { "name": "quality", "type": "number", "optional": true, "description": "The compression quality for lossy formats, in the range 0 to 1." }
+            ]
+        },
+        {
+            "id": "ClipRectangle",
+            "description": "A rectangle to clip a captured screenshot to, either an element ('element') or a box in viewport coordinates ('box').",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "description": "Either 'element' or 'box'." },
+                { "name": "element", "type": "object", "optional": true, "description": "A script.SharedReference to the element to clip to, when type is 'element'." },
+                { "name": "x", "type": "number", "optional": true, "description": "The x coordinate of the box, when type is 'box'." },
+                { "name": "y", "type": "number", "optional": true, "description": "The y coordinate of the box, when type is 'box'." },
+                { "name": "width", "type": "number", "optional": true, "description": "The width of the box, when type is 'box'." },
+                { "name": "height", "type": "number", "optional": true, "description": "The height of the box, when type is 'box'." }
+            ]
+        },
+        {
             "id": "Info",
             "description": "Information about a navigable.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-browsingContext-Info",
@@ -104,6 +128,22 @@
             "async": true,
             "parameters": [
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to activate.  It is an error to pass a non-top level traversable." }
+            ]
+        },
+        {
+            "name": "captureScreenshot",
+            "description": "Captures an image of the given navigable, and returns it as a Base64-encoded string.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/capture_screenshot",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to capture." },
+                { "name": "origin", "type": "string", "optional": true, "description": "The origin of the coordinate system the capture is taken from: 'viewport' (default) or 'document'. Validated by the command implementation, as invalid values must be rejected rather than ignored." },
+                { "name": "format", "$ref": "BidiBrowsingContext.ImageFormat", "optional": true, "description": "The format of the captured image (default is PNG)." },
+                { "name": "clip", "$ref": "BidiBrowsingContext.ClipRectangle", "optional": true, "description": "A rectangle to clip the captured image to." }
+            ],
+            "returns": [
+                { "name": "data", "type": "string", "description": "The Base64-encoded image data." }
             ]
         },
         {
