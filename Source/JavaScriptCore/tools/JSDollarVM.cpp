@@ -67,6 +67,7 @@
 #include "ShadowChicken.h"
 #include "Snippet.h"
 #include "SnippetParams.h"
+#include "StringSplitCache.h"
 #include "Strong.h"
 #include "StructureCreateInlines.h"
 #include "TypeProfiler.h"
@@ -2139,6 +2140,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionTriggerMemoryPressure);
 static JSC_DECLARE_HOST_FUNCTION(functionGC);
 static JSC_DECLARE_HOST_FUNCTION(functionEdenGC);
 static JSC_DECLARE_HOST_FUNCTION(functionGCSweepAsynchronously);
+static JSC_DECLARE_HOST_FUNCTION(functionClearStringSplitCache);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpSubspaceHashes);
 static JSC_DECLARE_HOST_FUNCTION(functionCallFrame);
 static JSC_DECLARE_HOST_FUNCTION(functionCodeBlockForFrame);
@@ -2666,6 +2668,14 @@ JSC_DEFINE_HOST_FUNCTION(functionGCSweepAsynchronously, (JSGlobalObject* globalO
 {
     DollarVMAssertScope assertScope;
     globalObject->vm().heap.collectNow(Async, CollectionScope::Full);
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionClearStringSplitCache, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    if (auto* cache = globalObject->vm().stringSplitCache())
+        cache->clear();
     return JSValue::encode(jsUndefined());
 }
 
@@ -4652,6 +4662,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, alwaysAllow, "triggerMemoryPressure"_s, functionTriggerMemoryPressure, 0);
     addFunction(vm, alwaysAllow, "gc"_s, functionGC, 0);
     addFunction(vm, alwaysAllow, "gcSweepAsynchronously"_s, functionGCSweepAsynchronously, 0);
+    addFunction(vm, alwaysAllow, "clearStringSplitCache"_s, functionClearStringSplitCache, 0);
     addFunction(vm, alwaysAllow, "edenGC"_s, functionEdenGC, 0);
     addFunction(vm, alwaysAllow, "dumpSubspaceHashes"_s, functionDumpSubspaceHashes, 0);
 

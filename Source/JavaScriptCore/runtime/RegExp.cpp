@@ -457,8 +457,10 @@ void RegExp::deleteCode()
     if (!hasCode())
         return;
     m_state = NotCompiled;
-    m_atom = String();
+    // Clear the classification before the atom it describes, so a reader that has already sampled
+    // a non-None pattern cannot go on to read an emptied atom.
     m_specificPattern = Yarr::SpecificPattern::None;
+    m_atom = String();
 #if ENABLE(YARR_JIT)
     if (m_regExpJITCode)
         m_regExpJITCode->clear(locker);
