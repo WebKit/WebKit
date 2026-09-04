@@ -27,15 +27,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import pickle
 import unittest
+
+from unittest.mock import patch
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.controllers import layout_test_runner
 from webkitpy.layout_tests.controllers.layout_test_runner import (
     LayoutTestRunner,
     Sharder,
     TestRunInterruptedException,
+    TestShard,
+    UnclaimedShard,
+    Worker,
 )
 from webkitpy.layout_tests.models import test_expectations, test_failures
 from webkitpy.layout_tests.models.test import Test
@@ -268,6 +275,157 @@ class LayoutTestRunnerTests(unittest.TestCase):
         self.assertEqual(self.web_platform_test_server_stopped, False)
 
 
+class UnusableDeviceTests(unittest.TestCase):
+    """A device can go away while a shard is running. The tests it was given have to reach a device that is still
+    working, rather than being recorded as failures they did not have."""
+
+    class FakeProcess(object):
+        name = 'worker/0'
+        working = True
+
+    def _worker(self, port):
+        worker = Worker(port, port.results_directory())
+        Worker.instance = worker
+        self.addCleanup(setattr, Worker, 'instance', None)
+        return worker
+
+    def _port_with_usable(self, usable):
+        options = run_webkit_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
+        port = MockHost().port_factory.get(options.platform, options=options)
+        port.target_host_is_usable = lambda worker_number=None, force_update=False: usable
+        return port
+
+    def setUp(self):
+        patcher = patch.object(layout_test_runner.TaskPool, 'Process', self.FakeProcess)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_shard_is_returned_when_device_is_unusable(self):
+        port = self._port_with_usable(False)
+        worker = self._worker(port)
+        shard = TestShard('shard', [TestInput(Test('fast/a.html'), 6000), TestInput(Test('fast/b.html'), 6000)])
+
+        ran = []
+        worker.run_test = lambda test_input, shard_name: ran.append(test_input)
+        result = worker.run_tests(shard)
+
+        self.assertIsInstance(result, UnclaimedShard)
+        self.assertEqual(len(result.tests), 2)
+        self.assertEqual(ran, [], 'no test should run against an unusable device')
+
+    def test_shard_runs_normally_when_device_is_usable(self):
+        port = self._port_with_usable(True)
+        worker = self._worker(port)
+        shard = TestShard('shard', [TestInput(Test('fast/a.html'), 6000), TestInput(Test('fast/b.html'), 6000)])
+
+        ran = []
+        worker.run_test = lambda test_input, shard_name: ran.append(test_input)
+        result = worker.run_tests(shard)
+
+        self.assertNotIsInstance(result, UnclaimedShard)
+        self.assertEqual(len(ran), 2)
+
+    def test_shard_is_split_when_device_dies_partway_through(self):
+        port = self._port_with_usable(True)
+        worker = self._worker(port)
+        shard = TestShard('shard', [TestInput(Test('fast/{}.html'.format(name)), 6000) for name in ('a', 'b', 'c', 'd')])
+
+        ran = []
+
+        def run_test(test_input, shard_name):
+            ran.append(test_input)
+            # The device goes away after the second test, taking the driver with it, which is how a lost device
+            # announces itself: the test crashes and _clean_up_after_test kills the driver.
+            if len(ran) == 2:
+                port.target_host_is_usable = lambda worker_number=None, force_update=False: False
+                worker._driver_died = True
+
+        worker.run_test = run_test
+        result = worker.run_tests(shard)
+
+        self.assertIsInstance(result, UnclaimedShard)
+        self.assertEqual(len(ran), 2, 'the run should stop as soon as the device is gone')
+        self.assertEqual(
+            [test_input.test_name for test_input in result.tests],
+            ['fast/c.html', 'fast/d.html'],
+            'only the tests that did not run should come back')
+
+    def test_dead_driver_alone_does_not_return_the_shard(self):
+        port = self._port_with_usable(True)
+        worker = self._worker(port)
+        shard = TestShard('shard', [TestInput(Test('fast/a.html'), 6000), TestInput(Test('fast/b.html'), 6000)])
+
+        ran = []
+
+        def run_test(test_input, shard_name):
+            ran.append(test_input)
+            worker._driver_died = True
+
+        worker.run_test = run_test
+        result = worker.run_tests(shard)
+
+        self.assertNotIsInstance(result, UnclaimedShard)
+        self.assertEqual(len(ran), 2, 'a test that crashes on a healthy device must not end the shard')
+
+    def test_unclaimed_shard_reports_how_much_was_left(self):
+        self.assertEqual(len(UnclaimedShard([1, 2, 3]).tests), 3)
+        self.assertIn('3', repr(UnclaimedShard([1, 2, 3])))
+
+    def test_unclaimed_shard_survives_pickling(self):
+        # The worker returns this across a process boundary, so it has to pickle with its test inputs intact.
+        shard = UnclaimedShard([TestInput(Test('fast/a.html'), 6000)])
+        restored = pickle.loads(pickle.dumps(shard))
+        self.assertEqual([test_input.test_name for test_input in restored.tests], ['fast/a.html'])
+
+
+class AbandoningShardsTests(unittest.TestCase):
+    """A shard is only given up on when no device will run any of it. One that keeps making progress keeps going
+    around, however many devices it has to pass through."""
+
+    def _runner(self, usable=True):
+        options = run_webkit_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
+        options.child_processes = '1'
+        host = MockHost()
+        port = host.port_factory.get(options.platform, options=options)
+        port.target_host_is_usable = lambda worker_number=None, force_update=False: usable
+        port.has_usable_device = lambda: usable
+        port.expects_more_devices = lambda: False
+        return LayoutTestRunner(options, port, FakePrinter(), port.results_directory())
+
+    def test_shard_that_keeps_shrinking_is_never_abandoned(self):
+        runner = self._runner()
+        remaining = 40
+        fruitless_attempts = 0
+        rounds = 0
+        while remaining > 1:
+            dispatched, remaining = remaining, remaining - 1
+            fruitless_attempts = runner._port.fruitless_attempts_after(dispatched, remaining, fruitless_attempts)
+            self.assertFalse(
+                runner._port.should_abandon_shard(fruitless_attempts, 4),
+                'a shard that ran a test must not be given up on')
+            rounds += 1
+        self.assertEqual(rounds, 39, 'every round should have made progress')
+
+    def test_shard_no_device_will_run_is_eventually_abandoned(self):
+        runner = self._runner()
+        fruitless_attempts = 0
+        for attempt in range(1, 5):
+            fruitless_attempts = runner._port.fruitless_attempts_after(8, 8, fruitless_attempts)
+            self.assertEqual(fruitless_attempts, attempt)
+        self.assertTrue(runner._port.should_abandon_shard(fruitless_attempts, 4))
+
+    def test_every_worker_gets_a_turn_before_giving_up(self):
+        runner = self._runner()
+        # A shard must outlast one bad device per worker, so a large pool has to try harder than the floor of 3.
+        self.assertFalse(runner._port.should_abandon_shard(5, 25))
+        self.assertTrue(runner._port.should_abandon_shard(25, 25))
+        self.assertTrue(runner._port.should_abandon_shard(3, 1))
+
+    def test_shard_is_abandoned_when_no_device_is_usable(self):
+        runner = self._runner(usable=False)
+        self.assertTrue(runner._port.should_abandon_shard(0, 4))
+
+
 class SharderTests(unittest.TestCase):
 
     test_list = [
@@ -302,25 +460,30 @@ class SharderTests(unittest.TestCase):
     def test_shard_by_dir(self):
         result = self.get_shards(num_workers=2, fully_parallel=False)
 
-        self.assert_shards(result,
-            [('animations', ['animations/keyframes.html']),
-             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html',
-                                      'dom/html/level2/html/HTMLAnchorElement06.html']),
-             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('http/tests/security', ['http/tests/security/view-source-no-refresh.html']),
-             ('http/tests/websocket/tests', ['http/tests/websocket/tests/unicode.htm', 'http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('http/tests/xmlhttprequest', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+        # Shards are dispatched biggest first so that a large one is not left running alone at the end of a run.
+        self.assert_shards(result, [
+            ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html', 'dom/html/level2/html/HTMLAnchorElement06.html']),
+            ('http/tests/websocket/tests', ['http/tests/websocket/tests/unicode.htm', 'http/tests/websocket/tests/websocket-protocol-ignored.html']),
+            ('animations', ['animations/keyframes.html']),
+            ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
+            ('http/tests/security', ['http/tests/security/view-source-no-refresh.html']),
+            ('http/tests/xmlhttprequest', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
+            ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+
+    def test_shards_of_equal_size_stay_in_directory_order(self):
+        result = self.get_shards(num_workers=2, fully_parallel=False)
+        single_test_shards = [shard.name for shard in result if len(shard.test_inputs) == 1]
+        self.assertEqual(sorted(single_test_shards), single_test_shards)
 
     def test_shard_every_file(self):
         result = self.get_shards(num_workers=2, fully_parallel=True)
-        self.assert_shards(result,
-            [('.', ['http/tests/websocket/tests/unicode.htm']),
-             ('.', ['animations/keyframes.html']),
-             ('.', ['http/tests/security/view-source-no-refresh.html']),
-             ('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('.', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             ('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
-             ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
+        self.assert_shards(result, [
+            ('.', ['http/tests/websocket/tests/unicode.htm']),
+            ('.', ['animations/keyframes.html']),
+            ('.', ['http/tests/security/view-source-no-refresh.html']),
+            ('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
+            ('.', ['fast/css/display-none-inline-style-change-crash.html']),
+            ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
+            ('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
+            ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
+            ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])

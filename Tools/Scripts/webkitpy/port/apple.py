@@ -85,7 +85,7 @@ class ApplePort(Port):
         self._version = self._strip_port_name_prefix(port_name)
         self.supports_localhost_aliases = True
 
-    def setup_test_run(self, device_type=None):
+    def setup_test_run(self, device_type=None, workers_per_device=1):
         files_to_skip = []
         for directory in self.crash_log_directories():
             files_to_skip.extend(self.host.filesystem.files_under(directory))

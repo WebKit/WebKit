@@ -36,6 +36,7 @@ from webkitcorepy import TaskPool
 
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
+from webkitpy.common.unclaimed_shard import UnclaimedShard
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
@@ -53,6 +54,8 @@ def setup_shard(port=None, results_directory=None, devices=None, retrying=False)
     if devices and getattr(port, 'DEVICE_MANAGER', None):
         port.DEVICE_MANAGER.AVAILABLE_DEVICES = devices.get('available_devices', [])
         port.DEVICE_MANAGER.INITIALIZED_DEVICES = devices.get('initialized_devices', None)
+        if devices.get('provisioning'):
+            port._provisioning.adopt_provisioning_state(devices['provisioning'])
 
     if retrying:
         results_directory = port.host.filesystem.join(results_directory, 'retries')
@@ -117,6 +120,8 @@ class LayoutTestRunner(object):
         self._did_start_http_server = False
         self._did_start_websocket_server = False
         self._did_start_wpt_server = False
+        self._unclaimed_shard_count = 0
+        self._abandoned_test_count = 0
 
         if ((self._needs_http and self._options.http) or self._needs_web_platform_test_server) and self._port.get_option("start_http_servers_if_needed"):
             self.start_servers()
@@ -157,7 +162,9 @@ class LayoutTestRunner(object):
             devices = dict(
                 available_devices=self._port.DEVICE_MANAGER.AVAILABLE_DEVICES,
                 initialized_devices=self._port.DEVICE_MANAGER.INITIALIZED_DEVICES,
+                provisioning=self._port.provisioning_state(),
             )
+        self._port.prepare_devices_for_workers()
 
         try:
             LayoutTestRunner.instance = self
@@ -174,6 +181,29 @@ class LayoutTestRunner(object):
             ) as pool:
                 was_sent = set()
 
+                def dispatch(shard, group=None, fruitless_attempts=0):
+                    pool.do(run_shard, shard, callback=lambda value: handle_shard_result(shard, value, fruitless_attempts), group=group)
+
+                def handle_shard_result(shard, value, fruitless_attempts):
+                    # Runs on the thread that owns the alarm, so it is where devices still coming up get handed over.
+                    self._port.advance_provisioning()
+                    if isinstance(value, UnclaimedShard):
+                        if not value.tests:
+                            return
+                        fruitless_attempts = self._port.fruitless_attempts_after(
+                            len(shard.test_inputs), len(value.tests), fruitless_attempts)
+                        if self._port.should_abandon_shard(fruitless_attempts, num_workers):
+                            self._abandoned_test_count += len(value.tests)
+                            _log.error(u'Giving up on {} after {} attempts that ran nothing; {} tests will not run'.format(
+                                shard.name, fruitless_attempts, len(value.tests)))
+                            return
+                        # Not re-dispatched to its group: a group is bound to one worker for the life of the pool, so
+                        # that would hand these back to the same unusable device.
+                        self._unclaimed_shard_count += 1
+                        dispatch(TestShard(shard.name, value.tests), fruitless_attempts=fruitless_attempts)
+                        return
+                    self._annotate_results_with_additional_failures(value)
+
                 # Dispatch shards from groups first, so we start dedicated groups running before all our other shards
                 for shard in all_shards:
                     group = self._port.group_for_shard(shard)
@@ -181,19 +211,12 @@ class LayoutTestRunner(object):
                         continue
 
                     was_sent.add(shard.name)
-                    pool.do(
-                        run_shard, shard,
-                        callback=lambda value: self._annotate_results_with_additional_failures(value),
-                        group=group,
-                    )
+                    dispatch(shard, group=group)
 
                 for shard in all_shards:
                     if shard.name in was_sent:
                         continue
-                    pool.do(
-                        run_shard, shard,
-                        callback=lambda value: self._annotate_results_with_additional_failures(value),
-                    )
+                    dispatch(shard)
 
                 pool.wait()
 
@@ -209,6 +232,11 @@ class LayoutTestRunner(object):
             raise
         finally:
             LayoutTestRunner.instance = None
+
+        if self._abandoned_test_count:
+            # Never-run tests are absent from the results, so without this the run reports success having skipped them.
+            _log.error(u'{} tests could not be run because no device would take them'.format(self._abandoned_test_count))
+            run_results.interrupted = True
 
         return run_results
 
@@ -334,12 +362,29 @@ class Worker(object):
         self._num_tests = 0
         self._batch_count = 0
         self._driver = None
+        self._driver_died = False
+        self._device_suspect = True
         self._batch_size = self._port.get_option('batch_size') or 0
 
     def run_tests(self, shard):
-        for input in shard.test_inputs:
+        worker_number = int((TaskPool.Process.name).split('/')[-1])
+        # Only when something already went wrong, since a healthy run should not pay for the check.
+        if self._device_suspect and not self._port.target_host_is_usable(worker_number):
+            _log.error(u'{} cannot reach its device; returning {} to be run elsewhere'.format(TaskPool.Process.name, shard.name))
+            return UnclaimedShard(shard.test_inputs)
+        self._device_suspect = False
+
+        for index, input in enumerate(shard.test_inputs):
             if not TaskPool.Process.working:
                 break
+            # Only after a driver died, since a healthy run should not pay for the check.
+            if self._driver_died and not self._port.target_host_is_usable(worker_number, force_update=True):
+                # Every remaining test would otherwise be recorded as a failure it did not have.
+                _log.error(u'{} lost its device partway through {}; returning {} remaining tests'.format(
+                    TaskPool.Process.name, shard.name, len(shard.test_inputs) - index))
+                self._kill_driver()
+                return UnclaimedShard(shard.test_inputs[index:])
+            self._driver_died = False
             Worker.instance.run_test(input, shard.name)
 
         _log.debug('finished test group')
@@ -419,6 +464,8 @@ class Worker(object):
         driver = self._driver
         self._driver = None
         if driver:
+            self._driver_died = True
+            self._device_suspect = True
             _log.debug('killing driver')
             driver.stop()
 
@@ -589,7 +636,7 @@ class Sharder(object):
             shard = TestShard(directory, test_inputs)
             shards.append(shard)
 
-        # Sort the shards by directory name.
-        shards.sort(key=lambda shard: shard.name)
+        # Biggest first, so a large shard is not left running alone at the end. Only the order changes.
+        shards.sort(key=lambda shard: (-len(shard.test_inputs), shard.name))
 
         return shards

@@ -34,6 +34,7 @@ maybe_enter_webkit_container_sdk()
 from webkitpy.api_tests.manager import Manager
 from webkitpy.api_tests.test_expectations import APITestExpectations
 from webkitpy.common.host import Host
+from webkitpy.common.interrupt_debugging import log_stack_trace_on_signal
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.port import configuration_options, platform_options, base, win
 from webkitpy.results.options import upload_options
@@ -54,6 +55,10 @@ def main(argv, stdout, stderr):
     except NotImplementedError as e:
         print(str(e), file=stderr)
         return EXCEPTIONAL_EXIT_STATUS
+
+    stack_trace_path = host.filesystem.join(port.results_directory(), 'python_stack_trace.txt')
+    log_stack_trace_on_signal('SIGTERM', output_file=stack_trace_path)
+    log_stack_trace_on_signal('SIGINT', output_file=stack_trace_path)
 
     # Some platforms do not support API tests
     does_not_support_api_tests = ['ios-device']

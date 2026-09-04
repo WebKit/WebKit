@@ -530,7 +530,7 @@ class Manager(object):
                 # calls clean_up_test_run, which tears down the iOS simulator and
                 # leaves target_host(0) with no initialized device.
                 if self._options.report_urls:
-                    configuration = self._port.configuration_for_upload(self._port.target_host(0))
+                    configuration = self._port.configuration_for_upload(self._port.device_for_upload())
                     if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
                         configuration['flavor'] = 'wk1' if self._port.is_webkitlegacy() else 'wk2'
 
