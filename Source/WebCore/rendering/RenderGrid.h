@@ -260,6 +260,8 @@ private:
     LayoutRect contentOverflowRect() const;
 
     void applyStretchAlignmentToGridItemIfNeeded(RenderBox&, RenderGridLayoutState&);
+    void stretchBlockSizeForGridItem(RenderBox&, LayoutUnit alignmentContainerSize, RenderGridLayoutState&);
+    void stretchInlineSizeForGridItem(RenderBox&, LayoutUnit alignmentContainerSize);
     void applySubgridStretchAlignmentToGridItemIfNeeded(RenderBox&);
 
     std::optional<LayoutUnit> firstLineBaseline() const final;
