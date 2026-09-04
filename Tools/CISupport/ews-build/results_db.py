@@ -97,6 +97,7 @@ class EWSRowDetails:
 @dataclass
 class EWSRow:
     """One row the results database has recorded for one test in one configuration."""
+    test: str = ''
     uuid: int = 0
     start_time: int = 0
     # Whatever the suite that ran the test reports, which differs per suite.
@@ -105,8 +106,9 @@ class EWSRow:
     details: EWSRowDetails = field(default_factory=EWSRowDetails)
 
     @classmethod
-    def from_json(cls, data: dict) -> 'EWSRow':
+    def from_json(cls, data: dict, test: str = '') -> 'EWSRow':
         return cls(
+            test=test,
             uuid=data.get('uuid') or 0,
             start_time=data.get('start_time') or 0,
             result=data.get('result') or {},
@@ -408,24 +410,24 @@ class ResultsDatabase(object):
             bucket.setdefault(flaky_type, []).append(row)
 
         for flaky_type, dropped in sorted(same_pull_request.items()):
-            logger(f"Ignored {len(dropped)} {flaky_type} row(s) recorded by this change's own pull request (#{curr_pr})\n")
+            logger(f"{dropped[0].test}: Ignored {len(dropped)} {flaky_type} row(s) recorded by this change's own pull request (#{curr_pr})\n")
         for flaky_type, dropped in sorted(same_authors.items()):
-            logger(f"Ignored {len(dropped)} {flaky_type} row(s) recorded by this change's own author(s)\n")
+            logger(f"{dropped[0].test}: Ignored {len(dropped)} {flaky_type} row(s) recorded by this change's own author(s)\n")
         return by_type
 
     @classmethod
     def _is_intra_build_flake(cls, rows: EWSRowByType, logger: Callable[[str], None]) -> Optional[FlakyVerdict]:
         if failed_with_no_flaky_type := rows.get(cls.FAILED_ROWS, []):
-            logger(f'Ignored {len(failed_with_no_flaky_type)} flake row(s) that carried no flaky_type\n')
+            logger(f'{failed_with_no_flaky_type[0].test}: Ignored {len(failed_with_no_flaky_type)} flake row(s) that carried no flaky_type\n')
         if unrecognized := {name for name in rows if name not in cls.WITHIN_BUILD_ROWS and name != cls.FAILED_ROWS}:
-            logger(f"Ignored flakiness recorded as {', '.join(sorted(unrecognized))}\n")
+            logger(f"{rows[next(iter(unrecognized))][0].test}: Ignored flakiness recorded as {', '.join(sorted(unrecognized))}\n")
 
         if clean_tree := rows.get(cls.WITHIN_STEP_CLEAN_TREE, []):
             evidence = cls._evidence_in(clean_tree)
             if verdict := cls._convict(evidence, cls.CLEAN_TREE_VERDICT, builds_needed=cls.BUILDS_FOR_CLEAN_TREE_FLAKE):
                 return verdict
             logger(
-                f'{len(clean_tree)} clean-tree row(s) come from {len(evidence.build_urls)} build(s), '
+                f'{clean_tree[0].test}: {len(clean_tree)} clean-tree row(s) come from {len(evidence.build_urls)} build(s), '
                 f'fewer than the {cls.BUILDS_FOR_CLEAN_TREE_FLAKE} the clean-tree rule needs\n'
             )
 
@@ -450,7 +452,7 @@ class ResultsDatabase(object):
         rows_without_an_author = sum(1 for row in failed if not row.details.authors)
         if rows_without_an_author and len(evidence.authors) < cls.AUTHORS_FOR_BETWEEN_BUILD_FLAKE:
             logger(
-                f'{rows_without_an_author} row(s) record no author, so the between-builds rule saw '
+                f'{failed[0].test}: {rows_without_an_author} row(s) record no author, so the between-builds rule saw '
                 f'{len(evidence.authors)} of the {cls.AUTHORS_FOR_BETWEEN_BUILD_FLAKE} it needs '
                 f'across {len(evidence.pr_numbers)} pull request(s)\n'
             )
@@ -510,7 +512,7 @@ class ResultsDatabase(object):
                 return None
 
             for entry in entries:
-                rows = [EWSRow.from_json(row) for row in (entry.get('results') or [])]
+                rows = [EWSRow.from_json(row, test=entry['test']) for row in (entry.get('results') or [])]
                 by_test.setdefault(entry['test'], []).extend(rows)
 
         return by_test
