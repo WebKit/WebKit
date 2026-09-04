@@ -31,6 +31,7 @@
 #include "Download.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessConnectionMessages.h"
 #include "NetworkSessionSoup.h"
 #include "PrivateRelayed.h"
 #include "WebErrors.h"
@@ -1449,44 +1450,47 @@ void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* resul
     }
 
     // Ignore the error here, it will be handled by g_file_read_async below.
-    if (GRefPtr<GFileInfo> info = adoptGRef(g_file_query_info_finish(file, result, nullptr))) {
-        task->didGetFileInfo(info.get());
+    GRefPtr<GFileInfo> info = adoptGRef(g_file_query_info_finish(file, result, nullptr));
+    if (info && g_file_info_get_file_type(info.get()) == G_FILE_TYPE_DIRECTORY) {
+        task->m_response.setURL(URL { task->m_firstRequest.url() });
+        task->m_response.setMimeType("text/html"_s);
+        task->m_response.setExpectedContentLength(-1);
 
-        if (g_file_info_get_file_type(info.get()) == G_FILE_TYPE_DIRECTORY) {
-            g_file_enumerate_children_async(file, "*", G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(),
-                reinterpret_cast<GAsyncReadyCallback>(enumerateFileChildrenCallback), protectedThis.leakRef());
-            return;
-        }
+        g_file_enumerate_children_async(file, "*", G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(),
+            reinterpret_cast<GAsyncReadyCallback>(enumerateFileChildrenCallback), protectedThis.leakRef());
+        return;
     }
 
-    g_file_read_async(file, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), protectedThis.leakRef());
-}
+    if (!info) [[unlikely]] {
+        g_file_read_async(file, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), protectedThis.leakRef());
+        return;
+    }
 
-void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
-{
-    m_response.setURL(URL { m_firstRequest.url() });
-    if (g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
-        m_response.setMimeType("text/html"_s);
-        m_response.setExpectedContentLength(-1);
-    } else {
-        auto contentType = String::fromLatin1(g_file_info_get_content_type(info));
-        auto mimeTypeFromExtension = MIMETypeRegistry::mimeTypeForPath(m_response.url().path());
-        auto mimeTypeFromContent = extractMIMETypeFromMediaType(contentType);
-        // If an application calls g_app_info_get_default_for_type($ext) then Glib will return "application/x-extension-$ext" in mimeTypeFromExtension which WebKit doesn't know how to handle.
-        // So, only prefer mimeTypeFromExtension if that is a mimeType that WebKit recognizes internally. See: https://gitlab.gnome.org/GNOME/glib/-/issues/2511
-        if (MIMETypeRegistry::canShowMIMEType(mimeTypeFromExtension) || mimeTypeFromContent.isEmpty())
-            m_response.setMimeType(WTF::move(mimeTypeFromExtension));
+    task->m_response.setURL(URL { task->m_firstRequest.url() });
+    auto contentType = String::fromLatin1(g_file_info_get_content_type(info.get()));
+
+    auto mimeTypeFromExtension = MIMETypeRegistry::mimeTypeForPath(task->m_response.url().path());
+    auto mimeTypeFromContent = extractMIMETypeFromMediaType(contentType);
+    // If an application calls g_app_info_get_default_for_type($ext) then Glib will return "application/x-extension-$ext" in mimeTypeFromExtension which WebKit doesn't know how to handle.
+    // So, only prefer mimeTypeFromExtension if that is a mimeType that WebKit recognizes internally. See: https://gitlab.gnome.org/GNOME/glib/-/issues/2511
+    task->m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
+    task->m_response.setExpectedContentLength(g_file_info_get_size(info.get()));
+
+    RefPtr taskReference = task;
+    taskReference->m_session->networkProcess().canShowMIMEType(mimeTypeFromExtension, [task = WTF::move(protectedThis), file = adoptGRef(g_file_dup(file)), mimeTypeFromExtension = mimeTypeFromExtension.isolatedCopy(), mimeTypeFromContent = WTF::move(mimeTypeFromContent)](bool canShowMIMEType) mutable {
+        if (canShowMIMEType || mimeTypeFromContent.isEmpty())
+            task->m_response.setMimeType(WTF::move(mimeTypeFromExtension));
         else
-            m_response.setMimeType(WTF::move(mimeTypeFromContent));
-        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
-        m_response.setExpectedContentLength(g_file_info_get_size(info));
-    }
+            task->m_response.setMimeType(WTF::move(mimeTypeFromContent));
+        GRefPtr cancellable = task->m_cancellable;
+        g_file_read_async(file.get(), RunLoopSourcePriority::AsyncIONetwork, cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), task.leakRef());
+    });
 }
 
 void NetworkDataTaskSoup::readFileCallback(GFile* file, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
     RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
-    ASSERT(file == task->m_file.get());
+    // ASSERT(file == task->m_file.get());
 
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();

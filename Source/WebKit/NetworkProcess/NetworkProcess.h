@@ -514,6 +514,10 @@ public:
     void isEnhancedSecurityLink(const URL&, CompletionHandler<void(bool)>&&);
 #endif
 
+#if USE(SOUP)
+    void canShowMIMEType(String, CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     NetworkProcess();
 

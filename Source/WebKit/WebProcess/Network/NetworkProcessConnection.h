@@ -129,6 +129,10 @@ private:
 
     void storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain);
 
+#if USE(SOUP)
+    void canShowMIMEType(const String&, CompletionHandler<void(bool)>&&);
+#endif
+
     // The connection from the web process to the network process.
     const Ref<IPC::Connection> m_connection;
 #if HAVE(AUDIT_TOKEN)

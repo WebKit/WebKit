@@ -142,7 +142,6 @@ private:
     void didRestart();
 
     static void fileQueryInfoCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
-    void didGetFileInfo(GFileInfo*);
     static void readFileCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
     static void enumerateFileChildrenCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
     void didReadFile(GRefPtr<GInputStream>&&);
