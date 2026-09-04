@@ -1004,6 +1004,15 @@ void WebPageProxy::setUpHighlightsObserver()
 
 #endif
 
+#if ENABLE(APPLE_PAY)
+
+void WebPageProxy::didCompleteApplePayPayment()
+{
+    uiClient().didCompleteApplePayPayment(*this);
+}
+
+#endif
+
 #if ENABLE(APPLE_PAY_AMS_UI)
 
 void WebPageProxy::startApplePayAMSUISession(URL&& originatingURL, ApplePayAMSUIRequest&& request, CompletionHandler<void(std::optional<bool>&&)>&& completionHandler)

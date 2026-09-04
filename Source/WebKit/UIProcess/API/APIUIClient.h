@@ -226,6 +226,10 @@ public:
     {
         return InspectorConfiguration::create();
     }
+#if ENABLE(APPLE_PAY)
+    virtual void didCompleteApplePayPayment(WebKit::WebPageProxy&) { }
+#endif
+
     virtual void didEnableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
     virtual void didDisableInspectorBrowserDomain(WebKit::WebPageProxy&) { }
 

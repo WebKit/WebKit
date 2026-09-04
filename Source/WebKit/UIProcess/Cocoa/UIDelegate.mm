@@ -226,6 +226,9 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
     m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:relatedOrigins:completionHandler:)];
 #endif
     
+#if ENABLE(APPLE_PAY)
+    m_delegateMethods.webViewDidCompleteApplePayPayment = [delegate respondsToSelector:@selector(_webViewDidCompleteApplePayPayment:)];
+#endif
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
     m_delegateMethods.webViewDidDisableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidDisableInspectorBrowserDomain:)];
 
@@ -1954,6 +1957,26 @@ void UIDelegate::UIClient::queryPermission(const String& permissionName, API::Se
         }
     }).get()];
 }
+
+#if ENABLE(APPLE_PAY)
+
+void UIDelegate::UIClient::didCompleteApplePayPayment(WebPageProxy&)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate)
+        return;
+
+    if (!uiDelegate->m_delegateMethods.webViewDidCompleteApplePayPayment)
+        return;
+
+    RetainPtr delegate = uiDelegatePrivate();
+    if (!delegate)
+        return;
+
+    [delegate _webViewDidCompleteApplePayPayment:uiDelegate->m_webView.get()];
+}
+
+#endif // ENABLE(APPLE_PAY)
 
 void UIDelegate::UIClient::didEnableInspectorBrowserDomain(WebPageProxy&)
 {

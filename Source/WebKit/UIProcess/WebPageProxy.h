@@ -928,6 +928,10 @@ public:
     void systemPreviewActionTriggered(const WebCore::SystemPreviewInfo&, const String&);
 #endif
 
+#if ENABLE(APPLE_PAY)
+    void didCompleteApplePayPayment();
+#endif
+
 #if ENABLE(APPLE_PAY_AMS_UI)
     void startApplePayAMSUISession(URL&&, WebCore::ApplePayAMSUIRequest&&, CompletionHandler<void(std::optional<bool>&&)>&&);
     void abortApplePayAMSUISession();

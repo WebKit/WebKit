@@ -637,6 +637,10 @@ messages -> WebPageProxy {
     ChangeUniversalAccessZoomFocus(WebCore::IntRect viewRect, WebCore::IntRect caretRect)
 #endif
 
+#if ENABLE(APPLE_PAY)
+    [EnabledBy=ApplePayEnabled] DidCompleteApplePayPayment()
+#endif
+
 #if ENABLE(APPLE_PAY_AMS_UI)
     [EnabledBy=ApplePayEnabled] StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
     [EnabledBy=ApplePayEnabled] AbortApplePayAMSUISession()
