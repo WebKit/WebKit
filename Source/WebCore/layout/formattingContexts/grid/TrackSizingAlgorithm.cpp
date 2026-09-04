@@ -75,8 +75,6 @@ struct UnsizedTrack {
     LayoutUnit growthLimit;
     const TrackSizingFunctions trackSizingFunction;
     // https://drafts.csswg.org/css-grid-1/#infinitely-growable
-    // FIXME: Add a RAII helper to set this flag when a track's growth limit is changed from infinite to finite
-    // while resolving intrinsic maximums.
     bool infinitelyGrowable { false };
 
     // https://drafts.csswg.org/css-grid-1/#extra-space
@@ -623,7 +621,9 @@ static bool isTrackAffectedForSpaceDistributionInPhase(const UnsizedTrack& track
 }
 
 // https://drafts.csswg.org/css-grid-1/#extra-space
-static void distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionTarget, AffectedTrackSizingFunction affectedTrackSizingFunction,
+// Some tracks may need their growth limit changed from infinite to finite while distributing to
+// intrinsic maximums.
+static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionTarget, AffectedTrackSizingFunction affectedTrackSizingFunction,
     const TrackIndexes& affectedTracksIndexes, const Vector<LayoutUnit>& sizeContributions, const GridItemIndexes& accommodatedItemsIndexes,
     const PlacedGridItemSpanList& gridItemSpanList, UnsizedTracks& unsizedTracks, LayoutUnit gapSize)
 {
@@ -699,15 +699,25 @@ static void distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionT
     if (spaceDistributionTarget == ExtraSpaceDistributionTarget::BaseSizes) {
         for (auto trackIndex : affectedTracksIndexes)
             unsizedTracks[trackIndex].baseSize += plannedIncreases[trackIndex];
+        return { };
     } else {
+        ASSERT(spaceDistributionTarget == ExtraSpaceDistributionTarget::GrowthLimits);
+        TrackIndexes tracksWhoseGrowthLimitBecameFinite;
         for (auto trackIndex : affectedTracksIndexes) {
             auto& track = unsizedTracks[trackIndex];
             auto plannedIncrease = plannedIncreases[trackIndex];
             if (track.growthLimit != LayoutUnit::max())
                 track.growthLimit += plannedIncrease;
-            else
+            else {
+                ASSERT(track.growthLimit == LayoutUnit::max());
                 track.growthLimit = track.baseSize + plannedIncrease;
+                if (affectedTrackSizingFunction == AffectedTrackSizingFunction::IntrinsicMaximum)
+                    tracksWhoseGrowthLimitBecameFinite.append(trackIndex);
+            }
         }
+        if (affectedTrackSizingFunction != AffectedTrackSizingFunction::IntrinsicMaximum)
+            ASSERT(tracksWhoseGrowthLimitBecameFinite.isEmpty());
+        return tracksWhoseGrowthLimitBecameFinite;
     }
 }
 
@@ -721,6 +731,30 @@ static TrackIndexes affectedTracks(const UnsizedTracks& unsizedTracks, AffectedT
     }
     return trackIndexes;
 }
+
+// https://drafts.csswg.org/css-grid-1/#infinitely-growable
+// The marking is for item 6 of https://drafts.csswg.org/css-grid-1/#algo-spanning-items, so it is
+// undone when this scope ends.
+class ScopedInfinitelyGrowableTracks {
+public:
+    ScopedInfinitelyGrowableTracks(UnsizedTracks& unsizedTracks, const TrackIndexes& tracksWhoseGrowthLimitBecameFinite)
+        : m_unsizedTracks(unsizedTracks)
+        , m_markedTracks(tracksWhoseGrowthLimitBecameFinite)
+    {
+        for (auto trackIndex : m_markedTracks)
+            m_unsizedTracks[trackIndex].infinitelyGrowable = true;
+    }
+
+    ~ScopedInfinitelyGrowableTracks()
+    {
+        for (auto trackIndex : m_markedTracks)
+            m_unsizedTracks[trackIndex].infinitelyGrowable = false;
+    }
+
+private:
+    UnsizedTracks& m_unsizedTracks;
+    TrackIndexes m_markedTracks;
+};
 
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-items
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
@@ -783,26 +817,24 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
 
     // 4. If at this point any track's growth limit is now less than its base size, increase its
     //    growth limit to match its base size.
-    //    Not applicable: a flexible track's growth limit is still infinite here (initialized from its
-    //    <flex> max and untouched by the base-size passes above), so it can never be less than the
-    //    base size. It is set to the base size later by the finite-growth-limit step below.
-    ASSERT(std::ranges::all_of(unsizedTracks, [](const auto& track) {
-        return !track.trackSizingFunction.max.isFlex() || track.baseSize <= track.growthLimit;
-    }));
+    for (auto& track : unsizedTracks)
+        track.ensureGrowthLimitIsBiggerThanBaseSize();
 
-    // 5. For intrinsic maximums: distribute extra space to the growth limits of tracks with an
-    //    intrinsic max track sizing function, to accommodate these items' min-content contributions.
-    //    Not applicable: a flexible track's max track sizing function is <flex>, which is not an
-    //    intrinsic max track sizing function, so no flexible track is affected.
-    auto tracksWithIntrinsicMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::IntrinsicMaximum, phase);
-    UNUSED_VARIABLE(tracksWithIntrinsicMaximums);
+    // Scope tracksWhoseGrowthLimitBecameFinite to this block, since it is only used for the next step.
+    {
+        // 5. For intrinsic maximums: distribute extra space to the growth limits of tracks with an
+        //    intrinsic max track sizing function, to accommodate these items' min-content contributions.
+        auto tracksWithIntrinsicMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::IntrinsicMaximum, phase);
+        auto tracksWhoseGrowthLimitBecameFinite = distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::IntrinsicMaximum, tracksWithIntrinsicMaximums, minContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+        // "Mark any tracks whose growth limit changed from infinite to finite in this step as
+        // infinitely growable for the next step."
+        auto infinitelyGrowableTracks = ScopedInfinitelyGrowableTracks { unsizedTracks, tracksWhoseGrowthLimitBecameFinite };
 
-    // 6. For max-content maximums: distribute extra space to the growth limits of tracks with a
-    //    max-content max track sizing function, to accommodate these items' max-content contributions.
-    //    Not applicable: a flexible track's max track sizing function is <flex>, not max-content, so no
-    //    flexible track is affected.
-    auto tracksWithMaxContentMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::MaxContentMaximum, phase);
-    UNUSED_VARIABLE(tracksWithMaxContentMaximums);
+        // 6. For max-content maximums: distribute extra space to the growth limits of tracks with a
+        //    max-content max track sizing function, to accommodate these items' max-content contributions.
+        auto tracksWithMaxContentMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::MaxContentMaximum, phase);
+        distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::MaxContentMaximum, tracksWithMaxContentMaximums, maxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+    }
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-content
