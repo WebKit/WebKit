@@ -94,9 +94,17 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSe
 void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+#ifdef RC_REMOVE_SEC_ACCEL_3
     postMessageLocally(origin, name, source, message.copyRef(), callbackAggregator.copyRef());
     if (auto clientOrigin = toClientOrigin(origin))
         protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { WTF::move(message), { } } }, [callbackAggregator] { }, 0);
+#else
+    // Send IPC first. postMessageLocally() consumes the SerializedScriptValue in the message, possibly on a different thread, so sending IPC afterward would be unsafe.
+    if (auto clientOrigin = toClientOrigin(origin))
+        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { message.copyRef(), { } } }, [callbackAggregator] { }, 0);
+
+    postMessageLocally(origin, name, source, WTF::move(message), WTF::move(callbackAggregator));
+#endif
 }
 
 void WebBroadcastChannelRegistry::postMessageLocally(const WebCore::PartitionedSecurityOrigin& origin, const String& name, std::optional<WebCore::BroadcastChannelIdentifier> sourceInProcess, Ref<WebCore::SerializedScriptValue>&& message, Ref<WTF::CallbackAggregator>&& callbackAggregator)
