@@ -1,0 +1,7 @@
+
+PASS public to loopback: permission denied.
+FAIL public to loopback: success. assert_equals: expected "loaded" but got "timeout"
+PASS public to local: permission denied.
+FAIL public to local: success. assert_equals: expected "loaded" but got "timeout"
+FAIL public to public: no permission required. assert_equals: expected "loaded" but got "timeout"
+
