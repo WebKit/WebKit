@@ -217,6 +217,9 @@ private:
 
     struct QueryContainerState {
         bool invalidated { false };
+        // A scroll-state container's descendants are resolved before interleaved layout (unlike a size
+        // container's, which are deferred), so resuming its resolution invalidates the subtree instead.
+        bool descendantsResolvedBeforeLayout { false };
     };
     HashMap<Ref<Element>, QueryContainerState> m_queryContainerStates;
 

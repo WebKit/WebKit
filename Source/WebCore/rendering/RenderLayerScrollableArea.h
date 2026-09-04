@@ -264,6 +264,7 @@ public:
     ScrollAnchoringController* scrollAnchoringController() const final { return m_scrollAnchoringController.get(); }
 
     void updateAnchorPositionedAfterScroll() final;
+    void updateScrollStateContainersAfterScroll() final;
 
     void createScrollbarsController() final;
 

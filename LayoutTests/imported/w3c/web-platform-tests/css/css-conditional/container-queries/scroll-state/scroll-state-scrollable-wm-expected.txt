@@ -1,4 +1,14 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS scroll-state(scrollable) horizontal scrollbar horizontal-tb/ltr
+PASS scroll-state(scrollable) horizontal scrollbar horizontal-tb/rtl
+PASS scroll-state(scrollable) horizontal scrollbar vertical-lr/ltr
+PASS scroll-state(scrollable) horizontal scrollbar vertical-lr/rtl
+PASS scroll-state(scrollable) horizontal scrollbar vertical-rl/ltr
+PASS scroll-state(scrollable) horizontal scrollbar vertical-rl/rtl
+PASS scroll-state(scrollable) vertical scrollbar horizontal-tb/ltr
+PASS scroll-state(scrollable) vertical scrollbar horizontal-tb/rtl
+PASS scroll-state(scrollable) vertical scrollbar vertical-lr/ltr
+PASS scroll-state(scrollable) vertical scrollbar vertical-lr/rtl
+PASS scroll-state(scrollable) vertical scrollbar vertical-rl/ltr
+PASS scroll-state(scrollable) vertical scrollbar vertical-rl/rtl
 
