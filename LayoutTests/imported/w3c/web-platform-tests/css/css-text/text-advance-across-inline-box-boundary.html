@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Text: an inline box boundary must not change the text run's advance</title>
+<link rel="help" href="https://drafts.csswg.org/css-text-3/#boundary-shaping">
+<link rel="author" title="ChangSeok Oh" href="mailto:changseok@webkit.org">
+<link rel="match" href="text-advance-across-inline-box-boundary-ref.html">
+<link rel="assert" title="Tests that An empty inline box that splits a text run at a soft-wrap opportunity must not change the run's advance width.">
+<style>
+@font-face {
+  font-family: "lato";
+  src: url("/fonts/Lato-Medium.ttf");
+}
+div {
+  font-family: "lato", system-ui;
+  font-size: 40px;
+}
+</style>
+<!--
+  The hyphens are soft-wrap opportunities that split "One-Two-Three" into separate
+  inline text items. The sum of the per-item advances (which includes kerning within
+  each item) must equal the advance of the whole run shaped at once; otherwise the
+  inline box, and the "-Four" inside it, is pushed to the right and a gap appears
+  before it. "-Four" starts with a glyph that does not kern with the preceding "e",
+  so the reference below is an exact pixel match.
+-->
+<div>One-Two-Three<span>-Four</span></div>
