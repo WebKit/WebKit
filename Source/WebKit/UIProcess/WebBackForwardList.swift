@@ -56,19 +56,6 @@ extension WebKit.VectorBackForwardListItemState: CxxVector {
     typealias Element = WebKit.BackForwardListItemState
 }
 
-extension WebKit.WebBackForwardListItem {
-    private borrowing func getUrlCopy() -> WTF.String {
-        // Safety: we immediately make a copy of the string before
-        // it could be freed or mutated. FIXME(rdar://145054011): remove
-        // this.
-        unsafe __urlUnsafe().pointee
-    }
-
-    var url: WTF.String {
-        getUrlCopy()
-    }
-}
-
 // Some of these utility functions would be better in WebBackForwardListSwiftUtilities.h
 // but can't be put there as we are unable to use swift::Array and swift::String
 // rdar://161270632
@@ -304,7 +291,7 @@ final class WebBackForwardList {
         // If the target item wasn't even in the list, there's nothing else to do.
         guard var targetIndex else {
             backForwardLog(
-                "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) could not go to item \(item.identifier().toString()) \(item.url) because it was not found"
+                "(Back/Forward) WebBackForwardList \(ObjectIdentifier(self)) could not go to item \(item.identifier().toString()) \(item.url()) because it was not found"
             )
             return
         }

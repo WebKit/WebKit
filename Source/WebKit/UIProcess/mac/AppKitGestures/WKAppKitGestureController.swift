@@ -59,22 +59,18 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
         let locationInView = location(in: webView)
         let pinnedState = page.pinnedStateIncludingAncestorsAtPoint(.init(locationInView))
 
-        // Safety: Accessing these functions on `pinnedState` is safe because a copy is immediately made,
-        // and the functions's return value's lifetime is bound to `pinnedState` anyways.
-        // FIXME: (rdar://145054011) Remove `unsafe` when possible.
-
         if abs(delta.x) > abs(delta.y) {
-            if unsafe delta.x < 0 && pinnedState.__rightUnsafe().pointee {
+            if delta.x < 0 && pinnedState.right() {
                 return .fail
             }
-            if unsafe delta.x > 0 && pinnedState.__leftUnsafe().pointee {
+            if delta.x > 0 && pinnedState.left() {
                 return .fail
             }
         } else {
-            if unsafe delta.y < 0 && pinnedState.__topUnsafe().pointee {
+            if delta.y < 0 && pinnedState.top() {
                 return .fail
             }
-            if unsafe delta.y > 0 && pinnedState.__bottomUnsafe().pointee {
+            if delta.y > 0 && pinnedState.bottom() {
                 return .fail
             }
         }

@@ -355,6 +355,7 @@ set(WTF_PUBLIC_HEADERS
     StringPrintStream.h
     StructDump.h
     SuspendableWorkQueue.h
+    SwiftAccessors.h
     SwiftBridging.h
     SwiftCXXThunk.h
     SynchronizedFixedQueue.h

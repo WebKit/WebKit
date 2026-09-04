@@ -21,6 +21,11 @@ module wtf [system] {
         export *
     }
 
+    explicit module SwiftAccessors {
+        header "SwiftAccessors.h"
+        export *
+    }
+
     explicit module WebCoreThread {
         header "ios/WebCoreThread.h"
         export *

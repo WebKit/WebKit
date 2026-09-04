@@ -200,6 +200,7 @@
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		82722C867A8346EB9034D804 /* ThreadSafeLazyUniquePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 96C342C5B2894529B448A3CD /* ThreadSafeLazyUniquePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
+		86A48D5393DCC98740A125D4 /* SwiftAccessors.h in Headers */ = {isa = PBXBuildFile; fileRef = B9FCFF520962F6C9E6F4477B /* SwiftAccessors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8AB05DFB2C99482E00738BDD /* PreciseSum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AB05DF92C99482E00738BDD /* PreciseSum.cpp */; };
 		8AB05DFC2C99482E00738BDD /* PreciseSum.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB05DFA2C99482E00738BDD /* PreciseSum.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		92874A1B2D6AF35200BBF326 /* LLVMProfilingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 92874A1A2D6AF34200BBF326 /* LLVMProfilingUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1751,6 +1752,7 @@
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
 		B6397A84DB2844D9A8644961 /* OrderedHashSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrderedHashSet.h; sourceTree = "<group>"; };
+		B9FCFF520962F6C9E6F4477B /* SwiftAccessors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftAccessors.h; sourceTree = "<group>"; };
 		BBEA08032CCFDB33000AC148 /* MallocCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MallocCommon.h; sourceTree = "<group>"; };
 		BBFA08032CCFDB33000AC148 /* MallocCommon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MallocCommon.cpp; sourceTree = "<group>"; };
 		BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariantListOperations.h; sourceTree = "<group>"; };
@@ -2833,6 +2835,7 @@
 				E3260E972DA0E508003FC93F /* StructDump.h */,
 				93B07ED726B8715B00A09B34 /* SuspendableWorkQueue.cpp */,
 				93B07ED626B86BB500A09B34 /* SuspendableWorkQueue.h */,
+				B9FCFF520962F6C9E6F4477B /* SwiftAccessors.h */,
 				9758E8EF2DDCA639004434FD /* SwiftBridging.h */,
 				5C12460D2DC25A130077D423 /* SwiftCXXThunk.h */,
 				5597F82C1D94B9970066BC21 /* SynchronizedFixedQueue.h */,
@@ -4023,6 +4026,7 @@
 				FF8CB4012A88C0D3004AF498 /* SuperFastHash.h in Headers */,
 				DD3DC89A27A4BF8E007E5B61 /* SuspendableWorkQueue.h in Headers */,
 				E396C11E2BE885D9000CBAE1 /* sve.h in Headers */,
+				86A48D5393DCC98740A125D4 /* SwiftAccessors.h in Headers */,
 				9758E8F02DDCA639004434FD /* SwiftBridging.h in Headers */,
 				5C12460E2DC25A130077D423 /* SwiftCXXThunk.h in Headers */,
 				DDF307DA27C086DF006A526F /* SymbolImpl.h in Headers */,
