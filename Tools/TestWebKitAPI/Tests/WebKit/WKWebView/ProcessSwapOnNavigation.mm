@@ -761,8 +761,8 @@ TEST(ProcessSwap, PSONRedirectionToExternal)
 {
     TestWebKitAPI::HTTPServer server(std::initializer_list<std::pair<String, TestWebKitAPI::HTTPResponse>> { }, TestWebKitAPI::HTTPServer::Protocol::Https);
 
-    HashMap<String, String> redirectHeaders;
-    redirectHeaders.add("location"_s, "other://test"_s);
+    Vector<WTF::KeyValuePair<String, String>> redirectHeaders;
+    redirectHeaders.append({ "location"_s, "other://test"_s });
     TestWebKitAPI::HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
     server.addResponse("/popup.html"_s, WTF::move(redirectResponse));
@@ -8423,19 +8423,19 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
 {
     using namespace TestWebKitAPI;
 
-    HashMap<String, String> sourceHeaders;
-    sourceHeaders.add("Content-Type"_s, "text/html"_s);
+    Vector<WTF::KeyValuePair<String, String>> sourceHeaders;
+    sourceHeaders.append({ "Content-Type"_s, "text/html"_s });
     if (sourceCOOP)
-        sourceHeaders.add("Cross-Origin-Opener-Policy"_s, sourceCOOP);
+        sourceHeaders.append({ "Cross-Origin-Opener-Policy"_s, sourceCOOP });
     if (sourceCOEP)
-        sourceHeaders.add("Cross-Origin-Embedder-Policy"_s, sourceCOEP);
+        sourceHeaders.append({ "Cross-Origin-Embedder-Policy"_s, sourceCOEP });
 
-    HashMap<String, String> destinationHeaders;
-    destinationHeaders.add("Content-Type"_s, "text/html"_s);
+    Vector<WTF::KeyValuePair<String, String>> destinationHeaders;
+    destinationHeaders.append({ "Content-Type"_s, "text/html"_s });
     if (destinationCOOP)
-        destinationHeaders.add("Cross-Origin-Opener-Policy"_s, destinationCOOP);
+        destinationHeaders.append({ "Cross-Origin-Opener-Policy"_s, destinationCOOP });
     if (destinationCOEP)
-        destinationHeaders.add("Cross-Origin-Embedder-Policy"_s, destinationCOEP);
+        destinationHeaders.append({ "Cross-Origin-Embedder-Policy"_s, destinationCOEP });
     HTTPResponse destinationResponse(WTF::move(destinationHeaders), "popup"_s);
 
     HTTPServer server(std::initializer_list<std::pair<String, HTTPResponse>> { }, HTTPServer::Protocol::Https);
@@ -8445,9 +8445,9 @@ static void runCOOPProcessSwapTest(ASCIILiteral sourceCOOP, ASCIILiteral sourceC
     server.addResponse("/main.html"_s, HTTPResponse { WTF::move(sourceHeaders), WTF::move(popupSource) });
 
     if (doServerSideRedirect == DoServerSideRedirect::Yes) {
-        HashMap<String, String> redirectHeaders;
+        Vector<WTF::KeyValuePair<String, String>> redirectHeaders;
         String redirectionURL = isSameOrigin == IsSameOrigin::Yes ? makeString("https://127.0.0.1:"_s, server.port(), "/popup-after-redirection.html"_s) : makeString("https://localhost:"_s, server.port(), "/popup-after-redirection.html"_s);
-        redirectHeaders.add("location"_s, WTF::move(redirectionURL));
+        redirectHeaders.append({ "location"_s, WTF::move(redirectionURL) });
         HTTPResponse redirectResponse(301, WTF::move(redirectHeaders));
 
         server.addResponse("/popup.html"_s, WTF::move(redirectResponse));

@@ -116,6 +116,7 @@ static bool shouldDisableTLS(HTTPServer::Protocol protocol)
     case HTTPServer::Protocol::Http:
     case HTTPServer::Protocol::HttpsProxy:
     case HTTPServer::Protocol::HttpsProxyWithAuthentication:
+    case HTTPServer::Protocol::Http2Proxy:
         return true;
     case HTTPServer::Protocol::Https:
     case HTTPServer::Protocol::HttpsWithLegacyTLS:
@@ -189,7 +190,7 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
                 verifier(metadata, trust, completion);
             }).get(), mainDispatchQueueSingleton());
         }
-        if (protocol == Protocol::Http2Raw || protocol == Protocol::Http2)
+        if (protocol == Protocol::Http2Raw || protocol == Protocol::Http2 || protocol == Protocol::Http2Proxy)
             sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
     };
 
@@ -198,7 +199,7 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
     if (port)
         nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().data()));
 
-    if (protocol == Protocol::HttpsProxy || protocol == Protocol::HttpsProxyWithAuthentication) {
+    if (protocol == Protocol::HttpsProxy || protocol == Protocol::HttpsProxyWithAuthentication || protocol == Protocol::Http2Proxy) {
         RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
         RetainPtr options = adoptNS(nw_framer_create_options(proxyDefinition(protocol).get()));
         nw_protocol_stack_prepend_application_protocol(stack.get(), options.get());
@@ -206,6 +207,15 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         RetainPtr tlsOptions = adoptNS(nw_tls_create_options());
         configureTLS(tlsOptions.get());
         nw_protocol_stack_prepend_application_protocol(stack.get(), tlsOptions.get());
+
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+        if (protocol == Protocol::Http2Proxy) {
+            nw_parameters_set_server_mode(parameters.get(), true);
+            nw_parameters_set_attach_protocol_listener(parameters.get(), true);
+            RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
+            nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
+        }
+#endif
     }
 
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
@@ -286,7 +296,7 @@ HTTPServer::HTTPServer(
         requestData->connections.append(Connection(connection));
         nw_connection_set_queue(connection, mainDispatchQueueSingleton());
         nw_connection_start(connection);
-        if (protocol == Protocol::Http2 || protocol == Protocol::Http3) {
+        if (protocol == Protocol::Http2 || protocol == Protocol::Http3 || protocol == Protocol::Http2Proxy) {
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
             respondToHTTPMessagingRequests(Connection(connection), requestData);
 #else
@@ -593,7 +603,7 @@ void HTTPServer::respondToHTTPMessagingRequests(Connection connection, Ref<Reque
         auto response = requestData->requestMap.get(request.path);
         if (response.shouldRespondWith304ToConditionalRequests) {
             if (request.headerFields.contains("if-none-match"_s))
-                return connection.sendHTTPMessagingResponse(HTTPResponse(304, WTF::move(response.headerFieldsFor304)));
+                return connection.sendHTTPMessagingResponse(HTTPResponse(304, copyToVector(response.headerFieldsFor304)));
         }
 
         switch (response.behavior) {
@@ -630,6 +640,7 @@ const char* HTTPServer::scheme() const
         break;
     case Protocol::HttpsProxy:
     case Protocol::HttpsProxyWithAuthentication:
+    case Protocol::Http2Proxy:
         RELEASE_ASSERT_NOT_REACHED();
     }
     return scheme;
@@ -673,7 +684,7 @@ Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLengt
     for (auto& pair : headerFields)
         responseBuilder.append(pair.key, ": "_s, pair.value, "\r\n"_s);
     responseBuilder.append("\r\n"_s);
-    
+
     auto bytesToSend = toUTF8Vector(responseBuilder.toString());
     bytesToSend.appendVector(body);
     return bytesToSend;

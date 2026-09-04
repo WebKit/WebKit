@@ -2016,7 +2016,7 @@ TEST(ResourceLoadStatistics, BlockUnpartitionedAndAllowPartitionedThirdPartyCook
     [webView evaluateJavaScript:@"document.cookie" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([value isKindOfClass:[NSString class]]);
-        EXPECT_WK_STREQ(@"cookieSetBy1=firstParty", (NSString *)value);
+        EXPECT_WK_STREQ(@"cookieSetBy1=firstParty; cookieSetBy2=firstParty", (NSString *)value);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -2040,7 +2040,7 @@ TEST(ResourceLoadStatistics, BlockUnpartitionedAndAllowPartitionedThirdPartyCook
     [webView evaluateJavaScript:@"document.cookie" completionHandler:^(id value, NSError *error) {
         EXPECT_NULL(error);
         EXPECT_TRUE([value isKindOfClass:[NSString class]]);
-        EXPECT_WK_STREQ(@"cookieSetBy1=firstParty", (NSString *)value);
+        EXPECT_WK_STREQ(@"cookieSetBy1=firstParty; cookieSetBy2=firstParty", (NSString *)value);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

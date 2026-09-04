@@ -91,6 +91,7 @@ bool nw_http_fields_enumerate(nw_http_fields_t, NW_NOESCAPE nw_http_field_conten
 
 void nw_http_request_access_method(nw_http_request_t, NW_NOESCAPE nw_http_string_accessor_t);
 void nw_http_request_access_path(nw_http_request_t, NW_NOESCAPE nw_http_optional_string_accessor_t);
+void nw_http_request_access_authority(nw_http_request_t, NW_NOESCAPE nw_http_optional_string_accessor_t);
 OS_OBJECT_RETURNS_RETAINED nw_http_fields_t nw_http_request_copy_header_fields(nw_http_request_t);
 
 OS_OBJECT_RETURNS_RETAINED nw_http_response_t nw_http_response_create(uint16_t status_code, const char * _Nullable reason_phrase);

@@ -69,7 +69,8 @@ public:
         Http2,
         Http3,
         HttpsProxy,
-        HttpsProxyWithAuthentication
+        HttpsProxyWithAuthentication,
+        Http2Proxy,
     };
     enum class DeferListening : bool { No, Yes };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
@@ -133,13 +134,13 @@ struct HTTPResponse {
         : body(WTF::move(body)) { }
     HTTPResponse(const String& body)
         : body(bodyFromString(body)) { }
-    HTTPResponse(HashMap<String, String>&& headerFields, const String& body)
+    HTTPResponse(Vector<WTF::KeyValuePair<String, String>>&& headerFields, const String& body)
         : headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
-    HTTPResponse(HashMap<String, String>&& headerFields, NSData *data)
+    HTTPResponse(Vector<WTF::KeyValuePair<String, String>>&& headerFields, NSData *data)
         : headerFields(WTF::move(headerFields))
         , body(makeVector(data)) { }
-    HTTPResponse(unsigned statusCode, HashMap<String, String>&& headerFields = { }, const String& body = { })
+    HTTPResponse(unsigned statusCode, Vector<WTF::KeyValuePair<String, String>>&& headerFields = { }, const String& body = { })
         : statusCode(statusCode)
         , headerFields(WTF::move(headerFields))
         , body(bodyFromString(body)) { }
@@ -162,7 +163,7 @@ struct HTTPResponse {
 
     void setHeaderField(String&& name, String&& value)
     {
-        headerFields.set(WTF::move(name), WTF::move(value));
+        headerFields.append({ WTF::move(name), WTF::move(value) });
     }
 
     enum class IncludeContentLength : bool { No, Yes };
@@ -170,7 +171,7 @@ struct HTTPResponse {
     static Vector<uint8_t> bodyFromString(const String&);
 
     unsigned statusCode { 200 };
-    HashMap<String, String> headerFields;
+    Vector<WTF::KeyValuePair<String, String>> headerFields;
     Vector<uint8_t> body;
     Behavior behavior { Behavior::SendResponseNormally };
     bool shouldRespondWith304ToConditionalRequests { false };

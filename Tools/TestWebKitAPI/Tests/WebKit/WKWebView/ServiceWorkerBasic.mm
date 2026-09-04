@@ -5139,9 +5139,9 @@ TEST(ServiceWorkers, ServiceWorkerStorageTiming)
     [webView1 loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);
 
-    HashMap<String, String> sourceHeaders;
-    sourceHeaders.add("Cache-Control"_s, "no-cache"_s);
-    sourceHeaders.add("Content-Type"_s, "application/javascript"_s);
+    Vector<WTF::KeyValuePair<String, String>> sourceHeaders;
+    sourceHeaders.append({ "Cache-Control"_s, "no-cache"_s });
+    sourceHeaders.append({ "Content-Type"_s, "application/javascript"_s });
     server.setResponse("/sw.js"_s, TestWebKitAPI::HTTPResponse { WTF::move(sourceHeaders), serviceWorkerStorageTimingScriptBytesV2 });
 
     done = false;
