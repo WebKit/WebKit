@@ -1156,11 +1156,33 @@ select::picker-icon {
     position-try-order: -internal-auto-base(unset, most-block-size);
     position-try-fallbacks: -internal-auto-base(unset, {
         flip-block, flip-inline, flip-block flip-inline });
+    transform-origin: -internal-auto-base(unset, top center);
+    opacity: -internal-auto-base(unset, 0);
+    transform: -internal-auto-base(unset, scale(0.95));
+    transition: -internal-auto-base(unset, {
+        opacity 100ms cubic-bezier(0.42, 0, 1, 1),
+        transform 125ms cubic-bezier(0.42, 0, 1, 1),
+        display 125ms allow-discrete,
+        overlay 125ms allow-discrete });
     display: -internal-auto-base(contents, none);
 }
 
 :-internal-select-popover:popover-open {
     display: block;
+    opacity: -internal-auto-base(unset, 1);
+    transform: -internal-auto-base(unset, scale(1));
+    transition: -internal-auto-base(unset, {
+        opacity 150ms cubic-bezier(0, 0, 0.58, 1),
+        transform 150ms cubic-bezier(0, 0, 0.58, 1),
+        display 150ms allow-discrete,
+        overlay 150ms allow-discrete });
+}
+
+@starting-style {
+    :-internal-select-popover:popover-open {
+        opacity: -internal-auto-base(unset, 0);
+        transform: -internal-auto-base(unset, scale(0.95));
+    }
 }
 
 select:-internal-uses-menulist option {
