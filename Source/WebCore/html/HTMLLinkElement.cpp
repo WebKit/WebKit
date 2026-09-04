@@ -281,6 +281,7 @@ String HTMLLinkElement::as() const
     String as = attributeWithoutSynchronization(asAttr);
     if (equalLettersIgnoringASCIICase(as, "fetch"_s)
         || equalLettersIgnoringASCIICase(as, "image"_s)
+        || equalLettersIgnoringASCIICase(as, "json"_s)
         || equalLettersIgnoringASCIICase(as, "script"_s)
         || equalLettersIgnoringASCIICase(as, "style"_s)
         || (document().settings().mediaPreloadingEnabled() && (equalLettersIgnoringASCIICase(as, "video"_s) || equalLettersIgnoringASCIICase(as, "audio"_s)))
