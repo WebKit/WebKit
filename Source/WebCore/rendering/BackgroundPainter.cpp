@@ -611,11 +611,23 @@ static inline std::optional<LayoutUnit> NODELETE getSpace(LayoutUnit areaSize, L
     return std::nullopt;
 }
 
-static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& tileSize, LayoutSize& phase, LayoutSize& space, float scaleFactor)
+static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& tileSize, LayoutSize& phase, LayoutSize& space, float scaleFactor, FillRepeat repeatX, FillRepeat repeatY)
 {
-    tileSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), tileSize), scaleFactor).size());
+    // The tile size doubles as the repeat period, so rounding it in an axis that repeats displaces
+    // every tile but the first by a growing multiple of the rounding error. Only snap the axes that
+    // paint a single tile; the same goes for the spacing between tiles.
+    auto snappedTileSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), tileSize), scaleFactor).size());
+    auto snappedSpace = LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), space), scaleFactor).size());
+    if (repeatX == FillRepeat::NoRepeat) {
+        tileSize.setWidth(snappedTileSize.width());
+        space.setWidth(snappedSpace.width());
+    }
+    if (repeatY == FillRepeat::NoRepeat) {
+        tileSize.setHeight(snappedTileSize.height());
+        space.setHeight(snappedSpace.height());
+    }
+
     phase = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), phase), scaleFactor).size());
-    space = LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), space), scaleFactor).size());
     destinationRect = LayoutRect(snapRectToDevicePixels(destinationRect, scaleFactor));
 }
 
@@ -814,7 +826,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     destinationRect.intersect(borderBoxRect);
 
     auto tileSizeWithoutPixelSnapping = tileSize;
-    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);
+    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor, backgroundRepeatX, backgroundRepeatY);
 
     return BackgroundImageGeometry(destinationRect, tileSizeWithoutPixelSnapping, tileSize, phase, spaceSize, fixedAttachment);
 }
