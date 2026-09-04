@@ -2,7 +2,6 @@
 
 import glob
 import logging
-import math
 import os
 import shlex
 import shutil
@@ -19,30 +18,6 @@ def locate_binary_xcrun(sdk, binary_name):
     if completed_process.returncode:
         return None
     return completed_process.stdout.strip()
-
-
-def simplify_profile_weights(profile_weights):
-    simplified_profile_weights = []
-
-    weight_sum = 0
-    max_weight = 0
-    # We need to turn percentages into weights > 1, but we don't want crazy high multipliers.
-    # For example, if we have weights 0.35 and 0.65, we don't need a 7:13 ratio when 5:9 is good enough.
-    max_multiplier = 15
-    for group, weight in profile_weights:
-        weight_sum = weight_sum + weight
-        if weight > max_weight:
-            max_weight = weight
-
-    gcd = int(max_weight * max_multiplier)
-    for group, weight in profile_weights:
-        gcd = math.gcd(gcd, int((weight / weight_sum) * max_multiplier))
-
-    for i in range(0, len(profile_weights)):
-        group, weight = profile_weights[i]
-        simplified_profile_weights.append((group, int((weight / weight_sum) * max_multiplier) // gcd))
-
-    return simplified_profile_weights
 
 
 class ExecutablesFromEnvAndXcode:

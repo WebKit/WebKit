@@ -5,7 +5,7 @@ import logging
 import os
 import subprocess
 
-from webkitpy.llvm_profile_utils import (LLVMProfileData, simplify_profile_weights,
+from webkitpy.llvm_profile_utils import (LLVMProfileData,
                                          merge_raw_profiles_in_directory_by_prefixes)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
@@ -13,7 +13,8 @@ logger = logging.getLogger()
 
 
 PROFILED_DYLIBS = ['JavaScriptCore', 'WebCore', 'WebKit']
-BENCHMARK_GROUP_WEIGHTS = [('speedometer3', 0.6), ('jetstream3', 0.2), ('motionmark', 0.2)]
+BENCHMARK_GROUP_WEIGHTS = [('speedometer3', 15), ('jetstream3', 5), ('motionmark', 2)]
+MAX_WEIGHT = 15
 
 
 def pad(string, max_length):
@@ -107,8 +108,10 @@ def combine(args):
 
     assert len(profile_weight_pairs) > 0, 'Must specify at least one group.'
 
-    profile_weight_pairs = simplify_profile_weights(profile_weight_pairs)
-    logger.info(f'Simplified group weights: {profile_weight_pairs}')
+    max_weight = max(weight for _, weight in profile_weight_pairs)
+    assert max_weight <= MAX_WEIGHT, \
+        f'Max weight {max_weight} exceeds MAX_WEIGHT={MAX_WEIGHT}.'
+    logger.info(f'Group weights: {profile_weight_pairs}')
 
     for lib in PROFILED_DYLIBS:
         logger.info(f'Merging {lib}')
