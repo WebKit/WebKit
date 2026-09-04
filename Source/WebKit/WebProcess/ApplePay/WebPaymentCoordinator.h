@@ -34,7 +34,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/StringHash.h>
 
@@ -115,9 +114,6 @@ private:
     WeakPtr<WebPage> m_webPage;
 
     mutable std::optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
-
-    MonotonicTime m_timestampOfLastCanMakePaymentsRequest;
-    std::optional<bool> m_lastCanMakePaymentsResult;
 };
 
 } // namespace WebKit

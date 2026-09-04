@@ -44,6 +44,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/PaymentCoordinator.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
 
@@ -87,17 +88,20 @@ std::optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const Strin
 
 bool WebPaymentCoordinator::canMakePayments()
 {
+    static MonotonicTime timestampOfLastCanMakePaymentsRequest;
+    static std::optional<bool> lastCanMakePaymentsResult;
+
     auto now = MonotonicTime::now();
-    if (now - m_timestampOfLastCanMakePaymentsRequest > 1_min || !m_lastCanMakePaymentsResult) {
+    if (now - timestampOfLastCanMakePaymentsRequest > 1_min || !lastCanMakePaymentsResult) {
         auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::CanMakePayments());
         if (!sendResult.succeeded())
             return false;
         auto [canMakePayments] = sendResult.takeReply();
 
-        m_timestampOfLastCanMakePaymentsRequest = now;
-        m_lastCanMakePaymentsResult = canMakePayments;
+        timestampOfLastCanMakePaymentsRequest = now;
+        lastCanMakePaymentsResult = canMakePayments;
     }
-    return *m_lastCanMakePaymentsResult;
+    return *lastCanMakePaymentsResult;
 }
 
 void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&& completionHandler)
