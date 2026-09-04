@@ -875,6 +875,7 @@ public:
     void allTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData>&&);
 
     void frameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, const WebCore::FrameTreeSyncSerializationData&);
+    void frameTreeSyncDataBatchChangedInAnotherProcess(const Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&);
     void allFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier, Ref<WebCore::FrameTreeSyncData>&&);
 
     // Updates visible rect state (e.g. windowClipRect and exposedContentRect) in this process using

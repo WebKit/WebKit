@@ -231,6 +231,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     AllTopDocumentSyncDataChangedInAnotherProcess(Ref<WebCore::DocumentSyncData> documentSyncData)
 
     FrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, struct WebCore::FrameTreeSyncSerializationData frameTreeSyncData)
+    FrameTreeSyncDataBatchChangedInAnotherProcess(Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>> frameTreeSyncData)
     AllFrameTreeSyncDataChangedInAnotherProcess(WebCore::FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
     UpdateUserActivationState(Vector<WebCore::FrameIdentifier> frameIDs, MonotonicTime activationTime)

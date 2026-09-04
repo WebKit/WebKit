@@ -2686,4 +2686,10 @@ void WebChromeClient::didFinishContentChangeObserving(WebCore::LocalFrame& frame
 }
 #endif
 
+void WebChromeClient::broadcastFrameTreeSyncDataBatchToOtherProcesses(const Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>& updates)
+{
+    if (RefPtr page = m_page.get())
+        page->send(Messages::WebPageProxy::BroadcastFrameTreeSyncDataBatch(updates));
+}
+
 } // namespace WebKit
