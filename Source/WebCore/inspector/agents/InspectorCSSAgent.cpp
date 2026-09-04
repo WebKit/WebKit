@@ -105,10 +105,12 @@ InspectorCSSAgent::~InspectorCSSAgent() = default;
 
 void InspectorCSSAgent::didCreateFrontendAndBackend()
 {
+    Ref { m_instrumentingAgents.get() }->setPersistentCSSAgent(this);
 }
 
 void InspectorCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
+    Ref { m_instrumentingAgents.get() }->setPersistentCSSAgent(nullptr);
     std::ignore = disable();
 }
 
