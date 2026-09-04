@@ -96,7 +96,7 @@ static MarkerSearchBoxType markerSearchBoxType(const RenderObject& box)
     return MarkerSearchBoxType::BlockContainer;
 }
 
-static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firstFormattedLineRoot, const RenderListItem& listItem, LayoutUnit lineStartInset)
+static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firstFormattedLineRoot, const RenderListItem& listItem, bool isLineStartConstrainedByFloat)
 {
     // <ul><li id=o><ul><li id=i><div style="border-left: 5px solid">text</div></li></ul></li></ul>
     // UA sets 40px start padding on <ul>
@@ -134,10 +134,10 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
             if (box.get() == &listItem)
                 break;
         }
-        // A float pushing the line start inwards also constrains the marker, which sits to the logical left of it.
-        // Nesting list items then all end up with their marker in the same place, just left of the line.
-        if (lineStartInset)
-            toAssociatedListItem = std::min(0_lu, std::max(lineStartInset, toAssociatedListItem));
+        // A float pushing the line start inwards also constrains the marker, so it stays with the line rather than
+        // moving out to its own list item. Nesting list items then all end up with their marker in the same place.
+        if (isLineStartConstrainedByFloat)
+            toAssociatedListItem = { };
     }
 
     // The offsets above are inline start relative (negative means further towards the inline start), while what we return is a logical left offset, so in a right to left inline direction it points the other way.
@@ -590,7 +590,7 @@ void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
     // Line layout placed the marker on the line as if it belonged to the list item establishing that formatting context.
     // Take it from there: out to our own border box start, then across the in-flow content up to us.
     auto logicalTop = LayoutUnit { excludedPosition->topLeft.y() };
-    auto logicalLeft = LayoutUnit { excludedPosition->topLeft.x() } + excludedMarkerLogicalLeftOffsetFor(*firstFormattedLineRoot, *this, LayoutUnit { excludedPosition->lineStartInset });
+    auto logicalLeft = LayoutUnit { excludedPosition->topLeft.x() } + excludedMarkerLogicalLeftOffsetFor(*firstFormattedLineRoot, *this, excludedPosition->isLineStartConstrainedByFloat);
     for (CheckedPtr<RenderBlock> ancestor = firstFormattedLineRoot; ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {
         // Inside a fragmented flow the coordinates are in flow thread space, where the content is one continuous
         // strip. The column the line ended up in is a sibling of the flow thread rather than an ancestor, so leave

@@ -85,7 +85,7 @@ public:
     struct ExcludedPosition {
         SingleThreadWeakPtr<RenderBlockFlow> firstFormattedLineRoot;
         FloatPoint topLeft;
-        float lineStartInset { 0 };
+        bool isLineStartConstrainedByFloat { false };
     };
     void setExcludedPosition(ExcludedPosition);
     std::optional<ExcludedPosition> excludedPosition() const { return m_excludedPosition; }
