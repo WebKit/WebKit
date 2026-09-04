@@ -37,6 +37,7 @@ static constexpr auto maximumAncestorCount = 4;
 CustomPropertyData::CustomPropertyData(const CustomPropertyData& other)
     : m_size(other.m_size)
     , m_mayHaveAnimatableProperties(other.m_mayHaveAnimatableProperties)
+    , m_hasAnimatedProperties(other.m_hasAnimatedProperties)
 {
     auto shouldReferenceAsParentValues = [&] {
         // Always reference the root style since it likely gets shared a lot.

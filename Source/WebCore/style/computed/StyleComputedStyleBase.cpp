@@ -471,6 +471,7 @@ void ComputedStyleBase::NonInheritedFlags::dumpDifferences(TextStream& ts, const
     LOG_IF_DIFFERENT(usesViewportUnits);
     LOG_IF_DIFFERENT(isContainerDependent);
     LOG_IF_DIFFERENT(useTreeCountingFunctions);
+    LOG_IF_DIFFERENT(usesCustomPropertyReferences);
 
     LOG_IF_DIFFERENT_WITH_FROM_RAW(TextDecorationLine, textDecorationLine);
 

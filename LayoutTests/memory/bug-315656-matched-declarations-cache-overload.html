@@ -1,0 +1,104 @@
+<html>
+  <head>
+    <style>
+      @property --animated-number {
+          syntax: "<number>";
+          inherits: true;
+          initial-value: 0.0;
+      }
+      .animated {
+          animation-name: animate;
+          animation-duration: 5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      @keyframes animate {
+          0% {
+              --animated-number: 0.0;
+          }
+          50% {
+              --animated-number: 20.0;
+          }
+          100% {
+              --animated-number: 0.0;
+          }
+      }
+      </style>
+  </head>
+  <body>
+    <span>span
+      <p>p
+        <div>div</div>
+      </p>
+    </span>
+    <script>
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
+
+      if (!window.testRunner || !window.internals) {
+          finish("This test requires testRunner and internals.");
+      } else {
+          setupDOM();
+          setTimeout(async () => {
+
+              let firstFootprint = internals.memoryInfo().memoryFootprint;
+              if (!firstFootprint) {
+                  finish("FAIL: memory footprint not implemented for this platform");
+                  return;
+              }
+              await tryOverloadingMatchedDeclarationsCache();
+              let secondFootprint = internals.memoryInfo().memoryFootprint;
+              let growth = secondFootprint - firstFootprint;
+              let maxAllowedGrowth = firstFootprint * 0.1;
+
+              if (growth <= maxAllowedGrowth)
+                  finish("PASS");
+              else {
+                  let growthPercentage = (growth / firstFootprint * 100.0).toFixed(2);
+                  finish(`FAIL: memory footprint grew by more than 10% i.e. ${growthPercentage}% (${firstFootprint} -> ${secondFootprint})`);
+              }
+          }, 1000);
+      }
+
+      function setupDOM() {
+          const shadowDepth = 1024;
+
+          const span = document.querySelector("span");
+          const p = document.querySelector("p");
+          p.remove();
+
+          let content = p;
+          for (let i = 0; i < shadowDepth; i++) {
+              const host = document.createElement("div");
+              host.dataset.shadowLevel = shadowDepth - i;
+              const shadowRoot = host.attachShadow({ mode: "open" });
+              const style = document.createElement("style");
+              style.textContent = `div { border: ${i}px solid black; }`;
+              shadowRoot.appendChild(style);
+              shadowRoot.appendChild(content);
+              content = host;
+          }
+
+          span.appendChild(content);
+      }
+
+      async function tryOverloadingMatchedDeclarationsCache() {
+          const span = document.querySelector("span");
+          span.className = "animated";
+          return new Promise((resolve) => setTimeout(() => {
+              span.className = "";
+              resolve();
+          }, 5000));
+      }
+
+      function finish(message)
+      {
+          document.body.textContent = message;
+          if (window.testRunner)
+              testRunner.notifyDone();
+      }
+    </script>
+  </body>
+</html>
