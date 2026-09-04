@@ -47,6 +47,8 @@ use POSIX;
 use Text::ParseWords;
 
 sub writeCongrats();
+sub swiftBrowserNeedsBuild($);
+sub touchSwiftBrowserStamp($);
 
 maybeEnterWebKitContainerSDK();
 
@@ -76,6 +78,7 @@ my $prefixPath;
 my $makeArgs = "";
 my @cmakeArgs;
 my $onlyWebKitProject = 0;
+my $buildSwiftBrowser = 1;
 my $xcodeScheme;
 my $coverageSupport = 0;
 my $shouldRunStaticAnalyzer = 0;
@@ -151,6 +154,8 @@ Usage: $programName [options] [options to pass to build system]
   --only-webkit                     Build only the WebKit project
   --only=<scheme>                   Build only the given scheme, instead of the entire project (Xcode builds only)
 
+  --[no-]swiftbrowser               Build SwiftBrowser.app (CMake builds on Apple platforms; on by default)
+
   --skip-library-update             Skip the check to see if windows libraries are up to date
 
   --[no-]use-ccache                 Enable (or disable) CCache, if available
@@ -170,6 +175,7 @@ my %options = (
     'cmakeargs=s' => \@cmakeArgs,
     'minimal' => \$minimal,
     'only-webkit' => \$onlyWebKitProject,
+    'swiftbrowser!' => \$buildSwiftBrowser,
     'only=s' => \$xcodeScheme,
     'coverage' => \$coverageSupport,
     'analyze' => \$shouldRunStaticAnalyzer,
@@ -326,6 +332,21 @@ if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
     }
 
     buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, @featureArgs, @cmakeArgs);
+
+    # SwiftBrowser has no CMake project of its own, so build it out of its Xcode
+    # project against the frameworks CMake just produced.
+    if (isAppleCocoaWebKit() && $buildSwiftBrowser && !$onlyWebKitProject && swiftBrowserNeedsBuild($productDir)) {
+        my @command = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-swiftbrowser");
+        die "build-swiftbrowser script not found" if !-e $command[0];
+
+        # @ARGV holds the CMake arguments in this branch, so pass only the configuration.
+        push @command, argumentsForConfiguration();
+        $result = system(@command);
+        if (exitStatus($result)) {
+            exit exitStatus($result);
+        }
+        touchSwiftBrowserStamp($productDir);
+    }
 }
 
 my $baseProductDir = baseProductDir();
@@ -431,6 +452,51 @@ chdir $originalWorkingDirectory;
 writeCongrats();
 
 exit 0;
+
+sub swiftBrowserStampFile($)
+{
+    my ($productDir) = @_;
+    return File::Spec->catfile($productDir, "SwiftBrowser", "build-swiftbrowser.stamp");
+}
+
+# xcodebuild takes a few seconds to decide it has nothing to do, which is the common
+# case once the frameworks are built, so compare the inputs of the Xcode project
+# against the last successful run ourselves.
+sub swiftBrowserNeedsBuild($)
+{
+    my ($productDir) = @_;
+
+    my $stamp = swiftBrowserStampFile($productDir);
+    return 1 if !-e $stamp;
+    return 1 if !-e File::Spec->catdir($productDir, "SwiftBrowser.app");
+
+    my $stampTime = (stat($stamp))[9];
+    my @inputs = (File::Spec->catfile(sourceDir(), "LocalOverrides.xcconfig"),
+                  File::Spec->catfile(sourceDir(), "Configurations", "CommonBase.xcconfig"));
+    my $collect = sub { push @inputs, $File::Find::name if -f $_; };
+    find($collect, File::Spec->catdir(sourceDir(), "Tools", "SwiftBrowser"));
+    foreach my $framework ("WebKit.framework", "_WebKit_SwiftUI.framework") {
+        my $path = File::Spec->catdir($productDir, $framework);
+        find($collect, $path) if -d $path;
+    }
+
+    # Modification times have a one second resolution, so treat an input written in
+    # the same second as the stamp as newer and pay for a build that does nothing.
+    foreach my $input (@inputs) {
+        my @stat = stat($input);
+        return 1 if @stat && $stat[9] >= $stampTime;
+    }
+    return 0;
+}
+
+sub touchSwiftBrowserStamp($)
+{
+    my ($productDir) = @_;
+    my $stamp = swiftBrowserStampFile($productDir);
+    mkdir dirname($stamp);
+    open my $stampHandle, ">", $stamp or die "Unable to write $stamp: $!";
+    close $stampHandle;
+}
 
 sub writeCongrats()
 {

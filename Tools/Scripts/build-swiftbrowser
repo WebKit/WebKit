@@ -1,0 +1,95 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2026 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+# 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use warnings;
+use File::Basename;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+use POSIX;
+
+my $showHelp = 0;
+my $clean = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options] [options to pass to build system]
+  --help        Show this help message
+  --clean       Clean up the build directory
+EOF
+
+my $result = GetOptions(
+    'help' => \$showHelp,
+    'clean' => \$clean,
+);
+
+if ($showHelp or not $result) {
+   print STDERR $usage;
+   exit 1;
+}
+
+checkRequiredSystemConfig();
+setConfiguration();
+chdirWebKit();
+
+die "SwiftBrowser can only be built for Apple platforms\n" if !isAppleCocoaWebKit();
+
+my $isCMake = isCMakeBuild();
+
+# SwiftBrowser is not part of any workspace.
+overrideConfiguredXcodeWorkspace("");
+my @xcodeOptions = ("-project", "SwiftBrowser.xcodeproj");
+
+if ($isCMake) {
+    # The frameworks SwiftBrowser links against were built by CMake, so the Xcode
+    # options that describe a WebKit build don't apply. The project only has Debug
+    # and Release configurations, while the tree can be configured for ASan or
+    # TSan, so name the output directory directly instead of deriving it from the
+    # configuration, and keep Xcode's intermediates out of it.
+    my $productDir = productDir();
+    my $intermediatesDir = File::Spec->catdir($productDir, "SwiftBrowser");
+    push @xcodeOptions, ("-configuration", configuration());
+    push @xcodeOptions, ("SYMROOT=$intermediatesDir", "OBJROOT=$intermediatesDir");
+    push @xcodeOptions, "CONFIGURATION_BUILD_DIR=$productDir";
+    my $sdk = xcodeSDK();
+    push @xcodeOptions, "SDKROOT=$sdk" if $sdk;
+    # ONLY_ACTIVE_ARCH needs a run destination to name an architecture, otherwise
+    # the app is built for every architecture the SDK supports.
+    my $destination = xcodeDestination();
+    push @xcodeOptions, ("-destination", $destination) if $destination;
+} else {
+    push @xcodeOptions, XcodeOptions();
+}
+
+# Build. xcodebuild only honours a run destination when it is given a scheme.
+chdir "Tools/SwiftBrowser" or die;
+$result = buildXcodeScheme("SwiftBrowser", $clean, @xcodeOptions, @ARGV);
+exit exitStatus($result);
