@@ -56,7 +56,7 @@ class XvfbDriverTest(unittest.TestCase):
         driver._xvfb_screen_depth = lambda: '24'
         driver._xvfb_pipe = lambda: (3, 4)
         driver._xvfb_read_display_id = lambda x: 1
-        driver._xvfb_close_pipe = lambda p: None
+        driver._xvfb_close_fd = lambda fd: None
         driver._print_screen_size_process_for_testing = print_screen_size_process if print_screen_size_process else MockProcess(driver._xvfb_screen_size())
         driver._port_server_environment = port.setup_environ_for_server(port.driver_name())
         return driver
@@ -90,6 +90,20 @@ class XvfbDriverTest(unittest.TestCase):
         expected_logs = ("MOCK popen: ['Xvfb', '-displayfd', '4', '-nolisten', 'tcp', '-ac', '-screen', '0', '1024x768x24'], env=%s\n" % driver._port_server_environment)
         expected_logs += ('The Xvfb display server "%s" is ready and replying as expected.\n' % expected_display)
         self.assertDriverStartSuccessful(driver, expected_logs=expected_logs, expected_display=":1", pixel_tests=True)
+        self.cleanup_driver(driver)
+
+    def test_xvfb_never_returns_display_id(self):
+        # Simulates the container failure where Xvfb spins on socket-listener
+        # errors without ever writing to -displayfd: _xvfb_read_display_id
+        # must return None and the start logic must retry rather than hang.
+        driver = self.make_driver()
+        driver._xvfb_read_display_id = lambda fd: None
+        with OutputCapture(level=logging.INFO) as captured:
+            self.assertRaisesRegex(RuntimeError, 'Unable to start Xvfb display server', driver.start, False, [])
+            captured_log = captured.root.log.getvalue()
+            self.assertIn('Xvfb did not produce a display ID, retrying [ 1 of 9 ].', captured_log)
+            self.assertIn('Xvfb did not produce a display ID, retrying [ 9 of 9 ].', captured_log)
+            self.assertIn('Failed to start and check that the Xvfb replies after 9 retries.', captured_log)
         self.cleanup_driver(driver)
 
     def test_xvfb_not_replying(self):
