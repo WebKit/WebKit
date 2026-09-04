@@ -309,6 +309,7 @@ void StreamPipeToState::handleSignal()
                 if (!globalObject)
                     return nullptr;
 
+<<<<<<< HEAD
                 auto valueOrException = internalWritableStream->abort(*globalObject, signal->reason().getValue());
                 if (valueOrException.hasException()) {
                     auto [rejectedPromise, deferred] = createPromiseAndWrapper(*globalObject);
@@ -316,6 +317,12 @@ void StreamPipeToState::handleSignal()
                     return WTF::move(rejectedPromise);
                 }
                 auto* promise = downcast<JSC::JSPromise>(valueOrException.releaseReturnValue());
+=======
+                auto value = internalWritableStream->abort(*globalObject, signal->reason().getValue());
+                if (!value)
+                    return nullptr;
+                auto* promise = jsDynamicCast<JSC::JSPromise*>(value);
+>>>>>>> 6fd41e08545c (Crash in StreamPipeToState::errorsMustBePropagatedForward)
                 if (!promise)
                     return nullptr;
 
@@ -419,6 +426,7 @@ void StreamPipeToState::errorsMustBePropagatedForward(JSDOMGlobalObject& globalO
                     return nullptr;
 
                 Ref internalWritableStream = protectedThis->m_destination->internalWritableStream();
+<<<<<<< HEAD
                 auto valueOrException = internalWritableStream->abort(*globalObject, error.get());
                 if (valueOrException.hasException()) {
                     auto [rejectedPromise, deferred] = createPromiseAndWrapper(*globalObject);
@@ -426,6 +434,12 @@ void StreamPipeToState::errorsMustBePropagatedForward(JSDOMGlobalObject& globalO
                     return WTF::move(rejectedPromise);
                 }
                 auto* promise = dynamicDowncast<JSC::JSPromise>(valueOrException.releaseReturnValue());
+=======
+                auto value = internalWritableStream->abort(*globalObject, error.get());
+                if (!value)
+                    return nullptr;
+                auto* promise = jsDynamicCast<JSC::JSPromise*>(value);
+>>>>>>> 6fd41e08545c (Crash in StreamPipeToState::errorsMustBePropagatedForward)
                 if (!promise) {
                     auto [result, deferred] = createPromiseAndWrapper(*globalObject);
                     deferred->resolve();
