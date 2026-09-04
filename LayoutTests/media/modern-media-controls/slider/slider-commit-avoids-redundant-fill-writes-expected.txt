@@ -1,0 +1,20 @@
+Testing that Slider.commit() only writes the fill flex-grow styles when the value actually changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial fills reflect value = 0.5:
+PASS primaryFill.style.flexGrow is "50"
+PASS trackFill.style.flexGrow is "50"
+
+Poke sentinel values into the fills, then dirty an unrelated property (width). Since the value did not change, commit() must not rewrite the fills:
+PASS primaryFill.style.flexGrow is "999"
+PASS trackFill.style.flexGrow is "888"
+
+Now change the value; commit() must update both fills:
+PASS primaryFill.style.flexGrow is "25"
+PASS trackFill.style.flexGrow is "75"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
