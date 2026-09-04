@@ -137,6 +137,9 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
         command = PlatformMediaSession::RemoteControlCommandType::NextTrackCommand;
         break;
     case MediaSessionAction::Settrack:
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    case MediaSessionAction::CallToAction:
+#endif
     case MediaSessionAction::Hangup:
     case MediaSessionAction::Enterpictureinpicture:
         // Not supported at present.
@@ -314,6 +317,11 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
     if (document && !document->settings().mediaSessionExtendedActionsEnabled() && (action == MediaSessionAction::Hangup || action == MediaSessionAction::Previousslide || action == MediaSessionAction::Nextslide || action == MediaSessionAction::Enterpictureinpicture))
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    if (RefPtr document = this->document(); document && !document->settings().mediaSessionCallToActionEnabled() && action == MediaSessionAction::CallToAction)
+        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#endif
+
     RefPtr sessionManager = this->sessionManager();
     if (!sessionManager)
         ERROR_LOG(LOGIDENTIFIER, "NULL session manager");
@@ -369,6 +377,13 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
         return;
     }
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    if (RefPtr document = this->document(); document && !document->settings().mediaSessionCallToActionEnabled() && actionDetails.action == MediaSessionAction::CallToAction) {
+        promise.reject(ExceptionCode::TypeError);
+        return;
+    }
+#endif
+
     if (!callActionHandler(actionDetails, TriggerGestureIndicator::No)) {
         promise.reject(ExceptionCode::InvalidStateError);
         return;
@@ -407,6 +422,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
         std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
             maybeGestureIndicator.emplace(IsProcessingUserGesture::Yes, document());
+        ALWAYS_LOG(LOGIDENTIFIER, "invoking handler for ", effectiveActionDetails.action);
         handler->invoke(effectiveActionDetails);
         return true;
     }
@@ -483,6 +499,7 @@ RefPtr<MediaSessionManagerInterface> MediaSession::sessionManager() const
 
 void MediaSession::metadataUpdated(const MediaMetadata& metadata)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "title: ", metadata.title());
     notifyMetadataObservers(const_cast<MediaMetadata*>(&metadata));
 }
 

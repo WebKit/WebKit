@@ -443,6 +443,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasource/TextTrack+MediaSource.idl \
     $(WebCore)/Modules/mediasource/VideoPlaybackQuality.idl \
     $(WebCore)/Modules/mediasource/VideoTrack+MediaSource.idl \
+    $(WebCore)/Modules/mediasession/CallToActionLabel.idl \
     $(WebCore)/Modules/mediasession/MediaImage.idl \
     $(WebCore)/Modules/mediasession/MediaMetadata.idl \
     $(WebCore)/Modules/mediasession/MediaMetadataInit.idl \

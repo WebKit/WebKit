@@ -30,6 +30,14 @@ enum class WebCore::MediaSessionPlaybackState : uint8_t {
 };
 #endif // ENABLE(MEDIA_SESSION)
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+header: <WebCore/CallToActionLabel.h>
+enum class WebCore::CallToActionLabel : uint8_t {
+    Visit,
+    Download,
+};
+#endif // ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 header: <WebCore/MediaSessionCoordinatorState.h>
 enum class WebCore::MediaSessionCoordinatorState : uint8_t {

@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
+#import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "PlaybackSessionInterfaceAVKit.h"
 #import "PlaybackSessionInterfaceLMK.h"
@@ -44,10 +45,13 @@
 #import <WebCore/PlaybackSessionInterfaceAVKitLegacy.h>
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PlaybackSessionInterfaceTVOS.h>
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+#import <WebCore/CallToActionLabel.h>
+#endif
 #if HAVE(PIP_SKIP_PREROLL)
 #import <WebCore/VideoPresentationInterfaceMac.h>
 #endif
-#if ENABLE(LINEAR_MEDIA_PLAYER)
+#if PLATFORM(IOS_FAMILY)
 #import <WebCore/VideoPresentationInterfaceIOS.h>
 #endif
 #import <wtf/LoggerHelper.h>
@@ -500,6 +504,14 @@ void PlaybackSessionModelContext::canSkipAdChanged(bool value)
 }
 #endif
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionModelContext::canShowCallToActionChanged(bool hasHandler, WebCore::CallToActionLabel label)
+{
+    for (CheckedRef client : m_clients)
+        client->canShowCallToActionChanged(hasHandler, label);
+}
+#endif
+
 #if ENABLE(LINEAR_MEDIA_PLAYER)
 void PlaybackSessionModelContext::supportsLinearMediaPlayerChanged(bool supportsLinearMediaPlayer)
 {
@@ -848,6 +860,27 @@ void PlaybackSessionManagerProxy::canSkipAdChanged(IPC::Connection& connection, 
         return;
 
     interface->canSkipAdChanged(value);
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionManagerProxy::canShowCallToActionChanged(IPC::Connection&, HTMLMediaElementIdentifier, bool hasHandler, WebCore::CallToActionLabel label)
+{
+    RELEASE_LOG(Media, "PlaybackSessionManagerProxy::canShowCallToActionChanged hasHandler=%d label=%hhu", hasHandler, static_cast<uint8_t>(label));
+
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    RefPtr videoPresentationManager = page->videoPresentationManager();
+    if (!videoPresentationManager)
+        return;
+
+    RefPtr interface = videoPresentationManager->controlsManagerInterface();
+    if (!interface)
+        return;
+
+    // TODO call into platform call-to-action API once it is available
 }
 #endif
 

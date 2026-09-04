@@ -31,4 +31,5 @@
     DOMString album = "";
     [Conditional=MEDIA_SESSION_PLAYLIST, EnabledBySetting=MediaSessionPlaylistEnabled] DOMString trackIdentifier = "";
     sequence<MediaImage> artwork = [];
+    [Conditional=MEDIA_SESSION_CALL_TO_ACTION, EnabledBySetting=MediaSessionCallToActionEnabled] CallToActionLabel callToActionLabel = "visit";
 };

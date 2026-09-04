@@ -505,6 +505,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediarecorder/MediaRecorder.idl
     Modules/mediarecorder/MediaRecorderErrorEvent.idl
 
+    Modules/mediasession/CallToActionLabel.idl
     Modules/mediasession/MediaImage.idl
     Modules/mediasession/MediaMetadata.idl
     Modules/mediasession/MediaMetadataInit.idl

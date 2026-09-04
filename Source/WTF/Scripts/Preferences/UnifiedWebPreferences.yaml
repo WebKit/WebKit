@@ -5872,6 +5872,21 @@ MediaRecorderEnabledWebM:
       default: false
   sharedPreferenceForWebProcess: true
 
+MediaSessionCallToActionEnabled:
+  type: bool
+  status: testable
+  category: media
+  condition: ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+  humanReadableName: "MediaSession call-to-action action"
+  humanReadableDescription: "Enable the MediaSession call-to-action action and MediaMetadata label"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MediaSessionCaptureToggleAPIEnabled:
   type: bool
   status: stable

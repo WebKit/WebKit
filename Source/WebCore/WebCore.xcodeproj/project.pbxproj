@@ -211,15 +211,16 @@
 		077BA575260FA5FE0072F19F /* MediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA232538CD8000A1300C /* MediaSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA576260FADF60072F19F /* MediaPositionState.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA342538CE6200A1300C /* MediaPositionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA577260FAEC80072F19F /* MediaSessionAction.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA2B2538CDE300A1300C /* MediaSessionAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EBA2F053F90C79842B18CC3D /* CallToActionLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A3869CC50ED1FA41CFA504A /* CallToActionLabel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA578260FAEDB0072F19F /* MediaSessionActionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA3A2538E9C200A1300C /* MediaSessionActionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA579260FAEE80072F19F /* MediaSessionPlaybackState.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA292538CDCB00A1300C /* MediaSessionPlaybackState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA57A260FAEF80072F19F /* MediaSessionReadyState.h in Headers */ = {isa = PBXBuildFile; fileRef = 074471FD25E180050054B231 /* MediaSessionReadyState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA57B260FB1020072F19F /* MediaSessionActionDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA362538CE7000A1300C /* MediaSessionActionDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077BA57E260FEF360072F19F /* MediaSessionCoordinatorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 077BA57C260FE7380072F19F /* MediaSessionCoordinatorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		077FD1B32CC82C5D00C5D9E0 /* IntelligenceTextEffectsSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 077FD1B12CC82C2100C5D9E0 /* IntelligenceTextEffectsSupport.h */; };
-		0782894825C23FE500A7BA03 /* MediaMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA2D2538CE0400A1300C /* MediaMetadata.h */; };
-		0782894B25C36FED00A7BA03 /* MediaImage.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA322538CE3500A1300C /* MediaImage.h */; };
-		0782894C25C3700B00A7BA03 /* MediaMetadataInit.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA302538CE1E00A1300C /* MediaMetadataInit.h */; };
+		0782894825C23FE500A7BA03 /* MediaMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA2D2538CE0400A1300C /* MediaMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0782894B25C36FED00A7BA03 /* MediaImage.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA322538CE3500A1300C /* MediaImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0782894C25C3700B00A7BA03 /* MediaMetadataInit.h in Headers */ = {isa = PBXBuildFile; fileRef = CDDDEA302538CE1E00A1300C /* MediaMetadataInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 0783228318013ED800999E0C /* MediaStreamAudioSource.h */; };
 		07846343145B151A00A58DF1 /* JSTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846341145B151A00A58DF1 /* JSTrackEvent.h */; };
 		07846385145B1B8E00A58DF1 /* JSTrackCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 07846384145B1B8E00A58DF1 /* JSTrackCustom.h */; };
@@ -21612,7 +21613,9 @@
 		CDDDEA282538CDCB00A1300C /* MediaSessionPlaybackState.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionPlaybackState.idl; sourceTree = "<group>"; };
 		CDDDEA292538CDCB00A1300C /* MediaSessionPlaybackState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionPlaybackState.h; sourceTree = "<group>"; };
 		CDDDEA2A2538CDE300A1300C /* MediaSessionAction.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSessionAction.idl; sourceTree = "<group>"; };
+		404C3282CCCFA0D966EB763F /* CallToActionLabel.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CallToActionLabel.idl; sourceTree = "<group>"; };
 		CDDDEA2B2538CDE300A1300C /* MediaSessionAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionAction.h; sourceTree = "<group>"; };
+		0A3869CC50ED1FA41CFA504A /* CallToActionLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallToActionLabel.h; sourceTree = "<group>"; };
 		CDDDEA2C2538CE0400A1300C /* MediaMetadata.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaMetadata.idl; sourceTree = "<group>"; };
 		CDDDEA2D2538CE0400A1300C /* MediaMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaMetadata.h; sourceTree = "<group>"; };
 		CDDDEA2F2538CE1E00A1300C /* MediaMetadataInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaMetadataInit.idl; sourceTree = "<group>"; };
@@ -40638,6 +40641,8 @@
 		CDDDEA212538CD3500A1300C /* mediasession */ = {
 			isa = PBXGroup;
 			children = (
+				0A3869CC50ED1FA41CFA504A /* CallToActionLabel.h */,
+				404C3282CCCFA0D966EB763F /* CallToActionLabel.idl */,
 				CDDDEA322538CE3500A1300C /* MediaImage.h */,
 				CDDDEA312538CE3500A1300C /* MediaImage.idl */,
 				CDDDEA5225395DE100A1300C /* MediaMetadata.cpp */,
@@ -44696,6 +44701,7 @@
 				41D129D51F3D0F6900D15E47 /* CacheStorageProvider.h in Headers */,
 				E43AF8E71AC5B7EC00CA717E /* CacheValidation.h in Headers */,
 				7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */,
+				EBA2F053F90C79842B18CC3D /* CallToActionLabel.h in Headers */,
 				EFCC6C8F20FE914400A2321B /* CanvasActivityRecord.h in Headers */,
 				313171561FB079E5008D91FC /* CanvasBase.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
