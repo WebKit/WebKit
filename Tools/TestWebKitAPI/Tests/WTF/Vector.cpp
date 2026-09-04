@@ -431,6 +431,148 @@ TEST(WTF_Vector, Reverse)
     EXPECT_EQ(13, intVector[4]);
 }
 
+TEST(WTF_Vector, MoveTo)
+{
+    Vector<int> intVector { 10, 11, 12, 13, 14 };
+
+    // Move an earlier element to a later index: only the range in between shifts.
+    intVector.moveTo(1, 3);
+    EXPECT_EQ(10, intVector[0]);
+    EXPECT_EQ(12, intVector[1]);
+    EXPECT_EQ(13, intVector[2]);
+    EXPECT_EQ(11, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+
+    // Move a later element back to an earlier index.
+    intVector.moveTo(3, 0);
+    EXPECT_EQ(11, intVector[0]);
+    EXPECT_EQ(10, intVector[1]);
+    EXPECT_EQ(12, intVector[2]);
+    EXPECT_EQ(13, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+
+    // Moving to the same index is a no-op.
+    intVector.moveTo(2, 2);
+    EXPECT_EQ(11, intVector[0]);
+    EXPECT_EQ(10, intVector[1]);
+    EXPECT_EQ(12, intVector[2]);
+    EXPECT_EQ(13, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+
+    // Move first to last and last to first.
+    intVector.moveTo(0, 4);
+    EXPECT_EQ(10, intVector[0]);
+    EXPECT_EQ(12, intVector[1]);
+    EXPECT_EQ(13, intVector[2]);
+    EXPECT_EQ(14, intVector[3]);
+    EXPECT_EQ(11, intVector[4]);
+
+    intVector.moveTo(4, 0);
+    EXPECT_EQ(11, intVector[0]);
+    EXPECT_EQ(10, intVector[1]);
+    EXPECT_EQ(12, intVector[2]);
+    EXPECT_EQ(13, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+}
+
+TEST(WTF_Vector, MoveToAdjacent)
+{
+    Vector<int> intVector { 1, 2, 3 };
+
+    intVector.moveTo(0, 1);
+    EXPECT_EQ(2, intVector[0]);
+    EXPECT_EQ(1, intVector[1]);
+    EXPECT_EQ(3, intVector[2]);
+
+    intVector.moveTo(2, 1);
+    EXPECT_EQ(2, intVector[0]);
+    EXPECT_EQ(3, intVector[1]);
+    EXPECT_EQ(1, intVector[2]);
+}
+
+TEST(WTF_Vector, MoveToSamePosition)
+{
+    Vector<int> intVector { 10, 11, 12 };
+
+    intVector.moveTo(0, 0);
+    intVector.moveTo(1, 1);
+    intVector.moveTo(2, 2);
+    EXPECT_EQ(3U, intVector.size());
+    EXPECT_EQ(10, intVector[0]);
+    EXPECT_EQ(11, intVector[1]);
+    EXPECT_EQ(12, intVector[2]);
+
+    // A single-element vector: the only valid move is a no-op.
+    Vector<int> single { 42 };
+    single.moveTo(0, 0);
+    EXPECT_EQ(1U, single.size());
+    EXPECT_EQ(42, single[0]);
+}
+
+TEST(WTF_Vector, MoveToInlineCapacity)
+{
+    Vector<int, 8> intVector { 10, 11, 12, 13, 14 };
+
+    intVector.moveTo(1, 3);
+    EXPECT_EQ(10, intVector[0]);
+    EXPECT_EQ(12, intVector[1]);
+    EXPECT_EQ(13, intVector[2]);
+    EXPECT_EQ(11, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+
+    intVector.moveTo(3, 0);
+    EXPECT_EQ(11, intVector[0]);
+    EXPECT_EQ(10, intVector[1]);
+    EXPECT_EQ(12, intVector[2]);
+    EXPECT_EQ(13, intVector[3]);
+    EXPECT_EQ(14, intVector[4]);
+
+    intVector.moveTo(2, 2);
+    EXPECT_EQ(12, intVector[2]);
+}
+
+TEST(WTF_Vector, MoveToMoveOnly)
+{
+    Vector<MoveOnly> vector;
+    for (unsigned i = 0; i < 5; ++i)
+        vector.append(MoveOnly(i));
+
+    // Move an earlier element to a later index.
+    vector.moveTo(1, 3);
+    EXPECT_EQ(0U, vector[0].value());
+    EXPECT_EQ(2U, vector[1].value());
+    EXPECT_EQ(3U, vector[2].value());
+    EXPECT_EQ(1U, vector[3].value());
+    EXPECT_EQ(4U, vector[4].value());
+
+    // Move a later element back to an earlier index.
+    vector.moveTo(3, 0);
+    EXPECT_EQ(1U, vector[0].value());
+    EXPECT_EQ(0U, vector[1].value());
+    EXPECT_EQ(2U, vector[2].value());
+    EXPECT_EQ(3U, vector[3].value());
+    EXPECT_EQ(4U, vector[4].value());
+
+    // Same-position move leaves a move-only element untouched.
+    vector.moveTo(2, 2);
+    EXPECT_EQ(2U, vector[2].value());
+
+    // First to last and last to first.
+    vector.moveTo(0, 4);
+    EXPECT_EQ(0U, vector[0].value());
+    EXPECT_EQ(2U, vector[1].value());
+    EXPECT_EQ(3U, vector[2].value());
+    EXPECT_EQ(4U, vector[3].value());
+    EXPECT_EQ(1U, vector[4].value());
+
+    vector.moveTo(4, 0);
+    EXPECT_EQ(1U, vector[0].value());
+    EXPECT_EQ(0U, vector[1].value());
+    EXPECT_EQ(2U, vector[2].value());
+    EXPECT_EQ(3U, vector[3].value());
+    EXPECT_EQ(4U, vector[4].value());
+}
+
 TEST(WTF_Vector, ReverseIterator)
 {
     Vector<int> intVector;

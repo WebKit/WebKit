@@ -195,12 +195,18 @@ std::optional<ScrollingNodeID> ScrollingStateTree::insertNode(ScrollingNodeType 
             if (parent->childAtIndex(childIndex) == node)
                 return newNodeID;
 
-            parent->removeChild(*node);
+            auto& children = parent->children();
+            size_t currentIndex = children.find(node.get());
+            if (currentIndex == notFound) {
+                ASSERT_NOT_REACHED();
+                return newNodeID;
+            }
 
-            if (childIndex == notFound)
-                parent->appendChild(node.releaseNonNull());
-            else
-                parent->insertChild(node.releaseNonNull(), childIndex);
+            size_t targetIndex = std::min(childIndex, children.size() - 1);
+            if (currentIndex != targetIndex) {
+                children.moveTo(currentIndex, targetIndex);
+                parent->setPropertyChanged(ScrollingStateNode::Property::ChildNodes);
+            }
 
             return newNodeID;
         }
