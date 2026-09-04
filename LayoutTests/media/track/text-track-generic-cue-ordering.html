@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+    <title>TextTrackCueGeneric::isOrderedBefore is a valid strict weak ordering</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+// Regression test for TextTrackCueGeneric::isOrderedBefore.
+//
+// For two generic cues with equal start/end times, the comparator broke the
+// tie by cue index (via VTTCue::isOrderedBefore()) yet fell back to breaking
+// it by on-screen line. Those two orderings can disagree, so isOrderedBefore(a,
+// b) and isOrderedBefore(b, a) could both be true -- an asymmetric relation
+// that is not a strict weak ordering. That comparator is passed to std::sort()
+// in HTMLMediaElement::updateActiveTextTrackCues(), where an invalid ordering
+// is undefined behaviour. Rather than observe UB from script, we call the
+// comparator directly via internals and assert the properties it must satisfy.
+//
+// internals.createGenericCue() is the only way to mint a TextTrackCueGeneric
+// from script, and internals.cueIsOrderedBefore() exposes the comparator, so
+// these tests require internals.
+
+// Two generic cues sharing timing but differing in line, where the *first-added*
+// cue (lower cue index) has the *lower* line. The old comparator's cue-index
+// tiebreak and its line tiebreak then point in opposite directions.
+function makeConflictingCues(t) {
+    // A track is required so the cues have distinct cue indices (cueIndex() is
+    // the cue's position within its track's cue list).
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    const tt = video.addTextTrack("captions", "test", "en");
+
+    const lowLine = internals.createGenericCue(0, 100, "low line, added first");
+    lowLine.line = 1;
+    tt.addCue(lowLine);            // cue index 0
+
+    const highLine = internals.createGenericCue(0, 100, "high line, added second");
+    highLine.line = 10;
+    tt.addCue(highLine);           // cue index 1
+
+    return { lowLine, highLine };
+}
+
+test(t => {
+    assert_true(!!window.internals, "test requires window.internals");
+    const { lowLine, highLine } = makeConflictingCues(t);
+
+    const lowBeforeHigh = internals.cueIsOrderedBefore(lowLine, highLine);
+    const highBeforeLow = internals.cueIsOrderedBefore(highLine, lowLine);
+
+    // Antisymmetry: a valid strict weak ordering can never order both a<b and
+    // b<a. The old code returned true for both directions here.
+    assert_false(lowBeforeHigh && highBeforeLow,
+        "isOrderedBefore must not order two generic cues before each other");
+}, "isOrderedBefore is antisymmetric for equal-timing generic cues");
+
+test(t => {
+    assert_true(!!window.internals, "test requires window.internals");
+    const { lowLine, highLine } = makeConflictingCues(t);
+
+    // Irreflexivity: no cue is ordered before itself.
+    assert_false(internals.cueIsOrderedBefore(lowLine, lowLine),
+        "a cue is not ordered before itself");
+
+    // The intended ordering: for equal-timing generic cues the higher line
+    // sorts first, independent of add order / cue index.
+    assert_true(internals.cueIsOrderedBefore(highLine, lowLine),
+        "higher-line generic cue is ordered before lower-line cue");
+    assert_false(internals.cueIsOrderedBefore(lowLine, highLine),
+        "lower-line generic cue is not ordered before higher-line cue");
+}, "isOrderedBefore orders equal-timing generic cues by line, not cue index");
+
+test(t => {
+    assert_true(!!window.internals, "test requires window.internals");
+
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    t.add_cleanup(() => video.remove());
+    const tt = video.addTextTrack("captions", "test", "en");
+
+    // A fully-conflicting fan: add order ascending and line ascending too, so
+    // the first-added cue (lowest cue index) has the lowest line. Every pair's
+    // cue-index tiebreak (lower index first) and line tiebreak (higher line
+    // first) then disagree. Verify the relation stays a strict weak ordering
+    // across all pairs (irreflexive + antisymmetric), which is what std::sort
+    // relies on.
+    const cues = [];
+    const LINES = [1, 2, 3, 4, 5, 6, 7, 8];
+    for (const line of LINES) {
+        const cue = internals.createGenericCue(0, 100, `line ${line}`);
+        cue.line = line;
+        tt.addCue(cue);
+        cues.push(cue);
+    }
+
+    for (let i = 0; i < cues.length; ++i) {
+        for (let j = 0; j < cues.length; ++j) {
+            const ab = internals.cueIsOrderedBefore(cues[i], cues[j]);
+            const ba = internals.cueIsOrderedBefore(cues[j], cues[i]);
+            if (i === j)
+                assert_false(ab, `cue ${i} must not be ordered before itself`);
+            assert_false(ab && ba,
+                `cues ${i} and ${j} must not both be ordered before each other`);
+        }
+    }
+}, "isOrderedBefore stays a strict weak ordering across many conflicting generic cues");
+</script>
+</body>
+</html>
