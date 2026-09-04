@@ -55,6 +55,7 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/CheckedPtr.h>
@@ -148,6 +149,9 @@ void FrameInspectorController::createLazyAgents()
 
     // Create debugger before agents that depend on it.
     m_debugger = makeUnique<FrameDebugger>(*frame);
+
+    if (auto* scriptProfilerAgent = m_instrumentingAgents->persistentScriptProfilerAgent())
+        scriptProfilerAgent->installProfilingClientIfTracking(*m_debugger);
 
     auto context = frameAgentContext();
     m_agents.append(makeUniqueRef<FrameDebuggerAgent>(context));
@@ -254,6 +258,13 @@ Stopwatch& FrameInspectorController::executionStopwatch() const
 JSC::Debugger* FrameInspectorController::debugger()
 {
     return m_debugger.get();
+}
+
+JSC::Debugger* FrameInspectorController::attachedDebugger() const
+{
+    if (m_debugger && m_debugger->isAttachedToFrame())
+        return m_debugger.get();
+    return nullptr;
 }
 
 JSC::VM& FrameInspectorController::vm()
