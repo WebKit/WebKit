@@ -546,8 +546,12 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
     auto lineBoxLogicalRect = firstContentfulLine->lineBoxLogicalRect();
     auto isLeftToRight = flow().writingMode().isLogicalLeftInlineStart();
+    // text-indent is a margin on the line box, not content the marker hangs off.
+    ASSERT(m_inlineContentConstraints);
+    auto textIndent = Layout::InlineFormattingUtils::computedTextIndentForFirstLine(rootLayoutBox(), m_inlineContentConstraints->horizontal().logicalWidth);
     auto lineStartEdge = [&] {
         auto edge = isLeftToRight ? lineBoxLogicalRect.x() : lineBoxLogicalRect.maxX();
+        edge += isLeftToRight ? -textIndent : textIndent;
         // A float of this formatting context took room from the line, but the marker hangs off where the line would
         // have started without it. One intruding from earlier content moves the marker with the line instead
         // (webkit.org/b/166528).

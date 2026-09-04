@@ -139,6 +139,16 @@ InlineRect InlineFormattingUtils::flipVisualRectToLogicalForWritingMode(const In
     return visualRect;
 }
 
+InlineLayoutUnit InlineFormattingUtils::computedTextIndentForFirstLine(const ElementBox& root, InlineLayoutUnit availableWidth)
+{
+    auto shouldIndent = root.style().textIndent().eachLine.has_value() || (root.isAnonymousTextIndentCandidateForIntegration() || !root.isAnonymous() || (!root.isInlineIntegrationRoot() && root.parent().firstInFlowChild() == &root));
+    // Specifying 'hanging' inverts whether the line should be indented or not.
+    if (shouldIndent == root.style().textIndent().hanging.has_value())
+        return { };
+    auto& textIndentAmount = root.style().textIndent().amount;
+    return textIndentAmount == 0_css_px ? 0.f : Style::evaluate<InlineLayoutUnit>(textIndentAmount, availableWidth, root.style().usedZoomForLength());
+}
+
 InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode isIntrinsicWidthMode, IsFirstFormattedLine isFirstFormattedLine, std::optional<PreviousLineEndsParagraph> previousLineEndsParagraph, InlineLayoutUnit availableWidth) const
 {
     CheckedRef root = formattingContext().root();
