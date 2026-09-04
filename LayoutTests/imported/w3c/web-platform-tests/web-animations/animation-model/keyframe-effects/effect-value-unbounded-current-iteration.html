@@ -1,0 +1,65 @@
+<!doctype html>
+<meta charset=utf-8>
+<title>The effect value of a keyframe effect: Applying the iteration composite
+  operation with an unbounded current iteration</title>
+<link rel="help" href="https://drafts.csswg.org/web-animations/#calculating-the-current-iteration">
+<link rel="help" href="https://drafts.csswg.org/web-animations/#the-effect-value-of-a-keyframe-animation-effect">
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src="../../testcommon.js"></script>
+<div id="log"></div>
+<script>
+'use strict';
+
+test(t => {
+  const div = createDiv(t);
+  const anim =
+    div.animate({ color: ['rgb(0, 0, 0)', 'rgb(255, 0, 0)'] },
+                { duration: 0,
+                  iterations: Infinity,
+                  fill: 'forwards',
+                  iterationComposite: 'accumulate' });
+  anim.currentTime = 1;
+
+  assert_equals(anim.effect.getComputedTiming().currentIteration, Infinity,
+    'The current iteration is infinite');
+  assert_equals(getComputedStyle(div).color, 'rgb(255, 0, 0)',
+    'Animated color style in the after phase');
+}, 'iteration composition with an infinite current iteration');
+
+test(t => {
+  const div = createDiv(t);
+  const anim =
+    div.animate({ color: ['rgb(0, 0, 0)', 'rgb(255, 0, 0)'] },
+                { duration: 100 * MS_PER_SEC,
+                  easing: 'linear',
+                  iterationStart: 3e9,
+                  iterationComposite: 'accumulate' });
+  anim.pause();
+  anim.currentTime = 50 * MS_PER_SEC;
+
+  assert_equals(anim.effect.getComputedTiming().currentIteration, 3e9,
+    'The current iteration exceeds the range of a 32-bit signed integer');
+  assert_equals(getComputedStyle(div).color, 'rgb(255, 0, 0)',
+    'Animated color style at 50s of the 3000000001st iteration');
+}, 'iteration composition with a current iteration too large to be applied one '
+   + 'accumulation at a time');
+
+test(t => {
+  const div = createDiv(t);
+  const anim =
+    div.animate({ transform: ['translateX(0px)', 'translateX(1px)'] },
+                { duration: 100 * MS_PER_SEC,
+                  easing: 'linear',
+                  iterationStart: 5,
+                  iterationComposite: 'accumulate' });
+  anim.pause();
+  anim.currentTime = 50 * MS_PER_SEC;
+
+  assert_matrix_equals(getComputedStyle(div).transform,
+    'matrix(1, 0, 0, 1, 5.5, 0)',
+    'Animated transform style at 50s of the sixth iteration');
+}, 'iteration composition with a current iteration small enough to be applied '
+   + 'one accumulation at a time');
+
+</script>
