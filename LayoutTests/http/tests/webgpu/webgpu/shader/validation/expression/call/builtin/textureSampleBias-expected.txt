@@ -484,47 +484,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="abstract-flo
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="f16"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-int%3E"
-FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E" assert_unreached:
-  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(-9, -9, -9));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-  - (in subcase: value=-9) INFO: subcase ran
-  - (in subcase: value=-8) INFO: subcase ran
-  - (in subcase: value=0) INFO: subcase ran
-  - (in subcase: value=7) INFO: subcase ran
-  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(8, 8, 8));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-  - (in subcase: value=8) INFO: subcase ran
- Reached unreachable code
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cabstract-int%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cabstract-float%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cf32%3E"
@@ -537,47 +497,7 @@ PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf32%3
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Cf16%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="i32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Ci32%3E"
-FAIL :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E" assert_unreached:
-  - (in subcase: value=-9) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: value=-9) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(-9), i32(-9), i32(-9)));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-  - (in subcase: value=-9) INFO: subcase ran
-  - (in subcase: value=-8) INFO: subcase ran
-  - (in subcase: value=0) INFO: subcase ran
-  - (in subcase: value=7) INFO: subcase ran
-  - (in subcase: value=8) EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - (in subcase: value=8) VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3(i32(8), i32(8), i32(8)));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-  - (in subcase: value=8) INFO: subcase ran
- Reached unreachable code
+PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec3%3Ci32%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec4%3Ci32%3E"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="u32"
 PASS :offset_argument:textureType="texture_3d%3Cf32%3E";offsetType="vec2%3Cu32%3E"
@@ -590,54 +510,8 @@ PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType=
 PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="u"
 PASS :offset_argument,non_const:textureType="texture_2d_array%3Cf32%3E";varType="l"
 PASS :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="c"
-FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @group(0) @binding(2) var<uniform> u: vec3<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec3(i32(0), i32(0), i32(0));
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3<i32>(u));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
-    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
- Reached unreachable code
-FAIL :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l" assert_unreached:
-  - EXPECTATION FAILED: Expected validation error
-      at (elided: below max severity)
-  - VALIDATION FAILED: Missing expected compilationInfo 'error' message.
-
-
-    ---- shader ----
-
-    @group(0) @binding(0) var s: sampler;
-    @group(0) @binding(1) var t: texture_3d<f32>;
-    @group(0) @binding(2) var<uniform> u: vec3<i32>;
-    @fragment fn fs() -> @location(0) vec4f {
-      const c = 1;
-      let l = vec3(i32(0), i32(0), i32(0));
-      let v = textureSampleBias(t, s, vec3(0.0f, 0.0f, 0.0f), 0, vec3<i32>(l));
-      return vec4f(0);
-    }
-
-    @http://127.0.0.1:8000/webgpu/webgpu/shader/validation/shader_validation_test.js:91:30
-    async finalize@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:128:16
-    async runTest@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:532:28
-    async run@http://127.0.0.1:8000/webgpu/common/internal/test_group.js:680:31
-    @http://127.0.0.1:8000/webgpu/common/runtime/wpt.js:75:27
- Reached unreachable code
+PASS :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="u"
+PASS :offset_argument,non_const:textureType="texture_3d%3Cf32%3E";varType="l"
 PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=false
 PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="none";offset=true
 PASS :only_in_fragment:textureType="texture_2d%3Cf32%3E";entryPoint="fragment";offset=false

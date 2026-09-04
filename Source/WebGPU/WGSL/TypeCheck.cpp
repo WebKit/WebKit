@@ -1625,7 +1625,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
 
                 auto& lastArg = call.arguments().last();
                 auto* vectorType = std::get_if<Types::Vector>(lastArg.inferredType());
-                if (!vectorType || vectorType->size != 2 || vectorType->element != m_types.i32Type())
+                if (!vectorType || (vectorType->size != 2 && vectorType->size != 3) || vectorType->element != m_types.i32Type())
                     return { };
 
                 auto& maybeConstant = lastArg.constantValue();
@@ -1633,7 +1633,7 @@ Result<void> TypeChecker::visit(AST::CallExpression& call)
                     TYPE_ERROR(lastArg.span(), "the offset argument must be a const-expression"_s);
 
                 auto& vector = std::get<ConstantVector>(*maybeConstant);
-                for (unsigned i = 0; i < 2; ++i) {
+                for (unsigned i = 0; i < vectorType->size; ++i) {
                     auto& i32 = std::get<int32_t>(vector.elements[i]);
                     if (i32 < -8 || i32 > 7) [[unlikely]]
                         TYPE_ERROR(lastArg.span(), "each component of the offset argument must be at least -8 and at most 7. offset component "_s, String::number(i), " is "_s, String::number(i32));
