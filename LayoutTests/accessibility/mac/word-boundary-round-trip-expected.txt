@@ -1,0 +1,32 @@
+This test ensures that stepping to the next word end and then back to the previous word start lands on the start of the word the marker began on, from any position within that word. Words separated by a br element and words separated by a soft wrap are both covered, because neither kind of line break should move a word boundary.
+
+Words separated by a br element.
+PASS: wordStartOffsetFrom('broken', 0) === 0
+PASS: wordStartOffsetFrom('broken', 3) === 0
+PASS: wordStartOffsetFrom('broken', 6) === 6
+PASS: wordStartOffsetFrom('broken', 9) === 6
+PASS: wordStartOffsetFrom('broken', 12) === 12
+PASS: wordStartOffsetFrom('broken', 16) === 12
+
+The recovered range is the word, without the line break.
+PASS: wordTextFrom('broken', 3) === 'Alpha'
+PASS: wordTextFrom('broken', 9) === 'bravo'
+PASS: wordTextFrom('broken', 16) === 'charlie'
+
+Words separated by a soft wrap.
+PASS: wordStartOffsetFrom('wrapped', 0) === 0
+PASS: wordStartOffsetFrom('wrapped', 3) === 0
+PASS: wordStartOffsetFrom('wrapped', 6) === 6
+PASS: wordStartOffsetFrom('wrapped', 8) === 6
+PASS: wordStartOffsetFrom('wrapped', 11) === 11
+PASS: wordStartOffsetFrom('wrapped', 15) === 11
+
+The recovered range is the word, and the wrap adds nothing to it.
+PASS: wordTextFrom('wrapped', 3) === 'delta'
+PASS: wordTextFrom('wrapped', 8) === 'echo'
+PASS: wordTextFrom('wrapped', 15) === 'foxtrot'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

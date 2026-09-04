@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+#wrapped { width: 6ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="broken">Alpha<br>Bravo<br>Charlie</p>
+<p id="wrapped">aaa bbb ccc</p>
+
+<script>
+var output = "This test ensures that stepping to the next line end and then back to the previous line start lands on the start of the line the marker began on, from any position within that line. Lines broken by a br element and lines broken only by wrapping are both covered.\n\n";
+
+function baseIndexOf(paragraphId)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    return paragraph.indexForTextMarker(paragraph.startTextMarkerForTextMarkerRange(paragraph.textMarkerRangeForElement(paragraph)));
+}
+
+function lineStartOffsetFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var lineEnd = paragraph.nextLineEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    return paragraph.indexForTextMarker(paragraph.previousLineStartTextMarkerForTextMarker(lineEnd)) - base;
+}
+
+function lineTextFrom(paragraphId, offset)
+{
+    var paragraph = accessibilityController.accessibleElementById(paragraphId);
+    var base = baseIndexOf(paragraphId);
+    var lineEnd = paragraph.nextLineEndTextMarkerForTextMarker(paragraph.textMarkerForIndex(base + offset));
+    var lineStart = paragraph.previousLineStartTextMarkerForTextMarker(lineEnd);
+    return paragraph.stringForTextMarkerRange(paragraph.textMarkerRangeForMarkers(lineStart, lineEnd));
+}
+
+function wrappedLineTextFrom(offset)
+{
+    // The space at a soft wrap is included by the isolated tree and not by the live tree.
+    return lineTextFrom("wrapped", offset).trim();
+}
+
+if (window.accessibilityController) {
+    output += "Lines broken by a br element.\n";
+    output += expect("lineStartOffsetFrom('broken', 0)", "0");
+    output += expect("lineStartOffsetFrom('broken', 3)", "0");
+    output += expect("lineStartOffsetFrom('broken', 6)", "6");
+    output += expect("lineStartOffsetFrom('broken', 9)", "6");
+    output += expect("lineStartOffsetFrom('broken', 12)", "12");
+    output += expect("lineStartOffsetFrom('broken', 16)", "12");
+
+    output += "\nThe recovered range spans the whole line, and stops before the line break.\n";
+    output += expect("lineTextFrom('broken', 3)", "'Alpha'");
+    output += expect("lineTextFrom('broken', 9)", "'Bravo'");
+    output += expect("lineTextFrom('broken', 16)", "'Charlie'");
+
+    output += "\nLines broken only by wrapping.\n";
+    output += expect("lineStartOffsetFrom('wrapped', 0)", "0");
+    output += expect("lineStartOffsetFrom('wrapped', 2)", "0");
+    output += expect("lineStartOffsetFrom('wrapped', 4)", "4");
+    output += expect("lineStartOffsetFrom('wrapped', 6)", "4");
+    output += expect("lineStartOffsetFrom('wrapped', 8)", "8");
+    output += expect("lineStartOffsetFrom('wrapped', 10)", "8");
+
+    output += "\nThe recovered range spans the whole wrapped line.\n";
+    output += expect("wrappedLineTextFrom(2)", "'aaa'");
+    output += expect("wrappedLineTextFrom(6)", "'bbb'");
+    output += expect("wrappedLineTextFrom(10)", "'ccc'");
+
+    document.getElementById("broken").style.display = "none";
+    document.getElementById("wrapped").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

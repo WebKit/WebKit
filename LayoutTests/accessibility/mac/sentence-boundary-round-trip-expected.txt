@@ -1,0 +1,26 @@
+This test ensures that stepping to the next sentence end and then back to the previous sentence start lands on the start of the sentence the marker began on, from any position within that sentence. A sentence ended by a br element and a sentence that soft wraps across several lines are both covered, because a sentence boundary is not a line boundary.
+
+Sentences separated by a br element.
+PASS: sentenceStartOffsetFrom('broken', 0) === 0
+PASS: sentenceStartOffsetFrom('broken', 7) === 0
+PASS: sentenceStartOffsetFrom('broken', 16) === 16
+PASS: sentenceStartOffsetFrom('broken', 23) === 16
+
+The recovered range is the sentence, without the line break.
+PASS: sentenceTextFrom('broken', 7) === 'First sentence.'
+PASS: sentenceTextFrom('broken', 23) === 'Second sentence.'
+
+Sentences that soft wrap across lines.
+PASS: sentenceStartOffsetFrom('wrapped', 0) === 0
+PASS: sentenceStartOffsetFrom('wrapped', 7) === 0
+PASS: sentenceStartOffsetFrom('wrapped', 16) === 16
+PASS: sentenceStartOffsetFrom('wrapped', 23) === 16
+
+The recovered range spans the whole sentence, across the lines it wrapped onto.
+PASS: sentenceTextFrom('wrapped', 7) === 'Third sentence.'
+PASS: sentenceTextFrom('wrapped', 23) === 'Fourth sentence.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
