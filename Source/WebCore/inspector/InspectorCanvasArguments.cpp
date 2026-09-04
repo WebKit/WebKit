@@ -42,6 +42,7 @@
 #include "GPURenderPipelineDescriptor.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "Path2D.h"
+#include "SVGPathUtilities.h"
 #include "WebGLBuffer.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
