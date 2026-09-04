@@ -5004,6 +5004,19 @@ void Internals::enterViewerMode(HTMLVideoElement& element)
     element.enterFullscreen(HTMLMediaElementEnums::VideoFullscreenModeInWindow);
 }
 
+void Internals::setVideoInExternalPlayback(HTMLVideoElement& element, bool inExternalPlayback)
+{
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    if (inExternalPlayback)
+        element.didEnterExternalPlayback();
+    else
+        element.didExitExternalPlayback();
+#else
+    UNUSED_PARAM(element);
+    UNUSED_PARAM(inExternalPlayback);
+#endif
+}
+
 ExceptionOr<bool> Internals::mediaPlayerRenderingCanBeAccelerated(HTMLMediaElement& element)
 {
     return element.mediaPlayerRenderingCanBeAccelerated();

@@ -146,6 +146,8 @@ public:
     WEBCORE_EXPORT void didEnterExternalPlayback();
     WEBCORE_EXPORT void didExitExternalPlayback();
     bool isInExternalPlayback() const { return m_isInExternalPlayback; };
+#else
+    bool isInExternalPlayback() const { return false; }
 #endif
 
     // ActiveDOMObject
@@ -161,6 +163,9 @@ private:
 
     void scheduleResizeEvent(const FloatSize&) final;
     void scheduleResizeEventIfSizeChanged(const FloatSize&) final;
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    void scheduleExternalPlaybackChangedEventIfNeeded();
+#endif
     bool rendererIsNeeded(const Style::ComputedStyle&) final;
     void didAttachRenderers() final;
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

@@ -410,6 +410,12 @@ bool Quirks::needsCNNCaptionQuirk() const
 #endif
 }
 
+// The sites whose in-page captions WebKit mirrors into a text track rdar://174708144
+bool Quirks::needsCaptionMirroringQuirk() const
+{
+    return needsYouTubeCaptionsQuirk() || needsCNNCaptionQuirk();
+}
+
 // theguardian.com rdar://166727225
 bool Quirks::needsYouTubeEmbedAutoplayQuirk() const
 {

@@ -1,0 +1,30 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ NeedsSiteSpecificQuirks=true ] -->
+<html>
+<head>
+<title>Caption mirroring quirk does not leak webkitIsInExternalPlayback onto other sites</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+
+if (window.internals)
+    internals.setTopDocumentURLForQuirks("https://www.example.com/");
+
+test(function() {
+    assert_true(!!window.internals, "This test requires window.internals");
+    assert_false("webkitIsInExternalPlayback" in HTMLVideoElement.prototype,
+        "webkitIsInExternalPlayback must not be exposed on a host without the caption mirroring quirk");
+    assert_equals(document.createElement("video").webkitIsInExternalPlayback, undefined,
+        "reading it on an unrelated host should give undefined, not false");
+}, "webkitIsInExternalPlayback is not exposed on unrelated hosts");
+
+test(function() {
+    assert_false("onwebkitexternalplaybackchanged" in HTMLVideoElement.prototype,
+        "webkitexternalplaybackchanged should have no event handler attribute on the prototype");
+    assert_false("onwebkitexternalplaybackchanged" in document.createElement("video"),
+        "webkitexternalplaybackchanged should have no event handler attribute on the element");
+}, "webkitexternalplaybackchanged has no event handler attribute");
+</script>
+</body>
+</html>
