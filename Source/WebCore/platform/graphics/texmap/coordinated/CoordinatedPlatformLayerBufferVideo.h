@@ -60,7 +60,10 @@ private:
 #if USE(GSTREAMER_GL)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> createBufferFromGLMemory();
 #endif
+
+#if USE(TEXTURE_MAPPER)
     void createBufferFromMappedFrameIfNeeded();
+#endif
 
     Ref<VideoFrameGStreamer> m_videoFrame;
     std::optional<GstMappedFrame> m_mappedVideoFrame;
