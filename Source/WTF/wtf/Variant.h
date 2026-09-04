@@ -406,6 +406,7 @@ namespace mpark {
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
+#include <wtf/SwiftBridging.h>
 
 #define MPARK_RETURN(...) \
   noexcept(noexcept(__VA_ARGS__)) -> decltype(__VA_ARGS__) { return __VA_ARGS__; }
@@ -2025,7 +2026,7 @@ IGNORE_GCC_WARNINGS_END
 
     friend struct detail::access::variant;
     friend struct detail::visitation::variant;
-  };
+  } SWIFT_ESCAPABLE_IF(Ts) SWIFT_COPYABLE_IF(Ts);
 
   template <std::size_t I, typename... Ts>
   [[nodiscard]] inline constexpr bool holds_alternative(const variant<Ts...> &v) noexcept {

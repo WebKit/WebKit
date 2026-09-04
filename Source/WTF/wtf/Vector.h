@@ -1018,7 +1018,7 @@ private:
 #if ASAN_ENABLED
     using Base::endOfBuffer;
 #endif
-} SWIFT_ESCAPABLE_IF(T);
+} SWIFT_ESCAPABLE_IF(T) SWIFT_COPYABLE_IF(T);
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(const Vector& other)
