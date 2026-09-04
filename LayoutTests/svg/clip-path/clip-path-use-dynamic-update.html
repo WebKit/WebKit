@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="250" height="150">
+  <rect id="clipSource" width="150" height="100" x="50" y="25" fill="none"/>
+  <g clip-path="url(#clip)"><rect x="25" y="25" width="200" height="100" fill="#3333ff"/></g>
+  <clipPath id="clip"><use xlink:href="#clipSource"/></clipPath>
+</svg>
+<script>
+// Mutate only after the initial layout & paint, so the clipper has cached its
+// state and must be invalidated by the change to the use-referenced element.
+requestAnimationFrame(() => requestAnimationFrame(() => {
+    const source = document.getElementById("clipSource");
+    source.setAttribute("width", "50");
+    source.setAttribute("x", "100");
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        document.documentElement.classList.remove("reftest-wait");
+    }));
+}));
+</script>
+</body>
+</html>
