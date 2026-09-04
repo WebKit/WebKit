@@ -42,6 +42,7 @@
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/WebGPU.h>
@@ -268,6 +269,25 @@ void RemoteGPU::paintNativeImageToImageBuffer(WebCore::NativeImage& nativeImage,
         semaphore.signal();
     });
     semaphore.wait();
+}
+
+RefPtr<WebCore::ImageBuffer> RemoteGPU::imageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier)
+{
+    assertIsCurrent(workQueue());
+    BinarySemaphore semaphore;
+
+    RefPtr<WebCore::ImageBuffer> result;
+    Ref renderingBackend = m_renderingBackend;
+    renderingBackend->dispatch([&]() mutable {
+        if (RefPtr imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
+            imageBuffer->flushDrawingContext();
+            result = WTF::move(imageBuffer);
+        }
+        semaphore.signal();
+    });
+    semaphore.wait();
+
+    return result;
 }
 
 

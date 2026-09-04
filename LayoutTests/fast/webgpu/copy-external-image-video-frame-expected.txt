@@ -1,0 +1,11 @@
+Tests that GPUQueue.copyExternalImageToTexture copies from a WebCodecs VideoFrame.
+
+PASS top left without flipY
+PASS top right without flipY
+PASS bottom left without flipY
+PASS bottom right without flipY
+PASS top left with flipY
+PASS top right with flipY
+PASS bottom left with flipY
+PASS bottom right with flipY
+

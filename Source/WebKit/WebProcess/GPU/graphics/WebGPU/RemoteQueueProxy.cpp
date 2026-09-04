@@ -151,7 +151,21 @@ void RemoteQueueProxy::copyExternalImageToTexture(
     const WebCore::WebGPU::ImageCopyTextureTagged& destination,
     const WebCore::WebGPU::Extent3D& copySize)
 {
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    if (source.videoSource) {
+        copyExternalImageFromVideoFrameToTexture(source, destination, copySize);
+        return;
+    }
+#endif
+
     Ref convertToBackingContext = m_convertToBackingContext;
+
+    // The GPU process resolves the source by identifier through its RemoteRenderingBackend, so make
+    // sure every drawing command recorded against the source buffer has been submitted first.
+    RefPtr sourceImageBuffer = source.imageBuffer;
+    if (sourceImageBuffer)
+        sourceImageBuffer->flushDrawingContext();
+
     auto convertedSource = convertToBackingContext->convertToBacking(source);
     ASSERT(convertedSource);
     auto convertedDestination = convertToBackingContext->convertToBacking(destination);
@@ -161,9 +175,57 @@ void RemoteQueueProxy::copyExternalImageToTexture(
     if (!convertedSource || !convertedDestination || !convertedCopySize)
         return;
 
-    auto sendResult = send(Messages::RemoteQueue::CopyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize));
+    // Sent synchronously, because the source is identified rather than referenced: releasing it, or
+    // drawing into it again, travels on the RemoteRenderingBackend's stream, which is not ordered
+    // against this one. Blocking until the GPU process has resolved the identifier and encoded the
+    // copy is what keeps `sourceImageBuffer` from being released, or overwritten, too early.
+    auto sendResult = sendSync(Messages::RemoteQueue::CopyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize));
     UNUSED_VARIABLE(sendResult);
 }
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void RemoteQueueProxy::copyExternalImageFromVideoFrameToTexture(
+    const WebCore::WebGPU::ImageCopyExternalImage& source,
+    const WebCore::WebGPU::ImageCopyTextureTagged& destination,
+    const WebCore::WebGPU::Extent3D& copySize)
+{
+    Ref convertToBackingContext = m_convertToBackingContext;
+
+    auto convertedSource = convertToBackingContext->convertToBackingVideoSource(source);
+    ASSERT(convertedSource);
+    auto convertedDestination = convertToBackingContext->convertToBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedCopySize = convertToBackingContext->convertToBacking(copySize);
+    ASSERT(convertedCopySize);
+    if (!convertedSource || !convertedDestination || !convertedCopySize)
+        return;
+
+    // A frame with no media player behind it - every WebCodecs frame, and a media element whose
+    // player has not been given an identifier - has to be shipped across itself, the same way
+    // RemoteDeviceProxy ships one for an external texture.
+    if (!convertedSource->mediaIdentifier) {
+        auto* videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&*source.videoSource);
+        if (!videoFrame || !videoFrame->get())
+            return;
+
+        convertedSource->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [this, protectedThis = protect(*this)](auto& semaphore) {
+            auto sendResult = send(Messages::RemoteQueue::SetSharedVideoFrameSemaphore { semaphore });
+            UNUSED_VARIABLE(sendResult);
+        }, [this, protectedThis = protect(*this)](WebCore::SharedMemory::Handle&& handle) {
+            auto sendResult = send(Messages::RemoteQueue::SetSharedVideoFrameMemory { WTF::move(handle) });
+            UNUSED_VARIABLE(sendResult);
+        });
+        if (!convertedSource->sharedFrame)
+            return;
+    }
+
+    // Sent asynchronously, unlike the ImageBuffer copy above: the frame either travels with the
+    // message or is named by a media player the GPU process resolves for itself, so there is no
+    // identifier on another stream whose lifetime this call has to hold open.
+    auto sendResult = send(Messages::RemoteQueue::CopyExternalImageFromVideoFrameToTexture(WTF::move(*convertedSource), *convertedDestination, *convertedCopySize));
+    UNUSED_VARIABLE(sendResult);
+}
+#endif
 
 void RemoteQueueProxy::setLabelInternal(const String& label)
 {

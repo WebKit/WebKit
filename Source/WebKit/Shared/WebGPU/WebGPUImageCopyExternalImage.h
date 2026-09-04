@@ -27,16 +27,36 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "SharedVideoFrame.h"
 #include "WebGPUOrigin2D.h"
+#include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/RenderingResourceIdentifier.h>
 #include <optional>
 
 namespace WebKit::WebGPU {
 
 struct ImageCopyExternalImage {
-    // FIXME: Handle the source.
     std::optional<Origin2D> origin;
     bool flipY { false };
+    // Identifies the source ImageBuffer, which already lives in the GPU process. Null for the
+    // sources which still take the CPU readback path in GPUQueue::copyExternalImageToTexture.
+    std::optional<WebCore::RenderingResourceIdentifier> imageBufferIdentifier;
+    // Whether that buffer's pixels are premultiplied by their alpha.
+    bool premultipliedAlpha { true };
 };
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+// The same copy, when the source is a video rather than an ImageBuffer. Unlike an ImageBuffer, a
+// decoded frame carries no rendering resource identifier, so it is named the way an external texture
+// names one: by the media player holding it, or - for a WebCodecs frame, which has no player - by
+// shipping the frame itself through the shared video frame memory.
+struct ImageCopyExternalImageVideoSource {
+    std::optional<Origin2D> origin;
+    bool flipY { false };
+    std::optional<WebCore::MediaPlayerIdentifier> mediaIdentifier;
+    std::optional<WebKit::SharedVideoFrame> sharedFrame;
+};
+#endif
 
 } // namespace WebKit::WebGPU
 

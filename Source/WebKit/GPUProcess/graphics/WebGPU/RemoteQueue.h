@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPU.h"
+#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
@@ -54,8 +55,13 @@ class StreamServerConnection;
 
 namespace WebKit {
 
+struct SharedVideoFrame;
+
 namespace WebGPU {
 struct ImageCopyExternalImage;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+struct ImageCopyExternalImageVideoSource;
+#endif
 struct ImageCopyTexture;
 struct ImageCopyTextureTagged;
 struct ImageDataLayout;
@@ -121,7 +127,18 @@ private:
     void copyExternalImageToTexture(
         const WebGPU::ImageCopyExternalImage& source,
         const WebGPU::ImageCopyTextureTagged& destination,
+        const WebGPU::Extent3D& copySize,
+        CompletionHandler<void()>&&);
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&&);
+
+    void copyExternalImageFromVideoFrameToTexture(
+        WebGPU::ImageCopyExternalImageVideoSource&&,
+        const WebGPU::ImageCopyTextureTagged& destination,
         const WebGPU::Extent3D& copySize);
+#endif
 
     void setLabel(String&&);
     void destruct();
@@ -131,6 +148,9 @@ private:
     const Ref<IPC::StreamServerConnection> m_streamConnection;
     WeakRef<RemoteGPU> m_gpu;
     WebGPUIdentifier m_identifier;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    SharedVideoFrameReader m_sharedVideoFrameReader;
+#endif
 };
 
 } // namespace WebKit

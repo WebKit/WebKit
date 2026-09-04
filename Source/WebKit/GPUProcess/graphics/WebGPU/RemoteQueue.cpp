@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteBufferProxy.h"
+#include "RemoteGPU.h"
 #include "RemoteQueueMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
@@ -36,6 +37,12 @@
 #include <WebCore/WebGPUBuffer.h>
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+#include "GPUConnectionToWebProcess.h"
+#include <WebCore/MediaPlayer.h>
+#include <WebCore/VideoFrame.h>
+#endif
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #include <WebGPU/WebGPU.h>
@@ -187,8 +194,16 @@ void RemoteQueue::writeTextureWithCopy(
 void RemoteQueue::copyExternalImageToTexture(
     const WebGPU::ImageCopyExternalImage& source,
     const WebGPU::ImageCopyTextureTagged& destination,
-    const WebGPU::Extent3D& copySize)
+    const WebGPU::Extent3D& copySize,
+    CompletionHandler<void()>&& completionHandler)
 {
+    // This message is synchronous, so that the source ImageBuffer cannot be released before it is
+    // resolved below, and so that drawing recorded against the source after this call cannot be
+    // applied before the copy is encoded. Neither is otherwise ordered: the source travels by
+    // identifier and lives on the RemoteRenderingBackend's stream, which has no ordering
+    // relationship with this one.
+    CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
+
     Ref objectHeap = m_objectHeap.get();
     auto convertedSource = objectHeap->convertFromBacking(source);
     ASSERT(convertedSource);
@@ -196,11 +211,81 @@ void RemoteQueue::copyExternalImageToTexture(
     ASSERT(convertedDestination);
     auto convertedCopySize = objectHeap->convertFromBacking(copySize);
     ASSERT(convertedCopySize);
-    if (!convertedDestination || !convertedDestination || !convertedCopySize)
+    if (!convertedSource || !convertedDestination || !convertedCopySize)
+        return;
+
+    // ConvertFromBackingContext cannot resolve the source, because only RemoteGPU can reach the
+    // RemoteRenderingBackend which owns the ImageBuffer.
+    if (source.imageBufferIdentifier) {
+        RefPtr sourceImageBuffer = protect(m_gpu)->imageBuffer(*source.imageBufferIdentifier);
+        if (!sourceImageBuffer)
+            return;
+        convertedSource->imageBuffer = WTF::move(sourceImageBuffer);
+    }
+
+    protect(m_backing)->copyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
+}
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+void RemoteQueue::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
+{
+    m_sharedVideoFrameReader.setSemaphore(WTF::move(semaphore));
+}
+
+void RemoteQueue::setSharedVideoFrameMemory(WebCore::SharedMemoryHandle&& handle)
+{
+    m_sharedVideoFrameReader.setSharedMemory(WTF::move(handle));
+}
+
+void RemoteQueue::copyExternalImageFromVideoFrameToTexture(
+    WebGPU::ImageCopyExternalImageVideoSource&& source,
+    const WebGPU::ImageCopyTextureTagged& destination,
+    const WebGPU::Extent3D& copySize)
+{
+    // Resolved the same way RemoteDevice resolves an external texture's frame: a shared frame is read
+    // out of the shared video frame memory, and a media player identifier is asked for the frame it is
+    // showing right now.
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    // A frame's pixels are stored as decoded, so the transform that presents them travels separately.
+    // A media player has already applied its asset's transform to the buffer it hands over, but a
+    // WebCodecs frame carries one of its own.
+    auto rotation = WebCore::VideoFrameRotation::None;
+    bool isMirrored = false;
+    auto takeFrame = [&](WebCore::VideoFrame& videoFrame) {
+        pixelBuffer = videoFrame.pixelBuffer();
+        rotation = videoFrame.rotation();
+        isMirrored = videoFrame.isMirrored();
+    };
+    if (source.sharedFrame) {
+        if (auto videoFrame = m_sharedVideoFrameReader.read(WTF::move(*source.sharedFrame)))
+            takeFrame(*videoFrame);
+    } else if (source.mediaIdentifier) {
+        if (RefPtr connection = protect(m_gpu)->gpuConnectionToWebProcess()) {
+            connection->performWithMediaPlayerOnMainThread(*source.mediaIdentifier, [&](auto& player) mutable {
+                if (auto videoFrame = player.videoFrameForCurrentTime())
+                    takeFrame(*videoFrame);
+            });
+        }
+    }
+
+    // A frame which could not be resolved leaves the destination texture alone, exactly as a video
+    // with nothing decoded yet did on the readback path.
+    if (!pixelBuffer)
+        return;
+
+    Ref objectHeap = m_objectHeap.get();
+    auto convertedSource = objectHeap->convertFromBacking(source, WTF::move(pixelBuffer), rotation, isMirrored);
+    ASSERT(convertedSource);
+    auto convertedDestination = objectHeap->convertFromBacking(destination);
+    ASSERT(convertedDestination);
+    auto convertedCopySize = objectHeap->convertFromBacking(copySize);
+    ASSERT(convertedCopySize);
+    if (!convertedSource || !convertedDestination || !convertedCopySize)
         return;
 
     protect(m_backing)->copyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
 }
+#endif
 
 void RemoteQueue::setLabel(String&& label)
 {

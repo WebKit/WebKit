@@ -32,6 +32,9 @@
 #include "WebGPUCommandBufferImpl.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUTextureImpl.h"
+#include <WebCore/DestinationColorSpace.h>
+#include <WebCore/IOSurface.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -127,14 +130,166 @@ void QueueImpl::writeTexture(
     wgpuQueueWriteTexture(m_backing.get(), &backingDestination, source, &backingDataLayout, &backingSize);
 }
 
+static WGPUColorSpace NODELETE convertToColorSpace(PredefinedColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case PredefinedColorSpace::SRGB:
+        return WGPUColorSpace::SRGB;
+    case PredefinedColorSpace::SRGBLinear:
+        return WGPUColorSpace::SRGBLinear;
+#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    case PredefinedColorSpace::DisplayP3:
+        return WGPUColorSpace::DisplayP3;
+    case PredefinedColorSpace::DisplayP3Linear:
+        return WGPUColorSpace::DisplayP3Linear;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUColorSpace::SRGB;
+}
+
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+static WGPUVideoFrameRotation NODELETE convertToVideoFrameRotation(VideoFrameRotation rotation)
+{
+    switch (rotation) {
+    case VideoFrameRotation::None:
+        return WGPUVideoFrameRotation_None;
+    case VideoFrameRotation::Right:
+        return WGPUVideoFrameRotation_Right;
+    case VideoFrameRotation::UpsideDown:
+        return WGPUVideoFrameRotation_UpsideDown;
+    case VideoFrameRotation::Left:
+        return WGPUVideoFrameRotation_Left;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WGPUVideoFrameRotation_None;
+}
+#endif
+
+// The IOSurface format an accelerated ImageBuffer of this pixel format is backed by, expressed as the
+// equivalent WGPUTextureFormat, plus whether its alpha channel holds meaningful data. std::nullopt for
+// the formats GPUQueue::copyExternalImageToTexture keeps on the CPU readback path.
+struct SourceTextureFormat {
+    WGPUTextureFormat format;
+    bool hasAlpha;
+};
+
+static std::optional<SourceTextureFormat> NODELETE sourceTextureFormat(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+        return SourceTextureFormat { WGPUTextureFormat_RGBA8Unorm, true };
+    case PixelFormat::BGRA8:
+        return SourceTextureFormat { WGPUTextureFormat_BGRA8Unorm, true };
+    case PixelFormat::BGRX8:
+        // IOSurface::Format::BGRX uses the same IOSurface pixel format as BGRA, but CoreGraphics
+        // renders into it with kCGImageAlphaNoneSkipFirst, so the alpha byte is undefined.
+        return SourceTextureFormat { WGPUTextureFormat_BGRA8Unorm, false };
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+        return SourceTextureFormat { WGPUTextureFormat_RGBA16Float, true };
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case PixelFormat::RGB10:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case PixelFormat::RGB10A8:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10) || ENABLE(PIXEL_FORMAT_RGB10A8)
+        // Packed 10-bit surfaces have no single-plane MTLPixelFormat equivalent.
+        return std::nullopt;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
 void QueueImpl::copyExternalImageToTexture(
     const ImageCopyExternalImage& source,
     const ImageCopyTextureTagged& destination,
     const Extent3D& copySize)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
+    Ref convertToBackingContext = m_convertToBackingContext;
+
+    auto sourceOrigin = source.origin ? convertToBackingContext->convertToBacking(*source.origin) : WGPUOrigin3D { 0, 0, 0 };
+
+    WGPUImageCopyExternalImage backingSource {
+        .source = nullptr,
+        .pixelBuffer = nullptr,
+        .pixelBufferRotation = WGPUVideoFrameRotation_None,
+        .pixelBufferIsMirrored = false,
+        .sourceFormat = WGPUTextureFormat_Undefined,
+        .originX = sourceOrigin.x,
+        .originY = sourceOrigin.y,
+        .sourceWidth = 0,
+        .sourceHeight = 0,
+        .flipY = source.flipY,
+        .hasAlpha = false,
+        // An ImageBitmap created with premultiplyAlpha: "none" was put into its buffer straight, so
+        // the caller has to say; a buffer a 2D context composited is premultiplied.
+        .premultipliedAlpha = source.premultipliedAlpha,
+        .colorSpace = WGPUColorSpace::SRGB,
+    };
+
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    if (source.videoSource) {
+        // The decoded frame the GPU process resolved for us. Its extent, its crop and its primaries
+        // all travel with the frame, so the backing queue reads them off it rather than being told
+        // here; and a decoded frame is opaque, so its alpha is replaced with 1 the way an external
+        // texture's is.
+        auto* pixelBuffer = std::get_if<RetainPtr<CVPixelBufferRef>>(&*source.videoSource);
+        if (!pixelBuffer || !*pixelBuffer)
+            return;
+
+        backingSource.pixelBuffer = pixelBuffer->get();
+        // The display transform is the one thing about the frame its pixel buffer does not carry.
+        backingSource.pixelBufferRotation = convertToVideoFrameRotation(source.videoSourceRotation);
+        backingSource.pixelBufferIsMirrored = source.videoSourceIsMirrored;
+        backingSource.premultipliedAlpha = true;
+    } else
+#endif
+    {
+        RefPtr sourceImageBuffer = source.imageBuffer;
+        if (!sourceImageBuffer)
+            return;
+
+        // Only accelerated ImageBuffers have an IOSurface to wrap in an MTLTexture. GPUQueue rejects
+        // unaccelerated sources before we get here, but the backing may have been dropped since.
+        auto* surface = sourceImageBuffer->surface();
+        if (!surface)
+            return;
+
+        auto sourceSize = sourceImageBuffer->truncatedLogicalSize();
+        if (!sourceSize.width() || !sourceSize.height())
+            return;
+
+        auto sourceFormat = sourceTextureFormat(sourceImageBuffer->pixelFormat());
+        if (!sourceFormat)
+            return;
+
+        backingSource.source = surface->surface();
+        backingSource.sourceFormat = sourceFormat->format;
+        backingSource.sourceWidth = static_cast<uint32_t>(sourceSize.width());
+        backingSource.sourceHeight = static_cast<uint32_t>(sourceSize.height());
+        backingSource.hasAlpha = sourceFormat->hasAlpha;
+        backingSource.colorSpace = sourceImageBuffer->colorSpace() == DestinationColorSpace::DisplayP3() ? WGPUColorSpace::DisplayP3 : WGPUColorSpace::SRGB;
+    }
+
+    WGPUImageCopyTextureTagged backingDestination {
+        .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
+        .mipLevel = destination.mipLevel,
+        .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
+        .aspect = convertToBackingContext->convertToBacking(destination.aspect),
+        .colorSpace = convertToColorSpace(destination.colorSpace),
+        .premultipliedAlpha = destination.premultipliedAlpha,
+    };
+
+    WGPUExtent3D backingCopySize = convertToBackingContext->convertToBacking(copySize);
+
+    wgpuQueueCopyExternalImageToTexture(m_backing.get(), &backingSource, &backingDestination, &backingCopySize);
 }
 
 void QueueImpl::setLabelInternal(const String& label)

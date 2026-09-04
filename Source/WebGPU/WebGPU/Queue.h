@@ -74,6 +74,7 @@ public:
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data) HAS_SWIFTCXX_THUNK;
     void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
     void writeTexture(const WGPUImageCopyTexture& destination, std::span<uint8_t> data, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
+    void copyExternalImageToTexture(const WGPUImageCopyExternalImage& source, const WGPUImageCopyTextureTagged& destination, const WGPUExtent3D& copySize);
     void setLabel(String&&);
 
     void onSubmittedWorkScheduled(Function<void()>&&);
@@ -126,6 +127,10 @@ private:
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
     NSString * _Nullable errorValidatingWriteTexture(const WGPUImageCopyTexture&, const WGPUTextureDataLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
+    NSString * _Nullable errorValidatingCopyExternalImageToTexture(const WGPUImageCopyTextureTagged&, const WGPUExtent3D&, const Texture&) const;
+    // Renders one source texel per destination texel, so the pipeline only varies by the destination's
+    // pixel format. Cached per format, because a copy per animation frame is the expected usage.
+    id<MTLRenderPipelineState> _Nullable copyExternalImagePipelineState(MTLPixelFormat);
 
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };
@@ -133,6 +138,8 @@ private:
     id<MTLComputeCommandEncoder> _Nullable m_stagedCopyEncoder { nil };
     id<MTLComputePipelineState> _Nullable m_stagedCopyPipelineState { nil };
     bool m_stagedCopyPipelineCreationFailed { false };
+    NSMutableDictionary<NSNumber *, id<MTLRenderPipelineState>> * _Nullable m_copyExternalImagePipelineStates { nil };
+    bool m_copyExternalImagePipelineCreationFailed { false };
     ThreadSafeWeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };
