@@ -31,7 +31,9 @@
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlayer.h"
+#import "MediaStrategy.h"
 #import "PlatformMediaSession.h"
+#import "PlatformStrategies.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
 #import <wtf/MainThread.h>
@@ -102,10 +104,6 @@ bool MediaSessionManageriOS::isMonitoringWirelessTargets() const
 
 void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 {
-#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
-    ensureMediaDeviceRouteControllerMonitoring();
-#endif
-
 #if !PLATFORM(WATCHOS)
     bool requiresMonitoring = anyOfSessions([] (auto& session) {
         return session.requiresPlaybackTargetRouteMonitoring();
@@ -128,6 +126,9 @@ void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 void MediaSessionManageriOS::ensureMediaDeviceRouteControllerMonitoring()
 {
+    if (!hasPlatformStrategies() || !platformStrategies()->mediaStrategy()->wirelessPlaybackMediaPlayerEnabled())
+        return;
+
     protect(MediaSessionHelper::sharedHelper())->ensureMediaDeviceRouteControllerMonitoring();
 }
 #endif
