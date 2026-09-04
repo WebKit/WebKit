@@ -2540,6 +2540,160 @@ TEST(ServiceWorkers, SharedWorkerReusesProcessAfterCOOPProcessSwap)
     }));
 }
 
+static constexpr auto sharedWorkerIdentityPageBytes = R"SWRESOURCE(
+<script>
+const worker = new SharedWorker("sharedWorker.js");
+worker.port.onmessage = (event) => {
+    window.workerId = event.data;
+};
+worker.port.start();
+function askWorkerId()
+{
+    window.workerId = null;
+    worker.port.postMessage("who are you?");
+}
+</script>
+)SWRESOURCE"_s;
+
+// Each time this script is evaluated (i.e. each time the worker is (re)started) it picks a new identity.
+static constexpr auto sharedWorkerIdentityScriptBytes = R"SWRESOURCE(
+const workerId = "worker-" + Math.random();
+onconnect = (e) => {
+    const port = e.ports[0];
+    port.onmessage = () => port.postMessage(workerId);
+    port.start();
+};
+)SWRESOURCE"_s;
+
+static RetainPtr<TestWKWebView> createSharedWorkerWebView(TestWebKitAPI::HTTPServer& server, WKProcessPool *processPool)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:server.request()];
+    return webView;
+}
+
+static RetainPtr<NSString> sharedWorkerIdentity(TestWKWebView *webView)
+{
+    [webView objectByEvaluatingJavaScript:@"askWorkerId()"];
+    RetainPtr<NSString> identity;
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        identity = [webView objectByEvaluatingJavaScript:@"window.workerId"];
+        return [identity isKindOfClass:NSString.class];
+    }));
+    return identity;
+}
+
+// Returns 0 if no web content process is currently hosting a shared worker.
+static pid_t sharedWorkerHostProcessIdentifier()
+{
+    for (_WKWebContentProcessInfo *info in [WKProcessPool _webContentProcessInfoForTesting]) {
+        if (info.runningSharedWorkers)
+            return info.pid;
+    }
+    return 0;
+}
+
+// A shared worker context connection that goes idle is terminated after 5 seconds, so tests that
+// need to observe what happens on either side of that delay have to straddle it.
+static constexpr Seconds sharedWorkerIdleTerminationDelay { 5_s };
+
+TEST(SharedWorker, KeepsRunningAfterHostingPageCloses)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { sharedWorkerIdentityPageBytes } },
+        { "/sharedWorker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, sharedWorkerIdentityScriptBytes } },
+    });
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr firstWebView = createSharedWorkerWebView(server, processPool.get());
+    RetainPtr firstIdentity = sharedWorkerIdentity(firstWebView.get());
+    EXPECT_GT([firstIdentity length], 0u);
+
+    RetainPtr secondWebView = createSharedWorkerWebView(server, processPool.get());
+    // Both pages must be talking to the same shared worker instance.
+    EXPECT_WK_STREQ(firstIdentity.get(), sharedWorkerIdentity(secondWebView.get()).get());
+
+    // The shared worker has to be hosted in the first page's process for this test to be meaningful.
+    auto firstPID = [firstWebView _webProcessIdentifier];
+    EXPECT_NE(firstPID, [secondWebView _webProcessIdentifier]);
+    EXPECT_EQ(firstPID, sharedWorkerHostProcessIdentifier());
+
+    // Close the first page ("tab"), leaving the second one as the only client of the shared worker.
+    [firstWebView _close];
+    firstWebView = nil;
+
+    // The hosting process must stay alive even though it no longer has any page, and it must still
+    // be alive after the idle termination delay has elapsed.
+    EXPECT_EQ(firstPID, sharedWorkerHostProcessIdentifier());
+    TestWebKitAPI::Util::runFor(sharedWorkerIdleTerminationDelay + 1_s);
+    EXPECT_EQ(firstPID, sharedWorkerHostProcessIdentifier());
+
+    // And the surviving page must still be talking to the very same shared worker instance.
+    EXPECT_WK_STREQ(firstIdentity.get(), sharedWorkerIdentity(secondWebView.get()).get());
+}
+
+TEST(SharedWorker, HostProcessGoesAwayWhenLastClientCloses)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { sharedWorkerIdentityPageBytes } },
+        { "/sharedWorker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, sharedWorkerIdentityScriptBytes } },
+    });
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr firstWebView = createSharedWorkerWebView(server, processPool.get());
+    RetainPtr secondWebView = createSharedWorkerWebView(server, processPool.get());
+    EXPECT_GT([sharedWorkerIdentity(secondWebView.get()) length], 0u);
+    EXPECT_EQ([firstWebView _webProcessIdentifier], sharedWorkerHostProcessIdentifier());
+
+    // Keeping the hosting process alive must not outlive the last client: once every page that was
+    // using the shared worker is gone, the process has to be released.
+    [firstWebView _close];
+    firstWebView = nil;
+    [secondWebView _close];
+    secondWebView = nil;
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([] {
+        return !sharedWorkerHostProcessIdentifier();
+    }));
+}
+
+TEST(SharedWorker, HostProcessIsReleasedWhenNetworkProcessTerminates)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { sharedWorkerIdentityPageBytes } },
+        { "/sharedWorker.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, sharedWorkerIdentityScriptBytes } },
+    });
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr firstWebView = createSharedWorkerWebView(server, processPool.get());
+    RetainPtr secondWebView = createSharedWorkerWebView(server, processPool.get());
+    EXPECT_GT([sharedWorkerIdentity(secondWebView.get()) length], 0u);
+
+    auto firstPID = [firstWebView _webProcessIdentifier];
+    EXPECT_EQ(firstPID, sharedWorkerHostProcessIdentifier());
+
+    // The hosting process now has no page of its own and is only kept alive by its shared worker.
+    [firstWebView _close];
+    firstWebView = nil;
+    EXPECT_EQ(firstPID, sharedWorkerHostProcessIdentifier());
+
+    // The network process is the only thing that tells us when a shared worker host is no longer
+    // needed, so losing it must not leave the host process pinned forever.
+    [[WKWebsiteDataStore defaultDataStore] _terminateNetworkProcess];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([] {
+        return !sharedWorkerHostProcessIdentifier();
+    }));
+}
+
 enum class UseSeparateServiceWorkerProcess : bool { No, Yes };
 void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess useSeparateServiceWorkerProcess)
 {

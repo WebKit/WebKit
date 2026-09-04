@@ -150,6 +150,19 @@ bool WebSharedWorkerServer::needsContextConnectionForRegistrableDomain(const Web
     return false;
 }
 
+bool WebSharedWorkerServer::needsContextConnection(const ContextConnectionKey& key) const
+{
+    auto& [registrableDomain, coep] = key;
+    for (auto& sharedWorker : m_sharedWorkers.values()) {
+        if (registrableDomain != sharedWorker->topRegistrableDomain())
+            continue;
+        // A worker that has not finished fetching has no COEP value yet, so it may still need this connection.
+        if (!sharedWorker->didFinishFetching() || sharedWorker->fetchResult().crossOriginEmbedderPolicy.value == coep)
+            return true;
+    }
+    return false;
+}
+
 void WebSharedWorkerServer::createContextConnection(const WebCore::Site& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, WebCore::CrossOriginEmbedderPolicyValue workerCrossOriginEmbedderPolicy)
 {
     ContextConnectionKey key { site.domain(), workerCrossOriginEmbedderPolicy };
@@ -222,6 +235,11 @@ void WebSharedWorkerServer::contextConnectionCreated(WebSharedWorkerServerToCont
             continue;
 
         sharedWorker->didCreateContextConnection(contextConnection);
+    }
+
+    if (contextConnection.sharedWorkerObjects().isEmpty() && !needsContextConnection({ registrableDomain, coep })) {
+        RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::contextConnectionCreated(%p) is not needed by any shared worker, starting a timer to terminate it", &contextConnection);
+        contextConnection.startIdleTerminationTimerIfNeeded();
     }
 }
 

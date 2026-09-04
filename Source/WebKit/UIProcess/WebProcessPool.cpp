@@ -527,6 +527,10 @@ void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProc
         automationSession->terminate();
 
     terminateServiceWorkers();
+
+    // Shared workers keep their hosting web process alive and only the network process knows when
+    // they are no longer needed, so losing it has to release those hosts too.
+    terminateSharedWorkers();
 }
 
 void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, ProcessTerminationReason reason)
@@ -1879,6 +1883,17 @@ void WebProcessPool::terminateServiceWorkers()
     });
     for (Ref serviceWorkerProcess : serviceWorkerProcesses)
         serviceWorkerProcess->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
+}
+
+void WebProcessPool::terminateSharedWorkers()
+{
+    Vector<Ref<WebProcessProxy>> sharedWorkerProcesses;
+    remoteWorkerProcesses().forEach([&](auto& process) {
+        if (process.isRunningSharedWorkers())
+            sharedWorkerProcesses.append(process);
+    });
+    for (auto& sharedWorkerProcess : sharedWorkerProcesses)
+        sharedWorkerProcess->disableRemoteWorkers(RemoteWorkerType::SharedWorker);
 }
 
 void WebProcessPool::updateAutomationCapabilities() const
