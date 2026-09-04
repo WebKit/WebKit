@@ -6620,16 +6620,12 @@ webkit.org/b/297734 imported/w3c/web-platform-tests/css/css-counter-styles/count
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested.html [ ImageOnlyFailure ]
 
-# Missing support for extended range
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal-extended.html
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal-extended.html
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended.html
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal-extended.html
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-extended.html
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/counter-trad-chinese-informal.html [ ImageOnlyFailure ]
+# These number past 2147483647, which a counter value cannot hold. webkit.org/b/257369
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal-extended.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal-extended.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal-extended.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-extended.html [ ImageOnlyFailure ]
 
 # Newly imported ruby WPTs
 imported/w3c/web-platform-tests/css/css-ruby/block-ruby-001.html [ ImageOnlyFailure ]

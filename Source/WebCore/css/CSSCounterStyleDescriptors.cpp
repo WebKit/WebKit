@@ -303,6 +303,11 @@ bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescrip
     case System::SimplifiedChineseFormal:
     case System::TraditionalChineseInformal:
     case System::TraditionalChineseFormal:
+    case System::JapaneseInformal:
+    case System::JapaneseFormal:
+    case System::KoreanHangulFormal:
+    case System::KoreanHanjaInformal:
+    case System::KoreanHanjaFormal:
     case System::EthiopicNumeric:
     case System::Extends:
         return !symbols.size() && !additiveSymbols.size();
@@ -449,6 +454,11 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     case System::SimplifiedChineseFormal:
     case System::TraditionalChineseInformal:
     case System::TraditionalChineseFormal:
+    case System::JapaneseInformal:
+    case System::JapaneseFormal:
+    case System::KoreanHangulFormal:
+    case System::KoreanHanjaInformal:
+    case System::KoreanHanjaFormal:
     case System::EthiopicNumeric:
     case System::DisclosureClosed:
     case System::DisclosureOpen:

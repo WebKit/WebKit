@@ -60,6 +60,11 @@ struct CSSCounterStyleDescriptors {
         SimplifiedChineseFormal,
         TraditionalChineseInformal,
         TraditionalChineseFormal,
+        JapaneseInformal,
+        JapaneseFormal,
+        KoreanHangulFormal,
+        KoreanHanjaInformal,
+        KoreanHanjaFormal,
         EthiopicNumeric,
         Extends
     };
