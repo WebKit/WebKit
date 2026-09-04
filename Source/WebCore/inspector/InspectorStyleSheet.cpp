@@ -615,6 +615,10 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
 static String sourceURLForCSSRule(CSSRule& rule)
 {
     if (RefPtr parentStyleSheet = rule.parentStyleSheet()) {
+        // A constructable stylesheet's base URL is its owner document's. See InspectorStyleSheet::finalURL().
+        if (parentStyleSheet->wasConstructedByJS())
+            return nullString();
+
         if (auto sourceURL = parentStyleSheet->contents().baseURL().string(); !sourceURL.isEmpty())
             return sourceURL;
 
@@ -1058,6 +1062,11 @@ InspectorStyleSheet::~InspectorStyleSheet()
 
 String InspectorStyleSheet::finalURL() const
 {
+    // A constructable stylesheet has no source file. Its base URL is the owner document's, which must
+    // not be reported as the stylesheet's own URL, or every rule gets attributed to the document.
+    if (m_pageStyleSheet && m_pageStyleSheet->wasConstructedByJS())
+        return nullString();
+
     String url = styleSheetURL(m_pageStyleSheet.get());
     return url.isEmpty() ? m_documentURL : url;
 }
@@ -1275,7 +1284,7 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
 
     RefPtr document = styleSheet->ownerDocument();
     RefPtr frame = document ? document->frame() : nullptr;
-    return Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
+    auto header = Inspector::Protocol::CSS::CSSStyleSheetHeader::create()
         .setStyleSheetId(id())
         .setOrigin(m_origin)
         .setDisabled(styleSheet->disabled())
@@ -1286,6 +1295,11 @@ RefPtr<Inspector::Protocol::CSS::CSSStyleSheetHeader> InspectorStyleSheet::build
         .setStartLine(styleSheet->startPosition().m_line.zeroBasedInt())
         .setStartColumn(styleSheet->startPosition().m_column.zeroBasedInt())
         .release();
+
+    if (styleSheet->wasConstructedByJS())
+        header->setIsConstructed(true);
+
+    return header;
 }
 
 static Ref<Inspector::Protocol::CSS::CSSSelector> buildObjectForSelectorHelper(const String& selectorText, const CSSSelector& selector)
@@ -1428,8 +1442,10 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorStyleSheet::buildObjectForRul
         .setStyle(buildObjectForStyle(protect(rule->style()).ptr()))
         .release();
 
-    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Author || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User)
-        result->setSourceURL(finalURL());
+    if (m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::Author || m_origin == Inspector::Protocol::CSS::StyleSheetOrigin::User) {
+        if (auto sourceURL = finalURL(); !sourceURL.isEmpty())
+            result->setSourceURL(sourceURL);
+    }
 
     if (canBind()) {
         if (auto ruleId = this->ruleOrStyleId(rule).asProtocolValue<Inspector::Protocol::CSS::CSSRuleId>())

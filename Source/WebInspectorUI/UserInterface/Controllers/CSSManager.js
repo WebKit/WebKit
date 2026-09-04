@@ -584,6 +584,12 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (!styleSheet.noteContentDidChange())
             return;
 
+        // A constructed style sheet has no resource behind it, so there is no resource revision to
+        // write the new text into. noteContentDidChange above has already marked the style sheet's
+        // content stale and told the views, so the UI still refreshes.
+        if (styleSheet.isConstructed())
+            return;
+
         this._updateResourceContent(styleSheet);
     }
 
@@ -596,7 +602,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId, target);
         let parentFrame = WI.networkManager.frameForIdentifier(styleSheetInfo.frameId);
         let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
-        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+        styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.isConstructed);
 
         this.dispatchEventToListeners(WI.CSSManager.Event.StyleSheetAdded, {styleSheet});
     }
@@ -767,7 +773,11 @@ WI.CSSManager = class CSSManager extends WI.Object
                 let origin = WI.CSSManager.protocolStyleSheetOriginToEnum(styleSheetInfo.origin);
 
                 let styleSheet = this.styleSheetForIdentifier(styleSheetInfo.styleSheetId);
-                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn);
+                styleSheet.updateInfo(styleSheetInfo.sourceURL, parentFrame, origin, styleSheetInfo.isInline, styleSheetInfo.startLine, styleSheetInfo.startColumn, styleSheetInfo.isConstructed);
+
+                // A style sheet without a URL has no resource to be looked up by
+                if (!styleSheetInfo.sourceURL)
+                    continue;
 
                 let key = this._frameURLMapKey(parentFrame, styleSheetInfo.sourceURL);
                 this._styleSheetFrameURLMap.set(key, styleSheet);

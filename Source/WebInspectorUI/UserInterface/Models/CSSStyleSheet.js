@@ -40,6 +40,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
         this._inlineStyleAttribute = false;
         this._inlineStyleTag = false;
+        this._isConstructed = false;
 
         this._hasInfo = false;
     }
@@ -48,7 +49,8 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     static resetUniqueDisplayNameNumbers()
     {
-        WI.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+        WI.CSSStyleSheet._nextAnonymousDisplayNameNumber = 1;
+        WI.CSSStyleSheet._nextConstructedDisplayNameNumber = 1;
     }
 
     // Public
@@ -96,10 +98,12 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         if (this._url)
             return WI.displayNameForURL(this._url, this.urlComponents);
 
-        // Assign a unique number to the StyleSheet object so it will stay the same.
-        if (!this._uniqueDisplayNameNumber)
-            this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
+        if (this.isConstructed()) {
+            this._uniqueDisplayNameNumber ||= this.constructor._nextConstructedDisplayNameNumber++;
+            return WI.UIString("Constructed Style Sheet %d").format(this._uniqueDisplayNameNumber);
+        }
 
+        this._uniqueDisplayNameNumber ||= this.constructor._nextAnonymousDisplayNameNumber++;
         return WI.UIString("Anonymous Style Sheet %d").format(this._uniqueDisplayNameNumber);
     }
 
@@ -121,6 +125,11 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
     isInspectorStyleSheet()
     {
         return this._origin === WI.CSSStyleSheet.Type.Inspector;
+    }
+
+    isConstructed()
+    {
+        return this._isConstructed;
     }
 
     isInlineStyleTag()
@@ -154,7 +163,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     // Protected
 
-    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber)
+    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber, isConstructed)
     {
         this._hasInfo = true;
 
@@ -167,6 +176,8 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         this._inlineStyleTag = inlineStyle;
         this._startLineNumber = startLineNumber;
         this._startColumnNumber = startColumnNumber;
+
+        this._isConstructed = !!isConstructed;
     }
 
     get revisionForRequestedContent()
@@ -225,7 +236,8 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
     }
 };
 
-WI.CSSStyleSheet._nextUniqueDisplayNameNumber = 1;
+WI.CSSStyleSheet._nextAnonymousDisplayNameNumber = 1;
+WI.CSSStyleSheet._nextConstructedDisplayNameNumber = 1;
 
 WI.CSSStyleSheet.Event = {
     ContentDidChange: "css-style-sheet-content-did-change"

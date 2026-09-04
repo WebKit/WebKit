@@ -208,7 +208,6 @@ localizedStrings["Animation Target"] = "Animation Target";
 localizedStrings["Anonymous Script %d"] = "Anonymous Script %d";
 localizedStrings["Anonymous Scripts"] = "Anonymous Scripts";
 localizedStrings["Anonymous Style Sheet %d"] = "Anonymous Style Sheet %d";
-localizedStrings["Anonymous Style Sheets"] = "Anonymous Style Sheets";
 /* Header for section with appearance user preferences. */
 localizedStrings["Appearance @ User Preferences Overrides"] = "Appearance";
 localizedStrings["Appearance:"] = "Appearance:";
@@ -462,6 +461,7 @@ localizedStrings["Console cleared at %s"] = "Console cleared at %s";
 localizedStrings["Console opened at %s"] = "Console opened at %s";
 localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Console:"] = "Console:";
+localizedStrings["Constructed Style Sheet %d"] = "Constructed Style Sheet %d";
 localizedStrings["Containing"] = "Containing";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
 /* Property value for `font-variant-ligatures: contextual`. */
