@@ -404,9 +404,14 @@ bool cachedResourceContent(CachedResource& resource, String* result, bool* base6
     switch (resource.type()) {
     case CachedResource::Type::CSSStyleSheet:
         *base64Encoded = false;
-        *result = downcast<CachedCSSStyleSheet>(resource).sheetText();
-        // The above can return a null String if the MIME type is invalid.
-        return !result->isNull();
+
+        if (auto sheetText = downcast<CachedCSSStyleSheet>(resource).sheetText()) {
+            *result = WTF::move(*sheetText);
+            return true;
+        }
+
+        *result = nullString();
+        return false;
     case CachedResource::Type::JSON:
     case CachedResource::Type::Text:
     case CachedResource::Type::Script:

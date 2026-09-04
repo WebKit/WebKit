@@ -39,7 +39,8 @@ public:
     virtual ~CachedCSSStyleSheet();
 
     enum class MIMETypeCheckHint { Strict, Lax };
-    const String sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, bool* hasValidMIMEType = nullptr, bool* hasHTTPStatusOK = nullptr) const;
+    enum class Error : bool { UnsuccessfulRequest, InvalidMIMEType };
+    std::expected<String, Error> sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict) const;
 
     RefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy, FrameLoader&);
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
@@ -48,7 +49,7 @@ public:
 
 private:
     String responseMIMEType() const;
-    bool canUseSheet(MIMETypeCheckHint, bool* hasValidMIMEType, bool* hasHTTPStatusOK) const;
+    std::optional<Error> canUseSheet(MIMETypeCheckHint) const;
     bool mayTryReplaceEncodedData() const final { return true; }
 
     void didAddClient(CachedResourceClient&) final;

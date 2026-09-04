@@ -401,16 +401,18 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
 {
     bool isSameOriginRequest = securityOrigin && securityOrigin->canRequest(baseURL(), OriginAccessPatternsForWebProcess::singleton());
     CachedCSSStyleSheet::MIMETypeCheckHint mimeTypeCheckHint = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheckHint::Strict : CachedCSSStyleSheet::MIMETypeCheckHint::Lax;
-    bool hasValidMIMEType = true;
-    bool hasHTTPStatusOK = true;
-    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType, &hasHTTPStatusOK);
+    auto sheetTextOrError = cachedStyleSheet->sheetText(mimeTypeCheckHint);
 
-    if (!hasHTTPStatusOK) {
-        ASSERT(sheetText.isNull());
-        return false;
+    if (sheetTextOrError) {
+        CSSParser::parseStyleSheet(*sheetTextOrError, parserContext(), *this);
+        return true;
     }
-    if (!hasValidMIMEType) {
-        ASSERT(sheetText.isNull());
+
+    switch (sheetTextOrError.error()) {
+    case CachedCSSStyleSheet::Error::UnsuccessfulRequest:
+        break;
+
+    case CachedCSSStyleSheet::Error::InvalidMIMEType:
         if (RefPtr document = singleOwnerDocument()) {
             if (RefPtr frame = document->frame()) {
                 if (isStrictParserMode(m_parserContext.mode))
@@ -421,11 +423,9 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
                     frame->console().addMessage(MessageSource::Security, MessageLevel::Error, makeString("Did not parse stylesheet at '"_s, cachedStyleSheet->url().stringCenterEllipsizedToLength(), "' because non CSS MIME types are not allowed for cross-origin stylesheets."_s));
             }
         }
-        return false;
     }
 
-    CSSParser::parseStyleSheet(sheetText, parserContext(), *this);
-    return true;
+    return false;
 }
 
 bool StyleSheetContents::parseString(const String& sheetText)
