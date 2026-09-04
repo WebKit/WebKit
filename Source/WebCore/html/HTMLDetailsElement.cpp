@@ -64,6 +64,7 @@ static const AtomString& summarySlotName()
 class DetailsSlotAssignment final : public NamedSlotAssignment {
 private:
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
+    void hostChildElementDidMove(const Element&, ShadowRoot&) override;
     const AtomString& NODELETE slotNameForHostChild(const Node&) const override;
 };
 
@@ -80,6 +81,19 @@ void DetailsSlotAssignment::hostChildElementDidChange(const Element& childElemen
         }
     } else
         didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot);
+}
+
+void DetailsSlotAssignment::hostChildElementDidMove(const Element& childElement, ShadowRoot& shadowRoot)
+{
+    if (is<HTMLSummaryElement>(childElement)) {
+        didChangeSlot(summarySlotName(), shadowRoot, SlotChangeInvalidation::PreserveRenderers);
+
+        if (RefPtr associatedDetails = dynamicDowncast<HTMLDetailsElement>(shadowRoot.host())) {
+            if (CheckedPtr cache = protect(associatedDetails->document())->existingAXObjectCache())
+                cache->onDetailsSummarySlotChange(*associatedDetails);
+        }
+    } else
+        didChangeSlot(NamedSlotAssignment::defaultSlotName(), shadowRoot, SlotChangeInvalidation::PreserveRenderers);
 }
 
 SUPPRESS_NODELETE const AtomString& NODELETE DetailsSlotAssignment::slotNameForHostChild(const Node& child) const

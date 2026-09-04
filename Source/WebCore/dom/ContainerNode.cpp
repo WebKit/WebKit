@@ -71,6 +71,7 @@
 #include "SlotAssignment.h"
 #include "StaticNodeList.h"
 #include "TemplateContentDocumentFragment.h"
+#include "Text.h"
 #include <algorithm>
 #include <wtf/TZoneMallocInlines.h>
 #include "AsyncNodeDeletionQueueInlines.h"
@@ -1546,6 +1547,9 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
 
     RefPtr oldPreviousSibling = node.previousSibling();
     RefPtr oldNextSibling = node.nextSibling();
+    bool treeScopeChanged = &node.treeScope() != &treeScope();
+    RefPtr<HTMLSlotElement> oldAssignedSlot = node.assignedSlot();
+    RefPtr movedElement = dynamicDowncast<Element>(node);
 
     auto removalChildChange = makeChildChangeForMoveRemoval(node);
 
@@ -1555,6 +1559,22 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ChildListMutationScope(*oldParent).willRemoveChild(node);
         nodeDocument->nodeWillBeMoved(node);
+
+        if (oldParent->isShadowRoot() || oldParent->isInShadowTree()) [[unlikely]]
+            oldParent->containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+        if (isShadowRoot() || isInShadowTree()) [[unlikely]]
+            containingShadowRoot()->resolveSlotsBeforeNodeInsertionOrRemoval();
+
+        if (oldParent->hasShadowRootContainingSlots()) [[unlikely]]
+            protect(oldParent->shadowRoot())->willRemoveAssignedNode(node);
+
+        if (treeScopeChanged) {
+            if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(node); slot && oldParent->isInShadowTree()) {
+                RefPtr oldShadowRoot = oldParent->containingShadowRoot();
+                ASSERT(oldShadowRoot);
+                oldShadowRoot->removeSlotElementByName(slot->attributeWithoutSynchronization(HTMLNames::nameAttr), *slot, *oldParent);
+            }
+        }
 
         if (oldNextSibling) {
             oldNextSibling->setPreviousSibling(oldPreviousSibling.get());
@@ -1577,7 +1597,12 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         InspectorInstrumentation::didRemoveDOMNode(nodeDocument, node);
         node.setParentNode(nullptr);
 
-        // FIXME(281223): Handle slot assignments and live ranges.
+        if (movedElement) {
+            if (RefPtr shadowRoot = oldParent->shadowRoot())
+                shadowRoot->hostChildElementDidMove(*movedElement);
+        }
+
+        // FIXME(281223): Handle live ranges.
 
         if (refChild)
             insertBeforeCommon(*refChild, node);
@@ -1586,7 +1611,30 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
         // FIXME(319588): Handle inspector DOM breakpoints (e.g. InspectorInstrumentation::willInsertDOMNode)
         InspectorInstrumentation::didInsertDOMNode(protect(document()), node);
 
+        if (movedElement) {
+            if (RefPtr shadowRoot = this->shadowRoot())
+                shadowRoot->hostChildElementDidMove(*movedElement);
+        }
+
+        RefPtr newAssignedSlot = node.assignedSlot();
+        auto shouldTearDownMovedNodeRenderer = [](HTMLSlotElement* slot) {
+            RefPtr shadowRoot = slot ? slot->containingShadowRoot() : nullptr;
+            return shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent;
+        };
+        if (oldAssignedSlot != newAssignedSlot && (shouldTearDownMovedNodeRenderer(oldAssignedSlot.get()) || shouldTearDownMovedNodeRenderer(newAssignedSlot.get()))) {
+            if (movedElement)
+                RenderTreeUpdater::tearDownRenderers(*movedElement);
+            else if (RefPtr text = dynamicDowncast<Text>(node))
+                RenderTreeUpdater::tearDownRenderer(*text);
+        }
+
         node.setTreeScopeRecursively(treeScope());
+        if (treeScopeChanged) {
+            if (RefPtr slot = dynamicDowncast<HTMLSlotElement>(node); slot && slot->isInShadowTree()) {
+                if (RefPtr shadowRoot = slot->containingShadowRoot())
+                    shadowRoot->addSlotElementByName(slot->attributeWithoutSynchronization(HTMLNames::nameAttr), *slot);
+            }
+        }
         node.updateAncestorConnectedSubframeCountForInsertion();
         ChildListMutationScope(*this).childAdded(node);
     }
