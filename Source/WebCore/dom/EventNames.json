@@ -307,6 +307,8 @@
     "webkitbeforeblur": { },
     "webkitbeforefocus": { },
     "webkitbeginfullscreen": { },
+    "webkitcameramoved": { },
+    "webkitcameraviewchanged": { },
     "webkitcurrentplaybacktargetiswirelesschanged": { },
     "webkitendfullscreen": { },
     "webkitfocusedelementdisconnected": { },

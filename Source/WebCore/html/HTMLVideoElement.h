@@ -155,6 +155,11 @@ public:
     bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
     void viewportIntersectionChanged(bool isIntersecting);
 
+    double cameraYaw() const { return m_cameraYaw; }
+    double cameraPitch() const { return m_cameraPitch; }
+    double cameraFieldOfView() const { return m_cameraFieldOfView; }
+    void spatialCameraDidMove(double yaw, double pitch, double fieldOfView);
+
 private:
     friend class HTMLVideoElementPictureInPicture;
     HTMLVideoElement(const QualifiedName&, Document&, bool createdByParser);
@@ -193,6 +198,10 @@ private:
     AtomString m_defaultPosterURL;
 
     FloatSize m_lastReportedNaturalSize { };
+
+    double m_cameraYaw { 0 };
+    double m_cameraPitch { 0 };
+    double m_cameraFieldOfView { 0 };
 
     bool m_renderingCanBeAccelerated { false };
 

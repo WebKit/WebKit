@@ -403,6 +403,12 @@ std::optional<int32_t> MediaControlsHost::spatialVideoHorizontalFieldOfView() co
     return metadata->horizontalFieldOfView;
 }
 
+void MediaControlsHost::spatialCameraDidMove(double yaw, double pitch, double fieldOfView)
+{
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(m_mediaElement.get()))
+        videoElement->spatialCameraDidMove(yaw, pitch, fieldOfView);
+}
+
 bool MediaControlsHost::isAVExperienceControllerFullscreenEnabled() const
 {
 #if HAVE(AVEXPERIENCECONTROLLER)

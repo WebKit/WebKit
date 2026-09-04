@@ -243,11 +243,26 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
         if (name == webkitprojectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled())
             scheduleEvent(eventNames().webkitprojectionchangedEvent);
 
+        if ((name == webkitfieldofviewAttr || name == webkityawAttr || name == webkitpitchAttr) && document().settings().spatialVideoRenderingEnabled())
+            scheduleEvent(eventNames().webkitcameraviewchangedEvent);
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr)
             protect(mediaSession())->setWirelessVideoPlaybackDisabled(isWirelessPlaybackTargetDisabled());
 #endif
     }
+}
+
+void HTMLVideoElement::spatialCameraDidMove(double yaw, double pitch, double fieldOfView)
+{
+    if (m_cameraYaw == yaw && m_cameraPitch == pitch && m_cameraFieldOfView == fieldOfView)
+        return;
+
+    m_cameraYaw = yaw;
+    m_cameraPitch = pitch;
+    m_cameraFieldOfView = fieldOfView;
+
+    scheduleEvent(eventNames().webkitcameramovedEvent);
 }
 
 bool HTMLVideoElement::supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode) const
