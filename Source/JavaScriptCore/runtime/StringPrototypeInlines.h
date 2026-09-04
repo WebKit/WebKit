@@ -1528,6 +1528,13 @@ ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
     if (!result)
         return string;
 
+    if (replacementString.isEmpty()) {
+        if (!result.start)
+            return jsSubstringOfResolved(vm, string, result.end, source.length() - result.end);
+        if (result.end == source.length())
+            return jsSubstringOfResolved(vm, string, 0, result.start);
+    }
+
     auto before = StringView { source }.substring(0, result.start);
     auto after = StringView { source }.substring(result.end, source.length() - result.end);
 
