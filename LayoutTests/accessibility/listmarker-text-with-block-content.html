@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+body { margin: 0; font: 20px/1 monospace; }
+ul { margin: 0; padding-inline-start: 60px; }
+</style>
+</head>
+<body>
+
+<ul>
+<li id="blockContent"><div>item</div></li>
+<li id="inlineContent">item</li>
+</ul>
+
+<script>
+let output = "This test makes sure the marker of a list item whose content is a block is part of the item's stitched text, the way it is for an item with inline content.\n\n";
+
+function staticTextIn(element) {
+    if (element.role === platformRoleForStaticText())
+        return element;
+    for (let i = 0; i < element.childrenCount; ++i) {
+        let found = staticTextIn(element.childAtIndex(i));
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+if (window.accessibilityController) {
+    var blockText = staticTextIn(accessibilityController.accessibleElementById("blockContent"));
+    var inlineText = staticTextIn(accessibilityController.accessibleElementById("inlineContent"));
+
+    // The marker is drawn to the left of the text, so a stitched run that includes it starts further left and is wider.
+    output += expect("blockText.x === inlineText.x", "true");
+    output += expect("blockText.width === inlineText.width", "true");
+    output += `\nblock content: x=${blockText.x} width=${blockText.width}\ninline content: x=${inlineText.x} width=${inlineText.width}\n`;
+
+    debug(output);
+    finishJSTest();
+}
+</script>
+</body>
+</html>

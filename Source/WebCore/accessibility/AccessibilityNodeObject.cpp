@@ -4172,6 +4172,27 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
             currentGroup.clear();
         representativeID = std::nullopt;
     };
+    // Our own outside marker takes no part in our lines, so it is not one of the leaf boxes below, but it belongs at
+    // the start of the group for the line it was positioned against, when that line is one of ours.
+    auto stitchableExcludedMarker = [&]() -> CheckedPtr<RenderListOutsideMarker> {
+        // The marker's list item is this block flow itself when the item's own content makes the line, and an
+        // ancestor of it when the line is in a descendant block of the item.
+        for (CheckedPtr<const RenderBlock> ancestor = renderBlockFlow.get(); ancestor; ancestor = ancestor->containingBlock()) {
+            CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor.get());
+            CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
+            if (!marker || !marker->isExcludedMarker() || marker->isDisclosureMarker())
+                continue;
+            auto excludedPosition = marker->excludedPosition();
+            if (excludedPosition && excludedPosition->firstFormattedLineRoot.get() == renderBlockFlow.get())
+                return marker;
+        }
+        return { };
+    }();
+    if (stitchableExcludedMarker) {
+        if (RefPtr object = cache->getOrCreate(*stitchableExcludedMarker))
+            appendToCurrentGroup(object->objectID());
+    }
+
     for (auto lineBox = inlineLayout->firstLineBox(); lineBox; lineBox.traverseNext()) {
         for (auto box = lineBox->logicalLeftmostLeafBox(); box; box.traverseLogicalRightwardOnLine()) {
             auto updateLastRenderer = makeScopeExit([&] {
