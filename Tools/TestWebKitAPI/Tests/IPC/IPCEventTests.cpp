@@ -93,16 +93,22 @@ TEST(IPCEventTests, SignalDoesNotBlockWhenNotWaitedFor)
     auto pair = IPC::createEventSignalPair();
     ASSERT_TRUE(pair.has_value());
     // Signalling must not block when the previous signal has not been waited for, the same as
-    // Semaphore::signal(). The Event holds one signal, so the rest are dropped.
+    // Semaphore::signal().
     auto start = MonotonicTime::now();
     for (int i = 0; i < 100; ++i)
         pair->signal.signal();
     EXPECT_LT(MonotonicTime::now() - start, shortTimeout);
 
     EXPECT_TRUE(pair->event.waitFor(longTimeout));
+#if PLATFORM(COCOA)
+    // A Mach notification port coalesces, so the Event holds one signal and the rest were
+    // dropped. The non-Cocoa implementation is a counting semaphore pair, which keeps them all.
     EXPECT_FALSE(pair->event.waitFor(shortTimeout));
+#else
+    while (pair->event.waitFor(shortTimeout)) { }
+#endif
 
-    // Dropping those signals did not break the pair.
+    // Consuming those signals did not break the pair.
     pair->signal.signal();
     EXPECT_TRUE(pair->event.waitFor(longTimeout));
 }

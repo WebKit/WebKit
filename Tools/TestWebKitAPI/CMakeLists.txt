@@ -599,7 +599,7 @@ if (ENABLE_WEBKIT)
 
     WEBKIT_EXECUTABLE_DECLARE(TestWebKit)
 
-    if (APPLE)
+    if (APPLE OR PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
         # TestIPC definitions
         set(TestIPC_SOURCES
             Helpers/Utilities.cpp
@@ -645,6 +645,71 @@ if (ENABLE_WEBKIT)
         set(TestIPC_FRAMEWORKS
             WebKit
         )
+
+        if (NOT APPLE)
+            # TestIPC compiles the IPC implementation directly rather than linking WebKit.
+            list(APPEND TestIPC_SOURCES
+                generic/main.cpp
+
+                ${WEBKIT_DIR}/Platform/IPC/ArgumentCoders.cpp
+                ${WEBKIT_DIR}/Platform/IPC/Connection.cpp
+                ${WEBKIT_DIR}/Platform/IPC/Decoder.cpp
+                ${WEBKIT_DIR}/Platform/IPC/Encoder.cpp
+                ${WEBKIT_DIR}/Platform/IPC/IPCUtilities.cpp
+                ${WEBKIT_DIR}/Platform/IPC/MessageLog.cpp
+                ${WEBKIT_DIR}/Platform/IPC/MessageReceiveQueueMap.cpp
+                ${WEBKIT_DIR}/Platform/IPC/MessageReceiverMap.cpp
+                ${WEBKIT_DIR}/Platform/IPC/MessageSender.cpp
+                ${WEBKIT_DIR}/Platform/IPC/SharedBufferReference.cpp
+                ${WEBKIT_DIR}/Platform/IPC/SharedFileHandle.cpp
+                ${WEBKIT_DIR}/Platform/IPC/StreamClientConnection.cpp
+                ${WEBKIT_DIR}/Platform/IPC/StreamConnectionBuffer.cpp
+                ${WEBKIT_DIR}/Platform/IPC/StreamConnectionWorkQueue.cpp
+                ${WEBKIT_DIR}/Platform/IPC/StreamServerConnection.cpp
+                ${WEBKIT_DIR}/Platform/IPC/TransferString.cpp
+                ${WEBKIT_DIR}/Platform/IPC/glib/ConnectionGLib.cpp
+                ${WEBKIT_DIR}/Platform/IPC/unix/ArgumentCodersUnix.cpp
+                ${WEBKIT_DIR}/Platform/IPC/unix/IPCSemaphoreUnix.cpp
+                ${WEBKIT_DIR}/Platform/IPC/unix/IPCUtilitiesUnix.cpp
+
+                ${WEBCORE_DIR}/platform/SharedMemory.cpp
+                ${WEBCORE_DIR}/platform/unix/SharedMemoryUnix.cpp
+                ${WEBKIT_DIR}/Platform/EditingRangeClamping.cpp
+                ${WEBKIT_DIR}/Platform/Logging.cpp
+                ${WEBKIT_DIR}/Shared/WebFoundTextRange.cpp
+                ${WebKit_DERIVED_SOURCES_DIR}/MessageNames.cpp
+                ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
+            )
+
+            list(APPEND TestIPC_PRIVATE_INCLUDE_DIRECTORIES
+                ${CMAKE_SOURCE_DIR}/Source
+                ${WEBCORE_DIR}
+                ${WEBCORE_DIR}/platform
+                ${WEBCORE_DIR}/platform/graphics
+                ${WEBCORE_DIR}/platform/graphics/gstreamer
+                ${WEBCORE_DIR}/platform/network
+                ${WEBCORE_DIR}/platform/text
+                ${GSTREAMER_INCLUDE_DIRS}
+                ${GSTREAMER_AUDIO_INCLUDE_DIRS}
+                ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
+                ${GSTREAMER_VIDEO_INCLUDE_DIRS}
+                ${WEBKIT_DIR}
+                ${WEBKIT_DIR}/Platform
+                ${WEBKIT_DIR}/Platform/IPC
+                ${WEBKIT_DIR}/Platform/IPC/glib
+                ${WEBKIT_DIR}/Platform/IPC/unix
+                ${WEBKIT_DIR}/Shared
+                ${WEBKIT_DIR}/Shared/glib
+                ${WebKit_DERIVED_SOURCES_DIR}
+            )
+
+            list(APPEND TestIPC_LIBRARIES
+                WebKit::WTF
+                WebKit::WebCore
+                ${GLIB_LIBRARIES}
+            )
+
+        endif ()
 
         WEBKIT_EXECUTABLE_DECLARE(TestIPC)
         target_compile_definitions(TestIPC PRIVATE BUILDING_TEST_IPC)
@@ -745,7 +810,7 @@ if (ENABLE_WEBKIT)
         WEBKIT_COMPUTE_SOURCES(TestWebKit)
     endif ()
     WEBKIT_TEST(TestWebKit)
-    if (APPLE)
+    if (APPLE OR PORT STREQUAL "GTK" OR PORT STREQUAL "WPE")
         WEBKIT_TEST(TestIPC)
     endif ()
 endif ()

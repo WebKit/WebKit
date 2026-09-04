@@ -244,6 +244,11 @@ TEST_P(ConnectionTestABBA, AAndBInvalidateDoesNotDeliverDidClose)
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
 
+#if PLATFORM(COCOA)
+
+// Invalidating an unopened connection closes its socket, so a peer using Unix domain sockets sees
+// the end of file and reports didClose. A Mach based peer is never told.
+
 TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
 {
     ASSERT_TRUE(openB());
@@ -251,6 +256,8 @@ TEST_P(ConnectionTestABBA, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
     deleteA();
     EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
 }
+
+#endif // PLATFORM(COCOA)
 
 TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
 {

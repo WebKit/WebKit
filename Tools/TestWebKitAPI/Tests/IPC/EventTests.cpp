@@ -104,6 +104,12 @@ TEST_P(EventTestABBA, SerializeAndSignal)
     pair->event.wait();
 }
 
+#if PLATFORM(COCOA)
+
+// Destroying the Signal interrupts the wait only where the pair is a Mach send and receive right.
+// The non-Cocoa implementation is a plain semaphore pair, so this would wait forever rather than
+// fail (see the FIXME in IPCEvent.h, and the matching guard in IPCEventTests.cpp).
+
 TEST_P(EventTestABBA, InterruptOnDestruct)
 {
     ASSERT_TRUE(openA());
@@ -128,6 +134,8 @@ TEST_P(EventTestABBA, InterruptOnDestruct)
 
     pair->event.wait();
 }
+
+#endif // PLATFORM(COCOA)
 
 #undef RUN_LOOP_NAME
 #undef LOCAL_STRINGIFY
