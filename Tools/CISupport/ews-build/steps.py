@@ -7574,14 +7574,9 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
     name = 'validate-commit-message'
     haltOnFailure = False
     flunkOnFailure = True
-    OOPS_RE = 'OO*PP*S!'
-    REVIEWED_STRINGS = (
-        'Reviewed by',
-        'Rubber-stamped by',
-        'Rubber stamped by',
-        'Unreviewed',
-        'Versioning.',
-    )
+    OOPS_RE = '^[^-]*OO*PP*S!*'
+    REVIEWED_STRINGS = ('Reviewed by', 'Rubber-stamped by', 'Rubber stamped by',)
+    UNREVIEWED_STRINGS = ('Unreviewed', 'Versioning\\.',)
     RE_CHANGELOG = br'^(\+\+\+)\s+(.*/ChangeLog.*)'
     BY_RE = re.compile(r'.+\s+by\s+(.+)$')
     SPLIT_RE = re.compile(r'\s+and\s+|,\s*and\s*|,\s*')
@@ -7634,13 +7629,13 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             reviewer_error_msg = invalid_msg.format(', '.join(invalid_reviewers))
 
         self.commands = []
-        reviewed_strings = '\\|'.join(self.REVIEWED_STRINGS)
-        reviewed_by_strings = '\\|'.join(self.REVIEWED_STRINGS[:3])
+        reviewer_strings = '\\|'.join(self.REVIEWED_STRINGS)
+        all_strings = '\\|'.join(self.REVIEWED_STRINGS + self.UNREVIEWED_STRINGS)
         commands = [
-            f"git log {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
-            f"git log {head_ref} ^{base_ref} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
-            f"git log --format=%B {head_ref} ^{base_ref} > commit_msg.txt; grep -q '^[[:space:]]*\\({reviewed_strings}\\)' commit_msg.txt || echo 'No reviewer information in commit message';",
-            f"git log --format=%B {head_ref} ^{base_ref} | grep '^[[:space:]]*\\({reviewed_by_strings}\\)' || true",
+            f"git log --format=%B {head_ref} ^{base_ref} | grep -q '{self.OOPS_RE}' && echo 'Commit message contains (OOPS!){reviewer_error_msg}' || test $? -eq 1",
+            f"git log --format=%B {head_ref} ^{base_ref} | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\"{reviewer_error_msg}' || test $? -eq 1",
+            f"git log --format=%B {head_ref} ^{base_ref} > commit_msg.txt; grep -q '^[[:space:]]*\\({all_strings}\\)' commit_msg.txt || echo 'No reviewer information in commit message';",
+            f"git log --format=%B {head_ref} ^{base_ref} | grep '^[[:space:]]*\\({reviewer_strings}\\)' || true",
         ]
         for command in commands:
             self.commands.append(util.ShellArg(command=self.shell_command(command), logname='stdio', haltOnFailure=True))
