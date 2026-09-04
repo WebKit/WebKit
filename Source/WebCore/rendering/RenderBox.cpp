@@ -3790,7 +3790,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(this)) {
             auto computedFixedLogicalWidth = style().logicalWidth().tryFixed();
             auto preferredRatio = renderImage->preferredAspectRatioAsSize();
-            if (computedFixedLogicalWidth && !style().aspectRatio().hasRatio()) {
+            if (computedFixedLogicalWidth && !style().aspectRatio().hasRatio() && !preferredRatio.isEmpty()) {
                 return resolveHeightForRatio(
                     borderAndPaddingLogicalWidth(),
                     borderAndPaddingLogicalHeight(),

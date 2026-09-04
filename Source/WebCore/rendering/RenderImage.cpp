@@ -979,10 +979,20 @@ FloatSize RenderImage::preferredAspectRatioAsSize() const
     if (shouldApplySizeOrInlineSizeContainment())
         return RenderReplaced::preferredAspectRatioAsSize();
 
-    // Don't compute an intrinsic ratio to preserve historical WebKit behavior if we're painting alt text and/or a broken image.
     if (shouldDisplayBrokenImageIcon()) {
-        if (style().aspectRatio().isAutoAndRatio() && !isShowingAltText())
+        auto ratioFromStyle = [&] {
             return FloatSize::narrowPrecision(style().aspectRatioLogicalWidth().value, style().aspectRatioLogicalHeight().value);
+        };
+
+        if (isShowingAltText()) {
+            if (style().aspectRatio().isRatio() && style().display() != Style::DisplayType::InlineFlow)
+                return ratioFromStyle();
+            return { };
+        }
+
+        if (style().aspectRatio().hasRatio())
+            return ratioFromStyle();
+
         return { 1.0, 1.0 };
     }
 
