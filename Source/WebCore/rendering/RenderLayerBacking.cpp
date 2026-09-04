@@ -2543,7 +2543,7 @@ bool RenderLayerBacking::updateAncestorClippingStack(Vector<CompositedClipData>&
     m_ancestorClippingStack->updateWithClipData(scrollingCoordinator, Vector { clippingData });
     LOG_WITH_STREAM(Compositing, stream << "layer " << &m_owningLayer << " ancestorClippingStack " << *m_ancestorClippingStack);
     if (m_overflowControlsHostLayerAncestorClippingStack)
-        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, WTF::move(clippingData));
+        m_overflowControlsHostLayerAncestorClippingStack->updateWithClipData(scrollingCoordinator, m_ancestorClippingStack->compositedClipData());
     return true;
 }
 
