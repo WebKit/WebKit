@@ -314,9 +314,16 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         auto length = inlineTextItem->length();
         CheckedRef inlineTextBox = inlineTextItem->inlineTextBox();
         auto content = inlineTextBox->content().substring(start, length);
+        // A run made up of nothing but combining marks has no base character of its own (the marks belong to the
+        // grapheme cluster started by an earlier run), so it must not clobber the base character we are tracking.
+        auto updateLastBaseCharacter = [&] {
+            if (auto lastBaseCharacter = TextUtil::lastBaseCharacterFromText(content)) {
+                lastCharacterFromPreviousRun = lastBaseCharacter;
+                lastCharacterDepth = currentCharacterDepth;
+            }
+        };
         if (!processInlineBoxBoundary || !lastCharacterFromPreviousRun) {
-            lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
-            lastCharacterDepth = currentCharacterDepth;
+            updateLastBaseCharacter();
             processInlineBoxBoundary = false;
             continue;
         }
@@ -329,8 +336,7 @@ void InlineItemsBuilder::computeInlineBoxBoundaryTextSpacings(const InlineItemLi
         if (!boundaryTextAutospace.isNoAutospace() && boundaryTextAutospace.shouldApplySpacing(inlineTextBox->content().codePointAt(start), lastCharacterFromPreviousRun))
             spacings.add(boundaryIndex, TextAutospace::textAutospaceSize(boundaryOwnerStyle->fontCascade().primaryFont()));
 
-        lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(content);
-        lastCharacterDepth = currentCharacterDepth;
+        updateLastBaseCharacter();
         processInlineBoxBoundary = false;
     }
     if (!spacings.isEmpty())
@@ -922,8 +928,10 @@ static void handleTextSpacing(TextSpacing::SpacingState& spacingState, Trimmable
         if (autospace.shouldApplySpacing(spacingState.lastCharacterClassFromPreviousRun, characterClass))
             trimmableTextSpacings.add(inlineItemIndex, TextAutospace::textAutospaceSize(inlineTextItem.style().fontCascade().primaryFont()));
 
-        auto lastCharacterFromPreviousRun = TextUtil::lastBaseCharacterFromText(inlineTextItem.content());
-        spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(lastCharacterFromPreviousRun);
+        auto lastBaseCharacter = TextUtil::lastBaseCharacterFromText(inlineTextItem.content());
+        // A run made up of nothing but combining marks has no base character of its own, so leave the state from the previous run intact.
+        if (lastBaseCharacter)
+            spacingState.lastCharacterClassFromPreviousRun = TextSpacing::characterClass(lastBaseCharacter);
     } else
         spacingState.lastCharacterClassFromPreviousRun = TextSpacing::CharacterClass::Undefined;
 }
