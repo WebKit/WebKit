@@ -24,6 +24,7 @@
 
 #include <glib-object.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
+#include <@API_INCLUDE_PREFIX@/WebKitFrameInfo.h>
 #include <@API_INCLUDE_PREFIX@/WebKitURIRequest.h>
 
 G_BEGIN_DECLS
@@ -82,6 +83,12 @@ webkit_navigation_action_is_redirect         (WebKitNavigationAction *navigation
 
 WEBKIT_API const char *
 webkit_navigation_action_get_frame_name      (WebKitNavigationAction *navigation);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_navigation_action_get_source_frame    (WebKitNavigationAction *navigation);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_navigation_action_get_target_frame    (WebKitNavigationAction *navigation);
 
 G_END_DECLS
 

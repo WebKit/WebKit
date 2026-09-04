@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2026 Tau Gärtli
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,29 +17,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
+@API_SINGLE_HEADER_CHECK@
+
 #pragma once
 
-#include "APINavigationAction.h"
-#include "WebKitNavigationAction.h"
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CString.h>
+#include <glib-object.h>
+#include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
-struct _WebKitNavigationAction {
-    _WebKitNavigationAction(Ref<API::NavigationAction>&& action)
-        : action(WTF::move(action))
-    {
-    }
+G_BEGIN_DECLS
 
-    _WebKitNavigationAction(WebKitNavigationAction* navigation)
-        : action(navigation->action)
-    {
-    }
+#define WEBKIT_TYPE_FRAME_INFO (webkit_frame_info_get_type())
 
-    RefPtr<API::NavigationAction> action;
-    GRefPtr<WebKitURIRequest> request;
-    std::optional<CString> frameName;
-    WebKitFrameInfo* sourceFrame;
-    WebKitFrameInfo* targetFrame;
-};
+typedef struct _WebKitFrameInfo WebKitFrameInfo;
 
-WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&&);
+WEBKIT_API GType
+webkit_frame_info_get_type            (void);
+
+WEBKIT_API WebKitFrameInfo *
+webkit_frame_info_copy                (WebKitFrameInfo *info);
+
+WEBKIT_API void
+webkit_frame_info_free                (WebKitFrameInfo *info);
+
+WEBKIT_API gboolean
+webkit_frame_info_is_main_frame       (WebKitFrameInfo *info);
+
+G_END_DECLS
