@@ -235,6 +235,36 @@ const documentation = {
                     `where &ltcommit-a&gt and &ltcommit-b&gt are both ${localLink(['API', 'Commit'], 'commit objects')} and &ltconfiguration-object&gt is a ${localLink(['Query Parameters', 'Configuration'], 'configuration object')}. The data inside the 'processing' dictionary indicates any failures which occurred when attempting to process the upload.`
                 ],
             ),
+            documentEndpoint(
+                '/upload/ews',
+                ['POST'],
+                [],
+                [
+                    `Endpoint used by EWS to upload per-test results, as opposed to the trie-shaped uploads described in ${localLink(['API', 'Uploads'], 'Uploads')}. This endpoint does not accept any query parameters; the entire request is a json object in the request body, of the form:`,
+                    codeBlock('{\n' +
+                    '    "commits": [<commit-a>, <commit-b>],\n' +
+                    '    "configuration": <configuration-object>,\n' +
+                    '    "suite": <suite>,\n' +
+                    '    "timestamp": <UTC timestamp of test run, optional, defaults to the time of the request>,\n' +
+                    '    "flaky_type": <optional string>,\n' +
+                    '    "details": <optional json object>,\n' +
+                    '    "test_results": {\n' +
+                    '        "results": {\n' +
+                    '            "test-1": <result>,\n' +
+                    '            "test-2": <result>\n' +
+                    '        }\n' +
+                    '    }\n' +
+                    '}'),
+                    `where &ltcommit-a&gt and &ltcommit-b&gt are both ${localLink(['API', 'Commits'], 'commit objects')} and &ltconfiguration-object&gt is a ${localLink(['Query Parameters', 'Configuration'], 'configuration object')}. Unlike ${localLink(['API', '/api/upload'], '/api/upload')}, "results" is a flat map of test name to result, not a trie.`,
+                    `"suite", "test_results" and "commits" are required, and a missing or malformed field aborts with an error; "timestamp", if provided, must be a positive number no more than 5 minutes in the future; it is not bounded in the past, so an upload may backfill an older result.`,
+                    `"flaky_type" is optional and decides which table the results land in: if present, results are written to ews_flakes_by_start_time with a 90-day retention instead of the suite's normal retention, and the affected test names are recorded as flaky in the test name index; if omitted, results are written to ews_failed_tests_by_start_time instead.`,
+                    `On success, the response names the tests that were actually stored, so a caller can log the write instead of assuming it:`,
+                    codeBlock('{\n' +
+                    '    "status": "ok",\n' +
+                    '    "tests": ["test-1", "test-2"]\n' +
+                    '}'),
+                ],
+            ),
         ], 'Test Lists': [
             `Most enpoints on the results database require information about the suite, test or configuration results are associated with. Because these configurations, suites or tests may change over time, the results database exposes some endpoints allowing this data to be retreived in an automated way.`,
             documentEndpoint(
@@ -260,6 +290,20 @@ const documentation = {
                 ['GET'],
                 ['Limit', 'Test'],
                 [`Returns a list of tests associated with a specific suite. This list is useful for mapping a partial string to a test name.`],
+            ),
+            documentEndpoint(
+                '/results-ews/tests',
+                ['GET'],
+                ['Limit'],
+                [
+                    `Test names recorded in the EWS results tables for a suite, across every configuration and branch; names are not partitioned by either. "suite" is required and only its first value is used, unlike the general ${localLink(['Query Parameters', 'Suite'], 'suite')} query.`,
+                    `"flaky" (true or false, default false) selects the same partition as ${localLink(['API', '/results-ews'], '/results-ews')}'s flaky flag, but here it is one partition of a single table rather than a choice between two tables: flaky=true returns names recorded from flaky uploads, and flaky=false, or omitting flaky entirely, returns names recorded from non-flaky uploads only, never both. "prefixes" is an optional, repeatable parameter restricting the names returned to those starting with one of the given prefixes; if omitted, every recorded name for the suite/flaky pair is a candidate.`,
+                    `${localLink(['Query Parameters', 'Limit'], 'limit')} caps the total number of names returned across all prefixes combined, and defaults to 100: a suite can easily have recorded far more names than that, so a default-length response is a sample, not the full catalog, and a caller that wants every name should pass an explicit, larger limit. The output is a sorted list of names:`,
+                    codeBlock('[\n' +
+                    '    "test-1",\n' +
+                    '    "test-2"\n' +
+                    ']'),
+                ],
             ),
         ], 'Test Results': [
             `The results-database preforms post-processing on every upload to sort test results. Each test has it's results saved independently and high-level results for a test suite are also stored. The results database classifies every test failure with the following mapping:`,
@@ -370,6 +414,34 @@ const documentation = {
                     '    "crash": 5,\n' +
                     '}'),
                     `These results are always the weighted aggregation of results for the provided configurations, with weights to be understood as percent liklihood a test will have a certain result on a given revision.`,
+                ],
+            ),
+            documentEndpoint(
+                '/results-ews',
+                ['GET'],
+                ['Branch', 'Configuration', 'Limit', 'Suite', 'Time'],
+                [
+                    `Results recorded by ${localLink(['API', '/upload/ews'], '/upload/ews')}, for one or more tests, returned one entry per test and configuration that actually has matching results. "suite" is required and only its first value is used, unlike the general ${localLink(['Query Parameters', 'Suite'], 'suite')} query, and "tests" is required and repeatable, matching test names exactly rather than by prefix:`,
+                    codeBlock('tests=test-1&tests=test-2'),
+                    `A request missing either aborts with an error, and a single request cannot carry more than 100 test names. Because the test names travel in the query string rather than the request body, a batch of long test paths can overflow the server's request line well before that 100-test cap is reached, so callers with long test names should chunk requests well below 100.`,
+                    `${localLink(['Query Parameters', 'Limit'], 'limit')} is applied per test rather than shared across the batch, since a shared limit would be spent entirely on whichever test happened to be queried first; a batch of 50 tests can therefore return up to 50 times the limit in rows. "flaky" (true or false, default false) selects which table is read: flaky=true reads ews_flakes_by_start_time, and flaky=false, or omitting flaky entirely, reads ews_failed_tests_by_start_time only; a single request never reads both.`,
+                    `A query matching no rows for any requested test answers with a 404, not an empty list, so a caller sweeping through a large test list in chunks needs to treat a 404 as "no results in this chunk" rather than as a failure. Results are organized like this:`,
+                    codeBlock('[\n' +
+                    '    {\n' +
+                    '        "test": <test name>,\n' +
+                    '        "configuration": <configuration-object>,\n' +
+                    '        "results": [\n' +
+                    '            {\n' +
+                    '                "uuid": <UUID for test run>,\n' +
+                    '                "start_time": <UTC time test run started>,\n' +
+                    '                "result": <run-webkit-tests result object for this test>,\n' +
+                    '                "details": <json object supplied at upload time, if any>,\n' +
+                    '                "flaky_type": <only present when flaky=true>\n' +
+                    '            }\n' +
+                    '        ]\n' +
+                    '    }\n' +
+                    ']'),
+                    `where &ltconfiguration-object&gt is a ${localLink(['Query Parameters', 'Configuration'], 'configuration object')}. The configuration is attached once per group, not to each individual entry in "results".`,
                 ],
             ),
         ], 'Failure Analysis': [
