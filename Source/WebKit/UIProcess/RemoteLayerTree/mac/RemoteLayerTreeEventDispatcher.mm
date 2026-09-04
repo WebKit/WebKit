@@ -835,7 +835,6 @@ void RemoteLayerTreeEventDispatcher::startMomentumSignpostInterval()
     if (!m_momentumIntervalIsActive) {
         WTFBeginSignpostAlways(nullptr, ScrollingPerformanceTestMomentumInterval, "isAnimation=YES;");
         m_momentumIntervalIsActive = true;
-        m_momentumIntervalHasSeenNonZeroDeltaEvent = false;
     }
 }
 
@@ -857,12 +856,7 @@ void RemoteLayerTreeEventDispatcher::handleSyntheticWheelEvent(PageIdentifier pa
         if (event.momentumPhase() == WebWheelEvent::Phase::Began)
             startMomentumSignpostInterval();
 
-        bool eventHasNonZeroDelta = std::abs(event.delta().height()) > 0;
-        if (eventHasNonZeroDelta)
-            m_momentumIntervalHasSeenNonZeroDeltaEvent = true;
-
-        // FIXME: <rdar://184036413> Momentum intervals should only start with non-zero deltas.
-        if (m_momentumIntervalIsActive && ((!eventHasNonZeroDelta && m_momentumIntervalHasSeenNonZeroDeltaEvent) || event.momentumPhase() == WebWheelEvent::Phase::Ended))
+        if (m_momentumIntervalIsActive && (!std::abs(event.delta().height()) || event.momentumPhase() == WebWheelEvent::Phase::Ended))
             endMomentumSignpostInterval();
     }
 
