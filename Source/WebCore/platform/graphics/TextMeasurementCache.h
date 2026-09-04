@@ -35,6 +35,7 @@
 #include <wtf/ZippedRange.h>
 #include <wtf/text/RapidHash.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -53,17 +54,29 @@ struct TextShapingContext {
 namespace TextMeasurementCacheDefaults {
 static constexpr int minInterval = -3; // A cache hit pays for about 3 cache misses.
 static constexpr int maxInterval = 20; // Sampling at this interval has almost no overhead.
-static constexpr unsigned maxSize = 500000; // Just enough to guard against pathological growth.
-static constexpr unsigned maxTextLength = 64; // Maximum text length for SmallStringKey.
+static constexpr unsigned maxTextLength = 64; // Maximum text length that can be cached.
+static constexpr unsigned inlineKeyCapacity = 16; // Text this long or shorter is stored inline in SmallStringKey; longer text (up to maxTextLength) is stored out-of-line, keyed by String.
+static constexpr size_t maxBytes = 20 * 1024 * 1024; // ~20MiB. Rough budget above which the cache is cleared to avoid pathological growth.
+
+template<typename CachedType, unsigned InlineKeyCapacity>
+constexpr unsigned maxSizeForByteBudget(size_t bytes = maxBytes)
+{
+    // Approximate SmallStringKey's inline char16_t array plus its hash/length word and the cache payload.
+    constexpr size_t slotBytes = sizeof(char16_t) * InlineKeyCapacity + sizeof(unsigned) + sizeof(CachedType);
+    size_t entries = bytes / slotBytes;
+    return static_cast<unsigned>(entries ? entries : 1);
+}
 }
 
 template <typename CachedType,
     int InitialInterval = TextMeasurementCacheDefaults::maxInterval,
     int MinInterval = TextMeasurementCacheDefaults::minInterval,
     int MaxInterval = TextMeasurementCacheDefaults::maxInterval,
-    unsigned MaxSize = TextMeasurementCacheDefaults::maxSize,
-    unsigned MaxTextLength = TextMeasurementCacheDefaults::maxTextLength>
+    unsigned MaxTextLength = TextMeasurementCacheDefaults::maxTextLength,
+    unsigned InlineKeyCapacity = TextMeasurementCacheDefaults::inlineKeyCapacity,
+    unsigned MaxSize = TextMeasurementCacheDefaults::maxSizeForByteBudget<CachedType, InlineKeyCapacity>()>
 class TextMeasurementCache {
+    static_assert(InlineKeyCapacity >= 1 && InlineKeyCapacity <= MaxTextLength, "InlineKeyCapacity must be in [1, MaxTextLength]");
 private:
     // Used to optimize small strings as hash table keys. Avoids malloc'ing an out-of-line StringImpl.
     class SmallStringKey {
@@ -100,7 +113,7 @@ private:
         friend bool operator==(const SmallStringKey&, const SmallStringKey&) = default;
 
     private:
-        static constexpr unsigned s_capacity = MaxTextLength;
+        static constexpr unsigned s_capacity = InlineKeyCapacity;
         static constexpr unsigned s_deletedValueLength = s_capacity + 1;
 
         template<typename CharacterType>
@@ -117,6 +130,8 @@ private:
         std::array<char16_t, s_capacity> m_characters { };
         unsigned m_hashAndLength { 0 };
     };
+
+    static_assert(sizeof(SmallStringKey) == sizeof(std::array<char16_t, InlineKeyCapacity>) + sizeof(unsigned), "Revisit maxSizeForByteBudget computation");
 
     struct SmallStringKeyHashTraits : SimpleClassHashTraits<SmallStringKey> {
         static constexpr bool emptyValueIsZero = true;
@@ -180,9 +195,14 @@ public:
         ASSERT(isMainThread());
         m_singleCharMap.clear();
         m_map.clear();
+        m_outOfLineMap.clear();
     }
 
-    bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty(); }
+    bool isEmpty() const { return m_singleCharMap.isEmpty() && m_map.isEmpty() && m_outOfLineMap.isEmpty(); }
+
+    static constexpr unsigned inlineKeyCapacity() { return InlineKeyCapacity; }
+    static constexpr unsigned maxTextLength() { return MaxTextLength; }
+    static constexpr unsigned maxSize() { return MaxSize; }
 
 private:
 
@@ -201,8 +221,12 @@ private:
             auto addResult = m_singleCharMap.fastAdd(character + 1, WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
-        } else {
+        } else if (length <= InlineKeyCapacity) {
             auto addResult = m_map.fastAdd(text, WTF::move(entry));
+            isNewEntry = addResult.isNewEntry;
+            value = &addResult.iterator->value;
+        } else {
+            auto addResult = m_outOfLineMap.fastAdd(text.toString(), WTF::move(entry));
             isNewEntry = addResult.isNewEntry;
             value = &addResult.iterator->value;
         }
@@ -218,12 +242,13 @@ private:
             ++m_interval;
         m_countdown = m_interval;
 
-        if ((m_singleCharMap.size() + m_map.size()) < MaxSize)
+        if ((m_singleCharMap.size() + m_map.size() + m_outOfLineMap.size()) < MaxSize)
             return value;
 
         // No need to be fancy: we're just trying to avoid pathological growth.
         m_singleCharMap.clear();
         m_map.clear();
+        m_outOfLineMap.clear();
         return nullptr;
     }
 
@@ -246,11 +271,13 @@ private:
 
     using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
+    using OutOfLineMap = HashMap<String, CachedType>;
 
     int m_interval;
     int m_countdown;
     SingleCharMap m_singleCharMap;
     Map m_map;
+    OutOfLineMap m_outOfLineMap;
     bool m_hasSeenIdeograph;
 };
 

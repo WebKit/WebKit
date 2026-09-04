@@ -347,6 +347,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/TestPlatformStrategies.cpp
         Tests/WebCore/TextCodec.cpp
         Tests/WebCore/TextIterator.cpp
+        Tests/WebCore/TextMeasurementCache.cpp
         Tests/WebCore/TimeRanges.cpp
         Tests/WebCore/TransformationMatrix.cpp
         Tests/WebCore/U2fCommandConstructorTest.cpp

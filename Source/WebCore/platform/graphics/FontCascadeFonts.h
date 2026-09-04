@@ -142,8 +142,9 @@ public:
         ShapedTextCacheDefaults::initialInterval,
         ShapedTextCacheDefaults::minInterval,
         ShapedTextCacheDefaults::maxInterval,
-        ShapedTextCacheDefaults::maxSize,
-        ShapedTextCacheDefaults::maxTextLength
+        ShapedTextCacheDefaults::maxTextLength,
+        ShapedTextCacheDefaults::maxTextLength, // InlineKeyCapacity == MaxTextLength: keep every entry inline, out-of-line table intentionally unused.
+        ShapedTextCacheDefaults::maxSize
     >;
     ShapedTextCache& shapedTextCache() LIFETIME_BOUND { return m_shapedTextCache; }
     const ShapedTextCache& shapedTextCache() const LIFETIME_BOUND { return m_shapedTextCache; }
