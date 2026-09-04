@@ -206,7 +206,7 @@ private:
 
     void attachLater(Ref<ContainerNode>&& parent, Ref<Node>&& child, bool selfClosing = false);
 
-    void findFosterSite(HTMLConstructionSiteTask&);
+    void recordFosterSite(HTMLConstructionSiteTask&);
 
     std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> createHTMLElementOrFindCustomElementInterface(AtomHTMLToken&);
     Ref<HTMLElement> createHTMLElement(AtomHTMLToken&);

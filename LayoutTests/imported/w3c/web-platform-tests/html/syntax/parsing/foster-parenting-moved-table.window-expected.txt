@@ -1,0 +1,8 @@
+
+PASS Table moved to a div: the tree stays well-formed
+PASS Table moved to a div: the second foster-parented element follows it
+PASS Table moved to a template element: the tree stays well-formed
+PASS Table moved to a template element: the second foster-parented element follows it
+PASS Table removed from the tree: the tree stays well-formed
+PASS Table removed from the tree: the second foster-parented element follows it
+
