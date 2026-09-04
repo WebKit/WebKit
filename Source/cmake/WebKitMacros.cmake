@@ -1169,7 +1169,6 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
         set(_dllimport_decl "")
     endif ()
     set(_flags
-        -DENABLE_WEBGPU_SWIFT=1
         -DJS_EXPORT_PRIVATE=${_dllimport_decl}
         -DNODELETE=
         -DPAL_EXPORT=${_dllimport_decl}
