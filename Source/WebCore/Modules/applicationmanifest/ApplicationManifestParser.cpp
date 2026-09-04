@@ -362,33 +362,28 @@ Vector<ApplicationManifest::Icon> ApplicationManifestParser::parseIcons(const JS
         auto purposeValue = iconJSON->getValue("purpose"_s);
         OptionSet<ApplicationManifest::Icon::Purpose> purposes;
 
-        if (!purposeValue) {
+        if (!purposeValue)
             purposes.add(ApplicationManifest::Icon::Purpose::Any);
-            currentIcon.purposes = purposes;
+        else if (auto purposeStringValue = purposeValue->asString(); !purposeStringValue) {
+            logManifestPropertyNotAString("purpose"_s);
+            purposes.add(ApplicationManifest::Icon::Purpose::Any);
         } else {
-            auto purposeStringValue = purposeValue->asString();
-            if (!purposeStringValue) {
-                logManifestPropertyNotAString("purpose"_s);
-                purposes.add(ApplicationManifest::Icon::Purpose::Any);
-                currentIcon.purposes = purposes;
-            } else {
-                for (auto keyword : StringView(purposeStringValue).trim(isASCIIWhitespace<char16_t>).splitAllowingEmptyEntries(' ')) {
-                    if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
-                        purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
-                    else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))
-                        purposes.add(ApplicationManifest::Icon::Purpose::Maskable);
-                    else if (equalLettersIgnoringASCIICase(keyword, "any"_s))
-                        purposes.add(ApplicationManifest::Icon::Purpose::Any);
-                    else
-                        logDeveloperWarning(makeString("\""_s, purposeStringValue, "\" is not a valid purpose."_s));
-                }
-
-                if (purposes.isEmpty())
-                    continue;
-
-                currentIcon.purposes = purposes;
+            for (auto keyword : StringView(purposeStringValue).trim(isASCIIWhitespace<char16_t>).splitAllowingEmptyEntries(' ')) {
+                if (equalLettersIgnoringASCIICase(keyword, "monochrome"_s))
+                    purposes.add(ApplicationManifest::Icon::Purpose::Monochrome);
+                else if (equalLettersIgnoringASCIICase(keyword, "maskable"_s))
+                    purposes.add(ApplicationManifest::Icon::Purpose::Maskable);
+                else if (equalLettersIgnoringASCIICase(keyword, "any"_s))
+                    purposes.add(ApplicationManifest::Icon::Purpose::Any);
+                else
+                    logDeveloperWarning(makeString("\""_s, purposeStringValue, "\" is not a valid purpose."_s));
             }
+
+            if (purposes.isEmpty())
+                continue;
         }
+
+        currentIcon.purposes = purposes;
 
         imageResources.append(WTF::move(currentIcon));
     }
