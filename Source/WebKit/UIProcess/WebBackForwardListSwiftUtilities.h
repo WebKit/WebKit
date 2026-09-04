@@ -81,4 +81,15 @@ Ref<WebKit::WebBackForwardListItem> createItemFromState(const WebKit::BackForwar
 Vector<Ref<WebKit::WebBackForwardListItem>> createItemsFromState(const WebKit::BackForwardListState&, WebKit::WebPageProxyIdentifier pageIdentifier);
 WebKit::WebBackForwardListItem* itemAtIndexInBackForwardListItemVector(const Vector<Ref<WebKit::WebBackForwardListItem>>& items, size_t index);
 
+// Helper bridge functions for optional filter callbacks
+inline bool filterSpecified(const WebBackForwardListItemFilter& filter)
+{
+    return !!(*filter);
+}
+
+inline bool callFilter(const WebBackForwardListItemFilter& filter, const WebKit::WebBackForwardListItem& entry)
+{
+    return (*filter)(const_cast<WebKit::WebBackForwardListItem&>(entry));
+}
+
 #endif // ENABLE(BACK_FORWARD_LIST_SWIFT)
