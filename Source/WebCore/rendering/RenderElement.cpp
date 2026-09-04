@@ -2746,6 +2746,10 @@ void RenderElement::setPseudoElementRenderer(PseudoElementType type, RenderBlock
 Overflow RenderElement::effectiveOverflowX() const
 {
     auto overflowX = style().overflowX();
+    // The overflow property does not apply to table row elements (CSS2 section 11.1.1), so they never
+    // become scroll containers, even though the computed value is preserved (see StyleAdjuster).
+    if (isRenderTableRow())
+        return Overflow::Visible;
     if (paintContainmentApplies() && overflowX == Overflow::Visible)
         return Overflow::Clip;
     return overflowX;
@@ -2754,6 +2758,8 @@ Overflow RenderElement::effectiveOverflowX() const
 Overflow RenderElement::effectiveOverflowY() const
 {
     auto overflowY = style().overflowY();
+    if (isRenderTableRow())
+        return Overflow::Visible;
     if (paintContainmentApplies() && overflowY == Overflow::Visible)
         return Overflow::Clip;
     return overflowY;
