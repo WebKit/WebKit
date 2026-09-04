@@ -8052,6 +8052,18 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 
 #endif
 
+void Document::logXMLExternalEntityDeprecationWarningIfNeeded()
+{
+    // Documents created by DOMParser and XMLHttpRequest have no frame, and addConsoleMessage
+    // silently drops messages in that case, so report on the context document instead. Throttling
+    // on the target document also keeps repeated DOMParser parses from logging more than once.
+    Ref document = frame() ? protect(*this) : protect(contextDocument());
+    if (document->m_hasLoggedXMLExternalEntityDeprecationWarning)
+        return;
+    document->m_hasLoggedXMLExternalEntityDeprecationWarning = true;
+    document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "XML external entities are deprecated and will be removed in a future version of WebKit."_s);
+}
+
 String Document::designMode() const
 {
     return inDesignMode() ? onAtom() : offAtom();
