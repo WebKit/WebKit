@@ -920,6 +920,33 @@ void AcceleratedSurface::SwapChainDamageTracker::didPresent(RenderTarget& target
 }
 #endif
 
+bool AcceleratedSurface::shouldPaintMirrored() const
+{
+    switch (m_swapChain.type()) {
+    case SwapChain::Type::Invalid:
+        return false;
+#if PLATFORM(GTK) || ENABLE(WPE_PLATFORM)
+    case SwapChain::Type::Texture:
+#if USE(GBM) || OS(ANDROID)
+    case SwapChain::Type::EGLImage:
+#endif
+#if PLATFORM(GTK) && !USE(GTK4)
+        return true;
+#else
+        return false;
+#endif
+    case SwapChain::Type::SharedMemory:
+        return false;
+#endif
+#if USE(WPE_RENDERER)
+    case SwapChain::Type::WPEBackend:
+        return true;
+#endif
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM) && (USE(GBM) || OS(ANDROID))
 void AcceleratedSurface::preferredBufferFormatsDidChange()
 {
