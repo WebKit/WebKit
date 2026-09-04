@@ -32,11 +32,15 @@
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkBlendMode.h>
+#include <skia/core/SkMatrix.h>
+#include <skia/core/SkRect.h>
 #include <skia/core/SkRefCnt.h>
+#include <skia/core/SkSamplingOptions.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 #include <skia/gpu/ganesh/GrDirectContext.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/MathExtras.h>
 
 class SkImage;
 class SkSurface;
@@ -51,6 +55,34 @@ enum class BlendMode : uint8_t;
 enum class CompositeOperator : uint8_t;
 
 namespace SkiaUtilities {
+
+inline SkSamplingOptions samplingOptionsForMatrix(const SkMatrix& matrix)
+{
+    auto mapsSourcePixelsOneToOne = [&] {
+        if (!matrix.isScaleTranslate())
+            return false;
+
+        // The scale needs a tolerance because it is computed by dividing. The translation does not: accepting
+        // a wrong one point samples an off grid draw, rejecting a wrong one only costs linear sampling.
+        constexpr float scaleTolerance = 1e-4f;
+        if (!WTF::areEssentiallyEqual(std::abs(matrix.getScaleX()), 1.0f, scaleTolerance) || !WTF::areEssentiallyEqual(std::abs(matrix.getScaleY()), 1.0f, scaleTolerance))
+            return false;
+
+        return WTF::isIntegral(matrix.getTranslateX()) && WTF::isIntegral(matrix.getTranslateY());
+    };
+
+    return mapsSourcePixelsOneToOne() ? SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone) : SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone);
+}
+
+inline SkSamplingOptions samplingOptionsForImageDraw(const SkMatrix& deviceMatrix, const SkRect& srcRect, const SkRect& dstRect)
+{
+    if (!deviceMatrix.isScaleTranslate())
+        return SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone);
+
+    auto matrix = deviceMatrix;
+    matrix.preConcat(SkMatrix::RectToRect(srcRect, dstRect));
+    return samplingOptionsForMatrix(matrix);
+}
 
 // Creates a GrBackendTexture from a BitmapTexture's GL texture.
 GrBackendTexture createBackendTexture(const BitmapTexture&);

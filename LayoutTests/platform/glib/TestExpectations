@@ -892,8 +892,6 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size-043.html [ P
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size-044.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-transforms/3d-scene-with-iframe-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-matrix3d-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-combined-001.html [ Pass ]
 
@@ -1362,7 +1360,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 webkit.org/b/314309 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
 webkit.org/b/314310 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-003.html [ ImageOnlyFailure ]
 webkit.org/b/314312 media/media-sources-selection.html [ ImageOnlyFailure ]
-webkit.org/b/314313 platform/glib/fast/layers/fractional-transforms.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests

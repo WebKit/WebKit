@@ -823,7 +823,9 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 matrix.setScale(m_contentsTiling.size.width() / tileImage->width(), m_contentsTiling.size.height() / tileImage->height());
                 matrix.postTranslate(m_contentsRect.x() - m_contentsTiling.phase.width(), m_contentsRect.y() - m_contentsTiling.phase.height());
                 SkPaint paint = setupPaint();
-                paint.setShader(tileImage->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), matrix));
+                // The shader matrix maps the tile image into layer space, so it needs to be taken into account here.
+                const auto sampling = SkiaUtilities::samplingOptionsForMatrix(SkMatrix::Concat(canvas.getLocalToDeviceAs3x3(), matrix));
+                paint.setShader(tileImage->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, sampling, matrix));
                 drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
             }
         }
@@ -833,8 +835,10 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 if (rotationMatrix)
                     canvas.concat(*rotationMatrix);
                 SkPaint paint = setupPaint();
-                drawImageRectRestricted(canvas, context.damageRegionOrNull(), image.get(), SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(imageRect),
-                    SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint);
+                const SkRect srcRect = SkRect::MakeSize(SkSize::Make(image->dimensions()));
+                const SkRect dstRect = SkRect(imageRect);
+                const auto sampling = SkiaUtilities::samplingOptionsForImageDraw(canvas.getLocalToDeviceAs3x3(), srcRect, dstRect);
+                drawImageRectRestricted(canvas, context.damageRegionOrNull(), image.get(), srcRect, dstRect, sampling, &paint);
             } else {
                 if (rotationMatrix)
                     transform.preConcat(*rotationMatrix);
@@ -1170,8 +1174,9 @@ void SkiaCompositingLayer::paintWithIntermediateSurface(SkCanvas& canvas, PaintC
     grContext->flushAndSubmit(surface.get(), GrSyncCpu::kNo);
 
     auto snapshot = surface->makeImageSnapshot();
-    const auto sampling = SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone);
 
+    // The surface is in device space, and both rects have the same size, so only the canvas matrix matters.
+    const auto sampling = SkiaUtilities::samplingOptionsForMatrix(canvas.getLocalToDeviceAs3x3());
     drawImageRectRestricted(canvas, context.damageRegionOrNull(), snapshot.get(), SkRect::MakeWH(surfaceRect.width(), surfaceRect.height()),
         SkRect::Make(surfaceRect), sampling, paint);
 }
@@ -1254,7 +1259,7 @@ void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintConte
 
         if (shouldClipPath)
             canvas.clipPath(m_mask->m_clipPath->makeTransform(matrix), true);
-        else if (auto maskShader = maskImage->makeShader({ SkFilterMode::kLinear, SkMipmapMode::kNone }, &matrix))
+        else if (auto maskShader = maskImage->makeShader(SkiaUtilities::samplingOptionsForMatrix(SkMatrix::Concat(canvas.getLocalToDeviceAs3x3(), matrix)), &matrix))
             canvas.clipShader(maskShader);
     }
 

@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "SkiaBackingStore.h"
 #include "SkiaDamageRegion.h"
+#include "SkiaUtilities.h"
 
 namespace WebCore {
 
@@ -52,32 +53,22 @@ void SkiaCompositingLayerImageSetBatch::updateSamplingOptions(SkCanvas& canvas, 
     m_samplingOptions = samplingOptions;
 }
 
-bool SkiaCompositingLayerImageSetBatch::imageRequiresLinearSampling(const SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const SkMatrix& ctm) const
-{
-    if (m_samplingOptions.filter == SkFilterMode::kLinear) {
-        // Linear is already the batch sampling options, so don't need change it to keep the batch.
-        return false;
-    }
-
-    // For axis aligned, not scaled and integer translated transforms, nearest and linear do the same,
-    // so we can keep nearest to avoid the sampling options switch that will cause a new batch.
-    auto matrix = canvas.getLocalToDeviceAs3x3() * ctm;
-    matrix.preConcat(SkMatrix::RectToRect(SkRect::MakeWH(image->width(), image->height()), SkRect(rect)));
-    if (!matrix.isScaleTranslate())
-        return true;
-
-    if (std::abs(matrix.getScaleX()) != 1 || std::abs(matrix.getScaleY()) != 1)
-        return true;
-
-    return !WTF::isIntegral(matrix.getTranslateX()) || !WTF::isIntegral(matrix.getTranslateY());
-}
-
 SkSamplingOptions SkiaCompositingLayerImageSetBatch::samplingOptionsForImage(const SkCanvas& canvas, const sk_sp<SkImage>& image, const FloatRect& rect, const SkMatrix& ctm) const
 {
-    if (!imageRequiresLinearSampling(canvas, image, rect, ctm))
+    if (m_samplingOptions.filter == SkFilterMode::kLinear)
         return m_samplingOptions;
 
-    return SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone);
+    const auto matrix = canvas.getLocalToDeviceAs3x3() * ctm;
+    return SkiaUtilities::samplingOptionsForImageDraw(matrix, SkRect::MakeWH(image->width(), image->height()), SkRect(rect));
+}
+
+SkSamplingOptions SkiaCompositingLayerImageSetBatch::samplingOptionsForBackingStore(const SkCanvas& canvas, const SkiaBackingStore& backingStore, const SkMatrix& ctm) const
+{
+    if (m_samplingOptions.filter == SkFilterMode::kLinear)
+        return m_samplingOptions;
+
+    const auto matrix = canvas.getLocalToDeviceAs3x3() * ctm;
+    return backingStore.samplingOptionsForMatrix(matrix);
 }
 
 size_t SkiaCompositingLayerImageSetBatch::matrixIndexForDraw(const SkMatrix& ctm)
@@ -91,7 +82,16 @@ size_t SkiaCompositingLayerImageSetBatch::matrixIndexForDraw(const SkMatrix& ctm
 void SkiaCompositingLayerImageSetBatch::addImageSet(SkCanvas& canvas, SkiaBackingStore& backingStore, const SkM44& transform, float opacity, bool enableAntialias, const SkiaDamageRegion* damageRegion, const SkPaint& fallbackPaint)
 {
     const auto ctm = transform.asM33();
-    const auto sampling = SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone);
+    const auto sampling = samplingOptionsForBackingStore(canvas, backingStore, ctm);
+
+    // A batch draws all of its entries with one constraint. A strict one would clamp every piece of a tile that
+    // the damage split, so the pieces would no longer join up. Draw this layer alone instead.
+    if (backingStore.requiresStrictSourceConstraint(sampling)) {
+        drawOutsideBatch(canvas, transform, damageRegion, [&](SkCanvas& canvas) {
+            backingStore.paintToCanvas(canvas, fallbackPaint, damageRegion);
+        });
+        return;
+    }
 
     if (!damageRegion) {
         updateSamplingOptions(canvas, sampling);
@@ -120,9 +120,10 @@ void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<S
     const auto ctm = transform.asM33();
     const SkRect srcRectFull = SkRect::MakeWH(image->width(), image->height());
     const SkRect dstRectFull = SkRect(rect);
+    const auto sampling = samplingOptionsForImage(canvas, image, rect, ctm);
 
     if (!damageRegion) {
-        updateSamplingOptions(canvas, samplingOptionsForImage(canvas, image, rect, ctm));
+        updateSamplingOptions(canvas, sampling);
         const auto matrixIndex = matrixIndexForDraw(ctm);
         const unsigned aaFlags = enableAntialias ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
         m_imageSet.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
@@ -133,12 +134,12 @@ void SkiaCompositingLayerImageSetBatch::addImage(SkCanvas& canvas, const sk_sp<S
 
     SkMatrix inverse;
     const auto plan = planRestrictedDraw(canvas, transform, ctm, deviceRect, *damageRegion, inverse, [&](SkCanvas& canvas) {
-        canvas.drawImageRect(image, srcRectFull, dstRectFull, SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &fallbackPaint, SkCanvas::kFast_SrcRectConstraint);
+        canvas.drawImageRect(image, srcRectFull, dstRectFull, sampling, &fallbackPaint, SkCanvas::kFast_SrcRectConstraint);
     });
     if (plan == RestrictedDraw::Done)
         return;
 
-    updateSamplingOptions(canvas, samplingOptionsForImage(canvas, image, rect, ctm));
+    updateSamplingOptions(canvas, sampling);
     const auto matrixIndex = matrixIndexForDraw(ctm);
 
     // Drawn whole, so it has no interior edges and antialiases like a draw with no damage.
