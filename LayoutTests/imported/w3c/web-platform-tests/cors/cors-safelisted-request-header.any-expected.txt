@@ -37,4 +37,15 @@ PASS Preflight for {"range":"bytes 100-200"}
 PASS Preflight for {"range":"bytes = 100-200"}
 PASS Preflight for {"range":",bytes=100-200"}
 PASS Preflight for {"range":"bytes=,100-200"}
+PASS Preflight for {"range":"BYTES=100-200"}
+PASS Preflight for {"range":"Bytes=100-200"}
+PASS Preflight for {"range":"bytes=+0-100"}
+PASS Preflight for {"range":"bytes=0-+100"}
+PASS Preflight for {"range":"bytes=+5-"}
+PASS Preflight for {"range":"bytes=0--1"}
+PASS Preflight for {"range":"bytes\f=100-200"}
+PASS Preflight for {"range":"bytes=\f100-200"}
+PASS Preflight for {"range":"bytes=100\f-200"}
+PASS Preflight for {"range":"bytes=100-\f200"}
+PASS Preflight for {"range":"bytes=100-200\f"}
 
