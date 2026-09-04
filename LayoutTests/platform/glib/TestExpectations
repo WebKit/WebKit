@@ -3460,6 +3460,7 @@ http/wpt/site-isolation [ Skip ]
 media/audio-session-category.html [ Skip ]
 media/audio-session-category-at-most-recent-playback.html [ Skip ]
 media/audio-session-category-play-unmute-pause.html [ Skip ]
+http/tests/media/audio-session-category-cross-site-pause-resume.html [ Skip ]
 
 # This test assumes we cannot play RTSP, but we can.
 media/unsupported-rtsp.html [ WontFix Skip ]
