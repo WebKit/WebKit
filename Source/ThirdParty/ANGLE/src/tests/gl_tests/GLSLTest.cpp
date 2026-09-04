@@ -7731,6 +7731,53 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
 }
 
+// Test that a derivative applied to another derivative compiles. A derivative that is the direct
+// operand of another one used to queue a replacement whose parent was already dropped by the
+// RewriteDfdy pass, tripping ASSERT(replaced) in TIntermTraverser::updateTree().
+TEST_P(GLSLTest_ES3, NestedDerivatives)
+{
+    // The operand has to be non-constant, otherwise the derivatives are folded to zero before the
+    // rewrite runs.
+    constexpr char kFSPrefix[] = R"(#version 300 es
+precision mediump float;
+uniform float u;
+out vec4 color;
+void main()
+{
+    color = vec4()";
+    constexpr char kFSSuffix[] = R"();
+})";
+
+    for (const char *expression : {"dFdy(dFdy(u))", "dFdx(dFdx(u))", "dFdx(dFdy(u))",
+                                   "dFdy(dFdx(u))", "dFdy(dFdy(dFdy(u)))", "dFdy(u + dFdy(u))"})
+    {
+        const std::string fs = std::string(kFSPrefix) + expression + kFSSuffix;
+
+        GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.c_str());
+        EXPECT_NE(0u, shader) << expression;
+        glDeleteShader(shader);
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that a nested derivative survives the RewriteDfdy rewrite and can be linked and drawn. The
+// value of a derivative of a derivative is implementation defined, so it is not checked.
+TEST_P(GLSLTest_ES3, NestedDerivativesDraw)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+uniform float u;
+out vec4 color;
+void main()
+{
+    color = vec4(dFdy(dFdy(u)), 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that a varying struct that's not statically used in the fragment shader works.
 // GLSL ES 3.00.6 section 4.3.10.
 TEST_P(GLSLTest_ES3, VaryingStructNotStaticallyUsedInFragmentShader)
