@@ -45,27 +45,27 @@ enum class BmallocHeapVariant {
 
 void testBmallocAllocate(BmallocHeapVariant variant)
 {
-    auto try_allocate = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate(size);
-        return bmalloc_try_allocate(size, mode);
+        return bmalloc_try_allocate(size);
     };
 
-    void* mem = try_allocate(100, pas_non_compact_allocation_mode);
+    void* mem = try_allocate(100);
     CHECK(mem);
 }
 
 void testBmallocAllocationZeroing(BmallocHeapVariant variant)
 {
-    auto try_allocate_zeroed = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate_zeroed = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate_zeroed(size);
-        return bmalloc_try_allocate_zeroed(size, mode);
+        return bmalloc_try_allocate_zeroed(size);
     };
-    auto try_allocate_zeroed_with_alignment = [variant](size_t size, size_t alignment, pas_allocation_mode mode) -> void* {
+    auto try_allocate_zeroed_with_alignment = [variant](size_t size, size_t alignment) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
-        return bmalloc_try_allocate_zeroed_with_alignment(size, alignment, mode);
+        return bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
     };
 
     auto checkBufferIsZeroed = [](void* buff, size_t size) -> void {
@@ -80,34 +80,27 @@ void testBmallocAllocationZeroing(BmallocHeapVariant variant)
     auto sizes = std::array<size_t, 6> {
         7, 100, 128, 2003, 4096, 1024 * 32
     };
-    auto allocationModes = std::array<pas_allocation_mode, 3> {
-        pas_non_compact_allocation_mode,
-        pas_maybe_compact_allocation_mode,
-        pas_always_compact_allocation_mode,
-    };
     for (auto size : sizes) {
-        for (auto mode : allocationModes) {
-            void* memA = try_allocate_zeroed(size, mode);
-            checkBufferIsZeroed(memA, size);
-            void* memB = try_allocate_zeroed_with_alignment(size, 1, mode);
-            checkBufferIsZeroed(memB, size);
-            void* memC = try_allocate_zeroed_with_alignment(size, 64, mode);
-            checkBufferIsZeroed(memC, size);
-        }
+        void* memA = try_allocate_zeroed(size);
+        checkBufferIsZeroed(memA, size);
+        void* memB = try_allocate_zeroed_with_alignment(size, 1);
+        checkBufferIsZeroed(memB, size);
+        void* memC = try_allocate_zeroed_with_alignment(size, 64);
+        checkBufferIsZeroed(memC, size);
     }
 }
 
 void testBmallocAllocationAlignment(BmallocHeapVariant variant)
 {
-    auto try_allocate_with_alignment = [variant](size_t size, size_t alignment, pas_allocation_mode mode) -> void* {
+    auto try_allocate_with_alignment = [variant](size_t size, size_t alignment) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate_with_alignment(size, alignment);
-        return bmalloc_try_allocate_with_alignment(size, alignment, mode);
+        return bmalloc_try_allocate_with_alignment(size, alignment);
     };
-    auto try_allocate_zeroed_with_alignment = [variant](size_t size, size_t alignment, pas_allocation_mode mode) -> void* {
+    auto try_allocate_zeroed_with_alignment = [variant](size_t size, size_t alignment) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
-        return bmalloc_try_allocate_zeroed_with_alignment(size, alignment, mode);
+        return bmalloc_try_allocate_zeroed_with_alignment(size, alignment);
     };
 
     auto checkBufferIsAligned = [](void* buff, size_t alignment)  {
@@ -121,19 +114,12 @@ void testBmallocAllocationAlignment(BmallocHeapVariant variant)
     auto alignments = std::array<size_t, 5> {
         1, 8, 128, 1024, 4096
     };
-    auto allocationModes = std::array<pas_allocation_mode, 3> {
-        pas_non_compact_allocation_mode,
-        pas_maybe_compact_allocation_mode,
-        pas_always_compact_allocation_mode,
-    };
     for (auto size : sizes) {
         for (auto align : alignments) {
-            for (auto mode : allocationModes) {
-                void* memA = try_allocate_with_alignment(size, align, mode);
-                checkBufferIsAligned(memA, align);
-                void* memB = try_allocate_zeroed_with_alignment(size, align, mode);
-                checkBufferIsAligned(memB, align);
-            }
+            void* memA = try_allocate_with_alignment(size, align);
+            checkBufferIsAligned(memA, align);
+            void* memB = try_allocate_zeroed_with_alignment(size, align);
+            checkBufferIsAligned(memB, align);
         }
     }
 }
@@ -141,10 +127,10 @@ void testBmallocAllocationAlignment(BmallocHeapVariant variant)
 
 void testBmallocDeallocate(BmallocHeapVariant variant)
 {
-    auto try_allocate = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate(size);
-        return bmalloc_try_allocate(size, mode);
+        return bmalloc_try_allocate(size);
     };
     auto deallocate = [variant](void* ptr) {
         if (variant == BmallocHeapVariant::Tagged)
@@ -153,17 +139,17 @@ void testBmallocDeallocate(BmallocHeapVariant variant)
             bmalloc_deallocate(ptr);
     };
 
-    void* mem = try_allocate(100, pas_non_compact_allocation_mode);
+    void* mem = try_allocate(100);
     CHECK(mem);
     deallocate(mem);
 }
 
 void testBmallocForceBitfitAfterAlloc(BmallocHeapVariant variant)
 {
-    auto try_allocate = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate(size);
-        return bmalloc_try_allocate(size, mode);
+        return bmalloc_try_allocate(size);
     };
 
     auto& intrinsic_runtime_config = (variant == BmallocHeapVariant::Tagged)
@@ -173,10 +159,10 @@ void testBmallocForceBitfitAfterAlloc(BmallocHeapVariant variant)
         ? tagged_bmalloc_primitive_runtime_config
         : bmalloc_primitive_runtime_config;
 
-    void* mem0 = try_allocate(28616, pas_non_compact_allocation_mode);
+    void* mem0 = try_allocate(28616);
     CHECK(mem0);
 
-    void* mem1 = try_allocate(20768, pas_non_compact_allocation_mode);
+    void* mem1 = try_allocate(20768);
     CHECK(mem1);
 
     // Simulate entering mini mode by forcing bitfit only.
@@ -185,19 +171,19 @@ void testBmallocForceBitfitAfterAlloc(BmallocHeapVariant variant)
     primitive_runtime_config.base.max_segregated_object_size = 0;
     primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
 
-    void* mem2 = try_allocate(20648, pas_non_compact_allocation_mode);
+    void* mem2 = try_allocate(20648);
     CHECK(mem2);
 }
 
 void testBmallocDisableAllocationsAboveMTETaggingCeiling(BmallocHeapVariant variant)
 {
-    auto try_allocate = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate(size);
-        return bmalloc_try_allocate(size, mode);
+        return bmalloc_try_allocate(size);
     };
 
-    auto do_allocate_and_check = [&](pas_allocation_mode mode) {
+    auto do_allocate_and_check = [&]() {
         const std::array<size_t, 8> sizes = {
             4096,
             8,
@@ -209,46 +195,44 @@ void testBmallocDisableAllocationsAboveMTETaggingCeiling(BmallocHeapVariant vari
             PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE * 4
         };
         for (auto size : sizes) {
-            void* mem = try_allocate(size, mode);
+            void* mem = try_allocate(size);
             CHECK(mem);
         }
     };
 
-    do_allocate_and_check(pas_non_compact_allocation_mode);
-    do_allocate_and_check(pas_always_compact_allocation_mode);
+    do_allocate_and_check();
 
     // Simulate the effects of MTE enablement by forcing larger allocations
     // into the large heap or system heap
     pas_mte_force_nontaggable_user_allocations_into_large_heap();
 
-    do_allocate_and_check(pas_non_compact_allocation_mode);
-    do_allocate_and_check(pas_always_compact_allocation_mode);
+    do_allocate_and_check();
 }
 
 void testBmallocSmallIndexOverlap(BmallocHeapVariant variant)
 {
-    auto try_allocate = [variant](size_t size, pas_allocation_mode mode) -> void* {
+    auto try_allocate = [variant](size_t size) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate(size);
-        return bmalloc_try_allocate(size, mode);
+        return bmalloc_try_allocate(size);
     };
-    auto try_allocate_with_alignment = [variant](size_t size, size_t alignment, pas_allocation_mode mode) -> void* {
+    auto try_allocate_with_alignment = [variant](size_t size, size_t alignment) -> void* {
         if (variant == BmallocHeapVariant::Tagged)
             return tagged_bmalloc_try_allocate_with_alignment(size, alignment);
-        return bmalloc_try_allocate_with_alignment(size, alignment, mode);
+        return bmalloc_try_allocate_with_alignment(size, alignment);
     };
 
     // object_size = 16 * index for this heap.
     // Creates directory A with min_index = 97, object_size = 1616
-    void* mem0 = try_allocate(1552, pas_non_compact_allocation_mode);
+    void* mem0 = try_allocate(1552);
     CHECK(mem0);
     // Extends directory A to have min_index = 96, object_size = 1616
-    void* mem1 = try_allocate(1536, pas_non_compact_allocation_mode);
+    void* mem1 = try_allocate(1536);
     CHECK(mem1);
     // Install index is 94. Directory A is a "candidate" but doesn't satisfy alignment,
     // so new directory B is created with min_index = 94, object_size = 1536.
     // Directory B overlaps directory A at index 96 (1536 / 16).
-    void* mem2 = try_allocate_with_alignment(1504, 32, pas_non_compact_allocation_mode);
+    void* mem2 = try_allocate_with_alignment(1504, 32);
     CHECK(mem2);
 }
 

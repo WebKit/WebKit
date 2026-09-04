@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Apple Inc. All rights reserved.
+ * Copyright (c) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PAS_SMALL_MEDIUM_BOOTSTRAP_FREE_HEAP_H
-#define PAS_SMALL_MEDIUM_BOOTSTRAP_FREE_HEAP_H
+#ifndef PAS_MTE_BOOTSTRAP_HEAP_PAGE_PROVIDER_H
+#define PAS_MTE_BOOTSTRAP_HEAP_PAGE_PROVIDER_H
 
-#include "pas_allocation_config.h"
-#include "pas_allocation_kind.h"
-#include "pas_lock.h"
-#include "pas_simple_large_free_heap.h"
+#include "pas_heap_page_provider.h"
 
 PAS_BEGIN_EXTERN_C;
 
-#define PAS_SIMPLE_FREE_HEAP_NAME pas_small_medium_bootstrap_free_heap
-#define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_small_medium_bootstrap_free_heap ## suffix
-#include "pas_simple_free_heap_declarations.def"
-#undef PAS_SIMPLE_FREE_HEAP_NAME
-#undef PAS_SIMPLE_FREE_HEAP_ID
+PAS_API pas_allocation_result pas_mte_bootstrap_heap_page_provider(
+    size_t size,
+    pas_alignment alignment,
+    const char* name,
+    pas_heap* heap,
+    pas_physical_memory_transaction* transaction,
+    void *arg);
 
 PAS_END_EXTERN_C;
 
-#endif /* PAS_SMALL_MEDIUM_BOOTSTRAP_FREE_HEAP_H */
+#endif /* PAS_MTE_BOOTSTRAP_HEAP_PAGE_PROVIDER_H */
+

@@ -85,7 +85,7 @@ void* StructureAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 #if USE(LIBPAS)
 
 static const bmalloc_type structureHeapType { BMALLOC_TYPE_INITIALIZER(MarkedBlock::blockSize, MarkedBlock::blockSize, "Structure Heap") };
-static pas_primitive_heap_ref structureHeap { BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&structureHeapType, pas_bmalloc_heap_ref_kind_compact) };
+static pas_primitive_heap_ref structureHeap { BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&structureHeapType) };
 
 #elif USE(MIMALLOC)
 
@@ -148,7 +148,7 @@ public:
     {
         if (!m_useSystemHeap) [[likely]] {
 #if USE(LIBPAS)
-            void* result = bmalloc_try_allocate_auxiliary_with_alignment_inline(&structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize, pas_always_compact_allocation_mode);
+            void* result = bmalloc_try_allocate_auxiliary_with_alignment_inline(&structureHeap, MarkedBlock::blockSize, MarkedBlock::blockSize);
 
 #if PLATFORM(PLAYSTATION)
             // libpas isn't calling pas_page_malloc commit, so we've got to commit the region ourselves

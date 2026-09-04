@@ -56,7 +56,6 @@ struct pas_local_allocator {
     bool current_word_is_valid : 1; /* This is just used by enumeration. */
     bool is_small : 1; /* Marks that this local allocator is used to allocate small objects. */
     bool is_profiled; /* Marks that allocations coming out of this local allocator should be profiled. */
-    bool is_mte_tagged; /* Marks that allocations coming out of this local allocator are MTE-tagged. */
 
     /* This has to have a pointer to our index within the view. We can get to the view using
        page_ish. Maybe worth reconsidering that, but then again maybe it's good enough. 
@@ -94,7 +93,6 @@ struct pas_local_allocator {
         .current_word_is_valid = false, \
         .is_small = 0, \
         .is_profiled = 0, \
-        .is_mte_tagged = 0, \
         .current_word = 0, \
         .config_kind = pas_local_allocator_config_kind_null \
     })

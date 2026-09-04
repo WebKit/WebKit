@@ -29,7 +29,12 @@
 
 #include "pas_deallocate.h"
 
+#include "pas_heap.h"
+#include "pas_heap_config_kind.h"
+#include "pas_large_map.h"
 #include "pas_malloc_stack_logging.h"
+#include "pas_mte.h"
+#include "pas_page_base.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_scavenger.h"
 #include "pas_segregated_page_inlines.h"
@@ -43,9 +48,9 @@ bool pas_try_deallocate_known_large(void* ptr,
 
     begin = (uintptr_t)ptr;
     PAS_PROFILE(TRY_DEALLOCATE_KNOWN_LARGE, config, begin);
-    
+
     pas_heap_lock_lock();
-    
+
     if (!pas_large_heap_try_deallocate(begin, config)) {
         switch (deallocation_mode) {
         case pas_try_deallocate_mode:
@@ -58,7 +63,7 @@ bool pas_try_deallocate_known_large(void* ptr,
         }
         PAS_ASSERT_NOT_REACHED();
     }
-    
+
     pas_heap_lock_unlock();
     
     pas_scavenger_notify_eligibility_if_needed();
@@ -130,7 +135,10 @@ bool pas_try_deallocate_slow_no_cache(void* ptr,
     if (PAS_UNLIKELY(pas_system_heap_should_supplant_bmalloc(config_ptr->kind))) {
         if (verbose)
             pas_log("Deallocating %p with system heap.\n", ptr);
-        PAS_ASSERT(deallocation_mode == pas_deallocate_mode);
+        // The system heap does not provide a try_free API, because not all platform mallocs
+        // provide one. Cleanly failing here is better than potentially crashing inside ::free
+        if (deallocation_mode != pas_deallocate_mode)
+            return false;
         pas_system_heap_free(ptr);
         return true;
     }

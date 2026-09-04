@@ -26,7 +26,6 @@
 #ifndef PAS_SEGREGATED_HEAP_CONFIG_H
 #define PAS_SEGREGATED_HEAP_CONFIG_H
 
-#include "pas_allocation_mode.h"
 #include "pas_allocation_result.h"
 #include "pas_bitvector.h"
 #include "pas_config.h"
@@ -78,7 +77,6 @@ typedef void (*pas_segregated_page_config_dealloc_func)(pas_thread_local_cache* 
 
 typedef bool (*pas_segregated_page_config_specialized_local_allocator_refill)(
     pas_local_allocator* allocator,
-    pas_allocation_mode allocation_mode,
     pas_allocator_counts* counts);
 typedef void (*pas_segregated_page_config_specialized_local_allocator_return_memory_to_page)(
     pas_local_allocator* allocator,
@@ -171,7 +169,6 @@ PAS_API extern bool pas_medium_segregated_page_config_variant_is_enabled_overrid
 #define PAS_SEGREGATED_PAGE_CONFIG_TLC_SPECIALIZATION_DECLARATIONS(lower_case_page_config_name) \
     PAS_API bool lower_case_page_config_name ## _specialized_local_allocator_refill( \
         pas_local_allocator* allocator, \
-        pas_allocation_mode allocation_mode, \
         pas_allocator_counts* counts); \
     PAS_API void \
     lower_case_page_config_name ## _specialized_local_allocator_return_memory_to_page( \

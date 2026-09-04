@@ -55,7 +55,7 @@ static const bmalloc_type primitiveGigacageType = BMALLOC_TYPE_INITIALIZER(1, 1,
 } // anonymous namespace
 
 pas_primitive_heap_ref gigacageHeaps[static_cast<size_t>(Gigacage::NumberOfKinds)] = {
-    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&primitiveGigacageType, pas_bmalloc_heap_ref_kind_non_compact),
+    BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(&primitiveGigacageType),
 };
 #endif
 
@@ -66,7 +66,19 @@ void* mallocOutOfLine(size_t size, CompactAllocationMode mode, HeapKind kind)
 
 void freeOutOfLine(void* object, HeapKind kind)
 {
+#if BUSE(LIBPAS)
+    BUNUSED(kind);
+    if (bmalloc_try_deallocate_casual(object))
+        return;
+    // We stuff this in the out-of-line path because we expect it to never be
+    // hit in non-hardened WebContent processes, where we're most performance-
+    // sensitive. In processes where MTE is enabled, we can absorb the cost.
+    if (tagged_bmalloc_try_deallocate_inline_only(object))
+        return;
+    tagged_bmalloc_deallocate_casual(object);
+#else
     free(object, kind);
+#endif
 }
 
 void* tryLargeZeroedMemalignVirtual(size_t requiredAlignment, size_t requestedSize, CompactAllocationMode mode, HeapKind kind)
@@ -139,17 +151,6 @@ void scavenge()
 bool isEnabled(HeapKind)
 {
     return !Environment::get()->shouldBmallocAllocateThroughSystemHeap();
-}
-
-bool isMTEEnabled(HeapKind kind)
-{
-    BUNUSED_PARAM(kind);
-#if PAS_BMALLOC && defined(PAS_ENABLE_MTE) && PAS_ENABLE_MTE
-    // MTE is not currently enabled for the Gigacage
-    return isEnabled(kind) && kind == HeapKind::Primary && pas_mte_is_mte_enabled();
-#else
-    return false;
-#endif
 }
 
 #if BOS(DARWIN)

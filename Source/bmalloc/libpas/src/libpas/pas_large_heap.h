@@ -27,7 +27,6 @@
 #define PAS_LARGE_HEAP_H
 
 #include "pas_fast_large_free_heap.h"
-#include "pas_allocation_mode.h"
 #include "pas_heap_summary.h"
 #include "pas_heap_table_state.h"
 #include "pas_large_map_variant.h"
@@ -46,18 +45,16 @@ struct pas_large_heap {
     uint16_t index;
     pas_heap_table_state table_state : 8;
     pas_large_map_variant variant : 8;
-    bool is_megapage_heap;
 };
 
 /* Note that all of these functions have to be called with the heap lock held. */
 
 /* NOTE: it's only valid to construct a large heap that is a member of a pas_heap. */
-PAS_API void pas_large_heap_construct(pas_large_heap* heap, pas_large_map_variant variant, bool is_megapage_heap);
+PAS_API void pas_large_heap_construct(pas_large_heap* heap, pas_large_map_variant variant);
 
 PAS_API pas_allocation_result
 pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
                                        size_t size, size_t alignment,
-                                       pas_allocation_mode allocation_mode,
                                        const pas_heap_config* config,
                                        pas_physical_memory_transaction* transaction);
 
@@ -75,7 +72,6 @@ pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
 PAS_API pas_allocation_result
 pas_large_heap_try_allocate_user_allocation(pas_large_heap* heap,
                                             size_t size, size_t alignment,
-                                            pas_allocation_mode allocation_mode,
                                             const pas_heap_config* config,
                                             pas_physical_memory_transaction* transaction);
 

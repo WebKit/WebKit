@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Apple Inc. All rights reserved.
+ * Copyright (c) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,35 +27,46 @@
 
 #if LIBPAS_ENABLED
 
-#include "pas_small_medium_bootstrap_heap_page_provider.h"
+#include "pas_mte_bootstrap_free_heap.h"
 
-#include "pas_small_medium_bootstrap_free_heap.h"
+#include "pas_config.h"
+#include "pas_enumerable_page_malloc.h"
+#include "pas_heap_lock.h"
+#include "pas_large_free_heap_config.h"
+#include "pas_simple_free_heap_helpers.h"
 
-pas_allocation_result pas_small_medium_bootstrap_heap_page_provider(
-    size_t size,
-    pas_alignment alignment,
-    const char* name,
-    pas_heap* heap,
-    pas_physical_memory_transaction* transaction,
-    void *arg)
+static pas_aligned_allocation_result bootstrap_source_allocate_aligned(size_t size,
+                                                                       pas_alignment alignment,
+                                                                       void* arg)
 {
     PAS_UNUSED_PARAM(arg);
-    PAS_UNUSED_PARAM(heap);
-    PAS_UNUSED_PARAM(transaction);
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BOOTSTRAP_HEAPS);
 
     if (verbose)
-        pas_log("small/medium bootstrap heap page-provider allocating %zu for %s\n", size, name);
+        pas_log("small/medium bootstrap heap allocating %zu\n", size);
 
-    PAS_PROFILE(SMALL_MEDIUM_BOOTSTRAP_ALLOCATION, heap, size, alignment, name, arg);
-
-    pas_allocation_result retval = pas_small_medium_bootstrap_free_heap_try_allocate_with_alignment(
-        size, alignment, name, pas_delegate_allocation);
+    pas_aligned_allocation_result retval = pas_enumerable_page_malloc_try_allocate_without_deallocating_padding(size, alignment, true);
 
     if (verbose)
-        pas_log("small/medium bootstrap heap page-provider done allocating\n");
+        pas_log("small/medium bootstrap heap done allocating, returning %p.\n", retval.result);
 
     return retval;
 }
+
+static void initialize_config(pas_large_free_heap_config* config)
+{
+    config->type_size = 1;
+    config->min_alignment = 1;
+    config->aligned_allocator = bootstrap_source_allocate_aligned;
+    config->aligned_allocator_arg = NULL;
+    config->deallocator = NULL;
+    config->deallocator_arg = NULL;
+}
+
+#define PAS_SIMPLE_FREE_HEAP_NAME pas_mte_bootstrap_free_heap
+#define PAS_SIMPLE_FREE_HEAP_ID(suffix) pas_mte_bootstrap_free_heap ## suffix
+#include "pas_simple_free_heap_definitions.def"
+#undef PAS_SIMPLE_FREE_HEAP_NAME
+#undef PAS_SIMPLE_FREE_HEAP_ID
 
 #endif /* LIBPAS_ENABLED */

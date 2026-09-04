@@ -29,7 +29,6 @@
 
 #include "pas_large_heap.h"
 
-#include "pas_allocation_mode.h"
 #include "pas_compute_summary_object_callbacks.h"
 #include "pas_heap.h"
 #include "pas_heap_config.h"
@@ -44,7 +43,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void pas_large_heap_construct(pas_large_heap* heap, pas_large_map_variant variant, bool is_megapage_heap)
+void pas_large_heap_construct(pas_large_heap* heap, pas_large_map_variant variant)
 {
     /* Warning: anything you do here must be duplicated in
        pas_try_allocate_intrinsic.h. */
@@ -53,7 +52,6 @@ void pas_large_heap_construct(pas_large_heap* heap, pas_large_map_variant varian
     heap->table_state = pas_heap_table_state_uninitialized;
     heap->index = 0;
     heap->variant = variant;
-    heap->is_megapage_heap = is_megapage_heap;
 }
 
 typedef struct {
@@ -97,7 +95,6 @@ static void initialize_config(pas_large_free_heap_config* config,
 static pas_allocation_result allocate_impl(pas_large_heap* heap,
                                            size_t* size,
                                            size_t* alignment,
-                                           pas_allocation_mode allocation_mode,
                                            const pas_heap_config* heap_config,
                                            pas_physical_memory_transaction* transaction)
 {
@@ -153,45 +150,25 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     }
 
     PAS_ASSERT(pas_is_aligned(result.begin, *alignment));
-    PAS_PROFILE(LARGE_HEAP_ALLOCATION, heap_config, result.begin, *size, allocation_mode);
-    
+    PAS_PROFILE(LARGE_HEAP_ALLOCATION, heap_config, result.begin, *size);
+
     return result;
 }
 
 static pas_allocation_result delegated_allocate_impl(size_t size,
                                                      size_t alignment,
-                                                     pas_allocation_mode allocation_mode,
                                                      const pas_heap_config* heap_config)
 {
-    pas_allocation_result result;
-
     PAS_TESTING_ASSERT(pas_system_heap_is_enabled(heap_config->kind));
-    switch (allocation_mode) {
-    case pas_non_compact_allocation_mode:
-        if (alignment > sizeof(void*))
-            result.begin = (uintptr_t)pas_system_heap_memalign(alignment, size);
-        else
-            result.begin = (uintptr_t)pas_system_heap_malloc(size);
-        break;
-    case pas_always_compact_allocation_mode:
-    case pas_maybe_compact_allocation_mode:
-        PAS_ASSERT_NOT_REACHED();
-        break;
-    }
 
-    if (!result.begin) {
-        result.did_succeed = false;
-        return result;
-    }
-    result.zero_mode = pas_zero_mode_may_have_non_zero;
-    result.did_succeed = true;
-
-    return result;
+    /* Only a heap that tags its own memory can accept MTE-tagged memory back from the
+       system allocator. Everyone else has to ask for canonically-tagged memory, since
+       their callers may store the result somewhere that cannot carry a tag. */
+    return pas_system_heap_allocate(size, alignment, heap_config->allow_mte_tagging);
 }
 
 PAS_IGNORE_WARNINGS_BEGIN("unreachable-code")
 static bool should_delegate_user_allocation_to_system_malloc(size_t size,
-                                                             pas_allocation_mode allocation_mode,
                                                              const pas_heap_config* heap_config)
 {
     if (!PAS_MTE_USE_LARGE_OBJECT_DELEGATION)
@@ -199,8 +176,7 @@ static bool should_delegate_user_allocation_to_system_malloc(size_t size,
     if (size < PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE)
         return false;
     return (pas_system_heap_is_enabled(heap_config->kind)
-            && heap_config->delegate_large_user_allocations
-            && allocation_mode == pas_non_compact_allocation_mode);
+            && heap_config->delegate_large_user_allocations);
 }
 PAS_IGNORE_WARNINGS_END;
 
@@ -208,18 +184,16 @@ pas_allocation_result
 pas_large_heap_try_allocate_and_forget(pas_large_heap* heap,
                                        size_t size,
                                        size_t alignment,
-                                       pas_allocation_mode allocation_mode,
                                        const pas_heap_config* heap_config,
                                        pas_physical_memory_transaction* transaction)
 {
-    return allocate_impl(heap, &size, &alignment, allocation_mode, heap_config, transaction);
+    return allocate_impl(heap, &size, &alignment, heap_config, transaction);
 }
 
 pas_allocation_result
 pas_large_heap_try_allocate_user_allocation(pas_large_heap* heap,
                                             size_t size,
                                             size_t alignment,
-                                            pas_allocation_mode allocation_mode,
                                             const pas_heap_config* heap_config,
                                             pas_physical_memory_transaction* transaction)
 {
@@ -227,12 +201,12 @@ pas_large_heap_try_allocate_user_allocation(pas_large_heap* heap,
     pas_large_map_entry entry;
 
     entry.delegated_to_system_malloc =
-        should_delegate_user_allocation_to_system_malloc(size, allocation_mode, heap_config);
+        should_delegate_user_allocation_to_system_malloc(size, heap_config);
     if (entry.delegated_to_system_malloc)
-        result = delegated_allocate_impl(size, alignment, allocation_mode, heap_config);
+        result = delegated_allocate_impl(size, alignment, heap_config);
     else
         result = allocate_impl(
-            heap, &size, &alignment, allocation_mode, heap_config, transaction);
+            heap, &size, &alignment, heap_config, transaction);
     if (!result.did_succeed)
         return result;
 
@@ -252,8 +226,12 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
 
     pas_heap_lock_assert_held();
     
-    map_entry = pas_large_map_take(begin);
-    
+    /* Peek without removing. The user-facing free path (see freeOutOfLine in
+       bmalloc.cpp) tries one heap config at a time, and the large map is global
+       and address-keyed, so an entry found here may belong to a different heap
+       config. We must not take (destructively remove) an entry that isn't ours. */
+    map_entry = pas_large_map_find(begin);
+
     if (pas_large_map_entry_is_empty(map_entry)) {
         if (heap_config->pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin)) {
             pas_probabilistic_guard_malloc_deallocate((void *) begin);
@@ -263,9 +241,20 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
         return false;
     }
 
+    /* The entry exists but is owned by a different heap config. Report "not ours"
+       (leaving it in the map) so the caller can retry with the correct config. In
+       pas_deallocate_mode the caller has already committed to this config, so this
+       surfaces as a deallocation failure rather than silently freeing under the
+       wrong config. */
+    if (pas_heap_config_kind_get_config(
+            pas_heap_for_large_heap(map_entry.heap)->config_kind)
+        != heap_config)
+        return false;
+
     PAS_IGNORE_WARNINGS_BEGIN("unreachable-code");
     if (PAS_MTE_USE_LARGE_OBJECT_DELEGATION) {
         if (map_entry.delegated_to_system_malloc) {
+            pas_large_map_take(begin);
             pas_system_heap_free((void*)map_entry.begin);
             return true;
         }
@@ -273,11 +262,11 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
         PAS_TESTING_ASSERT(!map_entry.delegated_to_system_malloc);
     PAS_IGNORE_WARNINGS_END;
 
+    map_entry = pas_large_map_take(begin);
+    PAS_ASSERT(!pas_large_map_entry_is_empty(map_entry));
+
     PAS_PROFILE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
     PAS_MTE_HANDLE(LARGE_MAP_TOOK_ENTRY, heap_config, map_entry.begin, map_entry.end);
-    PAS_ASSERT(pas_heap_config_kind_get_config(
-                   pas_heap_for_large_heap(map_entry.heap)->config_kind)
-               == heap_config);
 
     if (heap_config->aligned_allocator_talks_to_sharing_pool) {
         pas_large_sharing_pool_free(

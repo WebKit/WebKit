@@ -281,7 +281,6 @@ typedef struct {
     pas_stats_stat_base base;
     uint64_t total_bytes_mapped;
     uint64_t bytes_mapped_mte_tagged;
-    uint64_t bytes_mapped_may_contain_small_or_medium;
 } pas_stats_page_alloc_counts_data;
 
 #define PAS_STATS_UINT64_MAX_STRING_LEN 20
@@ -292,7 +291,7 @@ PAS_API char* pas_stats_malloc_info_dump_to_json(void* stat_v);
 PAS_API void pas_stats_malloc_info_record(pas_stats_malloc_info_data* data, pas_stats_heap_type heap_type, size_t size, size_t count);
 
 PAS_API char* pas_stats_page_alloc_counts_dump_to_json(void* stat_v);
-PAS_API void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data* data, size_t size, bool may_contain_small_or_medium, bool mapped_with_mte);
+PAS_API void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data* data, size_t size, bool mapped_with_mte);
 
 // Arguments:
 //   - stat-name
@@ -306,8 +305,8 @@ PAS_API void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data
 
 
 // FIXME: in principle it should be possible to automatically generate this via PAS_STATS_FOR_EACH_COUNTER, somehow
-#define PAS_RECORD_STAT_page_alloc_counts(data, size, may_contain_small_or_medium, mapped_with_mte) \
-    pas_stats_page_alloc_counts_record(data, size, may_contain_small_or_medium, mapped_with_mte)
+#define PAS_RECORD_STAT_page_alloc_counts(data, size, mapped_with_mte) \
+    pas_stats_page_alloc_counts_record(data, size, mapped_with_mte)
 #define PAS_RECORD_STAT_malloc_info_bytes(data, heap_type, size) \
     pas_stats_malloc_info_record(data, heap_type, size, size)
 #define PAS_RECORD_STAT_malloc_info_allocations(data, heap_type, size) \
