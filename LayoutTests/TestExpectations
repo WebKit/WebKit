@@ -5834,14 +5834,6 @@ webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-external-module.html [ Pass Failure ]
 webkit.org/b/217931 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/move-back-iframe-success-inline-classic.html [ Pass Failure ]
 
-
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-deep-chain-001.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-inheritance-001.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-no-named-rule-001.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-no-named-rule-002.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-painting-001.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-painting-002.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/custom-highlight-universal-painting-003.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-currentcolor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/highlight-image-stacked.html [ ImageOnlyFailure ]
 

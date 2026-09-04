@@ -1006,11 +1006,18 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
         }
 #endif
         case CSSSelector::PseudoElement::Highlight: {
-            auto& ident = block.consumeIncludingWhitespace();
-            if (ident.type() != IdentToken || !block.atEnd())
+            auto& token = block.consumeIncludingWhitespace();
+            if (!block.atEnd())
                 return nullptr;
-            selector->setStringList({ { ident.value().toAtomString() } });
-            return selector;
+            if (token.type() == IdentToken) {
+                selector->setStringList({ { token.value().toAtomString() } });
+                return selector;
+            }
+            if (token.type() == DelimiterToken && token.delimiter() == '*') {
+                selector->setStringList({ { nullAtom() } });
+                return selector;
+            }
+            return nullptr;
         }
 
         case CSSSelector::PseudoElement::Picker: {
@@ -1030,7 +1037,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
 
             // Check for implicit universal selector.
             if (block.peek().type() == DelimiterToken && block.peek().delimiter() == '.')
-                nameAndClasses.append(starAtom());
+                nameAndClasses.append(nullAtom());
 
             // Parse name or explicit universal selector.
             if (nameAndClasses.isEmpty()) {
@@ -1038,7 +1045,7 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumePseudo(CSSParserTo
                 if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
                     nameAndClasses.append(ident.value().toAtomString());
                 else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
-                    nameAndClasses.append(starAtom());
+                    nameAndClasses.append(nullAtom());
                 else
                     return nullptr;
             }
@@ -1516,10 +1523,14 @@ std::optional<Style::PseudoElementIdentifier> CSSSelectorParser::parsePseudoElem
     block.consumeWhitespace();
     switch (*pseudoElement) {
     case CSSSelector::PseudoElement::Highlight: {
-        auto& ident = block.consumeIncludingWhitespace();
-        if (ident.type() != IdentToken || !block.atEnd())
+        auto& token = block.consumeIncludingWhitespace();
+        if (!block.atEnd())
             return { };
-        return { Style::PseudoElementIdentifier { PseudoElementType::Highlight, ident.value().toAtomString() } };
+        if (token.type() == IdentToken)
+            return { Style::PseudoElementIdentifier { PseudoElementType::Highlight, token.value().toAtomString() } };
+        if (token.type() == DelimiterToken && token.delimiter() == '*')
+            return { Style::PseudoElementIdentifier { PseudoElementType::Highlight, starAtom() } };
+        return { };
     }
     case CSSSelector::PseudoElement::ViewTransitionGroup:
     case CSSSelector::PseudoElement::ViewTransitionImagePair:
