@@ -1984,16 +1984,35 @@ if not C_LOOP
             # Because of ARM64 calling convention, stack-pointer is already 16-byte aligned.
             # Let's check address is aligned or not to use 16-byte zero-fill.
             assert(macro (ok)  btpz a0, (PtrSize * 2 - 1), ok end)
-            btpz address, (PtrSize * 2 - 1), .zeroFillLoop
+            btpz address, (PtrSize * 2 - 1), .zeroFillAligned
             # If it is not aligned, then store pointer-size and increment.
             emit "str xzr, [x1], #8" # address is a1, thus x1
             bpbeq a0, address, .zeroFillDone
+        .zeroFillAligned:
             assert(macro (ok)  btpz address, (PtrSize * 2 - 1), ok end)
+            # dc zva clears a whole zero block per instruction without reading memory, roughly
+            # twice the throughput of a store-pair loop. It is only usable when that block is one
+            # 64-byte cache line (DCZID_EL0.BS == 4) and unprivileged use is permitted
+            # (DCZID_EL0.DZP == 0); every other bit of the register is RES0, so both conditions
+            # hold exactly when it reads 4.
+            emit "mrs x2, dczid_el0" # scratch is a2, thus x2
+            bpneq scratch, 4, .zeroFillLoop
+        .zeroFillToBlock:
+            btpz address, 63, .zeroFillBlocks
+            emit "stp xzr, xzr, [x1], #16" # address is a1, thus x1
+            bpa a0, address, .zeroFillToBlock
+            jmp .zeroFillDone
+        .zeroFillBlocks:
+            emit "and x2, x0, #-64" # scratch = the last block boundary at or below the end
+            bpbeq scratch, address, .zeroFillLoop
+        .zeroFillBlockLoop:
+            emit "dc zva, x1" # address is a1, thus x1
+            addp 64, address
+            bpa scratch, address, .zeroFillBlockLoop
+            bpbeq a0, address, .zeroFillDone
         .zeroFillLoop:
-            # Use non-temporal store-pair (stnp) since these stack values are meaningless to the execution.
-            # Avoid polluting CPU cache by using stnp.
-            emit "stnp xzr, xzr, [x1]" # address is a1, thus x1
-            addp PtrSize * 2, address
+            # stp, not stnp: for regions this small the non-temporal hint measures slower.
+            emit "stp xzr, xzr, [x1], #16" # address is a1, thus x1
             bpa a0, address, .zeroFillLoop
         else
             move 0, scratch
