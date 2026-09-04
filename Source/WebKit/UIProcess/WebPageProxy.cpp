@@ -2981,6 +2981,11 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
         navigation->setBackForwardTraversalWasDispatched(true);
     }
 
+    if (preferences->useUIProcessForBackForwardItemLoading()) {
+        if (RefPtr currentItem = backForwardList().currentItem())
+            dispatchSameDocumentJointTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), frameLoadType, frameItem.frameID());
+    }
+
     return RefPtr<API::Navigation> { WTF::move(navigation) };
 }
 
@@ -3214,6 +3219,49 @@ void WebPageProxy::enqueueHistoryTraversalDelta(int32_t delta)
 int32_t WebPageProxy::inFlightTraversalDirection() const
 {
     return m_sessionHistoryTraversalQueue->inFlightDirection();
+}
+
+void WebPageProxy::dispatchSameDocumentJointTraversals(WebBackForwardListFrameItem& fromFrameItem, WebBackForwardListFrameItem& toFrameItem, FrameLoadType frameLoadType, std::optional<WebCore::FrameIdentifier> primaryFrameID)
+{
+    auto fromSeq = fromFrameItem.frameState().itemSequenceNumber;
+    auto toSeq = toFrameItem.frameState().itemSequenceNumber;
+
+    bool itemsMatch = fromSeq == toSeq;
+    if (!itemsMatch) {
+        bool sameDocument = fromFrameItem.frameState().documentSequenceNumber == toFrameItem.frameState().documentSequenceNumber;
+        auto frameID = toFrameItem.frameID();
+        bool isPrimary = primaryFrameID && frameID && *frameID == *primaryFrameID;
+        if (sameDocument && !isPrimary && frameID) {
+            if (RefPtr webFrame = WebFrameProxy::webFrame(*frameID); webFrame && webFrame->page() == this) {
+                if (webFrame->provisionalFrame())
+                    WEBPAGEPROXY_RELEASE_LOG(Loading, "dispatchSameDocumentJointTraversals: skipping frameID=%" PRIu64 " (provisional load in flight)", frameID->toUInt64());
+                else {
+                    Ref process = webFrame->process();
+                    process->send(Messages::WebPage::ApplyHistoryTraversalToFrame(toFrameItem.copyFrameState(), fromFrameItem.copyFrameState(), frameLoadType), webPageIDInProcess(process));
+                }
+            }
+        }
+    }
+
+    for (auto& toChild : toFrameItem.children()) {
+        auto childFrameID = toChild->frameID();
+        if (!childFrameID)
+            continue;
+        RefPtr fromChild = fromFrameItem.childItemForFrameID(*childFrameID);
+        if (!fromChild) {
+            WEBPAGEPROXY_RELEASE_LOG(Loading, "dispatchSameDocumentJointTraversals: target child frameID=%" PRIu64 " has no counterpart in current; skipping", childFrameID->toUInt64());
+            continue;
+        }
+        dispatchSameDocumentJointTraversals(*fromChild, toChild.get(), frameLoadType, primaryFrameID);
+    }
+
+    for (auto& fromChild : fromFrameItem.children()) {
+        auto childFrameID = fromChild->frameID();
+        if (!childFrameID)
+            continue;
+        if (!toFrameItem.childItemForFrameID(*childFrameID))
+            WEBPAGEPROXY_RELEASE_LOG(Loading, "dispatchSameDocumentJointTraversals: current child frameID=%" PRIu64 " has no counterpart in target; same-document step (if any) for this frame is dropped", childFrameID->toUInt64());
+    }
 }
 
 bool WebPageProxy::shouldKeepCurrentBackForwardListItemInList(WebBackForwardListItem& item)

@@ -2901,6 +2901,52 @@ void WebPage::goToBackForwardItemWaitingForProcessLaunch(GoToBackForwardItemPara
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+void WebPage::applyHistoryTraversalToFrame(Ref<FrameState>&& toFrameState, Ref<FrameState>&& fromFrameState, FrameLoadType frameLoadType)
+{
+    RELEASE_ASSERT(corePage()->settings().useUIProcessForBackForwardItemLoading());
+
+    auto frameID = toFrameState->frameID;
+    if (!frameID) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "applyHistoryTraversalToFrame: missing frameID in toFrameState");
+        return;
+    }
+
+    RefPtr webFrame = WebProcess::singleton().webFrame(*frameID);
+    if (!webFrame || webFrame->page() != this) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "applyHistoryTraversalToFrame: no live local frame for frameID=%" PRIu64, frameID->toUInt64());
+        return;
+    }
+
+    RefPtr localFrame = webFrame->coreLocalFrame();
+    if (!localFrame) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "applyHistoryTraversalToFrame: frame is not local for frameID=%" PRIu64, frameID->toUInt64());
+        return;
+    }
+
+    RefPtr<HistoryItem> toItem;
+    RefPtr<HistoryItem> fromItem;
+    {
+        auto ignoreHistoryItemChangesForScope = m_historyItemClient->ignoreChangesForScope();
+        toItem = toHistoryItem(m_historyItemClient, toFrameState);
+        fromItem = toHistoryItem(m_historyItemClient, fromFrameState);
+    }
+
+    if (!toItem || !fromItem) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "applyHistoryTraversalToFrame: toHistoryItem returned null (frameID=%" PRIu64 ")", frameID->toUInt64());
+        return;
+    }
+
+    RefPtr currentItem = localFrame->loader().history().currentItem();
+    if (!currentItem || currentItem->documentSequenceNumber() != fromItem->documentSequenceNumber()) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "applyHistoryTraversalToFrame: frame currentItem documentSequenceNumber mismatch — bailing (frameID=%" PRIu64 ")", frameID->toUInt64());
+        return;
+    }
+
+    WEBPAGE_RELEASE_LOG(Loading, "applyHistoryTraversalToFrame: frameID=%" PRIu64 ", frameLoadType=%u, url=%" SENSITIVE_LOG_STRING, frameID->toUInt64(), static_cast<unsigned>(frameLoadType), toItem->url().string().utf8().data());
+
+    localFrame->loader().loadItem(*toItem, fromItem.get(), frameLoadType, ShouldTreatAsContinuingLoad::No, ShouldRestoreFromBackForwardCache::Unspecified);
+}
+
 void WebPage::tryRestoreScrollPosition()
 {
     if (RefPtr localMainFrame = this->localMainFrame())

@@ -2152,6 +2152,17 @@ WKURLRef TestController::createTestURL(std::span<const char> pathOrURL)
     return url.leakRef();
 }
 
+// FIXME: remove once test infrastructure auto-enables
+// UseUIProcessForBackForwardItemLoading under SiteIsolation
+// (https://bugs.webkit.org/show_bug.cgi?id=316588 / rdar://179043211 follow-up).
+static TestFeatures siteIsolationImpliedFeaturesForTest(const TestCommand& command)
+{
+    TestFeatures features;
+    if (command.pathOrURL.find("html/browsers/history/the-history-interface/001.html") != std::string::npos)
+        features.boolWebPreferenceFeatures.insert({ "UseUIProcessForBackForwardItemLoading", true });
+    return features;
+}
+
 TestOptions TestController::testOptionsForTest(const TestCommand& command) const
 {
     TestFeatures features = TestOptions::defaults();
@@ -2162,6 +2173,11 @@ TestOptions TestController::testOptionsForTest(const TestCommand& command) const
     merge(features, featureDefaultsFromTestHeaderForTest(command, TestOptions::keyTypeMapping()));
     merge(features, featureFromAdditionalHeaderOption(command, TestOptions::keyTypeMapping()));
     merge(features, platformSpecificFeatureOverridesDefaultsForTest(command));
+
+    auto siteIsolationIt = features.boolWebPreferenceFeatures.find("SiteIsolationEnabled");
+    if (siteIsolationIt != features.boolWebPreferenceFeatures.end() && siteIsolationIt->second)
+        merge(features, siteIsolationImpliedFeaturesForTest(command));
+
     return TestOptions { features };
 }
 
