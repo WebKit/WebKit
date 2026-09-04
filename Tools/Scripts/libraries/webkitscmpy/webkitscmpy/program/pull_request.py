@@ -468,6 +468,23 @@ class PullRequest(Command):
             print('Posted pull request link to {}'.format(issue.link))
 
     @classmethod
+    def is_merge_back_radar(cls, issue):
+        return bool(issue and issue.title and issue.title.startswith('[merge-back]'))
+
+    @classmethod
+    def confirm_merge_back_pr_creation(cls, args, radar_issue):
+        # A fresh PR here loses the title format the merge-back automation relies on to
+        # recognize the source as landed, which can get it re-dispatched as a duplicate.
+        if not cls.is_merge_back_radar(radar_issue) or args.defaults:
+            return True
+        return Terminal.choose(
+            "'{}' looks like a WebKit security merge-back conflict.\n"
+            "Are you sure you want to use this tool instead of following the resolution instructions?".format(radar_issue.link),
+            options=('Yes', 'No'),
+            default='No',
+        ) == 'Yes'
+
+    @classmethod
     def create_pull_request(cls, repository, args, branch_point, callback=None, unblock=True, update_issue=None):
         if update_issue is None:
             update_issue = getattr(args, 'update_issue', True)
@@ -659,6 +676,10 @@ class PullRequest(Command):
                     ).returncode not in [0, 3]:
                         sys.stderr.write("Failed to add '{}' remote\n".format(target))
                         return 1
+
+        if not existing_pr and not cls.confirm_merge_back_pr_creation(args, radar_issue):
+            sys.stderr.write("User declined to create a new pull-request for a merge-back conflict\n")
+            return 1
 
         # Remove any active labels
         if existing_pr and existing_pr._metadata and existing_pr._metadata.get('issue'):
