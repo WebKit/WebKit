@@ -5371,6 +5371,23 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIncludesValueInt32, UCPUStrictInt32, (JSG
     OPERATION_RETURN(scope, toUCPUStrictInt32(0));
 }
 
+static ALWAYS_INLINE UCPUStrictInt32 arrayIncludesDouble(const double* data, int32_t length, double searchElement, int32_t index)
+{
+    if (index >= length)
+        return toUCPUStrictInt32(0);
+    return toUCPUStrictInt32(!!WTF::findDouble(data + index, searchElement, length - index));
+}
+
+static ALWAYS_INLINE UCPUStrictInt32 arrayIndexOfDouble(const double* data, int32_t length, double searchElement, int32_t index)
+{
+    if (index >= length)
+        return toUCPUStrictInt32(-1);
+    auto* result = WTF::findDouble(data + index, searchElement, length - index);
+    if (result)
+        return toUCPUStrictInt32(result - data);
+    return toUCPUStrictInt32(-1);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesValueDouble, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
 {
     // We do not cause any exceptions, thus we do not need FrameTracers.
@@ -5386,13 +5403,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesValueDouble, UCPUStrictI
     if (!searchElement.isNumber())
         return toUCPUStrictInt32(0);
 
-    double number = searchElement.asNumber();
-    for (; index < length; ++index) {
-        // This comparison ignores NaN.
-        if (data[index] == number)
-            return toUCPUStrictInt32(1);
-    }
-    return toUCPUStrictInt32(0);
+    return arrayIncludesDouble(data, length, searchElement.asNumber(), index);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesDouble, UCPUStrictInt32, (Butterfly* butterfly, double searchElement, int32_t index))
+{
+    return arrayIncludesDouble(butterfly->contiguousDouble().data(), butterfly->publicLength(), searchElement, index);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIncludesNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue searchElement, int32_t index))
@@ -5565,16 +5581,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictIn
 
     if (!searchElement.isNumber())
         return toUCPUStrictInt32(-1);
-    double number = searchElement.asNumber();
 
-    int32_t length = butterfly->publicLength();
-    const double* data = butterfly->contiguousDouble().data();
-    for (; index < length; ++index) {
-        // This comparison ignores NaN.
-        if (data[index] == number)
-            return toUCPUStrictInt32(index);
-    }
-    return toUCPUStrictInt32(-1);
+    return arrayIndexOfDouble(butterfly->contiguousDouble().data(), butterfly->publicLength(), searchElement.asNumber(), index);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIndexOfDouble, UCPUStrictInt32, (Butterfly* butterfly, double searchElement, int32_t index))
+{
+    return arrayIndexOfDouble(butterfly->contiguousDouble().data(), butterfly->publicLength(), searchElement, index);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationArrayIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue searchElement, int32_t index))

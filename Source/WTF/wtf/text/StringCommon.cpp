@@ -63,37 +63,6 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
 }
 
 SUPPRESS_NODELETE SUPPRESS_ASAN
-const double* findDoubleAlignedImpl(const double* pointer, double target, size_t length)
-{
-    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0b111));
-
-    constexpr simde_uint32x2_t indexMask { 0, 1 };
-
-    ASSERT(length);
-    ASSERT(!(reinterpret_cast<uintptr_t>(pointer) & 0xf));
-    ASSERT((reinterpret_cast<uintptr_t>(pointer) & ~static_cast<uintptr_t>(0xf)) == reinterpret_cast<uintptr_t>(pointer));
-    const double* cursor = pointer;
-    constexpr size_t stride = SIMD::stride<double>;
-
-    simde_float64x2_t targetsVector = simde_vdupq_n_f64(target);
-
-    while (true) {
-        simde_float64x2_t value = simde_vld1q_f64(cursor);
-        simde_uint64x2_t mask = simde_vceqq_f64(value, targetsVector);
-        simde_uint32x2_t reducedMask = simde_vmovn_u64(mask);
-        if (simde_vget_lane_u64(simde_vreinterpret_u64_u32(reducedMask), 0)) {
-            simde_uint32x2_t ranked = simde_vorn_u32(indexMask, reducedMask);
-            uint32_t index = simde_vminv_u32(ranked);
-            return (index < length) ? cursor + index : nullptr;
-        }
-        if (length <= stride)
-            return nullptr;
-        length -= stride;
-        cursor += stride;
-    }
-}
-
-SUPPRESS_NODELETE SUPPRESS_ASAN
 const Latin1Character* find8NonASCIIAlignedImpl(std::span<const Latin1Character> data)
 {
     constexpr simde_uint8x16_t indexMask { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };

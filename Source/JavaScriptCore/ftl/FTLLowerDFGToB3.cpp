@@ -8650,6 +8650,7 @@ IGNORE_CLANG_WARNINGS_END
         switch (searchElementEdge.useKind()) {
         case Int32Use:
         case DoubleRepUse: {
+            LBasicBlock vectorized = m_out.newBlock();
             LBasicBlock loopHeader = m_out.newBlock();
             LBasicBlock loopBody = m_out.newBlock();
             LBasicBlock loopNext = m_out.newBlock();
@@ -8676,14 +8677,30 @@ IGNORE_CLANG_WARNINGS_END
             length = m_out.zeroExtPtr(length);
 
             ValueFromBlock initialStartIndex = m_out.anchor(startIndex);
-            m_out.jump(loopHeader);
+            m_out.branch(m_out.aboveOrEqual(m_out.sub(length, startIndex), m_out.constIntPtr(arrayIndexOfVectorizedThreshold)), unsure(vectorized), unsure(loopHeader));
 
-            LBasicBlock lastNext = m_out.appendTo(loopHeader, loopBody);
+            LBasicBlock lastNext = m_out.appendTo(vectorized, loopHeader);
+            LValue vectorizedResult;
+            switch (searchElementEdge.useKind()) {
+            case Int32Use:
+                vectorizedResult = vmCall(Int32, isArrayIncludes ? operationArrayIncludesNonStringIdentityValueContiguous : operationArrayIndexOfNonStringIdentityValueContiguous, storage, searchElement, m_out.castToInt32(startIndex));
+                break;
+            case DoubleRepUse:
+                vectorizedResult = vmCall(Int32, isArrayIncludes ? operationArrayIncludesDouble : operationArrayIndexOfDouble, storage, searchElement, m_out.castToInt32(startIndex));
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            ValueFromBlock vectorizedResultValue = m_out.anchor(vectorizedResult);
+            m_out.jump(continuation);
+
+            m_out.appendTo(loopHeader, loopBody);
             LValue index = m_out.phi(pointerType(), initialStartIndex);
             m_out.branch(m_out.notEqual(index, length), unsure(loopBody), unsure(notFound));
 
             m_out.appendTo(loopBody, loopNext);
-            ValueFromBlock foundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(true)) : m_out.anchor(index);
+            ValueFromBlock foundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(true)) : m_out.anchor(m_out.castToInt32(index));
             switch (searchElementEdge.useKind()) {
             case Int32Use: {
                 // Empty value is ignored because of JSValue::NumberTag.
@@ -8708,16 +8725,16 @@ IGNORE_CLANG_WARNINGS_END
             m_out.jump(loopHeader);
 
             m_out.appendTo(notFound, continuation);
-            ValueFromBlock notFoundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(false)) : m_out.anchor(m_out.constIntPtr(-1));
+            ValueFromBlock notFoundResult = isArrayIncludes ? m_out.anchor(m_out.constBool(false)) : m_out.anchor(m_out.constInt32(-1));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
             // We have to keep base alive since that keeps content of storage alive.
             ensureStillAliveHere(base);
             if (isArrayIncludes)
-                setBoolean(m_out.phi(Int32, notFoundResult, foundResult));
+                setBoolean(m_out.phi(Int32, notFoundResult, foundResult, vectorizedResultValue));
             else
-                setInt32(m_out.castToInt32(m_out.phi(pointerType(), notFoundResult, foundResult)));
+                setInt32(m_out.phi(Int32, notFoundResult, foundResult, vectorizedResultValue));
             return;
         }
 

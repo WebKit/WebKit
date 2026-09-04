@@ -9823,50 +9823,7 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
         }
     };
 
-    switch (searchElementEdge.useKind()) {
-    case Int32Use: {
-        auto emitLoop = [&] (auto emitCompare) {
-#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-            clearRegisterAllocationOffsets();
-#endif
-
-            zeroExtend32ToWord(lengthGPR, lengthGPR);
-            zeroExtend32ToWord(indexGPR, indexGPR);
-
-            auto loop = label();
-            auto notFound = branch32(Equal, indexGPR, lengthGPR);
-
-            auto found = emitCompare();
-
-            add32(TrustedImm32(1), indexGPR);
-            jump().linkTo(loop, this);
-
-            emitResult(notFound, found);
-            if (isArrayIncludes)
-                unblessedBooleanResult(indexGPR, node);
-            else
-                strictInt32Result(indexGPR, node);
-        };
-
-        ASSERT(node->arrayMode().type() == Array::Int32);
-        JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
-        GPRReg searchElementGPR = searchElement.gpr();
-        speculateInt32(searchElementEdge, searchElementGPR);
-        emitLoop([&] () {
-            auto found = branch64(Equal, BaseIndex(storageGPR, indexGPR, TimesEight), searchElementGPR);
-            return found;
-        });
-        return;
-    }
-
-    case DoubleRepUse: {
-        ASSERT(node->arrayMode().type() == Array::Double);
-        SpeculateDoubleOperand searchElement(this, searchElementEdge);
-        FPRTemporary tempDouble(this);
-
-        FPRReg searchElementFPR = searchElement.fpr();
-        FPRReg tempFPR = tempDouble.fpr();
-
+    auto emitLoop = [&](auto searchElementReg, GPRReg scratchGPR, auto emitCompare, auto operation) {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
         clearRegisterAllocationOffsets();
 #endif
@@ -9874,18 +9831,49 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
         zeroExtend32ToWord(lengthGPR, lengthGPR);
         zeroExtend32ToWord(indexGPR, indexGPR);
 
+        sub32(lengthGPR, indexGPR, scratchGPR);
+        auto vectorized = branch32(AboveOrEqual, scratchGPR, TrustedImm32(arrayIndexOfVectorizedThreshold));
+
         auto loop = label();
         auto notFound = branch32(Equal, indexGPR, lengthGPR);
-        loadDouble(BaseIndex(storageGPR, indexGPR, TimesEight), tempFPR);
-        auto found = branchDouble(DoubleEqualAndOrdered, tempFPR, searchElementFPR);
+        auto found = emitCompare();
         add32(TrustedImm32(1), indexGPR);
         jump().linkTo(loop, this);
 
         emitResult(notFound, found);
+        addSlowPathGenerator(slowPathCall(vectorized, this, operation, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, indexGPR, storageGPR, searchElementReg, indexGPR));
         if (isArrayIncludes)
             unblessedBooleanResult(indexGPR, node);
         else
             strictInt32Result(indexGPR, node);
+    };
+
+    switch (searchElementEdge.useKind()) {
+    case Int32Use: {
+        ASSERT(node->arrayMode().type() == Array::Int32);
+        JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
+        GPRTemporary scratch(this);
+        GPRReg searchElementGPR = searchElement.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        speculateInt32(searchElementEdge, searchElementGPR);
+        emitLoop(searchElementGPR, scratchGPR, [&] {
+            return branch64(Equal, BaseIndex(storageGPR, indexGPR, TimesEight), searchElementGPR);
+        }, isArrayIncludes ? operationArrayIncludesNonStringIdentityValueContiguous : operationArrayIndexOfNonStringIdentityValueContiguous);
+        return;
+    }
+
+    case DoubleRepUse: {
+        ASSERT(node->arrayMode().type() == Array::Double);
+        SpeculateDoubleOperand searchElement(this, searchElementEdge);
+        FPRTemporary tempDouble(this);
+        GPRTemporary scratch(this);
+        FPRReg searchElementFPR = searchElement.fpr();
+        FPRReg tempFPR = tempDouble.fpr();
+        GPRReg scratchGPR = scratch.gpr();
+        emitLoop(searchElementFPR, scratchGPR, [&] {
+            loadDouble(BaseIndex(storageGPR, indexGPR, TimesEight), tempFPR);
+            return branchDouble(DoubleEqualAndOrdered, tempFPR, searchElementFPR);
+        }, isArrayIncludes ? operationArrayIncludesDouble : operationArrayIndexOfDouble);
         return;
     }
 

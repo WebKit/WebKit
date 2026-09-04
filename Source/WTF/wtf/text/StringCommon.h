@@ -666,58 +666,54 @@ ALWAYS_INLINE const uint32_t* NODELETE find32(const uint32_t* pointer, uint32_t 
     return findImpl(pointer, character, length);
 }
 
-SUPPRESS_NODELETE ALWAYS_INLINE const uint64_t* NODELETE find64(const uint64_t* pointer, uint64_t character, size_t length)
+template<typename LaneType>
+SUPPRESS_NODELETE ALWAYS_INLINE const LaneType* NODELETE find64BitLaneImpl(const LaneType* pointer, LaneType target, size_t length)
 {
+    static_assert(sizeof(LaneType) == sizeof(uint64_t));
     constexpr size_t scalarThreshold = 4;
     size_t index = 0;
     size_t runway = std::min(scalarThreshold, length);
     for (; index < runway; ++index) {
-        if (pointer[index] == character)
+        if (pointer[index] == target)
             return pointer + index;
     }
     if (runway == length)
         return nullptr;
 
-    constexpr size_t stride = SIMD::stride<uint64_t>;
+    constexpr size_t stride = SIMD::stride<LaneType>;
     constexpr size_t unrollFactor = 4;
     constexpr size_t unrolledStride = stride * unrollFactor;
 
-    auto charactersVector = SIMD::splat<uint64_t>(character);
-    auto vectorMatch = [&](auto value) ALWAYS_INLINE_LAMBDA {
-        auto mask = SIMD::equal(value, charactersVector);
-        return SIMD::findFirstNonZeroIndex(mask);
-    };
-
+    auto targetsVector = SIMD::splat<LaneType>(target);
     auto* cursor = pointer + index;
     auto* end = pointer + length;
 
     for (; cursor + unrolledStride <= end; cursor += unrolledStride) {
-        auto v0 = SIMD::load(cursor);
-        auto v1 = SIMD::load(cursor + stride);
-        auto v2 = SIMD::load(cursor + stride * 2);
-        auto v3 = SIMD::load(cursor + stride * 3);
-
-        if (auto idx = vectorMatch(v0))
-            return cursor + idx.value();
-        if (auto idx = vectorMatch(v1))
-            return cursor + stride + idx.value();
-        if (auto idx = vectorMatch(v2))
-            return cursor + stride * 2 + idx.value();
-        if (auto idx = vectorMatch(v3))
-            return cursor + stride * 3 + idx.value();
+        auto eq0 = SIMD::equal(SIMD::load(cursor), targetsVector);
+        auto eq1 = SIMD::equal(SIMD::load(cursor + stride), targetsVector);
+        auto eq2 = SIMD::equal(SIMD::load(cursor + stride * 2), targetsVector);
+        auto eq3 = SIMD::equal(SIMD::load(cursor + stride * 3), targetsVector);
+        if (SIMD::findFirstNonZeroIndex(SIMD::bitOr(eq0, eq1, eq2, eq3))) [[unlikely]] {
+            for (size_t offset = 0; offset < unrolledStride; ++offset) {
+                if (cursor[offset] == target)
+                    return cursor + offset;
+            }
+        }
     }
 
     for (; cursor + stride <= end; cursor += stride) {
-        if (auto idx = vectorMatch(SIMD::load(cursor)))
+        if (auto idx = SIMD::findFirstNonZeroIndex(SIMD::equal(SIMD::load(cursor), targetsVector)))
             return cursor + idx.value();
     }
 
-    if (cursor < end) {
-        if (auto idx = vectorMatch(SIMD::load(end - stride)))
-            return end - stride + idx.value();
-    }
-
+    if (cursor < end && *cursor == target)
+        return cursor;
     return nullptr;
+}
+
+SUPPRESS_NODELETE ALWAYS_INLINE const uint64_t* NODELETE find64(const uint64_t* pointer, uint64_t character, size_t length)
+{
+    return find64BitLaneImpl(pointer, character, length);
 }
 
 SUPPRESS_NODELETE ALWAYS_INLINE const uint8_t* NODELETE reverseFind8(const uint8_t* pointer, uint8_t character, size_t length)
@@ -1072,38 +1068,10 @@ ALWAYS_INLINE const float* NODELETE findFloat(const float* pointer, float target
 }
 #endif
 
-WTF_EXPORT_PRIVATE const double* NODELETE findDoubleAlignedImpl(const double* pointer, double target, size_t length);
-
-#if CPU(ARM64)
 SUPPRESS_NODELETE ALWAYS_INLINE const double* NODELETE findDouble(const double* pointer, double target, size_t length)
 {
-    constexpr size_t thresholdLength = 32;
-    static_assert(!(thresholdLength % (16 / sizeof(double))), "length threshold should be16-byte aligned to make doubleFindAlignedImpl simpler");
-
-    uintptr_t unaligned = reinterpret_cast<uintptr_t>(pointer) & 0xf;
-
-    size_t index = 0;
-    size_t runway = std::min(thresholdLength - (unaligned / sizeof(double)), length);
-    for (; index < runway; ++index) {
-        if (pointer[index] == target)
-            return pointer + index;
-    }
-    if (runway == length)
-        return nullptr;
-
-    ASSERT(index < length);
-    return findDoubleAlignedImpl(pointer + index, target, length - index);
+    return find64BitLaneImpl(pointer, target, length);
 }
-#else
-ALWAYS_INLINE const double* NODELETE findDouble(const double* pointer, double target, size_t length)
-{
-    for (size_t index = 0; index < length; ++index) {
-        if (pointer[index] == target)
-            return pointer + index;
-    }
-    return nullptr;
-}
-#endif
 
 WTF_EXPORT_PRIVATE const Latin1Character* NODELETE find8NonASCIIAlignedImpl(std::span<const Latin1Character>);
 WTF_EXPORT_PRIVATE const char16_t* NODELETE find16NonASCIIAlignedImpl(std::span<const char16_t>);

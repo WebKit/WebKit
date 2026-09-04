@@ -115,10 +115,17 @@ constexpr simde_uint64x2_t splat64(uint64_t code)
     return simde_uint64x2_t { code, code };
 }
 
+constexpr simde_float64x2_t splatDouble(double value)
+{
+    return simde_float64x2_t { value, value };
+}
+
 template<typename LaneType>
 ALWAYS_INLINE constexpr decltype(auto) splat(LaneType lane)
 {
-    if constexpr (sizeof(LaneType) == sizeof(uint8_t))
+    if constexpr (std::is_same_v<LaneType, double>)
+        return splatDouble(lane);
+    else if constexpr (sizeof(LaneType) == sizeof(uint8_t))
         return splat8(static_cast<uint8_t>(lane));
     else if constexpr (sizeof(LaneType) == sizeof(uint16_t))
         return splat16(static_cast<uint16_t>(lane));

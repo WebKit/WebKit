@@ -863,12 +863,7 @@ std::optional<bool> JSArray::fastIncludes(JSGlobalObject* globalObject, JSValue 
         if (!searchElement.isNumber())
             return false;
 
-        double searchNumber = searchElement.asNumber();
-        for (; index < length; ++index) {
-            if (data[index] == searchNumber)
-                return true;
-        }
-        return false;
+        return !!WTF::findDouble(data + index, searchElement.asNumber(), length - index);
     }
     default:
         return std::nullopt;
