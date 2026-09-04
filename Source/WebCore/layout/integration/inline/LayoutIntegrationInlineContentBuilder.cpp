@@ -458,6 +458,8 @@ void InlineContentBuilder::computeOverflowFromBoxes(InlineContent& inlineContent
             lineInkOverflowRect.inflate(leadingOverflow, { }, trailingOverflow, { });
         }
 
+        if (inlineContent.displayContent().hasLineEllipsisInBlockDirection(lineIndex))
+            lineScrollableOverflowRect = { };
         line.setScrollableOverflow(lineScrollableOverflowRect);
         line.setInkOverflow(lineInkOverflowRect);
         line.setFirstBoxIndex(firstBoxIndex);
