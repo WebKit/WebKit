@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml">
+  <metadata>
+    <h:title>A text positioning list must not split a typographic character (reference)</h:title>
+  </metadata>
+  <text x="0" y="40" style="font-size: 20px">&#x1F1FA;&#x1F1F8;</text>
+  <text x="80" y="40" style="font-size: 20px">a</text>
+  <text x="0" y="80" style="font-size: 20px">e&#x0301;</text>
+  <text x="80" y="80" style="font-size: 20px">a</text>
+  <text x="0" y="120" style="font-size: 20px">&#x1F1FA;&#x1F1F8;</text>
+</svg>
