@@ -5783,12 +5783,6 @@
     "imported/w3c/web-platform-tests/svg/linking/scripted/a.rel-noopener-policy.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/random/euckr-encode-form.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/tools/third_party/html5lib/benchmarks/data/wpt/weighted/fetch.http.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/trusted-types/ServiceWorkerContainer-register-from-ServiceWorker.https.html": [
         "slow"
     ],

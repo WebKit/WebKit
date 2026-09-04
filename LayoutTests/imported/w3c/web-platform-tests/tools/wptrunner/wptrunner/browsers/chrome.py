@@ -123,12 +123,19 @@ def executor_kwargs(logger, test_type, test_environment, run_info_data, subsuite
     # This is needed until https://github.com/web-platform-tests/wpt/pull/40709
     # is merged.
     chrome_options["args"].append("--enable-features=FedCmWithoutWellKnownEnforcement")
-    # Use a fake UI for digital identity to allow testing it.
-    chrome_options["args"].append("--use-fake-ui-for-digital-identity")
     # Shorten delay for Reporting <https://w3c.github.io/reporting/>.
     chrome_options["args"].append("--short-reporting-delay")
-    # Point all .test domains to localhost for Chrome
-    chrome_options["args"].append("--host-resolver-rules=MAP nonexistent.*.test ^NOTFOUND, MAP *.test 127.0.0.1, MAP *.test. 127.0.0.1")
+    # Point all .test domains to localhost for Chrome. Also make payment
+    # method manifest fetches for the Apple Pay method (which many
+    # payment-request tests use, as it is the only method Safari supports)
+    # fail fast and deterministically instead of hitting the live apple.com
+    # servers, whose response timing made those tests flaky.
+    chrome_options["args"].append("--host-resolver-rules="
+                                  "MAP nonexistent.*.test ^NOTFOUND, "
+                                  "MAP *.test 127.0.0.1, "
+                                  "MAP *.test. 127.0.0.1, "
+                                  "MAP apple.com ^NOTFOUND, "
+                                  "MAP *.apple.com ^NOTFOUND")
     # Enable Secure Payment Confirmation for Chrome. This is normally disabled
     # on Linux as it hasn't shipped there yet, but in WPT we enable virtual
     # authenticator devices anyway for testing and so SPC works.
@@ -273,6 +280,7 @@ class ChromeBrowser(WebDriverBrowser):
         self._leak_check = leak_check
         self._actual_port = None
         self._require_webdriver_bidi: Optional[bool] = None
+        self._is_extension_test: Optional[bool] = None
 
     def restart_on_test_type_change(self, new_test_type: str, old_test_type: str) -> bool:
         # Restart the test runner when switch from/to wdspec or aamtest tests.
@@ -318,7 +326,9 @@ class ChromeBrowser(WebDriverBrowser):
 
     def executor_browser(self):
         browser_cls, browser_kwargs = super().executor_browser()
-        return browser_cls, {**browser_kwargs, "leak_check": self._leak_check}
+        return browser_cls, {**browser_kwargs,
+                             "leak_check": self._leak_check,
+                             "is_extension_test": self._is_extension_test}
 
     @property
     def require_webdriver_bidi(self) -> Optional[bool]:
@@ -327,16 +337,19 @@ class ChromeBrowser(WebDriverBrowser):
     def settings(self, test: Test) -> BrowserSettings:
         """ Required to store `require_webdriver_bidi` in browser settings."""
         settings = super().settings(test)
+        self._is_extension_test = (
+            (test.testdriver_features is not None and
+             "extensions" in test.testdriver_features) or
+            (test.path is not None and "web-extensions/" in test.path))
         self._require_webdriver_bidi = (
-            test.testdriver_features is not None and (
-                'bidi' in test.testdriver_features or
-                'extensions' in test.testdriver_features
-            )
-        )
+            (test.testdriver_features is not None and
+             ("bidi" in test.testdriver_features or
+              "extensions" in test.testdriver_features)) or
+            self._is_extension_test)
 
         return {
-            **settings,
-            "require_webdriver_bidi": self._require_webdriver_bidi
+            **settings, "require_webdriver_bidi": self._require_webdriver_bidi,
+            "is_extension_test": self._is_extension_test
         }
 
 
