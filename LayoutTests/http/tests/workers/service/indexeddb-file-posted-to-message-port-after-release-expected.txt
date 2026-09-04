@@ -1,0 +1,3 @@
+A File posted to a MessagePort should still be readable after the sending process releases its blob URL.
+read 'contents stored in IndexedDB' from the posted File
+

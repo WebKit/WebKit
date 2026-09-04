@@ -103,7 +103,7 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
@@ -118,7 +118,13 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
     if (connectionIdentifiersForNameIterator == channelsForOriginIterator->value.end())
         return completionHandler();
 
-    auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    CompletionHandlerCallingScope blobURLsInFlight;
+    if (RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection))
+        blobURLsInFlight = webProcessConnection->retainBlobURLsWhileMessageIsInFlight(blobURLs);
+
+    auto callbackAggregator = CallbackAggregator::create([completionHandler = WTF::move(completionHandler), blobURLsInFlight = WTF::move(blobURLsInFlight)]() mutable {
+        completionHandler();
+    });
     for (auto& connectionID : connectionIdentifiersForNameIterator->value) {
         // Only dispatch the post the messages to BroadcastChannels outside the source process.
         if (connectionID == connection.uniqueID())
