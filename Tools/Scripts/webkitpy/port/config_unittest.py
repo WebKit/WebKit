@@ -156,6 +156,16 @@ class ConfigTest(unittest.TestCase):
         self.assertNotIn('--asan', seen[-1])
         self.assertNotIn('--cmake', seen[-1])
 
+    def test_tsan_marker(self):
+        # There is no --tsan option, so the marker file is the only signal.
+        def mock_run_command(arg_list):
+            return 'foo\nfoo/Release'
+
+        self.assertTrue(self.make_config(run_command_fn=mock_run_command, files={'foo/TSan': 'YES'}).tsan)
+        self.assertFalse(self.make_config(run_command_fn=mock_run_command).tsan)
+        # An ASan build is not a TSan build.
+        self.assertFalse(self.make_config(run_command_fn=mock_run_command, files={'foo/ASan': 'YES'}).tsan)
+
     def test_build_directory_passes_xcode_flag(self):
         seen = []
 
