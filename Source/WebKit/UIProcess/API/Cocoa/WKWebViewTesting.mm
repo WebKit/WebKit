@@ -875,6 +875,19 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_setGPUProcessCreatesFailingWebGLContextsForTesting:(BOOL)value completionHandler:(void(^)(void))completionHandler
+{
+    RefPtr gpuProcess = _page->configuration().processPool().gpuProcess();
+    if (!gpuProcess) {
+        completionHandler();
+        return;
+    }
+
+    gpuProcess->setCreatesFailingWebGLContextsForTesting(value, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)

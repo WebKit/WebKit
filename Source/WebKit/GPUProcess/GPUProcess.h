@@ -161,6 +161,12 @@ public:
 
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+    void didSucceedGraphicsContextGLCreation();
+    void didFailGraphicsContextGLCreation();
+
+    void setCreatesFailingWebGLContextsForTesting(bool, CompletionHandler<void()>&&);
+    bool createsFailingWebGLContextsForTesting() const { return m_createsFailingWebGLContextsForTesting; }
+
 #if USE(EXTENSIONKIT)
     void resolveBookmarkDataForCacheDirectory(std::span<const uint8_t> bookmarkData);
 #endif
@@ -345,6 +351,9 @@ private:
     bool m_haveEnabledSWVP9Decoder { false };
 #endif
     bool m_isNowPlayingArbiterActive { false };
+    bool m_createsFailingWebGLContextsForTesting { false };
+    unsigned m_consecutiveGraphicsContextGLCreationFailures { 0 };
+    static constexpr unsigned maxConsecutiveGraphicsContextGLCreationFailures { 3 };
 
 };
 

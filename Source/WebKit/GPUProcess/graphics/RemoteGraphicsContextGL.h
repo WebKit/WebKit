@@ -101,6 +101,8 @@ protected:
 
     void workQueueInitialize(WebCore::GraphicsContextGLAttributes&&);
     virtual void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) { };
+
+    void setCreatesFailingContextForTesting() { m_createsFailingContextForTesting = true; }
     void workQueueUninitialize();
     template<typename T>
     IPC::Error send(T&& message) const
@@ -182,6 +184,8 @@ protected:
     const RemoteGraphicsContextGLIdentifier m_identifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+    // Set on the main thread in create() before initialize() dispatches the work-queue task.
+    bool m_createsFailingContextForTesting { false };
 #if ENABLE(VIDEO)
     const Ref<RemoteVideoFrameObjectHeap> m_videoFrameObjectHeap;
 #if PLATFORM(COCOA)

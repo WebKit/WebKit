@@ -570,12 +570,12 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     case ProcessTerminationReason::IdleExit:
     case ProcessTerminationReason::Unresponsive:
     case ProcessTerminationReason::Crash:
+    case ProcessTerminationReason::RequestedByGPUProcess:
         RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=%" PUBLIC_LOG_STRING, this, processTerminationReasonToString(reason).characters());
         break;
     case ProcessTerminationReason::ExceededProcessCountLimit:
     case ProcessTerminationReason::NavigationSwap:
     case ProcessTerminationReason::RequestedByNetworkProcess:
-    case ProcessTerminationReason::RequestedByGPUProcess:
     case ProcessTerminationReason::RequestedByModelProcess:
     case ProcessTerminationReason::GPUProcessCrashedTooManyTimes:
     case ProcessTerminationReason::ModelProcessCrashedTooManyTimes:
@@ -604,6 +604,13 @@ void GPUProcessProxy::processIsReadyToExit()
     gpuProcessExited(ProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
 }
 
+void GPUProcessProxy::terminateForGraphicsContextGLFailures()
+{
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::terminateForGraphicsContextGLFailures: GPU process reported repeated GraphicsContextGL creation failures, terminating it so a fresh one is relaunched on next use", this);
+    terminate();
+    gpuProcessExited(ProcessTerminationReason::RequestedByGPUProcess); // May cause |this| to get deleted.
+}
+
 void GPUProcessProxy::childConnectionDidBecomeUnresponsive()
 {
     RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::childConnectionDidBecomeUnresponsive:", this);
@@ -618,6 +625,11 @@ void GPUProcessProxy::terminateForTesting()
 void GPUProcessProxy::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::GPUProcess::WebProcessConnectionCountForTesting(), WTF::move(completionHandler));
+}
+
+void GPUProcessProxy::setCreatesFailingWebGLContextsForTesting(bool value, CompletionHandler<void()>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::SetCreatesFailingWebGLContextsForTesting(value), WTF::move(completionHandler));
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)
