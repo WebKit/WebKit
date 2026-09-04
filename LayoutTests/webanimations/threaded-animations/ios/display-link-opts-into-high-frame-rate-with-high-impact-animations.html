@@ -20,39 +20,36 @@
 
 <script>
 
-const assertLowImpactOpacityAnimation = async () => {
-    const acceleratedAnimations = internals.acceleratedAnimationsForElement(target);
-    assert_equals(acceleratedAnimations.length, 1);
-    assert_equals(acceleratedAnimations[0].property, "opacity");
-    assert_false(acceleratedAnimations[0].hasHighImpact, "Animating 'opacity' does not have a high impact");
-    assert_false(await UIHelper.displayLinkWantsHighFrameRate(), "Animating 'opacity' does not yield high frame rate display link updates");
-};
-
 promise_test(async t => {
-    const duration = 1000 * 1000;
+    const highImpactDistance = 120;
+    const lowImpactDistance = highImpactDistance / 2;
+    const timing = { duration: 1000, iterations: 100 };
 
     // First, start an opacity animation, which is not considered high-impact and
     // should not result in high frame rate display link updates.
-    const opacityAnimation = target.animate({ opacity: 0.5 }, duration);
+    const opacityAnimation = target.animate({ opacity: 0.5 }, timing);
     await animationAcceleration(opacityAnimation);
-    await assertLowImpactOpacityAnimation();
+    await threadedAnimationsCommit();
+    assert_false(await UIHelper.displayLinkWantsHighFrameRate(), "Animating 'opacity' does not yield high frame rate display link updates");
 
-    // Now, add a translate animation, which is considered high-impact and should
-    // result in high frame rate display link updates.
-    const translateAnimation = target.animate({ translate: "1000px" }, duration);
+    // Add a translate animation, which will not be considered high-impact
+    // when traveling around 60pt/s.
+    const translateAnimation = target.animate({ translate: `${lowImpactDistance}px` }, timing);
     await animationAcceleration(translateAnimation);
-    const acceleratedAnimations = internals.acceleratedAnimationsForElement(target);
-    assert_equals(acceleratedAnimations.length, 2);
-    assert_equals(acceleratedAnimations[1].property, "translate");
-    assert_true(acceleratedAnimations[1].hasHighImpact, "Animating 'translate' has a high impact");
-    assert_true(await UIHelper.displayLinkWantsHighFrameRate(), "Animating 'translate' yields high frame rate display link updates");
+    await threadedAnimationsCommit();
+    assert_false(await UIHelper.displayLinkWantsHighFrameRate(), "Adding a 'translate' animation around 60pt/s does not yield high frame rate display link updates");
+
+    // Change the translate animation to travel around 120pt/s, which will be considered high-impact.
+    translateAnimation.effect.setKeyframes({ translate: `${highImpactDistance}px` });
+    await threadedAnimationsCommit();
+    assert_true(await UIHelper.displayLinkWantsHighFrameRate(), "Changing the 'translate' animation to animate around 120pt/s yields high frame rate display link updates");
 
     // Finally, terminate that translate animation, which means only the opacity
     // animation is running in the remote layer tree, which should result in the
     // display link updates to return to a non-high frame rate.
     translateAnimation.finish();
     await threadedAnimationsCommit();
-    await assertLowImpactOpacityAnimation();
+    assert_false(await UIHelper.displayLinkWantsHighFrameRate(), "Removing the 'translate' animation and having only an 'opacity' animation does not yield high frame rate display link updates");
 }, "Display link opts into high frame rate updates only when high-impact animations are running");
 
 </script>
