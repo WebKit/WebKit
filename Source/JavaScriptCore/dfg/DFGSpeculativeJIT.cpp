@@ -13470,14 +13470,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
             speculateRegExpObject(node->child2(), baseGPR);
             speculateString(node->child3(), argumentGPR);
 
-            if (tryEmitRegExpTestFirstCharacterFilter(node, globalObjectGPR, baseGPR, argumentGPR, node->child2(), node->child3()))
-                return;
-
-            flushRegisters();
-            GPRFlushedCallResult result(this);
-            callOperation(operationRegExpTestString, result.gpr(), globalObjectGPR, baseGPR, argumentGPR);
-
-            unblessedBooleanResult(result.gpr(), node);
+            emitRegExpTestWithFilter(node, globalObjectGPR, baseGPR, argumentGPR, node->child2(), node->child3());
             return;
         }
 
@@ -13487,14 +13480,7 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
         GPRReg argumentGPR = argument.gpr();
         speculateRegExpObject(node->child2(), baseGPR);
 
-        if (tryEmitRegExpTestFirstCharacterFilter(node, globalObjectGPR, baseGPR, argumentGPR, node->child2(), node->child3()))
-            return;
-
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-        callOperation(operationRegExpTest, result.gpr(), globalObjectGPR, baseGPR, argumentGPR);
-
-        unblessedBooleanResult(result.gpr(), node);
+        emitRegExpTestWithFilter(node, globalObjectGPR, baseGPR, argumentGPR, node->child2(), node->child3());
         return;
     }
 
@@ -13510,30 +13496,18 @@ void SpeculativeJIT::compileRegExpTest(Node* node)
     unblessedBooleanResult(result.gpr(), node);
 }
 
-// RegExp.test(input) fast-fail on a constant RegExpObject: when the one byte a match would have to
-// start at cannot begin a match, answer false without entering the RegExp engine. A sticky pattern
-// looks at input[lastIndex] and must also reset lastIndex to 0, as a failed RegExpBuiltinExec does.
-bool SpeculativeJIT::tryEmitRegExpTestFirstCharacterFilter(Node* node, GPRReg globalObjectGPR, GPRReg baseGPR, GPRReg argumentGPR, Edge baseEdge, Edge argumentEdge)
+// RegExp.test(input) fast-fail: answer false without entering the RegExp engine when the input cannot
+// match. A sticky pattern looks at input[lastIndex] and must also reset lastIndex to 0, as a failed
+// RegExpBuiltinExec does.
+void SpeculativeJIT::emitRegExpTestWithFilter(Node* node, GPRReg globalObjectGPR, GPRReg baseGPR, GPRReg argumentGPR, Edge baseEdge, Edge argumentEdge)
 {
-    // At most one position can apply: AtStart requires a non-global non-sticky pattern, AtLastIndex a sticky one.
-    auto position = FirstCharacterFilterPosition::AtStart;
-    const auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), position);
-    if (!localBitmap) {
-        position = FirstCharacterFilterPosition::AtLastIndex;
-        localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), position);
-    }
-    if (!localBitmap)
-        return false;
-
-    const uint8_t* bitmap = localBitmap->storageBytes().data();
-    bool argumentIsString = argumentEdge.useKind() == StringUse || argumentEdge.useKind() == KnownStringUse;
-
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
     GPRReg resultGPR = result.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
+    bool argumentIsString = argumentEdge.useKind() == StringUse || argumentEdge.useKind() == KnownStringUse;
 
     // baseGPR/argumentGPR/globalObjectGPR are preserved across flushRegisters for the slow-path
     // operation call; the scratch registers are free to clobber.
@@ -13542,20 +13516,40 @@ bool SpeculativeJIT::tryEmitRegExpTestFirstCharacterFilter(Node* node, GPRReg gl
     JumpList slowCases;
     JumpList doneCases;
 
-    if (!argumentIsString) {
-        slowCases.append(branchIfNotCell(argumentGPR));
-        slowCases.append(branchIfNotString(argumentGPR));
+    // At most one position can apply: AtStart requires a non-global non-sticky pattern, AtLastIndex a sticky one.
+    auto position = FirstCharacterFilterPosition::AtStart;
+    const auto* localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), position);
+    if (!localBitmap) {
+        position = FirstCharacterFilterPosition::AtLastIndex;
+        localBitmap = m_graph.tryGetConstantRegExpFirstCharacterBitmap(baseEdge.node(), position);
     }
 
-    if (position == FirstCharacterFilterPosition::AtStart)
-        emitRegExpAnchoredFirstCharacterFilterGuards(bitmap, argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
-    else {
-        emitRegExpStickyFirstCharacterFilterGuards(bitmap, baseGPR, argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
-        store64(TrustedImm64(JSValue::encode(jsNumber(0))), Address(baseGPR, RegExpObject::offsetOfLastIndex()));
+    std::optional<unsigned> constantMinimumSize;
+    bool emitFilter = true;
+    if (!localBitmap) {
+        constantMinimumSize = m_graph.tryGetConstantRegExpTestMinimumSize(baseEdge.node());
+        if (constantMinimumSize && !*constantMinimumSize)
+            emitFilter = false;
     }
 
-    move(TrustedImm32(0), resultGPR);
-    doneCases.append(jump());
+    if (emitFilter) {
+        if (!argumentIsString) {
+            slowCases.append(branchIfNotCell(argumentGPR));
+            slowCases.append(branchIfNotString(argumentGPR));
+        }
+
+        if (!localBitmap)
+            emitRegExpMinimumLengthFilterGuards(constantMinimumSize, baseGPR, argumentGPR, canBeRope(argumentEdge), scratch1GPR, scratch2GPR, slowCases);
+        else if (position == FirstCharacterFilterPosition::AtStart)
+            emitRegExpAnchoredFirstCharacterFilterGuards(localBitmap->storageBytes().data(), argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
+        else {
+            emitRegExpStickyFirstCharacterFilterGuards(localBitmap->storageBytes().data(), baseGPR, argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
+            store64(TrustedImm64(JSValue::encode(jsNumber(0))), Address(baseGPR, RegExpObject::offsetOfLastIndex()));
+        }
+
+        move(TrustedImm32(0), resultGPR);
+        doneCases.append(jump());
+    }
 
     slowCases.link(this);
     if (argumentIsString)
@@ -13565,7 +13559,6 @@ bool SpeculativeJIT::tryEmitRegExpTestFirstCharacterFilter(Node* node, GPRReg gl
 
     doneCases.link(this);
     unblessedBooleanResult(resultGPR, node);
-    return true;
 }
 
 void SpeculativeJIT::compileStringReplace(Node* node)

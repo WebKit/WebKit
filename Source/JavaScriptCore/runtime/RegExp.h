@@ -69,8 +69,11 @@ public:
     void dumpSimpleName(PrintStream&) const;
 
     static constexpr ptrdiff_t offsetOfFlags() { return OBJECT_OFFSETOF(RegExp, m_flags); }
+    static constexpr ptrdiff_t offsetOfMinimumSize() { return OBJECT_OFFSETOF(RegExp, m_minimumSize); }
+    static constexpr uint16_t globalOrStickyFlagsMask = OptionSet<Yarr::Flags> { Yarr::Flags::Global, Yarr::Flags::Sticky }.toRaw();
 
     OptionSet<Yarr::Flags> flags() const { return m_flags; }
+    unsigned minimumSize() const { return m_minimumSize; }
 #define JSC_DEFINE_REGEXP_FLAG_ACCESSOR(key, name, lowerCaseName, index) bool lowerCaseName() const { return m_flags.contains(Yarr::Flags::name); }
     JSC_REGEXP_FLAGS(JSC_DEFINE_REGEXP_FLAG_ACCESSOR)
 #undef JSC_DEFINE_REGEXP_FLAG_ACCESSOR
@@ -85,6 +88,7 @@ public:
     void reset()
     {
         m_state = NotCompiled;
+        m_minimumSize = 0;
         m_constructionErrorCode = Yarr::ErrorCode::NoError;
     }
 
@@ -246,6 +250,7 @@ private:
     OptionSet<Yarr::Flags> m_flags;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     unsigned m_numSubpatterns { 0 };
+    unsigned m_minimumSize { 0 };
     std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
 #if ENABLE(YARR_JIT)
     std::unique_ptr<Yarr::YarrCodeBlock> m_regExpJITCode;

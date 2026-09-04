@@ -1564,11 +1564,12 @@ public:
     void emitFirstCharacterBitmapMatch(const uint8_t* bitmap, GPRReg characterGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& matchMaybeCases);
     void emitRegExpAnchoredFirstCharacterFilterGuards(const uint8_t* bitmap, GPRReg argumentGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, JumpList& slowCases);
     void emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* bitmap, GPRReg baseGPR, GPRReg argumentGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, JumpList& slowCases);
+    void emitRegExpMinimumLengthFilterGuards(std::optional<unsigned> constantMinimumSize, GPRReg baseGPR, GPRReg argumentGPR, bool argumentCanBeRope, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& slowCases);
     void compileRegExpMatchFast(Node*);
     void compileRegExpMatchFastGlobal(Node*);
     void compileRegExpSplitFast(Node*);
     void compileRegExpTest(Node*);
-    bool tryEmitRegExpTestFirstCharacterFilter(Node*, GPRReg globalObjectGPR, GPRReg baseGPR, GPRReg argumentGPR, Edge baseEdge, Edge argumentEdge);
+    void emitRegExpTestWithFilter(Node*, GPRReg globalObjectGPR, GPRReg baseGPR, GPRReg argumentGPR, Edge baseEdge, Edge argumentEdge);
     void compileRegExpTestInline(Node*);
     void compileRegExpSearch(Node*);
     void compileRegExpStringIteratorNext(Node*);

@@ -119,6 +119,9 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     m_rtMatchTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
 
+    if (s.length() - startOffset < m_minimumSize)
+        return -1;
+
     compileIfNecessary(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16, s);
 
     auto throwError = [&] {
@@ -249,6 +252,9 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     m_rtMatchOnlyCallCount++;
     m_rtMatchOnlyTotalSubjectStringLen += (double)(s.length() - startOffset);
 #endif
+
+    if (s.length() - startOffset < m_minimumSize)
+        return MatchResult::failed();
 
     compileIfNecessaryMatchOnly(vm, s.is8Bit() ? Yarr::CharSize::Char8 : Yarr::CharSize::Char16, s);
 

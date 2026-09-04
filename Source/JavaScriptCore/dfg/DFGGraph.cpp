@@ -1582,19 +1582,24 @@ ObjectPropertyConditionSet Graph::tryEnsureAbsence(JSGlobalObject* globalObject,
     return result;
 }
 
+static RegExp* constantRegExpFor(Graph& graph, Node* node, JSGlobalObject*& globalObject)
+{
+    if (RegExpObject* regExpObject = node->dynamicCastConstant<RegExpObject*>()) {
+        globalObject = regExpObject->realm();
+        return regExpObject->regExp();
+    }
+    if (node->op() == NewRegExp) {
+        globalObject = graph.globalObjectFor(node->origin.semantic);
+        return node->castOperand<RegExp*>();
+    }
+    return nullptr;
+}
+
 const WTF::BitSet<256>* Graph::tryGetConstantRegExpFirstCharacterBitmap(Node* node, FirstCharacterFilterPosition position)
 {
     JSGlobalObject* globalObject = nullptr;
-    RegExp* regExp = nullptr;
-    if (RegExpObject* regExpObject = node->dynamicCastConstant<RegExpObject*>()) {
-        globalObject = regExpObject->realm();
-        regExp = regExpObject->regExp();
-    } else if (node->op() == NewRegExp) {
-        globalObject = globalObjectFor(node->origin.semantic);
-        regExp = node->castOperand<RegExp*>();
-    }
-
-    if (!globalObject || !regExp)
+    RegExp* regExp = constantRegExpFor(*this, node, globalObject);
+    if (!regExp)
         return nullptr;
 
     // The filter reads one fixed position, so the flags must guarantee a match can only begin there.
@@ -1621,6 +1626,29 @@ const WTF::BitSet<256>* Graph::tryGetConstantRegExpFirstCharacterBitmap(Node* no
     // realm jettison code that baked no bitmap at all.
     watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
     return bitmap;
+}
+
+// nullopt: not a constant or not compiled yet, read RegExp::m_minimumSize at runtime. 0: constant, but no input length can be rejected.
+std::optional<unsigned> Graph::tryGetConstantRegExpTestMinimumSize(Node* node)
+{
+    JSGlobalObject* globalObject = nullptr;
+    RegExp* regExp = constantRegExpFor(*this, node, globalObject);
+    if (!regExp || globalObject->isRegExpRecompiled())
+        return std::nullopt;
+
+    unsigned minimumSize = 0;
+    {
+        Locker locker { regExp->cellLock() };
+        if (!regExp->hasCode())
+            return std::nullopt;
+        minimumSize = regExp->minimumSize();
+    }
+
+    if (regExp->globalOrSticky() || !minimumSize)
+        return 0;
+
+    watchpoints().addLazily(globalObject->regExpRecompiledWatchpointSet());
+    return minimumSize;
 }
 
 const WTF::BitSet<256>* Graph::regExpFirstCharacterBitmap(RegExp* regExp, FirstCharacterFilterPosition position)

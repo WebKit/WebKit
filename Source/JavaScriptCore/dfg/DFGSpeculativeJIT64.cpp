@@ -10052,6 +10052,33 @@ void SpeculativeJIT::emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* b
     emitFirstCharacterBitmapMatch(bitmap, scratch3GPR, scratch1GPR, scratch2GPR, slowCases);
 }
 
+void SpeculativeJIT::emitRegExpMinimumLengthFilterGuards(std::optional<unsigned> constantMinimumSize, GPRReg baseGPR, GPRReg argumentGPR, bool argumentCanBeRope, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& slowCases)
+{
+    ASSERT(noOverlap(baseGPR, argumentGPR, scratch1GPR, scratch2GPR));
+
+    loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
+    Jump isRope;
+    if (argumentCanBeRope)
+        isRope = branchIfRopeStringImpl(scratch1GPR);
+    load32(Address(scratch1GPR, StringImpl::lengthMemoryOffset()), scratch1GPR);
+    if (isRope.isSet()) {
+        auto done = jump();
+        isRope.link(this);
+        load32(Address(argumentGPR, JSRopeString::offsetOfLength()), scratch1GPR);
+        done.link(this);
+    }
+
+    if (constantMinimumSize) {
+        slowCases.append(branch32(AboveOrEqual, scratch1GPR, TrustedImm32(static_cast<int32_t>(*constantMinimumSize))));
+        return;
+    }
+
+    loadPtr(Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), scratch2GPR);
+    andPtr(TrustedImmPtr(RegExpObject::regExpMask), scratch2GPR);
+    slowCases.append(branch32(AboveOrEqual, scratch1GPR, Address(scratch2GPR, RegExp::offsetOfMinimumSize())));
+    slowCases.append(branchTest16(NonZero, Address(scratch2GPR, RegExp::offsetOfFlags()), TrustedImm32(RegExp::globalOrStickyFlagsMask)));
+}
+
 } } // namespace JSC::DFG
 
 #endif

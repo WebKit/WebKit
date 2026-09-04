@@ -322,6 +322,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
         Yarr::jitCompile(pattern, m_patternString, charSize, sampleString, vm, jitCode, Yarr::ExecutionMode::IncludeSubpatterns);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
+            m_minimumSize = pattern.m_body->m_minimumSize;
             return;
         }
     }
@@ -338,6 +339,7 @@ void RegExp::compile(VM* vm, Yarr::CharSize charSize, std::optional<StringView> 
         m_state = ParseError;
         return;
     }
+    m_minimumSize = pattern.m_body->m_minimumSize;
 }
 
 const WTF::BitSet<256>* RegExp::firstCharacterBitmap(FirstCharacterFilterPosition position)
@@ -405,6 +407,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
         Yarr::jitCompile(pattern, m_patternString, charSize, sampleString, vm, jitCode, Yarr::ExecutionMode::MatchOnly);
         if (!jitCode.failureReason()) {
             m_state = JITCode;
+            m_minimumSize = pattern.m_body->m_minimumSize;
             return;
         }
     }
@@ -430,6 +433,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::CharSize charSize, std::optional<Str
         m_state = ParseError;
         return;
     }
+    m_minimumSize = bytecodePattern.m_body->m_minimumSize;
 }
 
 MatchResult RegExp::match(JSGlobalObject* globalObject, StringView s, unsigned startOffset)
@@ -457,6 +461,7 @@ void RegExp::deleteCode()
     if (!hasCode())
         return;
     m_state = NotCompiled;
+    m_minimumSize = 0;
     m_atom = String();
     m_specificPattern = Yarr::SpecificPattern::None;
 #if ENABLE(YARR_JIT)
