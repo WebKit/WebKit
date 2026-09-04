@@ -321,6 +321,9 @@ public:
         return &Wasm::Global::fromBinding(*pointer);
     }
 
+    static constexpr ptrdiff_t offsetOfPassiveElements() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_passiveElements); }
+    static constexpr ptrdiff_t offsetOfPassiveDataSegments() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_passiveDataSegments); }
+
     static constexpr ptrdiff_t offsetOfCachedTable0Buffer() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedTable0Buffer); }
     static constexpr ptrdiff_t offsetOfCachedTable0Length() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedTable0Length); }
     static constexpr ptrdiff_t offsetOfBuiltinCalleeBits() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_builtinCalleeBits); }
