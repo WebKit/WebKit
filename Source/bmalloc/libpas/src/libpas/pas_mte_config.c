@@ -211,7 +211,7 @@ static void pas_mte_do_initialization(void)
     PAS_IGNORE_WARNINGS_END;
 }
 
-static bool pas_mte_is_enabled(void)
+static bool pas_mte_is_mte_on_for_process(void)
 {
     const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
     struct proc_bsdinfo info;
@@ -227,7 +227,7 @@ static PAS_UNUSED void pas_mte_do_initialization(void)
     config->enabled = false;
 }
 
-static PAS_UNUSED bool pas_mte_is_enabled(void)
+static PAS_UNUSED bool pas_mte_is_mte_on_for_process(void)
 {
     return false;
 }
@@ -331,7 +331,8 @@ static void pas_mte_do_and_check_initialization(void* context)
         if (!strcasecmp(crashIfMTENotEnabled, "true")
             || !strcasecmp(crashIfMTENotEnabled, "yes")
             || !strcasecmp(crashIfMTENotEnabled, "1")) {
-            PAS_ASSERT(pas_mte_is_enabled() && "MTE is not enabled, crashing");
+            PAS_ASSERT(pas_mte_is_mte_enabled() && "MTE is not enabled, crashing");
+            PAS_ASSERT(pas_mte_is_mte_on_for_process() && "MTE is not enabled for the process, crashing");
         }
     }
     const char* logLibpasConfiguration = getenv("LibpasMallocReportConfig");

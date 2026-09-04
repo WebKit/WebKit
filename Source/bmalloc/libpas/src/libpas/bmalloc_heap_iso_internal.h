@@ -57,8 +57,8 @@ PAS_CREATE_TRY_ALLOCATE(
     &bmalloc_allocator_counts,
     pas_allocation_result_crash_on_error);
 
-PAS_API void* bmalloc_try_iso_allocate_casual(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode);
-PAS_API void* bmalloc_iso_allocate_casual(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode);
+PAS_API void* bmalloc_try_iso_allocate_casual(pas_heap_ref* heap_ref);
+PAS_API void* bmalloc_iso_allocate_casual(pas_heap_ref* heap_ref);
 
 PAS_CREATE_TRY_ALLOCATE_ARRAY(
     bmalloc_try_iso_allocate_array_impl,
@@ -75,117 +75,116 @@ PAS_CREATE_TRY_ALLOCATE_ARRAY(
     pas_allocation_result_crash_on_error);
 
 PAS_API void* bmalloc_try_allocate_array_by_size_with_alignment_casual(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
 PAS_API void* bmalloc_allocate_array_by_size_with_alignment_casual(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode);
+    pas_heap_ref* heap_ref, size_t size, size_t alignment);
 
-static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_inline(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode)
+static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_inline(pas_heap_ref* heap_ref)
 {
     pas_allocation_result result;
-    result = bmalloc_try_iso_allocate_impl_inline_only(heap_ref, allocation_mode);
+    result = bmalloc_try_iso_allocate_impl_inline_only(heap_ref);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_try_iso_allocate_casual(heap_ref, allocation_mode);
+    return bmalloc_try_iso_allocate_casual(heap_ref);
 }
 
-static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_inline(pas_heap_ref* heap_ref, pas_allocation_mode allocation_mode)
+static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_inline(pas_heap_ref* heap_ref)
 {
     pas_allocation_result result;
-    result = bmalloc_iso_allocate_impl_inline_only(heap_ref, allocation_mode);
+    result = bmalloc_iso_allocate_impl_inline_only(heap_ref);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_iso_allocate_casual(heap_ref, allocation_mode);
+    return bmalloc_iso_allocate_casual(heap_ref);
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_by_size_inline(
-    pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size)
 {
     pas_allocation_result result;
-    result = bmalloc_try_iso_allocate_array_impl_inline_only(heap_ref, size, 1, allocation_mode);
+    result = bmalloc_try_iso_allocate_array_impl_inline_only(heap_ref, size, 1);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_try_allocate_array_by_size_with_alignment_casual(heap_ref, size, 1, allocation_mode);
+    return bmalloc_try_allocate_array_by_size_with_alignment_casual(heap_ref, size, 1);
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_zeroed_array_by_size_inline(
-    pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size)
 {
     return (void*)pas_allocation_result_zero(
-        bmalloc_try_iso_allocate_array_impl_by_size(heap_ref, size, 1, allocation_mode),
+        bmalloc_try_iso_allocate_array_impl_by_size(heap_ref, size, 1),
         size).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_by_size_with_alignment_inline(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size, size_t alignment)
 {
     pas_allocation_result result;
-    result = bmalloc_try_iso_allocate_array_impl_inline_only(heap_ref, size, alignment, allocation_mode);
+    result = bmalloc_try_iso_allocate_array_impl_inline_only(heap_ref, size, alignment);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_try_allocate_array_by_size_with_alignment_casual(heap_ref, size, alignment, allocation_mode);
+    return bmalloc_try_allocate_array_by_size_with_alignment_casual(heap_ref, size, alignment);
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_by_count_inline(
-    pas_heap_ref* heap_ref, size_t count, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t count)
 {
-    return (void*)bmalloc_try_iso_allocate_array_impl_by_count(heap_ref, count, 1, allocation_mode).begin;
+    return (void*)bmalloc_try_iso_allocate_array_impl_by_count(heap_ref, count, 1).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_allocate_array_by_count_with_alignment_inline(
-    pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return (void*)bmalloc_try_iso_allocate_array_impl_by_count(heap_ref, count, alignment, allocation_mode).begin;
+    return (void*)bmalloc_try_iso_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_by_size_inline(
-    pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size)
 {
     pas_allocation_result result;
-    result = bmalloc_iso_allocate_array_impl_inline_only(heap_ref, size, 1, allocation_mode);
+    result = bmalloc_iso_allocate_array_impl_inline_only(heap_ref, size, 1);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_allocate_array_by_size_with_alignment_casual(heap_ref, size, 1, allocation_mode);
+    return bmalloc_allocate_array_by_size_with_alignment_casual(heap_ref, size, 1);
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_zeroed_array_by_size_inline(
-    pas_heap_ref* heap_ref, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size)
 {
     return (void*)pas_allocation_result_zero(
-        bmalloc_iso_allocate_array_impl_by_size(heap_ref, size, 1, allocation_mode),
+        bmalloc_iso_allocate_array_impl_by_size(heap_ref, size, 1),
         size).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_by_size_with_alignment_inline(
-    pas_heap_ref* heap_ref, size_t size, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t size, size_t alignment)
 {
     pas_allocation_result result;
-    result = bmalloc_iso_allocate_array_impl_inline_only(heap_ref, size, alignment, allocation_mode);
+    result = bmalloc_iso_allocate_array_impl_inline_only(heap_ref, size, alignment);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
-    return bmalloc_allocate_array_by_size_with_alignment_casual(heap_ref, size, alignment, allocation_mode);
+    return bmalloc_allocate_array_by_size_with_alignment_casual(heap_ref, size, alignment);
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_by_count_inline(
-    pas_heap_ref* heap_ref, size_t count, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t count)
 {
-    return (void*)bmalloc_iso_allocate_array_impl_by_count(heap_ref, count, 1, allocation_mode).begin;
+    return (void*)bmalloc_iso_allocate_array_impl_by_count(heap_ref, count, 1).begin;
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_allocate_array_by_count_with_alignment_inline(
-    pas_heap_ref* heap_ref, size_t count, size_t alignment, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, size_t count, size_t alignment)
 {
-    return (void*)bmalloc_iso_allocate_array_impl_by_count(heap_ref, count, alignment, allocation_mode).begin;
+    return (void*)bmalloc_iso_allocate_array_impl_by_count(heap_ref, count, alignment).begin;
 }
 
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_size_inline(
-    pas_heap_ref* heap_ref, void* ptr, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, void* ptr, size_t size)
 {
     return (void*)pas_try_reallocate_array_by_size(
         ptr,
         heap_ref,
         size,
-        allocation_mode,
         BMALLOC_HEAP_CONFIG,
         bmalloc_try_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
@@ -194,13 +193,12 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_size_inline(
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_size_inline(
-    pas_heap_ref* heap_ref, void* ptr, size_t size, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, void* ptr, size_t size)
 {
     return (void*)pas_try_reallocate_array_by_size(
         ptr,
         heap_ref,
         size,
-        allocation_mode,
         BMALLOC_HEAP_CONFIG,
         bmalloc_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
@@ -209,13 +207,12 @@ static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_size_inline(
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_count_inline(
-    pas_heap_ref* heap_ref, void* ptr, size_t count, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, void* ptr, size_t count)
 {
     return (void*)pas_try_reallocate_array_by_count(
         ptr,
         heap_ref,
         count,
-        allocation_mode,
         BMALLOC_HEAP_CONFIG,
         bmalloc_try_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,
@@ -224,13 +221,12 @@ static PAS_ALWAYS_INLINE void* bmalloc_try_iso_reallocate_array_by_count_inline(
 }
 
 static PAS_ALWAYS_INLINE void* bmalloc_iso_reallocate_array_by_count_inline(
-    pas_heap_ref* heap_ref, void* ptr, size_t count, pas_allocation_mode allocation_mode)
+    pas_heap_ref* heap_ref, void* ptr, size_t count)
 {
     return (void*)pas_try_reallocate_array_by_count(
         ptr,
         heap_ref,
         count,
-        allocation_mode,
         BMALLOC_HEAP_CONFIG,
         bmalloc_iso_allocate_array_impl_for_realloc,
         &bmalloc_typed_runtime_config.base,

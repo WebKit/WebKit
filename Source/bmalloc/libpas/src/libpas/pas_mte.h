@@ -37,7 +37,6 @@
 #include <mach/vm_statistics.h>
 #endif // PAS_USE_APPLE_INTERNAL_SDK
 #endif // PAS_OS(DARWIN)
-#include "pas_allocation_mode.h"
 #include "pas_internal_config.h"
 #include "pas_page_base_config.h"
 #include "pas_stats.h"
@@ -253,36 +252,36 @@ pas_mte_compute_valid_tags_under_adjacent_tag_exclusion(
                 PAS_ASSERT_NOT_REACHED();
             }
         }
-        // Since we cannot ldg addresses which lie on another page
-        // from our own, we need some way to ensure that if the
-        // adjacent page *is* a libpas allocator page, its first
-        // allocation could not possibly have the same tag as us.
-        // We do so by using pas_mte_any_nonzero_tag for allocations
-        // within the page, save any which abuts a page boundary.
-        // Allocations which abut the prior page are instead allocated
-        // with pas_mte_nonzero_even_tag, while those that abut the
-        // succeeding page are allocated with pas_mte_odd_tag.
-        // We then apply the intra-page ldg checks to exclude
-        // adjacent allocations therewithin.
-        // Cases:
-        //   - If the next page is marge or larger, then it is not
-        //     tagged and thus trivially cannot collide
-        //   - If the next page is small, then the first allocation
-        //     is a zero-tagged page-header and cannot collide
-        //   - If the next page is medium-segregated, then the first
-        //     byte will either be unallocated (zero tagged) or be
-        //     tagged with a nonzero even tag, as it would have
-        //     parity 0
-        //   - If the next page is medium-bitfit, then the first
-        //     byte will either be unallocated (zero tagged) or be
-        //     tagged with a nonzero even tag, as it cannot possibly
-        //     also be the final allocation in the page
+        /* Since we cannot ldg addresses which lie on another page
+           from our own, we need some way to ensure that if the
+           adjacent page *is* a libpas allocator page, its first
+           allocation could not possibly have the same tag as us.
+           We do so by using pas_mte_any_nonzero_tag for allocations
+           within the page, save any which abuts a page boundary.
+           Allocations which abut the prior page are instead allocated
+           with pas_mte_nonzero_even_tag, while those that abut the
+           succeeding page are allocated with pas_mte_odd_tag.
+           We then apply the intra-page ldg checks to exclude
+           adjacent allocations therewithin.
+           Cases:
+             - If the next page is marge or larger, then it is not
+               tagged and thus trivially cannot collide
+             - If the next page is small, then the first allocation
+               is a zero-tagged page-header and cannot collide
+             - If the next page is medium-segregated, then the first
+               byte will either be unallocated (zero tagged) or be
+               tagged with a nonzero even tag, as it would have
+               parity 0
+             - If the next page is medium-bitfit, then the first
+               byte will either be unallocated (zero tagged) or be
+               tagged with a nonzero even tag, as it cannot possibly
+               also be the final allocation in the page */
         valid_tags = pas_mte_any_nonzero_tag;
         if (current_pageno != prior_pageno) {
             valid_tags = pas_mte_nonzero_even_tag;
-            // If an allocation were to somehow abut both the beginning and
-            // the end of a page (e.g. by changing PAS_MIN_OBJECTS_PER_PAGE)
-            // then it would not be possible to guarantee cross-page ATE.
+            /* If an allocation were to somehow abut both the beginning and
+               the end of a page (e.g. by changing PAS_MIN_OBJECTS_PER_PAGE)
+               then it would not be possible to guarantee cross-page ATE. */
             PAS_ASSERT(current_pageno == succeeding_pageno, current_pageno, prior_pageno, succeeding_pageno);
         } else if (current_pageno != succeeding_pageno)
             valid_tags = pas_mte_odd_tag;
@@ -543,14 +542,12 @@ pas_mte_tag_region_from_pointer(
         } \
     } while (0)
 
-#define PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator) (allocator)->is_mte_tagged
 #define PAS_MTE_DECIDE_PAGE_CONFIG_TAGGEDNESS(size_category) \
     (size_category == pas_page_config_size_category_small || size_category == pas_page_config_size_category_medium)
 #define PAS_MTE_CAN_TAG_SIZE_CATEGORY(size_category) ((size_category) == pas_page_config_size_category_small || (size_category) == pas_page_config_size_category_medium)
 #define PAS_MTE_SHOULD_TAG_PAGE(page_config) ((page_config).base.allow_mte_tagging && PAS_MTE_CAN_TAG_SIZE_CATEGORY((page_config).base.page_config_size_category))
 #define PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator) !(allocator)->is_small
 #define PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config_base) (page_config_base.page_config_size_category == pas_page_config_size_category_medium)
-#define PAS_MTE_SHOULD_TAG_SEGREGATED_HEAP(segregated_heap) (segregated_heap->parent_heap && segregated_heap->parent_heap->is_non_compact_heap)
 
 static PAS_ALWAYS_INLINE uintptr_t
 pas_mte_generate_random_tag(
@@ -570,52 +567,43 @@ pas_mte_generate_random_tag(
 }
 
 /*
- * Tagging is what actually applies an PAS_MTE tag to an allocation. If the
- * pas_allocation_mode passed to this macro is compact, we zero the upper
- * bits of the pointer and tag the object with a zero tag. Otherwise, we
- * randomly choose a nonzero tag. It's assumed that this macro will be
- * invoked with a size that's a multiple of 16, and it's really important
- * that the size passed be the allocation size of the object, not the
- * actual size.
+ * Tagging is what actually applies an PAS_MTE tag to an allocation.
+ * We always tag objects with a non-zero tag. It's assumed that this macro will
+ * be invoked with a size that's a multiple of 16, and it's really important
+ * that the size passed be the allocation size of the object, not the actual
+ * (i.e. user-requested) size.
  */
 static PAS_ALWAYS_INLINE uintptr_t
 pas_mte_generate_tag_and_tag_region(
     uintptr_t begin,
     size_t size,
-    pas_allocation_mode mode,
     pas_allocator_homogeneity homogeneity,
     bool is_known_medium)
 {
-    if (mode != pas_non_compact_allocation_mode)
-        begin &= ~PAS_MTE_TAG_MASK;
-    else {
-        pas_mte_tag_constraint valid_tags;
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION))
-            valid_tags = pas_mte_compute_valid_tags_under_adjacent_tag_exclusion(begin, size, homogeneity, is_known_medium);
-        else
-            valid_tags = pas_mte_any_nonzero_tag;
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_PREVIOUS_TAG_EXCLUSION)) {
-            /*
-             * The LDG this incurs tends to be expensive, and could be avoided
-             * for initial allocations at the cost of an extra branch. If this
-             * code becomes hotter than it is today (e.g. further deployment of
-             * +MTE WebContent process variants) it might be worth looking into
-             * whether it can be elided.
-             */
-            uintptr_t p = begin;
-            PAS_MTE_GET_MTAG(p);
-            uint8_t previous_tag = (p & PAS_MTE_TAG_MASK) >> PAS_MTE_TAG_SHIFT;
-            valid_tags = pas_mte_exclude_tag(valid_tags, previous_tag);
-        }
-        begin = pas_mte_generate_random_tag(begin, valid_tags);
+    pas_mte_tag_constraint valid_tags;
+    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION))
+        valid_tags = pas_mte_compute_valid_tags_under_adjacent_tag_exclusion(begin, size, homogeneity, is_known_medium);
+    else
+        valid_tags = pas_mte_any_nonzero_tag;
+    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_PREVIOUS_TAG_EXCLUSION)) {
+        /*
+         * The LDG this incurs tends to be expensive, and could be avoided
+         * for initial allocations at the cost of an extra branch. If this
+         * code becomes hotter than it is today (e.g. further deployment of
+         * +MTE WebContent process variants) it might be worth looking into
+         * whether it can be elided.
+         */
+        uintptr_t p = begin;
+        PAS_MTE_GET_MTAG(p);
+        uint8_t previous_tag = (p & PAS_MTE_TAG_MASK) >> PAS_MTE_TAG_SHIFT;
+        valid_tags = pas_mte_exclude_tag(valid_tags, previous_tag);
     }
-    if (mode != pas_always_compact_allocation_mode) {
-        pas_mte_tag_region_from_pointer(begin, size, is_known_medium);
-        if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
-            && PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)) {
-            pas_mte_assert_prior_tag_is_disjoint(begin);
-            pas_mte_assert_prior_tag_is_disjoint(begin + size);
-        }
+    begin = pas_mte_generate_random_tag(begin, valid_tags);
+    pas_mte_tag_region_from_pointer(begin, size, is_known_medium);
+    if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ADJACENT_TAG_EXCLUSION)
+        && PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_ASSERT_ADJACENT_TAGS_ARE_DISJOINT)) {
+        pas_mte_assert_prior_tag_is_disjoint(begin);
+        pas_mte_assert_prior_tag_is_disjoint(begin + size);
     }
     return begin;
 }
@@ -639,7 +627,6 @@ static PAS_ALWAYS_INLINE uintptr_t
 pas_mte_maybe_tag_allocated_region(
     uintptr_t begin,
     size_t size,
-    pas_allocation_mode mode,
     pas_allocator_homogeneity homogeneity,
     pas_allocation_initiality initiality,
     bool is_known_medium);
@@ -718,15 +705,13 @@ static PAS_ALWAYS_INLINE uintptr_t
 pas_mte_maybe_tag_allocated_region(
     uintptr_t begin,
     size_t size,
-    pas_allocation_mode mode,
     pas_allocator_homogeneity homogeneity,
     pas_allocation_initiality initiality,
     bool is_known_medium)
 {
     if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_RETAG_ON_SCAVENGE)
         && !PAS_WORKAROUND_RDAR_171662605_UNCONDITIONAL_TAG_ON_ALLOC
-        && initiality == pas_non_initial_allocation
-        && mode == pas_non_compact_allocation_mode) {
+        && initiality == pas_non_initial_allocation) {
         /* can assume: size >= 16 && begin % 16 == 0 */
         if (PAS_MTE_FEATURE_ENABLED(PAS_MTE_FEATURE_LOG_ON_TAG))
             printf("[MTE]\tSkipping alloc-tagging %zu bytes from %p to %p\n", size, (uint8_t*)begin, (uint8_t*)begin + size);
@@ -736,7 +721,7 @@ pas_mte_maybe_tag_allocated_region(
             const char* qualifier = (initiality == pas_initial_allocation) ? "First" : "Maybe first";
             printf("[MTE]\t%s time tagging region: alloc-tagging %zu bytes from %p to %p\n", qualifier, size, (uint8_t*)begin, (uint8_t*)begin + size);
         }
-        begin = pas_mte_generate_tag_and_tag_region(begin, size, mode, homogeneity, is_known_medium);
+        begin = pas_mte_generate_tag_and_tag_region(begin, size, homogeneity, is_known_medium);
     }
     return begin;
 }
@@ -761,16 +746,17 @@ pas_mte_retag_freed_region_if_tagged(
      * so that we can save the LDG, but that will require moving the
      * source-of-truth out of the local allocator. */
     if (tag)
-        begin = pas_mte_generate_tag_and_tag_region(begin, size, pas_non_compact_allocation_mode, homogeneity, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config));
+        begin = pas_mte_generate_tag_and_tag_region(begin, size, homogeneity, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config));
     return begin;
 }
 
-// When zeroing out memory we need to be careful to not clear its tagged status.
-// Neither memset nor mach_vm_behavior_set will do so, but re-mapping the page
-// with mmap or mach_vm_map will do so unless we force it to use PAS_VM_MTE.
-// This has the side effect of making *non*-PAS_MTE pages into tagged memory, but
-// the only side effect of that should be a small hit to performance -- which
-// will have to suffice until we can start using mach_vm_behavior_set.
+
+/* When zeroing out memory we need to be careful to not clear its tagged status.
+   Neither memset nor mach_vm_behavior_set will do so, but re-mapping the page
+   with mmap or mach_vm_map will do so unless we force it to use PAS_VM_MTE.
+   This has the side effect of making *non*-PAS_MTE pages into tagged memory, but
+   the only side effect of that should be a small hit to performance -- which
+   will have to suffice until we can start using mach_vm_behavior_set. */
 
 #if PAS_OS(DARWIN)
 
@@ -872,31 +858,39 @@ extern struct __pas_heap bmalloc_common_primitive_heap;
         pas_mte_ensure_initialized(); \
     } while (false)
 
-// Used to set up whether a local allocator should tag its allocations.
+// Used to set up per-allocator state needed by tagging. Taggability itself is
+// fixed per heap config (via the page config's allow_mte_tagging; only the
+// tagged_bmalloc heap sets it), so the tag decision is made at the allocation
+// site from the config rather than a runtime flag. We still record is_small
+// here because the tag mechanics (granule stride) need the small/medium split.
 #define PAS_MTE_HANDLE_SET_UP_LOCAL_ALLOCATOR(page_config, segregated_heap, allocator) do { \
-        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_SEGREGATED_HEAP(segregated_heap)) { \
-            allocator->is_mte_tagged = PAS_MTE_SHOULD_TAG_PAGE(page_config); \
+        (void)segregated_heap; \
+        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
             allocator->is_small = (page_config).base.page_config_size_category == pas_page_config_size_category_small; \
-        } else \
-            allocator->is_mte_tagged = false; \
     } while (false)
 
 // Used to tag bump allocations from a local allocator.
-#define PAS_MTE_HANDLE_LOCAL_BUMP_ALLOCATION(heap_config, allocator, ptr, size, mode) do { \
-        if (PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator)) \
-            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, mode, pas_mte_homogeneous_allocator, pas_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator)); \
+// The local-bump-allocation site is reached only for small or medium
+// segregated objects (large allocations never go through a segregated local
+// allocator), so PAS_MTE_CAN_TAG_SIZE_CATEGORY is statically satisfied here and
+// the heap config's compile-time allow_mte_tagging is a sufficient and
+// equivalent gate. We only have the heap config (not a page config) at this
+// point, and keying off it lets the whole tag path fold away for untagged heaps.
+#define PAS_MTE_HANDLE_LOCAL_BUMP_ALLOCATION(heap_config, allocator, ptr, size) do { \
+        if (PAS_USE_MTE && (heap_config).allow_mte_tagging) \
+            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, pas_mte_homogeneous_allocator, pas_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_BUMP(allocator)); \
     } while (false)
 
 // Used to tag free-bit scanning allocations from a local allocator.
-#define PAS_MTE_HANDLE_LOCAL_FREEBITS_ALLOCATION(page_config, ptr, allocator, mode) do { \
-        if (PAS_MTE_SHOULD_TAG_ALLOCATOR(allocator)) \
-            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)allocator->object_size, mode, pas_mte_homogeneous_allocator, pas_non_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
+#define PAS_MTE_HANDLE_LOCAL_FREEBITS_ALLOCATION(page_config, ptr, allocator) do { \
+        if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
+            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)allocator->object_size, pas_mte_homogeneous_allocator, pas_non_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
     } while (false)
 
 // Used to tag bitfit allocations.
-#define PAS_MTE_HANDLE_BITFIT_ALLOCATION(page_config, ptr, size, mode) do { \
+#define PAS_MTE_HANDLE_BITFIT_ALLOCATION(page_config, ptr, size) do { \
         if (PAS_USE_MTE && PAS_MTE_SHOULD_TAG_PAGE(page_config)) \
-            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, mode, pas_mte_nonhomogeneous_allocator, pas_maybe_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
+            ptr = pas_mte_maybe_tag_allocated_region(ptr, (size_t)size, pas_mte_nonhomogeneous_allocator, pas_maybe_initial_allocation, PAS_MTE_IS_KNOWN_MEDIUM_PAGE(page_config.base)); \
     } while (false)
 
 // Logic for tagging system heap (aka system malloc) allocations. These are used
@@ -937,53 +931,14 @@ void* pas_mte_system_heap_realloc_zero_tagged(malloc_zone_t* zone, void* ptr, si
 }
 #endif
 
-#define PAS_MTE_HANDLE_SYSTEM_HEAP_ALLOCATION(systemHeap, size, alignment, mode) do { \
-        if ((mode) != pas_non_compact_allocation_mode) \
-            return pas_mte_system_heap_malloc_zero_tagged(systemHeap->zone(), (alignment), (size)); \
+// These are only for the entry points that promise a canonical (zero) tag; the
+// ordinary system heap entry points let the system malloc tag as it pleases.
+#define PAS_MTE_HANDLE_SYSTEM_HEAP_CANONICAL_TAG_ALLOCATION(systemHeap, size, alignment) do { \
+        return pas_mte_system_heap_malloc_zero_tagged(systemHeap->zone(), (alignment), (size)); \
     } while (false)
 
-#define PAS_MTE_HANDLE_SYSTEM_HEAP_REALLOCATION(systemHeap, ptr, size, mode) do { \
-        if (mode != pas_non_compact_allocation_mode) \
-            return pas_mte_system_heap_realloc_zero_tagged(systemHeap->zone(), (ptr), (size)); \
-    } while (false)
-
-// Used to bail from allocating megapages from the megapage large heap if PAS_MTE is disabled.
-// The non-MTE default is to use the megapage large heap for any non-compact megapage
-// allocation, which is what we want in an PAS_MTE world, but splitting up the page sources incurs
-// a modest but significant performance/memory overhead when PAS_MTE is disabled. This is part of
-// the inevitable overhead of enabling PAS_MTE, but we don't want to burden non-PAS_MTE hardware with
-// this cost, so we inject this early return.
-#define PAS_MTE_HANDLE_MEGAPAGES_ALLOCATION(heap, size, alignment, heap_config) do { \
-        if (!PAS_USE_MTE) { \
-            return pas_large_heap_try_allocate_and_forget( \
-                &heap->large_heap, size, alignment, pas_non_compact_allocation_mode, \
-                heap_config, transaction); \
-        } \
-    } while (false)
-
-// Used to redirect small megapage allocations when PAS_MTE is not enabled to the respective untagged megapage cache.
-#define PAS_MTE_HANDLE_SMALL_EXCLUSIVE_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
-            megapage_cache = &page_caches->small_compact_exclusive_segregated_megapage_cache; \
-    } while (false)
-#define PAS_MTE_HANDLE_SMALL_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
-            megapage_cache = &page_caches->small_compact_other_megapage_cache; \
-    } while (false)
-
-// Used to redirect medium megapage allocations when medium object tagging is not enabled to the respective untagged megapage cache.
-#define PAS_MTE_HANDLE_MEDIUM_SEGREGATED_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
-            megapage_cache = &page_caches->medium_compact_megapage_cache; \
-    } while (false)
-#define PAS_MTE_HANDLE_MEDIUM_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        if (!PAS_USE_MTE || !heap->parent_heap->is_non_compact_heap) \
-            megapage_cache = &page_caches->medium_compact_megapage_cache; \
-    } while (false)
-
-// Used to tacitly redirect all marge megapage allocations to the untagged megapage cache.
-#define PAS_MTE_HANDLE_MARGE_BITFIT_PAGE_ALLOCATION(heap, megapage_cache) do { \
-        megapage_cache = &page_caches->medium_compact_megapage_cache; \
+#define PAS_MTE_HANDLE_SYSTEM_HEAP_CANONICAL_TAG_REALLOCATION(systemHeap, ptr, size) do { \
+        return pas_mte_system_heap_realloc_zero_tagged(systemHeap->zone(), (ptr), (size)); \
     } while (false)
 
 // Used to tag the memory left behind by objects freed from bitfit heaps.

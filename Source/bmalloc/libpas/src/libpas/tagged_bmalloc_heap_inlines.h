@@ -93,9 +93,9 @@ PAS_API void* tagged_bmalloc_allocate_casual(size_t size);
 static PAS_ALWAYS_INLINE void* tagged_bmalloc_try_allocate_inline(size_t size)
 {
     pas_allocation_result result;
-    result = tagged_bmalloc_try_allocate_impl_inline_only(size, 1, pas_non_compact_allocation_mode);
+    result = tagged_bmalloc_try_allocate_impl_inline_only(size, 1);
     if (PAS_LIKELY(result.did_succeed)) {
-        if (PAS_MAR_SHOULD_LOG(pas_non_compact_allocation_mode, (void*) result.begin))
+        if (PAS_MAR_SHOULD_LOG((void*) result.begin))
             return PAS_MAR_TRACK_ALLOCATION((void*) result.begin, size);
         return (void*)result.begin;
     }
@@ -105,14 +105,14 @@ static PAS_ALWAYS_INLINE void* tagged_bmalloc_try_allocate_inline(size_t size)
 static PAS_ALWAYS_INLINE void*
 tagged_bmalloc_try_allocate_with_alignment_inline(size_t size, size_t alignment)
 {
-    return (void*)tagged_bmalloc_try_allocate_with_alignment_impl(size, alignment, pas_non_compact_allocation_mode).begin;
+    return (void*)tagged_bmalloc_try_allocate_with_alignment_impl(size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void*
 tagged_bmalloc_try_allocate_zeroed_with_alignment_inline(size_t size, size_t alignment)
 {
     return (void*)pas_allocation_result_zero(
-        tagged_bmalloc_try_allocate_with_alignment_impl(size, alignment, pas_non_compact_allocation_mode),
+        tagged_bmalloc_try_allocate_with_alignment_impl(size, alignment),
         size).begin;
 }
 
@@ -120,8 +120,8 @@ static PAS_ALWAYS_INLINE void* tagged_bmalloc_try_allocate_zeroed_inline(size_t 
 {
     pas_allocation_result result;
 
-    result = tagged_bmalloc_try_allocate_impl(size, 1, pas_non_compact_allocation_mode);
-    if (PAS_MAR_SHOULD_LOG(pas_non_compact_allocation_mode, (void*) result.begin))
+    result = tagged_bmalloc_try_allocate_impl(size, 1);
+    if (PAS_MAR_SHOULD_LOG((void*) result.begin))
         return PAS_MAR_TRACK_ALLOCATION((void*)result.begin, size);
     return (void*)pas_allocation_result_zero(result, size).begin;
 }
@@ -130,7 +130,7 @@ static PAS_ALWAYS_INLINE void* tagged_bmalloc_allocate_inline(size_t size)
 {
     pas_allocation_result result;
 
-    result = tagged_bmalloc_allocate_impl_inline_only(size, 1, pas_non_compact_allocation_mode);
+    result = tagged_bmalloc_allocate_impl_inline_only(size, 1);
     if (PAS_LIKELY(result.did_succeed))
         return (void*)result.begin;
     return tagged_bmalloc_allocate_casual(size);
@@ -139,13 +139,13 @@ static PAS_ALWAYS_INLINE void* tagged_bmalloc_allocate_inline(size_t size)
 static PAS_ALWAYS_INLINE void*
 tagged_bmalloc_allocate_with_alignment_inline(size_t size, size_t alignment)
 {
-    return (void*)tagged_bmalloc_allocate_with_alignment_impl(size, alignment, pas_non_compact_allocation_mode).begin;
+    return (void*)tagged_bmalloc_allocate_with_alignment_impl(size, alignment).begin;
 }
 
 static PAS_ALWAYS_INLINE void* tagged_bmalloc_allocate_zeroed_inline(size_t size)
 {
     return (void*)pas_allocation_result_zero(
-        tagged_bmalloc_allocate_impl(size, 1, pas_non_compact_allocation_mode),
+        tagged_bmalloc_allocate_impl(size, 1),
         size).begin;
 }
 
@@ -153,7 +153,7 @@ static PAS_ALWAYS_INLINE void*
 tagged_bmalloc_allocate_zeroed_with_alignment_inline(size_t size, size_t alignment)
 {
     return (void*)pas_allocation_result_zero(
-        tagged_bmalloc_allocate_with_alignment_impl(size, alignment, pas_non_compact_allocation_mode),
+        tagged_bmalloc_allocate_with_alignment_impl(size, alignment),
         size).begin;
 }
 
@@ -165,7 +165,6 @@ tagged_bmalloc_try_reallocate_inline(void* old_ptr, size_t new_size,
         old_ptr,
         &tagged_bmalloc_common_primitive_heap,
         new_size,
-        pas_non_compact_allocation_mode,
         TAGGED_BMALLOC_HEAP_CONFIG,
         tagged_bmalloc_try_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
@@ -180,16 +179,23 @@ tagged_bmalloc_reallocate_inline(void* old_ptr, size_t new_size,
         old_ptr,
         &tagged_bmalloc_common_primitive_heap,
         new_size,
-        pas_non_compact_allocation_mode,
         TAGGED_BMALLOC_HEAP_CONFIG,
         tagged_bmalloc_allocate_impl_for_realloc,
         pas_reallocate_allow_heap_teleport,
         free_mode).begin;
 }
 
+PAS_API bool tagged_bmalloc_try_deallocate_casual(void* ptr);
+PAS_API void tagged_bmalloc_deallocate_casual(void* ptr);
+
 static PAS_ALWAYS_INLINE void tagged_bmalloc_deallocate_inline(void* ptr)
 {
     pas_deallocate(ptr, TAGGED_BMALLOC_HEAP_CONFIG);
+}
+
+static PAS_ALWAYS_INLINE bool tagged_bmalloc_try_deallocate_inline_only(void* ptr)
+{
+    return pas_try_deallocate_inline_only(ptr, TAGGED_BMALLOC_HEAP_CONFIG, pas_try_deallocate_mode);
 }
 
 PAS_END_EXTERN_C;

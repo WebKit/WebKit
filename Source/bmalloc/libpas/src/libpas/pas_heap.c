@@ -77,7 +77,6 @@ pas_heap* pas_heap_create(pas_heap_ref* heap_ref,
     heap->heap_ref = heap_ref;
     heap->heap_ref_kind = heap_ref_kind;
     heap->config_kind = config->kind;
-    heap->is_non_compact_heap = heap_ref->is_non_compact_heap;
 
     // PGM being enabled in the config does not guarantee it will be called during runtime.
     if (config->pgm_enabled)

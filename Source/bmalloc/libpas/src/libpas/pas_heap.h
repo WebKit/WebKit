@@ -51,7 +51,6 @@ struct pas_heap {
     pas_compact_heap_ptr next_heap;
     pas_heap_config_kind config_kind : 5;
     pas_heap_ref_kind heap_ref_kind : 2;
-    bool is_non_compact_heap : 1;
 };
 
 PAS_API pas_heap* pas_heap_create(pas_heap_ref* heap_ref,

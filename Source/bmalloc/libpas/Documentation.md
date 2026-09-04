@@ -135,7 +135,7 @@ at any abstraction level.
 
 # Design of Libpas
 
-Libpas is organized into roughly eleven areas:
+Libpas is organized into roughly twelve areas:
 
 1.  Heap configurations. This is the way that we tell libpas how to organize a heap. Heap configurations can
     control a lot. They can change obvious things like the minalign and page size, but also more crazy things,
@@ -155,7 +155,8 @@ Libpas is organized into roughly eleven areas:
 9.  The basic configuration template, used to create the `bmalloc_heap` API that is used as a replacement for
     all of bmalloc's functionality.
 10. The JIT heap config.
-11. The fast paths. The various heaps, TLCs, megapages and page header tables are glued together by fast paths
+11. The tagged_bmalloc (i.e. MTE) heap config.
+12. The fast paths. The various heaps, TLCs, megapages and page header tables are glued together by fast paths
     provided for allocation, deallocation, and various utility functions.
 
 ## Heap Configurations
@@ -203,6 +204,35 @@ a known constant at compile to, so then:
     config.specialized_local_allocator_try_allocate_small_segregated_slow(...);
 
 Is an out-of-line direct function call.
+
+### Mapping Types
+
+One important characteristic determined by heap configs is the 'flavor' of memory allocated by the heap. 'Flavor', more
+precisely, means the mapping type of a page, but not its protections: a page mapped with MAP_JIT has a different mapping
+type than one mapped without, but two pages with different protections (e.g. PROT_READ | PROT_WRITE vs. PROT_READ) can
+still have the same mapping type. Any given pas_heap should only ever allocate objects from a single mapping type; we
+rely on this to be able to manipulate large page ranges (e.g. to zero memory, or to coalesce multiple free regions)
+without having to both store + check per-page metadata. This invariant only applies to memory used to allocate objects
+(i.e. memory returned to the user); memory internally allocated by a heap for use as libpas metadata or heap
+infrastructure can have a distinct mapping type from that of object allocated by the heap, as metadata is already
+segregated from the memory used for backing allocations.
+
+The mapping type used by a heap is determined by two fields:
+
+- pas_page_flags
+- allow_mte_tagging
+
+The reason for the distinction is that while pas_page_flags statically map to a given mapping-type, allow_mte_tagging
+only implies the use of PAS_VM_MTE if that feature is supported by the OS.
+This is not fundamentally necessary and will be changed at a future date.
+
+Four mapping types are currently in use:
+
+1. Default data memory: pas_page_flags_none, !allow_mte_tagging
+2. MTE-tagged data memory: pas_page_flags_none, allow_mte_tagging
+3. RWX JIT memory: pas_page_flag_executable, !allow_mte_tagging
+4. Unowned memory: pas_page_flag_client_owns_permissions, * - not strictly a mapping-type but prevents libpas from
+   doing anything fancy to the allocation.
 
 ## The Large Heaps
 

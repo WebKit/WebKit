@@ -31,37 +31,24 @@
 
 PAS_BEGIN_EXTERN_C;
 
-enum pas_bmalloc_heap_ref_kind {
-    /* Every object in this heap must be able to be referenced by a compact
-       pointer. */
-    pas_bmalloc_heap_ref_kind_compact,
-
-    /* Objects in this heap may potentially not be safely referenced via
-       compact pointer. */
-    pas_bmalloc_heap_ref_kind_non_compact
-};
-
-typedef enum pas_bmalloc_heap_ref_kind pas_bmalloc_heap_ref_kind;
-
-#define BMALLOC_HEAP_REF_INITIALIZER(passed_type, heap_ref_kind) \
+#define BMALLOC_HEAP_REF_INITIALIZER(passed_type) \
     ((pas_heap_ref){ \
          .type = (const pas_heap_type*)(passed_type), \
          .heap = NULL, \
-         .allocator_index = 0, \
-         .is_non_compact_heap = (heap_ref_kind == pas_bmalloc_heap_ref_kind_non_compact) \
+         .allocator_index = 0 \
      })
 
-#define BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type, heap_ref_kind) \
+#define BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type) \
     ((pas_primitive_heap_ref){ \
-         .base = BMALLOC_HEAP_REF_INITIALIZER(passed_type, heap_ref_kind), \
+         .base = BMALLOC_HEAP_REF_INITIALIZER(passed_type), \
          .cached_index = UINT_MAX \
      })
 
-#define BMALLOC_FLEX_HEAP_REF_INITIALIZER(passed_type, heap_ref_kind) \
-    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type, heap_ref_kind)
+#define BMALLOC_FLEX_HEAP_REF_INITIALIZER(passed_type) \
+    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type)
 
-#define BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(passed_type, heap_ref_kind) \
-    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type, heap_ref_kind)
+#define BMALLOC_AUXILIARY_HEAP_REF_INITIALIZER(passed_type) \
+    BMALLOC_PRIMITIVE_HEAP_REF_INITIALIZER_IMPL(passed_type)
 
 PAS_END_EXTERN_C;
 

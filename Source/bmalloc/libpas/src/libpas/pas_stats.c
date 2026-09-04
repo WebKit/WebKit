@@ -42,7 +42,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "pas_allocation_mode.h"
 #include "pas_heap_lock.h"
 #include "pas_immortal_heap.h"
 #include "pas_utils.h"

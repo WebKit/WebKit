@@ -273,7 +273,6 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_allocation_callbacks.h
     libpas/src/libpas/pas_allocation_config.h
     libpas/src/libpas/pas_allocation_kind.h
-    libpas/src/libpas/pas_allocation_mode.h
     libpas/src/libpas/pas_allocation_result.h
     libpas/src/libpas/pas_allocator_counts.h
     libpas/src/libpas/pas_allocator_index.h

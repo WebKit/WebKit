@@ -35,10 +35,8 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_SEGREGATED_PAGE_CONFIG_TLC_SPECIALIZATION_DEFINITIONS(lower_case_page_config_name, page_config_value) \
     PAS_NEVER_INLINE bool lower_case_page_config_name ## _specialized_local_allocator_refill( \
         pas_local_allocator* allocator, \
-        pas_allocation_mode allocation_mode, \
         pas_allocator_counts* counts) \
     { \
-        PAS_UNUSED_PARAM(allocation_mode); \
         return pas_local_allocator_refill_with_known_config(allocator, counts, (page_config_value)); \
     } \
     \

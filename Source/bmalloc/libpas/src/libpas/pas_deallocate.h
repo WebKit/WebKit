@@ -204,6 +204,18 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate_casual_case(void* ptr,
         return pas_try_deallocate_slow_no_cache((void*)begin, config.config_ptr, deallocation_mode);
 
     megapage_kind = config.fast_megapage_kind_func(begin);
+    /* Generally, if this is true then we would have expected it to be caught
+       in a preceding call to pas_try_deallocate_inline_only.
+       However, if the consumer did not call it, or another function-call from
+       this thread (e.g. another config's casual_case) has modified TLC state
+       since the consumer called it, then it's possible that we actually can
+       go down the happy-happy path after all. */
+    if (PAS_UNLIKELY(megapage_kind == pas_small_exclusive_segregated_fast_megapage_kind)) {
+        pas_segregated_page_log_or_deallocate(
+            begin, thread_local_cache, config.small_segregated_config);
+        return true;
+    }
+
     return config.specialized_try_deallocate_not_small_exclusive_segregated(
         thread_local_cache, begin, deallocation_mode, megapage_kind);
 }

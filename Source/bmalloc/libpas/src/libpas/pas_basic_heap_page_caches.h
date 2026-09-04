@@ -45,21 +45,19 @@ struct pas_basic_heap_page_caches {
                                                  allocated one-at-a-time from bootstrap, since that
                                                  would create unnecessary fragmentation in the large
                                                  heap. */
-    pas_megapage_cache small_compact_exclusive_segregated_megapage_cache;
-    pas_megapage_cache small_compact_other_megapage_cache;
-    pas_megapage_cache medium_compact_megapage_cache;
 };
 
-#define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(small_log_shift, medium_log_shift) \
+/* may_tag selects the page provider for every megapage cache of this heap config:
+   true (only the tagged_bmalloc heap) uses the MTE-capable small/medium bootstrap
+   provider, false uses the plain bootstrap provider. It must be a literal so the
+   static initializer stays a constant expression. */
+#define PAS_BASIC_HEAP_PAGE_CACHES_INITIALIZER(may_tag) \
     ((pas_basic_heap_page_caches){ \
         .megapage_large_heap_cache = PAS_MEGAPAGE_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
         .large_heap_cache = PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER, \
-        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small), \
-        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small), \
-        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium), \
-        .small_compact_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small_compact), \
-        .small_compact_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small_compact), \
-        .medium_compact_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium_compact) \
+        .small_exclusive_segregated_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, may_tag), \
+        .small_other_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_small, may_tag), \
+        .medium_megapage_cache = PAS_MEGAPAGE_CACHE_INITIALIZER(pas_megapage_cache_size_medium, may_tag) \
     })
 
 PAS_END_EXTERN_C;
