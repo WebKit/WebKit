@@ -24,11 +24,16 @@ import os
 import time
 from unittest.mock import Mock, patch
 
-from webkitbugspy import mocks as bmocks
+from webkitbugspy import Issue, mocks as bmocks
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 
 from webkitscmpy import Commit, Contributor, local, mocks, program
+from webkitscmpy.program.conflict import Conflict
+
+
+class KeyValuePairNotFoundException(Exception):
+    pass
 
 
 class TestConflict(testing.PathTestCase):
@@ -48,26 +53,84 @@ class TestConflict(testing.PathTestCase):
 
         self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
-    def _mock_radar_response(self, *args, **kwargs):
-        rdar = bmocks.Radar()
-        rdar.sourceChanges = 'WebKit, merge, sha123'
-        rdar.source_changes = rdar.sourceChanges.splitlines()
-        rdar.id = 1234
-        return rdar
+    @staticmethod
+    def _mock_radar_response(pr_url=None, comments=None):
+        def callback(*args, **kwargs):
+            rdar = bmocks.Radar()
+            rdar.sourceChanges = 'WebKit, merge, sha123'
+            rdar.source_changes = rdar.sourceChanges.splitlines()
+            rdar.id = 1234
+            rdar.comments = comments or []
+
+            library = Mock()
+            library.exceptions.KeyValuePairNotFoundException = KeyValuePairNotFoundException
+
+            client = Mock()
+            if pr_url:
+                client.key_values_for_radar_id.return_value.key_value_pair_for_key.return_value = Mock(value=pr_url)
+            else:
+                client.key_values_for_radar_id.return_value.key_value_pair_for_key.side_effect = KeyValuePairNotFoundException()
+
+            rdar.tracker = Mock(library=library, client=client)
+            return rdar
+        return callback
 
     def test_conflict_not_found(self):
         with (
             OutputCapture() as captured,
             mocks.remote.GitHub() as remote,
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)),
-            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response)
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response())
         ):
             self.assertEqual(1, program.main(
                 args=('conflict', '1234'),
                 path=self.path,
             ))
 
-            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found with branch integration/conflict/1234\n')
+            self.assertEqual(captured.stderr.getvalue(), 'No conflict pull request found via the scm-integrate:pr_url key-value, radar comments, or branch-guessing on rdar://1234\n')
+
+    def test_conflict_via_comments_validates_radar_reference(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [
+                dict(
+                    number=1, state='open', title='Unrelated change', user=dict(login='tcontributor'),
+                    body='No radar reference here.',
+                    head=dict(ref='eng/unrelated', repo=dict(full_name='tcontributor')),
+                    base=dict(ref='main'), requested_reviews=[], reviews=[], draft=False,
+                ),
+                dict(
+                    number=2, state='open', title='Cherry-pick(s)', user=dict(login='tcontributor'),
+                    body='Cherry-pick(s). rdar://1234',
+                    head=dict(ref='integration/conflict/sha_sha', repo=dict(full_name='tcontributor')),
+                    base=dict(ref='main'), requested_reviews=[], reviews=[], draft=False,
+                ),
+            ]
+            radar_obj.comments = [
+                # Most recent comment links an unrelated PR - should be checked first and rejected.
+                Issue.Comment(user=None, timestamp=200, content='See also https://{}/pull/1'.format(remote.remote)),
+                # Older comment links the real conflict PR, which references this radar.
+                Issue.Comment(user=None, timestamp=100, content='Conflict PR: https://{}/pull/2'.format(remote.remote)),
+            ]
+
+            pr = Conflict.find_conflict_pr_via_comments(radar_obj)
+            self.assertIsNotNone(pr)
+            self.assertEqual(pr.number, 2)
+
+    def test_conflict_via_comments_no_matching_pr(self):
+        radar_obj = Mock(id=1234)
+        with mocks.remote.GitHub() as remote:
+            remote.pull_requests = [dict(
+                number=1, state='open', title='Unrelated change', user=dict(login='tcontributor'),
+                body='No radar reference here.',
+                head=dict(ref='eng/unrelated', repo=dict(full_name='tcontributor')),
+                base=dict(ref='main'), requested_reviews=[], reviews=[], draft=False,
+            )]
+            radar_obj.comments = [
+                Issue.Comment(user=None, timestamp=100, content='See also https://{}/pull/1'.format(remote.remote)),
+            ]
+
+            self.assertIsNone(Conflict.find_conflict_pr_via_comments(radar_obj))
 
     def test_conflict_found(self):
         with (
@@ -75,8 +138,7 @@ class TestConflict(testing.PathTestCase):
             mocks.remote.GitHub() as remote,
             mocks.local.Git(self.path, remote='https://{}'.format(remote.remote)) as repo,
             mocks.local.Svn(),
-            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response),
-            patch('webkitscmpy.program.conflict.Conflict.get_open_integration_prs', lambda x: [Mock(head='integration/conflict/sha123_sha123/target_branch', _metadata={'full_name': 'tcontributor'})])
+            patch('webkitscmpy.program.conflict.Tracker.from_string', TestConflict._mock_radar_response(pr_url='https://{}/pull/1'.format(remote.remote))),
         ):
             remote.users = dict(
                 rreviewer=Contributor('Ricky Reviewer', ['rreviewer@webkit.org'], github='rreviewer'),
@@ -100,7 +162,7 @@ class TestConflict(testing.PathTestCase):
             Reviewed by NOBODY (OOPS!).
             </pre>
             ''',
-                head=dict(ref='tcontributor:integration/conflict/sha123_sha123/target_branch'),
+                head=dict(ref='integration/conflict/sha123_sha123/target_branch', repo=dict(full_name='tcontributor')),
                 base=dict(ref='main'),
                 requested_reviews=[dict(login='rreviewer')],
                 reviews=[dict(user=dict(login='rreviewer'), state='CHANGES_REQUESTED')],
