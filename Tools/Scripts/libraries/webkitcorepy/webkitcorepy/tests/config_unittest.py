@@ -98,6 +98,15 @@ class ConfigRenderTestCase(unittest.TestCase):
         }, context={'x': 5})
         self.assertDictEqual(result, {'value': 10})
 
+    def test_render_key_named_mapping(self) -> None:
+        result = Config.render({'mapping': {'key': 'value'}})
+        self.assertIsInstance(result, Config)
+        self.assertDictEqual(result, {'mapping': {'key': 'value'}})
+
+    def test_render_key_named_mapping_alongside_others(self) -> None:
+        result = Config.render({'mapping': {'key': 'value'}, 'other': 1})
+        self.assertDictEqual(result, {'mapping': {'key': 'value'}, 'other': 1})
+
 
 class ConfigLoadsTestCase(unittest.TestCase):
     def test_loads_yaml(self):

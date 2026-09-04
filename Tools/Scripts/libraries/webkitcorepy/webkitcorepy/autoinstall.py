@@ -35,13 +35,12 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-import time
 import zipfile
 
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import NullHandler
-from webkitcorepy import log
+
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 
@@ -49,6 +48,8 @@ from html.parser import HTMLParser
 from urllib.request import urlopen
 from urllib.error import URLError
 from urllib.parse import urlparse
+
+log = logging.getLogger('webkitcorepy')
 
 
 class SimplyPypiIndexPageParser(HTMLParser):
@@ -635,7 +636,7 @@ class AutoInstall(importlib.abc.MetaPathFinder):
         try:
             response = AutoInstall._request('https://{}/simple/pip/'.format(cls.index), ca_cert_path=cls.ca_cert_path)
             if response.code != 200:
-                error('Failed to set AutoInstall index to {}, received {} response when searching for simple/pip'.format(index, response.code))
+                error('Failed to set AutoInstall index to {}, received {} response when searching for simple/pip'.format(cls.index, response.code))
 
         except URLError:
             error('Failed to set AutoInstall index to {}, no response from the server'.format(cls.index))
@@ -661,7 +662,7 @@ class AutoInstall(importlib.abc.MetaPathFinder):
             cls._verify_index()
 
         if cls.ca_cert_path:
-            os.environ[cls.CA_CERT_PATH_ENV_VAR] = ca_cert_path
+            os.environ[cls.CA_CERT_PATH_ENV_VAR] = cls.ca_cert_path
 
         return cls.index
 
@@ -721,12 +722,12 @@ class AutoInstall(importlib.abc.MetaPathFinder):
             sys.stderr.write("Autoinstaller disabled, but 'install' called\n")
             return None
         if isinstance(package, str):
-            # we want this to throw if it hasn't been previously registered; in the case
-            # that this is being called from cls.find_module it should always exist
             packages = cls.packages[package]
         else:
             packages = cls.register(package)
-        return all([to_install.install() for to_install in packages])
+        for to_install in packages:
+            to_install.install()
+        return None
 
     @classmethod
     def install_everything(cls):

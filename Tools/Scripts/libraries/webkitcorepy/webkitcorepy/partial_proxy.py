@@ -44,7 +44,7 @@ class PartialProxy(mocks.ContextStack):
         import requests
 
         class Session(requests.Session):
-            def request(self, method, url, **kwargs):
+            def request(self, method, url, *args, **kwargs):
                 split = url.split('/')
                 protocol = split[0]
                 host = split[2] if len(split) >= 3 else None
@@ -60,7 +60,7 @@ class PartialProxy(mocks.ContextStack):
                             break
                         current = current.previous
 
-                return super(Session, self).request(method, url, **kwargs)
+                return super(Session, self).request(method, url, *args, **kwargs)
 
         self._temp_patches = [
             mock.patch('requests.Session', new=Session),

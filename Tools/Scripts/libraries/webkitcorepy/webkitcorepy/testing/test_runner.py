@@ -28,7 +28,9 @@ import sys
 import time
 import unittest
 
-from webkitcorepy import arguments, log, string_utils, Terminal
+from webkitcorepy import arguments, string_utils, Terminal
+
+log = logging.getLogger('webkitcorepy')
 
 
 class TestRunner(object):

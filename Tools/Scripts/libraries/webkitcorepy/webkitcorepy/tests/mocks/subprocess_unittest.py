@@ -133,6 +133,24 @@ class MockSubprocess(unittest.TestCase):
             self.assertEqual(run(['command'], stdin=BytesIO(b'stdin')).returncode, 0)
 
 
+class MockSubprocessUnexpectedKeywordArgument(unittest.TestCase):
+    def test_subprocess_constructor(self) -> None:
+        with self.assertRaisesRegex(TypeError, 'unexpected keyword argument bogus'):
+            mocks.Subprocess(mocks.Subprocess.Route('ls'), bogus=True)
+
+    def test_route_constructor(self) -> None:
+        with self.assertRaisesRegex(TypeError, 'unexpected keyword argument bogus'):
+            mocks.Subprocess.Route('ls', bogus=True)
+
+    def test_route_matches(self) -> None:
+        with self.assertRaisesRegex(TypeError, 'unexpected keyword argument bogus'):
+            mocks.Subprocess.Route('ls').matches('ls', bogus=True)
+
+    def test_route_call(self) -> None:
+        with self.assertRaisesRegex(TypeError, 'unexpected keyword argument bogus'):
+            mocks.Subprocess.Route('ls')('ls', bogus=True)
+
+
 class MockCheckOutput(unittest.TestCase):
     def test_popen(self):
         with mocks.Subprocess(MockSubprocess.LS):

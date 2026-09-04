@@ -25,6 +25,7 @@ import os
 import shutil
 import tempfile
 import unittest
+from collections import defaultdict
 from unittest.mock import patch
 from urllib.error import URLError
 
@@ -174,3 +175,18 @@ class MergeMoveTest(unittest.TestCase):
         self._unpack('provides-file', ['sample/thing'])
         self._unpack('provides-package', ['sample/thing/__init__.py'])
         self.assertEqual(self._contents(), ['sample/thing/__init__.py'])
+
+
+class InstallTest(unittest.TestCase):
+    def test_install_nothing_registered(self) -> None:
+        with patch.object(AutoInstall, 'enabled', return_value=True), \
+                patch.object(AutoInstall, 'packages', new=defaultdict(list)):
+            self.assertIsNone(AutoInstall.install('never-registered'))
+
+    def test_install_registered_package(self) -> None:
+        with patch.object(AutoInstall, 'enabled', return_value=True), \
+                patch.object(AutoInstall, 'packages', new=defaultdict(list)), \
+                patch.object(Package, 'install', autospec=True, return_value=None) as install:
+            AutoInstall.register(Package('example', Version(1, 0)))
+            self.assertIsNone(AutoInstall.install('example'))
+            self.assertEqual(install.call_count, 1)

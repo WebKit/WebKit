@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import bisect
 import collections
 import importlib
@@ -29,8 +30,11 @@ import signal
 import threading
 import time
 
-from webkitcorepy import log, string_utils
+from webkitcorepy import string_utils
+
 from webkitcorepy.call_by_need import CallByNeed
+
+log = logging.getLogger('webkitcorepy')
 
 mock = CallByNeed(lambda: importlib.import_module('unittest.mock'))
 
@@ -52,7 +56,7 @@ class Timeout(object):
             if not other:
                 return False
             if not isinstance(other, Timeout.Data):
-                raise ValueError('Expected {} in comparison, received {}').format(Timeout.Data, type(other))
+                raise ValueError('Expected {} in comparison, received {}'.format(Timeout.Data, type(other)))
             return self.alarm_time < other.alarm_time
 
     class Exception(Exception):
@@ -114,6 +118,8 @@ class Timeout(object):
         if cls.difference(current_time=current_time) != 0:
             return
         current = cls.current()
+        if not current:
+            return
         current.triggered = True
         cls.bind()
         current.handler(Timeout.SIGALRM, None)

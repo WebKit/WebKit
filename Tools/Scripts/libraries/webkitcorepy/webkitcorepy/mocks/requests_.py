@@ -23,6 +23,8 @@
 import json
 from unittest import mock
 
+from requests.structures import CaseInsensitiveDict
+
 from webkitcorepy import string_utils
 from webkitcorepy.mocks import ContextStack
 
@@ -37,7 +39,7 @@ class Response(object):
     def fromJson(data, url=None, headers=None, status_code=None):
         assert isinstance(data, list) or isinstance(data, dict)
 
-        headers = headers or {}
+        headers = dict(headers or {})
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'text/json'
 
@@ -63,12 +65,12 @@ class Response(object):
             self.content = content or b''
 
         self.url = url
-        self.headers = headers or {}
+        self.headers = CaseInsensitiveDict(headers or {})
 
         if 'Content-Type' not in self.headers:
             self.headers['Content-Type'] = 'text'
         if 'Content-Length' not in self.headers:
-            self.headers['Content-Length'] = len(self.content) if self.content else 0
+            self.headers['Content-Length'] = str(len(self.content)) if self.content else '0'
 
     @property
     def text(self):

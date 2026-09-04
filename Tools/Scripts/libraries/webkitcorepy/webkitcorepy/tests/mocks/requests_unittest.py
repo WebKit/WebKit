@@ -50,11 +50,19 @@ class MockRequests(unittest.TestCase):
             response = requests.get('https://webkit.org/text')
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.text, 'text content')
-            self.assertDictEqual(response.headers, {'Content-Length': 12, 'Content-Type': 'text'})
+            self.assertEqual(response.headers, {'Content-Length': '12', 'Content-Type': 'text'})
 
     def test_json(self):
         with self.Example('webkit.org'):
             response = requests.get('https://webkit.org/json')
             self.assertEqual(response.status_code, 200)
             self.assertDictEqual(response.json(), dict(content='json'))
-            self.assertDictEqual(response.headers, {'Content-Length': 19, 'Content-Type': 'text/json'})
+            self.assertEqual(response.headers, {'Content-Length': '19', 'Content-Type': 'text/json'})
+
+
+class MockResponse(unittest.TestCase):
+    def test_from_json_does_not_mutate_headers(self) -> None:
+        headers = {'Accept': 'application/json'}
+        response = mocks.Response.fromJson(data=dict(content='json'), headers=headers)
+        self.assertEqual(headers, {'Accept': 'application/json'})
+        self.assertEqual(response.headers['Content-Type'], 'text/json')
