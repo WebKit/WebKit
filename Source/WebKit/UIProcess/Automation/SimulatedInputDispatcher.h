@@ -67,6 +67,9 @@ using CharKeySet = ListHashSet<uint32_t>;
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+using KeyboardInteractionSpec = std::pair<KeyboardInteraction, Variant<VirtualKey, CharKey>>;
+#endif
 
 enum class SimulatedInputSourceType {
     Null, // Used to induce a minimum duration.
@@ -120,13 +123,18 @@ struct SimulatedInputKeyFrame {
 public:
     using StateEntry = std::pair<SimulatedInputSource&, SimulatedInputSourceState>;
 
-    explicit SimulatedInputKeyFrame(Vector<StateEntry>&&);
+    // The keyframe that resets every input source (§17.6 Release Actions) may change several keys at
+    // once; a keyframe from a tick changes at most one per input source.
+    enum class IsResetKeyFrame : bool { No, Yes };
+
+    explicit SimulatedInputKeyFrame(Vector<StateEntry>&&, IsResetKeyFrame = IsResetKeyFrame::No);
     Seconds maximumDuration() const;
 
     static SimulatedInputKeyFrame keyFrameFromStateOfInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
     static SimulatedInputKeyFrame keyFrameToResetInputSources(const HashMap<String, Ref<SimulatedInputSource>>&);
 
     Vector<StateEntry> states;
+    IsResetKeyFrame isResetKeyFrame { IsResetKeyFrame::No };
 };
 
 class SimulatedInputDispatcher : public RefCountedAndCanMakeWeakPtr<SimulatedInputDispatcher> {
@@ -171,6 +179,9 @@ private:
 
     void transitionToNextInputSourceState();
     void transitionInputSourceToState(SimulatedInputSource&, SimulatedInputSourceState& newState, AutomationCompletionHandler&&);
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+    void dispatchKeyboardInteractions(Vector<KeyboardInteractionSpec>&&, size_t nextIndex, AutomationCompletionHandler&&);
+#endif
     void finishDispatching(std::optional<AutomationCommandError>);
 
     void keyFrameTransitionDurationTimerFired();

@@ -2986,8 +2986,22 @@ void WebAutomationSession::performInteractionSequence(const Inspector::Protocol:
             Ref inputSource = *m_inputSources.get(sourceId);
             SimulatedInputSourceState sourceState { };
 
-            auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s);
-            if (!!pressedCharKeyString) {
+            // 'pressedCharKey' is the deprecated singular form of 'pressedCharKeys'; prefer the plural
+            // form when a client sends both.
+            if (auto pressedCharKeysArray = stateObject->getArray("pressedCharKeys"_s)) {
+                for (auto& value : *pressedCharKeysArray) {
+                    auto pressedCharKeyString = value->asString();
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!pressedCharKeyString, InvalidParameter, "Encountered a non-string character key value."_s);
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(WTF::numGraphemeClusters(pressedCharKeyString) != 1, InvalidParameter, "Invalid 'pressedCharKeys'."_s);
+                    sourceState.pressedCharKeys.add(pressedCharKeyString);
+#else
+                    auto charKey = pressedCharKey(pressedCharKeyString);
+                    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!charKey, InvalidParameter, "Invalid 'pressedCharKeys'."_s);
+                    sourceState.pressedCharKeys.add(*charKey);
+#endif
+                }
+            } else if (auto pressedCharKeyString = stateObject->getString("pressedCharKey"_s); !!pressedCharKeyString) {
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
                 ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(WTF::numGraphemeClusters(pressedCharKeyString) != 1, InvalidParameter, "Invalid 'pressedCharKey'."_s);
                 sourceState.pressedCharKeys.add(pressedCharKeyString);
@@ -3080,12 +3094,21 @@ void WebAutomationSession::cancelInteractionSequence(const Inspector::Protocol::
 #if !ENABLE(WEBDRIVER_ACTIONS_API)
     ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
 #else
+    // m_inputSources is per-session and outlives any one browsing context, so it has to be cleared even
+    // when there is nowhere left to dispatch the release events to. A key left in the pressed state
+    // would otherwise be seen as still held down by every later interaction in the session.
     auto page = webPageProxyForHandle(handle);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    if (!page) {
+        m_inputSources.clear();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    }
 
     bool frameNotFound = false;
     auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, WindowNotFound);
+    if (frameNotFound) {
+        m_inputSources.clear();
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+    }
 
     Vector<SimulatedInputKeyFrame> keyFrames({ SimulatedInputKeyFrame::keyFrameToResetInputSources(m_inputSources) });
     Ref inputDispatcher = inputDispatcherForPage(*page);

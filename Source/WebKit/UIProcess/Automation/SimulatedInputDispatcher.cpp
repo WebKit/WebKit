@@ -61,8 +61,9 @@ SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(Sim
 }
 
 
-SimulatedInputKeyFrame::SimulatedInputKeyFrame(Vector<StateEntry>&& entries)
+SimulatedInputKeyFrame::SimulatedInputKeyFrame(Vector<StateEntry>&& entries, IsResetKeyFrame isResetKeyFrame)
     : states(WTF::move(entries))
+    , isResetKeyFrame(isResetKeyFrame)
 {
 }
 
@@ -96,9 +97,9 @@ SimulatedInputKeyFrame SimulatedInputKeyFrame::keyFrameToResetInputSources(const
         return std::pair<SimulatedInputSource&, SimulatedInputSourceState> { inputSource.get(), SimulatedInputSourceState::emptyStateForSourceType(inputSource->type) };
     });
 
-    return SimulatedInputKeyFrame(WTF::move(entries));
+    return SimulatedInputKeyFrame(WTF::move(entries), IsResetKeyFrame::Yes);
 }
-    
+
 SimulatedInputDispatcher::SimulatedInputDispatcher(WebPageProxy& page, SimulatedInputDispatcher::Client& client)
     : m_page(page)
     , m_client(client)
@@ -381,86 +382,67 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
 #if !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         RELEASE_ASSERT_NOT_REACHED();
 #else
-        auto comparePressedCharKeys = [](const auto& a, const auto& b) {
-            if (a.size() != b.size())
-                return false;
-            for (const auto& charKey : a) {
-                if (!b.contains(charKey))
-                    return false;
-            }
-            return true;
-        };
-
         // The "dispatch a key{Down,Up} action" algorithms (§17.4 Dispatching Actions).
-        if (!comparePressedCharKeys(a.pressedCharKeys, b.pressedCharKeys)) {
-            bool simulatedAnInteraction = false;
-            for (auto charKey : b.pressedCharKeys) {
-                if (!a.pressedCharKeys.contains(charKey)) {
-#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-                    ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
-#endif
-                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
-                    if (simulatedAnInteraction)
-                        continue;
-                    simulatedAnInteraction = true;
+        //
+        // A tick changes at most one key per input source, but the keyframe that resets every input
+        // source (§17.6 Release Actions) releases everything still held at once, so several keys can
+        // differ here.
+        //
+        // Modifiers are pressed before and released after character keys: the platform layer folds the
+        // currently pressed modifiers into the characters it synthesizes, so a character key pressed
+        // before its modifier produces the unmodified character.
+        Vector<KeyboardInteractionSpec> interactions;
 
-#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
-#else
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
-#endif
-                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyPress, charKey, WTF::move(eventDispatchFinished));
-                }
-            }
-
-            for (auto charKey : copyToVector(a.pressedCharKeys)) {
-                if (!b.pressedCharKeys.contains(charKey)) {
-#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-                    ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
-#endif
-                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one CharKey may differ at a time between two input source states.");
-                    if (simulatedAnInteraction)
-                        continue;
-                    simulatedAnInteraction = true;
-#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
-#else
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
-#endif
-                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyRelease, charKey, WTF::move(eventDispatchFinished));
-                }
-            }
-        } else if (a.pressedVirtualKeys != b.pressedVirtualKeys) {
-            bool simulatedAnInteraction = false;
-            for (const auto& iter : b.pressedVirtualKeys) {
-                if (!a.pressedVirtualKeys.contains(iter.key)) {
-                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
-                    if (simulatedAnInteraction)
-                        continue;
-                    simulatedAnInteraction = true;
+        for (const auto& iter : b.pressedVirtualKeys) {
+            if (a.pressedVirtualKeys.contains(iter.key))
+                continue;
 #if !LOG_DISABLED
-                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+            String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyPress, iter.value, WTF::move(eventDispatchFinished));
-                }
-            }
+            interactions.append({ KeyboardInteraction::KeyPress, iter.value });
+        }
 
-            for (const auto& iter : copyToVector(a.pressedVirtualKeys)) {
-                if (!b.pressedVirtualKeys.contains(iter.key)) {
-                    ASSERT_WITH_MESSAGE(!simulatedAnInteraction, "Only one VirtualKey may differ at a time between two input source states.");
-                    if (simulatedAnInteraction)
-                        continue;
-                    simulatedAnInteraction = true;
-#if !LOG_DISABLED
-                    String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
-                    LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+        for (auto charKey : b.pressedCharKeys) {
+            if (a.pressedCharKeys.contains(charKey))
+                continue;
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+            ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#else
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyPress[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
 #endif
-                    m_client.simulateKeyboardInteraction(protect(m_page), KeyboardInteraction::KeyRelease, iter.value, WTF::move(eventDispatchFinished));
-                }
-            }
-        } else
-            eventDispatchFinished(std::nullopt);
+            interactions.append({ KeyboardInteraction::KeyPress, charKey });
+        }
+
+        for (auto charKey : a.pressedCharKeys) {
+            if (b.pressedCharKeys.contains(charKey))
+                continue;
+#if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
+            ASSERT_WITH_MESSAGE(WTF::numGraphemeClusters(charKey) <= 1, "A CharKey must either be a single unicode code point, a single grapheme cluster, or null.");
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, charKey.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#else
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%c] for transition to %d.%d", this, charKey, m_keyframeIndex, m_inputSourceStateIndex);
+#endif
+            interactions.append({ KeyboardInteraction::KeyRelease, charKey });
+        }
+
+        for (const auto& iter : a.pressedVirtualKeys) {
+            if (b.pressedVirtualKeys.contains(iter.key))
+                continue;
+#if !LOG_DISABLED
+            String virtualKeyName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(iter.value);
+            LOG(Automation, "SimulatedInputDispatcher[%p]: simulating KeyRelease[key=%s] for transition to %d.%d", this, virtualKeyName.utf8().data(), m_keyframeIndex, m_inputSourceStateIndex);
+#endif
+            interactions.append({ KeyboardInteraction::KeyRelease, iter.value });
+        }
+
+        // Several differences outside the reset keyframe mean the client built its input source states
+        // incorrectly; simulate them anyway rather than discarding input.
+        ASSERT_WITH_MESSAGE(m_keyframes[m_keyframeIndex].isResetKeyFrame == SimulatedInputKeyFrame::IsResetKeyFrame::Yes || interactions.size() <= 1,
+            "Only one key may differ at a time between two input source states, unless all input sources are being reset.");
+
+        dispatchKeyboardInteractions(WTF::move(interactions), 0, WTF::move(eventDispatchFinished));
 #endif // !ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
         break;
     }
@@ -498,6 +480,28 @@ void SimulatedInputDispatcher::transitionInputSourceToState(SimulatedInputSource
         break;
     }
 }
+
+#if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
+void SimulatedInputDispatcher::dispatchKeyboardInteractions(Vector<KeyboardInteractionSpec>&& interactions, size_t nextIndex, AutomationCompletionHandler&& completionHandler)
+{
+    if (nextIndex == interactions.size()) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    auto interaction = interactions[nextIndex].first;
+    auto key = interactions[nextIndex].second;
+
+    m_client.simulateKeyboardInteraction(protect(m_page), interaction, WTF::move(key), [this, protectedThis = Ref { *this }, interactions = WTF::move(interactions), nextIndex, completionHandler = WTF::move(completionHandler)](std::optional<AutomationCommandError> error) mutable {
+        if (error) {
+            completionHandler(error);
+            return;
+        }
+
+        dispatchKeyboardInteractions(WTF::move(interactions), nextIndex + 1, WTF::move(completionHandler));
+    });
+}
+#endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
 void SimulatedInputDispatcher::run(std::optional<WebCore::FrameIdentifier> frameID, Vector<SimulatedInputKeyFrame>&& keyFrames, const HashMap<String, Ref<SimulatedInputSource>>& inputSources, AutomationCompletionHandler&& completionHandler)
 {
