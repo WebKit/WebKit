@@ -592,6 +592,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
         auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
+        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
         CGContextSetTextPosition(context, labelBounds.origin.x + 3, labelBounds.origin.y + 20);
         CTLineDraw(line.get(), context);
     
