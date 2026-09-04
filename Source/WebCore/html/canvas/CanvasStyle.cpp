@@ -117,7 +117,8 @@ Color parseColor(const String& colorString, ScriptExecutionContext& scriptExecut
     // FIXME: Add constructor for CSSParserContext that takes a ScriptExecutionContext to allow preferences to be
     //        checked correctly.
     using namespace CSSPropertyParserHelpers;
-    auto color = parseColorRawSimple(colorString, CSSParserContext(HTMLStandardMode));
+    CSSParserContext cssParserContext(HTMLStandardMode);
+    auto color = parseColorRawSimple(colorString, cssParserContext);
     if (color.isValid())
         return color;
     CSSColorParsingOptions options {
@@ -126,7 +127,7 @@ Color parseColor(const String& colorString, ScriptExecutionContext& scriptExecut
     CSS::PlatformColorResolutionState state {
         .resolvedCurrentColor = Color::black
     };
-    return parseColorRawGeneral(colorString, CSSParserContext(HTMLStandardMode), scriptExecutionContext, options, state);
+    return parseColorRawGeneral(colorString, cssParserContext, scriptExecutionContext, options, state);
 }
 
 }
