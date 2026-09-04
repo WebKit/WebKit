@@ -4411,7 +4411,10 @@ Vector<String> Internals::getReferencedFilePaths() const
     if (!localFrame)
         return { };
     localFrame->loader().history().saveDocumentAndScrollState();
-    return FormController::referencedFilePaths(localFrame->loader().history().currentItem()->documentState());
+    RefPtr currentItem = localFrame->loader().history().currentItem();
+    if (!currentItem)
+        return { };
+    return FormController::referencedFilePaths(currentItem->documentState());
 }
 
 ExceptionOr<void> Internals::startTrackingRepaints()
