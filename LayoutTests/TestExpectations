@@ -3933,6 +3933,8 @@ webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/tex
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-character-001.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-inter-word-001.html [ ImageOnlyFailure ]
 webkit.org/b/99945 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-none-001.html [ ImageOnlyFailure ]
+webkit.org/b/322760 imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-001.html [ ImageOnlyFailure ]
+webkit.org/b/322760 imported/w3c/web-platform-tests/css/css-text/word-spacing/word-spacing-combining-mark-002.html [ ImageOnlyFailure ]
 
 # Link prefetch is disabled by default (needs ENABLE_LINK_PREFETCH)
 webkit.org/b/3652 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Skip ]

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test makes sure that letter-spacing and word-spacing are not inserted between a combining mark and its grapheme cluster base, which would paint the mark outside of the cluster it belongs to.");
+
+// The bug needs a mark Core Text places with a glyph origin: U+0336 COMBINING LONG STROKE OVERLAY is one em wide
+// in Hiragino and drawn entirely to the right of the pen, so pin the family. Other fonts take the trivial pass
+// below.
+const ideograph = "陸";
+const mark = "̶";
+const font = "64px 'Hiragino Kaku Gothic Pro', 'Hiragino Sans', sans-serif";
+const canvasWidth = 500;
+const canvasHeight = 128;
+const originX = 20;
+const baselineY = 96;
+const inkThreshold = 32;
+// Wider than the ideograph, so an uncompensated shift moves the mark clear of the base it belongs on.
+const spacing = "100px";
+
+function createContext(spacingProperty) {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const context = canvas.getContext("2d");
+    context.font = font;
+    if (spacingProperty)
+        context[spacingProperty] = spacing;
+    context.fillStyle = "black";
+    context.textBaseline = "alphabetic";
+    return context;
+}
+
+// fillText() uses the same text painting path as the DOM, so it sees the same glyph origins.
+function render(text, spacingProperty) {
+    const context = createContext(spacingProperty);
+    context.fillText(text, originX, baselineY);
+    return context.getImageData(0, 0, canvasWidth, canvasHeight).data;
+}
+
+function alphaAt(pixels, x, y) {
+    return pixels[4 * (y * canvasWidth + x) + 3];
+}
+
+function inkColumnRange(pixels) {
+    let left = -1;
+    let right = -1;
+    for (let x = 0; x < canvasWidth; ++x) {
+        for (let y = 0; y < canvasHeight; ++y) {
+            if (alphaAt(pixels, x, y) > inkThreshold) {
+                if (left < 0)
+                    left = x;
+                right = x;
+                break;
+            }
+        }
+    }
+    return { left: left, right: right };
+}
+
+// The columns "pixels" inks that "basePixels" did not, which for a mark is where the mark landed.
+function addedInkColumnRange(pixels, basePixels) {
+    let left = -1;
+    let right = -1;
+    for (let x = 0; x < canvasWidth; ++x) {
+        for (let y = 0; y < canvasHeight; ++y) {
+            if (alphaAt(pixels, x, y) - alphaAt(basePixels, x, y) > inkThreshold) {
+                if (left < 0)
+                    left = x;
+                right = x;
+                break;
+            }
+        }
+    }
+    return { left: left, right: right };
+}
+
+const metricsContext = createContext(null);
+const letterSpacingContext = createContext("letterSpacing");
+const markMetrics = metricsContext.measureText(mark);
+
+// A mark whose ink lies entirely to the right of the pen can only reach its base by way of a Core Text glyph
+// origin, which is what the compensation under test adjusts. A mark the font itself draws to the left of the pen
+// has no origin to adjust, so pass trivially there.
+const markIsPlacedByAnOrigin = markMetrics.actualBoundingBoxLeft <= 0.5 && markMetrics.actualBoundingBoxRight > 1;
+const triggerPresent = markIsPlacedByAnOrigin
+    && metricsContext.measureText(ideograph).width > 0
+    && letterSpacingContext.letterSpacing === spacing
+    && letterSpacingContext.measureText(ideograph).width > metricsContext.measureText(ideograph).width;
+
+var letterSpacingLeavesTheMarkOnItsBase = true;
+var wordSpacingLeavesTheMarkOnItsBase = true;
+
+if (triggerPresent) {
+    const ideographOnly = render(ideograph, null);
+
+    // Letter-spacing goes after the cluster, not between the ideograph and its mark, so the mark's ink must not
+    // move at all. Uncompensated it moves right by the letter-spacing, off the ideograph entirely.
+    const markInk = addedInkColumnRange(render(ideograph + mark, null), ideographOnly);
+    const markInkWithLetterSpacing = addedInkColumnRange(render(ideograph + mark, "letterSpacing"), render(ideograph, "letterSpacing"));
+    letterSpacingLeavesTheMarkOnItsBase = markInk.left >= 0 && Math.abs(markInkWithLetterSpacing.left - markInk.left) <= 1;
+
+    // Same for word-spacing, which stacks with the space width substituted for the space's own advance.
+    const markOnSpaceInk = addedInkColumnRange(render(ideograph + " " + mark, null), ideographOnly);
+    const markOnSpaceInkWithWordSpacing = addedInkColumnRange(render(ideograph + " " + mark, "wordSpacing"), render(ideograph + " ", "wordSpacing"));
+    wordSpacingLeavesTheMarkOnItsBase = markOnSpaceInk.left >= 0 && Math.abs(markOnSpaceInkWithWordSpacing.left - markOnSpaceInk.left) <= 1;
+}
+
+shouldBeTrue("letterSpacingLeavesTheMarkOnItsBase");
+shouldBeTrue("wordSpacingLeavesTheMarkOnItsBase");
+
+</script>
+</body>
+</html>
