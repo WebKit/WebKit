@@ -35,6 +35,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     {
         this._nodeToIdMap = new Map;
         this._idToNodeMap = new Map;
+        this._staleIdentifiers = new Set;
     }
 
     // Public
@@ -300,6 +301,11 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let node = this._idToNodeMap.get(identifier);
         if (node)
             return node;
+
+        // A node this frame knew about and then evicted is stale. One it never knew about
+        // belongs to a different browsing context, which callers must distinguish.
+        if (this._staleIdentifiers.has(identifier))
+            throw {name: "StaleNode", message: "Node with identifier '" + identifier + "' is stale"};
         throw {name: "NodeNotFound", message: "Node with identifier '" + identifier + "' was not found"};
     }
 
@@ -324,6 +330,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
                 this._idToNodeMap.delete(identifier);
+                this._staleIdentifiers.add(identifier);
             }
         }
     }

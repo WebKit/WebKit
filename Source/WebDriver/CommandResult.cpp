@@ -97,6 +97,8 @@ CommandResult::CommandResult(RefPtr<JSON::Value>&& result, std::optional<ErrorCo
         else if (errorName == "JavaScriptTimeout"_s)
             m_errorCode = ErrorCode::ScriptTimeout;
         else if (errorName == "NodeNotFound"_s)
+            m_errorCode = ErrorCode::NoSuchElement;
+        else if (errorName == "StaleNode"_s)
             m_errorCode = ErrorCode::StaleElementReference;
         else if (errorName == "InvalidNodeIdentifier"_s)
             m_errorCode = ErrorCode::NoSuchElement;
