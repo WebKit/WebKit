@@ -21,6 +21,21 @@ if [ "${1}" = "--headless" ]; then
     shift 1
 fi
 
+# Unfortunately it is not unusual that some of this distros randomly fail to setup
+# the initial environment for running the webdriver tests with python/selenium.
+# To deal with that, this script tells the caller the reason of the failure via a
+# special exit code. Exit code of $BUNDLETEST_SETUP_FAILURE_RC means a failure while
+# setting up the distro env (install deps), which is tolerable, any other non-zero
+# exit code means a fatal failure while running the webdriver/minibrowser tests.
+BUNDLETEST_SETUP_FAILURE_RC=42
+bundletest_on_exit() {
+    rc=$?
+    [ "${rc}" -ne 0 ] || return 0
+    echo "[BUNDLETEST][RESULT] ENV_SETUP_FAILED rc=${rc} distro=${CURRENT_DISTRO:-unknown}"
+    exit "${BUNDLETEST_SETUP_FAILURE_RC}"
+}
+trap bundletest_on_exit EXIT
+
 # Install needed packages
 case "${CURRENT_DISTRO}" in
     alpine)
@@ -76,16 +91,18 @@ case "${CURRENT_DISTRO}" in
     ;;
     *)
         echo "Unknown distro: ${CURRENT_DISTRO}"
+        trap - EXIT
         exit 1
     ;;
 esac
 
-# prepare for testing
+# Distro initial setup done: disarm the setup-failure handler and start the tests. From here any failure
+# propagates the real exit code unchanged, so the caller treats it as a fatal test/launch failure.
+trap - EXIT
 mkdir /testbundle
-tar xfav /testbundle.tar.xz -C /testbundle
+tar xfa /testbundle.tar.xz -C /testbundle
 echo "Starting tests on distro: ${CURRENT_DISTRO}"
 [ -f /etc/os-release ] && cat /etc/os-release
-# run the tests
 CMD="/testdata/test_webdriver_bundle.py ${HEADLESS} --platform=$1 /testbundle"
 if [ "${CURRENT_DISTRO}" = "nixos" ]; then
     exec nix-shell -p python3 python3Packages.pip python3Packages.pillow python3Packages.numpy --run "${CMD}"
