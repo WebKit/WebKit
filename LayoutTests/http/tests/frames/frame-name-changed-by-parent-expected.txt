@@ -1,0 +1,4 @@
+ALERT: parent origin is http://127.0.0.1:8000
+ALERT: successfully accessed frame1
+ALERT: could not access frame2
+

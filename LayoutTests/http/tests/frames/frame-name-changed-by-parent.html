@@ -1,0 +1,10 @@
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+    onload = () => {
+        alert('parent origin is ' + window.origin);
+        let f = document.getElementById('frame1');
+        f.name = 'frame2';
+        f.contentWindow.postMessage('name changed', '*');
+    }
+</script>
+<iframe id="frame1" name="frame1" src="http://localhost:8000/frames/resources/child.html"></iframe>
