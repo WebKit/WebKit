@@ -2710,7 +2710,6 @@ imported/w3c/web-platform-tests/svg/path/distance/pathlength-rect-mutating.svg [
 imported/w3c/web-platform-tests/svg/animations/seeking-events-1.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/animations/pruning-first-interval.html [ Failure Pass ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-scale-scroll.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/extensibility/foreignObject/foreign-object-with-position-under-clip-path.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/scroll-transform-nested-stacked-children.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/will-change-in-foreign-object-paint-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/extensibility/foreignObject/isolation-with-html.html [ ImageOnlyFailure ]

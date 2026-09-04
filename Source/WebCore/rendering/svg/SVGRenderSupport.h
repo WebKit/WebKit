@@ -111,8 +111,9 @@ public:
 
     static void clipContextToCSSClippingArea(GraphicsContext&, const RenderElement& renderer);
 
-    // Offset from a renderer's origin-relative bounding box to where it actually paints its content.
-    static FloatSize svgContentLocationOffset(const RenderObject&);
+    // Like RenderObject::localToAbsoluteQuad(), but takes a rect in SVG bounding box space rather than CSS box
+    // space. The two only differ for a <foreignObject> - see LegacyRenderSVGForeignObject.h.
+    static FloatQuad mapSVGBoundingBoxToAbsoluteQuad(const RenderElement&, FloatRect boundingBox, OptionSet<MapCoordinatesMode> = MapCoordinatesMode::UseTransforms, bool* wasFixed = nullptr);
 
     static void styleChanged(RenderElement&, const Style::ComputedStyle*);
 

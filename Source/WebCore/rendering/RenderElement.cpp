@@ -2105,7 +2105,7 @@ const Style::ComputedStyle* RenderElement::targetTextPseudoStyle() const
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().minXMinYCorner();
+        point = SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*this, strokeBoundingBox()).boundingBox().minXMinYCorner();
         return true;
     }
 
@@ -2169,7 +2169,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
 bool RenderElement::getTrailingCorner(FloatPoint& point, bool& insideFixed) const
 {
     if (isSVGRenderer()) {
-        point = localToAbsoluteQuad(strokeBoundingBox(), MapCoordinatesMode::UseTransforms).boundingBox().maxXMaxYCorner();
+        point = SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(*this, strokeBoundingBox()).boundingBox().maxXMaxYCorner();
         return true;
     }
 
