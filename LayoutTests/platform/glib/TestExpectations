@@ -5329,5 +5329,7 @@ webkit.org/b/323309 ipc/getpixelbuffer-layerbacking-heap-disclosure.html [ Pass 
 # End of NEEDS TRIAGING. Don't put expectations below this section.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Times out on the GLib ports (GTK/WPE): the PDF-in-iframe never fires its load event (no PDF viewer), so the test never completes. Passes on macOS.
-webkit.org/b/319150 imported/w3c/web-platform-tests/loading/early-hints/iframe-pdf.h2.window.html [ Skip ]
+# Early Hints preloading is Cocoa-only for now: 103 responses reach the handler via
+# didReceiveInformationalResponse, which the soup backend receives (for timing) but does not yet
+# forward. Skip on GTK/WPE until soup wires it up.
+imported/w3c/web-platform-tests/loading/early-hints [ Skip ]

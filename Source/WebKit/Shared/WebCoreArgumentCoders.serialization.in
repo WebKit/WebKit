@@ -5553,6 +5553,7 @@ class WebCore::NetworkLoadMetrics {
     [BitField] bool hasCrossOriginRedirect;
     [BitField] bool fromPrefetch;
     [BitField] bool fromCache;
+    [BitField] bool fromEarlyHints;
 
     WebCore::PrivacyStance privacyStance;
 

@@ -2580,6 +2580,8 @@
 		EB44A69C2C8A4F6E006595BF /* WebClipCache.h in Headers */ = {isa = PBXBuildFile; fileRef = EB44A6992C8A4F6E006595BF /* WebClipCache.h */; };
 		EB450E0F2996C7B6009724B1 /* WKWebsiteDataStoreRefPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB517B802D7C09690019E451 /* AboutSchemeHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB517B7A2D7BC03B0019E451 /* AboutSchemeHandlerCocoa.mm */; };
+		EB579C4229AEBD0800894C1C /* EarlyHintsPreloadCache.h in Headers */ = {isa = PBXBuildFile; fileRef = EB579C4129AEBCF100894C1C /* EarlyHintsPreloadCache.h */; };
+		EB579C4529AEBD0800894C1C /* EarlyHintsPreloadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = EB579C4429AEBCF100894C1C /* EarlyHintsPreloadTask.h */; };
 		EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.mac.sb in Resources */ = {isa = PBXBuildFile; fileRef = EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */; };
 		EB8322162D72600C009515DA /* AboutSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = EB8322132D72600C009515DA /* AboutSchemeHandler.h */; };
 		EBA8D3AB27A5E31300CB7900 /* ApplePushServiceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */; };
@@ -8934,6 +8936,10 @@
 		EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKWebsiteDataStoreRefPrivateMac.h; path = mac/WKWebsiteDataStoreRefPrivateMac.h; sourceTree = "<group>"; };
 		EB450E0E2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebsiteDataStoreRefPrivateMac.mm; path = mac/WKWebsiteDataStoreRefPrivateMac.mm; sourceTree = "<group>"; };
 		EB517B7A2D7BC03B0019E451 /* AboutSchemeHandlerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AboutSchemeHandlerCocoa.mm; sourceTree = "<group>"; };
+		EB579C4029AEBCF100894C1C /* EarlyHintsPreloadCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EarlyHintsPreloadCache.cpp; sourceTree = "<group>"; };
+		EB579C4129AEBCF100894C1C /* EarlyHintsPreloadCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlyHintsPreloadCache.h; sourceTree = "<group>"; };
+		EB579C4329AEBCF100894C1C /* EarlyHintsPreloadTask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EarlyHintsPreloadTask.cpp; sourceTree = "<group>"; };
+		EB579C4429AEBCF100894C1C /* EarlyHintsPreloadTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlyHintsPreloadTask.h; sourceTree = "<group>"; };
 		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.mac.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.mac.sb.in; sourceTree = "<group>"; };
 		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.mac.sb; sourceTree = "<group>"; };
 		EB8322132D72600C009515DA /* AboutSchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AboutSchemeHandler.h; sourceTree = "<group>"; };
@@ -14310,6 +14316,10 @@
 				41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */,
 				5C826D6E26D58A16008AEC91 /* DatabaseUtilities.cpp */,
 				5C826D6F26D58A16008AEC91 /* DatabaseUtilities.h */,
+				EB579C4029AEBCF100894C1C /* EarlyHintsPreloadCache.cpp */,
+				EB579C4129AEBCF100894C1C /* EarlyHintsPreloadCache.h */,
+				EB579C4329AEBCF100894C1C /* EarlyHintsPreloadTask.cpp */,
+				EB579C4429AEBCF100894C1C /* EarlyHintsPreloadTask.h */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
 				535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */,
 				5C3B0A012DA0000000ABCDEF /* NetworkActivityTracker.serialization.in */,
@@ -18476,6 +18486,8 @@
 				2D50F88F2B21C5170042E139 /* DynamicContentScalingBifurcatedImageBuffer.h in Headers */,
 				BCE579A62634836700F5C5E9 /* DynamicContentScalingImageBufferBackend.h in Headers */,
 				2DA6731A20C754B1003CB401 /* DynamicViewportSizeUpdate.h in Headers */,
+				EB579C4229AEBD0800894C1C /* EarlyHintsPreloadCache.h in Headers */,
+				EB579C4529AEBD0800894C1C /* EarlyHintsPreloadTask.h in Headers */,
 				E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */,
 				DD4DB786280F945A001700D4 /* ElementAttribute.js in Headers */,

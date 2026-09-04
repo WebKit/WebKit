@@ -6605,6 +6605,15 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 # Early hints require network callbacks that are only present in macOS 12 / iOS 15 or greater.
 http/wpt/loading/early-hints [ Skip ]
 
+# Imported Early Hints WPTs that hang because WebKit does not support the case (the rest of the
+# suite's known failures are captured in their -expected.txt baselines instead).
+# The embed/object destination is not supported for early hints preloads.
+imported/w3c/web-platform-tests/loading/early-hints/embed-object.h2.window.html [ Skip ]
+# A consumer that arrives while a preload is in-flight starts its own load rather than attaching to it.
+imported/w3c/web-platform-tests/loading/early-hints/preload-in-flight-when-consumed.h2.window.html [ Skip ]
+# Interim (103) response timing is not surfaced to Resource Timing; the measured value is also timing-dependent.
+imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html [ Skip ]
+
 # Most ports don't have a HEIC decoder.
 http/tests/misc/heic-accept-header.html [ Pass Failure ]
 
@@ -8273,15 +8282,6 @@ webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-fetch-with-link-header.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-match.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/dictionary-registration.tentative.https.html [ Skip ]
-
-# Early Hints preload is not implemented, so these time out waiting for a preload that never happens.
-imported/w3c/web-platform-tests/loading/early-hints/preload-finished-before-final-response.h2.window.html [ Skip ]
-imported/w3c/web-platform-tests/loading/early-hints/preload-finished-while-receiving-final-response-body.h2.window.html [ Skip ]
-imported/w3c/web-platform-tests/loading/early-hints/preload-fetchpriority.h2.window.html [ Skip ]
-# The <embed> element's load event never fires here, so the test times out.
-imported/w3c/web-platform-tests/loading/early-hints/embed-object.h2.window.html [ Skip ]
-# Failing due to explicit (non-deterministic) timestamps in the failure message, so it cannot be rebaselined.
-imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html [ Skip ]
 
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Skip ] # Different hash generated on each run
 imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pass ]

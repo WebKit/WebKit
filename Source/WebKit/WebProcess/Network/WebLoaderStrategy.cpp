@@ -437,8 +437,10 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
     auto advancedPrivacyProtections = policySourceDocumentLoader ? policySourceDocumentLoader->advancedPrivacyProtections() : mainFrame->advancedPrivacyProtections();
     parameters.advancedPrivacyProtections = advancedPrivacyProtections;
 
-    if (isMainFrameNavigation)
+    if (isMainFrameNavigation) {
         parameters.linkPreconnectEarlyHintsEnabled = mainFrame->settings().linkPreconnectEarlyHintsEnabled();
+        parameters.linkPreloadEarlyHintsEnabled = mainFrame->settings().linkPreloadEarlyHintsEnabled();
+    }
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)

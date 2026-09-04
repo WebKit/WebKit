@@ -1,3 +1,5 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS fetchpriority='low' in early hints preload headers does cause not any error
+PASS fetchpriority='high' in early hints preload headers does cause not any error
+PASS fetchpriority='auto' in early hints preload headers does cause not any error
 

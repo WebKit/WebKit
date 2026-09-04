@@ -128,6 +128,7 @@ struct NetworkResourceLoadParameters {
 #endif
 
     bool linkPreconnectEarlyHintsEnabled { false };
+    bool linkPreloadEarlyHintsEnabled { false };
     bool shouldRecordFrameLoadForStorageAccess { false };
 
     bool isInitiatorPrefetch { false };

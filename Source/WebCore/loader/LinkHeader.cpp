@@ -64,6 +64,12 @@ static bool NODELETE isExtensionParameter(LinkHeader::LinkParameterName name)
     return name >= LinkHeader::LinkParameterUnknown;
 }
 
+static bool NODELETE parameterValueIsOptional(LinkHeader::LinkParameterName name)
+{
+    // crossorigin may be written bare, meaning the "anonymous" state, like its content attribute.
+    return name == LinkHeader::LinkParameterCrossOrigin;
+}
+
 // Before:
 //
 // <cat.jpg>; rel=preload
@@ -183,7 +189,7 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
     if (hasEqual)
         return name;
     bool validParameterValueEnd = buffer.atEnd() || isParameterValueEnd(*buffer);
-    if (validParameterValueEnd && isExtensionParameter(name))
+    if (validParameterValueEnd && (isExtensionParameter(name) || parameterValueIsOptional(name)))
         return name;
     return std::nullopt;
 }
@@ -334,7 +340,7 @@ template<typename CharacterType> LinkHeader::LinkHeader(StringParsingBuffer<Char
         }
 
         String parameterValue;
-        if (!parseParameterValue(buffer, parameterValue) && !isExtensionParameter(*parameterName)) {
+        if (!parseParameterValue(buffer, parameterValue) && !isExtensionParameter(*parameterName) && !parameterValueIsOptional(*parameterName)) {
             findNextHeader(buffer);
             m_isValid = false;
             return;

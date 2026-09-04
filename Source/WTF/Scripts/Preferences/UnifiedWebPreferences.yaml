@@ -5264,6 +5264,20 @@ LinkPrefetchEnabled:
     WebCore:
       default: false
 
+LinkPreloadEarlyHintsEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Link rel=preload via HTTP early hints"
+  humanReadableDescription: "Enable link rel=preload via early hints"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LinkPreloadEnabled:
   type: bool
   status: embedder
