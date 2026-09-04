@@ -7,4 +7,5 @@ PASS Cache.delete supports ignoreVary
 PASS Cache.delete with a non-existent entry
 PASS Cache.delete with ignoreSearch option (request with search parameters)
 PASS Cache.delete with ignoreSearch option (when it is specified as false)
+PASS Cache.delete with a string that cannot construct a Request
 

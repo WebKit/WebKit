@@ -456,9 +456,13 @@ void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromis
     if (!scriptExecutionContext()) [[unlikely]]
         return;
 
-    auto requestOrException = requestFromInfo(WTF::move(info), options.ignoreMethod);
+    bool requestValidationFailed = false;
+    auto requestOrException = requestFromInfo(WTF::move(info), options.ignoreMethod, &requestValidationFailed);
     if (requestOrException.hasException()) {
-        promise.resolve(false);
+        if (requestValidationFailed)
+            promise.resolve(false);
+        else
+            promise.reject(requestOrException.releaseException());
         return;
     }
 
@@ -482,9 +486,13 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
 
     ResourceRequest resourceRequest;
     if (info) {
-        auto requestOrException = requestFromInfo(WTF::move(info.value()), options.ignoreMethod);
+        bool requestValidationFailed = false;
+        auto requestOrException = requestFromInfo(WTF::move(info.value()), options.ignoreMethod, &requestValidationFailed);
         if (requestOrException.hasException()) {
-            promise.resolve(Vector<Ref<FetchRequest>> { });
+            if (requestValidationFailed)
+                promise.resolve(Vector<Ref<FetchRequest>> { });
+            else
+                promise.reject(requestOrException.releaseException());
             return;
         }
         resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
