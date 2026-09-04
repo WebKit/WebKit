@@ -1,0 +1,22 @@
+To manually run this test, please follow the steps below:
+1. Place caret at the end of 'hello world'.
+2. Press Ctrl-Backspace (Alt-Backspace on macOS) to delete word backwards.
+3. Place caret at the end of 'test2' => Press 'a' key.
+4. Select 'test2a' => Press 'b' key.
+5. Select 'b' => Bold text through context menu or Command-b on macOS.
+6. Place caret at the end of 'test3' => Press 'a' key => Press Backspace key.
+
+If a "PASS" result appears the test passes, otherwise it fails
+
+hello world
+
+test2
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT getTargetRanges() returns correct range and cleared after dispatch. Test timed out
+NOTRUN Actions other than deletion should have current selection as target ranges.
+NOTRUN Textarea should have empty target range.
+

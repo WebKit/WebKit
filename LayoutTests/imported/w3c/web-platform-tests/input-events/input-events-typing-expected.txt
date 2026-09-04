@@ -1,0 +1,16 @@
+
+
+PASS It triggers beforeinput and input events on text typing
+FAIL It triggers beforeinput and input events on typing RETURN assert_equals: expected 2 but got 0
+PASS Newline character in plain text editing should get insertLinebreak input event
+FAIL It triggers beforeinput and input events on typing Shift+RETURN assert_equals: expected "insertLineBreak" but got "insertParagraph"
+PASS It triggers beforeinput and input events on typing DELETE with pre-existing content
+FAIL It triggers beforeinput and input events on typing DELETE with no pre-existing content assert_equals: expected 2 but got 0
+PASS It triggers beforeinput and input events on typing BACK_SPACE with pre-existing content
+FAIL Input events have correct inputType updated when different inputs are typed assert_equals: expected "deleteContentBackward" but got "deleteContentForward"
+FAIL Input events have correct inputType when selected text is removed with Backspace or Delete assert_equals: expected 2 but got 4
+FAIL It triggers beforeinput and input events on typing BACK_SPACE with no pre-existing content assert_equals: expected 2 but got 0
+FAIL It triggers beforeinput and input events on typing Undo and Redo key combinations with an existing history assert_equals: expected 4 but got 8
+FAIL It triggers beforeinput and input events on typing Undo and Redo key combinations without an existing history assert_equals: expected 4 but got 8
+FAIL InputEvents have correct data/order when typing on textarea and contenteditable assert_equals: expected "plain-keydown-B" but got "plain-keydown-b"
+

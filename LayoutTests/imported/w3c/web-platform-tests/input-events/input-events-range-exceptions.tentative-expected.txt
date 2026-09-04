@@ -1,0 +1,41 @@
+hello world
+
+FAIL valid target ranges in Element don't throw exceptions assert_equals: expected 1 but got 0
+FAIL InputEvent constructor throws with invalid range in Element assert_throws_dom: function "() => {
+      // This should throw:
+      let ev = new InputEvent("input",
+                              {
+                                data: "a",
+                                inputType: "insertText",
+                                targetRanges: [
+                                  new StaticRange({
+                                                    startContainer: target,
+                                                    startOffset: 0,
+                                                    endContainer: target,
+                                                    endOffset: 5,
+                                                  }),
+                                ],
+                              });
+      // Run this in case it doesn't throw, to make sure it doesn't crash:
+      ev.getTargetRanges()[0].endOffset;
+    }" threw object "TypeError: undefined is not an object (evaluating 'ev.getTargetRanges()[0].endOffset')" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+FAIL valid target ranges in Text don't throw exceptions assert_equals: expected 1 but got 0
+FAIL InputEvent constructor throws with invalid range in Text assert_throws_dom: function "() => {
+      // This should throw:
+      let ev = new InputEvent("input",
+                              {
+                                data: "a",
+                                inputType: "insertText",
+                                targetRanges: [
+                                  new StaticRange({
+                                                    startContainer: text,
+                                                    startOffset: 0,
+                                                    endContainer: text,
+                                                    endOffset: 12,
+                                                  }),
+                                ],
+                              });
+      // Run this in case it doesn't throw, to make sure it doesn't crash:
+      ev.getTargetRanges()[0].endOffset;
+    }" threw object "TypeError: undefined is not an object (evaluating 'ev.getTargetRanges()[0].endOffset')" that is not a DOMException IndexSizeError: property "code" is equal to undefined, expected 1
+

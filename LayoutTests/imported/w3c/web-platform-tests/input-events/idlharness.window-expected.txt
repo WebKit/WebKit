@@ -1,0 +1,15 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface InputEvent: original interface defined
+PASS Partial interface InputEvent: member names are unique
+PASS Partial dictionary InputEventInit: original dictionary defined
+PASS Partial dictionary InputEventInit: member names are unique
+PASS Partial interface UIEvent: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
+PASS InputEvent interface: attribute dataTransfer
+PASS InputEvent interface: operation getTargetRanges()
+PASS InputEvent interface: new InputEvent("foo") must inherit property "dataTransfer" with the proper type
+PASS InputEvent interface: new InputEvent("foo") must inherit property "getTargetRanges()" with the proper type
+

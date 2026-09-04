@@ -1,0 +1,3 @@
+
+PASS Drag and remove from the select event doesn't crash
+

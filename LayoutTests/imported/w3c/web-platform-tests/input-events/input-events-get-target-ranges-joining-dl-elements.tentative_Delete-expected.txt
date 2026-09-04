@@ -1,0 +1,443 @@
+
+
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>}list-item2</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item2\", 10)" but got "(#text \"list-item1\", 10) - (#text \"list-item2\", 10)"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dt>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dd>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>}list-item2</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item2\", 10)" but got "(#text \"list-item1\", 10) - (#text \"list-item2\", 10)"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dt>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dd>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>}list-item2</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item2\", 10)" but got "(#text \"list-item1\", 10) - (#text \"list-item2\", 10)"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dt>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dd>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>}list-item2</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item1\", 0) - (#text \"list-item2\", 10)" but got "(#text \"list-item1\", 10) - (#text \"list-item2\", 10)"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dt>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd><dt>list-item3</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dt>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"list-item2\", 10) - (<dd>, 0)" but got "(#text \"list-item2\", 10) - (#text \"list-item3\", 10)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd><dd>list-item3</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item1list-item2\", 10) - (#text \"\", 0)" but got "(#text \"list-item1list-item2\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>"
+FAIL Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"list-item2list-item3\", 10) - (#text \"\", 0)" but got "(#text \"list-item2list-item3\", 10) - (<dd>, 0)"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>"
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>"
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>}list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dt>list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>}list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[]</dt></dl><dl><dd>list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1[</dt></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt></dl><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>list-item1</dt><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dt>[list-item1</dt><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>}list-item2</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2</dt><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dt>list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>}list-item2</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2]</dt><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dt>list-item2</dt><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[]</dt></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>list-item2[</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dt>[list-item2</dt></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dt>list-item2</dt></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>}list-item2</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd><dt>list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2</dd><dt>}list-item3</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dt>list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>}list-item3</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dt>list-item3]</dt><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dt>list-item3</dt><dd>list-item4]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[]</dd></dl><dl><dd>list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>}list-item2</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1[</dd></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2]</dd><dd>list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd></dl><dl><dd>list-item2</dd><dd>}list-item3</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dt>list-item4</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dt>list-item4]</dt></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[]</dd></dl><dl><dd>list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>}list-item3</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>list-item2[</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>list-item1</dd><dd>[list-item2</dd></dl><dl><dd>list-item3]</dd><dd>list-item4</dd></dl>" - comparing innerHTML
+PASS Delete at "<dl><dd>[list-item1</dd><dd>list-item2</dd></dl><dl><dd>list-item3</dd><dd>list-item4]</dd></dl>" - comparing innerHTML
+

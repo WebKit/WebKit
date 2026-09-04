@@ -1,0 +1,45 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/input-events/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/input-events/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/input-events/contenteditable-insertfrompaste-type-inputevent-data.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-arrow-key-on-number-input-delete-document.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-arrow-key-on-number-input-prevent-default.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-arrow-key-on-number-input.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-cut-paste.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-delete-selection.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-exec-command.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-backspace.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-in-list-items.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-deleting-range-across-editing-host-boundaries.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-during-and-after-dispatch.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-forwarddelete.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-element-and-another-list.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-joining-dl-elements.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges-non-collapsed-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-get-target-ranges.js
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-range-exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-spin-button-click-on-number-input-delete-document.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-spin-button-click-on-number-input-prevent-default.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-spin-button-click-on-number-input.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/input-events-typing.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/select-event-drag-remove.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/textarea-insertfrompaste-type-inputevent-data-withnewline-atend.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/textarea-insertfrompaste-type-inputevent-data-withnewline-atstart.html
+/LayoutTests/imported/w3c/web-platform-tests/input-events/textarea-insertfrompaste-type-inputevent-data.html

@@ -1,0 +1,180 @@
+abc def s
+
+
+PASS Delete at "<p>ab[]c</p>"
+PASS Delete at "<p>a[]bc</p>"
+PASS Delete at "<p>[]abc</p>"
+FAIL Delete at "<p>abc[]</p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>abc[]<br></p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p><img>[]<br></p>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<p>a[]<span>b</span>c</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"a\", 1) - (<p>, 2)" but got "(#text \"b\", 0) - (#text \"b\", 1)"
+FAIL Delete at "<p>a<span>[]b</span>c</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 1) - (<p>, 2)" but got "(#text \"b\", 0) - (#text \"b\", 1)"
+FAIL Delete at "<p>ab[]c </p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"ab\", 2) - (#text \"ab\", 4)" but got "(#text \"ab\", 2) - (#text \"ab\", 3)"
+FAIL Delete at "<p>abc[]</p><p>def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<p>, 0)"
+FAIL Delete at "<p>abc[]   </p><p>   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+FAIL Delete at "<p>abc []  </p><p>   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+FAIL Delete at "<p>abc  [] </p><p>   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+FAIL Delete at "<p>abc   []</p><p>   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+FAIL Delete at "<p>abc[]</p><p><b>def</b></p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+FAIL Delete at "<p><b>abc[]</b></p><p><b>def</b></p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+FAIL Delete at "<p><i>abc[]</i></p><p><b>def</b></p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+FAIL Delete at "<pre>abc   []</pre><p>   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc   def\", 6) - (#text \"\", 3)" but got "(#text \"abc   def\", 6) - (<p>, 0)"
+FAIL Delete at "<pre>abc   []</pre><p>   def   </p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc   def\", 6) - (#text \"\", 3)" but got "(#text \"abc   def\", 6) - (<p>, 0)"
+FAIL Delete at "<p>abc[]   </p><pre>   def</pre>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc   def\", 3) - (#text \"\", 0)" but got "(#text \"abc   def\", 6) - (<pre>, 0)"
+PASS Delete at "<p style="white-space:pre-line">abc[]\ndef</p>"
+PASS Delete at "<p style="white-space:pre-line">abc[]\n def</p>"
+FAIL Delete at "<p style="white-space:pre-line">abc[] \ndef</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\ndef\", 3) - (#text \"abc\ndef\", 6)" but got "(#text \"abc\ndef\", 3) - (#text \"abc\ndef\", 4)"
+FAIL Delete at "<p style="white-space:pre-line">abc[] \n def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\n def\", 3) - (#text \"abc\n def\", 6)" but got "(#text \"abc\n def\", 3) - (#text \"abc\n def\", 4)"
+FAIL Delete at "<p style="white-space:pre-line">abc[] \n \n def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\n \n def\", 3) - (#text \"abc\n \n def\", 8)" but got "(#text \"abc\n \n def\", 3) - (#text \"abc\n \n def\", 4)"
+FAIL Delete at "<p>abc[]<br></p><p>def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(<p>, 1) - (<p>, 0)"
+FAIL Delete at "<p><img>{}<br></p><p>def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 1) - (#text \"\", 0)" but got "(<p>, 1) - (<p>, 0)"
+FAIL Delete at "<p>abc<br>{}<br></p><p>def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 2) - (#text \"\", 0)" but got "(<p>, 2) - (<p>, 0)"
+PASS Delete at "<p>abc[]<br>def</p>"
+PASS Delete at "<p>abc []<br>def</p>"
+FAIL Delete at "<p>abc[]<br> def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 1) - (#text \"def\", 1)" but got "(<p>, 1) - (<p>, 2)"
+PASS Delete at "<p>abc[]<img>def</p>"
+PASS Delete at "<p>abc []<img>def</p>"
+PASS Delete at "<p>abc[]<img> def</p>"
+PASS Delete at "<p>abc[]<img><img>def</p>"
+PASS Delete at "<p>abc<img>{}<img>def</p>"
+FAIL Delete at "<div>abc[]<hr>def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (<div>, 2)" but got "(#text \"abc\", 3) - (<div>, 1)"
+FAIL Delete at "<div>abc[] <hr>def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (<div>, 2)" but got "(#text \"abc\", 4) - (<div>, 1)"
+FAIL Delete at "<div>abc[]<hr> def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (<div>, 2)" but got "(#text \"abc\", 3) - (<div>, 1)"
+FAIL Delete at "<div>abc[]<br><hr>def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (<div>, 3)" but got "(<div>, 1) - (<div>, 2)"
+FAIL Delete at "<div><img>{}<br><hr>def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (<div>, 3)" but got "(<div>, 1) - (<div>, 2)"
+FAIL Delete at "<div>abc[]<p>def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<p>, 0)"
+FAIL Delete at "<div>abc[]<br><p>def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (#text \"\", 0)" but got "(<div>, 1) - (<p>, 0)"
+FAIL Delete at "<div><img>{}<br><p>def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<div>, 1) - (#text \"\", 0)" but got "(<div>, 1) - (<p>, 0)"
+FAIL Delete at "<div>abc[]   <p>   def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+FAIL Delete at "<div>abc[]<p><b>def</b></p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+FAIL Delete at "<div><b>abc[]</b><p><b>def</b></p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+FAIL Delete at "<div><i>abc[]</i><p><b>def</b></p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<p>, 0)"
+PASS Delete at "<div><p>abc[]</p>def</div>"
+PASS Delete at "<div><p>abc[]<br></p>def</div>"
+PASS Delete at "<div><p><img>{}<br></p>def</div>"
+FAIL Delete at "<div><p>abc[]   </p>   def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (#text \"\", 0)"
+PASS Delete at "<div><p><b>abc[]</b></p>def</div>"
+FAIL Delete at "<div><p><b>abc[]</b></p><b>def</b></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<b>, 0)"
+FAIL Delete at "<div><p><b>abc[]</b></p><i>def</i></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 3) - (<i>, 0)"
+FAIL Delete at "<div>abc[]<ul><li>def</li></ul>ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<li>, 0)"
+FAIL Delete at "<div>abc[]  <ul><li> def </li></ul>  ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 1)" but got "(#text \"abcdef\", 5) - (<li>, 0)"
+FAIL Delete at "<div>abc  []<ul><li> def </li></ul>  ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 1)" but got "(#text \"abcdef\", 5) - (<li>, 0)"
+PASS Delete at "<div>abc<ul><li>def[]</li></ul>ghi</div>"
+FAIL Delete at "<div>abc <ul><li>  def[]  </li></ul> ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"  defghi\", 5) - (#text \"\", 1)" but got "(#text \"  defghi\", 7) - (#text \"\", 0)"
+FAIL Delete at "<div>abc <ul><li>  def  []</li></ul> ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"  defghi\", 5) - (#text \"\", 1)" but got "(#text \"  defghi\", 7) - (#text \"\", 0)"
+FAIL Delete at "<div>abc[]<ul><li>def</li><li>ghi</li></ul>jkl</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<li>, 0)"
+FAIL Delete at "<div>abc<ul><li>def[]</li><li>ghi</li></ul>jkl</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(#text \"defghi\", 3) - (#text \"\", 0)" but got "(#text \"defghi\", 3) - (<li>, 0)"
+PASS Delete at "<div>abc<ul><li>def</li><li>ghi[]</li></ul>jkl</div>"
+FAIL Delete at "<p>{}<br></p><p>abc</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 0) - (#text \"\", 0)" but got "(<p>, 0) - (<p>, 0)"
+FAIL Delete at "<p><span>{}</span><br></p><p>abc</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 0) - (#text \"\", 0)" but got "(<p>, 1) - (<p>, 0)"
+FAIL Delete at "<p>{}<br></p><p>  abc</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 0) - (#text \"\", 5)" but got "(<p>, 0) - (<p>, 0)"
+PASS Delete at "<p>{}<br></p><p><span contenteditable="false">abc</span>def</p>"
+FAIL Delete at "<p>{}<br></p><p contenteditable="false">abc</p><p>def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 0) - (<div>, 1)" but got "(#text \"ef\", 0) - (#text \"ef\", 1)"
+FAIL Delete at "<p>abc[]<span contenteditable="false">def</span>ghi</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<p>, 1) - (<p>, 2)" but got "(#text \"abc\", 3) - (#text \"ghi\", 0)"
+PASS Delete at "<p>{}<br></p><table><tr><td>cell</td></tr></table>"
+FAIL Delete at "<table><tr><td>{}<br></td><td>cell2</td></tr></table>" assert_equals: One beforeinput event should be fired if the key operation tries to delete something expected 1 but got 0
+FAIL Delete at "<table><caption>{}<br></caption><tr><td>cell</td></tr></table>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentForward") expected "(<caption>, 0)" but got "(<caption>, 0) - (<td>, 0)"
+FAIL Delete at "<table><tr>{<td>cell1</td>}<td>cell2</td></tr></table>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<tr>, 0) - (<tr>, 1)" but got "(#text \"cell1\", 0) - (<td>, 0)"
+FAIL Delete at "<table><tr><td>cell1</td>{<td>cell2</td>}</tr></table>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<tr>, 1) - (<tr>, 2)" but got "(#text \"cell2\", 0) - (<div>, 1)"
+FAIL Delete at "<table><tr>{<td>cell</td>}</tr></table>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(<div>, 0) - (<div>, 1)" but got "(#text \"cell\", 0) - (<div>, 1)"
+FAIL Delete at "<table><tr>{<td>cell1</td>}<td>cell2</td></tr><tr><td>cell3</td>{<td>cell4</td>}</tr></table>" assert_equals: Should support multiple cell selection expected 2 but got 1
+FAIL Delete at "<table><tr>{<td>cell1</td>}<td>cell2</td></tr><tr>{<td>cell3</td>}<td>cell4</td></tr></table>" assert_equals: Should support multiple cell selection expected 2 but got 1
+FAIL Delete at "<table><tr>{<td>cell1</td>}{<td>cell2</td>}</tr><tr><td>cell3</td><td>cell4</td></tr></table>" assert_equals: Should support multiple cell selection expected 2 but got 1
+FAIL Delete at "<table><tr><td>cell1</td><td>cell2</td></tr><tr>{<td>cell3</td>}{<td>cell4</td>}</tr></table>" assert_equals: Should support multiple cell selection expected 2 but got 1
+FAIL Delete at "<table><tr>{<td>cell1</td>}{<td>cell2</td>}</tr><tr>{<td>cell3</td>}{<td>cell4</td>}</tr></table>" assert_equals: Should support multiple cell selection expected 4 but got 1
+FAIL Delete at "<table><tr>{<td>cell1</td>}<td>c[ell]2</td></tr><tr>{<td>cell3</td>}<td>cell4</td></tr></table>" assert_equals: Should support multiple cell selection expected 3 but got 1
+PASS Delete at "<p>hello[]&#x5E9;&#x5DC;&#x5D5;&#x5DD;</p>"
+PASS Shift + Delete at "<p>abc []def ghi</p>"
+PASS Control + Delete at "<p>abc []def ghi</p>"
+PASS Alt + Delete at "<p>abc []def ghi</p>"
+PASS Meta + Delete at "<p>abc []def ghi</p>"
+PASS Shift + Delete at "<p>abc []def   </p>"
+PASS Control + Delete at "<p>abc []def   </p>"
+FAIL Alt + Delete at "<p>abc []def   </p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteWordForward") expected "(#text \"abc \", 4) - (#text \"abc \", 10)" but got "(#text \"abc \", 4) - (#text \"abc \", 7)"
+PASS Meta + Delete at "<p>abc []def</p>"
+PASS Delete at "<p>ab[]c</p>" - comparing innerHTML
+PASS Delete at "<p>a[]bc</p>" - comparing innerHTML
+PASS Delete at "<p>[]abc</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]<br></p>" - comparing innerHTML
+PASS Delete at "<p><img>[]<br></p>" - comparing innerHTML
+PASS Delete at "<p>a[]<span>b</span>c</p>" - comparing innerHTML
+PASS Delete at "<p>a<span>[]b</span>c</p>" - comparing innerHTML
+PASS Delete at "<p>ab[]c </p>" - comparing innerHTML
+PASS Delete at "<p>abc[]</p><p>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]   </p><p>   def</p>" - comparing innerHTML
+PASS Delete at "<p>abc []  </p><p>   def</p>" - comparing innerHTML
+PASS Delete at "<p>abc  [] </p><p>   def</p>" - comparing innerHTML
+PASS Delete at "<p>abc   []</p><p>   def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]</p><p><b>def</b></p>" - comparing innerHTML
+PASS Delete at "<p><b>abc[]</b></p><p><b>def</b></p>" - comparing innerHTML
+PASS Delete at "<p><i>abc[]</i></p><p><b>def</b></p>" - comparing innerHTML
+PASS Delete at "<pre>abc   []</pre><p>   def</p>" - comparing innerHTML
+PASS Delete at "<pre>abc   []</pre><p>   def   </p>" - comparing innerHTML
+PASS Delete at "<p>abc[]   </p><pre>   def</pre>" - comparing innerHTML
+PASS Delete at "<p style="white-space:pre-line">abc[]\ndef</p>" - comparing innerHTML
+PASS Delete at "<p style="white-space:pre-line">abc[]\n def</p>" - comparing innerHTML
+FAIL Delete at "<p style="white-space:pre-line">abc[] \ndef</p>" - comparing innerHTML assert_equals: expected "<p style=\"white-space:pre-line\">abcdef</p>" but got "<p style=\"white-space:pre-line\">abc\ndef</p>"
+FAIL Delete at "<p style="white-space:pre-line">abc[] \n def</p>" - comparing innerHTML assert_equals: expected "<p style=\"white-space:pre-line\">abcdef</p>" but got "<p style=\"white-space:pre-line\">abc\n def</p>"
+FAIL Delete at "<p style="white-space:pre-line">abc[] \n \n def</p>" - comparing innerHTML assert_equals: expected "<p style=\"white-space:pre-line\">abc\n def</p>" but got "<p style=\"white-space:pre-line\">abc\n \n def</p>"
+PASS Delete at "<p>abc[]<br></p><p>def</p>" - comparing innerHTML
+FAIL Delete at "<p><img>{}<br></p><p>def</p>" - comparing innerHTML assert_equals: expected "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def</p>" but got "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def<br></p>"
+FAIL Delete at "<p>abc<br>{}<br></p><p>def</p>" - comparing innerHTML assert_equals: expected "<p>abc<br>def</p>" but got "<p>abc<br>def<br></p>"
+PASS Delete at "<p>abc[]<br>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc []<br>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]<br> def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]<img>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc []<img>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]<img> def</p>" - comparing innerHTML
+PASS Delete at "<p>abc[]<img><img>def</p>" - comparing innerHTML
+PASS Delete at "<p>abc<img>{}<img>def</p>" - comparing innerHTML
+PASS Delete at "<div>abc[]<hr>def</div>" - comparing innerHTML
+PASS Delete at "<div>abc[] <hr>def</div>" - comparing innerHTML
+FAIL Delete at "<div>abc[]<hr> def</div>" - comparing innerHTML assert_equals: expected "<div>abcdef</div>" but got "<div>abc def</div>"
+PASS Delete at "<div>abc[]<br><hr>def</div>" - comparing innerHTML
+PASS Delete at "<div><img>{}<br><hr>def</div>" - comparing innerHTML
+PASS Delete at "<div>abc[]<p>def<br>ghi</p></div>" - comparing innerHTML
+PASS Delete at "<div>abc[]<br><p>def<br>ghi</p></div>" - comparing innerHTML
+PASS Delete at "<div><img>{}<br><p>def<br>ghi</p></div>" - comparing innerHTML
+PASS Delete at "<div>abc[]   <p>   def<br>ghi</p></div>" - comparing innerHTML
+FAIL Delete at "<div>abc[]<p><b>def</b></p></div>" - comparing innerHTML assert_equals: expected "<div>abc<b>def</b></div>" but got "abc<b>def</b>"
+FAIL Delete at "<div><b>abc[]</b><p><b>def</b></p></div>" - comparing innerHTML assert_in_array: value "<b>abc</b><b>def</b>" not in array ["<div><b>abc</b><b>def</b></div>", "<div><b>abcdef</b></div>"]
+FAIL Delete at "<div><i>abc[]</i><p><b>def</b></p></div>" - comparing innerHTML assert_equals: expected "<div><i>abc</i><b>def</b></div>" but got "<i>abc</i><b>def</b>"
+FAIL Delete at "<div><p>abc[]</p>def</div>" - comparing innerHTML assert_in_array: value "<p>abcdef</p>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Delete at "<div><p>abc[]<br></p>def</div>" - comparing innerHTML assert_in_array: value "<p>abcdef</p>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Delete at "<div><p><img>{}<br></p>def</div>" - comparing innerHTML assert_in_array: value "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def<br></p>" not in array ["<div><p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def</p></div>", "<div><p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVR42mNgaGD4D8YwBgAw9AX9Y9zBwwAAAABJRU5ErkJggg==\">def<br></p></div>"]
+FAIL Delete at "<div><p>abc[]   </p>   def</div>" - comparing innerHTML assert_in_array: value "<p>abcdef</p>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Delete at "<div><p><b>abc[]</b></p>def</div>" - comparing innerHTML assert_equals: expected "<div><p><b>abc</b>def</p></div>" but got "<p><b>abc</b>def</p>"
+FAIL Delete at "<div><p><b>abc[]</b></p><b>def</b></div>" - comparing innerHTML assert_in_array: value "<p><b>abc</b><b>def</b></p>" not in array ["<div><p><b>abc</b><b>def</b></p></div>", "<div><p><b>abcdef</b></p></div>"]
+FAIL Delete at "<div><p><b>abc[]</b></p><i>def</i></div>" - comparing innerHTML assert_equals: expected "<div><p><b>abc</b><i>def</i></p></div>" but got "<p><b>abc</b><i>def</i></p>"
+FAIL Delete at "<div>abc[]<ul><li>def</li></ul>ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "abcdef<br>ghi"
+FAIL Delete at "<div>abc[]  <ul><li> def </li></ul>  ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "abcdef<br>  ghi"
+FAIL Delete at "<div>abc  []<ul><li> def </li></ul>  ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "abcdef<br>  ghi"
+FAIL Delete at "<div>abc<ul><li>def[]</li></ul>ghi</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul></div>" but got "abc<ul><li>defghi</li></ul>"
+FAIL Delete at "<div>abc <ul><li>  def[]  </li></ul> ghi</div>" - comparing innerHTML assert_in_array: value "abc <ul><li>  defghi</li></ul>" not in array ["<div>abc <ul><li>  defghi</li></ul></div>", "<div>abc <ul><li>defghi</li></ul></div>", "<div>abc<ul><li>defghi</li></ul></div>"]
+FAIL Delete at "<div>abc <ul><li>  def  []</li></ul> ghi</div>" - comparing innerHTML assert_in_array: value "abc <ul><li>  defghi</li></ul>" not in array ["<div>abc <ul><li>  defghi</li></ul></div>", "<div>abc <ul><li>defghi</li></ul></div>", "<div>abc<ul><li>defghi</li></ul></div>"]
+FAIL Delete at "<div>abc[]<ul><li>def</li><li>ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abcdef<ul><li>ghi</li></ul>jkl</div>" but got "abcdef<ul><li>ghi</li></ul>jkl"
+FAIL Delete at "<div>abc<ul><li>def[]</li><li>ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul>jkl</div>" but got "abc<ul><li>defghi</li></ul>jkl"
+FAIL Delete at "<div>abc<ul><li>def</li><li>ghi[]</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>def</li><li>ghijkl</li></ul></div>" but got "abc<ul><li>def</li><li>ghijkl</li></ul>"
+FAIL Delete at "<p>{}<br></p><p>abc</p>" - comparing innerHTML assert_equals: expected "<p>abc</p>" but got "<p>abc<br></p>"
+FAIL Delete at "<p><span>{}</span><br></p><p>abc</p>" - comparing innerHTML assert_equals: expected "<p>abc</p>" but got "<p>abc<br><span></span></p>"
+FAIL Delete at "<p>{}<br></p><p>  abc</p>" - comparing innerHTML assert_in_array: value "<p>abc<br></p>" not in array ["<p>  abc</p>", "<p>abc</p>"]
+FAIL Delete at "<p>{}<br></p><p><span contenteditable="false">abc</span>def</p>" - comparing innerHTML assert_equals: expected "<p><span contenteditable=\"false\">abc</span>def</p>" but got "<p><br><br></p>"
+FAIL Delete at "<p>{}<br></p><p contenteditable="false">abc</p><p>def</p>" - comparing innerHTML assert_in_array: value "<p><br></p><p contenteditable=\"false\">abc</p><p>ef</p>" not in array ["<p>def</p>", "<p contenteditable=\"false\">abc</p><p>def</p>"]
+PASS Delete at "<p>abc[]<span contenteditable="false">def</span>ghi</p>" - comparing innerHTML
+PASS Delete at "<p>{}<br></p><table><tr><td>cell</td></tr></table>" - comparing innerHTML
+PASS Delete at "<table><tr><td>{}<br></td><td>cell2</td></tr></table>" - comparing innerHTML
+FAIL Delete at "<table><caption>{}<br></caption><tr><td>cell</td></tr></table>" - comparing innerHTML assert_equals: expected "<table><caption><br></caption><tbody><tr><td>cell</td></tr></tbody></table>" but got "<table><caption></caption><tbody><tr><td>cell</td></tr></tbody></table>"
+PASS Delete at "<table><tr>{<td>cell1</td>}<td>cell2</td></tr></table>" - comparing innerHTML
+PASS Delete at "<table><tr><td>cell1</td>{<td>cell2</td>}</tr></table>" - comparing innerHTML
+PASS Delete at "<table><tr>{<td>cell</td>}</tr></table>" - comparing innerHTML
+PASS Delete at "<p>hello[]&#x5E9;&#x5DC;&#x5D5;&#x5DD;</p>" - comparing innerHTML
+PASS Shift + Delete at "<p>abc []def ghi</p>" - comparing innerHTML
+PASS Control + Delete at "<p>abc []def ghi</p>" - comparing innerHTML
+PASS Alt + Delete at "<p>abc []def ghi</p>" - comparing innerHTML
+PASS Meta + Delete at "<p>abc []def ghi</p>" - comparing innerHTML
+FAIL Shift + Delete at "<p>abc []def   </p>" - comparing innerHTML assert_equals: expected "<p>abc ef</p>" but got "<p>abc ef   </p>"
+FAIL Control + Delete at "<p>abc []def   </p>" - comparing innerHTML assert_equals: expected "<p>abc def</p>" but got "<p>abc def   </p>"
+PASS Alt + Delete at "<p>abc []def   </p>" - comparing innerHTML
+FAIL Meta + Delete at "<p>abc []def</p>" - comparing innerHTML assert_equals: expected "<p>abc deff</p>" but got "<p>abc def   s</p>"
+

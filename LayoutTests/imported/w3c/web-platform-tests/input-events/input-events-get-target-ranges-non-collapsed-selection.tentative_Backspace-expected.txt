@@ -1,0 +1,74 @@
+ab	
+kl
+
+PASS Backspace at "<p>{abc}</p>"
+PASS Backspace at "<p>{abc}<br></p>"
+PASS Backspace at "<p>{<img>}</p>"
+PASS Backspace at "<p>{<img>}<br></p>"
+FAIL Backspace at "<p>{ abc }</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"\", 0) - (#text \"\", 5)" but got "(#text \"\", 1) - (#text \"\", 4)"
+FAIL Backspace at "<p>abc   [</p><p>]   def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+PASS Backspace at "<p>ab[c</p><p>d]ef</p>"
+PASS Backspace at "<p>ab[c </p><p> d]ef</p>"
+FAIL Backspace at "<p>ab[c </p><p>] def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abdef\", 2) - (#text \"\", 1)" but got "(#text \"abdef\", 2) - (<p>, 0)"
+FAIL Backspace at "<p>abc [</p><p>] def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 1)" but got "(#text \"abcdef\", 4) - (<p>, 0)"
+FAIL Backspace at "<p>abc [</p><p> ]def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 1)" but got "(#text \"abcdef\", 4) - (<p>, 0)"
+FAIL Backspace at "<p>abc[<img>]def</p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(<p>, 1) - (<p>, 2)"
+PASS Backspace at "<div>abc[<hr>]def</div>"
+FAIL Backspace at "<div>abc [<hr>]def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abc\", 3) - (#text \"def\", 0)" but got "(#text \"abc\", 4) - (#text \"def\", 0)"
+FAIL Backspace at "<div>abc [<hr>] def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abc\", 3) - (#text \"def\", 1)" but got "(#text \"abc\", 4) - (#text \"def\", 0)"
+FAIL Backspace at "<div>abc {<hr>} def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abc\", 3) - (#text \"def\", 1)" but got "(#text \"abc\", 4) - (#text \"def\", 0)"
+PASS Backspace at "<p>abc{<br>}def</p>"
+FAIL Backspace at "<div>abc[<p>]def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<p>, 0)"
+FAIL Backspace at "<div>abc   [<p>]   def<br>ghi</p></div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (<p>, 0)"
+PASS Backspace at "<div><p>abc[</p>]def</div>"
+FAIL Backspace at "<div><p>abc   [</p>]   def</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 3)" but got "(#text \"abcdef\", 6) - (#text \"\", 0)"
+FAIL Backspace at "<div>abc[<ul><li>]def</li></ul>ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<li>, 0)"
+FAIL Backspace at "<div>abc  [<ul><li>] def </li></ul>  ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 1)" but got "(#text \"abcdef\", 5) - (<li>, 0)"
+PASS Backspace at "<div>abc<ul><li>def[</li></ul>]ghi</div>"
+FAIL Backspace at "<div>abc <ul><li>  def  [</li></ul>] ghi</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"  defghi\", 5) - (#text \"\", 1)" but got "(#text \"  defghi\", 7) - (#text \"\", 0)"
+FAIL Backspace at "<div>abc[<ul><li>]def</li><li>ghi</li></ul>jkl</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcdef\", 3) - (#text \"\", 0)" but got "(#text \"abcdef\", 3) - (<li>, 0)"
+FAIL Backspace at "<div>abc[<ul><li>def</li><li>]ghi</li></ul>jkl</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abcghi\", 3) - (#text \"\", 0)" but got "(#text \"abcghi\", 3) - (<li>, 0)"
+FAIL Backspace at "<div>abc<ul><li>def[</li><li>]ghi</li></ul>jkl</div>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"defghi\", 3) - (#text \"\", 0)" but got "(#text \"defghi\", 3) - (<li>, 0)"
+PASS Backspace at "<div>abc<ul><li>def</li><li>ghi[</li></ul>]jkl</div>"
+PASS Backspace at "<div>abc<ul><li>def[</li><li>ghi</li></ul>]jkl</div>"
+FAIL Backspace at "<p>abc[</p><p>}<br></p>" assert_equals: gBeforeinput[0].getTargetRanges()[0] should return expected range (inputType is "deleteContentBackward") expected "(#text \"abc\", 3) - (<p>, 1)" but got "(#text \"abc\", 3) - (<p>, 0)"
+PASS Backspace at "<p>abc[<span contenteditable="false">def</span>]ghi</p>"
+PASS Backspace at "<table><tr><td>ab[c</td><td>d]ef</td></tr></table>"
+PASS Backspace at "<table><tr><td>ab[c</td><td>def</td></tr><tr><td>ghi</td><td>j]kl</td></tr></table>"
+PASS Backspace at "<table><tr><td>ab[c</td><td>def</td></tr></table><table><tr><td>ghi</td><td>j]kl</td></tr></table>"
+PASS Backspace at "<p>{abc}</p>" - comparing innerHTML
+PASS Backspace at "<p>{abc}<br></p>" - comparing innerHTML
+PASS Backspace at "<p>{<img>}</p>" - comparing innerHTML
+PASS Backspace at "<p>{<img>}<br></p>" - comparing innerHTML
+PASS Backspace at "<p>{ abc }</p>" - comparing innerHTML
+PASS Backspace at "<p>abc   [</p><p>]   def</p>" - comparing innerHTML
+PASS Backspace at "<p>ab[c</p><p>d]ef</p>" - comparing innerHTML
+PASS Backspace at "<p>ab[c </p><p> d]ef</p>" - comparing innerHTML
+PASS Backspace at "<p>ab[c </p><p>] def</p>" - comparing innerHTML
+PASS Backspace at "<p>abc [</p><p>] def</p>" - comparing innerHTML
+PASS Backspace at "<p>abc [</p><p> ]def</p>" - comparing innerHTML
+PASS Backspace at "<p>abc[<img>]def</p>" - comparing innerHTML
+PASS Backspace at "<div>abc[<hr>]def</div>" - comparing innerHTML
+PASS Backspace at "<div>abc [<hr>]def</div>" - comparing innerHTML
+PASS Backspace at "<div>abc [<hr>] def</div>" - comparing innerHTML
+PASS Backspace at "<div>abc {<hr>} def</div>" - comparing innerHTML
+PASS Backspace at "<p>abc{<br>}def</p>" - comparing innerHTML
+PASS Backspace at "<div>abc[<p>]def<br>ghi</p></div>" - comparing innerHTML
+PASS Backspace at "<div>abc   [<p>]   def<br>ghi</p></div>" - comparing innerHTML
+FAIL Backspace at "<div><p>abc[</p>]def</div>" - comparing innerHTML assert_in_array: value "<p>abcdef</p>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Backspace at "<div><p>abc   [</p>]   def</div>" - comparing innerHTML assert_in_array: value "<p>abcdef</p>" not in array ["<div><p>abcdef</p></div>", "<div><p>abcdef<br></p></div>"]
+FAIL Backspace at "<div>abc[<ul><li>]def</li></ul>ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "abcdef<br>ghi"
+FAIL Backspace at "<div>abc  [<ul><li>] def </li></ul>  ghi</div>" - comparing innerHTML assert_equals: expected "<div>abcdefghi</div>" but got "abcdef<br>  ghi"
+FAIL Backspace at "<div>abc<ul><li>def[</li></ul>]ghi</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul></div>" but got "abc<ul><li>defghi</li></ul>"
+FAIL Backspace at "<div>abc <ul><li>  def  [</li></ul>] ghi</div>" - comparing innerHTML assert_in_array: value "abc <ul><li>  defghi</li></ul>" not in array ["<div>abc <ul><li>  defghi</li></ul></div>", "<div>abc <ul><li>defghi</li></ul></div>", "<div>abc<ul><li>defghi</li></ul></div>"]
+FAIL Backspace at "<div>abc[<ul><li>]def</li><li>ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abcdef<ul><li>ghi</li></ul>jkl</div>" but got "abcdef<ul><li>ghi</li></ul>jkl"
+FAIL Backspace at "<div>abc[<ul><li>def</li><li>]ghi</li></ul>jkl</div>" - comparing innerHTML assert_in_array: value "abcghi<br>jkl" not in array ["<div>abcghijkl</div>", "<div>abcghijkl<br></div>"]
+FAIL Backspace at "<div>abc<ul><li>def[</li><li>]ghi</li></ul>jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defghi</li></ul>jkl</div>" but got "abc<ul><li>defghi</li></ul>jkl"
+FAIL Backspace at "<div>abc<ul><li>def</li><li>ghi[</li></ul>]jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>def</li><li>ghijkl</li></ul></div>" but got "abc<ul><li>def</li><li>ghijkl</li></ul>"
+FAIL Backspace at "<div>abc<ul><li>def[</li><li>ghi</li></ul>]jkl</div>" - comparing innerHTML assert_equals: expected "<div>abc<ul><li>defjkl</li></ul></div>" but got "abc<ul><li>defjkl</li></ul>"
+PASS Backspace at "<p>abc[</p><p>}<br></p>" - comparing innerHTML
+PASS Backspace at "<p>abc[<span contenteditable="false">def</span>]ghi</p>" - comparing innerHTML
+PASS Backspace at "<table><tr><td>ab[c</td><td>d]ef</td></tr></table>" - comparing innerHTML
+PASS Backspace at "<table><tr><td>ab[c</td><td>def</td></tr><tr><td>ghi</td><td>j]kl</td></tr></table>" - comparing innerHTML
+PASS Backspace at "<table><tr><td>ab[c</td><td>def</td></tr></table><table><tr><td>ghi</td><td>j]kl</td></tr></table>" - comparing innerHTML
+
