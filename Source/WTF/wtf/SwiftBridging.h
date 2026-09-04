@@ -46,7 +46,7 @@
 #endif
 
 #ifndef SWIFT_COPYABLE_IF
-#define SWIFT_COPYABLE_IF
+#define SWIFT_COPYABLE_IF(...)
 #endif
 
 #ifndef SWIFT_ESCAPABLE
