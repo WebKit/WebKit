@@ -277,11 +277,17 @@ inline void emitRestoreInstanceFrameIfNeeded(CCallHelpers& jit, GPRReg currentIn
         {
             auto scratch3 = jit.scratchRegister();
             DisallowMacroScratchRegisterUsage disallowScratch(jit);
+#if CPU(ARM64)
+            jit.loadPair64(CCallHelpers::PostIndexAddress(scratch1, 16), scratch2, scratch3);
+            jit.storePair64(scratch2, scratch3, CCallHelpers::Address(scratch1, -static_cast<int32_t>(restoreFrameSize) - 16));
+#else
             jit.loadPair64(scratch1, scratch2, scratch3);
-            // FIXME: This could be a PostIndexAddress.
             jit.storePair64(scratch2, scratch3, CCallHelpers::Address(scratch1, -restoreFrameSize));
+#endif
         }
+#if !CPU(ARM64)
         jit.addPtr(CCallHelpers::TrustedImm32(16), scratch1);
+#endif
         // FIXME: It'd be nice to use the address scratch on ARM64 to hold the end point.
         jit.addPtr(CCallHelpers::TrustedImm32(topSourceOffsetFromFP), GPRInfo::callFrameRegister, scratch2);
         jit.branchPtr(CCallHelpers::Below, scratch1, scratch2).linkTo(loop, &jit);
