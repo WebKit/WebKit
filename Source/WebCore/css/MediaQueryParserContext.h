@@ -40,6 +40,11 @@ public:
     WEBCORE_EXPORT MediaQueryParserContext(const Document&);
 
     CSSParserContext context;
+
+    // Container query conditions have an element context (the query container), so unlike media
+    // queries they allow the tree counting functions.
+    // https://github.com/w3c/csswg-drafts/issues/10982
+    bool treeCountingFunctionsAllowed { false };
 };
 
 } // namespace WebCore

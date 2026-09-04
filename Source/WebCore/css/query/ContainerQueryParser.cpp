@@ -198,8 +198,13 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
     return queries;
 }
 
-std::optional<ContainerCondition> ContainerQueryParser::consumeContainerCondition(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<ContainerCondition> ContainerQueryParser::consumeContainerCondition(CSSParserTokenRange& range, const MediaQueryParserContext& parentContext)
 {
+    // "RESOLVED: Explicitly allow tree-counting functions in container queries"
+    // https://github.com/w3c/csswg-drafts/issues/10982
+    auto context = parentContext;
+    context.treeCountingFunctionsAllowed = true;
+
     auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
             return nullAtom();

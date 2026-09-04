@@ -103,6 +103,7 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const Media
 
     auto parserState = CSS::PropertyParserState {
         .context = context.context,
+        .treeCountingFunctionsAllowed = context.treeCountingFunctionsAllowed,
     };
 
     if (auto value = consumeUnresolvedRatioWithBothNumeratorAndDenominator(range, parserState))

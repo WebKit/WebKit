@@ -1347,7 +1347,7 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
             return { };
         if (state.propertyParserState.currentRule != StyleRuleType::Style && state.propertyParserState.currentRule != StyleRuleType::Keyframe)
             return { };
-        if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
+        if (state.propertyParserState.currentProperty == CSSPropertyInvalid && !state.propertyParserState.treeCountingFunctionsAllowed)
             return { };
         state.requiresConversionData = true;
         return consumeZeroArguments<SiblingCount>(tokens, depth, state);
@@ -1360,7 +1360,7 @@ std::optional<TypedChild> parseCalcFunction(CSSParserTokenRange& tokens, CSSValu
             return { };
         if (state.propertyParserState.currentRule != StyleRuleType::Style && state.propertyParserState.currentRule != StyleRuleType::Keyframe)
             return { };
-        if (state.propertyParserState.currentProperty == CSSPropertyInvalid)
+        if (state.propertyParserState.currentProperty == CSSPropertyInvalid && !state.propertyParserState.treeCountingFunctionsAllowed)
             return { };
         state.requiresConversionData = true;
         return consumeZeroArguments<SiblingIndex>(tokens, depth, state);

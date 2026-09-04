@@ -36,6 +36,7 @@
 #include "NodeDocument.h"
 #include "NodeRenderStyle.h"
 #include "RenderView.h"
+#include "StyleBuilderState.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
@@ -50,6 +51,8 @@ ContainerQueryEvaluator::ContainerQueryEvaluator(const Element& element, Selecti
     , m_evaluationState(evaluationState)
 {
 }
+
+ContainerQueryEvaluator::~ContainerQueryEvaluator() = default;
 
 bool ContainerQueryEvaluator::evaluate(const CQ::ContainerQuery& containerQuery) const
 {
@@ -113,15 +116,18 @@ auto ContainerQueryEvaluator::featureEvaluationContextForCondition(const CQ::Con
         return styleForContainer(*rootElement, condition.requirements, m_evaluationState);
     }();
 
+    // Give the condition an element context, which is what the functions that resolve against the
+    // query container need.
+    m_builderState = BuilderState::create(const_cast<ComputedStyle&>(*containerStyle), BuilderContext {
+        .document = document.get(),
+        .parentStyle = containerParentStyle.get(),
+        .rootElementStyle = rootStyle.get(),
+        .element = container.get(),
+    }).moveToUniquePtr();
+
     return MQ::FeatureEvaluationContext {
         .document = document.get(),
-        .conversionData = CSSToLengthConversionData {
-            *containerStyle,
-            rootStyle.get(),
-            containerParentStyle.get(),
-            document->renderView(),
-            container.get()
-        },
+        .conversionData = m_builderState->cssToLengthConversionData(),
         .renderer = container->renderer(),
     };
 }

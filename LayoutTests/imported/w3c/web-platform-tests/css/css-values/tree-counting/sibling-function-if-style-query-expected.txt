@@ -1,0 +1,6 @@
+
+PASS sibling-index() in an if() style() comparison
+PASS sibling-index() inside mod() in an if() style() comparison
+PASS sibling-index() compared against a registered custom property
+PASS sibling-count() in an if() style() comparison
+

@@ -28,6 +28,7 @@
 #include "GenericMediaQueryEvaluator.h"
 #include "StyleScopeOrdinal.h"
 #include "StyleUpdate.h"
+#include <memory>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -35,6 +36,8 @@ namespace WebCore {
 class Element;
 
 namespace Style {
+
+class BuilderState;
 
 struct ContainerQueryEvaluationState {
     Vector<Ref<const Element>> sizeQueryContainers;
@@ -45,6 +48,7 @@ class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQ
 public:
     enum class SelectionMode : uint8_t { Element, PseudoElement, PartPseudoElement };
     ContainerQueryEvaluator(const Element&, SelectionMode, ScopeOrdinal, ContainerQueryEvaluationState*);
+    ~ContainerQueryEvaluator();
 
     bool evaluate(const CQ::ContainerQuery&) const;
 
@@ -57,6 +61,11 @@ private:
     const SelectionMode m_selectionMode;
     const ScopeOrdinal m_scopeOrdinal;
     ContainerQueryEvaluationState* m_evaluationState { nullptr };
+
+    // No style is being built while a condition is evaluated, but the functions that resolve against
+    // the query container need a BuilderState to reach it. The conversion data only points at it, so
+    // it is owned here.
+    mutable std::unique_ptr<BuilderState> m_builderState;
 };
 
 }

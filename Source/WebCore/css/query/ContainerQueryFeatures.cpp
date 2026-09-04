@@ -197,7 +197,11 @@ static std::optional<StyleRangeValue> evaluateStyleRangeValue(const Vector<CSSPa
         return { };
 
     auto& conversionData = context.conversionData;
-    auto parserState = CSS::PropertyParserState { .context = protect(context.document.get())->cssParserContext() };
+
+    auto parserState = CSS::PropertyParserState {
+        .context = protect(context.document.get())->cssParserContext(),
+        .treeCountingFunctionsAllowed = true,
+    };
 
     auto isFullyConsumed = [](CSSParserTokenRange consumed) {
         consumed.consumeWhitespace();
@@ -276,8 +280,9 @@ struct StyleFeatureSchema : public FeatureSchema {
     // https://drafts.csswg.org/css-mixins/#resolve-function-styles
     static const Style::LocalPropertyRegistry* localPropertyRegistry(const FeatureEvaluationContext& context)
     {
-        CheckedPtr builderState = context.conversionData.styleBuilderState();
-        return builderState ? builderState->localPropertyRegistry() : nullptr;
+        // Both evaluators that reach a style() feature, container queries and if(), have a builder state.
+        CheckedRef builderState = *context.conversionData.styleBuilderState();
+        return builderState->localPropertyRegistry();
     }
 
     // FeatureSchema conformance
