@@ -51,6 +51,8 @@ NS_SWIFT_UI_ACTOR
 
 @property (nonatomic, readonly, nullable) NSURL *linkURL;
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (instancetype)initWithPDFAnnotation:(PDFAnnotation *)annotation;
 
 @end
@@ -65,6 +67,8 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, readonly) NSString *text;
 
 @property (nonatomic, readonly) NSInteger characterCount;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initWithPDFPage:(PDFPage *)page;
 
@@ -82,6 +86,8 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, readonly) NSInteger pageCount;
 
 - (nullable TestPDFPage *)pageAtIndex:(NSInteger)index;
+
+- (instancetype)init NS_UNAVAILABLE;
 
 - (instancetype)initFromData:(NSData *)data;
 

@@ -38,6 +38,8 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 NS_SWIFT_UI_ACTOR
 @interface WKTextSelectionController : NSObject
 
+- (instancetype)init NS_UNAVAILABLE;
+
 - (instancetype)initWithView:(WKWebView *)view;
 
 - (void)addTextSelectionManager;
