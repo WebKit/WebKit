@@ -6923,6 +6923,7 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks
 imported/w3c/web-platform-tests/html/editing/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-event.html [ Skip ]
 
 # Drag-and-drop testdriver automation is not supported on iOS.
+webkit.org/b/321858 imported/w3c/web-platform-tests/html/editing/dnd/events/drag-events-cancelable.html [ Skip ]
 webkit.org/b/66547 imported/w3c/web-platform-tests/html/editing/dnd/events/dragenter-dragleave-related-target.html [ Skip ]
 
 ######################################################

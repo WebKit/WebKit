@@ -2723,7 +2723,14 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
     if (relatedTarget && &relatedTarget->document() != &dragTarget.document())
         relatedTarget = nullptr;
 
-    auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
+    auto& eventNames = WebCore::eventNames();
+
+    // https://html.spec.whatwg.org/multipage/dnd.html#fire-a-dnd-event
+    // "If e is not dragleave or dragend, then initialize event's cancelable attribute to true."
+    auto cancelable = eventType == eventNames.dragleaveEvent || eventType == eventNames.dragendEvent
+        ? Event::IsCancelable::No : Event::IsCancelable::Yes;
+
+    auto dragEvent = DragEvent::create(eventType, Event::CanBubble::Yes, cancelable, Event::IsComposed::Yes,
         event.timestamp(), &frame->windowProxy(), 0,
         flooredIntPoint(event.globalPosition()), flooredIntPoint(event.position()), event.movementDelta().x(), event.movementDelta().y(),
         event.modifiers(), MouseButton::Left, 0, WTF::move(relatedTarget), event.force(), SyntheticClickType::NoTap, &dataTransfer);
@@ -2731,7 +2738,6 @@ bool EventHandler::dispatchDragEvent(const AtomString& eventType, Element& dragT
     dragTarget.dispatchEvent(dragEvent);
 
     if (CheckedPtr cache = protect(frame->document())->existingAXObjectCache()) {
-        auto& eventNames = WebCore::eventNames();
         if (eventType == eventNames.dragstartEvent)
             cache->onDraggingStarted(dragTarget);
         else if (eventType == eventNames.dragendEvent)
