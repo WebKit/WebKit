@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+async function runTest()
+{
+    switch (document.location.hash) {
+        case "":
+            document.location.href =
+                "http://127.0.0.1:8000/resources/redirect.py"
+                + "?cookie=" + encodeURIComponent("strict=1; SameSite=Strict; Path=/")
+                + "&url="    + encodeURIComponent(
+                    "http://127.0.0.1:8000/websocket/tests/hybi/websocket-samesite-sent-same-site.html#runTest"
+                );
+            break;
+
+        case "#runTest":
+            // Page origin:      http://127.0.0.1:8000
+            // WebSocket target: ws://127.0.0.1:8880  (same site)
+            var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo-cookie");
+            debug("Created socket to '" + ws.url + "'; readyState " + ws.readyState);
+
+            ws.onopen = () => debug("Connection opened.");
+
+            ws.onmessage = (event) => {
+                var cookieHeader = event.data;
+                debug("Received cookie header: " + cookieHeader);
+
+                if (cookieHeader.indexOf("strict") !== -1)
+                    testPassed("SameSite=Strict cookie WAS sent on same-site WebSocket upgrade request.");
+                else
+                    testFailed("SameSite=Strict cookie was NOT sent (expected it to be present). Got: " + cookieHeader);
+
+                ws.close();
+                finishJSTest();
+            };
+
+            ws.onerror = () => {
+                testFailed("WebSocket connection failed.");
+                finishJSTest();
+            };
+            break;
+    }
+}
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("SameSite=Strict cookies must be sent on same-site WebSocket upgrade requests.");
+runTest();
+</script>
+</body>
+</html>

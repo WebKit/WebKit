@@ -74,6 +74,9 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     if (WebCore::NetworkStorageSession::shouldBlockCookies(thirdPartyCookieBlockingDecision))
         blockCookies();
 
+    // Enforcing SameSite cookie policy for WebSocket upgrade requests, independently of ITP.
+    updateTaskWithFirstPartyForSameSiteCookies(protect(m_task.get()).get(), request);
+
     readNextMessage();
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
