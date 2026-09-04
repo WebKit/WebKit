@@ -65,11 +65,51 @@ DECLARE_SYSTEM_HEADER
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
-#include <Network/Network.h>
+typedef CF_ENUM(int64_t, _TimingDataOptions)
+{
+    _TimingDataOptionsEnableW3CNavigationTiming = (1 << 0)
+};
+
+enum CFURLCacheStoragePolicy {
+    kCFURLCacheStorageAllowed = 0,
+    kCFURLCacheStorageAllowedInMemoryOnly = 1,
+    kCFURLCacheStorageNotAllowed = 2
+};
+typedef enum CFURLCacheStoragePolicy CFURLCacheStoragePolicy;
+
+typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
+typedef const struct _CFURLCache* CFURLCacheRef;
+typedef const struct _CFURLCredential* CFURLCredentialRef;
+typedef const struct _CFURLRequest* CFURLRequestRef;
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+typedef const struct __CFData* CFDataRef;
+typedef const struct OpaqueCFHTTPCookie* CFHTTPCookieRef;
+typedef struct _CFURLConnection* CFURLConnectionRef;
+typedef struct _CFURLCredentialStorage* CFURLCredentialStorageRef;
+typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
+typedef struct _CFURLRequest* CFMutableURLRequestRef;
+typedef struct _CFURLResponse* CFURLResponseRef;
+typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
+typedef CFIndex CFURLRequestPriority;
+typedef int CFHTTPCookieStorageAcceptPolicy;
+
+CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
+{
+    CFHTTPCookieStorageAcceptPolicyAlways = 0,
+    CFHTTPCookieStorageAcceptPolicyNever = 1,
+    CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain = 2,
+    CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+};
 
 #if defined(__OBJC__)
+#import <Foundation/Foundation.h>
+#endif
 
-#include <Foundation/Foundation.h>
+#if __has_include(<Network/Network.h>)
+#include <Network/Network.h>
+#endif // __has_include(<Network/Network.h>)
+
+#if defined(__OBJC__)
 
 @interface _NSHTTPConnectionInfo : NSObject
 - (void)sendPingWithReceiveHandler:(void (^)(NSError * _Nullable error, NSTimeInterval interval))pongHandler;
@@ -94,6 +134,7 @@ OS_OBJECT_DECL(nw_array);
 OS_OBJECT_DECL(nw_object);
 OS_OBJECT_DECL(nw_context);
 OS_OBJECT_DECL(nw_endpoint);
+OS_OBJECT_DECL(nw_path);
 OS_OBJECT_DECL(nw_resolver);
 OS_OBJECT_DECL(nw_parameters);
 OS_OBJECT_DECL(nw_path_evaluator);
@@ -109,6 +150,8 @@ struct nw_context;
 typedef struct nw_context *nw_context_t;
 struct nw_endpoint;
 typedef struct nw_endpoint *nw_endpoint_t;
+struct nw_path;
+typedef struct nw_path *nw_path_t;
 struct nw_resolver;
 typedef struct nw_resolver *nw_resolver_t;
 struct nw_parameters;
@@ -161,42 +204,6 @@ nw_object_t nw_array_get_object_at_index(nw_array_t, size_t);
 #ifdef __cplusplus
 }
 #endif
-
-typedef CF_ENUM(int64_t, _TimingDataOptions)
-{
-    _TimingDataOptionsEnableW3CNavigationTiming = (1 << 0)
-};
-
-enum CFURLCacheStoragePolicy {
-    kCFURLCacheStorageAllowed = 0,
-    kCFURLCacheStorageAllowedInMemoryOnly = 1,
-    kCFURLCacheStorageNotAllowed = 2
-};
-typedef enum CFURLCacheStoragePolicy CFURLCacheStoragePolicy;
-
-typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
-typedef const struct _CFURLCache* CFURLCacheRef;
-typedef const struct _CFURLCredential* CFURLCredentialRef;
-typedef const struct _CFURLRequest* CFURLRequestRef;
-typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
-typedef const struct __CFData* CFDataRef;
-typedef const struct OpaqueCFHTTPCookie* CFHTTPCookieRef;
-typedef struct _CFURLConnection* CFURLConnectionRef;
-typedef struct _CFURLCredentialStorage* CFURLCredentialStorageRef;
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
-typedef struct _CFURLRequest* CFMutableURLRequestRef;
-typedef struct _CFURLResponse* CFURLResponseRef;
-typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
-typedef CFIndex CFURLRequestPriority;
-typedef int CFHTTPCookieStorageAcceptPolicy;
-
-CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
-{
-    CFHTTPCookieStorageAcceptPolicyAlways = 0,
-    CFHTTPCookieStorageAcceptPolicyNever = 1,
-    CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain = 2,
-    CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
-};
 
 typedef enum {
     nw_connection_privacy_stance_unknown = 0,

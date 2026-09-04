@@ -169,7 +169,7 @@ void TestController::platformInitialize(const Options& options)
 void TestController::platformDestroy()
 {
     [WebKitTestRunnerPasteboard releaseLocalPasteboards];
-#if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#if ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
     if (auto resolverConfig = m_resolverConfig)
         nw_resolver_config_unpublish(resolverConfig.get());
 #endif
