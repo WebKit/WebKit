@@ -643,7 +643,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     if (!frame)
         return;
 
-    if (MixedContentChecker::shouldBlockRequest(*frame, requestURL))
+    if (MixedContentChecker::shouldBlockRequest(*frame, requestURL, MixedContentChecker::IsUpgradable::No, request.targetAddressSpace()))
         return;
 
     RefPtr<SharedBuffer> data;

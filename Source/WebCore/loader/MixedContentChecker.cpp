@@ -33,10 +33,12 @@
 #include "ContentFilter.h"
 #include "DocumentQuirks.h"
 #include "FrameLoader.h"
+#include "IPAddressSpace.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -92,7 +94,20 @@ static bool NODELETE destinationIsImageAndInitiatorIsImageset(FetchOptions::Dest
     return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }
 
-bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Destination destination, Initiator initiator)
+// Only fetch() stamps a declared target address space onto its request, so every other load type needs
+// one derived here.
+static IPAddressSpace effectiveTargetAddressSpace(const Frame& frame, const URL& url, IPAddressSpace declaredTargetAddressSpace)
+{
+    if (declaredTargetAddressSpace != IPAddressSpace::Public)
+        return declaredTargetAddressSpace;
+
+    if (!frame.settings().localNetworkAccessEnabled())
+        return declaredTargetAddressSpace;
+
+    return determineIPAddressSpace(url);
+}
+
+bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Destination destination, Initiator initiator, IPAddressSpace targetAddressSpace)
 {
     RefPtr document = frame.document();
     if (!document || isUpgradable != IsUpgradable::Yes)
@@ -105,15 +120,18 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
         return false;
 
     // 4.1 The request's URL is not upgraded in the following cases.
-    if (!canModifyRequest(url, destination, initiator))
+    if (!canModifyRequest(url, destination, initiator, effectiveTargetAddressSpace(frame, url, targetAddressSpace)))
         return false;
 
     frame.reportMixedContentViolation(false, url);
     return true;
 }
 
-bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator)
+bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator, IPAddressSpace targetAddressSpace)
 {
+    // Deliberately `!= Public` rather than `== Local`, since Loopback is strictly more private than Local.
+    if (targetAddressSpace != IPAddressSpace::Public)
+        return false;
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     if (url.protocolIs("https"_s))
         return false;
@@ -137,7 +155,7 @@ static bool shouldAllowConnectionWithPotentiallyInsecureProtocol(Frame& frame, c
     return (LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol()) || shouldTreatAsPotentiallyTrustworthy(url)) && isUpgradable == MixedContentChecker::IsUpgradable::Yes;
 }
 
-bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpgradable isUpgradable)
+bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpgradable isUpgradable, IPAddressSpace targetAddressSpace)
 {
 #if ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS)
     if (url == ContentFilter::blockedPageURL())
@@ -147,6 +165,8 @@ bool MixedContentChecker::shouldBlockRequest(Frame& frame, const URL& url, IsUpg
     if (!isMixedContent(frame, url))
         return false;
     if (shouldAllowConnectionWithPotentiallyInsecureProtocol(frame, url, isUpgradable))
+        return false;
+    if (effectiveTargetAddressSpace(frame, url, targetAddressSpace) != IPAddressSpace::Public)
         return false;
     frame.reportMixedContentViolation(true, url);
     return true;

@@ -763,7 +763,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         if (!parentFrame)
             return completionHandler(WTF::move(newRequest));
 
-        if (MixedContentChecker::shouldBlockRequest(*parentFrame, newRequest.url())) {
+        if (MixedContentChecker::shouldBlockRequest(*parentFrame, newRequest.url(), MixedContentChecker::IsUpgradable::No, newRequest.targetAddressSpace())) {
             cancelMainResourceLoad(protect(frameLoader())->cancelledError(newRequest));
             return completionHandler(WTF::move(newRequest));
         }

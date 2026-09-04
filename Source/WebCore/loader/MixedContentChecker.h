@@ -30,6 +30,7 @@
 #pragma once
 
 #include <WebCore/FetchOptions.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/ResourceLoaderOptions.h>
 
 namespace WTF {
@@ -47,11 +48,11 @@ namespace MixedContentChecker {
 
 enum class IsUpgradable : bool { No, Yes, };
 
-bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator);
+bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
-bool shouldBlockRequest(Frame&, const URL&, IsUpgradable = IsUpgradable::No);
+bool shouldBlockRequest(Frame&, const URL&, IsUpgradable = IsUpgradable::No, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
-WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator);
+WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator, IPAddressSpace targetAddressSpace = IPAddressSpace::Public);
 
 WEBCORE_EXPORT String mixedContentViolationMessage(bool shouldUpgradeLocalhostAndIPAddressInMixedContent, bool blocked, const URL& current, const URL& target);
 

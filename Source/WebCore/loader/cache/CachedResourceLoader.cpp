@@ -276,11 +276,11 @@ ResourceErrorOr<RefPtr<CachedImage>> CachedResourceLoader::requestImage(CachedRe
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             bool isRequestUpgradable { false };
             if (RefPtr document = frame->document()) {
-                isRequestUpgradable = MixedContentChecker::shouldUpgradeInsecureContent(*frame, MixedContentChecker::IsUpgradable::Yes, request.resourceRequest().url(), request.options().destination, request.options().initiator);
+                isRequestUpgradable = MixedContentChecker::shouldUpgradeInsecureContent(*frame, MixedContentChecker::IsUpgradable::Yes, request.resourceRequest().url(), request.options().destination, request.options().initiator, request.resourceRequest().targetAddressSpace());
                 request.upgradeInsecureRequestIfNeeded(*document, isRequestUpgradable ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
             }
             URL requestURL = request.resourceRequest().url();
-            if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request.options(), ForPreload::No, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No, request.isLinkPreload()))
+            if (requestURL.isValid() && canRequest(CachedResource::Type::ImageResource, requestURL, request.options(), ForPreload::No, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No, request.isLinkPreload(), request.resourceRequest().targetAddressSpace()))
                 PingLoader::loadImage(*frame, WTF::move(requestURL));
             return { nullptr };
         }
@@ -462,7 +462,7 @@ static MixedContentChecker::IsUpgradable NODELETE isUpgradableTypeFromResourceTy
     return MixedContentChecker::IsUpgradable::No;
 }
 
-bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url, MixedContentChecker::IsUpgradable isRequestUpgradable) const
+bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const URL& url, MixedContentChecker::IsUpgradable isRequestUpgradable, IPAddressSpace targetAddressSpace) const
 {
     if (!canRequestInContentDispositionAttachmentSandbox(type, url))
         return false;
@@ -492,7 +492,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::Ping:
     case CachedResource::Type::FontResource: {
         if (RefPtr frame = this->frame()) {
-            if (MixedContentChecker::shouldBlockRequest(*frame, url, isRequestUpgradable))
+            if (MixedContentChecker::shouldBlockRequest(*frame, url, isRequestUpgradable, targetAddressSpace))
                 return false;
         }
         break;
@@ -606,7 +606,7 @@ static inline bool isSameOriginDataURL(const URL& url, const ResourceLoaderOptio
 }
 
 // Security checks defined in https://fetch.spec.whatwg.org/#main-fetch.
-bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ForPreload forPreload, MixedContentChecker::IsUpgradable isRequestUpgradable, bool isLinkPreload)
+bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, ForPreload forPreload, MixedContentChecker::IsUpgradable isRequestUpgradable, bool isLinkPreload, IPAddressSpace targetAddressSpace)
 {
     if (RefPtr document = m_document) {
         if (!protect(document->securityOrigin())->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
@@ -656,14 +656,14 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     // They'll still get a warning in the console about CSP blocking the load.
 
     // FIXME: Should we consider whether the request is for preload here?
-    if (!checkInsecureContent(type, url, isRequestUpgradable))
+    if (!checkInsecureContent(type, url, isRequestUpgradable, targetAddressSpace))
         return false;
 
     return true;
 }
 
 // FIXME: Should we find a way to know whether the redirection is for a preload request like we do for CachedResourceLoader::canRequest?
-bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, const URL& preRedirectURL) const
+bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type, const URL& url, const ResourceLoaderOptions& options, const URL& preRedirectURL, IPAddressSpace targetAddressSpace) const
 {
     if (RefPtr document = m_document) {
         if (!protect(document->securityOrigin())->canDisplay(url, OriginAccessPatternsForWebProcess::singleton())) {
@@ -696,7 +696,7 @@ bool CachedResourceLoader::canRequestAfterRedirection(CachedResource::Type type,
 
     // Last of all, check for insecure content. We do this last so that when folks block insecure content with a CSP policy, they don't get a warning.
     // They'll still get a warning in the console about CSP blocking the load.
-    if (!checkInsecureContent(type, url, MixedContentChecker::IsUpgradable::No)) {
+    if (!checkInsecureContent(type, url, MixedContentChecker::IsUpgradable::No, targetAddressSpace)) {
         CACHEDRESOURCELOADER_RELEASE_LOG("canRequestAfterRedirection: URL was not allowed because content is insecure");
         return false;
     }
@@ -825,7 +825,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
         return true;
 
     if (RefPtr document = m_documentLoader->cachedResourceLoader().document()) {
-        bool alwaysUpgradeMixedContent = document->frame() ? MixedContentChecker::shouldUpgradeInsecureContent(Ref { *document->frame() }, isUpgradableTypeFromResourceType(type), request.url(), options.destination, options.initiator) : false;
+        bool alwaysUpgradeMixedContent = document->frame() ? MixedContentChecker::shouldUpgradeInsecureContent(Ref { *document->frame() }, isUpgradableTypeFromResourceType(type), request.url(), options.destination, options.initiator, request.targetAddressSpace()) : false;
         upgradeInsecureResourceRequestIfNeeded(request, *document, alwaysUpgradeMixedContent ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
     }
 
@@ -864,7 +864,7 @@ bool CachedResourceLoader::updateRequestAfterRedirection(CachedResource::Type ty
         }
     }
 
-    return canRequestAfterRedirection(type, request.url(), options, preRedirectURL);
+    return canRequestAfterRedirection(type, request.url(), options, preRedirectURL, request.targetAddressSpace());
 }
 
 bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(CachedResource::Type type, const URL& url) const
@@ -1237,7 +1237,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     bool isRequestUpgradable { false };
     RefPtr document = m_document;
     if (document) {
-        isRequestUpgradable = MixedContentChecker::shouldUpgradeInsecureContent(frame, isUpgradableTypeFromResourceType(type), url, request.options().destination, request.options().initiator);
+        isRequestUpgradable = MixedContentChecker::shouldUpgradeInsecureContent(frame, isUpgradableTypeFromResourceType(type), url, request.options().destination, request.options().initiator, request.resourceRequest().targetAddressSpace());
         request.upgradeInsecureRequestIfNeeded(*document, isRequestUpgradable ? ContentSecurityPolicy::AlwaysUpgradeRequest::Yes : ContentSecurityPolicy::AlwaysUpgradeRequest::No);
         url = request.resourceRequest().url();
     }
@@ -1253,7 +1253,7 @@ ResourceErrorOr<Ref<CachedResource>> CachedResourceLoader::requestResource(Cache
     }
 
     // We are passing url as well as request, as request url may contain a fragment identifier.
-    if (!canRequest(type, url, request.options(), forPreload, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No, request.isLinkPreload())) {
+    if (!canRequest(type, url, request.options(), forPreload, isRequestUpgradable ? MixedContentChecker::IsUpgradable::Yes : MixedContentChecker::IsUpgradable::No, request.isLinkPreload(), request.resourceRequest().targetAddressSpace())) {
         CACHEDRESOURCELOADER_RELEASE_LOG_WITH_FRAME("requestResource: Not allowed to request resource", frame.get());
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }

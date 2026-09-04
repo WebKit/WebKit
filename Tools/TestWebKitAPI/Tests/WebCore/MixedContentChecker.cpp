@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/MixedContentChecker.h>
 
@@ -115,6 +116,78 @@ TEST(MixedContentChecker, CanModifyRequest)
         URL { "custom2://example.com/cat.jpg"_s },
         destination,
         Initiator::Imageset
+    ));
+}
+
+TEST(MixedContentChecker, CanModifyRequestLocalNetworkAccessExemption)
+{
+    URL url { "http://example.com/cat.jpg"_s };
+    FetchOptions::Destination destination = FetchOptions::Destination::Image;
+    Initiator initiator = Initiator::EmptyString;
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        url,
+        destination,
+        initiator,
+        IPAddressSpace::Local
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        url,
+        destination,
+        initiator,
+        IPAddressSpace::Loopback
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        URL { "http://192.0.1.36"_s },
+        destination,
+        initiator,
+        IPAddressSpace::Local
+    ));
+
+    // Explicit IPAddressSpace::Public should behave identically to omitting the parameter.
+    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
+        url,
+        destination,
+        initiator,
+        IPAddressSpace::Public
+    ));
+
+    // 4.1.2's IP-address rule carries an exception for potentially trustworthy hosts, so a loopback URL
+    // is the one local address that is modifiable while its declared space still reads as public. Naming
+    // the space it is really in is what makes Local Network Access exempt it, and this pair is the whole
+    // behaviour change: same URL, opposite answer.
+    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
+        URL { "http://127.0.0.1"_s },
+        destination,
+        initiator,
+        IPAddressSpace::Public
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        URL { "http://127.0.0.1"_s },
+        destination,
+        initiator,
+        IPAddressSpace::Loopback
+    ));
+
+    // The case the exemption exists for. 4.1.2 only rejects IP *literals*, so a name that resolves into
+    // the local network reaches the end of the checks and gets upgraded, unlike 192.0.1.36 above. A
+    // ".local" name is Local per determineIPAddressSpace, so declaring it is the only thing that stops
+    // the upgrade -- nothing else in mixed content would have.
+    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
+        URL { "http://printer.local/cat.jpg"_s },
+        destination,
+        initiator,
+        IPAddressSpace::Public
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        URL { "http://printer.local/cat.jpg"_s },
+        destination,
+        initiator,
+        IPAddressSpace::Local
     ));
 }
 
