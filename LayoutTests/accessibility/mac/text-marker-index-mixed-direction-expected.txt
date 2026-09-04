@@ -1,0 +1,17 @@
+This test ensures a paragraph holding both right-to-left and left-to-right runs, whose own direction is resolved from its content, reports its text and its index space in logical order rather than in the order the runs are drawn.
+
+The embedded left-to-right run keeps its logical position between the two right-to-left runs.
+PASS: text() === 'שלום world שלום'
+PASS: text().length === 15
+PASS: text().indexOf('world') === 5
+
+Every code unit has its own index, and it round-trips across the direction boundaries.
+PASS: walk.containerTextLength === 15
+PASS: walk.indicesChecked === 15
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

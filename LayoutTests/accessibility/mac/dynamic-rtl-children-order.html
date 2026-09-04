@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="target" role="group"><button id="first">One</button><button id="second">Two</button><button id="third">Three</button></div>
+
+<script>
+var output = "This test ensures flipping direction to right-to-left after load rearranges where the children are drawn without rearranging the order the accessibility tree reports them in.\n\n";
+
+function childTitles()
+{
+    var group = accessibilityController.accessibleElementById("target");
+    var titles = [];
+    for (var i = 0; i < group.childrenCount; i++)
+        titles.push(group.childAtIndex(i).title.replace("AXTitle: ", ""));
+    return titles.join(", ");
+}
+
+function firstIsDrawnLeftOfThird()
+{
+    return accessibilityController.accessibleElementById("first").pageX < accessibilityController.accessibleElementById("third").pageX;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += "Left to right: DOM order and drawing order agree.\n";
+    output += expect("childTitles()", "'One, Two, Three'");
+    output += expect("firstIsDrawnLeftOfThird()", "true");
+
+    setTimeout(async function() {
+        document.getElementById("target").dir = "rtl";
+
+        output += "\nRight to left: the first child is now drawn rightmost, and the reported order is unchanged.\n";
+        output += await expectAsync("firstIsDrawnLeftOfThird()", "false");
+        output += expect("childTitles()", "'One, Two, Three'");
+
+        document.getElementById("target").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

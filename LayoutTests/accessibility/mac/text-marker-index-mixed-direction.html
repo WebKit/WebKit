@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/ax-text-marker-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target" dir="auto">שלום world שלום</p>
+
+<script>
+var output = "This test ensures a paragraph holding both right-to-left and left-to-right runs, whose own direction is resolved from its content, reports its text and its index space in logical order rather than in the order the runs are drawn.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "The embedded left-to-right run keeps its logical position between the two right-to-left runs.\n";
+    output += expect("text()", "'שלום world שלום'");
+    output += expect("text().length", "15");
+    output += expect("text().indexOf('world')", "5");
+
+    output += "\nEvery code unit has its own index, and it round-trips across the direction boundaries.\n";
+    output += expect("walk.containerTextLength", "15");
+    output += expect("walk.indicesChecked", "15");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
