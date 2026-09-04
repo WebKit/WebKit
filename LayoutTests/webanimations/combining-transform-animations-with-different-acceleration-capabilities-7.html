@@ -34,11 +34,14 @@ const shouldBecomeEqualAsync = async (actual, expected) => new Promise(resolve =
     const rotationAnimation = element.animate({ rotate: ["30deg", "60deg"] }, timing);
     await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "2");
 
-    // Now, update the transform-related CSS Animation to a state that cannot be accelerated anymore
-    // due to using a linear() timing function. This should not only prevent this animation from
-    // running accelerated, but also make the second animation revert to a non-accelerated state.
+    // Now, update the transform-related CSS Animation to use a pointed linear() timing function.
+    // On Cocoa ports, CAMediaTimingFunction cannot represent linear() with points, so this should
+    // prevent this animation from running accelerated and make the second animation revert to a
+    // non-accelerated state too. On other ports (e.g. GTK/WPE), the compositing backend implements
+    // linear() with points directly, so both animations should remain accelerated.
     element.style.animationTimingFunction = "linear(0 0%, 0.2 50%, 1 100%)";
-    await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", "0");
+    const isCocoa = testRunner.isMac || testRunner.isIOSFamily;
+    await shouldBecomeEqualAsync("internals.acceleratedAnimationsForElement(element).length", isCocoa ? "0" : "2");
 
     finishJSTest();
 })();
