@@ -252,13 +252,21 @@ void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(Float
     auto targetCenter = targetRect.center();
     targetOrigin.moveBy(-targetCenter);
 
+    // Where centering the target rect leaves the scroll position, for drawing areas that apply the page scale in
+    // the UI process: those can't take a destination as a layer translation, since their transform is a pure scale.
+    // This is the same conversion they make of `targetOrigin` in the other direction when the web process owns the
+    // scale, and `visibleContentRect` is in unscaled content coordinates here (FrameView::visibleContentScaleFactor()).
+    auto targetScrollPosition = visibleContentRect.location();
+    targetScrollPosition.moveBy(-targetOrigin);
+    targetScrollPosition.scale(1. / targetMagnification);
+
     m_initialMagnification = page->pageScaleFactor();
     m_initialMagnificationOrigin = { };
 
     Ref drawingArea = *page->drawingArea();
     auto pageScaleFactor = page->pageScaleFactor();
     drawingArea->adjustTransientZoom(pageScaleFactor, scaledMagnificationOrigin(FloatPoint(), pageScaleFactor), m_magnificationOrigin);
-    drawingArea->commitTransientZoom(targetMagnification, targetOrigin);
+    drawingArea->commitTransientZoom(targetMagnification, targetOrigin, targetScrollPosition);
 
     m_lastSmartMagnificationUnscaledTargetRect = unscaledTargetRect;
     m_lastSmartMagnificationOrigin = gestureLocationInViewCoordinates;

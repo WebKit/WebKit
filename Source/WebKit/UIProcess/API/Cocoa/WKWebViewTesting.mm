@@ -74,6 +74,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
 #import "WKWebViewMac.h"
 #endif
 
@@ -1216,6 +1217,20 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         @"opaque" : @(layer.get().opaque),
         @"opacity" : @(layer.get().opacity),
     };
+}
+
+- (NSString *)_delegatedZoomOverrideAsTextForTesting
+{
+#if PLATFORM(MAC)
+    if (RefPtr drawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxyMac>(protect(_page->drawingArea())))
+        return drawingArea->delegatedZoomOverrideAsTextForTesting().createNSString().autorelease();
+    return @"";
+#else
+    // Magnification gestures, and so the override, are macOS only. Empty is also what having no override looks
+    // like, so a caller on another platform wouldn't be able to tell the difference.
+    ASSERT_NOT_REACHED();
+    return @"";
+#endif
 }
 
 - (void)_textFragmentRangesWithCompletionHandlerForTesting:(void(^)(NSArray<NSValue *> *fragmentRanges))completionHandler

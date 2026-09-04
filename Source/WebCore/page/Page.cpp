@@ -163,6 +163,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderImage.h"
+#include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
@@ -1744,8 +1745,13 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     RefPtr mainDocument = localTopDocument();
     RefPtr mainFrameView = mainDocument ? mainDocument->view() : nullptr;
 
+    bool scaleIsChanging = scale != m_pageScaleFactor;
+
     if (scale == m_pageScaleFactor) {
-        if (mainFrameView && mainFrameView->scrollPosition() != origin && !delegatesScaling())
+        // The scroll below still needs to reach the scrolling tree when scaling is delegated, so we can't skip
+        // the update just because the scale is unchanged. Match the condition the scroll is actually applied
+        // under, so ports that never apply `origin` here don't lay out for a scroll that won't happen.
+        if (mainFrameView && mainFrameView->scrollPosition() != origin && mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
             mainDocument->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
     } else {
         m_pageScaleFactor = scale;
@@ -1770,6 +1776,20 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 
             rootFrame->deviceOrPageScaleFactorChanged();
 
+            // Whether a bitmap layer gets a hidpi backing store depends on the page scale, no matter which layer
+            // the scale ends up on. See RenderLayerBacking::isUnscaledBitmapOnly(). The !delegatesScaling() branch
+            // above already covers this. Wait for the scale to settle, as with availableContentSizeChanged() below.
+            if (delegatesScaling() && inStableState)
+                view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+
+            // Scaling changes how much content the view covers, which is what scrollbars, viewport units and the
+            // layout viewport are sized from. Relaying out mid-gesture is wasteful and looks wrong. Ports that
+            // delegate scrolling to a native scroll view size all three from their own viewport update instead,
+            // and have no WebCore scrollbars; dirtying layout from here would add a layout to a dynamic viewport
+            // size update, which non-idempotent text autosizing counts (see LocalFrameViewLayoutContext::layout()).
+            if (delegatesScaling() && inStableState && view->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
+                view->availableContentSizeChanged(ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
+
             if (view->fixedElementsLayoutRelativeToFrame())
                 view->setViewportConstrainedObjectsNeedLayout();
         }
@@ -1782,7 +1802,11 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     }
 
     if (mainFrameView && mainFrameView->scrollPosition() != origin) {
-        if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
+        // The UI process owns the scroll position while the scale is moving, so pushing `origin` back queues a
+        // stale value that arrives frames later and jitters the view. Callers passing the current scale just
+        // want to scroll, so they still need the push.
+        bool uiProcessOwnsScrollPositionForThisChange = delegatesScaling() && scaleIsChanging;
+        if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView && !uiProcessOwnsScrollPositionForThisChange)
             mainFrameView->setScrollPosition(origin);
     }
 
@@ -1795,11 +1819,40 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 #else
     UNUSED_PARAM(inStableState);
 #endif
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // The UI process derives the content-to-screen scale it hands to VoiceOver by round-tripping a unit rect
+    // through contentsToRootView(). Element rects stay in unzoomed contents coordinates when scaling is
+    // delegated, so the scale is the only thing that changes and nothing else would prompt an update.
+    if (scaleIsChanging && AXObjectCache::accessibilityEnabled())
+        chrome().client().scheduleAccessibilityFrameGeometryUpdate();
+#endif
 }
 
-void NODELETE Page::setDelegatesScaling(bool delegatesScaling)
+void Page::setDelegatesScaling(bool delegatesScaling)
 {
+    if (m_delegatesScaling == delegatesScaling)
+        return;
+
     m_delegatesScaling = delegatesScaling;
+
+    // This is set at didCommitLoad, by which point the layers may already exist, so re-evaluate which one
+    // carries the page scale and force a compositing update.
+    for (auto& rootFrame : m_rootFrames) {
+        ASSERT(rootFrame->isRootFrame());
+        RefPtr view = rootFrame->view();
+        if (!view)
+            continue;
+
+        if (CheckedPtr renderView = view->renderView()) {
+            CheckedRef compositor = renderView->compositor();
+            compositor->updateRootContentsLayerAppliesPageScale();
+            // RenderLayer is UniquelyOwned, so it isn't CheckedPtr-capable.
+            if (auto* layer = renderView->layer())
+                layer->setNeedsCompositingConfigurationUpdate();
+            compositor->scheduleCompositingLayerUpdate();
+        }
+    }
 }
 
 void Page::setViewScaleFactor(float scale)

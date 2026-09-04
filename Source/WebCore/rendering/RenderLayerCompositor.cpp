@@ -805,7 +805,16 @@ FloatRect RenderLayerCompositor::visibleRectForLayerFlushing() const
 #else
 
     // Having a m_scrolledContentsLayer indicates that we're doing scrolling via GraphicsLayers.
-    FloatRect visibleRect = m_scrolledContentsLayer ? FloatRect({ }, frameView->sizeForVisibleContent(scrollbarInclusionForVisibleRect())) : frameView->visibleContentRect();
+    FloatRect visibleRect;
+    if (m_scrolledContentsLayer) {
+        // The layers below are in unscaled contents coordinates when the page scale is delegated, and nothing
+        // in the tree undoes the zoom on the way down, so unzoom the size here. This is what the iOS path
+        // above gets from exposedContentRect(), and is a no-op when scaling isn't delegated.
+        auto visibleSize = FloatSize { frameView->sizeForVisibleContent(scrollbarInclusionForVisibleRect()) };
+        visibleSize.scale(1 / frameView->visibleContentScaleFactor());
+        visibleRect = FloatRect { { }, visibleSize };
+    } else
+        visibleRect = frameView->visibleContentRect();
 
     if (auto exposedRect = frameView->viewExposedRect())
         visibleRect.intersect(*exposedRect);
@@ -2373,6 +2382,24 @@ static RenderLayerModelObject& NODELETE rendererForCompositingTests(const Render
 void RenderLayerCompositor::updateRootContentLayerClipping()
 {
     RefPtr { m_rootContentsLayer }->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage());
+}
+
+void RenderLayerCompositor::updateRootContentsLayerAppliesPageScale()
+{
+    if (!m_rootContentsLayer || !m_renderView.frameView().frame().isRootFrame())
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    // iOS always delegates scaling. Page::delegatesScaling() isn't set until didCommitLoad, so it would read
+    // false for a layer created before then.
+    bool appliesPageScale = true;
+#else
+    // This layer intercepts pageScaleFactor() when scaling is delegated, so tiles rasterize at the zoomed
+    // resolution. The scale is baked into the RenderView layer's geometry otherwise.
+    bool appliesPageScale = page().delegatesScaling();
+#endif
+
+    RefPtr { m_rootContentsLayer }->setAppliesPageScale(appliesPageScale);
 }
 
 bool RenderLayerCompositor::updateExplicitBacking(RenderLayer& layer, RequiresCompositingData& queryData, BackingRequired backingRequired)
@@ -5190,11 +5217,7 @@ void RenderLayerCompositor::ensureRootLayer()
         RefPtr { m_rootContentsLayer }->setSize(FloatSize(overflowRect.maxX(), overflowRect.maxY()));
         m_rootContentsLayer->setPosition(FloatPoint());
 
-#if PLATFORM(IOS_FAMILY)
-        // Page scale is applied above this on iOS, so we'll just say that our root layer applies it.
-        if (m_renderView.frameView().frame().isRootFrame())
-            m_rootContentsLayer->setAppliesPageScale();
-#endif
+        updateRootContentsLayerAppliesPageScale();
 
         // Need to clip to prevent transformed content showing outside this frame
         updateRootContentLayerClipping();

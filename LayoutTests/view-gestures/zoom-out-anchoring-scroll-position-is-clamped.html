@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // The scrolled-contents layer position and the scroll position sent to the scrolling tree and the web
+        // process both come from the anchoring scroll position, so it has to be clamped to what the document can
+        // reach. Zooming out walks the anchor past the top left without bound, and when only one of the two was
+        // clamped the page tore sideways for a frame on pinch release. This document has no horizontal overflow
+        // and starts at the top, so a zoom out has to anchor at the origin.
+        async function doTest()
+        {
+            const output = [];
+
+            // Zoom in away from the top left, so zooming back out drives the anchor negative.
+            await UIHelper.magnifyGestureAt(600, 400, 0.5);
+
+            // Held, so the override is still on the layer when we read it.
+            await UIHelper.beginMagnifyGestureAt(600, 400, -0.9);
+            output.push('Zoomed out: ' + await UIHelper.delegatedZoomOverrideAsText());
+            await UIHelper.endMagnifyGesture();
+
+            output.push('After release: scroll (' + Math.round(window.scrollX) + ', ' + Math.round(window.scrollY) + ')');
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <pre id="output"></pre>
+</body>
+</html>

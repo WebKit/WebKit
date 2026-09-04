@@ -76,7 +76,7 @@ std::optional<unsigned> ScrollSnapAnimatorState::closestSnapPointForOffset(Scrol
     LayoutPoint layoutScrollOffset(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
 
     auto snapOffsets = snapOffsetsForAxis(axis);
-    LayoutSize viewportSize(scrollExtents.viewportSize);
+    LayoutSize viewportSize(scrollExtents.snapportSize);
     std::optional<unsigned> activeIndex;
     if (snapOffsets.size())
         activeIndex = snapOffsetInfo().closestSnapOffset(axis, viewportSize, layoutScrollOffset, 0).second;
@@ -93,7 +93,7 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     std::optional<LayoutUnit> originalOffsetInLayoutUnits;
     if (originalOffset)
         originalOffsetInLayoutUnits = LayoutUnit(*originalOffset / pageScale);
-    LayoutSize viewportSize(scrollExtents.viewportSize);
+    LayoutSize viewportSize(scrollExtents.snapportSize);
 
     // Clamp the destination to the reachable scroll range before choosing a snap offset.
     auto minScrollOffset = valueForAxis(scrollExtents.minimumScrollOffset(), axis);
@@ -394,7 +394,7 @@ std::optional<NodeIdentifier> ScrollSnapAnimatorState::resolvePreferredBoxForAxi
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
 {
     m_lastLayoutScrollOffset = LayoutPoint(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
-    m_lastViewportSize = LayoutSize(scrollExtents.viewportSize);
+    m_lastViewportSize = LayoutSize(scrollExtents.snapportSize);
 
     auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
@@ -481,7 +481,7 @@ bool ScrollSnapAnimatorState::setNearestScrollSnapIndexForOffset(ScrollOffset sc
 {
     bool snapIndexChanged = false;
     m_lastLayoutScrollOffset = LayoutPoint(scrollOffset.x() / pageScale, scrollOffset.y() / pageScale);
-    m_lastViewportSize = LayoutSize(scrollExtents.viewportSize);
+    m_lastViewportSize = LayoutSize(scrollExtents.snapportSize);
     snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Horizontal, scrollOffset, scrollExtents, pageScale);
     snapIndexChanged |= setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis::Vertical, scrollOffset, scrollExtents, pageScale);
 
@@ -528,7 +528,7 @@ std::pair<float, std::optional<unsigned>> ScrollSnapAnimatorState::targetOffsetF
     else
         predictedLayoutOffset.setY(LayoutUnit(clampedAxisOffset));
 
-    auto [targetOffset, snapIndex] = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutSize { scrollExtents.viewportSize }, predictedLayoutOffset, initialDelta, LayoutUnit(startOffset / pageScale));
+    auto [targetOffset, snapIndex] = m_snapOffsetsInfo.closestSnapOffset(axis, LayoutSize { scrollExtents.snapportSize }, predictedLayoutOffset, initialDelta, LayoutUnit(startOffset / pageScale));
     targetOffset = clampTo<float>(float { targetOffset }, minScrollOffset, maxScrollOffset) * pageScale;
     return std::make_pair(targetOffset, snapIndex);
 }

@@ -1005,10 +1005,6 @@ void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
     }
 }
 
-void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime)
-{
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, MediaPlaybackTargetContextSerialized&& targetContext) const
 {

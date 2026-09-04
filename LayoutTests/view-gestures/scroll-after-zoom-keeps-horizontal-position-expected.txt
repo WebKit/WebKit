@@ -1,0 +1,4 @@
+Un-zoomed: (scrollable area size width=785 height=600)
+Zoomed in: (scrollable area size width=393 height=300)
+Zoomed in: scale 2.00 anchoring scroll position (200, 550) scrolled contents layer position (-400, -1100)
+After scrolling down while zoomed: horizontal scroll position 200 (unchanged: true), scrolled down: true

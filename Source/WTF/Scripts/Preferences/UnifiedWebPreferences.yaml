@@ -9331,6 +9331,21 @@ UndoManagerAPIEnabled:
     WebCore:
       default: false
 
+UnifiedMacZoomEnabled:
+  type: bool
+  status: internal
+  category: none
+  humanReadableName: "Unified macOS Dynamic Zoom"
+  humanReadableDescription: "Use the iOS dynamic zoom mechanism on macOS, delegating page scale to the UI process"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 UnifiedPDFEnabled:
   type: bool
   status: mature

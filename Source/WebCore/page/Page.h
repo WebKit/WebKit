@@ -647,7 +647,7 @@ public:
     void willChangeLocationInCompletelyLoadedSubframe();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
-    WEBCORE_EXPORT void NODELETE setDelegatesScaling(bool);
+    WEBCORE_EXPORT void setDelegatesScaling(bool);
 
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.

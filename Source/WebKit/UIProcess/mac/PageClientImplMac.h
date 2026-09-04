@@ -207,6 +207,11 @@ private:
 
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID) override;
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+    WebCore::FloatRect documentRect() const override;
+    double minimumZoomScale() const override;
+#endif
+
 #if HAVE(NSREFRESHCONTROLLER)
     void topScrollStretchDidChange(CGFloat) override;
 #endif
@@ -302,6 +307,7 @@ private:
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)
+    void pageScaleFactorDidChange() override;
     void didUpdateTransientZoomStateForScrollPocket(std::optional<TransientZoomState>) override;
 #endif
     std::optional<float> computeAutomaticTopObscuredInset() override;

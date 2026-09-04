@@ -82,7 +82,7 @@ OBJC_CLASS NSMutableDictionary;
 #include "RendererBufferTransportMode.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
 #include "ViewUpdateDispatcher.h"
 #endif
 
@@ -785,7 +785,7 @@ private:
     Seconds m_hiddenPageDOMTimerThrottlingIncreaseLimit;
 
     EventDispatcher m_eventDispatcher;
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
     ViewUpdateDispatcher m_viewUpdateDispatcher;
 #endif
     WebInspectorInterruptDispatcher m_webInspectorInterruptDispatcher;

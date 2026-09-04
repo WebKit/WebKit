@@ -1,0 +1,2 @@
+Zoomed out: scale 0.75 anchoring scroll position (0, 0) scrolled contents layer position (0, 0)
+After release: scroll (0, 0)

@@ -148,8 +148,8 @@ public:
     // Double two-finger tap on trackpad.
     void smartMagnify();
 
-#if ENABLE(MAC_GESTURE_EVENTS)
-    // Gesture events.
+#if PLATFORM(MAC)
+    // Pinch-to-zoom on a trackpad.
     void scaleGestureStart(double scale);
     void scaleGestureChange(double scale);
     void scaleGestureEnd(double scale);

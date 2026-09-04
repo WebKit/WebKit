@@ -1843,9 +1843,14 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
-        if (state.isMappingSecondaryQuad())
-            state.reset(clipRectForSelf, clipRectForSelf);
-        else
+        if (state.isMappingSecondaryQuad()) {
+            bool secondaryMapWasClamped = false;
+            auto secondaryQuad = state.mappedSecondaryQuad(&secondaryMapWasClamped);
+            auto coverageRectForSelf = clipRectForSelf;
+            if (secondaryQuad && !secondaryMapWasClamped && !applyWasClamped)
+                coverageRectForSelf = intersection(secondaryQuad->boundingBox(), FloatRect { { }, m_size });
+            state.reset(clipRectForSelf, coverageRectForSelf);
+        } else
             state.reset(clipRectForSelf);
     }
 

@@ -2479,3 +2479,8 @@ webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-
 webkit.org/b/322847 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash ]
 
 webkit.org/b/323246 [ Debug x86_64 ] accessibility/isolated-tree/canvas-fallback-content-2.html [ Timeout Pass ]
+
+# webkit.org/b/322505 With unified zoom scroll positions stay unscaled, so a half-layout-pixel target can't be
+# represented in the integer ScrollPosition and gets rounded, which shifts the layout viewport for fixed targets.
+# iOS skips these for the same reason, see platform/ios/TestExpectations.
+webkit.org/b/322505 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]

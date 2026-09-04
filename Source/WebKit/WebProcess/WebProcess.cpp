@@ -339,7 +339,7 @@ UserMediaCaptureManager& WebProcess::userMediaCaptureManager()
 
 WebProcess::WebProcess()
     : m_eventDispatcher(*this)
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
     , m_viewUpdateDispatcher(*this)
 #endif
     , m_webInspectorInterruptDispatcher(*this)
@@ -458,9 +458,9 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 #endif
 
     protect(eventDispatcher())->initializeConnection(*connection);
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(UI_SIDE_COMPOSITING)
     Ref { m_viewUpdateDispatcher }->initializeConnection(*connection);
-#endif // PLATFORM(IOS_FAMILY)
+#endif
 
     protect(m_webInspectorInterruptDispatcher)->initializeConnection(*connection);
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && ENABLE(REMOTE_INSPECTOR)

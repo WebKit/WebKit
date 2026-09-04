@@ -349,6 +349,8 @@ private:
 
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
+
+    void updateAppliesPageScale();
     
     void willDestroyLayer(const GraphicsLayer*);
 

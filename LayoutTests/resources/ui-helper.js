@@ -1559,6 +1559,72 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
+    // Waits for the UI-process scale to stop changing. A magnification gesture round-trips through the web process,
+    // so a single presentation update isn't enough.
+    static async waitForZoomScaleToSettle()
+    {
+        const zoomScale = () => new Promise(resolve => testRunner.runUIScript('uiController.uiScriptComplete(uiController.zoomScale)', resolve));
+
+        let lastScale = await zoomScale();
+        let stableCount = 0;
+        for (let i = 0; i < 60 && stableCount < 3; ++i) {
+            await UIHelper.ensurePresentationUpdate();
+            const scale = await zoomScale();
+            stableCount = (scale === lastScale) ? stableCount + 1 : 0;
+            lastScale = scale;
+        }
+        return parseFloat(lastScale);
+    }
+
+    // Zooms with a synthetic magnification gesture, so it goes through ViewGestureController and the drawing area
+    // instead of setting the page scale in the web process. With delegated scaling the UI process owns the scale,
+    // so this is the only way to get a zoom the page can see. magnificationDelta is relative and compounds per
+    // event like NSEvent.magnification, so it isn't a target scale.
+    static async magnifyGestureAt(x, y, magnificationDelta)
+    {
+        if (!this.isWebKit2() || !this.isMac()) {
+            console.log('Magnification gesture testing is currently only supported on macOS');
+            return;
+        }
+
+        await UIHelper.setWebViewAllowsMagnification(true);
+
+        eventSender.mouseMoveTo(x, y);
+        eventSender.scaleGestureStart(0);
+        eventSender.scaleGestureChange(magnificationDelta);
+        eventSender.scaleGestureEnd(0);
+
+        return UIHelper.waitForZoomScaleToSettle();
+    }
+
+    // Starts a magnification gesture and leaves it in flight, so the transient zoom state stays live for
+    // inspection. Pair with endMagnifyGesture().
+    static async beginMagnifyGestureAt(x, y, magnificationDelta)
+    {
+        if (!this.isWebKit2() || !this.isMac()) {
+            console.log('Magnification gesture testing is currently only supported on macOS');
+            return;
+        }
+
+        await UIHelper.setWebViewAllowsMagnification(true);
+
+        eventSender.mouseMoveTo(x, y);
+        eventSender.scaleGestureStart(0);
+        eventSender.scaleGestureChange(magnificationDelta);
+
+        return UIHelper.waitForZoomScaleToSettle();
+    }
+
+    static async endMagnifyGesture()
+    {
+        if (!this.isWebKit2() || !this.isMac())
+            return;
+
+        eventSender.scaleGestureEnd(0);
+        return UIHelper.waitForZoomScaleToSettle();
+    }
+
+
     static async smartMagnifyAt(x, y)
     {
         if (!this.isWebKit2() || !this.isMac()) {
@@ -2197,6 +2263,21 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`(() => {
                 return uiController.caLayerTreeAsText;
             })()`, resolve);
+        });
+    }
+
+    // The zoom override a magnification gesture has installed on the scrolled-contents layer, or '' when there is
+    // none. It only exists between the first change of a gesture and the web process catching up with the scale
+    // the gesture committed, so this has to be read while the override is still live.
+    static delegatedZoomOverrideAsText()
+    {
+        if (!this.isWebKit2() || !this.isMac()) {
+            console.log('The transient zoom override is currently only supported on macOS');
+            return Promise.resolve('');
+        }
+
+        return new Promise(resolve => {
+            testRunner.runUIScript('uiController.uiScriptComplete(uiController.delegatedZoomOverrideAsText)', resolve);
         });
     }
 

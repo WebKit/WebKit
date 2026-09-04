@@ -29,6 +29,7 @@
 #include "BackForwardController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentView.h"
 #include "Element.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
@@ -169,6 +170,16 @@ void CachedPage::restore(Page& page)
 
     if (m_needsDeviceOrPageScaleChanged && localMainFrame)
         localMainFrame->deviceOrPageScaleFactorChanged();
+
+    // The page scale can also have changed on the way back in, without this page ever having been marked for it:
+    // Page::setPageScaleFactor() runs at didCommitLoad, which is before open() above puts the render tree back, so
+    // its own call to setDescendantsNeedUpdateBackingAndHierarchyTraversal() had nothing to dirty. These layers were
+    // configured for the scale this page had when it was cached, and whether a bitmap layer gets a hidpi backing
+    // store depends on the scale. See RenderLayerBacking::isUnscaledBitmapOnly().
+    if (localMainFrame) {
+        if (RefPtr view = localMainFrame->view())
+            view->setDescendantsNeedUpdateBackingAndHierarchyTraversal();
+    }
 
     page.setNeedsRecalcStyleInAllFrames();
 

@@ -56,6 +56,8 @@
 #import "SynapseSPI.h"
 #import "UIRemoteObjectRegistry.h"
 #import "VideoPresentationManagerProxy.h"
+#import "ViewUpdateDispatcherMessages.h"
+#import "VisibleContentRectUpdateInfo.h"
 #import "WKErrorInternal.h"
 #import "WKHistoryDelegatePrivate.h"
 #import "WKWebViewPrivate.h"
@@ -84,6 +86,7 @@
 #import <WebCore/HighlightVisibility.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
@@ -2312,6 +2315,183 @@ void WebPageProxy::cancelAutoscroll()
     m_autoscrollState = AutoscrollState::Inactive;
     protect(m_legacyMainFrameProcess)->send(Messages::WebPage::CancelAutoscroll(), webPageIDInMainFrameProcess());
 }
+
+#if ENABLE(UI_SIDE_COMPOSITING)
+
+bool WebPageProxy::updateLayoutViewportParameters(const MainFrameData& mainFrameData)
+{
+    if (internals().baseLayoutViewportSize == mainFrameData.baseLayoutViewportSize
+        && internals().minStableLayoutViewportOrigin == mainFrameData.minStableLayoutViewportOrigin
+        && internals().maxStableLayoutViewportOrigin == mainFrameData.maxStableLayoutViewportOrigin)
+        return false;
+    internals().baseLayoutViewportSize = mainFrameData.baseLayoutViewportSize;
+    internals().minStableLayoutViewportOrigin = mainFrameData.minStableLayoutViewportOrigin;
+    internals().maxStableLayoutViewportOrigin = mainFrameData.maxStableLayoutViewportOrigin;
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::updateLayoutViewportParameters: baseLayoutViewportSize: " << internals().baseLayoutViewportSize << " minStableLayoutViewportOrigin: " << internals().minStableLayoutViewportOrigin << " maxStableLayoutViewportOrigin: " << internals().maxStableLayoutViewportOrigin);
+    return true;
+}
+
+void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
+{
+    if (visibleContentRectUpdate == internals().lastVisibleContentRectUpdate && !sendEvenIfUnchanged)
+        return;
+
+    internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
+
+    if (!hasRunningProcess())
+        return;
+
+    protect(m_legacyMainFrameProcess)->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(webPageIDInMainFrameProcess(), visibleContentRectUpdate), 0);
+}
+
+void WebPageProxy::updateVisibleContentRectsLocally(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
+{
+    internals().lastVisibleContentRectUpdate = visibleContentRectUpdate;
+}
+
+void WebPageProxy::resendLastVisibleContentRects()
+{
+    if (internals().lastVisibleContentRectUpdate)
+        protect(m_legacyMainFrameProcess)->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(webPageIDInMainFrameProcess(), *internals().lastVisibleContentRectUpdate), 0);
+}
+
+double WebPageProxy::displayedContentScale() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->scale();
+    return 1;
+}
+
+FloatRect WebPageProxy::exposedContentRect() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->exposedContentRect();
+    return { };
+}
+
+FloatRect WebPageProxy::unobscuredContentRect() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->unobscuredContentRect();
+    return { };
+}
+
+bool WebPageProxy::inStableState() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->inStableState();
+    return false;
+}
+
+FloatRect WebPageProxy::unobscuredContentRectRespectingInputViewBounds() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->unobscuredContentRectRespectingInputViewBounds();
+    return { };
+}
+
+FloatRect WebPageProxy::layoutViewportRect() const
+{
+    if (internals().lastVisibleContentRectUpdate)
+        return internals().lastVisibleContentRectUpdate->layoutViewportRect();
+    return { };
+}
+
+static inline float adjustedUnexposedEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge < documentEdge)
+        return documentEdge - factor * (documentEdge - exposedRectEdge);
+
+    return exposedRectEdge;
+}
+
+static inline float adjustedUnexposedMaxEdge(float documentEdge, float exposedRectEdge, float factor)
+{
+    if (exposedRectEdge > documentEdge)
+        return documentEdge + factor * (exposedRectEdge - documentEdge);
+
+    return exposedRectEdge;
+}
+
+WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unobscuredContentRect, const FloatRect& unobscuredContentRectRespectingInputViewBounds, const FloatRect& currentLayoutViewportRect, double displayedContentScale, LayoutViewportConstraint constraint) const
+{
+    RefPtr pageClient = this->pageClient();
+    if (!pageClient)
+        return { };
+
+    FloatRect constrainedUnobscuredRect = unobscuredContentRect;
+    FloatRect documentRect = pageClient->documentRect();
+
+    if (constraint == LayoutViewportConstraint::ConstrainedToDocumentRect)
+        constrainedUnobscuredRect.intersect(documentRect);
+
+    double minimumScale = pageClient->minimumZoomScale();
+    bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
+    if (isBelowMinimumScale) {
+        const CGFloat slope = 12;
+        CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
+
+        constrainedUnobscuredRect.setX(adjustedUnexposedEdge(documentRect.x(), constrainedUnobscuredRect.x(), factor));
+        constrainedUnobscuredRect.setY(adjustedUnexposedEdge(documentRect.y(), constrainedUnobscuredRect.y(), factor));
+        constrainedUnobscuredRect.setWidth(adjustedUnexposedMaxEdge(documentRect.maxX(), constrainedUnobscuredRect.maxX(), factor) - constrainedUnobscuredRect.x());
+        constrainedUnobscuredRect.setHeight(adjustedUnexposedMaxEdge(documentRect.maxY(), constrainedUnobscuredRect.maxY(), factor) - constrainedUnobscuredRect.y());
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    // interactive-widget comes from the meta viewport tag, so it only applies where META_VIEWPORT is on.
+    bool resizesContent = pageClient->viewportMetaTagInteractiveWidget() == WebCore::InteractiveWidgetValue::ResizesContent;
+#else
+    bool resizesContent = false;
+#endif
+    FloatRect sizeSourceRect = resizesContent ? unobscuredContentRectRespectingInputViewBounds : unobscuredContentRect;
+    FloatSize constrainedSize = isBelowMinimumScale ? constrainedUnobscuredRect.size() : sizeSourceRect.size();
+
+#if PLATFORM(MAC)
+    if (delegatesScalingToUIProcess() && !documentRect.isEmpty() && !isBelowMinimumScale) {
+        // The layout viewport must never exceed the document, or computeUpdatedLayoutViewportRect()'s clamp
+        // inverts (clampTo tests value >= max first) and puts it off the document's left edge. On macOS we
+        // derive the viewport from the view size, which includes the scrollbar.
+        constrainedSize = constrainedSize.shrunkTo(documentRect.size());
+    }
+#endif
+
+    FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;
+
+    double heightExpansionFactor = internals().allowsLayoutViewportHeightExpansion ? protect(m_preferences)->layoutViewportHeightExpansionFactor() : 0;
+    auto layoutViewportSize = LocalFrameView::expandedLayoutViewportSize(internals().baseLayoutViewportSize, LayoutSize(documentRect.size()), heightExpansionFactor);
+
+    auto minStableOrigin = internals().minStableLayoutViewportOrigin;
+    auto maxStableOrigin = internals().maxStableLayoutViewportOrigin;
+
+#if PLATFORM(MAC)
+    // Mac only: iOS needs the web process's values, which subtract headerHeight() + footerHeight(). We can't
+    // work those out here.
+    if (delegatesScalingToUIProcess() && displayedContentScale > 0) {
+        // The web process reports these limits unscaled, so they're far too small once zoomed (the X limit is
+        // 0 on a viewport-width document, and scaling 0 doesn't help). Recompute them from the same document
+        // rect and the zoomed viewport size.
+        auto zoomedViewportSize = unobscuredContentRect.size();
+        maxStableOrigin = LayoutPoint {
+            std::max<float>(0, documentRect.maxX() - zoomedViewportSize.width()),
+            std::max<float>(0, documentRect.maxY() - zoomedViewportSize.height())
+        };
+        minStableOrigin = LayoutPoint { documentRect.location() };
+    }
+#endif
+
+    FloatRect layoutViewportRect = LocalFrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentLayoutViewportRect), LayoutRect(documentRect), LayoutSize(constrainedSize), LayoutRect(unobscuredContentRectForViewport), layoutViewportSize, minStableOrigin, maxStableOrigin, constraint);
+
+    if (layoutViewportRect != currentLayoutViewportRect)
+        LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::computeLayoutViewportRect: new layout viewport  " << layoutViewportRect);
+    return layoutViewportRect;
+}
+
+FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
+{
+    return computeLayoutViewportRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), layoutViewportRect(), displayedContentScale(), LayoutViewportConstraint::Unconstrained);
+}
+
+#endif // ENABLE(UI_SIDE_COMPOSITING)
 
 #if ENABLE(TWO_PHASE_CLICKS)
 
