@@ -392,6 +392,10 @@ LayoutUnit FlexLayout::staticCrossAxisPositionForPositionedFlexItem(const Render
     auto availableSpace = utils.availableAlignmentSpaceForFlexItem(FlexFormattingUtils::crossAxisContentExtent(flexBox()), flexItem, utils.crossAxisExtentForFlexItem(flexItem));
     auto safety = utils.overflowAlignmentForFlexItem(flexItem);
     auto align = FlexFormattingUtils::alignmentForFlexItem(flexItem);
+    if (align == ItemPosition::Baseline)
+        align = ItemPosition::FlexStart;
+    else if (align == ItemPosition::LastBaseline)
+        align = ItemPosition::FlexEnd;
     if (availableSpace < 0 && safety == OverflowAlignment::Safe)
         align = ItemPosition::FlexStart;
     return FlexFormattingUtils::alignmentOffset(availableSpace, align, { }, { }, FlexFormattingUtils::isWrapReverse(flexBox()));
