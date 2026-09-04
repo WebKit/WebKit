@@ -7264,6 +7264,58 @@ TEST(SiteIsolation, CoordinateTransformation)
     Util::run(&done);
 }
 
+// Regression test for rdar://184770853, a case of the bug fixed by rdar://183236270 that
+// resurfaced in a different code path. The point given to _convertPoint:fromFrame:toMainFrameCoordinates:
+// is in the child frame's own root-view coordinates, i.e. already independent of the child's
+// scroll position (this is exactly how a context menu's location is computed and threaded up
+// through ancestor processes, via WebPage::contentsToRootView() on the RemoteFrameView standing
+// in for the child in the parent's process). Scrolling the child should not change the result.
+TEST(SiteIsolation, CoordinateTransformationWithScrolledFrame)
+{
+    HTTPServer server({
+        { "/example"_s, { "<br><iframe id='wk' src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<body style='margin: 0; width: 3000px; height: 3000px'>hi</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    auto convertPoint = [] (TestWKWebView *webView, CGPoint point) {
+        __block CGPoint result;
+        __block bool done { false };
+        [webView _convertPoint:point fromFrame:[webView firstChildFrame] toMainFrameCoordinates:^(CGPoint transformedPoint, NSError *error) {
+            EXPECT_NULL(error);
+            result = transformedPoint;
+            done = true;
+        }];
+        Util::run(&done);
+        return result;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto unscrolledResult = convertPoint(webView.get(), { 11, 10 });
+
+    [webView evaluateJavaScript:@"window.scrollTo(100, 200)" inFrame:[webView firstChildFrame] completionHandler:nil];
+    while (true) {
+        __block bool scrolled { false };
+        __block bool done { false };
+        [webView evaluateJavaScript:@"window.scrollY === 200" inFrame:[webView firstChildFrame] completionHandler:^(id result, NSError *) {
+            scrolled = [result boolValue];
+            done = true;
+        }];
+        Util::run(&done);
+        if (scrolled)
+            break;
+        Util::spinRunLoop();
+    }
+    [webView waitForNextPresentationUpdate];
+
+    auto scrolledResult = convertPoint(webView.get(), { 11, 10 });
+    EXPECT_EQ(scrolledResult.x, unscrolledResult.x);
+    EXPECT_EQ(scrolledResult.y, unscrolledResult.y);
+}
+
 RetainPtr<_WKTextManipulationToken> createToken(NSString *identifier, NSString *content)
 {
     RetainPtr<_WKTextManipulationToken> token = adoptNS([[_WKTextManipulationToken alloc] init]);

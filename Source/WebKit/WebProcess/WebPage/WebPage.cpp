@@ -10743,6 +10743,14 @@ template<typename T> T WebPage::contentsToRootView(WebCore::FrameIdentifier fram
         return geometry;
     }
 
+    // For a remote frame, the geometry received here already has that frame's own scroll position
+    // removed, via contentsToRootView() in the process actually hosting it. The RemoteFrameView's
+    // scroll position mirrors that same scroll (for other purposes, e.g. IntersectionObserver), so
+    // calling contentsToRootView() here would subtract it a second time. Use convertToRootView()
+    // instead, which only walks up the containing view chain without touching this frame's own scroll.
+    if (is<RemoteFrame>(*coreFrame))
+        return view->convertToRootView(geometry);
+
     return view->contentsToRootView(geometry);
 }
 

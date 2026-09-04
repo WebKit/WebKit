@@ -147,10 +147,10 @@ public:
     virtual void notifyWidget(WidgetNotification) { }
 
     IntPoint convertToRootView(IntPoint) const;
-    FloatPoint convertToRootView(FloatPoint) const;
+    WEBCORE_EXPORT FloatPoint convertToRootView(FloatPoint) const;
     DoublePoint convertToRootView(DoublePoint) const;
     WEBCORE_EXPORT IntRect convertToRootView(const IntRect&) const;
-    FloatRect convertToRootView(const FloatRect&) const;
+    WEBCORE_EXPORT FloatRect convertToRootView(const FloatRect&) const;
 
     WEBCORE_EXPORT IntPoint convertFromRootView(IntPoint) const;
     FloatPoint convertFromRootView(FloatPoint) const;
