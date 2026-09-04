@@ -126,6 +126,43 @@ void ScrollAnchoringController::scrollPositionDidChange()
 
     clearAnchor();
     updateScrollableAreaRegistration();
+
+    selectAnchorWhileTreeIsClean();
+}
+
+// A content mutation eagerly destroys the block's inline content (RenderBlockFlow::invalidateLineLayout),
+// so by updateBeforeLayout() a RenderText anchor's geometry is gone and anchoring falls back to a pinned
+// ancestor box. Programmatic scrolls flush layout first, so capture the anchor here while it's still valid.
+void ScrollAnchoringController::selectAnchorWhileTreeIsClean()
+{
+    if (m_anchorObject)
+        return;
+
+    // Skip the hot user-scroll path; lazy before-layout selection still covers box anchors there.
+    if (m_owningScrollableArea->currentScrollType() == ScrollType::User)
+        return;
+
+    CheckedPtr scrollerBox = scrollableAreaBox();
+    if (!scrollerBox)
+        return;
+
+    auto& layoutContext = frameView().layoutContext();
+    if (layoutContext.isInLayout() || layoutContext.isLayoutPending() || scrollerBox->view().needsLayout())
+        return;
+
+    // Mirror updateBeforeLayout()'s precondition, not shouldMaintainScrollAnchor() (its
+    // hasPotentiallyScrollableOverflow() check is false for the main-frame RenderView here).
+    auto scrollPosition = m_owningScrollableArea->scrollPosition();
+    if (!hasScrolledFromOriginInBlockDirection(scrollPosition, scrollerBox->writingMode()))
+        return;
+    if (m_owningScrollableArea->constrainedScrollPosition(scrollPosition) != scrollPosition)
+        return;
+
+    RefPtr document = frameView().frame().document();
+    if (!document)
+        return;
+
+    chooseAnchorElement(*document, *scrollerBox);
 }
 
 void ScrollAnchoringController::scrollerDidLayout()
