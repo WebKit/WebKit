@@ -6,10 +6,10 @@ layer at (0,0) size 785x620
       RenderTable {TABLE} at (0,0) size 72x32 [border: (2px solid #FF0000)]
         RenderTableSection {TBODY} at (2,2) size 68x28
           RenderTableRow {TR} at (0,2) size 68x24
-            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "One"
-            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "Two"
       RenderBlock (anonymous) at (0,32) size 769x20
@@ -17,10 +17,10 @@ layer at (0,0) size 785x620
       RenderTable {TABLE} at (0,52) size 74x34 [border: (3px solid #FF0000)]
         RenderTableSection {TBODY} at (3,3) size 68x28
           RenderTableRow {TR} at (0,2) size 68x24
-            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "One"
-            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "Two"
       RenderTable {TABLE} at (0,86) size 61x30 [border: (1px outset #000000)]
@@ -49,10 +49,10 @@ layer at (0,0) size 785x620
       RenderTable {TABLE} at (0,182) size 70x30 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 68x28
           RenderTableRow {TR} at (0,2) size 68x24
-            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (2,2) size 30x24 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 26x19
                 text run at (2,2) width 26: "One"
-            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (34,2) size 32x24 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "Two"
       RenderBlock (anonymous) at (0,212) size 769x40
