@@ -1525,32 +1525,19 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
             needsViewportContentsChanged = true;
         }
 
-        auto visibleRectFromParentFrameProcess = [&]() -> std::optional<IntRect> {
-            // This is the portion of the child frame that is on screen in the parent's content
-            // coordinate space.
-            auto onScreenRectInParent = layoutInfo->visibleRectInParent();
-            if (!onScreenRectInParent) {
-                // Either the owner element has no renderer, or this frame is entirely clipped by an
-                // ancestor in the parent frame process.
-                return IntRect { };
-            }
-            onScreenRectInParent->intersect(layoutInfo->windowClipRectInParent());
-
-            auto onScreenRectInChild = layoutInfo->mapParentContentsToChildWindow(*onScreenRectInParent);
-            if (onScreenRectInChild) {
-                onScreenRectInChild->intersect(FloatRect { { }, childView->size() });
-                return enclosingIntRect(*onScreenRectInChild);
-            }
-
-            // We couldn't map the rect into the child's coordinate space (e.g. non-affine
-            // transform). Return std::nullopt, which will cause LocalFrameView::windowClipRect
-            // to make the conservative assumption that the visibleContentRect is unclipped.
-            return std::nullopt;
-        }();
+        auto visibleRectFromParentFrameProcess = layoutInfo->onScreenRectInChildView();
+        visibleRectFromParentFrameProcess.intersect(IntRect { { }, childView->size() });
 
         if (childView->visibleRectFromParentFrameProcess() != visibleRectFromParentFrameProcess) {
             childView->setVisibleRectFromParentFrameProcess(visibleRectFromParentFrameProcess);
             needsViewportContentsChanged = true;
+
+            // FIXME: if this frame has a remote descendant, then we have to propagate this frame's
+            // windowClipRect to it via Page::syncLocalFrameInfoToRemote(), and that currently only
+            // happens in updateRendering. We should see if we can figure out a more efficient way
+            // of doing this.
+            if (!needsRenderingUpdate && localChild->tree().hasRemoteFrameDescendant())
+                needsRenderingUpdate = true;
         }
 
         if (needsViewportContentsChanged)
@@ -1560,15 +1547,10 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
         // FIXME (320601): this only affects tile coverage on iOS by setting exposedContentRect on
         // this child frame based on the exposedContentRect from the parent frame process. We need
         // to do something similar on macOS (see visibleRectForLayerFlushing).
-        auto exposedContentRectInParent = layoutInfo->exposedContentRectInParent();
-        bool exposedContentRectInParentIsEmpty = !exposedContentRectInParent || exposedContentRectInParent->isEmpty();
-        auto projected = exposedContentRectInParentIsEmpty ? FloatRect { } : layoutInfo->mapParentContentsToChildWindow(*exposedContentRectInParent).value_or(FloatRect { });
-        projected.intersect(FloatRect { { }, childView->size() });
-
-        // The parent frame process thinks this frame is visible, but we think it isn't. Err on the
-        // side of tiling the full view until we get updated geometry from the parent frame process.
-        if (!exposedContentRectInParentIsEmpty && projected.isEmpty())
-            projected = FloatRect { { }, childView->size() };
+        auto fullChildViewRect = FloatRect { { }, childView->size() };
+        auto exposedContentRectInChildView = layoutInfo->exposedContentRectInChildView();
+        auto projected = exposedContentRectInChildView;
+        projected.intersect(fullChildViewRect);
 
         if (childView->exposedContentRect() != projected) {
             childView->setExposedContentRect(projected);

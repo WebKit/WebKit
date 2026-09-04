@@ -639,6 +639,8 @@ enum ContentsFormat {
 
     DOMRect layoutViewportRect();
     DOMRect visualViewportRect();
+    DOMRect windowClipRect();
+    DOMRect exposedContentRect();
 
     undefined setViewIsTransparent(boolean trnasparent);
 
@@ -701,6 +703,7 @@ enum ContentsFormat {
     DOMString textFragmentDirectiveForRange(Range range);
 
     undefined setDelegatesScrolling(boolean enabled);
+    boolean delegatesScrollingToNativeView();
 
     unsigned long long lastSpellCheckRequestSequence();
     unsigned long long lastSpellCheckProcessedSequence();

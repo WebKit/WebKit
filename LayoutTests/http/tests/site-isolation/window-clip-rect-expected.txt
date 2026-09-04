@@ -1,0 +1,4 @@
+
+
+PASS A frame's windowClipRect does not depend on whether it is in another process
+

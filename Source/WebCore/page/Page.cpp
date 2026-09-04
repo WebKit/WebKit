@@ -2287,30 +2287,57 @@ void Page::syncLocalFrameInfoToRemote()
 #endif
 
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
+            auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
+
+            // We could use the mapAbsoluteToChildFrameViewRect member function here, but use the
+            // static version instead to reuse absoluteToChildFrameOwnerLocalTransform across
+            // multiple calls.
+            auto mapParentAbsoluteToChildFrameViewRect = [&] (const LayoutRect& rect) {
+                return LocalFrameView::mapAbsoluteToChildFrameViewRect(FloatRect { rect }, absoluteToChildFrameOwnerLocalTransform, contentBoxLocation);
+            };
+
             auto visibleRectInParent = frameView->visibleRectOfChild(*child.get());
 
+            auto onScreenRectInChildView = [&] {
+                if (!visibleRectInParent)
+                    return IntRect { };
+
+                auto onScreenRectInParent = *visibleRectInParent;
+                onScreenRectInParent.intersect(windowClipRectInContentCoordinates());
+                if (onScreenRectInParent.isEmpty())
+                    return IntRect { };
+
+                return enclosingIntRect(mapParentAbsoluteToChildFrameViewRect(onScreenRectInParent));
+            }();
+
 #if PLATFORM(IOS_FAMILY)
-            // Clamp the child's visible rect to the portion of the page actually on-screen, so an offscreen
-            // iframe commits ~0 tiles — matching the single-tiled-backing coverage decision the page makes
-            // with site isolation off. visibleRectOfChild() clips through the compositor tree but not the
-            // top-level viewport, so a fully-below-fold iframe can still return a non-empty box; intersect
-            // it here with the parent's exposed viewport.
-            auto exposedContentRectInParent = visibleRectInParent;
-            if (exposedContentRectInParent)
-                exposedContentRectInParent->intersect(exposedContentRect());
+            auto exposedContentRectInChildView = [&]() -> FloatRect {
+                auto exposedContentRectInParent = visibleRectInParent;
+                if (exposedContentRectInParent)
+                    exposedContentRectInParent->intersect(exposedContentRect());
+                if (!exposedContentRectInParent || exposedContentRectInParent->isEmpty())
+                    return FloatRect { };
+
+                auto rectInChildView = mapParentAbsoluteToChildFrameViewRect(*exposedContentRectInParent);
+                if (rectInChildView.isEmpty())
+                    return FloatRect { };
+
+                return rectInChildView;
+            }();
 #endif
 
             childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
-                windowClipRectInContentCoordinates(),
                 visibleRectInParent,
+                onScreenRectInChildView,
 #if PLATFORM(IOS_FAMILY)
-                exposedContentRectInParent,
+                exposedContentRectInChildView,
 #endif
                 !!child->ownerRenderer(),
                 frameView->childFrameOwnerToRootContentTransform(*child),
-                frameView->absoluteToChildFrameOwnerLocalTransform(*child),
+                WTF::move(absoluteToChildFrameOwnerLocalTransform),
                 frame.usedZoomForChild(*child),
-                frameView->childFrameOwnerContentBoxLocation(*child),
+                contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
         }

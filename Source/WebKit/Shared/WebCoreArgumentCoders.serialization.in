@@ -1340,10 +1340,10 @@ class WebCore::LayoutRect {
 using WebCore::ScrollPosition = WebCore::IntPoint;
 
 [RefCounted] class WebCore::RemoteFrameLayoutInfo {
-    WebCore::LayoutRect windowClipRectInParent();
     std::optional<WebCore::LayoutRect> visibleRectInParent();
+    WebCore::IntRect onScreenRectInChildView();
 #if PLATFORM(IOS_FAMILY)
-    std::optional<WebCore::LayoutRect> exposedContentRectInParent();
+    WebCore::FloatRect exposedContentRectInChildView();
 #endif
     bool ownerHasRenderer();
     WebCore::TransformationMatrix childFrameOwnerToRootContentTransform();

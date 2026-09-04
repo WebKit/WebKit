@@ -268,7 +268,7 @@ public:
 
     FloatSize sizeForCSSDynamicViewportUnits() const;
 
-    IntRect windowClipRect() const final;
+    WEBCORE_EXPORT IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
     WEBCORE_EXPORT void scrollToEdgeWithOptions(WebCore::RectEdges<bool>, const ScrollPositionChangeOptions&);
@@ -330,6 +330,9 @@ public:
     LayoutPoint childFrameOwnerContentBoxLocation(const Frame&) const final;
     TransformationMatrix childFrameOwnerToRootContentTransform(const Frame&) const final;
     TransformationMatrix absoluteToChildFrameOwnerLocalTransform(const Frame&) const final;
+
+    FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect&, const Frame& child) const;
+    static FloatRect mapAbsoluteToChildFrameViewRect(const FloatRect& rectInAbsolute, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation);
 
     static LayoutRect visibleDocumentRect(const FloatRect& visibleContentRect, float headerHeight, float footerHeight, const FloatSize& totalContentsSize, float pageScaleFactor);
 

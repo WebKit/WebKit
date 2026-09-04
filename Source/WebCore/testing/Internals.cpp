@@ -2499,6 +2499,30 @@ ExceptionOr<Ref<DOMRect>> Internals::visualViewportRect()
     return DOMRect::create(frameView.visualViewportRect());
 }
 
+ExceptionOr<Ref<DOMRect>> Internals::windowClipRect()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    auto& frameView = *document->view();
+    return DOMRect::create(frameView.windowClipRect());
+}
+
+ExceptionOr<Ref<DOMRect>> Internals::exposedContentRect()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
+    auto& frameView = *document->view();
+    return DOMRect::create(frameView.exposedContentRect());
+}
+
 ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
 {
     Document* document = contextDocument();
@@ -2874,6 +2898,15 @@ ExceptionOr<void> Internals::setDelegatesScrolling(bool enabled)
 
     document->view()->setDelegatedScrollingMode(enabled ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
     return { };
+}
+
+ExceptionOr<bool> Internals::delegatesScrollingToNativeView()
+{
+    Document* document = contextDocument();
+    if (!document || !document->view() || !document->page() || &document->page()->mainFrame() != document->frame())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    return document->view()->delegatesScrollingToNativeView();
 }
 
 ExceptionOr<uint64_t> Internals::lastSpellCheckRequestSequence()

@@ -412,6 +412,8 @@ public:
 
     ExceptionOr<Ref<DOMRect>> layoutViewportRect();
     ExceptionOr<Ref<DOMRect>> visualViewportRect();
+    ExceptionOr<Ref<DOMRect>> windowClipRect();
+    ExceptionOr<Ref<DOMRect>> exposedContentRect();
 
     ExceptionOr<void> setViewIsTransparent(bool);
 
@@ -472,6 +474,7 @@ public:
     String textFragmentDirectiveForRange(const Range&);
 
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
+    ExceptionOr<bool> delegatesScrollingToNativeView();
 
     ExceptionOr<uint64_t> lastSpellCheckRequestSequence();
     ExceptionOr<uint64_t> lastSpellCheckProcessedSequence();

@@ -2214,6 +2214,20 @@ TransformationMatrix LocalFrameView::absoluteToChildFrameOwnerLocalTransform(con
     return valueOrDefault(matrix->inverse());
 }
 
+FloatRect LocalFrameView::mapAbsoluteToChildFrameViewRect(const FloatRect& rect, const Frame& child) const
+{
+    return mapAbsoluteToChildFrameViewRect(rect, absoluteToChildFrameOwnerLocalTransform(child),
+        childFrameOwnerContentBoxLocation(child));
+}
+
+FloatRect LocalFrameView::mapAbsoluteToChildFrameViewRect(const FloatRect& rect, const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform, FloatPoint childFrameOwnerContentBoxLocation)
+{
+    // Use projectQuad() instead of mapRect() here to handle 3D rotations.
+    auto childFrameViewRect = absoluteToChildFrameOwnerLocalTransform.projectQuad(rect).boundingBox();
+    childFrameViewRect.moveBy(-childFrameOwnerContentBoxLocation);
+    return childFrameViewRect;
+}
+
 LayoutRect LocalFrameView::rectForFixedPositionLayout() const
 {
     if (m_frame->settings().visualViewportEnabled())

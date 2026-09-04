@@ -1,0 +1,53 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>windowClipRect of a 3D transformed cross-origin iframe and a frame nested inside it</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/frame-geometry-test.js"></script>
+<style>
+body { margin: 0 }
+#child {
+    position: absolute;
+    left: 200px;
+    top: 100px;
+    width: 200px;
+    height: 150px;
+    border: 0;
+    transform: perspective(700px) rotateY(40deg);
+    transform-origin: 0 0;
+}
+#spacer { height: 2000px }
+</style>
+<body>
+<iframe id="child" src="http://localhost:8000/site-isolation/resources/frame-geometry-frame-with-same-site-child.html?label=child"></iframe>
+<div id="spacer"></div>
+<script>
+
+// Frame hierarchy, where F1 has a perspective and rotateY transform:
+// - child F1 in this document at (200, 100) with content box 200x150 (cross-site to main frame)
+// - grandchild F2 inside F1 at (20, 20) with content box 100x100 (same-site to F1)
+
+promise_test(async t => {
+    await assertClipRect("child", "0,0 200x150", "the whole child frame is on screen");
+    await assertClipRect("grandchild", "20,20 100x100", "the whole grandchild frame is on screen");
+
+    window.scrollTo(0, 175);
+    const childRect = await waitForClipRect("child", rect => rect.height > 0 && rect.y > 0);
+    assert_equals(childRect.x, 0, "the left edge of the child frame is on screen");
+    assert_equals(childRect.width, 200, "the child frame is clipped at the top, not at the sides");
+    assert_equals(childRect.bottom, 150, "the bottom edge of the child frame is on screen");
+    assert_approx_equals(childRect.y, 75, 1, "the top 75 rows of the child frame are scrolled out");
+    const rect = await waitForClipRect("grandchild", rect => rect.height > 0 && rect.y > 20);
+    assert_equals(rect.x, 20, "the grandchild is not clipped horizontally");
+    assert_equals(rect.width, 100, "the grandchild is not clipped horizontally");
+    assert_equals(rect.bottom, 120, "the bottom of the grandchild is above the clip");
+    assert_approx_equals(rect.y, 75, 1, "the grandchild is clipped where the child frame is clipped");
+
+    window.scrollTo(0, 400);
+    await assertClipRect("child", "0,0 0x0", "the child frame is scrolled out entirely");
+    await assertClipRect("grandchild", "0,0 0x0", "the grandchild frame is scrolled out entirely");
+}, "windowClipRect of a 3D transformed cross-origin iframe, and of a frame nested inside it");
+
+</script>
+</body>
