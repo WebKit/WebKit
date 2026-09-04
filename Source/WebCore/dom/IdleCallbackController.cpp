@@ -50,7 +50,9 @@ int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callbac
     auto handle = m_idleCallbackIdentifier;
 
     bool hasTimeout = timeout > 0_s;
-    m_idleRequestCallbacks.append({ handle, WTF::move(callback), hasTimeout ? std::optional { MonotonicTime::now() + timeout } : std::nullopt });
+    auto request = IdleRequest::create(handle, WTF::move(callback), hasTimeout ? std::optional { MonotonicTime::now() + timeout } : std::nullopt);
+    m_idleRequestCallbacks.append(request.copyRef());
+    m_pendingIdleRequestsByIdentifier.add(handle, WTF::move(request));
 
     if (hasTimeout) {
         Timer::schedule(timeout, [weakThis = WeakPtr { *this }, handle]() mutable {
@@ -79,20 +81,17 @@ void IdleCallbackController::removeIdleCallback(int signedIdentifier)
         return;
     unsigned identifier = signedIdentifier;
 
-    m_idleRequestCallbacks.removeAllMatching([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
-
-    m_runnableIdleCallbacks.removeAllMatching([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
+    if (auto request = m_pendingIdleRequestsByIdentifier.take(identifier))
+        request->isPending = false;
 }
 
 // https://w3c.github.io/requestidlecallback/#start-an-idle-period-algorithm
 void IdleCallbackController::startIdlePeriod()
 {
-    for (auto& request : m_idleRequestCallbacks)
-        m_runnableIdleCallbacks.append(WTF::move(request));
+    for (auto& request : m_idleRequestCallbacks) {
+        if (request->isPending)
+            m_runnableIdleCallbacks.append(WTF::move(request));
+    }
     m_idleRequestCallbacks.clear();
 
     if (m_runnableIdleCallbacks.isEmpty())
@@ -120,17 +119,27 @@ bool IdleCallbackController::invokeIdleCallbacks()
     if (!document || !document->frame())
         return false;
 
+    // Drop cancelled/already-timed-out entries left at the front by removeIdleCallback()
+    // or invokeIdleCallbackTimeout() before spending any idle-time budget on them; this
+    // keeps isEmpty() accurate even if the deadline check below causes an early return.
+    while (!m_runnableIdleCallbacks.isEmpty() && !m_runnableIdleCallbacks.first()->isPending)
+        m_runnableIdleCallbacks.removeFirst();
+
+    if (m_runnableIdleCallbacks.isEmpty())
+        return false;
+
     Ref windowEventLoop = document->windowEventLoop();
     // FIXME: Implement "if the user-agent believes it should end the idle period early due to newly scheduled high-priority work, return from the algorithm."
 
     auto now = MonotonicTime::now();
     auto deadline = windowEventLoop->computeIdleDeadline();
-    if (now >= deadline || m_runnableIdleCallbacks.isEmpty())
+    if (now >= deadline)
         return false;
 
     auto request = m_runnableIdleCallbacks.takeFirst();
-    auto idleDeadline = IdleDeadline::create(request.timeout && *request.timeout < now ? IdleDeadline::DidTimeout::Yes : IdleDeadline::DidTimeout::No);
-    protect(request.callback)->invoke(idleDeadline.get());
+    m_pendingIdleRequestsByIdentifier.remove(request->identifier);
+    auto idleDeadline = IdleDeadline::create(request->timeout && *request->timeout < now ? IdleDeadline::DidTimeout::Yes : IdleDeadline::DidTimeout::No);
+    protect(request->callback)->invoke(idleDeadline.get());
 
     return !m_runnableIdleCallbacks.isEmpty();
 }
@@ -141,17 +150,14 @@ void IdleCallbackController::invokeIdleCallbackTimeout(unsigned identifier)
     if (!m_document)
         return;
 
-    auto it = m_idleRequestCallbacks.findIf([identifier](auto& request) {
-        return request.identifier == identifier;
-    });
-
-    if (it == m_idleRequestCallbacks.end())
+    auto request = m_pendingIdleRequestsByIdentifier.take(identifier);
+    if (!request)
         return;
 
+    request->isPending = false;
+
     auto idleDeadline = IdleDeadline::create(IdleDeadline::DidTimeout::Yes);
-    auto callback = WTF::move(it->callback);
-    m_idleRequestCallbacks.remove(it);
-    callback->invoke(idleDeadline.get());
+    protect(request->callback)->invoke(idleDeadline.get());
 }
 
 } // namespace WebCore
