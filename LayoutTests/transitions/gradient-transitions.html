@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .box {
+        width: 100px;
+        height: 100px;
+        transition: background-image 1s linear;
+    }
+
+    #linear { background-image: linear-gradient(-45deg, red, yellow); }
+    #linear.to { background-image: linear-gradient(45deg, blue, orange); }
+
+    #radial { background-image: radial-gradient(circle at 10% 10%, red 0px, yellow 50px); }
+    #radial.to { background-image: radial-gradient(circle at 90% 90%, blue 10px, orange 100px); }
+
+    #conic { background-image: conic-gradient(from 10deg at 20% 20%, red, yellow); }
+    #conic.to { background-image: conic-gradient(from 90deg at 80% 80%, blue, orange); }
+
+    /* Mismatched stop count falls back to discrete (no interpolation). */
+    #mismatchedStops { background-image: linear-gradient(to right, red, yellow); }
+    #mismatchedStops.to { background-image: linear-gradient(to right, red, green, blue); }
+
+    /* Mismatched gradient-line type (angle vs. keyword) falls back to discrete. */
+    #mismatchedLine { background-image: linear-gradient(45deg, red, yellow); }
+    #mismatchedLine.to { background-image: linear-gradient(to right, blue, orange); }
+
+    /* Mismatched <color-interpolation-method> falls back to discrete. */
+    #mismatchedMethod { background-image: linear-gradient(in srgb, red, yellow); }
+    #mismatchedMethod.to { background-image: linear-gradient(in oklab, blue, orange); }
+
+    /* Mismatched radial size (keyword extent vs. explicit length) falls back to discrete. */
+    #mismatchedRadialSize { background-image: radial-gradient(circle closest-side, red, yellow); }
+    #mismatchedRadialSize.to { background-image: radial-gradient(circle 40px, blue, orange); }
+
+    /* linear-gradient() to radial-gradient() falls back to discrete. */
+    #mismatchedKind { background-image: linear-gradient(to right, red, yellow); }
+    #mismatchedKind.to { background-image: radial-gradient(circle, blue, orange); }
+
+    /* Prefixed gradient syntaxes are not supported for interpolation; fall back to discrete. */
+    #prefixed { background-image: -webkit-linear-gradient(left, red, yellow); }
+    #prefixed.to { background-image: -webkit-linear-gradient(right, blue, orange); }
+</style>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<div id="linear" class="box"></div>
+<div id="radial" class="box"></div>
+<div id="conic" class="box"></div>
+<div id="mismatchedStops" class="box"></div>
+<div id="mismatchedLine" class="box"></div>
+<div id="mismatchedMethod" class="box"></div>
+<div id="mismatchedRadialSize" class="box"></div>
+<div id="mismatchedKind" class="box"></div>
+<div id="prefixed" class="box"></div>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that transitioning between two gradient() functions interpolates the gradient line, box, and color stops, and that unsupported combinations fall back to a discrete transition. See https://bugs.webkit.org/show_bug.cgi?id=119956.");
+
+const boxIds = ["linear", "radial", "conic", "mismatchedStops", "mismatchedLine", "mismatchedMethod", "mismatchedRadialSize", "mismatchedKind", "prefixed"];
+
+function backgroundImageOf(id)
+{
+    return getComputedStyle(document.getElementById(id)).backgroundImage;
+}
+
+function pauseTransitionAt(id, timeMs)
+{
+    const element = document.getElementById(id);
+    const animation = element.getAnimations().find(animation => animation instanceof CSSTransition && animation.transitionProperty == "background-image");
+    if (!animation) {
+        testFailed(`no background-image transition found for #${id}`);
+        return;
+    }
+    animation.pause();
+    animation.currentTime = timeMs;
+}
+
+function sampleAndCheck(id, timeMs, expected)
+{
+    pauseTransitionAt(id, timeMs);
+    shouldBeEqualToString(`backgroundImageOf("${id}")`, expected);
+}
+
+onload = () => {
+    for (const id of boxIds)
+        document.getElementById(id).classList.add("to");
+
+    // Two rAFs ensure the transitions have started (and their backing CSSTransition objects exist)
+    // before we try to pause and seek them.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        debug("Interpolated linear-gradient()");
+        sampleAndCheck("linear", 0, "linear-gradient(-45deg, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("linear", 250, "linear-gradient(-22.5deg, rgb(191, 0, 64), rgb(255, 233, 0))");
+        sampleAndCheck("linear", 500, "linear-gradient(0deg, rgb(128, 0, 128), rgb(255, 210, 0))");
+        sampleAndCheck("linear", 750, "linear-gradient(22.5deg, rgb(64, 0, 191), rgb(255, 188, 0))");
+        sampleAndCheck("linear", 1000, "linear-gradient(45deg, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("Interpolated radial-gradient() (size, position, and color stops)");
+        sampleAndCheck("radial", 0, "radial-gradient(circle at 10% 10%, rgb(255, 0, 0) 0px, rgb(255, 255, 0) 50px)");
+        sampleAndCheck("radial", 250, "radial-gradient(circle at 30% 30%, rgb(191, 0, 64) 2.5px, rgb(255, 233, 0) 62.5px)");
+        sampleAndCheck("radial", 500, "radial-gradient(circle, rgb(128, 0, 128) 5px, rgb(255, 210, 0) 75px)");
+        sampleAndCheck("radial", 750, "radial-gradient(circle at 70% 70%, rgb(64, 0, 191) 7.5px, rgb(255, 188, 0) 87.5px)");
+        sampleAndCheck("radial", 1000, "radial-gradient(circle at 90% 90%, rgb(0, 0, 255) 10px, rgb(255, 165, 0) 100px)");
+        debug("");
+
+        debug("Interpolated conic-gradient() (angle, position, and color stops)");
+        sampleAndCheck("conic", 0, "conic-gradient(from 10deg at 20% 20%, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("conic", 250, "conic-gradient(from 30deg at 35% 35%, rgb(191, 0, 64), rgb(255, 233, 0))");
+        sampleAndCheck("conic", 500, "conic-gradient(from 50deg, rgb(128, 0, 128), rgb(255, 210, 0))");
+        sampleAndCheck("conic", 750, "conic-gradient(from 70deg at 65% 65%, rgb(64, 0, 191), rgb(255, 188, 0))");
+        sampleAndCheck("conic", 1000, "conic-gradient(from 90deg at 80% 80%, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("Mismatched color stop counts fall back to a discrete transition");
+        sampleAndCheck("mismatchedStops", 0, "linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("mismatchedStops", 500, "linear-gradient(to right, rgb(255, 0, 0), rgb(0, 128, 0), rgb(0, 0, 255))");
+        sampleAndCheck("mismatchedStops", 1000, "linear-gradient(to right, rgb(255, 0, 0), rgb(0, 128, 0), rgb(0, 0, 255))");
+        debug("");
+
+        debug("Mismatched gradient-line types (angle vs. keyword) fall back to a discrete transition");
+        sampleAndCheck("mismatchedLine", 0, "linear-gradient(45deg, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("mismatchedLine", 500, "linear-gradient(to right, rgb(0, 0, 255), rgb(255, 165, 0))");
+        sampleAndCheck("mismatchedLine", 1000, "linear-gradient(to right, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("Mismatched color-interpolation-method falls back to a discrete transition");
+        sampleAndCheck("mismatchedMethod", 0, "linear-gradient(rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("mismatchedMethod", 500, "linear-gradient(in oklab, rgb(0, 0, 255), rgb(255, 165, 0))");
+        sampleAndCheck("mismatchedMethod", 1000, "linear-gradient(in oklab, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("Mismatched radial-gradient() size (keyword extent vs. explicit length) falls back to a discrete transition");
+        sampleAndCheck("mismatchedRadialSize", 0, "radial-gradient(circle closest-side, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("mismatchedRadialSize", 500, "radial-gradient(40px, rgb(0, 0, 255), rgb(255, 165, 0))");
+        sampleAndCheck("mismatchedRadialSize", 1000, "radial-gradient(40px, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("linear-gradient() to radial-gradient() falls back to a discrete transition");
+        sampleAndCheck("mismatchedKind", 0, "linear-gradient(to right, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("mismatchedKind", 500, "radial-gradient(circle, rgb(0, 0, 255), rgb(255, 165, 0))");
+        sampleAndCheck("mismatchedKind", 1000, "radial-gradient(circle, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        debug("Prefixed gradient syntaxes fall back to a discrete transition");
+        sampleAndCheck("prefixed", 0, "-webkit-linear-gradient(left, rgb(255, 0, 0), rgb(255, 255, 0))");
+        sampleAndCheck("prefixed", 500, "-webkit-linear-gradient(right, rgb(0, 0, 255), rgb(255, 165, 0))");
+        sampleAndCheck("prefixed", 1000, "-webkit-linear-gradient(right, rgb(0, 0, 255), rgb(255, 165, 0))");
+        debug("");
+
+        finishJSTest();
+    }));
+};
+</script>
+</body>
+</html>
