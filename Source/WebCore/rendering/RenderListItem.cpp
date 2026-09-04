@@ -668,6 +668,20 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
     return { { }, fallbackParent, stoppedAtTableRubyOrReplaced };
 }
 
+CheckedPtr<RenderListOutsideMarker> RenderListItem::excludedMarkerAnchoredTo(const RenderBlockFlow& firstFormattedLineRoot)
+{
+    for (CheckedPtr<const RenderBlock> ancestor = &firstFormattedLineRoot; ancestor; ancestor = ancestor->containingBlock()) {
+        CheckedPtr listItem = dynamicDowncast<RenderListItem>(ancestor.get());
+        CheckedPtr marker = listItem ? listItem->markerBox() : nullptr;
+        if (!marker || !marker->isExcludedMarker())
+            continue;
+        auto excludedPosition = marker->excludedPosition();
+        if (excludedPosition && excludedPosition->firstFormattedLineRoot.get() == &firstFormattedLineRoot)
+            return marker;
+    }
+    return { };
+}
+
 Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForContainer(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>& allExcludedMarkers)
 {
     auto markersForContainer = Vector<CheckedPtr<RenderListOutsideMarker>> { };

@@ -1536,6 +1536,14 @@ void LineLayout::shiftLinesByInBlockDirection(LayoutUnit blockShift)
     for (size_t lineIndex = 0; lineIndex < displayContent.lines.size(); ++lineIndex)
         displayContent.moveLineInBlockDirection(lineIndex, blockShift);
 
+    // An excluded marker is on one of these lines without being part of the content that moves with them, so the
+    // position it was given has to move too (see RenderListItem::placeExcludedMarker).
+    if (CheckedPtr marker = RenderListItem::excludedMarkerAnchoredTo(flow())) {
+        auto excludedPosition = *marker->excludedPosition();
+        excludedPosition.topLeft.move(0, blockShift.toFloat());
+        marker->setExcludedPosition(excludedPosition);
+    }
+
     auto deltaX = isHorizontalWritingMode ? 0_lu : blockShift;
     auto deltaY = isHorizontalWritingMode ? blockShift : 0_lu;
     for (auto& box : m_inlineContent->displayContent().boxes) {

@@ -66,6 +66,7 @@ public:
     };
     static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker);
     static Vector<CheckedPtr<RenderListOutsideMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>&);
+    static CheckedPtr<RenderListOutsideMarker> excludedMarkerAnchoredTo(const RenderBlockFlow& firstFormattedLineRoot);
 
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
