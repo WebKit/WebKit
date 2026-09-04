@@ -35,11 +35,19 @@
 
 namespace WebKit {
 
+// Without site isolation, WebProcessProxy records only the main frame's site while the process hosts
+// every site the page pulls in, so no first-party question has a useful answer.
+inline bool firstPartyAccessIsAnswerable(const WebProcessProxy& process)
+{
+    auto& preferences = process.sharedPreferencesForWebProcessValue();
+    return preferences.siteIsolationEnabled && !preferences.usesSingleWebProcess;
+}
+
 // Maps WebProcessProxy's three-way answer onto a validation failure. SilentFailure
 // happens legitimately as a new load starts.
-inline std::optional<IPC::ValidationFailure> checkFirstPartyAccess(const WebProcessProxy& process, const WebCore::RegistrableDomain& domain)
+inline std::optional<IPC::ValidationFailure> validationFailureFor(WebProcessProxy::FirstPartyAccessResult result)
 {
-    switch (process.allowsFirstPartyAccess(domain)) {
+    switch (result) {
     case WebProcessProxy::FirstPartyAccessResult::Pass:
         return std::nullopt;
     case WebProcessProxy::FirstPartyAccessResult::SilentFailure:
@@ -48,6 +56,11 @@ inline std::optional<IPC::ValidationFailure> checkFirstPartyAccess(const WebProc
         return IPC::ValidationFailure::Terminate;
     }
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+inline std::optional<IPC::ValidationFailure> checkFirstPartyAccess(const WebProcessProxy& process, const WebCore::RegistrableDomain& domain)
+{
+    return validationFailureFor(process.allowsFirstPartyAccess(domain));
 }
 
 // Use for any frame belonging to a process.
@@ -85,15 +98,11 @@ private:
     template<typename DomainFunction>
     std::optional<IPC::ValidationFailure> checkUntrustedDomain(NOESCAPE DomainFunction&& domain) const
     {
-        // Without site isolation, WebProcessProxy records only the main frame's site while the
-        // process hosts every site the page pulls in, so this question has no useful answer for a
-        // value that may name a subframe's origin.
         RefPtr process = m_process.get();
         if (!process)
             return IPC::ValidationFailure::Ignore;
 
-        auto& preferences = process->sharedPreferencesForWebProcessValue();
-        if (!preferences.siteIsolationEnabled || preferences.usesSingleWebProcess)
+        if (!firstPartyAccessIsAnswerable(*process))
             return std::nullopt;
 
         return checkFirstPartyAccess(*process, domain());
@@ -119,6 +128,32 @@ public:
             return IPC::ValidationFailure::Ignore;
 
         return checkFirstPartyAccess(*process, WebCore::RegistrableDomain { origin });
+    }
+
+private:
+    WeakPtr<const WebProcessProxy> m_process;
+};
+
+// Use for a value naming the top-level site of a page rather than something the sending process
+// speaks for itself: a cross-origin subframe's process legitimately observes and relays facts about
+// the page it is part of, so the authority is the process hosting that page's main frame.
+class PageFirstPartySiteAuthority : public IPC::CanValidateUntrusted<PageFirstPartySiteAuthority> {
+public:
+    explicit PageFirstPartySiteAuthority(const WebProcessProxy& process)
+        : m_process(process)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site& site) const
+    {
+        RefPtr process = m_process.get();
+        if (!process)
+            return IPC::ValidationFailure::Ignore;
+
+        if (!firstPartyAccessIsAnswerable(*process))
+            return std::nullopt;
+
+        return validationFailureFor(process->participatesInPageWithFirstPartySite(site));
     }
 
 private:
@@ -157,6 +192,8 @@ template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore:
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::Site> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::TopLevelFirstPartyAuthority, WebCore::SecurityOriginData> : std::true_type { };
+
+template<> struct IsValidationProcedureFor<WebKit::PageFirstPartySiteAuthority, WebCore::Site> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::CommittedClientOriginAuthority, WebCore::ClientOrigin> : std::true_type { };
 
