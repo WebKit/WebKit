@@ -38,8 +38,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 inline static WKTextExtractionContainer NODELETE containerType(TextExtraction::ContainerType type)
 {
     switch (type) {
@@ -333,8 +331,6 @@ void requestTextExtractionFilterRuleData(CompletionHandler<void(Vector<TextExtra
     completion({ });
 #endif
 }
-
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 #if ENABLE(TEXT_EXTRACTION_FILTER)
 

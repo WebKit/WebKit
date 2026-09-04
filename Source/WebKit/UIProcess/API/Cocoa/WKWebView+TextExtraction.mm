@@ -71,8 +71,6 @@ constexpr Seconds defaultInteractionPresentationUpdateTimeout = 100_ms;
 
 constexpr auto staleNodeIdentifierGuidance = " The page changed since this uid was last observed; re-extract the page and retry with a current uid."_s;
 
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 namespace WebKit {
 
 struct ConnectedRemapCandidate {
@@ -119,8 +117,6 @@ static void findFirstConnectedRemapCandidate(WebKit::WebPageProxy& page, const V
         completion(WebKit::ConnectedRemapCandidate { WTF::move(frame), *nodeIdentifier });
     });
 }
-
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 #if PLATFORM(IOS_FAMILY)
 namespace ForcedDisplayRefreshProperties {
@@ -263,8 +259,6 @@ static Vector<std::pair<String, String>> extractReplacementStrings(_WKTextExtrac
     return result;
 }
 
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 static String applyReplacementsToDescription(const String& description, const Vector<String>& stringsToValidate, const Vector<std::pair<String, String>>& replacementStrings)
 {
     if (replacementStrings.isEmpty())
@@ -277,8 +271,6 @@ static String applyReplacementsToDescription(const String& description, const Ve
     }
     return result;
 }
-
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtractionConfiguration *configuration)
 {
@@ -299,7 +291,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
     }
 }
 
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 - (void)_ensureTextExtractionFilterRulesWithCompletionHandler:(CompletionHandler<void()>&&)completionHandler
 {
     _page->hasTextExtractionFilterRules([completionHandler = WTF::move(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](bool hasRules) mutable {
@@ -313,7 +304,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         });
     });
 }
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 
 - (void)_extractDebugTextWithConfigurationWithoutUpdatingFilterRules:(_WKTextExtractionConfiguration *)configuration assertionScope:(UniqueRef<WebKit::TextExtractionAssertionScope>&&)assertionScope completionHandler:(void(^)(_WKTextExtractionResult *))completionHandler
 {
@@ -580,7 +570,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 
 - (void)_performInteraction:(WebCore::TextExtraction::Interaction)interaction inFrame:(RefPtr<WebKit::WebFrameProxy>)targetFrame actionType:(_WKTextExtractionAction)actionType staleNodeResolution:(const WebKit::StaleNodeResolutionState&)staleNodeResolution completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     RefPtr page = _page;
     if (!page || !targetFrame)
         return completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:@"Web view is invalid" summary:nil interactedElementBounds:CGRectNull]));
@@ -667,12 +656,10 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             aggregator.get()();
         });
     });
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_retryInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction actionType:(_WKTextExtractionAction)actionType requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates failureDescription:(const String&)failureDescription completionHandler:(void(^)(_WKTextExtractionInteractionResult *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     auto reportStaleNode = [failureDescription, completionHandler = makeBlockPtr(completionHandler)] {
         RetainPtr errorDescription = makeString(failureDescription, staleNodeIdentifierGuidance).createNSString();
         completionHandler(adoptNS([[_WKTextExtractionInteractionResult alloc] initWithErrorDescription:errorDescription.get() summary:nil interactedElementBounds:CGRectNull]).get());
@@ -703,7 +690,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
             .noteForCurrentAttempt = noteForRemappedStaleNode(requestedIdentifier)
         } completionHandler:completionHandler.get()];
     });
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_filterExtractedStringWithoutUpdatingFilterRules:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler
@@ -772,8 +758,6 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
 #endif // ENABLE(TEXT_EXTRACTION_FILTER)
 }
 
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 static Vector<WebCore::JSHandleIdentifier> extractHandleIdentifiersOfNodesToSkip(Ref<WebKit::WebFrameProxy>&& frame, _WKTextExtractionConfiguration *configuration)
 {
     Vector<WebCore::JSHandleIdentifier> nodes;
@@ -837,11 +821,8 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
 
 #endif // ENABLE(DATA_DETECTION)
 
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
-
 - (void)_requestTextExtractionInternal:(_WKTextExtractionConfiguration *)configuration completion:(CompletionHandler<void(std::optional<WebCore::TextExtraction::Result>&&)>&&)completion
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     Ref preferences = _page->preferences();
     if (!self._isValid || !preferences->textExtractionEnabled())
         return completion({ });
@@ -1016,12 +997,10 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         });
     }
 #endif // ENABLE(TEXT_EXTRACTION_FILTER) && HAVE(VISION)
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_requestTextExtraction:(_WKTextExtractionConfiguration *)configuration completionHandler:(void(^)(WKTextExtractionItem *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     [self _requestTextExtractionInternal:configuration completion:[completionHandler = makeBlockPtr(completionHandler), weakSelf = WeakObjCPtr<WKWebView>(self)](auto&& result) {
         RetainPtr strongSelf = weakSelf.get();
         if (!strongSelf)
@@ -1039,12 +1018,10 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         });
         completionHandler(rootItem.get());
     }];
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_describeInteraction:(_WKTextExtractionInteraction *)wkInteraction completionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     if (!self._isValid)
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorWebViewInvalidated userInfo:nil]);
 
@@ -1067,12 +1044,10 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
 #endif
 
     [self _describeInteraction:WTF::move(interaction) inFrame:targetFrame staleNodeResolution:WebKit::StaleNodeResolutionState { .requestedIdentifier = nodeIdentifierString } completionHandler:completionHandler];
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_describeInteraction:(WebCore::TextExtraction::Interaction)interaction inFrame:(RefPtr<WebKit::WebFrameProxy>)targetFrame staleNodeResolution:(const WebKit::StaleNodeResolutionState&)staleNodeResolution completionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     RefPtr page = _page;
     if (!page || !targetFrame)
         return completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
@@ -1141,12 +1116,10 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
         }
 #endif // ENABLE(TEXT_EXTRACTION_FILTER)
     });
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 - (void)_retryDescribingInteractionWithConnectedRemapCandidate:(WebCore::TextExtraction::Interaction)interaction requestedNodeIdentifier:(const String&)requestedIdentifier remapCandidates:(const Vector<String>&)remapCandidates completionHandler:(void (^)(NSString *, NSError *))completionHandler
 {
-#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
     auto reportStaleNode = [completionHandler = makeBlockPtr(completionHandler)] {
         RetainPtr errorDescription = makeString("Unable to describe the target of the interaction."_s, staleNodeIdentifierGuidance).createNSString();
         completionHandler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{
@@ -1178,7 +1151,6 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             .noteForCurrentAttempt = noteForRemappedStaleNode(requestedIdentifier)
         } completionHandler:completionHandler.get()];
     });
-#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
 }
 
 #if ENABLE(SYSTEM_TEXT_EXTRACTION)
