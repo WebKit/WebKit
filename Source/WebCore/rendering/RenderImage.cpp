@@ -718,11 +718,12 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         else
             protect(page())->addRelevantRepaintedObject(*this, visibleRect);
 
-        if (protect(cachedImage())->currentFrameIsComplete(this)) {
+        if (!imageResource().largestContentfulPaintTrackingConfirmed() && protect(cachedImage())->currentFrameIsComplete(this)) {
             if (auto styleable = Styleable::fromRenderer(*this)) {
                 auto localVisibleRect = visibleRect;
                 localVisibleRect.moveBy(-paintOffset);
-                protect(document())->didPaintImage(protect(styleable->element), protect(cachedImage()), localVisibleRect);
+                if (protect(document())->didPaintImage(protect(styleable->element), protect(cachedImage()), localVisibleRect))
+                    imageResource().setLargestContentfulPaintTrackingConfirmed(true);
             }
         }
     }

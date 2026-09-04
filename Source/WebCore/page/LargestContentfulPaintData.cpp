@@ -371,12 +371,12 @@ void LargestContentfulPaintData::didLoadImage(Element& element, CachedImage* ima
         lcpData.imageData[findIndex].loadTime = now;
 }
 
-void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* image, FloatRect localRect)
+bool LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* image, FloatRect localRect)
 {
     LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " didPaintImage() " << element << " image " << (image ? image->url().string() : emptyString()) << " localRect " << localRect);
 
     if (!image)
-        return;
+        return false;
 
     auto& lcpData = element.ensureLargestContentfulPaintData();
     auto findIndex = lcpData.imageData.findIf([&](auto& value) {
@@ -391,18 +391,18 @@ void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* im
 
     auto& imageData = lcpData.imageData[findIndex];
     if (imageData.inContentSet)
-        return;
+        return true;
 
     imageData.inContentSet = true;
 
     if (localRect.isEmpty())
-        return;
+        return true;
 
     if (canCompareWithLargestPaintArea(element) && localRect.area() <= m_largestPaintArea)
-        return;
+        return true;
 
     if (!isExposedForPaintTiming(element))
-        return;
+        return true;
 
     if (!imageData.loadTime)
         imageData.loadTime = MonotonicTime::now();
@@ -415,6 +415,7 @@ void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* im
     }).iterator->value.append(*image);
 
     scheduleRenderingUpdateIfNecessary(element);
+    return true;
 }
 
 void LargestContentfulPaintData::didPaintText(const RenderBlockFlow& formattingContextRoot, FloatRect localRect, bool isOnlyTextBoxForElement)

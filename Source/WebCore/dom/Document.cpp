@@ -9296,12 +9296,12 @@ void Document::didLoadImage(Element& element, CachedImage* image) const
     largestContentfulPaintData().didLoadImage(element, image);
 }
 
-void Document::didPaintImage(Element& element, CachedImage* image, FloatRect localRect) const
+bool Document::didPaintImage(Element& element, CachedImage* image, FloatRect localRect) const
 {
     if (!supportsLargestContentfulPaint())
-        return;
+        return false;
 
-    largestContentfulPaintData().didPaintImage(element, image, localRect);
+    return largestContentfulPaintData().didPaintImage(element, image, localRect);
 }
 
 void Document::didPaintText(const RenderBlockFlow& formattingContextRoot, FloatRect localRect, bool isOnlyTextBoxForElement) const

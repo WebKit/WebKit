@@ -209,9 +209,12 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
         else
             protect(page())->addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
 
-        auto localVisibleRect = visibleRect;
-        localVisibleRect.moveBy(-paintOffset);
-        protect(document())->didPaintImage(protect(imageElement()).get(), protect(cachedImage()), localVisibleRect);
+        if (!imageResource().largestContentfulPaintTrackingConfirmed()) {
+            auto localVisibleRect = visibleRect;
+            localVisibleRect.moveBy(-paintOffset);
+            if (protect(document())->didPaintImage(protect(imageElement()).get(), protect(cachedImage()), localVisibleRect))
+                imageResource().setLargestContentfulPaintTrackingConfirmed(true);
+        }
     }
 }
 

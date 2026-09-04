@@ -1531,7 +1531,7 @@ public:
 
     LargestContentfulPaintData& largestContentfulPaintData() const;
     void didLoadImage(Element&, CachedImage*) const;
-    void didPaintImage(Element&, CachedImage*, FloatRect localRect) const;
+    bool didPaintImage(Element&, CachedImage*, FloatRect localRect) const;
     void didPaintText(const RenderBlockFlow&, FloatRect localRect, bool isOnlyTextBoxForElement) const;
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);

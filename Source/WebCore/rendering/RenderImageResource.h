@@ -69,11 +69,15 @@ public:
 
     WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : nullptr; }
 
+    bool largestContentfulPaintTrackingConfirmed() const { return m_largestContentfulPaintTrackingConfirmed; }
+    void setLargestContentfulPaintTrackingConfirmed(bool confirmed) { m_largestContentfulPaintTrackingConfirmed = confirmed; }
+
 private:
     LayoutSize imageSize(float multiplier, CachedImage::SizeType) const;
 
     SingleThreadWeakPtr<RenderElement> m_renderer;
     RefPtr<Style::Image> m_styleImage;
+    bool m_largestContentfulPaintTrackingConfirmed { false };
 };
 
 } // namespace WebCore
