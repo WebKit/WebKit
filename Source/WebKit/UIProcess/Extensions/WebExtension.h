@@ -86,6 +86,9 @@ public:
 
     enum class CacheResult : bool { No, Yes };
     enum class SuppressNotFoundErrors : bool { No, Yes };
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+    enum class AllowInlineResourceURLs : bool { No, Yes };
+#endif
 
     enum class Error : uint8_t {
         Unknown = 1,
@@ -247,7 +250,11 @@ public:
     String resourceMIMETypeForPath(const String&);
 
     Expected<String, RefPtr<API::Error>> resourceStringForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+#if defined(RC_REMOVE_SEC_ACCEL_3)
     Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
+#else
+    Expected<Ref<API::Data>, RefPtr<API::Error>> resourceDataForPath(const String&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No, AllowInlineResourceURLs = AllowInlineResourceURLs::Yes);
+#endif
 
     RefPtr<WebExtensionLocalization> localization();
 

@@ -987,6 +987,65 @@ TEST(WKWebExtensionController, NonWebAccessibleResourceDeniedForSubframeNavigati
 }
 #endif
 
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+TEST(WKWebExtensionController, DataURLResourcePathsAreNotServed)
+{
+    // A "data:" resource path resolves as a missing lookup rather than being served.
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"(async () => {",
+
+        // A bundled resource loads normally.
+        @"  try {",
+        @"    const bundledResponse = await fetch(browser.runtime.getURL('resource.txt'))",
+        @"    if (!bundledResponse.ok) {",
+        @"      browser.test.notifyFail('The bundled resource should be served, but got HTTP ' + bundledResponse.status)",
+        @"      return",
+        @"    }",
+
+        @"    const bundledText = await bundledResponse.text()",
+        @"    if (bundledText !== 'Bundled Resource') {",
+        @"      browser.test.notifyFail('The bundled resource should have its real contents, but got: ' + bundledText)",
+        @"      return",
+        @"    }",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('The bundled resource should load, but fetch threw: ' + error)",
+        @"    return",
+        @"  }",
+
+        // A "data:" path is not served as a resource.
+        @"  const dataURL = browser.runtime.getURL('') + 'data:,Hello'",
+        @"  try {",
+        @"    const dataResponse = await fetch(dataURL)",
+        @"    browser.test.notifyFail('A data: resource path should not be served, but got HTTP ' + dataResponse.status)",
+        @"  } catch (error) {",
+        @"    browser.test.notifyPass()",
+        @"  }",
+        @"})()",
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"name": @"Test",
+        @"description": @"Test",
+        @"version": @"1.0",
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"resource.txt": @"Bundled Resource",
+    };
+
+    Util::loadAndRunExtension(manifest, resources);
+}
+#endif
+
 TEST(WKWebExtensionController, WebAccessibleResourcesV2)
 {
     TestWebKitAPI::HTTPServer server({

@@ -125,7 +125,11 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             loadingExtensionMainFrame = true;
         }
 
+#if defined(RC_REMOVE_SEC_ACCEL_3)
         auto resourceDataResult = extension->resourceDataForPath(requestURL.path().toString());
+#else
+        auto resourceDataResult = extension->resourceDataForPath(requestURL.path().toString(), WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::No, WebExtension::AllowInlineResourceURLs::No);
+#endif
         if (!resourceDataResult) {
             extensionContext->recordErrorIfNeeded(resourceDataResult.error());
             task->didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);

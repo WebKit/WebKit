@@ -74,7 +74,11 @@ WebExtension::WebExtension(const JSON::Value& manifest, Resources&& resources)
     m_stringResources.set("manifest.json"_s, manifestString);
 }
 
+#if defined(RC_REMOVE_SEC_ACCEL_3)
 Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+#else
+Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(const String& originalPath, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors, AllowInlineResourceURLs allowInlineResourceURLs)
+#endif
 {
     ASSERT(originalPath);
 
@@ -84,11 +88,16 @@ Expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForPath(c
     if (path.startsWith('/'))
         path = path.substring(1);
 
-    if (path.startsWith("data:"_s)) {
-        if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
-            return API::Data::create(decodedURL.value().data);
-        ASSERT(path == "data:"_s);
-        return API::Data::create(std::span<const uint8_t> { });
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+    if (allowInlineResourceURLs == AllowInlineResourceURLs::Yes)
+#endif
+    {
+        if (path.startsWith("data:"_s)) {
+            if (auto decodedURL = WebCore::DataURLDecoder::decode(URL { path }))
+                return API::Data::create(decodedURL.value().data);
+            ASSERT(path == "data:"_s);
+            return API::Data::create(std::span<const uint8_t> { });
+        }
     }
 
     if (path == generatedBackgroundPageFilename || path  == generatedBackgroundServiceWorkerFilename)
