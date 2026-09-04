@@ -67,6 +67,7 @@ public:
     size_t size() const { return (m_end - m_start) & m_capacityMask; }
     bool isEmpty() const { return m_start == m_end; }
 
+    // Iteration.
     iterator begin() LIFETIME_BOUND { return iterator(this, m_start); }
     iterator end() LIFETIME_BOUND { return iterator(this, m_end); }
     const_iterator begin() const LIFETIME_BOUND { return const_iterator(this, m_start); }
@@ -75,46 +76,44 @@ public:
     reverse_iterator rend() LIFETIME_BOUND { return reverse_iterator(begin()); }
     const_reverse_iterator rbegin() const LIFETIME_BOUND { return const_reverse_iterator(end()); }
     const_reverse_iterator rend() const LIFETIME_BOUND { return const_reverse_iterator(begin()); }
-    
-    template<typename U> bool contains(const U&) const;
 
+    // Accessing and/or removing the first item.
     T& first() LIFETIME_BOUND { return m_buffer.capacitySpan()[m_start]; }
     const T& first() const LIFETIME_BOUND { return m_buffer.capacitySpan()[m_start]; }
+    void removeFirst();
     T takeFirst();
+    // Returns a default-constructed T if the callback always returns false.
+    template<std::predicate<T&> Predicate>
+    T takeFirst(NOESCAPE const Predicate&);
 
+    // Accessing and/or removing the last item.
     T& last() LIFETIME_BOUND { return m_buffer.capacitySpan()[(m_end - 1) & m_capacityMask]; }
     const T& last() const LIFETIME_BOUND { return m_buffer.capacitySpan()[(m_end - 1) & m_capacityMask]; }
+    void removeLast();
     T takeLast();
+    // Returns a default-constructed T if the callback always returns false.
+    template<std::predicate<T&> Predicate>
+    T takeLast(NOESCAPE const Predicate&);
 
+    // Removal.
+    void remove(iterator&);
+    void remove(const_iterator&);
+    template<std::predicate<T&> Predicate> size_t removeAllMatching(const Predicate&);
+    template<std::predicate<T&> Predicate> bool removeFirstMatching(const Predicate&);
+    void clear();
+
+    // Insertion.
     void append(T&& value) { append<T>(std::forward<T>(value)); }
     template<typename U> void append(U&&);
     template<typename U> void prepend(U&&);
-    void removeFirst();
-    void removeLast();
-    void remove(iterator&);
-    void remove(const_iterator&);
-    
-    template<std::predicate<T&> Predicate> size_t removeAllMatching(const Predicate&);
-    template<std::predicate<T&> Predicate> bool removeFirstMatching(const Predicate&);
-
     // This is a priority enqueue. The callback is given a value, and if it returns true, then this
     // will put the appended value before that value. It will keep bubbling until the callback returns
     // false or the value ends up at the head of the queue.
     template<typename U, std::predicate<T&> Predicate>
     void appendAndBubble(U&&, const Predicate&);
-    
-    // Remove and return the first element for which the callback returns true. Returns a null version of
-    // T if it the callback always returns false.
-    template<std::predicate<T&> Predicate>
-    T takeFirst(NOESCAPE const Predicate&);
 
-    // Remove and return the last element for which the callback returns true. Returns a null version of
-    // T if it the callback always returns false.
-    template<std::predicate<T&> Predicate>
-    T takeLast(NOESCAPE const Predicate&);
-
-    void clear();
-
+    // Search.
+    template<typename U> bool contains(const U&) const;
     template<std::predicate<T&> Predicate> iterator findIf(NOESCAPE const Predicate&) LIFETIME_BOUND;
     template<std::predicate<const T&> Predicate> const_iterator findIf(NOESCAPE const Predicate&) const LIFETIME_BOUND;
     template<std::predicate<const T&> Predicate> bool containsIf(NOESCAPE const Predicate& predicate) const LIFETIME_BOUND
