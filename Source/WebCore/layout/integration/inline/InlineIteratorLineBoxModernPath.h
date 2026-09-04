@@ -73,7 +73,7 @@ public:
                 break;
             if (precedingLineBox.logicalBottom() < logicalTop())
                 break;
-            return precedingLineBox.contentLogicalBottom();
+            return std::min(contentLogicalTop(), precedingLineBox.contentLogicalBottom());
         }
         return contentLogicalTop();
     }
@@ -84,7 +84,7 @@ public:
         auto followingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 };
         if (followingLineBox.hasBlockLevelBox())
             return contentLogicalBottom();
-        return followingLineBox.contentLogicalTop();
+        return std::max(contentLogicalBottom(), followingLineBox.contentLogicalTop());
     }
 
     float contentLogicalLeft() const
