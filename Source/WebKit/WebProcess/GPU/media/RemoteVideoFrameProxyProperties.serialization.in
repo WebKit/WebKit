@@ -23,7 +23,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::RemoteVideoFrameProxyProperties {
-    WebKit::RemoteVideoFrameReference reference;
     MediaTime presentationTime;
     bool isMirrored;
     WebCore::VideoFrameRotation rotation;

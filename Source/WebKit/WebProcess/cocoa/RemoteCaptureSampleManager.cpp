@@ -168,20 +168,25 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(WTF::move(handle), description, WTF::move(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&& reply)
 {
     ASSERT(!WTF::isMainRunLoop());
-    // Create videoFrame before early outs so that the reference in `properties` is adopted.
-    Ref<RemoteVideoFrameProxy> videoFrame = [&] {
-        // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
-        Locker lock(m_videoFrameObjectHeapProxyLock);
-        return RemoteVideoFrameProxy::create(Ref { *m_connection }, Ref { *m_videoFrameObjectHeapProxy }, WTF::move(properties));
-    }();
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for videoFrameAvailable", identifier.toUInt64());
+        // Reject the offer: the frame is never added to the GPU process heap.
+        reply(std::nullopt);
         return;
     }
+    // Accept the offer: allocate the durable reference, build the proxy that adopts it, and
+    // return the reference so the GPU process adds the frame to its heap under it.
+    auto reference = RemoteVideoFrameReference::generateForAdd();
+    Ref<RemoteVideoFrameProxy> videoFrame = [&] {
+        // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
+        Locker lock(m_videoFrameObjectHeapProxyLock);
+        return RemoteVideoFrameProxy::create(Ref { *m_connection }, Ref { *m_videoFrameObjectHeapProxy }, reference, WTF::move(properties));
+    }();
+    reply(reference);
     Ref { iterator->value }->remoteVideoFrameAvailable(WTF::move(videoFrame), metadata);
 }
 

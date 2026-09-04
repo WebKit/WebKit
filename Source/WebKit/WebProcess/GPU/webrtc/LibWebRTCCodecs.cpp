@@ -502,18 +502,19 @@ void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
     }
 }
 
-void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
+void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties, CompletionHandler<void(std::optional<RemoteVideoFrameReference>)>&& reply)
 {
     assertIsCurrent(workQueue());
 
-    // Adopt RemoteVideoFrameProxy::Properties to RemoteVideoFrameProxy instance before the early outs, so that the reference gets adopted.
-    // Typically RemoteVideoFrameProxy::Properties&& sent to destinations that are already removed need to be handled separately.
-    // LibWebRTCCodecs is not ever removed, so we do not do this. However, if it ever is, LibWebRTCCodecs::handleMessageToRemovedDestination()
-    // needs to be implemented.
+    // Accept the offer: allocate the durable reference, build the proxy that adopts it, and return
+    // the reference so the GPU process adds the frame to its heap. LibWebRTCCodecs is never removed,
+    // so we always accept; if the decoder is gone the proxy is dropped and releases the reference.
+    auto reference = RemoteVideoFrameReference::generateForAdd();
     Ref<RemoteVideoFrameProxy> remoteVideoFrame = [&] {
         Locker locker { m_connectionLock };
-        return RemoteVideoFrameProxy::create(protect(m_connection).releaseNonNull(), *protect(m_videoFrameObjectHeapProxy), WTF::move(properties));
+        return RemoteVideoFrameProxy::create(protect(m_connection).releaseNonNull(), *protect(m_videoFrameObjectHeapProxy), reference, WTF::move(properties));
     }();
+    reply(reference);
     // FIXME: Do error logging.
     auto* decoder = m_decoders.get(decoderIdentifier);
     if (!decoder)

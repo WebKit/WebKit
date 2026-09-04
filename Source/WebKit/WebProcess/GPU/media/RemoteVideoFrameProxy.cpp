@@ -45,10 +45,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoFrameProxy);
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference reference, const WebCore::VideoFrame& videoFrame)
+RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(const WebCore::VideoFrame& videoFrame)
 {
     return {
-        WTF::move(reference),
         videoFrame.presentationTime(),
         videoFrame.isMirrored(),
         videoFrame.rotation(),
@@ -58,9 +57,9 @@ RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::Remo
     };
 }
 
-Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
+Ref<RemoteVideoFrameProxy> RemoteVideoFrameProxy::create(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, RemoteVideoFrameReference reference, Properties&& properties)
 {
-    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTF::move(properties)));
+    return adoptRef(*new RemoteVideoFrameProxy(connection, videoFrameObjectHeapProxy, WTF::move(reference), WTF::move(properties)));
 }
 
 static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const RemoteVideoFrameWriteReference& reference)
@@ -68,15 +67,10 @@ static void releaseRemoteVideoFrameProxy(IPC::Connection& connection, const Remo
     connection.send(Messages::RemoteVideoFrameObjectHeap::ReleaseVideoFrame(reference), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void RemoteVideoFrameProxy::releaseUnused(IPC::Connection& connection, Properties&& properties)
-{
-    releaseRemoteVideoFrameProxy(connection, { { properties.reference.identifier(), properties.reference.version() }, 0 });
-}
-
-RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, Properties&& properties)
+RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy, RemoteVideoFrameReference reference, Properties&& properties)
     : VideoFrame(properties.presentationTime, properties.isMirrored, properties.rotation, WTF::move(properties.colorSpace))
     , m_connection(&connection)
-    , m_referenceTracker(properties.reference)
+    , m_referenceTracker(reference)
     , m_size(properties.size)
     , m_pixelFormat(properties.pixelFormat)
     , m_videoFrameObjectHeapProxy(&videoFrameObjectHeapProxy)
@@ -152,8 +146,7 @@ Ref<WebCore::VideoFrame> RemoteVideoFrameProxy::clone()
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)
 {
-    ts << "{ reference="_s << properties.reference
-        << ", presentationTime=" << properties.presentationTime
+    ts << "{ presentationTime="_s << properties.presentationTime
         << ", isMirrored=" << properties.isMirrored
         << ", rotation=" << static_cast<int>(properties.rotation)
         << ", size=" << properties.size

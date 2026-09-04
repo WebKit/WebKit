@@ -33,10 +33,12 @@
 
 namespace WebKit {
 
+// Descriptive metadata for a video frame held in the GPU process. The frame's
+// RemoteVideoFrameReference (its durable identity) is always allocated by the Web
+// process and travels separately: embedded in the request for Web-process-initiated
+// creations, or returned in the reply of an "offer" async message for GPU-process-
+// initiated frames. The GPU process never allocates a RemoteVideoFrameReference.
 struct RemoteVideoFrameProxyProperties {
-    // The receiver owns the reference, so it must be released via either adoption to
-    // `RemoteVideoFrameProxy::create()` or via `RemoteVideoFrameProxy::releaseUnused()`.
-    WebKit::RemoteVideoFrameReference reference;
     MediaTime presentationTime;
     bool isMirrored { false };
     WebCore::VideoFrameRotation rotation { WebCore::VideoFrameRotation::None };
