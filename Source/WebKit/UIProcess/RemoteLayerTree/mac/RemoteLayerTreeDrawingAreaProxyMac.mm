@@ -221,7 +221,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID& transactionID)
+void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection& connection, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID& transactionID)
 {
     if (!mainFrameData)
         return;
@@ -229,10 +229,16 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
     RefPtr page = this->page();
     const auto& mainFrameCommitData = *mainFrameData;
 
-    m_pageScalingLayerID = mainFrameCommitData.pageScalingLayerID;
-    m_pageScrollingLayerID = mainFrameCommitData.scrolledContentsLayerID;
-    m_scrolledContentsLayerID = mainFrameCommitData.scrolledContentsLayerID;
-    m_mainFrameClipLayerID = mainFrameCommitData.mainFrameClipLayerID;
+    auto qualify = [processIdentifier = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier()] (Markable<PlatformLayerIdentifier> layerID) -> Markable<QualifiedPlatformLayerIdentifier> {
+        if (!layerID)
+            return { };
+        return QualifiedPlatformLayerIdentifier { *layerID, processIdentifier };
+    };
+
+    m_pageScalingLayerID = qualify(mainFrameCommitData.pageScalingLayerID);
+    m_pageScrollingLayerID = qualify(mainFrameCommitData.scrolledContentsLayerID);
+    m_scrolledContentsLayerID = qualify(mainFrameCommitData.scrolledContentsLayerID);
+    m_mainFrameClipLayerID = qualify(mainFrameCommitData.mainFrameClipLayerID);
 
     if (m_transientZoomScale)
         applyTransientZoomToLayer();

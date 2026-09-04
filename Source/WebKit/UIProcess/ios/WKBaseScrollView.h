@@ -65,12 +65,12 @@ class RemoteLayerTreeHost;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 @property (nonatomic) NSUInteger _scrollingBehavior;
 @property (nonatomic, readonly, getter=overlayRegionsForTesting) HashSet<WebCore::IntRect>& overlayRegionRects;
-@property (nonatomic, readonly, getter=overlayRegionAssociatedLayersForTesting) HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionAssociatedLayers;
+@property (nonatomic, readonly, getter=overlayRegionAssociatedLayersForTesting) HashSet<WebCore::QualifiedPlatformLayerIdentifier>& overlayRegionAssociatedLayers;
 
 
 - (BOOL)_hasEnoughContentForOverlayRegions;
 - (void)_updateOverlayRegionRects:(const HashSet<WebCore::IntRect>&)overlayRegions whileStable:(BOOL)stable;
-- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host;
+- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::QualifiedPlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host;
 - (void)_updateOverlayRegionsBehavior:(BOOL)selected;
 #endif // ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 

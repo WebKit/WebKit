@@ -121,8 +121,8 @@ public:
 
     virtual std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
-    void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
-    void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
+    void acceleratedAnimationDidStart(WebCore::QualifiedPlatformLayerIdentifier, const String& key, MonotonicTime startTime);
+    void acceleratedAnimationDidEnd(WebCore::QualifiedPlatformLayerIdentifier, const String& key);
 
     TransactionID NODELETE nextMainFrameLayerTreeTransactionID() const;
     TransactionID NODELETE lastCommittedMainFrameLayerTreeTransactionID() const;
@@ -132,7 +132,7 @@ public:
 
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
-    RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RetainPtr<CALayer> layerWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const;
 
     void viewWillStartLiveResize() final;
     void viewWillEndLiveResize() final;
@@ -142,7 +142,7 @@ public:
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
-    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const;
 #endif
 
     // For testing.
@@ -226,7 +226,7 @@ private:
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) { }
 
-    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
+    void asyncSetLayerContents(IPC::Connection&, WebCore::PlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
 
     void sendUpdateGeometry();
 

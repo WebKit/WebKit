@@ -52,13 +52,13 @@ class RemoteLayerTreeScrollbars;
 class RemoteLayerTreeNode final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteLayerTreeNode, WTF::DestructionThread::MainRunLoop> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteLayerTreeNode);
 public:
-    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::QualifiedPlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    static Ref<RemoteLayerTreeNode> create(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+    static Ref<RemoteLayerTreeNode> create(WebCore::QualifiedPlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
 #endif
     ~RemoteLayerTreeNode();
 
-    static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::PlatformLayerIdentifier);
+    static Ref<RemoteLayerTreeNode> createWithPlainLayer(WebCore::QualifiedPlatformLayerIdentifier);
 
     CALayer *layer() const LIFETIME_BOUND { return m_layer.get(); }
 #if ENABLE(GAZE_GLOW_FOR_INTERACTION_REGIONS) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
@@ -97,22 +97,22 @@ public:
     UIView *uiView() const { return m_uiView.get(); }
 #endif
 
-    WebCore::PlatformLayerIdentifier layerID() const { return m_layerID; }
+    WebCore::QualifiedPlatformLayerIdentifier layerID() const { return m_layerID; }
 
     const WebCore::EventRegion& eventRegion() const LIFETIME_BOUND { return m_eventRegion; }
     void setEventRegion(const WebCore::EventRegion&);
 
     // Non-ancestor scroller that controls positioning of the layer.
-    std::optional<WebCore::PlatformLayerIdentifier> actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
+    std::optional<WebCore::QualifiedPlatformLayerIdentifier> actingScrollContainerID() const { return m_actingScrollContainerID.asOptional(); }
     // Ancestor scrollers that don't affect positioning of the layer.
-    const Vector<WebCore::PlatformLayerIdentifier>& stationaryScrollContainerIDs() const LIFETIME_BOUND { return m_stationaryScrollContainerIDs; }
+    const Vector<WebCore::QualifiedPlatformLayerIdentifier>& stationaryScrollContainerIDs() const LIFETIME_BOUND { return m_stationaryScrollContainerIDs; }
 
-    void setActingScrollContainerID(std::optional<WebCore::PlatformLayerIdentifier> value) { m_actingScrollContainerID = value; }
-    void setStationaryScrollContainerIDs(Vector<WebCore::PlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTF::move(value); }
+    void setActingScrollContainerID(std::optional<WebCore::QualifiedPlatformLayerIdentifier> value) { m_actingScrollContainerID = value; }
+    void setStationaryScrollContainerIDs(Vector<WebCore::QualifiedPlatformLayerIdentifier>&& value) { m_stationaryScrollContainerIDs = WTF::move(value); }
 
     void detachFromParent();
 
-    static std::optional<WebCore::PlatformLayerIdentifier> layerID(CALayer *);
+    static std::optional<WebCore::QualifiedPlatformLayerIdentifier> layerID(CALayer *);
     static RemoteLayerTreeNode* forCALayer(CALayer *);
 
     static NSString *appendLayerDescription(NSString *description, CALayer *);
@@ -164,14 +164,14 @@ public:
     void setBackdropRootIsOpaque(bool backdropRootIsOpaque) { m_backdropRootIsOpaque = backdropRootIsOpaque; }
 
 private:
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
+    RemoteLayerTreeNode(WebCore::QualifiedPlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<CALayer>);
 #if PLATFORM(IOS_FAMILY)
-    RemoteLayerTreeNode(WebCore::PlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
+    RemoteLayerTreeNode(WebCore::QualifiedPlatformLayerIdentifier, Markable<WebCore::LayerHostingContextIdentifier>, RetainPtr<UIView>);
 #endif
 
     void initializeLayer();
 
-    const WebCore::PlatformLayerIdentifier m_layerID;
+    const WebCore::QualifiedPlatformLayerIdentifier m_layerID;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostingIdentifier;
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
@@ -215,8 +215,8 @@ private:
     Markable<WebCore::ScrollingNodeID> m_scrollingNodeID;
 #endif
 
-    Markable<WebCore::PlatformLayerIdentifier> m_actingScrollContainerID;
-    Vector<WebCore::PlatformLayerIdentifier> m_stationaryScrollContainerIDs;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> m_actingScrollContainerID;
+    Vector<WebCore::QualifiedPlatformLayerIdentifier> m_stationaryScrollContainerIDs;
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
     std::optional<WebCore::RenderingResourceIdentifier> m_asyncContentsIdentifier;

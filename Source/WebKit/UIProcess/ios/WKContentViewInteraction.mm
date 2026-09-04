@@ -10799,7 +10799,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self cleanUpDragSourceSessionState];
 }
 
-- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID
+- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item processIdentifier:(WebCore::ProcessIdentifier)processIdentifier nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID
 {
     ASSERT(item.sourceAction);
 
@@ -10807,7 +10807,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _dragDropInteractionState.setElementIdentifier(nodeID);
     if (item.modelLayerID && _page) {
         if (RefPtr portalPresentationManager = _page->portalPresentationManagerProxy()) {
-            if (RetainPtr viewForDragPreview = portalPresentationManager->startDragForModel(*item.modelLayerID)) {
+            if (RetainPtr viewForDragPreview = portalPresentationManager->startDragForModel({ *item.modelLayerID, processIdentifier })) {
                 _dragDropInteractionState.stageDragItem(item, viewForDragPreview);
                 return;
             }
@@ -14524,7 +14524,12 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
                 return self;
         }
 
-        RetainPtr enclosingView = [self _viewForLayerID:page->editorState().visualData->enclosingLayerID];
+        std::optional<WebCore::QualifiedPlatformLayerIdentifier> enclosingLayerID;
+        if (auto layerID = page->editorState().visualData->enclosingLayerID) {
+            if (auto processID = page->processIdentifierForEditorState())
+                enclosingLayerID = WebCore::QualifiedPlatformLayerIdentifier { *layerID, *processID };
+        }
+        RetainPtr enclosingView = [self _viewForLayerID:enclosingLayerID];
         if (![enclosingView window])
             return self;
 
@@ -14539,7 +14544,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
     return _cachedSelectionContainerView;
 }
 
-- (UIView *)_viewForLayerID:(std::optional<WebCore::PlatformLayerIdentifier>)layerID
+- (UIView *)_viewForLayerID:(std::optional<WebCore::QualifiedPlatformLayerIdentifier>)layerID
 {
     WeakPtr drawingArea = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea());
     if (!drawingArea)

@@ -1398,7 +1398,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     auto animationStack = [&] -> RefPtr<const WebKit::RemoteAnimationStack> {
         if (!layerID)
             return nullptr;
-        WebCore::PlatformLayerIdentifier platformLayerID { ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() };
+        WebCore::QualifiedPlatformLayerIdentifier platformLayerID { ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() };
         if (RefPtr nodeStack = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->animationStackForNodeWithIDForTesting(platformLayerID))
             return nodeStack;
         if (CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())

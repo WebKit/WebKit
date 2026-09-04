@@ -777,7 +777,7 @@ void RemoteLayerTreeEventDispatcher::updateAnimations(AnimationStacksToUpdate an
     }
 }
 
-RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+RefPtr<const RemoteAnimationStack> RemoteLayerTreeEventDispatcher::animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier layerID) const
 {
     assertIsHeld(m_animationLock);
     return m_animationStacks.get(layerID);

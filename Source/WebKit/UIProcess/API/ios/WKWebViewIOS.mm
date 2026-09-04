@@ -5400,7 +5400,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!_page || _perProcessState.pendingFindLayerID || _perProcessState.committedFindLayerID)
         return;
 
-    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (std::optional<WebCore::PlatformLayerIdentifier> layerID) {
+    _page->addLayerForFindOverlay([weakSelf = WeakObjCPtr<WKWebView>(self)] (std::optional<WebCore::QualifiedPlatformLayerIdentifier> layerID) {
         auto strongSelf = weakSelf.get();
         if (strongSelf)
             strongSelf->_perProcessState.pendingFindLayerID = layerID;

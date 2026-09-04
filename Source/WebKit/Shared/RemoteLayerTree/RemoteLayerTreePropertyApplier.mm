@@ -632,6 +632,11 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
     if (!properties.changedProperties.contains(LayerChange::ChildrenChanged))
         return;
 
+    // A layer's children are created by the same process as the layer itself.
+    auto relatedLayer = [&] (WebCore::PlatformLayerIdentifier child) {
+        return relatedLayers.get({ child, node.layerID().processIdentifier() });
+    };
+
 #if PLATFORM(IOS_FAMILY)
     auto hasViewChildren = [&] {
         RetainPtr uiView = node.uiView();
@@ -639,7 +644,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
             return true;
         if (properties.children.isEmpty())
             return false;
-        RefPtr childNode = relatedLayers.get(properties.children.first());
+        RefPtr childNode = relatedLayer(properties.children.first());
         ASSERT(childNode);
         return childNode && childNode->uiView();
     };
@@ -654,7 +659,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 #endif
 
         [view _web_setSubviews:createNSArray(properties.children, [&] (auto& child) -> UIView * {
-            auto* childNode = relatedLayers.get(child);
+            auto* childNode = relatedLayer(child);
             ASSERT(childNode);
             if (!childNode)
                 return nil;
@@ -678,7 +683,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 #endif
 
     [layer setSublayers:createNSArray(properties.children, [&] (auto& child) -> CALayer * {
-        auto* childNode = relatedLayers.get(child);
+        auto* childNode = relatedLayer(child);
         ASSERT(childNode);
         if (!childNode)
             return nil;
@@ -707,7 +712,7 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
         return;
     }
 
-    RefPtr maskNode = relatedLayers.get(*properties.maskLayerID);
+    RefPtr maskNode = relatedLayers.get({ *properties.maskLayerID, node.layerID().processIdentifier() });
     ASSERT(maskNode);
     if (!maskNode)
         return;

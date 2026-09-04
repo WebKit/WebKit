@@ -116,7 +116,7 @@ private:
     ScrollingDeltaWindow<3> _scrollingDeltaWindow;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::IntRect> _overlayRegionRects;
-    HashSet<WebCore::PlatformLayerIdentifier> _overlayRegionAssociatedLayers;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> _overlayRegionAssociatedLayers;
 #endif
 }
 
@@ -268,7 +268,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
 
-- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::PlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host
+- (void)_associateRelatedLayersForOverlayRegions:(const HashSet<WebCore::QualifiedPlatformLayerIdentifier>&)relatedLayers with:(const WebKit::RemoteLayerTreeHost&)host
 {
     auto diff = _overlayRegionAssociatedLayers.symmetricDifferenceWith(relatedLayers);
     if (diff.isEmpty())

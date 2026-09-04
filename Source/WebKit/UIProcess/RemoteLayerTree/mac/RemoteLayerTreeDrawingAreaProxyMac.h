@@ -56,10 +56,10 @@ public:
     DisplayLink* existingDisplayLink();
 
     void NODELETE updateZoomTransactionID();
-    std::optional<WebCore::PlatformLayerIdentifier> pageScalingLayerID() { return m_pageScalingLayerID.asOptional(); }
-    std::optional<WebCore::PlatformLayerIdentifier> pageScrollingLayerID() { return m_pageScrollingLayerID.asOptional(); }
-    std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
-    std::optional<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
+    std::optional<WebCore::QualifiedPlatformLayerIdentifier> pageScalingLayerID() { return m_pageScalingLayerID.asOptional(); }
+    std::optional<WebCore::QualifiedPlatformLayerIdentifier> pageScrollingLayerID() { return m_pageScrollingLayerID.asOptional(); }
+    std::optional<WebCore::QualifiedPlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
+    std::optional<WebCore::QualifiedPlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
 
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
@@ -110,10 +110,10 @@ private:
     const Ref<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
     const WeakPtr<WebProcessPool> m_processPool;
 
-    Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
-    Markable<WebCore::PlatformLayerIdentifier> m_pageScrollingLayerID;
-    Markable<WebCore::PlatformLayerIdentifier> m_scrolledContentsLayerID;
-    Markable<WebCore::PlatformLayerIdentifier> m_mainFrameClipLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> m_pageScalingLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> m_pageScrollingLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> m_scrolledContentsLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> m_mainFrameClipLayerID;
 
     bool m_shouldLogNextObserverChange { false };
     bool m_shouldLogNextDisplayRefresh { false };

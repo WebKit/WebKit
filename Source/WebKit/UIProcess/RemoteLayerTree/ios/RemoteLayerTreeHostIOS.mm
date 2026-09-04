@@ -58,10 +58,10 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection& connection, const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
+RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(QualifiedPlatformLayerIdentifier layerID, const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithView = [&] (RetainPtr<UIView>&& view) {
-        return RemoteLayerTreeNode::create(*properties.layerID, properties.hostIdentifier(), WTF::move(view));
+        return RemoteLayerTreeNode::create(layerID, properties.hostIdentifier(), WTF::move(view));
     };
 
     switch (properties.type) {
@@ -76,7 +76,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
         return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
     case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
-        return RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);
+        return RemoteLayerTreeNode::createWithPlainLayer(layerID);
 
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
         return makeWithView(adoptNS([[WKBackdropView alloc] init]));
@@ -107,8 +107,8 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
         if (properties.videoElementData) {
             if (RefPtr page = protect(m_drawingArea)->page()) {
                 if (RefPtr videoManager = page->videoPresentationManager()) {
-                    auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() };
-                    m_videoLayers.add(*properties.layerID, playerIdentifier);
+                    auto playerIdentifier = PlaybackSessionContextIdentifier { properties.videoElementData->playerIdentifier, layerID.processIdentifier() };
+                    m_videoLayers.add(layerID, playerIdentifier);
                 WebCore::HostingContext hostingContext;
                 hostingContext.contextID = properties.hostingContextID();
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
@@ -127,8 +127,8 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const IPC::Connection&
 #if ENABLE(MODEL_PROCESS) && HAVE(CORE_RE)
         if (auto modelContext = properties.modelContext()) {
             if (auto portalPresentationManager = m_drawingArea->page() ? m_drawingArea->page()->portalPresentationManagerProxy() : nullptr) {
-                if (auto view = portalPresentationManager->setUpModelView(*modelContext)) {
-                    m_modelLayers.add(modelContext->modelLayerIdentifier());
+                if (auto view = portalPresentationManager->setUpModelView(layerID.processIdentifier(), *modelContext)) {
+                    m_modelLayers.add(QualifiedPlatformLayerIdentifier { modelContext->modelLayerIdentifier(), layerID.processIdentifier() });
                     return makeWithView(WTF::move(view));
                 }
             }

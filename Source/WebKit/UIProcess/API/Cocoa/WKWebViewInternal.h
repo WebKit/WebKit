@@ -313,8 +313,8 @@ struct PerWebProcessState {
 
     std::optional<WebKit::TransactionID> firstTransactionIDAfterPageRestore;
 
-    Markable<WebCore::PlatformLayerIdentifier> pendingFindLayerID;
-    Markable<WebCore::PlatformLayerIdentifier> committedFindLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> pendingFindLayerID;
+    Markable<WebCore::QualifiedPlatformLayerIdentifier> committedFindLayerID;
 
     std::optional<LiveResizeParameters> liveResizeParameters;
 

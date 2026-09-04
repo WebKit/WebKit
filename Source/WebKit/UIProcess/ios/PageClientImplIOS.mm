@@ -1167,12 +1167,18 @@ void PageClientImpl::didPerformDragOperation(bool handled)
     [contentView() _didPerformDragOperation:handled];
 }
 
-void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>&)
+void PageClientImpl::startDrag(const DragItem& item, ShareableBitmap::Handle&& image, const std::optional<NodeIdentifier>& nodeID, const std::optional<FrameIdentifier>& frameID)
 {
     auto bitmap = ShareableBitmap::create(WTF::move(image));
     if (!bitmap)
         return;
-    [contentView() _startDrag:bitmap->createPlatformImage() item:item nodeID:nodeID];
+
+    // The drag item's layer identifiers were created by the process running the frame the drag started in.
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+    auto processIdentifier = protect(frame->process())->coreProcessIdentifier();
+    [contentView() _startDrag:bitmap->createPlatformImage() item:item processIdentifier:processIdentifier nodeID:nodeID];
 }
 
 void PageClientImpl::willReceiveEditDragSnapshot()

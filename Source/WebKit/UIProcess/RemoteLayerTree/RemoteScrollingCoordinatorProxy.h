@@ -151,7 +151,7 @@ public:
     virtual void didCommitLayerAndScrollingTrees() { }
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    virtual void updateOverlayRegions(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers = { }) { }
+    virtual void updateOverlayRegions(const Vector<WebCore::QualifiedPlatformLayerIdentifier>& destroyedLayers = { }) { }
     virtual void overlayRegionsEnabledChanged() { }
 #endif
 
@@ -161,7 +161,7 @@ public:
     virtual void updateTimelinesRegistration(WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&, MonotonicTime) { }
     virtual RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const { return nullptr; }
     virtual void progressBasedTimelinesWereUpdatedForNode(const WebCore::ScrollingTreeScrollingNode&) { }
-    virtual RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const { return nullptr; }
+    virtual RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const { return nullptr; }
     virtual HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const { return { }; }
     virtual bool hasHighImpactMonotonicAnimations() const { return false; }
 #endif
@@ -220,7 +220,7 @@ protected:
 
     RemoteScrollingTree& scrollingTree() const { return m_scrollingTree.get(); }
 
-    virtual void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) = 0;
+    virtual void connectStateNodeLayers(WebCore::ProcessIdentifier, WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) = 0;
 
     virtual void didReceiveWheelEvent(bool /* wasHandled */) { }
 
@@ -234,7 +234,7 @@ protected:
     WebCore::ScrollRequestData m_scrollRequestData;
     RemoteScrollingUIState m_uiState;
     bool m_waitingForDidScrollReply { false };
-    HashSet<WebCore::PlatformLayerIdentifier> m_layersWithScrollingRelations;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> m_layersWithScrollingRelations;
 };
 
 } // namespace WebKit

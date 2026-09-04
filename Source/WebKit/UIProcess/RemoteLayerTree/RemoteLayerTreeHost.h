@@ -62,32 +62,32 @@ public:
     explicit RemoteLayerTreeHost(RemoteLayerTreeDrawingAreaProxy&);
     ~RemoteLayerTreeHost();
 
-    RemoteLayerTreeNode* nodeForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
+    RemoteLayerTreeNode* nodeForID(std::optional<WebCore::QualifiedPlatformLayerIdentifier>) const;
     RefPtr<RemoteLayerTreeNode> rootNode() const { return m_rootNode.get(); }
 
-    RetainPtr<CALayer> layerForID(std::optional<WebCore::PlatformLayerIdentifier>) const;
+    RetainPtr<CALayer> layerForID(std::optional<WebCore::QualifiedPlatformLayerIdentifier>) const;
     RetainPtr<CALayer> rootLayer() const;
 
     RemoteLayerTreeDrawingAreaProxy& NODELETE drawingArea() const;
 
     // Returns true if the root layer changed.
     bool updateLayerTree(const IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, float indicatorScaleFactor  = 1);
-    void asyncSetLayerContents(WebCore::PlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
+    void asyncSetLayerContents(WebCore::QualifiedPlatformLayerIdentifier, RemoteLayerBackingStoreProperties&&);
 
     void setIsDebugLayerTreeHost(bool flag) { m_isDebugLayerTreeHost = flag; }
     bool isDebugLayerTreeHost() const { return m_isDebugLayerTreeHost; }
 
-    typedef HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
+    typedef HashMap<WebCore::QualifiedPlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> LayerAnimationDelegateMap;
     LayerAnimationDelegateMap& animationDelegates() LIFETIME_BOUND { return m_animationDelegates; }
 
-    void animationDidStart(std::optional<WebCore::PlatformLayerIdentifier>, CAAnimation *, MonotonicTime startTime);
-    void animationDidEnd(std::optional<WebCore::PlatformLayerIdentifier>, CAAnimation *);
+    void animationDidStart(std::optional<WebCore::QualifiedPlatformLayerIdentifier>, CAAnimation *, MonotonicTime startTime);
+    void animationDidEnd(std::optional<WebCore::QualifiedPlatformLayerIdentifier>, CAAnimation *);
 
 #if ENABLE(THREADED_ANIMATIONS)
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     RefPtr<const RemoteAnimationTimeline> timeline(const TimelineID&) const;
-    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RefPtr<const RemoteAnimationStack> animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const;
 #endif
 
     void NODELETE detachFromDrawingArea();
@@ -96,7 +96,7 @@ public:
     // Detach the root layer; it will be reattached upon the next incoming commit.
     void detachRootLayer();
 
-    RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
+    RetainPtr<CALayer> layerWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier) const;
 
     bool NODELETE replayDynamicContentScalingDisplayListsIntoBackingStore() const;
     bool threadedAnimationsEnabled() const;
@@ -107,25 +107,25 @@ public:
 
 private:
 
-    void createLayer(const IPC::Connection&, const RemoteLayerTreeTransaction::LayerCreationProperties&);
-    RefPtr<RemoteLayerTreeNode> makeNode(const IPC::Connection&, const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    void createLayer(WebCore::QualifiedPlatformLayerIdentifier, const RemoteLayerTreeTransaction::LayerCreationProperties&);
+    RefPtr<RemoteLayerTreeNode> makeNode(WebCore::QualifiedPlatformLayerIdentifier, const RemoteLayerTreeTransaction::LayerCreationProperties&);
 
-    bool updateBannerLayers(const std::optional<MainFrameData>&);
+    bool updateBannerLayers(WebCore::ProcessIdentifier, const std::optional<MainFrameData>&);
 
-    void layerWillBeRemoved(WebCore::ProcessIdentifier, WebCore::PlatformLayerIdentifier);
+    void layerWillBeRemoved(WebCore::QualifiedPlatformLayerIdentifier);
 
     WeakPtr<RemoteLayerTreeDrawingAreaProxy> m_drawingArea;
     ThreadSafeWeakPtr<RemoteLayerTreeNode> m_rootNode;
-    HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteLayerTreeNode>> m_nodes;
-    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostingLayers;
-    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::PlatformLayerIdentifier> m_hostedLayers;
-    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::PlatformLayerIdentifier>> m_hostedLayersInProcess;
-    HashMap<WebCore::PlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, Ref<RemoteLayerTreeNode>> m_nodes;
+    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::QualifiedPlatformLayerIdentifier> m_hostingLayers;
+    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::QualifiedPlatformLayerIdentifier> m_hostedLayers;
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::QualifiedPlatformLayerIdentifier>> m_hostedLayersInProcess;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
 #if HAVE(AVKIT)
-    HashMap<WebCore::PlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, PlaybackSessionContextIdentifier> m_videoLayers;
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
-    HashSet<WebCore::PlatformLayerIdentifier> m_modelLayers;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> m_modelLayers;
 #endif
     bool m_isDebugLayerTreeHost { false };
 };

@@ -265,7 +265,7 @@ OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *ro
 
 UIScrollView *findActingScrollParent(UIScrollView *scrollView, const RemoteLayerTreeHost& host)
 {
-    HashSet<WebCore::PlatformLayerIdentifier> scrollersToSkip;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> scrollersToSkip;
 
     for (UIView *view = [scrollView superview]; view; view = [view superview]) {
         if ([view isKindOfClass:[WKChildScrollView class]] && !scrollersToSkip.contains(*RemoteLayerTreeNode::layerID(view.layer))) {

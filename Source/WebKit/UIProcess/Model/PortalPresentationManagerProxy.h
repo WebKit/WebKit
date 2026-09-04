@@ -51,10 +51,10 @@ public:
 
     virtual ~PortalPresentationManagerProxy();
 
-    RetainPtr<WKPageHostedPortalView> setUpModelView(Ref<WebCore::ModelContext>);
-    RetainPtr<UIView> startDragForModel(const WebCore::PlatformLayerIdentifier&);
+    RetainPtr<WKPageHostedPortalView> setUpModelView(WebCore::ProcessIdentifier, Ref<WebCore::ModelContext>);
+    RetainPtr<UIView> startDragForModel(const WebCore::QualifiedPlatformLayerIdentifier&);
     void doneWithCurrentDragSession();
-    void invalidateModel(const WebCore::PlatformLayerIdentifier&);
+    void invalidateModel(const WebCore::QualifiedPlatformLayerIdentifier&);
     void invalidateAllModels();
     void pageScaleDidChange(CGFloat);
 
@@ -70,10 +70,10 @@ private:
         RetainPtr<WKPageHostedPortalView> pageHostedPortalView;
     };
 
-    PortalPresentation& ensurePortalPresentation(Ref<WebCore::ModelContext>, const WebPageProxy&);
+    PortalPresentation& ensurePortalPresentation(WebCore::ProcessIdentifier, Ref<WebCore::ModelContext>, const WebPageProxy&);
 
-    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<PortalPresentation>> m_portalPresentations;
-    HashSet<WebCore::PlatformLayerIdentifier> m_activelyDraggedModelLayerIDs;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, UniqueRef<PortalPresentation>> m_portalPresentations;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> m_activelyDraggedModelLayerIDs;
     WeakPtr<WebPageProxy> m_page;
 };
 

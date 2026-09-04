@@ -531,8 +531,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
             scrollingCoordinatorProxy->adjustMainFrameDelegatedScrollPosition(WTF::move(requestedScroll));
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-        if (layerTreeTransaction.changedLayerProperties().size() || layerTreeTransaction.destroyedLayers().size())
-            scrollingCoordinatorProxy->updateOverlayRegions(layerTreeTransaction.destroyedLayers());
+        if (layerTreeTransaction.changedLayerProperties().size() || layerTreeTransaction.destroyedLayers().size()) {
+            auto processIdentifier = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
+            scrollingCoordinatorProxy->updateOverlayRegions(layerTreeTransaction.destroyedLayers().map([processIdentifier] (auto& layerID) {
+                return WebCore::QualifiedPlatformLayerIdentifier { layerID, processIdentifier };
+            }));
+        }
 #endif
 
         if (m_debugIndicatorLayerTreeHost && mainFrameData) {
@@ -552,21 +556,21 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     page->layerTreeCommitComplete();
 }
 
-void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLayerIdentifier layerID, RemoteLayerBackingStoreProperties&& properties)
+void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(IPC::Connection& connection, WebCore::PlatformLayerIdentifier layerID, RemoteLayerBackingStoreProperties&& properties)
 {
-    m_remoteLayerTreeHost->asyncSetLayerContents(layerID, WTF::move(properties));
+    m_remoteLayerTreeHost->asyncSetLayerContents({ layerID, WebProcessProxy::fromConnection(connection)->coreProcessIdentifier() }, WTF::move(properties));
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::QualifiedPlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
     if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
-        connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
+        connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID.object(), key, startTime), identifier());
 }
 
-void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
+void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::QualifiedPlatformLayerIdentifier layerID, const String& key)
 {
     if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
-        connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());
+        connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID.object(), key), identifier());
 }
 
 static const float indicatorInset = 10;
@@ -918,7 +922,7 @@ bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
     return m_remoteLayerTreeHost->rootLayer();
 }
 
-RetainPtr<CALayer> RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+RetainPtr<CALayer> RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier layerID) const
 {
     return m_remoteLayerTreeHost->layerWithIDForTesting(layerID);
 }
@@ -973,7 +977,7 @@ RefPtr<const RemoteAnimationTimeline> RemoteLayerTreeDrawingAreaProxy::timeline(
     return nullptr;
 }
 
-RefPtr<const RemoteAnimationStack> RemoteLayerTreeDrawingAreaProxy::animationStackForNodeWithIDForTesting(WebCore::PlatformLayerIdentifier layerID) const
+RefPtr<const RemoteAnimationStack> RemoteLayerTreeDrawingAreaProxy::animationStackForNodeWithIDForTesting(WebCore::QualifiedPlatformLayerIdentifier layerID) const
 {
     return m_remoteLayerTreeHost->animationStackForNodeWithIDForTesting(layerID);
 }

@@ -924,7 +924,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didPerformDragOperation:(BOOL)handled;
 - (void)_didHandleDragStartRequest:(BOOL)started;
 - (void)_didHandleAdditionalDragItemsRequest:(BOOL)added;
-- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID;
+- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item processIdentifier:(WebCore::ProcessIdentifier)processIdentifier nodeID:(std::optional<WebCore::NodeIdentifier>)nodeID;
 - (void)_willReceiveEditDragSnapshot;
 - (void)_didReceiveEditDragSnapshot:(RefPtr<WebCore::TextIndicator>&&)textIndicator;
 - (void)_didChangeDragCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;

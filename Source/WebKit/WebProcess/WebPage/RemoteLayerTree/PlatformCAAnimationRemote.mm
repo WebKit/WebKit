@@ -53,7 +53,7 @@ static NSString * const WKExplicitBeginTimeFlag = @"WKPlatformCAAnimationExplici
 
 @implementation WKAnimationDelegate
 
-- (instancetype)initWithLayerID:(WebCore::PlatformLayerIdentifier)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
+- (instancetype)initWithLayerID:(WebCore::QualifiedPlatformLayerIdentifier)layerID layerTreeHost:(WebKit::RemoteLayerTreeHost*)layerTreeHost
 {
     if ((self = [super init])) {
         _layerID = layerID;

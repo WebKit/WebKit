@@ -68,7 +68,7 @@ public:
     void updateSnapIndicesForMainFrameOffset(CGPoint scrollOffset, CGFloat zoomScale);
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void updateOverlayRegions(const Vector<WebCore::PlatformLayerIdentifier>& destroyedLayers = { }) override;
+    void updateOverlayRegions(const Vector<WebCore::QualifiedPlatformLayerIdentifier>& destroyedLayers = { }) override;
     void overlayRegionsEnabledChanged() override;
 #endif
 
@@ -91,7 +91,7 @@ private:
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 
-    void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
+    void connectStateNodeLayers(WebCore::ProcessIdentifier, WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     void selectOverlayRegionScrollViewIfNeeded();
@@ -121,10 +121,10 @@ private:
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    HashMap<WebCore::PlatformLayerIdentifier, WebCore::ScrollingNodeID> m_scrollingNodesByLayerID;
-    HashMap<WebCore::PlatformLayerIdentifier, WebCore::ScrollingNodeID> m_fixedAndStickyScrollingNodesByLayerID;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, WebCore::ScrollingNodeID> m_scrollingNodesByLayerID;
+    HashMap<WebCore::QualifiedPlatformLayerIdentifier, WebCore::ScrollingNodeID> m_fixedAndStickyScrollingNodesByLayerID;
 #if ENABLE(OVERLAY_REGIONS_REMOTE_EFFECT)
-    HashMap<WebCore::ScrollingNodeID, WebCore::PlatformLayerIdentifier> m_layerIDsByFixedAndStickyScrollingNodeID;
+    HashMap<WebCore::ScrollingNodeID, WebCore::QualifiedPlatformLayerIdentifier> m_layerIDsByFixedAndStickyScrollingNodeID;
 #else
     HashSet<WebCore::IntRect> m_lastOverlayRegionRects;
 #endif
@@ -135,7 +135,7 @@ private:
 #endif
 
 #if ENABLE(THREADED_ANIMATIONS)
-    HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
+    HashSet<WebCore::QualifiedPlatformLayerIdentifier> m_animatedNodeLayerIDs;
     std::unique_ptr<RemoteMonotonicTimelineRegistry> m_monotonicTimelineRegistry;
 #endif
 };

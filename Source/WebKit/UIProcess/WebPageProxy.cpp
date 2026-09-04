@@ -4017,6 +4017,13 @@ const EditorState& WebPageProxy::editorState() const
     return internals().editorState;
 }
 
+std::optional<WebCore::ProcessIdentifier> WebPageProxy::processIdentifierForEditorState() const
+{
+    if (RefPtr frame = focusedOrMainFrame())
+        return protect(frame->process())->coreProcessIdentifier();
+    return std::nullopt;
+}
+
 bool WebPageProxy::hasSelectedRange() const
 {
     return editorState().selectionType == WebCore::SelectionType::Range;
@@ -7575,9 +7582,13 @@ void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, 
     sendWithAsyncReplyToProcessContainingFrame(current->frameID(), Messages::WebPage::RequestRectForFoundTextRange(range), WTF::move(callbackFunction));
 }
 
-void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&& callbackFunction)
+void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::QualifiedPlatformLayerIdentifier>)>&& callbackFunction)
 {
-    sendWithAsyncReply(Messages::WebPage::AddLayerForFindOverlay(), WTF::move(callbackFunction));
+    sendWithAsyncReply(Messages::WebPage::AddLayerForFindOverlay(), [processIdentifier = protect(legacyMainFrameProcess())->coreProcessIdentifier(), callbackFunction = WTF::move(callbackFunction)] (std::optional<WebCore::PlatformLayerIdentifier> layerID) mutable {
+        if (!layerID)
+            return callbackFunction(std::nullopt);
+        callbackFunction(WebCore::QualifiedPlatformLayerIdentifier { *layerID, processIdentifier });
+    });
 }
 
 void WebPageProxy::removeLayerForFindOverlay(CompletionHandler<void()>&& callbackFunction)

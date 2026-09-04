@@ -5420,7 +5420,7 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
     if (backing.paintsIntoCompositedAncestor())
         ts << " paintsIntoCompositedAncestor"_s;
 
-    ts << " primary layer ID "_s << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->object().toUInt64() : 0);
+    ts << " primary layer ID "_s << (backing.graphicsLayer()->primaryLayerID() ? backing.graphicsLayer()->primaryLayerID()->toUInt64() : 0);
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::ViewportConstrained))
         ts << " viewport constrained scrolling node "_s << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling))

@@ -3698,7 +3698,7 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
         return Exception { ExceptionCode::NotFoundError };
 
     auto* backing = layerModelObject.layer()->backing();
-    return backing->graphicsLayer()->primaryLayerID() ? backing->graphicsLayer()->primaryLayerID()->object().toUInt64() : 0;
+    return backing->graphicsLayer()->primaryLayerID() ? backing->graphicsLayer()->primaryLayerID()->toUInt64() : 0;
 }
 
 static ExceptionOr<uint64_t> getLayerID(GraphicsLayer* layer)
@@ -3710,7 +3710,7 @@ static ExceptionOr<uint64_t> getLayerID(GraphicsLayer* layer)
     if (!primaryLayerID)
         return Exception { ExceptionCode::NotFoundError };
 
-    return primaryLayerID ? primaryLayerID->object().toUInt64() : 0;
+    return primaryLayerID ? primaryLayerID->toUInt64() : 0;
 }
 
 ExceptionOr<uint64_t> Internals::horizontalScrollbarLayerID(Node* node) const
