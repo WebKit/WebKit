@@ -2774,6 +2774,11 @@ sub shouldRemoveCMakeCache(@)
     my (@buildArgs) = grep(/^-/, sort(@_, @originalArgv));
     push @buildArgs, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
+    # Dashed options that select what gets built, rather than how CMake configures the build,
+    # must not trigger a reconfiguration either: --makeargs carries build target names
+    # (e.g. --makeargs="jsc testapi"), and --generate-project-only just stops before the build step.
+    @buildArgs = grep(!/^--makeargs(=|$)/ && $_ ne "--generate-project-only", @buildArgs);
+
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = productDir();
     my $optionsCache = File::Spec->catdir($productDir, "build-webkit-options.txt");
