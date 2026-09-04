@@ -7990,16 +7990,20 @@ void WebPageProxy::preferencesDidChange()
     protect(websiteDataStore())->propagateSettingUpdates();
 }
 
-void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
+void WebPageProxy::didCreateSubframe(IPC::Untrusted<FrameIdentifier>&& untrustedParentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
 {
+    auto parentID = WTF::move(untrustedParentID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     if (!parent)
         return;
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
-void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
+void WebPageProxy::didDestroyFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID)
 {
+    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
@@ -8300,8 +8304,10 @@ void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::Fram
     }
 }
 
-void WebPageProxy::updateOpener(IPC::Connection& connection, WebCore::FrameIdentifier frameID, std::optional<WebCore::FrameIdentifier> newOpener)
+void WebPageProxy::updateOpener(IPC::Connection& connection, IPC::Untrusted<WebCore::FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::FrameIdentifier> newOpener)
 {
+    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->updateOpener(newOpener);
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
@@ -8457,8 +8463,10 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 #endif
 }
 
-void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, FrameIdentifier frameID, URL&& url, String&& mimeType)
+void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, URL&& url, String&& mimeType)
 {
+    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
@@ -9478,8 +9486,10 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
     }
 }
 
-void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, URL&& url, const UserData& userData)
+void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, URL&& url, const UserData& userData)
 {
+    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
     RefPtr protectedPageClient { pageClient() };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
