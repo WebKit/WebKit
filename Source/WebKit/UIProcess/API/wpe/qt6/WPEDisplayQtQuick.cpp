@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WPEDisplayQtQuick.h"
 
+#include "WPEQtInputMethodContextImpl.h"
 #include "WPEToplevelQtQuick.h"
 #include "WPEViewQtQuick.h"
 
@@ -48,6 +49,7 @@
 struct _WPEDisplayQtQuickPrivate {
     EGLDisplay eglDisplay;
     GRefPtr<WPEDRMDevice> drmDevice;
+    WPEInputMethodContext* im { nullptr };
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEDisplayQtQuick, wpe_display_qtquick, WPE_TYPE_DISPLAY, WPEDisplay)
 
@@ -116,11 +118,20 @@ static WPEDRMDevice* wpeDisplayQtQuickGetDRMDevice(WPEDisplay* display)
     return WPE_DISPLAY_QTQUICK(display)->priv->drmDevice.get();
 }
 
+static WPEInputMethodContext* wpeDisplayQtQuickCreateInputMethodContext(WPEDisplay* display, WPEView*)
+{
+    auto* priv = WPE_DISPLAY_QTQUICK(display)->priv;
+    priv->im = qt_input_method_context_impl_wpe_new();
+
+    return priv->im;
+}
+
 static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuickClass)
 {
     WPEDisplayClass* displayClass = WPE_DISPLAY_CLASS(displayQtQuickClass);
     displayClass->connect = wpeDisplayQtQuickConnect;
     displayClass->create_view = wpeDisplayQtQuickCreateView;
+    displayClass->create_input_method_context = wpeDisplayQtQuickCreateInputMethodContext;
     displayClass->get_egl_display = wpeDisplayQtQuickGetEGLDisplay;
     displayClass->get_drm_device = wpeDisplayQtQuickGetDRMDevice;
 }
@@ -128,4 +139,9 @@ static void wpe_display_qtquick_class_init(WPEDisplayQtQuickClass* displayQtQuic
 WPEDisplay* wpe_display_qtquick_new(void)
 {
     return WPE_DISPLAY(g_object_new(WPE_TYPE_DISPLAY_QTQUICK, nullptr));
+}
+
+WPEInputMethodContext* wpe_display_qtquick_get_input_method_context(WPEDisplay *display)
+{
+    return WPE_DISPLAY_QTQUICK(display)->priv->im;
 }
