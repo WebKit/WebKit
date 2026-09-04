@@ -38,4 +38,6 @@ enum EditableType {
     HasEditableAXRole
 };
 
+enum class StopAtEnclosingTableCell : bool { No, Yes };
+
 } // namespace WebCore

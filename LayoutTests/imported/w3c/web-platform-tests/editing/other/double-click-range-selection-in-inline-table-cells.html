@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>
+  This test is for testing that double click does not select beyond a table
+  cell boundary when the cell uses display:inline or display:inline-block,
+  while still selecting a single word within a cell.
+</title>
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=286666" />
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-actions.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<style>
+  table.inline th { display: inline-block; }
+  table.inline td { display: inline; }
+</style>
+<table class="inline">
+  <tr>
+    <th>head1</th>
+    <th id="title">head2</th>
+    <th>head3</th>
+  </tr>
+  <tr>
+    <td>one</td>
+    <td id="value">two</td>
+    <td>three</td>
+  </tr>
+</table>
+<table class="inline">
+  <tr>
+    <td>alpha beta <span id="inlineWord">gamma</span> delta</td>
+    <td>sibling</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td>alpha beta <span id="blockWord">gamma</span> delta</td>
+    <td>sibling</td>
+  </tr>
+</table>
+<table class="inline">
+  <tr>
+    <td>iota<span contenteditable id="editableInCell">kappa</span></td>
+    <td>lambda</td>
+  </tr>
+</table>
+<script>
+  async function doubleClickOnTargetAndCheckSelection(target, expectedSelection, assertionMessage) {
+    target.focus();
+    let actions = new test_driver.Actions()
+      .pointerMove(0, 0, { origin: target })
+      .pointerDown()
+      .pointerUp()
+      .pointerDown()
+      .pointerUp();
+    await actions.send();
+    const selection = window.getSelection();
+    let selectedText = selection.toString();
+    assert_equals(selectedText, expectedSelection, assertionMessage);
+  }
+
+  function runTests() {
+    promise_test(async () => {
+      await doubleClickOnTargetAndCheckSelection(
+        document.getElementById("title"),
+        "head2",
+        "Selected text should be equal to value in header col 2"
+      );
+    }, "Double click on inline-block table cell selects only until cell boundary");
+
+    promise_test(async () => {
+      await doubleClickOnTargetAndCheckSelection(
+        document.getElementById("value"),
+        "two",
+        "Selected text should be equal to value in col 2"
+      );
+    }, "Double click on inline table cell selects only until cell boundary");
+
+    promise_test(async () => {
+      await doubleClickOnTargetAndCheckSelection(
+        document.getElementById("inlineWord"),
+        "gamma",
+        "Selected text should be a single word within the inline cell"
+      );
+    }, "Double click in a multi-word inline table cell selects one word, not the whole cell");
+
+    promise_test(async () => {
+      await doubleClickOnTargetAndCheckSelection(
+        document.getElementById("blockWord"),
+        "gamma",
+        "Selected text should be a single word within the normal cell"
+      );
+    }, "Double click in a multi-word normal table cell still selects one word");
+
+    promise_test(async () => {
+      await doubleClickOnTargetAndCheckSelection(
+        document.getElementById("editableInCell"),
+        "kappa",
+        "Selected text should stop at the editable region, not run to the cell edge"
+      );
+    }, "Double click in an editable region inside an inline table cell stops at the editable region");
+  }
+
+  window.addEventListener("load", runTests, { once: true });
+</script>

@@ -1,0 +1,12 @@
+head1head2head3
+onetwothree
+alpha beta gamma deltasibling
+alpha beta gamma delta	sibling
+iotakappalambda
+
+PASS Double click on inline-block table cell selects only until cell boundary
+PASS Double click on inline table cell selects only until cell boundary
+PASS Double click in a multi-word inline table cell selects one word, not the whole cell
+PASS Double click in a multi-word normal table cell still selects one word
+PASS Double click in an editable region inside an inline table cell stops at the editable region
+

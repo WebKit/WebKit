@@ -642,6 +642,8 @@ editing/selection/editable-links.html [ Skip ]
 editing/selection/empty-cell-right-click.html [ Skip ]
 editing/selection/extend-after-mouse-selection.html [ Skip ]
 editing/selection/extend-selection-after-double-click.html [ Skip ]
+# webkit.org/b/286666 Double-click (double-tap) does not select a word on iOS; word selection uses long-press/loupe, so this desktop-gesture test yields an empty selection.
+imported/w3c/web-platform-tests/editing/other/double-click-range-selection-in-inline-table-cells.html [ Skip ]
 editing/selection/fake-drag.html [ Skip ]
 editing/selection/focus-and-display-none.html [ Skip ]
 editing/selection/focus-crash.html [ Skip ]
