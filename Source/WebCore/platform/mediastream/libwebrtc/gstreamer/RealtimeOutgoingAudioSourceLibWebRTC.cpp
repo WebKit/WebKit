@@ -117,13 +117,25 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
     size_t outBufferSize = outChunkSampleCount * m_outputStreamDescription.bpf;
 
     Locker locker { m_adapterLock };
-    size_t inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter.get(), outChunkSampleCount);
-    size_t inBufferSize = inChunkSampleCount * m_inputStreamDescription.bpf;
+    while (true) {
+        bool silenced = isSilenced();
+        size_t availableFrames = gst_adapter_available(m_adapter.get()) / m_inputStreamDescription.bpf;
+        size_t inChunkSampleCount;
+        if (silenced) {
+            // Silence bypasses the converter, so consume input at the nominal rate to keep pacing.
+            inChunkSampleCount = gst_audio_converter_get_in_frames(m_sampleConverter.get(), outChunkSampleCount);
+            if (inChunkSampleCount > availableFrames)
+                break;
+        } else {
+            auto frames = gstAudioConverterInputFramesForOutput(m_sampleConverter.get(), outChunkSampleCount, availableFrames);
+            if (!frames)
+                break;
+            inChunkSampleCount = *frames;
+        }
 
-    while (gst_adapter_available(m_adapter.get()) > inBufferSize) {
-        GRefPtr inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
+        GRefPtr inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inChunkSampleCount * m_inputStreamDescription.bpf));
         m_audioBuffer.grow(outBufferSize);
-        if (isSilenced()) {
+        if (silenced) {
             GST_TRACE("Audio buffer will contain silence");
             webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.mutableSpan().data(), outBufferSize);
         } else {
