@@ -3360,6 +3360,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         { "DoNotRevealSelection"_s, FindOption::DoNotRevealSelection },
         { "AtWordEnds"_s, FindOption::AtWordEnds },
         { "DoNotTraverseFlatTree"_s, FindOption::DoNotTraverseFlatTree },
+        { "IcuOnlyWordBoundaries"_s, FindOption::IcuOnlyWordBoundaries },
     });
     FindOptions result;
     for (auto& option : optionList) {

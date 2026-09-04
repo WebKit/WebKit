@@ -157,6 +157,7 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
         options.add(FindOption::AtWordStarts);
     if (wordEndBounded == WordBounded::Yes)
         options.add(FindOption::AtWordEnds);
+    options.add(FindOption::IcuOnlyWordBoundaries);
 
     auto foundText = findPlainText(searchRange, foldedQuery, options);
 
