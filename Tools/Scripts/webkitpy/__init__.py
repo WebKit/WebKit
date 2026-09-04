@@ -149,13 +149,13 @@ AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
 AutoInstall.register(Package('zipp', Version(1, 2, 0)))
 if sys.version_info >= (3, 10):
-    AutoInstall.register(Package('zope.interface', Version(8, 1, 1), aliases=['zope'], pypi_name='zope-interface', wheel=True))
+    AutoInstall.register(Package('zope.interface', Version(8, 1, 1), aliases=['zope'], pypi_name='zope-interface', wheel=(sys.version_info < (3, 15))))
 else:
     AutoInstall.register(Package('zope.interface', Version(7, 0, 1), aliases=['zope'], pypi_name='zope-interface', wheel=True))
 AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
 AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
 AutoInstall.register(Package('webkitexpectationspy', Version(1, 0, 0)), local=True)
-AutoInstall.register(Package('yaml', Version(6, 0, 3), pypi_name='PyYAML', wheel=True))
+AutoInstall.register(Package('yaml', Version(6, 0, 3), pypi_name='PyYAML', wheel=(sys.version_info < (3, 15))))
 
 import webkitscmpy
 
