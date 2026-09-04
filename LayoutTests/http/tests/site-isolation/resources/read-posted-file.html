@@ -1,0 +1,13 @@
+<script>
+onmessage = (event) => {
+    if (!(event.data instanceof File)) {
+        parent.postMessage("did not receive a File, received " + event.data, "*");
+        return;
+    }
+    event.data.text().then(
+        (text) => parent.postMessage("read '" + text + "' from the posted File", "*"),
+        (error) => parent.postMessage("failed to read the posted File: " + error, "*"));
+};
+
+onload = () => parent.postMessage("ready", "*");
+</script>

@@ -1,0 +1,10 @@
+Posting a File that was read back from IndexedDB to an out-of-process cross-origin iframe should let that iframe read the File instead of terminating its web process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "read 'contents stored in IndexedDB' from the posted File"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

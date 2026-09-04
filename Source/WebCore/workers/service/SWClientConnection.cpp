@@ -135,7 +135,7 @@ static void postMessageToContainer(ScriptExecutionContext& context, MessageWithM
         container->postMessage(WTF::move(message), WTF::move(sourceData), sourceOrigin.securityOrigin());
 }
 
-void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const SecurityOriginData& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const SecurityOriginData& sourceOrigin, CompletionHandlerCallingScope&& messageDispatched)
 {
     ASSERT(isMainThread());
 
@@ -143,7 +143,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContext
         postMessageToContainer(*destinationDocument, WTF::move(message), WTF::move(sourceData), sourceOrigin);
         return;
     }
-    ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTF::move(message), sourceData = WTF::move(sourceData).isolatedCopy(), sourceOrigin = sourceOrigin.isolatedCopy()](auto& context) mutable {
+    ScriptExecutionContext::postTaskTo(destinationContextIdentifier, [message = WTF::move(message), sourceData = WTF::move(sourceData).isolatedCopy(), sourceOrigin = sourceOrigin.isolatedCopy(), messageDispatched = WTF::move(messageDispatched)](auto& context) mutable {
         postMessageToContainer(context, WTF::move(message), WTF::move(sourceData), sourceOrigin);
     });
 }

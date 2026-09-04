@@ -1213,11 +1213,17 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     CheckedPtr session = networkSession();
     if (!session)
         return;
-    if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
-        MESSAGE_CHECK(isFilePathAllowed(fileBackedPath));
+
+    RefPtr<BlobDataFileReference> file;
+    if (!blobFileAccessEnforcementEnabled() || !shouldCheckBlobFileAccess() || isFilePathAllowed(fileBackedPath))
+        file = BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath);
+    else if (!session->blobRegistry().blobDataFromURL(srcURL)) {
+        CONNECTION_RELEASE_LOG_ERROR(Loading, "registerInternalBlobURLOptionallyFileBacked: refusing to back a blob with a file path this process is not allowed, and srcURL is not registered");
+        return;
+    }
 
     m_blobURLs.add({ url, std::nullopt });
-    session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
+    session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, WTF::move(file), contentType, { });
 }
 
 void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
@@ -1258,6 +1264,36 @@ void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, cons
 
     m_blobURLHandles.remove({ url, topOrigin });
     session->blobRegistry().unregisterBlobURLHandle(url, topOrigin);
+}
+
+bool NetworkConnectionToWebProcess::ownsBlobURL(const URL& url) const
+{
+    return m_blobURLs.contains({ url, std::nullopt }) || m_blobURLHandles.contains({ url, std::nullopt });
+}
+
+CompletionHandlerCallingScope NetworkConnectionToWebProcess::retainBlobURLsWhileMessageIsInFlight(const Vector<URL>& blobURLs)
+{
+    CheckedPtr session = networkSession();
+    if (!session || blobURLs.isEmpty())
+        return { };
+
+    Vector<URL> retainedBlobURLs;
+    for (auto& url : blobURLs) {
+        if (!ownsBlobURL(url) || !session->blobRegistry().blobDataFromURL(url))
+            continue;
+        session->blobRegistry().registerBlobURLHandle(url, std::nullopt);
+        retainedBlobURLs.append(url);
+    }
+    if (retainedBlobURLs.isEmpty())
+        return { };
+
+    return CompletionHandlerCallingScope { [networkProcess = WeakPtr { m_networkProcess.get() }, sessionID = m_sessionID, retainedBlobURLs = WTF::move(retainedBlobURLs)] {
+        CheckedPtr session = networkProcess ? networkProcess->networkSession(sessionID) : nullptr;
+        if (!session)
+            return;
+        for (auto& url : retainedBlobURLs)
+            session->blobRegistry().unregisterBlobURLHandle(url, std::nullopt);
+    } };
 }
 
 void NetworkConnectionToWebProcess::blobType(const URL& url, CompletionHandler<void(String)>&& completionHandler)
@@ -1859,7 +1895,7 @@ void NetworkConnectionToWebProcess::didDeliverMessagePortMessages(MessageBatchId
         callback();
 }
 
-void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& port)
+void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& port, Vector<URL>&& blobURLs)
 {
     CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
     RefPtr channel = registry->existingChannelContainingPort(port);
@@ -1876,7 +1912,7 @@ void NetworkConnectionToWebProcess::postMessageToRemote(MessageWithMessagePorts&
     for (auto& transferredPort : message.transferredPorts)
         MESSAGE_CHECK(registry->claimPendingTransferOrigin(transferredPort.first, m_webProcessIdentifier));
 
-    if (registry->didPostMessageToRemote(WTF::move(message), port)) {
+    if (registry->didPostMessageToRemote(WTF::move(message), port, retainBlobURLsWhileMessageIsInFlight(blobURLs))) {
         if (auto destinationProcess = channel->processForPort(port)) {
             if (RefPtr connectionToWebProcess = m_networkProcess->webProcessConnection(*destinationProcess))
                 connectionToWebProcess->m_connection->send(Messages::NetworkProcessConnection::MessagesAvailableForPort(port), 0);

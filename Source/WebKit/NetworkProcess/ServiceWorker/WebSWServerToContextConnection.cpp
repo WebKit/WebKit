@@ -133,11 +133,17 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
     return 0;
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin, Vector<URL>&& blobURLs)
 {
     RefPtr server = this->server();
-    if (RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
-        connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
+    RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr;
+    if (!connection)
+        return;
+
+    CompletionHandlerCallingScope blobURLsInFlight;
+    if (RefPtr contextProcessConnection = m_connection.get())
+        blobURLsInFlight = contextProcessConnection->retainBlobURLsWhileMessageIsInFlight(blobURLs);
+    connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin, WTF::move(blobURLsInFlight));
 }
 
 void WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)

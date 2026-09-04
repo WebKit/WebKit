@@ -202,9 +202,9 @@ static void fireMessageEvent(ServiceWorkerGlobalScope& scope, MessageWithMessage
     scope.updateExtendedEventsSet(messageEvent.event.ptr());
 }
 
-void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
+void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData, CompletionHandlerCallingScope&& messageDispatched)
 {
-    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, message = WTF::move(message), sourceData = WTF::move(sourceData)](auto& serviceWorkerGlobalScope) mutable {
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, message = WTF::move(message), sourceData = WTF::move(sourceData), messageDispatched = WTF::move(messageDispatched)](auto& serviceWorkerGlobalScope) mutable {
         URL sourceURL;
         auto source = WTF::switchOn(WTF::move(sourceData),
             [&](ServiceWorkerClientData&& sourceData) {
@@ -241,7 +241,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
             }
         );
         fireMessageEvent(serviceWorkerGlobalScope, WTF::move(message), WTF::move(source), sourceURL);
-        callOnMainThread([weakThis = WTF::move(weakThis)] {
+        callOnMainThread([weakThis = WTF::move(weakThis), messageDispatched = WTF::move(messageDispatched)] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->finishedFiringMessageEvent();
         });

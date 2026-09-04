@@ -37,6 +37,7 @@ messages -> WebSWContextManagerConnection {
     ForwardPendingStreamUploadError(WebCore::FetchIdentifier fetchIdentifier)
 
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
+    PostMessageToServiceWorkerAndNotifyWhenDispatched(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData) -> ()
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
     FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<std::span<const uint8_t>> data, std::optional<WebCore::NotificationPayload> proposedPayload) -> (bool handled, std::optional<WebCore::NotificationPayload> resultPayload)

@@ -30,6 +30,7 @@
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -48,7 +49,7 @@ public:
     WEBCORE_EXPORT void didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier);
     WEBCORE_EXPORT void didDisentangleMessagePort(const MessagePortIdentifier& local);
     WEBCORE_EXPORT void didCloseMessagePort(const MessagePortIdentifier& local, MessagePortStatus);
-    WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
+    WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight = { });
     WEBCORE_EXPORT void takeAllMessagesForPort(const MessagePortIdentifier&, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&&);
 
     WEBCORE_EXPORT MessagePortChannel* NODELETE existingChannelContainingPort(const MessagePortIdentifier&);
