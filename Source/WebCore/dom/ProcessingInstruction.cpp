@@ -34,7 +34,6 @@
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "SerializedNode.h"

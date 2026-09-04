@@ -26,6 +26,7 @@
 #include "HTMLLinkElement.h"
 
 #include "Attribute.h"
+#include "CSSParserContext.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResource.h"
 #include "CachedResourceRequest.h"
@@ -58,7 +59,6 @@
 #include "Logging.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "Page.h"
@@ -558,7 +558,7 @@ void HTMLLinkElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet, const CachedCSSStyleSheet& cachedStyleSheet, MediaQueryParserContext context)
+void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet, const CachedCSSStyleSheet& cachedStyleSheet, const CSSParserContext& context)
 {
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);
@@ -566,7 +566,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
     }
 
     m_sheet = CSSStyleSheet::create(WTF::move(styleSheet), *this, cachedStyleSheet.isCORSSameOrigin());
-    protect(m_sheet)->setMediaQueries(MQ::MediaQueryParser::parse(m_media, context.context));
+    protect(m_sheet)->setMediaQueries(MQ::MediaQueryParser::parse(m_media, context));
     if (!isInShadowTree())
         protect(m_sheet)->setTitle(title());
 
@@ -607,7 +607,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     if (auto restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy, frame->loader())) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
-        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet, MediaQueryParserContext(parserContext));
+        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet, parserContext);
 
         m_loading = false;
         sheetLoaded();
@@ -616,7 +616,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     }
 
     auto styleSheet = StyleSheetContents::create(href, parserContext);
-    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, MediaQueryParserContext(parserContext));
+    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, parserContext);
 
     // FIXME: Set the visibility option based on m_sheet being clean or not.
     // Best approach might be to set it on the style sheet content itself or its context parser otherwise.

@@ -31,7 +31,6 @@
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSSubstitutionParser.h"
 #include "ContainerQueryFeatures.h"
-#include "MediaQueryParserContext.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -46,7 +45,7 @@ using namespace MQ;
 //   <style-range-value> = <custom-property-name> | <style-feature-value>
 // Each operand is captured as an unresolved declaration value and resolved against the query
 // container during evaluation; a bare <custom-property-name> is detected there and treated as var().
-static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto isComparisonDelimiter = [](const CSSParserToken& token) {
         return token.type() == DelimiterToken
@@ -82,7 +81,7 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
         // name for parsing/resolution; it is never looked up as a real property.
         static MainThreadNeverDestroyed<const AtomString> operandName("--style-range-operand"_s);
         auto name = customPropertyName.isNull() ? operandName.get() : customPropertyName;
-        auto value = CSSSubstitutionParser::parseDeclarationValue(name, operandRange, context.context);
+        auto value = CSSSubstitutionParser::parseDeclarationValue(name, operandRange, context);
         if (!value)
             return { };
 
@@ -146,7 +145,7 @@ static std::optional<Feature> consumeStyleRangeFeature(CSSParserTokenRange& rang
 // A style() feature queries a single custom property, in boolean (style(--foo)), plain
 // (style(--foo: value)) or <style-range> form. Unlike size features, style features are always
 // custom properties, so this is simpler than the generic boolean/plain/range path.
-static std::optional<Feature> consumeStyleFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+static std::optional<Feature> consumeStyleFeature(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto rangeForStyleRange = range;
 
@@ -178,7 +177,7 @@ Vector<const MQ::FeatureSchema*> ContainerQueryParser::featureSchemas()
     return Features::allSchemas();
 }
 
-std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     Vector<ContainerCondition> queries;
 
@@ -198,13 +197,8 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
     return queries;
 }
 
-std::optional<ContainerCondition> ContainerQueryParser::consumeContainerCondition(CSSParserTokenRange& range, const MediaQueryParserContext& parentContext)
+std::optional<ContainerCondition> ContainerQueryParser::consumeContainerCondition(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    // "RESOLVED: Explicitly allow tree-counting functions in container queries"
-    // https://github.com/w3c/csswg-drafts/issues/10982
-    auto context = parentContext;
-    context.treeCountingFunctionsAllowed = true;
-
     auto consumeName = [&] {
         if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
             return nullAtom();
@@ -242,13 +236,13 @@ bool ContainerQueryParser::isValidFunctionId(CSSValueID functionId)
     return functionId == CSSValueStyle || functionId == CSSValueScrollState;
 }
 
-const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const MediaQueryParserContext& context, State& state)
+const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomString& name, const CSSParserContext& context, State& state)
 {
     if (state.inFunctionId == CSSValueStyle)
         return &Features::style();
 
     if (state.inFunctionId == CSSValueScrollState) {
-        if (!context.context.cssScrollStateContainerQueriesEnabled)
+        if (!context.cssScrollStateContainerQueriesEnabled)
             return nullptr;
         return Features::scrollState(name);
     }
@@ -256,7 +250,7 @@ const MQ::FeatureSchema* ContainerQueryParser::schemaForFeatureName(const AtomSt
     return GenericMediaQueryParser<ContainerQueryParser>::schemaForFeatureName(name, context, state);
 }
 
-std::optional<MQ::Feature> ContainerQueryParser::consumeAndValidateFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context, State& state)
+std::optional<MQ::Feature> ContainerQueryParser::consumeAndValidateFeature(CSSParserTokenRange& range, const CSSParserContext& context, State& state)
 {
     // style() features (boolean, plain and <style-range>) are all custom-property queries.
     if (state.inFunctionId == CSSValueStyle) {

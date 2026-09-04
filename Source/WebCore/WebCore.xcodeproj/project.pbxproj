@@ -1728,7 +1728,6 @@
 		4465D7BD2536D05E0016666D /* RenderSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B38BF42536901A00A4458D /* RenderSelection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		446D35B8B3401CB6051BCD66 /* Airplay.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = 3DCCA4B4BF1CEDC0C5E7B3BB /* Airplay.svg */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		446DC64824A29DAB0061F390 /* PlaybackTargetClientContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4471710C205AF945000A116E /* MediaQueryParserContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		447B137E2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */; };
 		4480E06B2A67D86A0081EAE8 /* ContentVisibilityAutoStateChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4480E06A2A67D8690081EAE8 /* ContentVisibilityAutoStateChangeEvent.h */; };
@@ -11873,8 +11872,6 @@
 		4469587A276B3A9000449C2D /* JSRangeCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSRangeCustom.cpp; sourceTree = "<group>"; };
 		446DC64624A29D9B0061F390 /* PlaybackTargetClientContextIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaybackTargetClientContextIdentifier.h; sourceTree = "<group>"; };
 		446EE4E8255E0D9200454463 /* LocalizableAdditions.strings.out */ = {isa = PBXFileReference; explicitFileType = text.plist.strings; fileEncoding = 4; path = LocalizableAdditions.strings.out; sourceTree = "<group>"; };
-		4471710B205AF945000A116E /* MediaQueryParserContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryParserContext.cpp; sourceTree = "<group>"; };
-		4471710C205AF945000A116E /* MediaQueryParserContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaQueryParserContext.h; sourceTree = "<group>"; };
 		447958021643B47B001E0A7F /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
 		447958031643B47B001E0A7F /* ParsedContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsedContentType.h; sourceTree = "<group>"; };
 		447B137C2CB6B80C00F355CB /* JSCaretPositionFromPointOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = JSCaretPositionFromPointOptions.h; sourceTree = "<group>"; };
@@ -42313,8 +42310,6 @@
 				84650E802387AD8B006266E2 /* MediaQueryListEvent.idl */,
 				D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */,
 				D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */,
-				4471710B205AF945000A116E /* MediaQueryParserContext.cpp */,
-				4471710C205AF945000A116E /* MediaQueryParserContext.h */,
 				930A76C7297FA1C40055B743 /* MutableStyleProperties.cpp */,
 				930A76C6297FA1C30055B743 /* MutableStyleProperties.h */,
 				49CCE6F72997441F006C91EB /* popover.css */,
@@ -47650,7 +47645,6 @@
 				84650E7E2387AD7D006266E2 /* MediaQueryListEvent.h in Headers */,
 				D3AA10F4123A98AA0092152B /* MediaQueryMatcher.h in Headers */,
 				E44F422E28F6A648000F87BC /* MediaQueryParser.h in Headers */,
-				4471710E205AF945000A116E /* MediaQueryParserContext.h in Headers */,
 				4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */,
 				4DB7130D216ECB4D0096A4DD /* MediaRecorderErrorEvent.h in Headers */,
 				4D3B5016217E58B700665DB1 /* MediaRecorderPrivate.h in Headers */,

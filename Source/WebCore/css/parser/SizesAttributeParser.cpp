@@ -45,7 +45,6 @@
 #include "CSSTokenizer.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "RenderView.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"

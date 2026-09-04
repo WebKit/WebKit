@@ -39,7 +39,6 @@
 #include "LocalFrameView.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "NodeName.h"
 #include "Quirks.h"
 #include "Settings.h"

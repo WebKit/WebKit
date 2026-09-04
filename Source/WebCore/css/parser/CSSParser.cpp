@@ -72,7 +72,6 @@
 #include "FontPaletteValues.h"
 #include "MediaList.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "MutableCSSSelector.h"
 #include "NestingLevelIncrementer.h"
 #include "NodeDocument.h"

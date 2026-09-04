@@ -39,7 +39,6 @@
 #include "CSSPropertyParserState.h"
 #include "CSSSubstitutionParser.h"
 #include "CSSUnevaluatedCalc.h"
-#include "MediaQueryParserContext.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
 
@@ -63,17 +62,17 @@ AtomString bareCustomPropertyName(std::span<const CSSParserToken> tokens)
     return nullAtom();
 }
 
-std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<Feature> FeatureParser::consumeFeature(CSSParserTokenRange& range, const CSSParserContext& context, EnumSet<FeatureParserOption> options)
 {
     auto rangeCopy = range;
-    if (auto feature = consumeBooleanOrPlainFeature(range, context))
+    if (auto feature = consumeBooleanOrPlainFeature(range, context, options))
         return feature;
 
     range = rangeCopy;
-    return consumeRangeFeature(range, context);
+    return consumeRangeFeature(range, context, options);
 };
 
-std::optional<Value> FeatureParser::consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<Value> FeatureParser::consumeCustomPropertyValue(const AtomString& propertyName, CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto valueRange = range;
     range.consumeAll();
@@ -84,14 +83,14 @@ std::optional<Value> FeatureParser::consumeCustomPropertyValue(const AtomString&
     if (valueRange.atEnd())
         return Value { CSSCustomPropertyValue::createEmpty(propertyName) };
 
-    auto declaration = CSSSubstitutionParser::parseDeclarationValue(propertyName, valueRange, context.context);
+    auto declaration = CSSSubstitutionParser::parseDeclarationValue(propertyName, valueRange, context);
     if (!declaration)
         return std::nullopt;
 
     return Value { declaration.releaseNonNull() };
 }
 
-static std::optional<Value> consumeValue(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+static std::optional<Value> consumeValue(CSSParserTokenRange& range, const CSSParserContext& context, EnumSet<FeatureParserOption> options)
 {
     using namespace CSSPropertyParserHelpers;
 
@@ -102,8 +101,8 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const Media
         return Value { WTF::move(*value) };
 
     auto parserState = CSS::PropertyParserState {
-        .context = context.context,
-        .treeCountingFunctionsAllowed = context.treeCountingFunctionsAllowed,
+        .context = context,
+        .treeCountingFunctionsAllowed = options.contains(FeatureParserOption::TreeCountingFunctionsAllowed),
     };
 
     if (auto value = consumeUnresolvedRatioWithBothNumeratorAndDenominator(range, parserState))
@@ -121,7 +120,7 @@ static std::optional<Value> consumeValue(CSSParserTokenRange& range, const Media
     return std::nullopt;
 }
 
-std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserTokenRange& range, const CSSParserContext& context, EnumSet<FeatureParserOption> options)
 {
     auto consumePlainFeatureName = [&]() -> std::pair<AtomString, ComparisonOperator> {
         auto name = consumeFeatureName(range);
@@ -159,7 +158,7 @@ std::optional<Feature> FeatureParser::consumeBooleanOrPlainFeature(CSSParserToke
 
     range.consumeIncludingWhitespace();
 
-    auto value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range, context) : consumeValue(range, context);
+    auto value = isCustomPropertyName(featureName) ? consumeCustomPropertyValue(featureName, range, context) : consumeValue(range, context, options);
 
     if (!value)
         return { };
@@ -205,7 +204,7 @@ std::optional<ComparisonOperator> FeatureParser::consumeRangeComparisonOperator(
     }
 }
 
-std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& range, const MediaQueryParserContext& context)
+std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& range, const CSSParserContext& context, EnumSet<FeatureParserOption> options)
 {
     auto consumeRangeOperator = [&] {
         return consumeRangeComparisonOperator(range);
@@ -216,7 +215,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
     auto consumeLeftComparison = [&]() -> std::optional<Comparison> {
         if (range.peek().type() == IdentToken)
             return { };
-        auto value = consumeValue(range, context);
+        auto value = consumeValue(range, context, options);
         if (!value)
             return { };
         auto op = consumeRangeOperator();
@@ -232,7 +231,7 @@ std::optional<Feature> FeatureParser::consumeRangeFeature(CSSParserTokenRange& r
         auto op = consumeRangeOperator();
         if (!op)
             return { };
-        auto value = consumeValue(range, context);
+        auto value = consumeValue(range, context, options);
         if (!value) {
             didFailParsing = true;
             return { };

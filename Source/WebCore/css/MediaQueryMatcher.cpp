@@ -29,7 +29,6 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryList.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "ResolvedStyle.h"

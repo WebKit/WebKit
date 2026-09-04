@@ -1088,7 +1088,6 @@ css/MediaList.cpp
 css/MediaQueryList.cpp
 css/MediaQueryListEvent.cpp
 css/MediaQueryMatcher.cpp @cost:3
-css/MediaQueryParserContext.cpp
 css/MutableStyleProperties.cpp
 css/PropertySetCSSDescriptors.cpp
 css/SelectorChecker.cpp @cost:6

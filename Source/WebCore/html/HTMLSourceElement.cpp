@@ -36,7 +36,6 @@
 #include "HTMLSrcsetParser.h"
 #include "Logging.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "NodeName.h"
 #include <wtf/TZoneMallocInlines.h>
 

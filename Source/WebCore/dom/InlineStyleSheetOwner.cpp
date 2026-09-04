@@ -27,7 +27,6 @@
 #include "Logging.h"
 #include "MediaList.h"
 #include "MediaQueryParser.h"
-#include "MediaQueryParserContext.h"
 #include "PluginDocument.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
