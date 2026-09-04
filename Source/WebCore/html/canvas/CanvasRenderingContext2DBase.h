@@ -338,6 +338,8 @@ public:
         // The font description `unparsedFont` was resolved against. Relative values in the font
         // shorthand depend on it, so `font` is stale once it no longer matches the canvas element.
         FontCascadeDescription fontResolutionBase;
+        // Likewise for the root element's font, which root font relative values depend on.
+        FontCascadeDescription rootFontResolutionBase;
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 

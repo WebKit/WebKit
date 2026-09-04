@@ -3321,7 +3321,10 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
         return;
 
     CheckedRef fontCascade = fontProxy()->fontCascade();
-    double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, fontCascade, nullptr);
+    // FIXME: Passing null for the root font means root font relative units ('rem', 'rex', ...) still
+    //        resolve against the font of the context here, even though unitAllowedForSpacing() admits
+    //        them. Fixing it needs this setter to update style first, so it is done separately.
+    double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, fontCascade, nullptr, nullptr);
 
     modifiableState().letterSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setLetterSpacing(pixels);
@@ -3349,7 +3352,8 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
         return;
 
     CheckedRef fontCascade = fontProxy()->fontCascade();
-    double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, fontCascade, nullptr);
+    // FIXME: See the comment about the root font in setLetterSpacing().
+    double pixels = Style::resolveLength(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, fontCascade, nullptr, nullptr);
 
     modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setWordSpacing(pixels);
