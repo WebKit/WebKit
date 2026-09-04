@@ -101,7 +101,7 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
     return ceil(nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
 }
 
-bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox) const
+bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& inlineLevelBox, const LineBox& lineBox) const
 {
     if (!inlineLevelBox.mayStretchLineBox())
         return false;
@@ -109,7 +109,9 @@ bool InlineFormattingUtils::inlineLevelBoxAffectsLineBox(const InlineLevelBox& i
     if (inlineLevelBox.isLineBreakBox()) {
         // A line break box affects the line box when it has a non-default
         // line-height (e.g. br { line-height: 200px }).
-        return !inlineLevelBox.isPreferredLineHeightFontMetricsBased();
+        if (inlineLevelBox.isPreferredLineHeightFontMetricsBased())
+            return false;
+        return formattingContext().layoutState().inStandardsMode() ? true : InlineQuirks::lineBreakBoxIsOnlyContentOnLine(lineBox);
     }
     if (inlineLevelBox.isListMarker()) {
         // This does not match other browser engines. see webkit.org/b/256390.

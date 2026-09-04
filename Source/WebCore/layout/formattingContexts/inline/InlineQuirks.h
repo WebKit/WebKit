@@ -40,6 +40,7 @@ public:
     bool NODELETE trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
     InlineLayoutUnit NODELETE initialLineHeight() const;
     bool inlineBoxAffectsLineBox(const InlineLevelBox&) const;
+    static bool NODELETE lineBreakBoxIsOnlyContentOnLine(const LineBox&);
     static bool NODELETE lineBreakBoxAffectsParentInlineBox(const LineBox&);
     std::optional<LayoutUnit> initialLetterAlignmentOffset(const Box& floatBox, const Style::ComputedStyle& lineBoxStyle) const;
     std::optional<InlineRect> adjustedRectForLineGridLineAlign(const InlineRect&) const;

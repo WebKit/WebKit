@@ -55,7 +55,7 @@ private:
     void computeRootInlineBoxVerticalPosition(LineBox&, const LineBoxAlignmentContent&) const;
     void alignInlineLevelBoxes(LineBox&, InlineLayoutUnit lineBoxLogicalHeight) const;
     InlineLayoutUnit adjustForAnnotationIfNeeded(LineBox&, InlineLayoutUnit lineBoxHeight) const;
-    std::optional<InlineLevelBox::AscentAndDescent> layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const;
+    std::optional<InlineLevelBox::AscentAndDescent> layoutBoundsForInlineBoxSubtree(const LineBox&, size_t inlineBoxIndex) const;
     enum class IsInlineLevelBoxAlignment : bool { No, Yes };
     InlineLayoutUnit logicalTopOffsetFromParentBaseline(const InlineLevelBox&, const InlineLevelBox& parentInlineBox, IsInlineLevelBoxAlignment = IsInlineLevelBoxAlignment::No) const;
 

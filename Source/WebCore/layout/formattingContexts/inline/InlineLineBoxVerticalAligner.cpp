@@ -211,7 +211,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
 
     auto minimumLogicalTop = std::optional<InlineLayoutUnit> { };
     auto maximumLogicalBottom = std::optional<InlineLayoutUnit> { };
-    if (formattingUtils.inlineLevelBoxAffectsLineBox(rootInlineBox)) {
+    if (formattingUtils.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox)) {
         minimumLogicalTop = InlineLayoutUnit { };
         maximumLogicalBottom = rootInlineBox.layoutBounds().height();
         inlineLevelBoxAbsoluteTopAndBottomMap.add(&rootInlineBox, AbsoluteTopAndBottom { *minimumLogicalTop, *maximumLogicalBottom });
@@ -237,7 +237,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
         auto absoluteLogicalBottom = absoluteLogicalTop + inlineLevelBox.layoutBounds().height();
         inlineLevelBoxAbsoluteTopAndBottomMap.add(&inlineLevelBox, AbsoluteTopAndBottom { absoluteLogicalTop, absoluteLogicalBottom });
         // Stretch the min/max absolute values if applicable.
-        if (formattingUtils.inlineLevelBoxAffectsLineBox(inlineLevelBox)) {
+        if (formattingUtils.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox)) {
             minimumLogicalTop = std::min(minimumLogicalTop.value_or(absoluteLogicalTop), absoluteLogicalTop);
             maximumLogicalBottom = std::max(maximumLogicalBottom.value_or(absoluteLogicalBottom), absoluteLogicalBottom);
         }
@@ -249,7 +249,7 @@ LineBoxVerticalAligner::LineBoxAlignmentContent LineBoxVerticalAligner::computeL
     auto topAlignedBoxesMaximumHeight = std::optional<InlineLayoutUnit> { };
     auto bottomAlignedBoxesMaximumHeight = std::optional<InlineLayoutUnit> { };
     for (auto* lineBoxRelativeInlineLevelBox : lineBoxRelativeInlineLevelBoxes) {
-        if (!formattingUtils.inlineLevelBoxAffectsLineBox(*lineBoxRelativeInlineLevelBox))
+        if (!formattingUtils.inlineLevelBoxAffectsLineBox(*lineBoxRelativeInlineLevelBox, lineBox))
             continue;
         // This line box relative aligned inline level box stretches the line box.
         auto inlineLevelBoxHeight = lineBoxRelativeInlineLevelBox->layoutBounds().height();
@@ -276,11 +276,11 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
     auto maximumTopOffsetFromRootInlineBoxBaseline = std::optional<InlineLayoutUnit> { };
-    if (formattingUtils.inlineLevelBoxAffectsLineBox(rootInlineBox))
+    if (formattingUtils.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox))
         maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
     auto affectsRootInlineBoxVerticalPosition = [&](auto& inlineLevelBox) {
-        return formattingUtils.inlineLevelBoxAffectsLineBox(inlineLevelBox);
+        return formattingUtils.inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
     };
 
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
@@ -342,7 +342,7 @@ void LineBoxVerticalAligner::computeRootInlineBoxVerticalPosition(LineBox& lineB
     rootInlineBox.setLogicalTop(rootInlineBoxLogicalTop);
 }
 
-std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox::InlineLevelBoxList& nonRootInlineLevelBoxes, size_t inlineBoxIndex) const
+std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBoundsForInlineBoxSubtree(const LineBox& lineBox, size_t inlineBoxIndex) const
 {
     // https://w3c.github.io/csswg-drafts/css2/#propdef-vertical-align
     //
@@ -352,6 +352,7 @@ std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBo
     // The aligned subtree of an inline element contains that element and the aligned subtrees of all children
     // inline elements whose computed vertical-align value is not top or bottom.
     // The top of the aligned subtree is the highest of the tops of the boxes in the subtree, and the bottom is analogous.
+    auto& nonRootInlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();
     ASSERT(nonRootInlineLevelBoxes[inlineBoxIndex].isInlineBox());
     auto& formattingUtils = this->formattingUtils();
     auto maximumAscent = std::optional<InlineLayoutUnit> { };
@@ -364,7 +365,7 @@ std::optional<InlineLevelBox::AscentAndDescent> LineBoxVerticalAligner::layoutBo
             // We are at the end of the descendant list.
             break;
         }
-        if (!formattingUtils.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
+        if (!formattingUtils.inlineLevelBoxAffectsLineBox(descendantInlineLevelBox, lineBox) || descendantInlineLevelBox.hasLineBoxRelativeAlignment())
             continue;
 
         // ascent/descent here really mean enclosing geometry adjusted by vertical alignemnt, which is in case of baseline alignment is simply layout bounds but
@@ -404,7 +405,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             [&](const CSS::Keyword::Top&) {
                 auto ascent = inlineLevelBox.layoutBounds().ascent;
                 if (inlineLevelBox.isInlineBox()) {
-                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
+                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(lineBox, index))
                         ascent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->ascent : std::max(descendantsEnclosingGeometry->ascent, ascent);
                 }
                 // Note that this logical top is not relative to the parent inline box.
@@ -413,7 +414,7 @@ void LineBoxVerticalAligner::alignInlineLevelBoxes(LineBox& lineBox, InlineLayou
             [&](const CSS::Keyword::Bottom&) {
                 auto descent = inlineLevelBox.layoutBounds().descent;
                 if (inlineLevelBox.isInlineBox()) {
-                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(nonRootInlineLevelBoxes, index))
+                    if (auto descendantsEnclosingGeometry = layoutBoundsForInlineBoxSubtree(lineBox, index))
                         descent = !inlineLevelBox.hasContent() ? descendantsEnclosingGeometry->descent : std::max(descendantsEnclosingGeometry->descent, descent);
                 }
                 // Note that this logical top is not relative to the parent inline box.

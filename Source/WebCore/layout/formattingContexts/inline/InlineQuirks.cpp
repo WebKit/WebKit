@@ -56,7 +56,7 @@ InlineLayoutUnit InlineQuirks::initialLineHeight() const
     return 0.f;
 }
 
-bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
+bool InlineQuirks::lineBreakBoxIsOnlyContentOnLine(const LineBox& lineBox)
 {
     // In quirks mode linebreak boxes (<br>) stop affecting the line box when (assume <br> is nested e.g. <span style="font-size: 100px"><br></span>)
     // 1. the root inline box has content <div>content<br>/div>
@@ -67,6 +67,18 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
     if (lineBox.hasAtomicInlineBox())
         return false;
     // At this point we either have only the <br> on the line or inline boxes with or without content.
+    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
+        // Filter out empty inline boxes e.g. <div><span></span><span></span><br></div>
+        if (inlineLevelBox.isInlineBox() && inlineLevelBox.hasContent())
+            return false;
+    }
+    return true;
+}
+
+bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
+{
+    if (!lineBreakBoxIsOnlyContentOnLine(lineBox))
+        return false;
     auto& inlineLevelBoxes = lineBox.nonRootInlineLevelBoxes();
     ASSERT(!inlineLevelBoxes.isEmpty());
     if (inlineLevelBoxes.size() == 1) {
@@ -74,11 +86,6 @@ bool InlineQuirks::lineBreakBoxAffectsParentInlineBox(const LineBox& lineBox)
         // the BR's own layout bounds will drive the line height directly.
         auto& lineBreakBox = inlineLevelBoxes.first();
         return lineBreakBox.isLineBreakBox() && lineBreakBox.isPreferredLineHeightFontMetricsBased();
-    }
-    for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
-        // Filter out empty inline boxes e.g. <div><span></span><span></span><br></div>
-        if (inlineLevelBox.isInlineBox() && inlineLevelBox.hasContent())
-            return false;
     }
     return true;
 }
