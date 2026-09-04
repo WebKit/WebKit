@@ -33,7 +33,7 @@ import time
 
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.servers import web_platform_test_server
-from webkitpy.layout_tests.run_webkit_tests import EXCEPTIONAL_EXIT_STATUS
+from webkitpy.layout_tests.run_layout_tests import EXCEPTIONAL_EXIT_STATUS
 from webkitpy.port import platform_options
 
 
