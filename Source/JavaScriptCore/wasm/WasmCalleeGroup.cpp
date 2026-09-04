@@ -258,6 +258,17 @@ bool CalleeGroup::startInstallingCallee(const AbstractLocker& locker, FunctionCo
     }
     ASSERT(slot);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+    if (callee.compilationMode() == CompilationMode::BBQMode) {
+        // IPInt OSR should never trigger a BBQ compile while there's a retired but still alive
+        // BBQCallee. In those cases, the retired BBQCallee is reused.
+        Locker bbqLocker { slot->m_bbqCalleeLock };
+        RELEASE_ASSERT(!slot->m_bbqCallee.get());
+    }
+#endif
+#endif
+
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     if (callee.compilationMode() == CompilationMode::OMGMode) {
         // Why does it happen? It is possible that some code is still running IPIntCallee, and OMGCallee is installed and BBQCallee gets retired.
