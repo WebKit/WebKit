@@ -32,6 +32,7 @@
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
+#include <optional>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -61,11 +62,32 @@ void lowerStackArgs(Code& code)
 
     InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
-        // FIXME We can keep track of the last large offset which was materialized in this block, and reuse the register
-        // if it hasn't been clobbered instead of renetating imm+add+addr every time. https://bugs.webkit.org/show_bug.cgi?id=171387
+#if CPU(ARM64) || CPU(RISCV64)
+        std::optional<int32_t> materializedOffsetFromSP;
+        Air::Tmp extendedOffsetTmp = Air::Tmp(extendedOffsetAddrRegister());
+        auto invalidateIfClobbered = [&] (Inst& inst) {
+            if (inst.hasNonArgNonControlEffects()) {
+                materializedOffsetFromSP.reset();
+                return;
+            }
+            bool clobbers = false;
+            inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
+                if (tmp == extendedOffsetTmp && Arg::isAnyDef(role))
+                    clobbers = true;
+            });
+            if (clobbers)
+                materializedOffsetFromSP.reset();
+        };
+#endif
 
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
+#if CPU(ARM64) || CPU(RISCV64)
+            inst.forEachTmp([&] (Tmp& tmp, Arg::Role role, Bank, Width) {
+                if (tmp == extendedOffsetTmp && Arg::isEarlyDef(role))
+                    materializedOffsetFromSP.reset();
+            });
+#endif
             bool extendedOffsetAddrRegInUse = false;
 
             auto stackAddr = [&] (unsigned insertionIndex, Arg arg, Width width, Value::OffsetType offsetFromFP) -> Arg {
@@ -90,14 +112,25 @@ void lowerStackArgs(Code& code)
                     return Arg::extendedOffsetAddr(offsetFromFP);
 
 #if CPU(ARM64) || CPU(RISCV64)
+                if (materializedOffsetFromSP) {
+                    int64_t delta = static_cast<int64_t>(offsetFromSP) - static_cast<int64_t>(*materializedOffsetFromSP);
+                    if (isRepresentableAs<int32_t>(delta)) {
+                        Arg reused = Arg::addr(extendedOffsetTmp, static_cast<int32_t>(delta));
+                        if (reused.isValidForm(Move, width)) {
+                            extendedOffsetAddrRegInUse = true;
+                            return reused;
+                        }
+                    }
+                }
+
                 RELEASE_ASSERT(!extendedOffsetAddrRegInUse);
-                Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
-                extendedOffsetAddrRegInUse = true;
 
                 Arg largeOffset = Arg::isValidImmForm(offsetFromSP) ? Arg::imm(offsetFromSP) : Arg::bigImm(offsetFromSP);
-                insertionSet.insert(insertionIndex, Move, inst.origin, largeOffset, tmp);
-                insertionSet.insert(insertionIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), tmp);
-                result = Arg::addr(tmp, 0);
+                insertionSet.insert(insertionIndex, Move, inst.origin, largeOffset, extendedOffsetTmp);
+                insertionSet.insert(insertionIndex, Add64, inst.origin, Air::Tmp(MacroAssembler::stackPointerRegister), extendedOffsetTmp);
+                materializedOffsetFromSP = offsetFromSP;
+                extendedOffsetAddrRegInUse = true;
+                result = Arg::addr(extendedOffsetTmp, 0);
                 return result;
 #elif CPU(X86_64)
                 UNUSED_PARAM(insertionIndex);
@@ -128,12 +161,18 @@ void lowerStackArgs(Code& code)
                 // On ARM64, Lea is just an add. We can't handle this below because
                 // taking into account the Width to see if we can compute the immediate
                 // is wrong.
+#if CPU(ARM64) || CPU(RISCV64)
+                bool leaUsedExtendedOffsetReg = false;
+#endif
                 auto lowerArmLea = [&] (Value::OffsetType offset, Tmp base) {
                     ASSERT(inst.args()[1].isTmp());
 
                     if (Arg::isValidImmForm(offset))
                         inst = Inst(inst.kind.opcode == Lea32 ? Add32 : Add64, inst.origin, Arg::imm(offset), base, inst.args()[1]);
                     else {
+#if CPU(ARM64) || CPU(RISCV64)
+                        leaUsedExtendedOffsetReg = true;
+#endif
                         Air::Tmp tmp = Air::Tmp(extendedOffsetAddrRegister());
                         Arg offsetArg = Arg::bigImm(offset);
                         insertionSet.insert(instIndex, Move, inst.origin, offsetArg, tmp);
@@ -160,6 +199,10 @@ void lowerStackArgs(Code& code)
                     break;
                 }
 
+#if CPU(ARM64) || CPU(RISCV64)
+                if (leaUsedExtendedOffsetReg)
+                    materializedOffsetFromSP.reset();
+#endif
                 continue;
             }
 
@@ -192,8 +235,12 @@ void lowerStackArgs(Code& code)
                     break;
                 }
             }
-            if (!mayHaveStackArg)
+            if (!mayHaveStackArg) {
+#if CPU(ARM64) || CPU(RISCV64)
+                invalidateIfClobbered(inst);
+#endif
                 continue;
+            }
 
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {
@@ -202,16 +249,21 @@ void lowerStackArgs(Code& code)
                         StackSlot* slot = arg.stackSlot();
                         if (inst.kind.opcode == Move && slot->kind() == StackSlotKind::Spill)
                             inst.kind.spill = true;
-                        if (Arg::isZDef(role)
+                        Arg originalArg = arg;
+                        Value::OffsetType currentOffsetFromFP = arg.offset() + slot->offsetFromFP();
+                        bool needsZDefFill = Arg::isZDef(role)
                             && slot->kind() == StackSlotKind::Spill
-                            && slot->byteSize() > bytesForWidth(width)) {
+                            && slot->byteSize() > bytesForWidth(width);
+                        if (needsZDefFill) {
                             // Currently we only handle this simple case because it's the only one
                             // that arises: ZDef's are only 32-bit right now. So, when we hit these
                             // assertions it means that we need to implement those other kinds of
                             // zero fills.
                             RELEASE_ASSERT(slot->byteSize() == 8);
                             RELEASE_ASSERT(width == Width32);
-
+                        }
+                        arg = stackAddr(instIndex, originalArg, width, currentOffsetFromFP);
+                        if (needsZDefFill) {
 #if CPU(ARM64) || CPU(RISCV64)
                             Air::Opcode storeOpcode = Move32;
                             Air::Arg::Kind operandKind = Arg::ZeroReg;
@@ -224,12 +276,11 @@ void lowerStackArgs(Code& code)
 #error Unhandled architecture.
 #endif
                             RELEASE_ASSERT(isValidForm(storeOpcode, operandKind, Arg::Stack));
+                            extendedOffsetAddrRegInUse = false;
                             insertionSet.insert(
                                 instIndex + 1, storeOpcode, inst.origin, operand,
-                                stackAddr(instIndex + 1, arg, width, arg.offset() + 4 + slot->offsetFromFP()));
-                            extendedOffsetAddrRegInUse = false;
+                                stackAddr(instIndex + 1, originalArg, width, originalArg.offset() + 4 + slot->offsetFromFP()));
                         }
-                        arg = stackAddr(instIndex, arg, width, arg.offset() + slot->offsetFromFP());
                         break;
                     }
                     case Arg::CallArg:
@@ -240,6 +291,9 @@ void lowerStackArgs(Code& code)
                     }
                 }
             );
+#if CPU(ARM64) || CPU(RISCV64)
+            invalidateIfClobbered(inst);
+#endif
         }
         insertionSet.execute(block);
     }
@@ -248,4 +302,3 @@ void lowerStackArgs(Code& code)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-
