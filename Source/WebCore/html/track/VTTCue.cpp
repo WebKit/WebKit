@@ -607,7 +607,7 @@ int VTTCue::calculateComputedLinePosition() const
     // (Although the WebVTT parser will not set the line to a number outside the
     // range 0..100 and also set the WebVTT cue snap-to-lines flag to false, this
     // can happen when using the DOM API’s snapToLines and line attributes.)
-    if (m_snapToLines && m_linePosition && (*m_linePosition < 0 && *m_linePosition > 100))
+    if (!m_snapToLines && m_linePosition && (*m_linePosition < 0 || *m_linePosition > 100))
         return 100;
 
     // 2. If the line is numeric, return the value of the WebVTT cue line and abort

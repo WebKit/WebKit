@@ -1,0 +1,15 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplay)
+RUN(cue = new VTTCue(0, 100, "Lorem"))
+RUN(cue.snapToLines = false)
+RUN(textTrack.addCue(cue))
+EXPECTED (cueBox() != 'null') OK
+RUN(cue.line = 50)
+EXPECTED (observedTop == '50cqh') OK
+RUN(cue.line = 200)
+EXPECTED (observedTop == '100cqh') OK
+RUN(cue.line = -25)
+EXPECTED (observedTop == '100cqh') OK
+END OF TEST
+
