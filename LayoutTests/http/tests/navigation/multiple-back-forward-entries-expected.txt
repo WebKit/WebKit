@@ -3,4 +3,5 @@ This test creates an iFrame via document.write(), then immediately changes the s
 
 ============== Back Forward List ==============
 curr->  http://127.0.0.1:8000/navigation/multiple-back-forward-entries.html
+            http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=250 (in frame "<!--frame1-->")
 ===============================================

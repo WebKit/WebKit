@@ -610,35 +610,42 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
     bool canRecordHistory = canRecordHistoryForFrame(m_frame);
     auto historyURL = documentLoader ? documentLoader->urlForHistory() : URL { };
 
+    auto createChildItemInParent = [&] {
+        RefPtr page = m_frame->page();
+        RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
+        if (!page || !parentFrame)
+            return;
+        RefPtr parentCurrentItem = parentFrame->loader().history().currentItem();
+        if (!parentCurrentItem)
+            return;
+        Ref item = createItem(page->historyItemClient(), parentCurrentItem->itemID());
+        parentCurrentItem->setChildItem(item.copyRef());
+        protect(page->backForward())->setChildItem(parentCurrentItem->frameItemID(), WTF::move(item));
+    };
+
     if (documentLoader && documentLoader->isClientRedirect()) {
-        if (!m_currentItem && m_frame->isMainFrame()) {
-            if (!historyURL.isEmpty()) {
-                updateBackForwardListClippedAtTarget(true);
-                if (canRecordHistory) {
-                    Ref frameLoader = m_frame->loader();
-                    protect(frameLoader->client())->updateGlobalHistory();
-                    documentLoader->setDidCreateGlobalHistoryEntry(true);
-                    if (documentLoader->unreachableURL().isEmpty())
-                        protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
+        if (!m_currentItem) {
+            if (m_frame->isMainFrame()) {
+                if (!historyURL.isEmpty()) {
+                    updateBackForwardListClippedAtTarget(true);
+                    if (canRecordHistory) {
+                        Ref frameLoader = m_frame->loader();
+                        protect(frameLoader->client())->updateGlobalHistory();
+                        documentLoader->setDidCreateGlobalHistoryEntry(true);
+                        if (documentLoader->unreachableURL().isEmpty())
+                            protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
+                    }
                 }
-            }
+            } else
+                createChildItemInParent();
         }
         // The client redirect replaces the current history item.
         if (RefPtr page = m_frame->page()) {
             auto scope = protect(page->historyItemClient())->ignoreChangesForScopeDuringRedirect(m_frame);
             updateCurrentItem();
         }
-    } else {
-        RefPtr page = m_frame->page();
-        RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
-        if (page && parentFrame) {
-            if (RefPtr parentCurrentItem = parentFrame->loader().history().currentItem()) {
-                Ref item = createItem(page->historyItemClient(), parentCurrentItem->itemID());
-                parentCurrentItem->setChildItem(item.copyRef());
-                protect(page->backForward())->setChildItem(parentCurrentItem->frameItemID(), WTF::move(item));
-            }
-        }
-    }
+    } else
+        createChildItemInParent();
 
     if (!historyURL.isEmpty() && canRecordHistory) {
         Ref frame = m_frame.get();
