@@ -177,7 +177,7 @@ consteval bool isAvailable(SiteSpecificQuirk quirk)
     case AllowLayeredFullscreenVideos: return iOS || vision;
     case BlocksEnteringStandardFullscreenFromPictureInPictureQuirk: return fullscreenAPI && videoPresentationMode;
     case BlocksReturnToFullscreenFromPictureInPictureQuirk: return fullscreenAPI && videoPresentationMode;
-    case EnsureCaptionVisibilityInFullscreenAndPictureInPicture: return always;
+    case EnsureCaptionVisibilityInFullscreenAndPictureInPicture: return iOSFamily;
     case HasBrokenEncryptedMediaAPISupportQuirk: return always;
     case ImplicitMuteWhenVolumeSetToZero: return always;
     case InputMethodMustUseCompositionEvents: return mac;
@@ -231,7 +231,7 @@ consteval bool isAvailable(SiteSpecificQuirk quirk)
     case NeedsSuppressedPauseEventOnFullscreenExitQuirk: return iOS;
     case NeedsTikTokOverflowingContentQuirk: return always;
     case NeedsVideoShouldMaintainAspectRatioQuirk: return always;
-    case NeedsWebExScrollabilityQuirk: return desktopContentModeQuirks;
+    case NeedsWebExScrollabilityQuirk: return iOSFamily && desktopContentModeQuirks;
     case NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk: return cocoa;
     case NeedsWebKitMediaTextTrackDisplayQuirk: return always;
     case NeedsYahooVolumeSliderQuirk: return always;
@@ -311,7 +311,7 @@ consteval bool isAvailable(SiteSpecificQuirk quirk)
     case ShouldSendFakeTouchForceChangeEvent: return iOSFamily;
     case ShouldSilenceMediaQueryListChangeEvents: return iOS || vision;
     case ShouldSilenceResizeObservers: return iOS || vision;
-    case ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting: return iOSFamily;
+    case ShouldSilenceWindowResizeEventsDuringApplicationSnapshotting: return iOS || vision;
     case ShouldSupportHoverMediaQueriesQuirk: return desktopContentModeQuirks;
     case ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk: return iOSFamily;
     case ShouldSuppressHLSSubtitles: return always;

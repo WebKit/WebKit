@@ -25,7 +25,7 @@ https://amazon.design/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://www.apple.com/
-    EnsureCaptionVisibilityInFullscreenAndPictureInPicture
+    (none)
 https://as.com/
     (none)
 https://www.att.com/
