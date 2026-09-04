@@ -88,9 +88,30 @@ static void testSettingsRegistration(WPEMockPlatformTest* test, gconstpointer)
     ret = wpe_settings_set_value(settings, "/wpe-platform/a-new-key", applicationValue, WPE_SETTINGS_SOURCE_APPLICATION, nullptr);
     g_assert_true(ret);
     g_assert_cmpvariant(wpe_settings_get_value(settings, "/wpe-platform/a-new-key", nullptr), applicationValue);
-    ret = wpe_settings_set_value(settings, "/wpe-platform/a-new-key", someValue.get(), WPE_SETTINGS_SOURCE_PLATFORM, nullptr);
+    ret = wpe_settings_set_value(settings, "/wpe-platform/a-new-key", anotherValue.get(), WPE_SETTINGS_SOURCE_PLATFORM, nullptr);
     g_assert_true(ret);
     g_assert_cmpvariant(wpe_settings_get_value(settings, "/wpe-platform/a-new-key", nullptr), applicationValue);
+
+    // The platform keeps a value of its own while the application's is in use,
+    // and it can still be asked what that value is.
+    g_assert_cmpvariant(wpe_settings_get_value_for_source(settings, "/wpe-platform/a-new-key", WPE_SETTINGS_SOURCE_PLATFORM, nullptr), anotherValue.get());
+    g_assert_cmpvariant(wpe_settings_get_value_for_source(settings, "/wpe-platform/a-new-key", WPE_SETTINGS_SOURCE_APPLICATION, nullptr), applicationValue);
+
+    // Unsetting the application value gives the key back to the platform.
+    ret = wpe_settings_unset(settings, "/wpe-platform/a-new-key", WPE_SETTINGS_SOURCE_APPLICATION, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_true(ret);
+    g_assert_cmpvariant(wpe_settings_get_value(settings, "/wpe-platform/a-new-key", nullptr), anotherValue.get());
+
+    // Unsetting the platform value leaves the default.
+    ret = wpe_settings_unset(settings, "/wpe-platform/a-new-key", WPE_SETTINGS_SOURCE_PLATFORM, nullptr);
+    g_assert_true(ret);
+    g_assert_cmpvariant(wpe_settings_get_value(settings, "/wpe-platform/a-new-key", nullptr), someValue.get());
+
+    // Unsetting a key that was never registered.
+    ret = wpe_settings_unset(settings, "/wpe-platform/non-existing-key", WPE_SETTINGS_SOURCE_APPLICATION, &error.outPtr());
+    g_assert_error(error.get(), WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED);
+    g_assert_false(ret);
 }
 
 static void testSettingsSaveKeyFiles(WPEMockPlatformTest* test, gconstpointer)
@@ -109,8 +130,14 @@ static void testSettingsSaveKeyFiles(WPEMockPlatformTest* test, gconstpointer)
     wpe_settings_save_to_keyfile(settings, keyFile.get());
     g_assert_false(g_key_file_has_key(keyFile.get(), "wpe-platform", "a-new-key", nullptr));
 
-    // Non-default is written.
+    // What the platform reports is the system's to answer again next time, so
+    // it is not written.
     wpe_settings_set_value(settings, "/wpe-platform/a-new-key", anotherValue.get(), WPE_SETTINGS_SOURCE_PLATFORM, nullptr);
+    wpe_settings_save_to_keyfile(settings, keyFile.get());
+    g_assert_false(g_key_file_has_key(keyFile.get(), "wpe-platform", "a-new-key", nullptr));
+
+    // What the application chose is written.
+    wpe_settings_set_value(settings, "/wpe-platform/a-new-key", anotherValue.get(), WPE_SETTINGS_SOURCE_APPLICATION, nullptr);
     wpe_settings_save_to_keyfile(settings, keyFile.get());
     g_assert_true(g_key_file_has_key(keyFile.get(), "wpe-platform", "a-new-key", nullptr));
 }
