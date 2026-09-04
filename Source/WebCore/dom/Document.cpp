@@ -12085,6 +12085,15 @@ bool Document::hasElementWithPendingUserAgentShadowTreeUpdate(Element& element) 
 
 bool Document::isSameSiteForCookies(const URL& url) const
 {
+    // https://html.spec.whatwg.org/multipage/browsers.html#site-for-cookies
+    // A document with an opaque origin is never same-site with anything, so a sandboxed frame gets a
+    // null site for cookies even when its URL is same-site with the top-level site. Sandbox flags are
+    // inherited, so this covers documents nested inside a sandboxed frame as well.
+    // FIXME: The site for cookies should also be null when a document is same-site with the top-level
+    // site but has a cross-site ancestor between the two, which we do not yet detect.
+    if (securityOrigin().isOpaque())
+        return false;
+
     auto domain = isTopDocument() ? RegistrableDomain(securityOrigin().data()) : RegistrableDomain(siteForCookies());
     return domain.matches(url);
 }

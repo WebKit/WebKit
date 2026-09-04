@@ -1045,8 +1045,6 @@ imported/w3c/web-platform-tests/cookies/samesite/about-blank-subresource.https.h
 imported/w3c/web-platform-tests/cookies/samesite/about-blank-toplevel.https.html [ Failure Crash Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/iframe.document.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/multiple-samesite-attributes.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-nested.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/cookies/samesite/sandbox-iframe-subresource.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/setcookie-lax.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite/setcookie-navigation.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/cookies/samesite-none-secure/cookies-without-samesite-must-be-secure.https.html [ Failure Pass ]
