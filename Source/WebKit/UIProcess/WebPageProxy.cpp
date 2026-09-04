@@ -2968,10 +2968,11 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
 
     if (preferences->useUIProcessForBackForwardItemLoading()) {
         bool anySent = false;
-        if (RefPtr currentItem = backForwardList().currentItem())
+        RefPtr currentItem = backForwardList().currentItem();
+        if (currentItem)
             anySent = dispatchPerFrameTraversals(protect(currentItem->mainFrameItem()), protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
         if (!anySent && (!backForwardList().currentItem() || isSessionRestore == IsSessionRestoreNavigation::Yes))
-            anySent = sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
+            anySent = sendGoToBackForwardItemForFrame(protect(item->mainFrameItem()), protect(currentItem->mainFrameItem()), navigation->navigationID(), frameLoadType, shouldRestoreFromBackForwardCache, publicSuffix);
         if (!anySent)
             WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: walk dispatched no GoToBackForwardItem messages — back/forward action will be silently dropped");
         navigation->setBackForwardTraversalWasDispatched(anySent);
@@ -3006,7 +3007,7 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
     bool anySent = false;
     if (fromFrame.frameState().itemSequenceNumber != toFrame.frameState().itemSequenceNumber
         && !isStaleInitialAboutBlankIframeTarget(toFrame))
-        anySent = sendGoToBackForwardItemForFrame(toFrame, navigationID, frameLoadType, shouldRestore, publicSuffix);
+        anySent = sendGoToBackForwardItemForFrame(toFrame, fromFrame, navigationID, frameLoadType, shouldRestore, publicSuffix);
 
     bool sameDocument = fromFrame.frameState().documentSequenceNumber == toFrame.frameState().documentSequenceNumber;
     if (!sameDocument)
@@ -3027,34 +3028,35 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
             fromChild = fromFrame.childItemAtIndex(i);
         if (!fromChild || !pairedFromChildren.add(fromChild->identifier()).isNewEntry)
             continue;
-
-        if (toChild->frameState().wasRestoredFromSession && !childFrameID) {
-            if (auto fromFrameID = fromChild->frameID(); fromFrameID && !toChild->frameID())
-                toChild->updateFrameID(*fromFrameID);
-        }
-
         if (dispatchPerFrameTraversals(*fromChild, toChild, navigationID, frameLoadType, shouldRestore, publicSuffix))
             anySent = true;
     }
     return anySent;
 }
 
-bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& targetFrame, NavigationIdentifier navigationID, FrameLoadType frameLoadType, ShouldRestoreFromBackForwardCache shouldRestore, const WebCore::PublicSuffix& publicSuffix)
+bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& targetFrame, WebBackForwardListFrameItem& fromFrame, NavigationIdentifier navigationID, FrameLoadType frameLoadType, ShouldRestoreFromBackForwardCache shouldRestore, const WebCore::PublicSuffix& publicSuffix)
 {
+    RefPtr process = processForTheFrameItem(targetFrame);
+    Ref frameStateCopy = targetFrame.copyFrameState();
+
     if (targetFrame.parent()) {
         auto frameID = targetFrame.frameID();
-        if (!frameID)
-            return false;
+        if (!frameID) {
+            frameID = fromFrame.frameState().frameID;
+            if (!frameID)
+                return false;
+            process = processForTheFrameItem(fromFrame);
+            frameStateCopy->frameID = frameID;
+        }
         RefPtr liveFrame = WebFrameProxy::webFrame(*frameID);
         if (!liveFrame || liveFrame->page() != this)
             return false;
     }
 
-    Ref process = processForTheFrameItem(targetFrame);
     auto suffixCopy = publicSuffix;
     process->send(Messages::WebPage::GoToBackForwardItem({
         navigationID,
-        targetFrame.copyFrameState(),
+        frameStateCopy,
         frameLoadType,
         ShouldTreatAsContinuingLoad::No,
         std::nullopt,
@@ -3064,7 +3066,7 @@ bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& 
         WTF::move(suffixCopy),
         { },
         WebCore::ProcessSwapDisposition::None
-    }), webPageIDInProcess(process));
+    }), webPageIDInProcess(*process));
     process->startResponsivenessTimer();
     return true;
 }
@@ -9882,7 +9884,10 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         if (RefPtr frameState = frameStateForBackForwardChildFrame(frame, *navigationActionData.targetBackForwardItemIdentifier)) {
             WEBPAGEPROXY_RELEASE_LOG(Loading, "frameStateForBackForwardChildFrame: Back/Forward child frame, rewriting URL to %" SENSITIVE_LOG_STRING, frameState->urlString.utf8().data());
             navigationActionData.request.setURL(URL { frameState->urlString });
-
+            if (!frameState->frameID) {
+                if (protocolHostAndPortAreEqual(URL { frameState->urlString }, navigationActionData.request.url()))
+                    frameState->frameID = frame.frameID();
+            }
             frameStateForBackForwardNavigation = WTF::move(frameState);
         }
     }

@@ -2881,7 +2881,8 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     m_internals->pendingWebsitePolicies = WTF::move(parameters.websitePolicies);
 
     Ref targetFrame = m_mainFrame;
-    if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()); historyItemFrame && historyItemFrame->page() == this)
+    RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID());
+    if (historyItemFrame && historyItemFrame->page() == this)
         targetFrame = historyItemFrame.releaseNonNull();
 
     if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
