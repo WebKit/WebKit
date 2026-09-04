@@ -586,6 +586,7 @@
 				WebKit/WebPage/WebPageTransferableTests.swift,
 				WebKit/WebPage/WebViewTests.swift,
 				WebKit/WKWebView/CodingTests.swift,
+				WebKit/WKWebView/ios/QuickLookFullscreen.mm,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
