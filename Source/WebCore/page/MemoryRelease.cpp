@@ -267,7 +267,7 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
         String tagName = displayNameForVMTag(i);
         if (!tagName)
             tagName = makeString("Tag "_s, i);
-        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %lu MB in %zu regions", tagName.latin1().data(), dirty / MB, pages[i].regionCount);
+        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %lu MB in %zu regions", tagName.latin1().characters(), dirty / MB, pages[i].regionCount);
     }
 
     bool shouldLogJavaScriptObjectCounts = os_variant_allows_internal_security_policies("com.apple.WebKit");

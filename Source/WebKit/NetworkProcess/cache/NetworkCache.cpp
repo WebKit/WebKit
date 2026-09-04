@@ -542,7 +542,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
 {
     ASSERT(responseData);
 
-    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", request.url().stringWithoutFragmentIdentifier().latin1().data(), makeCacheKey(request).partition().latin1().data());
+    LOG(NetworkCache, "(NetworkProcess) storing %s, partition %s", request.url().stringWithoutFragmentIdentifier().latin1().characters(), makeCacheKey(request).partition().latin1().characters());
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
@@ -586,7 +586,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
 
 std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap)
 {
-    LOG(NetworkCache, "(NetworkProcess) storing redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
+    LOG(NetworkCache, "(NetworkProcess) storing redirect %s -> %s", request.url().string().latin1().characters(), redirectRequest.url().string().latin1().characters());
 
     StoreDecision storeDecision = makeStoreDecision(request, response, 0);
     if (storeDecision != StoreDecision::Yes) {
@@ -597,7 +597,7 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
     auto cacheEntry = makeRedirectEntry(request, response, redirectRequest);
 
     if (maxAgeCap) {
-        LOG(NetworkCache, "(NetworkProcess) capping max age for redirect %s -> %s", request.url().string().latin1().data(), redirectRequest.url().string().latin1().data());
+        LOG(NetworkCache, "(NetworkProcess) capping max age for redirect %s -> %s", request.url().string().latin1().characters(), redirectRequest.url().string().latin1().characters());
         cacheEntry->capMaxAge(maxAgeCap.value());
     }
 
@@ -610,7 +610,7 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
 
 std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed privateRelayed)
 {
-    LOG(NetworkCache, "(NetworkProcess) updating %s", originalRequest.url().string().latin1().data());
+    LOG(NetworkCache, "(NetworkProcess) updating %s", originalRequest.url().string().latin1().characters());
 
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);

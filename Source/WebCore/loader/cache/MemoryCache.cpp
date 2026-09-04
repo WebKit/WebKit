@@ -136,7 +136,7 @@ bool MemoryCache::add(CachedResource& resource)
     
     resourceAccessed(resource);
 
-    LOG(ResourceLoading, "MemoryCache::add Added '%.255s', resource %p\n", resource.url().string().latin1().data(), &resource);
+    LOG(ResourceLoading, "MemoryCache::add Added '%.255s', resource %p\n", resource.url().string().latin1().characters(), &resource);
     return true;
 }
 
@@ -430,7 +430,7 @@ void MemoryCache::remove(CachedResource& resource)
     RELEASE_ASSERT(isMainThread());
     RefPtr protectedResource { resource };
 
-    LOG(ResourceLoading, "Evicting resource %p for '%.255s' from cache", &resource, resource.url().string().latin1().data());
+    LOG(ResourceLoading, "Evicting resource %p for '%.255s' from cache", &resource, resource.url().string().latin1().characters());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (auto* resources = sessionResourceMap(resource.sessionID())) {

@@ -53,7 +53,7 @@ static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point
     };
     if (differs(gotRed, expectedRed) || differs(gotGreen, expectedGreen) || differs(gotBlue, expectedBlue) || differs(gotAlpha, expectedAlpha)) {
         // Use this to debug the contents in the browser.
-        // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().data());
+        // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().characters());
         return ::testing::AssertionFailure() << "color is not expected at " << point << ". Got: " << got << ", expected: " << expected << " with tolerance " << tolerance << ".";
     }
     return ::testing::AssertionSuccess();

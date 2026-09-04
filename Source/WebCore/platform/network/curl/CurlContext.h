@@ -207,7 +207,7 @@ public:
     }
 
     void append(const char* str) { m_list = curl_slist_append(m_list, str); }
-    void append(const String& str) { append(str.latin1().data()); }
+    void append(const String& str) { append(str.latin1().characters()); }
 
 private:
     struct curl_slist* m_list { nullptr };
