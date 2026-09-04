@@ -87,6 +87,7 @@
 #include "FocusedElementInformation.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "FrameOwnershipAuthority.h"
 #include "FrameProcess.h"
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
@@ -9488,7 +9489,8 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
 
 void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, URL&& url, const UserData& userData)
 {
-    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
 
     RefPtr protectedPageClient { pageClient() };
 
@@ -9496,7 +9498,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     if (!frame)
         return;
 
-    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
+    MESSAGE_CHECK_URL(process, url);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrame: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), std::to_underlying(navigationType));
 
