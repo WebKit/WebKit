@@ -31,6 +31,7 @@
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "Node.h"
+#include "ScriptDisallowedScope.h"
 
 namespace WebCore {
 
@@ -62,6 +63,7 @@ void PageDOMDebuggerAgent::disable()
     m_domSubtreeModifiedBreakpoints.clear();
     m_domAttributeModifiedBreakpoints.clear();
     m_domNodeRemovedBreakpoints.clear();
+    m_domStyleInvalidatedBreakpoints.clear();
 
     InspectorDOMDebuggerAgent::disable();
 }
@@ -97,6 +99,11 @@ Inspector::Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::setDOMBreakpoint(
         if (!m_domNodeRemovedBreakpoints.add(node, breakpoint.releaseNonNull()))
             return makeUnexpected("Breakpoint for given node and given type already exists"_s);
         return { };
+
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::StyleInvalidated:
+        if (!m_domStyleInvalidatedBreakpoints.add(node, breakpoint.releaseNonNull()))
+            return makeUnexpected("Breakpoint for given node and given type already exists"_s);
+        return { };
     }
 
     ASSERT_NOT_REACHED();
@@ -130,6 +137,11 @@ Inspector::Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::removeDOMBreakpoi
         if (!m_domNodeRemovedBreakpoints.remove(node))
             return makeUnexpected("Breakpoint for given node and given type missing"_s);
         return { };
+
+    case Inspector::Protocol::DOMDebugger::DOMBreakpointType::StyleInvalidated:
+        if (!m_domStyleInvalidatedBreakpoints.remove(node))
+            return makeUnexpected("Breakpoint for given node and given type missing"_s);
+        return { };
     }
 
     ASSERT_NOT_REACHED();
@@ -149,6 +161,7 @@ void PageDOMDebuggerAgent::frameDocumentUpdated(LocalFrame& frame)
     m_domSubtreeModifiedBreakpoints.clear();
     m_domAttributeModifiedBreakpoints.clear();
     m_domNodeRemovedBreakpoints.clear();
+    m_domStyleInvalidatedBreakpoints.clear();
 }
 
 
@@ -269,6 +282,7 @@ void PageDOMDebuggerAgent::didRemoveDOMNode(Node& node)
     m_domSubtreeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
     m_domAttributeModifiedBreakpoints.removeIf(nodeContainsBreakpointOwner);
     m_domNodeRemovedBreakpoints.removeIf(nodeContainsBreakpointOwner);
+    m_domStyleInvalidatedBreakpoints.removeIf(nodeContainsBreakpointOwner);
 }
 
 void PageDOMDebuggerAgent::willDestroyDOMNode(Node& node)
@@ -304,10 +318,34 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
 }
 
+void PageDOMDebuggerAgent::didInvalidateStyleForElement(Element& element)
+{
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    if (m_domStyleInvalidatedBreakpoints.isEmpty())
+        return;
+
+    // Style can be invalidated while we're inside style resolution / the cascade (e.g. descendant
+    // invalidation during a forced style update), which runs under ScriptDisallowedScope. Pausing there
+    // would re-enter the run loop and assert, so only break when script is actually allowed to run --
+    // which is also exactly when an author-reachable line is the culprit. Mirrors
+    // InspectorDOMDebuggerAgent::breakOnURLIfNeeded.
+    if (!ScriptDisallowedScope::isScriptAllowedInMainThread())
+        return;
+
+    auto it = m_domStyleInvalidatedBreakpoints.find(&element);
+    if (it == m_domStyleInvalidatedBreakpoints.end())
+        return;
+
+    auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::StyleInvalidated, element);
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
+}
+
 Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
 {
     ASSERT(m_debuggerAgent->breakpointsActive());
-    ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
+    ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner) || m_domStyleInvalidatedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();
     pauseData->setString("type"_s, Inspector::Protocol::Helpers::getEnumConstantValue(breakpointType));

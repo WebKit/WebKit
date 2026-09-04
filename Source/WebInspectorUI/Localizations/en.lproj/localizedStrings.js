@@ -1731,6 +1731,7 @@ localizedStrings["Stretch @ Font Details Sidebar Property"] = "Stretch";
 localizedStrings["Style @ Font Details Sidebar Property"] = "Style";
 /* CSS properties defined via HTML style attribute */
 localizedStrings["Style Attribute"] = "Style Attribute";
+localizedStrings["Style Invalidated @ DOM Breakpoint"] = "Style Invalidated";
 localizedStrings["Style Sheet"] = "Style Sheet";
 localizedStrings["Style Sheets"] = "Style Sheets";
 localizedStrings["Style rule"] = "Style rule";
