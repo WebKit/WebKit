@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<body>
+<style>
+
+#scroller {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+#subject {
+    position: absolute;
+    top: 50px;
+    width: 100px;
+    height: 100px;
+    background-color: black;
+}
+
+#spacer {
+    height: 1000px;
+}
+
+#target {
+    width: 25px;
+    height: 25px;
+    opacity: 0;
+    background-color: green;
+}
+
+</style>
+
+<div id="scroller">
+    <div id="subject"><div id="target"></div></div>
+    <div id="spacer"></div>
+</div>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../imported/w3c/web-platform-tests/web-animations/testcommon.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="threaded-animations-utils.js"></script>
+
+<script>
+
+promise_test(async t => {
+    const timeline = new ViewTimeline({ subject });
+    const animation = target.animate({ opacity: 1 }, { timeline });
+
+    await animationAcceleration(animation);
+
+    const initialStack = await UIHelper.remoteAnimationStackForElement(target);
+    assert_equals(initialStack.animations.length, 1, "The animation is accelerated");
+    assert_not_equals(initialStack.animations[0].timeline.currentTime, null,
+        "The remote timeline has a resolved current time while its range is not empty");
+
+    // A view timeline's range is its subject's size plus its scroll container's size.
+    scroller.style.height = "0px";
+    subject.style.height = "0px";
+    await threadedAnimationsCommit();
+
+    const updatedStack = await UIHelper.remoteAnimationStackForElement(target);
+    assert_equals(updatedStack.animations.length, 1, "The animation is still accelerated");
+    const remoteAnimation = updatedStack.animations[0];
+    assert_equals(remoteAnimation.timeline.currentTime, null,
+        "An empty range leaves the remote timeline's current time unresolved");
+    assert_false("progress" in remoteAnimation,
+        "The effect does not apply while the timeline's current time is unresolved");
+}, "An empty view timeline range leaves the remote progress-based timeline's current time unresolved");
+
+</script>
+</body>
