@@ -355,6 +355,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply:
         return jsValueForDecodedMessage<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessageReply>(globalObject, decoder);
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin:
+        return jsValueForDecodedMessage<MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin>(globalObject, decoder);
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOriginReply:
+        return jsValueForDecodedMessage<MessageName::TestWithUntrustedReply_AskWebContentForAnOriginReply>(globalObject, decoder);
     case MessageName::TestWithValidator_AlwaysEnabled:
         return jsValueForDecodedMessage<MessageName::TestWithValidator_AlwaysEnabled>(globalObject, decoder);
     case MessageName::TestWithValidator_EnabledIfPassValidation:
@@ -482,6 +486,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestAsyncMessage>(globalObject, decoder);
     case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin:
+        return jsValueForDecodedMessageReply<MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin>(globalObject, decoder);
     case MessageName::TestWithValidator_MessageWithReply:
         return jsValueForDecodedMessageReply<MessageName::TestWithValidator_MessageWithReply>(globalObject, decoder);
     case MessageName::TestWithWantsAsyncDispatch_TestSyncMessage:
@@ -1216,6 +1222,13 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
         };
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOriginReply:
+        return Vector<ArgumentDescription> {
+            { "origin"_s, "IPC::Untrusted<WebCore::SecurityOriginData>"_s },
+            { "wasHandled"_s, "bool"_s },
+        };
     case MessageName::TestWithValidator_AlwaysEnabled:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
@@ -1432,6 +1445,11 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
     case MessageName::TestWithSwiftConditionallyAndEnabledBy_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithUntrustedReply_AskWebContentForAnOrigin:
+        return Vector<ArgumentDescription> {
+            { "origin"_s, "IPC::Untrusted<WebCore::SecurityOriginData>"_s },
+            { "wasHandled"_s, "bool"_s },
         };
     case MessageName::TestWithValidator_MessageWithReply:
         return Vector<ArgumentDescription> {

@@ -28,6 +28,7 @@
 #endif
 
 #import "config.h"
+#import "ExtensionHostPermissionAuthority.h"
 #import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -115,8 +116,13 @@ void WebExtensionContext::fetchCookies(WebsiteDataStore& dataStore, const URL& u
         protect(dataStore.cookieStore())->cookies(WTF::move(internalCompletionHandler));
 }
 
-void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.get()", nullString(), @"cookie store not found"));
@@ -147,8 +153,13 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
     });
 }
 
-void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID, const URL& url, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<URL>&& untrustedURL, const WebExtensionCookieFilterParameters& filterParameters, CompletionHandler<void(std::expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.getAll()", nullString(), @"cookie store not found"));
@@ -160,8 +171,9 @@ void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID,
     });
 }
 
-void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, const WebExtensionCookieParameters& cookieParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<WebExtensionCookieParameters>&& untrustedCookieParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto cookieParameters = WTF::move(untrustedCookieParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.set()", nullString(), @"cookie store not found"));
@@ -182,8 +194,13 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
     });
 }
 
-void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID, const String& name, const URL& url, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID, const String& name, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<WebExtensionCookieParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto validatedURL = WTF::move(untrustedURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this URL"));
+    auto url = WTF::move(*validatedURL);
+
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
         completionHandler(toWebExtensionError(@"cookies.remove()", nullString(), @"cookie store not found"));

@@ -34,6 +34,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     IsSecurityFlagEnabledForTesting(String flagName) -> (std::optional<bool> enabled)
 
     AddAllowedFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain firstPartyForCookies, enum:bool WebKit::LoadedWebArchive loadedWebArchive) -> ()
+    AddHostedDomainForWebProcess(WebCore::ProcessIdentifier processIdentifier, WebCore::RegistrableDomain domain) -> ()
 
 #if USE(SOUP)
     SetIgnoreTLSErrors(PAL::SessionID sessionID, bool ignoreTLSErrors)

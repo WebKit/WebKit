@@ -28,6 +28,7 @@
 #endif
 
 #import "config.h"
+#import "ExtensionHostPermissionAuthority.h"
 #import "WebExtensionContext.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)
@@ -41,8 +42,13 @@
 
 namespace WebKit {
 
-void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, const std::optional<URL>& frameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier webPageProxyIdentifier, const String& scriptSource, IPC::Untrusted<std::optional<URL>>&& untrustedFrameURL, CompletionHandler<void(std::expected<RunJavaScriptResult, WebExtensionError>&&)>&& completionHandler)
 {
+    auto validatedFrameURL = WTF::move(untrustedFrameURL).validate(ExtensionHostPermissionAuthority { *this });
+    if (!validatedFrameURL)
+        return completionHandler(toWebExtensionError(nullString(), nullString(), @"the extension does not have access to this frame"));
+    auto frameURL = WTF::move(*validatedFrameURL);
+
     static NSString * const apiName = @"devtools.inspectedWindow.eval()";
 
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);

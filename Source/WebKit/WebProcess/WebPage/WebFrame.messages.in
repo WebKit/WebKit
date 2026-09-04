@@ -26,7 +26,7 @@
     DispatchedFrom=UI
 ]
 messages -> WebFrame {
-    GetFrameInfo() -> (struct std::optional<WebKit::FrameInfoData> data)
+    GetFrameInfo() -> (struct IPC::Untrusted<std::optional<WebKit::FrameInfoData>> data)
     CreateProvisionalFrame(struct WebKit::ProvisionalFrameCreationParameters creationParameters)
     DestroyProvisionalFrame();
     FindFocusableElementDescendingIntoRemoteFrame(enum:uint8_t WebCore::FocusDirection direction, struct WebCore::FocusEventData focusEventData, enum:bool WebCore::ShouldFocusElement shouldFocusElement) -> (enum:bool WebCore::FoundElementInRemoteFrame foundElement)
@@ -38,16 +38,16 @@ messages -> WebFrame {
     SendMessageToInspectorTarget(String message)
 
     # Text extraction support
-    RequestTextExtraction(struct WebCore::TextExtraction::Request request) -> (struct WebCore::TextExtraction::Result result)
+    RequestTextExtraction(struct WebCore::TextExtraction::Request request) -> (struct IPC::Untrusted<WebCore::TextExtraction::Result> result)
     HandleTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (bool succeeded, String description, Vector<String> stringsToValidate, WebCore::FloatRect interactedElementBounds)
     DescribeTextExtractionInteraction(struct WebCore::TextExtraction::Interaction interaction) -> (struct WebCore::TextExtraction::InteractionDescription description)
     TakeSnapshotOfExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (RefPtr<WebCore::TextIndicator> textIndicator)
-    RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
-    RequestContainerJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct std::optional<WebKit::JSHandleInfo> handle)
-    RequestContainerJSHandleForSearchTexts(Vector<String> texts, std::optional<WebCore::NodeIdentifier> fallbackNodeIdentifier) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    RequestJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct IPC::Untrusted<std::optional<WebKit::JSHandleInfo>> handle)
+    RequestContainerJSHandleForExtractedText(struct WebCore::TextExtraction::ExtractedText text) -> (struct IPC::Untrusted<std::optional<WebKit::JSHandleInfo>> handle)
+    RequestContainerJSHandleForSearchTexts(Vector<String> texts, std::optional<WebCore::NodeIdentifier> fallbackNodeIdentifier) -> (struct IPC::Untrusted<std::optional<WebKit::JSHandleInfo>> handle)
     RequestContentFrameIdentifierForNode(WebCore::NodeIdentifier nodeIdentifier) -> (std::optional<WebCore::FrameIdentifier> frameIdentifier)
 
     # Element targeting support
     GetSelectorPathsForNode(struct WebKit::JSHandleInfo handle) -> (Vector<HashSet<String>> selectors)
-    GetNodeForSelectorPaths(Vector<HashSet<String>> selectors) -> (struct std::optional<WebKit::JSHandleInfo> handle)
+    GetNodeForSelectorPaths(Vector<HashSet<String>> selectors) -> (struct IPC::Untrusted<std::optional<WebKit::JSHandleInfo>> handle)
 }

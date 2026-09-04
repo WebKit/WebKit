@@ -2033,7 +2033,10 @@ void WebAutomationSession::getAllCookies(const Inspector::Protocol::Automation::
         callback(buildArrayForCookies(cookies));
     };
 
-    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageIDInMainFrameProcess(), std::nullopt), WTF::move(completionHandler));
+    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->webPageIDInMainFrameProcess(), std::nullopt), [completionHandler = WTF::move(completionHandler)](std::optional<String>&& errorType, IPC::Untrusted<Vector<WebCore::Cookie>>&& untrustedCookies) mutable {
+        // Reported to the automation client, which already drives the whole browser.
+        completionHandler(WTF::move(errorType), WTF::move(untrustedCookies).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    });
 }
 
 void WebAutomationSession::deleteSingleCookie(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const String& cookieName, CommandCallback<void>&& callback)
@@ -3228,8 +3231,8 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 #if ENABLE(WEBDRIVER_BIDI)
 void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    // Labels a realm for the automation client, which already drives the whole browser.
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;

@@ -89,6 +89,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;
     using ReplyArguments = std::tuple<uint64_t>;
     using Reply = CompletionHandler<void(uint64_t)>;
+    using SuppliedReply = CompletionHandler<void(uint64_t)>;
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
     explicit TestAsyncMessage(WebKit::TestTwoStateEnum twoStateEnum)
         : m_twoStateEnum(twoStateEnum)
@@ -121,6 +122,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::AnyThread;
     using ReplyArguments = std::tuple<uint64_t>;
     using Reply = CompletionHandler<void(uint64_t)>;
+    using SuppliedReply = CompletionHandler<void(uint64_t)>;
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
     explicit TestAsyncMessageAnyThread(WebKit::TestTwoStateEnum twoStateEnum)
         : m_twoStateEnum(twoStateEnum)
@@ -153,6 +155,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     TestAsyncMessageWithNoArguments()
     {
@@ -182,6 +185,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool, uint64_t>;
     using Reply = CompletionHandler<void(bool, uint64_t)>;
+    using SuppliedReply = CompletionHandler<void(bool, uint64_t)>;
     using Promise = WTF::NativePromise<std::tuple<bool, uint64_t>, IPC::Error>;
     TestAsyncMessageWithMultipleArguments()
     {
@@ -211,6 +215,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<bool>;
     using Reply = CompletionHandler<void(bool)>;
+    using SuppliedReply = CompletionHandler<void(bool)>;
     using Promise = WTF::NativePromise<bool, IPC::Error>;
     explicit TestAsyncMessageWithConnection(const int& value)
         : m_value(value)
@@ -241,6 +246,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<uint8_t>;
     using Reply = CompletionHandler<void(uint8_t)>;
+    using SuppliedReply = CompletionHandler<void(uint8_t)>;
     explicit TestSyncMessage(uint32_t param)
         : m_param(param)
     {
@@ -269,6 +275,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<std::optional<WebKit::TestClassName>>;
     using Reply = CompletionHandler<void(std::optional<WebKit::TestClassName>&&)>;
+    using SuppliedReply = CompletionHandler<void(std::optional<WebKit::TestClassName>&&)>;
     explicit TestSynchronousMessage(bool value)
         : m_value(value)
     {

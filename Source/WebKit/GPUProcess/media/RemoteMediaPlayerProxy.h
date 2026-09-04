@@ -39,6 +39,7 @@
 #include "RemoteVideoFrameProxy.h"
 #include "SandboxExtension.h"
 #include "ScopedRenderingResourcesRequest.h"
+#include "Untrusted.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayer.h>
@@ -150,7 +151,7 @@ public:
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode, WebCore::PlatformDynamicRangeLimit);
     void prepareForRendering();
 
-    void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+    void load(IPC::Untrusted<URL>&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
     void cancelLoad();
 
     void prepareToPlay();
@@ -223,7 +224,7 @@ public:
 
     using PerformTaskAtTimeCompletionHandler = CompletionHandler<void(std::optional<MediaTime>)>;
     void performTaskAtTime(const MediaTime&, PerformTaskAtTimeCompletionHandler&&);
-    void isCrossOrigin(WebCore::SecurityOriginData, CompletionHandler<void(std::optional<bool>)>&&);
+    void isCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData>&&, CompletionHandler<void(std::optional<bool>)>&&);
 
     void setVideoPlaybackMetricsUpdateInterval(double);
 

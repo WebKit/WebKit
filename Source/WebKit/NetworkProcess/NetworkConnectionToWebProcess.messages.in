@@ -27,73 +27,73 @@
 ]
 messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
-    ScheduleResourceLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
-    PerformSynchronousLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
+    ScheduleResourceLoad(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
+    PerformSynchronousLoad(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
-    LoadPing(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters)
+    LoadPing(struct IPC::Untrusted<WebKit::NetworkResourceLoadParameters> resourceLoadParameters)
     RemoveLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     BrowsingContextRemoved(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
     PrefetchDNS(String hostname)
-    SendH2Ping(URL url, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) -> (std::expected<Seconds, WebCore::ResourceError> result)
-    PreconnectTo(struct WebKit::PreconnectRequest request);
+    SendH2Ping(IPC::Untrusted<URL> url, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) -> (std::expected<Seconds, WebCore::ResourceError> result)
+    PreconnectTo(struct IPC::Untrusted<WebKit::PreconnectRequest> request);
     IsResourceLoadFinished(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (bool isFinished)
 
-    StartDownload(WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName, enum:bool WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
-    ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, std::optional<WebCore::SecurityOriginData> topOrigin, WebCore::ResourceResponse response, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
+    StartDownload(WebKit::DownloadID downloadID, IPC::Untrusted<WebCore::ResourceRequest> request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, String suggestedName, enum:bool WebCore::FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID)
+    ConvertMainResourceLoadToDownload(std::optional<WebCore::ResourceLoaderIdentifier> mainResourceLoadIdentifier, WebKit::DownloadID downloadID, IPC::Untrusted<WebCore::ResourceRequest> request, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin, IPC::Untrusted<WebCore::ResourceResponse> response, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 
-    CookiesForDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, WebKit::WebPageProxyIdentifier webPageProxyID) -> (String cookieString, bool didAccessSecureCookies) Synchronous
-    SetCookiesFromDOM(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, String cookieString, enum:bool WebCore::RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, WebKit::WebPageProxyIdentifier webPageProxyID)
-    CookiesEnabledSync(URL firstParty, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool enabled) Synchronous
-    CookiesEnabled(URL firstParty, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool enabled)
-    CookieRequestHeaderFieldValueDigest(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (std::optional<std::array<uint8_t, 20>> digest) Synchronous
-    SetRawCookie(URL firstParty, URL url, struct WebCore::Cookie cookie, enum:bool WebCore::ShouldPartitionCookie shouldPartitionCookie)
-    GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (Vector<WebCore::Cookie> cookies) Synchronous
-    DeleteCookie(URL firstParty, URL url, String cookieName) -> ()
-    DomCookiesForHost(URL host) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    CookiesForDOM(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, WebKit::WebPageProxyIdentifier webPageProxyID) -> (String cookieString, bool didAccessSecureCookies) Synchronous
+    SetCookiesFromDOM(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, String cookieString, enum:bool WebCore::RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, WebKit::WebPageProxyIdentifier webPageProxyID)
+    CookiesEnabledSync(IPC::Untrusted<URL> firstParty, IPC::Untrusted<URL> url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool enabled) Synchronous
+    CookiesEnabled(IPC::Untrusted<URL> firstParty, IPC::Untrusted<URL> url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool enabled)
+    CookieRequestHeaderFieldValueDigest(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (std::optional<std::array<uint8_t, 20>> digest) Synchronous
+    SetRawCookie(IPC::Untrusted<URL> firstParty, IPC::Untrusted<URL> url, struct IPC::Untrusted<WebCore::Cookie> cookie, enum:bool WebCore::ShouldPartitionCookie shouldPartitionCookie)
+    GetRawCookies(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    DeleteCookie(IPC::Untrusted<URL> firstParty, IPC::Untrusted<URL> url, String cookieName) -> ()
+    DomCookiesForHost(IPC::Untrusted<URL> host) -> (Vector<WebCore::Cookie> cookies) Synchronous
 
-    [EnabledBy=CookieStoreAPIEnabled] CookiesForDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, struct WebCore::CookieStoreGetOptions options, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (std::optional<Vector<WebCore::Cookie>> cookies)
+    [EnabledBy=CookieStoreAPIEnabled] CookiesForDOMAsync(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, struct WebCore::CookieStoreGetOptions options, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (std::optional<Vector<WebCore::Cookie>> cookies)
 
-    [EnabledBy=CookieStoreAPIEnabled] SetCookieFromDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct WebCore::Cookie cookie, enum:bool WebCore::RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (bool setSuccessfully)
+    [EnabledBy=CookieStoreAPIEnabled] SetCookieFromDOMAsync(IPC::Untrusted<URL> firstParty, struct WebCore::SameSiteInfo sameSiteInfo, IPC::Untrusted<URL> url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct IPC::Untrusted<WebCore::Cookie> cookie, enum:bool WebCore::RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (bool setSuccessfully)
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    SubscribeToCookieChangeNotifications(URL url, URL firstParty, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool result) AllowedWhenWaitingForSyncReply
+    SubscribeToCookieChangeNotifications(IPC::Untrusted<URL> url, IPC::Untrusted<URL> firstParty, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID, WebKit::WebPageProxyIdentifier webPageProxyID) -> (bool result) AllowedWhenWaitingForSyncReply
     UnsubscribeFromCookieChangeNotifications(String host) AllowedWhenWaitingForSyncReply
 #endif
 
-    SubscribeToStorageAccessPermissionChanges(WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain);
-    UnsubscribeFromStorageAccessPermissionChanges(WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain);
+    SubscribeToStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain);
+    UnsubscribeFromStorageAccessPermissionChanges(IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain);
 
-    RegisterInternalFileBlobURL(URL url, String path, String replacementPath, WebKit::SandboxExtensionHandle extensionHandle, String contentType)
-    RegisterInternalBlobURL(URL url, Vector<WebCore::BlobPart> blobParts, String contentType)
-    RegisterBlobURL(URL url, URL srcURL, struct WebCore::PolicyContainer policyContainer, std::optional<WebCore::SecurityOriginData> topOrigin)
-    RegisterInternalBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
-    RegisterInternalBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end, String contentType)
-    UnregisterBlobURL(URL url, std::optional<WebCore::SecurityOriginData> topOrigin)
-    BlobType(URL url) -> (String result) Synchronous
-    BlobSize(URL url) -> (uint64_t resultSize) Synchronous
+    RegisterInternalFileBlobURL(IPC::Untrusted<URL> url, String path, String replacementPath, WebKit::SandboxExtensionHandle extensionHandle, String contentType)
+    RegisterInternalBlobURL(IPC::Untrusted<URL> url, IPC::Untrusted<Vector<WebCore::BlobPart>> blobParts, String contentType)
+    RegisterBlobURL(IPC::Untrusted<URL> url, IPC::Untrusted<URL> srcURL, struct WebCore::PolicyContainer policyContainer, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin)
+    RegisterInternalBlobURLOptionallyFileBacked(IPC::Untrusted<URL> url, IPC::Untrusted<URL> srcURL, String fileBackedPath, String contentType)
+    RegisterInternalBlobURLForSlice(IPC::Untrusted<URL> url, IPC::Untrusted<URL> srcURL, int64_t start, int64_t end, String contentType)
+    UnregisterBlobURL(IPC::Untrusted<URL> url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin)
+    BlobType(IPC::Untrusted<URL> url) -> (String result) Synchronous
+    BlobSize(IPC::Untrusted<URL> url) -> (uint64_t resultSize) Synchronous
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
-    RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
-    UnregisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
+    RegisterBlobURLHandle(IPC::Untrusted<URL> url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin);
+    UnregisterBlobURLHandle(IPC::Untrusted<URL> url, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>> topOrigin);
     RegisterBlobPathForTesting(String path) -> ();
     [EnabledBy=AllowTestOnlyIPC] GeneralStoragePathForTesting() -> (String path);
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
-    [EnabledBy=WebSocketEnabled] CreateSocketChannel(WebCore::ResourceRequest request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct WebCore::ClientOrigin clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> protections, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+    [EnabledBy=WebSocketEnabled] CreateSocketChannel(IPC::Untrusted<WebCore::ResourceRequest> request, String protocol, WebCore::WebSocketIdentifier identifier, WebKit::WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> protections, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
 
     CountWebSocketChannelsForTesting() -> (uint32_t count)
 
     ClearPageSpecificData(WebCore::PageIdentifier pageID);
 
     [EnabledBy=StorageAccessAPIEnabled] RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
-    LogUserInteraction(WebCore::RegistrableDomain domain)
-    ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> ()
-    [EnabledBy=StorageAccessAPIEnabled] HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)
-    [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID, enum:bool WebCore::StorageAccessScope scope, enum:bool WebCore::HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired) -> (struct WebCore::RequestStorageAccessResult result)
-    [EnabledBy=StorageAccessAPIEnabled] QueryStorageAccessPermission(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (enum:uint8_t WebCore::PermissionState permissionState)
-    [EnabledBy=StorageAccessAPIEnabled] StorageAccessQuirkForTopFrameDomain(URL topFrameURL) -> (Vector<WebCore::RegistrableDomain> domains)
-    [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
+    LogUserInteraction(IPC::Untrusted<WebCore::RegistrableDomain> domain)
+    ResourceLoadStatisticsUpdated(IPC::Untrusted<Vector<WebCore::ResourceLoadStatistics>> statistics) -> ()
+    [EnabledBy=StorageAccessAPIEnabled] HasStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)
+    [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccess(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID, enum:bool WebCore::StorageAccessScope scope, enum:bool WebCore::HasUserGestureOrNoUserGestureRequired hasUserGestureOrNoUserGestureRequired) -> (struct WebCore::RequestStorageAccessResult result)
+    [EnabledBy=StorageAccessAPIEnabled] QueryStorageAccessPermission(IPC::Untrusted<WebCore::RegistrableDomain> subFrameDomain, IPC::Untrusted<WebCore::RegistrableDomain> topFrameDomain, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (enum:uint8_t WebCore::PermissionState permissionState)
+    [EnabledBy=StorageAccessAPIEnabled] StorageAccessQuirkForTopFrameDomain(IPC::Untrusted<URL> topFrameURL) -> (Vector<WebCore::RegistrableDomain> domains)
+    [EnabledBy=StorageAccessAPIEnabled] RequestStorageAccessUnderOpener(IPC::Untrusted<WebCore::RegistrableDomain> domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, IPC::Untrusted<WebCore::RegistrableDomain> openerDomain)
 
     [EnabledBy=AllowTestOnlyOriginAccessAllowListIPC] AddOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     [EnabledBy=AllowTestOnlyOriginAccessAllowListIPC] RemoveOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
@@ -103,11 +103,11 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     GetNetworkLoadIntermediateInformation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Synchronous
     TakeNetworkLoadInformationMetrics(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
-    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, enum:bool WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy) -> ()
+    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, IPC::Untrusted<WebCore::Site> site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, enum:bool WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy) -> ()
     CloseSWContextConnection()
     PingPongForServiceWorkers() -> (bool isSuccess)
 
-    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site, enum:bool WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy) -> ()
+    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, IPC::Untrusted<WebCore::Site> site, enum:bool WebCore::CrossOriginEmbedderPolicyValue crossOriginEmbedderPolicy) -> ()
     CloseSharedWorkerContextConnection()
 
     CreateRTCProvider() -> ()
@@ -137,24 +137,24 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     [EnabledBy=AllowTestOnlyMockContentFilterIPC] InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 
-    UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
+    UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, IPC::Untrusted<WebCore::ResourceResponse> response)
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    NavigatorSubscribeToPushService(URL scopeURL, Vector<uint8_t> applicationServerKey) -> (std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
-    NavigatorUnsubscribeFromPushService(URL scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (std::expected<bool, WebCore::ExceptionData> result)
-    NavigatorGetPushSubscription(URL scopeURL) -> (std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
-    NavigatorGetPushPermissionState(URL scopeURL) -> (std::expected<uint8_t, WebCore::ExceptionData> result)
+    NavigatorSubscribeToPushService(IPC::Untrusted<URL> scopeURL, Vector<uint8_t> applicationServerKey) -> (std::expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
+    NavigatorUnsubscribeFromPushService(IPC::Untrusted<URL> scopeURL, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (std::expected<bool, WebCore::ExceptionData> result)
+    NavigatorGetPushSubscription(IPC::Untrusted<URL> scopeURL) -> (std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
+    NavigatorGetPushPermissionState(IPC::Untrusted<URL> scopeURL) -> (std::expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
-    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(WebKit::WebTransportSessionIdentifier identifier, URL url, struct WebCore::WebTransportOptions options, Vector<KeyValuePair<String, String>> additionalHeaders, WebKit::WebPageProxyIdentifier pageID, struct WebCore::ClientOrigin clientOrigin) -> (struct std::optional<WebCore::WebTransportConnectionInfo> connectionInfo)
+    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(WebKit::WebTransportSessionIdentifier identifier, IPC::Untrusted<URL> url, struct WebCore::WebTransportOptions options, Vector<KeyValuePair<String, String>> additionalHeaders, WebKit::WebPageProxyIdentifier pageID, struct IPC::Untrusted<WebCore::ClientOrigin> clientOrigin) -> (struct std::optional<WebCore::WebTransportConnectionInfo> connectionInfo)
     [EnabledBy=WebTransportEnabled] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 
-    LoadImageForDecoding(WebCore::ResourceRequest request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
+    LoadImageForDecoding(IPC::Untrusted<WebCore::ResourceRequest> request, WebKit::WebPageProxyIdentifier pageID, uint64_t maximumBytesFromNetwork) -> (std::expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError> result)
 
-    SetLoginStatus(WebCore::RegistrableDomain domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, std::optional<WebCore::LoginStatus> lastAuthentication) -> ()
-    IsLoggedIn(WebCore::RegistrableDomain domain) -> (bool result)
+    SetLoginStatus(IPC::Untrusted<WebCore::RegistrableDomain> domain, enum:uint8_t WebCore::IsLoggedIn loggedInStatus, IPC::Untrusted<std::optional<WebCore::LoginStatus>> lastAuthentication) -> ()
+    IsLoggedIn(IPC::Untrusted<WebCore::RegistrableDomain> domain) -> (bool result)
 
     DropNonSerializableInProcessCache(WebCore::ProcessIdentifier originProcess, WebCore::NonSerializedDataIdentifier identifier)
 

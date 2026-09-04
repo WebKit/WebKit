@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "WebProcessProxy.h"
+
+#import "FirstPartyAuthority.h"
 #include <WebCore/ServiceWorkerTypes.h>
 
 #import "AccessibilitySupportSPI.h"
@@ -286,8 +288,13 @@ bool WebProcessProxy::shouldDisableJITCage() const
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
-void WebProcessProxy::createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, URL&& url, WebCore::ServiceWorkerIsInspectable isInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&& completionHandler)
+void WebProcessProxy::createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedURL, WebCore::ServiceWorkerIsInspectable isInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&& completionHandler)
 {
+    auto validatedURL = WTF::move(untrustedURL).validate(FirstPartyAuthority { *this });
+    if (!validatedURL)
+        return completionHandler(false);
+    auto url = WTF::move(*validatedURL);
+
     MESSAGE_CHECK_URL(url);
     RELEASE_LOG(Inspector, "WebProcessProxy::createServiceWorkerDebuggable");
     if (!shouldEnableRemoteInspector()) {

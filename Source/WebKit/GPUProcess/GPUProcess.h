@@ -220,6 +220,9 @@ private:
     void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
+    void addHostedDomainForWebProcess(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
+    bool hostsDomain(WebCore::ProcessIdentifier, const WebCore::RegistrableDomain&) const;
+    friend class GPUHostedDomainAuthority;
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
     void updateNowPlayingArbiterActive(const SharedPreferencesForWebProcess&);
     void securityFlagsDidChange(SecurityFlags&&);
@@ -281,6 +284,7 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::RegistrableDomain>> m_hostedDomainsByProcess;
     MonotonicTime m_creationTime { MonotonicTime::now() };
 
     GPUProcessPreferences m_preferences;

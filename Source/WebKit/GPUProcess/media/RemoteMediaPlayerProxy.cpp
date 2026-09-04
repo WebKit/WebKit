@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteMediaPlayerProxy.h"
 
+#include "GPUHostedDomainAuthority.h"
+
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "ArgumentCoders.h"
@@ -183,8 +185,10 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     });
 }
 
-void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const MediaPlayer::LoadOptions& options, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::load(IPC::Untrusted<URL>&& untrustedURL, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const MediaPlayer::LoadOptions& options, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
+    auto url = WTF::move(untrustedURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+
     RemoteMediaPlayerConfiguration configuration;
     if (sandboxExtensionHandle) {
         m_sandboxExtension = SandboxExtension::create(WTF::move(sandboxExtensionHandle.value()));
@@ -544,7 +548,10 @@ String RemoteMediaPlayerProxy::mediaPlayerNetworkInterfaceName() const
 
 void RemoteMediaPlayerProxy::mediaPlayerGetRawCookies(const URL& url, WebCore::MediaPlayerClient::GetRawCookiesCallback&& completionHandler) const
 {
-    protect(m_webProcessConnection)->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::GetRawCookies(url), WTF::move(completionHandler), m_id);
+    protect(m_webProcessConnection)->sendWithAsyncReply(Messages::MediaPlayerPrivateRemote::GetRawCookies(url), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<Vector<WebCore::Cookie>>&& untrustedCookies) mutable {
+        // Handed straight back to the media stack loading this web process's own resource.
+        completionHandler(WTF::move(untrustedCookies).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, m_id);
 }
 #endif
 
@@ -1175,8 +1182,16 @@ void RemoteMediaPlayerProxy::performTaskAtTime(const MediaTime& taskTime, Perfor
     }, taskTime);
 }
 
-void RemoteMediaPlayerProxy::isCrossOrigin(WebCore::SecurityOriginData originData, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+void RemoteMediaPlayerProxy::isCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
+    RefPtr manager = m_manager.get();
+    RefPtr gpuConnection = manager ? manager->gpuConnectionToWebProcess() : nullptr;
+    if (!gpuConnection)
+        return completionHandler(std::nullopt);
+    auto validatedOrigin = WTF::move(untrustedOrigin).validate(GPUHostedDomainAuthority { *gpuConnection });
+    if (!validatedOrigin)
+        return completionHandler(std::nullopt);
+    auto originData = WTF::move(*validatedOrigin);
     completionHandler(protect(m_player)->isCrossOrigin(originData.securityOrigin()));
 }
 

@@ -346,6 +346,8 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
     auto& cookiesData = webProcessProxy.allowedFirstPartiesForCookiesData();
     parameters.loadedWebArchive = cookiesData.first;
     parameters.allowedFirstPartiesForCookies = cookiesData.second;
+    parameters.hostedDomains = webProcessProxy.hostedDomains();
+    m_hostedDomainsByProcess.set(webProcessProxy, webProcessProxy.hostedDomains());
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTF::move(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
@@ -2055,6 +2057,16 @@ void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::Client
     }
     for (Ref process : processesToSend)
         process->sendWithAsyncReply(Messages::WebProcess::ReloadExecutionContextsForOrigin(origin, triggeringFrame), [callbackAggregator] { });
+}
+
+void NetworkProcessProxy::addHostedDomainForWebProcess(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+{
+    auto& domains = m_hostedDomainsByProcess.ensure(webProcessProxy, [] {
+        return HashSet<WebCore::RegistrableDomain> { };
+    }).iterator->value;
+    if (!domains.add(domain).isNewEntry)
+        return completionHandler();
+    sendWithAsyncReply(Messages::NetworkProcess::AddHostedDomainForWebProcess(webProcessProxy.coreProcessIdentifier(), domain), WTF::move(completionHandler));
 }
 
 void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)

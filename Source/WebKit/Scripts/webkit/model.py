@@ -24,7 +24,7 @@ import itertools
 
 from collections import Counter, defaultdict
 from .opaque_ipc_types import is_opaque_type, opaque_ipc_types
-from .untrusted_origins import conveys_untrusted_value, is_privileged_receiver, unwrap_if_untrusted, unwrap_untrusted
+from .untrusted_origins import conveys_untrusted_value, is_privileged_receiver, replies_to_privileged_sender, struct_types_carrying_untrusted_origins, unwrap_if_untrusted, unwrap_untrusted
 
 BUILTIN_ATTRIBUTE = "Builtin"
 MAINTHREADCALLBACK_ATTRIBUTE = "MainThreadCallback"
@@ -86,19 +86,31 @@ class MessageReceiver(object):
 
     def enforce_untrusted_origin_usage(self):
         """A privileged process must not be handed a bare origin or URL by web content.
+
+        Messages travelling into a privileged process and replies travelling back out of web
+        content are the same problem seen from the two ends of a connection.
         """
-        if not is_privileged_receiver(self):
+        checks_messages = is_privileged_receiver(self)
+        checks_replies = replies_to_privileged_sender(self)
+        if not checks_messages and not checks_replies:
             return
+        carriers = struct_types_carrying_untrusted_origins()
         for message in self.messages:
-            for parameter in message.parameters:
-                untrusted_type = conveys_untrusted_value(parameter.type)
-                if untrusted_type is None or unwrap_untrusted(parameter.type):
-                    continue
-                raise Exception(
-                    f"{self.name}.{message.name} passes {untrusted_type} from web content into the "
-                    f"{self.receiver_dispatched_to} process as a bare value. Declare the parameter as "
-                    f"IPC::Untrusted<{parameter.type}> and either validate it with one of the "
-                    f"designated validation procedures or call unsafeExtractWithoutValidation() with a reason.")
+            if checks_messages:
+                self._enforce_untrusted_parameters(message, message.parameters, carriers, self.receiver_dispatched_to, 'passes')
+            if checks_replies and message.reply_parameters is not None:
+                self._enforce_untrusted_parameters(message, message.reply_parameters, carriers, self.receiver_dispatched_from, 'replies with')
+
+    def _enforce_untrusted_parameters(self, message, parameters, carriers, destination, verb):
+        for parameter in parameters:
+            untrusted_type = conveys_untrusted_value(parameter.type, extra_types=carriers)
+            if untrusted_type is None or unwrap_untrusted(parameter.type):
+                continue
+            raise Exception(
+                f"{self.name}.{message.name} {verb} {untrusted_type} from web content into the "
+                f"{destination} process as a bare value. Declare the parameter as "
+                f"IPC::Untrusted<{parameter.type}> and either validate it with one of the "
+                f"designated validation procedures or call unsafeExtractWithoutValidation() with a reason.")
 
 
 class Message(object):

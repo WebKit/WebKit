@@ -244,6 +244,13 @@ def function_parameter_type(type, kind, for_reply=False):
     return 'const %s&' % type
 
 
+def reply_parameter_type(parameter):
+    """The type the process that asked the question receives, wrapper and all."""
+    if unwrap_untrusted(parameter.type):
+        return '%s&&' % parameter.type
+    return function_parameter_type(parameter.type, parameter.kind, True)
+
+
 def function_parameter_requires_suppress_forward_decl(type, kind, for_reply=False):
     type = unwrap_if_untrusted(type)
     return not (
@@ -293,7 +300,10 @@ def message_to_struct_declaration(receiver, message):
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
-        result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(x.type, x.kind, True) for x in message.reply_parameters]))
+        result.append('    using Reply = CompletionHandler<void(%s)>;\n' % ', '.join([reply_parameter_type(x) for x in message.reply_parameters]))
+        # The process that replies supplies a bare value: IPC::Untrusted<T> is applied as the reply
+        # is decoded, so it constrains only the privileged process that asked the question.
+        result.append('    using SuppliedReply = CompletionHandler<void(%s)>;\n' % ', '.join([function_parameter_type(unwrap_if_untrusted(x.type), x.kind, True) for x in message.reply_parameters]))
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             if len(message.reply_parameters) == 0:
                 result.append('    using Promise = WTF::NativePromise<void, IPC::Error>;\n')
@@ -861,7 +871,7 @@ def forward_declarations_and_headers(receiver):
 
 def message_to_completion_handler_using_declaration(receiver, message):
     completion_handler_name = message.name + 'CompletionHandler'
-    return 'using %s = WTF::RefCountable<Messages::%s::%s::Reply>;' % (completion_handler_name, receiver.name, message.name)
+    return 'using %s = WTF::RefCountable<Messages::%s::%s::SuppliedReply>;' % (completion_handler_name, receiver.name, message.name)
 
 
 def generate_messages_header(receiver):
@@ -2030,7 +2040,7 @@ def generate_message_handler(receiver):
             result.append('            return;\n')
             result.append('        connection.sendAsyncReply<Messages::%s::%s>(*replyID\n' % (receiver.name, message.name))
             for parameter in message.reply_parameters:
-                result.append('            , IPC::AsyncReplyError<%s>::create()\n' % (parameter.type))
+                result.append('            , IPC::AsyncReplyError<%s>::create()\n' % (unwrap_if_untrusted(parameter.type)))
             result.append('        );\n')
             result.append('        return;\n')
             result.append('    }\n')

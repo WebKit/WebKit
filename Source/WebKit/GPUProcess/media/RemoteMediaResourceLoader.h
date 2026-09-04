@@ -90,12 +90,12 @@ private:
     Ref<GuaranteedSerialFunctionDispatcher> targetDispatcher() final { return defaultQueue(); }
 
     // Messages
-    void responseReceived(RemoteMediaResourceIdentifier, const WebCore::ResourceResponse&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
-    void redirectReceived(RemoteMediaResourceIdentifier, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
+    void responseReceived(RemoteMediaResourceIdentifier, IPC::Untrusted<WebCore::ResourceResponse>&&, bool, CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&);
+    void redirectReceived(RemoteMediaResourceIdentifier, IPC::Untrusted<WebCore::ResourceRequest>&&, IPC::Untrusted<WebCore::ResourceResponse>&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void dataSent(RemoteMediaResourceIdentifier, uint64_t, uint64_t);
     void dataReceived(RemoteMediaResourceIdentifier, IPC::SharedBufferReference&&, CompletionHandler<void(std::optional<WebCore::SharedMemory::Handle>&&)>&&);
-    void accessControlCheckFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
-    void loadFailed(RemoteMediaResourceIdentifier, const WebCore::ResourceError&);
+    void accessControlCheckFailed(RemoteMediaResourceIdentifier, IPC::Untrusted<WebCore::ResourceError>&&);
+    void loadFailed(RemoteMediaResourceIdentifier, IPC::Untrusted<WebCore::ResourceError>&&);
     void loadFinished(RemoteMediaResourceIdentifier, const WebCore::NetworkLoadMetrics&);
 
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy WTF_GUARDED_BY_CAPABILITY(mainRunLoop);

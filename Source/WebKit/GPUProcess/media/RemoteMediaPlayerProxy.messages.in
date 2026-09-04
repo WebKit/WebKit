@@ -31,7 +31,7 @@
 messages -> RemoteMediaPlayerProxy {
     PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerPreload preload, bool preservesPitch, enum:uint8_t WebCore::MediaPlayerPitchCorrectionAlgorithm pitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, enum:uint8_t WebCore::DynamicRangeMode mode, WebCore::PlatformDynamicRangeLimit platformDynamicRangeLimit)
 
-    Load(URL url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, struct WebCore::MediaPlayerLoadOptions options) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
+    Load(IPC::Untrusted<URL> url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, struct WebCore::MediaPlayerLoadOptions options) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
     CancelLoad()
 
     PrepareToPlay()
@@ -105,7 +105,7 @@ messages -> RemoteMediaPlayerProxy {
     TextTrackSetMode(WebCore::TrackID trackId, enum:uint8_t WebCore::InbandTextTrackPrivateMode mode)
 
     PerformTaskAtTime(MediaTime mediaTime) -> (std::optional<MediaTime> mediaTime)
-    IsCrossOrigin(WebCore::SecurityOriginData origin) -> (std::optional<bool> crossOrigin) Synchronous
+    IsCrossOrigin(IPC::Untrusted<WebCore::SecurityOriginData> origin) -> (std::optional<bool> crossOrigin) Synchronous
 
     SetVideoPlaybackMetricsUpdateInterval(double interval)
 

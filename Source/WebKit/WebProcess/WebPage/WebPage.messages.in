@@ -150,11 +150,11 @@ messages -> WebPage WantsAsyncDispatchMessage {
     GetRectsForGranularityWithSelectionOffset(enum:uint8_t WebCore::TextGranularity granularity, int32_t offset) -> (Vector<WebCore::SelectionGeometry> rect)
     GetRectsAtSelectionOffsetWithText(int32_t offset, String text) -> (Vector<WebCore::SelectionGeometry> rect)
     StoreSelectionForAccessibility(bool shouldStore)
-    RequestFocusedElementInformation() -> (struct std::optional<WebKit::FocusedElementInformation> info)
+    RequestFocusedElementInformation() -> (struct IPC::Untrusted<std::optional<WebKit::FocusedElementInformation>> info)
     HardwareKeyboardAvailabilityChanged(struct WebKit::HardwareKeyboardState state)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> ()
-    RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response)
+    RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct IPC::Untrusted<WebKit::DocumentEditingContext> response)
     GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType command)
     SetShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
     TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<WebCore::ElementContext> contexts)
@@ -222,8 +222,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)
     CreateRemoteSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newChildID, String frameName, WebCore::ProcessIdentifier hostingProcessID, Ref<WebCore::FrameTreeSyncData> frameTreeSyncData)
 
-    GetFrameTree() -> (struct std::optional<WebKit::FrameTreeNodeData> data)
-    GetFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier frameItemID) -> (struct std::optional<WebKit::FrameTreeNodeData> data)
+    GetFrameTree() -> (struct IPC::Untrusted<std::optional<WebKit::FrameTreeNodeData>> data)
+    GetFrameTreeForBackForwardCacheEntry(WebCore::BackForwardFrameItemIdentifier frameItemID) -> (struct IPC::Untrusted<std::optional<WebKit::FrameTreeNodeData>> data)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
 
@@ -263,7 +263,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     # Callbacks.
     GetContentsAsString(enum:bool WebKit::ContentAsStringIncludesChildFrames inChildFrames) -> (String string)
 #if PLATFORM(COCOA)
-    GetContentsAsAttributedString() -> (struct WebCore::AttributedString result)
+    GetContentsAsAttributedString() -> (struct IPC::Untrusted<WebCore::AttributedString> result)
 #endif
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData() -> (IPC::SharedBufferReference data)
@@ -276,11 +276,11 @@ messages -> WebPage WantsAsyncDispatchMessage {
     GetWebArchiveOfFrameWithFileName(WebCore::FrameIdentifier frameID, Vector<WebCore::MarkupExclusionRule> markupExclusionRules, String fileName) -> (std::optional<IPC::SharedBufferReference> dataReference)
 #if PLATFORM(COCOA)
     GetWebArchiveData() -> (std::optional<IPC::SharedBufferReference> dataReference)
-    GetWebArchivesForFrames(Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>> frameArchives)
-    GetContentsAsAttributedStringForFrames(Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> frameAttributedStrings)
+    GetWebArchivesForFrames(Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (IPC::Untrusted<HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>> frameArchives)
+    GetContentsAsAttributedStringForFrames(Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (IPC::Untrusted<HashMap<WebCore::FrameIdentifier, WebCore::AttributedString>> frameAttributedStrings)
 #endif
 
-    RunJavaScriptInFrameInScriptWorld(struct WebKit::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, struct WebKit::ContentWorldData world, bool wantsResult) -> (std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>> result)
+    RunJavaScriptInFrameInScriptWorld(struct WebKit::RunJavaScriptParameters parameters, std::optional<WebCore::FrameIdentifier> frameID, struct WebKit::ContentWorldData world, bool wantsResult) -> (IPC::Untrusted<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>> result)
 
     ClearContentWorld(WebKit::ContentWorldIdentifier worldIdentifier) -> ()
 
@@ -535,8 +535,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DrawToPDF(std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground) -> (RefPtr<WebCore::SharedBuffer> data)
 #endif
 #if PLATFORM(GTK)
-    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebCore::SharedMemory::Handle> data, WebCore::ResourceError error)
-    DrawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebCore::SharedMemory::Handle> data, WebCore::ResourceError error) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
+    DrawPagesForPrinting(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebCore::SharedMemory::Handle> data, IPC::Untrusted<WebCore::ResourceError> error)
+    DrawPagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, struct WebKit::PrintInfo printInfo) -> (std::optional<WebCore::SharedMemory::Handle> data, IPC::Untrusted<WebCore::ResourceError> error) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
 #endif
 
     DrawToSnapshot(std::optional<WebCore::FloatRect> rect, bool allowTransparentBackground, WebKit::RemoteSnapshotIdentifier snapshotIdentifier) -> (std::optional<WebCore::IntSize> result)
@@ -619,7 +619,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
-    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct WebCore::AttributedString string, struct WebKit::EditingRange range)
+    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range) -> (struct IPC::Untrusted<WebCore::AttributedString> string, struct WebKit::EditingRange range)
     RequestAcceptsFirstMouse(int eventNumber, Ref<WebKit::WebMouseEvent> event) AllowedWhenWaitingForSyncReplyDuringUnboundedIPC
     SetCaretAnimatorType(enum:uint8_t WebCore::CaretAnimatorType caretType)
     SetCaretBlinkingSuspended(bool blinkSuspended)
@@ -695,7 +695,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     FlushDeferredDidReceiveMouseEvent()
 
-    PerformHitTestForMouseEvent(Ref<WebKit::WebMouseEvent> event) -> (struct WebKit::WebHitTestResultData hitTestResult, OptionSet<WebKit::WebEventModifier> modifiers)
+    PerformHitTestForMouseEvent(Ref<WebKit::WebMouseEvent> event) -> (struct IPC::Untrusted<WebKit::WebHitTestResultData> hitTestResult, OptionSet<WebKit::WebEventModifier> modifiers)
 
     SetUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 
@@ -735,7 +735,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     RegisterURLSchemeHandler(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, String scheme)
 
-    URLSchemeTaskWillPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest)
+    URLSchemeTaskWillPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (IPC::Untrusted<WebCore::ResourceRequest> actualRequest)
     URLSchemeTaskDidPerformRedirection(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
     URLSchemeTaskDidReceiveResponse(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, WebCore::ResourceResponse response)
     URLSchemeTaskDidReceiveData(WebKit::WebURLSchemeHandlerIdentifier handlerIdentifier, WebCore::ResourceLoaderIdentifier taskIdentifier, Ref<WebCore::SharedBuffer> data)
@@ -752,7 +752,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    GetApplicationManifest() -> (struct std::optional<WebCore::ApplicationManifest> manifest)
+    GetApplicationManifest() -> (struct IPC::Untrusted<std::optional<WebCore::ApplicationManifest>> manifest)
 #endif
 
     GetTextFragmentMatch() -> (String match)
@@ -763,8 +763,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if ENABLE(AX_PDF_SUPPORT)
     TogglePDFAccessibilityDisplayMode(WebKit::PDFPluginIdentifier identifier)
 #endif
-    SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, URL url, std::span<const uint8_t> data)
-    OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct std::optional<WebKit::FrameInfoData> frameInfo, std::span<const uint8_t> data)
+    SavePDF(WebKit::PDFPluginIdentifier identifier) -> (String filename, IPC::Untrusted<URL> url, std::span<const uint8_t> data)
+    OpenPDFWithPreview(WebKit::PDFPluginIdentifier identifier) -> (String filename, struct IPC::Untrusted<std::optional<WebKit::FrameInfoData>> frameInfo, std::span<const uint8_t> data)
 #endif
 
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEventModifier> modifiers)
@@ -786,7 +786,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     WasLoadedWithDataTransferFromPrevalentResource()
     ClearLoadedSubresourceDomains()
-    GetLoadedSubresourceDomains() -> (Vector<WebCore::RegistrableDomain> domains)
+    GetLoadedSubresourceDomains() -> (IPC::Untrusted<Vector<WebCore::RegistrableDomain>> domains)
 
 #if USE(SYSTEM_PREVIEW)
     SystemPreviewActionTriggered(struct WebCore::SystemPreviewInfo previewInfo, String message)
@@ -823,7 +823,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetAppHighlightsVisibility(enum:bool WebCore::HighlightVisibility highlightVisibility)
 #endif
 
-    CreateTextFragmentDirectiveFromSelection() -> (URL url)
+    CreateTextFragmentDirectiveFromSelection() -> (IPC::Untrusted<URL> url)
     GetTextFragmentRanges() -> (Vector<WebKit::EditingRange> textFragmentEditingRanges)
 
     HandleWheelEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebWheelEvent> event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, std::optional<bool> willStartSwipe) -> (std::optional<WebCore::ScrollingNodeID> scrollingNodeID, enum:uint8_t std::optional<WebCore::WheelScrollGestureState> gestureState, bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
@@ -890,9 +890,9 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     RequestAllTextAndRects() -> (Vector<std::pair<String, WebCore::FloatRect>> textAndRects)
 
-    RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
+    RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (IPC::Untrusted<Vector<WebCore::TargetedElementInfo>> elements)
 
-    RequestAllTargetableElements(float hitTestInterval) -> (Vector<Vector<WebCore::TargetedElementInfo>> elements)
+    RequestAllTargetableElements(float hitTestInterval) -> (IPC::Untrusted<Vector<Vector<WebCore::TargetedElementInfo>>> elements)
 
     # Text extraction support
     HasTextExtractionFilterRules() -> (bool hasRules)
@@ -909,7 +909,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    WillBeginWritingToolsSession(std::optional<WebCore::WritingTools::Session> session, Vector<WebCore::JSHandleIdentifier> preservedNodeIdentifiers) -> (Vector<WebCore::WritingTools::Context> contexts)
+    WillBeginWritingToolsSession(std::optional<WebCore::WritingTools::Session> session, Vector<WebCore::JSHandleIdentifier> preservedNodeIdentifiers) -> (IPC::Untrusted<Vector<WebCore::WritingTools::Context>> contexts)
 
     DidBeginWritingToolsSession(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::Context> contexts)
 
@@ -960,8 +960,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ContentsToRootViewRect(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)
     ContentsToRootViewRects(WebCore::FrameIdentifier frameID, Vector<WebCore::FloatRect> rects) -> (Vector<WebCore::FloatRect> rects)
     ContentsToRootViewPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (WebCore::FloatPoint point)
-    RemoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, struct WebCore::DictionaryPopupInfo popupInfo) -> (struct WebCore::DictionaryPopupInfo popupInfo)
-    HitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, struct WebKit::ContentWorldData world) -> (struct WebKit::NodeHitTestResult result)
+    RemoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, struct WebCore::DictionaryPopupInfo popupInfo) -> (struct IPC::Untrusted<WebCore::DictionaryPopupInfo> popupInfo)
+    HitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, struct WebKit::ContentWorldData world) -> (struct IPC::Untrusted<WebKit::NodeHitTestResult> result)
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     SetDefaultSpatialTrackingLabel(String label)
@@ -970,7 +970,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     StartObservingNowPlayingMetadata()
     StopObservingNowPlayingMetadata()
 
-    LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint, uint64_t maximumBytesFromNetwork) -> (std::expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError> result)
+    LoadAndDecodeImage(WebCore::ResourceRequest request, std::optional<WebCore::FloatSize> sizeConstraint, uint64_t maximumBytesFromNetwork) -> (IPC::Untrusted<std::expected<Ref<WebCore::ShareableBitmap>, WebCore::ResourceError>> result)
 #if PLATFORM(COCOA)
     GetInformationFromImageData(Vector<uint8_t> imageData) -> (std::expected<std::pair<String, Vector<WebCore::IntSize>>, WebCore::ImageDecodingError> result)
     GetImageMetadata(Vector<uint8_t> imageData) -> (std::expected<Vector<std::pair<String, float>>, WebCore::ImageDecodingError> result)

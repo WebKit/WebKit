@@ -1645,7 +1645,10 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
 
     // We send the request body separately because the ResourceRequest body normally does not get encoded when sent over IPC, as an optimization.
     // However, we really need the body here because a redirect cross-site may cause a process-swap and the request to start again in a new WebContent process.
-    sendWithAsyncReply(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTF::move(redirectResponse), ResourceResponse::SanitizationType::Redirection)), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), firstPartyForCookiesFromRedirectRequest = redirectRequest.firstPartyForCookies()] (ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials) mutable {
+    sendWithAsyncReply(Messages::WebResourceLoader::WillSendRequest(redirectRequest, IPC::FormDataReference { redirectRequest.httpBody() }, sanitizeResponseIfPossible(WTF::move(redirectResponse), ResourceResponse::SanitizationType::Redirection)), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), firstPartyForCookiesFromRedirectRequest = redirectRequest.firstPartyForCookies()] (IPC::Untrusted<ResourceRequest>&& untrustedNewRequest, bool isAllowedToAskUserForCredentials) mutable {
+        // The URL is where the redirect is going; the first party for cookies is checked below
+        // against the domains this web process may claim.
+        auto newRequest = WTF::move(untrustedNewRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return completionHandler({ });

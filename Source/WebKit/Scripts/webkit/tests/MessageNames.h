@@ -67,14 +67,15 @@ enum class ReceiverName : uint8_t {
     , TestWithSwift = 23
     , TestWithSwiftConditionally = 24
     , TestWithSwiftConditionallyAndEnabledBy = 25
-    , TestWithValidator = 26
-    , TestWithWantsAsyncDispatch = 27
-    , TestWithWantsDispatch = 28
-    , TestWithWantsDispatchNoSyncMessages = 29
-    , TestWithoutAttributes = 30
-    , TestWithoutUsingIPCConnection = 31
-    , IPC = 32
-    , Invalid = 33
+    , TestWithUntrustedReply = 26
+    , TestWithValidator = 27
+    , TestWithWantsAsyncDispatch = 28
+    , TestWithWantsDispatch = 29
+    , TestWithWantsDispatchNoSyncMessages = 30
+    , TestWithoutAttributes = 31
+    , TestWithoutUsingIPCConnection = 32
+    , IPC = 33
+    , Invalid = 34
 };
 
 enum class MessageName : uint16_t {
@@ -183,6 +184,8 @@ enum class MessageName : uint16_t {
     TestWithSwiftConditionally_TestAsyncMessageReply,
     TestWithSwift_TestAsyncMessage,
     TestWithSwift_TestAsyncMessageReply,
+    TestWithUntrustedReply_AskWebContentForAnOrigin,
+    TestWithUntrustedReply_AskWebContentForAnOriginReply,
     TestWithValidator_AlwaysEnabled,
     TestWithValidator_EnabledIfPassValidation,
     TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation,

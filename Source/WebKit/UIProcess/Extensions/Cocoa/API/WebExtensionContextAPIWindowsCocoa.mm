@@ -43,8 +43,9 @@
 
 namespace WebKit {
 
-void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& creationParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::windowsCreate(IPC::Untrusted<WebExtensionWindowParameters>&& untrustedCreationParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionWindowParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto creationParameters = WTF::move(untrustedCreationParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"windows.create()";
 
     if (!canOpenNewWindow()) {
@@ -202,8 +203,9 @@ void WebExtensionContext::windowsGetAll(OptionSet<WindowTypeFilter> filter, Popu
     });
 }
 
-void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdentifier, WebExtensionWindowParameters updateParameters, CompletionHandler<void(std::expected<WebExtensionWindowParameters, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdentifier, IPC::Untrusted<WebExtensionWindowParameters>&& untrustedUpdateParameters, CompletionHandler<void(std::expected<WebExtensionWindowParameters, WebExtensionError>&&)>&& completionHandler)
 {
+    auto updateParameters = WTF::move(untrustedUpdateParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"windows.update()";
 
     RefPtr window = getWindow(windowIdentifier);

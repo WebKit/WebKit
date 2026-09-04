@@ -27,11 +27,11 @@
 ]
 messages -> ServiceWorkerFetchTask {
     DidNotHandle()
-    DidFail(WebCore::ResourceError error)
-    DidReceiveRedirectResponse(WebCore::ResourceResponse response)
-    DidReceiveResponse(WebCore::ResourceResponse response, bool needsContinueDidReceiveResponseMessage)
+    DidFail(IPC::Untrusted<WebCore::ResourceError> error)
+    DidReceiveRedirectResponse(IPC::Untrusted<WebCore::ResourceResponse> response)
+    DidReceiveResponse(IPC::Untrusted<WebCore::ResourceResponse> response, bool needsContinueDidReceiveResponseMessage)
     DidReceiveData(IPC::SharedBufferReference data)
-    DidReceiveFormData(IPC::FormDataReference data)
+    DidReceiveFormData(IPC::Untrusted<IPC::FormDataReference> data)
     DidFinish(WebCore::NetworkLoadMetrics metrics)
     UsePreload()
     WorkerClosed()

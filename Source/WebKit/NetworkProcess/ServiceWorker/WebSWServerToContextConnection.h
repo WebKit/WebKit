@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "ServiceWorkerDownloadTask.h"
 #include "ServiceWorkerFetchTask.h"
+#include "Untrusted.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
 #include <wtf/TZoneMalloc.h>
@@ -112,7 +113,7 @@ private:
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
 
-    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const WebCore::SecurityOriginData& sourceOrigin);
+    void postMessageToServiceWorkerClient(const WebCore::ScriptExecutionContextIdentifier& destinationIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceIdentifier);
     void skipWaiting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 
     // Messages back from the SW host process
@@ -131,11 +132,13 @@ private:
     void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void fireBackgroundFetchClickEvent(WebCore::ServiceWorkerIdentifier, const WebCore::BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) final;
     void focus(WebCore::ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
-    void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, const URL&, CompletionHandler<void(std::expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);
+    void navigate(WebCore::ScriptExecutionContextIdentifier, WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, CompletionHandler<void(std::expected<std::optional<WebCore::ServiceWorkerClientData>, WebCore::ExceptionData>&&)>&&);
 
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
     void openWindow(WebCore::ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) final;
+    void openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, OpenWindowCallback&&);
+    void setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, IPC::Untrusted<WebCore::ServiceWorkerImportedScript>&&);
     void reportConsoleMessage(WebCore::ServiceWorkerIdentifier, MessageSource, MessageLevel, const String& message, uint64_t requestIdentifier);
     void startPendingStreamUploadForwarding(WebCore::FetchIdentifier);
     void pendingStreamDataAvailable(WebCore::FetchIdentifier);

@@ -29,8 +29,10 @@
 #include "WebProcessProxy.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -76,6 +78,13 @@ public:
     {
         return checkUntrustedDomain([&]() -> const WebCore::RegistrableDomain& {
             return site.domain();
+        });
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL& url) const
+    {
+        return checkUntrustedDomain([&] {
+            return WebCore::RegistrableDomain { url };
         });
     }
 
@@ -125,6 +134,73 @@ private:
     WeakPtr<const WebProcessProxy> m_process;
 };
 
+// Use for a value naming the top-level site of a page rather than something the sending process
+// speaks for itself: a cross-origin subframe's process legitimately observes and relays facts about
+// the page it is part of, so the authority is the process hosting that page's main frame.
+class PageFirstPartySiteAuthority : public IPC::CanValidateUntrusted<PageFirstPartySiteAuthority> {
+public:
+    explicit PageFirstPartySiteAuthority(const WebProcessProxy& process)
+        : m_process(process)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::Site& site) const
+    {
+        RefPtr process = m_process.get();
+        if (!process)
+            return IPC::ValidationFailure::Ignore;
+
+        if (!process->participatesInPageWithFirstPartySite(site))
+            return IPC::ValidationFailure::Terminate;
+        return std::nullopt;
+    }
+
+private:
+    WeakPtr<const WebProcessProxy> m_process;
+};
+
+// The disposition for a struct that a web process uses to describe one of its own frames or a
+// navigation of one: FrameInfoData, NavigationActionData and the structs that embed them.
+//
+// The origins in such a struct are claims about what the frame may speak for, so they go through
+// the process's first-party set. The URLs are the frame's request - where it is going rather than
+// what it may act as - so they are request targets and are not checked here.
+//
+// This is process-level rather than frame-level: it establishes that the sending process may
+// speak for the origin, not that the particular frame named by the struct's own frameID may.
+// Checking the latter needs either a visitor that identifies which field it is presenting, or a
+// way for a validator to read the identifier out of the struct it is validating.
+class FirstPartyStructAuthority : public IPC::CanValidateUntrusted<FirstPartyStructAuthority> {
+public:
+    explicit FirstPartyStructAuthority(const WebProcessProxy& process)
+        : m_firstParty(process)
+    {
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOriginData& origin) const
+    {
+        return m_firstParty.checkUntrusted(origin);
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::SecurityOrigin& origin) const
+    {
+        return m_firstParty.checkUntrusted(origin.data());
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const WebCore::RegistrableDomain& domain) const
+    {
+        return m_firstParty.checkUntrusted(domain);
+    }
+
+    std::optional<IPC::ValidationFailure> checkUntrusted(const URL&) const
+    {
+        return IPC::unvalidated(IPC::UnvalidatedReason::RequestTarget);
+    }
+
+private:
+    FirstPartyAuthority m_firstParty;
+};
+
 // Use to check if this process has committed a load for this exact (top origin, client origin) pair.
 class CommittedClientOriginAuthority : public IPC::CanValidateUntrusted<CommittedClientOriginAuthority> {
 public:
@@ -155,8 +231,11 @@ namespace IPC {
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::SecurityOriginData> : std::true_type { };
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::RegistrableDomain> : std::true_type { };
 template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, WebCore::Site> : std::true_type { };
+template<> struct IsValidationProcedureFor<WebKit::FirstPartyAuthority, URL> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::TopLevelFirstPartyAuthority, WebCore::SecurityOriginData> : std::true_type { };
+
+template<> struct IsValidationProcedureFor<WebKit::PageFirstPartySiteAuthority, WebCore::Site> : std::true_type { };
 
 template<> struct IsValidationProcedureFor<WebKit::CommittedClientOriginAuthority, WebCore::ClientOrigin> : std::true_type { };
 

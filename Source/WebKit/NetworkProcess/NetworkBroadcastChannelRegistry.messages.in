@@ -27,7 +27,7 @@
     DispatchedTo=Networking
 ]
 messages -> NetworkBroadcastChannelRegistry {
-    RegisterChannel(struct WebCore::ClientOrigin origin, String name)
-    UnregisterChannel(struct WebCore::ClientOrigin origin, String name)
-    PostMessage(struct WebCore::ClientOrigin origin, String name, struct WebCore::MessageWithMessagePorts message) -> ()
+    RegisterChannel(struct IPC::Untrusted<WebCore::ClientOrigin> origin, String name)
+    UnregisterChannel(struct IPC::Untrusted<WebCore::ClientOrigin> origin, String name)
+    PostMessage(struct IPC::Untrusted<WebCore::ClientOrigin> origin, String name, struct WebCore::MessageWithMessagePorts message) -> ()
 }

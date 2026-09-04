@@ -30,6 +30,7 @@
 #include "GPUProcessMediaCodecCapabilities.h"
 #include "SharedPreferencesForWebProcess.h"
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/MachSendRight.h>
 
 #if HAVE(AUDIT_TOKEN)
@@ -43,6 +44,7 @@ struct GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
     SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
     bool isLockdownModeEnabled { false };
+    HashSet<WebCore::RegistrableDomain> hostedDomains;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting { false };
 #endif

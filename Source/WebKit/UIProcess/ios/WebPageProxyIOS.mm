@@ -38,6 +38,7 @@
 #import "DragInitiationResult.h"
 #import "DrawingAreaProxy.h"
 #import "EditingRange.h"
+#import "FirstPartyAuthority.h"
 #import "GlobalFindInPageState.h"
 #import "InteractionInformationAtPosition.h"
 #import "KeyEventInterpretationContext.h"
@@ -103,6 +104,14 @@
 #if PLATFORM(VISION)
 static constexpr CGFloat kTargetFullscreenAspectRatio = 1.7778;
 #endif
+
+#define EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(name, untrusted, ValidationProcedure) \
+    Ref name##Process = WebProcessProxy::fromConnection(connection); \
+    auto name##Validated = WTF::move(untrusted).validate(ValidationProcedure { name##Process }); \
+    MESSAGE_CHECK_BASE(IPC::valueMayBeLegitimate(name##Validated), connection); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -185,7 +194,10 @@ void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const
     if (!hasRunningProcess())
         return callback({ });
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), WTF::move(callback), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestFocusedElementInformation(), [callback = WTF::move(callback)](IPC::Untrusted<std::optional<FocusedElementInformation>>&& untrustedInformation) mutable {
+        // Describes the focused form element so the UI process can present an input view for it.
+        callback(WTF::move(untrustedInformation).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate, bool sendEvenIfUnchanged)
@@ -910,10 +922,11 @@ void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContex
         client->didProgrammaticallyClearFocusedElement(WTF::move(context));
 }
 
-void WebPageProxy::elementDidFocus(IPC::Connection& connection, const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
+void WebPageProxy::elementDidFocus(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(information, untrustedInformation, FirstPartyStructAuthority);
     m_pendingInputModeChange = std::nullopt;
-    m_focusedElementProcessID = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
+    m_focusedElementProcessID = informationProcess->coreProcessIdentifier();
 
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
@@ -947,8 +960,9 @@ void WebPageProxy::elementDidBlur(IPC::Connection& connection)
         pageClient->elementDidBlur();
 }
 
-void WebPageProxy::updateFocusedElementInformation(const FocusedElementInformation& information)
+void WebPageProxy::updateFocusedElementInformation(IPC::Connection& connection, IPC::Untrusted<FocusedElementInformation>&& untrustedInformation)
 {
+    EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK(information, untrustedInformation, FirstPartyStructAuthority);
     convertFocusedElementInformationRectsToMainFrameCoordinates(information,
         [weakThis = WeakPtr { *this }](FocusedElementInformation convertedInfo) {
             RefPtr protectedThis = weakThis.get();
@@ -1096,8 +1110,9 @@ void WebPageProxy::setSelectElementIsOpen(std::optional<WebCore::FrameIdentifier
     sendToProcessContainingFrame(frameID, Messages::WebPage::SetSelectElementIsOpen(context, isOpen));
 }
 
-void WebPageProxy::didPerformDictionaryLookup(const DictionaryPopupInfo& dictionaryPopupInfo)
+void WebPageProxy::didPerformDictionaryLookup(IPC::Untrusted<DictionaryPopupInfo>&& untrustedDictionaryPopupInfo)
 {
+    auto dictionaryPopupInfo = WTF::move(untrustedDictionaryPopupInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     if (RefPtr pageClient = this->pageClient())
         pageClient->didPerformDictionaryLookup(dictionaryPopupInfo);
 }
@@ -1321,7 +1336,10 @@ void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextR
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTF::move(request)), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<DocumentEditingContext>&& untrustedContext) mutable {
+        // The text around the selection, handed to the keyboard as editing context.
+        completionHandler(WTF::move(untrustedContext).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, webPageIDInMainFrameProcess());
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -1960,3 +1978,5 @@ bool WebPageProxy::hasMouseDevice()
 #undef WEBPAGEPROXY_RELEASE_LOG
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#undef EXTRACT_FROM_CONNECTION_WITH_MESSAGE_CHECK

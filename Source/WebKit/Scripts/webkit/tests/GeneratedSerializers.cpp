@@ -51,6 +51,9 @@
 #include "StructHeader.h"
 #endif
 #include "TemplateTest.h"
+#include "TestNoUntrustedValue.h"
+#include "TestUntrustedValueCarrier.h"
+#include "TestUntrustedValueConditionalCarrier.h"
 #include <Namespace/EmptyConstructorStruct.h>
 #include <Namespace/EmptyConstructorWithIf.h>
 #if !(ENABLE(OUTER_CONDITION))
@@ -115,6 +118,11 @@ template<> struct ArgumentCoder<Namespace::OtherClass> {
 template<> struct ArgumentCoder<Namespace::ClassWithMemberPrecondition> {
     static void encode(Encoder&, const Namespace::ClassWithMemberPrecondition&);
     static std::optional<Namespace::ClassWithMemberPrecondition> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::TestUntrustedValueCarrier::Inlined> {
+    static void encode(Encoder&, const WebKit::TestUntrustedValueCarrier::Inlined&);
+    static std::optional<WebKit::TestUntrustedValueCarrier::Inlined> decode(Decoder&);
 };
 
 #if ENABLE(TEST_FEATURE)
@@ -1637,6 +1645,203 @@ std::optional<WebCore::OpaqueTypeObject> ArgumentCoder<WebCore::OpaqueTypeObject
             WTF::move(*member)
         }
     };
+}
+
+void ArgumentCoder<WebKit::TestUntrustedValueCarrier>::encode(Encoder& encoder, const WebKit::TestUntrustedValueCarrier& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.origin)>, WebCore::SecurityOriginData>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.getterOrigin())>, WebCore::SecurityOriginData>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.optionalURL)>, std::optional<URL>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.nullableOrigin)>, RefPtr<WebCore::SecurityOrigin>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.origins)>, Vector<Ref<WebCore::SecurityOrigin>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.domainStrings)>, HashMap<WebCore::RegistrableDomain, String>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.urlsByName)>, HashMap<String, Vector<URL>>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.stringOrURL)>, Variant<String, URL>>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.inlined)>, WebKit::TestUntrustedValueCarrier::Inlined>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.notAnOrigin)>, int>);
+#if ENABLE(TEST_FEATURE)
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.conditionalOrigin)>, WebCore::ClientOrigin>);
+#endif
+
+    encoder << instance.origin;
+    encoder << instance.getterOrigin();
+    encoder << instance.optionalURL;
+    encoder << instance.nullableOrigin;
+    encoder << instance.origins;
+    encoder << instance.domainStrings;
+    encoder << instance.urlsByName;
+    encoder << instance.stringOrURL;
+    encoder << instance.inlined;
+    encoder << instance.notAnOrigin;
+#if ENABLE(TEST_FEATURE)
+    encoder << instance.conditionalOrigin;
+#endif
+}
+
+std::optional<WebKit::TestUntrustedValueCarrier> ArgumentCoder<WebKit::TestUntrustedValueCarrier>::decode(Decoder& decoder)
+{
+    auto origin = decoder.decode<WebCore::SecurityOriginData>();
+    auto getterOrigin = decoder.decode<WebCore::SecurityOriginData>();
+    auto optionalURL = decoder.decode<std::optional<URL>>();
+    auto nullableOrigin = decoder.decode<RefPtr<WebCore::SecurityOrigin>>();
+    auto origins = decoder.decode<Vector<Ref<WebCore::SecurityOrigin>>>();
+    auto domainStrings = decoder.decode<HashMap<WebCore::RegistrableDomain, String>>();
+    auto urlsByName = decoder.decode<HashMap<String, Vector<URL>>>();
+    auto stringOrURL = decoder.decode<Variant<String, URL>>();
+    auto inlined = decoder.decode<WebKit::TestUntrustedValueCarrier::Inlined>();
+    auto notAnOrigin = decoder.decode<int>();
+#if ENABLE(TEST_FEATURE)
+    auto conditionalOrigin = decoder.decode<WebCore::ClientOrigin>();
+#endif
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::TestUntrustedValueCarrier {
+            WTF::move(*origin),
+            WTF::move(*getterOrigin),
+            WTF::move(*optionalURL),
+            WTF::move(*nullableOrigin),
+            WTF::move(*origins),
+            WTF::move(*domainStrings),
+            WTF::move(*urlsByName),
+            WTF::move(*stringOrURL),
+            WTF::move(*inlined),
+            WTF::move(*notAnOrigin),
+#if ENABLE(TEST_FEATURE)
+            WTF::move(*conditionalOrigin)
+#endif
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TestUntrustedValueCarrier::Inlined>::encode(Encoder& encoder, const WebKit::TestUntrustedValueCarrier::Inlined& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.url)>, URL>);
+    struct ShouldBeSameSizeAsInlined : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TestUntrustedValueCarrier::Inlined>, false> {
+        URL url;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsInlined) == sizeof(WebKit::TestUntrustedValueCarrier::Inlined));
+    static_assert(IsIncreasing < 0
+        , offsetof(WebKit::TestUntrustedValueCarrier::Inlined, url)
+    >);
+
+    encoder << instance.url;
+}
+
+std::optional<WebKit::TestUntrustedValueCarrier::Inlined> ArgumentCoder<WebKit::TestUntrustedValueCarrier::Inlined>::decode(Decoder& decoder)
+{
+    auto url = decoder.decode<URL>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::TestUntrustedValueCarrier::Inlined {
+            WTF::move(*url)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TestUntrustedValueConditionalCarrier>::encode(Encoder& encoder, const WebKit::TestUntrustedValueConditionalCarrier& instance)
+{
+#if ENABLE(TEST_FEATURE)
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.site)>, WebCore::Site>);
+#endif
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.notAnOrigin)>, int>);
+    struct ShouldBeSameSizeAsTestUntrustedValueConditionalCarrier : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TestUntrustedValueConditionalCarrier>, false> {
+#if ENABLE(TEST_FEATURE)
+        WebCore::Site site;
+#endif
+        int notAnOrigin;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTestUntrustedValueConditionalCarrier) == sizeof(WebKit::TestUntrustedValueConditionalCarrier));
+    static_assert(IsIncreasing < 0
+#if ENABLE(TEST_FEATURE)
+        , offsetof(WebKit::TestUntrustedValueConditionalCarrier, site)
+#endif
+        , offsetof(WebKit::TestUntrustedValueConditionalCarrier, notAnOrigin)
+    >);
+
+#if ENABLE(TEST_FEATURE)
+    encoder << instance.site;
+#endif
+    encoder << instance.notAnOrigin;
+}
+
+std::optional<WebKit::TestUntrustedValueConditionalCarrier> ArgumentCoder<WebKit::TestUntrustedValueConditionalCarrier>::decode(Decoder& decoder)
+{
+#if ENABLE(TEST_FEATURE)
+    auto site = decoder.decode<WebCore::Site>();
+#endif
+    auto notAnOrigin = decoder.decode<int>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::TestUntrustedValueConditionalCarrier {
+#if ENABLE(TEST_FEATURE)
+            WTF::move(*site),
+#endif
+            WTF::move(*notAnOrigin)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TestNoUntrustedValue>::encode(Encoder& encoder, const WebKit::TestNoUntrustedValue& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.notAnOrigin)>, int>);
+    struct ShouldBeSameSizeAsTestNoUntrustedValue : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::TestNoUntrustedValue>, false> {
+        int notAnOrigin;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsTestNoUntrustedValue) == sizeof(WebKit::TestNoUntrustedValue));
+    static_assert(IsIncreasing < 0
+        , offsetof(WebKit::TestNoUntrustedValue, notAnOrigin)
+    >);
+
+    encoder << instance.notAnOrigin;
+}
+
+std::optional<WebKit::TestNoUntrustedValue> ArgumentCoder<WebKit::TestNoUntrustedValue>::decode(Decoder& decoder)
+{
+    auto notAnOrigin = decoder.decode<int>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::TestNoUntrustedValue {
+            WTF::move(*notAnOrigin)
+        }
+    };
+}
+
+void ArgumentCoder<WebKit::TestUntrustedValueCarrier>::visitUntrustedValues(const WebKit::TestUntrustedValueCarrier& instance, UntrustedValueVisitor& visitor)
+{
+    visitor.visitUntrusted(instance.origin);
+    const auto& getterOrigin0 = instance.getterOrigin();
+    visitor.visitUntrusted(getterOrigin0);
+    if (instance.optionalURL)
+        visitor.visitUntrusted((*instance.optionalURL));
+    if (instance.nullableOrigin)
+        visitor.visitUntrusted((*instance.nullableOrigin));
+    for (auto& item0 : instance.origins)
+        visitor.visitUntrusted(item0.get());
+    for (auto& entry0 : instance.domainStrings)
+        visitor.visitUntrusted(entry0.key);
+    for (auto& entry0 : instance.urlsByName) {
+        for (auto& item1 : entry0.value)
+            visitor.visitUntrusted(item1);
+    }
+    if (auto* alternative0 = std::get_if<URL>(&instance.stringOrURL))
+        visitor.visitUntrusted((*alternative0));
+    visitor.visitUntrusted(instance.inlined.url);
+#if ENABLE(TEST_FEATURE)
+    visitor.visitUntrusted(instance.conditionalOrigin);
+#endif
+}
+
+void ArgumentCoder<WebKit::TestUntrustedValueConditionalCarrier>::visitUntrustedValues(const WebKit::TestUntrustedValueConditionalCarrier& instance, UntrustedValueVisitor& visitor)
+{
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(visitor);
+#if ENABLE(TEST_FEATURE)
+    visitor.visitUntrusted(instance.site);
+#endif
 }
 
 } // namespace IPC

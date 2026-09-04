@@ -442,8 +442,9 @@ void WebPasteboardProxy::setPasteboardTypes(IPC::Connection& connection, const S
     });
 }
 
-void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, const PasteboardURL& pasteboardURL, const String& pasteboardName, std::optional<WebPageProxyIdentifier> pageID, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardURL(IPC::Connection& connection, IPC::Untrusted<PasteboardURL>&& untrustedPasteboardURL, const String& pasteboardName, std::optional<WebPageProxyIdentifier> pageID, CompletionHandler<void(int64_t)>&& completionHandler)
 {
+    auto pasteboardURL = WTF::move(untrustedPasteboardURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), connection, completionHandler(0));
 
     RefPtr process = webProcessProxyForConnection(connection);
@@ -1055,8 +1056,9 @@ std::optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::Past
     return processes[matchIndex].second;
 }
 
-void WebPasteboardProxy::writeWebArchiveToPasteBoard(IPC::Connection& connection, const String& pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, HashMap<FrameIdentifier, Ref<LegacyWebArchive>>&& localFrameArchives, const Vector<FrameIdentifier>& remoteFrameIdentifiers, CompletionHandler<void(WriteWebArchiveToPasteBoardResult, int64_t)>&& completionHandler)
+void WebPasteboardProxy::writeWebArchiveToPasteBoard(IPC::Connection& connection, const String& pasteboardName, WebCore::FrameIdentifier rootFrameIdentifier, IPC::Untrusted<HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>>&& untrustedLocalFrameArchives, const Vector<FrameIdentifier>& remoteFrameIdentifiers, CompletionHandler<void(WriteWebArchiveToPasteBoardResult, int64_t)>&& completionHandler)
 {
+    auto localFrameArchives = WTF::move(untrustedLocalFrameArchives).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), connection, completionHandler(WriteWebArchiveToPasteBoardResult::FailureOther, 0));
     MESSAGE_CHECK_COMPLETION(validateFrameIdentifiers(rootFrameIdentifier, localFrameArchives, remoteFrameIdentifiers), connection, completionHandler(WriteWebArchiveToPasteBoardResult::FailureDueToInvalidFrameIdentifiers, 0));
 
@@ -1124,7 +1126,9 @@ void WebPasteboardProxy::createOneWebArchiveFromFrames(WebProcessProxy& requeste
 
     for (auto& [process, frameIDs] : frameByProcess) {
         Ref protectedProcess = process;
-        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](auto&& result) {
+        protectedProcess->sendWithAsyncReply(Messages::WebPage::GetWebArchivesForFrames(frameIDs), [frameIDs, callbackAggregator](IPC::Untrusted<HashMap<WebCore::FrameIdentifier, Ref<WebCore::LegacyWebArchive>>>&& untrustedResult) {
+            // An archive of the page's own contents, on its way to the pasteboard.
+            auto result = WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
             if (result.size() > frameIDs.size())
                 return;
             callbackAggregator->addResult(WTF::move(result));

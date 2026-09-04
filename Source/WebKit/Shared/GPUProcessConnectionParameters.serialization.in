@@ -26,6 +26,7 @@
     WebCore::ProcessIdentity webProcessIdentity;
     WebKit::SharedPreferencesForWebProcess sharedPreferencesForWebProcess;
     bool isLockdownModeEnabled;
+    HashSet<WebCore::RegistrableDomain> hostedDomains;
 #if ENABLE(IPC_TESTING_API)
     bool ignoreInvalidMessageForTesting;
 #endif

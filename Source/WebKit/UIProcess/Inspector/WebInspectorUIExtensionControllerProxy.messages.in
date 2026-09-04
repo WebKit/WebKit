@@ -30,8 +30,8 @@
 messages -> WebInspectorUIExtensionControllerProxy {
     DidShowExtensionTab(String extensionID, String extensionTabID, WebCore::FrameIdentifier frameID)
     DidHideExtensionTab(String extensionID, String extensionTabID)
-    DidNavigateExtensionTab(String extensionID, String extensionTabID, URL newURL)
-    InspectedPageDidNavigate(URL newURL)
+    DidNavigateExtensionTab(String extensionID, String extensionTabID, IPC::Untrusted<URL> newURL)
+    InspectedPageDidNavigate(IPC::Untrusted<URL> newURL)
 }
 
 #endif // ENABLE(INSPECTOR_EXTENSIONS)

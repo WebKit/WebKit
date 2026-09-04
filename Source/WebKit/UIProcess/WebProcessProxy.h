@@ -211,6 +211,8 @@ public:
 
     static void forWebPagesWithOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, NOESCAPE const Function<void(WebPageProxy&)>&);
     void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&, LoadedWebArchive);
+    void addHostedDomain(const WebCore::RegistrableDomain&);
+    const HashSet<WebCore::RegistrableDomain>& hostedDomains() const LIFETIME_BOUND { return m_hostedDomains; }
     const std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
 
     void initializeWebProcess(WebProcessCreationParameters&&);
@@ -321,7 +323,9 @@ public:
     void didCreateWebPageInProcess(WebCore::PageIdentifier);
 
     bool hasCommittedClientOrigin(const WebCore::ClientOrigin&) const;
+    bool participatesInPageWithFirstPartySite(const WebCore::Site&) const;
     void didCommitLoadClientOrigin(WebCore::ClientOrigin&&);
+    void didCommitWebArchiveLoad();
     void didBecomeRemoteWorkerHostForSite(const WebCore::Site&);
 
     void addVisitedLinkStoreUser(VisitedLinkStore&, WebPageProxyIdentifier);
@@ -373,8 +377,8 @@ public:
     void setOptInCookiePartitioningEnabled(bool);
 #endif
 
-    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
-    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, FrameInfoData&&, ScriptMessageHandlerIdentifier, JavaScriptEvaluationResult&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<WebKit::JavaScriptEvaluationResult, String>&&)>&&);
+    void didPostLegacySynchronousMessage(WebPageProxyIdentifier, UserContentControllerIdentifier, IPC::Untrusted<FrameInfoData>&&, ScriptMessageHandlerIdentifier, IPC::Untrusted<JavaScriptEvaluationResult>&&, CompletionHandler<void(std::expected<JavaScriptEvaluationResult, String>&&)>&&);
 
     void enableSuddenTermination();
     void disableSuddenTermination();
@@ -560,7 +564,7 @@ public:
     void setCaptionDisplayMode(WebCore::CaptionUserPreferences::CaptionDisplayMode);
     void setCaptionLanguage(const String&);
 #endif
-    void getNotifications(const URL&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
+    void getNotifications(IPC::Untrusted<URL>&&, const String&, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
     void serializeAndWrapCryptoKey(WebCore::CryptoKeyData&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unwrapCryptoKey(WebCore::WrappedCryptoKey&&, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
 
@@ -794,7 +798,7 @@ private:
     void sharedPreferencesDidChange();
 
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
-    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, URL&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
+    void createServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier, IPC::Untrusted<URL>&&, WebCore::ServiceWorkerIsInspectable, CompletionHandler<void(bool shouldWaitForAutoInspection)>&&);
     void deleteServiceWorkerDebuggable(WebCore::ServiceWorkerIdentifier);
     void sendMessageToInspector(WebCore::ServiceWorkerIdentifier, String&& message);
 #endif
@@ -849,6 +853,7 @@ private:
     uint64_t m_frameProcessCount { 0 };
 
     HashSet<WebCore::ClientOrigin> m_committedClientOrigins; // Only grows because WebProcess can navigate back to an old origin in a history item.
+    bool m_hasCommittedWebArchiveLoad { false };
     HashSet<WebCore::Site> m_remoteWorkerSites; // Only grows so that messages sent by a remote worker that is going away remain valid.
 
     WeakHashMap<VisitedLinkStore, HashSet<WebPageProxyIdentifier>> m_visitedLinkStoresWithUsers;
@@ -871,6 +876,7 @@ private:
     HashSet<WebCore::Site> m_committedSites;
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
+    HashSet<WebCore::RegistrableDomain> m_hostedDomains;
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     bool m_isEligibleForWebProcessCache { true };

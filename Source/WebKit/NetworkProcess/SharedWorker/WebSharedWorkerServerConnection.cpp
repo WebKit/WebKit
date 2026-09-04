@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebSharedWorkerServerConnection.h"
 
+#include "FirstPartyForCookiesAuthority.h"
+
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcess.h"
@@ -37,6 +39,13 @@
 #include "WebSharedWorkerServer.h"
 #include <WebCore/WorkerFetchResult.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -89,9 +98,9 @@ NetworkSession* WebSharedWorkerServerConnection::session()
     return m_networkProcess->networkSession(server->sessionID());
 }
 
-void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
+void WebSharedWorkerServerConnection::requestSharedWorker(IPC::Untrusted<WebCore::SharedWorkerKey>&& untrustedSharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
-    MESSAGE_CHECK(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorkerKey.origin.topOrigin.host())) != NetworkProcess::AllowCookieAccess::Terminate);
+    EXTRACT_WITH_MESSAGE_CHECK(sharedWorkerKey, untrustedSharedWorkerKey, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     MESSAGE_CHECK(port.first.processIdentifier == m_webProcessIdentifier);
     MESSAGE_CHECK(port.second.processIdentifier == m_webProcessIdentifier);
@@ -101,24 +110,27 @@ void WebSharedWorkerServerConnection::requestSharedWorker(WebCore::SharedWorkerK
         session->ensureSharedWorkerServer().requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, WTF::move(port), WTF::move(workerOptions));
 }
 
-void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+void WebSharedWorkerServerConnection::sharedWorkerObjectIsGoingAway(IPC::Untrusted<WebCore::SharedWorkerKey>&& untrustedSharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(sharedWorkerKey, untrustedSharedWorkerKey, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("sharedWorkerObjectIsGoingAway: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().sharedWorkerObjectIsGoingAway(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
-void WebSharedWorkerServerConnection::suspendForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+void WebSharedWorkerServerConnection::suspendForBackForwardCache(IPC::Untrusted<WebCore::SharedWorkerKey>&& untrustedSharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(sharedWorkerKey, untrustedSharedWorkerKey, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("suspendForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     if (CheckedPtr session = this->session())
         session->ensureSharedWorkerServer().suspendForBackForwardCache(sharedWorkerKey, sharedWorkerObjectIdentifier);
 }
 
-void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
+void WebSharedWorkerServerConnection::resumeForBackForwardCache(IPC::Untrusted<WebCore::SharedWorkerKey>&& untrustedSharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(sharedWorkerKey, untrustedSharedWorkerKey, HostedDomainAuthority { m_networkProcess, m_webProcessIdentifier });
     MESSAGE_CHECK(sharedWorkerObjectIdentifier.processIdentifier() == m_webProcessIdentifier);
     CONNECTION_RELEASE_LOG("resumeForBackForwardCache: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
     if (CheckedPtr session = this->session())
@@ -128,7 +140,12 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedW
 void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<WebCore::WorkerFetchResult>&& untrustedFetchResult, IPC::Untrusted<WebCore::WorkerInitializationData>&& untrustedInitializationData) mutable {
+        // Both are relayed to the process that will run the worker. The worker's own origin comes
+        // from the SharedWorkerKey this connection was already checked for, not from these.
+        completionHandler(WTF::move(untrustedFetchResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive),
+            WTF::move(untrustedInitializationData).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    });
 }
 
 void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)
@@ -164,3 +181,5 @@ void WebSharedWorkerServerConnection::reportNetworkUsageToWorkerObject(WebCore::
 #undef MESSAGE_CHECK
 
 } // namespace WebKit
+
+#undef EXTRACT_WITH_MESSAGE_CHECK

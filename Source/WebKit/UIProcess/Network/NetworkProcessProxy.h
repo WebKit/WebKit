@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "BackgroundFetchState.h"
 #include "DataTaskIdentifier.h"
+#include "FormDataReference.h"
 #include "IdentifierTypes.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
@@ -66,7 +67,6 @@
 #endif
 
 namespace IPC {
-class FormDataReference;
 }
 
 namespace API {
@@ -159,6 +159,7 @@ public:
     void dataTaskWithRequest(WebPageProxy&, PAL::SessionID, WebCore::ResourceRequest&&, const std::optional<WebCore::SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&&);
 
     void addAllowedFirstPartyForCookies(WebProcessProxy&, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive, CompletionHandler<void()>&&);
+    void addHostedDomainForWebProcess(WebProcessProxy&, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void addAllowedFilePaths(WebProcessProxy&, const Vector<String>& paths);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
@@ -501,6 +502,7 @@ private:
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     WeakHashMap<WebProcessProxy, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
+    WeakHashMap<WebProcessProxy, HashSet<WebCore::RegistrableDomain>> m_hostedDomainsByProcess;
     WeakHashMap<WebProcessProxy, HashSet<String>> m_allowedFilePathsByProcess;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
 #if PLATFORM(MAC)

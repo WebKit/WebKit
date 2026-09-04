@@ -73,10 +73,10 @@ messages -> WebExtensionContext {
     [Validator=isCommandsMessageAllowed] CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands)
 
     // Cookies APIs
-    [Validator=isCookiesMessageAllowed] CookiesGet(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [Validator=isCookiesMessageAllowed] CookiesGetAll(std::optional<PAL::SessionID> sessionID, URL url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (std::expected<Vector<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [Validator=isCookiesMessageAllowed] CookiesSet(std::optional<PAL::SessionID> sessionID, struct WebKit::WebExtensionCookieParameters cookie) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
-    [Validator=isCookiesMessageAllowed] CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, URL url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesGet(std::optional<PAL::SessionID> sessionID, String name, IPC::Untrusted<URL> url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesGetAll(std::optional<PAL::SessionID> sessionID, IPC::Untrusted<URL> url, struct WebKit::WebExtensionCookieFilterParameters filterParameters) -> (std::expected<Vector<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesSet(std::optional<PAL::SessionID> sessionID, struct IPC::Untrusted<WebKit::WebExtensionCookieParameters> cookie) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
+    [Validator=isCookiesMessageAllowed] CookiesRemove(std::optional<PAL::SessionID> sessionID, String name, IPC::Untrusted<URL> url) -> (std::expected<std::optional<WebKit::WebExtensionCookieParameters>, WebKit::WebExtensionError> result)
     [Validator=isCookiesMessageAllowed] CookiesGetAllCookieStores() -> (std::expected<HashMap<PAL::SessionID, Vector<WebKit::WebExtensionTabIdentifier>>, WebKit::WebExtensionError> result)
 
     // DeclarativeNetRequest APIs
@@ -93,7 +93,7 @@ messages -> WebExtensionContext {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // DevTools APIs
     [Validator=isDevToolsMessageAllowed] DevToolsPanelsCreate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String title, String iconPath, String pagePath) -> (std::expected<Inspector::ExtensionTabID, WebKit::WebExtensionError> result)
-    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, std::optional<URL> frameURL) -> (std::expected<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
+    [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowEval(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String scriptSource, IPC::Untrusted<std::optional<URL>> frameURL) -> (std::expected<std::expected<WebKit::JavaScriptEvaluationResult, std::optional<WebCore::ExceptionDetails>>, WebKit::WebExtensionError> result)
     [Validator=isDevToolsMessageAllowed] DevToolsInspectedWindowReload(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<bool> ignoreCache)
 #endif
 
@@ -131,12 +131,12 @@ messages -> WebExtensionContext {
     [Validator=isLoaded] RuntimeGetBackgroundPage() -> (std::expected<std::optional<WebCore::PageIdentifier>, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeOpenOptionsPage() -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeReload()
-    [Validator=isLoaded] RuntimeSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeSendMessage(String extensionID, String messageJSON, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeSendNativeMessage(String applicationID, String messageJSON) -> (std::expected<String, WebKit::WebExtensionError> result)
     [Validator=isLoaded] RuntimeConnectNative(String applicationID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, WebKit::WebPageProxyIdentifier pageProxyIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] RuntimeWebPageSendMessage(String extensionID, String messageJSON, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::expected<String, WebKit::WebExtensionError> result)
-    [Validator=isLoaded] RuntimeWebPageConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageSenderParameters senderParameters) -> (std::expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeWebPageSendMessage(String extensionID, String messageJSON, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoaded] RuntimeWebPageConnect(String extensionID, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters) -> (std::expected<void, WebKit::WebExtensionError> result)
 
     // Scripting APIs
     [Validator=isScriptingMessageAllowed] ScriptingExecuteScript(WebKit::WebExtensionScriptInjectionParameters parameters, bool userGesture) -> (std::expected<Vector<WebKit::WebExtensionScriptInjectionResultParameters>, WebKit::WebExtensionError> result)
@@ -173,9 +173,9 @@ messages -> WebExtensionContext {
     [Validator=isStorageMessageAllowed] StorageSetAccessLevel(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionDataType dataType, WebKit::WebExtensionStorageAccessLevel accessLevel) -> (std::expected<void, WebKit::WebExtensionError> result)
 
     // Tabs APIs
-    [Validator=isLoadedAndPrivilegedMessage] TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, WebKit::WebExtensionTabParameters updateParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] TabsDuplicate(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionTabParameters creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsCreate(std::optional<WebKit::WebPageProxyIdentifier> webPageProxyIdentifier, IPC::Untrusted<WebKit::WebExtensionTabParameters> creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsUpdate(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, IPC::Untrusted<WebKit::WebExtensionTabParameters> updateParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsDuplicate(WebKit::WebExtensionTabIdentifier tabIdentifier, IPC::Untrusted<WebKit::WebExtensionTabParameters> creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsGet(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsGetCurrent(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (std::expected<std::optional<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsQuery(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionTabQueryParameters queryParameters) -> (std::expected<Vector<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
@@ -185,8 +185,8 @@ messages -> WebExtensionContext {
     [Validator=isLoadedAndPrivilegedMessage] TabsDetectLanguage(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<String, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsToggleReaderMode(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsCaptureVisibleTab(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, enum:uint8_t WebKit::WebExtensionTabImageFormat imageFormat, uint8_t imageQuality) -> (std::expected<URL, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct WebKit::WebExtensionMessageSenderParameters senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsSendMessage(WebKit::WebExtensionTabIdentifier tabIdentifier, String messageJSON, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters, bool userGesture) -> (std::expected<String, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] TabsConnect(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionPortChannelIdentifier channelIdentifier, String name, struct WebKit::WebExtensionMessageTargetParameters targetParameters, struct IPC::Untrusted<WebKit::WebExtensionMessageSenderParameters> senderParameters, bool userGesture) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsGetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<double, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsSetZoom(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, double zoomFactor) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] TabsMove(Vector<WebKit::WebExtensionTabIdentifier> tabIdentifiers, std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, double index) -> (std::expected<Vector<WebKit::WebExtensionTabParameters>, WebKit::WebExtensionError> result)
@@ -200,11 +200,11 @@ messages -> WebExtensionContext {
     [Validator=isWebNavigationMessageAllowed] WebNavigationGetFrame(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionFrameIdentifier frameIdentifier) -> (std::expected<std::optional<WebKit::WebExtensionFrameParameters>, WebKit::WebExtensionError> result)
 
     // Windows APIs
-    [Validator=isLoadedAndPrivilegedMessage] WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsCreate(IPC::Untrusted<WebKit::WebExtensionWindowParameters> creationParameters) -> (std::expected<std::optional<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsGet(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebKit::WebExtensionWindowIdentifier windowIdentifier, OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsGetLastFocused(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsGetAll(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::expected<Vector<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
-    [Validator=isLoadedAndPrivilegedMessage] WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionWindowParameters updateParameters) -> (std::expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
+    [Validator=isLoadedAndPrivilegedMessage] WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, IPC::Untrusted<WebKit::WebExtensionWindowParameters> updateParameters) -> (std::expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
 }
 

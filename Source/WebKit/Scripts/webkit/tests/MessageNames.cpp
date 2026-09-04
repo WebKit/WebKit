@@ -133,6 +133,8 @@ const MessageDescriptionsArray messageDescriptions {
     MessageDescription { "TestWithSwiftConditionally_TestAsyncMessageReply"_s, ReceiverName::TestWithSwiftConditionally, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestAsyncMessage"_s, ReceiverName::TestWithSwift, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithSwift_TestAsyncMessageReply"_s, ReceiverName::TestWithSwift, false, false, true, ProcessName::Unknown, ProcessName::Unknown },
+    MessageDescription { "TestWithUntrustedReply_AskWebContentForAnOrigin"_s, ReceiverName::TestWithUntrustedReply, false, false, false, ProcessName::UI, ProcessName::WebContent },
+    MessageDescription { "TestWithUntrustedReply_AskWebContentForAnOriginReply"_s, ReceiverName::TestWithUntrustedReply, false, false, true, ProcessName::WebContent, ProcessName::UI },
     MessageDescription { "TestWithValidator_AlwaysEnabled"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_EnabledIfPassValidation"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation"_s, ReceiverName::TestWithValidator, false, false, false, ProcessName::Unknown, ProcessName::Unknown },

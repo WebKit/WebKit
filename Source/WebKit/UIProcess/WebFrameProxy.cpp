@@ -32,6 +32,7 @@
 #include "Connection.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "FirstPartyAuthority.h"
 #include "FrameInspectorTarget.h"
 #include "FrameProcess.h"
 #include "FrameTreeCreationParameters.h"
@@ -403,7 +404,10 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
 
     if (RefPtr page = m_page) {
         RefPtr mainFrame = page->mainFrame();
-        protect(process())->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->documentSecurityOriginData() : SecurityOriginData { }, documentSecurityOriginData() });
+        Ref committingProcess = process();
+        if (MIMETypeRegistry::isWebArchiveMIMEType(contentType))
+            committingProcess->didCommitWebArchiveLoad();
+        committingProcess->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->documentSecurityOriginData() : SecurityOriginData { }, documentSecurityOriginData() });
     }
 
     RefPtr webPage = page();
@@ -711,12 +715,15 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
             page->inspectorController().didCommitProvisionalFrame(*this, oldProcessID, oldPageID, newProcessID);
     }
 
-    protect(page())->didCommitLoadForFrame(connection, frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, hasCertificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), IPC::Untrusted<HashSet<WebCore::SecurityOriginData>> { WTF::move(cspOriginsThatUpgradeInsecureNavigations) }, userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
+    protect(page())->didCommitLoadForFrame(connection, frameID, IPC::Untrusted<FrameInfoData> { WTF::move(frameInfo) }, IPC::Untrusted<WebCore::ResourceRequest> { WTF::move(request) }, navigationID, WTF::move(mimeType), frameHasCustomContentProvider, frameLoadType, hasCertificateInfo, usedLegacyTLS, privateRelayed, WTF::move(proxyName), source, containsPluginDocument, hasInsecureContent, mouseEventPolicy, WTF::move(documentSecurityPolicy), IPC::Untrusted<HashSet<WebCore::SecurityOriginData>> { WTF::move(cspOriginsThatUpgradeInsecureNavigations) }, userData, restoredFromBackForwardCache, WTF::move(redirectReplaceFrameState));
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoData>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebFrame::GetFrameInfo(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](auto&& frameInfo) mutable {
+    sendWithAsyncReply(Messages::WebFrame::GetFrameInfo(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](IPC::Untrusted<std::optional<FrameInfoData>>&& untrustedFrameInfo) mutable {
+        // Every field below is compared against this proxy's own record of the frame and replaced
+        // when it disagrees, which is a stronger check than any authority could make here.
+        auto frameInfo = WTF::move(untrustedFrameInfo).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
         if (!frameInfo)
             return completionHandler({ });
 
@@ -1147,22 +1154,15 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::setAppBadge(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, std::optional<uint64_t> badge)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    Ref protectedProcess = process();
-    auto firstPartyAccessResult = protectedProcess->allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
-    if (firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::SilentFailure)
-        return;
-    MESSAGE_CHECK(firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::Pass);
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, TopLevelFirstPartyAuthority { protect(process()) });
 
     if (RefPtr webPageProxy = m_page.get())
         webPageProxy->uiClient().updateAppBadge(*webPageProxy, origin, badge);
 }
 
-void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations)
+void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOrigins)
 {
-    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOriginsThatUpgradeInsecureNavigations).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedCspOrigins, FirstPartyAuthority { protect(process()) });
     setCSPOriginsThatUpgradeInsecureNavigations(WTF::move(cspOriginsThatUpgradeInsecureNavigations));
 }
 
@@ -1206,7 +1206,11 @@ void WebFrameProxy::requestTextExtraction(WebCore::TextExtraction::Request&& req
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebFrame::RequestTextExtraction(WTF::move(request)), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebFrame::RequestTextExtraction(WTF::move(request)), [completion = WTF::move(completion)](IPC::Untrusted<WebCore::TextExtraction::Result>&& untrustedResult) mutable {
+        // The URLs are those of links and images in the page's own content, extracted for the
+        // client to read rather than for anything the UI process decides.
+        completion(WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    });
 }
 
 void WebFrameProxy::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
@@ -1237,12 +1241,24 @@ void WebFrameProxy::describeTextExtractionInteraction(TextExtraction::Interactio
     sendWithAsyncReply(Messages::WebFrame::DescribeTextExtractionInteraction(WTF::move(interaction)), WTF::move(completion));
 }
 
+// The frame info inside a JS handle describes the frame the handle refers to and reaches the API
+// client as that frame's identity, so the replying process must have authority over its origins.
+CompletionHandler<void(IPC::Untrusted<std::optional<JSHandleInfo>>&&)> WebFrameProxy::validatedJSHandleReply(CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
+{
+    return [protectedThis = Ref { *this }, completion = WTF::move(completion)](IPC::Untrusted<std::optional<JSHandleInfo>>&& untrustedHandle) mutable {
+        auto validatedHandle = WTF::move(untrustedHandle).validate(FirstPartyStructAuthority { protect(protectedThis->process()) });
+        if (!validatedHandle)
+            return completion({ });
+        completion(WTF::move(*validatedHandle));
+    };
+}
+
 void WebFrameProxy::requestJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebFrame::RequestJSHandleForExtractedText(WTF::move(extractedText)), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebFrame::RequestJSHandleForExtractedText(WTF::move(extractedText)), validatedJSHandleReply(WTF::move(completion)));
 }
 
 void WebFrameProxy::requestContainerJSHandleForExtractedText(TextExtraction::ExtractedText&& extractedText, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
@@ -1250,7 +1266,7 @@ void WebFrameProxy::requestContainerJSHandleForExtractedText(TextExtraction::Ext
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebFrame::RequestContainerJSHandleForExtractedText(WTF::move(extractedText)), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebFrame::RequestContainerJSHandleForExtractedText(WTF::move(extractedText)), validatedJSHandleReply(WTF::move(completion)));
 }
 
 void WebFrameProxy::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTexts, std::optional<NodeIdentifier>&& targetNodeIdentifier, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completion)
@@ -1258,7 +1274,7 @@ void WebFrameProxy::requestContainerJSHandleForSearchTexts(Vector<String>&& sear
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebFrame::RequestContainerJSHandleForSearchTexts(WTF::move(searchTexts), WTF::move(targetNodeIdentifier)), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebFrame::RequestContainerJSHandleForSearchTexts(WTF::move(searchTexts), WTF::move(targetNodeIdentifier)), validatedJSHandleReply(WTF::move(completion)));
 }
 
 void WebFrameProxy::requestContentFrameIdentifierForNode(NodeIdentifier nodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&& completion)
@@ -1282,7 +1298,7 @@ void WebFrameProxy::getNodeForSelectorPaths(Vector<HashSet<String>>&& selectors,
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
         return completion({ });
 
-    sendWithAsyncReply(Messages::WebFrame::GetNodeForSelectorPaths(WTF::move(selectors)), WTF::move(completion));
+    sendWithAsyncReply(Messages::WebFrame::GetNodeForSelectorPaths(WTF::move(selectors)), validatedJSHandleReply(WTF::move(completion)));
 }
 
 ProvisionalFrameCreationParameters WebFrameProxy::provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier> frameIDBeforeProvisionalNavigation, std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier, CommitTiming commitTiming)

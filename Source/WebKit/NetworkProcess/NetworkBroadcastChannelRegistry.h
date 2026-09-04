@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "SharedPreferencesForWebProcess.h"
+#include "Untrusted.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
@@ -51,9 +52,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
-    void registerChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
-    void unregisterChannel(IPC::Connection&, const WebCore::ClientOrigin&, const String& name);
-    void postMessage(IPC::Connection&, const WebCore::ClientOrigin&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
+    void registerChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
+    void unregisterChannel(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name);
+    void postMessage(IPC::Connection&, IPC::Untrusted<WebCore::ClientOrigin>&&, const String& name, WebCore::MessageWithMessagePorts&&, CompletionHandler<void()>&&);
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:

@@ -86,6 +86,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
+    using SuppliedReply = CompletionHandler<void(int64_t)>;
     using Promise = WTF::NativePromise<int64_t, IPC::Error>;
     explicit SendStringAsync(const String& url)
         : m_url(url)
@@ -118,6 +119,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     using Reply = CompletionHandler<void(int64_t)>;
+    using SuppliedReply = CompletionHandler<void(int64_t)>;
     explicit SendStringSync(const String& url)
         : m_url(url)
     {
@@ -150,6 +152,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<>;
     using Reply = CompletionHandler<void()>;
+    using SuppliedReply = CompletionHandler<void()>;
     using Promise = WTF::NativePromise<void, IPC::Error>;
     CallWithIdentifier()
     {
@@ -209,6 +212,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
     using Reply = CompletionHandler<void(MachSendRight&&)>;
+    using SuppliedReply = CompletionHandler<void(MachSendRight&&)>;
     ReceiveMachSendRight()
     {
     }
@@ -239,6 +243,7 @@ public:
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<MachSendRight>;
     using Reply = CompletionHandler<void(MachSendRight&&)>;
+    using SuppliedReply = CompletionHandler<void(MachSendRight&&)>;
     explicit SendAndReceiveMachSendRight(MachSendRight&& a1)
         : m_a1(WTF::move(a1))
     {

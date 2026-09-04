@@ -36,6 +36,7 @@
 #include "NetworkSession.h"
 #include "ServiceWorkerFetchTask.h"
 #include "ServiceWorkerFetchTaskMessages.h"
+#include "ServiceWorkerOriginAuthority.h"
 #include "SharedBufferReference.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWContextManagerConnectionMessages.h"
@@ -133,8 +134,13 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
     return 0;
 }
 
-void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin)
+void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier)
 {
+    RefPtr sourceWorker = SWServerWorker::existingWorkerForIdentifier(sourceIdentifier);
+    if (!sourceWorker)
+        return;
+    auto sourceOrigin = sourceWorker->origin().clientOrigin;
+
     RefPtr server = this->server();
     if (RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
@@ -178,11 +184,12 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
     std::optional<std::span<const uint8_t>> ipcData;
     if (data)
         ipcData = data->span();
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTF::move(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](bool wasProcessed, std::optional<NotificationPayload>&& resultPayload) mutable {
+    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData, WTF::move(proposedPayload)), [weakThis = WeakPtr { *this }, callback = WTF::move(callback)](bool wasProcessed, IPC::Untrusted<std::optional<NotificationPayload>>&& untrustedResultPayload) mutable {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && !--protectedThis->m_processingFunctionalEventCount)
             protectedThis->sendToParentProcess(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { protectedThis->webProcessIdentifier() });
 
-        callback(wasProcessed, WTF::move(resultPayload));
+        // The only URL is where clicking the notification will navigate.
+        callback(wasProcessed, WTF::move(untrustedResultPayload).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget));
     });
 }
 
@@ -335,8 +342,23 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
     protect(m_connection)->terminateSWContextConnectionDueToUnresponsiveness();
 }
 
+void WebSWServerToContextConnection::openWindowFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedURL, OpenWindowCallback&& callback)
+{
+    auto validatedURL = WTF::move(untrustedURL).validate(ServiceWorkerSiteAuthority { site() });
+    if (!validatedURL)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "URL is not same site as the service worker"_s }));
+    openWindow(identifier, *validatedURL, WTF::move(callback));
+}
+
+void WebSWServerToContextConnection::setScriptResourceFromServiceWorker(WebCore::ServiceWorkerIdentifier identifier, IPC::Untrusted<URL>&& untrustedScriptURL, IPC::Untrusted<WebCore::ServiceWorkerImportedScript>&& untrustedScript)
+{
+    auto script = WTF::move(untrustedScript).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    setScriptResource(identifier, WTF::move(untrustedScriptURL).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget), WTF::move(script));
+}
+
 void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const URL& url, OpenWindowCallback&& callback)
 {
+
     RefPtr server = this->server();
     if (!server) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "No SWServer"_s }));
@@ -522,8 +544,13 @@ void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clie
     connection->focusServiceWorkerClient(clientIdentifier, WTF::move(callback));
 }
 
-void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const URL& url, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
+void WebSWServerToContextConnection::navigate(ScriptExecutionContextIdentifier clientIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, IPC::Untrusted<URL>&& untrustedURL, CompletionHandler<void(std::expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>&& callback)
 {
+    auto validatedURL = WTF::move(untrustedURL).validate(ServiceWorkerSiteAuthority { site() });
+    if (!validatedURL)
+        return callback(makeUnexpected(ExceptionData { ExceptionCode::SecurityError, "URL is not same site as the service worker"_s }));
+    auto url = WTF::move(*validatedURL);
+
     RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     if (!worker) {
         callback(makeUnexpected(ExceptionData { ExceptionCode::TypeError, "no service worker"_s }));

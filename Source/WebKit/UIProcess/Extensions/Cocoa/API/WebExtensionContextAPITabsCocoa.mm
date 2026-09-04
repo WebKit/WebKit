@@ -59,8 +59,9 @@ namespace WebKit {
 
 using namespace WebExtensionDynamicScripts;
 
-void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPageProxyIdentifier, IPC::Untrusted<WebExtensionTabParameters>&& untrustedParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     ASSERT(!parameters.audible);
     ASSERT(!parameters.loading);
     ASSERT(!parameters.privateBrowsing);
@@ -127,8 +128,9 @@ void WebExtensionContext::tabsCreate(std::optional<WebPageProxyIdentifier> webPa
     }).get()];
 }
 
-void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier, IPC::Untrusted<WebExtensionTabParameters>&& untrustedParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     ASSERT(!parameters.audible);
     ASSERT(!parameters.index);
     ASSERT(!parameters.loading);
@@ -257,8 +259,9 @@ void WebExtensionContext::tabsUpdate(WebPageProxyIdentifier webPageProxyIdentifi
     });
 }
 
-void WebExtensionContext::tabsDuplicate(WebExtensionTabIdentifier tabIdentifier, const WebExtensionTabParameters& parameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsDuplicate(WebExtensionTabIdentifier tabIdentifier, IPC::Untrusted<WebExtensionTabParameters>&& untrustedParameters, CompletionHandler<void(std::expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&& completionHandler)
 {
+    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
         completionHandler(toWebExtensionError(@"tabs.duplicate()", nullString(), @"tab not found"));
@@ -471,8 +474,9 @@ void WebExtensionContext::tabsToggleReaderMode(WebPageProxyIdentifier webPagePro
     tab->toggleReaderMode(WTF::move(completionHandler));
 }
 
-void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifier, const String& messageJSON, const WebExtensionMessageTargetParameters& targetParameters, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, bool userGesture, CompletionHandler<void(std::expected<String, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"tabs.sendMessage()";
 
     RefPtr tab = getTab(tabIdentifier);
@@ -510,8 +514,9 @@ void WebExtensionContext::tabsSendMessage(WebExtensionTabIdentifier tabIdentifie
     }
 }
 
-void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
+void WebExtensionContext::tabsConnect(WebExtensionTabIdentifier tabIdentifier, WebExtensionPortChannelIdentifier channelIdentifier, String name, const WebExtensionMessageTargetParameters& targetParameters, IPC::Untrusted<WebExtensionMessageSenderParameters>&& untrustedSenderParameters, bool userGesture, CompletionHandler<void(std::expected<void, WebExtensionError>&&)>&& completionHandler)
 {
+    auto senderParameters = WTF::move(untrustedSenderParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     static NSString * const apiName = @"tabs.connect()";
 
     RefPtr tab = getTab(tabIdentifier);

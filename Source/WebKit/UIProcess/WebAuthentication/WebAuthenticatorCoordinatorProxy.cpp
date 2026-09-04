@@ -30,6 +30,7 @@
 
 #include "APIUIClient.h"
 #include "AuthenticatorManager.h"
+#include "FirstPartyAuthority.h"
 #include "LocalService.h"
 #include "Logging.h"
 #include "RelatedOriginsValidator.h"
@@ -46,6 +47,15 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, connection, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION_BASE(IPC::valueMayBeLegitimate(name##Validated), connection, completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 using namespace WebCore;
@@ -78,8 +88,11 @@ std::optional<SharedPreferencesForWebProcess> WebAuthenticatorCoordinatorProxy::
     return webPageProxy ? webPageProxy->legacyMainFrameProcess().sharedPreferencesForWebProcess() : std::nullopt;
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
 {
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, connection,
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }),
+        FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
@@ -101,10 +114,13 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connectio
     handleRequest({ { }, WTF::move(options), *webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { webPageProxy->webPageIDInMainFrameProcess(), frameId }, WTF::move(frameInfo), String(), nullptr, mediation, std::nullopt }, WTF::move(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, IPC::Untrusted<FrameInfoData>&& untrustedFrameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
 {
-    auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(frameInfo, untrustedFrameInfo, connection,
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { ExceptionCode::InvalidStateError }),
+        FirstPartyStructAuthority { WebProcessProxy::fromConnection(connection) });
+    // The handler walks the frame's ancestor chain, which is stronger than domain authority.
+    auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
@@ -266,17 +282,13 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& comple
     completionHandler();
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Connection&, IPC::Untrusted<SecurityOriginData>&&, QueryCompletionHandler&& handler)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     handler(LocalService::isAvailable());
 }
 
-void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Connection&, IPC::Untrusted<SecurityOriginData>&&, QueryCompletionHandler&& handler)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     handler(false);
 }
 #endif // !HAVE(UNIFIED_ASC_AUTH_UI) && !HAVE(WEB_AUTHN_AS_MODERN)
@@ -315,3 +327,5 @@ bool WebAuthenticatorCoordinatorProxy::removeMatchingAutofillEventForUsername(co
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION

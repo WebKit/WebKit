@@ -86,7 +86,10 @@ RefPtr<PlatformMediaResource> RemoteMediaResourceLoader::requestResource(Resourc
 
 void RemoteMediaResourceLoader::sendH2Ping(const URL& url, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler)
 {
-    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoaderProxy::SendH2Ping(url), WTF::move(completionHandler), identifier());
+    m_connection->sendWithAsyncReply(Messages::RemoteMediaResourceLoaderProxy::SendH2Ping(url), [completionHandler = WTF::move(completionHandler)](IPC::Untrusted<std::expected<Seconds, ResourceError>>&& untrustedResult) mutable {
+        // The only URL is the failing URL of an error report for a ping the GPU process asked for.
+        completionHandler(WTF::move(untrustedResult).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive));
+    }, identifier());
 }
 
 void RemoteMediaResourceLoader::addMediaResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, RemoteMediaResource& remoteMediaResource)
@@ -116,8 +119,9 @@ RefPtr<RemoteMediaResource> RemoteMediaResourceLoader::resourceForId(RemoteMedia
     return m_remoteMediaResources.get(identifier).get();
 }
 
-void RemoteMediaResourceLoader::responseReceived(RemoteMediaResourceIdentifier identifier, const ResourceResponse& response, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
+void RemoteMediaResourceLoader::responseReceived(RemoteMediaResourceIdentifier identifier, IPC::Untrusted<ResourceResponse>&& untrustedResponse, bool didPassAccessControlCheck, CompletionHandler<void(ShouldContinuePolicyCheck)>&& completionHandler)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     assertIsCurrent(defaultQueue());
     if (RefPtr resource = resourceForId(identifier))
         resource->responseReceived(response, didPassAccessControlCheck, WTF::move(completionHandler));
@@ -125,8 +129,10 @@ void RemoteMediaResourceLoader::responseReceived(RemoteMediaResourceIdentifier i
         completionHandler(ShouldContinuePolicyCheck::No);
 }
 
-void RemoteMediaResourceLoader::redirectReceived(RemoteMediaResourceIdentifier identifier, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+void RemoteMediaResourceLoader::redirectReceived(RemoteMediaResourceIdentifier identifier, IPC::Untrusted<ResourceRequest>&& untrustedRequest, IPC::Untrusted<ResourceResponse>&& untrustedResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
+    auto response = WTF::move(untrustedResponse).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
+    auto request = WTF::move(untrustedRequest).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     assertIsCurrent(defaultQueue());
     if (RefPtr resource = resourceForId(identifier))
         resource->redirectReceived(WTF::move(request), response, WTF::move(completionHandler));
@@ -160,15 +166,17 @@ void RemoteMediaResourceLoader::dataReceived(RemoteMediaResourceIdentifier ident
     completionHandler(WTF::move(handle));
 }
 
-void RemoteMediaResourceLoader::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
+void RemoteMediaResourceLoader::accessControlCheckFailed(RemoteMediaResourceIdentifier identifier, IPC::Untrusted<ResourceError>&& untrustedError)
 {
+    auto error = WTF::move(untrustedError).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     assertIsCurrent(defaultQueue());
     if (RefPtr resource = resourceForId(identifier))
         resource->accessControlCheckFailed(error);
 }
 
-void RemoteMediaResourceLoader::loadFailed(RemoteMediaResourceIdentifier identifier, const ResourceError& error)
+void RemoteMediaResourceLoader::loadFailed(RemoteMediaResourceIdentifier identifier, IPC::Untrusted<ResourceError>&& untrustedError)
 {
+    auto error = WTF::move(untrustedError).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     assertIsCurrent(defaultQueue());
     if (RefPtr resource = resourceForId(identifier))
         resource->loadFailed(error);

@@ -338,6 +338,7 @@ public:
 
     void getSelectorPathsForNode(JSHandleInfo&&, CompletionHandler<void(Vector<HashSet<String>>&&)>&&);
     void getNodeForSelectorPaths(Vector<HashSet<String>>&&, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
+    CompletionHandler<void(IPC::Untrusted<std::optional<JSHandleInfo>>&&)> validatedJSHandleReply(CompletionHandler<void(std::optional<JSHandleInfo>&&)>&&);
 
     ProvisionalFrameCreationParameters NODELETE provisionalFrameCreationParameters(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::LayerHostingContextIdentifier>, CommitTiming);
 

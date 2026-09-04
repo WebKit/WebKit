@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 
+#include "GPUHostedDomainAuthority.h"
+
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "GPUConnectionToWebProcess.h"
@@ -51,6 +53,13 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_gpuConnectionToWebProcess.get()->connection())
+
+#define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK(IPC::valueMayBeLegitimate(name##Validated)); \
+    if (!name##Validated) \
+        return; \
+    auto name = WTF::move(*name##Validated)
 
 namespace WebKit {
 
@@ -89,8 +98,9 @@ void RemoteMediaPlayerManagerProxy::clear()
         proxy->invalidate();
 }
 
-void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, RemoteMediaPlayerProxyConfiguration&& proxyConfiguration)
+void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier identifier, MediaPlayerClientIdentifier clientIdentifier, MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, IPC::Untrusted<RemoteMediaPlayerProxyConfiguration>&& untrustedProxyConfiguration)
 {
+    EXTRACT_WITH_MESSAGE_CHECK(proxyConfiguration, untrustedProxyConfiguration, GPUHostedDomainAuthority { *m_gpuConnectionToWebProcess.get() });
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return;
@@ -142,8 +152,9 @@ void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEng
     completionHandler(WTF::move(result));
 }
 
-void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, const MediaEngineSupportParameters&& parameters, CompletionHandler<void(MediaPlayer::SupportsType)>&& completionHandler)
+void RemoteMediaPlayerManagerProxy::supportsTypeAndCodecs(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, IPC::Untrusted<MediaEngineSupportParameters>&& untrustedParameters, CompletionHandler<void(MediaPlayer::SupportsType)>&& completionHandler)
 {
+    auto parameters = WTF::move(untrustedParameters).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::RequestTarget);
     CheckedPtr engine = playbackEngineForConnection(engineIdentifier);
     if (!engine) {
         WTFLogAlways("Failed to find media engine.");
@@ -217,3 +228,5 @@ std::optional<SharedPreferencesForWebProcess> RemoteMediaPlayerManagerProxy::sha
 #undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK
