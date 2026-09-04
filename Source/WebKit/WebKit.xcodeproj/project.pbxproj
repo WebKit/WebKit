@@ -201,6 +201,11 @@
 		0773A93B3023B0FB002C57FE /* SpatialShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0773A93A3023B0FB002C57FE /* SpatialShim.swift */; };
 		077DBAFF303AAE74000AA8FC /* RunJavaScriptResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */; };
 		077DD8E7303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077DD8E6303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift */; };
+		077F49B63036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B53036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift */; };
+		077F49B83036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B73036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift */; };
+		077F49BA3036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49B93036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift */; };
+		077F49BC3036E23900861A64 /* JavaScriptEvaluationArrayDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49BB3036E23900861A64 /* JavaScriptEvaluationArrayDecoder.swift */; };
+		077F49BE3036E3A000861A64 /* JavaScriptEvaluationObjectDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077F49BD3036E3A000861A64 /* JavaScriptEvaluationObjectDecoder.swift */; };
 		077FD1A02CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077FD19F2CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift */; };
 		078074F93029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */; };
 		0782B70A30467FC10011880F /* JavaScriptEvaluationResultCxxInteropSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 0782B70930467FC10011880F /* JavaScriptEvaluationResultCxxInteropSupport.h */; };
@@ -261,6 +266,9 @@
 		07E2AD972CF42302000844EA /* WebPage+BackForwardList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E2AD962CF42302000844EA /* WebPage+BackForwardList.swift */; };
 		07E4BDC72A3A7089000D5509 /* _WKWebViewTextInputNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E4BDC52A3A7089000D5509 /* _WKWebViewTextInputNotifications.h */; };
 		07E4BDC82A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E4BDC62A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm */; };
+		07EB34D73037F52600B217DD /* JavaScriptEvaluationDecodingGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EB34D63037F52600B217DD /* JavaScriptEvaluationDecodingGraph.swift */; };
+		07EB34D93037F60700B217DD /* JavaScriptEvaluationCodableValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EB34D83037F60700B217DD /* JavaScriptEvaluationCodableValue.swift */; };
+		07EB34DB30380D7E00B217DD /* WebPage+NewCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EB34DA30380D7E00B217DD /* WebPage+NewCodable.swift */; };
 		07F0337C30107D3900B69551 /* WKFastScrollTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */; };
 		07F0337E3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */; };
 		07F327F22CB09B74006D9918 /* _WKTextPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F327F02CB085A4006D9918 /* _WKTextPreview.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3543,6 +3551,11 @@
 		077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCoordinatorProxyPrivate.h; sourceTree = "<group>"; };
 		077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunJavaScriptResult.h; sourceTree = "<group>"; };
 		077DD8E6303AE8A2000AA8FC /* WTFCompletionHandler+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WTFCompletionHandler+Extras.swift"; sourceTree = "<group>"; };
+		077F49B53036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationResultDecoder.swift; sourceTree = "<group>"; };
+		077F49B73036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationGraphDecoder.swift; sourceTree = "<group>"; };
+		077F49B93036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationFieldDecoder.swift; sourceTree = "<group>"; };
+		077F49BB3036E23900861A64 /* JavaScriptEvaluationArrayDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationArrayDecoder.swift; sourceTree = "<group>"; };
+		077F49BD3036E3A000861A64 /* JavaScriptEvaluationObjectDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationObjectDecoder.swift; sourceTree = "<group>"; };
 		077FD19F2CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKIntelligenceReplacementTextEffectCoordinator.swift; sourceTree = "<group>"; };
 		078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDOMDoubleClickGestureRecognizer.swift; sourceTree = "<group>"; };
 		0782B70930467FC10011880F /* JavaScriptEvaluationResultCxxInteropSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JavaScriptEvaluationResultCxxInteropSupport.h; sourceTree = "<group>"; };
@@ -3630,6 +3643,9 @@
 		07E691C62E9EB5C4000C7E3C /* RemoteMediaSessionManagerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionManagerMessages.h; sourceTree = "<group>"; };
 		07E691C72E9EB5C4000C7E3C /* RemoteMediaSessionManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		07E691C82E9EB5C4000C7E3C /* RemoteMediaSessionManagerProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionManagerProxyMessages.h; sourceTree = "<group>"; };
+		07EB34D63037F52600B217DD /* JavaScriptEvaluationDecodingGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationDecodingGraph.swift; sourceTree = "<group>"; };
+		07EB34D83037F60700B217DD /* JavaScriptEvaluationCodableValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEvaluationCodableValue.swift; sourceTree = "<group>"; };
+		07EB34DA30380D7E00B217DD /* WebPage+NewCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebPage+NewCodable.swift"; sourceTree = "<group>"; };
 		07EF0751274593FA0066EA04 /* UserMediaPermissionRequestProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaPermissionRequestProxyCocoa.mm; sourceTree = "<group>"; };
 		07EF0752274593FA0066EA04 /* UserMediaPermissionRequestProxyCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionRequestProxyCocoa.h; sourceTree = "<group>"; };
 		07EF07582745A8160066EA04 /* DisplayCaptureSessionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DisplayCaptureSessionManager.mm; sourceTree = "<group>"; };
@@ -9931,6 +9947,7 @@
 				07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */,
 				074E87E02CF8EA3D0059E469 /* WebPage+NavigationDeciding.swift */,
 				078B049F2CF18EAB00B453A6 /* WebPage+NavigationPreferences.swift */,
+				07EB34DA30380D7E00B217DD /* WebPage+NewCodable.swift */,
 				0732D6EA301D645100C2BFE7 /* WebPage+SPI.swift */,
 				071467772DFE84E500F77867 /* WebPage+Transferable.swift */,
 				07CB79952CE9435700199C49 /* WebPage.swift */,
@@ -10486,11 +10503,18 @@
 				7BF19B60290FC5B400EF322A /* IPCTesterReceiver.cpp */,
 				7BF19B5F290FC5B400EF322A /* IPCTesterReceiver.h */,
 				5CF250AE2EE06491006A7172 /* IPCTesterReceiver.swift */,
+				077F49BB3036E23900861A64 /* JavaScriptEvaluationArrayDecoder.swift */,
+				07EB34D83037F60700B217DD /* JavaScriptEvaluationCodableValue.swift */,
+				07EB34D63037F52600B217DD /* JavaScriptEvaluationDecodingGraph.swift */,
+				077F49B93036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift */,
+				077F49B73036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift */,
+				077F49BD3036E3A000861A64 /* JavaScriptEvaluationObjectDecoder.swift */,
 				FAC7C0B12D70229C00E7297E /* JavaScriptEvaluationResult.cpp */,
 				FAC7C0AF2D70225500E7297E /* JavaScriptEvaluationResult.h */,
 				FAC7C0B22D7022AF00E7297E /* JavaScriptEvaluationResult.mm */,
 				FAC7C0B02D70228200E7297E /* JavaScriptEvaluationResult.serialization.in */,
 				0782B70930467FC10011880F /* JavaScriptEvaluationResultCxxInteropSupport.h */,
+				077F49B53036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift */,
 				FA84D66A2E57AE2F004BDAA4 /* JSHandleInfo.cpp */,
 				FA58F4562E1E030A0098E1C8 /* JSHandleInfo.h */,
 				074A6FC62D5F1DEA0027F958 /* KeyEventInterpretationContext.cpp */,
@@ -22284,6 +22308,13 @@
 				074D6A652F385435006089F6 /* IntRectCG.swift in Sources */,
 				5CF250AF2EE06491006A7172 /* IPCTesterReceiver.swift in Sources */,
 				5C448C662EE06E11008931C7 /* IPCTesterReceiverMessageReceiver.swift in Sources */,
+				077F49BC3036E23900861A64 /* JavaScriptEvaluationArrayDecoder.swift in Sources */,
+				07EB34D93037F60700B217DD /* JavaScriptEvaluationCodableValue.swift in Sources */,
+				07EB34D73037F52600B217DD /* JavaScriptEvaluationDecodingGraph.swift in Sources */,
+				077F49BA3036E01600861A64 /* JavaScriptEvaluationFieldDecoder.swift in Sources */,
+				077F49B83036DFD800861A64 /* JavaScriptEvaluationGraphDecoder.swift in Sources */,
+				077F49BE3036E3A000861A64 /* JavaScriptEvaluationObjectDecoder.swift in Sources */,
+				077F49B63036DE1B00861A64 /* JavaScriptEvaluationResultDecoder.swift in Sources */,
 				7D2F27C4301C2EF50043C2CE /* JSWebExtensionAPIUnified.cpp in Sources */,
 				1C0F05BE2CFA5D2E007D1F62 /* JSWebExtensionAPIUnified.mm in Sources */,
 				E385F3672E86D6C900461B0C /* LaunchLogHook.mm in Sources */,
@@ -22646,6 +22677,7 @@
 				07FAA74B2CE947AA00128360 /* WebPage+Navigation.swift in Sources */,
 				074E87E12CF8EA3D0059E469 /* WebPage+NavigationDeciding.swift in Sources */,
 				078B04A02CF18EAB00B453A6 /* WebPage+NavigationPreferences.swift in Sources */,
+				07EB34DB30380D7E00B217DD /* WebPage+NewCodable.swift in Sources */,
 				0732D6EB301D645100C2BFE7 /* WebPage+SPI.swift in Sources */,
 				071467782DFE84E500F77867 /* WebPage+Transferable.swift in Sources */,
 				07CB79962CE9435700199C49 /* WebPage.swift in Sources */,

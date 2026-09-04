@@ -33,6 +33,29 @@
 
 namespace WebKit {
 
+#if defined(HAVE_NEW_CODABLE) && HAVE_NEW_CODABLE
+
+// FIXME: Remove this once rdar://185497624 is fixed.
+class JavaScriptEvaluationOwnedResult {
+public:
+    explicit JavaScriptEvaluationOwnedResult(JavaScriptEvaluationResult&& result)
+        : m_result(WTF::move(result)) { }
+
+    JavaScriptEvaluationOwnedResult(const JavaScriptEvaluationOwnedResult&) = delete;
+    JavaScriptEvaluationOwnedResult& operator=(const JavaScriptEvaluationOwnedResult&) = delete;
+    JavaScriptEvaluationOwnedResult(JavaScriptEvaluationOwnedResult&&) = default;
+    JavaScriptEvaluationOwnedResult& operator=(JavaScriptEvaluationOwnedResult&&) = default;
+
+    using const_iterator = JavaScriptEvaluationResult::Map::const_iterator;
+    const_iterator begin() const { return m_result.map().begin(); }
+    const_iterator end() const { return m_result.map().end(); }
+
+private:
+    JavaScriptEvaluationResult m_result;
+};
+
+#endif
+
 // FIXME: Remove this once rdar://186141869 is fixed.
 class SWIFT_NONCOPYABLE JavaScriptArgumentsBridge {
 public:
@@ -67,6 +90,29 @@ private:
 }
 
 namespace WebKit::CxxInteropSupport {
+
+#if defined(HAVE_NEW_CODABLE) && HAVE_NEW_CODABLE
+
+// FIXME: Generalize this once rdar://186426517 is fixed.
+template<typename Alternative>
+inline bool alternativeForVariant(const JavaScriptEvaluationResult::Value& value)
+{
+    return std::get<Alternative>(value);
+}
+
+// FIXME: Remove this once rdar://186426517 is fixed.
+template<typename Alternative>
+inline size_t alternativeIndexForJavaScriptEvaluationResultValue()
+{
+    return WTF::alternativeIndexV<Alternative, JavaScriptEvaluationResult::Value>;
+}
+
+inline uint64_t jsObjectIDRawValue(const JSObjectID& id)
+{
+    return id.toUInt64();
+}
+
+#endif
 
 inline RunJavaScriptResult::value_type takeValue(RunJavaScriptResult&& expected)
 {
