@@ -9,14 +9,12 @@ import time
 
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
-from webkitpy.benchmark_runner.webdriver_benchmark_runner import WebDriverBenchmarkRunner
 from webkitpy.benchmark_runner.webserver_benchmark_runner import WebServerBenchmarkRunner
 from webkitpy.port.linux_container_sdk_utils import maybe_enter_webkit_container_sdk
 
 
 _log = logging.getLogger(__name__)
 benchmark_runner_subclasses = {
-    WebDriverBenchmarkRunner.name: WebDriverBenchmarkRunner,
     WebServerBenchmarkRunner.name: WebServerBenchmarkRunner,
 }
 

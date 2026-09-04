@@ -30,6 +30,3 @@ from webkitpy.benchmark_runner.browser_driver.linux_browser_driver import LinuxB
 class ServoBrowserDriver(LinuxBrowserDriver):
     browser_name = 'servo'
     process_search_list = ['servo']
-
-    def launch_driver(self, url, options, browser_build_path):
-        raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))
