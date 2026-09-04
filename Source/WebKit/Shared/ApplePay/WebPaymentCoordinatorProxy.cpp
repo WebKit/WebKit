@@ -86,7 +86,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
 
 void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (auto& coordinator = activePaymentCoordinatorProxy())
+    if (RefPtr coordinator = activePaymentCoordinatorProxy())
         coordinator->didReachFinalState();
     activePaymentCoordinatorProxy() = *this;
 

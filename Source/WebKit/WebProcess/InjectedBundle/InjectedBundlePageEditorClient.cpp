@@ -84,7 +84,7 @@ bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node,
 bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, const String& text, const std::optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     if (m_client.shouldInsertText)
-        return m_client.shouldInsertText(toAPI(&page), toAPI(text.impl()), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
+        return m_client.shouldInsertText(toAPI(&page), toAPI(text), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
     return true;
 }
 
@@ -112,25 +112,25 @@ bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, const Style
 void InjectedBundlePageEditorClient::didBeginEditing(WebPage& page, const String& notificationName)
 {
     if (m_client.didBeginEditing)
-        m_client.didBeginEditing(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
+        m_client.didBeginEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::didEndEditing(WebPage& page, const String& notificationName)
 {
     if (m_client.didEndEditing)
-        m_client.didEndEditing(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
+        m_client.didEndEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::didChange(WebPage& page, const String& notificationName)
 {
     if (m_client.didChange)
-        m_client.didChange(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
+        m_client.didChange(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, const String& notificationName)
 {
     if (m_client.didChangeSelection)
-        m_client.didChangeSelection(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
+        m_client.didChangeSelection(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const std::optional<SimpleRange>& range)

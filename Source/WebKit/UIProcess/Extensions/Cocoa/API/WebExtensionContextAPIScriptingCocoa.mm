@@ -318,7 +318,7 @@ void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& sc
     if (scriptIDs.isEmpty()) {
         // Return all registered scripts if no filter is specififed.
         for (auto& entry : m_registeredScriptsMap)
-            scripts.append(entry.value.get().parameters());
+            scripts.append(protect(entry.value.get())->parameters());
     } else {
         for (auto& scriptID : scriptIDs) {
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);

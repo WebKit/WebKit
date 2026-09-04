@@ -62,8 +62,8 @@ public:
     ~PointerLockController();
     void requestPointerLock(Element* target, PointerLockOptions&&, Ref<DeferredPromise>&&);
 
-    void NODELETE ref() const;
-    void deref() const;
+    WEBCORE_EXPORT void NODELETE ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     void requestPointerUnlock();
     void requestPointerUnlockAndForceCursorVisible();

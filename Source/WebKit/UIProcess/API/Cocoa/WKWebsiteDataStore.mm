@@ -1138,7 +1138,7 @@ struct WKWebsiteData {
 
 - (_WKWebsiteDataStoreConfiguration *)_configuration
 {
-    return wrapper(_websiteDataStore->configuration().copy()).autorelease();
+    return wrapper(protect(_websiteDataStore->configuration())->copy()).autorelease();
 }
 
 + (WKNotificationManagerRef)_sharedServiceWorkerNotificationManager

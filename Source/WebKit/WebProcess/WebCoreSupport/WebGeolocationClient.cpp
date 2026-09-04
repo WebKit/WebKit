@@ -79,19 +79,19 @@ std::optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 {
     if (m_page)
-        m_page->geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
+        protect(m_page->geolocationPermissionRequestManager())->startRequestForGeolocation(geolocation);
 }
 
 void WebGeolocationClient::revokeAuthorizationToken(const String& authorizationToken)
 {
     if (m_page)
-        m_page->geolocationPermissionRequestManager().revokeAuthorizationToken(authorizationToken);
+        protect(m_page->geolocationPermissionRequestManager())->revokeAuthorizationToken(authorizationToken);
 }
 
 void WebGeolocationClient::cancelPermissionRequest(Geolocation& geolocation)
 {
     if (m_page)
-        m_page->geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
+        protect(m_page->geolocationPermissionRequestManager())->cancelRequestForGeolocation(geolocation);
 }
 
 } // namespace WebKit

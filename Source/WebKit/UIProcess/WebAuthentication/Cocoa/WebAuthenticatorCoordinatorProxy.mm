@@ -87,7 +87,7 @@
         return nil;
 
     if (page)
-        m_view = page->cocoaView();
+        m_view = protect(page)->cocoaView();
     m_completionHandler = WTF::move(completionHandler);
 
     return self;
@@ -552,13 +552,12 @@ void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
 
 void WebAuthenticatorCoordinatorProxy::makeActiveConditionalAssertion()
 {
-    if (auto& activeProxy = activeConditionalMediationProxy()) {
+    if (RefPtr activeProxy = activeConditionalMediationProxy()) {
         if (activeProxy == this && !m_paused)
             return;
         activeProxy->pauseConditionalAssertion([weakThis = WeakPtr { *this }] () {
-            if (!weakThis)
-                return;
-            weakThis->unpauseConditionalAssertion();
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->unpauseConditionalAssertion();
         });
         return;
     }

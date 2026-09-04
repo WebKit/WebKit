@@ -36,7 +36,7 @@ namespace WebKit::WebGPU {
 
 std::optional<PresentationContextDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PresentationContextDescriptor& presentationContextDescriptor)
 {
-    auto identifier = convertToBacking(presentationContextDescriptor.compositorIntegration);
+    auto identifier = convertToBacking(protect(presentationContextDescriptor.compositorIntegration));
 
     return { { identifier } };
 }

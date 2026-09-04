@@ -2332,7 +2332,7 @@ void WebPage::getInformationFromImageData(const Vector<uint8_t>& data, Completio
     if (m_isClosed)
         return completionHandler(makeUnexpected(ImageDecodingError::Internal));
 
-    if (SVGImage::isDataDecodable(m_page->settings(), data.span()))
+    if (SVGImage::isDataDecodable(protect(m_page->settings()), data.span()))
         return completionHandler(std::make_pair(String { "public.svg-image"_s }, Vector<IntSize> { }));
 
     completionHandler(utiAndAvailableSizesFromImageData(data.span()));

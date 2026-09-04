@@ -164,7 +164,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
     m_coreFrame = coreFrame;
     m_coreFrame->tree().setSpecifiedName(nullAtom());
-    if (auto* localFrame = dynamicDowncast<LocalFrame>(coreFrame))
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(coreFrame))
         localFrame->init();
 }
 
@@ -807,7 +807,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
 
     std::optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
-    webProcess.ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, topOrigin, response, isAppBound), 0);
+    protect(webProcess.ensureNetworkProcessConnection().connection())->send(Messages::NetworkConnectionToWebProcess::ConvertMainResourceLoadToDownload(mainResourceLoadIdentifier, policyDownloadID, request, topOrigin, response, isAppBound), 0);
 }
 
 void WebFrame::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, uint64_t requestID)

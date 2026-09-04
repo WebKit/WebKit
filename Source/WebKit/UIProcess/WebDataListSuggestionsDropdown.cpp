@@ -46,7 +46,7 @@ void WebDataListSuggestionsDropdown::show(WebCore::DataListSuggestionInformation
 void WebDataListSuggestionsDropdown::close()
 {
     auto targetFrameID = std::exchange(m_targetFrameID, std::nullopt);
-    if (auto page = std::exchange(m_page, nullptr))
+    if (RefPtr page = std::exchange(m_page, nullptr))
         page->didCloseSuggestions(targetFrameID);
 }
 

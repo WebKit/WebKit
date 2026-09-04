@@ -514,7 +514,7 @@ static void getSandboxProfileOrProfilePath(const SandboxInitializationParameters
 {
     switch (parameters.mode()) {
     case SandboxInitializationParameters::ProfileSelectionMode::UseDefaultSandboxProfilePath:
-        profileOrProfilePath = [webKit2BundleSingleton() pathForResource:[[NSBundle mainBundle] bundleIdentifier] ofType:@"sb"];
+        profileOrProfilePath = [webKit2BundleSingleton() pathForResource:protect([[NSBundle mainBundle] bundleIdentifier]).get() ofType:@"sb"];
         isProfilePath = true;
         return;
     case SandboxInitializationParameters::ProfileSelectionMode::UseOverrideSandboxProfilePath:
@@ -619,10 +619,10 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
         return suffix.left(suffix.find('/'));
     }
 
-    String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
+    String clientIdentifier = codeSigningIdentifier(OSObjectPtr { parameters.connectionIdentifier.xpcConnection }.get());
     if (clientIdentifier.isNull())
         clientIdentifier = parameters.clientIdentifier;
-    return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
+    return makeString(protect([[NSBundle mainBundle] bundleIdentifier]).get(), '+', clientIdentifier);
 }
 
 static void closeOpenDirectoryConnections()

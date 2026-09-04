@@ -938,7 +938,7 @@ void WebProcessProxy::shutDown()
     didStopRunningProcess();
 
     if (m_isInProcessCache) {
-        processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
+        protect(processPool().webProcessCache())->removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
         ASSERT(!m_isInProcessCache);
     }
 
@@ -1271,13 +1271,14 @@ void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String
     if (!dataStore)
         return completionHandler();
     auto afterAllowAccess = [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, path, completionHandler = WTF::move(completionHandler)] mutable {
-        if (!weakThis || !weakPage)
+        RefPtr page = weakPage;
+        if (!weakThis || !page)
             return completionHandler();
 
         // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
         // to have read access to this directory already.
         weakThis->m_localPathsWithAssumedReadAccess.add(path);
-        weakPage->addPreviouslyVisitedPath(path);
+        page->addPreviouslyVisitedPath(path);
         completionHandler();
     };
 
@@ -1326,14 +1327,15 @@ void WebProcessProxy::assumeReadAccessToBaseURLs(WebPageProxy& page, const Vecto
 
     auto messagePaths = paths;
     protect(dataStore->networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(coreProcessIdentifier(), WTF::move(messagePaths)), [weakThis = WeakPtr { *this }, weakPage = WeakPtr { page }, paths = WTF::move(paths), completionHandler = WTF::move(completionHandler)] mutable {
-        if (!weakThis || !weakPage)
+        RefPtr page = weakPage;
+        if (!weakThis || !page)
             return completionHandler();
 
         // Client loads an alternate string. This doesn't grant universal file read, but the web process is assumed
         // to have read access to this directory already.
         for (auto& path : paths) {
             weakThis->m_localPathsWithAssumedReadAccess.add(path);
-            weakPage->addPreviouslyVisitedPath(path);
+            page->addPreviouslyVisitedPath(path);
         }
         completionHandler();
     });
@@ -2976,7 +2978,8 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     m_speechRecognitionServerMap.ensure(identifier, [&]() {
 #if ENABLE(MEDIA_STREAM)
         auto createRealtimeMediaSource = [weakPage = WeakPtr { targetPage }](WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier) {
-            return weakPage ? weakPage->createRealtimeMediaSourceForSpeechRecognition(clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_s, WebCore::MediaAccessDenialReason::InvalidAccess } };
+            RefPtr page = weakPage;
+            return page ? page->createRealtimeMediaSourceForSpeechRecognition(clientIdentifier) : CaptureSourceOrError { { "Page is invalid"_s, WebCore::MediaAccessDenialReason::InvalidAccess } };
         };
         Ref speechRecognitionServer = SpeechRecognitionServer::create(*this, identifier, WTF::move(permissionChecker), WTF::move(checkIfMockCaptureDevicesEnabled), WTF::move(createRealtimeMediaSource));
 #else

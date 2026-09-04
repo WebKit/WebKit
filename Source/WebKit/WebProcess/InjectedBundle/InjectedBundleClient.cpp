@@ -62,7 +62,7 @@ void InjectedBundleClient::didReceiveMessage(InjectedBundle& bundle, const Strin
     if (!m_client.didReceiveMessage)
         return;
 
-    m_client.didReceiveMessage(toAPI(&bundle), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
+    m_client.didReceiveMessage(toAPI(&bundle), toAPI(messageName), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
 void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPage& page, const String& messageName, RefPtr<API::Object>&& messageBody)
@@ -70,7 +70,7 @@ void InjectedBundleClient::didReceiveMessageToPage(InjectedBundle& bundle, WebPa
     if (!m_client.didReceiveMessageToPage)
         return;
 
-    m_client.didReceiveMessageToPage(toAPI(&bundle), toAPI(&page), toAPI(messageName.impl()), toAPI(messageBody.get()), m_client.base.clientInfo);
+    m_client.didReceiveMessageToPage(toAPI(&bundle), toAPI(&page), toAPI(messageName), toAPI(messageBody.get()), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

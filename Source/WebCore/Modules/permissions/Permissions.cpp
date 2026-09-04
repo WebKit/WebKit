@@ -252,9 +252,9 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
             return;
         }
 
-        auto page = source == PermissionQuerySource::DedicatedWorker || source == PermissionQuerySource::Window ? WeakPtr { *document.page() } : nullptr;
+        RefPtr page = source == PermissionQuerySource::DedicatedWorker || source == PermissionQuerySource::Window ? document.page() : nullptr;
 
-        PermissionController::singleton().query(ClientOrigin { document.topOrigin().data(), WTF::move(originData) }, permissionDescriptor, page, source, [contextIdentifier, permissionDescriptor, weakThis = WTF::move(weakThis), promiseIdentifier, source, page, document = Ref { document }](auto permissionState) mutable {
+        PermissionController::singleton().query(ClientOrigin { document.topOrigin().data(), WTF::move(originData) }, permissionDescriptor, page, source, [contextIdentifier, permissionDescriptor, weakThis = WTF::move(weakThis), promiseIdentifier, source, weakPage = WeakPtr { page.get() }, document = Ref { document }](auto permissionState) mutable {
             ASSERT(isMainThread());
 
             auto result = processPermissionQueryResult(permissionState, permissionDescriptor, document);
@@ -269,12 +269,12 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, Re
                 return;
             }
 
-            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [weakThis = WTF::move(weakThis), promiseIdentifier, permissionState = *result, permissionDescriptor, source, page = WTF::move(page)](auto& context) mutable {
+            ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [weakThis = WTF::move(weakThis), promiseIdentifier, permissionState = *result, permissionDescriptor, source, weakPage = WTF::move(weakPage)](auto& context) mutable {
                 RefPtr protectedThis = weakThis;
                 if (!protectedThis)
                     return;
                 if (RefPtr promise = protectedThis->m_queryPromises.take(promiseIdentifier))
-                    promise->resolve<IDLInterface<PermissionStatus>>(PermissionStatus::create(context, permissionState, permissionDescriptor, source, WTF::move(page)));
+                    promise->resolve<IDLInterface<PermissionStatus>>(PermissionStatus::create(context, permissionState, permissionDescriptor, source, WTF::move(weakPage)));
             });
         });
     };

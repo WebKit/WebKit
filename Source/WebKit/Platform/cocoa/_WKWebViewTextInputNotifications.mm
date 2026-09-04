@@ -57,7 +57,7 @@
 {
     if (_caretType == WebCore::CaretAnimatorType::Dictation) {
         if (_webView)
-            _webView->page().setCaretBlinkingSuspended(false);
+            protect(_webView->page())->setCaretBlinkingSuspended(false);
         return;
     }
 
@@ -77,26 +77,26 @@
 
     _caretType = WebCore::CaretAnimatorType::Default;
     if (_webView)
-        _webView->page().setCaretAnimatorType(WebCore::CaretAnimatorType::Default);
+        protect(_webView->page())->setCaretAnimatorType(WebCore::CaretAnimatorType::Default);
 }
 
 - (void)dictationDidPause
 {
     if (_webView)
-        _webView->page().setCaretBlinkingSuspended(true);
+        protect(_webView->page())->setCaretBlinkingSuspended(true);
 }
 
 - (void)dictationDidResume
 {
     if (_caretType == WebCore::CaretAnimatorType::Dictation) {
         if (_webView)
-            _webView->page().setCaretBlinkingSuspended(false);
+            protect(_webView->page())->setCaretBlinkingSuspended(false);
         return;
     }
 
     _caretType = WebCore::CaretAnimatorType::Dictation;
     if (_webView)
-        _webView->page().setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
+        protect(_webView->page())->setCaretAnimatorType(WebCore::CaretAnimatorType::Dictation);
 }
 
 @end

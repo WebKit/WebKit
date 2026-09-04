@@ -532,7 +532,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     // FIXME: All loaders should provide their origin if navigation mode is cors/no-cors/same-origin.
     // As a temporary approach, we use the document origin if available or the HTTP Origin header otherwise.
-    if (auto* loader = dynamicDowncast<SubresourceLoader>(resourceLoader)) {
+    if (RefPtr loader = dynamicDowncast<SubresourceLoader>(resourceLoader)) {
         loadParameters.sourceOrigin = loader->origin();
 
         if (auto* headers = loader->originalHeaders())

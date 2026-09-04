@@ -168,7 +168,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (_WKProcessPoolConfiguration *)_configuration
 {
-    return wrapper(_processPool->configuration().copy()).autorelease();
+    return wrapper(protect(_processPool->configuration())->copy()).autorelease();
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -406,7 +406,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_clearWebProcessCache
 {
-    _processPool->webProcessCache().clear();
+    protect(_processPool->webProcessCache())->clear();
 }
 
 - (void)_setCachedProcessLifetimeForTesting:(NSTimeInterval)lifetime

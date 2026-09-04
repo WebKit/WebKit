@@ -1113,17 +1113,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([textStyle isSelectedForSegment:0] != _textIsBold) {
         _textIsBold = !_textIsBold;
-        _webViewImpl->page().executeEditCommand("ToggleBold"_s, emptyString());
+        protect(_webViewImpl->page())->executeEditCommand("ToggleBold"_s, emptyString());
     }
 
     if ([textStyle isSelectedForSegment:1] != _textIsItalic) {
         _textIsItalic = !_textIsItalic;
-        _webViewImpl->page().executeEditCommand("ToggleItalic"_s, emptyString());
+        protect(_webViewImpl->page())->executeEditCommand("ToggleItalic"_s, emptyString());
     }
 
     if ([textStyle isSelectedForSegment:2] != _textIsUnderlined) {
         _textIsUnderlined = !_textIsUnderlined;
-        _webViewImpl->page().executeEditCommand("ToggleUnderline"_s, emptyString());
+        protect(_webViewImpl->page())->executeEditCommand("ToggleUnderline"_s, emptyString());
     }
 }
 
@@ -1181,7 +1181,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     _textColor = self.colorPickerItem.color;
-    _webViewImpl->page().executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())));
+    protect(_webViewImpl->page())->executeEditCommand("ForeColor"_s, WebCore::serializationForHTML(WebCore::colorFromCocoaColor(_textColor.get())));
 }
 
 - (NSViewController *)textListViewController

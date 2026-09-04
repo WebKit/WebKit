@@ -2665,7 +2665,7 @@ void WebsiteDataStore::forwardAppBoundDomainsToITPIfInitialized(CompletionHandle
         store->setAppBoundDomainsForITP(domains, [callbackAggregator] { });
     };
 
-    propagateAppBoundDomains(protectedGlobalDefaultDataStore().get(), *appBoundDomains);
+    propagateAppBoundDomains(protect(protectedGlobalDefaultDataStore()), *appBoundDomains);
 
     for (auto& store : allDataStores().values())
         propagateAppBoundDomains(protect(store).ptr(), *appBoundDomains);

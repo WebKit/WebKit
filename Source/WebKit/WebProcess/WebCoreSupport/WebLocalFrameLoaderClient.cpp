@@ -681,7 +681,7 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
     auto& cspOriginsThatUpgradeInsecureNavigations = protect(protect(m_localFrame->document())->contentSecurityPolicy())->insecureNavigationRequestsToUpgrade();
 
     RefPtr<FrameState> redirectReplaceFrameState;
-    if (RefPtr page = m_localFrame->page(); page && page->settings().useUIProcessForBackForwardItemLoading() && m_localFrame->loader().shouldReplaceHistoryItemInChildFrame()) {
+    if (RefPtr page = m_localFrame->page(); page && page->settings().useUIProcessForBackForwardItemLoading() && protect(m_localFrame->loader())->shouldReplaceHistoryItemInChildFrame()) {
         if (RefPtr currentItem = m_localFrame->loader().history().currentItem()) {
             redirectReplaceFrameState = toFrameState(*currentItem);
             redirectReplaceFrameState->children.clear();
@@ -1073,7 +1073,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
 
 void WebLocalFrameLoaderClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
-    RefPtr documentLoader = m_localFrame->loader().loaderForWebsitePolicies();
+    RefPtr documentLoader = protect(m_localFrame->loader())->loaderForWebsitePolicies();
     if (!documentLoader)
         return;
 

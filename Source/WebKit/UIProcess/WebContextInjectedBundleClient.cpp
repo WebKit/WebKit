@@ -47,7 +47,7 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebProc
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), m_client.base.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName), toAPI(messageBody), m_client.base.clientInfo);
 }
 
 void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebProcessPool& processPool, const String& messageName, API::Object* messageBody, CompletionHandler<void(RefPtr<API::Object>)>&& completionHandler)
@@ -57,11 +57,11 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
 
     if (m_client.didReceiveSynchronousMessageFromInjectedBundle) {
         WKTypeRef returnDataRef = nullptr;
-        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
+        m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(&processPool), toAPI(messageName), toAPI(messageBody), &returnDataRef, m_client.base.clientInfo);
         return completionHandler(adoptRef(toImpl(returnDataRef)));
     }
 
-    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(&processPool), toAPI(messageName.impl()), toAPI(messageBody), toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
+    m_client.didReceiveSynchronousMessageFromInjectedBundleWithListener(toAPI(&processPool), toAPI(messageName), toAPI(messageBody), toAPI(API::MessageListener::create(WTF::move(completionHandler)).ptr()), m_client.base.clientInfo);
 }
 
 RefPtr<API::Object> WebContextInjectedBundleClient::getInjectedBundleInitializationUserData(WebProcessPool& processPool)

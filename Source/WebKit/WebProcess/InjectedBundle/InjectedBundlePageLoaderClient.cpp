@@ -74,7 +74,7 @@ void InjectedBundlePageLoaderClient::willLoadDataRequest(WebPage& page, const Re
         data = API::Data::createWithoutCopying(contiguousBufferSpan, [contiguousBuffer = WTF::move(contiguousBuffer)] { });
     }
 
-    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType.impl()), toAPI(encodingName.impl()), toURLRef(unreachableURL.string()), toAPI(userData), m_client.base.clientInfo);
+    m_client.willLoadDataRequest(toAPI(&page), toAPI(request), toAPI(data.get()), toAPI(MIMEType), toAPI(encodingName), toURLRef(unreachableURL.string()), toAPI(userData), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, RefPtr<API::Object>& userData)
@@ -171,7 +171,7 @@ void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage& page, cons
         return;
 
     WKTypeRef userDataToPass = nullptr;
-    m_client.didReceiveTitleForFrame(toAPI(&page), toAPI(title.impl()), toAPI(&frame), &userDataToPass, m_client.base.clientInfo);
+    m_client.didReceiveTitleForFrame(toAPI(&page), toAPI(title), toAPI(&frame), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 
@@ -317,7 +317,7 @@ bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebP
     if (!m_client.shouldForceUniversalAccessFromLocalURL)
         return false;
 
-    return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(&page), toAPI(url.impl()), m_client.base.clientInfo);
+    return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(&page), toAPI(url), m_client.base.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage& page, const Vector<String>& features)

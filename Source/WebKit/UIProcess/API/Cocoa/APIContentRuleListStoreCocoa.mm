@@ -52,10 +52,11 @@ WTF::String ContentRuleListStore::defaultStorePath()
         return [url URLByAppendingPathComponent:@"ContentRuleLists" isDirectory:YES];
     }();
 
-    if (![[NSFileManager defaultManager] createDirectoryAtURL:contentRuleListStoreURL.get().get() withIntermediateDirectories:YES attributes:nil error:nullptr])
+    RetainPtr localContentRuleListStoreURL = contentRuleListStoreURL.get();
+    if (![[NSFileManager defaultManager] createDirectoryAtURL:localContentRuleListStoreURL.get() withIntermediateDirectories:YES attributes:nil error:nullptr])
         LOG_ERROR("Failed to create directory %@", contentRuleListStoreURL.get().get());
 
-    return [contentRuleListStoreURL.get() absoluteURL].path;
+    return [localContentRuleListStoreURL absoluteURL].path;
 }
 
 } // namespace API

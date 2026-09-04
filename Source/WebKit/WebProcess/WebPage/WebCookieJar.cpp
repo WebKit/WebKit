@@ -394,10 +394,11 @@ void WebCookieJar::addChangeListenerWithAccess(const URL& url, const URL& firstP
             return;
     }
 
-    auto completionHandler = [protectedThis = Ref { *this }, this, host, listener = WeakPtr { listener }] (bool listenerAdded)  {
+    auto completionHandler = [protectedThis = Ref { *this }, this, host, weakListener = WeakPtr { listener }] (bool listenerAdded)  {
         if (!listenerAdded)
             return;
 
+        RefPtr listener = weakListener;
         if (!listener)
             return;
 

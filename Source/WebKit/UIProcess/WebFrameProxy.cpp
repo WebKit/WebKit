@@ -625,7 +625,7 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID, String&&
     if ((frameID.toUInt64() >> 32) != process().coreProcessIdentifier().toUInt64())
         return;
 
-    Ref child = WebFrameProxy::create(*page, m_frameProcess, frameID, effectiveSandboxFlags, effectiveReferrerPolicy, scrollingMode, nullptr, this, IsMainFrame::No, std::nullopt);
+    Ref child = WebFrameProxy::create(*page, protect(m_frameProcess), frameID, effectiveSandboxFlags, effectiveReferrerPolicy, scrollingMode, nullptr, this, IsMainFrame::No, std::nullopt);
     child->m_parentFrame = *this;
     child->m_frameName = WTF::move(frameName);
     page->inspectorController().didCreateFrame(child);

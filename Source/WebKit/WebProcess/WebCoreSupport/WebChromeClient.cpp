@@ -1788,7 +1788,7 @@ std::optional<ScrollbarOverlayStyle> WebChromeClient::preferredScrollbarOverlayS
 
 Color WebChromeClient::underlayColor() const
 {
-    auto* page = m_page.get();
+    RefPtr page = m_page;
     return page ? page->underlayColor() : Color();
 }
 
@@ -2041,7 +2041,7 @@ RefPtr<API::Object> userDataFromJSONData(JSON::Value& value)
         auto result = API::Dictionary::create();
         RefPtr jsonObject = value.asObject();
         for (auto [key, value] : *jsonObject)
-            result->add(key, userDataFromJSONData(value));
+            result->add(key, userDataFromJSONData(protect(value)));
         return result;
     }
     case JSON::Value::Type::Array: {
