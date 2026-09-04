@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const computed = element => getComputedStyle(element).positionAnchor;
+
+test(t => {
+    const invalidValues = [
+        ["macbook#lid-attachment", "the anchor name is not a dashed ident"],
+        ["--macbook #lid-attachment", "whitespace before the attachment point"],
+        ["--macbook#", "'#' with no attachment point"],
+        ["--macbook#123", "the attachment point is not an identifier"],
+    ];
+
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const [value, description] of invalidValues) {
+        element.style.positionAnchor = value;
+        assert_equals(element.style.positionAnchor, "", `"${value}" is not accepted — ${description}`);
+        assert_equals(computed(element), "normal", `"${value}" leaves the initial value in place`);
+    }
+}, "position-anchor ignores invalid attachment point syntax");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "2x2x2-center.usdz");
+    model.style.positionAnchor = "--macbook#123";
+
+    await model.ready;
+
+    assert_equals(computed(model), "normal", "the invalid declaration was ignored");
+}, "a model with invalid position-anchor syntax still loads");
+
+</script>
+</body>
+</html>

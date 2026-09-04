@@ -69,5 +69,12 @@ RefPtr<CSSValue> NODELETE valueForPositionArea(CSSValueID, CSSValueID, ValueType
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-area
 RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange&, CSS::PropertyParserState&);
 
+// MARK: <pinned-anchor-name>
+//
+// Hand-written rather than generated so that, when the spatial portal feature is enabled, the anchor
+// name can carry a '#'-delimited suffix naming an attachment point inside the anchor's model asset.
+// See consumePinnedAnchorName() for the grammar.
+RefPtr<CSSValue> consumePinnedAnchorName(CSSParserTokenRange&, CSS::PropertyParserState&);
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

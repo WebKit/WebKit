@@ -123,6 +123,9 @@ public:
     bool isNamedImageValue() const { return m_classType == ClassType::NamedImage; }
     bool isOffsetRotateValue() const { return m_classType == ClassType::OffsetRotate; }
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
+#if ENABLE(SPATIAL_PORTAL)
+    bool isPinnedAnchorNameValue() const { return m_classType == ClassType::PinnedAnchorName; }
+#endif
     bool isPair() const { return m_classType == ClassType::ValuePair; }
     bool isParamValue() const { return m_classType == ClassType::Param; }
     bool isPath() const { return m_classType == ClassType::Path; }
@@ -257,6 +260,9 @@ protected:
         Param,
         Path,
         ShorthandSubstitution,
+#if ENABLE(SPATIAL_PORTAL)
+        PinnedAnchorName,
+#endif
         Position,
         PositionX,
         PositionY,

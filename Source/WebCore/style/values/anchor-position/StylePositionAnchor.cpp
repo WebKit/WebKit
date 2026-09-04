@@ -27,6 +27,11 @@
 
 #include "CSSKeywordValue.h"
 #include "StyleBuilderState.h"
+#include "StyleCustomIdent.h"
+
+#if ENABLE(SPATIAL_PORTAL)
+#include "CSSPinnedAnchorNameValue.h"
+#endif
 
 namespace WebCore {
 namespace Style {
@@ -45,6 +50,18 @@ auto CSSValueConversion<PositionAnchor>::operator()(BuilderState& state, const C
             break;
         }
     }
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr pinned = dynamicDowncast<CSSPinnedAnchorNameValue>(value)) {
+        return PinnedAnchorName {
+            AnchorName {
+                .name = toStyle(pinned->name(), state).value,
+                .scopeOrdinal = state.styleScopeOrdinal()
+            },
+            toStyle(pinned->attachment(), state)
+        };
+    }
+#endif
 
     return { toStyleFromCSSValue<AnchorName>(state, value) };
 }

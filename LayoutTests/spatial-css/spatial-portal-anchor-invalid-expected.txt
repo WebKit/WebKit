@@ -1,0 +1,4 @@
+
+PASS position-anchor ignores invalid attachment point syntax
+PASS a model with invalid position-anchor syntax still loads
+

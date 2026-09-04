@@ -13670,10 +13670,11 @@
                 "auto"
             ],
             "codegen-properties": {
+                "comment": "The '#'-delimited attachment point is proposed in the Spatial CSS explainer, not yet in a specification: https://github.com/WebKit/explainers/blob/main/css-spatial/explainer.md",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::PositionAnchor",
-                "parser-grammar": "normal | none | auto | <dashed-ident>"
+                "parser-grammar": "normal | none | auto | <pinned-anchor-name>"
             },
             "specification": {
                 "category": "css-anchor-position",
@@ -14726,6 +14727,15 @@
         }
     },
     "shared-grammar-rules": {
+        "<pinned-anchor-name>": {
+            "grammar-unused": "<anchor-name> [ '#' <ident> ]?",
+            "grammar-unused-reason": "Needs support for token adjacency: the '#' must immediately follow the anchor name, which grammar notation cannot express.",
+            "grammar-function": "consumePinnedAnchorName",
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://github.com/WebKit/explainers/blob/main/css-spatial/explainer.md"
+            }
+        },
         "<opacity-value>": {
             "grammar": "<number-or-percentage-resolved-to-number>",
             "specification": {

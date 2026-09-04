@@ -27,14 +27,20 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
 
+#include "CSSCustomIdentValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserState.h"
 #include "CSSValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "RenderStyleConstants.h"
 #include "StyleKeyword+Mappings.h"
+
+#if ENABLE(SPATIAL_PORTAL)
+#include "CSSPinnedAnchorNameValue.h"
+#endif
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -363,6 +369,31 @@ RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, CSS::PropertyPa
     auto dim2 = *maybeDim2;
 
     return valueForPositionArea(dim1, dim2, ValueType::Specified);
+}
+
+RefPtr<CSSValue> consumePinnedAnchorName(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <pinned-anchor-name> = <anchor-name> [ '#' <ident> ]?
+    //
+    // With the spatial portal feature enabled, <anchor-name> may be followed by '#' and an identifier
+    // naming an attachment point in the anchor's model asset. The '#' must be adjacent:
+    // "--macbook#lid" parses, "--macbook #lid" does not. Grammar notation can't express adjacency,
+    // hence the token peeking.
+    //
+    // The attachment point is proposed in the Spatial CSS explainer, not yet in a specification.
+    // https://github.com/WebKit/explainers/blob/main/css-spatial/explainer.md
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (state.context.propertySettings.spatialPortalEnabled
+        && range.peek().type() == IdentToken && range.peek().value().startsWith("--"_s)
+        && range.peek(1).type() == HashToken && range.peek(1).getHashTokenType() == HashTokenId) {
+        auto name = range.consume().value().toAtomString();
+        auto attachment = range.consumeIncludingWhitespace().value().toAtomString();
+        return CSSPinnedAnchorNameValue::create(CSS::CustomIdent { WTF::move(name) }, CSS::CustomIdent { WTF::move(attachment) });
+    }
+#endif
+
+    return consumeDashedIdent(range, state);
 }
 
 } // namespace CSSPropertyParserHelpers

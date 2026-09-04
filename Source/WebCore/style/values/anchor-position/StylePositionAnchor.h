@@ -28,11 +28,18 @@
 #include <WebCore/StyleAnchorName.h>
 #include <WebCore/StyleValueTypes.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include <WebCore/StylePinnedAnchorName.h>
+#endif
+
 namespace WebCore {
 namespace Style {
 
 // <'position-anchor'> = normal | none | auto | <anchor-name>
 // https://drafts.csswg.org/css-anchor-position-1/#propdef-position-anchor
+//
+// With the spatial portal feature enabled, <anchor-name> may carry a '#'-delimited attachment
+// point: normal | none | auto | <anchor-name> [ '#' <ident> ]?
 struct PositionAnchor {
     PositionAnchor(CSS::Keyword::Normal keyword)
         : m_value { keyword }
@@ -54,15 +61,34 @@ struct PositionAnchor {
     {
     }
 
+#if ENABLE(SPATIAL_PORTAL)
+    PositionAnchor(PinnedAnchorName&& value)
+        : m_value { WTF::move(value) }
+    {
+    }
+#endif
+
     bool isNormal() const { return WTF::holdsAlternative<CSS::Keyword::Normal>(m_value); }
     bool isNone() const { return WTF::holdsAlternative<CSS::Keyword::None>(m_value); }
     bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
-    bool isName() const { return WTF::holdsAlternative<AnchorName>(m_value); }
+
+    bool isName() const
+    {
+#if ENABLE(SPATIAL_PORTAL)
+        if (WTF::holdsAlternative<PinnedAnchorName>(m_value))
+            return true;
+#endif
+        return WTF::holdsAlternative<AnchorName>(m_value);
+    }
 
     std::optional<AnchorName> tryName() const
     {
         if (auto* name = std::get_if<AnchorName>(&m_value))
             return *name;
+#if ENABLE(SPATIAL_PORTAL)
+        if (auto* pinned = std::get_if<PinnedAnchorName>(&m_value))
+            return pinned->name;
+#endif
         return { };
     }
 
@@ -74,7 +100,13 @@ struct PositionAnchor {
     bool operator==(const PositionAnchor&) const = default;
 
 private:
-    Variant<CSS::Keyword::Normal, CSS::Keyword::None, CSS::Keyword::Auto, AnchorName> m_value;
+#if ENABLE(SPATIAL_PORTAL)
+    using Value = Variant<CSS::Keyword::Normal, CSS::Keyword::None, CSS::Keyword::Auto, AnchorName, PinnedAnchorName>;
+#else
+    using Value = Variant<CSS::Keyword::Normal, CSS::Keyword::None, CSS::Keyword::Auto, AnchorName>;
+#endif
+
+    Value m_value;
 };
 
 // MARK: - Conversion

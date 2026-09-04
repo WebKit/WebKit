@@ -1,0 +1,4 @@
+
+PASS position-anchor rejects an attachment point when the spatial portal feature is off
+PASS position-anchor still accepts its keywords and a bare anchor name when the feature is off
+

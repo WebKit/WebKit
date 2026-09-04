@@ -1031,6 +1031,7 @@ css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
 css/CSSParamValue.cpp
 css/CSSPathValue.cpp
+css/CSSPinnedAnchorNameValue.cpp
 css/CSSShorthandSubstitutionValue.cpp
 css/CSSPositionTryDescriptors.cpp
 css/CSSPositionTryRule.cpp
@@ -3383,6 +3384,7 @@ style/values/align/StyleAlignSelf.cpp @header:RenderStyleGetters @cost:5
 style/values/align/StyleJustifyContent.cpp
 style/values/align/StyleJustifyItems.cpp
 style/values/align/StyleJustifySelf.cpp @header:RenderStyleGetters @cost:5
+style/values/anchor-position/StylePinnedAnchorName.cpp
 style/values/anchor-position/StylePositionAnchor.cpp
 style/values/anchor-position/StylePositionAreaAxis.cpp
 style/values/anchor-position/StylePositionAreaSelf.cpp

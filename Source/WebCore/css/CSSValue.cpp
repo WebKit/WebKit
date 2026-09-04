@@ -109,6 +109,10 @@
 #include "EventTarget.h"
 #include <wtf/Hasher.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "CSSPinnedAnchorNameValue.h"
+#endif
+
 namespace WebCore {
 
 struct SameSizeAsCSSValue {
@@ -238,6 +242,10 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPathValue>(*this));
     case ShorthandSubstitution:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSShorthandSubstitutionValue>(*this));
+#if ENABLE(SPATIAL_PORTAL)
+    case PinnedAnchorName:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPinnedAnchorNameValue>(*this));
+#endif
     case Position:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPositionValue>(*this));
     case PositionX:
