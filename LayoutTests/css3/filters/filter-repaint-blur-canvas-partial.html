@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+
+    canvas {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        filter: blur(10px);
+    }
+</style>
+<script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+<script>
+function repaintTest()
+{
+    const context = document.querySelector("canvas").getContext("2d");
+    context.fillStyle = "green";
+    context.fillRect(25, 25, 50, 50);
+}
+</script>
+</head>
+<body onload="runRepaintTest()">
+    <canvas width="100" height="100"></canvas>
+</body>
+</html>

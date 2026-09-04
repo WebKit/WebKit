@@ -680,7 +680,8 @@ public:
 
     RenderLayer* enclosingFilterLayer(IncludeSelfOrNot = IncludeSelf) const;
     RenderLayer* enclosingFilterRepaintLayer() const;
-    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&);
+    enum class FilterOutsets : bool { Add, AlreadyIncluded };
+    void setFilterBackendNeedsRepaintingInRect(const LayoutRect&, FilterOutsets = FilterOutsets::Add);
 
     inline bool NODELETE canUseOffsetFromAncestor() const;
     bool NODELETE canUseOffsetFromAncestor(const RenderLayer& ancestor) const;

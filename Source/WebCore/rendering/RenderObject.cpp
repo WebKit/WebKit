@@ -910,7 +910,7 @@ RenderObject::RepaintContainerStatus RenderObject::containerForRepaint() const
             }
         }
     }
-    if (view().hasSoftwareFilters()) {
+    if (view().hasRenderersWithPixelMovingFilter()) {
         if (CheckedPtr parentLayer = enclosingLayer()) {
             if (CheckedPtr enclosingFilterLayer = parentLayer->enclosingFilterLayer()) {
                 fullRepaintAlreadyScheduled = parentLayer->needsFullRepaint() && canRelyOnAncestorLayerFullRepaint(*this, *parentLayer);
@@ -971,7 +971,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     ASSERT_NOT_REACHED();
 }
 
-void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, bool shouldClipToLayer) const
+void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerModelObject>&& repaintContainer, const LayoutRect& r, ClipRepaintToLayer clipRepaintToLayer, RepaintRectIsPartial rectIsPartial) const
 {
     if (r.isEmpty())
         return;
@@ -990,7 +990,11 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     propagateRepaintToParentWithOutlineAutoIfNeeded(*repaintContainer, r);
 
     if (repaintContainer->hasFilter() && repaintContainer->layer() && repaintContainer->layer()->requiresFullLayerImageForFilters()) {
-        protect(repaintContainer->layer())->setFilterBackendNeedsRepaintingInRect(r);
+        // The full repaint rect of a RenderBox is its visual overflow, which already includes the filter outsets.
+        auto outsets = RenderLayer::FilterOutsets::Add;
+        if (rectIsPartial == RepaintRectIsPartial::No && repaintContainer.get() == this && is<RenderBox>(*this))
+            outsets = RenderLayer::FilterOutsets::AlreadyIncluded;
+        protect(repaintContainer->layer())->setFilterBackendNeedsRepaintingInRect(r, outsets);
         return;
     }
 
@@ -1010,7 +1014,7 @@ void RenderObject::repaintUsingContainer(SingleThreadWeakPtr<const RenderLayerMo
     if (view().usesCompositing()) {
         ASSERT(repaintContainer->isComposited());
         if (CheckedPtr layer = repaintContainer->layer())
-            layer->setBackingNeedsRepaintInRect(r, shouldClipToLayer ? GraphicsLayer::ShouldClipToLayer::Clip : GraphicsLayer::ShouldClipToLayer::DoNotClip);
+            layer->setBackingNeedsRepaintInRect(r, clipRepaintToLayer == ClipRepaintToLayer::Yes ? GraphicsLayer::ShouldClipToLayer::Clip : GraphicsLayer::ShouldClipToLayer::DoNotClip);
     }
 }
 
@@ -1043,7 +1047,7 @@ void RenderObject::issueRepaint(std::optional<LayoutRect> partialRepaintRect, Cl
     } else
         repaintRect = clippedOverflowRectForRepaint(repaintContainer.renderer.get());
 
-    repaintUsingContainer(repaintContainer.renderer.get(), repaintRect, clipRepaintToLayer == ClipRepaintToLayer::Yes);
+    repaintUsingContainer(repaintContainer.renderer.get(), repaintRect, clipRepaintToLayer, partialRepaintRect ? RepaintRectIsPartial::Yes : RepaintRectIsPartial::No);
 }
 
 void RenderObject::repaint(ForceRepaint forceRepaint) const
@@ -1087,17 +1091,17 @@ void RenderObject::repaintSlowRepaintObject() const
 
     CheckedPtr repaintContainer = containerForRepaint().renderer;
 
-    bool shouldClipToLayer = true;
+    auto clipRepaintToLayer = ClipRepaintToLayer::Yes;
     IntRect repaintRect;
     // If this is the root background, we need to check if there is an extended background rect. If
     // there is, then we should not allow painting to clip to the layer size.
     if (isDocumentElementRenderer() || isBody()) {
-        shouldClipToLayer = !protect(view->frameView())->hasExtendedBackgroundRectForPainting();
+        clipRepaintToLayer = protect(view->frameView())->hasExtendedBackgroundRectForPainting() ? ClipRepaintToLayer::No : ClipRepaintToLayer::Yes;
         repaintRect = snappedIntRect(view->backgroundRect());
     } else
         repaintRect = snappedIntRect(clippedOverflowRectForRepaint(repaintContainer.get()));
 
-    repaintUsingContainer(repaintContainer.get(), repaintRect, shouldClipToLayer);
+    repaintUsingContainer(repaintContainer.get(), repaintRect, clipRepaintToLayer);
 }
 
 IntRect RenderObject::pixelSnappedAbsoluteClippedOverflowRect() const
