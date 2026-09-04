@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<title>Select popup should close when there is no option</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/form-elements.html#the-select-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+
+<select id="sel">
+    <option value="1">Option 1</option>
+    <option value="2">Option 2</option>
+</select>
+
+<script>
+promise_test(async t => {
+    const sel = document.getElementById("sel");
+
+    await test_driver.bless("open select popup");
+    sel.showPicker();
+    assert_true(sel.matches(":open"), "select should be open after showPicker");
+
+    sel.options.length = 0;
+    assert_false(sel.matches(":open"), "select popup should close when all options are removed");
+}, "Select popup closes when all options are removed while popup is open");
+</script>
