@@ -7,19 +7,19 @@
 <div id="test-content">
   <!-- Test case 1: Basic user-select: none -->
   <div id="basic">
-    a<span style="-webkit-user-select: none;">b</span>c
+    a<span style="user-select: none;">b</span>c
   </div>
 
   <!-- Test case 2: Nested user-select: none -->
   <div id="nested">
-    start <span style="-webkit-user-select: none;">unselectable <strong>nested</strong>
+    start <span style="user-select: none;">unselectable <strong>nested</strong>
     text</span> end
   </div>
 
   <!-- Test case 3: Selectable children inside unselectable container -->
-  <div id="container" style="-webkit-user-select: none;">
-    <span style="-webkit-user-select: text;">selectable</span> unselectable
-    <span style="-webkit-user-select: text;">text</span>
+  <div id="container" style="user-select: none;">
+    <span style="user-select: text;">selectable</span> unselectable
+    <span style="user-select: text;">text</span>
   </div>
 </div>
 

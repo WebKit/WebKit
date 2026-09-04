@@ -1,0 +1,35 @@
+abcdef
+
+
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>UnassignedText</span>}</div>": getSelection().deleteFromDocument() should delete a part of the text and the unassigned <span>
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned]Text</span></div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned]Text</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned]Text</span></div>": getSelection().deleteFromDocument() should delete a part of the text and a part of the unassigned text
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>{UnassignedText}</span></div>"
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>{UnassignedText}</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>{UnassignedText}</span></div>": getSelection().deleteFromDocument() should delete the unassigned text
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root>{<span>UnassignedText</span></div><p>abc]def</p>"
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root>{<span>UnassignedText</span></div><p>abc]def</p>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root>{<span>UnassignedText</span></div><p>abc]def</p>": getSelection().deleteFromDocument() should delete the unassigned text and a part of the text
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned[Text</span></div><p>abc]def</p>"
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned[Text</span></div><p>abc]def</p>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>InnerText</span></shadow-root><span>Unassigned[Text</span></div><p>abc]def</p>": getSelection().deleteFromDocument() should delete a part of the unassigned text and a part of the text
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root></slot><span>InnerText</span></shadow-root><slot><span>Assigned]Text</span></div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root></slot><span>InnerText</span></shadow-root><slot><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root></slot><span>InnerText</span></shadow-root><slot><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() should delete a part of the text and a part of the assigned text
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot></slot></shadow-root><span>Assigned]Text</span></div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot></slot></shadow-root><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot></slot></shadow-root><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() should delete a part of the text and a part of the assigned text
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>Assigned]Text</span><span>UnassignedText</span></div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>Assigned]Text</span><span>UnassignedText</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>Assigned]Text</span><span>UnassignedText</span></div>": getSelection().deleteFromDocument() should delete a part of the text and a part of the assigned text
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>UnassignedText</span><span>Assigned]Text</span></div>"
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>UnassignedText</span><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>InnerText</span><slot name="assigned"></slot></shadow-root><span>UnassignedText</span><span>Assigned]Text</span></div>": getSelection().deleteFromDocument() should delete a part of the text, the unassigned <span> and a part of the assigned text
+FAIL Selection.deleteFromDocument() when "<p>abc[def</p><div><shadow-root><span>Inner]Text</span></shadow-root><span>UnassignedText</span></div>" The index is not in the allowed range.
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>"
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": getSelection().deleteFromDocument() shouldn't delete the content in the shadow
+PASS Selection.deleteFromDocument() when "<div><shadow-root><span>Inner[Text</span></shadow-root><span>UnassignedText</span></div><p>abc]def</p>": getSelection().deleteFromDocument() shouldn't delete the content in the parent DOM
+

@@ -5423,6 +5423,9 @@
     "imported/w3c/web-platform-tests/selection/collapse-45.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/selection/crashtests/selection-modify-around-details-not-having-summary.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/selection/extend-00.html": [
         "slow"
     ],

@@ -1,0 +1,4 @@
+bad good
+
+FAIL Drag rightward out of a floated block extends the selection forward, not backward to the start of the float's content. assert_false: selection should extend forward into 'good', not backward into 'bad'. Got: "bad " expected false got true
+

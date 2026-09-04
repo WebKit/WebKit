@@ -1,0 +1,4 @@
+Editable content hereUnselectable OOF
+
+FAIL Drag from contenteditable into out-of-flow user-select:none extends selection to editable boundary. assert_false: Selection should extend (not stay collapsed) when dragging from contenteditable into out-of-flow user-select:none expected false got true
+
