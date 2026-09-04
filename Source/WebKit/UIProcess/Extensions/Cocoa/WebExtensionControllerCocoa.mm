@@ -336,7 +336,7 @@ void WebExtensionController::updateWebsitePoliciesForNavigation(API::WebsitePoli
     auto actionPatterns = websitePolicies.activeContentRuleListActionPatterns();
 
     for (Ref context : m_extensionContexts) {
-        if (!context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+        if (!context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess) && !context->hasPermission(WKWebExtensionPermissionDeclarativeNetRequest))
             continue;
 
         OptionSet<WebExtensionMatchPattern::Options> expandOptions;
