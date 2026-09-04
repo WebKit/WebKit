@@ -198,6 +198,7 @@ NetworkProcess/cache/AsyncRevalidation.cpp
 NetworkProcess/cache/NetworkCache.cpp @cost:4
 NetworkProcess/cache/NetworkCacheBlobStorage.cpp
 NetworkProcess/cache/NetworkCacheCoders.cpp
+NetworkProcess/cache/NetworkCacheCompressionDictionaryEntry.cpp
 NetworkProcess/cache/NetworkCacheData.cpp
 NetworkProcess/cache/NetworkCacheEntry.cpp @cost:3
 NetworkProcess/cache/NetworkCacheFileSystem.cpp

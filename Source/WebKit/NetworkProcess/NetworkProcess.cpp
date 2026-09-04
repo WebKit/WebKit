@@ -2046,6 +2046,39 @@ void NetworkProcess::deleteWebsiteDataImpl(PAL::SessionID sessionID, OptionSet<W
         session->storageManager().deleteDataModifiedSince(websiteDataTypes, modifiedSince, [clearTasksHandler] { });
 }
 
+enum class CacheRecordsToDelete : bool { AllTypes, CompressionDictionariesOnly };
+
+static void deleteCacheRecordsForOrigin(NetworkCache::Cache& cache, const ClientOrigin& origin, CacheRecordsToDelete recordsToDelete, Ref<WTF::CallbackAggregator>&& clearTasksHandler)
+{
+    Vector<NetworkCache::Key> cacheKeysToDelete;
+    RegistrableDomain topDomain = RegistrableDomain::uncheckedCreateFromHost(origin.topOrigin.host());
+    String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : (topDomain.isEmpty() ? emptyString() : topDomain.string());
+    // A first-party origin has no partition of its own, so its traversal sees every origin's
+    // records; only whole-disk-cache removal is allowed to take them all.
+    bool shouldClearAllEntriesInPartition = origin.clientOrigin == origin.topOrigin && recordsToDelete == CacheRecordsToDelete::AllTypes;
+    auto recordHandler = [cache = Ref { cache }, clearTasksHandler = WTF::move(clearTasksHandler), shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTF::move(cacheKeysToDelete)](auto* traversalRecord) mutable {
+        if (traversalRecord) {
+            ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalRecord->record.key.partition(), cachePartition));
+            if (shouldClearAllEntriesInPartition) {
+                cacheKeysToDelete.append(traversalRecord->record.key);
+                return;
+            }
+
+            auto url = traversalRecord->url();
+            if (url && SecurityOriginData::fromURLWithoutStrictOpaqueness(*url) == origin)
+                cacheKeysToDelete.append(traversalRecord->record.key);
+            return;
+        }
+
+        cache->remove(cacheKeysToDelete, [clearTasksHandler] { });
+    };
+
+    if (recordsToDelete == CacheRecordsToDelete::CompressionDictionariesOnly)
+        cache.traverseCompressionDictionaryRecords(cachePartition, WTF::move(recordHandler));
+    else
+        cache.traverseRecords(cachePartition, WTF::move(recordHandler));
+}
+
 void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
     auto clearTasksHandler = WTF::CallbackAggregator::create([completionHandler = WTF::move(completionHandler)]() mutable {
@@ -2058,31 +2091,17 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (CheckedPtr networkStorageSession = storageSession(sessionID))
             networkStorageSession->deleteCookies(origin, [clearTasksHandler] { });
+
+        // Compression dictionaries are cleared along with cookies, see
+        // https://github.com/w3c/webappsec-clear-site-data/pull/94.
+        if (!websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral() && session) {
+            if (RefPtr cache = session->cache())
+                deleteCacheRecordsForOrigin(*cache, origin, CacheRecordsToDelete::CompressionDictionariesOnly, clearTasksHandler.copyRef());
+        }
     }
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral() && session) {
-        if (RefPtr cache = session->cache()) {
-            Vector<NetworkCache::Key> cacheKeysToDelete;
-            RegistrableDomain topDomain = RegistrableDomain::uncheckedCreateFromHost(origin.topOrigin.host());
-            String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : (topDomain.isEmpty() ? emptyString() : topDomain.string());
-            bool shouldClearAllEntriesInPartition = origin.clientOrigin == origin.topOrigin;
-            cache->traverseRecords(cachePartition, [cache, clearTasksHandler, shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTF::move(cacheKeysToDelete)](auto* traversalRecord) mutable {
-                if (traversalRecord) {
-                    ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalRecord->record.key.partition(), cachePartition));
-                    if (shouldClearAllEntriesInPartition) {
-                        cacheKeysToDelete.append(traversalRecord->record.key);
-                        return;
-                    }
-
-                    auto url = NetworkCache::Entry::decodeStorageRecordResponseURL(traversalRecord->record);
-                    if (url && SecurityOriginData::fromURLWithoutStrictOpaqueness(*url) == origin)
-                        cacheKeysToDelete.append(traversalRecord->record.key);
-                    return;
-                }
-
-                cache->remove(cacheKeysToDelete, [clearTasksHandler] { });
-                return;
-            });
-        }
+        if (RefPtr cache = session->cache())
+            deleteCacheRecordsForOrigin(*cache, origin, CacheRecordsToDelete::AllTypes, clearTasksHandler.copyRef());
     }
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session)
         session->storageManager().deleteData(websiteDataTypes, origin, [clearTasksHandler] { });

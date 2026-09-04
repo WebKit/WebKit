@@ -25,6 +25,11 @@
 #include <glib/gstdio.h>
 
 static WebKitTestServer* kServer;
+// Shares a host with kServer, so it is a different origin in the same cache partition.
+static WebKitTestServer* kOtherOriginServer;
+
+// Large enough that the bytes a dictionary adds to the disk cache of its origin are unmistakable.
+static const size_t kCompressionDictionaryLength = 64 * 1024;
 
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
 {
@@ -75,6 +80,33 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else if (g_str_equal(path, "/service/empty-worker.js")) {
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/compression-dictionary/page")) {
+        // The query string is forwarded to the dictionary request so that every registration is a
+        // network load, and names the dictionary to fetch.
+        static const char* dictionaryHTML =
+            "<html><body onload=\"fetch((new URLSearchParams(location.search).get('resource') || 'dictionary') + location.search)"
+            ".then(response => response.text()).then(() => document.title = 'Registered')\"></body></html>";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, dictionaryHTML, strlen(dictionaryHTML));
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/compression-dictionary/dictionary") || g_str_equal(path, "/compression-dictionary/foreign-dictionary")) {
+        bool isForeign = g_str_equal(path, "/compression-dictionary/foreign-dictionary");
+        auto* responseHeaders = soup_server_message_get_response_headers(message);
+        soup_message_headers_replace(responseHeaders, "Use-As-Dictionary", isForeign ? "match=\"https://other.example/*\"" : "match=\"/compression-dictionary/*\"");
+        soup_message_headers_replace(responseHeaders, "Cache-Control", "max-age=3600");
+        soup_message_headers_replace(responseHeaders, "Content-Type", "text/plain");
+        static GUniquePtr<char> dictionary(g_strnfill(kCompressionDictionaryLength, 'a'));
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, dictionary.get(), kCompressionDictionaryLength);
+        soup_message_body_complete(responseBody);
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    } else if (g_str_equal(path, "/compression-dictionary/clear-cookies")) {
+        auto* responseHeaders = soup_server_message_get_response_headers(message);
+        soup_message_headers_replace(responseHeaders, "Clear-Site-Data", "\"cookies\"");
+        soup_message_headers_replace(responseHeaders, "Cache-Control", "no-store");
+        static const char* emptyHTML = "<html><body></body></html>";
+        soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, emptyHTML, strlen(emptyHTML));
         soup_message_body_complete(responseBody);
         soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     } else
@@ -476,6 +508,146 @@ static void testWebsiteDataCache(WebsiteDataTest* test, gconstpointer)
     test->clear(cacheTypes, 0);
     dataList = test->fetch(cacheTypes);
     g_assert_null(dataList);
+}
+
+static guint64 diskCacheSize(WebsiteDataTest* test)
+{
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    if (!dataList)
+        return 0;
+
+    g_assert_cmpuint(g_list_length(dataList), ==, 1);
+    return webkit_website_data_get_size(static_cast<WebKitWebsiteData*>(dataList->data), WEBKIT_WEBSITE_DATA_DISK_CACHE);
+}
+
+// Writing to and removing from the disk cache is asynchronous, so the size has to be polled for.
+// Give up well inside the timeout of the test so that the caller gets to assert on the size it
+// wanted instead of the harness killing the test.
+static const double kDiskCacheSizePollInterval = 0.1;
+static const unsigned kDiskCacheSizePollCount = 20;
+
+static guint64 waitUntilDiskCacheSizeIsAtLeast(WebsiteDataTest* test, guint64 minimumSize)
+{
+    guint64 size = diskCacheSize(test);
+    for (unsigned i = 0; i < kDiskCacheSizePollCount && size < minimumSize; ++i) {
+        test->wait(kDiskCacheSizePollInterval);
+        size = diskCacheSize(test);
+    }
+    return size;
+}
+
+static guint64 waitUntilDiskCacheSizeIsAtMost(WebsiteDataTest* test, guint64 maximumSize)
+{
+    guint64 size = diskCacheSize(test);
+    for (unsigned i = 0; i < kDiskCacheSizePollCount && size > maximumSize; ++i) {
+        test->wait(kDiskCacheSizePollInterval);
+        size = diskCacheSize(test);
+    }
+    return size;
+}
+
+static void loadCompressionDictionaryPage(WebsiteDataTest* test, WebKitTestServer* server, const char* token)
+{
+    GUniquePtr<char> path(g_strdup_printf("/compression-dictionary/page?token=%s", token));
+    test->loadURI(server->getURIForPath(path.get()).data());
+    test->waitUntilTitleChangedTo("Registered");
+}
+
+// Registers a dictionary and returns the resulting disk cache size of the server origin. Both the
+// dictionary record and the regular cache entry for the response account for the dictionary body,
+// so the size is at least twice its length once the dictionary has been stored.
+static guint64 registerCompressionDictionary(WebsiteDataTest* test, const char* token)
+{
+    loadCompressionDictionaryPage(test, kServer, token);
+
+    guint64 size = waitUntilDiskCacheSizeIsAtLeast(test, 2 * kCompressionDictionaryLength);
+    g_assert_cmpuint(size, >=, 2 * kCompressionDictionaryLength);
+    return size;
+}
+
+static void enableCompressionDictionary(WebsiteDataTest* test)
+{
+    g_autoptr(WebKitFeatureList) features = webkit_settings_get_experimental_features();
+    WebKitFeature* compressionDictionary = webkit_feature_list_find(features, "CompressionDictionary");
+    g_assert_nonnull(compressionDictionary);
+    webkit_settings_set_feature_enabled(webkit_web_view_get_settings(test->webView()), compressionDictionary, TRUE);
+}
+
+static void testWebsiteDataCompressionDictionary(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    enableCompressionDictionary(test);
+
+    guint64 sizeWithDictionary = registerCompressionDictionary(test, "1");
+
+    // Clear-Site-Data: "cookies" clears the dictionaries of the origin, but not its cached resources.
+    test->loadURI(kServer->getURIForPath("/compression-dictionary/clear-cookies").data());
+    test->waitUntilLoadFinished();
+    guint64 sizeWithoutDictionary = waitUntilDiskCacheSizeIsAtMost(test, sizeWithDictionary - kCompressionDictionaryLength);
+    g_assert_cmpuint(sizeWithoutDictionary, >, 0);
+    g_assert_cmpuint(sizeWithDictionary - sizeWithoutDictionary, >=, kCompressionDictionaryLength);
+
+    // Removing the disk cache of the origin takes its dictionaries with it.
+    registerCompressionDictionary(test, "2");
+    GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    g_assert_nonnull(dataList);
+    test->remove(WEBKIT_WEBSITE_DATA_DISK_CACHE, dataList);
+    g_assert_null(test->fetch(WEBKIT_WEBSITE_DATA_DISK_CACHE));
+
+    test->clear(cacheTypes, 0);
+}
+
+static void testWebsiteDataCompressionDictionaryForeignMatch(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    enableCompressionDictionary(test);
+
+    test->loadURI(kServer->getURIForPath("/compression-dictionary/page?resource=foreign-dictionary").data());
+    test->waitUntilTitleChangedTo("Registered");
+
+    // A match pattern naming another origin is not registered, so the dictionary body is only
+    // accounted for by its regular cache entry. Both records would be written by the same store,
+    // so once the size covers one of them the other would be there too.
+    g_assert_cmpuint(waitUntilDiskCacheSizeIsAtLeast(test, kCompressionDictionaryLength), >=, kCompressionDictionaryLength);
+    test->wait(0.5);
+    g_assert_cmpuint(diskCacheSize(test), <, 2 * kCompressionDictionaryLength);
+
+    test->clear(cacheTypes, 0);
+}
+
+static void testWebsiteDataCompressionDictionaryOtherOrigin(WebsiteDataTest* test, gconstpointer)
+{
+    static const WebKitWebsiteDataTypes cacheTypes = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+
+    test->clear(cacheTypes, 0);
+    g_assert_null(test->fetch(cacheTypes));
+
+    enableCompressionDictionary(test);
+
+    // Both servers report as the same host, so one record accounts for the four dictionary-sized
+    // bodies: a dictionary record and a regular cache entry for each origin.
+    loadCompressionDictionaryPage(test, kServer, "1");
+    loadCompressionDictionaryPage(test, kOtherOriginServer, "1");
+    guint64 sizeWithBoth = waitUntilDiskCacheSizeIsAtLeast(test, 4 * kCompressionDictionaryLength);
+    g_assert_cmpuint(sizeWithBoth, >=, 4 * kCompressionDictionaryLength);
+
+    // Clear-Site-Data: "cookies" clears the dictionaries of the origin that sent it, and leaves
+    // the dictionaries of every other origin sharing the partition alone.
+    test->loadURI(kServer->getURIForPath("/compression-dictionary/clear-cookies").data());
+    test->waitUntilLoadFinished();
+    guint64 sizeAfter = waitUntilDiskCacheSizeIsAtMost(test, sizeWithBoth - kCompressionDictionaryLength);
+    g_assert_cmpuint(sizeWithBoth - sizeAfter, >=, kCompressionDictionaryLength);
+    g_assert_cmpuint(sizeAfter, >=, 3 * kCompressionDictionaryLength);
+
+    test->clear(cacheTypes, 0);
 }
 
 static void testWebsiteDataStorage(WebsiteDataTest* test, gconstpointer)
@@ -998,11 +1170,17 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+    kOtherOriginServer = new WebKitTestServer();
+    kOtherOriginServer->run(serverCallback);
+
     prepopulateHstsData();
 
     WebsiteDataTest::add("WebKitWebsiteData", "configuration", testWebsiteDataConfiguration);
     WebViewTest::add("WebKitWebsiteData", "ephemeral", testWebsiteDataEphemeral);
     WebsiteDataTest::add("WebKitWebsiteData", "cache", testWebsiteDataCache);
+    WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary", testWebsiteDataCompressionDictionary);
+    WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary-foreign-match", testWebsiteDataCompressionDictionaryForeignMatch);
+    WebsiteDataTest::add("WebKitWebsiteData", "compression-dictionary-other-origin", testWebsiteDataCompressionDictionaryOtherOrigin);
     WebsiteDataTest::add("WebKitWebsiteData", "storage", testWebsiteDataStorage);
     WebsiteDataTest::add("WebKitWebsiteData", "databases", testWebsiteDataDatabases);
     WebsiteDataTest::add("WebKitWebsiteData", "cookies", testWebsiteDataCookies);
@@ -1020,4 +1198,5 @@ void beforeAll()
 void afterAll()
 {
     delete kServer;
+    delete kOtherOriginServer;
 }
