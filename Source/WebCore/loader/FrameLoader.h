@@ -384,6 +384,8 @@ public:
 
     bool isDispatchingPageSwapEvent() const  { return m_isDispatchingPageSwapEvent; }
 
+    void updateFirstPartyForCookies();
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,
@@ -408,7 +410,6 @@ private:
 
     void loadProvisionalItemFromCachedPage();
 
-    void updateFirstPartyForCookies();
     void setFirstPartyForCookies(const URL&);
 
     ResourceRequestCachePolicy defaultRequestCachingPolicy(const ResourceRequest&, FrameLoadType, bool isMainResource);

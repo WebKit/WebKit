@@ -206,6 +206,7 @@ Tests/WebKit/WKWebView/MediaLoading.mm @nonARC @no-unify
 Tests/WebKit/WKWebView/MediaMutedState.mm @nonARC
 Tests/WebKit/WKWebView/MediaSession.mm @nonARC
 Tests/WebKit/WKWebView/MediaType.mm @nonARC
+Tests/WebKit/WKWebView/MemoryCachePartitioning.mm @nonARC
 Tests/WebKit/WKWebView/MemoryFootprintThreshold.mm @nonARC
 Tests/WebKit/WKWebView/MessagePortProviders.mm @nonARC
 Tests/WebKit/WKWebView/ModalAlerts.mm @nonARC
