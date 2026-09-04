@@ -534,6 +534,8 @@ protected:
 private:
     Document* NODELETE document() const;
 
+    bool isFormActionAllowedByRequesterCSP(const URL& postRedirectURL, const ResourceResponse& redirectResponse) const;
+
     void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
     void unregisterReservedServiceWorkerClient();
 
