@@ -1,0 +1,18 @@
+This test ensures Devanagari text, where a vowel sign renders to the left of the consonant it follows and a virama joins two consonants into a conjunct, keeps a text marker index per code unit in logical order rather than in the order the glyphs appear.
+
+The vowel sign keeps its logical position after the consonant, not its visual one before it.
+PASS: text().length === 6
+PASS: text().codePointAt(0) === 0x939
+PASS: text().codePointAt(1) === 0x93F
+PASS: text().codePointAt(3) === 0x94D
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 6
+PASS: walk.indicesChecked === 6
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,18 @@
+This test ensures the text marker index space over right-to-left text stays logical: every index round-trips, and the string from the start of the paragraph to an index is as long as that index, even though the characters render right to left.
+
+The letters keep logical order, so index 0 is the first letter of the first word, not the rightmost glyph.
+PASS: text() === 'שלום עולם'
+PASS: text().length === 9
+PASS: text().codePointAt(0) === 0x5E9
+PASS: text().codePointAt(8) === 0x5DD
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 9
+PASS: walk.indicesChecked === 9
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

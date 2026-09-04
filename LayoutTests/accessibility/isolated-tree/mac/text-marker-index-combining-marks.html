@@ -1,0 +1,44 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/ax-text-marker-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">cafe&#x301; nai&#x308;ve</p>
+
+<script>
+var output = "This test ensures a combining mark occupies its own text marker index. The paragraph holds two grapheme clusters that are two code units each, so an index space counting grapheme clusters rather than code units would disagree with the string length.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "The accessibility text keeps the marks decomposed.\n";
+    output += expect("text().length", "12");
+    output += expect("text().codePointAt(4)", "0x301");
+    output += expect("text().codePointAt(9)", "0x308");
+    output += expect("text().normalize('NFC')", "'café naïve'");
+
+    output += "\nEvery code unit has its own index, and it round-trips.\n";
+    output += expect("walk.containerTextLength", "12");
+    output += expect("walk.indicesChecked", "12");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

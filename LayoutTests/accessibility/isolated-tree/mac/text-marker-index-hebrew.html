@@ -1,0 +1,44 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/ax-text-marker-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">שלום עולם</p>
+
+<script>
+var output = "This test ensures the text marker index space over right-to-left text stays logical: every index round-trips, and the string from the start of the paragraph to an index is as long as that index, even though the characters render right to left.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var walk = checkRoundTripAllTextMarkerIndicesWithinContainer(target);
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    output += "The letters keep logical order, so index 0 is the first letter of the first word, not the rightmost glyph.\n";
+    output += expect("text()", "'שלום עולם'");
+    output += expect("text().length", "9");
+    output += expect("text().codePointAt(0)", "0x5E9");
+    output += expect("text().codePointAt(8)", "0x5DD");
+
+    output += "\nEvery code unit has its own index, and it round-trips.\n";
+    output += expect("walk.containerTextLength", "9");
+    output += expect("walk.indicesChecked", "9");
+    output += expect("walk.worstRoundTripDrift", "0");
+    output += expect("walk.worstLengthDifference", "0");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>
