@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/Lock.h>
 
+#include <cmath>
 #include <wtf/LockAlgorithmInlines.h>
 #include <wtf/StackShotProfiler.h>
 
@@ -81,9 +82,11 @@ bool Lock::tryLockWithTimeout(Seconds timeout)
     // why we use unistd.h's sleep() instead of its alternatives.
 
     // We'll be doing sleep(1) between tries below. Hence, sleepPerRetry is 1.
-    unsigned maxRetries = (timeout < Seconds::infinity()) ? timeout.value() : std::numeric_limits<unsigned>::max();
+    // Round up so a non-zero sub-second timeout still retries at least once, while a
+    // zero timeout does not sleep at all.
+    unsigned maxRetries = (timeout < Seconds::infinity()) ? std::ceil(timeout.value()) : std::numeric_limits<unsigned>::max();
     unsigned tryCount = 0;
-    while (!tryLock() && tryCount++ <= maxRetries) {
+    while (!tryLock() && tryCount++ < maxRetries) {
 #if OS(WINDOWS)
         Sleep(1000);
 #else

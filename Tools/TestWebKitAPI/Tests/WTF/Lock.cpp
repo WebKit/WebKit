@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/UniqueArray.h>
@@ -221,6 +222,47 @@ TEST(WTF_Lock, Basic)
     MyValue v;
     v.setValue(7);
     v.maybeSetOtherValue(34);
+}
+
+TEST(WTF_Lock, TryLockWithTimeoutZeroDoesNotSleep)
+{
+    // A zero timeout on a contended lock must fail promptly rather than sleeping a
+    // full second (regression test for the off-by-one / sub-second-truncation bug in
+    // tryLockWithTimeout, where maxRetries == 0 still slept once).
+    //
+    // Note: we assert on elapsed time only, not on the return value. tryLockWithTimeout
+    // returns isHeld(), which reports whether the lock is held by *any* thread, so with
+    // the main thread holding the lock the worker observes true regardless of whether it
+    // acquired the lock. The timing is the meaningful signal for this fix.
+    Lock lock;
+    Locker holder { lock };
+
+    MonotonicTime start = MonotonicTime::now();
+    Thread::create("tryLockWithTimeout test"_s, [&] {
+        lock.tryLockWithTimeout(0_s);
+    })->waitForCompletion();
+    Seconds elapsed = MonotonicTime::now() - start;
+
+    EXPECT_LT(elapsed, 500_ms);
+}
+
+TEST(WTF_Lock, TryLockWithTimeoutHonorsTimeoutWithoutOvershoot)
+{
+    // With a 1s timeout on a permanently-held lock, the retry loop must sleep exactly
+    // once (~1s) and then give up. The off-by-one bug slept twice (~2s), overshooting
+    // the requested timeout. We bound elapsed below the pre-fix ~2s and above the single
+    // ~1s sleep so the test fails for either the old off-by-one or a no-sleep regression.
+    Lock lock;
+    Locker holder { lock };
+
+    MonotonicTime start = MonotonicTime::now();
+    Thread::create("tryLockWithTimeout overshoot test"_s, [&] {
+        lock.tryLockWithTimeout(1_s);
+    })->waitForCompletion();
+    Seconds elapsed = MonotonicTime::now() - start;
+
+    EXPECT_GE(elapsed, 900_ms);
+    EXPECT_LT(elapsed, 1600_ms);
 }
 
 } // namespace TestWebKitAPI
