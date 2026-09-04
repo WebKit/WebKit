@@ -407,6 +407,9 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
 
     GstVideoFormat format;
     switch (pixelBuffer->format().pixelFormat) {
+    case PixelFormat::RGBX8:
+        format = GST_VIDEO_FORMAT_RGBx;
+        break;
     case PixelFormat::RGBA8:
         format = GST_VIDEO_FORMAT_RGBA;
         break;

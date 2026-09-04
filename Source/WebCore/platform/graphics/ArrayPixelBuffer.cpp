@@ -38,8 +38,10 @@ ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSiz
 RefPtr<ArrayPixelBuffer> ArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
     switch (format.pixelFormat) {
-    case PixelFormat::BGRA8:
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
+    case PixelFormat::BGRX8:
+    case PixelFormat::BGRA8:
         return ByteArrayPixelBuffer::tryCreate(format, size);
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)

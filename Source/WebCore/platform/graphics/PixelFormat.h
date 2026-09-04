@@ -32,6 +32,7 @@
 namespace WebCore {
 
 enum class PixelFormat : uint8_t {
+    RGBX8,
     RGBA8,
     BGRX8,
     BGRA8,
@@ -51,6 +52,7 @@ enum class UseLosslessCompression : bool { No, Yes };
 constexpr ContentsFormat convertToContentsFormat(PixelFormat format)
 {
     switch (format) {
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
     case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:
@@ -76,6 +78,7 @@ constexpr ContentsFormat convertToContentsFormat(PixelFormat format)
 constexpr bool pixelFormatIsOpaque(PixelFormat format)
 {
     switch (format) {
+    case PixelFormat::RGBX8:
     case PixelFormat::BGRX8:
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
@@ -115,6 +118,7 @@ enum class AllowExtendedColorSpace : bool { No, Yes };
 constexpr AllowExtendedColorSpace allowExtendedColorSpace(PixelFormat format)
 {
     switch (format) {
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
     case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:

@@ -142,6 +142,9 @@ public:
     WEBCORE_EXPORT static IntSize calculateBackendSize(FloatSize logicalSize, float resolutionScale);
     WEBCORE_EXPORT static ImageBufferBackendParameters backendParameters(const Parameters&);
 
+    // Supported get, putPixelBuffer formats.
+    WEBCORE_EXPORT static bool NODELETE supportedPixelBufferFormats(PixelFormat);
+
     // These functions are used when clamping the ImageBuffer which is created for filter, masker or clipper.
     static bool sizeNeedsClamping(const FloatSize&);
     static bool sizeNeedsClamping(const FloatSize&, FloatSize& scale);

@@ -38,34 +38,40 @@
 
 namespace WebCore {
 
-RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool hasAlpha)
+RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
 {
     if (pixelBuffer->size().isEmpty())
         return nullptr;
     auto format = pixelBuffer->format();
+    bool hasAlpha = !pixelFormatIsOpaque(format.pixelFormat);
     // The cairo image surface formats are BGRA (CAIRO_FORMAT_ARGB32) and BGRX
     // (CAIRO_FORMAT_RGB24) on little-endian architectures, so contents that have their
     // components in the RGBA order are converted in place.
     bool needsComponentSwap = false;
     switch (format.pixelFormat) {
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
         needsComponentSwap = true;
         break;
+    case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:
         needsComponentSwap = false;
         break;
-    case PixelFormat::BGRX8:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
+        // cairo has no image surface format for the 16 bit float components.
+        return nullptr;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
+        ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
+        return nullptr;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case PixelFormat::RGB10A8:
-#endif
         ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
         return nullptr;
+#endif
     }
 
     size_t totalBytes = pixelBuffer->bytes().size();
