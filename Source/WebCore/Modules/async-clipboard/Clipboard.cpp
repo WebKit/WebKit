@@ -263,7 +263,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    if (type == "image/png"_s) {
+    if (type == "image/png"_s || type == imageSVGContentTypeAtom()) {
         ClipboardImageReader imageReader { frame->document(), type };
         activePasteboard().read(imageReader, itemIndex);
         auto imageBlob = imageReader.takeResult();
@@ -291,17 +291,6 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         WebContentMarkupReader markupReader { *frame };
         activePasteboard().read(markupReader, WebContentReadingPolicy::OnlyRichTextTypes, itemIndex);
         resultAsString = markupReader.takeMarkup();
-    }
-
-    if (type == imageSVGContentTypeAtom()) {
-        ClipboardImageReader imageReader { frame->document(), type };
-        activePasteboard().read(imageReader, itemIndex);
-        auto imageBlob = imageReader.takeResult();
-        if (updateSessionValidity() == SessionIsValid::Yes && imageBlob)
-            promise->resolve<IDLInterface<Blob>>(imageBlob.releaseNonNull());
-        else
-            promise->reject(ExceptionCode::NotAllowedError);
-        return;
     }
 
     // FIXME: Support reading custom data.
