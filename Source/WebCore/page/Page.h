@@ -1442,6 +1442,24 @@ public:
     void syncLocalFrameInfoToRemote();
     RenderingUpdateScheduler& renderingUpdateScheduler() LIFETIME_BOUND;
 
+    // Cross-process postMessage is sent to the other process as soon as postMessage() is called, whereas
+    // same-process postMessage merely queues a task on the target's event loop. Notifications which are
+    // dispatched synchronously in the target process, such as the load event of a frame owner element,
+    // would therefore be observed out of order with respect to the same-process behavior. This scope
+    // buffers those sends so that they can be flushed after such a notification has been sent.
+    class DeferRemotePostMessageScope {
+        WTF_MAKE_NONCOPYABLE(DeferRemotePostMessageScope);
+    public:
+        explicit DeferRemotePostMessageScope(Page*);
+        ~DeferRemotePostMessageScope();
+
+    private:
+        const RefPtr<Page> m_page;
+    };
+
+    bool shouldDeferRemotePostMessage() const { return m_remotePostMessageDeferralCount; }
+    void deferRemotePostMessage(Function<void()>&&);
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1937,6 +1955,9 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     const std::unique_ptr<AcceleratedTimelinesUpdater> m_acceleratedTimelinesUpdater;
 #endif
+
+    unsigned m_remotePostMessageDeferralCount { 0 };
+    Vector<Function<void()>> m_deferredRemotePostMessages;
 
 }; // class Page
 

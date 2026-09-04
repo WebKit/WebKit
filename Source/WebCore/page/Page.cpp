@@ -4797,6 +4797,29 @@ void Page::forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)
         functor(eventLoop);
 }
 
+Page::DeferRemotePostMessageScope::DeferRemotePostMessageScope(Page* page)
+    : m_page(page)
+{
+    if (m_page)
+        ++m_page->m_remotePostMessageDeferralCount;
+}
+
+Page::DeferRemotePostMessageScope::~DeferRemotePostMessageScope()
+{
+    if (!m_page || --m_page->m_remotePostMessageDeferralCount)
+        return;
+
+    auto deferredRemotePostMessages = std::exchange(m_page->m_deferredRemotePostMessages, { });
+    for (auto& deferredRemotePostMessage : deferredRemotePostMessages)
+        deferredRemotePostMessage();
+}
+
+void Page::deferRemotePostMessage(Function<void()>&& sendMessage)
+{
+    ASSERT(shouldDeferRemotePostMessage());
+    m_deferredRemotePostMessages.append(WTF::move(sendMessage));
+}
+
 bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMainResource) const
 {
     if (mainFrameMainResource == MainFrameMainResource::No && !m_loadsSubresources)
