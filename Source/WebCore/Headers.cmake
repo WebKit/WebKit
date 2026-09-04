@@ -3342,6 +3342,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/flexbox/StyleFlexBasis.h
     style/values/flexbox/StyleFlexGrow.h
+    style/values/flexbox/StyleFlexLineCount.h
     style/values/flexbox/StyleFlexShrink.h
     style/values/flexbox/StyleFlexWrap.h
     style/values/flexbox/StyleWebKitBoxFlex.h

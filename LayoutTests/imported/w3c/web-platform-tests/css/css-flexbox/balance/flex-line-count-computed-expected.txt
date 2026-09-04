@@ -1,6 +1,6 @@
 
-FAIL Property flex-line-count value '1' assert_true: flex-line-count doesn't seem to be supported in the computed style expected true got false
-FAIL Property flex-line-count value '2' assert_true: flex-line-count doesn't seem to be supported in the computed style expected true got false
-FAIL Property flex-line-count value 'round(up, calc(7/2))' assert_true: flex-line-count doesn't seem to be supported in the computed style expected true got false
-FAIL Property flex-line-count value 'calc(NaN)' assert_true: flex-line-count doesn't seem to be supported in the computed style expected true got false
+PASS Property flex-line-count value '1'
+PASS Property flex-line-count value '2'
+PASS Property flex-line-count value 'round(up, calc(7/2))'
+PASS Property flex-line-count value 'calc(NaN)'
 

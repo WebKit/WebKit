@@ -146,6 +146,7 @@ PASS fit-tolerance
 PASS flex-basis
 PASS flex-direction
 PASS flex-grow
+PASS flex-line-count
 PASS flex-shrink
 PASS flex-wrap
 PASS float

@@ -1,4 +1,4 @@
 
-FAIL e.style['flex-line-count'] = "1" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['flex-line-count'] = "2" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['flex-line-count'] = "1" should set the property value
+PASS e.style['flex-line-count'] = "2" should set the property value
 

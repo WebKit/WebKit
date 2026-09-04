@@ -10690,6 +10690,22 @@
                 "url": "https://www.w3.org/TR/css-flexbox-1/#propdef-flex-grow"
             }
         },
+        "flex-line-count": {
+            "animation-type": "by computed value",
+            "initial": "1",
+            "codegen-properties": {
+                "settings-flag": "cssFlexWrapBalanceEnabled",
+                "computed-style-initial-constexpr": true,
+                "computed-style-storage-path": ["m_nonInheritedData", "miscData", "flexibleBox"],
+                "computed-style-storage-kind": "value",
+                "computed-style-type": "Style::FlexLineCount",
+                "parser-grammar": "<integer [1,inf]>"
+            },
+            "specification": {
+                "category": "css-flexbox-2",
+                "url": "https://drafts.csswg.org/css-flexbox-2/#flex-line-count-property"
+            }
+        },
         "flex-shrink": {
             "animation-type": "by computed value",
             "initial": "1",

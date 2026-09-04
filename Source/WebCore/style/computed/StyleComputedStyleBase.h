@@ -422,6 +422,7 @@ using BackgroundLayers = CoordinatedValueList<BackgroundLayer>;
 using BorderRadiusValue = MinimallySerializingSpaceSeparatedSize<LengthPercentage<CSS::Nonnegative>>;
 using BoxShadows = Shadows<BoxShadow>;
 using FlexGrow = Number<CSS::Nonnegative, float>;
+using FlexLineCount = Integer<CSS::Positive>;
 using FlexShrink = Number<CSS::Nonnegative, float>;
 using InsetBox = MinimallySerializingSpaceSeparatedRectEdges<InsetEdge>;
 using LineWidthBox = MinimallySerializingSpaceSeparatedRectEdges<LineWidth>;
