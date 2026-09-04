@@ -1,0 +1,18 @@
+This test ensures a zero width joiner emoji sequence, which is one glyph to a reader but five code units, keeps the joiner and both halves in the accessibility text and a text marker index per code unit.
+
+The joiner is not dropped, so the sequence can be reconstructed.
+PASS: text().length === 15
+PASS: text().codePointAt(6) === 0x1F469
+PASS: text().codePointAt(8) === 0x200D
+PASS: text().codePointAt(9) === 0x1F4BB
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 15
+PASS: walk.indicesChecked === 15
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

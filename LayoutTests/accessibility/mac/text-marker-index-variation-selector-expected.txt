@@ -1,0 +1,17 @@
+This test ensures a variation selector, which changes how the preceding character is drawn but is itself invisible, still occupies its own text marker index and reaches the accessibility text.
+
+The selector is preserved rather than folded into the character it modifies.
+PASS: text().length === 12
+PASS: text().codePointAt(6) === 0x2764
+PASS: text().codePointAt(7) === 0xFE0F
+
+Every code unit has its own index, and it round-trips.
+PASS: walk.containerTextLength === 12
+PASS: walk.indicesChecked === 12
+PASS: walk.worstRoundTripDrift === 0
+PASS: walk.worstLengthDifference === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
