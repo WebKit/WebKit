@@ -1,0 +1,6 @@
+ABCDEFGH
+ABCDEFGH
+Link#3
+
+PASS Hit-test of text with fractional (< 1) font-size and small (high scalefactor) viewBox
+

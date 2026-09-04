@@ -1,0 +1,4 @@
+Here is my sample text1!Here is my sample text2!Here is my sample text3!Here is my sample text4!Here is my sample text5!
+
+PASS Hittest on clipped <text>
+

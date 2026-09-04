@@ -1,0 +1,4 @@
+tspan inside a text.
+
+PASS tspan's bounding box was wrong on hit-testing with pointer-events:bouding-box
+
