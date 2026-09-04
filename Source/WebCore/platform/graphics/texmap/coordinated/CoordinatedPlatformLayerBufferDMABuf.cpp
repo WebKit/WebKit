@@ -440,6 +440,9 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PromiseDMABufYUVPlaneContext);
 
 void CoordinatedPlatformLayerBufferDMABuf::createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
+    if (!threadSafeGrContext)
+        return;
+
     auto backendFormat = threadSafeGrContext->defaultBackendFormat(kRGBA_8888_SkColorType, GrRenderable::kYes);
     ASSERT(backendFormat.isValid());
 
