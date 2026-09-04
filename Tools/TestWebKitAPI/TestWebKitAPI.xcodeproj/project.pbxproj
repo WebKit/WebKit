@@ -804,6 +804,7 @@
 				WebCore/KeyedCoding.cpp,
 				WebCore/LayoutRoundedRectTests.cpp,
 				WebCore/LayoutUnitTests.cpp,
+				WebCore/LocalNetworkAccess.cpp,
 				WebCore/Logging.cpp,
 				WebCore/LoginStatus.cpp,
 				WebCore/MarkedText.cpp,

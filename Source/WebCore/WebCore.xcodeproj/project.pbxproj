@@ -1393,6 +1393,7 @@
 		3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB6B80F22A7D311003A2A69 /* TabSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C8D24EE2E25CF1A00D2A929 /* IPAddressSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3C6A59722E5B011000A908CC /* LocalNetworkAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6A59712E5B011000A908CC /* LocalNetworkAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3D42BC4514B0E28F44D62E77 /* UnifiedSource51-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6D90699809046B96AE290168 /* UnifiedSource51-header-RenderStyleGetters.cpp */; };
 		3D4E6A98F12B0C85A2C173D6 /* RenderLayerSVGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C7B5F48E0A31D9467FB8C52 /* RenderLayerSVGAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F42B31B1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10994,6 +10995,8 @@
 		3C6A595F2E4E5D5300A908CC /* IPAddressSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPAddressSpace.cpp; sourceTree = "<group>"; };
 		3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPAddressSpace.h; sourceTree = "<group>"; };
 		3CE7C6702E270278005CDFD8 /* IPAddressSpace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IPAddressSpace.idl; sourceTree = "<group>"; };
+		3C6A59702E5B011000A908CC /* LocalNetworkAccess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LocalNetworkAccess.cpp; sourceTree = "<group>"; };
+		3C6A59712E5B011000A908CC /* LocalNetworkAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalNetworkAccess.h; sourceTree = "<group>"; };
 		3DCCA4B4BF1CEDC0C5E7B3BB /* Airplay.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Airplay.svg; sourceTree = "<group>"; };
 		3EB98985C78E4C2A4C58889D /* UnifiedSource61-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource61-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreAudioCaptureSource.cpp; sourceTree = "<group>"; };
@@ -28116,6 +28119,8 @@
 				3C6A595F2E4E5D5300A908CC /* IPAddressSpace.cpp */,
 				3C8D24ED2E25CF1A00D2A929 /* IPAddressSpace.h */,
 				3CE7C6702E270278005CDFD8 /* IPAddressSpace.idl */,
+				3C6A59702E5B011000A908CC /* LocalNetworkAccess.cpp */,
+				3C6A59712E5B011000A908CC /* LocalNetworkAccess.h */,
 				44CF5098299B906F0038D284 /* RequestPriority.h */,
 				44CF5097299B90600038D284 /* RequestPriority.idl */,
 				7C2E0BD125106AC4005F3C87 /* WindowOrWorkerGlobalScope+Fetch.idl */,
@@ -47527,6 +47532,7 @@
 				E35B907F23F60A50000011FF /* LocalizedDeviceModel.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				550A0BCC085F6039007353D7 /* LocalNameWithNamespace.h in Headers */,
+				3C6A59722E5B011000A908CC /* LocalNetworkAccess.h in Headers */,
 				41FCD6BB23CE027700C62567 /* LocalSampleBufferDisplayLayer.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				E3C788EE2D035C9500D6C13D /* LogClient.h in Headers */,

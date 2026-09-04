@@ -135,6 +135,8 @@ promise_test(async (t) => {
         globalPrivacyControlEnabled: false,
         shouldConsiderEnhancedSecurityForInsecureResponse:false,
         originalNavigationStartTime: { secondsSinceEpochSeconds: 0 },
+        clientAddressSpace: 0,
+        clientIsSecureContext: false,
     };
 
     CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, {}, () => { });
