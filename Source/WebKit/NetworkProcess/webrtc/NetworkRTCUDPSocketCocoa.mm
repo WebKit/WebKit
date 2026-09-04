@@ -240,7 +240,11 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     {
         auto hostAddress = computeHostAddress(address);
         auto localEndpoint = adoptNS(nw_endpoint_create_host_with_numeric_port(hostAddress.c_str(), 0));
-        m_address = { nw_endpoint_get_hostname(localEndpoint.get()), nw_endpoint_get_port(localEndpoint.get()) };
+        ASSERT(localEndpoint && nw_endpoint_get_hostname(localEndpoint.get()));
+        if (auto* hostname = nw_endpoint_get_hostname(localEndpoint.get()))
+            m_address = { hostname, nw_endpoint_get_port(localEndpoint.get()) };
+        else
+            RELEASE_LOG_ERROR(WebRTC, "NetworkRTCUDPSocketCocoaConnections was given a local address that cannot be used as an endpoint");
         nw_parameters_set_local_endpoint(parameters.get(), localEndpoint.get());
     }
     configureParameters(parameters.get(), address.family() == AF_INET ? nw_ip_version_4 : nw_ip_version_6);
