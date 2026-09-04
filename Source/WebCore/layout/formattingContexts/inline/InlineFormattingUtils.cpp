@@ -401,6 +401,12 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
         return false;
 
+    auto isMarkerContent = [](auto& inlineItem) {
+        return inlineItem.layoutBox().parent().style().isListMarkerStyle();
+    };
+    if (isMarkerContent(previous) && !isMarkerContent(next))
+        return TextUtil::isWrappingAllowed(nearestCommonAncestor(previous.layoutBox(), next.layoutBox(), formattingContext().root()).style());
+
     if (is<InlineTextItem>(previous) && is<InlineTextItem>(next)) {
         auto& previousInlineTextItem = uncheckedDowncast<InlineTextItem>(previous);
         auto& nextInlineTextItem = uncheckedDowncast<InlineTextItem>(next);
@@ -435,8 +441,8 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
         return TextUtil::isWrappingAllowed(nearestCommonAncestor(previousInlineTextItem.layoutBox(), nextInlineTextItem.layoutBox(), formattingContext().root()).style());
     }
     if (previous.layoutBox().isListMarkerBox()) {
-        auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
-        return !listMarkerBox.isListMarkerOutside();
+        // An outside marker is not on the line's content flow, so it offers nothing to break after.
+        return false;
     }
     if (next.layoutBox().isListMarkerBox()) {
         // FIXME: SHould this ever be the case?

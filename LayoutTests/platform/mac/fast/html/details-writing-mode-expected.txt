@@ -40,12 +40,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,-1) size 17x20
+                        text run at (0,0) width 17: "\x{25B6} "
                     RenderText {#text} at (16,1) size 61x19
                       text run at (16,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,-1) size 17x19: "\x{25BC}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,-1) size 17x20
+                        text run at (0,0) width 17: "\x{25BC} "
                     RenderText {#text} at (16,1) size 60x19
                       text run at (16,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -53,12 +57,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,0) size 17x20
+                        text run at (0,0) width 17: "\x{25B6} "
                     RenderText {#text} at (16,0) size 61x18
                       text run at (16,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,1) size 17x19: "\x{25B2}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,0) size 17x20
+                        text run at (0,0) width 17: "\x{25B2} "
                     RenderText {#text} at (16,0) size 60x18
                       text run at (16,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -66,12 +74,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,0) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (0,0) size 20x17
+                        text run at (0,0) width 17: "\x{25BC} "
                     RenderText {#text} at (0,16) size 18x60
                       text run at (0,16) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,0) size 19x17: "\x{25B6}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (0,0) size 20x17
+                        text run at (0,0) width 18: "\x{25B6} "
                     RenderText {#text} at (0,16) size 18x61
                       text run at (0,16) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -79,12 +91,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,0) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (-1,0) size 20x17
+                        text run at (0,0) width 16: "\x{25BC} "
                     RenderText {#text} at (1,16) size 19x60
                       text run at (1,16) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,0) size 19x17: "\x{25C0}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (-1,0) size 20x17
+                        text run at (0,0) width 17: "\x{25C0} "
                     RenderText {#text} at (1,16) size 19x61
                       text run at (1,16) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -96,20 +112,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,-1) size 17x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,-1) size 17x20
+                        text run at (103,0) width 5 RTL: " "
+                        text run at (107,0) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (43,1) size 61x19
                       text run at (43,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,-1) size 17x19: "\x{25BC}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25BC}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,-1) size 17x20
+                        text run at (103,0) width 6 RTL: " "
+                        text run at (108,0) width 12 RTL: "\x{25BC}"
                     RenderText {#text} at (44,1) size 60x19
                       text run at (44,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -117,20 +131,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,1) size 17x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,0) size 17x20
+                        text run at (103,0) width 5 RTL: " "
+                        text run at (107,0) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (43,0) size 61x18
                       text run at (43,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,1) size 17x19: "\x{25B2}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25B2}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,0) size 17x20
+                        text run at (103,0) width 6 RTL: " "
+                        text run at (108,0) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (44,0) size 60x18
                       text run at (44,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -138,20 +150,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,103) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (0,103) size 20x17
+                        text run at (0,103) width 5 RTL: " "
+                        text run at (0,108) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (0,44) size 18x60
                       text run at (0,44) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,103) size 19x17: "\x{25B6}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25B6}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (0,103) size 20x17
+                        text run at (0,103) width 5 RTL: " "
+                        text run at (0,107) width 14 RTL: "\x{25B6}"
                     RenderText {#text} at (0,43) size 18x61
                       text run at (0,43) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -159,20 +169,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,103) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (-1,103) size 20x17
+                        text run at (0,103) width 4 RTL: " "
+                        text run at (0,108) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (1,44) size 19x60
                       text run at (1,44) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,103) size 19x17: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (-1,103) size 20x17
+                        text run at (0,103) width 4 RTL: " "
+                        text run at (0,107) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (1,43) size 19x61
                       text run at (1,43) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -215,12 +223,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,-1) size 17x20
+                        text run at (0,0) width 17: "\x{25B6} "
                     RenderText {#text} at (16,1) size 61x19
                       text run at (16,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,-1) size 17x19: "\x{25BC}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,-1) size 17x20
+                        text run at (0,0) width 17: "\x{25BC} "
                     RenderText {#text} at (16,1) size 60x19
                       text run at (16,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -228,12 +240,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,1) size 17x19: "\x{25B6}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,0) size 17x20
+                        text run at (0,0) width 17: "\x{25B6} "
                     RenderText {#text} at (16,0) size 61x18
                       text run at (16,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (0,1) size 17x19: "\x{25B2}"
+                    RenderInline (generated) at (0,-1) size 17x20
+                      RenderText at (0,0) size 17x20
+                        text run at (0,0) width 17: "\x{25B2} "
                     RenderText {#text} at (16,0) size 60x18
                       text run at (16,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -241,12 +257,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,0) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (0,0) size 20x17
+                        text run at (0,0) width 17: "\x{25BC} "
                     RenderText {#text} at (0,16) size 18x60
                       text run at (0,16) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,0) size 19x17: "\x{25B6}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (0,0) size 20x17
+                        text run at (0,0) width 18: "\x{25B6} "
                     RenderText {#text} at (0,16) size 18x61
                       text run at (0,16) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -254,12 +274,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,0) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (-1,0) size 20x17
+                        text run at (0,0) width 16: "\x{25BC} "
                     RenderText {#text} at (1,16) size 19x60
                       text run at (1,16) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,0) size 19x17: "\x{25C0}"
+                    RenderInline (generated) at (-1,0) size 20x17
+                      RenderText at (-1,0) size 20x17
+                        text run at (0,0) width 17: "\x{25C0} "
                     RenderText {#text} at (1,16) size 19x61
                       text run at (1,16) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -271,20 +295,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (59,-1) size 18x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (59,-1) size 18x20
+                      RenderText at (59,-1) size 18x20
+                        text run at (59,0) width 5 RTL: " "
+                        text run at (63,0) width 14 RTL: "\x{25C0}"
                     RenderText {#text} at (0,1) size 60x19
                       text run at (0,1) width 60: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (59,-1) size 17x19: "\x{25BC}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25BC}"
+                    RenderInline (generated) at (59,-1) size 17x20
+                      RenderText at (59,-1) size 17x20
+                        text run at (59,0) width 5 RTL: " "
+                        text run at (63,0) width 13 RTL: "\x{25BC}"
                     RenderText {#text} at (0,1) size 60x19
                       text run at (0,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -292,20 +314,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (59,1) size 18x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (59,-1) size 18x20
+                      RenderText at (59,0) size 18x20
+                        text run at (59,0) width 5 RTL: " "
+                        text run at (63,0) width 14 RTL: "\x{25C0}"
                     RenderText {#text} at (0,0) size 60x18
                       text run at (0,0) width 60: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (59,1) size 17x19: "\x{25B2}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25B2}"
+                    RenderInline (generated) at (59,-1) size 17x20
+                      RenderText at (59,0) size 17x20
+                        text run at (59,0) width 5 RTL: " "
+                        text run at (63,0) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (0,0) size 60x18
                       text run at (0,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -313,20 +333,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,59) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,59) size 20x17
+                      RenderText at (0,59) size 20x17
+                        text run at (0,59) width 5 RTL: " "
+                        text run at (0,63) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (0,0) size 18x60
                       text run at (0,0) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,59) size 19x18: "\x{25B6}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25B6}"
+                    RenderInline (generated) at (-1,59) size 20x18
+                      RenderText at (0,59) size 20x18
+                        text run at (0,59) width 5 RTL: " "
+                        text run at (0,63) width 14 RTL: "\x{25B6}"
                     RenderText {#text} at (0,0) size 18x60
                       text run at (0,0) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -334,20 +352,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,59) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,59) size 20x17
+                      RenderText at (-1,59) size 20x17
+                        text run at (0,59) width 4 RTL: " "
+                        text run at (0,63) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (1,0) size 19x60
                       text run at (1,0) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,59) size 19x18: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (-1,59) size 20x18
+                      RenderText at (-1,59) size 20x18
+                        text run at (0,59) width 4 RTL: " "
+                        text run at (0,63) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (1,0) size 19x60
                       text run at (1,0) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -390,12 +406,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (21,-1) size 18x19: "\x{25B6}"
+                    RenderInline (generated) at (21,-1) size 18x20
+                      RenderText at (21,-1) size 18x20
+                        text run at (21,0) width 18: "\x{25B6} "
                     RenderText {#text} at (38,1) size 61x19
                       text run at (38,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (22,-1) size 17x19: "\x{25BC}"
+                    RenderInline (generated) at (22,-1) size 17x20
+                      RenderText at (22,-1) size 17x20
+                        text run at (22,0) width 17: "\x{25BC} "
                     RenderText {#text} at (38,1) size 60x19
                       text run at (38,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -403,12 +423,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (21,1) size 18x19: "\x{25B6}"
+                    RenderInline (generated) at (21,-1) size 18x20
+                      RenderText at (21,0) size 18x20
+                        text run at (21,0) width 18: "\x{25B6} "
                     RenderText {#text} at (38,0) size 61x18
                       text run at (38,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (22,1) size 17x19: "\x{25B2}"
+                    RenderInline (generated) at (22,-1) size 17x20
+                      RenderText at (22,0) size 17x20
+                        text run at (22,0) width 17: "\x{25B2} "
                     RenderText {#text} at (38,0) size 60x18
                       text run at (38,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -416,12 +440,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,22) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,22) size 20x17
+                      RenderText at (0,22) size 20x17
+                        text run at (0,22) width 17: "\x{25BC} "
                     RenderText {#text} at (0,38) size 18x60
                       text run at (0,38) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,21) size 19x18: "\x{25B6}"
+                    RenderInline (generated) at (-1,21) size 20x18
+                      RenderText at (0,21) size 20x18
+                        text run at (0,21) width 18: "\x{25B6} "
                     RenderText {#text} at (0,38) size 18x61
                       text run at (0,38) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -429,12 +457,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,22) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,22) size 20x17
+                      RenderText at (-1,22) size 20x17
+                        text run at (0,22) width 16: "\x{25BC} "
                     RenderText {#text} at (1,38) size 19x60
                       text run at (1,38) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,21) size 19x18: "\x{25C0}"
+                    RenderInline (generated) at (-1,21) size 20x18
+                      RenderText at (-1,21) size 20x18
+                        text run at (0,21) width 17: "\x{25C0} "
                     RenderText {#text} at (1,38) size 19x61
                       text run at (1,38) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -446,20 +478,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (81,-1) size 18x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (81,-1) size 18x20
+                      RenderText at (81,-1) size 18x20
+                        text run at (81,0) width 5 RTL: " "
+                        text run at (85,0) width 14 RTL: "\x{25C0}"
                     RenderText {#text} at (21,1) size 61x19
                       text run at (21,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (81,-1) size 17x19: "\x{25BC}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25BC}"
+                    RenderInline (generated) at (81,-1) size 17x20
+                      RenderText at (81,-1) size 17x20
+                        text run at (81,0) width 5 RTL: " "
+                        text run at (85,0) width 13 RTL: "\x{25BC}"
                     RenderText {#text} at (22,1) size 60x19
                       text run at (22,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -467,20 +497,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (81,1) size 18x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (81,-1) size 18x20
+                      RenderText at (81,0) size 18x20
+                        text run at (81,0) width 5 RTL: " "
+                        text run at (85,0) width 14 RTL: "\x{25C0}"
                     RenderText {#text} at (21,0) size 61x18
                       text run at (21,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (81,1) size 17x19: "\x{25B2}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25B2}"
+                    RenderInline (generated) at (81,-1) size 17x20
+                      RenderText at (81,0) size 17x20
+                        text run at (81,0) width 5 RTL: " "
+                        text run at (85,0) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (22,0) size 60x18
                       text run at (22,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -488,20 +516,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,81) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,81) size 20x17
+                      RenderText at (0,81) size 20x17
+                        text run at (0,81) width 5 RTL: " "
+                        text run at (0,85) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (0,22) size 18x60
                       text run at (0,22) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,81) size 19x18: "\x{25B6}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25B6}"
+                    RenderInline (generated) at (-1,81) size 20x18
+                      RenderText at (0,81) size 20x18
+                        text run at (0,81) width 5 RTL: " "
+                        text run at (0,85) width 14 RTL: "\x{25B6}"
                     RenderText {#text} at (0,21) size 18x61
                       text run at (0,21) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -509,20 +535,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,81) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,81) size 20x17
+                      RenderText at (-1,81) size 20x17
+                        text run at (0,81) width 4 RTL: " "
+                        text run at (0,85) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (1,22) size 19x60
                       text run at (1,22) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,81) size 19x18: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (-1,81) size 20x18
+                      RenderText at (-1,81) size 20x18
+                        text run at (0,81) width 4 RTL: " "
+                        text run at (0,85) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (1,21) size 19x61
                       text run at (1,21) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -565,12 +589,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (43,-1) size 18x19: "\x{25B6}"
+                    RenderInline (generated) at (43,-1) size 18x20
+                      RenderText at (43,-1) size 18x20
+                        text run at (43,0) width 18: "\x{25B6} "
                     RenderText {#text} at (60,1) size 60x19
                       text run at (60,1) width 60: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (44,-1) size 17x19: "\x{25BC}"
+                    RenderInline (generated) at (44,-1) size 17x20
+                      RenderText at (44,-1) size 17x20
+                        text run at (44,0) width 17: "\x{25BC} "
                     RenderText {#text} at (60,1) size 60x19
                       text run at (60,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -578,12 +606,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (43,1) size 18x19: "\x{25B6}"
+                    RenderInline (generated) at (43,-1) size 18x20
+                      RenderText at (43,0) size 18x20
+                        text run at (43,0) width 18: "\x{25B6} "
                     RenderText {#text} at (60,0) size 60x18
                       text run at (60,0) width 60: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (44,1) size 17x19: "\x{25B2}"
+                    RenderInline (generated) at (44,-1) size 17x20
+                      RenderText at (44,0) size 17x20
+                        text run at (44,0) width 17: "\x{25B2} "
                     RenderText {#text} at (60,0) size 60x18
                       text run at (60,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -591,12 +623,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,44) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,44) size 20x17
+                      RenderText at (0,44) size 20x17
+                        text run at (0,44) width 17: "\x{25BC} "
                     RenderText {#text} at (0,60) size 18x60
                       text run at (0,60) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,43) size 19x18: "\x{25B6}"
+                    RenderInline (generated) at (-1,43) size 20x18
+                      RenderText at (0,43) size 20x18
+                        text run at (0,43) width 18: "\x{25B6} "
                     RenderText {#text} at (0,60) size 18x60
                       text run at (0,60) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -604,12 +640,16 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,44) size 19x17: "\x{25BC}"
+                    RenderInline (generated) at (-1,44) size 20x17
+                      RenderText at (-1,44) size 20x17
+                        text run at (0,44) width 16: "\x{25BC} "
                     RenderText {#text} at (1,60) size 19x60
                       text run at (1,60) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,43) size 19x18: "\x{25C0}"
+                    RenderInline (generated) at (-1,43) size 20x18
+                      RenderText at (-1,43) size 20x18
+                        text run at (0,43) width 17: "\x{25C0} "
                     RenderText {#text} at (1,60) size 19x60
                       text run at (1,60) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -621,20 +661,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,-1) size 17x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,-1) size 17x20
+                        text run at (103,0) width 5 RTL: " "
+                        text run at (107,0) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (43,1) size 61x19
                       text run at (43,1) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,-1) size 17x19: "\x{25BC}"
-                      RenderBlock (generated) at (0,0) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25BC}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,-1) size 17x20
+                        text run at (103,0) width 6 RTL: " "
+                        text run at (108,0) width 12 RTL: "\x{25BC}"
                     RenderText {#text} at (44,1) size 60x19
                       text run at (44,1) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -642,20 +680,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,1) size 17x19: "\x{25C0}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,0) size 17x20
+                        text run at (103,0) width 5 RTL: " "
+                        text run at (107,0) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (43,0) size 61x18
                       text run at (43,0) width 61: "summary"
                 RenderBlock {DETAILS} at (0,19) size 120x20
                   RenderListItem {SUMMARY} at (0,0) size 120x20
-                    RenderListMarker at (103,1) size 17x19: "\x{25B2}"
-                      RenderBlock (generated) at (0,12) size 17x19
-                        RenderText at (0,-1) size 17x20
-                          text run at (0,0) width 5 RTL: " "
-                          text run at (4,0) width 13 RTL: "\x{25B2}"
+                    RenderInline (generated) at (103,-1) size 17x20
+                      RenderText at (103,0) size 17x20
+                        text run at (103,0) width 6 RTL: " "
+                        text run at (108,0) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (44,0) size 60x18
                       text run at (44,0) width 60: "summary"
                   RenderBlock {SLOT} at (0,19) size 120x0
@@ -663,20 +699,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,103) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (0,103) size 20x17
+                        text run at (0,103) width 5 RTL: " "
+                        text run at (0,108) width 13 RTL: "\x{25B2}"
                     RenderText {#text} at (0,44) size 18x60
                       text run at (0,44) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (1,103) size 19x17: "\x{25B6}"
-                      RenderBlock (generated) at (12,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25B6}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (0,103) size 20x17
+                        text run at (0,103) width 5 RTL: " "
+                        text run at (0,107) width 14 RTL: "\x{25B6}"
                     RenderText {#text} at (0,43) size 18x61
                       text run at (0,43) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120
@@ -684,20 +718,18 @@ layer at (0,0) size 785x1478
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderBlock {DETAILS} at (0,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,103) size 19x17: "\x{25B2}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 12 RTL: "\x{25B2}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (-1,103) size 20x17
+                        text run at (0,103) width 4 RTL: " "
+                        text run at (0,108) width 12 RTL: "\x{25B2}"
                     RenderText {#text} at (1,44) size 19x60
                       text run at (1,44) width 60: "summary"
                 RenderBlock {DETAILS} at (19,0) size 20x120
                   RenderListItem {SUMMARY} at (0,0) size 20x120
-                    RenderListMarker at (-1,103) size 19x17: "\x{25C0}"
-                      RenderBlock (generated) at (0,0) size 19x17
-                        RenderText at (-1,0) size 20x17
-                          text run at (0,0) width 4 RTL: " "
-                          text run at (0,4) width 13 RTL: "\x{25C0}"
+                    RenderInline (generated) at (-1,103) size 20x17
+                      RenderText at (-1,103) size 20x17
+                        text run at (0,103) width 4 RTL: " "
+                        text run at (0,107) width 13 RTL: "\x{25C0}"
                     RenderText {#text} at (1,43) size 19x61
                       text run at (1,43) width 60: "summary"
                   RenderBlock {SLOT} at (19,0) size 0x120

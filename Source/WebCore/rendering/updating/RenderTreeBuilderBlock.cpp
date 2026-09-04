@@ -92,7 +92,7 @@ struct ParentAndBeforeChild {
 static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& child)
 {
     CheckedPtr marker = dynamicDowncast<RenderListMarker>(child);
-    if (!marker || marker->isInside() || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
+    if (!marker || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
     CheckedPtr listItem = dynamicDowncast<RenderListItem>(parent);
     return listItem && !markerNeedsOwnLine(*listItem);

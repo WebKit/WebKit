@@ -126,7 +126,7 @@ void BoxGeometryUpdater::clear()
 void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListMarker& listMarker)
 {
     CheckedRef layoutBox = *listMarker.layoutBox();
-    ASSERT(layoutBox->isListMarkerOutside());
+    ASSERT(layoutBox->isListMarkerBox());
     auto* ancestor = listMarker.containingBlock();
 
     auto offsetFromParentListItem = [&] {
@@ -800,8 +800,7 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
         if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(*renderBox)) {
             CheckedRef style = layoutBox.parent().style();
             boxGeometry.setHorizontalMargin(horizontalLogicalMargin(*renderListMarker, { }, style->writingMode()));
-            if (!renderListMarker->isInside())
-                setListMarkerOffsetForMarkerOutside(*renderListMarker);
+            setListMarkerOffsetForMarkerOutside(*renderListMarker);
             const_cast<Layout::ElementBox&>(layoutBox).setListMarkerLayoutBounds(renderListMarker->layoutBounds());
         }
 
@@ -841,7 +840,7 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::o
 
     if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
         updateLayoutBoxDimensions(*renderBox, availableWidth, intrinsicWidthMode);
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer); renderListMarker && !renderListMarker->isInside())
+        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer))
             setListMarkerOffsetForMarkerOutside(*renderListMarker);
         return;
     }

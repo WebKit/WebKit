@@ -227,14 +227,9 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
     if (!markerBox)
         return false;
 
-    if (!marker.isListMarkerOutside()) {
-        ASSERT(marker.isListMarkerInside());
-        return false;
-    }
-
     size_t emptyInlineBoxCount = 0;
     for (auto& run : lineContent) {
-        if (run.isListMarkerOutside())
+        if (run.isListMarker())
             continue;
         if (Line::Run::isContentfulOrHasDecoration(run, formattingContext()))
             return false;

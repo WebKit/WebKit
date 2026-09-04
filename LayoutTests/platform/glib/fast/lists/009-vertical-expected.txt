@@ -11,6 +11,7 @@ layer at (0,0) size 800x600
           RenderBlock {DD} at (18,0) size 18x584
             RenderBlock {UL} at (0,0) size 18x584
               RenderListItem {LI} at (0,0) size 18x584
-                RenderListMarker at (2,0) size 13x9
+                RenderInline (generated) at (0,0) size 18x16
+                  RenderImage at (2,0) size 13x9
                 RenderText {#text} at (0,16) size 18x111
                   text run at (0,16) width 112: "LI text is here too"

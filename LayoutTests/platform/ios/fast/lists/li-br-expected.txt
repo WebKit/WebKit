@@ -10,6 +10,8 @@ layer at (0,0) size 800x600
             text run at (0,0) width 1492: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       RenderBlock {OL} at (0,34) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (0,0) size 16x18: "1"
+          RenderInline (generated) at (0,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "1. "
           RenderText {#text} at (0,18) size 1492x18
             text run at (0,18) width 1492: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

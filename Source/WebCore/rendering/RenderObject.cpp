@@ -1893,7 +1893,8 @@ Node* RenderObject::nodeForHitTest() const
     auto* node = this->node();
     // If we hit the anonymous renderers inside generated content we should
     // actually hit the generated content so walk up to the PseudoElement.
-    if (!node && parent() && parent()->isBeforeOrAfterContent()) {
+    // A marker has no element of its own, so hitting its content is hitting the list item.
+    if (!node && parent() && (parent()->isBeforeOrAfterContent() || parent()->style().isListMarkerStyle())) {
         for (auto* renderer = parent(); renderer && !node; renderer = renderer->parent())
             node = renderer->element();
     }
@@ -3153,7 +3154,7 @@ bool RenderObject::isExcludedMarker() const
     auto* marker = dynamicDowncast<RenderListMarker>(*this);
     if (!marker)
         return false;
-    if (marker->isInside() || !document().settings().listMarkerPositionedPostLayoutEnabled())
+    if (!document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
     return parent() && !parent()->childrenInline();
 }

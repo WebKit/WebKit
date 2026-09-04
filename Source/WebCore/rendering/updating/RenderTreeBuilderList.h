@@ -44,6 +44,7 @@ private:
     // Builds the anonymous inline-block subtree holding the ::marker's generated content
     // (css-lists-3 §3.3). The caller tears down any prior content first.
     void buildMarkerContentRenderers(RenderListMarker&);
+    void buildInlineMarker(RenderListItem&, Style::ComputedStyle&&);
 
     RenderTreeBuilder& m_builder;
 };

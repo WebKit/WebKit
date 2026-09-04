@@ -49,9 +49,11 @@ public:
 
     Style::ComputedStyle computeMarkerStyle() const;
 
-    RenderListMarker* markerRenderer() const { return m_marker.get(); }
-    void setMarkerRenderer(RenderListMarker& marker) { m_marker = marker; }
+    RenderBoxModelObject* markerRenderer() const { return m_marker.get(); }
+    void setMarkerRenderer(RenderBoxModelObject& marker) { m_marker = marker; }
+    RenderListMarker* markerBox() const;
 
+    // Fills in what the marker shows, in whichever shape it was built.
     void updateMarkerContent();
 
     bool isInReversedOrderedList() const;
@@ -62,7 +64,7 @@ public:
         // FIXME: handle all block level children, not just replaced elements that got blockified.
         bool stoppedAtTableRubyOrReplaced { false };
     };
-    static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderListMarker&);
+    static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker);
     static Vector<CheckedPtr<RenderListMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListMarker>>&);
 
 private:
@@ -84,7 +86,7 @@ private:
     void updateValueNow() const;
     void usedCounterDirectivesChanged();
 
-    SingleThreadWeakPtr<RenderListMarker> m_marker;
+    SingleThreadWeakPtr<RenderBoxModelObject> m_marker;
     mutable std::optional<int> m_value;
 };
 

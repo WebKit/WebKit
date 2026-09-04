@@ -432,6 +432,12 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
 
+    if (CheckedPtr markerInlineBox = m_renderer->parent(); is<RenderText>(*m_renderer) && markerInlineBox && markerInlineBox->style().isListMarkerStyle()) {
+        if (mode.includeListMarkers == IncludeListMarkerText::Yes)
+            return downcast<RenderText>(*m_renderer).text();
+        return { };
+    }
+
     if (auto* listMarker = dynamicDowncast<RenderListMarker>(*m_renderer)) {
         // A `content` marker has no text of its own; the child walk below reads the renderers holding it.
         if (!listMarker->hasContentProperty()) {

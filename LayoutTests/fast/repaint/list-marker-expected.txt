@@ -26,7 +26,9 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,86) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (-1,0) size 7x18: bullet
+            RenderInline (generated) at (-1,0) size 7x18
+              RenderText at (-1,0) size 7x18
+                text run at (-1,0) width 7: "\x{2022}"
             RenderText {#text} at (14,0) size 21x18
               text run at (14,0) width 21: "bar"
           RenderBlock {DIV} at (10,28) size 724x0
@@ -40,7 +42,9 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,154) size 784x18
         RenderListItem {LI} at (0,0) size 744x18
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (738,0) size 7x18: bullet
+            RenderInline (generated) at (738,0) size 7x18
+              RenderText at (738,0) size 7x18
+                text run at (738,0) width 7 RTL: "\x{2022}"
             RenderText {#text} at (709,0) size 21x18
               text run at (709,0) width 21: "bar"
           RenderBlock {DIV} at (10,28) size 724x0

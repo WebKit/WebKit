@@ -62,7 +62,6 @@ public:
         return includeSuffix == IncludeSuffix::Yes ? m_textContent.textWithSuffix : m_textContent.textWithoutSuffix().toString();
     }
 
-    bool NODELETE isInside() const;
     bool isDisclosureMarker() const;
     bool synthesizesGlyph() const;
 
@@ -99,7 +98,6 @@ public:
         if (value) {
             ASSERT(parent());
             ASSERT(parent()->isAnonymousBlock());
-            ASSERT(!isInside());
         }
         m_shouldCollapseAnonymousBlockParent = value;
     }
@@ -152,6 +150,7 @@ constexpr int listMarkerImagePadding = 7;
 ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle);
 bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
+bool listMarkerIsDisclosure(const RenderElement*);
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
 
 } // namespace WebCore

@@ -33,30 +33,42 @@ layer at (0,0) size 1808x585
             text run at (10,70) width 67: "Third item"
       RenderBlock {UL} at (300,0) size 134x189 [border: (1px solid #0000FF)]
         RenderListItem {LI} at (1,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,9) size 18x7: bullet
+          RenderInline (generated) at (10,9) size 18x7
+            RenderText at (10,9) size 18x7
+              text run at (10,9) width 8: "\x{2022}"
           RenderText {#text} at (10,24) size 18x59
             text run at (10,24) width 60: "First item"
         RenderListItem {LI} at (39,41) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,9) size 18x7: bullet
+          RenderInline (generated) at (10,9) size 18x7
+            RenderText at (10,9) size 18x7
+              text run at (10,9) width 8: "\x{2022}"
           RenderText {#text} at (10,10) size 36x120
             text run at (10,24) width 107: "Second and very"
             text run at (28,10) width 92: "very long item"
         RenderListItem {LI} at (95,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,9) size 18x7: bullet
+          RenderInline (generated) at (10,9) size 18x7
+            RenderText at (10,9) size 18x7
+              text run at (10,9) width 8: "\x{2022}"
           RenderText {#text} at (10,24) size 18x66
             text run at (10,24) width 67: "Third item"
       RenderBlock {UL} at (450,0) size 134x189 [border: (1px solid #FF0000)]
         RenderListItem {LI} at (1,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,130) size 18x8: bullet
+          RenderInline (generated) at (10,130) size 18x8
+            RenderText at (10,130) size 18x8
+              text run at (10,130) width 8 RTL: "\x{2022}"
           RenderText {#text} at (10,63) size 18x60
             text run at (10,63) width 60: "First item"
         RenderListItem {LI} at (39,1) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,130) size 18x8: bullet
+          RenderInline (generated) at (10,130) size 18x8
+            RenderText at (10,130) size 18x8
+              text run at (10,130) width 8 RTL: "\x{2022}"
           RenderText {#text} at (10,16) size 36x121
             text run at (10,16) width 107: "Second and very"
             text run at (28,45) width 92: "very long item"
         RenderListItem {LI} at (95,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,130) size 18x8: bullet
+          RenderInline (generated) at (10,130) size 18x8
+            RenderText at (10,130) size 18x8
+              text run at (10,130) width 8 RTL: "\x{2022}"
           RenderText {#text} at (10,56) size 18x67
             text run at (10,56) width 67: "Third item"
       RenderBlock {UL} at (600,0) size 134x189 [border: (1px solid #0000FF)]
@@ -89,30 +101,36 @@ layer at (0,0) size 1808x585
             text run at (10,70) width 67: "Third item"
       RenderBlock {UL} at (900,0) size 134x189 [border: (1px solid #0000FF)]
         RenderListItem {LI} at (1,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,10) size 10x10
+          RenderInline (generated) at (10,10) size 18x17
+            RenderImage at (14,10) size 10x10
           RenderText {#text} at (10,27) size 18x59
             text run at (10,27) width 60: "First item"
         RenderListItem {LI} at (39,41) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,10) size 10x10
+          RenderInline (generated) at (10,10) size 18x17
+            RenderImage at (14,10) size 10x10
           RenderText {#text} at (10,10) size 36x123
             text run at (10,27) width 107: "Second and very"
             text run at (28,10) width 92: "very long item"
         RenderListItem {LI} at (95,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,10) size 10x10
+          RenderInline (generated) at (10,10) size 18x17
+            RenderImage at (14,10) size 10x10
           RenderText {#text} at (10,27) size 18x66
             text run at (10,27) width 67: "Third item"
       RenderBlock {UL} at (1050,0) size 134x189 [border: (1px solid #FF0000)]
         RenderListItem {LI} at (1,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,126) size 10x11
+          RenderInline (generated) at (10,119) size 18x18
+            RenderImage at (14,126) size 10x11
           RenderText {#text} at (10,60) size 18x60
             text run at (10,60) width 60: "First item"
         RenderListItem {LI} at (39,1) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,126) size 10x11
+          RenderInline (generated) at (10,119) size 18x18
+            RenderImage at (14,126) size 10x11
           RenderText {#text} at (10,13) size 36x124
             text run at (10,13) width 107: "Second and very"
             text run at (28,45) width 92: "very long item"
         RenderListItem {LI} at (95,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (14,126) size 10x11
+          RenderInline (generated) at (10,119) size 18x18
+            RenderImage at (14,126) size 10x11
           RenderText {#text} at (10,53) size 18x67
             text run at (10,53) width 67: "Third item"
       RenderBlock {OL} at (1200,0) size 134x189 [border: (1px solid #0000FF)]
@@ -160,44 +178,47 @@ layer at (0,0) size 1808x585
             text run at (10,70) width 67: "Third item"
       RenderBlock {OL} at (1500,0) size 134x189 [border: (1px solid #0000FF)]
         RenderListItem {LI} at (1,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,10) size 18x16: "1"
+          RenderInline (generated) at (10,10) size 18x16
+            RenderText at (10,10) size 18x16
+              text run at (10,10) width 17: "1. "
           RenderText {#text} at (10,26) size 18x59
             text run at (10,26) width 60: "First item"
         RenderListItem {LI} at (39,41) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,10) size 18x16: "2"
+          RenderInline (generated) at (10,10) size 18x16
+            RenderText at (10,10) size 18x16
+              text run at (10,10) width 17: "2. "
           RenderText {#text} at (10,10) size 36x122
             text run at (10,26) width 107: "Second and very"
             text run at (28,10) width 92: "very long item"
         RenderListItem {LI} at (95,41) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,10) size 18x16: "3"
+          RenderInline (generated) at (10,10) size 18x16
+            RenderText at (10,10) size 18x16
+              text run at (10,10) width 17: "3. "
           RenderText {#text} at (10,26) size 18x66
             text run at (10,26) width 67: "Third item"
       RenderBlock {OL} at (1650,0) size 134x189 [border: (1px solid #FF0000)]
         RenderListItem {LI} at (1,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,120) size 18x17: "1"
-            RenderBlock (generated) at (-1,0) size 19x16
-              RenderText at (0,0) size 18x16
-                text run at (0,0) width 5 RTL: " "
-                text run at (0,4) width 5 RTL: "."
-                text run at (0,8) width 9: "1"
+          RenderInline (generated) at (10,120) size 18x17
+            RenderText at (10,120) size 18x17
+              text run at (10,120) width 5 RTL: " "
+              text run at (10,124) width 5 RTL: "."
+              text run at (10,128) width 9: "1"
           RenderText {#text} at (10,61) size 18x60
             text run at (10,61) width 60: "First item"
         RenderListItem {LI} at (39,1) size 56x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,120) size 18x17: "2"
-            RenderBlock (generated) at (-1,0) size 19x16
-              RenderText at (0,0) size 18x16
-                text run at (0,0) width 5 RTL: " "
-                text run at (0,4) width 5 RTL: "."
-                text run at (0,8) width 9: "2"
+          RenderInline (generated) at (10,120) size 18x17
+            RenderText at (10,120) size 18x17
+              text run at (10,120) width 5 RTL: " "
+              text run at (10,124) width 5 RTL: "."
+              text run at (10,128) width 9: "2"
           RenderText {#text} at (10,14) size 36x123
             text run at (10,14) width 107: "Second and very"
             text run at (28,45) width 92: "very long item"
         RenderListItem {LI} at (95,1) size 38x147 [border: (5px solid #FFA500)]
-          RenderListMarker at (10,120) size 18x17: "3"
-            RenderBlock (generated) at (-1,0) size 19x16
-              RenderText at (0,0) size 18x16
-                text run at (0,0) width 5 RTL: " "
-                text run at (0,4) width 5 RTL: "."
-                text run at (0,8) width 9: "3"
+          RenderInline (generated) at (10,120) size 18x17
+            RenderText at (10,120) size 18x17
+              text run at (10,120) width 5 RTL: " "
+              text run at (10,124) width 5 RTL: "."
+              text run at (10,128) width 9: "3"
           RenderText {#text} at (10,54) size 18x67
             text run at (10,54) width 67: "Third item"

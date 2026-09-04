@@ -673,8 +673,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     if (!m_current.renderer()->isFloatingOrOutOfFlowPositioned()) {
         m_lastObject = m_current.renderer();
         if (m_lastObject->isBlockLevelReplacedOrAtomicInline() && m_autoWrap && (!m_lastObject->isImage() || m_allowImagesToBreak)) {
-            auto* renderListMarker = dynamicDowncast<RenderListMarker>(*m_lastObject);
-            if (!renderListMarker || renderListMarker->isInside()) {
+            if (!is<RenderListMarker>(*m_lastObject)) {
                 if (m_nextObject)
                     commitLineBreakAtCurrentWidth(*m_nextObject);
                 else

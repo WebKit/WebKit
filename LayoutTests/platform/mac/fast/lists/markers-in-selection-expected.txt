@@ -28,7 +28,9 @@ layer at (0,0) size 800x600
             text run at (0,0) width 162: "Item with outside marker"
       RenderBlock {UL} at (0,120) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (-1,0) size 7x18: bullet
+          RenderInline (generated) at (-1,0) size 7x18
+            RenderText at (-1,0) size 7x18
+              text run at (-1,0) width 7: "\x{2022}"
           RenderText {#text} at (14,0) size 154x18
             text run at (14,0) width 154: "Item with inside marker"
       RenderBlock {UL} at (0,154) size 784x18
@@ -38,7 +40,8 @@ layer at (0,0) size 800x600
             text run at (0,0) width 205: "Item with outside image marker"
       RenderBlock {UL} at (0,188) size 784x18
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,4) size 10x10
+          RenderInline (generated) at (0,0) size 17x18
+            RenderImage at (0,4) size 10x10
           RenderText {#text} at (17,0) size 197x18
             text run at (17,0) width 197: "Item with inside image marker"
       RenderBlock {OL} at (0,222) size 784x36
@@ -52,11 +55,15 @@ layer at (0,0) size 800x600
             text run at (0,0) width 103: "and another one"
       RenderBlock {OL} at (0,274) size 784x36
         RenderListItem {LI} at (40,0) size 744x18
-          RenderListMarker at (0,0) size 16x18: "1"
+          RenderInline (generated) at (0,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "1. "
           RenderText {#text} at (16,0) size 154x18
             text run at (16,0) width 154: "Item with inside ordinal"
         RenderListItem {LI} at (40,18) size 744x18
-          RenderListMarker at (0,0) size 16x18: "2"
+          RenderInline (generated) at (0,0) size 16x18
+            RenderText at (0,0) size 16x18
+              text run at (0,0) width 16: "2. "
           RenderText {#text} at (16,0) size 103x18
             text run at (16,0) width 103: "and another one"
       RenderBlock (anonymous) at (0,336) size 784x0

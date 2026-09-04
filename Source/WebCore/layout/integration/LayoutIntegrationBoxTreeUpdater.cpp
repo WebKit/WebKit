@@ -235,8 +235,6 @@ static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttri
     auto listMarkerAttributes = EnumSet<Layout::ElementBox::ListMarkerAttribute> { };
     if (listMarkerRenderer.isImage())
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
-    if (!listMarkerRenderer.isInside())
-        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
     if (listMarkerRenderer.shouldCollapseAnonymousBlockParent())
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::ShouldCollapseAnonymousBlockParent);
 
@@ -245,8 +243,14 @@ static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttri
 
 static bool markerTextSynthesizesGlyph(const RenderText& textRenderer)
 {
-    CheckedPtr marker = dynamicDowncast<RenderListMarker>(textRenderer.parent()->parent());
-    return marker && marker->synthesizesGlyph();
+    // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
+    for (CheckedPtr marker = textRenderer.parent(); marker; marker = marker->parent()) {
+        if (marker->style().isListMarkerStyle())
+            return listMarkerSynthesizesGlyph(marker->style());
+        if (!marker->isAnonymous())
+            return false;
+    }
+    return false;
 }
 
 UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)

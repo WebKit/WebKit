@@ -356,6 +356,9 @@ void Line::appendText(const InlineTextItem& inlineTextItem, const Style::Compute
             return false;
         // This content is collapsible. Let's check if the last item is collapsed.
         for (auto& run : m_runs | std::views::reverse) {
+            // Nothing precedes the marker on the line, so this is the line's leading whitespace.
+            if (run.isListMarkerOrItsContent())
+                return true;
             if (run.isAtomicInlineBox())
                 return false;
             // https://drafts.csswg.org/css-text-3/#white-space-phase-1
@@ -363,7 +366,7 @@ void Line::appendText(const InlineTextItem& inlineTextItem, const Style::Compute
             // provided both spaces are within the same inline formatting context—is collapsed to have zero advance width.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
-            ASSERT(run.isListMarker() || run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity() || run.isOutOfFlow());
+            ASSERT(run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity() || run.isOutOfFlow());
         }
         // Leading whitespace.
         return true;
@@ -482,7 +485,7 @@ void Line::appendText(const InlineTextItem& inlineTextItem, const Style::Compute
 
 void Line::appendTextFast(const InlineTextItem& inlineTextItem, const Style::ComputedStyle& style, InlineLayoutUnit logicalWidth)
 {
-    auto lineHasContent = !m_runs.isEmpty();
+    auto lineHasContent = !m_runs.isEmpty() && !m_runs.last().isListMarkerOrItsContent();
     auto willCollapseCompletely = [&] {
         if (inlineTextItem.isEmpty())
             return true;
@@ -691,17 +694,21 @@ bool Line::restoreTrimmedTrailingWhitespace(InlineLayoutUnit trimmedTrailingWhit
     return false;
 }
 
+bool Line::Run::isListMarkerOrItsContent() const
+{
+    // A marker's contents inherit the ::marker style, so the marker and its text answer alike.
+    return isListMarker() || m_layoutBox->style().isListMarkerStyle();
+}
+
 bool Line::hasTrailingForcedLineBreak(const RunList& runs)
 {
     return !runs.isEmpty() && runs.last().isLineBreak();
 }
 
-bool Line::hasContentOrDecoration(IncludeInsideListMarker includeInsideListMarker) const
+bool Line::hasContentOrDecoration() const
 {
     if (m_runs.isEmpty())
         return false;
-    if (includeInsideListMarker == IncludeInsideListMarker::Yes && m_runs.first().isListMarkerInside())
-        return true;
     auto& formattingContext = this->formattingContext();
     for (auto& run : m_runs | std::views::reverse) {
         if (Line::Run::isContentfulOrHasDecoration(run, formattingContext) && !run.isListMarker())
@@ -794,7 +801,7 @@ inline static Line::Run::Type NODELETE toLineRunType(const InlineItem& inlineIte
         return Line::Run::Type::WordBreakOpportunity;
     case InlineItem::Type::AtomicInlineBox:
         if (inlineItem.layoutBox().isListMarkerBox())
-            return downcast<ElementBox>(inlineItem.layoutBox()).isListMarkerOutside() ? Line::Run::Type::ListMarkerOutside : Line::Run::Type::ListMarkerInside;
+            return Line::Run::Type::ListMarker;
         return Line::Run::Type::AtomicInlineBox;
     case InlineItem::Type::InlineBoxStart:
         return Line::Run::Type::InlineBoxStart;

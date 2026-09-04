@@ -537,16 +537,6 @@ void RenderListMarker::updateInlineMargins()
     constexpr int markerPadding = listMarkerImagePadding;
     const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
 
-    auto marginsForInsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
-        if (isImage())
-            return { 0, markerPadding };
-
-        if (synthesizesGlyph())
-            return { -1, fontMetrics.intAscent() - minContentLogicalWidthContribution() + 1 };
-
-        return { };
-    };
-
     auto marginsForOutsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
         if (isImage())
             return { -minContentLogicalWidthContribution() - markerPadding, markerPadding };
@@ -561,7 +551,7 @@ void RenderListMarker::updateInlineMargins()
         return { -minContentLogicalWidthContribution(), 0 };
     };
 
-    auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
+    auto [marginStart, marginEnd] = marginsForOutsideMarker();
     setListMarkerInlineMargins(mutableStyle(), m_listItem->writingMode(), marginStart, marginEnd);
 }
 
@@ -579,11 +569,6 @@ void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode l
     auto startIsTop = listItemWritingMode.isInlineTopToBottom();
     markerStyle.setMarginTop(startIsTop ? startEdge : endEdge);
     markerStyle.setMarginBottom(startIsTop ? endEdge : startEdge);
-}
-
-bool RenderListMarker::isInside() const
-{
-    return style().listStylePosition() == ListStylePosition::Inside;
 }
 
 bool RenderListMarker::isDisclosureMarker() const
@@ -668,6 +653,13 @@ bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document& d
         return false;
     auto system = counterStyle->system();
     return system == CSSCounterStyleDescriptors::System::DisclosureClosed || system == CSSCounterStyleDescriptors::System::DisclosureOpen;
+}
+
+bool listMarkerIsDisclosure(const RenderElement* renderer)
+{
+    if (!renderer || !renderer->style().isListMarkerStyle())
+        return false;
+    return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
 }
 
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle)

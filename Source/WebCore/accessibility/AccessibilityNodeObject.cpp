@@ -4178,7 +4178,12 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
                 context.lastRenderer = box->renderer();
             });
 
-            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(box->renderer()); renderListMarker && !renderListMarker->isDisclosureMarker()) {
+            if (listMarkerIsDisclosure(dynamicDowncast<RenderElement>(box->renderer())) || listMarkerIsDisclosure(box->renderer().parent())) {
+                finalizeCurrentGroup();
+                continue;
+            }
+
+            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(box->renderer())) {
                 if (RefPtr object = cache->getOrCreate(const_cast<RenderListMarker&>(*renderListMarker)))
                     appendToCurrentGroup(object->objectID());
                 continue;

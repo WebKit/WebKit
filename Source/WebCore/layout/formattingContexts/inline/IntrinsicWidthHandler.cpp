@@ -317,7 +317,7 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
             if (lineLayoutResult.runs.isEmpty())
                 return contentWidth;
             auto& leadingRun = lineLayoutResult.runs.first();
-            if (leadingRun.isListMarkerOutside())
+            if (leadingRun.isListMarker())
                 contentWidth -= leadingRun.logicalRight();
             return contentWidth;
         }();

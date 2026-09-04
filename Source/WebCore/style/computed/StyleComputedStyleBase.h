@@ -595,6 +595,8 @@ public:
     // MARK: - Pseudo element/style
 
     inline std::optional<PseudoElementType> pseudoElementType() const;
+    // True for the ::marker style itself and for the styles its content renderers inherit from it.
+    inline bool isListMarkerStyle() const;
     const AtomString& pseudoElementNameArgument() const LIFETIME_BOUND;
 
     std::optional<PseudoElementIdentifier> NODELETE pseudoElementIdentifier() const;

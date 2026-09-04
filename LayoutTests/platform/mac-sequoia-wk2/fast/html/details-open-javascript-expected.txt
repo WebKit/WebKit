@@ -5,7 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x39
         RenderListItem {SUMMARY} at (0,0) size 784x20
-          RenderListMarker at (0,-1) size 17x19: "\x{25BC}"
+          RenderInline (generated) at (0,-1) size 17x20
+            RenderText at (0,-1) size 17x20
+              text run at (0,0) width 17: "\x{25BC} "
           RenderText {#text} at (16,1) size 50x19
             text run at (16,1) width 50: "details1"
         RenderBlock {SLOT} at (0,19) size 784x20
@@ -13,7 +15,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {DETAILS} at (0,38) size 784x20
         RenderListItem {SUMMARY} at (0,0) size 784x20
-          RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+          RenderInline (generated) at (0,-1) size 17x20
+            RenderText at (0,-1) size 17x20
+              text run at (0,0) width 17: "\x{25B6} "
           RenderText {#text} at (16,1) size 51x19
             text run at (16,1) width 51: "details2"
 layer at (11,30) size 142x13

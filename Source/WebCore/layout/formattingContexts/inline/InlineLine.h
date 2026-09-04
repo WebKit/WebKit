@@ -62,9 +62,8 @@ public:
 
     void setContentNeedsBidiReordering() { m_hasNonDefaultBidiLevelRun = true; }
 
-    enum class IncludeInsideListMarker : bool { No, Yes };
-    bool hasContent(IncludeInsideListMarker = IncludeInsideListMarker::No) const;
-    bool hasContentOrDecoration(IncludeInsideListMarker = IncludeInsideListMarker::No) const;
+    bool hasContent() const;
+    bool hasContentOrDecoration() const;
     bool hasRubyContent() const { return m_hasRubyContent; }
 
     InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
@@ -99,8 +98,7 @@ public:
             SoftLineBreak,
             WordBreakOpportunity,
             AtomicInlineBox,
-            ListMarkerInside,
-            ListMarkerOutside,
+            ListMarker,
             InlineBoxStart,
             InlineBoxEnd,
             LineSpanningInlineBoxStart,
@@ -112,9 +110,8 @@ public:
         bool isNonBreakingSpace() const { return m_type == Type::NonBreakingSpace; }
         bool isWordSeparator() const { return m_type == Type::WordSeparator; }
         bool isAtomicInlineBox() const { return m_type == Type::AtomicInlineBox; }
-        bool isListMarker() const { return isListMarkerInside() || isListMarkerOutside(); }
-        bool isListMarkerInside() const { return m_type == Type::ListMarkerInside; }
-        bool isListMarkerOutside() const { return m_type == Type::ListMarkerOutside; }
+        bool isListMarker() const { return m_type == Type::ListMarker; }
+        bool isListMarkerOrItsContent() const;
         bool isLineBreak() const { return isHardLineBreak() || isSoftLineBreak(); }
         bool isSoftLineBreak() const  { return m_type == Type::SoftLineBreak; }
         bool isHardLineBreak() const { return m_type == Type::HardLineBreak; }
@@ -339,12 +336,10 @@ private:
     Vector<InlineLayoutUnit> m_inlineBoxLogicalLeftStack;
 };
 
-inline bool Line::hasContent(IncludeInsideListMarker includeInsideListMarker) const
+inline bool Line::hasContent() const
 {
     if (m_runs.isEmpty())
         return false;
-    if (includeInsideListMarker == IncludeInsideListMarker::Yes && m_runs.first().isListMarkerInside())
-        return true;
     for (auto& run : m_runs | std::views::reverse) {
         if (run.isContentful() && !run.isListMarker())
             return true;

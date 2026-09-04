@@ -8,16 +8,22 @@ layer at (0,0) size 800x585
       RenderBlock {DETAILS} at (0,19) size 784x0
 layer at (50,150) size 49x19
   RenderListItem {SUMMARY} at (50,150) size 49x20
-    RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+    RenderInline (generated) at (0,-1) size 17x20
+      RenderText at (0,-1) size 17x20
+        text run at (0,0) width 17: "\x{25B6} "
     RenderText {#text} at (16,1) size 33x19
       text run at (16,1) width 33: "fixed"
 layer at (158,158) size 784x19
   RenderListItem {SUMMARY} at (0,0) size 784x20
-    RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+    RenderInline (generated) at (0,-1) size 17x20
+      RenderText at (0,-1) size 17x20
+        text run at (0,0) width 17: "\x{25B6} "
     RenderText {#text} at (16,1) size 49x19
       text run at (16,1) width 49: "relative"
 layer at (250,150) size 70x19
   RenderListItem {SUMMARY} at (250,150) size 71x20
-    RenderListMarker at (0,-1) size 17x19: "\x{25B6}"
+    RenderInline (generated) at (0,-1) size 17x20
+      RenderText at (0,-1) size 17x20
+        text run at (0,0) width 17: "\x{25B6} "
     RenderText {#text} at (16,1) size 55x19
       text run at (16,1) width 55: "absolute"
