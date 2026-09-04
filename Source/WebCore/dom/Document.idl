@@ -107,3 +107,4 @@ Document includes GlobalEventHandlers;
 Document includes DocumentAndElementEventHandlers;
 Document includes FontFaceSource;
 Document includes XPathEvaluatorBase;
+Document includes GeometryUtils;

@@ -58,6 +58,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		A1B2C3013BC0010100000001 /* BoxQuadOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3023BC0010100000001 /* BoxQuadOptions.h */; };
+		A1B2C3033BC0010100000001 /* ConvertCoordinateOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3043BC0010100000001 /* ConvertCoordinateOptions.h */; };
+		A1B2C3053BC0010100000001 /* GeometryBox.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3063BC0010100000001 /* GeometryBox.h */; };
+		A1B2C3073BC0010100000001 /* GeometryNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C3083BC0010100000001 /* GeometryNode.h */; };
+		A1B2C3093BC0010100000001 /* GeometryUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B2C30A3BC0010100000001 /* GeometryUtils.h */; };
 		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 003F1FE911E6AB43008258D9 /* UserContentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318213BA867F0035A948 /* XMLDocumentParser.h */; };
@@ -7772,6 +7777,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A1B2C3023BC0010100000001 /* BoxQuadOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BoxQuadOptions.h; sourceTree = "<group>"; };
+		A1B2C3043BC0010100000001 /* ConvertCoordinateOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConvertCoordinateOptions.h; sourceTree = "<group>"; };
+		A1B2C3063BC0010100000001 /* GeometryBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeometryBox.h; sourceTree = "<group>"; };
+		A1B2C3083BC0010100000001 /* GeometryNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeometryNode.h; sourceTree = "<group>"; };
+		A1B2C30A3BC0010100000001 /* GeometryUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeometryUtils.h; sourceTree = "<group>"; };
+		A1B2C30B3BC0010100000001 /* GeometryUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GeometryUtils.cpp; sourceTree = "<group>"; };
+		A1B2C30C3BC0010100000001 /* GeometryUtils.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GeometryUtils.idl; sourceTree = "<group>"; };
+		A1B2C30D3BC0010100000001 /* BoxQuadOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = BoxQuadOptions.idl; sourceTree = "<group>"; };
+		A1B2C30E3BC0010100000001 /* ConvertCoordinateOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConvertCoordinateOptions.idl; sourceTree = "<group>"; };
+		A1B2C30F3BC0010100000001 /* CSSBoxType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSBoxType.idl; sourceTree = "<group>"; };
 		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
 		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		003F1FE911E6AB43008258D9 /* UserContentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentTypes.h; sourceTree = "<group>"; };
@@ -43088,6 +43103,16 @@
 				9BAAC4562151E39E003D4A98 /* GCReachableRef.h */,
 				054E3A33256C3BD90072C5BF /* GetHTMLOptions.h */,
 				054E3A35256C3BD90072C5BF /* GetHTMLOptions.idl */,
+				A1B2C3023BC0010100000001 /* BoxQuadOptions.h */,
+				A1B2C30D3BC0010100000001 /* BoxQuadOptions.idl */,
+				A1B2C3043BC0010100000001 /* ConvertCoordinateOptions.h */,
+				A1B2C30E3BC0010100000001 /* ConvertCoordinateOptions.idl */,
+				A1B2C30F3BC0010100000001 /* CSSBoxType.idl */,
+				A1B2C3063BC0010100000001 /* GeometryBox.h */,
+				A1B2C3083BC0010100000001 /* GeometryNode.h */,
+				A1B2C30B3BC0010100000001 /* GeometryUtils.cpp */,
+				A1B2C30A3BC0010100000001 /* GeometryUtils.h */,
+				A1B2C30C3BC0010100000001 /* GeometryUtils.idl */,
 				7C2D722E25083A3400539662 /* GlobalEventHandlers+PointerEvents.idl */,
 				44BD2B36252779780055D95A /* GlobalEventHandlers+Selection.idl */,
 				7C4189AB1B07C170000FA757 /* GlobalEventHandlers.idl */,
@@ -45518,6 +45543,11 @@
 				0F49669F1DB408C100A274BB /* DOMPointReadOnly.h in Headers */,
 				7C516AD41F3525200034B6BF /* DOMPromiseProxy.h in Headers */,
 				0FF835C31EE354DA008B4CC7 /* DOMQuad.h in Headers */,
+				A1B2C3013BC0010100000001 /* BoxQuadOptions.h in Headers */,
+				A1B2C3033BC0010100000001 /* ConvertCoordinateOptions.h in Headers */,
+				A1B2C3053BC0010100000001 /* GeometryBox.h in Headers */,
+				A1B2C3073BC0010100000001 /* GeometryNode.h in Headers */,
+				A1B2C3093BC0010100000001 /* GeometryUtils.h in Headers */,
 				0FF835C51EE354DA008B4CC7 /* DOMQuadInit.h in Headers */,
 				0F4710AF1DB56AFC002DCEC3 /* DOMRect.h in Headers */,
 				0F4710B11DB56AFC002DCEC3 /* DOMRectInit.h in Headers */,
