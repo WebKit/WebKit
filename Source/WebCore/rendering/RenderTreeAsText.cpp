@@ -65,7 +65,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderQuote.h"
 #include "RenderSVGContainer.h"
@@ -364,8 +364,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (auto* cell = dynamicDowncast<RenderTableCell>(o))
         ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
-    if (auto* listMarker = dynamicDowncast<RenderListMarker>(o)) {
-        auto text = listMarker->textContent(RenderListMarker::IncludeSuffix::No);
+    if (auto* listMarker = dynamicDowncast<RenderListOutsideMarker>(o)) {
+        auto text = listMarker->textContent(RenderListOutsideMarker::IncludeSuffix::No);
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -549,7 +549,7 @@ void write(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextF
         return;
     }
 
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(renderer); listMarker && listMarker->synthesizesGlyph())
+    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer); listMarker && listMarker->synthesizesGlyph())
         return;
 
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
@@ -921,7 +921,7 @@ String markerTextForListItem(Element* element)
     auto* renderer = dynamicDowncast<RenderListItem>(element->renderer());
     if (!renderer)
         return String();
-    return renderer->markerText(RenderListMarker::IncludeSuffix::No);
+    return renderer->markerText(RenderListOutsideMarker::IncludeSuffix::No);
 }
 
 } // namespace WebCore

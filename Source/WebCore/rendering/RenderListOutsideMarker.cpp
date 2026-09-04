@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 
 #include "BaselineAlignment.h"
 #include "CSSCounterStyleDescriptors.h"
@@ -64,21 +64,21 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderListMarker);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderListOutsideMarker);
 
-RenderListMarker::RenderListMarker(RenderListItem& listItem, Style::ComputedStyle&& style)
-    : RenderBox(Type::ListMarker, listItem.document(), WTF::move(style))
+RenderListOutsideMarker::RenderListOutsideMarker(RenderListItem& listItem, Style::ComputedStyle&& style)
+    : RenderBox(Type::ListOutsideMarker, listItem.document(), WTF::move(style))
     , m_listItem(listItem)
 {
     setInline(true);
     setBlockLevelReplacedOrAtomicInline(true); // pretend to be replaced
-    ASSERT(isRenderListMarker());
+    ASSERT(isRenderListOutsideMarker());
 }
 
 // Do not add any code in below destructor. Add it to willBeDestroyed() instead.
-RenderListMarker::~RenderListMarker() = default;
+RenderListOutsideMarker::~RenderListOutsideMarker() = default;
 
-void RenderListMarker::willBeDestroyed()
+void RenderListOutsideMarker::willBeDestroyed()
 {
     if (m_image)
         protect(m_image)->removeClient(*this);
@@ -90,19 +90,18 @@ static Style::Difference NODELETE adjustedStyleDifference(Style::Difference diff
     if (diff >= Style::DifferenceResult::Layout)
         return diff;
     // FIXME: Preferably we do this at Style::ComputedStyle::changeRequiresLayout but checking against pseudo(::marker) is not sufficient.
-    auto needsLayout =
-           oldStyle.listStylePosition() != newStyle.listStylePosition()
+    auto needsLayout = oldStyle.listStylePosition() != newStyle.listStylePosition()
         || oldStyle.listStyleType() != newStyle.listStyleType()
         || oldStyle.display().isInlineType() != newStyle.display().isInlineType();
     return needsLayout ? Style::DifferenceResult::Layout : diff;
 }
 
-void RenderListMarker::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
+void RenderListOutsideMarker::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
 {
     RenderBox::styleWillChange(adjustedStyleDifference(diff, style(), newStyle), newStyle);
 }
 
-void RenderListMarker::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
+void RenderListOutsideMarker::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     if (oldStyle)
         diff = adjustedStyleDifference(diff, *oldStyle, style());
@@ -119,14 +118,14 @@ void RenderListMarker::styleDidChange(Style::Difference diff, const Style::Compu
     }
 }
 
-bool RenderListMarker::isImage() const
+bool RenderListOutsideMarker::isImage() const
 {
     // `content` supersedes list-style-image (css-lists-3 §3.3), so a marker with generated content
     // is never treated as an image marker (affects inline margins, baseline, and layout attributes).
     return m_image && !protect(m_image)->errorOccurred() && !hasContentProperty();
 }
 
-bool RenderListMarker::hasContentProperty() const
+bool RenderListOutsideMarker::hasContentProperty() const
 {
     return document().settings().cssMarkerContentEnabled() && style().content().isData();
 }
@@ -173,7 +172,7 @@ static bool counterStyleChainHasStrongDirectionalitySymbols(const CSSRegisteredC
     }
 }
 
-bool RenderListMarker::textNeedsBidiResolution() const
+bool RenderListOutsideMarker::textNeedsBidiResolution() const
 {
     if (hasContentProperty() || isImage() || synthesizesGlyph() || style().listStyleType().isNone())
         return false;
@@ -191,19 +190,19 @@ bool RenderListMarker::textNeedsBidiResolution() const
     return counterStyleChainHasStrongDirectionalitySymbols(*counterStyle);
 }
 
-bool RenderListMarker::needsContentContainer() const
+bool RenderListOutsideMarker::needsContentContainer() const
 {
     return hasContentProperty() || textNeedsBidiResolution() || synthesizesGlyph();
 }
 
-RenderBlockFlow* RenderListMarker::contentContainer() const
+RenderBlockFlow* RenderListOutsideMarker::contentContainer() const
 {
     // When the marker has generated content, its sole child is the anonymous
     // inline-block box holding that content (created by RenderTreeBuilder::List).
     return dynamicDowncast<RenderBlockFlow>(firstChild());
 }
 
-LayoutRect RenderListMarker::localSelectionRect()
+LayoutRect RenderListOutsideMarker::localSelectionRect()
 {
     return LayoutRect(LayoutPoint(), borderBoxSize());
 }
@@ -223,7 +222,7 @@ static auto textRunForContent(ListMarkerTextContent textContent, const Style::Co
     return { WTF::move(textRun), WTF::move(textForRun) };
 }
 
-void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (style().usedVisibility() != Visibility::Visible)
         return;
@@ -308,7 +307,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     }
 
     if (writingMode().isHorizontal()) {
-        // This is required because RenderListMarker hand-draws the text, instead of running inline
+        // This is required because RenderListOutsideMarker hand-draws the text, instead of running inline
         // layout and paint on its (RenderText) subtree (LayoutUnit vs. float precision)
         // FIXME: The vertical path mispositions the marker line box separately (it ignores fallback-font
         // metrics), so this is limited to horizontal writing modes for now. See webkit.org/b/319618.
@@ -321,7 +320,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     context.drawText(style().fontCascade(), textRunForContent(m_textContent, style()), textOrigin);
 }
 
-RenderBox* RenderListMarker::parentBox(RenderBox& box)
+RenderBox* RenderListOutsideMarker::parentBox(RenderBox& box)
 {
     ASSERT(m_listItem);
     CheckedPtr multiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(m_listItem->enclosingFragmentedFlow());
@@ -331,7 +330,7 @@ RenderBox* RenderListMarker::parentBox(RenderBox& box)
     return placeholder ? placeholder->parentBox() : box.parentBox();
 };
 
-void RenderListMarker::layout()
+void RenderListOutsideMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
@@ -369,7 +368,7 @@ void RenderListMarker::layout()
     clearNeedsLayout();
 }
 
-void RenderListMarker::layoutContentContainer(RenderBlockFlow& container)
+void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
 {
     // The marker participates in its list item's line as a single atomic inline. Lay its
     // generated-content subtree out at its max-content (shrink-to-fit) width, like an
@@ -409,7 +408,7 @@ void RenderListMarker::layoutContentContainer(RenderBlockFlow& container)
     addVisualOverflow(contentVisualOverflow);
 }
 
-void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
+void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
 {
     if (parent()) {
         RefPtr image = m_image;
@@ -431,7 +430,7 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
     RenderBox::imageChanged(o, rect);
 }
 
-void RenderListMarker::updateInlineMarginsAndContent()
+void RenderListOutsideMarker::updateInlineMarginsAndContent()
 {
     // FIXME: It's messy to use the preferredLogicalWidths dirty bit for this optimization, also unclear if this is premature optimization.
     if (hasInvalidContentLogicalWidths())
@@ -439,7 +438,7 @@ void RenderListMarker::updateInlineMarginsAndContent()
     updateInlineMargins();
 }
 
-void RenderListMarker::updateContent()
+void RenderListOutsideMarker::updateContent()
 {
     if (hasContentProperty()) {
         // css-lists-3 §3.3: `content` (not normal) supersedes list-style-image/type. The generated
@@ -469,7 +468,7 @@ void RenderListMarker::updateContent()
         updateContentContainerText();
 }
 
-void RenderListMarker::updateContentContainerText()
+void RenderListOutsideMarker::updateContentContainerText()
 {
     CheckedPtr container = contentContainer();
     if (!container) {
@@ -491,7 +490,7 @@ void RenderListMarker::updateContentContainerText()
     textRenderer->setText(m_textContent.textWithSuffix);
 }
 
-void RenderListMarker::computeIntrinsicLogicalWidthContributions()
+void RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
     updateContent();
@@ -532,7 +531,7 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
     updateInlineMargins();
 }
 
-void RenderListMarker::updateInlineMargins()
+void RenderListOutsideMarker::updateInlineMargins()
 {
     constexpr int markerPadding = listMarkerImagePadding;
     const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
@@ -571,24 +570,24 @@ void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode l
     markerStyle.setMarginBottom(startIsTop ? endEdge : startEdge);
 }
 
-bool RenderListMarker::isDisclosureMarker() const
+bool RenderListOutsideMarker::isDisclosureMarker() const
 {
     return listMarkerIsDisclosure(style(), protect(document()));
 }
 
-RenderListItem* RenderListMarker::listItem() const
+RenderListItem* RenderListOutsideMarker::listItem() const
 {
     return m_listItem.get();
 }
 
-void RenderListMarker::setExcludedPosition(ExcludedPosition excludedPosition)
+void RenderListOutsideMarker::setExcludedPosition(ExcludedPosition excludedPosition)
 {
     ASSERT(excludedPosition.firstFormattedLineRoot);
 
     m_excludedPosition = excludedPosition;
 }
 
-void RenderListMarker::invalidateExcludedMarkerContainer()
+void RenderListOutsideMarker::invalidateExcludedMarkerContainer()
 {
     ASSERT(m_excludedPosition);
 
@@ -603,12 +602,12 @@ void RenderListMarker::invalidateExcludedMarkerContainer()
     m_excludedPosition = { };
 }
 
-Node* RenderListMarker::nodeForHitTest() const
+Node* RenderListOutsideMarker::nodeForHitTest() const
 {
     return m_listItem ? m_listItem->element() : nullptr;
 }
 
-FloatRect RenderListMarker::relativeMarkerRect()
+FloatRect RenderListOutsideMarker::relativeMarkerRect()
 {
     if (isImage())
         return { 0.f, 0.f, protect(m_image)->imageSize(this, style().usedZoom()).width(), protect(m_image)->imageSize(this, style().usedZoom()).height() };
@@ -627,7 +626,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
     return relativeRect;
 }
 
-LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject*, bool)
+LayoutRect RenderListOutsideMarker::selectionRectForRepaint(const RenderLayerModelObject*, bool)
 {
     ASSERT(!needsLayout());
     return { };
@@ -641,7 +640,7 @@ static RefPtr<CSSRegisteredCounterStyle> counterStyleFor(const Style::ComputedSt
     return document.counterStyleRegistry().resolvedCounterStyle(*counterStyle);
 }
 
-RefPtr<CSSRegisteredCounterStyle> RenderListMarker::counterStyle() const
+RefPtr<CSSRegisteredCounterStyle> RenderListOutsideMarker::counterStyle() const
 {
     return counterStyleFor(style(), protect(document()));
 }
@@ -697,7 +696,7 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
     return textContent;
 }
 
-bool RenderListMarker::synthesizesGlyph() const
+bool RenderListOutsideMarker::synthesizesGlyph() const
 {
     // `content` supersedes list-style-type, so a content marker never draws in place of a glyph, and a list-style-image marker draws the image instead.
     if (hasContentProperty() || isImage())
@@ -706,7 +705,7 @@ bool RenderListMarker::synthesizesGlyph() const
     return listType.isCircle() || listType.isDisc() || listType.isSquare();
 }
 
-std::pair<float, float> RenderListMarker::layoutBoundForTextContent(String text) const
+std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(String text) const
 {
     // FIXME: This should be part of InlineBoxBuilder (webkit.org/b/294342)
     // This is essentially what we do in LineBoxBuilder::enclosingAscentDescentWithFallbackFonts.

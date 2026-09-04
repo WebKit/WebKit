@@ -76,7 +76,7 @@ rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
-rendering/RenderListMarker.cpp
+rendering/RenderListOutsideMarker.cpp
 rendering/RenderMultiColumnFlow.cpp
 rendering/RenderMultiColumnSet.cpp
 rendering/RenderObject.cpp

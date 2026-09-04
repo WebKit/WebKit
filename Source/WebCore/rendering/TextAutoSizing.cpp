@@ -35,7 +35,7 @@
 #include "Logging.h"
 #include "RenderBlock.h"
 #include "RenderElementInlines.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
@@ -246,7 +246,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
             parentRenderer = parentRenderer->parent();
 
         // If we have a list we should resize ListMarkers separately.
-        if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(*parentRenderer->firstChild())) {
+        if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(*parentRenderer->firstChild())) {
             auto style = cloneRenderStyleWithState(listMarkerRenderer->style());
             style.setFontDescription(FontCascadeDescription { fontDescription });
             listMarkerRenderer->setStyle(WTF::move(style));

@@ -667,7 +667,7 @@ String AXTextMarkerRange::toString(IncludeListMarkerText includeListMarkerText, 
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // If this is in a list item, we need to add the text for the list marker
-            // because a RenderListMarker does not have a Node equivalent and thus does not appear
+            // because a RenderListOutsideMarker does not have a Node equivalent and thus does not appear
             // when iterating text.
             // Don't add list marker text for new line character.
             if (it.text().length() != 1 || !isASCIIWhitespace(it.text()[0]))

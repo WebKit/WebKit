@@ -1190,7 +1190,7 @@ Document* LocalFrameViewLayoutContext::document() const
     return frame().document();
 }
 
-ListItemExcludedMarkerScope::ListItemExcludedMarkerScope(LocalFrameViewLayoutContext& layoutContext, RenderListMarker& excludedMarker)
+ListItemExcludedMarkerScope::ListItemExcludedMarkerScope(LocalFrameViewLayoutContext& layoutContext, RenderListOutsideMarker& excludedMarker)
     : m_layoutContext(layoutContext)
 {
     // Nested list items lay out inside their ancestor's layout, so this is a stack: an ancestor stays in it while

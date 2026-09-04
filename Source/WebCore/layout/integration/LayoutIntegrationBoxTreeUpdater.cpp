@@ -43,7 +43,7 @@
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
@@ -79,7 +79,7 @@ static Layout::Box::IsAnonymous NODELETE isAnonymous(const RenderObject& rendere
 static Layout::Box::ElementAttributes elementAttributes(const RenderElement& renderer)
 {
     auto nodeType = [&] {
-        if (is<RenderListMarker>(renderer))
+        if (is<RenderListOutsideMarker>(renderer))
             return Layout::Box::NodeType::ListMarker;
         if (is<RenderReplaced>(renderer))
             return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
@@ -230,7 +230,7 @@ void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, Style::C
         adjustStyle(*firstLineStyle);
 }
 
-static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttribute(const RenderListMarker& listMarkerRenderer)
+static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttribute(const RenderListOutsideMarker& listMarkerRenderer)
 {
     auto listMarkerAttributes = EnumSet<Layout::ElementBox::ListMarkerAttribute> { };
     if (listMarkerRenderer.isImage())
@@ -308,7 +308,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
     auto style = Style::ComputedStyle::clone(renderElement.style());
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
-    if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderElement))
+    if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderElement))
         return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), calculateListMarkerAttribute(*listMarkerRenderer), WTF::move(style), WTF::move(firstLineStyle));
 
     return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTF::move(style), WTF::move(firstLineStyle));
@@ -411,7 +411,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     auto newStyle = Style::ComputedStyle::clone(downcast<RenderElement>(renderer).style());
     adjustStyleIfNeeded(downcast<RenderElement>(renderer), newStyle, firstLineNewStyle.get());
     layoutBox->updateStyle(WTF::move(newStyle), WTF::move(firstLineNewStyle));
-    if (auto* listMarkerRenderer = dynamicDowncast<RenderListMarker>(renderer)) {
+    if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer)) {
         if (auto* elementBox = dynamicDowncast<Layout::ElementBox>(*layoutBox))
             elementBox->setListMarkerAttributes(calculateListMarkerAttribute(*listMarkerRenderer));
     }

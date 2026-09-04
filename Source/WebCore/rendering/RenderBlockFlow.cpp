@@ -5453,7 +5453,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlockFlow::computeInlineIntrinsicLogical
         }
 
         // Ignore spaces after a list marker.
-        if (child->isRenderListMarker())
+        if (child->isRenderListOutsideMarker())
             stripFrontSpaces = true;
 
         isPrevChildInlineFlow = !child->isRenderText() && child->isRenderInline();

@@ -145,7 +145,7 @@ public:
         LineBreak,
         ListBox,
         ListItem,
-        ListMarker,
+        ListOutsideMarker,
         Media,
         MenuList,
         Meter,
@@ -452,7 +452,7 @@ public:
     virtual bool isImage() const { return false; }
     bool isRenderListBox() const { return type() == Type::ListBox; }
     bool isRenderListItem() const { return type() == Type::ListItem; }
-    bool isRenderListMarker() const { return type() == Type::ListMarker; }
+    bool isRenderListOutsideMarker() const { return type() == Type::ListOutsideMarker; }
     bool isRenderMedia() const { return isRenderReplaced() && m_typeSpecificFlags.replacedFlags().contains(ReplacedFlag::IsMedia); }
     bool isRenderMenuList() const { return type() == Type::MenuList; }
     bool isRenderMeter() const { return type() == Type::Meter; }

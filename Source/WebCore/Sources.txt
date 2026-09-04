@@ -3094,7 +3094,7 @@ rendering/RenderLineBoxList.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderLineBreak.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderListBox.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderListItem.cpp @header:RenderStyleGetters @cost:7
-rendering/RenderListMarker.cpp @header:RenderStyleGetters @cost:8
+rendering/RenderListOutsideMarker.cpp @header:RenderStyleGetters @cost:8
 rendering/RenderMarquee.cpp @header:RenderStyleGetters @cost:5
 rendering/RenderMedia.cpp @header:RenderStyleGetters @cost:6
 rendering/RenderMenuList.cpp @header:RenderStyleGetters @cost:8

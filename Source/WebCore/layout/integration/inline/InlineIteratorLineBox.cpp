@@ -144,15 +144,15 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
     if (firstBox == lastBox && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (firstBox && horizontalPosition <= firstBox->logicalLeft() && !firstBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(firstBox)))
+    if (firstBox && horizontalPosition <= firstBox->logicalLeft() && !firstBox->renderer().isRenderListOutsideMarker() && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (lastBox && horizontalPosition >= lastBox->logicalRight() && !lastBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(lastBox)))
+    if (lastBox && horizontalPosition >= lastBox->logicalRight() && !lastBox->renderer().isRenderListOutsideMarker() && (!editableOnly || isEditable(lastBox)))
         return lastBox;
 
     auto closestBox = lastBox;
     for (auto box = firstBox; box; box = box.traverseLogicalRightwardOnLineIgnoringLineBreak()) {
-        if (!box->renderer().isRenderListMarker() && (!editableOnly || isEditable(box))) {
+        if (!box->renderer().isRenderListOutsideMarker() && (!editableOnly || isEditable(box))) {
             if (horizontalPosition < box->logicalRight())
                 return box;
             closestBox = box;

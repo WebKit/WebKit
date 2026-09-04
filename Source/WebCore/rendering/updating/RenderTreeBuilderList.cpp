@@ -29,7 +29,7 @@
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
 #include "RenderImage.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectStyle.h"
@@ -50,7 +50,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderTreeBuilder::List);
 static RenderObject* firstNonMarkerChild(RenderBlock& parent)
 {
     RenderObject* child = parent.firstChild();
-    while (is<RenderListMarker>(child))
+    while (is<RenderListOutsideMarker>(child))
         child = child->nextSibling();
     return child;
 }
@@ -77,7 +77,7 @@ struct MarkerParentSearchResult {
     bool shouldCollapseAnonymousBlockParent { false };
 };
 
-static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListMarker& marker)
+static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListOutsideMarker& marker)
 {
     if (listItemRenderer.document().settings().listMarkerPositionedPostLayoutEnabled() && !markerNeedsOwnLine(listItemRenderer)) {
         // The outside marker is always the list item's first child and it takes no part in in-flow layout.
@@ -211,7 +211,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         return;
     }
 
-    RenderPtr<RenderListMarker> newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTF::move(newStyle));
+    RenderPtr<RenderListOutsideMarker> newMarkerRenderer = WebCore::createRenderer<RenderListOutsideMarker>(listItemRenderer, WTF::move(newStyle));
     newMarkerRenderer->initializeStyle();
     m_builder.addListItemNeedingMarkerUpdate(listItemRenderer);
     listItemRenderer.setMarkerRenderer(*newMarkerRenderer);
@@ -271,14 +271,14 @@ void RenderTreeBuilder::List::buildInlineMarker(RenderListItem& listItemRenderer
     m_builder.attach(marker.get(), WTF::move(textRenderer));
 }
 
-void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& marker)
+void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListOutsideMarker& marker)
 {
     ASSERT(marker.needsContentContainer());
     ASSERT(!marker.contentContainer());
 
     // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
     // inline-block box holding the content list (strings, images, counters, quotes). The marker
-    // (RenderListMarker) lays this box out and paints it as a single atomic inline.
+    // (RenderListOutsideMarker) lays this box out and paints it as a single atomic inline.
     auto containerStyle = Style::ComputedStyle::createAnonymousStyleWithDisplay(marker.style(), Style::DisplayType::InlineFlowRoot);
     auto newContainer = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, marker.document(), WTF::move(containerStyle));
     newContainer->initializeStyle();
@@ -288,7 +288,7 @@ void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& mark
     if (!marker.hasContentProperty()) {
         // list-style-type text that needs renderers of its own, so inline layout can bidi-resolve it.
         // The text itself is only known once counter values resolve, so start empty and let
-        // RenderListMarker::updateContent() fill it in at layout time.
+        // RenderListOutsideMarker::updateContent() fill it in at layout time.
         auto textRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, marker.document(), emptyString());
         m_builder.attach(container.get(), WTF::move(textRenderer));
         return;

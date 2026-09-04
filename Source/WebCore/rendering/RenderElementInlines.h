@@ -65,7 +65,7 @@ inline bool RenderElement::isAnonymousBlock() const
 #if ENABLE(MATHML)
         && !isRenderMathMLBlock()
 #endif
-        && !isRenderListMarker()
+        && !isRenderListOutsideMarker()
         && !isRenderFragmentedFlow()
         && !isRenderMultiColumnSet()
         && !isRenderView()

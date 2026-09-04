@@ -48,13 +48,13 @@ struct ListMarkerTextContent {
 };
 
 // Used to render the list item's marker.
-// The RenderListMarker always has to be a child of a RenderListItem.
-class RenderListMarker final : public RenderBox {
-    WTF_MAKE_TZONE_ALLOCATED(RenderListMarker);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListMarker);
+// The RenderListOutsideMarker always has to be a child of a RenderListItem.
+class RenderListOutsideMarker final : public RenderBox {
+    WTF_MAKE_TZONE_ALLOCATED(RenderListOutsideMarker);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListOutsideMarker);
 public:
-    RenderListMarker(RenderListItem&, Style::ComputedStyle&&);
-    virtual ~RenderListMarker();
+    RenderListOutsideMarker(RenderListItem&, Style::ComputedStyle&&);
+    virtual ~RenderListOutsideMarker();
 
     using IncludeSuffix = ListMarkerIncludeSuffix;
     String textContent(IncludeSuffix includeSuffix = IncludeSuffix::Yes) const
@@ -155,4 +155,4 @@ void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode l
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListMarker, isRenderListMarker())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderListOutsideMarker, isRenderListOutsideMarker())

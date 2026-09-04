@@ -32,7 +32,7 @@
 #include "PlatformScreen.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -832,7 +832,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
     if (!utf16Offset)
         return { WTF::move(defaultAttributes), -1, -1 };
 
-    if (is<RenderListMarker>(*m_coreObject->renderer()))
+    if (is<RenderListOutsideMarker>(*m_coreObject->renderer()))
         return { WTF::move(defaultAttributes), 0, static_cast<int>(m_coreObject->stringValue().length()) };
 
     if (!m_coreObject->node())

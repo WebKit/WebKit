@@ -1810,7 +1810,7 @@ void RenderText::setRenderedText(const String& newText)
         break;
 #if !PLATFORM(IOS_FAMILY)
     // We use the same characters here as for list markers.
-    // See the listMarkerText function in RenderListMarker.cpp.
+    // See the listMarkerText function in RenderListOutsideMarker.cpp.
     case TextSecurity::Circle:
         secureText(whiteBullet);
         break;

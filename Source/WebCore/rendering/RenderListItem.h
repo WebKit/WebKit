@@ -23,7 +23,7 @@
 #pragma once
 
 #include "RenderBlockFlow.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ public:
 
     RenderBoxModelObject* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderBoxModelObject& marker) { m_marker = marker; }
-    RenderListMarker* markerBox() const;
+    RenderListOutsideMarker* markerBox() const;
 
     // Fills in what the marker shows, in whichever shape it was built.
     void updateMarkerContent();
@@ -65,7 +65,7 @@ public:
         bool stoppedAtTableRubyOrReplaced { false };
     };
     static FirstFormattedLineCandidate firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker);
-    static Vector<CheckedPtr<RenderListMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListMarker>>&);
+    static Vector<CheckedPtr<RenderListOutsideMarker>> excludedMarkersForContainer(const RenderBlockFlow& lineContainer, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>&);
 
 private:
     ASCIILiteral renderName() const final { return "RenderListItem"_s; }
@@ -76,8 +76,8 @@ private:
     void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void layoutExcludedChildren(RelayoutChildren) final;
 
-    void placeExcludedMarker(RenderListMarker&);
-    RenderListMarker* excludedMarker() const;
+    void placeExcludedMarker(RenderListOutsideMarker&);
+    RenderListOutsideMarker* excludedMarker() const;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) final;
 

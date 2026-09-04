@@ -401,7 +401,7 @@ void OutlinePainter::collectFocusRingRectsForInline(const RenderInline& renderer
     renderer.collectLineBoxRects(rects, additionalOffset);
 
     for (CheckedRef child : childrenOfType<RenderBoxModelObject>(renderer)) {
-        if (child->isRenderListMarker())
+        if (child->isRenderListOutsideMarker())
             continue;
         FloatPoint pos(additionalOffset);
         // FIXME: This doesn't work correctly with transforms.

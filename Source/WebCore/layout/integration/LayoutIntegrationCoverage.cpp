@@ -33,7 +33,7 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGForeignObject.h"
@@ -58,7 +58,7 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
         if (!renderer->isInFlow())
             return false;
 
-        auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderInline, RenderListMarker>(renderer);
+        auto isFullySupportedInFlowRenderer = isAnyOf<RenderText, RenderLineBreak, RenderInline, RenderListOutsideMarker>(renderer);
         if (isFullySupportedInFlowRenderer)
             continue;
 

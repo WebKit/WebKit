@@ -57,7 +57,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderMathMLBlock.h"
 #include "RenderMenuList.h"
 #include "RenderModel.h"
@@ -123,7 +123,7 @@ void BoxGeometryUpdater::clear()
     m_nestedListMarkerOffsets.clear();
 }
 
-void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListMarker& listMarker)
+void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOutsideMarker& listMarker)
 {
     CheckedRef layoutBox = *listMarker.layoutBox();
     ASSERT(layoutBox->isListMarkerBox());
@@ -525,7 +525,7 @@ static std::optional<LayoutUnit> baselineForBox(const RenderBox& renderBox)
         return { };
     }
 
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(renderBox)) {
+    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderBox)) {
         if (CheckedPtr listItem = listMarker->listItem(); listItem && !listMarker->isImage())
             return fontMetricsBasedBaseline(*listMarker);
         return { };
@@ -567,7 +567,7 @@ static inline void setIntegrationBaseline(const RenderBox& renderBox)
         return;
 
     auto hasNonSyntheticBaseline = [&] {
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderBox))
+        if (auto* renderListMarker = dynamicDowncast<RenderListOutsideMarker>(renderBox))
             return !renderListMarker->isImage();
 
         if (is<RenderReplaced>(renderBox) && renderBox.style().display() == Style::DisplayType::InlineFlow)
@@ -797,7 +797,7 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
         // FIXME: These should eventually be all absorbed by LFC layout.
         setIntegrationBaseline(*renderBox);
 
-        if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(*renderBox)) {
+        if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(*renderBox)) {
             CheckedRef style = layoutBox.parent().style();
             boxGeometry.setHorizontalMargin(horizontalLogicalMargin(*renderListMarker, { }, style->writingMode()));
             setListMarkerOffsetForMarkerOutside(*renderListMarker);
@@ -840,7 +840,7 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::o
 
     if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
         updateLayoutBoxDimensions(*renderBox, availableWidth, intrinsicWidthMode);
-        if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(renderer))
+        if (auto* renderListMarker = dynamicDowncast<RenderListOutsideMarker>(renderer))
             setListMarkerOffsetForMarkerOutside(*renderListMarker);
         return;
     }

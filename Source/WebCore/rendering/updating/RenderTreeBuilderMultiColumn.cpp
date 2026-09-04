@@ -28,7 +28,7 @@
 #include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderInline.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -308,8 +308,8 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
 
     // An excluded marker takes no part in multi-column layout, and the list item positions it against its first
     // formatted line afterwards, which it can only do while the marker is still its own child.
-    CheckedPtr<RenderListMarker> excludedMarker;
-    for (auto& marker : childrenOfType<RenderListMarker>(flow)) {
+    CheckedPtr<RenderListOutsideMarker> excludedMarker;
+    for (auto& marker : childrenOfType<RenderListOutsideMarker>(flow)) {
         if (marker.isExcludedMarker()) {
             excludedMarker = &marker;
             break;

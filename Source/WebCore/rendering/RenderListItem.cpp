@@ -458,7 +458,7 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     }
 }
 
-RenderListMarker* RenderListItem::excludedMarker() const
+RenderListOutsideMarker* RenderListItem::excludedMarker() const
 {
     auto* marker = markerBox();
     if (marker && marker->parent() == this && marker->isExcludedMarker())
@@ -512,9 +512,9 @@ void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintO
     RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
 
-RenderListMarker* RenderListItem::markerBox() const
+RenderListOutsideMarker* RenderListItem::markerBox() const
 {
-    return dynamicDowncast<RenderListMarker>(m_marker.get());
+    return dynamicDowncast<RenderListOutsideMarker>(m_marker.get());
 }
 
 String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
@@ -574,7 +574,7 @@ bool RenderListItem::isInReversedOrderedList() const
     return list && list->isReversed();
 }
 
-void RenderListItem::placeExcludedMarker(RenderListMarker& marker)
+void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
 {
     auto excludedPosition = marker.excludedPosition();
     CheckedPtr firstFormattedLineRoot = excludedPosition ? excludedPosition->firstFormattedLineRoot.get() : nullptr;
@@ -668,9 +668,9 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
     return { { }, fallbackParent, stoppedAtTableRubyOrReplaced };
 }
 
-Vector<CheckedPtr<RenderListMarker>> RenderListItem::excludedMarkersForContainer(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListMarker>>& allExcludedMarkers)
+Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForContainer(const RenderBlockFlow& inlineRoot, const Vector<SingleThreadWeakPtr<RenderListOutsideMarker>>& allExcludedMarkers)
 {
-    auto markersForContainer = Vector<CheckedPtr<RenderListMarker>> { };
+    auto markersForContainer = Vector<CheckedPtr<RenderListOutsideMarker>> { };
     for (auto& marker : allExcludedMarkers) {
         ASSERT(marker->isExcludedMarker());
         CheckedPtr listItem = marker->listItem();

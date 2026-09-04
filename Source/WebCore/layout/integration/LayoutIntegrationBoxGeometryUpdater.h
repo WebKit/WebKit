@@ -39,7 +39,7 @@ class RenderLineBreak;
 class RenderInline;
 class RenderTable;
 class RenderListItem;
-class RenderListMarker;
+class RenderListOutsideMarker;
 
 namespace LayoutIntegration {
 
@@ -63,7 +63,7 @@ private:
     void updateLayoutBoxDimensions(const RenderBox&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
-    void setListMarkerOffsetForMarkerOutside(const RenderListMarker&);
+    void setListMarkerOffsetForMarkerOutside(const RenderListOutsideMarker&);
 
     Layout::BoxGeometry::HorizontalEdges horizontalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode);
     Layout::BoxGeometry::VerticalEdges verticalLogicalMargin(const RenderBoxModelObject&, std::optional<LayoutUnit> availableWidth, WritingMode);

@@ -113,7 +113,7 @@
 #include "RenderImage.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
-#include "RenderListMarker.h"
+#include "RenderListOutsideMarker.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RuleFeature.h"
@@ -919,7 +919,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     if (node() && !renderer() && WebCore::elementName(node()) == ElementName::HTML_noscript)
         return false;
 
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(renderer()))
+    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer()))
         return listMarker->hasContentProperty();
 
     // If this is an AccessibilityRenderObject, then it's okay if this object
@@ -4183,8 +4183,8 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
                 continue;
             }
 
-            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(box->renderer())) {
-                if (RefPtr object = cache->getOrCreate(const_cast<RenderListMarker&>(*renderListMarker)))
+            if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(box->renderer())) {
+                if (RefPtr object = cache->getOrCreate(const_cast<RenderListOutsideMarker&>(*renderListMarker)))
                     appendToCurrentGroup(object->objectID());
                 continue;
             }
@@ -4312,7 +4312,7 @@ String AccessibilityNodeObject::stringValue() const
                 if (!runStartNode)
                     runStartNode = memberNode;
                 runEndNode = memberNode;
-            } else if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(object->renderer())) {
+            } else if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(object->renderer())) {
                 // List markers have no DOM node. Flush any pending text run, then append marker text.
                 flushRun();
                 builder.append(renderListMarker->textContent());
