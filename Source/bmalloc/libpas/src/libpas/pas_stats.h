@@ -159,6 +159,7 @@
 #include "pas_config.h"
 
 #include "pas_internal_config.h"
+#include "pas_lock.h"
 #include "pas_utils.h"
 #include <stdbool.h>
 #include <stdint.h>
@@ -327,7 +328,7 @@ PAS_API void pas_stats_page_alloc_counts_record(pas_stats_page_alloc_counts_data
 /*******************************************/
 
 #if PAS_ENABLE_STATS
-PAS_API void pas_stats_do_accounting_before_recording_stat(void);
+static void pas_stats_do_accounting_before_recording_stat(void);
 
 // It's OK for the .enabled check here to be non-atomic: we know that all
 // .enabled bits will start initialized to true, and will be set to false at most once.
@@ -383,7 +384,7 @@ PAS_API extern pas_stats_data g_pas_stats_data;
 #define PAS_STATS_LOG_INTERVAL (1 << 16)
 
 PAS_API void pas_stats_do_accounting_before_recording_stat_slow_path(void);
-PAS_ALWAYS_INLINE void pas_stats_do_accounting_before_recording_stat(void)
+static PAS_ALWAYS_INLINE void pas_stats_do_accounting_before_recording_stat(void)
 {
     uint64_t new_count = pas_atomic_fetch_add_uint64_relaxed(&g_pas_stats_data.log_counter, 1);
     if (PAS_UNLIKELY(new_count == PAS_STATS_LOG_INTERVAL))
