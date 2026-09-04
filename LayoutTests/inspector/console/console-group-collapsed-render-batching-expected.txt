@@ -1,0 +1,10 @@
+Tests that messages inside a console.groupCollapsed() stay nested when the group's rendering spans multiple frames.
+
+
+== Running test suite: Console.GroupCollapsedRenderBatching
+-- Running test case: GroupSpanningRenderBatches
+PASS: All 150 children should be nested inside the collapsed group.
+
+-- Running test case: GroupContinuedAfterQueueDrains
+PASS: Child rendered in a later frame should nest in the still-open collapsed group.
+
