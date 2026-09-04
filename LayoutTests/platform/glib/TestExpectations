@@ -2883,6 +2883,12 @@ http/wpt/mediastream/webrtc-vp9-colorspace.html [ Failure ]
 
 webkit.org/b/314659 webrtc/getDisplayMedia-pc-resolution.html [ Pass Crash Failure Timeout ]
 
+# The GStreamer mock microphone exposes sampleRate as the continuous capability range [44100, 96000]
+# and does not override RealtimeMediaSource::discreteSampleRates(), so constraints below 44100 are
+# overconstrained here and the discrete supported values path this test covers is never taken. The
+# path itself is covered on every port by the MediaConstraintsTest API tests.
+webkit.org/b/320645 fast/mediastream/apply-constraints-sample-rate-range.html [ Skip ]
+
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]
 fast/mediastream/apply-constraints-video.html [ Failure ]
