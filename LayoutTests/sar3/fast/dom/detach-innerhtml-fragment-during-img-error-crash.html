@@ -1,0 +1,49 @@
+<!-- webkit-test-runner [ MutationEventsEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<iframe id="fr"></iframe>
+<script src="../../../resources/js-test.js"></script>
+<script>
+
+description('This tests manipulating DOM during error event of an img element. WebKit should not crash.');
+
+jsTestIsAsync = true;
+
+window.leak = null;
+window.onLeak = null;
+
+onload = function () {
+    var cd = document.getElementById('fr').contentDocument;
+
+    cd.body.innerHTML = '<div id="P"><i id="victim"></i><i id="S"></i></div>';
+    window.P = cd.getElementById('P');
+    window.victim = cd.getElementById('victim');
+    window.S = cd.getElementById('S');
+
+    P.addEventListener('DOMNodeRemoved', function(e) {
+        if (e.target === victim)
+            S.remove();
+    });
+
+    window.onLeak = function () {
+      setTimeout(function () {
+          shouldBeTrue('!!window.leak');
+
+          document.getElementById('fr').remove();
+
+          var r = window.leak.getRootNode({composed: true});
+          var r2 = window.leak.getRootNode();
+
+          finishJSTest();
+      }, 0);
+    };
+
+    victim.outerHTML = '<b>b</b><img src="missing-404-image.png" onerror="top.leak = this; if (top.onLeak) top.onLeak();"><table></table>';
+
+    shouldBe('victim.parentNode', 'null');
+    shouldBe('S.parentNode', 'null');
+};
+</script>
+</body>
+</html>

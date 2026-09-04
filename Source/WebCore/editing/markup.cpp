@@ -1541,14 +1541,9 @@ enum class DocumentFragmentMode : bool { New, ReuseForInnerOuterHTML };
 static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry = nullptr)
 {
     Ref document = contextElement.hasTagName(templateTag) ? protect(contextElement.document())->ensureTemplateDocument() : contextElement.document();
-    bool parseAsHTML = document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML);
-    auto fragment = mode == DocumentFragmentMode::New
-#ifndef RC_REMOVE_SEC_ACCEL_3
-        || !parseAsHTML
-#endif
-        ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
+    auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
-    if (parseAsHTML) {
+    if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
         fragment->parseHTML(markup, contextElement, parserContentPolicy, registry);
         return fragment;
     }
