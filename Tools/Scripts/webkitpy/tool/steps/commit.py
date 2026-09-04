@@ -104,3 +104,6 @@ class Commit(AbstractStep):
                     password = self._tool.user.prompt_password("%s password for %s: " % (e.server_host, username), repeat=5)
                     if not password:
                         raise ScriptError("You need to specify the password for %s on %s to perform the commit." % (username, e.server_host))
+
+        if "commit_text" not in self._state:
+            raise ScriptError(message="Unable to commit after 3 attempts.")
