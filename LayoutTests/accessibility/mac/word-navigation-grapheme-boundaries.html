@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="target">Hi &#x1F469;&#x200D;&#x1F4BB; there</p>
+
+<script>
+var output = "This test ensures word navigation never stops inside a grapheme cluster. The joined emoji occupies code units 3 through 7, so a word end at 4, 5, 6 or 7 would place an assistive technology's cursor in the middle of one glyph.\n\n";
+
+if (window.accessibilityController) {
+    var target = accessibilityController.accessibleElementById("target");
+    var targetRange = target.textMarkerRangeForElement(target);
+    var baseIndex = target.indexForTextMarker(target.startTextMarkerForTextMarkerRange(targetRange));
+
+    function text()
+    {
+        return target.stringForTextMarkerRange(targetRange);
+    }
+
+    function wordEndOffsets()
+    {
+        var offsets = [];
+        var marker = target.startTextMarkerForTextMarkerRange(targetRange);
+        for (var step = 0; step < 12; step++) {
+            marker = target.nextWordEndTextMarkerForTextMarker(marker);
+            var offset = target.indexForTextMarker(marker) - baseIndex;
+            if (offsets.length && offset <= offsets[offsets.length - 1])
+                break;
+            offsets.push(offset);
+            if (offset >= 14)
+                break;
+        }
+        return offsets;
+    }
+
+    function splitsGraphemeCluster()
+    {
+        return wordEndOffsets().some(offset => offset > 3 && offset < 8);
+    }
+
+    output += expect("text().length", "14");
+    output += expect("wordEndOffsets().includes(2)", "true");
+    output += expect("wordEndOffsets().includes(14)", "true");
+    output += expect("splitsGraphemeCluster()", "false");
+
+    document.getElementById("target").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

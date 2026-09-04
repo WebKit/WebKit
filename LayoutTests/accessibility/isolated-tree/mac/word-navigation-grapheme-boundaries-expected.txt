@@ -1,0 +1,11 @@
+This test ensures word navigation never stops inside a grapheme cluster. The joined emoji occupies code units 3 through 7, so a word end at 4, 5, 6 or 7 would place an assistive technology's cursor in the middle of one glyph.
+
+PASS: text().length === 14
+PASS: wordEndOffsets().includes(2) === true
+PASS: wordEndOffsets().includes(14) === true
+PASS: splitsGraphemeCluster() === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
