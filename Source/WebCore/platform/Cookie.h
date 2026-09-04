@@ -130,6 +130,22 @@ WEBCORE_EXPORT String defaultPathForURL(const URL&);
 
 std::optional<String> cookieStringWithDayFirstExpires(StringView);
 
+enum class CookieNamePrefix : uint8_t { None, Secure, Host, Http, HostHttp };
+
+WEBCORE_EXPORT CookieNamePrefix cookieNamePrefix(StringView name);
+
+struct DOMCookieFields {
+    CookieNamePrefix prefix { CookieNamePrefix::None };
+    bool hasHttpOnlyAttribute { false };
+    bool isSecure { false };
+    bool hasDomain { false };
+    bool hasRootPath { false };
+};
+
+WEBCORE_EXPORT DOMCookieFields parseDOMCookieFields(StringView cookieString);
+
+WEBCORE_EXPORT bool cookieNamePrefixRequirementsViolated(CookieNamePrefix, bool isSecure, bool httpOnly, bool hasDomain, bool hasRootPath);
+
 } // namespace CookieUtil
 
 } // namespace WebCore

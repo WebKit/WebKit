@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -171,6 +171,11 @@ void WebCookieJar::setCookies(WebCore::Document& document, const URL& url, const
         return;
 
     if (shouldBlockCookies(webFrame.get(), document.firstPartyForCookies(), url) == BlockCookies::Yes)
+        return;
+
+    // Must run before the cache is written as well as before the message is sent, so the cache never
+    // holds a cookie the store would have rejected.
+    if (shouldRejectDOMCookieWrite(document, cookieString))
         return;
 
     auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);

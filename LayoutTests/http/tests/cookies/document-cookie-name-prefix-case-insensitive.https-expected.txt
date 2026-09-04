@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: The cookie was ignored because its name begins with a cookie name prefix whose requirements it does not meet. "__Secure-" requires the Secure attribute; "__Host-" additionally requires no Domain attribute and an explicit Path=/.
+CONSOLE MESSAGE: The cookie was ignored because its name begins with a cookie name prefix whose requirements it does not meet. "__Secure-" requires the Secure attribute; "__Host-" additionally requires no Domain attribute and an explicit Path=/.
+CONSOLE MESSAGE: The cookie was ignored because its name begins with a cookie name prefix whose requirements it does not meet. "__Secure-" requires the Secure attribute; "__Host-" additionally requires no Domain attribute and an explicit Path=/.
+CONSOLE MESSAGE: The cookie was ignored because its name begins with "__Http-" or "__Host-Http-", which requires the HttpOnly attribute, and script cannot set HttpOnly. Use the HTTP header Set-Cookie instead.
+Tests that cookie name prefixes are matched ASCII case-insensitively (RFC 6265bis section 5.4) and that a cookie failing its prefix requirements reaches neither document.cookie nor the Cookie header. This runs over HTTPS because the "__Secure-" and "__Host-" prefixes require the Secure attribute, which cannot be set over plain HTTP.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.cookie is ""
+A case-variant prefix that satisfies its requirements is still stored.
+PASS cookieIsInDOM("__HoSt-stored") is true
+The canonical spelling keeps working, so the platform checks are unaffected.
+PASS cookieIsInDOM("__Secure-stored") is true
+A case-variant "__Host-" without Secure is rejected.
+PASS cookieIsInDOM("__HoSt-nosecure") is false
+A case-variant "__Secure-" without Secure is rejected.
+PASS cookieIsInDOM("__SeCuRe-nosecure") is false
+A case-variant "__Host-" with a Domain attribute is rejected.
+PASS cookieIsInDOM("__HOST-domain") is false
+"__Http-" can never be set from script, because script cannot set HttpOnly.
+PASS cookieIsInDOM("__Http-any") is false
+The rejected cookies are absent from the Cookie header too, not merely hidden from script.
+PASS wireNames.includes("__HoSt-stored") is true
+PASS wireNames.includes("__Secure-stored") is true
+PASS wireNames.includes("__HoSt-nosecure") is false
+PASS wireNames.includes("__SeCuRe-nosecure") is false
+PASS wireNames.includes("__HOST-domain") is false
+PASS wireNames.includes("__Http-any") is false
+PASS document.cookie is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

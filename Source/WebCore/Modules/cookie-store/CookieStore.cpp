@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2023-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -370,20 +370,22 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
         }
 
-        if (cookie.value.startsWithIgnoringASCIICase("__Host-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Host-Http-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Http-"_s)
-            || cookie.value.startsWithIgnoringASCIICase("__Secure-"_s)) {
+        if (CookieUtil::cookieNamePrefix(cookie.value) != CookieUtil::CookieNamePrefix::None) {
             promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name is empty, the value must not begin with \"__Host-\", \"__Host-Http-\", \"__Http-\", or \"__Secure-\""_s });
             return;
         }
     }
 
-    if (cookie.name.startsWithIgnoringASCIICase("__Host-Http-"_s)
-        || cookie.name.startsWithIgnoringASCIICase("__Http-"_s)) {
-            promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not begin with \"__Host-Http-\" or \"__Http-\""_s });
-            return;
+    auto namePrefix = CookieUtil::cookieNamePrefix(cookie.name);
+
+    if (namePrefix == CookieUtil::CookieNamePrefix::Http || namePrefix == CookieUtil::CookieNamePrefix::HostHttp) {
+        promise->reject(Exception { ExceptionCode::TypeError, "The cookie name must not begin with \"__Host-Http-\" or \"__Http-\""_s });
+        return;
     }
+
+    // Computed after the rejection above, so "__Host-Http-" cannot reach it and this is exactly
+    // "__Host-".
+    bool hasHostRequirements = namePrefix == CookieUtil::CookieNamePrefix::Host;
 
     // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
     if (cookie.name.utf8().length() + cookie.value.utf8().length() > maximumNameValuePairSize) {
@@ -392,7 +394,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     }
 
     // FIXME: This should be further down.
-    if (!options.domain.isNull() && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
+    if (!options.domain.isNull() && hasHostRequirements) {
         promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the domain must not be specified."_s });
         return;
     }
@@ -433,7 +435,7 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
         return;
     }
 
-    if (cookie.path != "/"_s && cookie.name.startsWithIgnoringASCIICase("__Host-"_s)) {
+    if (cookie.path != "/"_s && hasHostRequirements) {
         promise->reject(Exception { ExceptionCode::TypeError, "If the cookie name begins with \"__Host-\", the path must be \"/\" or default to that."_s });
         return;
     }

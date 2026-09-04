@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('Tests that cookie name prefixes are matched ASCII case-insensitively (RFC 6265bis section 5.4) and that a cookie failing its prefix requirements reaches neither document.cookie nor the Cookie header. This runs over HTTPS because the "__Secure-" and "__Host-" prefixes require the Secure attribute, which cannot be set over plain HTTP.');
+jsTestIsAsync = true;
+
+// Deleting a prefixed cookie is itself subject to the prefix requirements, so the delete has to
+// carry Secure or it would be rejected too and the cookie would survive. It also has to target the
+// same path the cookie was stored at: "__Host-" always means "/", but a "__Secure-" cookie set
+// without a Path attribute lands on the default-path, so deleting it with "Path=/" would address a
+// different cookie and leave the original in place.
+function clearPrefixedCookie(name, pathAttribute)
+{
+    document.cookie = name + '=; Max-Age=0; Secure' + (pathAttribute ? '; Path=' + pathAttribute : '');
+}
+
+function cookieIsInDOM(name)
+{
+    return document.cookie.split(/;\s*/).some((pair) => pair.indexOf(name + '=') === 0);
+}
+
+function cookieNamesOnTheWire()
+{
+    return fetch('resources/echo-cookies.py', { credentials: 'include', cache: 'no-store' })
+        .then((response) => response.text())
+        .then((text) => text.split('\n').filter((line) => line.indexOf(' = ') !== -1).map((line) => line.split(' = ')[0]));
+}
+
+onload = () => {
+    shouldBeEqualToString('document.cookie', '');
+
+    debug('A case-variant prefix that satisfies its requirements is still stored.');
+    document.cookie = '__HoSt-stored=1; Secure; Path=/';
+    shouldBeTrue('cookieIsInDOM("__HoSt-stored")');
+
+    debug('The canonical spelling keeps working, so the platform checks are unaffected.');
+    document.cookie = '__Secure-stored=1; Secure';
+    shouldBeTrue('cookieIsInDOM("__Secure-stored")');
+
+    debug('A case-variant "__Host-" without Secure is rejected.');
+    document.cookie = '__HoSt-nosecure=1; Path=/';
+    shouldBeFalse('cookieIsInDOM("__HoSt-nosecure")');
+
+    debug('A case-variant "__Secure-" without Secure is rejected.');
+    document.cookie = '__SeCuRe-nosecure=1';
+    shouldBeFalse('cookieIsInDOM("__SeCuRe-nosecure")');
+
+    debug('A case-variant "__Host-" with a Domain attribute is rejected.');
+    document.cookie = '__HOST-domain=1; Secure; Path=/; Domain=127.0.0.1';
+    shouldBeFalse('cookieIsInDOM("__HOST-domain")');
+
+    debug('"__Http-" can never be set from script, because script cannot set HttpOnly.');
+    document.cookie = '__Http-any=1; Secure; Path=/';
+    shouldBeFalse('cookieIsInDOM("__Http-any")');
+
+    debug('The rejected cookies are absent from the Cookie header too, not merely hidden from script.');
+    cookieNamesOnTheWire().then((names) => {
+        window.wireNames = names;
+        shouldBeTrue('wireNames.includes("__HoSt-stored")');
+        shouldBeTrue('wireNames.includes("__Secure-stored")');
+        shouldBeFalse('wireNames.includes("__HoSt-nosecure")');
+        shouldBeFalse('wireNames.includes("__SeCuRe-nosecure")');
+        shouldBeFalse('wireNames.includes("__HOST-domain")');
+        shouldBeFalse('wireNames.includes("__Http-any")');
+
+        clearPrefixedCookie('__HoSt-stored', '/');
+        clearPrefixedCookie('__Secure-stored');
+        shouldBeEqualToString('document.cookie', '');
+        finishJSTest();
+    });
+}
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>
