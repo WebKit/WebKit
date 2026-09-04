@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ErrorPrototype.h"
 
+#include "ErrorInstance.h"
 #include "IntegrityInlines.h"
 #include "JSCInlines.h"
 
@@ -30,6 +31,8 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototypeBase);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorPrototype);
 
 static JSC_DECLARE_HOST_FUNCTION(errorProtoFuncToString);
+static JSC_DECLARE_CUSTOM_GETTER(errorProtoStackGetter);
+static JSC_DECLARE_CUSTOM_SETTER(errorProtoStackSetter);
 
 }
 
@@ -61,6 +64,19 @@ void ErrorPrototypeBase::finishCreation(VM& vm, const String& name)
 ErrorPrototype::ErrorPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
+}
+
+void ErrorPrototype::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm, "Error"_s);
+    // FIXME: Once useErrorPrototypeStackAccessor is removed, declare "stack" in
+    // errorPrototypeTable above instead of installing it here.
+    if (Options::useErrorPrototypeStackAccessor()) {
+        // https://tc39.es/proposal-error-stack-accessor/
+        putDirectCustomGetterSetterWithoutTransition(vm, vm.propertyNames->stack,
+            CustomGetterSetter::create(vm, errorProtoStackGetter, errorProtoStackSetter),
+            static_cast<unsigned>(PropertyAttribute::DontEnum | PropertyAttribute::CustomAccessor));
+    }
 }
 
 // ------------------------------ Functions ---------------------------
@@ -118,6 +134,63 @@ JSC_DEFINE_HOST_FUNCTION(errorProtoFuncToString, (JSGlobalObject* globalObject, 
 
     // 10. Return the result of concatenating name, ":", a single space character, and msg.
     RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, nameString, ": "_s, messageString)));
+}
+
+// 20.5.3.1.1 get Error.prototype.stack
+// https://tc39.es/proposal-error-stack-accessor/#sec-get-error.prototype-stack
+JSC_DEFINE_CUSTOM_GETTER(errorProtoStackGetter, (JSGlobalObject* globalObject, EncodedJSValue encodedThisValue, PropertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let E be the this value.
+    JSValue thisValue = JSValue::decode(encodedThisValue);
+
+    // 2. If E is not an Object, throw a TypeError exception.
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Error.prototype.stack getter requires that |this| be an Object."_s);
+
+    // 3. If E does not have an [[ErrorData]] internal slot, return undefined.
+    auto* errorInstance = dynamicDowncast<ErrorInstance>(thisValue);
+    if (!errorInstance)
+        return JSValue::encode(jsUndefined());
+
+    // 4. Return an implementation-defined string that represents the stack trace of E.
+    // Match V8/legacy behavior: return undefined when no stack info is available
+    // (e.g., Error.stackTraceLimit was 0, or Error.captureStackTrace's own property was deleted).
+    JSString* stack = errorInstance->stackString(vm);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!stack)
+        return JSValue::encode(jsUndefined());
+    return JSValue::encode(stack);
+}
+
+// 20.5.3.1.2 set Error.prototype.stack
+// https://tc39.es/proposal-error-stack-accessor/#sec-set-error.prototype-stack
+JSC_DEFINE_CUSTOM_SETTER(errorProtoStackSetter, (JSGlobalObject* globalObject, EncodedJSValue encodedThisValue, EncodedJSValue encodedValue, PropertyName propertyName))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // 1. Let E be the this value.
+    JSValue thisValue = JSValue::decode(encodedThisValue);
+
+    // 2. If E is not an Object, throw a TypeError exception.
+    if (!thisValue.isObject()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Error.prototype.stack setter requires that |this| be an Object."_s);
+
+    // 3. If v is not a String, throw a TypeError exception.
+    JSValue value = JSValue::decode(encodedValue);
+    if (!value.isString()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, "Error.prototype.stack setter requires that the new value be a String."_s);
+
+    // 4. Perform ? SetterThatIgnoresPrototypeProperties(this value, %Error.prototype%, "stack", v).
+    bool shouldThrow = true;
+    setterThatIgnoresPrototypeProperties(globalObject, thisValue, globalObject->errorPrototype(), propertyName, value, shouldThrow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    // 5. Return undefined.
+    return JSValue::encode(jsUndefined());
 }
 
 } // namespace JSC

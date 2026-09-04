@@ -29,11 +29,20 @@ function checkNonEmptyErrorPropertiesDescriptors(error) {
 }
 
 function checkErrorPropertiesWritable(error) {
-    let properties = ["name", "message", "line", "lineNumber", "column", "columnNumber", "sourceURL", "stack"];
+    let properties = ["name", "message", "line", "lineNumber", "column", "columnNumber", "sourceURL"];
     for (let p of properties) {
         assert(error[p] !== 999);
         error[p] = 999;
         assert(error[p] === 999);
+    }
+    if (Object.getOwnPropertyDescriptor(Error.prototype, "stack")) {
+        // Error.prototype.stack accessor: setter requires a String value.
+        error.stack = "writable";
+        assert(error.stack === "writable");
+    } else {
+        assert(error.stack !== 999);
+        error.stack = 999;
+        assert(error.stack === 999);
     }
 }
 
