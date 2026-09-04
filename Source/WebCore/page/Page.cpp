@@ -2463,6 +2463,10 @@ void Page::updateRendering()
         document.updateIntersectionObservers();
     });
 
+    runProcessingStep(RenderingUpdateStep::CanvasPaint, [] (Document& document) {
+        document.dispatchPaintEventsForCanvasesIfNeeded();
+    });
+
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
         for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
@@ -5201,6 +5205,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush: ts << "PrepareCanvasesForDisplayOrFlush"_s; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"_s; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"_s; break;
+    case RenderingUpdateStep::CanvasPaint: ts << "CanvasPaint"_s; break;
     case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"_s; break;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"_s; break;

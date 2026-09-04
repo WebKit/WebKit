@@ -317,6 +317,7 @@ enum class RenderingUpdateStep : uint32_t {
     PrepareCanvasesForDisplayOrFlush    = 1 << 21,
     CaretAnimation                      = 1 << 22,
     FocusFixup                          = 1 << 23,
+    CanvasPaint                         = 1 << 24,
     UpdateValidationMessagePositions    = 1 << 25,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AccessibilityRegionUpdate           = 1 << 26,
@@ -361,6 +362,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::AccessibilityRegionUpdate,
 #endif
     RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush,
+    RenderingUpdateStep::CanvasPaint,
     RenderingUpdateStep::CaretAnimation,
     RenderingUpdateStep::UpdateContentRelevancy,
     RenderingUpdateStep::PerformPendingViewTransitions,

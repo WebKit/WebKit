@@ -11979,6 +11979,20 @@ void Document::removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingCo
     context.setIsInPreparationForDisplayOrFlush(false);
 }
 
+void Document::dispatchPaintEventsForCanvasesIfNeeded()
+{
+}
+
+void Document::addCanvasNeedingPaintEvent(HTMLCanvasElement& canvas)
+{
+    UNUSED_PARAM(canvas);
+}
+
+void Document::removeCanvasNeedingPaintEvent(HTMLCanvasElement& canvas)
+{
+    m_canvasesNeedingPaintEvent.remove(canvas);
+}
+
 void Document::updateSleepDisablerIfNeeded()
 {
     MediaProducerMediaStateFlags activeVideoCaptureMask { MediaProducerMediaState::HasActiveVideoCaptureDevice, MediaProducerMediaState::HasActiveScreenCaptureDevice, MediaProducerMediaState::HasActiveWindowCaptureDevice };
