@@ -171,6 +171,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
+        WI.Resource.addEventListener(WI.Resource.Event.URLDidChange, this._handleResourceURLDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
@@ -321,6 +322,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Frame.removeEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.removeEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.removeEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
+        WI.Resource.removeEventListener(WI.Resource.Event.URLDidChange, this._handleResourceURLDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
@@ -1988,6 +1990,23 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
             this._updateWaterfallTimeRange(resource.firstTimestamp, resource.timingData.responseEnd);
 
+            if (this._hasURLFilter())
+                this._checkURLFilterAgainstResource(resource);
+
+            if (wasMain)
+                this.needsLayout();
+        });
+    }
+
+    _handleResourceURLDidChange(event)
+    {
+        // A resource's URL can be corrected after its row exists: an out-of-process frame's main resource
+        // starts out as an origin-only placeholder. Re-render so the Name and Domain columns catch up.
+        this._runForMainCollection((collection, wasMain) => {
+            let resource = event.target;
+            collection.pendingUpdates.push(resource);
+
+            // The filter was evaluated against the old URL, and its result is memoized per resource.
             if (this._hasURLFilter())
                 this._checkURLFilterAgainstResource(resource);
 
