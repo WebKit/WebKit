@@ -73,6 +73,7 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PageIdentifier.h>
@@ -719,6 +720,47 @@ bool PDFPluginBase::geometryDidChange(const IntSize& pluginSize, const AffineTra
 #endif
 
     return true;
+}
+
+RefPtr<LocalFrameView> PDFPluginBase::rootFrameView() const
+{
+    RefPtr frame = m_frame.get();
+    // A plugin only ever lives in a local frame, so null means the frame is gone.
+    RefPtr coreFrame = dynamicDowncast<LocalFrame>(frame ? frame->coreFrame() : nullptr);
+    if (!coreFrame)
+        return nullptr;
+
+    return Ref { coreFrame->rootFrame() }->view();
+}
+
+FloatPoint PDFPluginBase::convertFromRootViewToMainFrameView(FloatPoint point) const
+{
+    RefPtr view = rootFrameView();
+    return view ? view->convertToRootViewAcrossIsolatedFrames(point) : point;
+}
+
+FloatRect PDFPluginBase::convertFromRootViewToMainFrameView(FloatRect rect) const
+{
+    RefPtr view = rootFrameView();
+    return view ? view->convertToRootViewAcrossIsolatedFrames(rect) : rect;
+}
+
+void PDFPluginBase::convertTextIndicatorFromRootViewToMainFrameView(TextIndicator& textIndicator) const
+{
+    auto boundingRect = textIndicator.textBoundingRectInRootViewCoordinates();
+    auto boundingRectInMainFrameView = convertFromRootViewToMainFrameView(boundingRect);
+
+    textIndicator.setTextBoundingRectInRootViewCoordinates(boundingRectInMainFrameView);
+    textIndicator.setSelectionRectInRootViewCoordinates(convertFromRootViewToMainFrameView(textIndicator.selectionRectInRootViewCoordinates()));
+    textIndicator.setContentImageWithoutSelectionRectInRootViewCoordinates(convertFromRootViewToMainFrameView(textIndicator.contentImageWithoutSelectionRectInRootViewCoordinates()));
+
+    // Relative to the bounding rect, so absolutize, convert, then re-relativize.
+    textIndicator.setTextRectsInBoundingRectCoordinates(textIndicator.textRectsInBoundingRectCoordinates().map([&](auto rect) {
+        rect.moveBy(boundingRect.location());
+        rect = convertFromRootViewToMainFrameView(rect);
+        rect.moveBy(-boundingRectInMainFrameView.location());
+        return rect;
+    }));
 }
 
 #if ENABLE(PDF_HUD)

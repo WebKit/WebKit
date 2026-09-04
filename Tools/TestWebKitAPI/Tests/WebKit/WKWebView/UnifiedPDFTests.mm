@@ -461,14 +461,74 @@ UNIFIED_PDF_TEST(SelectionHighlightColorDoesNotAdaptToColorScheme)
 
 enum class PDFEmbedElement : uint8_t { IFrame, Embed, Object };
 
-using EmbeddedPDFFitsToFrameParams = std::tuple<PDFEmbedElement, bool, bool, bool>;
+static std::string testName(PDFEmbedElement embedElement)
+{
+    switch (embedElement) {
+    case PDFEmbedElement::IFrame:
+        return "IFrame";
+    case PDFEmbedElement::Embed:
+        return "Embed";
+    case PDFEmbedElement::Object:
+        return "Object";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+struct SiteIsolationParams {
+    // Only a cross-origin frame becomes a local root.
+    bool crossOrigin;
+    bool siteIsolationEnabled;
+    bool sharedProcessEnabled;
+
+    String pdfURL() const { return makeString("https://"_s, crossOrigin ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s); }
+
+    void applyTo(WKWebViewConfiguration *configuration) const
+    {
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
+                [[configuration preferences] _setEnabled:siteIsolationEnabled forFeature:feature];
+            else if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
+                [[configuration preferences] _setEnabled:sharedProcessEnabled forFeature:feature];
+        }
+    }
+
+    std::string testName() const
+    {
+        return std::string { crossOrigin ? "CrossOrigin" : "SameOrigin" }
+            + "_SiteIsolation" + (siteIsolationEnabled ? "Enabled" : "Disabled")
+            + "_SiteIsolationSharedProcess" + (sharedProcessEnabled ? "Enabled" : "Disabled");
+    }
+};
+
+// Site isolation ignores the shared process preference when disabled, so skip that combination.
+static constexpr SiteIsolationParams siteIsolationParams[] = {
+    { .crossOrigin = false, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
+    { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
+    { .crossOrigin = false, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
+    { .crossOrigin = true, .siteIsolationEnabled = false, .sharedProcessEnabled = false },
+    { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = false },
+    { .crossOrigin = true, .siteIsolationEnabled = true, .sharedProcessEnabled = true },
+};
+
+template<typename Params> static std::vector<Params> withEachPDFEmbedElement()
+{
+    std::vector<Params> params;
+    for (auto embedElement : { PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object }) {
+        for (auto& siteIsolation : siteIsolationParams)
+            params.push_back(Params { embedElement, siteIsolation });
+    }
+    return params;
+}
+
+struct EmbeddedPDFFitsToFrameParams {
+    PDFEmbedElement embedElement;
+    SiteIsolationParams siteIsolation;
+};
 
 class EmbeddedPDFFitsToFrame : public testing::TestWithParam<EmbeddedPDFFitsToFrameParams> {
 public:
-    PDFEmbedElement embedElement() const { return std::get<0>(GetParam()); }
-    bool crossOrigin() const { return std::get<1>(GetParam()); }
-    bool siteIsolationEnabled() const { return std::get<2>(GetParam()); }
-    bool siteIsolationSharedProcessEnabled() const { return std::get<3>(GetParam()); }
+    PDFEmbedElement embedElement() const { return GetParam().embedElement; }
 
     void SetUp() override
     {
@@ -478,13 +538,7 @@ public:
 
         configuration = configurationForWebViewTestingUnifiedPDF();
         [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
-        for (_WKFeature *feature in [WKPreferences _features]) {
-            NSString *key = feature.key;
-            if ([key isEqualToString:@"SiteIsolationEnabled"])
-                [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
-            else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
-                [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
-        }
+        GetParam().siteIsolation.applyTo(configuration.get());
 
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
@@ -494,22 +548,7 @@ public:
 
     static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFFitsToFrameParams> info)
     {
-        std::string element = [embedElement = std::get<0>(info.param)] {
-            switch (embedElement) {
-            case PDFEmbedElement::IFrame:
-                return "IFrame";
-            case PDFEmbedElement::Embed:
-                return "Embed";
-            case PDFEmbedElement::Object:
-                return "Object";
-            }
-            ASSERT_NOT_REACHED();
-            return "";
-        }();
-        return element
-            + (std::get<1>(info.param) ? "_CrossOrigin" : "_SameOrigin")
-            + "_SiteIsolation" + (std::get<2>(info.param) ? "Enabled" : "Disabled")
-            + "_SiteIsolationSharedProcess" + (std::get<3>(info.param) ? "Enabled" : "Disabled");
+        return testName(info.param.embedElement) + "_" + info.param.siteIsolation.testName();
     }
 
     std::unique_ptr<HTTPServer> server;
@@ -526,9 +565,8 @@ TEST_P(EmbeddedPDFFitsToFrame, Test)
             return;
 #endif
 
-    auto mainHTML = [crossOrigin = crossOrigin(), embedElement = embedElement()] {
+    auto mainHTML = [pdfURL = GetParam().siteIsolation.pdfURL(), embedElement = embedElement()] {
         auto layout = "style='position:absolute; left:0; top:0; border:0; width:600px; height:0'"_s;
-        auto pdfURL = makeString("https://"_s, crossOrigin ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s);
         switch (embedElement) {
         case PDFEmbedElement::IFrame:
             return makeString("<iframe id='pdf' "_s, layout, " src='"_s, pdfURL, "'></iframe>"_s);
@@ -597,7 +635,181 @@ TEST_P(EmbeddedPDFFitsToFrame, Test)
     EXPECT_LE([[finalState objectForKey:@"maxX"] doubleValue], pluginWidth + tolerance);
 }
 
-INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFFitsToFrame, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFFitsToFrame::testNameGenerator);
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFFitsToFrame, testing::ValuesIn(withEachPDFEmbedElement<EmbeddedPDFFitsToFrameParams>()), &EmbeddedPDFFitsToFrame::testNameGenerator);
+
+#if PLATFORM(MAC)
+
+// ContextMenuItemTag::DictionaryLookup. The title is localized, so match the tag.
+static constexpr NSInteger dictionaryLookupContextMenuItemTag = 2;
+
+class EmbeddedPDFLookUp : public testing::TestWithParam<SiteIsolationParams> {
+public:
+    // Large enough that a skipped conversion is unmissable.
+    static constexpr int iframeLeft = 100;
+    static constexpr int iframeTop = 120;
+    static constexpr int iframeWidth = 400;
+    static constexpr int iframeHeight = 300;
+    static constexpr NSRect iframeFrame { { iframeLeft, iframeTop }, { iframeWidth, iframeHeight } };
+
+    void SetUp() override
+    {
+        // The spacer makes the main frame scrollable.
+        auto mainHTML = makeString("<body style='margin:0'><iframe style='position:absolute; left:"_s, iframeLeft,
+            "px; top:"_s, iframeTop, "px; width:"_s, iframeWidth, "px; height:"_s, iframeHeight,
+            "px; border:0' src='"_s, GetParam().pdfURL(), "'></iframe><div style='height:2000px'></div>"_s);
+
+        server = makeUnique<HTTPServer>(std::initializer_list<std::pair<String, HTTPResponse>> {
+            { "/main"_s, HTTPResponse { { { "Content-Type"_s, "text/html"_s } }, mainHTML } },
+            { "/test.pdf"_s, HTTPResponse { { { "Content-Type"_s, "application/pdf"_s } }, testPDFDataWithLink() } },
+        }, HTTPServer::Protocol::HttpsProxy);
+
+        configuration = configurationForWebViewTestingUnifiedPDF();
+        [configuration setWebsiteDataStore:[server->httpsProxyConfiguration() websiteDataStore]];
+        GetParam().applyTo(configuration.get());
+
+        navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [navigationDelegate allowAnyTLSCertificate];
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration addToWindow:YES]);
+        [webView _setWindowOcclusionDetectionEnabled:NO];
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+    }
+
+    // A point over the PDF's text, in web view coordinates. The sole annotation is the link over
+    // "our website", so its center is on text whatever the layout.
+    NSPoint loadAndFindPointOverPDFText()
+    {
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr<NSArray> center;
+        bool foundAnnotation = TestWebKitAPI::Util::waitFor([&] {
+            center = dynamic_objc_cast<NSArray>([webView objectByEvaluatingJavaScript:@"(() => {"
+                "  const plugin = document.querySelector('embed');"
+                "  const rects = plugin ? internals.pdfAnnotationRectsForTesting(plugin) : [];"
+                "  if (!rects.length) return null;"
+                "  const box = plugin.getBoundingClientRect();"
+                "  return [box.x + rects[0].x + rects[0].width / 2, box.y + rects[0].y + rects[0].height / 2];"
+                "})()" inFrame:[webView firstChildFrame]]);
+            return !!center;
+        });
+        EXPECT_TRUE(foundAnnotation);
+        if (!foundAnnotation)
+            return NSZeroPoint;
+
+        [webView waitForNextPresentationUpdate];
+        return NSMakePoint(iframeLeft + [[center objectAtIndex:0] doubleValue], iframeTop + [[center objectAtIndex:1] doubleValue]);
+    }
+
+    // Right-clicks and picks Look Up, returning the text indicator's bounding rect in root view
+    // coordinates. The menu is a plain NSMenu, so swizzling is the only way in.
+    NSRect lookUpAtPoint(NSPoint pointInWebView)
+    {
+        __block bool lookedUp = false;
+        __block RetainPtr<NSString> lookedUpText;
+        __block NSRect textBoundingRect = NSZeroRect;
+        [webView _setDidPerformDictionaryLookupHandlerForTesting:^(NSString *text, CGRect rect) {
+            lookedUpText = text;
+            textBoundingRect = rect;
+            lookedUp = true;
+        }];
+
+        __block bool selectedLookUp = false;
+        InstanceMethodSwizzler popUpSwizzler {
+            object_getClass([NSMenu class]),
+            @selector(popUpContextMenu:withEvent:forView:),
+            imp_implementationWithBlock(^(id, NSMenu *menu, NSEvent *, NSView *) {
+                NSInteger index = [menu indexOfItemWithTag:dictionaryLookupContextMenuItemTag];
+                if (index == -1)
+                    return;
+                [menu performActionForItemAtIndex:index];
+                selectedLookUp = true;
+            })
+        };
+
+        // Right-clicking selects the word under the cursor, putting Look Up in the menu.
+        [webView rightClickAtPoint:[webView convertPoint:pointInWebView toView:nil]];
+        bool didLookUp = TestWebKitAPI::Util::runFor(&lookedUp, 5_s);
+        [webView _setDidPerformDictionaryLookupHandlerForTesting:nil];
+
+        EXPECT_TRUE(selectedLookUp);
+        EXPECT_TRUE(didLookUp);
+        EXPECT_GT([lookedUpText length], 0u);
+        return textBoundingRect;
+    }
+
+    static std::string testNameGenerator(testing::TestParamInfo<SiteIsolationParams> info)
+    {
+        return info.param.testName();
+    }
+
+    std::unique_ptr<HTTPServer> server;
+    RetainPtr<WKWebViewConfiguration> configuration;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<TestWKWebView> webView;
+};
+
+TEST_P(EmbeddedPDFLookUp, ContextMenuIsPositionedAtTheClick)
+{
+    auto pointInWindow = [webView convertPoint:loadAndFindPointOverPDFText() toView:nil];
+
+    __block bool poppedUpMenu = false;
+    __block NSPoint menuLocationInWindow = NSZeroPoint;
+    InstanceMethodSwizzler popUpSwizzler {
+        object_getClass([NSMenu class]),
+        @selector(popUpContextMenu:withEvent:forView:),
+        imp_implementationWithBlock(^(id, NSMenu *, NSEvent *event, NSView *) {
+            menuLocationInWindow = [event locationInWindow];
+            poppedUpMenu = true;
+        })
+    };
+
+    [webView rightClickAtPoint:pointInWindow];
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&poppedUpMenu, 10_s));
+
+    // Round-trips through root view, screen and window conversions, each rounding.
+    EXPECT_NEAR(menuLocationInWindow.x, pointInWindow.x, 2);
+    EXPECT_NEAR(menuLocationInWindow.y, pointInWindow.y, 2);
+}
+
+TEST_P(EmbeddedPDFLookUp, TextIndicatorRectCoversTheLookedUpWord)
+{
+    auto pointInWebView = loadAndFindPointOverPDFText();
+    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+
+    EXPECT_FALSE(NSIsEmptyRect(textBoundingRect));
+    // Containment alone is not enough: the iframe is exactly the plugin's size, so an unconverted
+    // rect is still inside it and only misses the click.
+    EXPECT_TRUE(NSPointInRect(pointInWebView, textBoundingRect));
+    EXPECT_TRUE(NSContainsRect(iframeFrame, textBoundingRect));
+}
+
+TEST_P(EmbeddedPDFLookUp, TextIndicatorRectAccountsForMainFrameScroll)
+{
+    auto pointInWebView = loadAndFindPointOverPDFText();
+
+    static constexpr int scrollOffset = 40;
+    bool scrolled = TestWebKitAPI::Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 40)"];
+        return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == scrollOffset;
+    });
+    EXPECT_TRUE(scrolled);
+    [webView waitForNextPresentationUpdate];
+
+    pointInWebView.y -= scrollOffset;
+    auto textBoundingRect = lookUpAtPoint(pointInWebView);
+
+    // Under site isolation the plugin's transform does not move, so the offset must come from the
+    // conversion; a sign error moves the highlight off the word.
+    EXPECT_FALSE(NSIsEmptyRect(textBoundingRect));
+    EXPECT_TRUE(NSPointInRect(pointInWebView, textBoundingRect));
+    EXPECT_TRUE(NSContainsRect(NSOffsetRect(iframeFrame, 0, -scrollOffset), textBoundingRect));
+}
+
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFLookUp, testing::ValuesIn(siteIsolationParams), &EmbeddedPDFLookUp::testNameGenerator);
+
+#endif // PLATFORM(MAC)
 
 #if ENABLE(PDF_HUD)
 
@@ -904,18 +1116,18 @@ UNIFIED_PDF_TEST(PDFHUDMultipleIFrames)
     EXPECT_TRUE(hadRightFrame);
 }
 
-using EmbeddedPDFHUDSiteIsolationParams = std::tuple<PDFEmbedElement, bool, bool, bool>;
+struct EmbeddedPDFHUDSiteIsolationParams {
+    PDFEmbedElement embedElement;
+    SiteIsolationParams siteIsolation;
+};
 
 class EmbeddedPDFHUDSiteIsolation : public testing::TestWithParam<EmbeddedPDFHUDSiteIsolationParams> {
 public:
-    PDFEmbedElement embedElement() const { return std::get<0>(GetParam()); }
-    bool crossOrigin() const { return std::get<1>(GetParam()); }
-    bool siteIsolationEnabled() const { return std::get<2>(GetParam()); }
-    bool siteIsolationSharedProcessEnabled() const { return std::get<3>(GetParam()); }
+    PDFEmbedElement embedElement() const { return GetParam().embedElement; }
 
     String mainHTML() const
     {
-        auto pdfURL = makeString("https://"_s, crossOrigin() ? "webkit.org"_s : "example.com"_s, "/test.pdf"_s);
+        auto pdfURL = GetParam().siteIsolation.pdfURL();
         auto layout = "width='300' height='150' style='position:absolute; left:10px; top:28px; border:0'"_s;
         switch (embedElement()) {
         case PDFEmbedElement::IFrame:
@@ -944,14 +1156,10 @@ public:
 
         configuration = server->httpsProxyConfiguration();
         for (_WKFeature *feature in [WKPreferences _features]) {
-            NSString *key = feature.key;
-            if ([key isEqualToString:@"UnifiedPDFEnabled"] || [key isEqualToString:@"PDFPluginHUDEnabled"])
+            if ([feature.key isEqualToString:@"UnifiedPDFEnabled"] || [feature.key isEqualToString:@"PDFPluginHUDEnabled"])
                 [[configuration preferences] _setEnabled:YES forFeature:feature];
-            else if ([key isEqualToString:@"SiteIsolationEnabled"])
-                [[configuration preferences] _setEnabled:siteIsolationEnabled() forFeature:feature];
-            else if ([key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
-                [[configuration preferences] _setEnabled:siteIsolationSharedProcessEnabled() forFeature:feature];
         }
+        GetParam().siteIsolation.applyTo(configuration.get());
 
         navigationDelegate = adoptNS([TestNavigationDelegate new]);
         [navigationDelegate allowAnyTLSCertificate];
@@ -978,22 +1186,7 @@ public:
 
     static std::string testNameGenerator(testing::TestParamInfo<EmbeddedPDFHUDSiteIsolationParams> info)
     {
-        std::string element = [embedElement = std::get<0>(info.param)] {
-            switch (embedElement) {
-            case PDFEmbedElement::IFrame:
-                return "IFrame";
-            case PDFEmbedElement::Embed:
-                return "Embed";
-            case PDFEmbedElement::Object:
-                return "Object";
-            }
-            ASSERT_NOT_REACHED();
-            return "";
-        }();
-        return element
-            + (std::get<1>(info.param) ? "_CrossOrigin" : "_SameOrigin")
-            + "_SiteIsolation" + (std::get<2>(info.param) ? "Enabled" : "Disabled")
-            + "_SiteIsolationSharedProcess" + (std::get<3>(info.param) ? "Enabled" : "Disabled");
+        return testName(info.param.embedElement) + "_" + info.param.siteIsolation.testName();
     }
 
     std::unique_ptr<HTTPServer> server;
@@ -1030,7 +1223,7 @@ TEST_P(EmbeddedPDFHUDSiteIsolation, HUDTracksMainFrameScroll)
     checkFrame([webView _pdfHUDs].anyObject.frame, 10, 8, 300, 150, 1);
 }
 
-INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::Combine(testing::Values(PDFEmbedElement::IFrame, PDFEmbedElement::Embed, PDFEmbedElement::Object), testing::Bool(), testing::Bool(), testing::Bool()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
+INSTANTIATE_TEST_SUITE_P(UnifiedPDF, EmbeddedPDFHUDSiteIsolation, testing::ValuesIn(withEachPDFEmbedElement<EmbeddedPDFHUDSiteIsolationParams>()), &EmbeddedPDFHUDSiteIsolation::testNameGenerator);
 
 UNIFIED_PDF_TEST(PDFHUDLoadPDFTypeWithPluginsBlocked)
 {
