@@ -73,8 +73,8 @@ class Revert(Command):
             try:
                 commit = repository.find(c, include_log=True)
             except (local.Scm.Exception, ValueError) as exception:
-                sys.stderr.write('Could not find "{}"'.format(c) + '\n')
-                return None, None, None
+                sys.stderr.write('Could not find "{}": {}\n'.format(c, exception))
+                return None, None
 
             commit_objects.append(commit)
             for i in commit.issues:
