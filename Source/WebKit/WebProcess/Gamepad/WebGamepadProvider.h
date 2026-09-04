@@ -52,6 +52,8 @@ public:
 
     void setInitialGamepads(const Vector<std::optional<GamepadData>>&);
 
+    void resetGamepadsForTesting();
+
 private:
     friend NeverDestroyed<WebGamepadProvider>;
     WebGamepadProvider();

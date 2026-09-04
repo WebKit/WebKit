@@ -66,6 +66,8 @@ public:
 
     WebPageProxy* platformWebPageProxyForGamepadInput();
 
+    void resetGamepadsForTesting();
+
 private:
     friend NeverDestroyed<UIGamepadProvider>;
     UIGamepadProvider();

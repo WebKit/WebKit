@@ -572,11 +572,13 @@ void WKContextSetLocalhostAliases(WKContextRef, WKArrayRef localhostAliases)
         WebKit::LegacyGlobalSettings::singleton().registerHostnameAsLocal(hostname);
 }
 
-void WKContextClearMockGamepadsForTesting(WKContextRef)
+void WKContextClearMockGamepadsForTesting(WKContextRef contextRef)
 {
 #if ENABLE(GAMEPAD)
     if (WebCore::GamepadProvider::singleton().isMockGamepadProvider())
         WebCore::GamepadProvider::singleton().clearGamepadsForTesting();
+
+    protect(WebKit::toImpl(contextRef))->resetGamepadsForTesting();
 #endif
 }
 

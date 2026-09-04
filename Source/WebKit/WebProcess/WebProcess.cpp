@@ -1319,6 +1319,11 @@ void WebProcess::gamepadDisconnected(unsigned index)
     WebGamepadProvider::singleton().gamepadDisconnected(index);
 }
 
+void WebProcess::resetGamepadsForTesting()
+{
+    WebGamepadProvider::singleton().resetGamepadsForTesting();
+}
+
 #endif
 
 void WebProcess::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
