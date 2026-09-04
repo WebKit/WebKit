@@ -21,10 +21,11 @@ async_test(t => {
     const io = new frames[0].ResizeObserver(new frames[1].Function(`throw new parent.frames[2].Error("PASS");`));
     io.observe(target);
 
-    t.step_timeout(() => {
-      assert_array_equals(onerrorCalls, ["frame1"]);
-      t.done();
-    }, 25);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(t.step_func_done(() => {
+        assert_array_equals(onerrorCalls, ["frame1"]);
+      }));
+    });
   });
 });
 </script>
