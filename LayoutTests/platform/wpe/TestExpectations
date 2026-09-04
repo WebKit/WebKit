@@ -1219,7 +1219,6 @@ webkit.org/b/317975 [ x86_64 ] fast/dom/HTMLImageElement/sizes/image-sizes-js-in
 
 webkit.org/b/320351 [ x86_64 ] fast/forms/range/range-set-value-repaint.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/320649 webrtc/disable-encryption.html [ Crash Pass ]
 webkit.org/b/320650 [ Debug ] editing/execCommand/insert-unordered-list-after-DOMNodeRemoved.html [ Timeout Pass ]
 webkit.org/b/320651 [ Debug ] svg/animations/animate-to-low-prio-frozen.html [ Failure Pass ]
 webkit.org/b/320652 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/is-pseudo-containing-sibling-relationship-in-has.html [ Failure Pass ]

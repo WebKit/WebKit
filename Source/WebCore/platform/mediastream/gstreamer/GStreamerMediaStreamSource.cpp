@@ -947,10 +947,12 @@ static void webkitMediaStreamSrcDispose(GObject* object)
     auto priv = self->priv;
 
     GST_DEBUG_OBJECT(self, "Disposing");
-    for (auto& source : priv->sources.values())
-        webkitMediaStreamSrcCleanup(self, source);
-
-    priv->sources.clear();
+    while (!priv->sources.isEmpty()) {
+        auto source = priv->sources.takeFirst();
+        callOnMainThreadAndWait([self, source = WTF::move(source)] {
+            webkitMediaStreamSrcCleanup(self, source);
+        });
+    }
 
     if (priv->stream) {
         priv->stream->removeObserver(*priv->mediaStreamObserver);
