@@ -44,6 +44,7 @@ enum class PointerLockRequestResult : uint8_t;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : uint8_t;
 struct FocusOptions;
+struct FrameTreeSyncSerializationData;
 struct SystemPreviewInfo;
 struct TextRecognitionOptions;
 }
@@ -610,6 +611,8 @@ private:
 #if ENABLE(VIDEO)
     void showCaptionDisplaySettings(WebCore::HTMLMediaElement&, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&) final;
 #endif
+
+    void broadcastFrameTreeSyncDataBatchToOtherProcesses(const Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&) final;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };
