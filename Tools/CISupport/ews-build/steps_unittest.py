@@ -13495,11 +13495,8 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
                 'status': 'ok', 'tests': ['fast/a.html', 'fast/b.html'],
             }))
         self.assertTrue(reported)
-        self.assertIn('Request:\n{', logs)
         self.assertNotIn('api_key', logs)
         self.assertNotIn('super-secret', logs)
-        self.assertIn('"suite": "layout-tests"', logs)
-        self.assertIn('(200):', logs)
 
     @defer.inlineCallbacks
     def test_report_ews_logs_the_tests_the_server_stored(self):

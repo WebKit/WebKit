@@ -23,7 +23,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
-import json
 import os
 import sys
 import time
@@ -325,16 +324,12 @@ class ResultsDatabase(object):
         url = f'{cls.HOSTNAME}/api/upload/ews'
         label = f'{payload.flaky_type} flaky tests' if payload.flaky_type else 'failed tests'
         logger(f"Reporting {label} to {url}: {', '.join(sorted(payload.results))}\n")
-        # FIXME: Remove the request and response dumps once reporting has been validated against a
-        # deployed results database.
-        logger(f'Request:\n{json.dumps(document, indent=2, sort_keys=True)}\n')
 
         response = yield TwistedAdditions.request(url, type=b'POST', json=body, logger=logger)
         if not response:
             logger(f'No response from {url}, so {label} were not reported\n')
             return False
 
-        logger(f'Response from {url} ({response.status_code}):\n{response.content}\n')
         if response.status_code != 200:
             logger(f'Failed to report {label} (status {response.status_code})\n{response.content}\n')
             return False
