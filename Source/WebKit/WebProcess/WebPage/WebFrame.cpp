@@ -2001,7 +2001,7 @@ void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& i
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
-        return completion({ { }, { }, false });
+        return completion({ { }, { }, false, false });
 
     auto resolvedInteraction = interactionWithResolvedTargetNode(WTF::move(interaction));
     completion(TextExtraction::interactionDescription(resolvedInteraction, *frame));
@@ -2077,6 +2077,17 @@ void WebFrame::requestContainerJSHandleForSearchTexts(Vector<String>&& searchTex
 void WebFrame::requestContentFrameIdentifierForNode(NodeIdentifier nodeIdentifier, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>&&)>&& completion)
 {
     completion(TextExtraction::contentFrameIdentifierForNode(nodeIdentifier));
+}
+
+void WebFrame::findFirstConnectedNode(Vector<NodeIdentifier>&& candidates, CompletionHandler<void(std::optional<NodeIdentifier>)>&& completion)
+{
+    for (auto& candidate : candidates) {
+        RefPtr node = Node::fromIdentifier(candidate);
+        if (node && node->isConnected())
+            return completion(candidate);
+    }
+
+    completion({ });
 }
 
 void WebFrame::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)

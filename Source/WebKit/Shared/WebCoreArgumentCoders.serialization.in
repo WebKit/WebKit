@@ -4938,6 +4938,7 @@ header: <WebCore/TextExtractionTypes.h>
     String description;
     Vector<String> stringsToValidate;
     bool didFindTargetNode;
+    bool describesInteractionTarget;
 };
 
 header: <WebCore/TextExtractionTypes.h>

@@ -79,6 +79,7 @@ struct InteractionDescription {
     String description;
     Vector<String> stringsToValidate;
     bool didFindTargetNode { true };
+    bool describesInteractionTarget { true };
 };
 
 enum class EventListenerCategory : uint8_t {

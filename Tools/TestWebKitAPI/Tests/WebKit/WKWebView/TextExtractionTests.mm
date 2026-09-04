@@ -447,7 +447,7 @@ TEST(TextExtractionTests, InteractionDescriptionAndSearchTextForLabellessIcons)
         "<div class='row-bravo'><span>Bravo Label</span><button onclick=''></button></div>"];
 
     RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
-    auto clickDescription = [&](NSString *className, NSString *searchText) -> NSString * {
+    auto makeClickInteraction = [&](NSString *className, NSString *searchText) {
         RetainPtr identifier = extractNodeIdentifier(debugText, className);
         EXPECT_NOT_NULL(identifier);
 
@@ -456,10 +456,20 @@ TEST(TextExtractionTests, InteractionDescriptionAndSearchTextForLabellessIcons)
         if (searchText)
             [interaction setText:searchText];
 
+        return interaction;
+    };
+
+    auto clickDescription = [&](NSString *className, NSString *searchText) -> NSString * {
         NSError *error = nil;
-        NSString *description = [interaction debugDescriptionInWebView:webView error:&error];
+        NSString *description = [makeClickInteraction(className, searchText) debugDescriptionInWebView:webView error:&error];
         EXPECT_NULL(error);
         return description;
+    };
+
+    auto cannotDescribeClick = [&](NSString *className, NSString *searchText) -> bool {
+        NSError *error = nil;
+        NSString *description = [makeClickInteraction(className, searchText) debugDescriptionInWebView:webView error:&error];
+        return !description && error;
     };
 
     EXPECT_WK_STREQ("Click on i with class “chevron-one” before rendered text “Notifications”", clickDescription(@"chevron-one", nil));
@@ -469,8 +479,8 @@ TEST(TextExtractionTests, InteractionDescriptionAndSearchTextForLabellessIcons)
     EXPECT_WK_STREQ("Click on button after rendered text “Bravo Label” under div with class “row-bravo”", clickDescription(@"button", nil));
 
     EXPECT_WK_STREQ("Click on “Security” in child node of span under div with class “head-two”, with rendered text “Security”", clickDescription(@"chevron-two", @"Security"));
-    EXPECT_WK_STREQ("Click", clickDescription(@"chevron-two", @"Notifications"));
-    EXPECT_WK_STREQ("Click", clickDescription(@"chevron-two", @"Nonexistent"));
+    EXPECT_TRUE(cannotDescribeClick(@"chevron-two", @"Notifications"));
+    EXPECT_TRUE(cannotDescribeClick(@"chevron-two", @"Nonexistent"));
 }
 
 TEST(TextExtractionTests, InteractionDescriptionIncludesAssociatedLabelText)
@@ -604,6 +614,37 @@ TEST(TextExtractionTests, InteractionDebugDescriptionWithStaleNodeIdentifier)
     [interaction setText:@"Test"];
 
     EXPECT_NOT_NULL([interaction debugDescriptionInWebView:webView error:&error]);
+}
+
+TEST(TextExtractionTests, InteractionDebugDescriptionWithUnresolvableNodeIdentifier)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:@"999999999"];
+
+    EXPECT_NULL([interaction debugDescriptionInWebView:webView error:&error]);
+    EXPECT_NOT_NULL(error);
+}
+
+TEST(TextExtractionTests, InteractionDebugDescriptionWithoutTargetElement)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"debug-text-extraction"];
+
+    NSError *error = nil;
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionScroll]);
+
+    EXPECT_WK_STREQ("Scroll to next page", [interaction debugDescriptionInWebView:webView error:&error]);
+    EXPECT_NULL(error);
 }
 
 TEST(TextExtractionTests, InteractionResultSummary)
@@ -796,6 +837,58 @@ TEST(TextExtractionTests, InteractionRemapsStaleNodeIdentifierWithURL)
     EXPECT_TRUE([summary containsString:@"stale"]);
     EXPECT_TRUE([summary containsString:@"re-resolved"]);
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.accountTabClicked"] boolValue]);
+}
+
+TEST(TextExtractionTests, InteractionReportsStaleNodeWhenRemapCandidateIsAlsoStale)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    auto makeDebugTextConfiguration = [] {
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setFilterOptions:_WKTextExtractionFilterNone];
+        return configuration;
+    };
+
+    RetainPtr verificationURL = [NSURL URLWithString:@"https://example.com/verify"];
+    RetainPtr chooseMethodMarkup = @"<div>"
+        "<p>Keeping your account safe</p>"
+        "<p>Choose one to continue</p>"
+        "<label><input type='radio' name='method' aria-label='Email verification'>Email</label>"
+        "<label><input type='radio' name='method' aria-label='Text verification'>Text</label>"
+        "<button id='continue'>Continue</button>"
+        "</div>";
+
+    RetainPtr enterCodeMarkup = @"<div>"
+        "<p>Enter verification code</p>"
+        "<p>It may take a few minutes to arrive</p>"
+        "<input type='text' aria-label='Verification code'>"
+        "<button id='verify'>Verify</button>"
+        "</div>";
+
+    [webView synchronouslyLoadHTMLString:chooseMethodMarkup baseURL:verificationURL];
+    RetainPtr staleIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Email verification");
+    EXPECT_NOT_NULL(staleIdentifier);
+
+    [webView synchronouslyLoadHTMLString:chooseMethodMarkup baseURL:verificationURL];
+    RetainPtr supersededIdentifier = extractNodeIdentifier([webView synchronouslyGetDebugText:makeDebugTextConfiguration()], @"Email verification");
+    EXPECT_NOT_NULL(supersededIdentifier);
+    EXPECT_FALSE([staleIdentifier isEqualToString:supersededIdentifier]);
+
+    [webView synchronouslyLoadHTMLString:enterCodeMarkup baseURL:verificationURL];
+    RetainPtr latestDebugText = [webView synchronouslyGetDebugText:makeDebugTextConfiguration()];
+    EXPECT_FALSE([latestDebugText containsString:@"Email verification"]);
+
+    RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+    [interaction setNodeIdentifier:staleIdentifier];
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result summary]);
+    RetainPtr<NSString> errorDescription = [[result error] userInfo][NSDebugDescriptionErrorKey];
+    EXPECT_TRUE([errorDescription containsString:@"re-extract the page"]);
+    EXPECT_FALSE([errorDescription containsString:@"re-resolved"]);
 }
 
 TEST(TextExtractionTests, TargetNodeAndClientAttributes)

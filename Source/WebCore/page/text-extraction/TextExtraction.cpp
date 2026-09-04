@@ -3423,6 +3423,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
         }
     }
 
+    bool didAppendElementString = false;
     auto appendElementString = [&]<typename... T>(T&&... args) {
         auto elementString = textDescription(std::forward<T>(args)...);
         if (elementString.isEmpty())
@@ -3450,6 +3451,7 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
         }();
 
         description.append(makeString(WTF::move(elementPrefix), WTF::move(elementString)));
+        didAppendElementString = true;
     };
 
     if (auto location = interaction.locationInRootView) {
@@ -3476,7 +3478,9 @@ InteractionDescription interactionDescription(const Interaction& interaction, Lo
         didFindTargetNode = node && node->isConnected();
     }
 
-    return { description.toString(), WTF::move(stringsToValidate), didFindTargetNode };
+    bool targetsSpecificElement = interaction.locationInRootView || interaction.nodeIdentifier || interaction.targetNodeHandleIdentifier || (usesSearchText && !interaction.text.isEmpty());
+
+    return { description.toString(), WTF::move(stringsToValidate), didFindTargetNode, didAppendElementString || !targetsSpecificElement };
 }
 
 std::optional<FrameIdentifier> contentFrameIdentifierForNode(NodeIdentifier identifier)

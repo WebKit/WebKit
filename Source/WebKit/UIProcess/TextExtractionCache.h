@@ -36,6 +36,7 @@ class TextExtractionCache {
 public:
     static constexpr auto maxEntries = 20;
     static constexpr auto contextLineCount = 3;
+    static constexpr auto maxRemapCandidates = 4;
 
     enum class NodeResolution : uint8_t {
         Current,
@@ -46,7 +47,7 @@ public:
     };
 
     struct ResolvedNode {
-        String identifier;
+        Vector<String> identifiers;
         NodeResolution resolution { NodeResolution::Unknown };
     };
 
@@ -65,6 +66,13 @@ private:
     static Vector<String> contextWindowAfter(const Vector<TextExtractionLineContent>&, unsigned targetIndex);
 
     Vector<Entry> m_entries;
+};
+
+struct StaleNodeResolutionState {
+    String requestedIdentifier;
+    String noteForCurrentAttempt;
+
+    bool didRemap() const { return !noteForCurrentAttempt.isEmpty(); }
 };
 
 } // namespace WebKit

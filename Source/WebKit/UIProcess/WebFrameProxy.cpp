@@ -1269,6 +1269,14 @@ void WebFrameProxy::requestContentFrameIdentifierForNode(NodeIdentifier nodeIden
     sendWithAsyncReply(Messages::WebFrame::RequestContentFrameIdentifierForNode(nodeIdentifier), WTF::move(completion));
 }
 
+void WebFrameProxy::findFirstConnectedNode(Vector<NodeIdentifier>&& candidates, CompletionHandler<void(std::optional<NodeIdentifier>)>&& completion)
+{
+    if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
+        return completion({ });
+
+    sendWithAsyncReply(Messages::WebFrame::FindFirstConnectedNode(WTF::move(candidates)), WTF::move(completion));
+}
+
 void WebFrameProxy::getSelectorPathsForNode(JSHandleInfo&& handle, CompletionHandler<void(Vector<HashSet<String>>&&)>&& completion)
 {
     if (RefPtr page = m_page.get(); !page || !page->hasRunningProcess())
