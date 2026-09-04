@@ -1475,6 +1475,12 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 #endif
 }
 
+void WebPage::frameTreeSyncDataBatchChangedInAnotherProcess(const Vector<std::pair<WebCore::FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>& updates)
+{
+    for (auto& [frameID, data] : updates)
+        frameTreeSyncDataChangedInAnotherProcess(frameID, data);
+}
+
 void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)
 {
     ASSERT(m_page->settings().siteIsolationEnabled());

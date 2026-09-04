@@ -9196,30 +9196,56 @@ static bool NODELETE frameTreePropertyIsRestrictedToFrameOwningProcess(WebCore::
     }
 }
 
-void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+static bool shouldBroadcastFrameTreeSyncData(WebProcessProxy& process, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
 {
-    Ref process = WebProcessProxy::fromConnection(connection);
-
     RefPtr webFrameProxy = WebFrameProxy::webFrame(frameID);
     if (!webFrameProxy)
-        return;
+        return false;
 
     // FIXME: This could instead be an option in FrameTreeSyncData.in to allow
     // certain properties to be mutable from non-frame-owning processes.
     if (frameTreePropertyIsRestrictedToFrameOwningProcess(static_cast<WebCore::FrameTreeSyncDataType>(data.value.index()))) {
-        if (&webFrameProxy->process() != &process.get()) {
+        if (&webFrameProxy->process() != &process) {
             // FIXME: make this a MESSAGE_CHECK.
-            return;
+            return false;
         }
     }
 
     if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::FrameRect))
         webFrameProxy->setRemoteFrameRect(std::get<IntRect>(data.value));
 
+    return true;
+}
+
+void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, FrameIdentifier frameID, const WebCore::FrameTreeSyncSerializationData& data)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+
+    if (!shouldBroadcastFrameTreeSyncData(process, frameID, data))
+        return;
+
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)
             return;
         webProcess.send(Messages::WebPage::FrameTreeSyncDataChangedInAnotherProcess(frameID, data), pageID);
+    });
+}
+
+void WebPageProxy::broadcastFrameTreeSyncDataBatch(IPC::Connection& connection, Vector<std::pair<FrameIdentifier, WebCore::FrameTreeSyncSerializationData>>&& updates)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+
+    updates.removeAllMatching([&](auto& update) {
+        return !shouldBroadcastFrameTreeSyncData(process, update.first, update.second);
+    });
+
+    if (updates.isEmpty())
+        return;
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess == process)
+            return;
+        webProcess.send(Messages::WebPage::FrameTreeSyncDataBatchChangedInAnotherProcess(updates), pageID);
     });
 }
 

@@ -163,6 +163,7 @@ struct ContentRuleListResults;
 struct DataDetectorElementInfo;
 struct DateTimeChooserParameters;
 struct FocusOptions;
+struct FrameTreeSyncSerializationData;
 struct GraphicsDeviceAdapter;
 struct LiveRegionAnnouncementData;
 struct MockWebAuthenticationConfiguration;
@@ -819,6 +820,8 @@ public:
 #if ENABLE(VIDEO)
     WEBCORE_EXPORT virtual void showCaptionDisplaySettings(HTMLMediaElement&, const ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(ExceptionOr<void>)>&&);
 #endif
+
+    virtual void broadcastFrameTreeSyncDataBatchToOtherProcesses(const Vector<std::pair<FrameIdentifier, FrameTreeSyncSerializationData>>&) { }
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 
