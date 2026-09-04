@@ -51,6 +51,8 @@ public:
 
         LayoutRect layerBounds() const { return m_layerBounds; }
 
+        LayoutRect paintDirtyRect() const { return m_paintDirtyRect; }
+
         ClipRect backgroundRect() const { return m_backgroundRect; }
         ClipRect dirtyBackgroundRect() const { return intersection(m_paintDirtyRect, m_backgroundRect); }
         ClipRect dirtyForegroundRect() const { return intersection(m_paintDirtyRect, m_foregroundRect); }
@@ -93,6 +95,8 @@ public:
     LayerFragment(Rects&& rects) { this->rects = WTF::move(rects); }
 
     LayoutRect layerBounds() const { return rects.layerBounds(); }
+
+    LayoutRect paintDirtyRect() const { return rects.paintDirtyRect(); }
 
     ClipRect backgroundRect() const { return rects.backgroundRect(); }
     ClipRect dirtyBackgroundRect() const { return rects.dirtyBackgroundRect(); }

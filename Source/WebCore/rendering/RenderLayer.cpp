@@ -4373,20 +4373,38 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
     }
 }
 
+// Extent an outline-style:auto platform focus ring paints outside the border box, or std::nullopt when there is
+// no auto outline and so no clip needs expanding.
+static std::optional<LayoutUnit> autoFocusRingExtent(const RenderElement& renderer)
+{
+    CheckedRef outlineStyle = renderer.outlineStyleForRepaint();
+    if (outlineStyle->outlineStyle() != OutlineStyle::Auto)
+        return std::nullopt;
+    return LayoutUnit { std::ceil(outlineStyle->usedOutlineSize(outlineStyle->usedZoomForLength(), outlineStyle->deviceScaleFactor())) };
+}
+
 void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo,
     OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRootForRenderer)
 {
+    auto focusRingExtent = autoFocusRingExtent(renderer());
+
     for (const auto& fragment : layerFragments) {
         if (fragment.dirtyBackgroundRect().isEmpty())
             continue;
 
+        auto outlineClipRect = fragment.dirtyBackgroundRect();
+        if (focusRingExtent) {
+            outlineClipRect.inflate(*focusRingExtent);
+            outlineClipRect.intersect(fragment.paintDirtyRect());
+        }
+
         // Paint our own outline
-        PaintInfo paintInfo(context, fragment.dirtyBackgroundRect().rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
+        PaintInfo paintInfo(context, outlineClipRect.rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
 
         GraphicsContextStateSaver stateSaver(context, false);
         RegionContextStateSaver regionContextStateSaver(localPaintingInfo.regionContext);
 
-        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, fragment.dirtyBackgroundRect(), DoNotIncludeSelfForBorderRadius);
+        clipToRect(context, stateSaver, regionContextStateSaver, localPaintingInfo, paintBehavior, outlineClipRect, DoNotIncludeSelfForBorderRadius);
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
