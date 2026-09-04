@@ -1964,17 +1964,17 @@ TEST(WebpagePreferences, HttpPageContentBlockers)
     };
 
     TestWebKitAPI::HTTPServer server({
-        { "/index.html"_s, { 
+        { "/index.html"_s, {
             R"INDEX(<script>
                 window.results = [];
                 window.addEventListener('message', function(event) {
                     window.results.push(event.data);
                     alert();
                 });
+                window.results.push(window.location.href);
             </script>
-            <script src='test:///script.js'></script>
             <iframe src='/subframe.html'></iframe>)INDEX"_s } },
-        { "/subframe.html"_s, { "<script src='test:///script_subframe.js'></script>"_s } },
+        { "/subframe.html"_s, { "<script>window.parent.postMessage(window.location.href, '*');</script>"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     RetainPtr handler = adoptNS([TestURLSchemeHandler new]);
