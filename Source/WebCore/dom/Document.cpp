@@ -2762,7 +2762,8 @@ void Document::scheduleStyleRecalc()
 
     ASSERT(childNeedsStyleRecalc() || m_needsFullStyleRebuild);
 
-    m_styleRecalcTimer.startOneShot(0_s);
+    scheduleRenderingUpdate({ });
+//    m_styleRecalcTimer.startOneShot(0_s);
 
     InspectorInstrumentation::didScheduleStyleRecalculation(*this);
 }
@@ -10477,6 +10478,7 @@ void Document::intersectionObserversInitialUpdateTimerFired()
 
 void Document::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
 {
+    // Why is m_intersectionObserversInitialUpdateTimer special?
     if (m_intersectionObserversInitialUpdateTimer.isActive()) {
         m_intersectionObserversInitialUpdateTimer.stop();
         requestedSteps.add(RenderingUpdateStep::IntersectionObservations);

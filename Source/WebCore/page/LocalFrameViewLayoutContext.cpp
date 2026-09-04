@@ -747,7 +747,9 @@ void LocalFrameViewLayoutContext::scheduleLayout()
     ASSERT(renderView());
     InspectorInstrumentation::didScheduleLayout(*renderView());
 
-    m_layoutTimer.startOneShot(0_s);
+    if (CheckedPtr view = renderView())
+        protect(view->page())->scheduleRenderingUpdate({ });
+//    m_layoutTimer.startOneShot(0_s);
 }
 
 void LocalFrameViewLayoutContext::unscheduleLayout()
