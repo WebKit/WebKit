@@ -29,7 +29,7 @@ function copy(event)
 
     shouldBe('clipboardData.items.add("scissors", "text/plain"); clipboardData.items.length', '1');
     shouldNotBe('clipboardData.items[0]', 'initialItem');
-    shouldBeEqualToString('initialItem.kind', 'string');
+    shouldBeEqualToString('initialItem.kind', '');
     shouldBeEqualToString('initialItem.type', '');
     shouldBe('initialItem.getAsFile()', 'null');
     shouldBe('initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled"))', 'undefined');

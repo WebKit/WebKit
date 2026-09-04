@@ -84,6 +84,9 @@ bool DataTransferItem::isFile() const
 
 String DataTransferItem::kind() const
 {
+    if (isInDisabledMode())
+        return { };
+
     switch (m_kind) {
     case Kind::String:
         return "string"_s;
