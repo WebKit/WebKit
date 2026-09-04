@@ -174,6 +174,8 @@ public:
     Node* previousInScope(const Node*) const;
     Node* NODELETE lastChildInScope(const Node&) const;
 
+    bool hasSlotElement() const;
+
 private:
     enum class SlotKind : uint8_t { Assigned, Fallback };
 
@@ -404,6 +406,11 @@ FocusNavigationScope FocusNavigationScope::scopeOwnedByIFrame(HTMLFrameOwnerElem
     ASSERT(is<LocalFrame>(frame.contentFrame()));
     ASSERT(downcast<LocalFrame>(frame.contentFrame())->document());
     return FocusNavigationScope(*downcast<LocalFrame>(frame.contentFrame())->document());
+}
+
+bool FocusNavigationScope::hasSlotElement() const
+{
+    return bool(m_slotElement);
 }
 
 static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, bool focused)
@@ -1059,6 +1066,8 @@ Element* FocusController::nextFocusableElementOrScopeOwner(const FocusNavigation
                 if (isFocusableElementOrScopeOwner(*element, focusEventData) && shadowAdjustedTabIndex(*element, focusEventData) >= 0)
                     return element.unsafeGet();
             }
+            if (scope.hasSlotElement())
+                return nullptr;
         } else {
             // First try to find a node with the same tabindex as start that comes after start in the scope.
             if (auto* winner = findElementWithExactTabIndex(scope, RefPtr { scope.nextInScope(start) }.get(), startTabIndex, focusEventData, FocusDirection::Forward))

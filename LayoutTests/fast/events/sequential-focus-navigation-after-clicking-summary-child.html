@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<body onload="runTest();">
+    <details>
+        <summary id="first-summary"><span id="first-span">Item 1</span></summary>
+        <p>Panel 1</p>
+    </details>
+
+    <details>
+        <summary id="second-summary"><span id="second-span">Item 2</span></summary>
+        <p>Panel 2</p>
+    </details>
+<script src="../../resources/js-test.js"></script>
+<script src="../forms/resources/common.js"></script>
+<script>
+function focusWithMouseClick(selector) {
+    hoverOverElement(document.querySelector(selector));
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function advanceFocus() {
+    eventSender.keyDown('\t');
+}
+
+function runTest() {
+    debug("After clicking an unfocusable element inside a summary, tabbing focus should advance outside its parent details.")
+
+    focusWithMouseClick('#first-span');
+    advanceFocus();
+    shouldBe('document.activeElement.id', "'second-summary'");
+}
+</script>
+</body>
