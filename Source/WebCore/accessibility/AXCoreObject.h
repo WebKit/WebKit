@@ -81,10 +81,8 @@ class AccessibilityObjectAtspi;
 
 typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
 
-#elif PLATFORM(PLAYSTATION) || PLATFORM(HAIKU)
-class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #else
-class AccessibilityObjectWrapper;
+class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #endif
 
 namespace WTF {
@@ -1531,10 +1529,10 @@ private:
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
-#elif PLATFORM(PLAYSTATION) || PLATFORM(HAIKU)
-    RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif USE(ATSPI)
     RefPtr<AccessibilityObjectAtspi> m_wrapper;
+#else
+    RefPtr<AccessibilityObjectWrapper> m_wrapper;
 #endif
 };
 
