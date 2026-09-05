@@ -2261,28 +2261,11 @@ unsigned NODELETE Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
-bool Page::hasRemoteFrames() const
-{
-    ASSERT_IMPLIES(mainFrame().tree().containsRemoteFrame(), m_remoteFrameCount);
-    return !!m_remoteFrameCount;
-}
-
 void Page::syncLocalFrameInfoToRemote()
 {
-    ASSERT(hasRemoteFrames());
+    ASSERT(mainFrame().tree().containsRemoteFrame());
 
-    // Memoize FrameTree::containsRemoteFrame for the entire frame tree.
-    HashSet<FrameIdentifier> subtreeContainsRemoteFrame;
-    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
-        if (!is<RemoteFrame>(*frame))
-            continue;
-        for (RefPtr ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
-            if (!subtreeContainsRemoteFrame.add(ancestor->frameID()).isNewEntry)
-                break;
-        }
-    }
-
-    forEachLocalFrame([&] (LocalFrame& frame) {
+    forEachLocalFrame([] (LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
@@ -2300,11 +2283,8 @@ void Page::syncLocalFrameInfoToRemote()
 #endif
 
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-            if (!subtreeContainsRemoteFrame.contains(child->frameID())) {
-                ASSERT(!child->tree().containsRemoteFrame());
+            if (!child->tree().containsRemoteFrame())
                 continue;
-            }
-            ASSERT(child->tree().containsRemoteFrame());
 
             auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
             auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
@@ -2673,7 +2653,7 @@ void Page::doAfterUpdateRendering()
 
     computeSampledPageTopColorIfNecessary();
 
-    if (hasRemoteFrames())
+    if (mainFrame().tree().containsRemoteFrame())
         syncLocalFrameInfoToRemote();
 }
 

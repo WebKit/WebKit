@@ -168,11 +168,6 @@ void Frame::detachFromPage()
         }
     }
 
-    if (m_frameType == FrameType::Remote) {
-        if (RefPtr page = m_page.get())
-            page->didDetachRemoteFrame();
-    }
-
     m_page = nullptr;
 }
 
