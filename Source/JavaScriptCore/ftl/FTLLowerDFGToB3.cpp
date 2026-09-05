@@ -24696,11 +24696,19 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
+#if CPU(X86_64)
+            LValue fastResult64 = m_out.doubleToInt64(doubleValue);
+            ValueFromBlock fastResult = m_out.anchor(m_out.castToInt32(fastResult64));
+            m_out.branch(
+                m_out.equal(fastResult64, m_out.constInt64(std::numeric_limits<int64_t>::min())),
+                rarely(slowPath), usually(continuation));
+#else
             LValue fastResultValue = m_out.doubleToInt32(doubleValue);
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
                 m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
                 rarely(slowPath), usually(continuation));
+#endif
 
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
             ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));

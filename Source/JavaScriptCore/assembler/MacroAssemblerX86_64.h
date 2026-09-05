@@ -2519,6 +2519,15 @@ public:
         return branch32(branchType ? NotEqual : Equal, dest, TrustedImm32(0x80000000));
     }
 
+    Jump branchTruncateDoubleToInt32ViaInt64(FPRegisterID src, RegisterID dest)
+    {
+        truncateDoubleToInt64(src, dest);
+        m_assembler.cmpq_ir(1, dest);
+        Jump failed(m_assembler.jCC(X86Assembler::ConditionO));
+        zeroExtend32ToWord(dest, dest);
+        return failed;
+    }
+
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
         if (supportsAVX())

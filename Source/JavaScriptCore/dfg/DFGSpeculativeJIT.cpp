@@ -2769,6 +2769,27 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     }
 }
 
+void SpeculativeJIT::compileDoubleToInt32(FPRReg fpr, GPRReg gpr)
+{
+#if CPU(ARM64)
+    if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
+        convertDoubleToInt32UsingJavaScriptSemantics(fpr, gpr);
+        return;
+    }
+#endif
+#if CPU(X86_64)
+    if (hasSensibleDoubleToInt()) {
+        Jump notTruncatedToInteger = branchTruncateDoubleToInt32ViaInt64(fpr, gpr);
+        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+            operationToInt32SensibleSlow, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
+        return;
+    }
+#endif
+    Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, gpr, BranchIfTruncateFailed);
+    addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+        hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
+}
+
 void SpeculativeJIT::compileValueToInt32(Node* node)
 {
     switch (node->child1().useKind()) {
@@ -2787,16 +2808,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         SpeculateDoubleOperand op1(this, node->child1());
         FPRReg fpr = op1.fpr();
         GPRReg gpr = result.gpr();
-#if CPU(ARM64)
-        if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
-            convertDoubleToInt32UsingJavaScriptSemantics(fpr, gpr);
-        else
-#endif
-        {
-            Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, gpr, BranchIfTruncateFailed);
-            addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
-                hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
-        }
+        compileDoubleToInt32(fpr, gpr);
         strictInt32Result(gpr, node);
         return;
     }
@@ -2846,17 +2858,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
             // First, if we get here we have a double encoded as a JSValue
             unboxDouble(gpr, resultGpr, fpr);
-#if CPU(ARM64)
-            if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
-                convertDoubleToInt32UsingJavaScriptSemantics(fpr, resultGpr);
-            else
-#endif
-            {
-                silentSpillAllRegisters(resultGpr);
-                callOperationWithoutExceptionCheck(operationToInt32, resultGpr, fpr);
-                silentFillAllRegisters();
-            }
-
+            compileDoubleToInt32(fpr, resultGpr);
             converted.append(jump());
 
             isInteger.link(this);
