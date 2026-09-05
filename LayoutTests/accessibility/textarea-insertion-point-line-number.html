@@ -40,22 +40,26 @@ if (window.accessibilityController) {
 
         // area2 is an empty textarea so the insertion point line number should be 0.
         area2AXUIElement = await waitForFocus("area2");
-        output += expect("area2AXUIElement.insertionPointLineNumber", "0");
+        output += await expectAsync("area2AXUIElement.insertionPointLineNumber", "0");
 
         // Set focus to the contenteditable-div element and set the insertion
         // point in each of the children lines.
         contenteditableAXUIElement = await waitForFocus("contenteditable-div");
 
-        var contenteditableLine1 = document.getElementById("contenteditable-line1");
-        window.getSelection().setBaseAndExtent(contenteditableLine1, 1, contenteditableLine1, 1);
+        async function selectAndWait(id) {
+            var node = document.getElementById(id);
+            await waitForNotification(null, "AXSelectedTextChanged", () => {
+                window.getSelection().setBaseAndExtent(node, 1, node, 1);
+            });
+        }
+
+        await selectAndWait("contenteditable-line1");
         output += expect("contenteditableAXUIElement.insertionPointLineNumber", "0");
 
-        var contenteditableLine2 = document.getElementById("contenteditable-line2");
-        window.getSelection().setBaseAndExtent(contenteditableLine2, 1, contenteditableLine2, 1);
+        await selectAndWait("contenteditable-line2");
         output += expect("contenteditableAXUIElement.insertionPointLineNumber", "1");
 
-        var contenteditableLine3 = document.getElementById("contenteditable-line3");
-        window.getSelection().setBaseAndExtent(contenteditableLine3, 1, contenteditableLine3, 1);
+        await selectAndWait("contenteditable-line3");
         output += expect("contenteditableAXUIElement.insertionPointLineNumber", "2");
 
         // Set focus to line 2 and get the insertion point line number relative

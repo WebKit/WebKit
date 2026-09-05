@@ -739,16 +739,18 @@ AXTextRunLineID AXTextMarker::lineID() const
     return runIndex != notFound ? runs->lineID(runIndex) : AXTextRunLineID();
 }
 
-int AXTextMarker::lineIndex() const
+int AXTextMarker::lineIndex(std::optional<AXID> rootID) const
 {
     if (!isValid())
         return -1;
     if (!isInTextRun())
-        return toTextRunMarker().lineIndex();
+        return toTextRunMarker().lineIndex(rootID);
 
     AXTextMarker startMarker;
     RefPtr object = isolatedObject();
-    if (object->isTextControl())
+    if (rootID)
+        startMarker = { treeID(), *rootID, 0 };
+    else if (object->isTextControl())
         startMarker = { *object, 0 };
     else if (RefPtr editableAncestor = object->editableAncestor())
         startMarker = { editableAncestor->treeID(), editableAncestor->objectID(), 0 };

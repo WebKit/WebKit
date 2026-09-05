@@ -342,8 +342,10 @@ public:
     AXTextMarker findLastBefore(std::optional<AXID>) const;
     AXTextMarker findLast() const { return findLastBefore(std::nullopt); }
     // The index of the line this text marker is on relative to the nearest editable ancestor (or start of the page if there are no editable ancestors).
+    // Pass |rootID| to count from the start of that object's text instead. This is required for computing
+    // the correct line index for nested text controls (e.g. a textarea inside a contenteditable).
     // Returns -1 if the line couldn't be computed (i.e. because `this` is invalid).
-    int lineIndex() const;
+    int lineIndex(std::optional<AXID> rootID = std::nullopt) const;
     // After resolving this marker to a text-run marker, what line does the offset point to?
     AXTextRunLineID lineID() const;
     // Returns the line number for the character index within the descendants of this marker's object.

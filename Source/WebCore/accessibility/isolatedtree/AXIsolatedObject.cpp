@@ -1922,8 +1922,11 @@ int AXIsolatedObject::insertionPointLineNumber() const
             return AXTextMarker { *this, 0 }.toTextRunMarker(idOfNextSiblingIncludingIgnoredOrParent()).isValid() ? -1 : 0;
         }
         RefPtr selectionObject = selectedMarkerRange.start().isolatedObject();
-        if (selectionObject && isAncestorOfObject(*selectionObject))
-            return selectedMarkerRange.start().lineIndex();
+        if (selectionObject && isAncestorOfObject(*selectionObject)) {
+            // Count lines from this control, not from the selection's own editable ancestor, which is a
+            // nested control when one contains the selection (e.g. a <textarea> inside a contenteditable).
+            return selectedMarkerRange.start().lineIndex(objectID());
+        }
     }
     return -1;
 }
