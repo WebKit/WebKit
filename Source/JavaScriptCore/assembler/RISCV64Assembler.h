@@ -38,7 +38,7 @@ namespace JSC {
 
 namespace RISCV64Registers {
 
-typedef enum : int8_t {
+enum RegisterID : int8_t {
 #define REGISTER_ID(id, name, r, cs) id,
     FOR_EACH_GP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID
@@ -48,23 +48,23 @@ typedef enum : int8_t {
 #undef REGISTER_ALIAS
 
     InvalidGPRReg = -1,
-} RegisterID;
+};
 
-typedef enum : int8_t {
+enum SPRegisterID : int8_t {
 #define REGISTER_ID(id, name) id,
     FOR_EACH_SP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID
 
     InvalidSPReg = -1,
-} SPRegisterID;
+};
 
-typedef enum : int8_t {
+enum FPRegisterID : int8_t {
 #define REGISTER_ID(id, name, r, cs) id,
     FOR_EACH_FP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID
 
     InvalidFPRReg = -1,
-} FPRegisterID;
+};
 
 } // namespace RISCV64Registers
 

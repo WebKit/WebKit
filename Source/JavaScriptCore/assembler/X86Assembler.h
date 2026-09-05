@@ -47,19 +47,19 @@ namespace RegisterNames {
 
 #define REGISTER_ID(id, name, res, cs) id,
 
-typedef enum : int8_t {
+enum RegisterID : int8_t {
     FOR_EACH_GP_REGISTER(REGISTER_ID)
     InvalidGPRReg = -1,
-} RegisterID;
+};
 
-typedef enum : int8_t {
+enum SPRegisterID : int8_t {
     FOR_EACH_SP_REGISTER(REGISTER_ID)                                                     
-} SPRegisterID;
+};
 
-typedef enum : int8_t {
+enum XMMRegisterID : int8_t {
     FOR_EACH_FP_REGISTER(REGISTER_ID)
     InvalidFPRReg = -1,
-} XMMRegisterID;
+};
 
 #undef REGISTER_ID
 

@@ -170,7 +170,7 @@ inline uint16_t getHalfword(uint64_t value, int which)
 
 namespace RegisterNames {
 
-typedef enum : int8_t {
+enum RegisterID : int8_t {
 #define REGISTER_ID(id, name, r, cs) id,
     FOR_EACH_GP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID
@@ -180,22 +180,22 @@ typedef enum : int8_t {
 #undef REGISTER_ALIAS
 
     InvalidGPRReg = -1,
-} RegisterID;
+};
 
-typedef enum : int8_t {
+enum SPRegisterID : int8_t {
 #define REGISTER_ID(id, name) id,
     FOR_EACH_SP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID
-} SPRegisterID;
+};
 
 // ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
 // and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
-typedef enum : int8_t {
+enum FPRegisterID : int8_t {
 #define REGISTER_ID(id, name, r, cs) id,
     FOR_EACH_FP_REGISTER(REGISTER_ID)
 #undef REGISTER_ID                       
     InvalidFPRReg = -1,
-} FPRegisterID;
+};
 
 static constexpr bool isSp(RegisterID reg) { return reg == sp; }
 static constexpr bool isZr(RegisterID reg) { return reg == zr; }
