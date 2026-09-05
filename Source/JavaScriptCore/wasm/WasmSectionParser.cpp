@@ -864,10 +864,11 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, bool& isExtendedConstantExpre
     // If an End doesn't appear, we have to assume it's an extended constant expression
     // and use the full Wasm expression parser to validate.
     size_t initExprOffset;
+    uint32_t maxStackHeight = 0;
     const size_t offsetOfExprInSource = initialOffset + m_offsetInSource;
-    WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source().subspan(initialOffset), offsetOfExprInSource, initExprOffset, m_info, expectedType));
+    WASM_FAIL_IF_HELPER_FAILS(parseExtendedConstExpr(source().subspan(initialOffset), offsetOfExprInSource, initExprOffset, maxStackHeight, m_info, expectedType));
     m_offset += (initExprOffset - (m_offset - initialOffset));
-    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(std::make_pair(source().subspan(initialOffset, initExprOffset), offsetOfExprInSource)), "could not allocate memory for init expr"_s);
+    WASM_PARSER_FAIL_IF(!m_info->constantExpressions.tryConstructAndAppend(ModuleInformation::ConstantExpression { source().subspan(initialOffset, initExprOffset), offsetOfExprInSource, maxStackHeight }), "could not allocate memory for init expr"_s);
     bitsOrImportNumber = m_info->constantExpressions.size() - 1;
     isExtendedConstantExpression = true;
     resultType = expectedType;

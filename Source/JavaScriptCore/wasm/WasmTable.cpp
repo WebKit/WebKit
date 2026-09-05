@@ -310,11 +310,16 @@ FuncRefTable::FuncRefTable(VM& vm, uint32_t initial, std::optional<uint64_t> max
 
     m_wrappers = MallocPtr<WriteBarrier<WebAssemblyFunctionBase>, VMMalloc>::malloc(sizeof(WriteBarrier<WebAssemblyFunctionBase>) * Checked<size_t>(allocatedLength(m_length)));
 
-    for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
-        new (&m_importableFunctions.get()[i]) Function();
+    // Every member of both element types defaults to a null pointer, so one bulk zero stands in
+    // for a placement-new per slot. Tables here run to thousands of entries and are then
+    // overwritten by the element segments.
+    uint32_t slots = allocatedLength(m_length);
+    zeroSpan(std::span { std::bit_cast<uint8_t*>(m_importableFunctions.get()), sizeof(Function) * slots });
+    zeroSpan(std::span { std::bit_cast<uint8_t*>(m_wrappers.get()), sizeof(WriteBarrier<WebAssemblyFunctionBase>) * slots });
+#if ASSERT_ENABLED
+    for (uint32_t i = 0; i < slots; ++i)
         ASSERT(m_importableFunctions.get()[i].isEmpty()); // We rely on this in compiled code.
-        new (&m_wrappers.get()[i]) WriteBarrier<WebAssemblyFunctionBase>();
-    }
+#endif
 }
 
 FuncRefTable::~FuncRefTable()

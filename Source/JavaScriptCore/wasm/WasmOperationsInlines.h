@@ -471,15 +471,14 @@ inline JSValue structNew(JSWebAssemblyInstance* instance, WebAssemblyGCStructure
     const Wasm::RTT& structRTT = structure->rtt();
     JSWebAssemblyStruct* structValue = JSWebAssemblyStruct::create(vm, structure);
     if (static_cast<Wasm::UseDefaultValue>(useDefault) == Wasm::UseDefaultValue::Yes) {
-        for (unsigned i = 0; i < structRTT.fieldCount(); ++i) {
-            if (structRTT.field(i).type.unpacked().isV128()) {
-                structValue->set(i, vectorAllZeros());
-                continue;
+        // The constructor zeroed the payload, which is already the default for every numeric,
+        // packed and v128 field. Only a reference field needs a write, since its default is null
+        // rather than an all-zero JSValue.
+        if (structRTT.hasRefFieldTypes()) {
+            for (unsigned i = 0; i < structRTT.fieldCount(); ++i) {
+                if (Wasm::isRefType(structRTT.field(i).type))
+                    structValue->set(i, JSValue::encode(jsNull()));
             }
-            EncodedJSValue value = 0;
-            if (Wasm::isRefType(structRTT.field(i).type))
-                value = JSValue::encode(jsNull());
-            structValue->set(i, value);
         }
     } else {
         ASSERT(arguments);

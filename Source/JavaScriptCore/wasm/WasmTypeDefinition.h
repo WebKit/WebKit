@@ -635,6 +635,7 @@ public:
     StructFieldCount fieldCount() const { return m_fields.size(); }
     const FieldType& field(StructFieldCount i) const LIFETIME_BOUND { return m_fields[i].type; }
     unsigned offsetOfFieldInPayload(StructFieldCount i) const { return m_fields[i].offset; }
+    const StructFieldEntry& fieldEntry(StructFieldCount i) const LIFETIME_BOUND { return m_fields[i]; }
     size_t instancePayloadSize() const { return m_instancePayloadSize; }
     bool hasRefFieldTypes() const { return m_hasRefFieldTypes; }
     bool hasRecursiveReference() const { return m_hasRecursiveReference; }
@@ -801,6 +802,13 @@ public:
         return structPayload().field(i);
     }
     unsigned offsetOfFieldInPayload(StructFieldCount i) const { return structPayload().offsetOfFieldInPayload(i); }
+
+    const StructFieldEntry& fieldEntry(StructFieldCount i) const LIFETIME_BOUND
+    {
+        ASSERT(m_kind == RTTKind::Struct);
+        return structPayload().fieldEntry(i);
+    }
+
     size_t instancePayloadSize() const { return structPayload().instancePayloadSize(); }
     bool hasRefFieldTypes() const { return structPayload().hasRefFieldTypes(); }
 

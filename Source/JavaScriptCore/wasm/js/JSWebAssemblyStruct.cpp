@@ -71,19 +71,20 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
 {
     using Wasm::TypeKind;
 
-    const uint8_t* targetPointer = fieldPointer(fieldIndex);
+    SUPPRESS_UNCOUNTED_LOCAL const auto& entry = structType().fieldEntry(fieldIndex);
+    const uint8_t* targetPointer = payload() + entry.offset;
 
-    if (fieldType(fieldIndex).type.is<Wasm::PackedType>()) {
-        switch (fieldType(fieldIndex).type.as<Wasm::PackedType>()) {
+    if (entry.type.type.is<Wasm::PackedType>()) {
+        switch (entry.type.type.as<Wasm::PackedType>()) {
         case Wasm::PackedType::I8:
             return *std::bit_cast<uint8_t*>(targetPointer);
         case Wasm::PackedType::I16:
             return *std::bit_cast<uint16_t*>(targetPointer);
         }
     }
-    ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
+    ASSERT(entry.type.type.is<Wasm::Type>());
 
-    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind()) {
+    switch (entry.type.type.as<Wasm::Type>().kind()) {
     case TypeKind::I32:
     case TypeKind::F32:
         return *std::bit_cast<uint32_t*>(targetPointer);
@@ -116,10 +117,11 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
 {
     using Wasm::TypeKind;
 
-    uint8_t* targetPointer = fieldPointer(fieldIndex);
+    SUPPRESS_UNCOUNTED_LOCAL const auto& entry = structType().fieldEntry(fieldIndex);
+    uint8_t* targetPointer = payload() + entry.offset;
 
-    if (fieldType(fieldIndex).type.is<Wasm::PackedType>()) {
-        switch (fieldType(fieldIndex).type.as<Wasm::PackedType>()) {
+    if (entry.type.type.is<Wasm::PackedType>()) {
+        switch (entry.type.type.as<Wasm::PackedType>()) {
         case Wasm::PackedType::I8:
             *std::bit_cast<uint8_t*>(targetPointer) = static_cast<uint8_t>(argument);
             return;
@@ -128,9 +130,9 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
             return;
         }
     }
-    ASSERT(fieldType(fieldIndex).type.is<Wasm::Type>());
+    ASSERT(entry.type.type.is<Wasm::Type>());
 
-    switch (fieldType(fieldIndex).type.as<Wasm::Type>().kind()) {
+    switch (entry.type.type.as<Wasm::Type>().kind()) {
     case TypeKind::I32:
     case TypeKind::F32: {
         *std::bit_cast<uint32_t*>(targetPointer) = static_cast<uint32_t>(argument);

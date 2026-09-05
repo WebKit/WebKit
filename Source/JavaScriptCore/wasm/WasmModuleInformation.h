@@ -228,8 +228,12 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     Vector<CustomSection> customSections;
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
-    using ConstantExpressionAndSourceOffset = std::pair<Vector<uint8_t>, size_t>;
-    Vector<ConstantExpressionAndSourceOffset> constantExpressions;
+    struct ConstantExpression {
+        Vector<uint8_t> bytes;
+        size_t sourceOffset { 0 };
+        uint32_t maxStackHeight { 0 };
+    };
+    Vector<ConstantExpression> constantExpressions;
     Name sourceURL;
     uint64_t requestIdentifier { 0 };
     Name sourceMappingURL;

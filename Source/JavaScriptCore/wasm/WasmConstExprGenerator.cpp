@@ -56,9 +56,13 @@ public:
     {
     }
 
-    std::expected<uint64_t, String> run(std::span<const uint8_t> bytes)
+    std::expected<uint64_t, String> run(std::span<const uint8_t> bytes, uint32_t maxStackHeight)
     {
         Vector<ConstExprValue, 16> stack;
+        stack.reserveInitialCapacity(maxStackHeight);
+        auto push = [&](ConstExprValue value) ALWAYS_INLINE_LAMBDA {
+            stack.append(value);
+        };
         auto pop = [&] ALWAYS_INLINE_LAMBDA {
             ASSERT(!stack.isEmpty());
             return stack.takeLast();
@@ -117,20 +121,20 @@ public:
 
             switch (op) {
             case I32Const:
-                stack.append(ConstExprValue(static_cast<uint64_t>(varInt32())));
+                push(ConstExprValue(static_cast<uint64_t>(varInt32())));
                 continue;
             case I64Const:
-                stack.append(ConstExprValue(static_cast<uint64_t>(varInt64())));
+                push(ConstExprValue(static_cast<uint64_t>(varInt64())));
                 continue;
             case F32Const:
-                stack.append(ConstExprValue(static_cast<uint64_t>(uint32())));
+                push(ConstExprValue(static_cast<uint64_t>(uint32())));
                 continue;
             case F64Const:
-                stack.append(ConstExprValue(uint64()));
+                push(ConstExprValue(uint64()));
                 continue;
             case RefNull:
                 varInt32(); // Heap type, which only affects the static type of the null.
-                stack.append(ConstExprValue(static_cast<uint64_t>(JSValue::encode(jsNull()))));
+                push(ConstExprValue(static_cast<uint64_t>(JSValue::encode(jsNull()))));
                 continue;
             case RefFunc:
                 result = refFunc(FunctionSpaceIndex(varUInt32()));
@@ -162,7 +166,7 @@ public:
                 v128_t vector;
                 memcpySpan(asMutableByteSpan(vector), bytes.subspan(offset, sizeof(vector)));
                 offset += sizeof(vector);
-                stack.append(ConstExprValue(vector));
+                push(ConstExprValue(vector));
                 continue;
             }
             case ExtGC: {
@@ -186,9 +190,9 @@ public:
                     size_t fieldCount = m_info.rtt(typeIndex).fieldCount();
                     ASSERT(stack.size() >= fieldCount);
                     result = createNewStruct(typeIndex, stack.subspan(stack.size() - fieldCount));
+                    stack.shrink(stack.size() - fieldCount);
                     if (result.isInvalid()) [[unlikely]]
                         return failedToAllocate("struct"_s, offset);
-                    stack.shrink(stack.size() - fieldCount);
                     break;
                 }
                 case ExtGCOpType::ArrayNew: {
@@ -213,9 +217,9 @@ public:
                     size_t elementCount = varUInt32();
                     ASSERT(stack.size() >= elementCount);
                     result = createNewArray(typeIndex, stack.subspan(stack.size() - elementCount));
+                    stack.shrink(stack.size() - elementCount);
                     if (result.isInvalid()) [[unlikely]]
                         return failedToAllocate("array"_s, offset);
-                    stack.shrink(stack.size() - elementCount);
                     break;
                 }
                 default:
@@ -231,7 +235,7 @@ public:
                 RELEASE_ASSERT_NOT_REACHED();
             }
 
-            stack.append(result);
+            push(result);
         }
     }
 
@@ -398,20 +402,25 @@ private:
     ConstExprValue createNewArray(TypeSignatureIndex typeIndex, std::span<const ConstExprValue> elements)
     {
         auto* structure = m_instance->gcObjectStructure(typeIndex.rawIndex());
-        bool isV128 = structure->rtt().elementType().type.unpacked().isV128();
-        ConstExprValue result = createNewArray(structure, elements.size(), isV128 ? ConstExprValue(vectorAllZeros()) : ConstExprValue());
-        if (result.isInvalid()) [[unlikely]]
-            return result;
+        VM& vm = m_instance->vm();
+        JSWebAssemblyArray* array = JSWebAssemblyArray::tryCreate(vm, structure, elements.size());
+        if (!array) [[unlikely]]
+            return ConstExprValue(InvalidConstExpr);
+        m_keepAlive.appendWithCrashOnOverflow(array);
 
-        JSWebAssemblyArray* array = uncheckedDowncast<JSWebAssemblyArray>(JSValue::decode(result.getValue()));
-        VM& vm = array->vm();
-        for (size_t i = 0; i < elements.size(); ++i) {
-            if (isV128)
-                array->set(vm, i, elements[i].getVector());
-            else
-                array->set(vm, i, elements[i].getValue());
+        if (structure->rtt().elementType().type.unpacked().isV128()) {
+            auto span = array->span<v128_t>();
+            for (size_t i = 0; i < elements.size(); ++i)
+                span[i] = elements[i].getVector();
+        } else {
+            array->visitSpanNonVector([&]<typename T>(std::span<T> span) ALWAYS_INLINE_LAMBDA {
+                for (size_t i = 0; i < elements.size(); ++i)
+                    span[i] = static_cast<T>(elements[i].getValue());
+            });
+            if (array->elementsAreRefTypes())
+                vm.writeBarrier(array);
         }
-        return result;
+        return ConstExprValue(JSValue(array));
     }
 
     ConstExprValue createNewStruct(TypeSignatureIndex typeIndex)
@@ -422,18 +431,20 @@ private:
 
     ConstExprValue createNewStruct(TypeSignatureIndex typeIndex, std::span<const ConstExprValue> fields)
     {
-        ConstExprValue result = createNewStruct(typeIndex);
-        if (result.isInvalid()) [[unlikely]]
-            return result;
+        auto* structure = m_instance->gcObjectStructure(typeIndex.rawIndex());
+        JSWebAssemblyStruct* structObject = JSWebAssemblyStruct::tryCreate(m_instance->vm(), structure);
+        if (!structObject) [[unlikely]]
+            return ConstExprValue(InvalidConstExpr);
+        m_keepAlive.appendWithCrashOnOverflow(structObject);
 
-        JSWebAssemblyStruct* structObject = uncheckedDowncast<JSWebAssemblyStruct>(JSValue::decode(result.getValue()));
+        ASSERT(fields.size() == structure->rtt().fieldCount());
         for (size_t i = 0; i < fields.size(); ++i) {
             if (fields[i].type() == ConstExprValue::Vector)
                 structObject->set(i, fields[i].getVector());
             else
                 structObject->set(i, fields[i].getValue());
         }
-        return result;
+        return ConstExprValue(JSValue(structObject));
     }
 
     const size_t m_offsetInSource;
@@ -515,6 +526,7 @@ public:
     }
 
     const Vector<FunctionSpaceIndex>& NODELETE declaredFunctions() const { return m_declaredFunctions; }
+    uint32_t NODELETE maxStackHeight() const { return m_maxStackHeight; }
     void NODELETE setParser(FunctionParser<ConstExprGenerator>* parser) { m_parser = parser; };
 
     bool NODELETE addArguments(const RTT&) { RELEASE_ASSERT_NOT_REACHED(); }
@@ -881,6 +893,8 @@ public:
     ALWAYS_INLINE void didParseOpcode() {
         if (m_parser->currentOpcode() == Nop)
             m_shouldError = true;
+
+        m_maxStackHeight = std::max<uint32_t>(m_maxStackHeight, m_parser->expressionStack().size());
     }
     void NODELETE didFinishParsingLocals() { }
     void NODELETE didPopValueFromStack(ExpressionType, ASCIILiteral) { }
@@ -891,15 +905,17 @@ private:
     size_t m_offsetInSource { 0 };
     const Ref<const ModuleInformation> m_info;
     bool m_shouldError = false;
+    uint32_t m_maxStackHeight { 0 };
     Vector<FunctionSpaceIndex> m_declaredFunctions;
 };
 
-std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, ModuleInformation& info, Type expectedType)
+std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> source, size_t offsetInSource, size_t& offset, uint32_t& maxStackHeight, ModuleInformation& info, Type expectedType)
 {
     ConstExprGenerator generator(offsetInSource, info);
     FunctionParser<ConstExprGenerator> parser(generator, source, BlockSignature { expectedType }, info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
     offset = parser.offset();
+    maxStackHeight = generator.maxStackHeight();
 
     for (const auto& declaredFunctionIndex : generator.declaredFunctions())
         info.addDeclaredFunction(declaredFunctionIndex);
@@ -907,10 +923,10 @@ std::expected<void, String> parseExtendedConstExpr(std::span<const uint8_t> sour
     return { };
 }
 
-std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpressionAndSourceOffset& constantExpressionAndSourceOffset, JSWebAssemblyInstance* instance, const ModuleInformation& info)
+std::expected<uint64_t, String> evaluateExtendedConstExpr(const ModuleInformation::ConstantExpression& constantExpression, JSWebAssemblyInstance* instance, const ModuleInformation& info)
 {
-    ConstExprInterpreter interpreter(constantExpressionAndSourceOffset.second, info, instance);
-    return interpreter.run(constantExpressionAndSourceOffset.first.span());
+    ConstExprInterpreter interpreter(constantExpression.sourceOffset, info, instance);
+    return interpreter.run(constantExpression.bytes.span(), constantExpression.maxStackHeight);
 }
 
 } } // namespace JSC::Wasm
