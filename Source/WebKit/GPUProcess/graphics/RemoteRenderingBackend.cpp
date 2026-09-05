@@ -91,6 +91,7 @@
 #endif
 
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, m_streamConnection, message);
+#define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, m_streamConnection, returnValue)
 
 namespace WebKit {
 using namespace WebCore;
@@ -288,6 +289,12 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     if (purpose == RenderingPurpose::Canvas && m_sharedResourceCache->reachedImageBufferForCanvasLimit())
         return nullptr;
 
+    // Verify DisplayList rendering mode is only used when RemoteSnapshotting is enabled
+    if (renderingMode == RenderingMode::DisplayList) {
+        auto prefs = sharedPreferencesForWebProcess();
+        MESSAGE_CHECK_WITH_RETURN_VALUE(prefs && prefs->remoteSnapshottingEnabled, nullptr);
+    }
+
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     adjustImageBufferRenderingMode(m_sharedResourceCache, purpose, renderingMode);
 
@@ -308,12 +315,6 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
 void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferFormat pixelFormat, RenderingResourceIdentifier identifier, RemoteGraphicsContextIdentifier contextIdentifier)
 {
     assertIsCurrent(workQueue());
-
-    // Verify DisplayList rendering mode is only used when RemoteSnapshotting is enabled
-    if (renderingMode == RenderingMode::DisplayList) {
-        auto prefs = sharedPreferencesForWebProcess();
-        MESSAGE_CHECK(prefs && prefs->remoteSnapshottingEnabled, "RemoteSnapshotting is not enabled");
-    }
 
     RefPtr<ImageBuffer> imageBuffer = allocateImageBuffer(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, { });
     if (!imageBuffer) {
@@ -727,5 +728,6 @@ void RemoteRenderingBackend::getImageBufferResourceLimitsForTesting(CompletionHa
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_WITH_RETURN_VALUE
 
 #endif // ENABLE(GPU_PROCESS)
