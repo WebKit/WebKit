@@ -52,16 +52,16 @@ CachedModuleScriptLoader::CachedModuleScriptLoader(ModuleScriptLoaderClient& cli
 
 CachedModuleScriptLoader::~CachedModuleScriptLoader()
 {
-    if (m_cachedScript) {
-        protect(m_cachedScript)->removeClient(*this);
-        m_cachedScript = nullptr;
+    if (m_cachedResource) {
+        protect(m_cachedResource)->removeClient(*this);
+        m_cachedResource = nullptr;
     }
 }
 
 bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::optional<ServiceWorkersMode> serviceWorkersMode, const URL& referrer)
 {
     ASSERT(m_promise);
-    ASSERT(!m_cachedScript);
+    ASSERT(!m_cachedResource);
     String integrity = m_parameters ? m_parameters->integrity() : String { };
     auto destination = FetchOptionsDestination::Script;
     if (m_parameters) {
@@ -76,20 +76,21 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
             break;
         }
     }
-    m_cachedScript = protect(scriptFetcher())->requestModuleScript(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode, referrer);
-    if (!m_cachedScript)
+
+    m_cachedResource = protect(scriptFetcher())->requestModuleResource(document, sourceURL, destination, WTF::move(integrity), serviceWorkersMode, referrer);
+    if (!m_cachedResource)
         return false;
     m_sourceURL = WTF::move(sourceURL);
 
     // If the content is already cached, this immediately calls notifyFinished.
-    protect(m_cachedScript)->addClient(*this);
+    protect(m_cachedResource)->addClient(*this);
     return true;
 }
 
 void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
-    ASSERT_UNUSED(resource, &resource == m_cachedScript);
-    ASSERT(m_cachedScript);
+    ASSERT_UNUSED(resource, &resource == m_cachedResource);
+    ASSERT(m_cachedResource);
     ASSERT(m_promise);
 
     Ref<CachedModuleScriptLoader> protectedThis(*this);
@@ -98,8 +99,8 @@ void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const Ne
 
     // Remove the client after calling notifyFinished to keep the data buffer in
     // CachedResource alive while notifyFinished processes the resource.
-    protect(m_cachedScript)->removeClient(*this);
-    m_cachedScript = nullptr;
+    protect(m_cachedResource)->removeClient(*this);
+    m_cachedResource = nullptr;
 }
 
 }
