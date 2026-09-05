@@ -35,6 +35,7 @@
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "RemotePageProxy.h"
+#include "ShouldFreezeLayerTree.h"
 #include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListFrameItem.h"
@@ -313,7 +314,7 @@ void SuspendedPageProxy::unsuspend(WebCore::BackForwardFrameItemIdentifier mainF
         if (!suspendedPage->hasSubframeInProcess(process->coreProcessIdentifier()))
             return;
         RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::unsuspend: Sending RestoreWithFrameItem to pid %i", &suspendedPage, process->processID());
-        process->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(mainFrameItemID, mainFrameURLAndOrigin), aggregator->chain(), remotePage.identifierInSiteIsolatedProcess());
+        process->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(mainFrameItemID, mainFrameURLAndOrigin, ShouldFreezeLayerTree::Yes), aggregator->chain(), remotePage.identifierInSiteIsolatedProcess());
     });
 }
 

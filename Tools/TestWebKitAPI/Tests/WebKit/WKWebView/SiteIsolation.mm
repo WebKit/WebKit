@@ -14295,4 +14295,54 @@ TEST(SiteIsolation, EndPrintingIsRoutedToTheFrameThatStartedPrinting)
     }));
 }
 
+TEST(SiteIsolation, MultiProcessBFCacheIframeRendersAfterBackNavigation)
+{
+    HTTPServer server({
+        { "/main"_s, { "<iframe src='https://b.com/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<a id='link' href='https://b.com/destination' target='_top'>click me</a>"_s } },
+        { "/destination"_s, { "<body>destination page</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, EnableProcessCache::Yes, nil, nil, nil, EnableBackForwardCache::Yes);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    });
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click()" inFrame:[webView firstChildFrame] completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://b.com/destination", [webView URL].absoluteString);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ(@"https://a.com/main", [webView URL].absoluteString);
+
+    Vector<ExpectedFrameTree> expectedAfterGoBack = {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    };
+    while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
+        TestWebKitAPI::Util::spinRunLoop();
+    checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
+
+    __block bool done = false;
+    __block BOOL frozen = YES;
+    [webView _isLayerTreeFrozenForTesting:^(BOOL isFrozen) {
+        frozen = isFrozen;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE(frozen);
+
+    NSString *layerTree = [webView _caLayerTreeAsText];
+    EXPECT_TRUE([layerTree containsString:@"(layer bounds"]);
+
+    startCountingAnimationFrames(webView.get(), [webView firstChildFrame]);
+    expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
+}
+
 }

@@ -84,6 +84,7 @@
 #include "SessionStateConversion.h"
 #include "ShareableBitmapUtilities.h"
 #include "SharedBufferReference.h"
+#include "ShouldFreezeLayerTree.h"
 #include "TextRecognitionUpdateResult.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
@@ -9186,7 +9187,7 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
     completionHandler(true);
 }
 
-void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, std::optional<std::pair<URL, SecurityOriginData>>&& mainFrameURLAndOrigin, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, std::optional<std::pair<URL, SecurityOriginData>>&& mainFrameURLAndOrigin, ShouldFreezeLayerTree shouldFreezeLayerTree, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!BackForwardCache::singleton().isInBackForwardCache(identifier))
         return completionHandler(true);
@@ -9213,6 +9214,11 @@ void WebPage::restoreWithFrameItem(BackForwardFrameItemIdentifier identifier, st
     m_isSuspended = false;
     auto restoredFrames = cachedPage->takeDetachedRootFrames();
     detachResidualSubframesForBackForwardCacheRestore(*page);
+
+    // Freeze here so the compositing update, and with it the root compositing layer attachment, can't happen until the new drawing area is in place.
+    // The layer tree is unfreezed in WebPage::reinitializeWebPage.
+    if (shouldFreezeLayerTree == ShouldFreezeLayerTree::Yes)
+        freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
 
     // Resume rendering for the frames detached in suspendWithFrameItem.
     for (auto& weakFrame : restoredFrames) {

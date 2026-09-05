@@ -743,7 +743,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetIsSuspended(bool suspended) -> (std::optional<bool> didSuspend)
     SuspendWithFrameItem(WebCore::BackForwardFrameItemIdentifier frameItemID) -> (bool success)
-    RestoreWithFrameItem(WebCore::BackForwardFrameItemIdentifier frameItemID, std::optional<std::pair<URL, WebCore::SecurityOriginData>> mainFrameURLAndOrigin) -> (bool success)
+    RestoreWithFrameItem(WebCore::BackForwardFrameItemIdentifier frameItemID, std::optional<std::pair<URL, WebCore::SecurityOriginData>> mainFrameURLAndOrigin, enum:bool WebKit::ShouldFreezeLayerTree shouldFreezeLayerTree) -> (bool success)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, std::optional<uint64_t> fileSize, String fileName, String contentType) -> ()
