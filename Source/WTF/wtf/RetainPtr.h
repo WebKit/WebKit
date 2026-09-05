@@ -25,6 +25,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainRef.h>
+#include <wtf/SwiftBridging.h>
 
 // Because ARC enablement is a compile-time choice, and we compile this header
 // both ways, we need a separate copy of our code when ARC is enabled.
@@ -74,7 +75,7 @@ template<typename T> [[nodiscard]] constexpr RetainPtr<RetainPtrType<T>> adoptNS
  * @note RetainPtr is compatible with ARC (Automatic Reference Counting) and will automatically use the
  * appropriate retain/release semantics based on the compilation mode.
  */
-template<typename T> class RetainPtr {
+template<typename T> class SWIFT_ESCAPABLE RetainPtr {
 public:
     using ValueType = std::remove_pointer_t<T>;
     using PtrType = ValueType*;

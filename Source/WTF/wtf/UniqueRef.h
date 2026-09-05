@@ -29,6 +29,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/GetPtr.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/TypeTraits.h>
 
@@ -64,7 +65,7 @@ UniqueRef<T> makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<T>&& ptr)
 }
 
 template<typename T>
-class UniqueRef {
+class SWIFT_ESCAPABLE UniqueRef {
 public:
     template <typename U>
     UniqueRef(UniqueRef<U>&& other)
