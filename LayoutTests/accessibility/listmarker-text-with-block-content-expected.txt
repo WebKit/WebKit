@@ -1,0 +1,10 @@
+This test makes sure the marker of a list item whose content is a block is part of the item's stitched text, the way it is for an item with inline content.
+
+PASS: blockText.x === inlineText.x === true
+PASS: blockText.width === inlineText.width === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+item
+item
