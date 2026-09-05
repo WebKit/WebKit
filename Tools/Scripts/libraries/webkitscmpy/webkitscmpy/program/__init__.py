@@ -57,6 +57,7 @@ from .review import Review
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
 from .show import Show
+from .stack import Stack
 from .trace import Trace
 from .track import Track
 from .tracker_metadata import TrackerMetadata
@@ -104,7 +105,7 @@ def main(
         PullRequest, Revert, Review, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, TrackerMetadata, Show, Publish,
-        Classify, InstallHooks,
+        Classify, InstallHooks, Stack,
     ] + (programs or [])
     if subversion:
         programs.append(SetupGitSvn)
