@@ -391,19 +391,6 @@ http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with
 http/tests/websocket/tests/hybi/interleaved-fragments.html [ Pass Failure Timeout ]
 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure Timeout ]
 
-# rdar://77084155 (REGRESSION: [ MacOS WK2 ] WebGL textures tests are consistently timing out)
-webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_byte.html [ Skip ]
-webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Skip ]
-webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Skip ]
-webgl/2.0.y/conformance/textures/image_bitmap_from_video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Skip ]
-webgl/2.0.y/conformance/textures/misc/texture-upload-size.html [ Skip ]
-webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Skip ]
-webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html [ Skip ]
-webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Skip ]
-webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Skip ]
-webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Skip ]
-
 # fast/events/controlclick-no-onclick.html fails or times out on Mac WK2
 webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
 
@@ -1071,8 +1058,6 @@ webkit.org/b/228030 inspector/canvas/setShaderProgramHighlighted.html [ Pass Fai
 webkit.org/b/228087 media/video-seek-with-negative-playback.html [ Pass Failure Timeout ]
 
 webkit.org/b/228248 fast/selectors/selection-window-inactive.html [ Pass ImageOnlyFailure ]
-
-webkit.org/b/228256 inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
 webkit.org/b/229043 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Pass Failure ]
@@ -1850,10 +1835,6 @@ webkit.org/b/295743 [ Debug ] media/video-display-aspect-ratio.html [ Pass Failu
 # FIXME: Needs bug.
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-unfiltered-link-decoration-before-short-deletion.html [ Failure ]
 
-webkit.org/b/295756 webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Pass Failure ]
-webkit.org/b/295756 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Pass Failure ]
-webkit.org/b/295756 webgl/2.0.y/conformance2/rendering/texture-switch-performance.html [ Pass Failure ]
-
 webkit.org/b/295814 [ arm64 ] scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe.html [ Pass Timeout ]
 
 webkit.org/b/295820 [ arm64 Debug ] webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
@@ -2108,8 +2089,6 @@ webkit.org/b/305959 fast/text/FontFaceSet-status-after-style-update.html [ Pass 
 webkit.org/b/306047 accessibility/mac/replaced-element-text-selection.html [ Pass Failure ]
 
 webkit.org/b/306278 [ arm64 ] media/media-source/media-managedmse-resume-after-remove.html [ Pass Failure ]
-
-webkit.org/b/306294 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/306570 [ Tahoe arm64 ] http/tests/webcodecs/video-decoder-callbacks-do-not-leak.html [ Pass Failure ]
 
