@@ -55,10 +55,10 @@ private:
     void write(const AbstractLocker& locker, std::span<const char> span) WTF_REQUIRES_LOCK(m_lock) { write(locker, unsafeMakeSpan(std::bit_cast<const uint8_t*>(span.data()), span.size_bytes())); }
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
-    WTF::FileSystemImpl::FileHandle m_file { };
+    WTF::FileSystemImpl::FileHandle m_file WTF_GUARDED_BY_LOCK(m_lock) { };
     CString m_irDumpDirectory;
     CString m_sourceCodeDumpDirectory;
-    uint64_t m_codeIndex { 0 };
+    uint64_t m_codeIndex WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     Lock m_lock;
 };
 

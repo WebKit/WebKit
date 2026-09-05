@@ -177,7 +177,7 @@ private:
     UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
     UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
     UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
-    UncheckedKeyHashSet<JSCell*> m_appendedCells;
+    UncheckedKeyHashSet<JSCell*> m_appendedCells WTF_GUARDED_BY_LOCK(m_buildingNodeMutex);
     SnapshotType m_snapshotType;
 };
 

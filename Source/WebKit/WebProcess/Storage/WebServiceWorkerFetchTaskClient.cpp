@@ -271,7 +271,10 @@ void WebServiceWorkerFetchTaskClient::doCancel()
 
 void WebServiceWorkerFetchTaskClient::convertFetchToDownload()
 {
-    m_isDownload = true;
+    {
+        Locker lock { m_connectionLock };
+        m_isDownload = true;
+    }
     continueDidReceiveResponse();
 }
 

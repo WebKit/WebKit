@@ -104,7 +104,7 @@ public:
         String codec;
         std::optional<WebCore::PlatformVideoColorSpace> colorSpaceOverride;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
-        DecoderCallback decoderCallback;
+        DecoderCallback decoderCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock);
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
@@ -159,9 +159,9 @@ public:
         std::optional<EncoderInitializationData> initializationData;
         Vector<PendingFrame> pendingFrames;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
-        EncoderCallback encoderCallback;
+        EncoderCallback encoderCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock);
 #if ENABLE(WEB_CODECS)
-        DescriptionCallback descriptionCallback;
+        DescriptionCallback descriptionCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock);
 #endif
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
@@ -257,7 +257,7 @@ private:
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
     RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy WTF_GUARDED_BY_LOCK(m_connectionLock);
-    Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
+    Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection WTF_GUARDED_BY_LOCK(m_connectionLock);
 
     const Ref<WorkQueue> m_queue;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;

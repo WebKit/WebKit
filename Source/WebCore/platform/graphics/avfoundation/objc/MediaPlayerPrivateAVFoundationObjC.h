@@ -443,7 +443,7 @@ private:
 
     friend class WebCoreAVFResourceLoader;
     mutable Lock m_resourceLoaderMapLock;
-    HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap;
+    HashMap<RetainPtr<AVAssetResourceLoadingRequest>, Ref<WebCoreAVFResourceLoader>> m_resourceLoaderMap WTF_GUARDED_BY_LOCK(m_resourceLoaderMapLock);
     const RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     MemoryCompactRobinHoodHashMap<String, RetainPtr<AVAssetResourceLoadingRequest>> m_keyURIToRequestMap;
 

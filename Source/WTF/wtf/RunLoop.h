@@ -316,7 +316,7 @@ private:
 #else
     mutable Lock m_registeredTimerLock;
 #endif
-    HashSet<TimerBase *> m_registeredTimers;
+    HashSet<TimerBase *> m_registeredTimers WTF_GUARDED_BY_LOCK(m_registeredTimerLock);
 
     Deque<Function<void()>> m_currentIteration;
 

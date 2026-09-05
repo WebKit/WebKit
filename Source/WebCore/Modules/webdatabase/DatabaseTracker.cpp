@@ -1269,7 +1269,7 @@ static Lock notificationLock;
 
 using NotificationQueue = Vector<std::pair<SecurityOriginData, String>>;
 
-static NotificationQueue& NODELETE notificationQueue()
+static NotificationQueue& NODELETE notificationQueue() WTF_REQUIRES_LOCK(notificationLock)
 {
     static NeverDestroyed<NotificationQueue> queue;
     return queue;

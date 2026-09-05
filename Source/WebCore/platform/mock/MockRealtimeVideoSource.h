@@ -178,7 +178,8 @@ private:
     std::optional<PhotoSettings> m_photoSettings;
     bool m_beingConfigured { false };
     bool m_isUsingRotationAngleForHorizonLevelDisplayChanged { false };
-    bool m_isTakingPhoto { false };
+    // Set on the caller's thread by takePhotoInternal() and cleared on m_runLoop's thread, like m_captureWasInterrupted.
+    std::atomic<bool> m_isTakingPhoto { false };
     std::atomic<bool> m_captureWasInterrupted { false };
 };
 

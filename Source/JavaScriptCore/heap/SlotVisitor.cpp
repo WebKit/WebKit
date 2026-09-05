@@ -671,6 +671,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 }
 
                 auto isReady = [&] () -> bool {
+                    assertIsHeld(m_heap.m_markingMutex);
                     return hasWork(locker)
                         || m_heap.m_bonusVisitorTask
                         || m_heap.m_parallelMarkersShouldExit;
@@ -688,6 +689,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
             if (!bonusTask && isEmpty()) {
                 forEachMarkStack(
                     [&] (MarkStackArray& stack) -> IterationStatus {
+                        assertIsHeld(m_heap.m_markingMutex);
                         stack.stealSomeCellsFrom(
                             correspondingGlobalStack(stack),
                             m_heap.m_numberOfWaitingParallelMarkers);

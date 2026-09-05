@@ -104,6 +104,7 @@ void ScrollingTreeLatchingController::nodeDidHandleEvent(ScrollingNodeID scrolli
     }
 
     auto shouldLatch = [&]() {
+        assertIsHeld(m_latchedNodeLock);
         if (wheelEvent.delta().isZero())
             return false;
 

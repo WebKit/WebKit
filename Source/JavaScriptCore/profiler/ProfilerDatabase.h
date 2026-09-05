@@ -68,7 +68,7 @@ public:
     JS_EXPORT_PRIVATE void logEvent(CodeBlock* codeBlock, const char* summary, const CString& detail);
     
 private:
-    Bytecodes* ensureBytecodesFor(const AbstractLocker&, CodeBlock*);
+    Bytecodes* ensureBytecodesFor(const AbstractLocker&, CodeBlock*) WTF_REQUIRES_LOCK(m_lock);
     
     void addDatabaseToAtExit();
     void removeDatabaseFromAtExit();
@@ -79,9 +79,9 @@ private:
     DatabaseID m_databaseID;
     VM& m_vm;
     SegmentedVector<Bytecodes> m_bytecodes;
-    UncheckedKeyHashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
+    UncheckedKeyHashMap<CodeBlock*, Bytecodes*> m_bytecodesMap WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<Compilation>> m_compilations;
-    UncheckedKeyHashMap<CodeBlock*, Ref<Compilation>> m_compilationMap;
+    UncheckedKeyHashMap<CodeBlock*, Ref<Compilation>> m_compilationMap WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Event> m_events;
     bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;

@@ -56,7 +56,7 @@ public:
 
 private:
     RefPtr<SharedTask<OuterType()>> m_outerSource;
-    RefPtr<SharedTask<InnerType()>> m_innerSource;
+    RefPtr<SharedTask<InnerType()>> m_innerSource WTF_GUARDED_BY_LOCK(m_lock);
     UnwrapFunc m_unwrapFunc;
     Lock m_lock;
 };

@@ -495,7 +495,10 @@ void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
     assertIsCurrent(workQueue());
 
     if (auto* decoder = m_decoders.get(decoderIdentifier)) {
-        decoder->hasError = true;
+        {
+            Locker locker { m_connectionLock };
+            decoder->hasError = true;
+        }
         Locker locker { decoder->decodedImageCallbackLock };
         if (decoder->decoderCallback)
             decoder->decoderCallback(nullptr, 0);

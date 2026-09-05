@@ -124,7 +124,10 @@ void Event::initEvent(const AtomString& eventTypeArg, bool canBubbleArg, bool ca
     m_immediatePropagationStopped = false;
     m_wasCanceled = false;
     m_isTrusted = false;
-    m_target = nullptr;
+    {
+        Locker targetLocker { m_targetLock };
+        m_target = nullptr;
+    }
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;

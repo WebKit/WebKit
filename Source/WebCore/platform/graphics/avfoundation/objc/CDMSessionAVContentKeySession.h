@@ -116,7 +116,7 @@ private:
     const Ref<WTF::WorkQueue> m_delegateQueue;
     Semaphore m_hasKeyRequestSemaphore;
     mutable Lock m_keyRequestLock;
-    RetainPtr<AVContentKeyRequest> m_keyRequest;
+    RetainPtr<AVContentKeyRequest> m_keyRequest WTF_GUARDED_BY_LOCK(m_keyRequestLock);
     RefPtr<Uint8Array> m_identifier;
     RefPtr<SharedBuffer> m_sourceBufferInitData;
     RefPtr<SharedBuffer> m_initData;
