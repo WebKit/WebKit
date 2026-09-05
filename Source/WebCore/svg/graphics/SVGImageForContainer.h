@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/DisplayList.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
@@ -67,8 +68,20 @@ public:
 private:
     WEBCORE_EXPORT SVGImageForContainer(SVGImage*, SVGImage::ContainerContext&&);
 
+    // FIXME: SVGImage::draw sets composite operator, blend mode and orientation,
+    // so those are recorded into m_displayList but not compared here yet.
+    struct DrawParameters {
+        FloatRect dstRect;
+        FloatRect srcRect;
+
+        friend bool operator==(const DrawParameters&, const DrawParameters&) = default;
+    };
+
     WeakPtr<SVGImage> m_image;
     const SVGImage::ContainerContext m_containerContext;
+
+    RefPtr<const DisplayList::DisplayList> m_displayList;
+    DrawParameters m_drawParameters;
 };
 
 } // namespace WebCore

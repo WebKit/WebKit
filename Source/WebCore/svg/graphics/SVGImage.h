@@ -124,6 +124,8 @@ private:
 
     void applyLinkParameters(const Style::LinkParameters&);
 
+    bool displayListCacheEnabled() const;
+
     RefPtr<Page> m_page;
     FloatSize m_intrinsicSize;
 

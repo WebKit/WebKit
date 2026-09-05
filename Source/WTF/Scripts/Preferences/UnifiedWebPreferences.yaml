@@ -7535,6 +7535,20 @@ SVGExternalResourcesEnabled:
     WebKit:
       default: true
 
+SVGImageDisplayListCacheEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "SVG image display list cache"
+  humanReadableDescription: "Cache a display list per SVG image container instead of re-rendering the resource document for every draw"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 SWVPDecodersAlwaysEnabled:
   type: bool
   status: internal

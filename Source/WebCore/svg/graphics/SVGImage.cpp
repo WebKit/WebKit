@@ -170,6 +170,11 @@ bool SVGImage::renderingTaintsOrigin() const
     return false;
 }
 
+bool SVGImage::displayListCacheEnabled() const
+{
+    return m_page && m_page->settings().svgImageDisplayListCacheEnabled();
+}
+
 void SVGImage::setContainerSize(const FloatSize& size)
 {
     RefPtr rootElement = this->rootElement();
@@ -252,8 +257,6 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
 
 void SVGImage::applyLinkParameters(const Style::LinkParameters& parameters)
 {
-    // FIXME: webkit.org/b/322833 - the resource document holds one container's parameters at a time,
-    // so this restyles it once per draw in the container.
     if (m_appliedLinkParameters == parameters)
         return;
 
@@ -571,6 +574,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
                 m_page->settings().setLayerBasedSVGEngineEnabled(parentSettings->layerBasedSVGEngineEnabled());
                 m_page->settings().fontGenericFamilies() = parentSettings->fontGenericFamilies();
                 m_page->settings().setCSSDPropertyEnabled(parentSettings->cssDPropertyEnabled());
+                m_page->settings().setSVGImageDisplayListCacheEnabled(parentSettings->svgImageDisplayListCacheEnabled());
                 m_page->settings().setDownloadableBinaryFontTrustedTypes(parentSettings->downloadableBinaryFontTrustedTypes());
             }
             protect(m_page)->setUseColorAppearance(observer->useSystemDarkAppearance(), false);
