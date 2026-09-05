@@ -46,7 +46,7 @@ public:
 
     virtual void didChooseColor(const Color&) = 0;
     virtual void didEndChooser() = 0;
-    virtual IntRect elementRectRelativeToRootView() const = 0;
+    virtual IntRect elementRectRelativeToMainFrameView() const = 0;
     virtual bool supportsAlpha() const = 0;
     virtual Vector<Color> suggestedColors() const = 0;
     virtual std::optional<FrameIdentifier> rootFrameID() const = 0;

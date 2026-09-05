@@ -12251,17 +12251,12 @@ void WebPageProxy::showColorPicker(IPC::Connection& connection, const WebCore::C
     if (!pageClient)
         return;
 
-    internals().colorPicker = pageClient->createColorPicker(*this, initialColor, elementRect, supportsAlpha, WTF::move(suggestions), rootFrameID);
+    RefPtr colorPicker = pageClient->createColorPicker(*this, initialColor, elementRect, supportsAlpha, WTF::move(suggestions), rootFrameID);
+    internals().colorPicker = colorPicker;
 
-    convertRectToMainFrameCoordinates(elementRect, rootFrameID, [weakThis = WeakPtr { *this }, initialColor](std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-
-        // FIXME: Remove this conditional once all ports have a functional PageClientImpl::createColorPicker.
-        if (RefPtr colorPicker = protectedThis->internals().colorPicker)
-            colorPicker->showColorPicker(initialColor, IntRect(*convertedRect));
-    });
+    // FIXME: Remove this conditional once all ports have a functional PageClientImpl::createColorPicker.
+    if (colorPicker)
+        colorPicker->showColorPicker(initialColor, elementRect);
 }
 
 void WebPageProxy::setColorPickerColor(const WebCore::Color& color)
