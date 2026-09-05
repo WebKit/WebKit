@@ -54,7 +54,6 @@ accessibility/mac/attributed-string/attributed-string-for-range-with-options.htm
 accessibility/isolated-tree/mac/attributed-string/attributed-string-for-range-with-options.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-for-range.html [ Failure ]
 accessibility/isolated-tree/mac/attributed-string/attributed-string-for-range.html [ Failure ]
-accessibility/mac/line-range-continuity.html [ Failure ]
 accessibility/mac/content-editable-attributed-string.html [ Failure ]
 accessibility/mac/misspelled-attributed-string.html [ Failure ]
 accessibility/mac/spellcheck-with-voiceover.html [ Failure ]

@@ -3484,7 +3484,16 @@ enum class TextUnit {
             AX_ASSERT_NOT_REACHED();
             break;
         }
-        return AXTextMarker { textMarker }.lineRange(rangeType, includeTrailingLineBreak).platformData().bridgingAutorelease();
+
+        auto lineRange = AXTextMarker { textMarker }.lineRange(rangeType, includeTrailingLineBreak);
+        if (textUnit == TextUnit::Line) {
+            // The range ends at the downstream start of the next line, rather than the upstream start of this
+            // one. This enables AT line-by-line navigation and matches the live tree.
+            auto endMarker = lineRange.end();
+            endMarker.setAffinity(Affinity::Downstream);
+            lineRange = { lineRange.start(), WTF::move(endMarker) };
+        }
+        return lineRange.platformData().bridgingAutorelease();
     }
 
     return (id)Accessibility::retrieveAutoreleasedValueFromMainThread<AXTextMarkerRangeRef>([textMarker = retainPtr(textMarker), &textUnit, protectedSelf = retainPtr(self)] () ->  RetainPtr<AXTextMarkerRangeRef> {
