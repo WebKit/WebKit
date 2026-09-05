@@ -43,6 +43,7 @@
 #include <JavaScriptCore/MathCommon.h>
 #include <limits>
 #include <wtf/Borrow.h>
+#include <wtf/JSONValues.h>
 #include <wtf/Ref.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -167,6 +168,78 @@ void BidiBrowsingContextAgent::activate(const BrowsingContext& browsingContext, 
 
         callback({ });
     });
+}
+
+void BidiBrowsingContextAgent::captureScreenshot(const BrowsingContext& browsingContext, const String& optionalOrigin, RefPtr<JSON::Object>&& optionalFormat, RefPtr<JSON::Object>&& optionalClip, CommandCallback<String>&& callback)
+{
+    // https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot
+    RefPtr session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    // The "get a navigable" algorithm uses `no such frame` for both top-level and child contexts.
+    // https://w3c.github.io/webdriver-bidi/#get-a-navigable
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(browsingContext.isEmpty(), FrameNotFound);
+
+    auto handles = session->extractBrowsingContextHandles(browsingContext);
+    ASYNC_FAIL_IF_UNEXPECTED_RESULT(handles);
+    auto [pageHandle, frameHandle] = handles.value();
+
+    // FIXME: implement the `document` origin; captures are always relative to the viewport. <https://webkit.org/b/323419>
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!optionalOrigin.isNull() && optionalOrigin != "viewport"_s && optionalOrigin != "document"_s, InvalidParameter);
+
+    if (optionalFormat) {
+        // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat
+        RefPtr formatType = optionalFormat->getValue("type"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!formatType, MissingParameter);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(formatType->asString().isNull(), InvalidParameter);
+
+        if (RefPtr quality = optionalFormat->getValue("quality"_s)) {
+            auto qualityValue = quality->asDouble();
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!qualityValue, InvalidParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(*qualityValue < 0 || *qualityValue > 1, InvalidParameter);
+        }
+
+        // FIXME: honor the requested image format and quality; captures are always encoded as PNG. <https://webkit.org/b/323422>
+    }
+
+    if (optionalClip) {
+        // https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle
+        RefPtr clipTypeValue = optionalClip->getValue("type"_s);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!clipTypeValue, MissingParameter);
+
+        auto clipType = clipTypeValue->asString();
+        if (clipType == "element"_s) {
+            RefPtr elementValue = optionalClip->getValue("element"_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!elementValue, MissingParameter);
+
+            RefPtr element = elementValue->asObject();
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!element, InvalidParameter);
+
+            RefPtr sharedIdValue = element->getValue("sharedId"_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!sharedIdValue, MissingParameter);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(sharedIdValue->asString().isNull(), InvalidParameter);
+
+            // FIXME: resolve shared references once the BiDi script module supports node serialization.
+            // Until then, no shared reference can name a known node. <https://webkit.org/b/323423>
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR(NodeNotFound);
+        } else if (clipType == "box"_s) {
+            for (auto key : { "x"_s, "y"_s, "width"_s, "height"_s }) {
+                RefPtr value = optionalClip->getValue(key);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!value, MissingParameter);
+                ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!value->asDouble(), InvalidParameter);
+            }
+
+            // An empty clip rectangle cannot intersect the viewport.
+            auto width = *optionalClip->getDouble("width"_s);
+            auto height = *optionalClip->getDouble("height"_s);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(width <= 0 || height <= 0, ScreenshotError);
+
+            // FIXME: apply the clip rectangle to the captured image. <https://webkit.org/b/323419>
+        } else
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
+    }
+
+    session->takeScreenshot(pageHandle, frameHandle, emptyString(), std::nullopt, std::nullopt, WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::close(const BrowsingContext& browsingContext, std::optional<bool>&& optionalPromptUnload, CommandCallback<void>&& callback)
