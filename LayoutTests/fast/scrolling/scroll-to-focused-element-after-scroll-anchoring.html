@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+#scroller { width: 360px; height: 600px; overflow-y: auto; border: 1px solid black; }
+.target { background: #ffe0a0; }
+</style>
+</head>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="scroller"></div>
+<script>
+description('Focused-element scroll must commit before paint, even after scroll anchoring adjusts scrollTop. webkit.org/b/318168');
+
+jsTestIsAsync = true;
+
+const scroller = document.getElementById('scroller');
+const nextRows = Array.from({length: 60}, (_, i) => `<div>Next ${i + 2}</div>`).join('');
+const headerRows = `
+  <h2>Header</h2>
+  <div>Subheader</div>
+  <div class="target" id="target" tabindex="0">Target</div>
+`;
+
+scroller.innerHTML = nextRows;
+
+requestAnimationFrame(() => {
+    scroller.scrollTop = 200; // Arm scroll anchoring
+    requestAnimationFrame(() => {
+        scroller.insertAdjacentHTML('afterbegin', headerRows);
+        document.getElementById('target').focus();
+
+        requestAnimationFrame(() => {
+            scrollTopAfterFocus = scroller.scrollTop;
+            shouldBe('scrollTopAfterFocus', '0');
+            scroller.remove(); // keep the scroller's filler rows out of the dumpAsText output
+            finishJSTest();
+        });
+    });
+});
+</script>
+</body>
+</html>

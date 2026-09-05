@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -2453,6 +2453,12 @@ void Page::updateRendering()
 
     runProcessingStep(RenderingUpdateStep::Animations, [] (Document& document) {
         document.updateAnimationsAndSendEvents();
+    });
+
+    // Commit any pending focus-induced scroll before paint, so it doesn't lose a race with something like scroll-anchoring mutating scrollTop first.
+    runProcessingStep(RenderingUpdateStep::DrainScrollToFocusedElement, [] (Document& document) {
+        if (RefPtr view = document.view())
+            view->scrollToFocusedElementImmediatelyIfNeeded();
     });
 
 #if ENABLE(FULLSCREEN_API)
@@ -5250,6 +5256,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::PrepareCanvasesForDisplayOrFlush: ts << "PrepareCanvasesForDisplayOrFlush"_s; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"_s; break;
     case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"_s; break;
+    case RenderingUpdateStep::DrainScrollToFocusedElement: ts << "DrainScrollToFocusedElement"_s; break;
     case RenderingUpdateStep::UpdateValidationMessagePositions: ts << "UpdateValidationMessagePositions"_s; break;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     case RenderingUpdateStep::AccessibilityRegionUpdate: ts << "AccessibilityRegionUpdate"_s; break;

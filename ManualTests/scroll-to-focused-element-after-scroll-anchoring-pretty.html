@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spotify queue-panel "hop" repro (rdar://171019322)</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 24px;
+  background: #121212;
+  color: #eee;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+}
+
+h1 { margin: 0 0 16px 0; }
+
+#row { display: flex; gap: 24px; align-items: flex-start; }
+
+#text { max-width: 540px; }
+#text p { color: #aaa; line-height: 1.5; }
+
+button {
+  font: inherit;
+  background: #2d8c5c;
+  color: white;
+  border: 0;
+  border-radius: 20px;
+  padding: 10px 22px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+button.secondary { background: #444; }
+
+#readout {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  color: #2dd87a;
+  margin: 12px 0;
+  white-space: pre;
+}
+
+/* The queue panel. Inner #queue-list is the scrollable; everything
+   inside it is subject to the browser's scroll-anchoring algorithm. */
+#panel {
+  width: 360px;
+  height: 600px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+#queue-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  /* explicit scroll-anchoring on; this is the default but we want it
+     unambiguous. */
+  overflow-anchor: auto;
+}
+
+.h-major {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.h-minor {
+  color: #999;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 16px 0 6px 0;
+  text-transform: uppercase;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.row:hover { background: rgba(255,255,255,0.05); }
+.row .art { width: 40px; height: 40px; background: #333; border-radius: 4px; flex-shrink: 0; }
+.row .title { color: #ddd; font-size: 14px; }
+.row .artist { color: #888; font-size: 12px; }
+
+.row.now-playing { background: rgba(45, 140, 92, 0.18); }
+.row.now-playing .title { color: #2dd87a; font-weight: 600; }
+.row.now-playing::before { content: "▶"; color: #2dd87a; font-size: 11px; margin-right: 4px; }
+
+a { text-decoration: none; color: inherit; outline: none; }
+a:focus { outline: 2px solid #5b9aff; outline-offset: -2px; }
+</style>
+</head>
+<body>
+
+<h1>Spotify queue-panel "hop" repro</h1>
+
+<div id="row">
+
+  <div id="text">
+    <p>
+      Press <b>Open Queue</b>. The flow:
+    </p>
+    <ol style="color:#aaa; line-height:1.5;">
+      <li>Mount the "Next from" section into the queue list. Visible content: "Next from: Rock Artist" at the top of the panel, scroll position = 0.</li>
+      <li>Wait one paint.</li>
+      <li>Prepend the "Queue" header, "Now playing" label, and the "Title 1" row above the existing content. The browser's scroll-anchoring algorithm shifts <code>scrollTop</code> automatically to keep the previously-visible content stable, so "Next from" stays at the top. Then <code>focus()</code> on the newly-inserted "Title 1" row.</li>
+    </ol>
+    <p>
+      <b>Unpatched Safari:</b> the <code>focus()</code> schedules a 0 s Timer for the focused-element scroll. The next paint happens before the Timer fires, so the list paints with "Next from" still at the top (anchored scrollTop). One Timer-fire later, scroll jumps to <code>scrollTop = 0</code> — "Now playing: Title 1" snaps into view at the top. <b>The hop.</b>
+    </p>
+    <p>
+      <b>Chrome:</b> focus-scroll commits before the paint that would have shown the anchored position, so the first paint shows Now Playing at the top.
+    </p>
+    <p>
+      <b>Patched Safari:</b> our rendering-update step runs the deferred focus-scroll inside the same rendering update as the content insertion, so paint commits at <code>scrollTop = 0</code> from the start.
+    </p>
+    <div>
+      <button id="openBtn">Open Queue</button>
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+    <div id="readout">state: idle</div>
+  </div>
+
+  <div id="panel">
+    <div id="queue-list"><!-- populated by JS --></div>
+  </div>
+
+</div>
+
+<script>
+const queueList = document.getElementById('queue-list');
+const readout = document.getElementById('readout');
+
+function setReadout(state) {
+  readout.textContent = `scrollTop: ${String(queueList.scrollTop).padEnd(4)} state: ${state}`;
+}
+
+queueList.addEventListener('scroll', () => setReadout('scrolling'), { passive: true });
+
+const nextFromHTML = `
+  <div class="h-minor">Next from: Rock Artist</div>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 2</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 3</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 4</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 5</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 6</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 7</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 8</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 9</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 10</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 11</div><div class="artist">Rock Artist</div></div></a>
+  <a class="row" href="#"><div class="art"></div><div><div class="title">Title 12</div><div class="artist">Rock Artist</div></div></a>
+`;
+
+const headerHTML = `
+  <h2 class="h-major">Queue</h2>
+  <div class="h-minor">Now playing</div>
+  <a class="row now-playing" id="nowPlaying" href="#" tabindex="0">
+    <div class="art"></div>
+    <div><div class="title">Title 1</div><div class="artist">Rock Artist</div></div>
+  </a>
+`;
+
+document.getElementById('openBtn').addEventListener('click', () => {
+  // STEP 1: Mount the "Next from" section only. scrollTop = 0.
+  // The first frame Spotify shows is exactly this state — "Next from"
+  // at the top of the queue, no Queue/Now playing headers yet.
+  queueList.innerHTML = nextFromHTML;
+  setReadout('mounted "Next from" only — waiting one paint');
+
+  // STEP 2: After the first paint commits with "Next from" at the
+  // top, prepend the upper sections. This is what triggers the hop.
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+
+    // Insert "Queue", "Now playing" label, and "Title 1"
+    // row at the top of the scrollable. Because this content is
+    // inserted ABOVE the current scroll position, the browser's
+    // scroll-anchoring algorithm shifts scrollTop by the height of
+    // the inserted content, keeping the previously-visible "Next
+    // from" section stable at the top of the viewport. The user
+    // continues to see "Next from" at the top.
+    queueList.insertAdjacentHTML('afterbegin', headerHTML);
+
+    // Now focus the newly-inserted "Title 1" row. This is
+    // currently scrolled out of view above the viewport (because
+    // scroll-anchoring moved scrollTop down). The browser is
+    // expected to scroll the queue list back up to bring it into
+    // view — which means scrollTop = 0 and Now Playing at the top.
+    //
+    //   Unpatched Safari: 0 s Timer schedules the focused-element
+    //   scroll. Timer fires next event loop iteration AFTER paint.
+    //   Paint N shows scrollTop = (anchor-adjusted value), "Next
+    //   from" still at top. Timer fires, scroll, Paint N+1 shows
+    //   scrollTop = 0 with Now Playing at top. HOP.
+    //
+    //   Chrome: focus-scroll runs synchronously / inside the same
+    //   rendering update, so Paint N shows scrollTop = 0 directly.
+    //
+    //   Patched Safari: the DrainScrollToFocusedElement rendering-
+    //   update step runs the deferred scroll before the next
+    //   paint, matching Chrome's behavior.
+    document.getElementById('nowPlaying').focus();
+    setReadout('prepended + focused — focus-scroll should fire');
+  }));
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  queueList.innerHTML = '';
+  setReadout('idle');
+});
+
+setReadout('idle');
+</script>
+</body>
+</html>
