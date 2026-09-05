@@ -923,7 +923,6 @@ public:
     // Called when we inherit an accessibility mode from the UI process.
     // The inheritance aspect is an important semantic, as if we inherit
     // AXThread mode, we should skip the client checks it normally does.
-    void inheritAccessibilityMode(WebCore::AccessibilityMode);
 
 #if PLATFORM(MAC)
     void getAccessibilityWebProcessDebugInfo(CompletionHandler<void(WebCore::AXDebugInfo)>&&);

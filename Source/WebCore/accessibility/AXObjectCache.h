@@ -548,8 +548,17 @@ public:
     void recomputeIsIgnored(RenderObject&);
     void recomputeIsIgnored(Node*);
 
-    enum class ForceAXThreadMode : bool { No, Yes };
-    static void enableAccessibility(ForceAXThreadMode = ForceAXThreadMode::No);
+    // What must hold before this process will reach AXThread mode.
+    enum class AXThreadModePreconditions : uint8_t {
+        // A current accessibility client that we support isolated trees for, and this process's
+        // isolated-tree setting.
+        RequireClientAndSetting,
+        // Only the setting. For transitions driven by IPC rather than by an accessibility request,
+        // where there is no current client to ask about.
+        RequireSettingOnly,
+        None
+    };
+    static void enableAccessibility(AXThreadModePreconditions = AXThreadModePreconditions::RequireClientAndSetting);
     // Resets mode to Off without notifying the UI process, so the change
     // stays local to this web process. Used by Internals::resetToConsistentState
     // to avoid interfering with other web content processes running tests.
@@ -558,7 +567,7 @@ public:
     WEBCORE_EXPORT static std::atomic<AccessibilityMode> gAccessibilityMode;
     static AccessibilityMode accessibilityMode() { return gAccessibilityMode.load(std::memory_order_relaxed); }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WEBCORE_EXPORT static std::optional<AccessibilityMode> transitionToAXThreadModeIfNeeded(ForceAXThreadMode = ForceAXThreadMode::No);
+    WEBCORE_EXPORT static std::optional<AccessibilityMode> transitionToAXThreadModeIfNeeded(AXThreadModePreconditions = AXThreadModePreconditions::RequireClientAndSetting);
     WEBCORE_EXPORT static bool shouldForceAccessibilityEnabled();
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
@@ -831,7 +840,7 @@ private:
     static bool clientSupportsIsolatedTree();
 
     enum class PlatformAXThreadSupport : bool { NotSupported, Supported };
-    static PlatformAXThreadSupport platformAXThreadSupport(ForceAXThreadMode);
+    static PlatformAXThreadSupport platformAXThreadSupport(AXThreadModePreconditions);
     enum class DidStartThread : bool { No, Yes };
     static DidStartThread platformStartSecondaryThread();
 
@@ -1243,7 +1252,7 @@ inline bool AXObjectCache::accessibilityEnabled()
     return !isAccessibilityModeOff(accessibilityMode());
 }
 
-inline void AXObjectCache::enableAccessibility([[maybe_unused]] ForceAXThreadMode forceAXThread)
+inline void AXObjectCache::enableAccessibility([[maybe_unused]] AXThreadModePreconditions preconditions)
 {
     if (accessibilityMode() == AccessibilityMode::AXThread) {
         // If we're in AXThread mode, there's nothing more to do.
@@ -1254,7 +1263,7 @@ inline void AXObjectCache::enableAccessibility([[maybe_unused]] ForceAXThreadMod
     }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (transitionToAXThreadModeIfNeeded(forceAXThread))
+    if (transitionToAXThreadModeIfNeeded(preconditions))
         return;
 #endif
     // We may not always be allowed to transition to AXThread-mode based on

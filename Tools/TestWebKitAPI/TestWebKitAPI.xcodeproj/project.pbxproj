@@ -1438,6 +1438,7 @@
 				WebKit/WKPage/CanHandleRequest_Bundle.cpp,
 				WebKit/WKPage/cocoa/CustomBundleObject.mm,
 				WebKit/WKPage/cocoa/CustomBundleParameter_Bundle.mm,
+				WebKit/WKPage/cocoa/EnableAccessibilityInWebProcess_Bundle.mm,
 				WebKit/WKPage/cocoa/ForceLightAppearanceInBundle_Bundle.mm,
 				WebKit/WKPage/cocoa/GetBackingScaleFactor_Bundle.mm,
 				WebKit/WKPage/cocoa/InjectedBundleAppleEvent_Bundle.cpp,

@@ -89,6 +89,7 @@
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
+#include <WebCore/AXObjectTypes.h>
 #include <WebCore/AudioSession.h>
 #include <WebCore/CryptoKey.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -257,6 +258,15 @@ WebProcessProxy::WebProcessProxyMap& WebProcessProxy::allProcessMap()
     return map;
 }
 
+// The accessibility mode every web content process should be in. When one web content process changes mode,
+// it reports to us (the UI process). Then, if needed, the mode is updated and broadcast to other web content processes.
+static WebCore::AccessibilityMode& webContentAccessibilityModeStorage()
+{
+    ASSERT(isMainRunLoop());
+    static WebCore::AccessibilityMode mode { };
+    return mode;
+}
+
 Vector<Ref<WebProcessProxy>> WebProcessProxy::allProcesses()
 {
     return WTF::map(allProcessMap(), [] (auto& keyValue) -> Ref<WebProcessProxy> {
@@ -336,6 +346,56 @@ Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
 unsigned WebProcessProxy::remotePageCount() const
 {
     return m_remotePages.computeSize();
+}
+
+void WebProcessProxy::accessibilityModeDidChange(WebCore::AccessibilityMode mode)
+{
+    // A web process reporting the mode it just transitioned to. It must not be echoed back. That process
+    // already has the mode, and the echo would arrive asynchronously, potentially after the process
+    // deliberately turned accessibility back off (which Internals::resetToConsistentState does between
+    // layout tests).
+    setAccessibilityModeForWebContent(mode, /* processToSkip */ this);
+}
+
+WebCore::AccessibilityMode WebProcessProxy::accessibilityModeForWebContent()
+{
+    ASSERT(isMainRunLoop());
+    return webContentAccessibilityModeStorage();
+}
+
+void WebProcessProxy::setAccessibilityModeForWebContent(WebCore::AccessibilityMode mode, const WebProcessProxy* processToSkip)
+{
+    ASSERT(isMainRunLoop());
+
+    // This only allows the mode to increase. resetAccessibilityModeForTesting is the only way it decreases, and it does
+    // so through direct assignment rather than through here.
+    if (WebCore::accessibilityModeRank(mode) <= WebCore::accessibilityModeRank(webContentAccessibilityModeStorage()))
+        return;
+
+    webContentAccessibilityModeStorage() = mode;
+
+    // All web content processes should now be notified of the mode change.
+    for (Ref process : allProcesses()) {
+        if (process.ptr() == processToSkip)
+            continue;
+        process->send(Messages::WebProcess::SetAccessibilityMode(mode), 0);
+    }
+
+#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
+    // Frame geometry is per-page and is only computed while accessibility is on, so every page needs a
+    // fresh one now that it is.
+    for (Ref page : globalPages())
+        page->scheduleAccessibilityFrameGeometryUpdate();
+#endif
+}
+
+void WebProcessProxy::resetAccessibilityModeForTesting()
+{
+    ASSERT(isMainRunLoop());
+    // Assigned directly rather than going through setAccessibilityModeForWebContent, which only ever
+    // raises the mode. Tests share one UI process, so a test that turns accessibility on has to be able
+    // to put this back or it would change the behavior of every test that follows it.
+    webContentAccessibilityModeStorage() = WebCore::AccessibilityMode::Off;
 }
 
 void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, NOESCAPE const Function<void(WebPageProxy&)>& callback)

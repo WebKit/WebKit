@@ -411,6 +411,10 @@ WebProcess::WebProcess()
 
     WebCore::WebLockRegistry::setSharedRegistry(RemoteWebLockRegistry::create(*this));
     WebCore::PermissionController::setSharedController(WebPermissionController::create(*this));
+
+    WebCore::AXObjectCache::setSyncModeToOtherProcessesCallback([](WebCore::AccessibilityMode mode) {
+        WebProcess::singleton().send(Messages::WebProcessProxy::AccessibilityModeDidChange(mode), 0);
+    });
 }
 
 WebProcess::~WebProcess()
@@ -1058,6 +1062,9 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 {
     m_hasEverHadAnyWebPages = true;
 
+    // Read before the parameters are moved from.
+    auto accessibilityMode = parameters.accessibilityMode;
+
     auto addResult = m_pageMap.ensure(pageID, [&] {
         return WebPage::create(pageID, WTF::move(parameters));
     });
@@ -1083,6 +1090,9 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
 #endif
     } else
         page->reinitializeWebPage(WTF::move(parameters));
+
+    // Bring this process up to the mode the UI process says web content should be in.
+    setAccessibilityMode(accessibilityMode);
 
     if (m_hasPendingAccessibilityUnsuspension) {
         m_hasPendingAccessibilityUnsuspension = false;
@@ -1626,6 +1636,25 @@ void WebProcess::modelProcessConnectionClosed(ModelProcessConnection& connection
 void WebProcess::setEnhancedAccessibility(bool flag)
 {
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
+}
+
+void WebProcess::setAccessibilityMode(WebCore::AccessibilityMode mode)
+{
+    if (WebCore::isAccessibilityModeOff(mode)) {
+        // Accessibility is never turned back off in production. The only transition to Off is
+        // AXObjectCache::disableAccessibilityForTesting, which deliberately doesn't sync to other
+        // processes. So receiving Off here just means this process isn't being asked to turn on.
+        return;
+    }
+
+    // RequireSettingOnly, not None. This runs downstream of IPC mode transitions or webpage creation,
+    // both of which may not have an actual client set. Assume that because a peer has seen a client that
+    // allows for isolated tree enablement, we will too.
+    auto preconditions = mode == WebCore::AccessibilityMode::AXThread
+        ? WebCore::AXObjectCache::AXThreadModePreconditions::RequireSettingOnly
+        : WebCore::AXObjectCache::AXThreadModePreconditions::RequireClientAndSetting;
+
+    WebCore::AXObjectCache::enableAccessibility(preconditions);
 }
 
 void WebProcess::startMemorySampler(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)

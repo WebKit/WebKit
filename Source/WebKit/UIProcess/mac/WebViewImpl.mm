@@ -103,7 +103,7 @@
 #import "_WKWebViewTextInputNotifications.h"
 #import <Carbon/Carbon.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
-#import <WebCore/AXObjectCache.h>
+#import <WebCore/AXObjectTypes.h>
 #import <WebCore/ActivityState.h>
 #import <WebCore/AttributedString.h>
 #import <WebCore/CGWindowUtilities.h>
@@ -2066,7 +2066,7 @@ void WebViewImpl::updateWindowAndViewFrames()
         }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        if (WebCore::AXObjectCache::accessibilityEnabled())
+        if (!WebCore::isAccessibilityModeOff(WebProcessProxy::accessibilityModeForWebContent()))
             accessibilityPosition = [[weakThis->m_view.get() accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -4302,20 +4302,22 @@ id WebViewImpl::accessibilityHitTest(CGPoint)
 
 void WebViewImpl::enableAccessibilityIfNecessary(NSString *attribute)
 {
-#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
     // The attributes NSAccessibilityParentAttribute and NSAccessibilityPositionAttribute do not require AX initialization in the WebContent process.
     if (![attribute isEqualToString:NSAccessibilityParentAttribute] && ![attribute isEqualToString:NSAccessibilityPositionAttribute]) {
+#if ENABLE(INITIALIZE_ACCESSIBILITY_ON_DEMAND)
+        // Bring the accessibility server up before any web process is told accessibility is on.
         Ref processPool = m_page->configuration().processPool();
         processPool->initializeAccessibilityIfNecessary();
-    }
 #endif
+        WebProcessProxy::setAccessibilityModeForWebContent(WebCore::AccessibilityMode::MainThread);
+    }
 
-    if (WebCore::AXObjectCache::accessibilityEnabled())
+    if (m_didUpdateFramesForAccessibility)
         return;
+    m_didUpdateFramesForAccessibility = true;
 
-    // After enabling accessibility update the window frame on the web process so that the
-    // correct accessibility position is transmitted (when AX is off, that position is not calculated).
-    WebCore::AXObjectCache::enableAccessibility();
+    // Update the window frame on the web process so that the correct accessibility position is
+    // transmitted (when AX is off, that position is not calculated).
     updateWindowAndViewFrames();
 }
 

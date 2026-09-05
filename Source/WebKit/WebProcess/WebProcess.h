@@ -111,6 +111,7 @@ class SecurityOriginData;
 class Site;
 class UserGestureToken;
 
+enum class AccessibilityMode : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class PlatformMediaSessionRemoteControlCommandType : uint8_t;
 enum class RenderAsTextFlag : uint16_t;
@@ -609,6 +610,7 @@ private:
     void NODELETE platformSetCacheModel(CacheModel);
 
     void setEnhancedAccessibility(bool);
+    void setAccessibilityMode(WebCore::AccessibilityMode);
     void bindAccessibilityFrameWithData(WebCore::FrameIdentifier, std::span<const uint8_t>);
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);

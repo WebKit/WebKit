@@ -1543,6 +1543,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     resetStoragePersistedState();
 
     WKContextClearCurrentModifierStateForTesting(TestController::singleton().context());
+    WKContextResetAccessibilityModeForTesting(TestController::singleton().context());
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
     WKContextClearMockGamepadsForTesting(TestController::singleton().context());
 

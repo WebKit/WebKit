@@ -311,15 +311,15 @@ void AXObjectCache::disableAccessibilityForTesting()
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-std::optional<AccessibilityMode> AXObjectCache::transitionToAXThreadModeIfNeeded(ForceAXThreadMode forceAXThread)
+std::optional<AccessibilityMode> AXObjectCache::transitionToAXThreadModeIfNeeded(AXThreadModePreconditions preconditions)
 {
     if (accessibilityMode() == AccessibilityMode::AXThread)
         return std::nullopt;
 
-    if (platformAXThreadSupport(forceAXThread) == PlatformAXThreadSupport::NotSupported)
+    if (platformAXThreadSupport(preconditions) == PlatformAXThreadSupport::NotSupported)
         return std::nullopt;
 
-    if (forceAXThread == ForceAXThreadMode::No
+    if (preconditions != AXThreadModePreconditions::None
         && !DeprecatedGlobalSettings::isAccessibilityIsolatedTreeEnabled())
         return std::nullopt;
 

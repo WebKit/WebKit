@@ -145,6 +145,10 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 + (void)_setApplicationBundleIdentifier:(NSString *)bundleIdentifier;
 + (void)_clearApplicationBundleIdentifierTestingOverride;
 
+// Accessibility mode is a single UIProcess-wide value, so these are per-process, not per-view.
++ (BOOL)_isAccessibilityEnabledForTesting;
++ (void)_resetAccessibilityModeForTesting;
+
 - (BOOL)_hasSleepDisabler;
 - (WKWebViewAudioRoutingArbitrationStatus)_audioRoutingArbitrationStatus;
 - (double)_audioRoutingArbitrationUpdateTime;

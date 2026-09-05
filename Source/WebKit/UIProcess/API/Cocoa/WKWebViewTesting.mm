@@ -54,6 +54,7 @@
 #import "WebsiteDataStore.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKInspectorInternal.h"
+#import <WebCore/AXObjectTypes.h>
 #import <WebCore/BoxSides.h>
 #import <WebCore/Color.h>
 #import <WebCore/NowPlayingInfo.h>
@@ -1132,6 +1133,16 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #else
     return NO;
 #endif
+}
+
++ (BOOL)_isAccessibilityEnabledForTesting
+{
+    return !WebCore::isAccessibilityModeOff(WebKit::WebProcessProxy::accessibilityModeForWebContent());
+}
+
++ (void)_resetAccessibilityModeForTesting
+{
+    WebKit::WebProcessProxy::resetAccessibilityModeForTesting();
 }
 
 - (void)_setMediaVolumeForTesting:(float)mediaVolume

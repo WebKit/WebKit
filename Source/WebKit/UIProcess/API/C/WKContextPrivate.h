@@ -102,6 +102,11 @@ WK_EXPORT void WKContextClearCurrentModifierStateForTesting(WKContextRef context
 
 WK_EXPORT void WKContextSetAllowAXAuthenticationForTesting(WKContextRef context, bool allow);
 
+// Puts the UIProcess-wide accessibility mode back to off. Web processes turn accessibility off between
+// tests without telling the UIProcess (see AXObjectCache::disableAccessibilityForTesting), so without
+// this the UIProcess would keep handing a stale on-mode to processes created by later tests.
+WK_EXPORT void WKContextResetAccessibilityModeForTesting(WKContextRef context);
+
 WK_EXPORT void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef context, bool forceServiceWorkerProcess);
 
 WK_EXPORT void WKContextSetPrimaryWebsiteDataStore(WKContextRef context, WKWebsiteDataStoreRef websiteDataStore);

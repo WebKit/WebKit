@@ -112,6 +112,7 @@ struct WebProcessCreationParameters;
 class SecurityOriginData;
 struct WrappedCryptoKey;
 
+enum class AccessibilityMode : uint8_t;
 enum class PermissionName : uint8_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 using FramesPerSecond = unsigned;
@@ -486,6 +487,15 @@ public:
 #if PLATFORM(COCOA)
     void unblockAccessibilityServerIfNeeded();
 #endif
+
+    // A web process reporting the mode it just transitioned to.
+    void accessibilityModeDidChange(WebCore::AccessibilityMode);
+
+    // The mode web content should be in, UIProcess-wide. When one process enables accessibility we
+    // propagate it to all of them. Tests can turn it back off with resetAccessibilityModeForTesting.
+    static WebCore::AccessibilityMode accessibilityModeForWebContent();
+    static void setAccessibilityModeForWebContent(WebCore::AccessibilityMode, const WebProcessProxy* processToSkip = nullptr);
+    static void resetAccessibilityModeForTesting();
 
     void updateAudibleMediaAssertions();
     void updateMediaStreamingActivity();

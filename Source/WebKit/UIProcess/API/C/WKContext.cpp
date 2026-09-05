@@ -47,6 +47,7 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <WebCore/GamepadProvider.h>
 #include <wtf/Borrow.h>
 #include <wtf/RefPtr.h>
@@ -550,6 +551,11 @@ void WKContextClearSupportedPlugins(WKContextRef contextRef)
 void WKContextClearCurrentModifierStateForTesting(WKContextRef contextRef)
 {
     protect(WebKit::toImpl(contextRef))->clearCurrentModifierStateForTesting();
+}
+
+void WKContextResetAccessibilityModeForTesting(WKContextRef)
+{
+    WebKit::WebProcessProxy::resetAccessibilityModeForTesting();
 }
 
 void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef, bool useSeparateServiceWorkerProcess)

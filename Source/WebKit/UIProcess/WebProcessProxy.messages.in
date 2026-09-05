@@ -87,6 +87,8 @@ messages -> WebProcessProxy WantsDispatchMessage {
     IsAXAuthenticated(struct WebKit::CoreIPCAuditToken auditToken) -> (bool authenticated) Synchronous
 #endif
 
+    AccessibilityModeDidChange(enum:uint8_t WebCore::AccessibilityMode mode)
+
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     SetCaptionDisplayMode(enum:uint8_t WebCore::CaptionUserPreferencesDisplayMode mode)
     SetCaptionLanguage(String language)

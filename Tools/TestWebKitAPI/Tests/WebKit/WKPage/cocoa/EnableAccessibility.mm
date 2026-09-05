@@ -26,12 +26,18 @@
 #import "config.h"
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Utilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/Scope.h>
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
@@ -157,3 +163,60 @@ TEST(WebKit, AccessibilityChildrenPreventsProcessSuspensionOnFrontmostTab)
 
 #endif
 
+#if PLATFORM(MAC) && WK_HAVE_C_SPI
+
+static bool didEnableAccessibilityInWebProcess;
+
+static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef, const void*)
+{
+    if (WKStringIsEqualToUTF8CString(messageName, "DidEnableAccessibility"))
+        didEnableAccessibilityInWebProcess = true;
+}
+
+// When two web views share a web process, turning accessibility on must reach both of them.
+TEST(WebKit, AccessibilityModeSyncsToAllPagesSharingAWebProcess)
+{
+    [WKWebView _resetAccessibilityModeForTesting];
+    auto resetAccessibilityModeOnExit = makeScopeExit([] {
+        [WKWebView _resetAccessibilityModeForTesting];
+    });
+
+    didEnableAccessibilityInWebProcess = false;
+
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("EnableAccessibilityInWebProcessTest"));
+
+    WKContextInjectedBundleClientV0 injectedBundleClient;
+    zeroBytes(injectedBundleClient);
+    injectedBundleClient.base.version = 0;
+    injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+    WKContextSetInjectedBundleClient(context.get(), &injectedBundleClient.base);
+
+    RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    firstConfiguration.get().processPool = (WKProcessPool *)context.get();
+    RetainPtr firstWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:firstConfiguration.get() addToWindow:YES]);
+    [firstWebView synchronouslyLoadTestPageNamed:@"simple"];
+
+    // _relatedWebView puts the second web view in the first one's web process, so both WebPages share
+    // the one process-wide accessibility mode.
+    RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    secondConfiguration.get().processPool = (WKProcessPool *)context.get();
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    secondConfiguration.get()._relatedWebView = firstWebView.get();
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    RetainPtr secondWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:secondConfiguration.get() addToWindow:YES]);
+    [secondWebView synchronouslyLoadTestPageNamed:@"simple"];
+
+    EXPECT_EQ([firstWebView _webProcessIdentifier], [secondWebView _webProcessIdentifier]);
+
+    EXPECT_FALSE([WKWebView _isAccessibilityEnabledForTesting]);
+
+    // Turn accessibility on inside the shared web process.
+    WKContextPostMessageToInjectedBundle(context.get(), TestWebKitAPI::Util::toWK("EnableAccessibility").get(), nullptr);
+    TestWebKitAPI::Util::run(&didEnableAccessibilityInWebProcess);
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([] {
+        return [WKWebView _isAccessibilityEnabledForTesting];
+    }));
+}
+
+#endif // PLATFORM(MAC) && WK_HAVE_C_SPI

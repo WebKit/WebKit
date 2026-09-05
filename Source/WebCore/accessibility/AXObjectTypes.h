@@ -49,7 +49,17 @@ inline bool isAccessibilityModeOff(AccessibilityMode mode)
         || mode == AccessibilityMode::OffWasAXThread;
 }
 
-WEBCORE_EXPORT std::optional<AccessibilityMode> resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
+// Ranks modes by how much accessibility is on (off, on, or on with an accessibility thread).
+// Deliberately not the numeric order of AccessibilityMode, where OffWasMainThread and OffWasAXThread
+// sort above AXThread despite both being off.
+inline unsigned accessibilityModeRank(AccessibilityMode mode)
+{
+    if (isAccessibilityModeOff(mode))
+        return 0;
+    return mode == AccessibilityMode::AXThread ? 2 : 1;
+}
+
+std::optional<AccessibilityMode> resolveAccessibilityModeTransition(AccessibilityMode current, AccessibilityMode requested);
 
 enum class TextMarkerOrigin : uint16_t;
 

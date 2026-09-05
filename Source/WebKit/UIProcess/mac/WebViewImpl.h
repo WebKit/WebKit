@@ -1060,6 +1060,8 @@ private:
     bool m_clipsToVisibleRect { false };
     bool m_needsViewFrameInWindowCoordinates;
     bool m_didScheduleWindowAndViewFrameUpdate { false };
+    // Whether this view has pushed its frames since accessibility was turned on.
+    bool m_didUpdateFramesForAccessibility { false };
     bool m_windowOcclusionDetectionEnabled { true };
     bool m_windowIsEnteringOrExitingFullScreen { false };
 

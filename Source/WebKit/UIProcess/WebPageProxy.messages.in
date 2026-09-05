@@ -61,8 +61,6 @@ messages -> WebPageProxy {
     RelayAriaNotifyNotification(struct WebCore::AriaNotifyData notificationData)
     RelayLiveRegionNotification(struct WebCore::LiveRegionAnnouncementData notificationData)
 #endif
-    SetAccessibilityMode(enum:uint8_t WebCore::AccessibilityMode mode)
-
     TranslateAccessibilityAnnouncementStrings(Vector<String> strings, String targetLocaleIdentifier) -> (Vector<String> translatedStrings)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
