@@ -152,6 +152,8 @@ void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
     if (CheckedPtr scrollingCoordinator = page->scrollingCoordinatorProxy())
         scrollingCoordinator->viewSizeDidChange();
 
+    updateLiveResizePresentation(m_isInLiveResize);
+
     if (m_isWaitingForDidUpdateGeometry)
         return;
     sendUpdateGeometry();
@@ -185,12 +187,18 @@ void RemoteLayerTreeDrawingAreaProxy::remotePageProcessDidTerminate(WebCore::Pro
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillStartLiveResize()
 {
+    m_isInLiveResize = true;
+    updateLiveResizePresentation();
+
     if (CheckedPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
         scrollingCoordinator->viewWillStartLiveResize();
 }
 
 void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
 {
+    m_isInLiveResize = false;
+    updateLiveResizePresentation(true);
+
     if (CheckedPtr scrollingCoordinator = page() ? page()->scrollingCoordinatorProxy() : nullptr)
         scrollingCoordinator->viewWillEndLiveResize();
 }
@@ -240,6 +248,12 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
         if (RefPtr protectedThis = weakThis)
             protectedThis->didUpdateGeometry();
     });
+
+    // During live resize, geometry changes are display opportunities. Queue the
+    // new size first, then use the existing guarded refresh path to let the Web
+    // process render it without waiting for the next display-link callback.
+    if (m_isInLiveResize)
+        RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay();
 }
 
 ProcessState& RemoteLayerTreeDrawingAreaProxy::processStateForConnection(IPC::Connection& connection)

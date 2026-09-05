@@ -60,6 +60,7 @@ public:
     std::optional<WebCore::PlatformLayerIdentifier> pageScrollingLayerID() { return m_pageScrollingLayerID.asOptional(); }
     std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
     std::optional<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
+    bool hasLiveResizePresentationOverrideForTesting() const { return m_hasLiveResizePresentationOverride; }
 
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
@@ -72,6 +73,7 @@ private:
     void layoutBannerLayers(const RemoteLayerTreeTransaction&);
 
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
+    void updateLiveResizePresentation(bool flushImmediately = false) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint originInLayerForPageScale, WebCore::FloatPoint originInVisibleRect) override;
     void commitTransientZoom(double, WebCore::FloatPoint) override;
@@ -114,6 +116,9 @@ private:
     Markable<WebCore::PlatformLayerIdentifier> m_pageScrollingLayerID;
     Markable<WebCore::PlatformLayerIdentifier> m_scrolledContentsLayerID;
     Markable<WebCore::PlatformLayerIdentifier> m_mainFrameClipLayerID;
+    bool m_hasLiveResizePresentationOverride { false };
+    WebCore::FloatSize m_liveResizePresentationCommittedSize;
+    WebCore::FloatSize m_liveResizePresentationTargetSize;
 
     bool m_shouldLogNextObserverChange { false };
     bool m_shouldLogNextDisplayRefresh { false };

@@ -31,6 +31,7 @@
 #import <WebKit/WKPage.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTestingMac.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -58,6 +59,28 @@ TEST(WebKit, InitialTileCoverageUsesViewExposedRect)
     viewExposedRectDidForceRepaint = false;
     WKPageForceRepaint([webView _pageForTesting], 0, viewExposedRectForceRepaintCallback);
     TestWebKitAPI::Util::run(&viewExposedRectDidForceRepaint);
+}
+
+TEST(WebKit, LiveResizeKeepsCommittedContentCoveringView)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)]);
+    [webView addToTestWindow];
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0; background: green'></body>"];
+    [webView waitForNextPresentationUpdate];
+
+    NSWindow *window = [webView hostWindow];
+    [NSNotificationCenter.defaultCenter postNotificationName:NSWindowWillStartLiveResizeNotification object:window];
+    [webView setFrameSize:NSMakeSize(600, 450)];
+
+    EXPECT_TRUE([webView _hasLiveResizePresentationOverrideForTesting]);
+
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([webView _hasLiveResizePresentationOverrideForTesting]);
+
+    [NSNotificationCenter.defaultCenter postNotificationName:NSWindowDidEndLiveResizeNotification object:window];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE([webView _hasLiveResizePresentationOverrideForTesting]);
 }
 
 #endif // PLATFORM(MAC)
