@@ -2671,6 +2671,13 @@ struct WebCore::GamepadEffectParameters {
     double rightTrigger;
 };
 
+header: <WebCore/GamepadButtonType.h>
+enum class WebCore::GamepadButtonType : uint8_t {
+    NonStandard,
+    Standard,
+    Trackpad
+};
+
 header: <WebCore/GamepadHapticEffectType.h>
 enum class WebCore::GamepadHapticEffectType : uint8_t {
     DualRumble,

@@ -154,6 +154,7 @@ ManetteGamepad::ManetteGamepad(ManetteDevice* device, unsigned index)
     m_buttonValues.resize(static_cast<size_t>(standardGamepadButtonCount));
     for (auto& value : m_buttonValues)
         value.setValue(0.0);
+    setButtonTypesForStandardMapping(m_buttonValues.size());
 
     if (manette_device_has_rumble(m_device.get()))
         m_supportedEffectTypes.add(GamepadHapticEffectType::DualRumble);

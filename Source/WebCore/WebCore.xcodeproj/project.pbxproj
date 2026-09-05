@@ -2253,6 +2253,7 @@
 		518F4FF6194CA4E60081BAAE /* GamepadButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518F4FED194CA4E60081BAAE /* GamepadButton.cpp */; };
 		518F5002194CAC3A0081BAAE /* JSGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F4FFE194CAC3A0081BAAE /* JSGamepad.h */; };
 		518F5004194CAC3A0081BAAE /* JSGamepadButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F5000194CAC3A0081BAAE /* JSGamepadButton.h */; };
+		5A72B8002F2A000100000001 /* GamepadButtonType.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A72B8012F2A000100000001 /* GamepadButtonType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		518F97031BE94C630023187C /* MemoryIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = 518F97011BE94C5B0023187C /* MemoryIndex.h */; };
 		519755FA1BFD7DC3003DE980 /* MemoryIndexCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 519755F81BFD7DBC003DE980 /* MemoryIndexCursor.h */; };
 		5198F7A51BBDB79300E2CC5F /* UniqueIDBDatabaseConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5198F7A31BBDAA2900E2CC5F /* UniqueIDBDatabaseConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12800,6 +12801,7 @@
 		515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProvider.h; sourceTree = "<group>"; };
 		515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadProviderClient.h; sourceTree = "<group>"; };
 		515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGamepad.h; sourceTree = "<group>"; };
+		5A72B8032F2A000100000001 /* PlatformGamepad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformGamepad.cpp; sourceTree = "<group>"; };
 		515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDGamepad.cpp; sourceTree = "<group>"; };
 		515BE1981D54F6BD00DD7C68 /* HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDGamepad.h; sourceTree = "<group>"; };
 		515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDGamepadProvider.mm; sourceTree = "<group>"; };
@@ -12934,6 +12936,8 @@
 		518F4FED194CA4E60081BAAE /* GamepadButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadButton.cpp; sourceTree = "<group>"; };
 		518F4FEE194CA4E60081BAAE /* GamepadButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadButton.h; sourceTree = "<group>"; };
 		518F4FEF194CA4E60081BAAE /* GamepadButton.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GamepadButton.idl; sourceTree = "<group>"; };
+		5A72B8012F2A000100000001 /* GamepadButtonType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GamepadButtonType.h; sourceTree = "<group>"; };
+		5A72B8022F2A000100000001 /* GamepadButtonType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GamepadButtonType.idl; sourceTree = "<group>"; };
 		518F4FFD194CAC3A0081BAAE /* JSGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGamepad.cpp; sourceTree = "<group>"; };
 		518F4FFE194CAC3A0081BAAE /* JSGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGamepad.h; sourceTree = "<group>"; };
 		518F4FFF194CAC3A0081BAAE /* JSGamepadButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGamepadButton.cpp; sourceTree = "<group>"; };
@@ -29172,6 +29176,7 @@
 				515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */,
 				515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */,
 				510A91F224D324C600BFD89C /* KnownGamepads.h */,
+				5A72B8032F2A000100000001 /* PlatformGamepad.cpp */,
 				515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */,
 				510A91DB24CF441800BFD89C /* SharedGamepadValue.h */,
 				522373E42C4FE8E300F1FA0C /* ShouldRequireExplicitConsentForGamepadAccess.h */,
@@ -29323,6 +29328,8 @@
 				518F4FED194CA4E60081BAAE /* GamepadButton.cpp */,
 				518F4FEE194CA4E60081BAAE /* GamepadButton.h */,
 				518F4FEF194CA4E60081BAAE /* GamepadButton.idl */,
+				5A72B8012F2A000100000001 /* GamepadButtonType.h */,
+				5A72B8022F2A000100000001 /* GamepadButtonType.idl */,
 				4664D1A42964FCD5006FE0C5 /* GamepadEffectParameters.h */,
 				4664D1A52964FCD5006FE0C5 /* GamepadEffectParameters.idl */,
 				516C621D1950D48700337E75 /* GamepadEvent.cpp */,
@@ -45924,6 +45931,7 @@
 				46FE73D22968E52000B8064C /* GameControllerHapticEngines.h in Headers */,
 				51A644B5292895C9001A6691 /* GameControllerSoftLink.h in Headers */,
 				51A644B629296E44001A6691 /* GameControllerSPI.h in Headers */,
+				5A72B8002F2A000100000001 /* GamepadButtonType.h in Headers */,
 				510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */,
 				510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */,
 				4664D1A72964FCF0006FE0C5 /* GamepadEffectParameters.h in Headers */,

@@ -443,6 +443,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/filesystem/WorkerFileSystemStorageConnection.h
     Modules/filesystem/WorkerFileSystemStorageConnectionCallbackIdentifier.h
 
+    Modules/gamepad/GamepadButtonType.h
     Modules/gamepad/GamepadEffectParameters.h
     Modules/gamepad/GamepadHapticEffectType.h
     Modules/gamepad/NavigatorGamepad.h

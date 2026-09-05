@@ -3661,6 +3661,21 @@ GStreamerEnabled:
     WebKit:
       default: true
 
+GamepadButtonTypeEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "GamepadButton.type support"
+  humanReadableDescription: "Support for GamepadButton.type"
+  condition: ENABLE(GAMEPAD)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GamepadTriggerRumbleEnabled:
   type: bool
   status: testable

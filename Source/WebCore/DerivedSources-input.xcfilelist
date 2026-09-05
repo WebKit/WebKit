@@ -497,6 +497,7 @@ $(PROJECT_DIR)/Modules/filesystem/FileSystemWritableFileStream.idl
 $(PROJECT_DIR)/Modules/filesystem/StorageManager+FileSystem.idl
 $(PROJECT_DIR)/Modules/gamepad/Gamepad.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadButton.idl
+$(PROJECT_DIR)/Modules/gamepad/GamepadButtonType.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEffectParameters.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadEvent.idl
 $(PROJECT_DIR)/Modules/gamepad/GamepadHapticActuator.idl

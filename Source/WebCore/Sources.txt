@@ -2639,6 +2639,7 @@ platform/encryptedmedia/clearkey/CDMClearKey.cpp
 platform/gamepad/EmptyGamepadProvider.cpp
 platform/gamepad/GamepadConstants.cpp
 platform/gamepad/GamepadProvider.cpp
+platform/gamepad/PlatformGamepad.cpp
 platform/graphics/AV1Utilities.cpp
 platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
@@ -4501,6 +4502,7 @@ JSGainNode.cpp
 JSGainOptions.cpp
 JSGamepad.cpp
 JSGamepadButton.cpp
+JSGamepadButtonType.cpp
 JSGamepadEffectParameters.cpp
 JSGamepadEvent.cpp
 JSGamepadHapticActuator.cpp

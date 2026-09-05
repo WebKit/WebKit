@@ -98,11 +98,14 @@ void GameControllerGamepad::setupElements()
     }
 #endif
 
-    if (m_gcController.get().extendedGamepad)
+    if (m_gcController.get().extendedGamepad) {
         m_mapping = standardGamepadMappingString();
+        setButtonTypesForStandardMapping(m_buttonValues.size());
+    } else
+        setNonStandardButtonTypes(m_buttonValues.size());
 
-    auto bindButton = ^(GCControllerButtonInput *button, GamepadButtonRole index) {
-        m_buttonValues[(size_t)index].setValue(button.value);
+    auto bindButtonAtIndex = ^(GCControllerButtonInput *button, size_t index) {
+        m_buttonValues[index].setValue(button.value);
         if (!button)
             return;
 
@@ -115,10 +118,14 @@ void GameControllerGamepad::setupElements()
                 return;
             if (!weakThis)
                 return;
-            weakThis->m_buttonValues[(size_t)index].setValue(value);
+            weakThis->m_buttonValues[index].setValue(value);
             weakThis->m_lastUpdateTime = MonotonicTime::now();
             GameControllerGamepadProvider::singleton().gamepadHadInput(*weakThis, pressed);
         };
+    };
+
+    auto bindButton = ^(GCControllerButtonInput *button, GamepadButtonRole index) {
+        bindButtonAtIndex(button, static_cast<size_t>(index));
     };
 
     // Button Pad
@@ -138,7 +145,7 @@ void GameControllerGamepad::setupElements()
     bindButton(profile.get().dpads[GCInputDirectionPad].down, GamepadButtonRole::LeftClusterBottom);
     bindButton(profile.get().dpads[GCInputDirectionPad].left, GamepadButtonRole::LeftClusterLeft);
     bindButton(profile.get().dpads[GCInputDirectionPad].right, GamepadButtonRole::LeftClusterRight);
-    
+
     // Home, Select, Start
     if (homeButton) {
         bindButton(homeButton.get(), GamepadButtonRole::CenterClusterCenter);
@@ -154,6 +161,20 @@ void GameControllerGamepad::setupElements()
     // L3, R3
     bindButton(profile.get().buttons[GCInputLeftThumbstickButton], GamepadButtonRole::LeftStick);
     bindButton(profile.get().buttons[GCInputRightThumbstickButton], GamepadButtonRole::RightStick);
+
+    // GCDualShockGamepad and GCDualSenseGamepad expose the clickable trackpad
+    // as touchpadButton. It is not part of the standard 17-button mapping.
+    NSObject *extendedGamepad = m_gcController.get().extendedGamepad;
+    if ([extendedGamepad respondsToSelector:@selector(touchpadButton)]) {
+        GCControllerButtonInput *touchpadButton = [extendedGamepad performSelector:@selector(touchpadButton)];
+        if ([touchpadButton isKindOfClass:getGCControllerButtonInputClassSingleton()]) {
+            ASSERT(m_buttonValues.size() == m_buttonTypes.size());
+            size_t buttonIndex = m_buttonValues.size();
+            m_buttonValues.append(0.0);
+            m_buttonTypes.append(GamepadButtonType::Trackpad);
+            bindButtonAtIndex(touchpadButton, buttonIndex);
+        }
+    }
 
     m_axisValues.resize(4);
     m_axisValues[0].setValue(profile.get().dpads[GCInputLeftThumbstick].xAxis.value);
