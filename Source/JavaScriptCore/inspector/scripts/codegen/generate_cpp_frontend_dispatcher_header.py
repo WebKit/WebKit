@@ -55,9 +55,14 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
         return [domain for domain in Generator.domains_to_generate(self) if len(self.events_for_domain(domain)) > 0]
 
     def generate_output(self):
+        typedefs = ['class FrontendRouter;']
+        if self._has_nullable_event_parameters():
+            typedefs.append('struct NullTag { };')
+            typedefs.append('template<typename T> using Nullable = std::variant<T, NullTag>;')
+
         header_args = {
             'includes': self._generate_secondary_header_includes(),
-            'typedefs': 'class FrontendRouter;',
+            'typedefs': '\n'.join(typedefs),
         }
 
         sections = []
@@ -79,6 +84,9 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
             (["JavaScriptCore", "WebKit", "WebDriverBidi"], ("WTF", "wtf/text/WTFString.h")),
         ]
         return '\n'.join(self.generate_includes_from_entries(header_includes))
+
+    def _has_nullable_event_parameters(self):
+        return any(parameter.is_nullable for domain in self.domains_to_generate() for event in self.events_for_domain(domain) for parameter in event.event_parameters)
 
     def _generate_anonymous_enum_for_parameter(self, parameter, event):
         enum_args = {
@@ -123,7 +131,7 @@ class CppFrontendDispatcherHeaderGenerator(CppGenerator):
             if parameter.is_optional:
                 parameter_name = 'opt_' + parameter_name
 
-            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional), parameter_name))
+            formal_parameters.append('%s %s' % (CppGenerator.cpp_type_for_event_parameter(parameter.type, parameter.is_optional, parameter.is_nullable), parameter_name))
 
             if isinstance(parameter.type, EnumType) and parameter.type.is_anonymous and parameter.parameter_name not in used_enum_names:
                 lines.append(self._generate_anonymous_enum_for_parameter(parameter, event))
