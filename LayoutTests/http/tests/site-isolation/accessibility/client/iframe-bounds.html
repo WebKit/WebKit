@@ -21,7 +21,7 @@ body { margin: 0; padding: 0; }
 <script>
 var output = "Test iframe bounds (in screen position) in site isolation.\n\n";
 
-var iframe, iframeX, iframeY, webArea;
+var iframe, iframeX, iframeY, iframeWidth, iframeHeight, webArea;
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
     accessibilityController.setForceInitialFrameCaching(true);
@@ -33,21 +33,48 @@ if (window.accessibilityController) {
             return webArea;
         });
 
-        var pageOrigin = { x: webArea.x, y: webArea.y };
+        if (!webArea) {
+            output += "FAIL: the web area never appeared in the accessibility tree.\n";
+            debug(output);
+            finishJSTest();
+            return;
+        }
 
+        // Wait for the settled tree before asserting anything. The cross-process iframe is briefly
+        // exposed as a bare ScrollArea and is only wrapped in the FrameHost that VoiceOver actually
+        // navigates to about a second later. Asserting on whichever child happens to be there first
+        // lets the test pass on that early transient while the settled tree is still wrong, which is
+        // exactly the regression this test exists to catch.
         await waitFor(() => {
             iframe = webArea.childAtIndex(0);
-            if (!iframe)
-                return false;
+            return iframe && iframe.rawRoleForTesting.includes("FrameHost");
+        });
 
+        if (!iframe || !iframe.rawRoleForTesting.includes("FrameHost")) {
+            output += "FAIL: the iframe's FrameHost never appeared in the accessibility tree.\n";
+            debug(output);
+            finishJSTest();
+            return;
+        }
+
+        // Re-read the page origin on every poll rather than sampling it once up front: the
+        // async frame screen-position update may not have arrived yet, and a stale origin
+        // makes the comparison below wrong forever.
+        await waitFor(() => {
+            var pageOrigin = { x: webArea.x, y: webArea.y };
             iframeX = iframe.x - pageOrigin.x;
             iframeY = iframe.y - pageOrigin.y;
+            iframeWidth = iframe.width;
+            iframeHeight = iframe.height;
 
             return iframeX == 100 && iframeY == 50;
         });
 
         output += expect("iframeX", "100");
         output += expect("iframeY", "50");
+        // The FrameHost must report the iframe's own box, not the whole hosting page's.
+        output += expect("iframeWidth", "400");
+        output += expect("iframeHeight", "300");
 
         debug(output);
         finishJSTest();

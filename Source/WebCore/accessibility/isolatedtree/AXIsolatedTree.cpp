@@ -2521,9 +2521,14 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
         if (frame)
             setProperty(AXProperty::RelativeFrame, WTF::move(*frame));
-        else if (isScrollArea || isWebArea || object.isScrollbar()) {
+        else if (isScrollArea || isWebArea || object.isScrollbar() || object.role() == AccessibilityRole::FrameHost) {
             // The GeometryManager does not have a relative frame for ScrollViews, WebAreas, or scrollbars yet. We need to get it from the
             // live object so that we don't need to hit the main thread in the case a request comes in while the whole isolated tree is being built.
+            //
+            // FrameHosts (the AccessibilityScrollView standing in for a cross-process iframe) are included for a
+            // stronger reason: the remote frame is never painted in this process, so the GeometryManager will never
+            // receive a rect for one. Without this, a FrameHost falls through to the ancestor-rect fallback in
+            // AXIsolatedObject::relativeFrame() and reports the whole page's bounds instead of the iframe's box.
             setProperty(AXProperty::RelativeFrame, enclosingIntRect(object.relativeFrame()));
         } else if (!object.renderer() && object.node() && is<AccessibilityNodeObject>(object) && !object.isImageMapLink()) {
             // The frame of node-only AX objects is made up of their children.
