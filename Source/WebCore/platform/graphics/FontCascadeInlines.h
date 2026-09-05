@@ -84,7 +84,9 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
         if (remainder < 0)
             remainder += baseTabWidth;
         result = baseTabWidth - remainder;
-        if (result < font.spaceWidth() / 2)
+        // A tab shorter than half the advance of the '0' glyph (0.5ch) is not recognizable as a tab, so it advances to the subsequent tab stop.
+        // https://drafts.csswg.org/css-text-4/#white-space-phase-2
+        if (result < zeroWidth() / 2)
             result += baseTabWidth;
     }
     // If our caller passes in SyntheticBoldInclusion::Exclude, that means they're going to apply synthetic bold themselves later.
