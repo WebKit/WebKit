@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+
+<div style="position: absolute; left: 0; top: 0; width: 400px; height: 150px; overflow: hidden">
+    <iframe style="position: absolute; left: 0; top: 0; width: 400px; height: 400px; border: none"
+        src="http://127.0.0.1:8000/site-isolation/intersection-observer/resources/same-site-middle-frame.html"></iframe>
+</div>
+
+<script>
+
+let latestReport = null;
+window.addEventListener("message", event => latestReport = JSON.parse(event.data));
+
+promise_test(async t => {
+    // Wait for the first report, then let the intersection state settle before asserting on it.
+    while (!latestReport)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    for (let i = 0; i < 20; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+    assert_true(latestReport.visible,
+        "a target inside the unclipped part of the grandchild frame must be intersecting");
+    assert_false(latestReport.clipped,
+        "a target clipped away by an ancestor in another process must not be intersecting");
+}, "Intersections in a cross-site frame account for clipping applied across a same-site frame");
+
+</script>

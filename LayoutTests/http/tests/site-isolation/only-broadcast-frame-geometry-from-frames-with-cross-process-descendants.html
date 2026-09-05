@@ -1,0 +1,78 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body style="margin: 0">
+<script>
+
+const crossSiteURL = "http://localhost:8000/site-isolation/resources/frame-with-text.html";
+const sameSiteURL = "http://127.0.0.1:8000/site-isolation/resources/frame-with-text.html";
+
+let broadcastCount = 0;
+
+// Frame geometry shares this IPC with the other frame tree sync properties, so this test compares
+// idle rendering update counts against each other rather than asserting an absolute number.
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("UI", message => {
+        if (message.description === "WebPageProxy_BroadcastFrameTreeSyncData")
+            broadcastCount++;
+    });
+}
+
+async function settle()
+{
+    // Two rendering updates and a task, so that the layout and frame rect changes caused by adding
+    // a frame have finished propagating before the next measurement starts.
+    for (let i = 0; i < 2; i++)
+        await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function countBroadcastsDuringIdleRenderingUpdate()
+{
+    await settle();
+    broadcastCount = 0;
+    await settle();
+    return broadcastCount;
+}
+
+function addIframe(url, top, parentDocument = document)
+{
+    return new Promise(resolve => {
+        const iframe = parentDocument.createElement("iframe");
+        // Position the frames absolutely so that adding one does not move the others, which would
+        // broadcast frame rects and perturb the counts below.
+        iframe.style.cssText = `position: absolute; left: 0; top: ${top}px; width: 100px; height: 100px; border: none`;
+        iframe.onload = () => resolve(iframe);
+        iframe.src = url;
+        parentDocument.body.appendChild(iframe);
+    });
+}
+
+promise_test(async t => {
+    // IPC interception only works in debug builds.
+    if (!window.IPC)
+        return;
+
+    t.add_cleanup(() => document.querySelectorAll("iframe").forEach(iframe => iframe.remove()));
+
+    // The main frame has a cross-process child, so the process hosting that child needs the main
+    // frame's geometry to map its own frames up to the root.
+    await addIframe(crossSiteURL, 0);
+    const withCrossSiteChildOnly = await countBroadcastsDuringIdleRenderingUpdate();
+    assert_greater_than(withCrossSiteChildOnly, 0,
+        "a frame with a cross-process child must broadcast its geometry");
+
+    // This frame and everything below it is in this process, so no other process can read its
+    // geometry. It shouldn't broadcast any geometry.
+    const sameSiteIframe = await addIframe(sameSiteURL, 100);
+    assert_equals(await countBroadcastsDuringIdleRenderingUpdate(), withCrossSiteChildOnly,
+        "a frame whose whole subtree is in this process must not broadcast its geometry");
+
+    // If we add a cross-site grandchild iframe under the local same-site iframe, then we need to
+    // start sending geometry again.
+    await addIframe(crossSiteURL, 0, sameSiteIframe.contentDocument);
+    assert_greater_than(await countBroadcastsDuringIdleRenderingUpdate(), withCrossSiteChildOnly,
+        "a frame with a cross-process descendant must broadcast its geometry");
+}, "Frame geometry is only broadcast by frames that have a cross-process descendant");
+</script>

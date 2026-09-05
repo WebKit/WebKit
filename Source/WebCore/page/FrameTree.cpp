@@ -372,6 +372,15 @@ bool FrameTree::containsRemoteFrame() const
     return false;
 }
 
+bool FrameTree::containsLocalFrame() const
+{
+    for (RefPtr frame = m_thisFrame.ptr(); frame; frame = frame->tree().traverseNext(m_thisFrame.ptr())) {
+        if (is<LocalFrame>(*frame))
+            return true;
+    }
+    return false;
+}
+
 bool FrameTree::hasRemoteFrameAncestor() const
 {
     for (RefPtr ancestor = parent(); ancestor; ancestor = ancestor->tree().parent()) {

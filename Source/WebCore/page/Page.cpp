@@ -2269,7 +2269,20 @@ bool Page::hasRemoteFrames() const
 
 void Page::syncLocalFrameInfoToRemote()
 {
-    forEachLocalFrame([] (LocalFrame& frame) {
+    ASSERT(hasRemoteFrames());
+
+    // Memoize FrameTree::containsRemoteFrame for the entire frame tree.
+    HashSet<FrameIdentifier> subtreeContainsRemoteFrame;
+    for (RefPtr frame = mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!is<RemoteFrame>(*frame))
+            continue;
+        for (RefPtr ancestor = frame; ancestor; ancestor = ancestor->tree().parent()) {
+            if (!subtreeContainsRemoteFrame.add(ancestor->frameID()).isNewEntry)
+                break;
+        }
+    }
+
+    forEachLocalFrame([&] (LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
@@ -2287,6 +2300,12 @@ void Page::syncLocalFrameInfoToRemote()
 #endif
 
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            if (!subtreeContainsRemoteFrame.contains(child->frameID())) {
+                ASSERT(!child->tree().containsRemoteFrame());
+                continue;
+            }
+            ASSERT(child->tree().containsRemoteFrame());
+
             auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
             auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
 
@@ -2340,6 +2359,11 @@ void Page::syncLocalFrameInfoToRemote()
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
+        }
+
+        if (childrenFrameLayoutInfo.isEmpty()) {
+            ASSERT(!frame.tree().containsRemoteFrame());
+            return;
         }
 
         frame.loader().client().broadcastFrameGeometryToOtherProcesses({

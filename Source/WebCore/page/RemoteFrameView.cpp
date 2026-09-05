@@ -38,6 +38,14 @@
 
 namespace WebCore {
 
+// Page::syncLocalFrameInfoToRemote running in a parent frame process only sends transforms for
+// child frame subtrees containing a remote frame. From our perspective, that means that the
+// transforms are only valid on child subtrees containing a local frame.
+//
+// As an example, the absoluteToChildFrameOwnerLocalTransform for a child frame whose subtree is
+// hosted entirely in other processes will likely return an invalid result in this process.
+#define ASSERT_CHILD_CONTAINS_LOCAL_FRAME(child) ASSERT((child).tree().containsLocalFrame())
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteFrameView);
 
 RemoteFrameView::RemoteFrameView(RemoteFrame& frame)
@@ -108,6 +116,8 @@ LayoutPoint RemoteFrameView::childFrameOwnerContentBoxLocation(const Frame& chil
 
 TransformationMatrix RemoteFrameView::childFrameOwnerToRootContentTransform(const Frame& child) const
 {
+    ASSERT_CHILD_CONTAINS_LOCAL_FRAME(child);
+
     if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->childFrameOwnerToRootContentTransform();
 
@@ -116,6 +126,8 @@ TransformationMatrix RemoteFrameView::childFrameOwnerToRootContentTransform(cons
 
 TransformationMatrix RemoteFrameView::absoluteToChildFrameOwnerLocalTransform(const Frame& child) const
 {
+    ASSERT_CHILD_CONTAINS_LOCAL_FRAME(child);
+
     if (RefPtr info = m_frame->frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
         return info->absoluteToChildFrameOwnerLocalTransform();
 
