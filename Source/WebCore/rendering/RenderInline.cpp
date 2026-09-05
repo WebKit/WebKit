@@ -805,21 +805,31 @@ void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPo
     generateLineBoxRects(context);
 }
 
-bool isEmptyInline(const RenderInline& renderer)
+static RenderObject* firstContentfulChild(const RenderInline& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
         if (current.isFloatingOrOutOfFlowPositioned())
             continue;
-        if (auto* text = dynamicDowncast<RenderText>(current)) {
-            if (!text->containsOnlyCollapsibleWhitespace())
-                return false;
+        if (auto* text = dynamicDowncast<RenderText>(current); text && text->containsOnlyCollapsibleWhitespace())
+            continue;
+        if (auto* renderInline = dynamicDowncast<RenderInline>(current)) {
+            if (auto* nested = firstContentfulChild(*renderInline))
+                return nested;
             continue;
         }
-        auto* renderInline = dynamicDowncast<RenderInline>(current);
-        if (!renderInline || !isEmptyInline(*renderInline))
-            return false;
+        return const_cast<RenderObject*>(&current);
     }
-    return true;
+    return { };
+}
+
+bool isEmptyInline(const RenderInline& renderer)
+{
+    return !firstContentfulChild(renderer);
+}
+
+RenderObject* firstContentfulChild(RenderInline& renderer)
+{
+    return firstContentfulChild(const_cast<const RenderInline&>(renderer));
 }
 
 bool RenderInline::requiresLayer() const

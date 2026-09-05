@@ -138,8 +138,13 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
         ? rootInlineBoxRect.left()
         : lineBoxLogicalRect.width() - lineLayoutResult.contentGeometry.logicalRightIncludingNegativeMargin; // Note that with hanging content lineLayoutResult.contentGeometry.logicalRight is not the same as rootLineBoxRect.right().
 
-    auto hasInflowContent = [&] {
+    auto hasContentfulContent = [&] {
         if (lineLayoutResult.hasContentfulInFlowContent())
+            return true;
+        return lineLayoutResult.isFirstLast.isFirstFormattedLine == IsFirstFormattedLine::Yes && !formattingContext().layoutState().excludedMarkerLayoutBounds().isEmpty();
+    };
+    auto hasInflowContent = [&] {
+        if (hasContentfulContent())
             return true;
         for (auto& run : lineLayoutResult.runs) {
             if (!run.isOutOfFlow())
@@ -149,7 +154,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineLayoutResult& line
     };
     auto writingMode = root().writingMode();
     return InlineDisplay::Line { hasInflowContent()
-        , lineLayoutResult.hasContentfulInFlowContent()
+        , hasContentfulContent()
         , lineLayoutResult.isBlockContent()
         , lineBoxLogicalRect
         , mapLineRectLogicalToVisual(lineBoxLogicalRect, constraints.formattingRootBorderBoxSize(), writingMode)

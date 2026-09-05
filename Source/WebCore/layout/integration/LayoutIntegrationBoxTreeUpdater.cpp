@@ -235,9 +235,6 @@ static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttri
     auto listMarkerAttributes = EnumSet<Layout::ElementBox::ListMarkerAttribute> { };
     if (listMarkerRenderer.isImage())
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
-    if (listMarkerRenderer.shouldCollapseAnonymousBlockParent())
-        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::ShouldCollapseAnonymousBlockParent);
-
     return listMarkerAttributes;
 }
 
@@ -318,7 +315,8 @@ void BoxTreeUpdater::buildTreeForInlineContent()
 {
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
         CheckedRef childRenderer = *walker.current();
-        ASSERT_IMPLIES(is<RenderBox>(childRenderer.get()), !childRenderer->isExcludedMarker());
+        if (childRenderer->isExcludedMarker())
+            continue;
         auto childLayoutBox = [&] {
             if (auto existingChildBox = childRenderer->layoutBox())
                 return existingChildBox->removeFromParent();

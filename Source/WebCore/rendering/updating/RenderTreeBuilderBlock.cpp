@@ -94,8 +94,7 @@ static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& chil
     CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(child);
     if (!marker || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
-    CheckedPtr listItem = dynamicDowncast<RenderListItem>(parent);
-    return listItem && !markerNeedsOwnLine(*listItem);
+    return is<RenderListItem>(parent);
 }
 
 static bool hasInlineInFlowChild(const RenderBlock& parent)

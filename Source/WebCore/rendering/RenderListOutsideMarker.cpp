@@ -44,8 +44,6 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMenuList.h"
-#include "RenderMultiColumnFlow.h"
-#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
 #include "RenderText.h"
@@ -306,9 +304,10 @@ void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& pai
         context.translate(-markerRect.x(), -markerRect.maxY());
     }
 
-    if (writingMode().isHorizontal()) {
+    if (writingMode().isHorizontal() && !isExcludedMarker()) {
         // This is required because RenderListOutsideMarker hand-draws the text, instead of running inline
         // layout and paint on its (RenderText) subtree (LayoutUnit vs. float precision)
+        // An excluded marker has no inline box to correct against: the list item placed it directly.
         // FIXME: The vertical path mispositions the marker line box separately (it ignores fallback-font
         // metrics), so this is limited to horizontal writing modes for now. See webkit.org/b/319618.
         if (auto markerInlineBox = InlineIterator::boxFor(*this))
@@ -320,27 +319,10 @@ void RenderListOutsideMarker::paint(PaintInfo& paintInfo, const LayoutPoint& pai
     context.drawText(style().fontCascade(), textRunForContent(m_textContent, style()), textOrigin);
 }
 
-RenderBox* RenderListOutsideMarker::parentBox(RenderBox& box)
-{
-    ASSERT(m_listItem);
-    CheckedPtr multiColumnFlow = dynamicDowncast<RenderMultiColumnFlow>(m_listItem->enclosingFragmentedFlow());
-    if (!multiColumnFlow)
-        return box.parentBox();
-    auto* placeholder = multiColumnFlow->findColumnSpannerPlaceholder(box);
-    return placeholder ? placeholder->parentBox() : box.parentBox();
-};
-
 void RenderListOutsideMarker::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-
-    LayoutUnit blockOffset;
-    for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor))
-        blockOffset += ancestor->logicalTop();
-
-    m_lineLogicalOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset);
-    m_lineOffsetForListItem = writingMode().isLogicalLeftInlineStart() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset);
 
     if (CheckedPtr container = contentContainer()) {
         updateInlineMarginsAndContent();

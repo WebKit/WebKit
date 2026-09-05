@@ -458,12 +458,27 @@ void RenderListItem::styleDidChange(Style::Difference diff, const Style::Compute
     }
 }
 
+void RenderListItem::computeIntrinsicLogicalWidthContributions()
+{
+    // FIXME: RenderListOutsideMarker::updateInlineMargins() mutates margin style which affects preferred widths.
+    if (CheckedPtr marker = markerBox(); marker && marker->hasInvalidContentLogicalWidths())
+        marker->updateInlineMarginsAndContent();
+
+    RenderBlockFlow::computeIntrinsicLogicalWidthContributions();
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderListItem::computeIntrinsicLogicalWidths() const
+{
+    if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->nextSibling())
+        return { };
+
+    return RenderBlockFlow::computeIntrinsicLogicalWidths();
+}
+
 RenderListOutsideMarker* RenderListItem::excludedMarker() const
 {
     auto* marker = markerBox();
-    if (marker && marker->parent() == this && marker->isExcludedMarker())
-        return marker;
-    return { };
+    return marker && marker->isExcludedMarker() ? marker : nullptr;
 }
 
 void RenderListItem::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
@@ -483,6 +498,23 @@ void RenderListItem::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     CheckedPtr excludedMarker = this->excludedMarker();
     if (!excludedMarker)
         return RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
+
+    auto markerNeedsOwnLine = [&] {
+        // Quirks mode puts the marker of a list item that starts with a nested list on a line of its own above that list, rather than on the line its first item makes.
+        if (!document().inQuirksMode())
+            return false;
+        for (CheckedPtr child = firstChild(); child; child = child->nextSibling()) {
+            if (child.get() == m_marker.get() || child->isFloatingOrOutOfFlowPositioned() || is<RenderMenuList>(*child))
+                continue;
+            return child->node() && isHTMLListElement(*child->node());
+        }
+        return false;
+    };
+
+    // The marker takes no part in layout, so a line of its own is room this list item makes for it before its block
+    // children are placed. layoutBlockChildren calls us right after it starts them at the content edge.
+    if (!childrenInline() && markerNeedsOwnLine())
+        setLogicalHeight(logicalHeight() + lineHeight());
 
     excludedMarker->setIsExcludedFromNormalLayout(true);
     if (relayoutChildren == RelayoutChildren::Yes)
@@ -510,6 +542,28 @@ void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintO
         excludedMarker->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*excludedMarker, paintOffset));
 
     RenderBlockFlow::paintObject(paintInfo, paintOffset);
+}
+
+bool RenderListItem::hasLineIfEmpty() const
+{
+    if (excludedMarker())
+        return true;
+
+    return RenderBlockFlow::hasLineIfEmpty();
+}
+
+bool RenderListItem::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
+        return true;
+
+    CheckedPtr excludedMarker = this->excludedMarker();
+    if (!excludedMarker || excludedMarker->hasSelfPaintingLayer())
+        return false;
+
+    // The marker's own location is relative to us, so it needs our adjusted one, the way hitTestChildren gets it.
+    auto adjustedLocation = accumulatedOffset + location();
+    return excludedMarker->nodeAtPoint(request, result, locationInContainer, flipForWritingModeForChild(*excludedMarker, adjustedLocation), hitTestAction);
 }
 
 RenderListOutsideMarker* RenderListItem::markerBox() const
@@ -613,8 +667,21 @@ void RenderListItem::placeExcludedMarker(RenderListOutsideMarker& marker)
 
 RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRootFor(RenderBlock& blockContainer, const RenderBoxModelObject& marker)
 {
-    RenderBlock* fallbackParent = { };
-    bool stoppedAtTableRubyOrReplaced = false;
+    RenderBlock* fallbackParent = is<RenderListItem>(blockContainer) && blockContainer.childrenInline() ? &blockContainer : nullptr;
+
+    auto firstFormattedLineRootIn = [&](RenderBlock& block) -> CheckedPtr<RenderBlock> {
+        auto nestedResult = firstFormattedLineRootFor(block, marker);
+        if (nestedResult.parent)
+            return nestedResult.parent;
+
+        if (!fallbackParent) {
+            if (nestedResult.fallbackParent)
+                fallbackParent = nestedResult.fallbackParent.get();
+            else if (auto* firstInFlowChild = block.firstInFlowChild(); !firstInFlowChild || firstInFlowChild == &marker)
+                fallbackParent = &block;
+        }
+        return { };
+    };
 
     for (auto& child : childrenOfType<RenderObject>(blockContainer)) {
         if (&child == &marker)
@@ -624,18 +691,30 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
         case MarkerSearchBoxType::Opaque:
             break;
         case MarkerSearchBoxType::NestedListInQuirksMode:
-            return { { }, fallbackParent, stoppedAtTableRubyOrReplaced };
+            return { { }, fallbackParent };
         case MarkerSearchBoxType::TableRubyOrReplaced:
-            return { { }, fallbackParent, true };
+            return { { }, fallbackParent };
         case MarkerSearchBoxType::InlineContent:
             // Neither an empty inline (e.g. <a id="anchor"></a>) nor collapsible whitespace produces a line.
-            if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(child); inlineBox && isEmptyInline(*inlineBox)) {
+            if (CheckedPtr text = dynamicDowncast<RenderText>(child); text && text->containsOnlyCollapsibleWhitespace()) {
                 fallbackParent = &blockContainer;
                 break;
             }
-            if (CheckedPtr text = dynamicDowncast<RenderText>(child); text && text->containsOnlyCollapsibleWhitespace())
-                break;
-            return { &blockContainer, { }, false };
+            if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(child)) {
+                if (isEmptyInline(*inlineBox)) {
+                    fallbackParent = &blockContainer;
+                    break;
+                }
+                // An inside marker takes a line ahead of the block, so only an outside marker follows the content in.
+                if (is<RenderListOutsideMarker>(marker)) {
+                    if (CheckedPtr leadingBlock = dynamicDowncast<RenderBlock>(firstContentfulChild(*inlineBox))) {
+                        if (auto firstFormattedLineRoot = firstFormattedLineRootIn(*leadingBlock))
+                            return { firstFormattedLineRoot, { } };
+                        break;
+                    }
+                }
+            }
+            return { &blockContainer, { } };
         case MarkerSearchBoxType::BlockContainer:
         case MarkerSearchBoxType::SpannerPlaceholder: {
             auto blockToDescendInto = [&] {
@@ -644,28 +723,14 @@ RenderListItem::FirstFormattedLineCandidate RenderListItem::firstFormattedLineRo
                 return dynamicDowncast<RenderBlock>(child);
             };
             if (CheckedPtr block = blockToDescendInto()) {
-                auto nestedResult = firstFormattedLineRootFor(*block, marker);
-                if (nestedResult.parent) {
-                    // Finding a line box parent is mutually exclusive with having stopped at one of those.
-                    ASSERT(!nestedResult.stoppedAtTableRubyOrReplaced);
-                    return { nestedResult.parent, { }, false };
-                }
-
-                // Propagate it from nested searches, so we know whether the search failed on such a box or simply found no inline content.
-                stoppedAtTableRubyOrReplaced |= nestedResult.stoppedAtTableRubyOrReplaced;
-
-                if (!fallbackParent) {
-                    if (nestedResult.fallbackParent)
-                        fallbackParent = nestedResult.fallbackParent;
-                    else if (auto* firstInFlowChild = block->firstInFlowChild(); !firstInFlowChild || firstInFlowChild == &marker)
-                        fallbackParent = block.get();
-                }
+                if (auto firstFormattedLineRoot = firstFormattedLineRootIn(*block))
+                    return { firstFormattedLineRoot, { } };
             }
             break;
         }
         }
     }
-    return { { }, fallbackParent, stoppedAtTableRubyOrReplaced };
+    return { { }, fallbackParent };
 }
 
 CheckedPtr<RenderListOutsideMarker> RenderListItem::excludedMarkerAnchoredTo(const RenderBlockFlow& firstFormattedLineRoot)
@@ -692,7 +757,8 @@ Vector<CheckedPtr<RenderListOutsideMarker>> RenderListItem::excludedMarkersForCo
             ASSERT_NOT_REACHED();
             continue;
         }
-        if (firstFormattedLineRootFor(*listItem, *marker).parent == &inlineRoot)
+        auto candidate = firstFormattedLineRootFor(*listItem, *marker);
+        if ((candidate.parent ? candidate.parent : candidate.fallbackParent) == &inlineRoot)
             markersForContainer.append(marker.get());
     }
     return markersForContainer;

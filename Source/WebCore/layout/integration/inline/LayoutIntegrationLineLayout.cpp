@@ -569,21 +569,15 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
     auto contentBoxStartEdge = isLeftToRight ? 0.f : flow().contentBoxLogicalWidth().toFloat();
     auto isLineStartConstrainedByFloat = lineStartEdge != contentBoxStartEdge;
     for (auto& marker : excludedMarkers) {
-        // Vertical: baseline aligned, with the ascent the inline formatting context would have given it.
-        auto markerAscent = [&]() -> float {
+        auto markerLogicalTop = [&]() -> float {
             if (firstContentfulLine->baselineType() == FontBaseline::Ideographic)
-                return flow().style().metricsOfPrimaryFont().ascent(FontBaseline::Ideographic);
-            // An image marker's baseline is its margin box bottom (it has no block axis margins), a text driven one behaves as text and sits on the font baseline.
-            return marker->isImage() ? marker->logicalHeight().toFloat() : marker->style().metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
+                return lineBoxLogicalRect.y() + (lineBoxLogicalRect.height() - marker->logicalHeight().toFloat()) / 2;
+            auto markerAscent = marker->isImage() ? marker->logicalHeight().toFloat() : marker->style().metricsOfPrimaryFont().ascent(FontBaseline::Alphabetic);
+            return lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent;
         }();
-        // Horizontal: just outside the line's inline start edge, which is the line's logical right in a right to left
-        // inline direction (the marker's start margin is what holds the gap, hence negative).
-        auto markerLogicalLeft = [&]() -> float {
-            if (isLeftToRight)
-                return lineStartEdge + marker->marginStart();
-            return lineStartEdge - marker->marginStart() - marker->logicalWidth();
-        }();
-        auto topLeft = FloatPoint { markerLogicalLeft, lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent };
+        auto markerMarginStart = marker->marginStart(flow().writingMode()).toFloat();
+        auto markerLogicalLeft = isLeftToRight ? lineStartEdge + markerMarginStart : lineStartEdge - markerMarginStart - marker->logicalWidth().toFloat();
+        auto topLeft = FloatPoint { markerLogicalLeft, markerLogicalTop };
         marker->setExcludedPosition({ flow(), topLeft, isLineStartConstrainedByFloat });
     }
 }

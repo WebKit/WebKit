@@ -50,6 +50,5 @@ private:
 };
 
 // <ul><li><ul><li>marker on the first li gets its own line in quirks mode, so it cannot be positioned after layout.
-bool markerNeedsOwnLine(const RenderListItem&);
 
 }

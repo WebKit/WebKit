@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class Position;
+class RenderBlock;
 class RenderFragmentContainer;
 
 class RenderInline : public RenderBoxModelObject {
@@ -145,6 +146,7 @@ private:
 };
 
 bool isEmptyInline(const RenderInline&);
+RenderObject* firstContentfulChild(RenderInline&);
 
 } // namespace WebCore
 
