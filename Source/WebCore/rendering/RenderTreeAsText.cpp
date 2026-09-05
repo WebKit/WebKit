@@ -549,7 +549,7 @@ void write(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextF
         return;
     }
 
-    if (CheckedPtr listMarker = dynamicDowncast<RenderListOutsideMarker>(renderer); listMarker && listMarker->synthesizesGlyph())
+    if (is<RenderListOutsideMarker>(renderer))
         return;
 
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
