@@ -375,7 +375,7 @@ extension AppKitGesturesTests.Basic {
         .bug("rdar://176117750"),
         arguments: [true, false]
     )
-    func clickingOnSelectedWordOpensContextMenu(contentEditable: Bool) async throws {
+    func clickingOnSelectedWordKeepsTextSelected(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)
 
         let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
@@ -389,10 +389,8 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        await withSwizzledContextMenu {
-            await recap.play { composer in
-                composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
-            }
+        await recap.play { composer in
+            composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
         }
 
         await page.waitForNextPresentationUpdate()
