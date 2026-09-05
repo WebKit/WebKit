@@ -430,19 +430,6 @@ void QueryHandler::handleWasmLocal(StringView packet)
     m_debugServer.sendReply(response);
 }
 
-// LLDB identifies an instance by the module id encoded in bits 61:32 of a Wasm address, so an
-// `instance:<id>` field names a module here.
-// FIXME: A module with several live instances has several sets of globals. Only a module the
-// debuggee is stopped in, or one with a single live instance, resolves to one of them.
-JSWebAssemblyInstance* QueryHandler::instanceForModule(uint32_t moduleId)
-{
-    auto& stopData = m_debugServer.execution().debuggeeStateForTest()->stopData;
-    if (stopData && stopData->instance->module().debugId() == moduleId)
-        return stopData->instance;
-
-    return m_debugServer.moduleManager().soleInstanceOfModule(moduleId);
-}
-
 JSWebAssemblyInstance* QueryHandler::instanceForFrame(uint32_t frameIndex)
 {
     auto* state = m_debugServer.execution().debuggeeStateForTest();
@@ -495,7 +482,7 @@ void QueryHandler::handleWasmGlobal(StringView packet)
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmGlobal ", namesInstance ? "instance="_s : "frame="_s, *instanceOrFrameIndex, ", global=", *globalIndex);
 
-    auto* instance = namesInstance ? instanceForModule(*instanceOrFrameIndex) : instanceForFrame(*instanceOrFrameIndex);
+    auto* instance = namesInstance ? m_debugServer.moduleManager().jsInstance(*instanceOrFrameIndex) : instanceForFrame(*instanceOrFrameIndex);
     if (!instance) {
         m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
         return;

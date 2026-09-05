@@ -28,7 +28,6 @@
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
 
 #include "WasmDebugServerUtilities.h"
-#include "WasmVirtualAddress.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -39,6 +38,12 @@
 namespace JSC {
 namespace Wasm {
 
+// Breakpoints are keyed by the bytecode they patch, not by a virtual address. That bytecode
+// belongs to the module and every instance of it executes the same buffer, so a breakpoint set
+// through one instance necessarily stops all of them; the stop is reported against whichever
+// instance ran into it. Keying on the patch keeps that one-to-one: LLDB resolving a source
+// breakpoint into several instances of one module lands on a single breakpoint here, and taking
+// it away through any of them restores the bytecode — which is what lets LLDB step over it.
 class JS_EXPORT_PRIVATE BreakpointManager {
     WTF_MAKE_TZONE_ALLOCATED(BreakpointManager);
 
@@ -49,18 +54,20 @@ public:
     bool hasBreakpoints();
     bool hasOneTimeBreakpoints();
 
-    Breakpoint* findBreakpoint(VirtualAddress);
-    void setBreakpoint(VirtualAddress, Breakpoint&&);
-    bool removeBreakpoint(VirtualAddress);
+    Breakpoint* findBreakpoint(const uint8_t* pc);
+    // No-op when a breakpoint already patches this pc; the existing one wins.
+    void setBreakpoint(uint8_t* pc, Breakpoint::Type);
+    // False when no breakpoint patched this pc.
+    bool removeBreakpoint(const uint8_t* pc);
     void clearAllOneTimeBreakpoints();
     void clearAllBreakpoints();
 
 private:
-    bool removeBreakpointImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
+    void removeBreakpointImpl(uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
-    UncheckedKeyHashMap<VirtualAddress, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<VirtualAddress> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<uint8_t*, Breakpoint> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashSet<uint8_t*> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace Wasm

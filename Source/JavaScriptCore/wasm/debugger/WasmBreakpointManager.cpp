@@ -56,47 +56,55 @@ bool BreakpointManager::hasOneTimeBreakpoints()
     return !m_oneTimeBreakpoints.isEmpty();
 }
 
-void BreakpointManager::setBreakpoint(VirtualAddress address, Breakpoint&& breakpoint)
+void BreakpointManager::setBreakpoint(uint8_t* pc, Breakpoint::Type type)
 {
     Locker locker { m_lock };
+    if (m_breakpoints.contains(pc)) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] setBreakpoint keeping the existing breakpoint at ", RawPointer(pc));
+        return;
+    }
+
+    Breakpoint breakpoint(pc, type);
     breakpoint.patchBreakpoint();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] setBreakpoint ", breakpoint, " at moduleAddress:", address);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] setBreakpoint ", breakpoint);
     if (breakpoint.isOneTimeBreakpoint())
-        m_oneTimeBreakpoints.add(address);
-    m_breakpoints.set(address, WTF::move(breakpoint));
+        m_oneTimeBreakpoints.add(pc);
+    m_breakpoints.set(pc, WTF::move(breakpoint));
 }
 
-Breakpoint* BreakpointManager::findBreakpoint(VirtualAddress address)
+Breakpoint* BreakpointManager::findBreakpoint(const uint8_t* pc)
 {
     Locker locker { m_lock };
-    if (auto it = m_breakpoints.find(address); it != m_breakpoints.end())
+    if (auto it = m_breakpoints.find(const_cast<uint8_t*>(pc)); it != m_breakpoints.end())
         return &it->value;
     return nullptr;
 }
 
-bool BreakpointManager::removeBreakpointImpl(VirtualAddress address)
+void BreakpointManager::removeBreakpointImpl(uint8_t* pc)
 {
-    auto it = m_breakpoints.find(address);
+    auto it = m_breakpoints.find(pc);
     RELEASE_ASSERT(it != m_breakpoints.end());
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Removing breakpoint ", it->value, " at ", address);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Removing breakpoint ", it->value);
     it->value.restorePatch();
     m_breakpoints.remove(it);
-    return true;
 }
 
-bool BreakpointManager::removeBreakpoint(VirtualAddress address)
+bool BreakpointManager::removeBreakpoint(const uint8_t* pc)
 {
     Locker locker { m_lock };
-    bool removed = removeBreakpointImpl(address);
-    RELEASE_ASSERT(removed);
+    uint8_t* patchedPC = const_cast<uint8_t*>(pc);
+    if (!m_breakpoints.contains(patchedPC))
+        return false;
+    m_oneTimeBreakpoints.remove(patchedPC);
+    removeBreakpointImpl(patchedPC);
     return true;
 }
 
 void BreakpointManager::clearAllOneTimeBreakpoints()
 {
     Locker locker { m_lock };
-    for (VirtualAddress address : m_oneTimeBreakpoints)
-        removeBreakpointImpl(address);
+    for (uint8_t* pc : m_oneTimeBreakpoints)
+        removeBreakpointImpl(pc);
     m_oneTimeBreakpoints.clear();
     dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Cleared all one-time breakpoints");
 }

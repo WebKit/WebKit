@@ -46,20 +46,20 @@ namespace Wasm {
 void VirtualAddress::dump(PrintStream& out) const
 {
     Type addressType = this->type();
-    uint32_t addressId = this->id();
+    uint32_t addressInstanceId = this->instanceId();
     uint32_t addressOffset = this->offset();
 
     out.print("VirtualAddress(0x", WTF::hex(m_value, WTF::Lowercase), " -> ");
 
     switch (addressType) {
     case Type::Memory:
-        out.print("Memory[instance:", addressId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Memory[instance:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
         break;
     case Type::Module:
-        out.print("Module[module:", addressId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Module[instance:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
         break;
     default:
-        out.print("Unknown[type:", (int)addressType, ", id:", addressId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
+        out.print("Unknown[type:", (int)addressType, ", id:", addressInstanceId, ", offset:0x", WTF::hex(addressOffset, WTF::Lowercase), "])");
         break;
     }
 }
@@ -67,24 +67,27 @@ void VirtualAddress::dump(PrintStream& out) const
 VirtualAddress VirtualAddress::toVirtual(JSWebAssemblyInstance* jsInstance, FunctionCodeIndex index, const uint8_t* pc)
 {
     JSWebAssemblyModule* jsModule = jsInstance->jsModule();
-    Ref module = jsModule->module();
     const Wasm::FunctionData& functionData = jsModule->moduleInformation().functions[index];
     uint32_t offset = static_cast<uint32_t>(pc - &functionData.data[0] + functionData.start);
-    return VirtualAddress::createModule(module->debugId(), offset);
+    return VirtualAddress::createModule(jsInstance->debugId(), offset);
 }
 
-uint8_t* VirtualAddress::toPhysicalPC(const ModuleManager& moduleManager)
+uint8_t* VirtualAddress::toPhysicalPC(ModuleManager& moduleManager)
 {
     RELEASE_ASSERT(type() == VirtualAddress::Type::Module);
 
-    uint32_t id = this->id();
     uint32_t offset = this->offset();
 
-    RefPtr module = moduleManager.module(id);
-    if (!module || offset >= module->moduleInformation().debugInfo->source.size())
+    JSWebAssemblyInstance* jsInstance = moduleManager.jsInstance(instanceId());
+    if (!jsInstance)
         return nullptr;
 
-    const ModuleInformation& moduleInfo = module->moduleInformation();
+    // All instances of a module share one bytecode buffer, so this resolves to the same physical
+    // PC for every instance of the same module.
+    const ModuleInformation& moduleInfo = jsInstance->module().moduleInformation();
+    if (offset >= moduleInfo.debugInfo->source.size())
+        return nullptr;
+
     const auto& functions = moduleInfo.functions;
 
 #if ASSERT_ENABLED
