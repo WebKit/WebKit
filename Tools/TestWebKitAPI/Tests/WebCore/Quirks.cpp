@@ -120,24 +120,20 @@ static WebCore::QuirksData resolveQuirksForEmbeddedDocument(ASCIILiteral topURLS
 
 TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
 {
-    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s).quirkIsEnabled(WebCore::Behaviors::needsYouTubeCaptionQuirk));
 
-    EXPECT_TRUE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).quirkIsEnabled(WebCore::Behaviors::needsYouTubeCaptionQuirk));
 
-    EXPECT_FALSE(resolveQuirksForEmbeddedDocument("https://www.example.com/"_s, "https://vimeo.com/12345"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).quirkIsEnabled(WebCore::Behaviors::needsYouTubeCaptionQuirk));
 
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.example.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
-
-    EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube-nocookie.com/embed/abc"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsYouTubeCaptionQuirk));
+    EXPECT_FALSE(resolveQuirksForTopURL("https://www.youtube-nocookie.com/embed/abc"_s).quirkIsEnabled(WebCore::Behaviors::needsYouTubeCaptionQuirk));
 }
 #endif
 
 TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
 {
-    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
-
-    EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsAirIndiaExpressLayeringQuirk));
-    EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).quirkIsEnabled(WebCore::Behaviors::needsAirIndiaExpressLayeringQuirk));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).quirkIsEnabled(WebCore::Behaviors::needsReuseLiveRangeForSelectionUpdateQuirk));
 
     EXPECT_TRUE(resolveQuirksForTopURL("https://www.iheart.com/"_s).isSite(WebCore::QuirkSite::IHeart));
 
@@ -197,7 +193,7 @@ TEST_F(QuirksTest, ShouldTranscodeHeicImagesForURL)
 TEST_F(QuirksTest, IsMicrosoftTeamsRedirectURL)
 {
     auto isRedirect = [](ASCIILiteral urlString) {
-        return resolveQuirksForTopURL(urlString).quirkIsEnabled(WebCore::SiteSpecificQuirk::IsMicrosoftTeamsRedirectURLQuirk);
+        return resolveQuirksForTopURL(urlString).quirkIsEnabled(WebCore::Behaviors::isMicrosoftTeamsRedirectURLQuirk);
     };
 
     EXPECT_TRUE(isRedirect("https://teams.microsoft.com/?error=Retried+3+times+without+success"_s));

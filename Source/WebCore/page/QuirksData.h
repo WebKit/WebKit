@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <WebCore/QuirkNames.h>
-#include <initializer_list>
+#include <WebCore/QuirkBehaviors.h>
+#include <span>
 
 namespace WebCore {
 
@@ -44,30 +44,25 @@ struct QuirksData {
         sites.set(static_cast<size_t>(site));
     }
 
-    inline bool quirkIsEnabled(SiteSpecificQuirk quirk) const
+    inline bool quirkIsEnabled(const QuirkBehavior& quirk) const
     {
-        return activeQuirks.get(static_cast<size_t>(quirk));
+        return activeQuirks.get(static_cast<size_t>(quirk.id));
     }
 
-    inline void enableQuirks()
+    inline void enableQuirks(std::span<const QuirkBehavior> quirks)
     {
-        // No-op to support macro expansions
+        for (auto& quirk : quirks)
+            enableQuirk(quirk);
     }
 
-    constexpr void enableQuirks(std::initializer_list<SiteSpecificQuirk> quirks)
+    inline void enableQuirk(const QuirkBehavior& quirk)
     {
-        for (auto quirk : quirks)
-            activeQuirks.set(static_cast<size_t>(quirk));
+        activeQuirks.set(static_cast<size_t>(quirk.id));
     }
 
-    inline void enableQuirk(SiteSpecificQuirk quirk)
+    inline void setQuirkState(const QuirkBehavior& quirk, bool state)
     {
-        return activeQuirks.set(static_cast<size_t>(quirk));
-    }
-
-    inline void setQuirkState(SiteSpecificQuirk quirk, bool state)
-    {
-        return activeQuirks.set(static_cast<size_t>(quirk), state);
+        activeQuirks.set(static_cast<size_t>(quirk.id), state);
     }
 
     constexpr void merge(const QuirksData& other)

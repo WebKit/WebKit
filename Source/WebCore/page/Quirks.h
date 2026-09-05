@@ -274,7 +274,7 @@ public:
     bool NODELETE shouldIgnorePlaysInlineRequirementQuirk() const;
 
 #if PLATFORM(IOS_FAMILY)
-    bool shouldAllowPopupFromMicrosoftOfficeToOneDrive() const { return m_quirksData.quirkIsEnabled(SiteSpecificQuirk::ShouldAllowPopupFromMicrosoftOfficeToOneDrive); }
+    bool shouldAllowPopupFromMicrosoftOfficeToOneDrive() const { return m_quirksData.quirkIsEnabled(Behaviors::shouldAllowPopupFromMicrosoftOfficeToOneDrive); }
     bool needsPopupFromMicrosoftOfficeToOneDrive(const URL& targetURL) const;
 #endif
 
@@ -394,9 +394,9 @@ private:
     mutable QuirkBitSet m_probedQuirks;
 
     template<typename Probe>
-    bool quirkIsEnabledAfterProbing(SiteSpecificQuirk quirk, NOESCAPE Probe&& probe) const
+    bool quirkIsEnabledAfterProbing(const QuirkBehavior& quirk, NOESCAPE Probe&& probe) const
     {
-        auto index = static_cast<size_t>(quirk);
+        auto index = static_cast<size_t>(quirk.id);
         if (!m_probedQuirks.get(index)) {
             m_probedQuirks.set(index);
             m_quirksData.setQuirkState(quirk, probe());

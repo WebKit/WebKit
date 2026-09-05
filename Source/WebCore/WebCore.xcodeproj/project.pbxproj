@@ -3160,7 +3160,7 @@
 		7ABA251128B41C64005D4F6D /* Report.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABA24E528A5C8D1005D4F6D /* Report.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7ABA251228B4457C005D4F6D /* ReportBody.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABA24E728A5C90A005D4F6D /* ReportBody.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05D4770CFFB4C18C6BA6928C /* QuirkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 05D4770BFFB4C18C6BA6928C /* QuirkTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7ABB0F622CE7C170009A837F /* QuirkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABB0F5D2CE7C170009A837F /* QuirkNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7ABB0F622CE7C170009A837F /* QuirkBehaviors.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABB0F5D2CE7C170009A837F /* QuirkBehaviors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7ABB0F602CE7C170009A837D /* QuirksData.h in Headers */ = {isa = PBXBuildFile; fileRef = 7ABB0F5F2CE7C170009A837D /* QuirksData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		05D47708FFB4C18C6BA6928A /* URLMatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 05D47707FFB4C18C6BA6928A /* URLMatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AC09F4728C0122C004568FC /* TestReportBody.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AC09F4528C00E5D004568FC /* TestReportBody.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14995,7 +14995,7 @@
 		7ABA250C28ADA68D005D4F6D /* ReportingScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReportingScope.h; sourceTree = "<group>"; };
 		7ABA250D28AEF4FC005D4F6D /* ReportBody.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ReportBody.cpp; sourceTree = "<group>"; };
 		7ABA250E28B40370005D4F6D /* ReportingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReportingClient.h; sourceTree = "<group>"; };
-		7ABB0F5D2CE7C170009A837F /* QuirkNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkNames.h; sourceTree = "<group>"; };
+		7ABB0F5D2CE7C170009A837F /* QuirkBehaviors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirkBehaviors.h; sourceTree = "<group>"; };
 		7ABB0F5F2CE7C170009A837D /* QuirksData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuirksData.h; sourceTree = "<group>"; };
 		05D47709FFB4C18C6BA6928A /* URLMatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLMatch.cpp; sourceTree = "<group>"; };
 		05D4770AFFB4C18C6BA6928B /* QuirkTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuirkTable.cpp; sourceTree = "<group>"; };
@@ -31547,7 +31547,7 @@
 				B776D43A1104525D00BEB0EC /* PrintContext.h */,
 				E42050162141901B0066EF3B /* ProcessWarming.cpp */,
 				E42050142141901A0066EF3B /* ProcessWarming.h */,
-				7ABB0F5D2CE7C170009A837F /* QuirkNames.h */,
+				7ABB0F5D2CE7C170009A837F /* QuirkBehaviors.h */,
 				CD9A87F9215D6CF3006F17B5 /* Quirks.cpp */,
 				CD9A87FB215D6CF3006F17B5 /* Quirks.h */,
 				7ABB0F5F2CE7C170009A837D /* QuirksData.h */,
@@ -48321,7 +48321,7 @@
 				A70B77D62A9EE40B003D8566 /* Quaternion.h in Headers */,
 				CD20ED3C27878FFB0038BE44 /* QueuedVideoOutput.h in Headers */,
 				A15E31F41E0CB0B5004B371C /* QuickLook.h in Headers */,
-				7ABB0F622CE7C170009A837F /* QuirkNames.h in Headers */,
+				7ABB0F622CE7C170009A837F /* QuirkBehaviors.h in Headers */,
 				9BAEE92C22388A7D004157A9 /* Quirks.h in Headers */,
 				7ABB0F602CE7C170009A837D /* QuirksData.h in Headers */,
 				05D4770CFFB4C18C6BA6928C /* QuirkTable.h in Headers */,
