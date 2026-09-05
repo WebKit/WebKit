@@ -53,6 +53,7 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
 namespace WebKit {
@@ -281,6 +282,12 @@ void FrameNetworkAgentProxy::didReceiveData(ResourceLoaderIdentifier resourceID,
         page->identifier());
 }
 
+static bool finishedWithoutContent(const BackendResourceDataStore::ResourceData* resourceData)
+{
+    return resourceData && !resourceData->hasContent() && !resourceData->hasBufferedData()
+        && !resourceData->isContentEvicted() && !resourceData->buffer();
+}
+
 void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics&, ResourceLoader*)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
@@ -298,6 +305,20 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     }
 
     m_resourcesData->maybeDecodeDataToContent(resourceID);
+
+    // A memory cache hit synthesizes the loader callbacks with a null buffer
+    // (FrameLoader::loadedResourceFromMemoryCache), so no body ever reached didReceiveData. The
+    // store keeps no CachedResource references, so copy the body out here, while the cache entry
+    // that served this load is still alive. The resource is found by URL because this path has no
+    // ResourceLoader to ask for it.
+    if (auto* resourceData = m_resourcesData->data(resourceID); finishedWithoutContent(resourceData)) {
+        if (RefPtr cachedResource = ResourceUtilities::cachedResource(frame.get(), URL { resourceData->url() })) {
+            String content;
+            bool base64Encoded;
+            if (ResourceUtilities::cachedResourceContent(*cachedResource, &content, &base64Encoded))
+                m_resourcesData->setResourceContent(resourceID, content, base64Encoded);
+        }
+    }
 
     RefPtr page = m_page.get();
     if (!page)
@@ -357,8 +378,8 @@ void FrameNetworkAgentProxy::didLoadResourceFromMemoryCache(DocumentLoader* load
     m_resourcesData->resourceCreated(resourceID, *frameID, resourceType);
 
     // Copy content from the CachedResource now, since the store does not hold
-    // CachedResource references. This is the only chance to capture the content
-    // for memory-cached resources (they don't go through didReceiveData).
+    // CachedResource references and memory-cached resources don't go through
+    // didReceiveData.
     String content;
     bool base64Encoded;
     if (ResourceUtilities::cachedResourceContent(cachedResource, &content, &base64Encoded))

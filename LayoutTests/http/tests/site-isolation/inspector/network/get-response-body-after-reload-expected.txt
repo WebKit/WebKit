@@ -1,0 +1,30 @@
+Tests that Network.getResponseBody returns the body of the main frame's same-origin subresources after reloading with the inspector open under Site Isolation, including subresources served from the memory cache.
+
+
+== Running test suite: SiteIsolation.Network.GetResponseBodyAfterReload
+-- Running test case: SiteIsolation.Network.GetResponseBodyAfterReload.Reload
+Reloading...
+PASS: Stylesheet should be present in the main frame after the reload.
+PASS: Script should be present in the main frame after the reload.
+PASS: Main resource should be present after the reload.
+Main resource: responseSource=Symbol(network), cached=false, hasRequestIdentifier=true
+Stylesheet: responseSource=Symbol(memory-cache), cached=true, hasRequestIdentifier=true
+Script: responseSource=Symbol(memory-cache), cached=true, hasRequestIdentifier=true
+PASS: Stylesheet should be served from the memory cache.
+PASS: Script should be served from the memory cache.
+
+-- Running test case: SiteIsolation.Network.GetResponseBodyAfterReload.MainResource
+PASS: Main resource: requestContent() should succeed.
+PASS: Main resource: requestContent() should return non-empty content.
+PASS: Main resource: content should contain "reload-memory-cached.css".
+
+-- Running test case: SiteIsolation.Network.GetResponseBodyAfterReload.StyleSheet
+PASS: Stylesheet: requestContent() should succeed.
+PASS: Stylesheet: requestContent() should return non-empty content.
+PASS: Stylesheet: content should contain "background-color".
+
+-- Running test case: SiteIsolation.Network.GetResponseBodyAfterReload.Script
+PASS: Script: requestContent() should succeed.
+PASS: Script: requestContent() should return non-empty content.
+PASS: Script: content should contain "reloadMemoryCachedScriptRan".
+

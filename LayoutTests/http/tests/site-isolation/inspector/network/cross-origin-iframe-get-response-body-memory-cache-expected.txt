@@ -1,0 +1,14 @@
+Tests that Network.getResponseBody returns the body of a stylesheet served from a cross-origin frame process's memory cache under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.CrossOriginIFrame.GetResponseBodyMemoryCache
+-- Running test case: SiteIsolation.Network.CrossOriginIFrame.GetResponseBodyMemoryCache
+Frame A stylesheet (cold): statusCode=200, responseSource=Symbol(network), cached=false, hasRequestIdentifier=true
+PASS: Frame A's load should come from the network.
+Frame B stylesheet (cached): statusCode=200, responseSource=Symbol(memory-cache), cached=true, hasRequestIdentifier=true
+PASS: Frame B's load should come from the memory cache.
+PASS: requestContent() should succeed for the memory-cached stylesheet.
+PASS: requestContent() should return non-empty content.
+PASS: Content should be the stylesheet that was served.
+
