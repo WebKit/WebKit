@@ -20,11 +20,16 @@
 
        accessibilityController.addNotificationListener(function(element, notification) {
           if (notification == "AXValueChanged") {
-               debug("Value change notification received"); 
+               // Setting the value posts more than one of these, and reading an accessibility
+               // attribute below lets the next one be delivered before this call returns, so stop
+               // listening before doing anything else.
+               // This hack will be obsolete after https://bugs.webkit.org/show_bug.cgi?id=323511 is fixed.
+               accessibilityController.removeNotificationListener();
+
+               debug("Value change notification received");
                var axElement = accessibilityController.accessibleElementById("contenteditable");
                debug("Updated Value: " + axElement.stringValue);
                document.getElementById("content").style.visibility = "hidden";
-               accessibilityController.removeNotificationListener();
                finishJSTest();
           }
        });
