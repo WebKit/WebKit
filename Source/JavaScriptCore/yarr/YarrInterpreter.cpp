@@ -2690,15 +2690,7 @@ public:
 
                     bool sameDirection = term.matchDirection() == matchDirection;
                     PatternDisjunction* disjunction = term.parentheses.disjunction;
-                    unsigned origin = term.inputPosition;
-                    if (term.matchDirection() == Backward || matchDirection == Backward) {
-                        origin = 0;
-                        disjunction = m_pattern.copyDisjunctionInMatchOrder(disjunction, origin, [&] {
-                            return isSafeToRecurse();
-                        });
-                        if (!disjunction)
-                            return ErrorCode::TooManyDisjunctions;
-                    }
+                    unsigned origin = (term.matchDirection() == Forward && matchDirection == Forward) ? term.inputPosition : 0;
 
                     unsigned alreadyChecked = std::min<unsigned>(sameDirection ? positiveInputOffset.value() : term.inputPosition, disjunction->m_minimumSize);
                     unsigned uncheckAmount = sameDirection ? positiveInputOffset.value() - alreadyChecked : positiveInputOffset.value() + alreadyChecked;

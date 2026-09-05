@@ -5775,15 +5775,6 @@ class YarrGenerator final : public YarrJITInfo {
 
         PatternDisjunction* disjunction = term->parentheses.disjunction;
         bool isBackward = term->matchDirection() == Backward || m_direction == Backward;
-        if (isBackward) {
-            disjunction = m_pattern.copyDisjunctionInMatchOrder(disjunction, 0, [&] {
-                return isSafeToRecurse();
-            });
-            if (!disjunction) {
-                m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
-                return;
-            }
-        }
 
         auto originalCheckedOffset = checkedOffset;
         size_t parenBegin = m_ops.size();

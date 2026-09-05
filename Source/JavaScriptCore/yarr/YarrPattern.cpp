@@ -1674,6 +1674,26 @@ public:
 
         if (shouldTryConvertingForwardReferencesToBackreferences && parenthesisMatchDirection() == Forward)
             tryConvertingForwardReferencesToBackreferences();
+
+        if (lastTerm.matchDirection() == Backward && parenthesisMatchDirection() == Forward)
+            putTermsInMatchOrder(lastTerm.parentheses.disjunction);
+    }
+
+    void putTermsInMatchOrder(PatternDisjunction* disjunction)
+    {
+        if (!isSafeToRecurse()) [[unlikely]] {
+            m_error = ErrorCode::TooManyDisjunctions;
+            return;
+        }
+
+        for (auto& alternative : disjunction->m_alternatives) {
+            ASSERT(alternative->matchDirection() == Backward);
+            alternative->m_terms.reverse();
+            for (auto& term : alternative->m_terms) {
+                if ((term.type == PatternTerm::Type::ParenthesesSubpattern || term.type == PatternTerm::Type::ParentheticalAssertion) && term.matchDirection() == Backward)
+                    putTermsInMatchOrder(term.parentheses.disjunction);
+            }
+        }
     }
 
     void atomBackReference(unsigned subpatternId)
@@ -2079,7 +2099,7 @@ public:
                 break;
 
             case PatternTerm::Type::ParentheticalAssertion: {
-                unsigned disjunctionInitialInputPosition = (term.matchDirection() == Forward) ? currentInputPosition.value() : 0;
+                unsigned disjunctionInitialInputPosition = (term.matchDirection() == Forward && alternative->matchDirection() == Forward) ? currentInputPosition.value() : 0;
                 term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
                 currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheticalAssertion;
@@ -3203,88 +3223,6 @@ YarrPattern::YarrPattern(StringView pattern, OptionSet<Flags> flags, ErrorCode& 
 {
     ASSERT(m_flags != Flags::DeletedValue);
     error = compile(pattern);
-}
-
-PatternDisjunction* YarrPattern::copyDisjunctionInMatchOrder(PatternDisjunction* disjunction, unsigned origin, const ScopedLambda<bool()>& isSafeToRecurse)
-{
-    if (!isSafeToRecurse()) [[unlikely]]
-        return nullptr;
-
-    auto copiedDisjunction = makeUnique<PatternDisjunction>();
-    copiedDisjunction->m_minimumSize = disjunction->m_minimumSize;
-    copiedDisjunction->m_callFrameSize = disjunction->m_callFrameSize;
-    copiedDisjunction->m_hasFixedSize = disjunction->m_hasFixedSize;
-
-    for (auto& alternative : disjunction->m_alternatives) {
-        MatchDirection direction = alternative->matchDirection();
-        PatternAlternative* copiedAlternative = copiedDisjunction->addNewAlternative(alternative->m_firstSubpatternId, direction);
-        copiedAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-        copiedAlternative->m_minimumSize = alternative->m_minimumSize;
-        copiedAlternative->m_hasFixedSize = alternative->m_hasFixedSize;
-        copiedAlternative->m_isLastAlternative = alternative->m_isLastAlternative;
-        size_t termCount = alternative->m_terms.size();
-        copiedAlternative->m_terms.reserveInitialCapacity(termCount);
-        unsigned inputPosition = origin;
-        for (size_t i = 0; i < termCount; ++i) {
-            PatternTerm term = alternative->m_terms[direction == Backward ? termCount - 1 - i : i];
-            switch (term.type) {
-            case PatternTerm::Type::AssertionBOL:
-            case PatternTerm::Type::AssertionEOL:
-            case PatternTerm::Type::AssertionBOI:
-            case PatternTerm::Type::AssertionEOI:
-            case PatternTerm::Type::AssertionWordBoundary:
-            case PatternTerm::Type::NumberedBackReference:
-            case PatternTerm::Type::NamedBackReference:
-                term.inputPosition = inputPosition;
-                break;
-
-            case PatternTerm::Type::NumberedForwardReference:
-            case PatternTerm::Type::NamedForwardReference:
-                break;
-
-            case PatternTerm::Type::PatternCharacter:
-                term.inputPosition = inputPosition;
-                if (term.quantityType == QuantifierType::FixedCount)
-                    inputPosition += term.quantityMaxCount.value() * (eitherUnicode() ? U16_LENGTH(term.patternCharacter) : 1);
-                break;
-
-            case PatternTerm::Type::CharacterClass:
-                term.inputPosition = inputPosition;
-                if (term.quantityType == QuantifierType::FixedCount)
-                    inputPosition += term.quantityMaxCount.value() * (eitherUnicode() && term.isFixedWidthCharacterClass() && term.characterClass->hasNonBMPCharacters() ? 2 : 1);
-                break;
-
-            case PatternTerm::Type::ParenthesesSubpattern: {
-                ASSERT(!term.parentheses.isStringList && !term.parentheses.isTerminal);
-                term.parentheses.disjunction = copyDisjunctionInMatchOrder(term.parentheses.disjunction, inputPosition, isSafeToRecurse);
-                if (!term.parentheses.disjunction)
-                    return nullptr;
-                if (term.quantityMaxCount == 1 && !term.parentheses.isCopy && term.quantityType == QuantifierType::FixedCount)
-                    inputPosition += term.parentheses.disjunction->m_minimumSize;
-                term.inputPosition = inputPosition;
-                break;
-            }
-
-            case PatternTerm::Type::ParentheticalAssertion:
-                if (direction == Forward && term.matchDirection() == Forward) {
-                    term.parentheses.disjunction = copyDisjunctionInMatchOrder(term.parentheses.disjunction, inputPosition, isSafeToRecurse);
-                    if (!term.parentheses.disjunction)
-                        return nullptr;
-                }
-                term.inputPosition = inputPosition;
-                break;
-
-            case PatternTerm::Type::DotStarEnclosure:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-            copiedAlternative->m_terms.append(term);
-        }
-        ASSERT(inputPosition - origin == alternative->m_minimumSize);
-    }
-
-    PatternDisjunction* result = copiedDisjunction.get();
-    m_disjunctions.append(WTF::move(copiedDisjunction));
-    return result;
 }
 
 void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)

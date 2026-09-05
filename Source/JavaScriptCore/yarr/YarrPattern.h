@@ -37,7 +37,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/PrintStream.h>
-#include <wtf/ScopedLambda.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -749,11 +748,6 @@ struct YarrPattern {
         return nonwordUnicodeIgnoreCasecharCached;
     }
     CharacterClass* unicodeCharacterClassFor(BuiltInCharacterClassID, bool ignoreCase, bool invert);
-
-    // The parser numbers terms in pattern order. Lookbehinds, and lookaheads inside them, are
-    // compiled from a copy whose terms are in the order they are matched (reversed for backward
-    // alternatives) with inputPosition counted from origin in that order.
-    PatternDisjunction* copyDisjunctionInMatchOrder(PatternDisjunction*, unsigned origin, const ScopedLambda<bool()>& isSafeToRecurse);
 
     unsigned offsetVectorBaseForNamedCaptures() const
     {
