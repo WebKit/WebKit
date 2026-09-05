@@ -382,8 +382,8 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
     RefPtr<WebKit::WebOpenPanelResultListenerProxy> _listener;
     RetainPtr<NSSet<NSString *>> _acceptedUTIs;
     OptionSet<WKFileUploadPanelImagePickerType> _allowedImagePickerTypes;
-    CGPoint _interactionPoint;
-    CGPoint _interactionPointInWindow;
+    CGPoint _menuPresentationPointInWindow;
+    CGRect _menuPresentationRect;
     BOOL _isMenuPreviouslyRepositioned;
     BOOL _allowDirectories;
     BOOL _allowMultipleFiles;
@@ -503,8 +503,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _allowDirectories = parameters->allowDirectories();
     _allowMultipleFiles = parameters->allowMultipleFiles();
     _isMenuPreviouslyRepositioned = NO;
-    _interactionPoint = [view lastInteractionLocation];
-    _interactionPointInWindow = [view convertPoint:_interactionPoint toView:[view webView].window];
+
+    // An input hidden offscreen behind a custom upload button has no usable box; use the tap.
+    RefPtr page = [view page];
+    CGRect elementRect = parameters->elementRectInMainFrameViewCoordinates();
+    bool elementIsVisible = page && CGRectIntersectsRect(elementRect, page->unobscuredContentRect());
+    _menuPresentationRect = elementIsVisible ? elementRect : CGRect { [view lastInteractionLocation], CGSizeZero };
+
+    // The menu goes below the anchor, so its bottom edge is what the input view can cover.
+    _menuPresentationPointInWindow = [view convertPoint:CGPointMake(CGRectGetMidX(_menuPresentationRect), CGRectGetMaxY(_menuPresentationRect)) toView:[view webView].window];
 
     Ref<API::Array> acceptMimeTypes = parameters->acceptMIMETypes();
     NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:acceptMimeTypes->size()];
@@ -730,7 +737,13 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configuration:(UIContextMenuConfiguration *)configuration highlightPreviewForItemWithIdentifier:(id<NSCopying>)identifier
 {
-    return [_view.get() _createTargetedContextMenuHintPreviewIfPossible];
+    RetainPtr view = _view.get();
+
+    // The fallback has no bounds for an element in a site-isolated frame.
+    if (!CGRectIsEmpty(_menuPresentationRect))
+        return [view _createTargetedContextMenuHintPreviewForRootViewRect:_menuPresentationRect];
+
+    return [view _createTargetedContextMenuHintPreviewIfPossible];
 }
 
 - (UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location {
@@ -830,7 +843,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     // The exact bounds of the context menu container itself isn't exposed through any UIKit API or SPI,
     // and would require traversing the view hierarchy in search of internal UIKit views. For now, just
     // reposition the context menu if its presentation location is covered by the input view.
-    if (!_isMenuPreviouslyRepositioned && !CGRectContainsPoint(inputViewBoundsInWindow, _interactionPointInWindow))
+    if (!_isMenuPreviouslyRepositioned && !CGRectContainsPoint(inputViewBoundsInWindow, _menuPresentationPointInWindow))
         return;
 
     _isMenuPreviouslyRepositioned = !_isMenuPreviouslyRepositioned;
@@ -838,7 +851,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     SetForScope repositioningContextMenuScope { _isRepositioningContextMenu, YES };
     [UIView performWithoutAnimation:^{
         _menuPresenter->dismiss();
-        _menuPresenter->present(_interactionPoint);
+        _menuPresenter->present(_menuPresentationRect);
     }];
 }
 
@@ -873,7 +886,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 #if HAVE(UICONTEXTMENU_LOCATION)
     // If directories are allowed or no image/video types are accepted, skip showing the context menu.
     if (!_allowDirectories && _allowedImagePickerTypes.containsAny({ WKFileUploadPanelImagePickerType::Image, WKFileUploadPanelImagePickerType::Video }))
-        self.contextMenuPresenter.present(_interactionPoint);
+        self.contextMenuPresenter.present(_menuPresentationRect);
     else
         [self showFilePickerMenu];
 #else

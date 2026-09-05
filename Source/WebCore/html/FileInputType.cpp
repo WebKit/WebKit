@@ -26,6 +26,7 @@
 #include "ContainerNodeInlines.h"
 #include "DOMFormData.h"
 #include "DirectoryFileListCreator.h"
+#include "DocumentView.h"
 #include "DragData.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
@@ -40,6 +41,7 @@
 #include "Icon.h"
 #include "InputTypeNames.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
 #include "RenderFileUploadControl.h"
@@ -172,6 +174,10 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 void FileInputType::showPicker()
 {
     ASSERT(element());
+
+    // The settings read the element's box, which a style change may have dirtied.
+    protect(element()->document())->updateLayoutIgnorePendingStylesheets();
+
     if (auto* chrome = this->chrome()) {
         applyFileChooserSettings();
         chrome->runOpenPanel(*protect(element()->document().frame()), *protect(m_fileChooser));
@@ -304,6 +310,13 @@ FileChooserSettings FileInputType::fileChooserSettings() const
 #if ENABLE(MEDIA_CAPTURE)
     settings.mediaCaptureType = element->mediaCaptureType();
 #endif
+
+    // Unlike contentsToRootView(), this crosses remote frame boundaries, in process.
+    if (CheckedPtr renderer = element->renderer()) {
+        if (RefPtr view = element->document().view())
+            settings.elementRectInMainFrameViewCoordinates = enclosingIntRect(view->convertToRootViewAcrossIsolatedFrames(view->contentsToView(FloatRect { renderer->absoluteBoundingBoxRect() })));
+    }
+
     return settings;
 }
 

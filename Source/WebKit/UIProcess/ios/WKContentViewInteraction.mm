@@ -11989,6 +11989,17 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return _contextMenuInteractionTargetedPreview.get();
 }
 
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForRootViewRect:(CGRect)rectInRootViewCoordinates
+{
+    auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, rectInRootViewCoordinates, nil);
+
+    // No hit test result, so no container scroller to track.
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:std::nullopt];
+
+    _contextMenuInteractionTargetedPreview = WTF::move(targetedPreview);
+    return _contextMenuInteractionTargetedPreview.get();
+}
+
 - (BOOL)positionInformationHasImageOverlayDataDetector
 {
 #if ENABLE(DATA_DETECTION)

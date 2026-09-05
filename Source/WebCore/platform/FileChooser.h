@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <WebCore/IntRect.h>
 #include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -62,6 +63,7 @@ struct FileChooserSettings {
 #if ENABLE(MEDIA_CAPTURE)
     MediaCaptureType mediaCaptureType { MediaCaptureType::MediaCaptureTypeNone };
 #endif
+    IntRect elementRectInMainFrameViewCoordinates;
 };
 
 class FileChooserClient {
