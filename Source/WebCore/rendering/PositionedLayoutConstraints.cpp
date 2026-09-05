@@ -468,8 +468,6 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
 {
     bool startIsBefore = this->startIsBefore();
     bool isOverflowing = unusedSpace < 0_lu;
-    if (isOverflowing && OverflowAlignment::Safe == m_alignment.overflow())
-        return startIsBefore ? 0_lu : unusedSpace;
 
     ItemPosition resolvedAlignment = resolveAlignmentValue();
     ASSERT(ItemPosition::Auto != resolvedAlignment);
@@ -487,7 +485,7 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
                     shift = unusedSpace;
             }
         }
-        if (!isOverflowing && OverflowAlignment::Default == m_alignment.overflow()) {
+        if (!isOverflowing && OverflowAlignment::Unsafe != m_alignment.overflow()) {
             // Avoid introducing overflow of the IMCB.
             if (shift < 0)
                 shift = 0;
@@ -500,12 +498,12 @@ LayoutUnit PositionedLayoutConstraints::resolveAlignmentShift(LayoutUnit unusedS
     }
 
     if (isOverflowing && ItemPosition::Normal != resolvedAlignment
-        && OverflowAlignment::Default == m_alignment.overflow()) {
+        && OverflowAlignment::Unsafe != m_alignment.overflow()) {
         // Allow overflow, but try to stay within the containing block.
         // See https://www.w3.org/TR/css-align-3/#auto-safety-position
 
         auto containingRange = m_originalContainingRange;
-        if (m_defaultAnchorBox && PositionType::Fixed == m_style.position()) {
+        if (m_defaultAnchorBox && PositionType::Fixed == m_style.position() && OverflowAlignment::Default == m_alignment.overflow()) {
             // We didn't modify the m_containingRange to include scrollable area for positioning,
             // but we should allow it for overflow management if we can scroll to reach that overflow.
             if (auto renderView = dynamicDowncast<RenderView>(m_container.get())) {

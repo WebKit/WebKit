@@ -14,4 +14,6 @@ PASS e.style['place-items'] = "legacy right flex-start" should not set the prope
 PASS e.style['place-items'] = "legacy normal" should not set the property value
 PASS e.style['place-items'] = "normal flex-start baseline" should not set the property value
 PASS e.style['place-items'] = "baseline safe" should not set the property value
+PASS e.style['place-items'] = "normal safe" should not set the property value
+PASS e.style['place-items'] = "normal unsafe" should not set the property value
 

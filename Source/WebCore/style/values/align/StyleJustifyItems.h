@@ -33,13 +33,13 @@
 namespace WebCore {
 namespace Style {
 
-// <'justify-items'> = normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]
+// <'justify-items'> = <overflow-position>? normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]
 // https://drafts.csswg.org/css-align/#propdef-justify-items
 // Additional values, `anchor-center` and `dialog` added to <self-position> by CSS Anchor Positioning.
 // FIXME: Add support for `dialog`.
 // https://drafts.csswg.org/css-anchor-position-1/#anchor-center
 struct JustifyItems {
-    constexpr JustifyItems(CSS::Keyword::Normal);
+    constexpr JustifyItems(CSS::Keyword::Normal, std::optional<OverflowPosition> = std::nullopt);
     constexpr JustifyItems(CSS::Keyword::Stretch);
     constexpr JustifyItems(CSS::Keyword::Baseline, std::optional<BaselineAlignmentPreference> = std::nullopt);
     constexpr JustifyItems(CSS::Keyword::Center, std::optional<OverflowPosition> = std::nullopt);
@@ -120,8 +120,8 @@ private:
 };
 static_assert(sizeof(JustifyItems) == 1);
 
-constexpr JustifyItems::JustifyItems(CSS::Keyword::Normal)
-    : JustifyItems { PrimaryKind::Normal }
+constexpr JustifyItems::JustifyItems(CSS::Keyword::Normal, std::optional<OverflowPosition> overflow)
+    : JustifyItems { PrimaryKind::Normal, overflow }
 {
 }
 
@@ -250,11 +250,11 @@ constexpr bool JustifyItems::canHaveBaselinePosition(PrimaryKind primary)
 constexpr bool JustifyItems::canHaveOverflowPosition(PrimaryKind primary)
 {
     switch (primary) {
-    case PrimaryKind::Normal:
     case PrimaryKind::Stretch:
     case PrimaryKind::Baseline:
     case PrimaryKind::Legacy:
         return false;
+    case PrimaryKind::Normal:
     case PrimaryKind::Center:
     case PrimaryKind::Start:
     case PrimaryKind::End:
@@ -281,7 +281,7 @@ template<typename... F> constexpr decltype(auto) JustifyItems::switchOn(F&&... f
 
     switch (primary()) {
     case PrimaryKind::Normal:
-        return visitor(CSS::Keyword::Normal { });
+        return visitOverflowPosition(CSS::Keyword::Normal { }, overflowPosition(), visitor);
     case PrimaryKind::Stretch:
         return visitor(CSS::Keyword::Stretch { });
     case PrimaryKind::Baseline:

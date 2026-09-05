@@ -1,5 +1,7 @@
 
 PASS e.style['align-items'] = "normal" should set the property value
+PASS e.style['align-items'] = "unsafe normal" should set the property value
+PASS e.style['align-items'] = "safe normal" should set the property value
 PASS e.style['align-items'] = "stretch" should set the property value
 PASS e.style['align-items'] = "baseline" should set the property value
 PASS e.style['align-items'] = "first baseline" should set the property value

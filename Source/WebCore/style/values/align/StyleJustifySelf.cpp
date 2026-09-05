@@ -58,7 +58,7 @@ StyleSelfAlignmentData JustifySelf::resolve(const Style::ComputedStyle* containe
         ASSERT_NOT_REACHED();
         return { ItemPosition::Auto };
     case PrimaryKind::Normal:
-        return { ItemPosition::Normal };
+        return resolveOverflowPosition(ItemPosition::Normal);
     case PrimaryKind::Stretch:
         return { ItemPosition::Stretch };
     case PrimaryKind::Baseline:
@@ -157,6 +157,8 @@ auto CSSValueConversion<JustifySelf>::operator()(BuilderState& state, const CSSV
 
     auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> JustifySelf {
         switch (applyPositionTryFallbackTactics(state, secondValueID)) {
+        case CSSValueNormal:
+            return { CSS::Keyword::Normal { }, overflowPosition };
         case CSSValueStart:
             return { CSS::Keyword::Start { }, overflowPosition };
         case CSSValueEnd:

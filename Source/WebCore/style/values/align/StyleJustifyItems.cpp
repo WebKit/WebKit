@@ -49,7 +49,7 @@ StyleSelfAlignmentData JustifyItems::resolve() const
 
     switch (primary()) {
     case PrimaryKind::Normal:
-        return { ItemPosition::Normal };
+        return resolveOverflowPosition(ItemPosition::Normal);
     case PrimaryKind::Stretch:
         return { ItemPosition::Stretch };
     case PrimaryKind::Baseline:
@@ -152,6 +152,8 @@ auto CSSValueConversion<JustifyItems>::operator()(BuilderState& state, const CSS
 
     auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> JustifyItems {
         switch (secondValueID) {
+        case CSSValueNormal:
+            return { CSS::Keyword::Normal { }, overflowPosition };
         case CSSValueCenter:
             return { CSS::Keyword::Center { }, overflowPosition };
         case CSSValueStart:

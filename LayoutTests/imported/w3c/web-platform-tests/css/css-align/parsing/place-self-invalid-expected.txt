@@ -8,4 +8,6 @@ PASS e.style['place-self'] = "right start" should not set the property value
 PASS e.style['place-self'] = "unsafe left stretch" should not set the property value
 PASS e.style['place-self'] = "normal flex-start baseline" should not set the property value
 PASS e.style['place-self'] = "baseline safe" should not set the property value
+PASS e.style['place-self'] = "normal safe" should not set the property value
+PASS e.style['place-self'] = "normal unsafe" should not set the property value
 

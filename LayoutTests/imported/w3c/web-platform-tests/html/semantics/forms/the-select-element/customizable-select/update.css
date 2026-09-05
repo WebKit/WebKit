@@ -131,6 +131,7 @@ select::picker(select),
   min-block-size: 1lh;
   max-block-size: calc(100svb - 8px);
   overflow: auto;
+  align-self: safe normal;
   overscroll-behavior: contain;
   box-shadow:
     0 4px 6px -1px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35)),

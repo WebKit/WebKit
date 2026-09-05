@@ -1,6 +1,8 @@
 
 PASS Property justify-self value 'auto'
 PASS Property justify-self value 'normal'
+PASS Property justify-self value 'unsafe normal'
+PASS Property justify-self value 'safe normal'
 PASS Property justify-self value 'stretch'
 PASS Property justify-self value 'baseline'
 PASS Property justify-self value 'last baseline'

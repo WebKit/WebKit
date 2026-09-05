@@ -1,5 +1,7 @@
 
 PASS Property align-items value 'normal'
+PASS Property align-items value 'unsafe normal'
+PASS Property align-items value 'safe normal'
 PASS Property align-items value 'stretch'
 PASS Property align-items value 'baseline'
 PASS Property align-items value 'last baseline'
