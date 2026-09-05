@@ -149,7 +149,7 @@ bool LoadableNonModuleScriptBase::load(Document& document, const URL& sourceURL)
     };
 
     m_weakDocument = document;
-    m_cachedScript = requestScriptWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), String { integrity() }, priority(), { });
+    m_cachedScript = downcast<CachedScript>(requestResourceWithCache(document, sourceURL, FetchOptionsDestination::Script, crossOriginMode(), String { integrity() }, priority(), { }));
     if (!m_cachedScript)
         return false;
     protect(m_cachedScript)->addClient(*this);

@@ -513,25 +513,25 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
     JSC::SourceCode sourceCode;
     if (m_ownerType == OwnerType::Document) {
         auto& loader = downcast<CachedModuleScriptLoader>(moduleScriptLoader);
-        Ref cachedScript = *loader.cachedScript();
+        Ref cachedResource = *loader.cachedResource();
 
-        if (cachedScript->resourceError().isAccessControl()) {
+        if (cachedResource->resourceError().isAccessControl()) {
             rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
             return;
         }
 
-        if (cachedScript->errorOccurred()) {
+        if (cachedResource->errorOccurred()) {
             rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasPropagatedError, "Importing a module script failed."_s);
             return;
         }
 
-        if (cachedScript->wasCanceled()) {
+        if (cachedResource->wasCanceled()) {
             rejectToPropagateNetworkError(*context, WTF::move(promise), ModuleFetchFailureKind::WasCanceled, "Importing a module script is canceled."_s);
             return;
         }
 
         ModuleType type = ModuleType::Invalid;
-        auto mimeType = cachedScript->response().mimeType();
+        auto mimeType = cachedResource->response().mimeType();
         auto requestedType = loader.parameters() ? loader.parameters()->type() : JSC::ScriptFetchParameters::Type::None;
         // A text module accepts any MIME type, and its content must never be parsed as JavaScript,
         // so it has to be decided before the JavaScript MIME type is considered.
@@ -549,7 +549,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', cachedScript->response().mimeType(), "' is not a valid JavaScript MIME type for module script '"_s, sourceURL.string(), "'."_s));
+            rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', cachedResource->response().mimeType(), "' is not a valid JavaScript MIME type for module script '"_s, sourceURL.string(), "'."_s));
             return;
         }
 
@@ -560,31 +560,41 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             integrity = parameters->integrity();
 
         if (!integrity.isEmpty()) {
-            if (!matchIntegrityMetadata(cachedScript, integrity)) {
-                context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedScript, integrity)));
+            if (!matchIntegrityMetadata(cachedResource, integrity)) {
+                context->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load script "_s, integrityMismatchDescription(cachedResource, integrity)));
                 rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, "Cannot load script due to integrity mismatch"_s);
                 return;
             }
         }
 
-        URL responseURL = canonicalizeAndRegisterResponseURL(cachedScript->response().url(), cachedScript->hasRedirections(), cachedScript->response().source());
+        URL responseURL = canonicalizeAndRegisterResponseURL(cachedResource->response().url(), cachedResource->hasRedirections(), cachedResource->response().source());
         m_requestURLToResponseURLMap.add(sourceURL.string(), WTF::move(responseURL));
         switch (type) {
-        case ModuleType::JavaScript:
+        case ModuleType::JavaScript: {
+            Ref cachedScript = downcast<CachedScript>(cachedResource);
             sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
             break;
+        }
+        case ModuleType::WebAssembly: {
 #if ENABLE(WEBASSEMBLY)
-        case ModuleType::WebAssembly:
+            Ref cachedScript = downcast<CachedScript>(cachedResource);
             sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { cachedScript.ptr(), loader.scriptFetcher() }.jsSourceCode() };
             break;
+#else
+            RELEASE_ASSERT_NOT_REACHED();
 #endif
-        case ModuleType::JSON:
+        }
+        case ModuleType::JSON: {
+            Ref cachedScript = downcast<CachedScript>(cachedResource);
             sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
             break;
-        case ModuleType::Text:
+        }
+        case ModuleType::Text: {
+            Ref cachedScript = downcast<CachedScript>(cachedResource);
             sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::Text, loader.scriptFetcher() }.jsSourceCode() };
             break;
-        default:
+        }
+        case ModuleType::Invalid:
             RELEASE_ASSERT_NOT_REACHED();
         }
     } else {
