@@ -136,6 +136,8 @@ webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 # Skip by default, enable tests that are stable.
 http/tests/site-isolation/accessibility/client [ Skip ]
 http/tests/site-isolation/accessibility/client/simple-iframe.html [ Pass ]
+http/tests/site-isolation/accessibility/client/walk-up-from-iframe-content.html [ Pass ]
+http/tests/site-isolation/accessibility/client/search-past-remote-frame-immediate-descendants.html [ Pass ]
 
 # Shared-process site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.

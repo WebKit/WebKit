@@ -19,7 +19,11 @@ accessibilityController.setClientAccessibilityMode(true);
 
 // Walks accessibilityParent until the chain ends or maxHops is exceeded.
 // Records each role visited so the test output documents the cross-process boundary.
-function walkParents(startElement) {
+// Stops at the root element (the main frame's ScrollArea): anything above that is
+// the host application's chrome, which is not what this test is about. WebKitTestRunner
+// reuses its window across tests, so the chrome above the root is present on every run
+// but the first, and walking into it would make this test order-dependent.
+function walkParents(startElement, rootElement) {
     var roles = [];
     var webAreaCount = 0;
     var current = startElement;
@@ -32,6 +36,8 @@ function walkParents(startElement) {
         roles.push(role);
         if (role.includes("AXWebArea"))
             webAreaCount++;
+        if (current.isEqual(rootElement))
+            break;
         current = current.parentElement();
     }
     return { roles, webAreaCount };
@@ -75,7 +81,7 @@ async function runTest() {
 
     output += `\nFound Iframe descendant: ${iframeHeading.role} "${iframeHeading.title}"\n`;
 
-    walk = walkParents(iframeHeading);
+    walk = walkParents(iframeHeading, root);
     output += "\nAccessibility-parent chain:\n";
     for (var i = 0; i < walk.roles.length; i++)
         output += `  ${i + 1}: ${walk.roles[i]}\n`;

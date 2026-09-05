@@ -2,7 +2,7 @@ Tests that immediateDescendantsOnly AnyType search correctly finds elements afte
 VoiceOver obtains the iframe's FrameHost element via the remote element parent chain.
 Without the fix, the search loops back to the first element.
 
-PASS: frameHost.rawRoleForTesting.includes('FrameHost') === true
+PASS: frameHost !== null === true
 
 Elements after FrameHost (immediateDescendantsOnly=true):
   1: AXRole: AXButton

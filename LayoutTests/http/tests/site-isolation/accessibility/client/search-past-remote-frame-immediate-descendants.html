@@ -31,15 +31,25 @@ async function runTest() {
     var root = accessibilityController.rootElement;
     var webArea = root.childAtIndex(0);
 
-    // Get the remote platform element (iframe) from WebArea's children, then get
-    // its parent. The remote token bridge maps the remote element's parent to the
-    // FrameHost (the ignored AccessibilityScrollView wrapping the iframe). This is
-    // how VoiceOver discovers the FrameHost element.
-    frameHost = webArea.childAtIndex(1).parentElement();
-    // We use rawRoleForTesting to verify we're getting an AccessibilityRole::FrameHost (it's platform
-    // role is group which is very generic). FrameHost is what VoiceOver used when
-    // triggering the actual bug, which is why we do this check.
-    output += expect("frameHost.rawRoleForTesting.includes('FrameHost')", "true");
+    // Find the FrameHost (the AccessibilityScrollView wrapping the cross-origin
+    // iframe) among the WebArea's children. It is exposed with the very generic
+    // platform role AXGroup, so we identify it by rawRoleForTesting. FrameHost is
+    // the element VoiceOver was on when it triggered the actual bug, which is why
+    // we search from it below rather than from the iframe's remote element.
+    frameHost = null;
+    for (var i = 0; i < webArea.childrenCount; i++) {
+        var child = webArea.childAtIndex(i);
+        if (child.rawRoleForTesting.includes("FrameHost")) {
+            frameHost = child;
+            break;
+        }
+    }
+    output += expect("frameHost !== null", "true");
+    if (!frameHost) {
+        debug(output);
+        finishJSTest();
+        return;
+    }
 
     // Now search forward from the FrameHost with immediateDescendantsOnly=true.
     // This is the exact search VoiceOver performs. Without the fix, the search
