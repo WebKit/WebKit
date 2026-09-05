@@ -1,0 +1,11 @@
+This test verifies the AXShowWritingTools custom action is exposed on editable web content.
+
+PASS: axDiv.supportedActions.includes('AXShowWritingTools') === false
+PASS: axTextarea.supportedActions.includes('AXShowWritingTools') === true
+PASS: axPassword.supportedActions.includes('AXShowWritingTools') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Not editable

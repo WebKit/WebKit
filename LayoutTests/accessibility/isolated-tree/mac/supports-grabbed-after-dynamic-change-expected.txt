@@ -1,0 +1,15 @@
+This test ensures that we report whether an object supports AXGrabbed correctly after dynamic page changes.
+
+PASS: axInput1.isAttributeSupported('AXGrabbed') === false
+PASS: axInput2.isAttributeSupported('AXGrabbed') === false
+PASS: axInput1.isAttributeSupported('AXGrabbed') === true
+PASS: axInput1.isAttributeSupported('AXGrabbed') === false
+PASS: axInput1.isAttributeSupported('AXGrabbed') === true
+PASS: axInput2.isAttributeSupported('AXGrabbed') === true
+PASS: axInput2.isAttributeSupported('AXGrabbed') === false
+PASS: axInput2.isAttributeSupported('AXGrabbed') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

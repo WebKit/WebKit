@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<a id="link" href="#">focusable link</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the relative frame attribute returns accurate data.");
+
+    if (window.accessibilityController) {
+
+        var link = accessibilityController.accessibleElementById("link");
+        debug("relative frame: " + link.stringDescriptionOfAttributeValue("AXRelativeFrame"));
+    }
+
+    successfullyParsed = true;
+</script>
+
+</body>
+</html>

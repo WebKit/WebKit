@@ -1,0 +1,15 @@
+This test ensures that the AXFontChangeSearchKey works correctly.
+
+PASS: firstText.stringValue === 'AXValue: One'
+PASS: resultText.stringValue === 'AXValue: Two'
+PASS: resultText.stringValue === 'AXValue: Three'
+PASS: resultText.stringValue === 'AXValue: Four'
+PASS: Found #div-4 text after #div-1 after dynamic change.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+One
+Four
+Two
+Three

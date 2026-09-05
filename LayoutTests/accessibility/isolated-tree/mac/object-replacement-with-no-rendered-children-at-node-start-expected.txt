@@ -1,0 +1,8 @@
+This tests object replacements are present in strings when the replaced element is at the beginning of the document and has no rendered children.
+
+Object string for webarea range: [ATTACHMENT]b
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+b

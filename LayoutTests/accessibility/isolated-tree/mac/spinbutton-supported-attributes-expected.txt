@@ -1,0 +1,21 @@
+This test ensures that the different types of spinbuttons advertise support for the right attributes.
+
+PASS: standaloneSpinbutton.role === 'AXRole: AXIncrementor'
+PASS: standaloneSpinbutton.isAttributeSupported('AXIncrementButton') === false
+PASS: standaloneSpinbutton.isAttributeSupported('AXDecrementButton') === false
+PASS: standaloneSpinbutton.isAttributeSupported('AXValueDescription') === true
+PASS: standaloneSpinbutton.isAttributeSupported('AXMinValue') === true
+PASS: standaloneSpinbutton.isAttributeSupported('AXMaxValue') === true
+
+PASS: numberInputSpinbutton.role === 'AXRole: AXIncrementor'
+PASS: numberInputSpinbutton.isAttributeSupported('AXIncrementButton') === true
+PASS: numberInputSpinbutton.isAttributeSupported('AXDecrementButton') === true
+PASS: standaloneSpinbutton.isAttributeSupported('AXValueDescription') === true
+PASS: standaloneSpinbutton.isAttributeSupported('AXMinValue') === true
+PASS: standaloneSpinbutton.isAttributeSupported('AXMaxValue') === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+2022
+

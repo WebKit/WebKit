@@ -1,0 +1,8 @@
+This test ensures accessibility element screen positions update after a page scale factor change.
+
+PASS: deltaX was equal or approximately equal to 100.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

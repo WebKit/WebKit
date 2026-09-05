@@ -131,6 +131,7 @@ fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
+webkit.org/b/306558 accessibility/isolated-tree/mac/style-range.html [ Failure ]
 
 # Site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.
@@ -1235,6 +1236,7 @@ webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ Imag
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/180675 accessibility/mac/search-field-cancel-button.html [ Pass Failure ]
+webkit.org/b/180675 accessibility/isolated-tree/mac/search-field-cancel-button.html [ Pass Failure ]
 
 webkit.org/b/181098 fast/workers/worker-terminate.html [ Pass Timeout ]
 
@@ -1451,6 +1453,7 @@ webkit.org/b/243407 accessibility/isolated-tree/add-children-pseudo-element.html
 # Requires (INLINE_PREDICTIONS)
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
 accessibility/mac/text-input-session-notifications.html [ Skip ]
+accessibility/isolated-tree/mac/text-input-session-notifications.html [ Skip ]
 
 webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass Crash ]
 

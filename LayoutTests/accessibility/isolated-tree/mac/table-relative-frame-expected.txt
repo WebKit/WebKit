@@ -1,0 +1,197 @@
+This test ensures we compute the relative frame of table objects correctly.
+
+
+{ AXRole: AXTable #table } has AXRelativeFrame: NSRect: {{156, 8}, {487, 176}}
+
+{ AXRole: AXRow #row1 } has AXRelativeFrame: NSRect: {{157, 27}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{157, 27}, {145, 66}}
+
+{ AXRole: AXStaticText AXValue: Ruritanian } has AXRelativeFrame: NSRect: {{191, 33}, {77, 18}}
+
+{ AXRole: AXStaticText AXValue: Population } has AXRelativeFrame: NSRect: {{192, 51}, {76, 18}}
+
+{ AXRole: AXStaticText AXValue: Survey } has AXRelativeFrame: NSRect: {{205, 69}, {49, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{301, 27}, {46, 66}}
+
+{ AXRole: AXStaticText AXValue: All } has AXRelativeFrame: NSRect: {{313, 42}, {22, 18}}
+
+{ AXRole: AXStaticText AXValue: Ages } has AXRelativeFrame: NSRect: {{307, 60}, {34, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{346, 27}, {297, 30}}
+
+{ AXRole: AXStaticText AXValue: By Age } has AXRelativeFrame: NSRect: {{469, 33}, {50, 18}}
+
+{ AXRole: AXRow #row2 } has AXRelativeFrame: NSRect: {{157, 57}, {485, 36}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{346, 57}, {199, 36}}
+
+{ AXRole: AXStaticText AXValue: Greater than or equal to 40 } has AXRelativeFrame: NSRect: {{352, 66}, {187, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{544, 57}, {98, 36}}
+
+{ AXRole: AXStaticText AXValue: Less than 40 } has AXRelativeFrame: NSRect: {{550, 66}, {87, 18}}
+
+{ AXRole: AXRow #row3 } has AXRelativeFrame: NSRect: {{157, 93}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{157, 93}, {92, 60}}
+
+{ AXRole: AXStaticText AXValue: All Regions } has AXRelativeFrame: NSRect: {{163, 114}, {80, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{248, 93}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: North } has AXRelativeFrame: NSRect: {{254, 99}, {42, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{301, 93}, {46, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{308, 99}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{346, 93}, {199, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{508, 99}, {31, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{544, 93}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{604, 99}, {33, 18}}
+
+{ AXRole: AXRow #row4 } has AXRelativeFrame: NSRect: {{157, 123}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{248, 123}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: South } has AXRelativeFrame: NSRect: {{255, 129}, {41, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{301, 123}, {46, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{308, 129}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{346, 123}, {199, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{508, 129}, {31, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{544, 123}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{604, 129}, {33, 18}}
+
+{ AXRole: AXRow #row5 } has AXRelativeFrame: NSRect: {{157, 153}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{157, 153}, {92, 30}}
+
+{ AXRole: AXStaticText AXValue: Foo } has AXRelativeFrame: NSRect: {{190, 159}, {27, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{248, 153}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{263, 159}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{301, 153}, {244, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{508, 159}, {31, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{544, 153}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{604, 159}, {33, 18}}
+
+Moving the table down by 3000px and scrolling down 500px.
+
+{ AXRole: AXTable #table } has AXRelativeFrame: NSRect: {{149, 2500}, {487, 176}}
+
+{ AXRole: AXRow #row1 } has AXRelativeFrame: NSRect: {{150, 2519}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{150, 2519}, {145, 66}}
+
+{ AXRole: AXStaticText AXValue: Ruritanian } has AXRelativeFrame: NSRect: {{184, 2525}, {77, 18}}
+
+{ AXRole: AXStaticText AXValue: Population } has AXRelativeFrame: NSRect: {{184, 2543}, {76, 18}}
+
+{ AXRole: AXStaticText AXValue: Survey } has AXRelativeFrame: NSRect: {{198, 2561}, {49, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{294, 2519}, {46, 66}}
+
+{ AXRole: AXStaticText AXValue: All } has AXRelativeFrame: NSRect: {{306, 2534}, {21, 18}}
+
+{ AXRole: AXStaticText AXValue: Ages } has AXRelativeFrame: NSRect: {{300, 2552}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{338, 2519}, {297, 30}}
+
+{ AXRole: AXStaticText AXValue: By Age } has AXRelativeFrame: NSRect: {{462, 2525}, {50, 18}}
+
+{ AXRole: AXRow #row2 } has AXRelativeFrame: NSRect: {{150, 2549}, {485, 36}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{338, 2549}, {199, 36}}
+
+{ AXRole: AXStaticText AXValue: Greater than or equal to 40 } has AXRelativeFrame: NSRect: {{344, 2558}, {188, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{537, 2549}, {98, 36}}
+
+{ AXRole: AXStaticText AXValue: Less than 40 } has AXRelativeFrame: NSRect: {{543, 2558}, {86, 18}}
+
+{ AXRole: AXRow #row3 } has AXRelativeFrame: NSRect: {{150, 2585}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{150, 2585}, {92, 60}}
+
+{ AXRole: AXStaticText AXValue: All Regions } has AXRelativeFrame: NSRect: {{156, 2606}, {80, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{241, 2585}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: North } has AXRelativeFrame: NSRect: {{247, 2591}, {42, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{294, 2585}, {46, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{300, 2591}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{338, 2585}, {199, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{500, 2591}, {32, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{537, 2585}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{596, 2591}, {33, 18}}
+
+{ AXRole: AXRow #row4 } has AXRelativeFrame: NSRect: {{150, 2615}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{241, 2615}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: South } has AXRelativeFrame: NSRect: {{247, 2621}, {41, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{294, 2615}, {46, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{300, 2621}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{338, 2615}, {199, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{500, 2621}, {32, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{537, 2615}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{596, 2621}, {33, 18}}
+
+{ AXRole: AXRow #row5 } has AXRelativeFrame: NSRect: {{150, 2645}, {485, 30}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{150, 2645}, {92, 30}}
+
+{ AXRole: AXStaticText AXValue: Foo } has AXRelativeFrame: NSRect: {{182, 2651}, {27, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{241, 2645}, {54, 30}}
+
+{ AXRole: AXStaticText AXValue: 3333 } has AXRelativeFrame: NSRect: {{256, 2651}, {33, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{294, 2645}, {244, 30}}
+
+{ AXRole: AXStaticText AXValue: 1111 } has AXRelativeFrame: NSRect: {{500, 2651}, {32, 18}}
+
+{ AXRole: AXCell } has AXRelativeFrame: NSRect: {{537, 2645}, {98, 30}}
+
+{ AXRole: AXStaticText AXValue: 2222 } has AXRelativeFrame: NSRect: {{596, 2651}, {33, 18}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Example #1: Nested Stubs
+Ruritanian
+Population
+Survey	All
+Ages	By Age
+Greater than or equal to 40	Less than 40
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+Foo	3333	1111	2222

@@ -1,0 +1,23 @@
+This test ensures we can create valid text marker ranges from positions adjacent to replaced elements.
+
+PASS: webarea.stringForTextMarkerRange(range) === '￼'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '￼'
+PASS: webarea.stringForTextMarkerRange(range) === 'x'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'x'
+PASS: webarea.stringForTextMarkerRange(range) === 'y'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'y'
+PASS: webarea.stringForTextMarkerRange(range) === 'z'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'z'
+PASS: webarea.stringForTextMarkerRange(range) === 'z'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'z'
+PASS: webarea.stringForTextMarkerRange(range) === 'y'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'y'
+PASS: webarea.stringForTextMarkerRange(range) === 'x'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === 'x'
+PASS: webarea.stringForTextMarkerRange(range) === '￼'
+PASS: webarea.attributedStringForTextMarkerRange(range).slice(-1) === '￼'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+xyz

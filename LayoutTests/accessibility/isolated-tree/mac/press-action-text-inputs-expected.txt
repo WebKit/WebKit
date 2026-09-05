@@ -1,0 +1,13 @@
+This tests that performing a press action on text input types brings focus to those elements.
+
+Successfully focused text input.
+Successfully focused search input.
+Successfully focused content editable div.
+Successfully focused number input.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Hello
+

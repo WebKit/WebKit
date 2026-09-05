@@ -1,0 +1,10 @@
+This test ensures we don't consider things that are pointer-events:none to support press action.
+
+PASS: text.role === 'AXRole: AXStaticText'
+PASS: text.isPressActionSupported() === true
+PASS: text.isPressActionSupported() === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press to perform important action.
