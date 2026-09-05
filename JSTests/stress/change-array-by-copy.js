@@ -88,10 +88,14 @@ var sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     // |this| = null.
     shouldThrow(() => Array.prototype.toSpliced.call(null, 0, 5), TypeError);
 
-    // Length >= 2^53 - 1.
+    // NewLength > 2^53 - 1 (Number.MAX_SAFE_INTEGER).
     var arrayLike = {};
     arrayLike.length = 2 ** 53 - 1;
     shouldThrow(() => Array.prototype.toSpliced.call(arrayLike, 0, 0, null), TypeError);
+
+    // NewLength > 2^32 - 1 (Array-Length Limit).
+    arrayLike.length = 2 ** 32 - 1;
+    shouldThrow(() => Array.prototype.toSpliced.call(arrayLike, 0, 0, null), RangeError);
 }
 
 //Array.prototype.with()

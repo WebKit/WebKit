@@ -2245,7 +2245,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToSpliced, (JSGlobalObject* globalObject,
 
     uint64_t newLen = length + insertCount - deleteCount;
 
-    if (newLen >= maxSafeIntegerAsUInt64()) [[unlikely]] {
+    if (newLen > maxSafeIntegerAsUInt64()) [[unlikely]] {
         throwTypeError(globalObject, scope, "Array length exceeds 2**53 - 1"_s);
         return { };
     }
