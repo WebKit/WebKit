@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 #include "Base.xcconfig"
+#include? "../../../Configurations/BuildSystemProductDir.xcconfig"
 #include? "../../../LocalOverrides.xcconfig"
 
 CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
