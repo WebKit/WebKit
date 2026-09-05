@@ -546,13 +546,28 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
 
     auto lineBoxLogicalRect = firstContentfulLine->lineBoxLogicalRect();
     auto isLeftToRight = flow().writingMode().isLogicalLeftInlineStart();
-    // How far the line start sits inwards from our content box start, which is what caps how far to the logical left
-    // (right in a right to left inline direction) a nesting list item's marker may go. An intruding float is the usual
-    // reason for it to be non zero.
-    auto lineStartInset = isLeftToRight ? lineBoxLogicalRect.x() : flow().contentBoxLogicalWidth() - lineBoxLogicalRect.maxX();
     // text-indent is a margin on the line box, not content the marker hangs off.
     ASSERT(m_inlineContentConstraints);
     auto textIndent = Layout::InlineFormattingUtils::computedTextIndentForFirstLine(rootLayoutBox(), m_inlineContentConstraints->horizontal().logicalWidth);
+    auto lineStartEdge = [&] {
+        auto edge = isLeftToRight ? lineBoxLogicalRect.x() : lineBoxLogicalRect.maxX();
+        edge += isLeftToRight ? -textIndent : textIndent;
+        // A float of this formatting context took room from the line, but the marker hangs off where the line would
+        // have started without it. One intruding from earlier content moves the marker with the line instead
+        // (webkit.org/b/166528).
+        for (auto& floatItem : m_blockFormattingState.placedFloats().list()) {
+            if (!floatItem.isInFormattingContextOf(rootLayoutBox()))
+                continue;
+            auto floatRect = floatItem.absoluteRectWithMargin();
+            if (floatRect.bottom() <= lineBoxLogicalRect.y() || floatRect.top() >= lineBoxLogicalRect.maxY())
+                continue;
+            edge += isLeftToRight ? -floatRect.width() : floatRect.width();
+        }
+        return edge;
+    }();
+
+    auto contentBoxStartEdge = isLeftToRight ? 0.f : flow().contentBoxLogicalWidth().toFloat();
+    auto isLineStartConstrainedByFloat = lineStartEdge != contentBoxStartEdge;
     for (auto& marker : excludedMarkers) {
         // Vertical: baseline aligned, with the ascent the inline formatting context would have given it.
         auto markerAscent = [&]() -> float {
@@ -565,11 +580,11 @@ void LineLayout::setExcludedMarkerPositions(const ExcludedMarkerList& excludedMa
         // inline direction (the marker's start margin is what holds the gap, hence negative).
         auto markerLogicalLeft = [&]() -> float {
             if (isLeftToRight)
-                return lineBoxLogicalRect.x() - textIndent + marker->marginStart();
-            return lineBoxLogicalRect.maxX() + textIndent - marker->marginStart() - marker->logicalWidth();
+                return lineStartEdge + marker->marginStart();
+            return lineStartEdge - marker->marginStart() - marker->logicalWidth();
         }();
         auto topLeft = FloatPoint { markerLogicalLeft, lineBoxLogicalRect.y() + firstContentfulLine->baseline() - markerAscent };
-        marker->setExcludedPosition({ flow(), topLeft, lineStartInset });
+        marker->setExcludedPosition({ flow(), topLeft, isLineStartConstrainedByFloat });
     }
 }
 
