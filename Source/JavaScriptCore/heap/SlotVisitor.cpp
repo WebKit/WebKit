@@ -42,6 +42,7 @@
 #include "VM.h"
 #include <wtf/ListDump.h>
 #include <wtf/Lock.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -630,7 +631,10 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
             if (isActive)
                 m_heap.m_numberOfActiveParallelMarkers--;
             m_heap.m_numberOfWaitingParallelMarkers++;
-            
+            auto stopWaiting = makeScopeExit([&] {
+                m_heap.m_numberOfWaitingParallelMarkers--;
+            });
+
             if (sharedDrainMode == MainDrain) {
                 while (true) {
                     if (hasElapsed(timeout))
@@ -696,7 +700,6 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
             }
 
             m_heap.m_numberOfActiveParallelMarkers++;
-            m_heap.m_numberOfWaitingParallelMarkers--;
         }
 
         if (bonusTask) {
