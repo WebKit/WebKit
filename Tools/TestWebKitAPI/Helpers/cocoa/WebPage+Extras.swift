@@ -153,7 +153,11 @@ extension WebPage {
     ///   - location: The location in window coordinates.
     ///   - flags: Modifier flags to include in the event.
     public func mouseMove(to location: NSPoint, flags: NSEvent.ModifierFlags = []) {
-        backingWebView.mouseMoved(with: mouseEvent(.mouseMoved, at: location, flags: flags, clickCount: 0, pressure: 0))
+        // WKWebView receives mouse moves through tracking areas rather than the responder
+        // chain, so sending one to the view directly with `-mouseMoved:` would go nowhere.
+        // `_simulateMouseMove:` is the entry point that reaches `WebViewImpl::mouseMoved`.
+        // See precedent established in PlatformWebView, TestWKWebView, and EventSenderProxy.
+        backingWebView._simulateMouseMove(mouseEvent(.mouseMoved, at: location, flags: flags, clickCount: 0, pressure: 0))
     }
 
     /// Sends a left mouse-dragged NSEvent to the web view at the given location.

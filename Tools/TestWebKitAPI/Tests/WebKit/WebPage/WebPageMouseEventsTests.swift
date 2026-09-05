@@ -24,10 +24,16 @@
 #if WTF_PLATFORM_MAC && ENABLE_SWIFTUI
 
 import AppKit
+import Foundation
 import SwiftUI
 import Testing
-@_spi(Testing) import WebKit
+@_spi(Testing) @_spi(CrossImportOverlay) import WebKit
 private import TestWebKitAPILibrary
+
+// Certain event delivery (such as mouseMove) is gated behind -isKeyWindow.
+private final class KeyWindow: NSWindow {
+    override var isKeyWindow: Bool { true }
+}
 
 @MainActor
 struct WebPageMouseEventsTests {
@@ -35,7 +41,7 @@ struct WebPageMouseEventsTests {
     private let window: NSWindow
 
     init() async throws {
-        self.window = NSWindow(size: NSSize(width: 400, height: 400)) { [page] in
+        self.window = KeyWindow(size: NSSize(width: 400, height: 400)) { [page] in
             WebView(page)
         }
         self.window.setFrameOrigin(.zero)
@@ -57,6 +63,73 @@ struct WebPageMouseEventsTests {
 
         let fired = try await page.callJavaScript("return window.clicked === true;") as? Bool
         #expect(fired == true)
+    }
+
+    @Test
+    func mouseMoveFiresMouseMoveHandler() async throws {
+        try await loadMouseMoveRecorder()
+
+        page.mouseMove(to: NSPoint(x: 120, y: 200))
+        await page.waitForPendingMouseEvents()
+
+        page.mouseMove(to: NSPoint(x: 280, y: 200))
+        await page.waitForPendingMouseEvents()
+
+        let moves = try await recordedMoves()
+        #expect(moves.count >= 2)
+
+        let first = try #require(moves.first)
+        let last = try #require(moves.last)
+        #expect(last > first)
+    }
+
+    @Test
+    func sendingMouseMovedToWebViewDoesNotReachPage() async throws {
+        try await loadMouseMoveRecorder()
+
+        let event = try #require(
+            NSEvent.mouseEvent(
+                with: .mouseMoved,
+                location: NSPoint(x: 150, y: 200),
+                modifierFlags: [],
+                timestamp: ProcessInfo.processInfo.systemUptime,
+                windowNumber: window.windowNumber,
+                context: nil,
+                eventNumber: 0,
+                clickCount: 0,
+                pressure: 0
+            )
+        )
+
+        page.backingWebView.mouseMoved(with: event)
+        await page.waitForPendingMouseEvents()
+
+        let afterResponderChain = try await recordedMoves()
+        #expect(afterResponderChain.isEmpty)
+    }
+}
+
+extension WebPageMouseEventsTests {
+    private func loadMouseMoveRecorder() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 100vh;"></body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript {
+            """
+            window.moves = [];
+            document.addEventListener("mousemove", event => window.moves.push(event.clientX));
+            """
+        }
+    }
+
+    private func recordedMoves() async throws -> [Double] {
+        try await page.callJavaScript(returning: [Double].self) {
+            "return window.moves;"
+        }
     }
 }
 
