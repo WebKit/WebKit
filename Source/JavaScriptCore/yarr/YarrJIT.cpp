@@ -1746,6 +1746,8 @@ class YarrGenerator final : public YarrJITInfo {
 
     CCallHelpers::Address NODELETE frameAddress()
     {
+        if (m_executionMode == ExecutionMode::InlineTest)
+            return CCallHelpers::Address(MacroAssembler::stackPointerRegister);
         size_t stackSizeForCalleeSaves = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(m_calleeSaves.registerCount() * sizeof(UCPURegister));
         return CCallHelpers::Address(GPRInfo::callFrameRegister, -(stackSizeForCalleeSaves + m_callFrameSizeInBytes));
     }
@@ -7209,17 +7211,15 @@ public:
                 return false;
             if (m_pattern.sticky())
                 return false;
-            if (m_pattern.eitherUnicode())
-                return false;
             if (mayCall())
-                return false;
-            if (m_callFrameSizeInBytes)
                 return false;
             if (m_containsNestedSubpatterns)
                 return false;
             if (m_pattern.m_containsBackreferences)
                 return false;
             if (m_pattern.m_saveInitialStartValue)
+                return false;
+            if (!m_abortExecution.empty())
                 return false;
 
             // SIMD search path uses Vector scratch registers which is not assigned from DFG / FTL.
@@ -7272,9 +7272,10 @@ public:
             codeBlock.setFallBackWithFailureReason(*m_failureReason);
     }
 
-    void compileInline(YarrBoyerMooreData& boyerMooreData)
+    void compileInline(YarrBoyerMooreData& boyerMooreData, unsigned reservedFrameSizeInBytes)
     {
         RELEASE_ASSERT(!m_pattern.m_containsBackreferences);
+        RELEASE_ASSERT(m_callFrameSizeInBytes <= reservedFrameSizeInBytes);
 
         // We need to compile before generating code since we set flags based on compilation that
         // are used during generation.
@@ -7303,21 +7304,6 @@ public:
 
         skipToEndAnchoredStart();
 
-        if (m_callFrameSizeInBytes) {
-            // Create space on stack for matching context data.
-            // Note that this stack check cannot clobber m_regs.regT1 as it is needed for the slow path we call if we fail the stack check.
-            m_jit.addPtr(MacroAssembler::TrustedImm32(-m_callFrameSizeInBytes), MacroAssembler::stackPointerRegister, m_regs.regT0);
-            MacroAssembler::Jump stackOk = m_jit.branchPtr(MacroAssembler::LessThanOrEqual, MacroAssembler::AbsoluteAddress(const_cast<VM*>(m_vm)->addressOfSoftStackLimit()), m_regs.regT0);
-
-            // Exceeded stack limit, punt to the interpreter.
-            m_jit.move(MacroAssembler::TrustedImmPtr((void*)static_cast<size_t>(JSRegExpResult::JITCodeFailure)), m_regs.returnRegister);
-            m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.returnRegister2);
-            m_inlinedFailedMatch.append(m_jit.jump());
-
-            stackOk.link(&m_jit);
-            m_jit.move(m_regs.regT0, MacroAssembler::stackPointerRegister);
-        }
-
         if (m_decodeSurrogatePairs)
             m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.input, m_regs.length, MacroAssembler::TimesTwo), m_regs.endOfStringAddress);
 
@@ -7339,7 +7325,8 @@ public:
         if (m_disassembler)
             m_disassembler->setEndOfBacktrack(m_jit.label());
 
-        generateJITFailReturn();
+        RELEASE_ASSERT(m_abortExecution.empty());
+        RELEASE_ASSERT(m_hitMatchLimit.empty());
 
         if (m_disassembler)
             m_disassembler->setEndOfCode(m_jit.label());
@@ -7830,7 +7817,7 @@ void jitCompile(YarrPattern& pattern, StringView patternString, CharSize charSiz
     }
 }
 
-void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, VM* vm, YarrBoyerMooreData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters)
+void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringView patternString, OptionSet<Yarr::Flags> flags, CharSize charSize, VM* vm, YarrBoyerMooreData& boyerMooreData, CCallHelpers& jit, YarrJITRegisters& jitRegisters, unsigned reservedFrameSizeInBytes)
 {
     Yarr::ErrorCode errorCode;
     Yarr::YarrPattern pattern(patternString, flags, errorCode, ExecutionMode::InlineTest);
@@ -7845,7 +7832,7 @@ void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, StringVi
 
     YarrGenerator<YarrJITRegisters> yarrGenerator(jit, vm, &boyerMooreData, jitRegisters, pattern, patternString, charSize, ExecutionMode::InlineTest);
     yarrGenerator.setStackChecker(m_compilationThreadStackChecker);
-    yarrGenerator.compileInline(boyerMooreData);
+    yarrGenerator.compileInline(boyerMooreData, reservedFrameSizeInBytes);
 }
 
 void YarrCodeBlock::dumpSimpleName(PrintStream& out) const

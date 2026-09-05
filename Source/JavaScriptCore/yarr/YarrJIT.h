@@ -438,7 +438,7 @@ void jitCompile(YarrPattern&, StringView patternString, CharSize, std::optional<
 
 class YarrJITRegisters;
 
-void jitCompileInlinedTest(StackCheck*, StringView, OptionSet<Yarr::Flags>, CharSize, VM*, YarrBoyerMooreData&, CCallHelpers&, YarrJITRegisters&);
+void jitCompileInlinedTest(StackCheck*, StringView, OptionSet<Yarr::Flags>, CharSize, VM*, YarrBoyerMooreData&, CCallHelpers&, YarrJITRegisters&, unsigned reservedFrameSizeInBytes);
 
 } } // namespace JSC::Yarr
 

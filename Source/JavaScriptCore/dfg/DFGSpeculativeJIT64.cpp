@@ -3116,7 +3116,7 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
 
         auto commonData = jitCode()->dfgCommon();
         move(TrustedImm32(0), yarrRegisters.index);
-        Yarr::jitCompileInlinedTest(&m_graph.m_stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, &vm(), commonData->m_boyerMooreData, *this, yarrRegisters);
+        Yarr::jitCompileInlinedTest(&m_graph.m_stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, &vm(), commonData->m_boyerMooreData, *this, yarrRegisters, m_graph.m_parameterSlots * sizeof(Register));
 
         slowCases.append(branch32(Equal, yarrRegisters.returnRegister, TrustedImm32(static_cast<int32_t>(Yarr::JSRegExpResult::JITCodeFailure))));
 

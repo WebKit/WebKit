@@ -19916,7 +19916,7 @@ IGNORE_CLANG_WARNINGS_END
                 yarrRegisters.returnRegister = returnGPR;
                 yarrRegisters.returnRegister2 = return2GPR;
 
-                Yarr::jitCompileInlinedTest(stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, vm, commonData->m_boyerMooreData, jit, yarrRegisters);
+                Yarr::jitCompileInlinedTest(stackChecker, regExp->pattern(), regExp->flags(), Yarr::CharSize::Char8, vm, commonData->m_boyerMooreData, jit, yarrRegisters, alignedFrameSize);
 
                 CCallHelpers::JumpList done;
 
