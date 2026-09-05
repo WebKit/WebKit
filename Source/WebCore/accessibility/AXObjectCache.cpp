@@ -2920,14 +2920,18 @@ void AXObjectCache::onSelectedOptionChanged(Element& element)
 
 void AXObjectCache::onSelectedOptionChanged(HTMLSelectElement& select, int optionIndex)
 {
-    if (RefPtr axMenuList = dynamicDowncast<AccessibilityMenuList>(get(select))) {
+    if (RefPtr axMenuList = dynamicDowncast<AccessibilityMenuList>(get(select)))
         axMenuList->didUpdateActiveOption(optionIndex);
-        return;
+    else {
+        // Base-appearance selects don't use AccessibilityMenuList (which normally handles this),
+        // so post the value change notification directly.
+        deferMenuListValueChange(&select);
     }
 
-    // Base-appearance selects don't use AccessibilityMenuList (which normally handles this),
-    // so post the value change notification directly.
-    deferMenuListValueChange(&select);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // Make sure the string value is updated in the same cycle as the expanded-state change.
+    updateIsolatedTree(get(select), AXProperty::StringValue);
+#endif
 }
 
 void AXObjectCache::onSlottedContentChange(const HTMLSlotElement& slot)

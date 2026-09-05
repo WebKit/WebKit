@@ -360,6 +360,19 @@ function findBaseSelectMenu(select) {
     return null;
 }
 
+// Same as findBaseSelectMenu, but waits until the menu has the given number of menu items.
+// With the isolated tree enabled, the select's expanded state is committed in an earlier
+// cycle than the newly rendered popover contents, so a menu found the moment the select
+// reports itself expanded can still have no children.
+async function waitForBaseSelectMenu(select, menuItemCount) {
+    var menu = null;
+    await waitFor(() => {
+        menu = findBaseSelectMenu(select);
+        return menu && menu.childrenCount === menuItemCount;
+    });
+    return menu;
+}
+
 // Executes the operation and waits until an accessibility notification of the provided
 // `notificationName` is received. A notification listener is added to the passed
 // AccessibilityUIElement if not null, or a global listener is installed, before
