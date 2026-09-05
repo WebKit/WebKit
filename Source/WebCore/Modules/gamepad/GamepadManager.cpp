@@ -108,8 +108,6 @@ void GamepadManager::platformGamepadConnected(PlatformGamepad& platformGamepad, 
 
 void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepad)
 {
-    WeakHashSet<Navigator> notifiedNavigators;
-
     // Handle the disconnect for all DOMWindows with event listeners and their Navigators.
     for (auto& window : copyToVectorOf<WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData>>(m_domWindows)) {
         // Event dispatch might have made this window go away.
@@ -120,28 +118,26 @@ void GamepadManager::platformGamepadDisconnected(PlatformGamepad& platformGamepa
         // If this happens the LocalDOMWindow will not get this gamepaddisconnected event.
         Ref navigator = window->navigator();
 
-        // If this Navigator hasn't seen gamepads yet then its Window should not get the disconnect event.
-        if (m_gamepadBlindNavigators.contains(navigator.get()))
-            continue;
-#if PLATFORM(VISION)
-        if (m_gamepadQuarantinedNavigators.contains(navigator.get()))
-            continue;
-#endif
-
         auto& navigatorGamepad = NavigatorGamepad::from(navigator);
 
-        Ref gamepad = navigatorGamepad.gamepadFromPlatformGamepad(platformGamepad);
+        // Only Navigators that actually had this gamepad exposed to them should see the disconnect.
+        // This covers Navigators that were blind (or, on visionOS, quarantined) when the gamepad
+        // connected, as well as gamepads that connected invisibly after a Navigator became visible:
+        // in both cases the gamepad was never added to m_gamepads.
+        RefPtr gamepad = navigatorGamepad.gamepadIfExists(platformGamepad);
+        if (!gamepad)
+            continue;
 
         navigatorGamepad.gamepadDisconnected(platformGamepad);
-        notifiedNavigators.add(navigator.get());
 
-        window->dispatchEvent(GamepadEvent::create(eventNames().gamepaddisconnectedEvent, WTF::move(gamepad)), protect(window->document()).get());
+        window->dispatchEvent(GamepadEvent::create(eventNames().gamepaddisconnectedEvent, gamepad.releaseNonNull()), protect(window->document()).get());
     }
 
-    // Notify all the Navigators that haven't already been notified.
+    // Notify any remaining Navigators that had the gamepad exposed but no listening Window above.
     for (Ref navigator : m_navigators) {
-        if (!notifiedNavigators.contains(navigator.get()))
-            NavigatorGamepad::from(navigator).gamepadDisconnected(platformGamepad);
+        auto& navigatorGamepad = NavigatorGamepad::from(navigator);
+        if (navigatorGamepad.gamepadIfExists(platformGamepad))
+            navigatorGamepad.gamepadDisconnected(platformGamepad);
     }
 }
 

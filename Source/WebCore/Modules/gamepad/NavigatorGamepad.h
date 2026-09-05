@@ -64,6 +64,10 @@ public:
 
     Ref<Gamepad> gamepadFromPlatformGamepad(PlatformGamepad&);
 
+    // Returns the Gamepad this Navigator has exposed for the given platform gamepad, or
+    // null if this Navigator never had it exposed.
+    RefPtr<Gamepad> gamepadIfExists(const PlatformGamepad&) const;
+
     WEBCORE_EXPORT static void NODELETE setGamepadsRecentlyAccessedThreshold(Seconds);
     static Seconds NODELETE gamepadsRecentlyAccessedThreshold();
 
