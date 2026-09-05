@@ -52,6 +52,16 @@ RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, con
 
 RefPtr<FilterImage> FilterImage::create(const FloatRect& primitiveSubregion, FilterImage& other, ImageBufferAllocator& allocator)
 {
+#if USE(CORE_IMAGE)
+    // A CoreImage-backed source has no ImageBuffer to copy; carry the CIImage forward under the
+    // new primitive subregion instead.
+    if (RetainPtr ciImage = other.ciImage()) {
+        RefPtr result = FilterImage::create(primitiveSubregion, other.imageRect(), other.absoluteImageRect(), other.isAlphaImage(), other.isValidPremultiplied(), other.renderingMode(), other.colorSpace(), allocator);
+        if (result)
+            result->setCIImage(WTF::move(ciImage));
+        return result;
+    }
+#endif
     RefPtr buffer = other.imageBuffer();
     if (!buffer)
         return nullptr;
