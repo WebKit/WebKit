@@ -1163,7 +1163,7 @@ imported/w3c/web-platform-tests/webauthn/getcredential-passing.https.html [ Skip
 imported/w3c/web-platform-tests/webauthn/getcredential-prf.https.html [ Skip ]
 imported/w3c/web-platform-tests/webauthn/getcredential-rk-passing.https.html [ Skip ]
 imported/w3c/web-platform-tests/webauthn/getcredential-timeout.https.html [ Skip ]
-imported/w3c/web-platform-tests/webauthn/public-key-credential-to-json.https.window-expected.txt [ Skip ]
+imported/w3c/web-platform-tests/webauthn/public-key-credential-to-json.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/webauthn/signal-all-accepted-credentials.https.html [ Skip ]
 imported/w3c/web-platform-tests/webauthn/signal-current-user-details.https.html [ Skip ]
 imported/w3c/web-platform-tests/webauthn/getclientcapabilities.https.html [ Skip ]

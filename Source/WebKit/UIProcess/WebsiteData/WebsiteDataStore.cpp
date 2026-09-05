@@ -104,9 +104,9 @@
 #include "WebPrivacyHelpers.h"
 #endif
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 #include "VirtualAuthenticatorManager.h"
-#endif // ENABLE(WEB_AUTHN)
+#endif
 
 namespace WebKit {
 
@@ -2402,12 +2402,14 @@ void WebsiteDataStore::setMockWebAuthenticationConfiguration(WebCore::MockWebAut
         m_authenticatorManager = MockAuthenticatorManager::create(WTF::move(configuration));
 }
 
+#if PLATFORM(COCOA)
 VirtualAuthenticatorManager& WebsiteDataStore::virtualAuthenticatorManager()
 {
     if (!is<VirtualAuthenticatorManager>(m_authenticatorManager.get()))
         m_authenticatorManager = VirtualAuthenticatorManager::create();
     return downcast<VirtualAuthenticatorManager>(m_authenticatorManager.get());
 }
+#endif
 #endif
 
 API::HTTPCookieStore& WebsiteDataStore::cookieStore()

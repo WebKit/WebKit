@@ -31,9 +31,11 @@
 #include "APIUIClient.h"
 #include "APIWebAuthenticationPanel.h"
 #include "APIWebAuthenticationPanelClient.h"
+#if PLATFORM(COCOA)
 #include "AuthenticatorPresenterCoordinator.h"
 #include "LocalService.h"
 #include "NfcService.h"
+#endif
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
@@ -268,7 +270,9 @@ void AuthenticatorManager::clearState()
     m_pendingRequest = { };
     m_authenticators.clear();
     m_services.clear();
+#if PLATFORM(COCOA)
     m_presenter = nullptr;
+#endif
 }
 
 void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator)
@@ -285,11 +289,13 @@ void AuthenticatorManager::authenticatorAdded(Ref<Authenticator>&& authenticator
 
 void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 {
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
         presenter->updatePresenter(status);
         return;
     }
+#endif
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
         protect(panel.client())->updatePanel(status);
@@ -345,11 +351,13 @@ void AuthenticatorManager::authenticatorStatusUpdated(WebAuthenticationStatus st
         m_pendingRequest->data.cachedPin = String();
     }
 
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
         presenter->updatePresenter(status);
         return;
     }
+#endif
 
     dispatchPanelClientCall([status] (const API::WebAuthenticationPanel& panel) {
         protect(panel.client())->updatePanel(status);
@@ -383,11 +391,13 @@ void AuthenticatorManager::requestPin(uint64_t retries, CompletionHandler<void(c
         completionHandler(pin);
     };
 
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
         presenter->requestPin(retries, WTF::move(callback));
         return;
     }
+#endif
 
     dispatchPanelClientCall([retries, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
         protect(panel.client())->requestPin(retries, WTF::move(callback));
@@ -412,11 +422,13 @@ void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<v
         completionHandler(pin);
     };
 
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
         presenter->requestNewPin(minLength, WTF::move(callback));
         return;
     }
+#endif
 
     dispatchPanelClientCall([minLength, callback = WTF::move(callback)] (const API::WebAuthenticationPanel& panel) mutable {
         protect(panel.client())->requestNewPin(minLength, WTF::move(callback));
@@ -425,11 +437,13 @@ void AuthenticatorManager::requestNewPin(uint64_t minLength, CompletionHandler<v
 
 void AuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(AuthenticatorAssertionResponse*)>&& completionHandler)
 {
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter) {
         presenter->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
         return;
     }
+#endif
 
     dispatchPanelClientCall([responses = WTF::move(responses), source, completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
         protect(panel.client())->selectAssertionResponse(WTF::move(responses), source, WTF::move(completionHandler));
@@ -445,10 +459,12 @@ void AuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<v
 
 void AuthenticatorManager::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
+#if PLATFORM(COCOA)
     if (RefPtr presenter = m_presenter) {
         presenter->requestLAContextForUserVerification(WTF::move(completionHandler));
         return;
     }
+#endif
 
     dispatchPanelClientCall([completionHandler = WTF::move(completionHandler)] (const API::WebAuthenticationPanel& panel) mutable {
         protect(panel.client())->requestLAContextForUserVerification(WTF::move(completionHandler));
@@ -470,10 +486,17 @@ Ref<AuthenticatorTransportService> AuthenticatorManager::createService(Authentic
 
 void AuthenticatorManager::filterTransports(TransportSet& transports) const
 {
+#if PLATFORM(COCOA)
     if (!NfcService::isAvailable())
         transports.remove(AuthenticatorTransport::Nfc);
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
+#else
+    transports.remove(AuthenticatorTransport::Nfc);
+    transports.remove(AuthenticatorTransport::Internal);
+    transports.remove(AuthenticatorTransport::Usb);
+    transports.remove(AuthenticatorTransport::SmartCard);
+#endif
     transports.remove(AuthenticatorTransport::Ble);
 }
 
@@ -573,17 +596,22 @@ void AuthenticatorManager::runPresenter()
 
 void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
 {
+#if PLATFORM(COCOA)
     if (!m_pendingRequest || !m_pendingRequest->completionHandler)
         return;
 
     auto& options = m_pendingRequest->data.options;
     m_presenter = AuthenticatorPresenterCoordinator::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
+#else
+    UNUSED_PARAM(transports);
+#endif
 }
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
 {
     auto result = std::holds_alternative<Ref<AuthenticatorResponse>>(respond) ? WebAuthenticationResult::Succeeded : WebAuthenticationResult::Failed;
 
+#if PLATFORM(COCOA)
     // This is for the new UI.
     if (RefPtr presenter = m_presenter)
         presenter->dimissPresenter(result);
@@ -592,6 +620,11 @@ void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)
             protect(panel.client())->dismissPanel(result);
         });
     }
+#else
+    dispatchPanelClientCall([result] (const API::WebAuthenticationPanel& panel) {
+        protect(panel.client())->dismissPanel(result);
+    });
+#endif
 
     m_pendingRequest->completionHandler(WTF::move(respond));
 }

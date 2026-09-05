@@ -29,7 +29,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "CtapDriver.h"
+#if PLATFORM(COCOA)
 #include "CtapHidDriver.h"
+#endif
 #include "Logging.h"
 #include "U2fAuthenticator.h"
 #include <WebCore/AuthenticationExtensionsClientOutputs.h>
@@ -439,7 +441,7 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
     } else if (needsPRF)
         CTAP_RELEASE_LOG("continueGetAssertionAfterCheckAllowCredentials: PRF requested authenticator does not support hmac-secret");
 
-    CTAP_RELEASE_LOG("getAssertion uv: %hhu internalUvAvailability %d", static_cast<uint8_t>(options.userVerification), internalUVAvailability);
+    CTAP_RELEASE_LOG("getAssertion uv: %hhu internalUvAvailability %d", static_cast<uint8_t>(options.userVerification), static_cast<int>(internalUVAvailability));
 
     UserVerificationRequirement effectiveUVRequirement = (needsPRF && supportsHmacSecret)
         ? UserVerificationRequirement::Required

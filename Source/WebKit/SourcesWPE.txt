@@ -283,6 +283,12 @@ UIProcess/Launcher/libwpe/ProcessProviderLibWPE.cpp
 
 UIProcess/Notifications/glib/NotificationService.cpp
 
+UIProcess/WebAuthentication/AuthenticatorManager.cpp
+
+UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp
+
+UIProcess/WebAuthentication/glib/WebAuthenticatorCoordinatorProxyGLib.cpp
+
 UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 

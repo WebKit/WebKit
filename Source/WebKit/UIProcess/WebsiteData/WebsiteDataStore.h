@@ -359,7 +359,9 @@ public:
 #if ENABLE(WEB_AUTHN)
     AuthenticatorManager& authenticatorManager() { return m_authenticatorManager.get(); }
     void setMockWebAuthenticationConfiguration(WebCore::MockWebAuthenticationConfiguration&&);
+#if PLATFORM(COCOA)
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
+#endif
 #endif
 
     const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }

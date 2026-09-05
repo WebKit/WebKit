@@ -1601,7 +1601,7 @@ String unacceptableTLSCertificate()
 }
 #endif
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 // On macOS, Touch ID prompt is not guaranteed to show on top of the UI client, and therefore additional
 // information is provided to help users to make decisions.
 String makeCredentialTouchIDPromptTitle(const String& bundleName, const String& domain)
@@ -1618,7 +1618,7 @@ String genericTouchIDPromptTitle()
 {
     return WEB_UI_STRING("Continue with Touch ID.", "Continue with Touch ID.");
 }
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 
 String pdfPasswordFormTitle()
 {

@@ -1,0 +1,3 @@
+
+FAIL Conditional mediation supported assert_own_property: expected property "isConditionalMediationAvailable" missing
+

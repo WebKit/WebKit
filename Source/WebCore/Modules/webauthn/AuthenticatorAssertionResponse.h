@@ -30,7 +30,9 @@
 #include <WebCore/AuthenticationResponseJSON.h>
 #include <WebCore/AuthenticatorResponse.h>
 #include <wtf/RetainPtr.h>
+#if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/SecuritySPI.h>
+#endif
 
 OBJC_CLASS LAContext;
 
@@ -41,7 +43,9 @@ public:
     static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& authenticatorData, Ref<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment);
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature,  const Vector<uint8_t>& userHandle, AuthenticatorAttachment);
     static Ref<AuthenticatorAssertionResponse> create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& authenticatorData, const Vector<uint8_t>& signature, const Vector<uint8_t>& userHandle, std::optional<AuthenticationExtensionsClientOutputs>&&, AuthenticatorAttachment);
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT static Ref<AuthenticatorAssertionResponse> create(Ref<ArrayBuffer>&& rawId, RefPtr<ArrayBuffer>&& userHandle, String&& name, SecAccessControlRef, AuthenticatorAttachment);
+#endif
     virtual ~AuthenticatorAssertionResponse() = default;
 
     ArrayBuffer* authenticatorData() const { return m_authenticatorData.get(); }
@@ -50,10 +54,14 @@ public:
     const String& name() const LIFETIME_BOUND { return m_name; }
     const String& displayName() const LIFETIME_BOUND { return m_displayName; }
     size_t numberOfCredentials() const { return m_numberOfCredentials; }
+#if PLATFORM(COCOA)
     SecAccessControlRef accessControl() const { return m_accessControl.get(); }
+#endif
     const String& group() const LIFETIME_BOUND { return m_group; }
     bool synchronizable() const { return m_synchronizable; }
+#if PLATFORM(COCOA)
     LAContext * laContext() const { return m_laContext.get(); }
+#endif
     RefPtr<ArrayBuffer> largeBlob() const { return m_largeBlob; }
     const String& accessGroup() const LIFETIME_BOUND { return m_accessGroup; }
 
@@ -64,7 +72,9 @@ public:
     void setNumberOfCredentials(size_t numberOfCredentials) { m_numberOfCredentials = numberOfCredentials; }
     void setGroup(const String& group) { m_group = group; }
     void setSynchronizable(bool synchronizable) { m_synchronizable = synchronizable; }
+#if PLATFORM(COCOA)
     void setLAContext(LAContext *context) { m_laContext = context; }
+#endif
     void setLargeBlob(Ref<ArrayBuffer>&& largeBlob) { m_largeBlob = WTF::move(largeBlob); }
     void setAccessGroup(const String& accessGroup) { m_accessGroup = accessGroup; }
 
@@ -72,7 +82,9 @@ public:
 
 private:
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, AuthenticatorAttachment);
+#if PLATFORM(COCOA)
     AuthenticatorAssertionResponse(Ref<ArrayBuffer>&&, RefPtr<ArrayBuffer>&&, String&&, SecAccessControlRef, AuthenticatorAttachment);
+#endif
 
     Type type() const final { return Type::Assertion; }
     AuthenticatorResponseData data() const final;
@@ -86,8 +98,10 @@ private:
     String m_group;
     bool m_synchronizable { false };
     size_t m_numberOfCredentials { 0 };
+#if PLATFORM(COCOA)
     const RetainPtr<SecAccessControlRef> m_accessControl;
     RetainPtr<LAContext> m_laContext;
+#endif
     RefPtr<ArrayBuffer> m_largeBlob;
     String m_accessGroup;
 };

@@ -3585,10 +3585,9 @@ svg/webarchive [ WontFix ]
 svg/custom/image-with-prefix-in-webarchive.svg [ WontFix ]
 inspector/page/archive.html [ WontFix ]
 
-# WebAuthN
-http/wpt/webauthn/ [ Skip ]
-imported/w3c/web-platform-tests/credential-management/ [ Skip ]
-imported/w3c/web-platform-tests/webauthn [ Skip ]
+# WebAuthn tests needing the mock or virtual authenticator machinery fail;
+# their baselines record the failures until there is a GLib implementation.
+imported/w3c/web-platform-tests/webauthn [ Pass ]
 
 # LFC (LayoutFormatingContext is disabled by default).
 fast/layoutformattingcontext/ [ Skip ]

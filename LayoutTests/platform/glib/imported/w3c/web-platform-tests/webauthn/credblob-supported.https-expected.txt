@@ -1,0 +1,4 @@
+
+FAIL assertion without credBlob promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+FAIL assertion with credBlob promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+

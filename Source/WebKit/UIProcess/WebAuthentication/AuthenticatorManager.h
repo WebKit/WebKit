@@ -28,7 +28,9 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "Authenticator.h"
+#if PLATFORM(COCOA)
 #include "AuthenticatorPresenterCoordinator.h"
+#endif
 #include "AuthenticatorTransportService.h"
 #include "WebAuthenticationRequestData.h"
 #include <WebCore/AuthenticatorResponse.h>
@@ -135,7 +137,9 @@ private:
     };
     std::optional<Request> m_pendingRequest;
     RunLoop::Timer m_requestTimeOutTimer;
+#if PLATFORM(COCOA)
     RefPtr<AuthenticatorPresenterCoordinator> m_presenter;
+#endif
 
     Vector<Ref<AuthenticatorTransportService>> m_services;
     HashSet<Ref<Authenticator>> m_authenticators;
