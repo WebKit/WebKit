@@ -27,6 +27,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include <WebCore/platform/LegacySchemeRegistry.h>
+#include <glib/gi18n.h>
 #include <wtf/URLParser.h>
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -253,6 +254,13 @@ void webkitWebExtensionContextSetWebExtension(WebKitWebExtensionContext* context
     context->priv->extension.reset(extension);
 }
 
+RefPtr<WebKit::WebExtensionContext> webkitWebExtensionContextToImpl(WebKitWebExtensionContext* context)
+{
+    ASSERT(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+
+    return context->priv->context;
+}
+
 /**
  * webkit_web_extension_context_new_for_extension:
  * @extension: (transfer none): a [class@WebExtension]
@@ -450,6 +458,69 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
     return priv->overrideNewTabPageURI.data();
 }
 
+/**
+ * webkit_web_extension_context_load_background_content:
+ * @context: a [class@WebExtensionContext]
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: the data to pass to callback function
+ *
+ * Asynchronously loads the background content if needed for the extension.
+ * 
+ * This method forces the loading of the background content for the extension that will otherwise be loaded on-demand during specific events.
+ * It is useful when the app requires the background content to be loaded for other reasons.
+ * 
+ * When the operation is finished, or if the background content is already loaded, @callback will be called. 
+ * 
+ * You can then call [method@WebExtensionContext.load_background_content_finish] to get the result of the operation.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_load_background_content(WebKitWebExtensionContext* context, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(context, cancellable, callback, userData));
+    if (!context->priv->context->isLoaded()) {
+        auto errorStr = _("Extension context is not loaded");
+        g_task_return_new_error(task.get(), webkit_web_extension_context_error_quark(),
+            WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NOT_LOADED, "%s", errorStr);
+        return;
+    }
+
+    context->priv->context->loadBackgroundContent([task = WTF::move(task)](RefPtr<API::Error> error) {
+        if (error) {
+            g_task_return_new_error(task.get(), webkit_web_extension_context_error_quark(),
+                toWebKitWebExtensionContextError(error->errorCode()), "%s", error->localizedDescription().utf8().data());
+        } else
+            g_task_return_boolean(task.get(), TRUE);
+    });
+}
+
+/**
+ * webkit_web_extension_context_load_background_content_finish:
+ * @context: a [class@WebExtensionContext]
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with [method@WebExtensionContext.load_background_content].
+ * 
+ * An error will occur if the extension does not have any background content to load or loading fails.
+ * 
+ * Returns: %TRUE if the background content was loaded or %FALSE in case of error.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_load_background_content_finish(WebKitWebExtensionContext* context, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+    g_return_val_if_fail(g_task_is_valid(result, context), FALSE);
+
+    return g_task_propagate_boolean(G_TASK(result), error);
+}
+
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
 void webkitWebExtensionContextSetWebExtension(WebKitWebExtensionContext* context, WebKitWebExtension* extension)
@@ -495,6 +566,20 @@ gboolean webkit_web_extension_context_has_injected_content_for_uri(WebKitWebExte
 const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWebExtensionContext* context)
 {
     return "";
+}
+
+void webkit_web_extension_context_load_background_content(WebKitWebExtensionContext* context, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    GRefPtr<GTask> task = adoptGRef(g_task_new(context, cancellable, callback, userData));
+        auto errorStr = _("Unsupported");
+        g_task_return_new_error(task.get(), webkit_web_extension_context_error_quark(),
+            WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_UNKNOWN, "%s", errorStr);
+    return;
+}
+
+gboolean webkit_web_extension_context_load_background_content_finish(WebKitWebExtensionContext* context, GAsyncResult* result, GError** error)
+{
+    return FALSE;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

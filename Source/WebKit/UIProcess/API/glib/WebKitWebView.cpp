@@ -85,6 +85,7 @@
 #include <WebCore/RunJavaScriptParameters.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/URLSoup.h>
+#include <glib-object.h>
 #include <glib/gi18n-lib.h>
 #include <jsc/JSCContextPrivate.h>
 #include <libsoup/soup.h>
@@ -136,6 +137,10 @@
 #include "WebKitNetworkSessionPrivate.h"
 #else
 #include "WebKitJavascriptResultPrivate.h"
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebKitWebExtensionContextPrivate.h"
 #endif
 
 using namespace WebKit;
@@ -264,6 +269,10 @@ enum {
 
 #if ENABLE(2022_GLIB_API)
     PROP_PAGE_ICONS,
+#endif
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    PROP_WEB_EXTENSION_CONTEXT,
 #endif
 
     N_PROPERTIES,
@@ -454,6 +463,9 @@ struct _WebKitWebViewPrivate {
     bool isWebProcessResponsive;
 #if ENABLE(WEBXR) && USE(OPENXR)
     bool isImmersiveModeEnabled;
+#endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    GWeakPtr<WebKitWebExtensionContext> webExtensionContext;
 #endif
 };
 
@@ -724,6 +736,13 @@ static WebKitFaviconDatabase* webkitWebViewGetFaviconDatabase(WebKitWebView* web
 }
 #endif // PLATFORM(GTK) || ENABLE(2021_GLIB_API)
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+WebKitWebExtensionContext* webkitWebViewGetWebExtensionContext(WebKitWebView *webView)
+{
+    return webView->priv->webExtensionContext.get();
+}
+#endif
+
 #if PLATFORM(GTK)
 static void enableBackForwardNavigationGesturesChanged(WebKitSettings* settings, GParamSpec*, WebKitWebView* webView)
 {
@@ -897,6 +916,20 @@ static Ref<API::PageConfiguration> webkitWebViewCreatePageConfiguration(WebKitWe
         break;
     }
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (WebKitWebExtensionContext *ctx = webkitWebViewGetWebExtensionContext(webView); priv->webExtensionMode != WEBKIT_WEB_EXTENSION_MODE_NONE && ctx) {
+        RefPtr<WebExtensionContext> context = webkitWebExtensionContextToImpl(ctx);
+        pageConfiguration->setCrossOriginAccessControlCheckEnabled(false);
+        pageConfiguration->setProcessDisplayName(context->processDisplayName());
+        pageConfiguration->setRequiredWebExtensionBaseURL(URL(context->baseURL()));
+        pageConfiguration->setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking::Yes);
+
+        pageConfiguration->setMaskedURLSchemes({ });
+
+        pageConfiguration->setCORSDisablingPatterns(context->corsDisablingPatterns());
+    }
+#endif
+
     if (!priv->defaultContentSecurityPolicy.isNull())
         pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(priv->defaultContentSecurityPolicy.data()));
 
@@ -1018,6 +1051,10 @@ static void webkitWebViewConstructed(GObject* object)
     }
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (!priv->websitePolicies && priv->webExtensionMode != WEBKIT_WEB_EXTENSION_MODE_NONE)
+        priv->websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("autoplay", WEBKIT_AUTOPLAY_ALLOW, nullptr));
+#endif
     if (!priv->websitePolicies)
         priv->websitePolicies = adoptGRef(webkit_website_policies_new());
 
@@ -1158,6 +1195,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
         webView->priv->defaultContentSecurityPolicy = CString(g_value_get_string(value));
         break;
+#if ENABLE(WK_WEB_EXTENSIONS)
+    case PROP_WEB_EXTENSION_CONTEXT:
+        webView->priv->webExtensionContext.reset(static_cast<WebKitWebExtensionContext*>(g_value_get_object(value)));
+        break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -1283,6 +1325,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 #if ENABLE(2022_GLIB_API)
     case PROP_PAGE_ICONS:
         g_value_set_boxed(value, webkit_web_view_get_page_icons(webView));
+        break;
+#endif
+#if ENABLE(WK_WEB_EXTENSIONS)
+    case PROP_WEB_EXTENSION_CONTEXT:
+        g_value_set_object(value, webkitWebViewGetWebExtensionContext(webView));
         break;
 #endif
     default:
@@ -1878,6 +1925,24 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr, nullptr,
         FALSE,
         WEBKIT_PARAM_READABLE);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    /**
+     * WebKitWebView:web-extension-context:
+     *
+     * The #WebKitWebExtensionContext this web view belongs to.
+     *
+     * It is likely that #WebKitWebExtensionContext or #WebKitWebView:web-extension-mode should be used instead.
+     *
+     * Since: 2.56
+     */
+    sObjProperties[PROP_WEB_EXTENSION_CONTEXT] =
+    g_param_spec_object(
+        "web-extension-context",
+        nullptr, nullptr,
+        WEBKIT_TYPE_WEB_EXTENSION_CONTEXT,
+        static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+#endif
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
@@ -2864,6 +2929,7 @@ RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API:
 
     Ref newPage = getPage(newWebView);
     ASSERT(newPage->configuration().windowFeatures());
+    newPage->setPlatformView(newWebView);
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), *newPage->configuration().windowFeatures());
     return newPage;
 }
@@ -6144,3 +6210,17 @@ WebKitImageList* webkit_web_view_get_page_icons(WebKitWebView* webView)
     return webView->priv->pageIcons.get();
 }
 #endif
+
+void webkitWebViewLoadServiceWorker(WebKitWebView* webView, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
+{
+    Ref page = getPage(webView);
+
+    if (page->isServiceWorkerPage()) {
+        completionHandler(false);
+        return;
+    }
+
+    page->loadServiceWorker(URL { String::fromUTF8(url) }, usingModules, [completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        completionHandler(success);
+    });
+}

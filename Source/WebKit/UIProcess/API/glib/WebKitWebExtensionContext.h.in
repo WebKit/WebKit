@@ -64,6 +64,16 @@ webkit_web_extension_context_has_injected_content_for_uri                   (Web
 WEBKIT_API const gchar *
 webkit_web_extension_context_get_override_new_tab_page_uri                  (WebKitWebExtensionContext *context);
 
+WEBKIT_API void
+webkit_web_extension_context_load_background_content                        (WebKitWebExtensionContext *context,
+                                                                             GCancellable              *cancellable,
+                                                                             GAsyncReadyCallback        callback,
+                                                                             gpointer                   user_data);
+WEBKIT_API gboolean
+webkit_web_extension_context_load_background_content_finish                 (WebKitWebExtensionContext  *context,
+                                                                             GAsyncResult               *result,
+                                                                             GError                    **error);
+
 G_END_DECLS
 
 #endif // ENABLE(2022_GLIB_API)

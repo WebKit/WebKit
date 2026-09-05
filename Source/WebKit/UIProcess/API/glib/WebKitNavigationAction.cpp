@@ -209,3 +209,8 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
     }
     return navigation->frameName->data();
 }
+
+RefPtr<API::NavigationAction> webkitNavigationActionGetAction(WebKitNavigationAction* navigation)
+{
+    return navigation->action;
+}

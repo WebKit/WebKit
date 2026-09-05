@@ -206,16 +206,19 @@ static void testOptionsPageURIParsing(Test* test, gconstpointer)
     g_assert_null(webkit_web_extension_context_get_options_page_uri(context.get()));
 }
 
-static void testURIOverridesParsing(Test*, gconstpointer)
+static void testURIOverridesParsing(Test* test, gconstpointer)
 {
     GUniqueOutPtr<GError> error;
     auto parseExtensionManifest = [&](const gchar* manifestString) {
-        return adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) } }, &error.outPtr()));
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) } }, &error.outPtr()));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
+        return extension;
     };
 
     GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": \"newtab.html\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_no_error(error.get());
-    GRefPtr<WebKitWebExtensionContext> context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    GRefPtr<WebKitWebExtensionContext> context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     GUniquePtr<char> newTabPageURI(g_strconcat(webkit_web_extension_context_get_base_uri(context.get()), "newtab.html", nullptr));
@@ -223,28 +226,32 @@ static void testURIOverridesParsing(Test*, gconstpointer)
 
     extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": 123 }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
 
     extension = parseExtensionManifest("{ \"browser_url_overrides\": { }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
 
     extension = parseExtensionManifest("{ \"browser_url_overrides\": { \"newtab\": \"\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
 
     extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": \"newtab.html\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_no_error(error.get());
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     newTabPageURI.reset(g_strconcat(webkit_web_extension_context_get_base_uri(context.get()), "newtab.html", nullptr));
@@ -252,24 +259,54 @@ static void testURIOverridesParsing(Test*, gconstpointer)
 
     extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": 123 }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
 
     extension = parseExtensionManifest("{ \"chrome_url_overrides\": { }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
 
     extension = parseExtensionManifest("{ \"chrome_url_overrides\": { \"newtab\": \"\" }, \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\" }");
     g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_ERROR, WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST_ENTRY);
-    context = webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr());
+    context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_no_error(error.get());
 
     g_assert_null(webkit_web_extension_context_get_override_new_tab_page_uri(context.get()));
+}
+
+static void testLoadBackgroundContentWithoutController(Test* test, gconstpointer)
+{
+    GUniqueOutPtr<GError> error;
+    auto parseExtensionManifest = [&](const gchar* manifestString, const gchar* backgroundScript) {
+        GRefPtr extension = adoptGRef(webkitWebExtensionCreate({ { "manifest.json"_s, createGBytes(manifestString) }, { "background.js"_s, createGBytes(backgroundScript) } }, &error.outPtr()));
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(extension.get()));
+        return extension;
+    };
+
+    GRefPtr<WebKitWebExtension> extension = parseExtensionManifest("{ \"manifest_version\": 3, \"name\": \"Test\", \"description\": \"Test\", \"version\": \"1.0\", \"background\": { \"scripts\": [ \"background.js\" ], \"type\": \"module\", \"persistent\": false } }", "const img = new Image(); img.src = 'non-existent-image.png';");
+    g_assert_no_error(error.get());
+    GRefPtr<WebKitWebExtensionContext> context = adoptGRef(webkit_web_extension_context_new_for_extension(extension.get(), &error.outPtr()));
+    g_assert_no_error(error.get());
+    GRefPtr<GMainLoop> mainLoop(g_main_loop_new(nullptr, TRUE));
+
+    webkit_web_extension_context_load_background_content(context.get(), nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) mutable {
+        auto* mainLoop = static_cast<GMainLoop*>(userData);
+        GUniqueOutPtr<GError> error;
+        g_assert_false(webkit_web_extension_context_load_background_content_finish(WEBKIT_WEB_EXTENSION_CONTEXT(object), result, &error.outPtr()));
+        g_assert_error(error.get(), WEBKIT_WEB_EXTENSION_CONTEXT_ERROR, WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NOT_LOADED);
+        g_main_loop_quit(mainLoop);
+    }, mainLoop.get());
+
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
+    g_main_loop_run(mainLoop.get());
 }
 
 void beforeAll()
@@ -277,6 +314,16 @@ void beforeAll()
     Test::add("WebKitWebExtensionContext", "content-scripts-parsing", testContentScriptsParsing);
     Test::add("WebKitWebExtensionContext", "options-page-uri-parsing", testOptionsPageURIParsing);
     Test::add("WebKitWebExtensionContext", "uri-overrides-parsing", testURIOverridesParsing);
+    Test::add("WebKitWebExtensionContext", "load-background-content-without-controller", testLoadBackgroundContentWithoutController);
+
+    // Some code in WebExtensionContext increases the amount of time allotted to a particular process
+    // when running in the Test Runner. Set a consistent Program Name (we can't set an Application ID since the Test Runner doesn't use GApplication)
+    // so WebExtensionContext can detect the test runner
+#if PLATFORM(WPE)
+    g_set_prgname("org.webkit.app-TestWebKitWPE");
+#else
+    g_set_prgname("org.webkit.app-TestWebKitGTK");
+#endif
 }
 
 void afterAll()

@@ -479,6 +479,10 @@ OBJC_CLASS WKQuickLookPreviewController;
 OBJC_CLASS WKWebView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
+#if USE(GLIB)
+typedef struct _WebKitWebView WebKitWebView;
+#endif
+
 struct WKPageInjectedBundleClientBase;
 struct wpe_view_backend;
 
@@ -2701,6 +2705,11 @@ public:
 
     RetainPtr<WKWebView> cocoaView();
     void setCocoaView(WKWebView *);
+#endif
+
+#if USE(GLIB)
+    WebKitWebView* platformView();
+    void setPlatformView(WebKitWebView *);
 #endif
 
     bool shouldAvoidSynchronouslyWaitingToPreventDeadlock() const;

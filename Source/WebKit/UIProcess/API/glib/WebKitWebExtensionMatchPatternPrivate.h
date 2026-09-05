@@ -19,6 +19,8 @@
 
 #pragma once
 
+#if ENABLE(2022_GLIB_API)
+
 #include "WebExtensionMatchPattern.h"
 #include "WebKitWebExtensionMatchPattern.h"
 #include <wtf/RefPtr.h>
@@ -31,3 +33,5 @@ WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebKit:
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPtr<WebKit::WebExtensionMatchPattern>&);
 
 #endif
+
+#endif // ENABLE(2022_GLIB_API)
