@@ -450,6 +450,7 @@ private:
         bool nestedClassEnd()
         {
             flushCachedCharacterIfNeeded();
+            m_processingEscape = false;
 
             if (m_inverted && m_mayContainStrings)
                 m_errorCode = ErrorCode::NegatedClassSetMayContainStrings;
@@ -548,6 +549,7 @@ private:
         void afterSetOperand()
         {
             flushCachedCharacterIfNeeded();
+            m_processingEscape = false;
             m_state = ClassSetConstructionState::AfterSetOperand;
         }
 
@@ -674,7 +676,7 @@ private:
                 if (!unionOpActive)
                     m_errorCode = ErrorCode::InvalidClassSetOperation;
 
-                if (ch == '-')
+                if (!processingEscape && ch == '-')
                     m_errorCode = ErrorCode::InvalidClassSetOperation;
                 else {
                     switchFromDefaultOpToUnionOpIfNeeded();
