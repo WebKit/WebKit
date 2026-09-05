@@ -1,0 +1,34 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: url() referencing a non-filter element is ignored</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="help" href="https://drafts.fxtf.org/filter-effects/#FilterProperty">
+<link rel="match" href="backdrop-filter-svg-reference-to-non-filter-expected.html">
+<!-- Per Filter Effects, if a url() references an element that is not a <filter>, the whole
+     filter chain is ignored and no filter is applied. The backdrop must render unchanged. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <rect id="notafilter" width="10" height="10" fill="lime"/>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+  backdrop-filter: url(#notafilter);
+}
+</style>
