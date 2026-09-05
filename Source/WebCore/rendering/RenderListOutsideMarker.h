@@ -69,11 +69,9 @@ public:
 
     bool isImage() const final;
 
-    // True when the ::marker's `content` property generates the marker box contents
-    // (css-lists-3 §3.3). In that case the contents live in an anonymous inline-block
-    // child (contentContainer()) that this marker lays out and paints itself.
+    // True when the ::marker's `content` property generates the marker box contents (css-lists-3 §3.3),
+    // rather than list-style-image/type.
     bool hasContentProperty() const;
-    bool needsContentContainer() const;
 
     RenderBlockFlow* contentContainer() const;
 
@@ -95,7 +93,7 @@ private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     void computeIntrinsicLogicalWidthContributions() final;
-    bool canHaveChildren() const final { return needsContentContainer(); }
+    bool canHaveChildren() const final { return true; }
     bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
@@ -113,13 +111,11 @@ private:
     void updateInlineMargins();
     void updateContent();
     void updateContentContainerText();
+    void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
-    FloatRect relativeMarkerRect();
     LayoutRect NODELETE localSelectionRect();
 
-    RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
-    bool textNeedsBidiResolution() const;
 
 private:
     ListMarkerTextContent m_textContent;
