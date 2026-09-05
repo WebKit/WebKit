@@ -552,8 +552,11 @@ accessibility/search-predicate-visited-links.html
 
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
+webkit.org/b/71298 accessibility/isolated-tree/mac/html-slider-indicator.html
 webkit.org/b/71298 accessibility/mac/listbox-hit-test.html
+webkit.org/b/71298 accessibility/isolated-tree/mac/listbox-hit-test.html
 webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
+webkit.org/b/71298 accessibility/isolated-tree/mac/iframe-with-title-correct-hierarchy.html
 
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
@@ -648,6 +651,7 @@ webkit.org/b/160042 accessibility/mac/value-change/value-change-user-info-conten
 
 # Skipped because ACCESSIBILITY_LOCAL_FRAME is not compatable with relative frames.
 accessibility/mac/iframe-relative-frame.html [ Skip ]
+accessibility/isolated-tree/mac/iframe-relative-frame.html [ Skip ]
 accessibility/mac/position-fixed-top-bottom-properties-relative-frame.html [ Skip ]
 accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
@@ -855,6 +859,7 @@ webkit.org/b/207938 http/wpt/crypto/derive-hmac-key-crash.any.html [ Pass Crash 
 webkit.org/b/207962 accessibility/mac/aria-menu-item-selected-notification.html [ Slow ]
 webkit.org/b/207962 accessibility/isolated-tree/mac/aria-menu-item-selected-notification.html [ Slow ]
 [ Debug ] accessibility/mac/line-index-for-textmarker.html [ Slow ]
+[ Debug ] accessibility/isolated-tree/mac/line-index-for-textmarker.html [ Slow ]
 
 webkit.org/b/208062 http/wpt/fetch/disable-speculative-for-reload.html [ Pass Failure ]
 
@@ -2228,6 +2233,7 @@ webkit.org/b/308856 [ Debug ] http/tests/websocket/tests/hybi/handshake-ok-with-
 webkit.org/b/309850 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Pass Failure ]
 
 webkit.org/b/314136 accessibility/mac/client/div-bounds.html [ Pass Failure ]
+webkit.org/b/314136 accessibility/isolated-tree/mac/client/div-bounds.html [ Pass Failure ]
 
 webkit.org/b/315776 [ arm64 ] inspector/timeline/timeline-recording.html [ Pass Failure ]
 
@@ -2397,6 +2403,7 @@ webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-c
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.any.sharedworker.html [ Failure ]
 
 webkit.org/b/318450 [ Debug ] accessibility/mac/input-replacevalue-userinfo.html [ Timeout ]
+webkit.org/b/318450 [ Debug ] accessibility/isolated-tree/mac/input-replacevalue-userinfo.html [ Timeout ]
 
 # webkit.org/b/305671 3x fast/animation/* (layout-tests) are flaky failures.
 fast/animation/css-animation-throttling.html [ Pass Failure ]

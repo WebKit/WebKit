@@ -1,0 +1,11 @@
+This test ensures the start and end text markers of a text-less document both resolve to a valid element and to the same element. Regression test for the isolated tree: the start marker must not become null when there is no text for it to anchor to.
+
+PASS: startElement == null === false
+PASS: endElement == null === false
+PASS: endElement.isEqual(startElement) === true
+PASS: emptyRangeString === ''
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -149,6 +149,7 @@ webkit.org/b/288827 http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html
 webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 webkit.org/b/298211 accessibility/mac/media-query-values-change.html [ Skip ]
 webkit.org/b/298211 accessibility/mac/increase-contrast-system-color-changes.html [ Skip ]
+webkit.org/b/298211 accessibility/isolated-tree/mac/increase-contrast-system-color-changes.html [ Skip ]
 webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
 webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]
 webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-3.html [ Skip ]
@@ -160,7 +161,9 @@ http/tests/uri [ Pass ]
 
 # Tests which only run on WebKitLegacy
 accessibility/mac/html-slider-indicator.html [ Pass ]
+accessibility/isolated-tree/mac/html-slider-indicator.html [ Pass ]
 accessibility/mac/listbox-hit-test.html [ Pass ]
+accessibility/isolated-tree/mac/listbox-hit-test.html [ Pass ]
 compositing/images/direct-image-object-fit.html [ Pass ]
 compositing/reflections/direct-image-object-fit-reflected.html [ Pass ]
 editing/input/press-tab-during-ime-composition.html [ Pass ]

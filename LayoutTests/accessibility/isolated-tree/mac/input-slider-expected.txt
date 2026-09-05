@@ -1,0 +1,56 @@
+This test ensures slider increment and decrement actions work as expected, and verifies other general properties of sliders.
+
+** Verify basic slider accessibility attributes
+PASS: sliderAXObject.minValue === 0
+PASS: sliderAXObject.maxValue === 100
+PASS: sliderAXObject.childrenCount === 1
+PASS: sliderAXObject.role === 'AXRole: AXSlider'
+
+** Verify basic thumb accessibility attributes
+thumbAXObject = sliderAXObject.childAtIndex(0)
+
+PASS: thumbAXObject.childrenCount === 0
+PASS: thumbAXObject.role === 'AXRole: AXValueIndicator'
+
+** Increment the slider, test slider value and div set on 'update' event
+sliderAXObject.increment()
+
+PASS: slider.value === '55'
+PASS: valueDiv.innerText === '55'
+
+** Decrement the slider, test slider value and div set on 'update' event
+slider.value = 22
+
+sliderAXObject.decrement()
+
+PASS: slider.value === '17'
+PASS: valueDiv.innerText === '17'
+
+** Change slider range
+slider.setAttribute('max', 1000)
+
+slider.setAttribute('min', 500)
+
+PASS: sliderAXObject.minValue === 500
+PASS: sliderAXObject.maxValue === 1000
+
+** Re-test incrementing the slider
+slider.value = 600
+
+sliderAXObject.increment()
+
+PASS: slider.value === '625'
+PASS: valueDiv.innerText === '625'
+
+** Re-test decrementing the slider
+slider.value = 850
+
+sliderAXObject.decrement()
+
+PASS: slider.value === '825'
+PASS: valueDiv.innerText === '825'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 825

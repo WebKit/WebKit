@@ -1,0 +1,13 @@
+fake
+
+fake
+This test validates we don't crash asking for range for bounds when encountering a shadow dom element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS [object AccessibilityUIElement] is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

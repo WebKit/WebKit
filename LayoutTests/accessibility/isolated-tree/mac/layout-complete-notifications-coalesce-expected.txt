@@ -1,0 +1,10 @@
+This test ensures that repeatedly forcing synchronous layout without returning to the run loop (as happens when JavaScript forces layout in a loop) does not accumulate one AXLayoutComplete notification per layout.
+
+
+
+PASS: layoutCompleteCount < 50 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

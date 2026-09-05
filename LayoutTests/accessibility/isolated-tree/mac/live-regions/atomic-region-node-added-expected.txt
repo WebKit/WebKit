@@ -1,0 +1,14 @@
+This tests that atomic regions are announced when aria-relevant=additions is set and an element is added as a child of an atomic region.
+
+Received announcement request:
+AnnouncementKey: Hello world{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world

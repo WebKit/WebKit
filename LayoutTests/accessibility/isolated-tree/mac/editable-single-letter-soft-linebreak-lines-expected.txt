@@ -1,0 +1,25 @@
+This test ensures we compute the correct line range after basic arrow key movement in a contenteditable with single letters separated by soft linebreaks.
+
+PASS: Got line index '0'
+PASS: Got line index '1' after down arrow
+
+PASS: Got line index '1'
+PASS: Got line index '2' after down arrow
+
+PASS: Got line index '2'
+PASS: Got line index '3' after down arrow
+
+PASS: Got line index '3'
+PASS: Got line index '4' after down arrow
+
+PASS: Got line index '4'
+PASS: Got line index '4' after down arrow
+
+PASS: Got line index '4'
+PASS: Got line index '4' after down arrow
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ABCDE

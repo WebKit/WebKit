@@ -1,0 +1,14 @@
+This tests the text marker system will return the correct element when given a text marker.
+
+PASS: text.textMarkerRangeLength(range) === 10
+PASS: text.accessibilityElementForTextMarker(start).isEqual(text) === true
+PASS: text.accessibilityElementForTextMarker(end).isEqual(text) === true
+PASS: text.textMarkerRangeLength(newRange) === 10
+PASS: newRange.isEqual(range) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text here
+text block
+text here

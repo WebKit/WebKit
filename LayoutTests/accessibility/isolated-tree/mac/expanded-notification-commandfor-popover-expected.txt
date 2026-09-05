@@ -1,0 +1,46 @@
+This tests that expanded notifications will be sent correctly for command buttons and popovers.
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: hidePopoverCommandButton.isExpanded === false
+PASS: togglePopoverCommandButton.isExpanded === false
+PASS: showPopoverCommandButton.isAttributeSupported('AXExpanded') === true
+PASS: hidePopoverCommandButton.isAttributeSupported('AXExpanded') === true
+PASS: togglePopoverCommandButton.isAttributeSupported('AXExpanded') === true
+PASS: customCommandButton.isExpanded === false
+PASS: invalidCommandButton.isExpanded === false
+PASS: customCommandButton.isAttributeSupported('AXExpanded') === false
+PASS: invalidCommandButton.isAttributeSupported('AXExpanded') === false
+document.getElementById('show-popover-command-btn').click()
+PASS: showPopoverCommandButton.isExpanded === true
+PASS: hidePopoverCommandButton.isExpanded === true
+PASS: togglePopoverCommandButton.isExpanded === true
+PASS: customCommandButton.isExpanded === false
+PASS: invalidCommandButton.isExpanded === false
+PASS: customCommandButton.isAttributeSupported('AXExpanded') === false
+PASS: invalidCommandButton.isAttributeSupported('AXExpanded') === false
+document.getElementById('hide-popover-command-btn').click()
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: hidePopoverCommandButton.isExpanded === false
+PASS: togglePopoverCommandButton.isExpanded === false
+document.getElementById('show-popover-command-btn').setAttribute('commandfor', 'non-existent')
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: showPopoverCommandButton.isAttributeSupported('AXExpanded') === false
+document.getElementById('show-popover-command-btn').setAttribute('commandfor', 'mypopover')
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: showPopoverCommandButton.isAttributeSupported('AXExpanded') === true
+document.getElementById('show-popover-command-btn').setAttribute('command', 'invalid')
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: showPopoverCommandButton.isAttributeSupported('AXExpanded') === false
+document.getElementById('show-popover-command-btn').setAttribute('command', 'show-popover')
+document.getElementById('mypopover').removeAttribute('popover')
+PASS: showPopoverCommandButton.isExpanded === false
+PASS: hidePopoverCommandButton.isExpanded === false
+PASS: togglePopoverCommandButton.isExpanded === false
+PASS: showPopoverCommandButton.isAttributeSupported('AXExpanded') === false
+PASS: hidePopoverCommandButton.isAttributeSupported('AXExpanded') === false
+PASS: togglePopoverCommandButton.isAttributeSupported('AXExpanded') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Show popover Hide popover Toggle popover  Custom Command Button Invalid Command Button
+Popover content

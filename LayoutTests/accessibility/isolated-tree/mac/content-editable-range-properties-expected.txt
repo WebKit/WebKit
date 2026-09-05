@@ -1,0 +1,18 @@
+This tests that contenteditable nodes return the correct information for range and selection based attributes.
+
+PASS: axElement.selectedTextRange === '{3, 0}'
+PASS: axElement.selectedTextRange === '{3, 3}'
+PASS: axElement.stringAttributeValue('AXSelectedText') === 'gle'
+PASS: axElement.selectedTextRange === '{3, 4}'
+PASS: axElement.selectedTextRange === '{12, 0}'
+PASS: axElement.selectedTextRange === '{12, 6}'
+PASS: axElement.stringAttributeValue('AXSelectedText') === matchedText
+PASS: axElement.selectedTextRange === '{12, 7}'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Single line test
+Multiple
+Line
+Textbox

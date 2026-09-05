@@ -1,0 +1,10 @@
+This tests that line range is returned correctly for a given text marker.
+
+PASS: lineText === expectedText
+PASS: lineText === expectedText
+PASS: lineText === expectedText
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

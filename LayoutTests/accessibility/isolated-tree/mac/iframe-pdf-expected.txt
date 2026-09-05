@@ -1,0 +1,10 @@
+This test ensures PDFs loaded in iframes are exposed in the accessibility tree.
+
+
+Found text object:
+AXRole: AXStaticText
+First word: Welcome
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

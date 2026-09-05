@@ -1,0 +1,21 @@
+This tests that button inputs that are in live regions work as expected.
+
+Received announcement request:
+AnnouncementKey: Middle{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+Received announcement request:
+AnnouncementKey: End{
+    AXLanguage = en;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

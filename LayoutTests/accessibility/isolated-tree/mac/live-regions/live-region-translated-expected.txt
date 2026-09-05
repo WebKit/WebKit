@@ -1,0 +1,14 @@
+This tests that live region announcements are translated, and carry the target language, when the page is presented as a machine translation (Core-AAM).
+
+Received announcement request:
+AnnouncementKey: Manzana_translated_to_fr{
+    AXLanguage = fr;
+}
+AXPriorityKey: 10
+AXAnnouncementIsLiveRegionKey: true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Apple: Manzana

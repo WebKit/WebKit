@@ -1,0 +1,11 @@
+This tests that AXElementBusyChanged is posted correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Received AXElementBusyChanged notification 1 of 2
+Received AXElementBusyChanged notification 2 of 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

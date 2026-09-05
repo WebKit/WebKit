@@ -1,0 +1,11 @@
+This tests that aria-hidden will affect the visibility of the web area and scroll view.
+
+PASS: body.childrenCount === 1
+PASS: body.childAtIndex(0).role === 'AXRole: AXTextField'
+PASS: body.childrenCount === 2
+PASS: body.childAtIndex(0).childAtIndex(0).role === 'AXRole: AXWebArea'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
