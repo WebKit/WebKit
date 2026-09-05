@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+An APNG whose default image is hidden, because its first fcTL follows the IDAT, must paint that<br>
+animation frame at the offset the fcTL gives it. A decoder that treats the frame's rows as canvas<br>
+rows paints them at the origin instead, and walks each row to the canvas width, past the end of a<br>
+row the frame only made forty pixels wide.<br><br>
+
+<pre id="log">PASS</pre>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+// A 200x2 canvas whose default image is not part of the animation, because its first fcTL follows
+// the IDAT. The single animation frame is 40x1 and sits at 160,1.
+var canvasWidth = 200;
+var canvasHeight = 2;
+var frameLeft = 160;
+var frameTop = 1;
+var frameColor = "ff8000";
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function hex(pixels, index)
+{
+    var result = "";
+    for (var component = 0; component < 3; ++component)
+        result += ("0" + pixels[index * 4 + component].toString(16)).slice(-2);
+    return result;
+}
+
+function testPixels(image)
+{
+    // Loading an image only decodes its header; drawing is what decodes the pixels.
+    var canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    var pixels = context.getImageData(0, 0, canvasWidth, canvasHeight).data;
+
+    // The frame covers the right end of the second row. Checking it keeps the test from passing
+    // just because nothing was decoded.
+    for (var x = frameLeft; x < canvasWidth; ++x) {
+        var index = frameTop * canvasWidth + x;
+        if (hex(pixels, index) != frameColor) {
+            log("FAIL: pixel " + x + "," + frameTop + " is " + hex(pixels, index)
+                + ", expected " + frameColor);
+            break;
+        }
+    }
+
+    // Every pixel the frame does not cover keeps whatever the canvas already held, so they are all
+    // one value, whichever value that is. A frame painted at the origin is not.
+    var background = hex(pixels, 0);
+    for (var index = 1; index < frameTop * canvasWidth + frameLeft; ++index) {
+        if (hex(pixels, index) != background) {
+            log("FAIL: pixel " + (index % canvasWidth) + "," + Math.floor(index / canvasWidth)
+                + " is " + hex(pixels, index) + ", expected " + background);
+            break;
+        }
+    }
+}
+
+function imageSettled(image)
+{
+    try {
+        if (!image.naturalWidth)
+            log("FAIL: did not decode");
+        else
+            testPixels(image);
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+var image = new Image();
+image.onload = function () { imageSettled(image); };
+image.onerror = function () { imageSettled(image); };
+image.src = "resources/apng-hidden-first-frame-offset.png";
+</script>

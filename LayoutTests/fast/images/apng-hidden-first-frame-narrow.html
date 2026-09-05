@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+An APNG whose default image is hidden, and whose first animation frame is narrower than the<br>
+canvas, must not decode more pixels than that frame's rows hold. Decoding the canvas width<br>
+instead copies bytes from past the end of the row into the image, where a page can read them<br>
+back out of a canvas.<br><br>
+
+<pre id="log">PASS</pre>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+// A 64x1 canvas whose default image is not part of the animation, because its first fcTL follows
+// the IDAT. The single animation frame is one pixel wide, so the rows of its own PNG stream hold
+// one pixel while the canvas holds 64.
+var canvasWidth = 64;
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function hex(pixels, index)
+{
+    var result = "";
+    for (var component = 0; component < 3; ++component)
+        result += ("0" + pixels[index * 4 + component].toString(16)).slice(-2);
+    return result;
+}
+
+function testPixels(image)
+{
+    // Loading an image only decodes its header; drawing is what decodes the pixels.
+    var canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = 1;
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    var pixels = context.getImageData(0, 0, canvasWidth, 1).data;
+
+    // The animation frame itself is one red pixel at the origin. Checking it keeps the test from
+    // passing just because nothing was decoded.
+    if (hex(pixels, 0) != "ff0000")
+        log("FAIL: pixel 0 is " + hex(pixels, 0) + ", expected ff0000");
+
+    // Every pixel the frame does not cover keeps whatever the canvas already held, so the rest of
+    // the row is one value, whichever value that is. Bytes read from past the end of the frame's
+    // row are not.
+    var rest = hex(pixels, 1);
+    for (var index = 2; index < canvasWidth; ++index) {
+        if (hex(pixels, index) != rest) {
+            log("FAIL: pixels 1 to " + (canvasWidth - 1) + " are not all " + rest
+                + "; pixel " + index + " is " + hex(pixels, index));
+            break;
+        }
+    }
+}
+
+function imageSettled(image)
+{
+    try {
+        if (!image.naturalWidth)
+            log("FAIL: did not decode");
+        else
+            testPixels(image);
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+var image = new Image();
+image.onload = function () { imageSettled(image); };
+image.onerror = function () { imageSettled(image); };
+image.src = "resources/apng-hidden-first-frame-narrow.png";
+</script>

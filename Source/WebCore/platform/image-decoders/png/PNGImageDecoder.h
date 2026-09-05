@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,12 +58,15 @@ namespace WebCore {
         // PNGImageReader!
         bool setFailed() override;
 
-        // Callbacks from libpng
+        // Callbacks from libpng. The canvas and each animation frame are decoded by separate
+        // streams, with one set of callbacks registered per stream.
         void headerAvailable();
         void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
         void pngComplete();
         void readChunks(png_unknown_chunkp);
         void frameHeader();
+        void frameRowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
+        void paintFrame();
 
         void init();
         void clearFrameBufferCache(size_t clearBeforeFrame) override;
@@ -95,7 +99,11 @@ namespace WebCore {
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived);
+        ScalableImageDecoderFrame* currentFrameBuffer();
+        void ensureInterlaceBuffer();
+        void beginFrame();
         void initFrameBuffer(size_t frameIndex);
+        void updateFrameRect(ScalableImageDecoderFrame&);
         void frameComplete();
         int processingStart(png_unknown_chunkp);
         int processingFinish();
