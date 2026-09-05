@@ -42,8 +42,6 @@ accessibility/loading-iframe-sends-notification.html [ Pass Failure ]
 accessibility/text-marker/text-marker-bidi-element-arabic.html [ Failure ]
 accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
 
-accessibility/mac/search-text-with-image-hang.html [ Failure ]
-
 # Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
 accessibility/content-editable-as-textarea.html [ Failure ]
 accessibility/isolated-tree/content-editable-as-textarea.html [ Failure ]

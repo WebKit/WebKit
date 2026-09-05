@@ -4847,7 +4847,7 @@ Node* AXObjectCache::previousNode(Node* node) const
     return NodeTraversal::previousSkippingChildren(*node);
 }
 
-VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const CharacterOffset& characterOffset)
+VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const CharacterOffset& characterOffset, AllowUserSelectNone allowUserSelectNone)
 {
     if (characterOffset.isNull())
         return VisiblePosition();
@@ -4857,7 +4857,7 @@ VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const Characte
     auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
     if (!range)
         return { };
-    return makeContainerOffsetPosition(range->start);
+    return { makeContainerOffsetPosition(range->start), VisiblePosition::defaultAffinity, allowUserSelectNone };
 }
 
 CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisiblePosition& targetVisiblePosition)

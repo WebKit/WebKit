@@ -86,15 +86,17 @@ TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& char
 
     zeroBytes(*this);
 
-    auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (AXObjectCache::shouldCreateAXThreadCompatibleMarkers()) {
+        // Accessibility exposes the text of a user-select:none element, so a marker has to be able to address it.
+        auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam, AllowUserSelectNone::Yes);
         if (std::optional data = cache.textMarkerDataForVisiblePosition(WTF::move(visiblePosition), origin))
             *this = *data;
         return;
     }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
+    auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffsetParam);
     treeID = cache.treeID().toUInt64();
     auto optionalObjectID = nodeID(cache, characterOffsetParam.node.get());
     objectID = optionalObjectID ? optionalObjectID->toUInt64() : 0;

@@ -902,7 +902,7 @@ protected:
     Node* NODELETE previousNode(Node*) const;
     CharacterOffset traverseToOffsetInRange(const SimpleRange&, int, TraverseOption = TraverseOptionDefault, bool stayWithinRange = false);
 public:
-    VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&);
+    VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&, AllowUserSelectNone = AllowUserSelectNone::No);
 protected:
     CharacterOffset characterOffsetFromVisiblePosition(const VisiblePosition&);
     char32_t characterAfter(const CharacterOffset&);
