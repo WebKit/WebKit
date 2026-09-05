@@ -1,8 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
 <html>
 <head>
-<script src="../resources/accessibility-helper.js"></script>
-<script src="../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -10,7 +10,7 @@
   id="video-with-src-attribute"
   aria-label="Video with src attribute"
   style="width:640px;height:360px;"
-  src="resources/test.mp4"
+  src="../resources/test.mp4"
 >
 </video>
 
@@ -19,7 +19,7 @@
   aria-label="Video with <source> element"
   style="width:640px;height:360px;"
 >
-    <source src="resources/test.mp4" type="video/mp4">
+    <source src="../resources/test.mp4" type="video/mp4">
 </video>
 
 <video
@@ -49,7 +49,7 @@ if (window.accessibilityController) {
         domVideo = document.getElementById("video-with-src-attribute");
         video = accessibilityController.accessibleElementById(domVideo.id);
         output += await expectAsync("video.url.includes(baseVideoPath)", "true");
-        domVideo.setAttribute("src", "resources/foo-bar.mp4");
+        domVideo.setAttribute("src", "../resources/foo-bar.mp4");
         output += await expectAsync("video.url.includes('foo-bar.mp4')", "true");
 
         domVideo = document.getElementById("video-with-source-element");
@@ -60,7 +60,7 @@ if (window.accessibilityController) {
         // source without changing any attribute on an element already in the document.
         domVideo.removeChild(domVideo.querySelector("source"));
         const newSource = document.createElement("source");
-        newSource.setAttribute("src", "resources/foo-bar.mp4");
+        newSource.setAttribute("src", "../resources/foo-bar.mp4");
         newSource.setAttribute("type", "video/mp4");
         domVideo.appendChild(newSource);
         domVideo.load();

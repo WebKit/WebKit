@@ -71,6 +71,7 @@ class Document;
 class HTMLAreaElement;
 class HTMLCanvasElement;
 class HTMLDetailsElement;
+class HTMLMediaElement;
 class HTMLSelectElement;
 class HTMLTableElement;
 class HTMLTextFormControlElement;
@@ -433,6 +434,9 @@ public:
     void onFocusChange(Element* oldElement, Element* newElement);
     void onFrameSelectionFocusedOrActiveStateChanged(Document&);
     void onInertOrVisibilityChange(RenderElement&);
+#if ENABLE(VIDEO)
+    void onMediaElementCurrentSrcChanged(HTMLMediaElement&);
+#endif
     void onPopoverToggle(const HTMLElement&);
     void onRadioGroupMembershipChanged(HTMLElement&);
     void onRemoteFrameGainedFocus(RemoteFrame&);

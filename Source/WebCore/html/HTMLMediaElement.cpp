@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "AXObjectCache.h"
 #include "Attribute.h"
 #include "AudioTrackConfiguration.h"
 #include "AudioTrackList.h"
@@ -9612,8 +9613,14 @@ String HTMLMediaElement::mediaSessionTitle() const
 
 void HTMLMediaElement::setCurrentSrc(const URL& src)
 {
+    bool changed = m_currentSrc != src;
     m_currentSrc = src;
     m_currentIdentifier = MediaUniqueIdentifier::generate();
+
+    if (changed) {
+        if (CheckedPtr cache = protect(document())->existingAXObjectCache())
+            cache->onMediaElementCurrentSrcChanged(*this);
+    }
 }
 
 MediaUniqueIdentifier HTMLMediaElement::mediaUniqueIdentifier() const

@@ -87,6 +87,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLMapElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
@@ -2877,6 +2878,13 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
     if (renderer)
         selectedChildrenChanged(protect(renderer->node()));
 }
+
+#if ENABLE(VIDEO)
+void AXObjectCache::onMediaElementCurrentSrcChanged(HTMLMediaElement& element)
+{
+    postNotification(&element, AXNotification::URLChanged);
+}
+#endif
 
 void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 {
