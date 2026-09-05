@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select">
+    <option>Alpha</option>
+    <option selected>Bravo</option>
+    <option>Charlie</option>
+</select>
+
+<script>
+var output = "This tests that pressing an expanded select posts AXPressDidSucceed, and that it already reports itself collapsed when the notification arrives.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+    var pressDidSucceedCount = 0;
+    var pressListener = null;
+    // Sampled inside the listener, so this reports what an assistive technology would read
+    // at delivery time rather than after a later tree update.
+    var expandedAtDelivery = null;
+
+    function pressDidSucceedDeliveries() {
+        if (!pressListener) {
+            pressListener = function(element, notification, userInfo) {
+                if (notification != "AXPressDidSucceed")
+                    return;
+                pressDidSucceedCount++;
+                expandedAtDelivery = select.isExpanded;
+            };
+            accessibilityController.addNotificationListener(pressListener);
+        }
+        return pressDidSucceedCount;
+    }
+
+    // Also installs the listener, which must happen before the first press.
+    output += expect("pressDidSucceedDeliveries()", "0");
+
+    setTimeout(async function() {
+        // The first press only sets up the expanded state this test collapses.
+        select.press();
+        output += await expectAsync("pressDidSucceedDeliveries()", "1");
+
+        select.press();
+        output += await expectAsync("pressDidSucceedDeliveries()", "2");
+        output += expect("expandedAtDelivery", "false");
+
+        accessibilityController.removeNotificationListener(pressListener);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

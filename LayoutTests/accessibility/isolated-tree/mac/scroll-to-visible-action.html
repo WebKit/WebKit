@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!--
+  Work around differences in bounds calculations in isolated tree mode.
+-->
+<style>
+button {
+    appearance: none;
+}
+</style>
+
+<div id="group" style="overflow: scroll; width:100px; height:100px;">
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+<button id="button">button</button>
+</div>
+
+<script>
+var output = "This tests that the scrollToMakeVisible accessibility action works as expected on the Mac.\n\n";
+
+var newButtonX, newButtonY, initialButtonX, initialButtonY;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        await waitForFrameGeometryReady();
+
+        var button = accessibilityController.accessibleElementById("button");
+        initialButtonX = button.x;
+        initialButtonY = button.y;
+
+        output += "Gathered initial button position and now scrolling to make it visible.\n";
+        button.scrollToMakeVisible();
+
+        await waitFor(() => button.y != initialButtonY);
+        newButtonX = button.x;
+        newButtonY = button.y;
+
+        output += "Scroll to make visible was performed. The X position should be the same, but the Y position should have changed.\n";
+        output += expect("newButtonX == initialButtonX", "true");
+        output += expect("newButtonY > initialButtonY", "true");
+
+        document.getElementById("group").style.visibility = "hidden";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

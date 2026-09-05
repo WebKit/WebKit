@@ -148,6 +148,7 @@ webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass F
 webkit.org/b/288827 http/wpt/webaudio/audioworklet-addModule-cors.sub.https.html [ Failure Pass ]
 webkit.org/b/132766 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 webkit.org/b/298211 accessibility/mac/media-query-values-change.html [ Skip ]
+webkit.org/b/298211 accessibility/isolated-tree/mac/media-query-values-change.html [ Skip ]
 webkit.org/b/298211 accessibility/mac/increase-contrast-system-color-changes.html [ Skip ]
 webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-1.html [ Skip ]
 webkit.org/b/298748 css3/text-decoration/text-decoration-line-grammar-error-2.html [ Skip ]

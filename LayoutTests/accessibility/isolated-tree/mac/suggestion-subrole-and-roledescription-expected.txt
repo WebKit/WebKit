@@ -1,0 +1,17 @@
+This tests that suggestion, insertion, and deletion elements have the right subroles.
+PASS: suggestion1.role === 'AXRole: AXGroup'
+PASS: suggestion1.subrole === 'AXSubrole: AXSuggestion'
+PASS: suggestion1.roleDescription === 'AXRoleDescription: suggestion'
+PASS: ins1.subrole === 'AXSubrole: AXInsertStyleGroup'
+PASS: ins2.subrole === 'AXSubrole: AXInsertStyleGroup'
+PASS: del1.subrole === 'AXSubrole: AXDeleteStyleGroup'
+PASS: del2.subrole === 'AXSubrole: AXDeleteStyleGroup'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some test to insert and delete
+this is inserted text.
+This is also inserted text
+This is deleted text
+this is also deleted text

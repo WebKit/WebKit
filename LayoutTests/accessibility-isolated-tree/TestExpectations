@@ -9,11 +9,17 @@ accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash
 # Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
 accessibility/mac/frame-with-title.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]
+accessibility/isolated-tree/mac/pseudo-element-text-markers.html [ Failure ]
 accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
+accessibility/isolated-tree/mac/ruby-hierarchy-roles.html [ Failure Pass ]
 accessibility/mac/search-predicate-from-ignored-element.html [ Failure ]
+accessibility/isolated-tree/mac/search-predicate-from-ignored-element.html [ Failure ]
 accessibility/mac/search-predicate-immediate-descendants-only.html [ Failure ]
+accessibility/isolated-tree/mac/search-predicate-immediate-descendants-only.html [ Failure ]
 accessibility/mac/set-value-editable-types.html [ Failure ]
+accessibility/isolated-tree/mac/set-value-editable-types.html [ Failure ]
 accessibility/mac/setting-attributes-is-asynchronous.html [ Failure ]
+accessibility/isolated-tree/mac/setting-attributes-is-asynchronous.html [ Failure ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 accessibility/isolated-tree/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]
 
@@ -25,6 +31,7 @@ accessibility/frame-disconnect-textmarker-cache-crash.html [ Pass Failure ]
 
 # Test times out without ITM, so we need to reconcile behavior here.
 accessibility/mac/style-range.html [ Pass ]
+accessibility/isolated-tree/mac/style-range.html [ Pass ]
 
 # Flaky: https://bugs.webkit.org/show_bug.cgi?id=290946
 accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Failure ]
@@ -43,6 +50,7 @@ accessibility/text-marker/text-marker-bidi-element-arabic.html [ Failure ]
 accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Failure ]
 
 accessibility/mac/search-text-with-image-hang.html [ Failure ]
+accessibility/isolated-tree/mac/search-text-with-image-hang.html [ Failure ]
 
 # Failures introduced by ENABLE(AX_THREAD_TEXT_APIS).
 accessibility/content-editable-as-textarea.html [ Failure ]
@@ -60,7 +68,9 @@ accessibility/isolated-tree/mac/attributed-string/attributed-string-for-range.ht
 accessibility/mac/line-range-continuity.html [ Failure ]
 accessibility/mac/content-editable-attributed-string.html [ Failure ]
 accessibility/mac/misspelled-attributed-string.html [ Failure ]
+accessibility/isolated-tree/mac/misspelled-attributed-string.html [ Failure ]
 accessibility/mac/spellcheck-with-voiceover.html [ Failure ]
+accessibility/isolated-tree/mac/spellcheck-with-voiceover.html [ Failure ]
 accessibility/mac/text-marker-for-index.html [ Failure ]
 accessibility/mac/text-marker-p-tags.html [ Failure ]
 accessibility/mac/text-marker-string-for-document-end-replaced-node.html [ Failure ]
@@ -72,11 +82,13 @@ accessibility/text-marker/text-marker-previous-next.html [ Failure ]
 accessibility/mac/text-marker-for-index-2.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Failure ]
 accessibility/mac/selected-visible-position-range.html [ Failure ]
+accessibility/isolated-tree/mac/selected-visible-position-range.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Timeout ]
 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 
 # We compute the wrong line index relative to what is actually visually laid out.
 accessibility/mac/replaced-element-line-index-hang.html [ Failure ]
+accessibility/isolated-tree/mac/replaced-element-line-index-hang.html [ Failure ]
 
 accessibility/mac/html5-input-number.html [ Timeout ]
 

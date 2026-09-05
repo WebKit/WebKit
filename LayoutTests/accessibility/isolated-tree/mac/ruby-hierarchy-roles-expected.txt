@@ -1,0 +1,18 @@
+This tests that the ruby containers are exposed with the appropriate hierarchy and roles.
+
+Testing #ruby
+PASS: axRuby.role === expectedRubyRole
+PASS: axRuby.subrole === expectedRubyInlineSubrole
+Testing #rt
+PASS: axRubyText.role === expectedRubyRole
+PASS: axRubyText.subrole === expectedRubyTextSubrole
+Testing #ruby
+PASS: axRuby.role === expectedRubyRole
+Testing #rt
+PASS: axRubyText.role === expectedRubyRole
+PASS: axRubyText.subrole === expectedRubyTextSubrole
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+basetext rubytext

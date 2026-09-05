@@ -1,0 +1,46 @@
+This tests that when we are calling the replace with range API to insert or replace text, value change notifications are posted as expected with correct user info data.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS addedNotification is true
+PASS axContentEditableDiv.replaceTextInRange('Apple', 0, 0) is true
+PASS axContentEditableDiv.stringValue is 'AXValue: Apple'
+PASS axContentEditableDiv.replaceTextInRange('Pie', 0, 5) is true
+PASS axContentEditableDiv.stringValue is 'AXValue: Pie'
+PASS axText.replaceTextInRange('Banana', 0, 0) is true
+PASS axText.stringValue is 'AXValue: Banana'
+PASS axText.replaceTextInRange('Ice-cream', 0, 6) is true
+PASS axText.stringValue is 'AXValue: Ice-cream'
+PASS axTextarea.replaceTextInRange('Cat', 0, 0) is true
+PASS axTextarea.stringValue is 'AXValue: Cat'
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex] is expectedValues[resultIndex]
+PASS actualEditTypes[resultIndex] is "Insert"
+PASS actualChangeTypes[resultIndex] is AXTextStateChangeTypeEdit
+PASS actualChangeValues[resultIndex][0] is expectedValues[resultIndex][0]
+PASS actualEditTypes[resultIndex][0] is "Delete"
+PASS actualChangeValues[resultIndex][1] is expectedValues[resultIndex][1]
+PASS actualEditTypes[resultIndex][1] is "Insert"
+PASS axTextarea.replaceTextInRange('Dog', 0, 3) is true
+PASS axTextarea.stringValue is 'AXValue: Dog'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

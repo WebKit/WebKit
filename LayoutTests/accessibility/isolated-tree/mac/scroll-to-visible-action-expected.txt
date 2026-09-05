@@ -1,0 +1,20 @@
+This tests that the scrollToMakeVisible accessibility action works as expected on the Mac.
+
+Gathered initial button position and now scrolling to make it visible.
+Scroll to make visible was performed. The X position should be the same, but the Y position should have changed.
+PASS: newButtonX == initialButtonX === true
+PASS: newButtonY > initialButtonY === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+
+
+
+
+

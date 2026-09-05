@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body id="body">
+
+<ul>
+  <li id="listitem">
+    Some text.
+    <a href="#" role="button">Like</a>
+  </li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that list items on MacOS do not expose labeling information. MacOS expects only leaf-node type elements to do that.");
+
+    if (window.accessibilityController) {
+
+          // Both the title and description should be empty for the list item.
+          var listitem = accessibilityController.accessibleElementById("listitem");
+          shouldBe("listitem.description", "'AXDescription: '");
+          shouldBe("listitem.title", "'AXTitle: '");
+    }
+
+</script>
+
+</body>
+</html>

@@ -430,7 +430,9 @@ webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 accessibility/mac/search-when-element-starts-in-table.html [ Failure ]
+webkit.org/b/125996 accessibility/isolated-tree/mac/search-when-element-starts-in-table.html [ Failure ]
 webkit.org/b/125996 accessibility/mac/search-predicate-visible-button.html [ Failure ]
+webkit.org/b/125996 accessibility/isolated-tree/mac/search-predicate-visible-button.html [ Failure ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
 webkit.org/b/172544 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe-with-handler.html [ Pass Failure ]
@@ -649,8 +651,10 @@ webkit.org/b/160042 accessibility/mac/value-change/value-change-user-info-conten
 # Skipped because ACCESSIBILITY_LOCAL_FRAME is not compatable with relative frames.
 accessibility/mac/iframe-relative-frame.html [ Skip ]
 accessibility/mac/position-fixed-top-bottom-properties-relative-frame.html [ Skip ]
+accessibility/isolated-tree/mac/position-fixed-top-bottom-properties-relative-frame.html [ Skip ]
 accessibility/mac/svg-relative-frame.html [ Skip ]
 accessibility/mac/table-relative-frame.html [ Skip ]
+accessibility/isolated-tree/mac/table-relative-frame.html [ Skip ]
 
 # Regression from ENABLE(ACCESSIBILITY_LOCAL_FRAME).
 accessibility/mac/visible-content-search-in-scrolled-iframe.html [ Failure ]
@@ -1558,6 +1562,7 @@ webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events
 webkit.org/b/274709 imported/w3c/web-platform-tests/pointerevents/pointer-events-none-skip-scroll-will-change-in-iframe.html [ Pass Failure ]
 
 webkit.org/b/258228 [ Sonoma+ Debug ] accessibility/mac/text-input-session-notifications.html [ Skip ]
+webkit.org/b/258228 [ Sonoma+ Debug ] accessibility/isolated-tree/mac/text-input-session-notifications.html [ Skip ]
 
 # rdar://129424261 (REGRESSION (279443@main): [ Sonoma Release ] WindowServer watchdog timeout on Intel machine)
 [ Release x86_64 ] http/tests/webgpu/webgpu/idl/constructable.html [ Skip ]
@@ -2106,6 +2111,7 @@ webkit.org/b/305958 imported/w3c/web-platform-tests/media-source/mediasource-cha
 webkit.org/b/305959 fast/text/FontFaceSet-status-after-style-update.html [ Pass Failure ]
 
 webkit.org/b/306047 accessibility/mac/replaced-element-text-selection.html [ Pass Failure ]
+webkit.org/b/306047 accessibility/isolated-tree/mac/replaced-element-text-selection.html [ Pass Failure ]
 
 webkit.org/b/306278 [ arm64 ] media/media-source/media-managedmse-resume-after-remove.html [ Pass Failure ]
 

@@ -1,0 +1,13 @@
+This test verifies that label elements expose AXServesAsTitleForUIElements.
+
+PASS: label1.allAttributes().includes('AXServesAsTitleForUIElements') === true
+PASS: label1.labelForElementAtIndex(0).domIdentifier === 'input1'
+PASS: label2.allAttributes().includes('AXServesAsTitleForUIElements') === true
+PASS: label2.labelForElementAtIndex(0).domIdentifier === 'input2'
+PASS: notALabel.allAttributes().includes('AXServesAsTitleForUIElements') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Username  Password
+Not a label
