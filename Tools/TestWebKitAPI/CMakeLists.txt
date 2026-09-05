@@ -281,6 +281,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/DocumentOrder.cpp
         Tests/WebCore/FidoHidMessageTest.cpp
         Tests/WebCore/FileMonitor.cpp
+        Tests/WebCore/FlexLineBreakerTests.cpp
         Tests/WebCore/FloatPointTests.cpp
         Tests/WebCore/FloatQuadTests.cpp
         Tests/WebCore/FloatRectTests.cpp

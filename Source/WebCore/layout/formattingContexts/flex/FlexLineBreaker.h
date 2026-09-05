@@ -33,10 +33,11 @@ namespace WebCore {
 
 // greedyLineBreaks fills each line until the next item would not fit, per
 // https://drafts.csswg.org/css-flexbox-1/#algo-line-break.
-Vector<size_t> greedyLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems);
+WEBCORE_EXPORT Vector<size_t> greedyLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems);
 
 // balancedLineBreaks instead minimizes the sum of squared free space across all lines, per
-// https://drafts.csswg.org/css-flexbox-2/#algo-balance.
-Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems);
+// https://drafts.csswg.org/css-flexbox-2/#algo-balance. The result has at least minimumLineCount
+// lines, unless there are fewer items than that.
+WEBCORE_EXPORT Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes, LayoutUnit mainAxisAvailableSpace, LayoutUnit gapBetweenItems, size_t minimumLineCount);
 
 } // namespace WebCore
