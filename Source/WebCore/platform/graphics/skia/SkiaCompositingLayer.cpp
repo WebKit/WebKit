@@ -1294,15 +1294,6 @@ void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext
 
 #if ENABLE(DAMAGE_TRACKING)
     if (!context.shouldDraw()) {
-        // The filter samples outside the layer, so the whole overlap region is damaged, not just what
-        // the subtree drew into it. Unconditionally, unlike collectGroupDamage(), since what the filter
-        // samples changes whenever the subtree does. Accumulated per frame, not across frames, or a layer
-        // that moves would keep damaging every region it has ever overlapped.
-        // FIXME: Unlike the plain damage path, the previous overlap region is not added here, so a moved
-        // or resized filtered layer leaves its old overlap undamaged. Once this damage feeds composition,
-        // that could leave artifacts for blurred overlapping elements.
-        addGroupDamage(canvas, context, overlapRects);
-
         paintSelfAndChildren(canvas, context);
         return;
     }
