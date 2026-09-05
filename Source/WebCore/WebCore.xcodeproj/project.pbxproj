@@ -3359,6 +3359,9 @@
 		7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD58DFB1F9565A500112791 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CEB57E91F95651500097AEC /* Settings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD58DFD1F9565A800112791 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CEB57EA1F95651500097AEC /* Settings.cpp */; };
+		FE7CF1A501000000000000A3 /* DeferredFetchRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A501000000000000A2 /* DeferredFetchRegistry.h */; };
+		FE7CF1A501000000000000B2 /* DeferredRequestInit.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A501000000000000B1 /* DeferredRequestInit.h */; };
+		FE7CF1A501000000000000C2 /* FetchLaterResult.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A501000000000000C1 /* FetchLaterResult.h */; };
 		7CE1914A1F2A98B900272F78 /* FetchRequestInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE191471F2A98AF00272F78 /* FetchRequestInit.h */; };
 		7CE1914D1F2A9AFB00272F78 /* FetchReferrerPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */; };
 		7CE191511F2A9B0A00272F78 /* FetchRequestMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE1914F1F2A9B0A00272F78 /* FetchRequestMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5355,6 +5358,8 @@
 		BC5EBA110E823E4700B25965 /* BlendingKeyframes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EBA0F0E823E4700B25965 /* BlendingKeyframes.h */; };
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
 		BC60D6E90D28D83400B9918F /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMException.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7CF1A5010000000000E002 /* QuotaExceededError.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A5010000000000E001 /* QuotaExceededError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE7CF1A5010000000000E006 /* QuotaExceededErrorOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7CF1A5010000000000E005 /* QuotaExceededErrorOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60D7C10D29A46300B9918F /* JSDOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D7BF0D29A46300B9918F /* JSDOMException.h */; };
 		BC611FF52EC79F6000904592 /* StyleContain.h in Headers */ = {isa = PBXBuildFile; fileRef = BC611FF32EC79C1E00904592 /* StyleContain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6120002EC7B83D00904592 /* StyleTouchAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC611FFE2EC7ADDE00904592 /* StyleTouchAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15485,6 +15490,13 @@
 		7CDA7912250E88F0007D1B36 /* InnerHTML.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = InnerHTML.idl; sourceTree = "<group>"; };
 		7CDA7919250E8C92007D1B36 /* Element+DOMParsing.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Element+DOMParsing.idl"; sourceTree = "<group>"; };
 		7CDE8EBC1F193BC500168FE7 /* CSSStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleDeclaration.cpp; sourceTree = "<group>"; };
+		FE7CF1A501000000000000A1 /* DeferredFetchRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredFetchRegistry.cpp; sourceTree = "<group>"; };
+		FE7CF1A501000000000000A2 /* DeferredFetchRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredFetchRegistry.h; sourceTree = "<group>"; };
+		FE7CF1A501000000000000B1 /* DeferredRequestInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredRequestInit.h; sourceTree = "<group>"; };
+		FE7CF1A501000000000000B3 /* DeferredRequestInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DeferredRequestInit.idl; sourceTree = "<group>"; };
+		FE7CF1A501000000000000C1 /* FetchLaterResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchLaterResult.h; sourceTree = "<group>"; };
+		FE7CF1A501000000000000C3 /* FetchLaterResult.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = FetchLaterResult.idl; sourceTree = "<group>"; };
+		FE7CF1A501000000000000D1 /* DOMWindow+FetchLater.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "DOMWindow+FetchLater.idl"; sourceTree = "<group>"; };
 		7CE191471F2A98AF00272F78 /* FetchRequestInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetchRequestInit.h; sourceTree = "<group>"; };
 		7CE191491F2A98B000272F78 /* FetchRequestInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequestInit.idl; sourceTree = "<group>"; };
 		7CE1914B1F2A9AFB00272F78 /* FetchReferrerPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FetchReferrerPolicy.h; sourceTree = "<group>"; };
@@ -16902,6 +16914,11 @@
 		978AD67314130A8D00C7CAE3 /* HTMLSpanElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSpanElement.idl; sourceTree = "<group>"; };
 		978CE10C711D6B12D9FBC9C9 /* UnifiedSource37-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource37-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		978D07BD145A0F6C0096908D /* DOMException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMException.cpp; sourceTree = "<group>"; };
+		FE7CF1A5010000000000E000 /* QuotaExceededError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuotaExceededError.cpp; sourceTree = "<group>"; };
+		FE7CF1A5010000000000E001 /* QuotaExceededError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuotaExceededError.h; sourceTree = "<group>"; };
+		FE7CF1A5010000000000E003 /* QuotaExceededError.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = QuotaExceededError.idl; sourceTree = "<group>"; };
+		FE7CF1A5010000000000E004 /* QuotaExceededErrorOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = QuotaExceededErrorOptions.idl; sourceTree = "<group>"; };
+		FE7CF1A5010000000000E005 /* QuotaExceededErrorOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuotaExceededErrorOptions.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* NavigationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* NavigationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationScheduler.h; sourceTree = "<group>"; };
 		97AA3CA3145237CC003E1DA6 /* EventTargetHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetHeaders.h; sourceTree = "<group>"; };
@@ -28072,6 +28089,11 @@
 		41F54F7C1C50C4F600338488 /* fetch */ = {
 			isa = PBXGroup;
 			children = (
+				FE7CF1A501000000000000A1 /* DeferredFetchRegistry.cpp */,
+				FE7CF1A501000000000000A2 /* DeferredFetchRegistry.h */,
+				FE7CF1A501000000000000B1 /* DeferredRequestInit.h */,
+				FE7CF1A501000000000000B3 /* DeferredRequestInit.idl */,
+				FE7CF1A501000000000000D1 /* DOMWindow+FetchLater.idl */,
 				41F54F7D1C50C4F600338488 /* FetchBody.cpp */,
 				41F54F7E1C50C4F600338488 /* FetchBody.h */,
 				41F54F7F1C50C4F600338488 /* FetchBody.idl */,
@@ -28086,6 +28108,8 @@
 				41F54F841C50C4F600338488 /* FetchHeaders.idl */,
 				4191981729950763007576C8 /* FetchHeadersGuard.h */,
 				416E0B37209BC3C2004A95D9 /* FetchIdentifier.h */,
+				FE7CF1A501000000000000C1 /* FetchLaterResult.h */,
+				FE7CF1A501000000000000C3 /* FetchLaterResult.idl */,
 				4147E2B41C89912600A7E715 /* FetchLoader.cpp */,
 				4147E2B51C89912600A7E715 /* FetchLoader.h */,
 				4147E2B61C89912600A7E715 /* FetchLoaderClient.h */,
@@ -43298,6 +43322,11 @@
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
 				83C1F5911EDF69D300410D27 /* QualifiedNameCache.cpp */,
 				83C1F5921EDF69D300410D27 /* QualifiedNameCache.h */,
+				FE7CF1A5010000000000E000 /* QuotaExceededError.cpp */,
+				FE7CF1A5010000000000E001 /* QuotaExceededError.h */,
+				FE7CF1A5010000000000E003 /* QuotaExceededError.idl */,
+				FE7CF1A5010000000000E005 /* QuotaExceededErrorOptions.h */,
+				FE7CF1A5010000000000E004 /* QuotaExceededErrorOptions.idl */,
 				93F925420F7EF5B8007E37C9 /* RadioButtonGroups.cpp */,
 				93F925410F7EF5B8007E37C9 /* RadioButtonGroups.h */,
 				7C6771282527D28100FDEF00 /* Range+CSSOMView.idl */,
@@ -45354,6 +45383,8 @@
 				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				E4F38D1B2626F13B007B1064 /* DefaultResourceLoadPriority.h in Headers */,
 				CD83D36221122A210076E11C /* DeferrableTask.h in Headers */,
+				FE7CF1A501000000000000A3 /* DeferredFetchRegistry.h in Headers */,
+				FE7CF1A501000000000000B2 /* DeferredRequestInit.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
 				FD31602E12B0267600C1A359 /* DelayNode.h in Headers */,
 				83A2ABDB24D86DE000E2D73D /* DelayOptions.h in Headers */,
@@ -45695,6 +45726,7 @@
 				416E0B3A209BC3CB004A95D9 /* FetchIdentifier.h in Headers */,
 				CEBB8C3320786DCB00039547 /* FetchIdioms.h in Headers */,
 				EB83220A2D70DC7F009515DA /* FetchingWorkerIdentifier.h in Headers */,
+				FE7CF1A501000000000000C2 /* FetchLaterResult.h in Headers */,
 				4161E2D51FE48DC500EC2E96 /* FetchLoader.h in Headers */,
 				517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */,
 				41AD753A1CEF6BD100A31486 /* FetchOptions.h in Headers */,
@@ -48331,6 +48363,8 @@
 				9BAEE92C22388A7D004157A9 /* Quirks.h in Headers */,
 				7ABB0F602CE7C170009A837D /* QuirksData.h in Headers */,
 				05D4770CFFB4C18C6BA6928C /* QuirkTable.h in Headers */,
+				FE7CF1A5010000000000E002 /* QuotaExceededError.h in Headers */,
+				FE7CF1A5010000000000E006 /* QuotaExceededErrorOptions.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				B22279720D00BF220071B782 /* RadialGradientAttributes.h in Headers */,
 				93F925430F7EF5B8007E37C9 /* RadioButtonGroups.h in Headers */,

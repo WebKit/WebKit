@@ -176,6 +176,7 @@ Modules/entriesapi/FileSystemEntriesCallback.cpp
 Modules/entriesapi/FileSystemEntry.cpp
 Modules/entriesapi/FileSystemFileEntry.cpp
 Modules/entriesapi/HTMLInputElementEntriesAPI.cpp
+Modules/fetch/DeferredFetchRegistry.cpp
 Modules/fetch/FetchBody.cpp @cost:3
 Modules/fetch/FetchBodyConsumer.cpp @cost:3
 Modules/fetch/FetchBodyOwner.cpp @cost:3
@@ -1347,6 +1348,7 @@ dom/CustomElementRegistry.cpp
 dom/CustomEvent.cpp
 dom/CustomStateSet.cpp
 dom/DOMException.cpp
+dom/QuotaExceededError.cpp
 dom/DOMImplementation.cpp
 dom/DOMPointInit.cpp
 dom/DOMPointReadOnly.cpp
@@ -4237,6 +4239,7 @@ JSDatabaseCallback.cpp
 JSDecompressionStream.cpp
 JSDecompressionStreamDecoder.cpp
 JSDedicatedWorkerGlobalScope.cpp
+JSDeferredRequestInit.cpp
 JSDelayNode.cpp
 JSDelayOptions.cpp
 JSDeprecatedCSSOMCounter.cpp
@@ -4314,6 +4317,7 @@ JSFaceDetectorOptions.cpp
 JSFetchBody.cpp
 JSFetchEvent.cpp
 JSFetchHeaders.cpp
+JSFetchLaterResult.cpp
 JSFetchReferrerPolicy.cpp
 JSFetchRequest.cpp
 JSFetchRequestCache.cpp
@@ -4912,6 +4916,8 @@ JSPushSubscriptionOptions.cpp
 JSPushSubscriptionOptionsInit.cpp
 JSQueuingStrategy.cpp
 JSQueuingStrategySize.cpp
+JSQuotaExceededError.cpp
+JSQuotaExceededErrorOptions.cpp
 JSRTCAnswerOptions.cpp
 JSRTCCertificate.cpp
 JSRTCConfiguration.cpp

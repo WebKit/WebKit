@@ -1852,7 +1852,8 @@
             // Check that the exception is from the right global.  This check is last
             // so more specific, and more informative, checks on the properties can
             // happen in case a totally incorrect exception is thrown.
-            assert(e.constructor === constructor,
+            var isQuotaSubclass = self.QuotaExceededError && constructor === self.DOMException && e.constructor === self.QuotaExceededError;
+            assert(e.constructor === constructor || isQuotaSubclass,
                    assertion_type, description,
                    "${func} threw an exception from the wrong global",
                    {func});

@@ -421,7 +421,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/entriesapi/FileSystemEntryCallback.idl
     Modules/entriesapi/FileSystemFileEntry.idl
 
+    Modules/fetch/DOMWindow+FetchLater.idl
+    Modules/fetch/DeferredRequestInit.idl
     Modules/fetch/FetchHeaders.idl
+    Modules/fetch/FetchLaterResult.idl
     Modules/fetch/FetchReferrerPolicy.idl
     Modules/fetch/FetchRequest.idl
     Modules/fetch/FetchRequestCache.idl
@@ -1206,6 +1209,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ProcessingInstruction.idl
     dom/ProgressEvent.idl
     dom/PromiseRejectionEvent.idl
+    dom/QuotaExceededError.idl
+    dom/QuotaExceededErrorOptions.idl
     dom/Range.idl
     dom/ReducerCallback.idl
     dom/RequestAnimationFrameCallback.idl

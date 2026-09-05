@@ -42,6 +42,20 @@ namespace WebKit {
 
 using namespace WebCore;
 
+void PingLoad::create(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
+{
+    Ref pingLoad = adoptRef(*new PingLoad(networkProcess, sessionID, WTF::move(parameters), WTF::move(completionHandler)));
+    pingLoad->initialize(networkProcess);
+    pingLoad->m_selfReference = WTF::move(pingLoad);
+}
+
+void PingLoad::create(NetworkConnectionToWebProcess& connection, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
+{
+    Ref pingLoad = adoptRef(*new PingLoad(connection, WTF::move(parameters), WTF::move(completionHandler)));
+    pingLoad->initialize(connection.networkProcess());
+    pingLoad->m_selfReference = WTF::move(pingLoad);
+}
+
 PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
     : m_sessionID(sessionID)
     , m_parameters(WTF::move(parameters))
@@ -49,7 +63,6 @@ PingLoad::PingLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, Net
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { m_parameters.options }, m_sessionID, m_parameters.webPageProxyID, WTF::move(m_parameters.originalRequestHeaders), URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, m_parameters.request.httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections))
 {
-    initialize(networkProcess);
 }
 
 PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const ResourceResponse&)>&& completionHandler)
@@ -62,8 +75,6 @@ PingLoad::PingLoad(NetworkConnectionToWebProcess& connection, NetworkResourceLoa
 {
     for (Ref file : borrow(m_blobFiles).get())
         file->prepareForFileAccess();
-
-    initialize(Ref { connection.networkProcess() });
 }
 
 void PingLoad::initialize(NetworkProcess& networkProcess)

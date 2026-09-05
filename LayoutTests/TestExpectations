@@ -1451,7 +1451,8 @@ webkit.org/b/247283 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 
 # Fetch features that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
-imported/w3c/web-platform-tests/fetch/fetch-later [ Skip ]
+
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/send-on-deactivate.https.window.html [ Pass Failure ]
 
 # This fetch test crashes.
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/crashtests/huge-fetch.any.serviceworker.html [ Skip ]
@@ -5907,8 +5908,6 @@ imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context
 # Needs display box support.
 fast/layoutformattingcontext/ [ Skip ]
 
-# This webstorage test has crashed since it was imported.
-imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
 # This webstorage test has timed out since it was imported.
 imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 

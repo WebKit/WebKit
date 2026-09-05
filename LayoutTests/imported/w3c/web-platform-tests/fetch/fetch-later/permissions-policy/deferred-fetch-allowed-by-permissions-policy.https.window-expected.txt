@@ -1,0 +1,6 @@
+
+PASS Permissions policy header: "deferred-fetch=*" allows fetchLater() in the top-level document.
+PASS Permissions policy header: "deferred-fetch=*" allows fetchLater() in the same-origin iframe.
+PASS Permissions policy header: "deferred-fetch=*" allows fetchLater() in the cross-origin iframe.
+PASS Permissions policy header: "deferred-fetch=*" allow="deferred-fetch" allows fetchLater() in the cross-origin iframe.
+

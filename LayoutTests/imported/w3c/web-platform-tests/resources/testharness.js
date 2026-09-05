@@ -2292,6 +2292,132 @@
     expose_assert(assert_throws_dom, "assert_throws_dom");
 
     /**
+     * Assert a `QuotaExceededError` with the expected values is thrown.
+     *
+     * There are two ways of calling `assert_throws_quotaexceedederror`:
+     *
+     * 1) If the `QuotaExceededError` is expected to come from the
+     *    current global, the first argument should be the function
+     *    expected to throw, the second and a third the expected
+     *    `requested` and `quota` property values, and the fourth,
+     *    optional, argument is the assertion description.
+     *
+     * 2) If the `QuotaExceededError` is expected to come from some
+     *    other global, the first argument should be the
+     *    `QuotaExceededError` constructor from that global, the second
+     *    argument should be the function expected to throw, the third
+     *    and fourth the expected `requested` and `quota` property
+     *    values, and the fifth, optional, argument is the assertion
+     *    description.
+     *
+     * For the `requested` and `quota` values, instead of `null` or a
+     * number, the caller can provide a function which determines
+     * whether the value is acceptable by returning a boolean.
+     */
+    function assert_throws_quotaexceedederror(funcOrConstructor, requestedOrFunc, quotaOrRequested, descriptionOrQuota, maybeDescription)
+    {
+        let constructor, func, requested, quota, description;
+        if (funcOrConstructor.name === "QuotaExceededError") {
+            constructor = funcOrConstructor;
+            func = requestedOrFunc;
+            requested = quotaOrRequested;
+            quota = descriptionOrQuota;
+            description = maybeDescription;
+        } else {
+            constructor = self.QuotaExceededError;
+            func = funcOrConstructor;
+            requested = requestedOrFunc;
+            quota = quotaOrRequested;
+            description = descriptionOrQuota;
+            assert(maybeDescription === undefined,
+                   "Too many args passed to no-constructor version of assert_throws_quotaexceedederror");
+        }
+        assert_throws_quotaexceedederror_impl(func, requested, quota, description, "assert_throws_quotaexceedederror", constructor);
+    }
+    expose_assert(assert_throws_quotaexceedederror, "assert_throws_quotaexceedederror");
+
+    /**
+     * Similar to `assert_throws_quotaexceedederror` but allows
+     * specifying the assertion type
+     * (`"assert_throws_quotaexceedederror"` or
+     * `"promise_rejects_quotaexceedederror"`, in practice). The
+     * `constructor` argument must be the `QuotaExceededError`
+     * constructor from the global we expect the exception to come from.
+     */
+    function assert_throws_quotaexceedederror_impl(func, requested, quota, description, assertion_type, constructor)
+    {
+        try {
+            func.call(this);
+            assert(false, assertion_type, description, "${func} did not throw",
+                   {func});
+        } catch (e) {
+            if (e instanceof AssertionError) {
+                throw e;
+            }
+
+            assert(typeof e === "object",
+                   assertion_type, description,
+                   "${func} threw ${e} with type ${type}, not an object",
+                   {func, e, type:typeof e});
+
+            assert(e !== null,
+                   assertion_type, description,
+                   "${func} threw null, not an object",
+                   {func});
+
+            assert(requested === null ||
+                   typeof requested === "number" ||
+                   typeof requested === "function",
+                   assertion_type, description,
+                   "${requested} is not null, a number, or a function",
+                   {requested});
+            assert(quota === null ||
+                   typeof quota === "number" ||
+                   typeof quota === "function",
+                   assertion_type, description,
+                   "${quota} is not null or a number",
+                   {quota});
+
+            const required_props = {
+                code: 22,
+                name: "QuotaExceededError"
+            };
+            if (typeof requested !== "function") {
+                required_props.requested = requested;
+            }
+            if (typeof quota !== "function") {
+                required_props.quota = quota;
+            }
+
+            for (const prop in required_props) {
+                const expected = required_props[prop];
+                assert(prop in e && e[prop] == expected,
+                       assertion_type, description,
+                       "${func} threw ${e} that is not a correct QuotaExceededError: property ${prop} is equal to ${actual}, expected ${expected}",
+                       {func, e, prop, actual:e[prop], expected});
+            }
+
+            if (typeof requested === "function") {
+                assert(requested(e.requested),
+                       assertion_type, description,
+                       "${func} threw ${e} that is not a correct QuotaExceededError: requested value did not pass the requested predicate",
+                       {func, e});
+            }
+            if (typeof quota === "function") {
+                assert(quota(e.quota),
+                       assertion_type, description,
+                       "${func} threw ${e} that is not a correct QuotaExceededError: quota value did not pass the quota predicate",
+                       {func, e});
+            }
+
+            assert(e.constructor === constructor,
+                   assertion_type, description,
+                   "${func} threw an exception from the wrong global",
+                   {func});
+        }
+    }
+
+    /**
      * Similar to assert_throws_dom but allows specifying the assertion type
      * (assert_throws_dom or promise_rejects_dom, in practice).  The
      * "constructor" argument must be the DOMException constructor from the
@@ -2438,7 +2564,10 @@
             // Check that the exception is from the right global.  This check is last
             // so more specific, and more informative, checks on the properties can
             // happen in case a totally incorrect exception is thrown.
-            assert(e.constructor === constructor,
+            // As of WebIDL, QuotaExceededError is a DOMException subclass, so allow
+            // it when the caller asserts on DOMException.
+            var isQuotaSubclass = self.QuotaExceededError && constructor === self.DOMException && e.constructor === self.QuotaExceededError;
+            assert(e.constructor === constructor || isQuotaSubclass,
                    assertion_type, description,
                    "${func} threw an exception from the wrong global",
                    {func});

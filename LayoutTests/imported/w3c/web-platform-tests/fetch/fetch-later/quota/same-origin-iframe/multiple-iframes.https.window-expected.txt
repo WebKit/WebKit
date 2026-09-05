@@ -1,0 +1,3 @@
+
+PASS fetchLater() request quota are shared by same-origin iframes and root.
+

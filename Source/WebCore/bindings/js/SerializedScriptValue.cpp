@@ -80,6 +80,7 @@
 #include "JSWebCodecsEncodedVideoChunk.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "JSWritableStream.h"
+#include "QuotaExceededError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValueInternals.h"
@@ -1193,6 +1194,16 @@ private:
         write(errorInformation->column);
         writeNullableString(errorInformation->sourceURL);
         writeNullableString(errorInformation->stack);
+
+        RefPtr quotaExceededError = dynamicDowncast<QuotaExceededError>(exception);
+        auto quota = quotaExceededError ? quotaExceededError->quota() : std::nullopt;
+        write(!!quota);
+        if (quota)
+            write(*quota);
+        auto requested = quotaExceededError ? quotaExceededError->requested() : std::nullopt;
+        write(!!requested);
+        if (requested)
+            write(*requested);
     }
 
 public:
@@ -3503,7 +3514,22 @@ private:
                 return JSValue();
         }
 
-        auto exception = DOMException::create(message->string(), name->string());
+        std::optional<double> quota;
+        std::optional<double> requested;
+        if (m_majorVersion >= 17) {
+            bool hasQuota;
+            if (!read(hasQuota) || (hasQuota && !read(quota.emplace())))
+                return JSValue();
+            bool hasRequested;
+            if (!read(hasRequested) || (hasRequested && !read(requested.emplace())))
+                return JSValue();
+        }
+
+        Ref<DOMException> exception = [&]() -> Ref<DOMException> {
+            if (name->string() == "QuotaExceededError"_s)
+                return QuotaExceededError::create(message->string(), { quota, requested });
+            return DOMException::create(message->string(), name->string());
+        }();
         JSValue result = getJSValue(exception);
         // Creating the wrapper captured a stack trace of the frame doing the deserializing; replace
         // it with the serialized one so the clone reports the same stack as the original did.
