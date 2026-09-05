@@ -342,7 +342,7 @@ public:
     Node(const Node&) = default;
 
     Node(NodeType op, NodeOrigin nodeOrigin, const AdjacencyList& children)
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(children)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -355,7 +355,7 @@ public:
     
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, NodeOrigin nodeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -369,7 +369,7 @@ public:
 
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -384,7 +384,7 @@ public:
 
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -399,7 +399,7 @@ public:
 
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -415,7 +415,7 @@ public:
 
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, NodeOrigin nodeOrigin, OpInfo imm1, OpInfo imm2, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)
@@ -431,7 +431,7 @@ public:
     
     // Construct a node with a variable number of children and two immediate values.
     Node(VarArgTag, NodeType op, NodeOrigin nodeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
-        : origin(nodeOrigin)
+        : origin(WTF::move(nodeOrigin))
         , children(AdjacencyList::Variable, firstChild, numChildren)
         , m_virtualRegister(VirtualRegister())
         , m_refCount(1)

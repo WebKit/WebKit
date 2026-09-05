@@ -65,7 +65,7 @@ public:
     template<typename... Params>
     Node* insertNode(size_t index, SpeculatedType type, Params... params)
     {
-        return insert(index, m_graph.addNode(type, params...));
+        return insert(index, m_graph.addNode(type, WTF::move(params)...));
     }
     
     Node* insertConstant(size_t index, NodeOrigin, FrozenValue*, NodeType op = JSConstant);

@@ -1105,7 +1105,7 @@ private:
         CodeOrigin semantic = m_currentSemanticOrigin.isSet() ? m_currentSemanticOrigin : currentCodeOrigin();
         CodeOrigin forExit = m_currentExitOrigin.isSet() ? m_currentExitOrigin : currentCodeOrigin();
 
-        return NodeOrigin(semantic, forExit, m_exitOK);
+        return NodeOrigin(WTF::move(semantic), WTF::move(forExit), m_exitOK);
     }
     
     BranchData* branchData(unsigned taken, unsigned notTaken)

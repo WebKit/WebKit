@@ -256,14 +256,14 @@ public:
     template<typename... Params>
     Node* addNode(Params... params)
     {
-        Node* node = m_nodes.addNew(params...);
+        Node* node = m_nodes.addNew(WTF::move(params)...);
         return node;
     }
 
     template<typename... Params>
     Node* addNode(SpeculatedType type, Params... params)
     {
-        Node* node = addNode(params...);
+        Node* node = addNode(WTF::move(params)...);
         node->predict(type);
         return node;
     }
