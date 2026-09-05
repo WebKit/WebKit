@@ -1506,6 +1506,15 @@ static bool shouldExcludeTextRunsForPseudoElement(std::optional<PseudoElementTyp
     return true;
 }
 
+static bool isPlaceholderText(const RenderText& renderText)
+{
+    RefPtr parentElement = renderText.textNode() ? renderText.textNode()->parentElement() : nullptr;
+    if (!parentElement)
+        return false;
+    RefPtr textControl = dynamicDowncast<HTMLTextFormControlElement>(parentElement->shadowHost());
+    return textControl && textControl->placeholderElement() == parentElement;
+}
+
 AXTextRuns AccessibilityRenderObject::textRuns()
 {
     constexpr std::array<uint16_t, 2> lengthOneDomOffsets = { 0, 1 };
@@ -1559,6 +1568,9 @@ AXTextRuns AccessibilityRenderObject::textRuns()
 
     WeakPtr renderText = dynamicDowncast<RenderText>(renderer.get());
     if (!renderText)
+        return { };
+
+    if (isPlaceholderText(*renderText))
         return { };
 
     if (CheckedPtr parent = renderText->parent()) {
