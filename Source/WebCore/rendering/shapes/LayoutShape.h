@@ -73,7 +73,7 @@ public:
 
     static Ref<const LayoutShape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, LayoutUnit borderBoxLogicalWidth, WritingMode, float logicalMargin, Style::ZoomFactor);
     static Ref<const LayoutShape> createRasterShape(Image*, float threshold, const LayoutRect& logicalImageRect, const LayoutRect& logicalMarginRect, WritingMode, float logicalMargin);
-    static Ref<const LayoutShape> createBoxShape(const LayoutRoundedRect&, WritingMode, float logicalMargin);
+    static Ref<const LayoutShape> createBoxShape(const LayoutRoundedRect&, Vector<FloatPoint>&& contour, WritingMode, float logicalMargin);
 
     virtual ~LayoutShape() = default;
 

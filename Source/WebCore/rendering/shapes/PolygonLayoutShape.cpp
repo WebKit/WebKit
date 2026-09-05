@@ -34,20 +34,15 @@
 
 namespace WebCore {
 
-static inline FloatSize inwardEdgeNormal(const FloatPolygonEdge& edge)
+static inline FloatSize inwardEdgeNormal(const FloatPoint& vertex1, const FloatPoint& vertex2)
 {
-    FloatSize edgeDelta = edge.vertex2() - edge.vertex1();
+    FloatSize edgeDelta = vertex2 - vertex1;
     if (!edgeDelta.width())
         return FloatSize((edgeDelta.height() > 0 ? -1 : 1), 0);
     if (!edgeDelta.height())
         return FloatSize(0, (edgeDelta.width() > 0 ? 1 : -1));
     float edgeLength = edgeDelta.diagonalLength();
     return FloatSize(-edgeDelta.height() / edgeLength, edgeDelta.width() / edgeLength);
-}
-
-static inline FloatSize outwardEdgeNormal(const FloatPolygonEdge& edge)
-{
-    return -inwardEdgeNormal(edge);
 }
 
 float OffsetPolygonEdge::xIntercept(float y) const
@@ -117,6 +112,23 @@ LayoutRect PolygonLayoutShape::shapeMarginLogicalBoundingBox() const
     return LayoutRect(box);
 }
 
+void uniteEdgeExcludedInterval(FloatShapeInterval& excludedInterval, const FloatPoint& vertex1, const FloatPoint& vertex2, float y1, float y2, float shapeMargin)
+{
+    if (std::max(vertex1.y(), vertex2.y()) + shapeMargin < y1 || std::min(vertex1.y(), vertex2.y()) - shapeMargin > y2)
+        return;
+
+    if (!shapeMargin) {
+        excludedInterval.unite(OffsetPolygonEdge(vertex1, vertex2, FloatSize()).clippedEdgeXRange(y1, y2));
+        return;
+    }
+
+    auto normal = inwardEdgeNormal(vertex1, vertex2);
+    excludedInterval.unite(OffsetPolygonEdge(vertex1, vertex2, -normal * shapeMargin).clippedEdgeXRange(y1, y2));
+    excludedInterval.unite(OffsetPolygonEdge(vertex1, vertex2, normal * shapeMargin).clippedEdgeXRange(y1, y2));
+    excludedInterval.unite(clippedCircleXRange(vertex1, shapeMargin, y1, y2));
+    excludedInterval.unite(clippedCircleXRange(vertex2, shapeMargin, y1, y2));
+}
+
 LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     float y1 = logicalTop;
@@ -129,14 +141,7 @@ LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layou
     for (const FloatPolygonEdge& edge : m_polygon.overlappingEdges(y1 - shapeMargin(), y2 + shapeMargin())) {
         if (edge.maxY() == edge.minY())
             continue;
-        if (!shapeMargin())
-            excludedInterval.unite(OffsetPolygonEdge(edge, FloatSize()).clippedEdgeXRange(y1, y2));
-        else {
-            excludedInterval.unite(OffsetPolygonEdge(edge, outwardEdgeNormal(edge) * shapeMargin()).clippedEdgeXRange(y1, y2));
-            excludedInterval.unite(OffsetPolygonEdge(edge, inwardEdgeNormal(edge) * shapeMargin()).clippedEdgeXRange(y1, y2));
-            excludedInterval.unite(clippedCircleXRange(edge.vertex1(), shapeMargin(), y1, y2));
-            excludedInterval.unite(clippedCircleXRange(edge.vertex2(), shapeMargin(), y1, y2));
-        }
+        uniteEdgeExcludedInterval(excludedInterval, edge.vertex1(), edge.vertex2(), y1, y2, shapeMargin());
     }
 
     if (excludedInterval.isEmpty())

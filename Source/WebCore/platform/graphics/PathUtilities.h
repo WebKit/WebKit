@@ -27,16 +27,26 @@
 
 #include <WebCore/FloatRoundedRect.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Path;
+
+// A path flattened into polylines: one implicitly-closed vertex list per subpath.
+using PathContours = Vector<Vector<FloatPoint>>;
+
+// Below a device pixel but not too small to keep point counts reasonable.
+constexpr float defaultPathFlatteningTolerance = 0.05f;
 
 class PathUtilities {
 public:
     WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
     WEBCORE_EXPORT static Path pathWithShrinkWrappedRects(const Vector<FloatRect>&, const CornerRadii&);
     WEBCORE_EXPORT static Vector<Path> pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius);
+
+    WEBCORE_EXPORT static PathContours flattenPath(const Path&, float tolerance = defaultPathFlatteningTolerance);
+    WEBCORE_EXPORT static Vector<FloatPoint> flattenPathToContour(const Path&, float tolerance = defaultPathFlatteningTolerance);
 };
 
 } // namespace WebCore

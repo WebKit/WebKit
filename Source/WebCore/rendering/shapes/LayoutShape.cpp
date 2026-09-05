@@ -235,12 +235,11 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     return createShape();
 }
 
-Ref<const LayoutShape> LayoutShape::createBoxShape(const LayoutRoundedRect& roundedRect, WritingMode writingMode, float logicalMargin)
+Ref<const LayoutShape> LayoutShape::createBoxShape(const LayoutRoundedRect& roundedRect, Vector<FloatPoint>&& contour, WritingMode writingMode, float logicalMargin)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
-    FloatRoundedRect bounds { roundedRect };
-    auto shape = adoptRef(*new BoxLayoutShape(bounds));
+    Ref shape = adoptRef(*new BoxLayoutShape(FloatRoundedRect { roundedRect }, WTF::move(contour)));
     shape->m_writingMode = writingMode;
     shape->m_margin = logicalMargin;
 

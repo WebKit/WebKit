@@ -40,6 +40,7 @@
 #include "LayoutRect.h"
 #include "LayoutRoundedRect.h"
 #include "Path.h"
+#include "PathUtilities.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <cmath>
 
@@ -89,7 +90,7 @@ static RectCorners<float> cornerCurvaturesFromStyle(const Style::ComputedStyle& 
 static void buildCornerInputs(const FloatRoundedRect&, const RectCorners<float>&,
     double leftWidth, double topWidth, double rightWidth, double bottomWidth, RectCorners<CornerInput>&);
 
-static float constrainedRadiiScale(const LayoutRect& borderRect, const LayoutRoundedRectRadii& radii, const RectCorners<float>& cornerCurvatures)
+float BorderShape::constrainedRadiiScale(const LayoutRect& borderRect, const LayoutRoundedRectRadii& radii, const RectCorners<float>& cornerCurvatures)
 {
     auto adjacent = calcBorderRadiiConstraintScaleFor(borderRect, radii);
 
@@ -375,6 +376,26 @@ bool BorderShape::hasNonRoundCornerShape() const
         || (m_cornerCurvatures.bottomRight() != 1.0f && !radii.bottomRight().isEmpty());
 }
 
+Vector<FloatPoint> BorderShape::outerShapeAsPolygon(float tolerance) const
+{
+    if (!hasNonRoundCornerShape())
+        return { };
+
+    // This doesn't do pixel snapping, but the result is used for layout purposes, so that's OK.
+    auto path = pathForOuterCornerShape(FloatRoundedRect { m_borderRect }, offsetReferenceRect());
+    return PathUtilities::flattenPathToContour(path, tolerance);
+}
+
+Vector<FloatPoint> BorderShape::innerShapeAsPolygon(float tolerance) const
+{
+    if (!hasNonRoundCornerShape())
+        return { };
+
+    // This doesn't do pixel snapping, but the result is used for layout purposes, so that's OK.
+    auto path = pathForInnerCornerShape(FloatRoundedRect { m_borderRect }, FloatRoundedRect { m_innerEdgeRect }, offsetReferenceRect());
+    return PathUtilities::flattenPathToContour(path, tolerance);
+}
+
 Path BorderShape::pathForOuterRoundedRect(const FloatRoundedRect& outerSnapped) const
 {
     Path path;
@@ -395,6 +416,13 @@ std::optional<FloatRoundedRect> BorderShape::snappedOffsetReferenceRect(float de
     if (!m_offsetReferenceRect)
         return std::nullopt;
     return m_offsetReferenceRect->pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+}
+
+std::optional<FloatRoundedRect> BorderShape::offsetReferenceRect() const
+{
+    if (!m_offsetReferenceRect)
+        return std::nullopt;
+    return FloatRoundedRect { *m_offsetReferenceRect };
 }
 
 static bool cornersHaveConvexSuperellipse(const RectCorners<float>& cornerCurvatures)

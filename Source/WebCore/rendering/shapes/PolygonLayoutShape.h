@@ -43,6 +43,12 @@ public:
     {
     }
 
+    OffsetPolygonEdge(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatSize& offset)
+        : m_vertex1(vertex1 + offset)
+        , m_vertex2(vertex2 + offset)
+    {
+    }
+
     const FloatPoint& vertex1() const LIFETIME_BOUND override { return m_vertex1; }
     const FloatPoint& vertex2() const LIFETIME_BOUND override { return m_vertex2; }
 
@@ -55,6 +61,11 @@ private:
     FloatPoint m_vertex1;
     FloatPoint m_vertex2;
 };
+
+// Unites the horizontal extent that the edge from vertex1 to vertex2, grown by `shapeMargin`, covers
+// between the y1 and y2 scanlines. Walking every edge of a closed contour this way gives the widest
+// extent of the whole shape in that band.
+void uniteEdgeExcludedInterval(FloatShapeInterval&, const FloatPoint& vertex1, const FloatPoint& vertex2, float y1, float y2, float shapeMargin);
 
 class PolygonLayoutShape : public LayoutShape {
     WTF_MAKE_NONCOPYABLE(PolygonLayoutShape);

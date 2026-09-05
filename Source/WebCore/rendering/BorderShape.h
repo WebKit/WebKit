@@ -31,10 +31,12 @@
 
 #include "FloatRoundedRect.h"
 #include "LayoutRoundedRect.h"
+#include "PathUtilities.h"
 #include "RectCorners.h"
 #include "RectEdges.h"
 #include "RenderStyleConstants.h"
 #include <optional>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -88,6 +90,15 @@ public:
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
     static std::optional<Path> pathForShapedRect(const FloatRoundedRect&, const RectCorners<float>& cornerCurvatures);
+
+    // https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii, combined with the
+    // adjacent-corner constraint. Callers building radii by hand must scale them by this.
+    static float constrainedRadiiScale(const LayoutRect& borderRect, const LayoutRoundedRectRadii&, const RectCorners<float>& cornerCurvatures);
+
+    // Polyline approximations of the border and padding edges, in layout coordinates, accurate to within
+    // `tolerance`. Returns an empty vecotr when every corner is round, since callers can use rounded rect functions in that case.
+    Vector<FloatPoint> outerShapeAsPolygon(float tolerance = defaultPathFlatteningTolerance) const;
+    Vector<FloatPoint> innerShapeAsPolygon(float tolerance = defaultPathFlatteningTolerance) const;
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
@@ -144,6 +155,8 @@ private:
     FloatRoundedRect snappedInnerEdgeRectForPainting(float deviceScaleFactor) const;
 
     std::optional<FloatRoundedRect> snappedOffsetReferenceRect(float deviceScaleFactor) const;
+    // Only for use in contexts where pixel snapping doesn't matter.
+    std::optional<FloatRoundedRect> offsetReferenceRect() const;
 
     Path pathForOuterRoundedRect(const FloatRoundedRect& outerSnapped) const;
     Path pathForInnerRoundedRect(const FloatRoundedRect& innerSnapped) const;

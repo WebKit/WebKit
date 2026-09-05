@@ -316,6 +316,36 @@ FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter
     };
 }
 
+static void appendFlattenedBezier(Vector<FloatPoint>& points, const BezierSegment& curve, float tolerance, unsigned depth)
+{
+    // Deep enough that a curve spanning the whole viewport still flattens well within `tolerance`.
+    constexpr unsigned maximumDepth = 16;
+
+    auto chord = curve.end - curve.start;
+    auto chordLength = chord.diagonalLength();
+    auto distanceFromChord = [&](const FloatPoint& point) {
+        auto startToPoint = point - curve.start;
+        if (!chordLength)
+            return startToPoint.diagonalLength();
+        return std::abs(chord.width() * startToPoint.height() - chord.height() * startToPoint.width()) / chordLength;
+    };
+
+    bool isFlatEnough = distanceFromChord(curve.controlPoint1) <= tolerance && distanceFromChord(curve.controlPoint2) <= tolerance;
+    if (isFlatEnough || depth >= maximumDepth) {
+        points.append(curve.end);
+        return;
+    }
+
+    auto [firstHalf, secondHalf] = splitBezier(curve, 0.5f);
+    appendFlattenedBezier(points, firstHalf, tolerance, depth + 1);
+    appendFlattenedBezier(points, secondHalf, tolerance, depth + 1);
+}
+
+void appendFlattenedBezier(Vector<FloatPoint>& points, const BezierSegment& curve, float tolerance)
+{
+    appendFlattenedBezier(points, curve, tolerance, 0);
+}
+
 Vector<BezierSegment> trimBezierToRect(const BezierSegment& curve, const FloatRect& rect)
 {
     auto controlBounds = controlPointBounds(curve);

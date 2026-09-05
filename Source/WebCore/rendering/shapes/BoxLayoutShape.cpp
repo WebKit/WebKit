@@ -31,6 +31,7 @@
 #include "BoxLayoutShape.h"
 
 #include "BorderShape.h"
+#include "PolygonLayoutShape.h"
 #include "RenderBoxInlines.h"
 #include <wtf/MathExtras.h>
 
@@ -63,38 +64,56 @@ static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRo
         computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
 }
 
-LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
+LayoutRoundedRect BoxShapeGeometry::roundedRect() const
+{
+    return edge == Edge::Inner ? borderShape.deprecatedInnerRoundedRect() : borderShape.deprecatedRoundedRect();
+}
+
+Vector<FloatPoint> BoxShapeGeometry::contour() const
+{
+    return edge == Edge::Inner ? borderShape.innerShapeAsPolygon() : borderShape.outerShapeAsPolygon();
+}
+
+BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
     CheckedRef style = renderer.style();
     switch (box) {
     case CSSBoxType::MarginBox: {
-        if (!style->border().hasBorderRadius())
-            return LayoutRoundedRect(renderer.marginBoxRect(), LayoutRoundedRect::Radii());
-
         auto marginBox = renderer.marginBoxRect();
+        if (!style->border().hasBorderRadius())
+            return { BorderShape { marginBox, { } }, BoxShapeGeometry::Edge::Outer };
+
         auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
-        LayoutRoundedRect::Radii radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
-        radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
-        return LayoutRoundedRect(marginBox, radii);
+        auto cornerCurvatures = borderShape.cornerCurvatures();
+        auto radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
+        // Expanding the radii for the margins can push concave corners into each other, so re-run the
+        // opposite-corner constraint rather than just the adjacent-corner one.
+        radii.scale(BorderShape::constrainedRadiiScale(marginBox, radii, cornerCurvatures));
+        if (!radii.areRenderableInRect(marginBox))
+            radii.makeRenderableInRect(marginBox);
+        return { BorderShape { marginBox, { }, radii, cornerCurvatures }, BoxShapeGeometry::Edge::Outer };
     }
     case CSSBoxType::PaddingBox:
-        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedInnerRoundedRect();
+        return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
-    case CSSBoxType::ContentBox: {
-        auto borderShape = renderer.borderShapeForContentClipping(renderer.borderBoxRect());
-        return borderShape.deprecatedInnerRoundedRect();
-    }
+    case CSSBoxType::ContentBox:
+        return { renderer.borderShapeForContentClipping(renderer.borderBoxRect()), BoxShapeGeometry::Edge::Inner };
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
-        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
+        return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
     }
 
     ASSERT_NOT_REACHED();
-    return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
+    return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
+}
+
+LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
+{
+    return computeGeometryForBoxShape(box, renderer).roundedRect();
 }
 
 LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
@@ -128,6 +147,22 @@ LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUni
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
     const FloatRect& rect = marginBounds.rect();
+
+    if (!m_contour.isEmpty()) {
+        FloatShapeInterval excludedInterval;
+        for (size_t index = 0; index < m_contour.size(); ++index) {
+            auto vertex = m_contour[index];
+            // Corner shapes can result in some degenerate contours, e.g. notch with border-radius: 50%.
+            // The infinitely thin arm still needs to be taken into account.
+            if (!shapeMargin() && vertex.y() >= y1 && vertex.y() <= y2)
+                excludedInterval.unite({ vertex.x(), vertex.x() });
+            uniteEdgeExcludedInterval(excludedInterval, vertex, m_contour[(index + 1) % m_contour.size()], y1, y2, shapeMargin());
+        }
+
+        if (excludedInterval.isUndefined())
+            return LineSegment();
+        return LineSegment(excludedInterval.x1(), excludedInterval.x2());
+    }
 
     if (!marginBounds.hasNonZeroRadii())
         return LineSegment(rect.x(), rect.maxX());

@@ -27,6 +27,7 @@
 #include "PathUtilities.h"
 
 #include "AffineTransform.h"
+#include "BezierUtilities.h"
 #include "FloatPointGraph.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
@@ -39,6 +40,76 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+PathContours PathUtilities::flattenPath(const Path& path, float tolerance)
+{
+    PathContours contours;
+    Vector<FloatPoint> contour;
+    FloatPoint currentPoint;
+    FloatPoint subpathStart;
+
+    auto finishContour = [&] {
+        if (!contour.isEmpty())
+            contours.append(std::exchange(contour, { }));
+    };
+    // The subpath's opening `moveTo` only becomes a vertex once something is drawn from it, so that a
+    // trailing or repeated `moveTo` doesn't leave a stray single-vertex contour behind.
+    auto startContourIfNeeded = [&] {
+        if (contour.isEmpty())
+            contour.append(currentPoint);
+    };
+
+    path.applyElements([&](const PathElement& element) {
+        switch (element.type) {
+        case PathElement::Type::MoveToPoint:
+            finishContour();
+            currentPoint = subpathStart = element.points[0];
+            break;
+        case PathElement::Type::AddLineToPoint:
+            startContourIfNeeded();
+            contour.append(element.points[0]);
+            currentPoint = element.points[0];
+            break;
+        case PathElement::Type::AddQuadCurveToPoint: {
+            // Elevate to a cubic so there's only one flattener to reason about.
+            startContourIfNeeded();
+            auto control = element.points[0];
+            auto end = element.points[1];
+            appendFlattenedBezier(contour, {
+                currentPoint,
+                currentPoint + (control - currentPoint).scaled(2.0f / 3.0f),
+                end + (control - end).scaled(2.0f / 3.0f),
+                end
+            }, tolerance);
+            currentPoint = end;
+            break;
+        }
+        case PathElement::Type::AddCurveToPoint:
+            startContourIfNeeded();
+            appendFlattenedBezier(contour, { currentPoint, element.points[0], element.points[1], element.points[2] }, tolerance);
+            currentPoint = element.points[2];
+            break;
+        case PathElement::Type::CloseSubpath:
+            // The closing edge is implicit, so nothing to append. Anything drawn after this starts a new
+            // subpath from where this one began.
+            finishContour();
+            currentPoint = subpathStart;
+            break;
+        }
+    });
+    finishContour();
+
+    return contours;
+}
+
+Vector<FloatPoint> PathUtilities::flattenPathToContour(const Path& path, float tolerance)
+{
+    auto contours = flattenPath(path, tolerance);
+    ASSERT(contours.size() <= 1);
+    if (contours.isEmpty())
+        return { };
+    return WTF::move(contours[0]);
+}
 
 Vector<Path> PathUtilities::pathsWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
 {

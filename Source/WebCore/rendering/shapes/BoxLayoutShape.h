@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "BorderShape.h"
 #include "FloatRoundedRect.h"
 #include "LayoutShape.h"
 #include "RenderStyleConstants.h"
@@ -37,12 +38,25 @@ namespace WebCore {
 
 class RenderBox;
 
+struct BoxShapeGeometry {
+    enum class Edge : bool { Outer, Inner };
+
+    BorderShape borderShape;
+    Edge edge { Edge::Outer };
+
+    LayoutRoundedRect roundedRect() const;
+    // Empty when every corner is round, in which case roundedRect() describes the shape.
+    Vector<FloatPoint> contour() const;
+};
+
+BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType, const RenderBox&);
 LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 
 class BoxLayoutShape final : public LayoutShape {
 public:
-    BoxLayoutShape(const FloatRoundedRect& bounds)
+    BoxLayoutShape(const FloatRoundedRect& bounds, Vector<FloatPoint>&& contour = { })
         : m_bounds(bounds)
+        , m_contour(WTF::move(contour))
     {
     }
 
@@ -56,6 +70,8 @@ private:
     FloatRoundedRect shapeMarginBounds() const;
 
     FloatRoundedRect m_bounds;
+    // Implicitly closed; see BorderShape::outerShapeAsPolygon().
+    Vector<FloatPoint> m_contour;
 };
 
 } // namespace WebCore
