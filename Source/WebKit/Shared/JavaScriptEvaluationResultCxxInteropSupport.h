@@ -56,42 +56,9 @@ private:
 
 #endif
 
-// FIXME: Remove this once rdar://186141869 is fixed.
-class SWIFT_NONCOPYABLE JavaScriptArgumentsBridge {
-public:
-    JavaScriptArgumentsBridge() = default;
-
-    explicit JavaScriptArgumentsBridge(size_t capacity)
-        : m_arguments(std::in_place)
-    {
-        m_arguments->reserveInitialCapacity(capacity);
-    }
-
-    JavaScriptArgumentsBridge(const JavaScriptArgumentsBridge&) = delete;
-    JavaScriptArgumentsBridge& operator=(const JavaScriptArgumentsBridge&) = delete;
-
-    JavaScriptArgumentsBridge(JavaScriptArgumentsBridge&&) = default;
-    JavaScriptArgumentsBridge& operator=(JavaScriptArgumentsBridge&&) = default;
-
-    void append(String&& key, JavaScriptEvaluationResult&& value)
-    {
-        m_arguments->constructAndAppend(WTF::move(key), WTF::move(value));
-    }
-
-    std::optional<Vector<std::pair<String, JavaScriptEvaluationResult>>> consume()
-    {
-        return std::exchange(m_arguments, std::nullopt);
-    }
-
-private:
-    std::optional<Vector<std::pair<String, JavaScriptEvaluationResult>>> m_arguments;
-};
-
 }
 
 namespace WebKit::CxxInteropSupport {
-
-#if defined(HAVE_NEW_CODABLE) && HAVE_NEW_CODABLE
 
 // FIXME: Generalize this once rdar://186426517 is fixed.
 template<typename Alternative>
@@ -111,8 +78,6 @@ inline uint64_t jsObjectIDRawValue(const JSObjectID& id)
 {
     return id.toUInt64();
 }
-
-#endif
 
 inline RunJavaScriptResult::value_type takeValue(RunJavaScriptResult&& expected)
 {

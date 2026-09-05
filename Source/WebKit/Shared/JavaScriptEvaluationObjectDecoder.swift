@@ -53,22 +53,7 @@ struct JavaScriptEvaluationObjectDecoder<ID: Hashable & Sendable>: ~Escapable {
     }
 
     private func keyName(entry: JavaScriptEvaluationCodableValue<ID>.ObjectEntry) throws(CodingError.Decoding) -> String {
-        guard let keyValue = storage.value.map[entry.key] else {
-            throw CodingError.dataCorrupted(
-                at: codingPath,
-                debugDescription: "No object entry for key reference \(entry.key)."
-            )
-        }
-
-        guard case .string(let name) = keyValue else {
-            throw CodingError.typeMismatch(
-                expectedTypeDescription: "\(String.self)",
-                actualValueDescription: "\(keyValue)",
-                at: codingPath
-            )
-        }
-
-        return name
+        try storage.value.keyName(for: entry.key, at: codingPath)
     }
 
     @_lifetime(copy self)

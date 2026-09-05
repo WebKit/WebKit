@@ -26,8 +26,8 @@
 import Foundation
 import WebKit_Internal
 
-enum JavaScriptEvaluationCodableValue<ID: Hashable & Sendable>: Sendable, Hashable {
-    enum EmptyType: Sendable, Hashable {
+enum JavaScriptEvaluationCodableValue<ID: Hashable & Sendable>: Hashable, Sendable {
+    enum EmptyType: Hashable, Sendable {
         case undefined
         case null
     }
@@ -52,30 +52,50 @@ extension JavaScriptEvaluationCodableValue.EmptyType {
     }
 }
 
-extension JavaScriptEvaluationCodableValue {
+extension JavaScriptEvaluationCodableValue<UInt64> {
     init(_ value: borrowing WebKit.JavaScriptEvaluationResult.Value) {
         typealias Cxx = WebKit.CxxInteropSupport
 
         self =
-            switch unsafe value.index() {
+            switch value.index() {
             case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: WebKit.JavaScriptEvaluationResult.EmptyType.self):
-                unsafe .empty(.init(Cxx.alternativeForVariant(value)))
+                .empty(.init(Cxx.alternativeForVariant(value)))
+
             case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CBool.self):
-                unsafe .bool(Cxx.alternativeForVariant(value))
+                .bool(Cxx.alternativeForVariant(value))
+
             case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: CDouble.self):
-                unsafe .number(Cxx.alternativeForVariant(value))
+                .number(Cxx.alternativeForVariant(value))
+
             case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(Alternative: WTF.String.self):
-                unsafe .string((Cxx.alternativeForVariant(value) as WTF.String).description)
+                .string((Cxx.alternativeForVariant(value) as WTF.String).description)
+
             case 4: // Seconds
                 fatalError("not yet implemented")
-            case 5: // Vector<JSObjectID>
-                fatalError("not yet implemented")
-            case 6: // ObjectMap
-                fatalError("not yet implemented")
+
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(
+                Alternative: WebKit.JavaScriptEvaluationResult.ObjectVector.self
+            ):
+                .array(
+                    Array(Cxx.alternativeForVariant(value) as WebKit.JavaScriptEvaluationResult.ObjectVector).map(Cxx.jsObjectIDRawValue)
+                )
+
+            case Cxx.alternativeIndexForJavaScriptEvaluationResultValue(
+                Alternative: WebKit.JavaScriptEvaluationResult.ObjectMap.self
+            ):
+                .object(
+                    Array(Cxx.alternativeForVariant(value) as WebKit.JavaScriptEvaluationResult.ObjectMap)
+                        .map {
+                            ObjectEntry(key: Cxx.jsObjectIDRawValue($0.key), value: Cxx.jsObjectIDRawValue($0.value))
+                        }
+                )
+
             case 7: // UniqueRef<JSHandleInfo>
                 fatalError("not yet implemented")
+
             case 8: // UniqueRef<WebCore::SerializedNode>
                 fatalError("not yet implemented")
+
             default:
                 fatalError("invalid index")
             }

@@ -28,6 +28,50 @@ import Testing
 import NewCodable
 import struct Swift.String
 
+// MARK: Supporting types
+
+@CommonDecodable
+private enum Shape: Equatable {
+    case point
+    case circle(radius: Double)
+    case rectangle(width: Double, height: Double)
+    case pair(Int, Int)
+}
+
+@CommonDecodable
+private struct Person: Equatable {
+    let name: String
+    let age: Int
+}
+
+@CommonDecodable
+private struct Item: Equatable {
+    let name: String
+    let rating: Double?
+}
+
+@CommonDecodable
+private struct Post: Equatable {
+    @CodingKey("date_published")
+    let publishDate: String
+    @DecodableAlias("headline")
+    let title: String
+    @CodableDefault(0)
+    let views: Int
+}
+
+@CommonDecodable
+private struct Team: Equatable {
+    let lead: Person
+    let members: [Person]
+    let scoresByName: [String: Int]
+}
+
+@CommonDecodable
+private struct Empty: Equatable {}
+
+// MARK: Tests
+
 @MainActor
 struct JavaScriptEvaluationTests {
     let page = WebPage()
@@ -211,7 +255,217 @@ struct JavaScriptEvaluationTests {
         await testTypeMismatch(decoding: String.self) { "return null;" }
         await testTypeMismatch(decoding: Double.self) { "return undefined;" }
     }
+
+    @Test
+    func decodingArray() async throws {
+        try await testDecoding([1, 2, 3]) { "return [1, 2, 3];" }
+        try await testDecoding([Int]()) { "return [];" }
+        try await testDecoding(["a", "b"]) { #"return ["a", "b"];"# }
+        try await testDecoding([true, false]) { "return [true, false];" }
+        try await testDecoding([1.5, -0.25]) { "return [1.5, -0.25];" }
+        try await testDecoding(Array(0..<100)) { "return Array.from({ length: 100 }, (_, i) => i);" }
+
+        // The element type applies to every element, so a mixed array only decodes as a type
+        // all of them share.
+        try await testDecoding(["1", "two"]) { #"return ["1", "two"];"# }
+        await testTypeMismatch(decoding: [Int].self) { #"return [1, "two", 3];"# }
+
+        // A hole and an explicit null are both missing values, so both need an optional
+        // element type.
+        try await testDecoding([1, nil, 3]) { "return [1, , 3];" }
+        try await testDecoding([1, nil, 3]) { "return [1, null, 3];" }
+        await testTypeMismatch(decoding: [Int].self) { "return [1, null, 3];" }
+
+        // Only a real array decodes as one; an array-like object does not.
+        await testTypeMismatch(decoding: [Int].self) { "return { 0: 1, length: 1 };" }
+        await testTypeMismatch(decoding: [Int].self) { "return 42;" }
+        await testTypeMismatch(decoding: [Int].self) { #"return "abc";"# }
+        await testTypeMismatch(decoding: [Int].self) { "return null;" }
+
+        // Array decodes every element, but a type reading a fixed number of them pulls only
+        // as many as it needs.
+        try await testDecoding(1..<5) { "return [1, 5];" }
+        await testDataCorrupted(decoding: Range<Int>.self) { "return [5, 1];" }
+    }
+
+    @Test
+    func decodingDictionary() async throws {
+        try await testDecoding(["a": 1, "b": 2]) { "return { a: 1, b: 2 };" }
+        try await testDecoding([String: Int]()) { "return {};" }
+        try await testDecoding(["greeting": "hello"]) { #"return { greeting: "hello" };"# }
+        try await testDecoding(["yes": true, "no": false]) { "return { yes: true, no: false };" }
+
+        // Any string is a usable key, including ones which are not identifiers.
+        try await testDecoding(["with space": 1, "": 2]) { #"return { "with space": 1, "": 2 };"# }
+
+        // A JavaScript key is always a string, so an Int key is parsed back out of one.
+        try await testDecoding([1: "one", 2: "two"]) { #"return { 1: "one", 2: "two" };"# }
+        await testDataCorrupted(decoding: [Int: String].self) { #"return { a: "one" };"# }
+
+        // A null value keeps its key, rather than dropping the entry.
+        try await testDecoding(["a": Int?.none, "b": 2]) { "return { a: null, b: 2 };" }
+        await testTypeMismatch(decoding: [String: Int].self) { "return { a: null };" }
+        await testTypeMismatch(decoding: [String: Int].self) { #"return { a: "1" };"# }
+
+        await testTypeMismatch(decoding: [String: Int].self) { "return [1, 2];" }
+        await testTypeMismatch(decoding: [String: Int].self) { "return 42;" }
+        await testTypeMismatch(decoding: [String: Int].self) { "return null;" }
+    }
+
+    @Test
+    func decodingNestedContainers() async throws {
+        try await testDecoding([[1, 2], [3], []]) { "return [[1, 2], [3], []];" }
+        try await testDecoding([["a": 1], ["b": 2]]) { "return [{ a: 1 }, { b: 2 }];" }
+        try await testDecoding(["outer": ["inner": 1]]) { "return { outer: { inner: 1 } };" }
+        try await testDecoding(["values": [1, 2, 3]]) { "return { values: [1, 2, 3] };" }
+        try await testDecoding([["a": [1]], ["b": [2, 3]]]) { "return [{ a: [1] }, { b: [2, 3] }];" }
+        try await testDecoding([[["deep"]]]) { #"return [[["deep"]]];"# }
+
+        // The result is a graph rather than a tree, so one object reached twice is one entry
+        // decoded twice.
+        try await testDecoding([[1], [1]]) { "const shared = [1]; return [shared, shared];" }
+        try await testDecoding(["x": ["n": 1], "y": ["n": 1]]) {
+            "const shared = { n: 1 }; return { x: shared, y: shared };"
+        }
+
+        // A mismatch nested inside a container is reported like any other.
+        await testTypeMismatch(decoding: [[Int]].self) { "return [[1], 2];" }
+        await testTypeMismatch(decoding: [String: [Int]].self) { #"return { a: "x" };"# }
+    }
+
+    @Test
+    func decodingEnum() async throws {
+        try await testDecoding(Shape.point) { "return { point: {} };" }
+        try await testDecoding(Shape.circle(radius: 2.5)) { "return { circle: { radius: 2.5 } };" }
+        try await testDecoding(Shape.rectangle(width: 3, height: 4)) {
+            "return { rectangle: { width: 3, height: 4 } };"
+        }
+
+        // Associated values without a label are keyed by position instead.
+        try await testDecoding(Shape.pair(1, 2)) { "return { pair: { _0: 1, _1: 2 } };" }
+
+        // Exactly one entry names the case, so neither none nor several will do.
+        await testDataCorrupted(decoding: Shape.self) { "return {};" }
+        await testDataCorrupted(decoding: Shape.self) { "return { point: {}, circle: { radius: 1 } };" }
+
+        // The name has to be a case the enum actually has.
+        await testUnknownKey(decoding: Shape.self) { "return { triangle: {} };" }
+
+        // The associated values are an object, and every one the case declares is required.
+        await testTypeMismatch(decoding: Shape.self) { "return { circle: 2.5 };" }
+        await testDataCorrupted(decoding: Shape.self) { "return { circle: {} };" }
+        await testDataCorrupted(decoding: Shape.self) { "return { rectangle: { width: 3 } };" }
+
+        // The enum itself is an object, whatever a case may look like.
+        await testTypeMismatch(decoding: Shape.self) { #"return "point";"# }
+        await testTypeMismatch(decoding: Shape.self) { "return [1, 2];" }
+        await testTypeMismatch(decoding: Shape.self) { "return null;" }
+    }
+
+    @Test
+    func decodingStruct() async throws {
+        let person = Person(name: "Ada", age: 36)
+
+        try await testDecoding(person) { #"return { name: "Ada", age: 36 };"# }
+        try await testDecoding(Empty()) { "return {};" }
+
+        // Fields are matched by name, so the order the object happens to list them in does
+        // not matter.
+        try await testDecoding(person) { #"return { age: 36, name: "Ada" };"# }
+
+        // A field the struct does not declare is ignored rather than rejected.
+        try await testDecoding(person) { #"return { name: "Ada", age: 36, nickname: "A" };"# }
+        try await testDecoding(Empty()) { "return { anything: 1 };" }
+
+        // Every declared field has to be there, and has to be the right type.
+        await testDataCorrupted(decoding: Person.self) { #"return { name: "Ada" };"# }
+        await testDataCorrupted(decoding: Person.self) { "return {};" }
+        await testTypeMismatch(decoding: Person.self) { #"return { name: "Ada", age: "36" };"# }
+
+        // A struct is an object; nothing else stands in for one.
+        await testTypeMismatch(decoding: Person.self) { #"return "Ada";"# }
+        await testTypeMismatch(decoding: Person.self) { #"return ["Ada", 36];"# }
+        await testTypeMismatch(decoding: Person.self) { "return null;" }
+    }
+
+    @Test
+    func decodingStructWithOptionalField() async throws {
+        try await testDecoding(Item(name: "book", rating: 4.5)) {
+            #"return { name: "book", rating: 4.5 };"#
+        }
+
+        // An optional field is satisfied by an explicit null, by undefined, and by the key
+        // being absent altogether.
+        try await testDecoding(Item(name: "book", rating: nil)) {
+            #"return { name: "book", rating: null };"#
+        }
+        try await testDecoding(Item(name: "book", rating: nil)) {
+            #"return { name: "book", rating: undefined };"#
+        }
+        try await testDecoding(Item(name: "book", rating: nil)) { #"return { name: "book" };"# }
+
+        // Optional means the value may be missing, not that it may be anything.
+        await testTypeMismatch(decoding: Item.self) { #"return { name: "book", rating: "4.5" };"# }
+    }
+
+    @Test
+    func decodingStructWithFieldAttributes() async throws {
+        let post = Post(publishDate: "2026-01-01", title: "Hello", views: 10)
+
+        try await testDecoding(post) {
+            #"return { date_published: "2026-01-01", title: "Hello", views: 10 };"#
+        }
+
+        // @DecodableAlias accepts a second spelling of the same field.
+        try await testDecoding(post) {
+            #"return { date_published: "2026-01-01", headline: "Hello", views: 10 };"#
+        }
+
+        // @CodableDefault supplies the value when the field is absent.
+        try await testDecoding(Post(publishDate: "2026-01-01", title: "Hello", views: 0)) {
+            #"return { date_published: "2026-01-01", title: "Hello" };"#
+        }
+
+        // @CodingKey replaces the property name rather than adding to it.
+        await testDataCorrupted(decoding: Post.self) {
+            #"return { publishDate: "2026-01-01", title: "Hello" };"#
+        }
+    }
+
+    @Test
+    func decodingNestedStruct() async throws {
+        let team = Team(
+            lead: Person(name: "Ada", age: 36),
+            members: [Person(name: "Grace", age: 45), Person(name: "Alan", age: 41)],
+            scoresByName: ["Grace": 1, "Alan": 2]
+        )
+
+        try await testDecoding(team) {
+            """
+            return {
+                lead: { name: "Ada", age: 36 },
+                members: [{ name: "Grace", age: 45 }, { name: "Alan", age: 41 }],
+                scoresByName: { Grace: 1, Alan: 2 },
+            };
+            """
+        }
+
+        try await testDecoding([Person(name: "Ada", age: 36)]) { #"return [{ name: "Ada", age: 36 }];"# }
+        try await testDecoding(["lead": Person(name: "Ada", age: 36)]) {
+            #"return { lead: { name: "Ada", age: 36 } };"#
+        }
+
+        // A failure inside a nested struct surfaces the same as one at the top level.
+        await testDataCorrupted(decoding: Team.self) {
+            #"return { lead: { name: "Ada" }, members: [], scoresByName: {} };"#
+        }
+        await testTypeMismatch(decoding: Team.self) {
+            #"return { lead: { name: "Ada", age: 36 }, members: {}, scoresByName: {} };"#
+        }
+    }
 }
+
+// MARK: Helpers
 
 extension JavaScriptEvaluationTests {
     private func testDecoding<T: CommonDecodable & Equatable>(
@@ -223,14 +477,22 @@ extension JavaScriptEvaluationTests {
         #expect(actual == expectedValue, sourceLocation: sourceLocation)
     }
 
+    private func testDecodingFailure<T: CommonDecodable>(
+        decoding type: T.Type,
+        sourceLocation: SourceLocation = #_sourceLocation,
+        _ source: () -> String
+    ) async -> CodingError.Decoding? {
+        await #expect(throws: CodingError.Decoding.self, sourceLocation: sourceLocation) {
+            _ = try await page.callJavaScriptv0(returning: T.self, source)
+        }
+    }
+
     private func testTypeMismatch<T: CommonDecodable>(
         decoding type: T.Type,
         sourceLocation: SourceLocation = #_sourceLocation,
         _ source: () -> String
     ) async {
-        let error = await #expect(throws: CodingError.Decoding.self, sourceLocation: sourceLocation) {
-            _ = try await page.callJavaScriptv0(returning: T.self, source)
-        }
+        let error = await testDecodingFailure(decoding: type, sourceLocation: sourceLocation, source)
 
         guard case .typeMismatch = error?.kind else {
             Issue.record("Unexpected CodingError.Decoding type: \(error)", sourceLocation: sourceLocation)
@@ -243,11 +505,22 @@ extension JavaScriptEvaluationTests {
         sourceLocation: SourceLocation = #_sourceLocation,
         _ source: () -> String
     ) async {
-        let error = await #expect(throws: CodingError.Decoding.self, sourceLocation: sourceLocation) {
-            _ = try await page.callJavaScriptv0(returning: T.self, source)
-        }
+        let error = await testDecodingFailure(decoding: type, sourceLocation: sourceLocation, source)
 
         guard case .dataCorrupted = error?.kind else {
+            Issue.record("Unexpected CodingError.Decoding type: \(error)", sourceLocation: sourceLocation)
+            return
+        }
+    }
+
+    private func testUnknownKey<T: CommonDecodable>(
+        decoding type: T.Type,
+        sourceLocation: SourceLocation = #_sourceLocation,
+        _ source: () -> String
+    ) async {
+        let error = await testDecodingFailure(decoding: type, sourceLocation: sourceLocation, source)
+
+        guard case .unknownKey = error?.kind else {
             Issue.record("Unexpected CodingError.Decoding type: \(error)", sourceLocation: sourceLocation)
             return
         }

@@ -56,21 +56,39 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
     mutating func decodeStruct<T: ~Copyable>(
         _ closure: (inout StructDecoder) throws(CodingError.Decoding) -> T
     ) throws(CodingError.Decoding) -> T {
-        fatalError("\(#function) is not implemented")
+        let object = try decodePrimitive([JavaScriptEvaluationCodableValue<ID>.ObjectEntry].self) {
+            guard case .object(let value) = $0 else {
+                return nil
+            }
+
+            return value
+        }
+
+        var decoder = StructDecoder(storage: storage, entries: object, codingPath: codingPath)
+        return try closure(&decoder)
     }
 
     @_lifetime(self: copy self)
     mutating func decodeDictionary<T: ~Copyable>(
         _ closure: (inout DictionaryDecoder) throws(CodingError.Decoding) -> T
     ) throws(CodingError.Decoding) -> T {
-        fatalError("\(#function) is not implemented")
+        try decodeStruct(closure)
     }
 
     @_lifetime(self: copy self)
     mutating func decodeArray<T: ~Copyable>(
         _ closure: (inout ArrayDecoder) throws(CodingError.Decoding) -> T
     ) throws(CodingError.Decoding) -> T {
-        fatalError("\(#function) is not implemented")
+        let array = try decodePrimitive([ID].self) {
+            guard case .array(let value) = $0 else {
+                return nil
+            }
+
+            return value
+        }
+
+        var decoder = ArrayDecoder(storage: storage, ids: array, codingPath: codingPath)
+        return try closure(&decoder)
     }
 
     @_lifetime(self: copy self)
@@ -78,21 +96,33 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
         _ caseDecoder: (inout FieldDecoder) throws(CodingError.Decoding) -> Void,
         associatedValues valueDecoder: (inout StructDecoder) throws(CodingError.Decoding) -> T
     ) throws(CodingError.Decoding) -> T {
-        fatalError("\(#function) is not implemented")
+        let entries = try decodePrimitive([JavaScriptEvaluationCodableValue<ID>.ObjectEntry].self) {
+            guard case .object(let value) = $0 else {
+                return nil
+            }
+
+            return value
+        }
+
+        guard entries.count == 1, let entry = entries.first else {
+            throw CodingError.dataCorrupted(
+                at: codingPath,
+                debugDescription: "Expected exactly one entry for an enum case, found \(entries.count)."
+            )
+        }
+
+        let name = try storage.value.keyName(for: entry.key, at: codingPath)
+
+        var fieldDecoder = FieldDecoder(string: name)
+        try caseDecoder(&fieldDecoder)
+
+        var associatedValues = Self(storage: storage, id: entry.value, codingPath: codingPath.appending(name))
+        return try associatedValues.decodeStruct(valueDecoder)
     }
 
-    @_lifetime(self: copy self)
-    mutating func decode<Key: CodingStringKeyRepresentable, Value: CommonDecodable>(
-        _: [Key: Value].Type,
-        sizeHint: Int
-    ) throws(CodingError.Decoding) -> [Key: Value] {
-        fatalError("\(#function) is not implemented")
-    }
+    // Intentionally does not implement the `mutating func decode<Key: CodingStringKeyRepresentable, Value: CommonDecodable>(_: [Key: Value].Type, sizeHint: Int) throws(CodingError.Decoding) -> [Key: Value]` requirement; the default implementation is sound.
 
-    @_lifetime(self: copy self)
-    mutating func decode<Element: CommonDecodable>(_: [Element].Type, sizeHint: Int) throws(CodingError.Decoding) -> [Element] {
-        fatalError("\(#function) is not implemented")
-    }
+    // Intentionally does not implement the `mutating func decode<Element: CommonDecodable>(_: [Element].Type, sizeHint: Int) throws(CodingError.Decoding) -> [Element]` requirement; the default implementation is sound.
 
     @_lifetime(self: copy self)
     mutating func decode(_: Bool.Type) throws(CodingError.Decoding) -> Bool {

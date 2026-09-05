@@ -39,10 +39,7 @@ enum class RemoveTransientActivation : bool;
 
 namespace WebKit {
 
-// `SWIFT_NONCOPYABLE` is required here because `JavaScriptEvaluationResult` is non-copyable,
-// and `WTF::Vector<T>` doesn't have any requirements on its copy constructor requiring `T` to be copyable.
-// FIXME: Remove `SWIFT_NONCOPYABLE` once rdar://186141869 is fixed.
-struct SWIFT_NONCOPYABLE RunJavaScriptParameters {
+struct RunJavaScriptParameters {
     IPC::TransferString source;
     JSC::SourceTaintedOrigin taintedness;
     URL sourceURL;
@@ -51,5 +48,18 @@ struct SWIFT_NONCOPYABLE RunJavaScriptParameters {
     WebCore::ForceUserGesture forceUserGesture;
     WebCore::RemoveTransientActivation removeTransientActivation;
 };
+
+}
+
+namespace WebKit::CxxInteropSupport {
+
+using RunJavaScriptParametersArguments = Vector<std::pair<String, JavaScriptEvaluationResult>>;
+using OptionalRunJavaScriptParametersArguments = std::optional<RunJavaScriptParametersArguments>;
+
+// FIXME: Remove this once rdar://186106924 is fixed.
+inline OptionalRunJavaScriptParametersArguments makeOptionalArguments(RunJavaScriptParametersArguments&& arguments)
+{
+    return { WTF::move(arguments) };
+}
 
 }

@@ -32,10 +32,10 @@ struct JavaScriptEvaluationResultDecoder {
         _ type: T.Type,
         from result: consuming WebKit.JavaScriptEvaluationResult
     ) throws(CodingError.Decoding) -> T {
-        let rootID = unsafe WebKit.CxxInteropSupport.jsObjectIDRawValue(result.root())
+        let rootID = WebKit.CxxInteropSupport.jsObjectIDRawValue(result.root())
 
-        let owned = unsafe WebKit.JavaScriptEvaluationOwnedResult(consuming: result)
-        let graph = unsafe JavaScriptEvaluationDecodingGraph<UInt64>(owned)
+        let owned = WebKit.JavaScriptEvaluationOwnedResult(consuming: result)
+        let graph = JavaScriptEvaluationDecodingGraph<UInt64>(owned)
 
         var decoder = JavaScriptEvaluationGraphDecoder(
             storage: Ref(graph),

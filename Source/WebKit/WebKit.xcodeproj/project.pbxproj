@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -164,6 +164,9 @@
 		0735F3202D3761A10003D029 /* WKIntelligenceReplacementTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735F31F2D3761A10003D029 /* WKIntelligenceReplacementTextEffectCoordinator.h */; };
 		0735F3222D38B09E0003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0735F3212D38B09E0003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.swift */; };
 		0735F3242D38C7790003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735F3232D38C7790003D029 /* WKIntelligenceSmartReplyTextEffectCoordinator.h */; };
+		0738ABBA304BBECF00987FFB /* RunJavaScriptParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = FA7036C32D72882A00083D04 /* RunJavaScriptParameters.h */; };
+		0738ABBB304BBEE100987FFB /* JavaScriptEvaluationResult.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC7C0AF2D70225500E7297E /* JavaScriptEvaluationResult.h */; };
+		0738ABBD304BD9CA00987FFB /* RunJavaScriptParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0738ABBC304BD9CA00987FFB /* RunJavaScriptParameters.swift */; };
 		0739EAF0301562080066ED1B /* WKPDFHUDView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0739EAEA301561FE0066ED1B /* WKPDFHUDView.h */; };
 		0739EAF13015620C0066ED1B /* WKDefaultPDFHUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0739EAEC301561FE0066ED1B /* WKDefaultPDFHUDView.swift */; };
 		0739EAF2301562100066ED1B /* WKPDFPageNumberIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0739EAED301561FE0066ED1B /* WKPDFPageNumberIndicator.h */; };
@@ -3511,6 +3514,7 @@
 		0736B75C260D4A4E00E06994 /* RemoteMediaSessionCoordinatorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionCoordinatorProxy.cpp; sourceTree = "<group>"; };
 		0736B75D260D4A4F00E06994 /* RemoteMediaSessionCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaSessionCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		0736B75E260D4A5000E06994 /* RemoteMediaSessionCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionCoordinatorProxy.h; sourceTree = "<group>"; };
+		0738ABBC304BD9CA00987FFB /* RunJavaScriptParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunJavaScriptParameters.swift; sourceTree = "<group>"; };
 		0739EAEA301561FE0066ED1B /* WKPDFHUDView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPDFHUDView.h; sourceTree = "<group>"; };
 		0739EAEC301561FE0066ED1B /* WKDefaultPDFHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDefaultPDFHUDView.swift; sourceTree = "<group>"; };
 		0739EAED301561FE0066ED1B /* WKPDFPageNumberIndicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPDFPageNumberIndicator.h; sourceTree = "<group>"; };
@@ -10599,6 +10603,7 @@
 				4149E97C2E95204700DA5303 /* RTCSocketCreationFlags.h */,
 				41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */,
 				FA7036C32D72882A00083D04 /* RunJavaScriptParameters.h */,
+				0738ABBC304BD9CA00987FFB /* RunJavaScriptParameters.swift */,
 				077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */,
 				0782B70B304680930011880F /* RunJavaScriptResult.swift */,
 				AE213B932DDE47AA0043DE0F /* SafeBrowsingCheckOngoing.h */,
@@ -18589,6 +18594,7 @@
 				3A061A313017E09F00F8873B /* IsolatedSiteStore.h in Headers */,
 				46DBC28C2AF96B9F00E6B63A /* ITPThirdPartyData.h in Headers */,
 				46DBC28D2AF96BA400E6B63A /* ITPThirdPartyDataForSpecificFirstParty.h in Headers */,
+				0738ABBB304BBEE100987FFB /* JavaScriptEvaluationResult.h in Headers */,
 				0782B70A30467FC10011880F /* JavaScriptEvaluationResultCxxInteropSupport.h in Headers */,
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				1CC94E542AC92F190045F269 /* JSWebExtensionAPIAction.h in Headers */,
@@ -18923,6 +18929,7 @@
 				F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */,
 				442E7BEB27B4586900C69AC1 /* RevealItem.h in Headers */,
 				410482CE1DDD324F00F006D0 /* RTCNetwork.h in Headers */,
+				0738ABBA304BBECF00987FFB /* RunJavaScriptParameters.h in Headers */,
 				077DBAFF303AAE74000AA8FC /* RunJavaScriptResult.h in Headers */,
 				46F38E8C2416E6730059375A /* RunningBoardServicesSPI.h in Headers */,
 				DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */,
@@ -22351,6 +22358,7 @@
 				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,
 				0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */,
 				1AF572302D690813008266F2 /* RemoteScrollingTreeCocoa.mm in Sources */,
+				0738ABBD304BD9CA00987FFB /* RunJavaScriptParameters.swift in Sources */,
 				0782B70C304680930011880F /* RunJavaScriptResult.swift in Sources */,
 				7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */,
 				9BF622542C3E8559007F7021 /* SecurityFlags.cpp in Sources */,

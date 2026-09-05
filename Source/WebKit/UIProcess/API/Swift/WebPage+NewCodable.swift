@@ -43,23 +43,24 @@ extension WebPage {
             fatalError()
         }
 
-        guard let transferString = unsafe Optional(fromCxx: IPC.TransferString.create(script())) else {
+        guard let transferString = Optional(fromCxx: IPC.TransferString.create(script())) else {
             fatalError()
         }
 
-        let result = unsafe try await page.runJavaScriptInMainFrame(
+        let parameters = unsafe WebKit.RunJavaScriptParameters(
             source: transferString,
             taintedness: .Untainted,
-            url: .init(),
+            sourceURL: .init(),
             runAsAsyncFunction: true,
             arguments: .init(),
             forceUserGesture: true,
             removeTransientActivation: false,
-            wantsResult: true
         )
 
+        let result = unsafe try await page.runJavaScriptInMainFrame(parameters: parameters, wantsResult: true)
+
         let decoder = JavaScriptEvaluationResultDecoder()
-        return unsafe try decoder.decode(Output.self, from: result)
+        return try decoder.decode(Output.self, from: result)
     }
 }
 

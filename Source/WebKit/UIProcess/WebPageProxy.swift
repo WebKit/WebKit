@@ -33,62 +33,36 @@ extension WebKit.WebPageProxy.SelectWithGestureCompletionHandler: @unsafe CxxCom
     typealias Argument = WebKit.SelectWithGestureResult
 }
 
+#if HAVE_NEW_CODABLE
 // This is safe because all conformances to the protocol are safe as long as they don't
 // implement any of the requirements themselves.
-extension WebKit.WebPageProxy.RunJavaScriptInFrameCompletionHandler: @unsafe CxxConsumingCompletionHandler {
+extension WebKit.WebPageProxy.RunJavaScriptInFrameCompletionHandler: CxxConsumingCompletionHandler {
     typealias Argument = WebKit.RunJavaScriptResult
 }
+#endif // HAVE_NEW_CODABLE
 
 extension WebKit.WebPageProxy {
-    #if HAVE_SWIFT_STDLIB_6_4
-    @unsafe
-    struct JavaScriptArgument: ~Copyable {
-        let key: String
-        let value: WebKit.JavaScriptEvaluationResult
-    }
-
+    #if HAVE_NEW_CODABLE
     @MainActor
     func runJavaScriptInMainFrame(
-        source: IPC.TransferString,
-        taintedness: JSC.SourceTaintedOrigin,
-        url: WTF.URL,
-        runAsAsyncFunction: Bool,
-        arguments: consuming UniqueArray<JavaScriptArgument>?,
-        forceUserGesture: Bool,
-        removeTransientActivation: Bool,
+        parameters: consuming WebKit.RunJavaScriptParameters,
         wantsResult: Bool
     ) async throws -> WebKit.JavaScriptEvaluationResult {
-        var argumentsBridge = unsafe WebKit.JavaScriptArgumentsBridge()
-        if var arguments = unsafe arguments {
-            unsafe argumentsBridge = unsafe WebKit.JavaScriptArgumentsBridge(arguments.count)
+        let parametersBox = unsafe CopyableBox(value: parameters)
 
-            while unsafe !arguments.isEmpty {
-                let argument = unsafe arguments.remove(at: 0)
-                unsafe argumentsBridge.append(consuming: WTF.String(argument.key), consuming: argument.value)
-            }
-        }
-
-        let box = unsafe try await withCheckedThrowingContinuation { continuation in
-            let parameters = unsafe WebKit.RunJavaScriptParameters(
-                source: source,
-                taintedness: taintedness,
-                sourceURL: url,
-                runAsAsyncFunction: runAsAsyncFunction ? .Yes : .No,
-                arguments: argumentsBridge.consume(),
-                forceUserGesture: forceUserGesture ? .Yes : .No,
-                removeTransientActivation: removeTransientActivation ? .Yes : .No
-            )
-
+        let box = try await withCheckedThrowingContinuation { continuation in
+            // Guaranteed to be non-nil since `take` is only called once, here.
+            // swift-format-ignore: NeverForceUnwrap
             unsafe runJavaScriptInMainFrame(
-                consuming: parameters,
+                consuming: parametersBox.take()!,
                 wantsResult,
                 consuming: .init { result in
                     do {
                         let evaluationResult = try unsafe result.consume()
-                        let box = unsafe CopyableBox(value: evaluationResult)
-                        unsafe continuation.resume(returning: box)
+                        let box = CopyableBox(value: evaluationResult)
+                        continuation.resume(returning: box)
                     } catch {
-                        unsafe continuation.resume(throwing: error)
+                        continuation.resume(throwing: error)
                     }
                 }
             )
@@ -96,9 +70,9 @@ extension WebKit.WebPageProxy {
 
         // Guaranteed to be non-nil since `take` is only called once, here.
         // swift-format-ignore: NeverForceUnwrap
-        return unsafe box.take()!
+        return box.take()!
     }
-    #endif // HAVE_SWIFT_STDLIB_6_4
+    #endif // HAVE_NEW_CODABLE
 
     private borrowing func editorStateCopy() -> WebKit.EditorState {
         unsafe __editorStateUnsafe().pointee

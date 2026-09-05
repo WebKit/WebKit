@@ -24,20 +24,41 @@
 #if HAVE_NEW_CODABLE
 
 import Foundation
+import NewCodable
 import WebKit_Internal
 
 struct JavaScriptEvaluationDecodingGraph<ID: Hashable & Sendable> {
     let map: [ID: JavaScriptEvaluationCodableValue<ID>]
 }
 
+extension JavaScriptEvaluationDecodingGraph {
+    func keyName(for id: ID, at codingPath: CodingPath) throws(CodingError.Decoding) -> String {
+        guard let value = map[id] else {
+            throw CodingError.dataCorrupted(
+                at: codingPath,
+                debugDescription: "No object entry for key reference \(id)."
+            )
+        }
+
+        guard case .string(let name) = value else {
+            throw CodingError.typeMismatch(
+                expectedTypeDescription: "\(String.self)",
+                actualValueDescription: "\(value)",
+                at: codingPath
+            )
+        }
+
+        return name
+    }
+}
+
 extension JavaScriptEvaluationDecodingGraph<UInt64> {
     init(_ result: consuming WebKit.JavaScriptEvaluationOwnedResult) {
         var map: [ID: JavaScriptEvaluationCodableValue<ID>] = [:]
 
-        // swift-format-ignore: Spacing
-        for unsafe entry in unsafe result {
-            let key = unsafe WebKit.CxxInteropSupport.jsObjectIDRawValue(entry.key)
-            let value = unsafe JavaScriptEvaluationCodableValue<ID>(entry.value)
+        for entry in result {
+            let key = WebKit.CxxInteropSupport.jsObjectIDRawValue(entry.key)
+            let value = JavaScriptEvaluationCodableValue<ID>(entry.value)
 
             map[key] = value
         }

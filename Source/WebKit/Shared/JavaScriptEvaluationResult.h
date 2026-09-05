@@ -61,13 +61,14 @@ class JavaScriptEvaluationResult {
 public:
     enum class EmptyType : bool { Undefined, Null };
     using ObjectMap = HashMap<JSObjectID, JSObjectID>;
+    using ObjectVector = Vector<JSObjectID>;
     using Value = Variant<
         EmptyType,
         bool,
         double,
         String,
         Seconds,
-        Vector<JSObjectID>,
+        ObjectVector,
         ObjectMap,
         UniqueRef<JSHandleInfo>,
         UniqueRef<WebCore::SerializedNode>
