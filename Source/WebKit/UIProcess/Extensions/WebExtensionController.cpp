@@ -460,7 +460,7 @@ String WebExtensionController::storageDirectory(const String& uniqueIdentifier) 
 
 String WebExtensionController::stateFilePath(const String& uniqueIdentifier) const
 {
-    return FileSystem::pathByAppendingComponent(storageDirectory(uniqueIdentifier), WebExtensionContext::plistFileName());
+    return FileSystem::pathByAppendingComponent(storageDirectory(uniqueIdentifier), WebExtensionContext::stateFileName());
 }
 
 HashSet<String> WebExtensionController::activeExtensionURLs() const

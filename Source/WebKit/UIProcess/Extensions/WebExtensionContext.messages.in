@@ -24,7 +24,6 @@
  */
 
 #if ENABLE(WK_WEB_EXTENSIONS)
-#if PLATFORM(COCOA)
 
 [
     ExceptionForEnabledBy,
@@ -32,6 +31,7 @@
     DispatchedTo=UI
 ]
 messages -> WebExtensionContext {
+#if PLATFORM(COCOA)
     // Runtime Error Reporting
     [Validator=isLoaded] DidEncounterScriptError(String message, String sourceURL, uint32_t lineNumber, uint32_t columnNumber, WebKit::WebExtensionContentWorldType worldType)
 
@@ -46,6 +46,7 @@ messages -> WebExtensionContext {
     [Validator=isActionMessageAllowed] ActionSetBadgeText(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, String text) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isActionMessageAllowed] ActionGetEnabled(std::optional<WebKit::WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier) -> (std::expected<bool, WebKit::WebExtensionError> result)
     [Validator=isActionMessageAllowed] ActionSetEnabled(std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, bool enabled) -> (std::expected<void, WebKit::WebExtensionError> result)
+#endif
 
     // Alarms APIs
     [Validator=isAlarmsMessageAllowed] AlarmsCreate(String name, Seconds initialInterval, Seconds repeatInterval) -> ()
@@ -54,6 +55,7 @@ messages -> WebExtensionContext {
     [Validator=isAlarmsMessageAllowed] AlarmsGetAll() -> (Vector<WebKit::WebExtensionAlarmParameters> alarms)
     [Validator=isAlarmsMessageAllowed] AlarmsClearAll() -> (bool success)
 
+#if PLATFORM(COCOA)
 #if ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
     // Bookmarks APIs
     [Validator=isBookmarksMessageAllowed] BookmarksCreate(std::optional<String> parentId, std::optional<uint64_t> index, std::optional<String> url, std::optional<String> title) -> (std::expected<WebKit::WebExtensionBookmarksParameters, WebKit::WebExtensionError> result)
@@ -206,7 +208,7 @@ messages -> WebExtensionContext {
     [Validator=isLoadedAndPrivilegedMessage] WindowsGetAll(OptionSet<WebKit::WebExtensionWindowTypeFilter> filter, WebKit::WebExtensionWindow::PopulateTabs populate) -> (std::expected<Vector<WebKit::WebExtensionWindowParameters>, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsUpdate(WebKit::WebExtensionWindowIdentifier windowIdentifier, WebKit::WebExtensionWindowParameters updateParameters) -> (std::expected<WebKit::WebExtensionWindowParameters, WebKit::WebExtensionError> result)
     [Validator=isLoadedAndPrivilegedMessage] WindowsRemove(WebKit::WebExtensionWindowIdentifier windowIdentifier) -> (std::expected<void, WebKit::WebExtensionError> result)
+#endif // PLATFORM(COCOA)
 }
 
-#endif // PLATFORM(COCOA)
 #endif // ENABLE(WK_WEB_EXTENSIONS)

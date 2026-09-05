@@ -94,4 +94,14 @@ void WebPageProxy::scheduleActivityStateUpdate()
     internals().activityStateChangeTimer.startOneShot(0_s);
 }
 
+WebKitWebView* WebPageProxy::platformView()
+{
+    return internals().platformView.get();
+}
+
+void WebPageProxy::setPlatformView(WebKitWebView *view)
+{
+    internals().platformView = GWeakPtr(view);
+}
+
 } // namespace WebKit

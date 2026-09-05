@@ -35,6 +35,9 @@
 #include "WebEvent.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
+#if ENABLE(WK_WEB_EXTENSIONS)
+#include "WebKitWebExtensionContext.h"
+#endif
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include <WebCore/CompositionUnderline.h>
@@ -138,4 +141,10 @@ WebKit::RendererBufferDescription webkitWebViewGetRendererBufferDescription(WebK
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 void webkitWebViewSetIsImmersiveModeEnabled(WebKitWebView*, bool);
+#endif
+
+void webkitWebViewLoadServiceWorker(WebKitWebView*, const gchar* url, bool usingModules, CompletionHandler<void(bool success)>&&);
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+WebKitWebExtensionContext *webkitWebViewGetWebExtensionContext(WebKitWebView*);
 #endif

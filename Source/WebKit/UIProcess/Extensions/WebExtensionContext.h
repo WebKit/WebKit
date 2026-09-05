@@ -103,7 +103,9 @@
 #endif
 
 #if ENABLE(2022_GLIB_API)
+#include "WebKitNavigationPolicyDecision.h"
 #include "WebKitWebExtensionContext.h"
+#include "WebKitWebView.h"
 #include <wtf/glib/GWeakPtr.h>
 #endif
 
@@ -121,9 +123,9 @@ OBJC_CLASS WKContentRuleListStore;
 OBJC_CLASS WKNavigation;
 OBJC_CLASS WKNavigationAction;
 OBJC_CLASS WKWebExtensionContext;
+OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKWebViewConfiguration;
-OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_PROTOCOL(WKWebExtensionTab);
 OBJC_PROTOCOL(WKWebExtensionWindow);
 
@@ -143,6 +145,16 @@ class SessionID;
 }
 
 namespace WebKit {
+
+#if ENABLE(2022_GLIB_API)
+using WebViewClass = WebKitWebView;
+using WebViewConfiguration = GRefPtr<WebKitSettings>;
+using NavigationPolicyAction = WebKitNavigationPolicyDecision;
+#elif PLATFORM(COCOA)
+using WebViewClass = WKWebView;
+using WebViewConfiguration = WKWebViewConfiguration *;
+using NavigationPolicyAction = WKNavigationAction;
+#endif
 
 class ContextMenuContextData;
 class ProcessThrottlerActivity;
@@ -182,8 +194,19 @@ public:
     void ref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::WebExtensionContext>::deref(); }
 
-    static String plistFileName() { return "State.plist"_s; };
+    static String stateFileName()
+    {
+#if PLATFORM(COCOA)
+        return "State.plist"_s;
+#else
+        return "State.ini"_s;
+#endif
+    };
+#if PLATFORM(COCOA)
     static NSMutableDictionary *readStateFromPath(const String&);
+#elif ENABLE(2022_GLIB_API)
+    static GRefPtr<GKeyFile> readStateFromPath(const String&);
+#endif
     static bool readLastBaseURLFromState(const String& filePath, URL& outLastBaseURL);
     static bool readDisplayNameFromState(const String& filePath, String& outDisplayName);
 
@@ -610,14 +633,11 @@ public:
 #endif
 
     URL backgroundContentURL();
-#if PLATFORM(COCOA)
-    WKWebView *backgroundWebView() const { return m_backgroundWebView.get(); }
+    WebViewClass *backgroundWebView() const { return m_backgroundWebView.get(); }
 
-#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN) && PLATFORM(COCOA)
     WKWebView *offscreenWebView() const { return m_offscreenWebView.get(); }
     bool isOffscreenWebView(WKWebView *webView) const { return webView == m_offscreenWebView; }
-#endif
-
 #endif
     bool safeToLoadBackgroundContent() const { return m_safeToLoadBackgroundContent; }
 
@@ -626,10 +646,10 @@ public:
     const String& backgroundWebViewInspectionName();
     void setBackgroundWebViewInspectionName(const String&);
 
-    bool decidePolicyForNavigationAction(WKWebView *, WKNavigationAction *);
-    void didFinishDocumentLoad(WKWebView *, WKNavigation *);
-    void didFailNavigation(WKWebView *, WKNavigation *, RefPtr<API::Error>);
-    void webViewWebContentProcessDidTerminate(WKWebView *);
+    bool decidePolicyForNavigationAction(WebViewClass *, NavigationPolicyAction *);
+    void didFinishDocumentLoad(WebViewClass *);
+    void didFailNavigation(WebViewClass *, RefPtr<API::Error>);
+    void webViewWebContentProcessDidTerminate(WebViewClass *);
 
 #if PLATFORM(MAC)
     void runOpenPanel(WKWebView *, WKOpenPanelParameters *, void (^)(NSArray *));
@@ -672,11 +692,11 @@ public:
 
     void enumerateExtensionPages(NOESCAPE Function<void(WebPageProxy&, bool& stop)>&&);
 
-    WKWebView *relatedWebView();
+    WebViewClass *relatedWebView();
     String processDisplayName();
     Vector<String> corsDisablingPatterns();
     void updateCORSDisablingPatternsOnAllExtensionPages();
-    WKWebViewConfiguration *webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
+    WebViewConfiguration webViewConfiguration(WebViewPurpose = WebViewPurpose::Any);
 
     WebsiteDataStore* websiteDataStore(std::optional<PAL::SessionID> = std::nullopt) const;
 
@@ -726,8 +746,13 @@ private:
     int NODELETE toAPIError(WebExtensionContext::Error);
 
     String stateFilePath() const;
+#if PLATFORM(COCOA)
     NSDictionary *currentState() const;
     NSDictionary *readStateFromStorage();
+#else
+    GRefPtr<GKeyFile> currentState() const;
+    GRefPtr<GKeyFile> readStateFromStorage();
+#endif
     void writeStateToStorage() const;
 
     void loadStorageAccessLevelsFromStorage();
@@ -751,6 +776,8 @@ private:
     bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
     bool NODELETE backgroundContentIsLoaded() const;
+
+    bool isNotRunningInTestRunner();
 
     void loadBackgroundWebViewDuringLoad();
     void loadBackgroundWebViewIfNeeded();
@@ -1087,10 +1114,8 @@ private:
     // webRequest support.
     bool hasPermissionToSendWebRequestEvent(WebExtensionTab*, const URL& resourceURL, const ResourceLoadInfo&);
 
-#if PLATFORM(COCOA)
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-#endif
 
     bool isLoaded(IPC::Decoder&) const { return isLoaded(); }
     bool isLoadedAndPrivilegedMessage(IPC::Decoder& message) const { return isLoaded() && isPrivilegedMessage(message); }
@@ -1102,6 +1127,8 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<NSMutableDictionary> m_state;
+#elif ENABLE(2022_GLIB_API)
+    GRefPtr<GKeyFile> m_state;
 #endif
     Vector<Ref<API::Error>> m_errors;
 
@@ -1151,7 +1178,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<WKWebView> m_backgroundWebView;
-    Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_backgroundWebViewActivity;
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
     RetainPtr<WKWebView> m_offscreenWebView;
@@ -1166,8 +1192,10 @@ private:
 
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
 #elif ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitWebView> m_backgroundWebView;
     GWeakPtr<WebKitWebExtensionContext> m_delegate;
 #endif
+    Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_backgroundWebViewActivity;
     RefPtr<API::Error> m_backgroundContentLoadError;
 
     String m_backgroundWebViewInspectionName;

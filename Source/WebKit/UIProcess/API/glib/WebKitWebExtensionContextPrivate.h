@@ -1,5 +1,6 @@
+
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,26 +20,16 @@
 
 #pragma once
 
-#include "APINavigationAction.h"
-#include "WebKitNavigationAction.h"
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CString.h>
+#if ENABLE(2022_GLIB_API)
 
-struct _WebKitNavigationAction {
-    _WebKitNavigationAction(Ref<API::NavigationAction>&& action)
-        : action(WTF::move(action))
-    {
-    }
+#include "WebExtensionContext.h"
+#include "WebKitWebExtensionContext.h"
+#include <wtf/RefPtr.h>
 
-    _WebKitNavigationAction(WebKitNavigationAction* navigation)
-        : action(navigation->action)
-    {
-    }
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-    RefPtr<API::NavigationAction> action;
-    GRefPtr<WebKitURIRequest> request;
-    std::optional<CString> frameName;
-};
+RefPtr<WebKit::WebExtensionContext> webkitWebExtensionContextToImpl(WebKitWebExtensionContext*);
 
-WebKitNavigationAction* webkitNavigationActionCreate(Ref<API::NavigationAction>&&);
-RefPtr<API::NavigationAction> webkitNavigationActionGetAction(WebKitNavigationAction*);
+#endif
+
+#endif // ENABLE(2022_GLIB_API)
