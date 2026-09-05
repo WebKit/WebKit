@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+try {
+    internals.setCookie({
+        name: 'thirdpartyiframecookie',
+        value: 'value',
+        domain: 'localhost',
+        path: '/',
+        isSession: true,
+    });
+    parent.postMessage('PASS: setCookie from third-party iframe did not terminate the WebProcess', '*');
+} catch (e) {
+    parent.postMessage('FAIL: threw ' + e, '*');
+}
+</script>
+</body>
+</html>

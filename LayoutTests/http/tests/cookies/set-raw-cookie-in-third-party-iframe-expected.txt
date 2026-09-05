@@ -1,0 +1,4 @@
+Test that internals.setCookie from a third-party iframe does not terminate the WebProcess.
+
+PASS: setCookie from third-party iframe did not terminate the WebProcess
+
