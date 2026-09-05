@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<input id="date" type="date">
+<input id="time" type="time">
+<input id="datetime-local" type="datetime-local">
+<input id="month" type="month">
+<input id="week" type="week">
+</div>
+
+<script>
+var output = "This test verifies the AXDateTimeComponents bitmask that each date and time input exposes.\n\n";
+
+function componentsFor(id)
+{
+    return accessibilityController.accessibleElementById(id).numberAttributeValue("AXDateTimeComponents");
+}
+
+if (window.accessibilityController) {
+    // Days | Months | Years.
+    output += expect("componentsFor('date')", "224");
+    // Seconds | Minutes | Hours.
+    output += expect("componentsFor('time')", "14");
+    // Seconds | Minutes | Hours | Days | Months | Years.
+    output += expect("componentsFor('datetime-local')", "238");
+    // Months | Years.
+    output += expect("componentsFor('month')", "192");
+    // Week is the one date input that maps to no components, so VoiceOver is told nothing
+    // about which fields a week control presents.
+    output += expect("componentsFor('week')", "0");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>

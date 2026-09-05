@@ -201,6 +201,7 @@ static id attributeValue(id element, NSString *attribute)
         @"AXControllerFor",
         @"AXControllers",
         @"AXDRTSpeechAttribute",
+        @"AXDateTimeComponents",
         @"AXDateTimeComponentsType",
         @"AXDescribedBy",
         @"AXDescriptionFor",

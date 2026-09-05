@@ -1,0 +1,12 @@
+This test verifies the AXDateTimeComponents bitmask that each date and time input exposes.
+
+PASS: componentsFor('date') === 224
+PASS: componentsFor('time') === 14
+PASS: componentsFor('datetime-local') === 238
+PASS: componentsFor('month') === 192
+PASS: componentsFor('week') === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
