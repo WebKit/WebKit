@@ -1,0 +1,118 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 40cm; height: 20cm; }
+</style>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const flatRectangle = "flat-rectangle.usdz";
+const centeredCube = "2x2x2-center.usdz";
+const offsetCube = "2x2x2-at-100x50x200.usdz";
+
+const rotation = new DOMMatrixReadOnly().rotateAxisAngle(0, 1, 0, 45);
+
+promise_test(async t => {
+    const autoTransform = await resolvedTransformForPortal(t, flatRectangle);
+    const scaledTransform = await resolvedTransformForPortal(t, flatRectangle, "scale3d(2, 2, 2) auto");
+
+    assert_3d_matrix_approx_equals(scaledTransform, autoTransform);
+}, `a uniform scale before auto is cancelled out by the auto-fit`);
+
+promise_test(async t => {
+    const smallPortal = { width: "10cm", height: "5cm" };
+    const autoThenRotation = await resolvedTransformForPortal(t, centeredCube, "auto rotate3d(0, 1, 0, 90deg)", smallPortal);
+    const rotationThenAuto = await resolvedTransformForPortal(t, centeredCube, "rotate3d(0, 1, 0, 90deg) auto", smallPortal);
+
+    assert_3d_matrix_approx_equals(autoThenRotation, rotationThenAuto);
+}, `a rotation that doesn't impact the bounding box has the same effect before or after auto`);
+
+promise_test(async t => {
+    const autoTransform = await resolvedTransformForPortal(t, offsetCube);
+    const scaledTransform = await resolvedTransformForPortal(t, offsetCube, "auto scale3d(2, 2, 2)");
+
+    assert_3d_matrix_approx_equals(scaledTransform, autoTransform.scale3d(2));
+}, `a scale listed after auto applies to the content inside the auto-fit`);
+
+promise_test(async t => {
+    const noneTransform = await resolvedTransformForPortal(t, offsetCube, "none");
+    const rotatedTransform = await resolvedTransformForPortal(t, offsetCube, "rotate3d(0, 1, 0, 45deg)");
+
+    assert_3d_matrix_approx_equals(rotatedTransform, noneTransform.multiply(rotation));
+}, `a transform list without auto applies to the content inside the 1:1 unit mapping`);
+
+promise_test(async t => {
+    const withoutTrailingList = await resolvedTransformForPortal(t, offsetCube, "scale3d(2, 2, 1) auto");
+    const withTrailingList = await resolvedTransformForPortal(t, offsetCube, "scale3d(2, 2, 1) auto rotate3d(0, 1, 0, 45deg)");
+
+    assert_3d_matrix_approx_equals(withTrailingList, withoutTrailingList.multiply(rotation));
+}, `a list after auto does not change what the auto-fit measured`);
+
+promise_test(async t => {
+    const autoTransform = await resolvedTransformForPortal(t, offsetCube);
+
+    const portal = createPortal(t, { portalTransform: "auto translateX(50%)" });
+    portal.style.padding = "10px";
+    portal.style.border = "5px solid transparent";
+    const model = appendModel(portal, offsetCube);
+    await model.ready;
+    const translated = await waitForPortalTransform(portal, portalTransformIsResolved, "translated transform");
+
+    assert_approx_equals((translated.m41 - autoTransform.m41) / (portal.getBoundingClientRect().width / 2), 1, epsilon, "the translation is in CSS pixels");
+}, `a length after auto displaces the content in CSS pixels`);
+
+promise_test(async t => {
+    const tinyPortal = { width: "1cm", height: "1cm" };
+    const autoTransform = await resolvedTransformForPortal(t, offsetCube, undefined, tinyPortal);
+
+    const portal = createPortal(t, { ...tinyPortal, portalTransform: "auto translateX(50%)" });
+    const model = appendModel(portal, offsetCube);
+    await model.ready;
+    const translated = await waitForPortalTransform(portal, portalTransformIsResolved, "translated transform");
+
+    assert_less_than(autoTransform.m11, 0.05, "the fit really is scaling the content down steeply");
+    assert_approx_equals((translated.m41 - autoTransform.m41) / (portal.getBoundingClientRect().width / 2), 1, epsilon, "the translation is significant");
+}, `a length after auto is unaffected by the auto-fit scale`);
+
+promise_test(async t => {
+    const unitMapping = await resolvedTransformForPortal(t, offsetCube, "none");
+
+    const portal = createPortal(t, { portalTransform: "translateX(50%)" });
+    portal.style.padding = "10px";
+    portal.style.border = "5px solid transparent";
+    const model = appendModel(portal, offsetCube);
+
+    await model.ready;
+    const before = await waitForPortalTransform(portal, portalTransformIsResolved, "transform before resizing");
+    const halfBorderBoxBefore = portal.getBoundingClientRect().width / 2;
+
+    portal.style.width = "80cm";
+    const after = await waitForPortalTransform(portal, transform => transform && !portalTransformsApproxEqual(transform, before), "transform after resizing");
+    const halfBorderBoxAfter = portal.getBoundingClientRect().width / 2;
+
+    assert_approx_equals((before.m41 - unitMapping.m41) / halfBorderBoxBefore, 1, epsilon, "the percentage resolves against the border box");
+    assert_approx_equals((after.m41 - unitMapping.m41) / halfBorderBoxAfter, 1, epsilon, "and is re-resolved against it when the portal is resized");
+}, `a percentage in the portal-transform list resolves against the border box, and is re-resolved on resize`);
+
+promise_test(async t => {
+    const unitMapping = await resolvedTransformForPortal(t, offsetCube, "none");
+
+    const portal = createPortal(t, { portalTransform: "translateX(calc(50% + 10px))" });
+    const model = appendModel(portal, offsetCube);
+    await model.ready;
+    const translated = await waitForPortalTransform(portal, portalTransformIsResolved, "calc() transform");
+
+    const expected = portal.getBoundingClientRect().width / 2 + 10;
+    assert_approx_equals((translated.m41 - unitMapping.m41) / expected, 1, epsilon, "the percentage and the length are both accounted for");
+}, `a calc() mixing a percentage and a length resolves against the border box`);
+
+</script>
+</body>
+</html>

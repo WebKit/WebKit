@@ -507,12 +507,12 @@ void ModelProcessModelPlayer::setHasPortal(bool hasPortal)
 
 #if ENABLE(SPATIAL_PORTAL)
 
-void ModelProcessModelPlayer::setPortalTransform(WebCore::PortalTransformKind kind)
+void ModelProcessModelPlayer::setPortalTransform(const WebCore::UsedPortalTransform& portalTransform)
 {
     // Deliberately unconditional. Skipping the send when the value matches the default
     // would leave a portal whose portal-transform is the initial `auto` indistinguishable
     // from a standalone <model>.
-    m_portalTransform = kind;
+    m_portalTransform = portalTransform;
     send(Messages::ModelProcessModelPlayerProxy::SetPortalTransform(m_portalTransform));
 }
 

@@ -25,46 +25,110 @@
 
 #pragma once
 
+#include <WebCore/StyleTransformList.h>
 #include <WebCore/StyleValueTypes.h>
+#include <WebCore/StyleZoomPrimitives.h>
 
 namespace WebCore {
+
+class FloatSize;
+class TransformationMatrix;
+
 namespace Style {
 
-// TODO: rdar://182292652
+// <'portal-transform'> = none | auto | auto? <transform-list> | <transform-list> auto <transform-list>?
+// https://webkit.github.io/explainers/css-spatial/Overview.html#stage-transform
+
 struct PortalTransform {
-    constexpr PortalTransform(CSS::Keyword::Auto)
-        : m_type { Type::Auto }
+    // `auto? <transform-list>`
+    struct AfterAuto {
+        std::optional<CSS::Keyword::Auto> autoKeyword;
+        TransformList after;
+
+        bool operator==(const AfterAuto&) const = default;
+    };
+
+    // `<transform-list> auto <transform-list>?`
+    struct BeforeAndAfterAuto {
+        TransformList before;
+        CSS::Keyword::Auto autoKeyword;
+        ListOrNullopt<TransformList> after;
+
+        bool operator==(const BeforeAndAfterAuto&) const = default;
+    };
+
+    PortalTransform(CSS::Keyword::None)
+        : m_value { CSS::Keyword::None { } }
     {
     }
 
-    constexpr PortalTransform(CSS::Keyword::None)
-        : m_type { Type::None }
+    PortalTransform(CSS::Keyword::Auto)
+        : m_value { CSS::Keyword::Auto { } }
     {
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
-    {
-        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+    static PortalTransform withAutoFit(TransformList&& beforeAuto, TransformList&& afterAuto);
+    static PortalTransform withoutAutoFit(TransformList&& transforms);
 
-        switch (m_type) {
-        case Type::Auto:
-            return visitor(CSS::Keyword::Auto { });
-        case Type::None:
-            return visitor(CSS::Keyword::None { });
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    bool hasAuto() const;
+    bool isNone() const { return std::holds_alternative<CSS::Keyword::None>(m_value); }
 
-    constexpr bool operator==(const PortalTransform&) const = default;
+    void applyBeforeAuto(TransformationMatrix&, const FloatSize&, ZoomFactor) const;
+    void applyAfterAuto(TransformationMatrix&, const FloatSize&, ZoomFactor) const;
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const { return WTF::switchOn(m_value, std::forward<F>(f)...); }
+
+    bool operator==(const PortalTransform&) const = default;
 
 private:
-    enum class Type : uint8_t { Auto, None };
-    Type m_type;
+    using Value = Variant<CSS::Keyword::None, CSS::Keyword::Auto, AfterAuto, BeforeAndAfterAuto>;
+
+    PortalTransform(Value&& value)
+        : m_value { WTF::move(value) }
+    {
+    }
+
+    friend struct Blending<PortalTransform>;
+
+    const TransformList& beforeAutoList() const LIFETIME_BOUND;
+    const TransformList& afterAutoList() const LIFETIME_BOUND;
+
+    Value m_value;
 };
 
-template<> struct CSSValueConversion<PortalTransform> { PortalTransform NODELETE operator()(BuilderState&, const CSSValue&); };
+template<size_t I> const auto& get(const PortalTransform::AfterAuto& value)
+{
+    if constexpr (!I)
+        return value.autoKeyword;
+    else if constexpr (I == 1)
+        return value.after;
+}
+
+template<size_t I> const auto& get(const PortalTransform::BeforeAndAfterAuto& value)
+{
+    if constexpr (!I)
+        return value.before;
+    else if constexpr (I == 1)
+        return value.autoKeyword;
+    else if constexpr (I == 2)
+        return value.after;
+}
+
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<PortalTransform> { auto operator()(BuilderState&, const CSSValue&) -> PortalTransform; };
+
+// MARK: - Blending
+
+template<> struct Blending<PortalTransform> {
+    auto canBlend(const PortalTransform&, const PortalTransform&, CompositeOperation) -> bool;
+    constexpr auto requiresInterpolationForAccumulativeIteration(const PortalTransform&, const PortalTransform&) -> bool { return true; }
+    auto blend(const PortalTransform&, const PortalTransform&, const Interpolation::Context&) -> PortalTransform;
+};
 
 } // namespace Style
 } // namespace WebCore
 
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PortalTransform::AfterAuto, 2)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PortalTransform::BeforeAndAfterAuto, 3)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::PortalTransform)

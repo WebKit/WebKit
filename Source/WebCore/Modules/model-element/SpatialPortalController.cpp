@@ -55,6 +55,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
 #include "ResourceError.h"
+#include "StylePortalTransform.h"
 #include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/RefCounted.h>
@@ -456,12 +457,31 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
     return m_modelPlayer.get();
 }
 
-void SpatialPortalController::setPortalTransform(PortalTransformKind kind)
+void SpatialPortalController::updatePortalTransform()
 {
-    if (m_portalTransform == kind)
+    RefPtr element = m_portalElement.get();
+    if (!element)
         return;
 
-    m_portalTransform = kind;
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(element->renderer()))
+        updatePortalTransform(*box);
+}
+
+void SpatialPortalController::updatePortalTransform(const RenderBox& box)
+{
+    auto& style = box.style();
+    auto& portalTransform = style.portalTransform();
+    auto referenceSize = FloatSize { box.borderBoxSize() };
+    auto zoom = style.usedZoomForLength();
+
+    UsedPortalTransform used { .fitsContent = portalTransform.hasAuto() };
+    portalTransform.applyBeforeAuto(used.transformBeforeAuto, referenceSize, zoom);
+    portalTransform.applyAfterAuto(used.transformAfterAuto, referenceSize, zoom);
+
+    if (m_portalTransform == used)
+        return;
+
+    m_portalTransform = WTF::move(used);
 
     if (RefPtr player = m_modelPlayer)
         player->setPortalTransform(m_portalTransform);
@@ -676,6 +696,8 @@ void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLaye
 
 void SpatialPortalController::sizeMayHaveChanged()
 {
+    updatePortalTransform();
+
     RefPtr player = m_modelPlayer;
     if (!player)
         return;

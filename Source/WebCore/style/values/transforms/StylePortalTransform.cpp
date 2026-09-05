@@ -27,26 +27,154 @@
 #include "StylePortalTransform.h"
 
 #include "CSSKeywordValue.h"
+#include "CSSTransformListValue.h"
+#include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "StyleBuilderChecking.h"
+#include "StyleInterpolationContext.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace Style {
 
+// MARK: - Construction
+
+static const TransformList& emptyTransformList()
+{
+    static NeverDestroyed<TransformList> list;
+    return list.get();
+}
+
+PortalTransform PortalTransform::withAutoFit(TransformList&& beforeAuto, TransformList&& afterAuto)
+{
+    if (beforeAuto.isEmpty()) {
+        if (afterAuto.isEmpty())
+            return CSS::Keyword::Auto { };
+        return PortalTransform { AfterAuto { CSS::Keyword::Auto { }, WTF::move(afterAuto) } };
+    }
+
+    if (afterAuto.isEmpty())
+        return PortalTransform { BeforeAndAfterAuto { WTF::move(beforeAuto), { }, std::nullopt } };
+
+    return PortalTransform { BeforeAndAfterAuto { WTF::move(beforeAuto), { }, WTF::move(afterAuto) } };
+}
+
+PortalTransform PortalTransform::withoutAutoFit(TransformList&& transforms)
+{
+    if (transforms.isEmpty())
+        return CSS::Keyword::None { };
+
+    return PortalTransform { AfterAuto { std::nullopt, WTF::move(transforms) } };
+}
+
+bool PortalTransform::hasAuto() const
+{
+    return WTF::switchOn(m_value,
+        [](const CSS::Keyword::Auto&) { return true; },
+        [](const AfterAuto& value) { return !!value.autoKeyword; },
+        [](const BeforeAndAfterAuto&) { return true; },
+        [](const auto&) { return false; }
+    );
+}
+
+const TransformList& PortalTransform::beforeAutoList() const
+{
+    if (auto* value = std::get_if<BeforeAndAfterAuto>(&m_value))
+        return value->before;
+
+    return emptyTransformList();
+}
+
+const TransformList& PortalTransform::afterAutoList() const
+{
+    return WTF::switchOn(m_value,
+        [](const AfterAuto& value) -> const TransformList& { return value.after; },
+        [](const BeforeAndAfterAuto& value) -> const TransformList& { return value.after ? *value.after : emptyTransformList(); },
+        [](const auto&) -> const TransformList& { return emptyTransformList(); }
+    );
+}
+
+void PortalTransform::applyBeforeAuto(TransformationMatrix& matrix, const FloatSize& size, ZoomFactor zoom) const
+{
+    beforeAutoList().apply(matrix, size, zoom);
+}
+
+void PortalTransform::applyAfterAuto(TransformationMatrix& matrix, const FloatSize& size, ZoomFactor zoom) const
+{
+    afterAutoList().apply(matrix, size, zoom);
+}
+
+// MARK: - Conversion
+
+static TransformList transformListSlice(BuilderState& state, const CSSValueContainingVector& source, size_t begin, size_t end)
+{
+    return TransformList { TransformList::Container::createWithSizeFromGenerator(end - begin, [&](size_t i) {
+        Ref value = source[begin + i];
+        return toStyleFromCSSValue<TransformFunction>(state, value);
+    }) };
+}
+
+static bool isAutoKeyword(const CSSValue& value)
+{
+    auto* keyword = dynamicDowncast<CSSKeywordValue>(value);
+    return keyword && keyword->valueID() == CSSValueAuto;
+}
+
 auto CSSValueConversion<PortalTransform>::operator()(BuilderState& state, const CSSValue& value) -> PortalTransform
 {
-    if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        switch (keywordValue->valueID()) {
-        case CSSValueAuto:
-            return CSS::Keyword::Auto { };
+    if (auto* keyword = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (keyword->valueID()) {
         case CSSValueNone:
             return CSS::Keyword::None { };
+        case CSSValueAuto:
+            return CSS::Keyword::Auto { };
         default:
             break;
         }
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::Auto { };
+    }
+
+    if (auto* transformList = dynamicDowncast<CSSTransformListValue>(value))
+        return PortalTransform::withoutAutoFit(transformListSlice(state, *transformList, 0, transformList->size()));
+
+    RefPtr list = requiredDowncast<CSSValueList>(state, value);
+    if (!list)
+        return CSS::Keyword::Auto { };
+
+    auto count = list->size();
+    for (size_t index = 0; index < count; ++index) {
+        if (isAutoKeyword((*list)[index]))
+            return PortalTransform::withAutoFit(transformListSlice(state, *list, 0, index), transformListSlice(state, *list, index + 1, count));
     }
 
     state.setCurrentPropertyInvalidAtComputedValueTime();
     return CSS::Keyword::Auto { };
+}
+
+// MARK: - Blending
+
+static bool hasMatchingAutoFit(const PortalTransform& from, const PortalTransform& to)
+{
+    return from.hasAuto() == to.hasAuto();
+}
+
+auto Blending<PortalTransform>::canBlend(const PortalTransform& from, const PortalTransform& to, CompositeOperation compositeOperation) -> bool
+{
+    return hasMatchingAutoFit(from, to)
+        && Style::canBlend(from.beforeAutoList(), to.beforeAutoList(), compositeOperation)
+        && Style::canBlend(from.afterAutoList(), to.afterAutoList(), compositeOperation);
+}
+
+auto Blending<PortalTransform>::blend(const PortalTransform& from, const PortalTransform& to, const Interpolation::Context& context) -> PortalTransform
+{
+    if (!hasMatchingAutoFit(from, to))
+        return context.progress < 0.5 ? from : to;
+
+    if (!from.hasAuto())
+        return PortalTransform::withoutAutoFit(Style::blend(from.afterAutoList(), to.afterAutoList(), context));
+
+    return PortalTransform::withAutoFit(Style::blend(from.beforeAutoList(), to.beforeAutoList(), context), Style::blend(from.afterAutoList(), to.afterAutoList(), context));
 }
 
 } // namespace Style

@@ -744,7 +744,7 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
 #if ENABLE(SPATIAL_PORTAL)
     if (!info.isInteractiveModel) {
         RefPtr element = dynamicDowncast<WebCore::Element>(hitTestNode);
-        info.isInteractiveModel = !!WebCore::SpatialPortalController::interactiveControllerForHitTestedElement(element.get());
+        info.isInteractiveModel = !!WebCore::SpatialPortalController::interactiveControllerForHitTestedElement(element);
     }
 #endif
 

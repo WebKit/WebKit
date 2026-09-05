@@ -590,7 +590,7 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
     return defaultPointsPerMeter;
 }
 
-RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT originalSRT)
+RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT originalSRT) const
 {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (m_immersivePresentation)
@@ -603,7 +603,7 @@ RESRT ModelProcessModelPlayerProxy::modelStandardizedTransformSRT(RESRT original
     return originalSRT;
 }
 
-RESRT ModelProcessModelPlayerProxy::modelLocalizedTransformSRT(RESRT originalSRT)
+RESRT ModelProcessModelPlayerProxy::modelLocalizedTransformSRT(RESRT originalSRT) const
 {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (m_immersivePresentation)
@@ -616,10 +616,68 @@ RESRT ModelProcessModelPlayerProxy::modelLocalizedTransformSRT(RESRT originalSRT
     return originalSRT;
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+static void transformBoundingBox(simd_float3 extents, simd_float3 center, const simd_float4x4& matrix, simd_float3& minimum, simd_float3& maximum)
+{
+    simd_float3 halfExtents = extents / 2;
+
+    for (int corner = 0; corner < 8; ++corner) {
+        simd_float3 offset = simd_make_float3(
+            (corner & 1) ? halfExtents.x : -halfExtents.x,
+            (corner & 2) ? halfExtents.y : -halfExtents.y,
+            (corner & 4) ? halfExtents.z : -halfExtents.z
+        );
+        simd_float3 point = simd_make_float3(simd_mul(matrix, simd_make_float4(center + offset, 1.0f)));
+
+        minimum = corner ? simd_min(minimum, point) : point;
+        maximum = corner ? simd_max(maximum, point) : point;
+    }
+}
+
+static float maximumScale(const simd_float4x4& matrix)
+{
+    return std::max({
+        simd_length(simd_make_float3(matrix.columns[0])),
+        simd_length(simd_make_float3(matrix.columns[1])),
+        simd_length(simd_make_float3(matrix.columns[2]))
+    });
+}
+
+static RESRT contentTransformedEntitySRT(const simd_float4x4& contentTransform, simd_float3 entityScale)
+{
+    RESRT entityScaleSRT = REMakeSRT(entityScale, simd_quaternion(0, simd_make_float3(1, 0, 0)), simd_make_float3(0, 0, 0));
+    return REMakeSRTFromMatrix(simd_mul(contentTransform, RESRTMatrix(entityScaleSRT)));
+}
+#endif // ENABLE(SPATIAL_PORTAL)
+
+#if ENABLE(SPATIAL_PORTAL)
+// Converts the trailing list's lengths from CSS pixels into the scaled (auto fit) coordinate system.
+simd_float4x4 ModelProcessModelPlayerProxy::contentTransformMatrix() const
+{
+    auto beforeAuto = static_cast<simd_float4x4>(m_portalTransform.transformBeforeAuto);
+    auto afterAuto = static_cast<simd_float4x4>(m_portalTransform.transformAfterAuto);
+
+    simd_float4x4 enclosing = simd_mul(RESRTMatrix(modelStandardizedTransformSRT(m_transformSRT)), beforeAuto);
+    simd_float3x3 enclosingLinear = simd_matrix(simd_make_float3(enclosing.columns[0]), simd_make_float3(enclosing.columns[1]), simd_make_float3(enclosing.columns[2]));
+
+    simd_float3 translation = simd_mul(simd_inverse(enclosingLinear), simd_make_float3(afterAuto.columns[3]));
+
+    if (std::isfinite(translation.x) && std::isfinite(translation.y) && std::isfinite(translation.z))
+        afterAuto.columns[3] = simd_make_float4(translation, afterAuto.columns[3].w);
+
+    return simd_mul(beforeAuto, afterAuto);
+}
+#endif
+
 void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
 {
     if (m_trackedModels.isEmpty() || !m_layer)
         return;
+
+#if ENABLE(SPATIAL_PORTAL)
+    auto beforeAutoMatrix = static_cast<simd_float4x4>(m_portalTransform.transformBeforeAuto);
+    float beforeAutoScale = maximumScale(beforeAutoMatrix);
+#endif
 
     // TODO: Once we have spatial positioninig the union won't be centered on the origin anymore.
     simd_float3 minBound = simd_make_float3(0, 0, 0);
@@ -630,9 +688,15 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
         if (!tracked->entity)
             continue;
 
+#if ENABLE(SPATIAL_PORTAL)
+        simd_float3 entityMin;
+        simd_float3 entityMax;
+        transformBoundingBox(tracked->originalBoundingBoxExtents, tracked->originalBoundingBoxCenter, beforeAutoMatrix, entityMin, entityMax);
+#else
         simd_float3 halfExtents = tracked->originalBoundingBoxExtents / 2;
         simd_float3 entityMin = tracked->originalBoundingBoxCenter - halfExtents;
         simd_float3 entityMax = tracked->originalBoundingBoxCenter + halfExtents;
+#endif
 
         minBound = hasBounds ? simd_min(minBound, entityMin) : entityMin;
         maxBound = hasBounds ? simd_max(maxBound, entityMax) : entityMax;
@@ -648,8 +712,7 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
     simd_quatf currentModelRotation = setDefaultRotation ? simd_quaternion(0, simd_make_float3(1, 0, 0)) : m_transformSRT.rotation;
 
 #if ENABLE(SPATIAL_PORTAL)
-    bool skipAutoFit = m_portalTransform == WebCore::PortalTransformKind::None;
-    if (skipAutoFit) {
+    if (!m_portalTransform.fitsContent) {
         m_transformSRT = computeUnfittedSRT(boundingBoxExtents, boundingBoxCenter, currentModelRotation);
         notifyModelPlayerOfTransformChange();
         return;
@@ -664,7 +727,13 @@ void ModelProcessModelPlayerProxy::computeTransform(bool setDefaultRotation)
             continue;
 
         float entityRadius = [tracked->entity boundingRadius] * tracked->originalEntityScale.x;
-        boundingRadius = std::max(boundingRadius, simd_length(tracked->originalBoundingBoxCenter - boundingBoxCenter) + entityRadius);
+#if ENABLE(SPATIAL_PORTAL)
+        entityRadius *= beforeAutoScale;
+        simd_float3 entityCenter = simd_make_float3(simd_mul(beforeAutoMatrix, simd_make_float4(tracked->originalBoundingBoxCenter, 1.0f)));
+#else
+        simd_float3 entityCenter = tracked->originalBoundingBoxCenter;
+#endif
+        boundingRadius = std::max(boundingRadius, simd_length(entityCenter - boundingBoxCenter) + entityRadius);
     }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
@@ -681,6 +750,12 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 {
     RESRT newSRT = modelStandardizedTransformSRT(m_transformSRT);
     simd_float4x4 matrix = RESRTMatrix(newSRT);
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalTransform.hasContentTransform())
+        matrix = simd_mul(matrix, contentTransformMatrix());
+#endif
+
     WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
 
 #if ENABLE(SPATIAL_PORTAL)
@@ -697,19 +772,25 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 
 RESRT ModelProcessModelPlayerProxy::childEntityTransformSRT(const TrackedModel& tracked) const
 {
-    RESRT srt {
-        .scale = tracked.originalEntityScale,
-        .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)),
-        .translation = simd_make_float3(0, 0, 0),
-    };
+    bool hasChildTransform = !simd_equal(tracked.childTransform, matrix_identity_float4x4);
+    if (!hasChildTransform && !m_portalTransform.hasContentTransform()) {
+        return RESRT {
+            .scale = tracked.originalEntityScale,
+            .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)),
+            .translation = simd_make_float3(0, 0, 0),
+        };
+    }
 
-    if (simd_equal(tracked.childTransform, matrix_identity_float4x4))
-        return srt;
+    // The author's `portal-transform` list applies to the whole portal content, so it sits outside of a child's own transform.
+    simd_float4x4 matrix = m_portalTransform.hasContentTransform() ? contentTransformMatrix() : matrix_identity_float4x4;
 
-    RESRT childSRT = REMakeSRTFromMatrix(tracked.childTransform);
-    childSRT.translation /= effectivePointsPerMeter(m_layer.get());
+    if (hasChildTransform) {
+        RESRT childSRT = REMakeSRTFromMatrix(tracked.childTransform);
+        childSRT.translation /= effectivePointsPerMeter(m_layer.get());
+        matrix = simd_mul(matrix, RESRTMatrix(childSRT));
+    }
 
-    return REMakeSRTFromMatrix(simd_mul(RESRTMatrix(childSRT), RESRTMatrix(srt)));
+    return contentTransformedEntitySRT(matrix, tracked.originalEntityScale);
 }
 
 #endif // ENABLE(SPATIAL_PORTAL)
@@ -723,7 +804,7 @@ void ModelProcessModelPlayerProxy::updateTransform()
     if (!m_containerEntityWrapper)
         return;
 
-    // The container owns the global transforms (stagemode, portal-transform) and each model sits beneath with only its own scale and transform applied.
+    // The container owns the auto-fit and stage mode, and each model sits beneath it with its own scale and transform, and the author's `portal-transform` list applied.
     [m_containerEntityWrapper setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
     for (UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
         if (!tracked->entity)
@@ -740,7 +821,12 @@ void ModelProcessModelPlayerProxy::updateTransform()
     if (!reportingEntity)
         return;
 
-    [reportingEntity setTransform:WKEntityTransform({ m_transformSRT.scale * reportingModelScale(), m_transformSRT.rotation, m_transformSRT.translation })];
+    RESRT entitySRT = REMakeSRT(m_transformSRT.scale * reportingModelScale(), m_transformSRT.rotation, m_transformSRT.translation);
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_portalTransform.hasContentTransform())
+        entitySRT = REMakeSRTFromMatrix(simd_mul(RESRTMatrix(m_transformSRT), RESRTMatrix(contentTransformedEntitySRT(contentTransformMatrix(), reportingModelScale()))));
+#endif
+    [reportingEntity setTransform:WKEntityTransform({ entitySRT.scale, entitySRT.rotation, entitySRT.translation })];
 #endif
 }
 
@@ -1471,14 +1557,14 @@ void ModelProcessModelPlayerProxy::setHasPortal(bool hasPortal)
 
 #if ENABLE(SPATIAL_PORTAL)
 
-void ModelProcessModelPlayerProxy::setPortalTransform(WebCore::PortalTransformKind kind)
+void ModelProcessModelPlayerProxy::setPortalTransform(const WebCore::UsedPortalTransform& portalTransform)
 {
     m_isSpatialPortal = true;
 
-    if (m_portalTransform == kind)
+    if (m_portalTransform == portalTransform)
         return;
 
-    m_portalTransform = kind;
+    m_portalTransform = portalTransform;
 
     computeTransform(effectiveStageModeOperation() == WebCore::StageModeOperation::None);
     updateTransform();

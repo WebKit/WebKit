@@ -27,13 +27,19 @@
 
 #if ENABLE(SPATIAL_PORTAL)
 
-#include <cstdint>
+#include <WebCore/TransformationMatrix.h>
 
 namespace WebCore {
 
-enum class PortalTransformKind : uint8_t {
-    None,
-    Auto,
+struct UsedPortalTransform {
+    bool fitsContent { true };
+    TransformationMatrix transformBeforeAuto;
+    TransformationMatrix transformAfterAuto;
+
+    TransformationMatrix contentTransform() const { return transformBeforeAuto * transformAfterAuto; }
+    bool hasContentTransform() const { return !transformBeforeAuto.isIdentity() || !transformAfterAuto.isIdentity(); }
+
+    bool operator==(const UsedPortalTransform&) const = default;
 };
 
 } // namespace WebCore

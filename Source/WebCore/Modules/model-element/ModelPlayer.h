@@ -161,7 +161,7 @@ public:
 #endif
 
 #if ENABLE(SPATIAL_PORTAL)
-    virtual void setPortalTransform(PortalTransformKind);
+    virtual void setPortalTransform(const UsedPortalTransform&);
     virtual void setPortalAction(PortalActionKind);
 #endif
 

@@ -369,15 +369,6 @@ static bool isNestedInsideSpatialPortal(const Element& element)
     return false;
 }
 
-// TODO: rdar://182292652
-static PortalTransformKind portalTransformKind(const Style::PortalTransform& portalTransform)
-{
-    return portalTransform.switchOn(
-        [](CSS::Keyword::None) { return PortalTransformKind::None; },
-        [](CSS::Keyword::Auto) { return PortalTransformKind::Auto; }
-    );
-}
-
 static PortalActionKind portalActionKind(PortalActionType portalAction)
 {
     switch (portalAction) {
@@ -390,19 +381,19 @@ static PortalActionKind portalActionKind(PortalActionType portalAction)
 }
 
 // `portal-action: orbit` requires `auto` to be part of the `portal-transform`.
-static PortalActionKind usedPortalActionKind(PortalActionKind portalAction, PortalTransformKind portalTransform)
+static PortalActionKind usedPortalActionKind(PortalActionKind portalAction, const Style::PortalTransform& portalTransform)
 {
-    if (portalTransform != PortalTransformKind::Auto)
+    if (!portalTransform.hasAuto())
         return PortalActionKind::None;
     return portalAction;
 }
 
-static void pushSpatialPortalProperties(Element& element, const Style::ComputedStyle& style)
+static void pushSpatialPortalProperties(Element& element, const RenderBox& box)
 {
+    auto& style = box.style();
     if (CheckedPtr controller = element.spatialPortalController()) {
-        auto portalTransform = portalTransformKind(style.portalTransform());
-        controller->setPortalTransform(portalTransform);
-        controller->setPortalAction(usedPortalActionKind(portalActionKind(style.portalAction()), portalTransform));
+        controller->updatePortalTransform(box);
+        controller->setPortalAction(usedPortalActionKind(portalActionKind(style.portalAction()), style.portalTransform()));
     }
 }
 
@@ -417,7 +408,7 @@ static void updateSpatialPortalController(Element& element)
         element.clearSpatialPortalController();
 
     if (box && hadController != element.establishesSpatialPortal()) {
-        pushSpatialPortalProperties(element, box->style());
+        pushSpatialPortalProperties(element, *box);
 
         if (CheckedPtr layer = box->layer())
             layer->setNeedsCompositingConfigurationUpdate();
@@ -560,7 +551,7 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
             spatialPortalStyleDidChange(*element);
 
         if (newStyle.spatial() == SpatialType::Portal)
-            pushSpatialPortalProperties(*element, newStyle);
+            pushSpatialPortalProperties(*element, *this);
     }
 #endif
 }

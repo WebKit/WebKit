@@ -1,0 +1,11 @@
+
+PASS a uniform scale before auto is cancelled out by the auto-fit
+PASS a rotation that doesn't impact the bounding box has the same effect before or after auto
+PASS a scale listed after auto applies to the content inside the auto-fit
+PASS a transform list without auto applies to the content inside the 1:1 unit mapping
+PASS a list after auto does not change what the auto-fit measured
+PASS a length after auto displaces the content in CSS pixels
+PASS a length after auto is unaffected by the auto-fit scale
+PASS a percentage in the portal-transform list resolves against the border box, and is re-resolved on resize
+PASS a calc() mixing a percentage and a length resolves against the border box
+

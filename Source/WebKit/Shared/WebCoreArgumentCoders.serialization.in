@@ -7076,9 +7076,10 @@ enum class WebCore::StageModeOperation : bool;
 
 #if ENABLE(SPATIAL_PORTAL)
 header: <WebCore/PortalTransform.h>
-enum class WebCore::PortalTransformKind : uint8_t {
-    None,
-    Auto
+[CustomHeader] struct WebCore::UsedPortalTransform {
+    bool fitsContent;
+    WebCore::TransformationMatrix transformBeforeAuto;
+    WebCore::TransformationMatrix transformAfterAuto;
 };
 
 header: <WebCore/PortalAction.h>
