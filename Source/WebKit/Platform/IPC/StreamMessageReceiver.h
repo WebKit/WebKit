@@ -37,6 +37,10 @@ public:
     virtual ~StreamMessageReceiver() { }
 
     virtual void didReceiveStreamMessage(StreamServerConnection&, Decoder&) = 0;
+
+#if OS(LINUX)
+    virtual void didRunOutOfStreamMessages() { }
+#endif
 };
 
 } // namespace IPC

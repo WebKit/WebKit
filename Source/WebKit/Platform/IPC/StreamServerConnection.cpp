@@ -153,8 +153,13 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
 
     for (size_t i = 0; i < messageLimit; ++i) {
         auto span = m_buffer.tryAcquire();
-        if (!span)
+        if (!span) {
+#if OS(LINUX)
+            if (currentReceiver)
+                currentReceiver->didRunOutOfStreamMessages();
+#endif
             return DispatchResult::HasNoMessages;
+        }
         IPC::Decoder decoder { *span, m_currentDestinationID };
         if (!decoder.isValid()) {
             dispatchDidReceiveInvalidMessage(decoder);
