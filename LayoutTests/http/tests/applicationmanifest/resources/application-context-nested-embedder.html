@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<title>application-context nested embedder</title>
+<body>
+<script>
+// Embeds a grandchild that is same origin with the top-level document and
+// relays the grandchild's report. Loaded cross-origin to exercise
+// A -> B (cross-origin) -> A' (same origin as top).
+window.addEventListener("message", event => {
+    if (event.data !== "report")
+        return;
+    const source = event.source;
+    const grandchild = document.createElement("iframe");
+    grandchild.src = "http://127.0.0.1:8000/applicationmanifest/resources/application-context-iframe.html";
+    grandchild.onload = () => {
+        window.addEventListener("message", relayEvent => {
+            if (relayEvent.source === grandchild.contentWindow)
+                source.postMessage(relayEvent.data, "*");
+        });
+        grandchild.contentWindow.postMessage("report", "*");
+    };
+    document.body.appendChild(grandchild);
+});
+</script>
+</body>

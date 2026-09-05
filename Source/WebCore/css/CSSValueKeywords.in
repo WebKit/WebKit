@@ -1751,6 +1751,7 @@ optional
 fullscreen enable-if=ENABLE_APPLICATION_MANIFEST
 standalone enable-if=ENABLE_APPLICATION_MANIFEST
 minimal-ui enable-if=ENABLE_APPLICATION_MANIFEST
+application enable-if=ENABLE_APPLICATION_MANIFEST
 browser enable-if=ENABLE_APPLICATION_MANIFEST
 
 // text-decoration-line

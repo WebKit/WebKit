@@ -533,6 +533,12 @@ void SettingsBase::useSystemAppearanceChanged()
         protect(m_page)->useSystemAppearanceChanged();
 }
 
+void SettingsBase::standaloneChanged()
+{
+    if (m_page)
+        protect(m_page)->standaloneChanged();
+}
+
 void SettingsBase::fontFallbackPrefersPictographsChanged()
 {
     invalidateAfterGenericFamilyChange(protect(m_page).get());

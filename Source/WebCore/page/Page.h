@@ -705,6 +705,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void useSystemAppearanceChanged();
+    WEBCORE_EXPORT void standaloneChanged();
 
     WEBCORE_EXPORT bool useDarkAppearance() const;
     bool useElevatedUserInterfaceLevel() const { return m_useElevatedUserInterfaceLevel; }

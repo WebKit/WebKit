@@ -72,6 +72,7 @@ const FeatureSchema& update();
 const FeatureSchema& videoPlayableInline();
 const FeatureSchema& width();
 #if ENABLE(APPLICATION_MANIFEST)
+const FeatureSchema& applicationContext();
 const FeatureSchema& displayMode();
 #endif
 #if ENABLE(DARK_MODE_CSS)

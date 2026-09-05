@@ -1688,6 +1688,7 @@ public:
     inline ClientOrigin clientOrigin() const;
 
     inline bool isSameOriginAsTopDocument() const; // Defined in DocumentSecurityOrigin
+    inline bool isSameOriginAsAllAncestors() const; // Defined in DocumentSecurityOrigin
     bool shouldForceNoOpenerBasedOnCOOP() const;
 
     WEBCORE_EXPORT CrossOriginOpenerPolicy crossOriginOpenerPolicy() const final;

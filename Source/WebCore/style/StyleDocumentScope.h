@@ -47,6 +47,7 @@ public:
     void evaluateMediaQueriesForViewportChange();
     void evaluateMediaQueriesForAccessibilitySettingsChange();
     void evaluateMediaQueriesForAppearanceChange();
+    void evaluateMediaQueriesForApplicationContextChange();
 
     // This is called when the environment where we intrepret the stylesheets changes (for example switching to printing).
     // The change is assumed to potentially affect all author and user stylesheets including shadow roots.

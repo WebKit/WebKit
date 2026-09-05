@@ -4507,6 +4507,17 @@ void Page::useSystemAppearanceChanged()
     });
 }
 
+void Page::standaloneChanged()
+{
+    // The application context can change during a document's lifetime: per spec a
+    // top-level traversable can become, or cease to be, an application context.
+    forEachDocument([](auto& document) {
+        document.styleScope().evaluateMediaQueriesForApplicationContextChange();
+        document.updateElementsAffectedByMediaQueries();
+        document.scheduleRenderingUpdate(RenderingUpdateStep::MediaQueryEvaluation);
+    });
+}
+
 void Page::setUseColorAppearance(bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
 #if ENABLE(DARK_MODE_CSS)

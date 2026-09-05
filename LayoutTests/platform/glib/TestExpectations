@@ -5035,6 +5035,8 @@ webkit.org/b/310742 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-
 imported/w3c/web-platform-tests/editing/other/fire-selection-change-on-deleting-empty-element.html [ Pass ]
 # Not supported on GTK/WPE
 webkit.org/b/158205 applicationmanifest/ [ Skip ]
+webkit.org/b/158205 http/tests/applicationmanifest/ [ Skip ]
+webkit.org/b/158205 http/tests/site-isolation/application-context-cross-origin.html [ Skip ]
 
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-disabled-scrollbar-tentative.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-scrollintoview.tentative.html [ Skip ]

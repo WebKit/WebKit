@@ -1,0 +1,46 @@
+ === CSS @media (default: standalone=false) ===
+.application visible: false
+.none visible: true
+.not-application visible: true
+.boolean visible: false
+.bogus visible: false
+=== matchMedia (default: standalone=false) ===
+(application-context: application): false
+(application-context: none): true
+(not (application-context: application)): true
+(application-context): false
+(application-context: bogus): false
+=== matchMedia (after setStandalone(true)) ===
+(application-context: application): true
+(application-context: none): false
+(not (application-context: application)): false
+(application-context): true
+=== CSS @media (after setStandalone(true)) ===
+.application visible: true
+.none visible: false
+.not-application visible: false
+.boolean visible: true
+.bogus visible: false
+=== matchMedia (after setStandalone(false)) ===
+(application-context: application): false
+(application-context: none): true
+(not (application-context: application)): true
+(application-context): false
+=== matchMedia (standalone=true, print media) ===
+(application-context: application): false
+(application-context: none): true
+(not (application-context: application)): true
+(application-context): false
+=== matchMedia (standalone=true, speech media) ===
+(application-context: application): false
+(application-context: none): true
+(not (application-context: application)): true
+(application-context): false
+=== change events fired ===
+(application-context: application)->true
+(application-context: none)->false
+(application-context)->true
+(application-context: application)->false
+(application-context: none)->true
+(application-context)->false
+
