@@ -1989,6 +1989,10 @@ http/wpt/webcodecs/encoder-decoder-vp9-I420.html [ Failure ]
 
 fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas-webgl.html [ Pass Failure ]
 
+# MediaRecorder never fires dataavailable for these, so notifyDone is never called.
+fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-element.html [ Timeout ]
+fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext.html [ Timeout ]
+
 webkit.org/b/298925 [ x86_64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Timeout ]
 webkit.org/b/298925 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Pass ]
 
@@ -2696,6 +2700,10 @@ webgl/webgl-draft-extensions-flag-on.html [ Skip ]
 
 # ANGLE disables base vertex/base instance on Linux.
 webkit.org/b/319507 fast/canvas/webgl/draw-elements-base-vertex-out-of-bounds.html [ Skip ]
+
+# ANGLE does not expose KHR_parallel_shader_compile here. Skip rather than Timeout since it is a long test.
+webgl/1.0.x/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+webgl/2.0.y/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 # WEBGL2 failures
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Failure ]

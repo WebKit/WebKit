@@ -110,6 +110,9 @@ inspector/dom/inspect.html [ Failure ]
 inspector/dom/willDestroyDOMNode.html [ Failure ]
 inspector/dom-debugger/attribute-modified-style.html [ Failure ]
 inspector/runtime/executionContextCreated-onEnable.html [ Failure ]
+# Top stack frame is reported as [native code] rather than [program code]; all assertions still pass.
+inspector/canvas/create-context-webgl.html [ Failure ]
+inspector/canvas/create-context-webgl2.html [ Failure ]
 svg/webarchive/svg-cursor-subresources.svg [ Failure ]
 
 #########################
