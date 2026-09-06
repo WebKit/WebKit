@@ -254,6 +254,24 @@ constexpr unsigned elementByteSize(SIMDLane simdLane)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+inline const v128_t* vectorBitmaskTower(SIMDLane lane)
+{
+    alignas(16) static constexpr v128_t i32x4 = v128_t::fromU32x4(1, 2, 4, 8);
+    alignas(16) static constexpr v128_t i16x8 = v128_t::fromU16x8(1, 2, 4, 8, 16, 32, 64, 128);
+    alignas(16) static constexpr v128_t i8x16 = v128_t::fromU8x16(1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128);
+    switch (lane) {
+    case SIMDLane::i32x4:
+        return &i32x4;
+    case SIMDLane::i16x8:
+        return &i16x8;
+    case SIMDLane::i8x16:
+        return &i8x16;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 } // namespace JSC
 
 namespace WTF {

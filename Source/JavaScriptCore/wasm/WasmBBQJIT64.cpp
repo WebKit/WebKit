@@ -4176,30 +4176,7 @@ void BBQJIT::materializeVectorConstant(v128_t value, Location result)
             return { };
         }
 
-        {
-            v128_t towerOfPower { };
-            switch (info.lane) {
-            case SIMDLane::i32x4:
-                for (unsigned i = 0; i < 4; ++i)
-                    towerOfPower.u32x4[i] = 1 << i;
-                break;
-            case SIMDLane::i16x8:
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u16x8[i] = 1 << i;
-                break;
-            case SIMDLane::i8x16:
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u8x16[i] = 1 << i;
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u8x16[i + 8] = 1 << i;
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-
-            // FIXME: this is bad, we should load
-            materializeVectorConstant(towerOfPower, Location::fromFPR(wasmScratchFPR));
-        }
+        m_jit.loadVector(TrustedImmPtr(vectorBitmaskTower(info.lane)), wasmScratchFPR);
 
         {
             ScratchScope<0, 1> scratches(*this, valueLocation, resultLocation);

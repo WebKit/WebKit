@@ -1673,35 +1673,9 @@ private:
         }
 
         Tmp maskTmp = m_code.newTmp(FP);
-
-        {
-            v128_t towerOfPower { };
-            switch (simdInfo.lane) {
-            case SIMDLane::i32x4:
-                for (unsigned i = 0; i < 4; ++i)
-                    towerOfPower.u32x4[i] = 1 << i;
-                break;
-            case SIMDLane::i16x8:
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u16x8[i] = 1 << i;
-                break;
-            case SIMDLane::i8x16:
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u8x16[i] = 1 << i;
-                for (unsigned i = 0; i < 8; ++i)
-                    towerOfPower.u8x16[i + 8] = 1 << i;
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-
-            // FIXME: this is bad, we should load
-            auto gpTmp = m_code.newTmp(GP);
-            append(Air::Move, Arg::bigImm(towerOfPower.u64x2[0]), gpTmp);
-            append(Air::VectorSplatInt64, gpTmp, maskTmp);
-            append(Air::Move, Arg::bigImm(towerOfPower.u64x2[1]), gpTmp);
-            append(Air::VectorReplaceLaneInt64, Arg::imm(1), gpTmp, maskTmp);
-        }
+        auto gpTmp = m_code.newTmp(GP);
+        append(Air::Move, Arg::immPtr(vectorBitmaskTower(simdInfo.lane)), gpTmp);
+        append(Air::MoveVector, Arg::addr(gpTmp), maskTmp);
 
         Tmp vectorTmp = m_code.newTmp(FP);
 
