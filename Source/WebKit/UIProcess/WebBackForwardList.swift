@@ -142,6 +142,11 @@ final class WebBackForwardList {
     // @used ensures these are retained even under -O -wmo: rdar://179098545
     @used
     init(page: WebKit.WeakPtrWebPageProxy) {
+        let swiftLayout = swiftImporterRefCountedLayoutSignature()
+        let cxxLayout = cxxRefCountedLayoutSignature()
+        if swiftLayout != cxxLayout {
+            fatalError("Swift/C++ RefCounted layout mismatch: Swift=\(swiftLayout), C++=\(cxxLayout)")
+        }
         self.page = page
         self.messageForwarder = WebKit.WebBackForwardListMessageForwarder.create(target: self)
         backForwardLog("(Back/Forward) Created WebBackForwardList \(ObjectIdentifier(self))")

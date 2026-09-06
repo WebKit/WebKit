@@ -36,6 +36,7 @@
 #include <wtf/RefCountable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/SwiftBridging.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -48,6 +49,25 @@ using SpanConstChar = std::span<const char>;
 void doLog(const WTF::String& msg); // rdar://168139823
 void doLoadingReleaseLog(const WTF::String& msg); // rdar://168139823
 void messageCheckFailed(Ref<WebKit::WebProcessProxy>); // rdar://168139740
+
+uint64_t cxxRefCountedLayoutSignature();
+
+#ifdef __swift__
+inline uint64_t swiftImporterRefCountedLayoutSignature()
+{
+    uint64_t signature = static_cast<uint64_t>(sizeof(WTF::RefCountedBase))
+        | (static_cast<uint64_t>(sizeof(WTF::ThreadSafeRefCountedBase)) << 8)
+        | (static_cast<uint64_t>(sizeof(WTF::RefCountDebugger)) << 16)
+        | (static_cast<uint64_t>(sizeof(WTF::ThreadSafeRefCountDebugger)) << 24);
+#if ASSERT_ENABLED
+    signature |= 1ULL << 32;
+#endif
+#if ENABLE(SECURITY_ASSERTIONS)
+    signature |= 1ULL << 33;
+#endif
+    return signature;
+}
+#endif
 
 // Workaround for rdar://162357139
 template<typename T>
