@@ -118,7 +118,7 @@ RefPtr<PixelBuffer> TypedArrayPixelBuffer<pixelBufferType, JSCTypedArrayAdaptor,
     return TypedArrayPixelBuffer::tryCreate(format(), size);
 }
 
-template class TypedArrayPixelBuffer<PixelBuffer::Type::ByteArray, JSC::Uint8ClampedAdaptor, PixelFormat::RGBA8, PixelFormat::BGRA8>;
+template class TypedArrayPixelBuffer<PixelBuffer::Type::ByteArray, JSC::Uint8ClampedAdaptor, PixelFormat::RGBX8, PixelFormat::RGBA8, PixelFormat::BGRX8, PixelFormat::BGRA8>;
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 template class TypedArrayPixelBuffer<PixelBuffer::Type::Float16Array, JSC::Float16Adaptor, PixelFormat::RGBA16F>;

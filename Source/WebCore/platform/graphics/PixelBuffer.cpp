@@ -35,21 +35,23 @@ namespace WebCore {
 bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
+    case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
 #endif
         return true;
 
-    case PixelFormat::BGRX8:
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
+        return false;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case PixelFormat::RGB10A8:
-#endif
         return false;
+#endif
     }
 
     ASSERT_NOT_REACHED();

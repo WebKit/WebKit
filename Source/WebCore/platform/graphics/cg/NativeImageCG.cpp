@@ -182,21 +182,17 @@ RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer,
     return NativeImage::create(WTF::move(image));
 }
 
-static CGImageAlphaInfo alphaInfoForAlphaLast(bool hasAlpha, bool isPremultiplied)
+static CGImageAlphaInfo alphaInfoForAlphaLast(bool isPremultiplied)
 {
-    if (!hasAlpha)
-        return kCGImageAlphaNoneSkipLast;
     return isPremultiplied ? kCGImageAlphaPremultipliedLast : kCGImageAlphaLast;
 }
 
-static CGImageAlphaInfo alphaInfoForAlphaFirst(bool hasAlpha, bool isPremultiplied)
+static CGImageAlphaInfo alphaInfoForAlphaFirst(bool isPremultiplied)
 {
-    if (!hasAlpha)
-        return kCGImageAlphaNoneSkipFirst;
     return isPremultiplied ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaFirst;
 }
 
-RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool hasAlpha)
+RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
 {
     if (pixelBuffer->size().isEmpty())
         return nullptr;
@@ -206,26 +202,33 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer, bool has
     // BGRA == kCGBitmapByteOrder32Little | kCGImageAlpha*First
     CGBitmapInfo bitmapInfo;
     switch (format.pixelFormat) {
+    case PixelFormat::RGBX8:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Big) | static_cast<CGBitmapInfo>(kCGImageAlphaNoneSkipLast);
+        break;
     case PixelFormat::RGBA8:
-        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Big) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(hasAlpha, isPremultiplied));
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Big) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(isPremultiplied));
+        break;
+    case PixelFormat::BGRX8:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaNoneSkipFirst);
         break;
     case PixelFormat::BGRA8:
-        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(alphaInfoForAlphaFirst(hasAlpha, isPremultiplied));
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(alphaInfoForAlphaFirst(isPremultiplied));
         break;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
-        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(hasAlpha, isPremultiplied));
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(isPremultiplied));
         break;
 #endif
-    case PixelFormat::BGRX8:
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
+        ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
+        return nullptr;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10A8)
     case PixelFormat::RGB10A8:
-#endif
         ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
         return nullptr;
+#endif
     }
 
     auto imageSize = pixelBuffer->size();

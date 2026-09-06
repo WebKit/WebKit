@@ -45,10 +45,6 @@ using namespace WebCore;
 
 namespace {
 
-// The ways the contents of a pixel buffer can describe their alpha. Premultiplication does not
-// apply to contents that are drawn as opaque, so there are three cases and not four.
-enum class AlphaMode : uint8_t { NoAlpha, Unpremultiplied, Premultiplied };
-
 // A quadrant of the test pattern and the unpremultiplied color it is filled with. The
 // components of the color are the contents of the pixel buffer, so they are interpreted in the
 // color space of the buffer.
@@ -105,6 +101,7 @@ static const DrawTarget g_drawTargets[] = {
 #endif
 #if USE(CG)
     { RenderingMode::Accelerated, PixelFormat::BGRX8, false, "Accelerated_BGRX8"_s },
+    { RenderingMode::Accelerated, PixelFormat::RGBX8, false, "Accelerated_RGBX8"_s },
 #if ENABLE(PIXEL_FORMAT_RGB10)
     { RenderingMode::Accelerated, PixelFormat::RGB10, false, "Accelerated_RGB10"_s },
 #endif
@@ -114,12 +111,14 @@ static const DrawTarget g_drawTargets[] = {
 #endif
 };
 
-// The pixel formats NativeImage::create(Ref<PixelBuffer>&&, bool) supports. The other formats
-// are rejected instead of being drawn with the components in the wrong order.
+// The pixel formats NativeImage::create(Ref<PixelBuffer>&&) supports. The other formats are
+// rejected instead of being drawn with the components in the wrong order.
 static bool isSupportedImagePixelFormat(PixelFormat pixelFormat)
 {
     switch (pixelFormat) {
+    case PixelFormat::RGBX8:
     case PixelFormat::RGBA8:
+    case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:
         return true;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -138,13 +137,14 @@ static bool isSupportedImagePixelFormat(PixelFormat pixelFormat)
 
 // Fills the pixel buffer with the test pattern, storing the components in the order and with the
 // premultiplication that the format of the buffer specifies.
-static void fillTestPattern(PixelBuffer& pixelBuffer, std::span<const TestPattern> testPattern, bool hasAlpha)
+static void fillTestPattern(PixelBuffer& pixelBuffer, std::span<const TestPattern> testPattern)
 {
     auto format = pixelBuffer.format();
     auto size = pixelBuffer.size();
     auto bytes = pixelBuffer.bytes();
     auto bytesPerPixel = PixelBuffer::bytesPerPixel(format.pixelFormat);
-    bool isPremultiplied = format.alphaFormat == AlphaPremultiplication::Premultiplied;
+    bool hasAlpha = !pixelFormatIsOpaque(format.pixelFormat);
+    bool isPremultiplied = hasAlpha && format.alphaFormat == AlphaPremultiplication::Premultiplied;
     bool storeOpaqueAlpha = false;
     if (!hasAlpha) {
         // Skia requires the contents of an image without alpha to be opaque, while
@@ -205,14 +205,11 @@ static Color expectedColor(const Color& patternColor, bool imageHasAlpha)
 
 // NativeImage test fixture for tests that are variant to the format of the pixel buffer the
 // image is created from.
-class AnyPixelBufferFormatTest : public testing::TestWithParam<std::tuple<PixelFormat, AlphaMode>> {
+class AnyPixelBufferFormatTest : public testing::TestWithParam<std::tuple<PixelFormat, AlphaPremultiplication>> {
 protected:
     PixelFormat pixelFormat() const { return std::get<0>(GetParam()); }
-    AlphaMode alphaMode() const { return std::get<1>(GetParam()); }
-    bool hasAlpha() const { return alphaMode() != AlphaMode::NoAlpha; }
-    // How the contents of the pixel buffer describe their alpha. Without alpha the contents are
-    // drawn as opaque, so premultiplication does not apply to them.
-    AlphaPremultiplication alphaFormat() const { return alphaMode() == AlphaMode::Premultiplied ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied; }
+    bool hasAlpha() const { return !pixelFormatIsOpaque(pixelFormat()); }
+    AlphaPremultiplication alphaFormat() const { return std::get<1>(GetParam()); }
     RefPtr<PixelBuffer> createPixelBuffer(const IntSize&, const ColorSpace&) const;
     RefPtr<PixelBuffer> createTestPatternPixelBuffer(const IntSize&, const ColorSpace&, std::span<const TestPattern>) const;
 };
@@ -229,20 +226,20 @@ RefPtr<PixelBuffer> AnyPixelBufferFormatTest::createTestPatternPixelBuffer(const
     if (!pixelBuffer)
         return nullptr;
     if (isSupportedImagePixelFormat(pixelFormat()))
-        fillTestPattern(*pixelBuffer, testPattern, hasAlpha());
+        fillTestPattern(*pixelBuffer, testPattern);
     return pixelBuffer;
 }
 
 // Test that a NativeImage created from a PixelBuffer draws the contents of the buffer,
 // interpreting the component order and the alpha of the contents the way the format of the
-// buffer and the hasAlpha argument describe them.
+// buffer describes them.
 TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferDraws)
 {
     constexpr IntSize testSize { 16, 16 };
     RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, ColorSpace::SRGB(), std::span { g_testPattern });
     ASSERT_NE(pixelBuffer, nullptr);
 
-    RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha());
+    RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull());
     if (!isSupportedImagePixelFormat(pixelFormat())) {
         EXPECT_EQ(image, nullptr);
         return;
@@ -256,6 +253,10 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferDraws)
         SCOPED_TRACE(target.name.characters());
         auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, ColorSpace::SRGB(), target.pixelFormat);
         ASSERT_NE(buffer, nullptr);
+        // ImageBuffer::create() falls back to another backend if the requested one cannot be had,
+        // which would silently drop the coverage this target is here for.
+        EXPECT_EQ(buffer->renderingMode(), target.renderingMode);
+        EXPECT_EQ(buffer->pixelFormat(), target.pixelFormat);
         buffer->context().drawNativeImage(*image, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { CompositeOperator::Copy });
         for (auto& pattern : g_testPattern) {
             auto expected = expectedColor(pattern.color, hasAlpha());
@@ -279,7 +280,7 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromEmptyPixelBufferFails)
         SCOPED_TRACE(::testing::Message() << "size: " << size.width() << "x" << size.height());
         RefPtr pixelBuffer = createPixelBuffer(size, ColorSpace::SRGB());
         ASSERT_NE(pixelBuffer, nullptr);
-        EXPECT_EQ(NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha()), nullptr);
+        EXPECT_EQ(NativeImage::create(pixelBuffer.releaseNonNull()), nullptr);
     }
 }
 
@@ -304,7 +305,7 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferUsesPixelBufferColorSpace)
     RefPtr pixelBuffer = createTestPatternPixelBuffer(testSize, ColorSpace::DisplayP3(), std::span { g_displayP3TestPattern });
     ASSERT_NE(pixelBuffer, nullptr);
 
-    RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull(), hasAlpha());
+    RefPtr image = NativeImage::create(pixelBuffer.releaseNonNull());
     ASSERT_NE(image, nullptr);
     EXPECT_TRUE(image->colorSpace() == ColorSpace::DisplayP3());
 
@@ -315,6 +316,10 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferUsesPixelBufferColorSpace)
         SCOPED_TRACE(target.name.characters());
         auto buffer = ImageBuffer::create(testSize, target.renderingMode, RenderingPurpose::Unspecified, 1.f, ColorSpace::SRGB(), target.pixelFormat);
         ASSERT_NE(buffer, nullptr);
+        // ImageBuffer::create() falls back to another backend if the requested one cannot be had,
+        // which would silently drop the coverage this target is here for.
+        EXPECT_EQ(buffer->renderingMode(), target.renderingMode);
+        EXPECT_EQ(buffer->pixelFormat(), target.pixelFormat);
         buffer->context().drawNativeImage(*image, FloatRect { { }, testSize }, FloatRect { { }, testSize }, { CompositeOperator::Copy });
         for (auto& pattern : g_displayP3TestPattern) {
             auto rect = pattern.unitRect;
@@ -328,11 +333,17 @@ TEST_P(AnyPixelBufferFormatTest, CreateFromPixelBufferUsesPixelBufferColorSpace)
 
 static std::string anyPixelBufferFormatTestName(const testing::TestParamInfo<AnyPixelBufferFormatTest::ParamType>& info)
 {
-    auto [pixelFormat, alphaMode] = info.param;
+    auto [pixelFormat, alphaFormat] = info.param;
     std::string name;
     switch (pixelFormat) {
+    case PixelFormat::RGBX8:
+        name = "RGBX8";
+        break;
     case PixelFormat::RGBA8:
         name = "RGBA8";
+        break;
+    case PixelFormat::BGRX8:
+        name = "BGRX8";
         break;
     case PixelFormat::BGRA8:
         name = "BGRA8";
@@ -346,14 +357,11 @@ static std::string anyPixelBufferFormatTestName(const testing::TestParamInfo<Any
         name = "UnknownPixelFormat";
         break;
     }
-    switch (alphaMode) {
-    case AlphaMode::NoAlpha:
-        name += "_NoAlpha";
-        break;
-    case AlphaMode::Unpremultiplied:
+    switch (alphaFormat) {
+    case AlphaPremultiplication::Unpremultiplied:
         name += "_Unpremultiplied";
         break;
-    case AlphaMode::Premultiplied:
+    case AlphaPremultiplication::Premultiplied:
         name += "_Premultiplied";
         break;
     }
@@ -361,13 +369,13 @@ static std::string anyPixelBufferFormatTestName(const testing::TestParamInfo<Any
 }
 
 // The pixel formats a PixelBuffer can have. The formats without a pixel buffer representation,
-// e.g. BGRX8, cannot be tested as sources.
+// e.g. RGB10, cannot be tested as sources.
 static auto testedPixelFormats()
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    return testing::Values(PixelFormat::RGBA8, PixelFormat::BGRA8, PixelFormat::RGBA16F);
+    return testing::Values(PixelFormat::RGBX8, PixelFormat::RGBA8, PixelFormat::BGRX8, PixelFormat::BGRA8, PixelFormat::RGBA16F);
 #else
-    return testing::Values(PixelFormat::RGBA8, PixelFormat::BGRA8);
+    return testing::Values(PixelFormat::RGBX8, PixelFormat::RGBA8, PixelFormat::BGRX8, PixelFormat::BGRA8);
 #endif
 }
 
@@ -375,7 +383,7 @@ INSTANTIATE_TEST_SUITE_P(NativeImageTests,
     AnyPixelBufferFormatTest,
     testing::Combine(
         testedPixelFormats(),
-        testing::Values(AlphaMode::NoAlpha, AlphaMode::Unpremultiplied, AlphaMode::Premultiplied)),
+        testing::Values(AlphaPremultiplication::Unpremultiplied, AlphaPremultiplication::Premultiplied)),
     anyPixelBufferFormatTestName);
 
 }

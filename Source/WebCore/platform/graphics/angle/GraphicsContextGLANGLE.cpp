@@ -370,7 +370,8 @@ bool GraphicsContextGLANGLE::releaseThreadResources(ReleaseThreadResourceBehavio
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
 {
     auto alphaFormat = contextAttributes().premultipliedAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
-    PixelBufferFormat format { alphaFormat, PixelFormat::RGBA8, ColorSpace::SRGB() };
+    auto pixelFormat = contextAttributes().alpha ? PixelFormat::RGBA8 : PixelFormat::RGBX8;
+    PixelBufferFormat format { alphaFormat, pixelFormat, ColorSpace::SRGB() };
     auto pixelBuffer = ByteArrayPixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
         return nullptr;
@@ -3467,7 +3468,7 @@ static void flipPixelBufferRows(PixelBuffer& pixelBuffer)
 {
     if (pixelBuffer.size().isEmpty())
         return;
-    ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8 || pixelBuffer.format().pixelFormat == PixelFormat::BGRA8);
+    ASSERT(PixelBuffer::bytesPerPixel(pixelBuffer.format().pixelFormat) == 4);
     // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
     size_t rowStride = pixelBuffer.size().width() * 4;
     auto rowBuffer = MallocSpan<uint8_t>::malloc(rowStride);
@@ -3495,7 +3496,7 @@ RefPtr<NativeImage> GraphicsContextGLANGLE::copyNativeImage(SurfaceBuffer source
         return nullptr;
     // The first row of the read results is the bottom row of the image.
     flipPixelBufferRows(*pixelBuffer);
-    return NativeImage::create(pixelBuffer.releaseNonNull(), contextAttributes().alpha);
+    return NativeImage::create(pixelBuffer.releaseNonNull());
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()

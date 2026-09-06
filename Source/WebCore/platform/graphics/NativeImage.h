@@ -75,7 +75,7 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>);
 #endif
-    WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&, bool hasAlpha);
+    WEBCORE_EXPORT static RefPtr<NativeImage> create(Ref<PixelBuffer>&&);
 
     WEBCORE_EXPORT virtual ~NativeImage();
 

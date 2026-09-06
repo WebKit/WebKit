@@ -490,9 +490,24 @@ void ImageBuffer::transformToColorSpace(const ColorSpace& newColorSpace)
     }
 }
 
+bool ImageBuffer::supportedPixelBufferFormats(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRA8:
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F:
+#endif
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+
 RefPtr<PixelBuffer> ImageBuffer::getPixelBuffer(const PixelBufferFormat& destinationFormat, const IntRect& sourceRect, const ImageBufferAllocator& allocator) const
 {
-    ASSERT(PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat));
+    ASSERT(supportedPixelBufferFormats(destinationFormat.pixelFormat));
     auto sourceRectScaled = sourceRect;
     sourceRectScaled.scale(resolutionScale());
     auto destination = allocator.createPixelBuffer(destinationFormat, sourceRectScaled.size());

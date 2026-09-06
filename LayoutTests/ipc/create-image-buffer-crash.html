@@ -18,14 +18,16 @@
     CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: renderingBackendIdentifier, connectionHandle: connection });
     const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
 
-    // The pixel formats to test
+    // The pixel formats to test.
     const pixelFormats = [
-      0, // RGBA8
-      1, // BGRX8
-      2, // BGRA8
-      3, // RGB10
-      4, // RGB10A8
-      5  // RGBA16F (if HDR_SUPPORT is enabled)
+      0, // RGBX8
+      1, // RGBA8
+      2, // BGRX8
+      3, // BGRA8
+      4, // RGBA16F, if ENABLE(PIXEL_FORMAT_RGBA16F)
+      5, // RGB10, if ENABLE(PIXEL_FORMAT_RGB10)
+      6, // RGB10A8, if ENABLE(PIXEL_FORMAT_RGB10A8)
+      7  // Always out of range.
     ];
 
     // Iterate through each pixel format and create image buffer

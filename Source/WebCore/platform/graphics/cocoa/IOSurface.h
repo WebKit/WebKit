@@ -296,6 +296,8 @@ std::optional<IOSurface::Locker<Mode>> IOSurface::lock()
 constexpr IOSurface::Format convertToIOSurfaceFormat(PixelFormat format)
 {
     switch (format) {
+    case PixelFormat::RGBX8:
+        return IOSurface::Format::RGBX;
     case PixelFormat::RGBA8:
         return IOSurface::Format::RGBA;
     case PixelFormat::BGRX8:

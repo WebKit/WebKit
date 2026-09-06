@@ -108,7 +108,7 @@ void RemoteImageBuffer::getPixelBuffer(WebCore::PixelBufferFormat destinationFor
     assertIsCurrent(workQueue());
     auto memory = m_renderingBackend->sharedMemoryForGetPixelBuffer();
     MESSAGE_CHECK(memory, "No shared memory for getPixelBufferForImageBuffer");
-    MESSAGE_CHECK(WebCore::PixelBuffer::supportedPixelFormat(destinationFormat.pixelFormat), "Pixel format not supported");
+    MESSAGE_CHECK(WebCore::ImageBuffer::supportedPixelBufferFormats(destinationFormat.pixelFormat), "Pixel format not supported");
     MESSAGE_CHECK(m_imageBuffer->renderingMode() != RenderingMode::PDFDocument && m_imageBuffer->renderingMode() != RenderingMode::DisplayList, "Backend does not hold pixels");
     MESSAGE_CHECK(m_imageBuffer->renderingPurpose() != RenderingPurpose::LayerBacking, "We should not interact with the pixelBuffer for LayerBacking");
     WebCore::IntRect srcRect(srcPoint, srcSize);
