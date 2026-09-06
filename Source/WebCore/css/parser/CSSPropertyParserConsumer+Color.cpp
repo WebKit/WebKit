@@ -860,6 +860,14 @@ std::optional<CSS::Color> consumeColor(CSSParserTokenRange& range, ColorParserSt
     ColorParserStateNester nester { state };
 
     auto keyword = range.peek().id();
+
+    if (keyword == CSSValueInternalCurrentBackgroundColor) {
+        if (state.propertyParserState.context.mode != UASheetMode)
+            return { };
+        consumeIdentRaw(range);
+        return CSS::Color { CSS::KeywordColor { keyword } };
+    }
+
     if (CSS::isColorKeyword(keyword, state.allowedColorTypes)) {
         if (!isColorKeywordAllowed(keyword, state.propertyParserState.context))
             return { };

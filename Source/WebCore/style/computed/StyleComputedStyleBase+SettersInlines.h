@@ -79,6 +79,16 @@ inline void ComputedStyleBase::setColorForHighlight(Color&& colorForHighlight)
         m_inheritedRareData.access().colorForHighlight = WTF::move(colorForHighlight);
 }
 
+inline void ComputedStyleBase::setUsesCurrentBackgroundColorKeyword()
+{
+    m_nonInheritedFlags.usesCurrentBackgroundColorKeyword = true;
+}
+
+inline void ComputedStyleBase::setCurrentBackgroundColor(WebCore::Color currentBackgroundColor)
+{
+    SET(m_inheritedData, currentBackgroundColor, WTF::move(currentBackgroundColor));
+}
+
 inline void ComputedStyleBase::setInsideLink(InsideLink insideLink)
 {
     m_inheritedFlags.insideLink = static_cast<unsigned>(insideLink);

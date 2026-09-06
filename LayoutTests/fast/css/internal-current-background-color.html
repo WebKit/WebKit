@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>-internal-current-background-color resolution</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<!--
+    -internal-current-background-color is a UA-only <color> keyword. It resolves, at computed-value
+    time, to the background-color of the closest flat-tree ancestor whose background-color is not
+    transparent. For properties other than background-color it also considers the element's own
+    background-color first, except for color and accent-color (which would otherwise form a cycle).
+    When no non-transparent ancestor exists, it resolves to the Canvas color.
+
+    The colors are arranged so that correct behavior always resolves to green and a regression would
+    resolve to red. Because the keyword is gated to UA stylesheet mode, it can only be used from a
+    <style> inside a user-agent shadow tree, which internals lets us create.
+-->
+<div id="host"></div>
+<div id="canvasRef" style="background-color: Canvas"></div>
+<script>
+const GREEN = "rgb(0, 128, 0)";
+
+let shadow = null;
+if (window.internals) {
+    shadow = internals.ensureUserAgentShadowRoot(document.getElementById("host"));
+    shadow.innerHTML = `
+        <style>
+            .ancestor-green { background-color: rgb(0, 128, 0); }
+            .ancestor-red   { background-color: rgb(255, 0, 0); }
+            .self-green     { background-color: rgb(0, 128, 0); }
+            .self-red       { background-color: rgb(255, 0, 0); }
+            .contents-red   { display: contents; background-color: rgb(255, 0, 0); }
+
+            .background-color      { background-color: -internal-current-background-color; }
+            .color                 { color: -internal-current-background-color; }
+            .accent-color          { accent-color: -internal-current-background-color; }
+            .text-decoration-color { text-decoration-color: -internal-current-background-color; }
+            .text-emphasis-color   { text-emphasis-color: -internal-current-background-color; }
+            .border-color          { border-color: -internal-current-background-color; }
+        </style>
+
+        <!-- Set 1a: background-color/color/accent-color use the nearest ancestor (green),
+             ignoring the element's own background (red). -->
+        <div class="ancestor-green">
+            <div class="s1 background-color"></div>
+            <div class="s1 color self-red"></div>
+            <div class="s1 accent-color self-red"></div>
+        </div>
+        <!-- Set 1b: the other properties use the element's own background (green),
+             not the nearest ancestor (red). -->
+        <div class="ancestor-red">
+            <div class="s1 text-decoration-color self-green"></div>
+            <div class="s1 text-emphasis-color self-green"></div>
+            <div class="s1 border-color self-green"></div>
+        </div>
+
+        <!-- Set 2: element, parent and grandparent are transparent; the great-grandparent
+             is green. The keyword must walk up to it. -->
+        <div class="ancestor-green">
+            <div><div>
+                <div class="s2 background-color"></div>
+                <div class="s2 color"></div>
+                <div class="s2 accent-color"></div>
+                <div class="s2 text-decoration-color"></div>
+                <div class="s2 text-emphasis-color"></div>
+                <div class="s2 border-color"></div>
+            </div></div>
+        </div>
+
+        <!-- Set 3: every ancestor is transparent, so the keyword falls back to Canvas. -->
+        <div><div>
+            <div class="s3 background-color"></div>
+            <div class="s3 color"></div>
+            <div class="s3 accent-color"></div>
+            <div class="s3 text-decoration-color"></div>
+            <div class="s3 text-emphasis-color"></div>
+            <div class="s3 border-color"></div>
+        </div></div>
+
+        <!-- Set 4: an intervening display:contents ancestor with a red background generates no box
+             and must be skipped, so the keyword resolves to the green box-generating ancestor. -->
+        <div class="ancestor-green">
+            <div class="contents-red"><div>
+                <div class="s4 background-color"></div>
+                <div class="s4 color"></div>
+                <div class="s4 accent-color"></div>
+                <div class="s4 text-decoration-color"></div>
+                <div class="s4 text-emphasis-color"></div>
+                <div class="s4 border-color"></div>
+            </div></div>
+        </div>
+
+        <!-- Set 5: dynamic changes must invalidate elements using the keyword. -->
+        <div id="dyn-recolor-ancestor">
+            <div class="background-color" id="dyn-recolor-target"></div>
+        </div>
+
+        <div class="ancestor-green">
+            <div id="dyn-nearer-ancestor">
+                <div class="background-color" id="dyn-nearer-target"></div>
+            </div>
+        </div>
+
+        <div class="ancestor-green">
+            <div id="dyn-farther-reveal-ancestor" style="background-color: rgb(0, 0, 255);">
+                <div class="background-color" id="dyn-farther-reveal-target"></div>
+            </div>
+        </div>
+
+        <div>
+            <div class="background-color" id="dyn-reparent-target"></div>
+        </div>
+        <div class="ancestor-green" id="dyn-reparent-green-host"></div>
+    `;
+}
+
+// Canvas is platform-dependent, so compare set 3 against an author element using it directly.
+const CANVAS = window.internals ? getComputedStyle(document.getElementById("canvasRef")).backgroundColor : "";
+
+function computed(set, property) {
+    const el = shadow.querySelector(`.${set}.${property}`);
+    // border-color is a shorthand; query one of its longhands to read the resolved value.
+    const queryProperty = property === "border-color" ? "border-top-color" : property;
+    return getComputedStyle(el).getPropertyValue(queryProperty);
+}
+
+function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(resolve));
+}
+
+const PROPS = [
+    "background-color",
+    "color",
+    "accent-color",
+    "text-decoration-color",
+    "text-emphasis-color",
+    "border-color",
+];
+
+test(() => {
+    assert_true(!!window.internals, "window.internals is required to install a user-agent stylesheet");
+}, "internals is available");
+
+// Set 1: nearest ancestor vs the element's own background-color.
+for (const property of PROPS) {
+    const usesOwnBackground = property !== "background-color" && property !== "color" && property !== "accent-color";
+    const detail = usesOwnBackground ? "uses the element's own background-color"
+                                     : "uses the nearest ancestor background-color, ignoring its own";
+    test(() => assert_equals(computed("s1", property), GREEN),
+        `${property} ${detail}`);
+}
+
+// Set 2: transparent element/parent/grandparent, non-transparent great-grandparent.
+for (const property of PROPS) {
+    test(() => assert_equals(computed("s2", property), GREEN),
+        `${property} walks past transparent ancestors to the nearest non-transparent one`);
+}
+
+// Set 3: all ancestors transparent -> Canvas.
+for (const property of PROPS) {
+    test(() => assert_equals(computed("s3", property), CANVAS),
+        `${property} falls back to the Canvas color when every ancestor is transparent`);
+}
+
+// Set 4: a display:contents ancestor paints no background and is skipped.
+for (const property of PROPS) {
+    test(() => assert_equals(computed("s4", property), GREEN),
+        `${property} skips a display:contents ancestor and uses the box-generating one`);
+}
+
+// Set 5: dynamic changes to the ancestor chain must invalidate elements using the keyword.
+promise_test(async () => {
+    const ancestor = shadow.querySelector("#dyn-recolor-ancestor");
+    const target = shadow.querySelector("#dyn-recolor-target");
+    await nextFrame();
+    assert_equals(getComputedStyle(target).backgroundColor, CANVAS, "starts at Canvas with a transparent ancestor");
+    ancestor.style.backgroundColor = "rgb(0, 128, 0)";
+    assert_equals(getComputedStyle(target).backgroundColor, GREEN, "updates when the ancestor's background-color changes");
+}, "background-color re-resolves when an ancestor's background-color changes");
+
+promise_test(async () => {
+    const nearer = shadow.querySelector("#dyn-nearer-ancestor");
+    const target = shadow.querySelector("#dyn-nearer-target");
+    await nextFrame();
+    assert_equals(getComputedStyle(target).backgroundColor, GREEN, "starts using the farther green ancestor");
+    nearer.style.backgroundColor = "rgb(0, 0, 255)";
+    assert_equals(getComputedStyle(target).backgroundColor, "rgb(0, 0, 255)", "prefers the nearer ancestor once it becomes non-transparent");
+}, "background-color re-resolves when a nearer ancestor becomes non-transparent");
+
+promise_test(async () => {
+    const nearer = shadow.querySelector("#dyn-farther-reveal-ancestor");
+    const target = shadow.querySelector("#dyn-farther-reveal-target");
+    await nextFrame();
+    assert_equals(getComputedStyle(target).backgroundColor, "rgb(0, 0, 255)", "starts using the nearer blue ancestor");
+    nearer.style.backgroundColor = "transparent";
+    assert_equals(getComputedStyle(target).backgroundColor, GREEN, "falls back to the farther ancestor once the nearer one becomes transparent");
+}, "background-color re-resolves when a nearer ancestor's background-color is removed");
+
+promise_test(async () => {
+    const target = shadow.querySelector("#dyn-reparent-target");
+    const newHost = shadow.querySelector("#dyn-reparent-green-host");
+    await nextFrame();
+    assert_equals(getComputedStyle(target).backgroundColor, CANVAS, "starts at Canvas under a transparent ancestor chain");
+    newHost.appendChild(target);
+    assert_equals(getComputedStyle(target).backgroundColor, GREEN, "updates when reparented under a green ancestor");
+}, "background-color re-resolves when the element is reparented to a new ancestor chain");
+</script>
+</body>
+</html>

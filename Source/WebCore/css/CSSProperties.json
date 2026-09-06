@@ -9741,7 +9741,7 @@
             "initial": "0px",
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedData"],
+                "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::WebkitBorderSpacing",
                 "parser-grammar": "<length [0,inf]>"
@@ -9787,7 +9787,7 @@
             "initial": "0px",
             "codegen-properties": {
                 "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_inheritedData"],
+                "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::WebkitBorderSpacing",
                 "parser-grammar": "<length [0,inf]>"

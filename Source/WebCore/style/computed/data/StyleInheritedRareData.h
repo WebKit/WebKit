@@ -58,6 +58,7 @@
 #include <WebCore/StyleTextUnderlineOffset.h>
 #include <WebCore/StyleTextUnderlinePosition.h>
 #include <WebCore/StyleTouchAction.h>
+#include <WebCore/StyleWebKitBorderSpacing.h>
 #include <WebCore/StyleWebKitLineBoxContain.h>
 #include <WebCore/StyleWebKitLineGrid.h>
 #include <WebCore/StyleWebKitOverflowScrolling.h>
@@ -148,6 +149,9 @@ public:
 
     ListStyleType listStyleType;
     BlockEllipsis blockEllipsis;
+
+    WebkitBorderSpacing borderHorizontalSpacing;
+    WebkitBorderSpacing borderVerticalSpacing;
 
     TextIndent textIndent;
 
