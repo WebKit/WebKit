@@ -1597,6 +1597,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
+    if (existingResource->isPreloaded() && existingResource->errorOccurred()) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because a preload failed");
+        return Reload;
+    }
+
     // We already have a preload going for this URL.
     if (forPreload == ForPreload::Yes && existingResource->isPreloaded())
         return Use;
