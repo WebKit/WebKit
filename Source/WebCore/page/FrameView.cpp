@@ -597,6 +597,11 @@ FloatQuad FrameView::convertToRootViewAcrossIsolatedFrames(const FloatQuad& quad
     };
 }
 
+FloatQuad FrameView::contentsToMainFrameView(const FloatQuad& quad) const
+{
+    return convertToRootViewAcrossIsolatedFrames(contentsToView(quad));
+}
+
 FloatRect FrameView::rootViewToContentsAcrossIsolatedFrames(FloatRect rect) const
 {
     return viewToContents(convertFromRootViewAcrossIsolatedFrames(rect));

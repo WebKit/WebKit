@@ -1111,7 +1111,7 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
         return;
     }
-    sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick, point);
+    sendTapHighlightForNodeIfNecessary(std::nullopt, requestID, nodeRespondingToClick, point);
     completeSyntheticClick(std::nullopt, *nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::TwoFingerTap);
 }
 
@@ -1146,7 +1146,7 @@ void WebPage::tapHighlightAtPosition(WebKit::TapIdentifier requestID, const Floa
     if (!localMainFrame)
         return;
     FloatPoint adjustedPoint;
-    sendTapHighlightForNodeIfNecessary(requestID, localMainFrame->nodeRespondingToClickEvents(position, adjustedPoint), position);
+    sendTapHighlightForNodeIfNecessary(std::nullopt, requestID, localMainFrame->nodeRespondingToClickEvents(position, adjustedPoint), position);
 }
 
 void WebPage::inspectorNodeSearchMovedToPosition(const FloatPoint& position)

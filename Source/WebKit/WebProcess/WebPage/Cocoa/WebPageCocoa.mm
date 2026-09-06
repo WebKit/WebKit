@@ -3272,7 +3272,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
         send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel, nodeIsPluginElement));
     }
 
-    sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), positionInRootView);
+    sendTapHighlightForNodeIfNecessary(frameID, requestID, m_potentialTapNode.get(), positionInRootView);
 #if ENABLE(TWO_PHASE_CLICKS)
     if (RefPtr potentialTapNode = m_potentialTapNode; potentialTapNode && !potentialTapNode->allowsDoubleTapGesture())
         send(Messages::WebPageProxy::DisableDoubleTapGesturesDuringTapIfNecessary(requestID));
@@ -3402,22 +3402,22 @@ void WebPage::didHandleTapAsHover()
     send(Messages::WebPageProxy::DidHandleTapAsHover());
 }
 
-void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID, Node* node, FloatPoint point)
+void WebPage::sendTapHighlightForNodeIfNecessary(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, Node* node, FloatPoint point)
 {
 #if ENABLE(TWO_PHASE_CLICKS)
     if (!node)
         return;
 
-    RefPtr localMainFrame = m_page->localMainFrame();
-    if (!localMainFrame)
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (!localRootFrame)
         return;
 
-    if (m_page->isEditable() && node == protect(localMainFrame->document())->body())
+    if (m_page->isEditable() && node == protect(localRootFrame->document())->body())
         return;
 
     if (RefPtr element = dynamicDowncast<Element>(*node)) {
         ASSERT(m_page);
-        localMainFrame->loader().prefetchDNSIfNeeded(element->absoluteLinkURL());
+        localRootFrame->loader().prefetchDNSIfNeeded(element->absoluteLinkURL());
     }
 
     RefPtr updatedNode = node;
@@ -3453,7 +3453,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         if (!updatedNode->document().frame()->isMainFrame()) {
             RefPtr view = updatedNode->document().frame()->view();
             for (auto& quad : quads)
-                quad = view->contentsToRootView(quad);
+                quad = view->contentsToMainFrameView(quad);
         }
 
         LayoutRoundedRect::Radii borderRadii;
@@ -3465,6 +3465,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight()), nodeHasBuiltInClickHandling));
     }
 #else
+    UNUSED_PARAM(frameID);
     UNUSED_PARAM(requestID);
     UNUSED_PARAM(node);
     UNUSED_PARAM(point);

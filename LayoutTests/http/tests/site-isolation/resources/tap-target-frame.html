@@ -1,0 +1,9 @@
+<body style="margin: 0; font: 20px monospace;">
+<button id="target" style="width: 200px; height: 60px;">Tap me</button>
+<script>
+document.getElementById("target").addEventListener("click", () => {
+    window.top.postMessage("clicked", "*");
+});
+window.top.postMessage("ready", "*");
+</script>
+</body>
