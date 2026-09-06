@@ -1815,8 +1815,10 @@ inline bool PropertyParserCustom::consumeWebkitPerspectiveShorthand(CSSParserTok
         return range.atEnd();
     }
 
-    if (auto perspective = CSSPrimitiveValueResolver<Number<Nonnegative>>::consumeAndResolve(range, state)) {
-        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspective, WTF::move(perspective));
+    // -webkit-perspective accepts bare <number [0,∞]> tokens (not calc) and interprets them as pixel lengths.
+    if (range.peek().type() == NumberToken && range.peek().numericValue() >= 0) {
+        auto value = CSSPrimitiveValue::create(range.consumeIncludingWhitespace().numericValue(), CSSUnitType::CSS_PX);
+        result.addPropertyForCurrentShorthand(state, CSSPropertyPerspective, WTF::move(value));
         return range.atEnd();
     }
 
