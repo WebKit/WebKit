@@ -2634,7 +2634,6 @@ void RenderElement::repaintOldAndNewPositionsForSVGRenderer() const
     repaint();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
 {
     const Style::ComputedStyle& style = renderer.style();
@@ -2706,7 +2705,6 @@ void RenderElement::resetTextAutosizing()
         newFixedDepth = 0;
     }
 }
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 std::unique_ptr<Style::ComputedStyle> RenderElement::animatedStyle()
 {

@@ -1406,18 +1406,12 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 
 - (void)_setShouldEnableTextAutosizingBoost:(BOOL)shouldEnableTextAutosizingBoost
 {
-#if ENABLE(TEXT_AUTOSIZING)
     protect(*_preferences)->setShouldEnableTextAutosizingBoost(shouldEnableTextAutosizingBoost);
-#endif
 }
 
 - (BOOL)_shouldEnableTextAutosizingBoost
 {
-#if ENABLE(TEXT_AUTOSIZING)
     return protect(*_preferences)->shouldEnableTextAutosizingBoost();
-#else
-    return NO;
-#endif
 }
 
 - (BOOL)_isSafeBrowsingEnabled

@@ -131,7 +131,6 @@ public:
     void setFontSmoothing(FontSmoothingMode smoothing) { m_fontSmoothing = static_cast<unsigned>(smoothing); }
     void setHasAuthorSpecifiedNonGenericPrimaryFont(bool value) { m_hasAuthorSpecifiedNonGenericPrimaryFont = value; }
 
-#if ENABLE(TEXT_AUTOSIZING)
     bool NODELETE familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const;
 
     bool equalForTextAutoSizing(const FontCascadeDescription& other) const
@@ -141,7 +140,6 @@ public:
             && variantSettings() == other.variantSettings()
             && m_isAbsoluteSize == other.m_isAbsoluteSize;
     }
-#endif
 
     WEBCORE_EXPORT void NODELETE resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 

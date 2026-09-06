@@ -57,11 +57,9 @@ namespace Style {
 enum class MarginTrimSide : uint8_t;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
 };
-#endif
 
 class MarginValues {
 public:
@@ -533,10 +531,9 @@ private:
 
     void dirtyForLayoutFromPercentageHeightDescendants();
 
-#if ENABLE(TEXT_AUTOSIZING)
     int m_widthForTextAutosizing;
     unsigned m_lineCountForTextAutosizing : 2;
-#endif
+
     // FIXME: This is temporary until after we remove the forced "line layout codepath" invalidation.
     std::optional<std::pair<LayoutUnit, LayoutUnit>> m_previousInlineLayoutContentTopAndBottomIncludingInkOverflow;
 
@@ -557,14 +554,12 @@ public:
     Layout::InlineContentCache& ensureInlineContentCache();
     void resetInlineContentCache();
 
-#if ENABLE(TEXT_AUTOSIZING)
     void adjustFontSizes(float size, float visibleWidth);
     void resetFontSize()
     {
         m_widthForTextAutosizing = -1;
         m_lineCountForTextAutosizing = NOT_SET;
     }
-#endif
 
 protected:
     std::unique_ptr<FloatingObjects> m_floatingObjects;

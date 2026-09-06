@@ -27,8 +27,6 @@
 #include "config.h"
 #include "AutosizeStatus.h"
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
@@ -220,5 +218,3 @@ float AutosizeStatus::idempotentTextSize(float size, float pageScale)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TEXT_AUTOSIZING)

@@ -730,9 +730,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_hostFileDescriptor(WTF::move(parameters.hostFileDescriptor))
 #endif
     , m_webPageProxyIdentifier(parameters.webPageProxyIdentifier)
-#if ENABLE(TEXT_AUTOSIZING)
     , m_textAutoSizingAdjustmentTimer(*this, &WebPage::textAutoSizingAdjustmentTimerFired)
-#endif
     , m_overriddenMediaType { WTF::move(parameters.overriddenMediaType) }
     , m_processDisplayName { WTF::move(parameters.processDisplayName) }
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -2348,9 +2346,7 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
 
     m_sandboxExtensionTracker.invalidate();
 
-#if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizingAdjustmentTimer.stop();
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     invokePendingSyntheticClickCallback(SyntheticClickResult::PageInvalid);
@@ -8446,9 +8442,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
         viewportConfigurationChanged();
 #endif // ENABLE(META_VIEWPORT)
 
-#if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizingAdjustmentTimer.stop();
-#endif
 
 #if USE(OS_STATE)
     m_loadCommitTime = WallTime::now();
@@ -9763,7 +9757,6 @@ void WebPage::setHasModelElement(bool hasModelElement)
 }
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
 void WebPage::textAutoSizingAdjustmentTimerFired()
 {
     protect(corePage())->recomputeTextAutoSizingInAllFrames();
@@ -9774,7 +9767,6 @@ void WebPage::textAutosizingUsesIdempotentModeChanged()
     if (!m_page->settings().textAutosizingUsesIdempotentMode())
         m_textAutoSizingAdjustmentTimer.stop();
 }
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 #if ENABLE(WEBXR)
 PlatformXRSystemProxy& WebPage::xrSystemProxy()

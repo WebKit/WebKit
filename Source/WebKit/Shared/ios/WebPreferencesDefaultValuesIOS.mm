@@ -38,14 +38,10 @@
 
 namespace WebKit {
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 bool defaultTextAutosizingUsesIdempotentMode()
 {
     return !PAL::currentUserInterfaceIdiomIsSmallScreen();
 }
-
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
 

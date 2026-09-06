@@ -712,11 +712,9 @@ public:
     bool defaultUseDarkAppearance() const { return m_useDarkAppearance; }
     void setUseDarkAppearanceOverride(std::optional<bool>);
 
-#if ENABLE(TEXT_AUTOSIZING)
     float textAutosizingWidth() const { return m_textAutosizingWidth; }
     void setTextAutosizingWidth(float textAutosizingWidth) { m_textAutosizingWidth = textAutosizingWidth; }
     WEBCORE_EXPORT void recomputeTextAutoSizingInAllFrames();
-#endif
 
     OptionSet<FilterRenderingMode> preferredFilterRenderingModes(const GraphicsContext&) const;
 
@@ -1605,11 +1603,10 @@ private:
     bool m_useDarkAppearance { false };
     std::optional<bool> m_useDarkAppearanceOverride;
 
-#if ENABLE(TEXT_AUTOSIZING)
     float m_textAutosizingWidth { 0 };
-#endif
+
     float m_initialScaleIgnoringContentSize { 1.0f };
-    
+
     bool m_suppressScrollbarAnimations { false };
 
 #if HAVE(NSREFRESHCONTROLLER)

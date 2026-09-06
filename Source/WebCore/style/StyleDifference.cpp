@@ -356,9 +356,7 @@ public:
             || a.usedZoom != b.usedZoom
             || a.textZoom != b.textZoom
             || a.deviceScaleFactor != b.deviceScaleFactor
-    #if ENABLE(TEXT_AUTOSIZING)
             || a.textSizeAdjust != b.textSizeAdjust
-    #endif
             || a.wordBreak != b.wordBreak
             || a.overflowWrap != b.overflowWrap
             || a.effectiveWrapInsideAvoid != b.effectiveWrapInsideAvoid
@@ -475,9 +473,7 @@ public:
 
         if (&a.inheritedData() != &b.inheritedData()) {
             if (a.inheritedData().lineHeight != b.inheritedData().lineHeight
-    #if ENABLE(TEXT_AUTOSIZING)
                 || a.inheritedData().specifiedLineHeight != b.inheritedData().specifiedLineHeight
-    #endif
                 || a.inheritedData().borderHorizontalSpacing != b.inheritedData().borderHorizontalSpacing
                 || a.inheritedData().borderVerticalSpacing != b.inheritedData().borderVerticalSpacing)
                 return true;

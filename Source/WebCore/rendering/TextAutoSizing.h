@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include "StyleComputedStyle.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -80,5 +78,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(TEXT_AUTOSIZING)

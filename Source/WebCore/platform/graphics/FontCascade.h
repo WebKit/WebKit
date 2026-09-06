@@ -238,13 +238,11 @@ private:
     friend class FontCascadeFonts;
 
 public:
-#if ENABLE(TEXT_AUTOSIZING)
     bool equalForTextAutoSizing(const FontCascade& other) const
     {
         return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)
             && m_spacing == other.m_spacing;
     }
-#endif
 
     // Useful for debugging the different font rendering code paths.
     WEBCORE_EXPORT static void NODELETE setForcedCodePath(Markable<CodePath>);

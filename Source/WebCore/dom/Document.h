@@ -1876,9 +1876,7 @@ public:
     // Per https://html.spec.whatwg.org/multipage/obsolete.html#dom-document-releaseevents, this method does nothing.
     void releaseEvents() { }
 
-#if ENABLE(TEXT_AUTOSIZING)
     TextAutoSizing& textAutoSizing();
-#endif
 
     Logger& logger();
     const Logger& logger() const { return const_cast<Document&>(*this).logger(); }
@@ -2556,9 +2554,7 @@ private:
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
 
-#if ENABLE(TEXT_AUTOSIZING)
     std::unique_ptr<TextAutoSizing> m_textAutoSizing;
-#endif
 
     const RefPtr<HighlightRegistry> m_highlightRegistry;
     const RefPtr<HighlightRegistry> m_fragmentHighlightRegistry;

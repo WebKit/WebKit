@@ -305,11 +305,9 @@ void SettingsBase::resetToConsistentState()
     setAllowedMediaAudioCodecIDs(std::nullopt);
     setAllowedMediaCaptionFormatTypes(std::nullopt);
 
-#if ENABLE(TEXT_AUTOSIZING)
     m_oneLineTextMultiplierCoefficient = defaultOneLineTextMultiplierCoefficient;
     m_multiLineTextMultiplierCoefficient = defaultMultiLineTextMultiplierCoefficient;
     m_maxTextAutosizingScaleIncrease = defaultMaxTextAutosizingScaleIncrease;
-#endif
 }
 
 // MARK - onChange handlers
@@ -399,8 +397,6 @@ void SettingsBase::iceCandidateFilteringEnabledChanged()
         protect(m_page)->disableICECandidateFiltering();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 void SettingsBase::shouldEnableTextAutosizingBoostChanged()
 {
     if (!m_page)
@@ -420,8 +416,6 @@ void SettingsBase::textAutosizingUsesIdempotentModeChanged()
         m_page->chrome().client().textAutosizingUsesIdempotentModeChanged();
     setNeedsRecalcStyleInAllFrames();
 }
-
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 #if ENABLE(MEDIA_STREAM)
 

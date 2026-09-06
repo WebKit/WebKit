@@ -99,9 +99,7 @@ bool isDutchLocale(const AtomString& locale)
 }
 
 struct SameSizeAsRenderText : public RenderObject {
-#if ENABLE(TEXT_AUTOSIZING)
     float candidateTextSize;
-#endif
     float widths[4];
     String text;
     std::optional<bool> canUseSimplifiedTextMeasuring;

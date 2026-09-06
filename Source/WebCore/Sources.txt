@@ -3139,6 +3139,7 @@ rendering/RenderWidget.cpp @header:RenderStyleGetters
 rendering/SubtreeScrollbarChangesState.cpp
 rendering/StyledMarkedText.cpp @header:RenderStyleGetters
 rendering/TableLayout.cpp @header:RenderStyleGetters
+rendering/TextAutoSizing.cpp @header:RenderStyleGetters
 rendering/TextBoxPainter.cpp @header:RenderStyleGetters
 rendering/TextBoxTrimmer.cpp @header:RenderStyleGetters
 rendering/TextDecorationPainter.cpp @header:RenderStyleGetters

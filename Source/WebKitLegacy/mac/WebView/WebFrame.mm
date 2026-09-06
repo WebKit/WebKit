@@ -1910,7 +1910,6 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
 #endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(TEXT_AUTOSIZING)
 - (void)resetTextAutosizingBeforeLayout
 {
     if (![self _webHTMLDocumentView])
@@ -1942,19 +1941,6 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
     page->setTextAutosizingWidth(width);
 }
-#else
-- (void)resetTextAutosizingBeforeLayout
-{
-}
-
-- (void)_setVisibleSize:(CGSize)size
-{
-}
-
-- (void)_setTextAutosizingWidth:(CGFloat)width
-{
-}
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 - (void)_createCaptionPreferencesTestingModeToken
 {

@@ -105,9 +105,7 @@ static constexpr std::array editingProperties {
 #endif
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
-#if ENABLE(TEXT_AUTOSIZING)
     CSSPropertyWebkitTextSizeAdjust,
-#endif
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
 

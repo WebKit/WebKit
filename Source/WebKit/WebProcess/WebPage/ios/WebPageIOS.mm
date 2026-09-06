@@ -3207,8 +3207,6 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
         return m_viewportConfiguration.setDefaultConfiguration(parametersForStandardFrame());
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 void WebPage::updateTextAutosizingEnablementFromInitialScale(double initialScale)
 {
     if (protect(*m_page)->settings().textAutosizingEnabledAtLargeInitialScale())
@@ -3254,11 +3252,9 @@ void WebPage::resetIdempotentTextAutosizingIfNeeded(double previousInitialScale)
     // We don't need to update text sizing eagerly. There might be multiple incoming dynamic viewport changes.
     m_textAutoSizingAdjustmentTimer.startOneShot(textAutoSizingDelay());
 }
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 void WebPage::resetTextAutosizing()
 {
-#if ENABLE(TEXT_AUTOSIZING)
     for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
@@ -3268,10 +3264,8 @@ void WebPage::resetTextAutosizing()
             continue;
         protect(document->renderView())->resetTextAutosizing();
     }
-#endif
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 void WebPage::scheduleTextAutosizingResetAfterLayout()
 {
     for (RefPtr frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -3284,9 +3278,6 @@ void WebPage::scheduleTextAutosizingResetAfterLayout()
         document->renderView()->setTextAutosizingState(RenderView::TextAutosizingState::ResetScheduled);
     }
 }
-#else
-void WebPage::scheduleTextAutosizingResetAfterLayout() { }
-#endif
 
 #if ENABLE(VIEWPORT_RESIZING)
 
@@ -3419,12 +3410,10 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 {
     double initialScale = m_viewportConfiguration.initialScale();
     double initialScaleIgnoringContentSize = m_viewportConfiguration.initialScaleIgnoringContentSize();
-#if ENABLE(TEXT_AUTOSIZING)
     double previousInitialScaleIgnoringContentSize = m_page->initialScaleIgnoringContentSize();
     protect(m_page)->setInitialScaleIgnoringContentSize(initialScaleIgnoringContentSize);
     resetIdempotentTextAutosizingIfNeeded(previousInitialScaleIgnoringContentSize);
     updateTextAutosizingEnablementFromInitialScale(initialScale);
-#endif
     if (setFixedLayoutSize(m_viewportConfiguration.layoutSize())) {
         // During a dynamic viewport size update (rotation/resize), the upcoming
         // layout may still see stale block widths from before the change, so

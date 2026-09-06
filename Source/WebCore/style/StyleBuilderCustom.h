@@ -91,11 +91,9 @@ public:
     static void applyInitialLetterSpacing(BuilderState&);
     static void applyValueLetterSpacing(BuilderState&, CSSValue&);
 
-#if ENABLE(TEXT_AUTOSIZING)
     static void applyInheritLineHeight(BuilderState&);
     static void applyInitialLineHeight(BuilderState&);
     static void applyValueLineHeight(BuilderState&, CSSValue&);
-#endif
 
     static void applyInheritWordSpacing(BuilderState&);
     static void applyInitialWordSpacing(BuilderState&);
@@ -114,9 +112,7 @@ public:
     // Custom handling of value setting only.
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
-#if ENABLE(TEXT_AUTOSIZING)
     static void applyValueWebkitTextSizeAdjust(BuilderState&, CSSValue&);
-#endif
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
@@ -306,8 +302,6 @@ inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, C
     builderState.setFontDirty();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 inline void BuilderCustom::applyInheritLineHeight(BuilderState& builderState)
 {
     builderState.style().setLineHeight(forwardInheritedValue(builderState.parentStyle().lineHeight()));
@@ -386,8 +380,6 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
     builderState.style().setSpecifiedLineHeight(WTF::move(lineHeight));
 }
 
-#endif
-
 inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CSSValue& value)
 {
     builderState.setFontDescriptionSpecifiedLocale(toStyleFromCSSValue<WebkitLocale>(builderState, value));
@@ -404,13 +396,11 @@ inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState,
     builderState.setTextOrientation(fromCSSValue<TextOrientation>(value));
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 inline void BuilderCustom::applyValueWebkitTextSizeAdjust(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setTextSizeAdjust(toStyleFromCSSValue<TextSizeAdjust>(builderState, value));
     builderState.setFontDirty();
 }
-#endif
 
 inline void BuilderCustom::applyValueWebkitTextZoom(BuilderState& builderState, CSSValue& value)
 {

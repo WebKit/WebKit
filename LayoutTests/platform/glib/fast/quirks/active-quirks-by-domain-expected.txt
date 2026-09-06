@@ -293,7 +293,7 @@ https://www.yahoo.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldPreventDispatchOfTouchEventQuirk
 https://news.ycombinator.com/
-    (none)
+    ShouldIgnoreTextAutoSizingQuirk
 https://ycombinator.com/
     (none)
 https://www.youtube.com/

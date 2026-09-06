@@ -3629,9 +3629,7 @@ void Document::destroyRenderTree()
 
     Node::setRenderer(nullptr);
 
-#if ENABLE(TEXT_AUTOSIZING)
     m_textAutoSizing = nullptr;
-#endif
 
     if (RefPtr view = this->view())
         view->didDestroyRenderTree();
@@ -8764,14 +8762,12 @@ String Document::nameForCSSCanvasElement(const HTMLCanvasElement& canvasElement)
     return String();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 TextAutoSizing& Document::textAutoSizing()
 {
     if (!m_textAutoSizing)
         m_textAutoSizing = makeUnique<TextAutoSizing>();
     return *m_textAutoSizing;
 }
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 void Document::getParserLocation(String& completedURL, unsigned& line, unsigned& column) const
 {

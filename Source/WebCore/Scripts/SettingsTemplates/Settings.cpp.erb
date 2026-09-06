@@ -199,9 +199,7 @@ void Settings::applyMainFrameWebsitePolicies(const WebsitePolicySettings& polici
     if (policies.legacyOverflowScrollingTouchPolicy == LegacyOverflowScrollingTouchPolicy::Disable)
         setLegacyOverflowScrollingTouchEnabled(false);
 #endif
-#if ENABLE(TEXT_AUTOSIZING)
     setIdempotentModeAutosizingOnlyHonorsPercentages(policies.idempotentModeAutosizingOnlyHonorsPercentages);
-#endif
 
     if (policies.pushAndNotificationsEnabledPolicy != PushAndNotificationsEnabledPolicy::UseGlobalPolicy) {
         bool enabled = policies.pushAndNotificationsEnabledPolicy == PushAndNotificationsEnabledPolicy::Yes;

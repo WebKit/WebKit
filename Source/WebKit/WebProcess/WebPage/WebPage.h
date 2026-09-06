@@ -2051,9 +2051,7 @@ public:
 
     bool isParentProcessAWebBrowser() const;
 
-#if ENABLE(TEXT_AUTOSIZING)
     void textAutosizingUsesIdempotentModeChanged();
-#endif
 
 #if ENABLE(META_VIEWPORT)
     double baseViewportLayoutSizeScaleFactor() const { return m_baseViewportLayoutSizeScaleFactor; }
@@ -2314,11 +2312,9 @@ private:
     bool shouldIgnoreMetaViewport() const;
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
     void textAutoSizingAdjustmentTimerFired();
     void resetIdempotentTextAutosizingIfNeeded(double previousInitialScale);
     void updateTextAutosizingEnablementFromInitialScale(double);
-#endif
     void resetTextAutosizing();
     void scheduleTextAutosizingResetAfterLayout();
 
@@ -3329,9 +3325,8 @@ private:
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
 #endif
-#if ENABLE(TEXT_AUTOSIZING)
+
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
-#endif
 
     AtomString m_overriddenMediaType;
     String m_processDisplayName;

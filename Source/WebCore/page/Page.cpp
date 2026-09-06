@@ -5075,8 +5075,6 @@ void Page::didFinishLoadingImageForSVGImage(SVGImageElement& element)
     chrome().client().didFinishLoadingImageForSVGImage(element);
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 void Page::recomputeTextAutoSizingInAllFrames()
 {
     ASSERT(settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode());
@@ -5097,8 +5095,6 @@ void Page::recomputeTextAutoSizingInAllFrames()
         }
     });
 }
-
-#endif
 
 OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes(const GraphicsContext& context) const
 {

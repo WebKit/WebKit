@@ -274,7 +274,6 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
         RenderTreeNeedsLayoutChecker checker(*renderView());
 #endif
         layoutRoot->layout();
-#if ENABLE(TEXT_AUTOSIZING)
         {
             CheckedPtr renderView = this->renderView();
             auto state = renderView ? renderView->textAutosizingState() : RenderView::TextAutosizingState::Normal;
@@ -299,7 +298,6 @@ void LocalFrameViewLayoutContext::performLayout(bool canDeferUpdateLayerPosition
                 break;
             }
         }
-#endif
         layoutRoot->absoluteQuads(layoutAreas);
 
         clearSubtreeLayoutRoot();
@@ -860,7 +858,6 @@ bool LocalFrameViewLayoutContext::canPerformLayout() const
     return true;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 {
     ASSERT(document());
@@ -884,7 +881,6 @@ void LocalFrameViewLayoutContext::applyTextSizingIfNeeded(RenderElement& layoutR
     LOG(TextAutosizing, "Text Autosizing: minimumZoomFontSize=%.2f textAutosizingWidth=%.2f", minimumZoomFontSize, textAutosizingWidth);
     layoutRoot.layout();
 }
-#endif
 
 void LocalFrameViewLayoutContext::updateStyleForLayout()
 {

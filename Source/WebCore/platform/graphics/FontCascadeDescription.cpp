@@ -93,8 +93,6 @@ FontSelectionValue FontCascadeDescription::bolderWeight(FontSelectionValue weigh
     return weight;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDescription& other) const
 {
     unsigned thisFamilyCount = familyCount();
@@ -110,8 +108,6 @@ bool FontCascadeDescription::familiesEqualForTextAutoSizing(const FontCascadeDes
 
     return true;
 }
-
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 bool FontCascadeDescription::familyNamesAreEqual(const AtomString& family1, const AtomString& family2)
 {

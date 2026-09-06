@@ -122,11 +122,6 @@ constexpr bool pictureInPictureAPI = true;
 #else
 constexpr bool pictureInPictureAPI = false;
 #endif
-#if ENABLE(TEXT_AUTOSIZING)
-constexpr bool textAutosizing = true;
-#else
-constexpr bool textAutosizing = false;
-#endif
 #if ENABLE(THREADED_ANIMATIONS)
 constexpr bool threadedAnimations = true;
 #else
@@ -298,7 +293,7 @@ consteval bool isAvailable(SiteSpecificQuirk quirk)
     case ShouldIgnoreAriaForFastPathContentObservationCheckQuirk: return iOSFamily;
     case ShouldIgnoreInputModeNone: return iOSFamily;
     case ShouldIgnorePlaysInlineRequirementQuirk: return always;
-    case ShouldIgnoreTextAutoSizingQuirk: return textAutosizing;
+    case ShouldIgnoreTextAutoSizingQuirk: return always;
     case ShouldIgnoreViewportArgumentsToAvoidEnlargedViewQuirk: return metaViewport;
     case ShouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk: return metaViewport;
     case ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk: return always;

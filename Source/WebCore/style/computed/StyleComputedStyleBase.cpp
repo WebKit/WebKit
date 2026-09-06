@@ -77,8 +77,6 @@ bool ComputedStyleBase::effectiveInertOutOfLine() const
     return effectiveInert();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 // MARK: - Text Autosizing
 
 AutosizeStatus ComputedStyleBase::autosizeStatus() const
@@ -90,8 +88,6 @@ void ComputedStyleBase::setAutosizeStatus(AutosizeStatus autosizeStatus)
 {
     m_inheritedFlags.autosizeStatus = autosizeStatus.fields().toRaw();
 }
-
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 // MARK: - Pseudo element/style
 
@@ -275,25 +271,16 @@ float ComputedStyleBase::usedFontSize() const
 
 const LineHeight& ComputedStyleBase::specifiedLineHeight() const
 {
-#if ENABLE(TEXT_AUTOSIZING)
     return m_inheritedData->specifiedLineHeight;
-#else
-    return m_inheritedData->lineHeight;
-#endif
 }
-
-#if ENABLE(TEXT_AUTOSIZING)
 
 void ComputedStyleBase::setSpecifiedLineHeight(LineHeight&& lineHeight)
 {
     SET_VAR(m_inheritedData, specifiedLineHeight, WTF::move(lineHeight));
 }
 
-#endif
-
 void ComputedStyleBase::setSpecifiedLineHeightFromAnimation(LineHeight&& lineHeight)
 {
-#if ENABLE(TEXT_AUTOSIZING)
     bool specifiedLineHeightChanged = m_inheritedData->specifiedLineHeight != lineHeight;
     bool lineHeightChanged = m_inheritedData->lineHeight != lineHeight;
     if (specifiedLineHeightChanged || lineHeightChanged) {
@@ -303,9 +290,6 @@ void ComputedStyleBase::setSpecifiedLineHeightFromAnimation(LineHeight&& lineHei
         if (lineHeightChanged)
             access.lineHeight = WTF::move(lineHeight);
     }
-#else
-    SET_VAR(m_inheritedData, lineHeight, WTF::move(lineHeight));
-#endif
 }
 
 void ComputedStyleBase::setLetterSpacingFromAnimation(LetterSpacing&& value)
@@ -522,10 +506,7 @@ void ComputedStyleBase::InheritedFlags::dumpDifferences(TextStream& ts, const In
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColor);
     LOG_IF_DIFFERENT_WITH_CAST(PrintColorAdjust, printColorAdjust);
     LOG_IF_DIFFERENT_WITH_CAST(InsideLink, insideLink);
-
-#if ENABLE(TEXT_AUTOSIZING)
     LOG_IF_DIFFERENT_WITH_CAST(unsigned, autosizeStatus);
-#endif
 }
 #endif
 

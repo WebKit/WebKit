@@ -104,11 +104,9 @@ public:
     WEBCORE_EXPORT void setMinimumDOMTimerInterval(Seconds); // Initialized to DOMTimer::defaultMinimumInterval().
     Seconds minimumDOMTimerInterval() const { return m_minimumDOMTimerInterval; }
 
-#if ENABLE(TEXT_AUTOSIZING)
     float oneLineTextMultiplierCoefficient() const { return m_oneLineTextMultiplierCoefficient; }
     float multiLineTextMultiplierCoefficient() const { return m_multiLineTextMultiplierCoefficient; }
     float maxTextAutosizingScaleIncrease() const { return m_maxTextAutosizingScaleIncrease; }
-#endif
 
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>&);
     WEBCORE_EXPORT void setMediaContentTypesRequiringHardwareSupport(const String&);
@@ -160,10 +158,8 @@ protected:
     void hiddenPageCSSAnimationSuspensionEnabledChanged();
     void resourceUsageOverlayVisibleChanged();
     void iceCandidateFilteringEnabledChanged();
-#if ENABLE(TEXT_AUTOSIZING)
     void shouldEnableTextAutosizingBoostChanged();
     void textAutosizingUsesIdempotentModeChanged();
-#endif
 #if ENABLE(MEDIA_STREAM)
     void mockCaptureDevicesEnabledChanged();
 #endif
@@ -185,7 +181,6 @@ protected:
     std::optional<Vector<FourCC>> m_allowedMediaAudioCodecIDs;
     std::optional<Vector<FourCC>> m_allowedMediaCaptionFormatTypes;
 
-#if ENABLE(TEXT_AUTOSIZING)
     static constexpr const float boostedOneLineTextMultiplierCoefficient = 2.23125f;
     static constexpr const float boostedMultiLineTextMultiplierCoefficient = 2.48125f;
     static constexpr const float boostedMaxTextAutosizingScaleIncrease = 5.0f;
@@ -196,7 +191,6 @@ protected:
     float m_oneLineTextMultiplierCoefficient { defaultOneLineTextMultiplierCoefficient };
     float m_multiLineTextMultiplierCoefficient { defaultMultiLineTextMultiplierCoefficient };
     float m_maxTextAutosizingScaleIncrease { defaultMaxTextAutosizingScaleIncrease };
-#endif
 };
 
 } // namespace WebCore

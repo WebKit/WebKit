@@ -580,13 +580,10 @@ public:
     inline void setUsedAppleVisualEffectForSubtree(AppleVisualEffect);
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
     // MARK: - Text Autosizing
 
     AutosizeStatus NODELETE autosizeStatus() const;
     void NODELETE setAutosizeStatus(AutosizeStatus);
-
-#endif
 
     // MARK: - Pseudo element/style
 
@@ -656,9 +653,7 @@ public:
     float NODELETE usedFontSize() const;
     inline WebkitLocale computedLocale() const;
     const LineHeight& NODELETE specifiedLineHeight() const;
-#if ENABLE(TEXT_AUTOSIZING)
     void setSpecifiedLineHeight(LineHeight&&);
-#endif
     void setSpecifiedLineHeightFromAnimation(LineHeight&&);
 
     void setLetterSpacingFromAnimation(LetterSpacing&&);
@@ -838,9 +833,7 @@ public:
         PREFERRED_TYPE(PrintColorAdjust) unsigned char printColorAdjust : 1;
         PREFERRED_TYPE(InsideLink) unsigned char insideLink : 2;
 
-#if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
-#endif
         // Total = 59 bits (fits in 8 bytes)
     };
 

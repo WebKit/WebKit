@@ -27,8 +27,6 @@
 #include "config.h"
 #include "StyleTextSizeAdjust.h"
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include "CSSKeywordValue.h"
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+CSSValueConversion.h"
@@ -57,5 +55,3 @@ auto CSSValueConversion<TextSizeAdjust>::operator()(BuilderState& state, const C
 
 } // namespace Style
 } // namespace WebCore
-
-#endif // ENABLE(TEXT_AUTOSIZING)

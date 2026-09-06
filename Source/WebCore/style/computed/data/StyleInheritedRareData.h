@@ -55,6 +55,7 @@
 #include <WebCore/StyleTextEmphasisStyle.h>
 #include <WebCore/StyleTextIndent.h>
 #include <WebCore/StyleTextShadow.h>
+#include <WebCore/StyleTextSizeAdjust.h>
 #include <WebCore/StyleTextUnderlineOffset.h>
 #include <WebCore/StyleTextUnderlinePosition.h>
 #include <WebCore/StyleTouchAction.h>
@@ -71,10 +72,6 @@
 
 #if HAVE(CORE_MATERIAL)
 #include <WebCore/AppleVisualEffect.h>
-#endif
-
-#if ENABLE(TEXT_AUTOSIZING)
-#include <WebCore/StyleTextSizeAdjust.h>
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
@@ -165,9 +162,7 @@ public:
 
     StrokeMiterlimit strokeMiterLimit;
 
-#if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjust textSizeAdjust;
-#endif
 
     MathDepth mathDepth;
 

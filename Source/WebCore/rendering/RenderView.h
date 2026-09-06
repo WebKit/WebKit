@@ -86,7 +86,6 @@ public:
     bool needsEventRegionUpdateForNonCompositedFrame() const { return m_needsEventRegionUpdateForNonCompositedFrame; }
     void setNeedsEventRegionUpdateForNonCompositedFrame(bool value = true) { m_needsEventRegionUpdateForNonCompositedFrame = value; }
 
-#if ENABLE(TEXT_AUTOSIZING)
     enum class TextAutosizingState : uint8_t {
         Normal,
         ResetScheduled,
@@ -94,7 +93,6 @@ public:
     };
     TextAutosizingState textAutosizingState() const { return m_textAutosizingState; }
     void setTextAutosizingState(TextAutosizingState state) { m_textAutosizingState = state; }
-#endif
 
     std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
     void repaintRootContents();
@@ -301,9 +299,7 @@ private:
     unsigned m_renderersWithPixelMovingFilterCount { 0 };
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
-#if ENABLE(TEXT_AUTOSIZING)
     TextAutosizingState m_textAutosizingState { TextAutosizingState::Normal };
-#endif
 
     SingleThreadWeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;

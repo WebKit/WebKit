@@ -21,8 +21,6 @@
 
 #pragma once
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include <WebCore/StylePrimitiveNumericTypes.h>
 
 namespace WebCore {
@@ -85,5 +83,3 @@ template<> struct CSSValueConversion<TextSizeAdjust> { auto operator()(BuilderSt
 } // namespace WebCore
 
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::TextSizeAdjust)
-
-#endif // ENABLE(TEXT_AUTOSIZING)

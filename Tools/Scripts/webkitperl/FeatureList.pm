@@ -374,9 +374,6 @@ my @features = (
     { option => "telephone-number-detection", desc => "Toggle telephone number detection support",
       define => "ENABLE_TELEPHONE_NUMBER_DETECTION", value => \$telephoneNumberDetectionSupport },
 
-    { option => "text-autosizing", desc => "Toggle automatic text size adjustment support",
-      define => "ENABLE_TEXT_AUTOSIZING", value => \$textAutosizingSupport },
-
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", value => \$touchEventsSupport },
 

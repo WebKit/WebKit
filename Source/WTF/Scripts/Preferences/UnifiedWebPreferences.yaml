@@ -6098,7 +6098,6 @@ MinimumZoomFontSize:
   type: double
   status: embedder
   webKitLegacyPreferenceKey: WebKitMinimumZoomFontSizePreferenceKey
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
       default: 15
@@ -8228,7 +8227,6 @@ ShouldEnableTextAutosizingBoost:
   type: bool
   status: embedder
   webcoreOnChange: shouldEnableTextAutosizingBoostChanged
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -8977,7 +8975,6 @@ TextAutosizingEnabled:
   type: bool
   status: embedder
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -8995,7 +8992,6 @@ TextAutosizingEnabledAtLargeInitialScale:
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "Enable Text Autosizing at Large Initial Scale"
   humanReadableDescription: "Enable Text Autosizing at Large Initial Scale"
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebCore:
       "ENABLE(TEXT_AUTOSIZING_BASED_ON_INITIAL_SCALE)": false
@@ -9008,7 +9004,6 @@ TextAutosizingUsesIdempotentMode:
   webcoreOnChange: textAutosizingUsesIdempotentModeChanged
   humanReadableName: "Idempotent Text Autosizing"
   humanReadableDescription: "Use idempotent text autosizing mode"
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebKitLegacy:
       default: false

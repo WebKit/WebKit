@@ -259,10 +259,8 @@ public:
     bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
-#if ENABLE(TEXT_AUTOSIZING)
     void adjustFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();
-#endif
 
     WEBCORE_EXPORT ImageOrientation imageOrientation() const;
 

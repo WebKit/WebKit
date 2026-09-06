@@ -738,7 +738,6 @@ platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBVP9.mm @nonARC
 platform/xr/cocoa/PlatformXRPose.cpp
 rendering/AttachmentLayout.mm @nonARC
-rendering/TextAutoSizing.cpp @header:RenderStyleGetters
 rendering/cocoa/RenderThemeCocoa.mm @nonARC
 rendering/ios/RenderThemeIOS.mm @nonARC
 rendering/mac/RenderThemeMac.mm @nonARC

@@ -190,10 +190,8 @@ RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCo
 
 RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, element, WTF::move(style), { }, flags)
-#if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
-#endif
 {
     ASSERT(isRenderBlockFlow());
     setChildrenInline(true);
@@ -201,10 +199,8 @@ RenderBlockFlow::RenderBlockFlow(Type type, Element& element, Style::ComputedSty
 
 RenderBlockFlow::RenderBlockFlow(Type type, Document& document, Style::ComputedStyle&& style, OptionSet<BlockFlowFlag> flags)
     : RenderBlock(type, document, WTF::move(style), { }, flags)
-#if ENABLE(TEXT_AUTOSIZING)
     , m_widthForTextAutosizing(-1)
     , m_lineCountForTextAutosizing(NOT_SET)
-#endif
 {
     ASSERT(isRenderBlockFlow());
     setChildrenInline(true);
@@ -4574,8 +4570,6 @@ void RenderBlockFlow::materializeRareBlockFlowData()
     m_rareBlockFlowData = makeUnique<RenderBlockFlowRareData>(*this);
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 static inline bool isVisibleRenderText(const RenderObject& renderer)
 {
     auto* renderText = dynamicDowncast<RenderText>(renderer);
@@ -4695,8 +4689,6 @@ void RenderBlockFlow::adjustFontSizes(float size, float visibleWidth)
         descendant = RenderObjectTraversal::nextSkippingChildren(text, this);
     }
 }
-
-#endif // ENABLE(TEXT_AUTOSIZING)
 
 void RenderBlockFlow::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {

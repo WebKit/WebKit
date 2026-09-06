@@ -2345,15 +2345,11 @@ void WebChromeClient::didAddOrRemoveViewportConstrainedObjects()
         page->didAddOrRemoveViewportConstrainedObjects();
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 void WebChromeClient::textAutosizingUsesIdempotentModeChanged()
 {
     if (RefPtr page = m_page.get())
         page->textAutosizingUsesIdempotentModeChanged();
 }
-
-#endif
 
 bool WebChromeClient::needsScrollGeometryUpdates() const
 {

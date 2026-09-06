@@ -63,9 +63,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_inheritedFlags.pointerEvents = static_cast<unsigned>(ComputedStyle::initialPointerEvents());
     m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
     m_inheritedFlags.isZoomed = 0;
-#if ENABLE(TEXT_AUTOSIZING)
     m_inheritedFlags.autosizeStatus = 0;
-#endif
 
     m_nonInheritedFlags.display = ComputedStyle::initialDisplay().toRaw();
     m_nonInheritedFlags.originalDisplay = ComputedStyle::initialDisplay().toRaw();

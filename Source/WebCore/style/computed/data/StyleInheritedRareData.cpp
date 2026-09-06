@@ -74,9 +74,7 @@ InheritedRareData::InheritedRareData()
     , lineGrid(ComputedStyle::initialLineGrid())
     , tabSize(ComputedStyle::initialTabSize())
     , strokeMiterLimit(ComputedStyle::initialStrokeMiterLimit())
-#if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(ComputedStyle::initialTextSizeAdjust())
-#endif
     , mathDepth(ComputedStyle::initialMathDepth())
     , textBoxEdge(ComputedStyle::initialTextBoxEdge())
     , lineFitEdge(ComputedStyle::initialLineFitEdge())
@@ -182,9 +180,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , lineGrid(o.lineGrid)
     , tabSize(o.tabSize)
     , strokeMiterLimit(o.strokeMiterLimit)
-#if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(o.textSizeAdjust)
-#endif
     , mathDepth(o.mathDepth)
     , textBoxEdge(o.textBoxEdge)
     , lineFitEdge(o.lineFitEdge)
@@ -295,9 +291,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
 #if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
         && overflowScrolling == o.overflowScrolling
 #endif
-#if ENABLE(TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
-#endif
         && webkitUserSelect == o.webkitUserSelect
         && usedUserSelect == o.usedUserSelect
         && speakAs == o.speakAs
@@ -503,9 +497,8 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT(lineGrid);
     LOG_IF_DIFFERENT(tabSize);
 
-#if ENABLE(TEXT_AUTOSIZING)
     LOG_IF_DIFFERENT(textSizeAdjust);
-#endif
+
 #if ENABLE(CSS_TAP_HIGHLIGHT_COLOR)
     LOG_IF_DIFFERENT(tapHighlightColor);
 #endif

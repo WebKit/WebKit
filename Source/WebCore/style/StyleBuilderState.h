@@ -269,9 +269,7 @@ private:
     void NODELETE adjustStyleForInterCharacterRuby();
 
     void updateFont();
-#if ENABLE(TEXT_AUTOSIZING)
     void updateFontForTextSizeAdjust();
-#endif
     void updateFontForZoomChange();
     void updateFontForGenericFamilyChange();
     void updateFontForOrientationChange();

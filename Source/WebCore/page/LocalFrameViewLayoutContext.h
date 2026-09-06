@@ -227,9 +227,8 @@ private:
 
     void NODELETE setSubtreeLayoutRoot(RenderElement&);
 
-#if ENABLE(TEXT_AUTOSIZING)
     void applyTextSizingIfNeeded(RenderElement& layoutRoot);
-#endif
+
     void updateStyleForLayout();
 
     // These functions may only be accessed by LayoutStateMaintainer.

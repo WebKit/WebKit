@@ -189,7 +189,6 @@ HTMLParserScriptingFlagPolicy:
 
 IdempotentModeAutosizingOnlyHonorsPercentages:
   type: bool
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebCore:
       default: false
@@ -411,7 +410,6 @@ SuppressHDRShouldBeAllowedInFullscreenVideo:
 TextAutosizingWindowSizeOverrideHeight:
   type: uint32_t
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebCore:
       default: 0
@@ -419,7 +417,6 @@ TextAutosizingWindowSizeOverrideHeight:
 TextAutosizingWindowSizeOverrideWidth:
   type: uint32_t
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
-  condition: ENABLE(TEXT_AUTOSIZING)
   defaultValue:
     WebCore:
       default: 0

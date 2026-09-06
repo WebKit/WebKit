@@ -288,13 +288,10 @@ ExceptionOr<void> InternalSettings::setTextAutosizingWindowSizeOverride(int widt
 {
     if (!m_page)
         return Exception { ExceptionCode::InvalidAccessError };
-#if ENABLE(TEXT_AUTOSIZING)
+
     settings().setTextAutosizingWindowSizeOverrideWidth(width);
     settings().setTextAutosizingWindowSizeOverrideHeight(height);
-#else
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
-#endif
+
     return { };
 }
 

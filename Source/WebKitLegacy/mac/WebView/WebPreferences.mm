@@ -1241,7 +1241,6 @@ public:
 }
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
 - (void)_setMinimumZoomFontSize:(float)size
 {
     [self _setFloatValue:size forKey:WebKitMinimumZoomFontSizePreferenceKey];
@@ -1261,7 +1260,6 @@ public:
 {
     return [self _boolValueForKey:WebKitTextAutosizingEnabledPreferenceKey];
 }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 - (void)_setMaxParseDuration:(float)d

@@ -185,9 +185,7 @@ void BuilderState::updateFont()
     if (!needsUpdate())
         return;
 
-#if ENABLE(TEXT_AUTOSIZING)
     updateFontForTextSizeAdjust();
-#endif
     updateFontForGenericFamilyChange();
     updateFontForZoomChange();
     updateFontForOrientationChange();
@@ -198,7 +196,6 @@ void BuilderState::updateFont()
     m_fontDirty = false;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 void BuilderState::updateFontForTextSizeAdjust()
 {
     if (m_style.textSizeAdjust().isAuto()
@@ -221,14 +218,12 @@ void BuilderState::updateFontForTextSizeAdjust()
 
     m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));
 }
-#endif
 
 void BuilderState::updateFontForZoomChange()
 {
     if (m_style.usedZoom() == parentStyle().usedZoom() && m_style.textZoom() == parentStyle().textZoom())
         return;
 
-#if ENABLE(TEXT_AUTOSIZING)
     // When text-size-adjust has an active percentage, updateFontForTextSizeAdjust() has already
     // computed the correct size (incorporating both the multiplier and the current zoom factor).
     // Skip recalculation here to avoid overwriting that result, which would lose the
@@ -239,7 +234,6 @@ void BuilderState::updateFontForZoomChange()
         && (!document().settings().textAutosizingUsesIdempotentMode()
             || document().settings().idempotentModeAutosizingOnlyHonorsPercentages()))
         return;
-#endif
 
     setFontDescriptionFontSize(m_style.fontDescription().computedSize());
 }

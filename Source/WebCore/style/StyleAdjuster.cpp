@@ -800,10 +800,8 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
             style.setCursor(CSS::Keyword::Auto { });
 #endif
 
-#if ENABLE(TEXT_AUTOSIZING)
         if (m_document->settings().textAutosizingUsesIdempotentMode())
             adjustForTextAutosizing(style, protect(*m_element));
-#endif
     }
 
     if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden && m_element && ContainmentChecker { style, *m_element }.isSkippedContentRoot())
@@ -1352,7 +1350,6 @@ std::unique_ptr<Style::ComputedStyle> Adjuster::restoreUsedDocumentElementStyleT
     return adjusted;
 }
 
-#if ENABLE(TEXT_AUTOSIZING)
 static bool NODELETE hasTextChild(const Element& element)
 {
     for (auto* child = element.firstChild(); child; child = child->nextSibling()) {
@@ -1443,7 +1440,6 @@ bool Adjuster::adjustForTextAutosizing(Style::ComputedStyle& style, const Elemen
 {
     return adjustForTextAutosizing(style, adjustmentForTextAutosizing(style, element));
 }
-#endif
 
 void Adjuster::adjustVisibilityForPseudoElement(Style::ComputedStyle& style, const Element& host)
 {

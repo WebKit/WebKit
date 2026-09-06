@@ -103,9 +103,7 @@ public:
 
     static inline PageSize initialPageSize();
     static constexpr ZIndex initialUsedZIndex();
-#if ENABLE(TEXT_AUTOSIZING)
     static inline LineHeight initialSpecifiedLineHeight();
-#endif
 
     // MARK: - Logical Values
 

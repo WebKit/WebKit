@@ -378,7 +378,6 @@ public:
 
     RenderElement* NODELETE firstNonAnonymousAncestor() const;
 
-#if ENABLE(TEXT_AUTOSIZING)
     // Minimal distance between the block with fixed height and overflowing content and the text block to apply text autosizing.
     // The greater this constant is the more potential places we have where autosizing is turned off.
     // So it should be as low as possible. There are sites that break at 2.
@@ -392,7 +391,6 @@ public:
 
     typedef BlockContentHeightType (*HeightTypeTraverseNextInclusionFunction)(const RenderObject&);
     RenderObject* traverseNext(const RenderObject* stayWithin, HeightTypeTraverseNextInclusionFunction, int& currentDepth, int& newFixedDepth) const;
-#endif
 
     WEBCORE_EXPORT RenderLayer* NODELETE enclosingLayer() const;
 

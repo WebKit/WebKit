@@ -27,8 +27,6 @@
 #include "config.h"
 #include "TextAutoSizing.h"
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "FontCascade.h"
@@ -376,5 +374,3 @@ void TextAutoSizing::reset()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TEXT_AUTOSIZING)

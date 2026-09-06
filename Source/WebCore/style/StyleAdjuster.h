@@ -64,7 +64,6 @@ public:
     static void propagateToDocumentElementAndInitialContainingBlock(Update&, const Document&);
     static std::unique_ptr<Style::ComputedStyle> restoreUsedDocumentElementStyleToComputed(const Style::ComputedStyle&);
 
-#if ENABLE(TEXT_AUTOSIZING)
     struct AdjustmentForTextAutosizing {
         std::optional<float> newFontSize;
         std::optional<float> newLineHeight;
@@ -74,7 +73,6 @@ public:
     static AdjustmentForTextAutosizing adjustmentForTextAutosizing(const Style::ComputedStyle&, const Element&);
     static bool adjustForTextAutosizing(Style::ComputedStyle&, AdjustmentForTextAutosizing);
     static bool adjustForTextAutosizing(Style::ComputedStyle&, const Element&);
-#endif
 
 private:
     void NODELETE adjustDisplayContentsStyle(Style::ComputedStyle&) const;

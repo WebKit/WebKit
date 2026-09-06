@@ -1505,7 +1505,6 @@
                 "none"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_TEXT_AUTOSIZING",
                 "settings-flag": "textAutosizingEnabled",
                 "high-priority": true,
                 "style-builder-custom": "Value",
@@ -5481,29 +5480,17 @@
             "values": [
                 "normal"
             ],
-            "codegen-properties": [
-                {
-                    "enable-if": "ENABLE_TEXT_AUTOSIZING",
-                    "animation-wrapper-requires-getter": "specifiedLineHeight",
-                    "animation-wrapper-requires-setter": "setSpecifiedLineHeightFromAnimation",
-                    "style-builder-custom": "All",
-                    "style-extractor-custom": true,
-                    "computed-style-storage-path": ["m_inheritedData"],
-                    "computed-style-storage-kind": "reference",
-                    "computed-style-type": "Style::LineHeight",
-                    "parser-grammar": "normal | <number [0,inf]> | <length-percentage [0,inf]>",
-                    "parser-exported": true
-                },
-                {
-                    "enable-if": "!ENABLE_TEXT_AUTOSIZING",
-                    "style-extractor-custom": true,
-                    "computed-style-storage-path": ["m_inheritedData"],
-                    "computed-style-storage-kind": "reference",
-                    "computed-style-type": "Style::LineHeight",
-                    "parser-grammar": "normal | <number [0,inf]> | <length-percentage [0,inf]>",
-                    "parser-exported": true
-                }
-            ],
+            "codegen-properties": {
+                "animation-wrapper-requires-getter": "specifiedLineHeight",
+                "animation-wrapper-requires-setter": "setSpecifiedLineHeightFromAnimation",
+                "style-builder-custom": "All",
+                "style-extractor-custom": true,
+                "computed-style-storage-path": ["m_inheritedData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::LineHeight",
+                "parser-grammar": "normal | <number [0,inf]> | <length-percentage [0,inf]>",
+                "parser-exported": true
+            },
             "specification": {
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-inline-3/#line-height-property"
@@ -12148,7 +12135,6 @@
             "animation-type": "not animatable (internal)",
             "inherited": true,
             "codegen-properties": {
-                "enable-if": "ENABLE_TEXT_AUTOSIZING",
                 "skip-style-builder": true,
                 "skip-parser": true,
                 "skip-computed-style": true,

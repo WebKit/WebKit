@@ -21,8 +21,6 @@
 
 #pragma once
 
-#if ENABLE(TEXT_AUTOSIZING)
-
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -70,5 +68,3 @@ constexpr bool AutosizeStatus::contains(Fields fields) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TEXT_AUTOSIZING)
