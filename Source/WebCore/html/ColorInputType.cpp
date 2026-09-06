@@ -58,6 +58,7 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgentParts.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -253,8 +254,10 @@ void ColorInputType::handleDOMActivateEvent(Event& event)
     if (element()->isDisabledFormControl())
         return;
 
-    if (!UserGestureIndicator::processingUserGesture())
+    if (!UserGestureIndicator::processingUserGesture()) {
+        protect(element()->document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Color picker was not shown because showing it requires a user gesture."_s);
         return;
+    }
 
     showPicker();
     event.setDefaultHandled();
