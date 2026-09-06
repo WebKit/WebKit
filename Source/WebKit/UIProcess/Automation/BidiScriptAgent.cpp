@@ -59,6 +59,9 @@ using namespace Inspector;
 using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContext;
 using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
+static constexpr size_t maxSandboxNameLength = 256;
+static constexpr size_t maxSandboxRealmsPerBrowsingContext = 256;
+
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
 
@@ -334,7 +337,17 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         }
     }
 
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
+    std::optional<String> sandboxName = target->getString("sandbox"_s);
+    if (sandboxName && !sandboxName->isEmpty()) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!isValidSandboxName(*sandboxName), InvalidParameter, makeString("sandbox must be a non-empty string no longer than "_s, String::number(maxSandboxNameLength), " characters"_s));
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!canCreateSandboxRealm(*browsingContext, *sandboxName), InvalidParameter, makeString("too many sandbox realms for browsing context (maximum "_s, String::number(maxSandboxRealmsPerBrowsingContext), ")"_s));
+    }
+
+    // FIXME: `target.sandbox` currently only affects the returned realm identifier.
+    // Actual sandbox realm execution requires plumbing the sandbox name through
+    // WebAutomationSession/WebProcess evaluation so scripts run in a distinct JS world.
+    // https://bugs.webkit.org/show_bug.cgi?id=314152
+    String realmID = realmIdForTarget(*browsingContext, sandboxName);
     session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
         // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
         // https://bugs.webkit.org/show_bug.cgi?id=301159
@@ -436,7 +449,7 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
-    // FIXME: Add full parameter validation (resultOwnership, serializationOptions, sandbox, realm targets, etc.)
+    // FIXME: Add full parameter validation (resultOwnership, serializationOptions, realm targets, etc.)
     // https://bugs.webkit.org/show_bug.cgi?id=288060
     std::optional<BrowsingContext> browsingContext = target->getString("context"_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, InvalidParameter);
@@ -445,7 +458,17 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
 
-    String realmID = generateRealmIdForBrowsingContext(*browsingContext);
+    std::optional<String> sandboxName = target->getString("sandbox"_s);
+    if (sandboxName && !sandboxName->isEmpty()) {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!isValidSandboxName(*sandboxName), InvalidParameter, makeString("sandbox must be a non-empty string no longer than "_s, String::number(maxSandboxNameLength), " characters"_s));
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!canCreateSandboxRealm(*browsingContext, *sandboxName), InvalidParameter, makeString("too many sandbox realms for browsing context (maximum "_s, String::number(maxSandboxRealmsPerBrowsingContext), ")"_s));
+    }
+
+    // FIXME: `target.sandbox` currently only affects the returned realm identifier.
+    // Actual sandbox realm execution requires plumbing the sandbox name through
+    // WebAutomationSession/WebProcess evaluation so scripts run in a distinct JS world.
+    // https://bugs.webkit.org/show_bug.cgi?id=314152
+    String realmID = realmIdForTarget(*browsingContext, sandboxName);
 
     session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, 1, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
@@ -575,7 +598,8 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
 
     // FIXME: Implement worker realm support (dedicated-worker, shared-worker, service-worker, worker).
     // https://bugs.webkit.org/show_bug.cgi?id=304300
-    // Currently only window realms (main frames and iframes) are supported.
+    // Currently only top-level window realms are enumerated here; iframe context support
+    // remains deferred in this implementation.
     // Worker realm types require tracking worker global scopes and their owner sets.
 
     // FIXME: Implement worklet realm support (paint-worklet, audio-worklet, worklet).
@@ -638,6 +662,7 @@ void BidiScriptAgent::addPreloadScript(const String& functionDeclaration, RefPtr
 {
     // FIXME: Add resource limits to prevent denial of service <https://webkit.org/b/288057>
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(functionDeclaration.isEmpty(), InvalidParameter, "functionDeclaration cannot be empty"_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!optionalSandbox.isNull() && !isValidSandboxName(optionalSandbox), InvalidParameter, makeString("sandbox must be a non-empty string no longer than "_s, String::number(maxSandboxNameLength), " characters"_s));
 
     auto scriptID = PreloadScriptIdentifier::generate();
 
@@ -849,18 +874,55 @@ String BidiScriptAgent::originStringFromSecurityOriginData(const WebCore::Securi
     return originData.toString();
 }
 
-void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
+void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<AccumulatedRealmData>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
 {
     if (pagesToProcess.isEmpty()) {
-        // Assemble final array with window realms only.
+        // Collect active context handles to filter sandbox realms without mutating m_sandboxRealms.
+        HashSet<String> activeContexts;
+        for (auto& entry : accumulated) {
+            if (!entry.context.isNull())
+                activeContexts.add(entry.context);
+        }
+
+        // Build sandbox realm entries per context, filtering out stale contexts.
+        struct SandboxEntry {
+            String name;
+            RealmIdentifier realmId;
+        };
+        HashMap<String, Vector<SandboxEntry>> sandboxesPerContext;
+        for (const auto& [sandboxKey, realmId] : m_sandboxRealms) {
+            if (!activeContexts.contains(sandboxKey.first))
+                continue;
+            auto result = sandboxesPerContext.add(sandboxKey.first, Vector<SandboxEntry> { });
+            result.iterator->value.append({ sandboxKey.second, realmId });
+        }
+        for (auto& [context, vec] : sandboxesPerContext)
+            std::sort(vec.begin(), vec.end(), [](const SandboxEntry& a, const SandboxEntry& b) { return codePointCompareLessThan(a.name, b.name); });
+
         auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
-        for (auto& realmInfo : accumulated) {
-            if (!realmInfo)
+        for (auto& entry : accumulated) {
+            if (!entry.info)
                 continue;
             if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window)
-                continue; // Only window realms supported currently.
+                continue;
 
-            realmsArray->addItem(realmInfo.releaseNonNull());
+            realmsArray->addItem(entry.info.releaseNonNull());
+
+            if (!entry.context.isNull()) {
+                auto it = sandboxesPerContext.find(entry.context);
+                if (it != sandboxesPerContext.end()) {
+                    for (const auto& sandbox : it->value) {
+                        auto sandboxInfo = Inspector::Protocol::BidiScript::RealmInfo::create()
+                            .setRealm(makeString("realm-"_s, sandbox.realmId.loggingString()))
+                            .setOrigin(entry.origin)
+                            .setType(Inspector::Protocol::BidiScript::RealmType::Window)
+                            .release();
+                        sandboxInfo->setContext(entry.context);
+                        sandboxInfo->setSandbox(sandbox.name);
+                        realmsArray->addItem(WTF::move(sandboxInfo));
+                    }
+                }
+            }
         }
 
         callback(WTF::move(realmsArray));
@@ -874,13 +936,12 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
         CheckedPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        // Collect realms from main frames only (no iframes in this PR).
-        Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>> candidateRealms;
+        Vector<AccumulatedRealmData> candidateRealms;
         for (const auto& frameTree : frameTrees)
             protectedThis->collectExecutionReadyFrameRealms(frameTree, candidateRealms, contextHandleFilter, false);
 
-        for (auto& realmInfo : candidateRealms)
-            accumulated.append(WTF::move(realmInfo));
+        for (auto& realm : candidateRealms)
+            accumulated.append(WTF::move(realm));
 
         protectedThis->processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
     });
@@ -925,7 +986,7 @@ std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData
     return std::nullopt;
 }
 
-void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& frameTree, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes)
+void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& frameTree, Vector<AccumulatedRealmData>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes)
 {
     // FIXME: Per W3C BiDi spec, when contextHandleFilter is present, we should also include
     // worker realms whose owner set includes the active document of that context.
@@ -937,8 +998,11 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
         auto handle = contextHandleForFrame(frameTree.info);
         bool shouldInclude = !contextHandleFilter || (handle && *handle == *contextHandleFilter);
         if (shouldInclude) {
-            if (auto realmInfo = createRealmInfoForFrame(frameTree.info))
-                realms.append(realmInfo);
+            if (auto realmInfo = createRealmInfoForFrame(frameTree.info)) {
+                String context = handle ? *handle : String();
+                String origin = originStringFromSecurityOriginData(frameTree.info.securityOrigin);
+                realms.append({ WTF::move(realmInfo), WTF::move(context), WTF::move(origin) });
+            }
         }
     }
 
@@ -951,14 +1015,14 @@ void BidiScriptAgent::collectExecutionReadyFrameRealms(const FrameTreeNodeData& 
     }
 }
 
-void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData& origin, Inspector::Protocol::BidiScript::RealmType type, Inspector::Protocol::BidiBrowsingContext::BrowsingContext context)
+void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData& origin, Inspector::Protocol::BidiScript::RealmType type, Inspector::Protocol::BidiBrowsingContext::BrowsingContext context, const String& sandbox)
 {
     RefPtr session = m_session.get();
     if (!session)
         return;
 
     session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmCreated, { context }, [&]() {
-        session->bidiProcessor().scriptDomainNotifier().realmCreated(realmID, originStringFromSecurityOriginData(origin), type, context);
+        session->bidiProcessor().scriptDomainNotifier().realmCreated(realmID, originStringFromSecurityOriginData(origin), type, context, sandbox);
     });
 }
 
@@ -970,7 +1034,7 @@ void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspec
     // Track the current realm for this browsing context.
     m_browsingContextToRealmId.set(browsingContext, realmIdentifier);
 
-    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext };
+    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, { } };
     m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
 
     sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext);
@@ -982,14 +1046,25 @@ void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Insp
     if (!session)
         return;
 
-    // Match the realm identifier that the WebProcess reported for this realm.
     String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
 
-    // Remove the realm from active realms.
     m_activeRealms.remove(realmIdentifier);
-
-    // Remove the browsing context mapping (realm will be regenerated on next navigation).
     m_browsingContextToRealmId.remove(browsingContext);
+
+    // Remove any sandbox realms associated with this browsing context.
+    Vector<std::pair<String, String>> sandboxKeysToRemove;
+    for (const auto& [sandboxKey, sandboxRealmId] : m_sandboxRealms) {
+        if (sandboxKey.first == browsingContext) {
+            sandboxKeysToRemove.append(sandboxKey);
+            String sandboxRealmIDString = makeString("realm-"_s, sandboxRealmId.loggingString());
+            m_activeRealms.remove(sandboxRealmId);
+            session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { browsingContext }, [&]() {
+                session->bidiProcessor().scriptDomainNotifier().realmDestroyed(sandboxRealmIDString, browsingContext);
+            });
+        }
+    }
+    for (const auto& key : sandboxKeysToRemove)
+        m_sandboxRealms.remove(key);
 
     session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { browsingContext }, [&]() {
         session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID, browsingContext);
@@ -1016,7 +1091,7 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
             continue;
 
         String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
-        sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context);
+        sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context, realmInfo.sandbox);
     }
 }
 
@@ -1039,6 +1114,46 @@ std::optional<String> BidiScriptAgent::browsingContextForRealm(RealmIdentifier r
         return std::nullopt;
 
     return it->value.context;
+}
+
+bool BidiScriptAgent::isValidSandboxName(const String& sandboxName) const
+{
+    return !sandboxName.isEmpty() && sandboxName.length() <= maxSandboxNameLength;
+}
+
+bool BidiScriptAgent::canCreateSandboxRealm(const String& browsingContext, const String& sandboxName) const
+{
+    std::pair<String, String> sandboxKey = std::make_pair(browsingContext, sandboxName);
+    if (m_sandboxRealms.contains(sandboxKey))
+        return true;
+
+    size_t sandboxCount = 0;
+    for (const auto& [existingKey, unusedRealmId] : m_sandboxRealms) {
+        if (existingKey.first == browsingContext)
+            ++sandboxCount;
+    }
+    return sandboxCount < maxSandboxRealmsPerBrowsingContext;
+}
+
+String BidiScriptAgent::realmIdForTarget(const String& browsingContext, const std::optional<String>& sandboxName)
+{
+    if (sandboxName && !sandboxName->isEmpty())
+        return generateSandboxRealmId(browsingContext, *sandboxName);
+    return generateRealmIdForBrowsingContext(browsingContext);
+}
+
+String BidiScriptAgent::generateSandboxRealmId(const String& browsingContext, const String& sandboxName)
+{
+    std::pair<String, String> sandboxKey = std::make_pair(browsingContext, sandboxName);
+
+    auto it = m_sandboxRealms.find(sandboxKey);
+    if (it != m_sandboxRealms.end())
+        return makeString("realm-"_s, it->value.loggingString());
+
+    auto realmIdentifier = RealmIdentifier::generate();
+    m_sandboxRealms.set(sandboxKey, realmIdentifier);
+    m_activeRealms.set(realmIdentifier, RealmInfo { { }, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, sandboxName });
+    return makeString("realm-"_s, realmIdentifier.loggingString());
 }
 
 } // namespace WebKit
