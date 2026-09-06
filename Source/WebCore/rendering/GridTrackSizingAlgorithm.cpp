@@ -2120,7 +2120,7 @@ void GridTrackSizingAlgorithm::setup(Style::GridTrackSizingDirection direction, 
     m_autoSizedTracksForStretchIndex.shrink(0);
 
     if (availableSpace) {
-        LayoutUnit guttersSize = m_renderGrid->guttersSize(direction, 0, m_grid.numTracks(direction), this->availableSpace(direction));
+        LayoutUnit guttersSize = m_renderGrid->guttersSize(direction, 0, numTracks, this->availableSpace(direction));
         setFreeSpace(direction, *availableSpace - guttersSize);
     } else
         setFreeSpace(direction, std::nullopt);

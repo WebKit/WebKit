@@ -1,0 +1,8 @@
+
+PASS Empty grid resolves flexible auto-fill columns against free space minus 10px gaps
+PASS Non-empty grid resolves flexible auto-fill columns against free space minus 10px gaps
+PASS Empty grid resolves flexible auto-fill columns against free space minus 5px gaps
+PASS Non-empty grid resolves flexible auto-fill columns against free space minus 5px gaps
+PASS Empty grid resolves flexible auto-fill columns against free space with no gaps
+PASS Non-empty grid resolves flexible auto-fill columns against free space with no gaps
+
