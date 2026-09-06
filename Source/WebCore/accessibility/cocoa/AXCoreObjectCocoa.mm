@@ -736,6 +736,20 @@ PlatformRoleMap createPlatformRoleMap()
 std::optional<AXTextMarkerRange> markerRangeFrom(NSRange range, const AXCoreObject& object)
 {
     std::optional stopAtID = object.idOfNextSiblingIncludingIgnoredOrParent();
+    if (object.stitchGroupIfRepresentative()) {
+        // The range can span every member, and members may be nested in inline wrappers (e.g. <strong>),
+        // so neither the representative's nor the last member's sibling is a safe stop. A stitch group
+        // never crosses its block flow, so stop past the block-flow ancestor.
+        if (RefPtr blockFlow = object.blockFlowAncestorForStitchable())
+            stopAtID = blockFlow->idOfNextSiblingIncludingIgnoredOrParent();
+
+        // But that boundary can also include content after the group, so clamp to the stitched length
+        // (the length of the concatenated member text) to keep the walk inside the group.
+        NSUInteger stitchedLength = object.stringValue().length();
+        range.location = std::min<NSUInteger>(range.location, stitchedLength);
+        range.length = std::min<NSUInteger>(range.length, stitchedLength - range.location);
+    }
+
     auto markerToLocation = AXTextMarker { object, 0 }.nextMarkerFromOffset(range.location, ForceSingleOffsetMovement::Yes, stopAtID);
     if (!markerToLocation.isValid())
         return std::nullopt;

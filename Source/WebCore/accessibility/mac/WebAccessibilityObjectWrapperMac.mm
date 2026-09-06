@@ -3603,6 +3603,13 @@ static bool isMatchingPlugin(AXCoreObject& axObject, const AccessibilitySearchCr
         return markerRange ? static_cast<CGRect>(markerRange->viewportRelativeFrame()) : CGRectZero;
     }
 
+    // For a representative, offsets can address text past its own node, so resolve them against
+    // simpleRange() (the whole stitched text). visiblePositionForIndex would clamp to its first run.
+    if (backingObject.stitchGroupIfRepresentative()) {
+        if (std::optional stitchScope = backingObject.simpleRange())
+            return FloatRect(backingObject.boundsForRange(resolveCharacterRange(*stitchScope, CharacterRange(range.location, range.length))));
+    }
+
     auto start = backingObject.visiblePositionForIndex(range.location);
     auto end = backingObject.visiblePositionForIndex(range.location + range.length);
     auto webRange = makeSimpleRange({ start, end });

@@ -1,0 +1,16 @@
+This test ensures AXBoundsForRange spans the full text of a stitch-group representative, and does not escape the group when the range is out of bounds.
+
+PASS: t.boundsForRange(0, 10) was equal or approximately equal to (x: -1, y: -1, w: 69, h: 18).
+PASS: t.boundsForRange(10, 5) was equal or approximately equal to (x: -1, y: -1, w: 47, h: 18).
+PASS: t.boundsForRange(16, 3) was equal or approximately equal to (x: -1, y: -1, w: 23, h: 18).
+PASS: t.boundsForRange(40, 3) was equal or approximately equal to (x: -1, y: -1, w: 26, h: 18).
+PASS: t.boundsForRange(0, 44) was equal or approximately equal to (x: -1, y: -1, w: 301, h: 18).
+PASS: g.boundsForRange(0, 17) was equal or approximately equal to (x: -1, y: -1, w: 126, h: 19).
+PASS: g.boundsForRange(0, 1000) was equal or approximately equal to (x: -1, y: -1, w: 126, h: 19).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The quick brown fox jumps over the lazy dog.
+
+Alpha beta gamma Go delta epsilon zeta.

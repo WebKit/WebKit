@@ -1301,15 +1301,16 @@ static FloatRect viewportRelativeFrameFromRuns(Ref<AXIsolatedObject> object, uns
 {
     const auto* runs = object->textRuns();
     auto relativeFrame = object->relativeFrame();
-    if (!start && end == runs->totalLength()) {
+    // A representative's relativeFrame() is the union of all its members (the whole stitched line), so
+    // it can't be returned as the frame of this object's own run.
+    bool isStitchRepresentative = object->stitchGroupIfRepresentative().has_value();
+    if (!isStitchRepresentative && !start && end == runs->totalLength()) {
         // If the caller wants the entirety of this object's text, we don't need to to do any estimating,
         // and can just return the relative frame.
         return relativeFrame;
     }
 
     auto runsLocalRect = runs->localRect(start, end, object->fontOrientation());
-    // The rect we got above is a "local" rect, relative to nothing else. Move it to be
-    // anchored at this object's relative frame.
     runsLocalRect.move(relativeFrame.x(), relativeFrame.y());
     return runsLocalRect;
 }
@@ -1347,10 +1348,13 @@ FloatRect AXTextMarkerRange::viewportRelativeFrame() const
     }
 
     // The range spans multiple objects, so we'll need to traverse objects with text runs
-    // from start to end and accumulate the final bounds.
+    // from start to end and accumulate the final bounds. The start object contributes only from
+    // start.offset() (handled here); the intermediate objects contribute in full; the end object
+    // contributes up to end.offset() (handled after the loop). Begin the loop at the object after
+    // start so we do not re-add the start object from offset 0 and lose start.offset().
     FloatRect result = viewportRelativeFrameFromRuns(*start.isolatedObject(), start.offset());
 
-    RefPtr current = start.isolatedObject();
+    RefPtr current = findObjectWithRuns(*start.isolatedObject(), AXDirection::Next, /* stopAtID */ *end.objectID());
     while (current && current->objectID() != *end.objectID()) {
         result.unite(viewportRelativeFrameFromRuns(*current, /* offset */ 0));
         RefPtr next = findObjectWithRuns(*current, AXDirection::Next, /* stopAtID */ *end.objectID());
