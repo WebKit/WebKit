@@ -92,9 +92,9 @@ auto CSSValueCreation<BorderImageSource>::operator()(CSSValuePool&, const Style:
 
 // MARK: - Blending
 
-auto Blending<BorderImageSource>::canBlend(const BorderImageSource& a, const BorderImageSource& b) -> bool
+auto Blending<BorderImageSource>::canBlend(const BorderImageSource&, const BorderImageSource&) -> bool
 {
-    return !a.isNone() && !b.isNone();
+    return false;
 }
 
 auto Blending<BorderImageSource>::blend(const BorderImageSource& a, const BorderImageSource& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> BorderImageSource
