@@ -283,8 +283,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         contextMenu.appendSeparator();
 
-        if (this._canvasNodes.length === 1)
-            WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNodes[0]);
+        WI.appendContextMenuItemsForDOMNode(contextMenu, this._canvasNodes);
     }
 
     _showGridButtonClicked()

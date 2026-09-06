@@ -940,11 +940,13 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             contextMenu.pushItem(subMenu);
 
         if (this.treeOutline.editable) {
-            if (this.selected && selectedTreeElements.length > 1) {
-                let forceHidden = !selectedTreeElements.every((treeElement) => treeElement.isNodeHidden);
+            let editableTreeElements = this.selected ? selectedTreeElements.filter((treeElement) => treeElement.representedObject.nodeType() === Node.ELEMENT_NODE && treeElement.editable) : [];
+            if (editableTreeElements.length > 1) {
+                let forceHidden = !editableTreeElements.every((treeElement) => treeElement.isNodeHidden);
                 let label = forceHidden ? WI.UIString("Hide Elements") : WI.UIString("Show Elements");
                 contextMenu.appendItem(label, () => {
-                    this.treeOutline.toggleSelectedElementsVisibility(forceHidden);
+                    for (let treeElement of editableTreeElements)
+                        treeElement.toggleElementVisibility(forceHidden);
                 });
             } else if (isEditableNode) {
                 contextMenu.appendItem(WI.UIString("Toggle Visibility"), () => {

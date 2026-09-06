@@ -1309,6 +1309,9 @@
 /* Label for Spatial Photos with image controls next to spatial glyph */
 "SPATIAL" = "SPATIAL";
 
+/* Button label for the Web Inspector save-to-directory panel */
+"Save" = "Save";
+
 /* Title for Save to Photos action button */
 "Save to Photos" = "Save to Photos";
 
