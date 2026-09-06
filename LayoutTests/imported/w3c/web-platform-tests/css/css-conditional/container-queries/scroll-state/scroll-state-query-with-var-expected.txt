@@ -1,10 +1,8 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
-NOTRUN Matching --match-unknown
-NOTRUN Matching --match-unknown-fallback
-NOTRUN Matching --match-unregistered
-NOTRUN Matching --match-unregistered-number
-NOTRUN Matching --match-registered
-NOTRUN Matching --match-registered-number
+PASS Matching --match-unknown
+FAIL Matching --match-unknown-fallback assert_equals: expected "yes" but got "no"
+FAIL Matching --match-unregistered assert_equals: expected "yes" but got "no"
+PASS Matching --match-unregistered-number
+FAIL Matching --match-registered assert_equals: expected "yes" but got "no"
+PASS Matching --match-registered-number
 

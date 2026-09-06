@@ -5876,6 +5876,17 @@ imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-sta
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-stuck-serialization.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-snapped-parsing.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/at-container-snapped-serialization.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-initially-scrollable.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-axis.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-wm.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-body-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-pseudo.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-layout-change.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-layout-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-container-type-change.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-change.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-root.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-body-001.html [ Pass ]
 
 webkit.org/b/279424 [ Debug ] imported/w3c/web-platform-tests/css/css-conditional/container-queries/svg-foreignobject-no-size-container.html [ Skip ] # Crash
 

@@ -2826,8 +2826,10 @@ void Element::invalidateStyleForAnimation()
     Node::invalidateStyle(Style::Validity::AnimationInvalid);
 }
 
-void Element::invalidateForQueryContainerSizeChange()
+void Element::invalidateForQueryContainerChange()
 {
+    // Called when a query container's evaluated state (size or scroll-state) changes, so that
+    // container-query-dependent style in the subtree is recomputed.
     // FIXME: Ideally we would just recompute things that are actually affected by containers queries within the subtree.
     Node::invalidateStyle(Style::Validity::SubtreeInvalid);
     setStateFlag(StateFlag::NeedsUpdateQueryContainerDependentStyle);

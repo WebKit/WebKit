@@ -2528,6 +2528,7 @@ void Page::updateRendering()
     runProcessingStep(RenderingUpdateStep::SnapshottedScrollOffsets, [&] (Document& document) {
         if (CheckedPtr renderView = document.renderView())
             Style::AnchorPositionEvaluator::updateScrollAdjustments(*renderView);
+        document.styleScope().updateScrollStateSnapshots();
     });
 
     for (auto& document : initialDocuments) {

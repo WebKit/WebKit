@@ -222,6 +222,10 @@ public:
     void unregisterContainerQueryBox(const RenderBox&);
     const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const LIFETIME_BOUND { return m_containerQueryBoxes; }
 
+    void registerScrollStateQueryBox(const RenderBox&);
+    void unregisterScrollStateQueryBox(const RenderBox&);
+    const SingleThreadWeakHashSet<const RenderBox>& scrollStateQueryBoxes() const LIFETIME_BOUND { return m_scrollStateQueryBoxes; }
+
     void registerAnchor(const RenderBoxModelObject&);
     void unregisterAnchor(const RenderBoxModelObject&);
     const SingleThreadWeakHashSet<const RenderBoxModelObject>& anchors() const LIFETIME_BOUND { return m_anchors; }
@@ -311,6 +315,7 @@ private:
 
     SingleThreadWeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
     SingleThreadWeakHashSet<const RenderBox> m_containerQueryBoxes;
+    SingleThreadWeakHashSet<const RenderBox> m_scrollStateQueryBoxes;
     SingleThreadWeakHashSet<const RenderBoxModelObject> m_anchors;
     SingleThreadWeakHashSet<const RenderBox> m_positionTryBoxes;
 
