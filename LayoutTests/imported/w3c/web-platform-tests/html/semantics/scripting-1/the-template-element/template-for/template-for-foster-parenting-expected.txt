@@ -1,0 +1,9 @@
+
+
+FAIL Foster parenting inside <template for> keeps content in the target (iframe) assert_not_equals: fostered content should not be lost got disallowed value null
+FAIL Foster parenting inside <template for> keeps content in the target (innerHTML) assert_not_equals: fostered content should not be lost got disallowed value null
+FAIL Foster parenting inside <template for> keeps content in the target (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+FAIL Foster parenting out of a tr inside <template for> keeps content in the target (iframe) assert_not_equals: the tr should be inserted at the target got disallowed value null
+FAIL Foster parenting out of a tr inside <template for> keeps content in the target (innerHTML) assert_not_equals: the tr should be inserted at the target got disallowed value null
+FAIL Foster parenting out of a tr inside <template for> keeps content in the target (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+

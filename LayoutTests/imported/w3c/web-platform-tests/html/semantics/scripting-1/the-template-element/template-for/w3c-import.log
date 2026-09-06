@@ -1,0 +1,60 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-append-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-append-text-and-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-append-to-head.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-case-sensitive-dom-inserted.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-case-sensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-empty-hash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-foster-parenting.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-gradual-append.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-html-setters.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-innerHTML-ambiguous.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-innerHTML-outside.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-innerHTML-within.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-invokes-pagehide-with-end.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-invokes-pagehide-without-end.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-move-cross-document.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-move-end-while-appending.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-move-marker-while-appending.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-move-start-while-appending.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-move-while-appending.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-multiple-cases.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-mutation-records.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-nested-patch.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-only-html-001.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-parsing-only.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-prepend-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-prepend-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-replace-children-with-element.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-replace-children-with-text.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-reverse.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-sanitization.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-script-children.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-script-eval.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-script-replace.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-scripting-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-shadow-nested.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-shadow-root.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-shadow.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-style-in-head.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-superseded-by-shadowrootmode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-supersedes-invalid-shadowrootmode.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-title.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-for/template-for-unclosed-content.html

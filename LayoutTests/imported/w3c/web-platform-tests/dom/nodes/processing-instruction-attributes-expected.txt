@@ -1,0 +1,270 @@
+
+FAIL Processing instruction in main parser assert_equals: expected 7 but got 8
+FAIL Processing instruction attribute parsing rejects unquoted attributes from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute mutation from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute parsing allows _ in attribute names from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction toggleAttribute from html-dom pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
+FAIL check attribute value: "=" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx"" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx>" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "some<>" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "'""'" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "aa"aa"" (source: "html-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL Invalid attribute name: = (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: a= (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: =x (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: b> (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: > (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: >x (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: /x/ (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: / (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x/ (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x	 (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: 	x (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x
+ (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name:
+x (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x\r (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: \rx (source: html-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Valid attribute name: $ (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _ (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: $foo (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _bar (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a$b (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a_b (source: html-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-dom): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-dom): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-dom): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Processing instruction attributes with xml-stylesheet from html-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute parsing rejects unquoted attributes from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute mutation from html-parser assert_equals: expected 7 but got 8
+FAIL Processing instruction attribute parsing allows _ in attribute names from html-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction toggleAttribute from html-parser assert_equals: expected 7 but got 8
+FAIL check attribute value: "=" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx"" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx>" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "some<>" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "'""'" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "aa"aa"" (source: "html-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL Invalid attribute name: = (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: a= (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: =x (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: b> (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: > (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: >x (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: /x/ (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: / (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x/ (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x	 (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: 	x (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x
+ (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name:
+x (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x\r (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: \rx (source: html-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Valid attribute name: $ (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _ (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: $foo (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _bar (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a$b (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a_b (source: html-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-parser): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-parser): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: html-parser): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Processing instruction attribute parsing rejects unquoted attributes from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute mutation from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute parsing allows _ in attribute names from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction toggleAttribute from xml-dom pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
+FAIL check attribute value: "=" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx"" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx>" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "some<>" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "'""'" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "aa"aa"" (source: "xml-dom") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL Invalid attribute name: = (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: a= (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: =x (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: b> (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: > (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: >x (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: /x/ (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: / (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x/ (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x	 (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: 	x (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x
+ (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name:
+x (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x\r (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: \rx (source: xml-dom) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Valid attribute name: $ (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _ (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: $foo (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _bar (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a$b (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a_b (source: xml-dom) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-dom): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-dom): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-dom): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Processing instruction attributes with xml-stylesheet from xml-dom pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute parsing rejects unquoted attributes from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute mutation from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction attribute parsing allows _ in attribute names from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+FAIL Processing instruction toggleAttribute from xml-parser pi.getAttribute is not a function. (In 'pi.getAttribute("attr")', 'pi.getAttribute' is undefined)
+FAIL check attribute value: "=" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx"" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "axx>" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "some<>" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "'""'" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL check attribute value: "aa"aa"" (source: "xml-parser") pi.setAttribute is not a function. (In 'pi.setAttribute("attr", value)', 'pi.setAttribute' is undefined)
+FAIL Invalid attribute name: = (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: a= (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: =x (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: b> (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: > (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: >x (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: /x/ (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: / (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x/ (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x	 (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: 	x (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x
+ (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name:
+x (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: x\r (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Invalid attribute name: \rx (source: xml-parser) assert_throws_dom: function "() => {
+          pi.setAttribute(name, "value");
+        }" threw object "TypeError: pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)" that is not a DOMException InvalidCharacterError: property "code" is equal to undefined, expected 5
+FAIL Valid attribute name: $ (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _ (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: $foo (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: _bar (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a$b (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Valid attribute name: a_b (source: xml-parser) pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-parser): ABC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-parser): abC and abc pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Distinct attribute name (source: xml-parser): x123A and x123a pi.setAttribute is not a function. (In 'pi.setAttribute(name, "value")', 'pi.setAttribute' is undefined)
+FAIL Processing instruction attributes with xml-stylesheet from xml-parser pi.hasAttributes is not a function. (In 'pi.hasAttributes()', 'pi.hasAttributes' is undefined)
+

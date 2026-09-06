@@ -1,0 +1,17 @@
+Old content
+
+FAIL <template for> is sanitized away with removeElements when streaming promise_test: Unhandled rejection with value: object "TypeError: document.body.streamAppendHTMLUnsafe is not a function. (In 'document.body.streamAppendHTMLUnsafe({
+        runScripts: true,
+        sanitizer: {
+          removeElements: ["template"],
+        },
+      })', 'document.body.streamAppendHTMLUnsafe' is undefined)"
+FAIL <template for> is sanitized away with removeAttributes when streaming promise_test: Unhandled rejection with value: object "TypeError: document.body.streamAppendHTMLUnsafe is not a function. (In 'document.body.streamAppendHTMLUnsafe({
+        runScripts: true,
+        sanitizer: {
+          removeAttributes: ["for"],
+        },
+      })', 'document.body.streamAppendHTMLUnsafe' is undefined)"
+FAIL <template for> is sanitized away with removeElements in a fragment assert_equals: expected "<?marker name=\"p\"?>" but got "<!--?marker name=\"p\"--><template for=\"p\">New content</template>"
+FAIL <template for> attribute is sanitized away with removeAttributes in a fragment assert_equals: expected "<?marker name=\"p\"?><template>New content</template>" but got "<!--?marker name=\"p\"--><template for=\"p\">New content</template>"
+

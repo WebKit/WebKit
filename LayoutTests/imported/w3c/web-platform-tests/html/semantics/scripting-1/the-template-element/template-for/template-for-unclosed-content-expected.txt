@@ -1,0 +1,13 @@
+
+
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (iframe) assert_equals: expected "<span>New</span>" but got "<!--?start name=\"p\"-->Old<!--?end-->"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (iframe) assert_equals: expected "Old <span>New</span>" but got "Old <!--?marker name=\"p\"-->"
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (innerHTML) assert_equals: expected "<span>New</span>" but got "<!--?start name=\"p\"-->Old<!--?end-->"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (innerHTML) assert_equals: expected "Old <span>New</span>" but got "Old <!--?marker name=\"p\"-->"
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (template) assert_equals: expected "<span>New</span>" but got "<!--?start name=\"p\"-->Old<!--?end-->"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (template) assert_equals: expected "Old <span>New</span>" but got "Old <!--?marker name=\"p\"-->"
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (DOMParser) assert_equals: expected "<span>New</span>" but got "<!--?start name=\"p\"-->Old<!--?end-->"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (DOMParser) assert_equals: expected "Old <span>New</span>" but got "Old <!--?marker name=\"p\"-->"
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+
