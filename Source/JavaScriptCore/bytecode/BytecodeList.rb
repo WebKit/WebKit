@@ -1426,6 +1426,12 @@ op_group :ProfiledUnaryOp,
         profileIndex: unsigned,
     }
 
+op :to_boolean,
+    args: {
+        dst: VirtualRegister,
+        operand: VirtualRegister,
+    }
+
 # If you add any bytecodes after bitnot make sure to update isOpcode
 
 end_section :Bytecode

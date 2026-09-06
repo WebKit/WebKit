@@ -1166,6 +1166,18 @@ llintOpWithReturn(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return
     dispatch()
 end)
 
+llintOpWithReturn(op_to_boolean, OpToBoolean, macro (size, get, dispatch, return)
+    get(m_operand, t0)
+    loadConstantOrVariable(size, t0, t2)
+    xorq ValueFalse, t2
+    btqnz t2, ~1, .opToBoolean
+    xorq ValueFalse, t2
+    return(t2)
+
+.opToBoolean:
+    callSlowPath(_slow_path_to_boolean)
+    dispatch()
+end)
 
 llintOpWithReturn(op_to_string, OpToString, macro (size, get, dispatch, return)
     get(m_operand, t1)

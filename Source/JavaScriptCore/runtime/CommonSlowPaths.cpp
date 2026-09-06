@@ -535,6 +535,13 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_numeric)
     });
 }
 
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_boolean)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpToBoolean>();
+    RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().toBoolean(globalObject)));
+}
+
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_object)
 {
     BEGIN();
