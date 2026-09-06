@@ -19756,6 +19756,7 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock nonRopeCase = m_out.newBlock();
         LBasicBlock checkLength = m_out.newBlock();
         LBasicBlock checkFlags = constantMinimumSize ? nullptr : m_out.newBlock();
+        LBasicBlock checkLastIndex = m_out.newBlock();
 
         if (!knownString)
             emitFirstCharacterGuardStringCheck(argument, argumentEdge, isCellCase, isStringCase, ropeCase, operationCase);
@@ -19770,19 +19771,22 @@ IGNORE_CLANG_WARNINGS_END
         ValueFromBlock nonRopeLength = m_out.anchor(m_out.load32(m_out.loadPtr(argument, m_heaps.JSString_value), m_heaps.StringImpl_length));
         m_out.jump(checkLength);
 
-        m_out.appendTo(checkLength, constantMinimumSize ? noMatchCase : checkFlags);
+        m_out.appendTo(checkLength, constantMinimumSize ? checkLastIndex : checkFlags);
         LValue stringLength = m_out.phi(Int32, ropeLength, nonRopeLength);
-        if (constantMinimumSize) {
-            m_out.branch(m_out.below(stringLength, m_out.constInt32(static_cast<int32_t>(*constantMinimumSize))), unsure(noMatchCase), unsure(operationCase));
-            return;
+        if (constantMinimumSize)
+            m_out.branch(m_out.below(stringLength, m_out.constInt32(static_cast<int32_t>(*constantMinimumSize))), unsure(checkLastIndex), unsure(operationCase));
+        else {
+            LValue regExp = m_out.bitAnd(m_out.loadPtr(base, m_heaps.RegExpObject_regExpAndFlags), m_out.constIntPtr(RegExpObject::regExpMask));
+            m_out.branch(m_out.below(stringLength, m_out.load32(regExp, m_heaps.RegExp_minimumSize)), unsure(checkFlags), unsure(operationCase));
+
+            m_out.appendTo(checkFlags, checkLastIndex);
+            LValue flags = m_out.load16ZeroExt32(regExp, m_heaps.RegExp_flags);
+            m_out.branch(m_out.testNonZero32(flags, m_out.constInt32(RegExp::globalOrStickyFlagsMask)), unsure(operationCase), unsure(checkLastIndex));
         }
 
-        LValue regExp = m_out.bitAnd(m_out.loadPtr(base, m_heaps.RegExpObject_regExpAndFlags), m_out.constIntPtr(RegExpObject::regExpMask));
-        m_out.branch(m_out.below(stringLength, m_out.load32(regExp, m_heaps.RegExp_minimumSize)), unsure(checkFlags), unsure(operationCase));
-
-        m_out.appendTo(checkFlags, noMatchCase);
-        LValue flags = m_out.load16ZeroExt32(regExp, m_heaps.RegExp_flags);
-        m_out.branch(m_out.testNonZero32(flags, m_out.constInt32(RegExp::globalOrStickyFlagsMask)), unsure(operationCase), unsure(noMatchCase));
+        m_out.appendTo(checkLastIndex, noMatchCase);
+        LValue lastIndexJSValue = m_out.load64(base, m_heaps.RegExpObject_lastIndex);
+        m_out.branch(isNotInt32(lastIndexJSValue), rarely(operationCase), usually(noMatchCase));
     }
 
     void compileRegExpTestMinimumLengthFilter(LValue globalObject, LValue base, LValue argument, Edge baseEdge, Edge argumentEdge)

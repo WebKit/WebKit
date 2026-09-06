@@ -10068,15 +10068,17 @@ void SpeculativeJIT::emitRegExpMinimumLengthFilterGuards(std::optional<unsigned>
         done.link(this);
     }
 
-    if (constantMinimumSize) {
+    if (constantMinimumSize)
         slowCases.append(branch32(AboveOrEqual, scratch1GPR, TrustedImm32(static_cast<int32_t>(*constantMinimumSize))));
-        return;
+    else {
+        loadPtr(Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), scratch2GPR);
+        andPtr(TrustedImmPtr(RegExpObject::regExpMask), scratch2GPR);
+        slowCases.append(branch32(AboveOrEqual, scratch1GPR, Address(scratch2GPR, RegExp::offsetOfMinimumSize())));
+        slowCases.append(branchTest16(NonZero, Address(scratch2GPR, RegExp::offsetOfFlags()), TrustedImm32(RegExp::globalOrStickyFlagsMask)));
     }
 
-    loadPtr(Address(baseGPR, RegExpObject::offsetOfRegExpAndFlags()), scratch2GPR);
-    andPtr(TrustedImmPtr(RegExpObject::regExpMask), scratch2GPR);
-    slowCases.append(branch32(AboveOrEqual, scratch1GPR, Address(scratch2GPR, RegExp::offsetOfMinimumSize())));
-    slowCases.append(branchTest16(NonZero, Address(scratch2GPR, RegExp::offsetOfFlags()), TrustedImm32(RegExp::globalOrStickyFlagsMask)));
+    load64(Address(baseGPR, RegExpObject::offsetOfLastIndex()), scratch1GPR);
+    slowCases.append(branchIfNotInt32(scratch1GPR));
 }
 
 } } // namespace JSC::DFG
