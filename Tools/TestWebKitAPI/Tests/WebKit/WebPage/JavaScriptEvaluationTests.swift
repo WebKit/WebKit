@@ -26,6 +26,7 @@
 @_spi(Experimental_NewCodable) import WebKit
 import Testing
 import NewCodable
+import struct FoundationEssentials.Data
 import struct Swift.String
 
 // MARK: Supporting types
@@ -69,6 +70,25 @@ private struct Team: Equatable {
 
 @CommonDecodable
 private struct Empty: Equatable {}
+
+private struct Profile: Decodable, Equatable {
+    let name: String
+    let age: Int
+    let tags: [String]
+}
+
+private struct CommonDecodableAdaptor<D: Decodable> {
+    let value: D
+}
+
+extension CommonDecodableAdaptor: CommonDecodable {
+    static func decode(from decoder: inout some (CommonDecoder & ~Escapable)) throws(CodingError.Decoding) -> Self {
+        CommonDecodableAdaptor(value: try decoder.decode(D.self))
+    }
+}
+
+extension CommonDecodableAdaptor: Equatable where D: Equatable {
+}
 
 // MARK: Tests
 
@@ -463,6 +483,51 @@ struct JavaScriptEvaluationTests {
             #"return { lead: { name: "Ada", age: 36 }, members: {}, scoresByName: {} };"#
         }
     }
+
+    @Test
+    func decodingData() async throws {
+        let data = Data([1, 2, 255])
+
+        // Bytes are either an array of numbers or the base64 string a script would produce for them.
+        try await testDecoding(data) { "return [1, 2, 255];" }
+        try await testDecoding(data) { "return btoa(String.fromCharCode(1, 2, 255));" }
+        try await testDecoding(Data()) { "return [];" }
+        try await testDecoding(Data()) { #"return "";"# }
+
+        // Every element has to be a byte, so one out of range or not integral is corrupt data
+        // rather than something to truncate.
+        await testDataCorrupted(decoding: Data.self) { "return [256];" }
+        await testDataCorrupted(decoding: Data.self) { "return [-1];" }
+        await testDataCorrupted(decoding: Data.self) { "return [1.5];" }
+        await testTypeMismatch(decoding: Data.self) { #"return ["1"];"# }
+
+        // A string is read as base64, so one which is not is corrupt data too.
+        await testDataCorrupted(decoding: Data.self) { #"return "not base64!";"# }
+
+        // Anything which is neither shape is a mismatch. A typed array is among them: it is
+        // not a JavaScript array, so it arrives keyed by index like any other object.
+        await testTypeMismatch(decoding: Data.self) { "return { 0: 1, 1: 2 };" }
+        await testTypeMismatch(decoding: Data.self) { "return 42;" }
+        await testTypeMismatch(decoding: Data.self) { "return null;" }
+    }
+
+    @Test
+    func decodingStandardDecodable() async throws {
+        typealias ProfileAdaptor = CommonDecodableAdaptor<Profile>
+
+        let box = ProfileAdaptor(value: Profile(name: "Ada", age: 36, tags: ["swift", "webkit"]))
+
+        try await testDecoding(box) {
+            #"return { name: "Ada", age: 36, tags: ["swift", "webkit"] };"#
+        }
+
+        // The standard decoding machinery classifies failures on this path, not the graph
+        // decoder, so only the fact that one is raised is checked here.
+        await testDecodingFailure(decoding: ProfileAdaptor.self) { #"return { name: "Ada", tags: [] };"# }
+        await testDecodingFailure(decoding: ProfileAdaptor.self) { #"return { name: "Ada", age: "36", tags: [] };"# }
+        await testDecodingFailure(decoding: ProfileAdaptor.self) { "return 42;" }
+        await testDecodingFailure(decoding: ProfileAdaptor.self) { "return null;" }
+    }
 }
 
 // MARK: Helpers
@@ -477,6 +542,7 @@ extension JavaScriptEvaluationTests {
         #expect(actual == expectedValue, sourceLocation: sourceLocation)
     }
 
+    @discardableResult
     private func testDecodingFailure<T: CommonDecodable>(
         decoding type: T.Type,
         sourceLocation: SourceLocation = #_sourceLocation,
