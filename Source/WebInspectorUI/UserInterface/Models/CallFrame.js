@@ -258,7 +258,7 @@ WI.CallFrame = class CallFrame
             if (sourceCode) {
                 // The lineNumber is 1-based, but we expect 0-based.
                 let lineNumber = payload.lineNumber - 1;
-                sourceCodeLocation = sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber);
+                sourceCodeLocation = sourceCode.createSourceCodeLocation(lineNumber, payload.columnNumber);
             } else {
                 // Treat this as native code if we were unable to find a source.
                 console.assert(!url, "We should have detected source code for something with a url");
