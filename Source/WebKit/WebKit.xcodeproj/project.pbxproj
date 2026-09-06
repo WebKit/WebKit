@@ -492,6 +492,7 @@
 		1AE00D4D182D6EB000087DD7 /* WKBrowsingContextHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4B182D6EB000087DD7 /* WKBrowsingContextHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE00D4F182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */; };
 		1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE00D5F1831792100087DD7 /* FrameLoadState.h */; };
+		A5F2D1F12FE1C0A100B7E402 /* FrameOwnershipAuthority.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F2D1F02FE1C0A100B7E402 /* FrameOwnershipAuthority.h */; };
 		1AE286781C7E76510069AC4F /* _WKWebsiteDataSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2867A1C7F7BA60069AC4F /* WKWebsiteDataStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE286791C7F7BA60069AC4F /* WKWebsiteDataStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE286801C7F92C00069AC4F /* _WKWebsiteDataSizeInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2867F1C7F92BF0069AC4F /* _WKWebsiteDataSizeInternal.h */; };
@@ -4164,6 +4165,7 @@
 		1AE00D4E182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandleInternal.h; sourceTree = "<group>"; };
 		1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoadState.cpp; sourceTree = "<group>"; };
 		1AE00D5F1831792100087DD7 /* FrameLoadState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoadState.h; sourceTree = "<group>"; };
+		A5F2D1F02FE1C0A100B7E402 /* FrameOwnershipAuthority.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameOwnershipAuthority.h; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
 		1AE286751C7E76510069AC4F /* _WKWebsiteDataSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebsiteDataSize.mm; sourceTree = "<group>"; };
 		1AE286761C7E76510069AC4F /* _WKWebsiteDataSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebsiteDataSize.h; sourceTree = "<group>"; };
@@ -16259,6 +16261,7 @@
 				D6C27CBA2EC2757B00AA941F /* FindTextMatchesCallbackAggregator.h */,
 				1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */,
 				1AE00D5F1831792100087DD7 /* FrameLoadState.h */,
+				A5F2D1F02FE1C0A100B7E402 /* FrameOwnershipAuthority.h */,
 				FA6757052B815C8300C1566A /* FrameProcess.cpp */,
 				FA6757062B815C8300C1566A /* FrameProcess.h */,
 				9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */,
@@ -18528,6 +18531,7 @@
 				F30EE4742E72227500935B60 /* FrameInspectorTargetProxy.h in Headers */,
 				1AE00D611831792100087DD7 /* FrameLoadState.h in Headers */,
 				A1B2C3D4E5F60718DEADBEEF /* FrameNetworkAgentProxy.h in Headers */,
+				A5F2D1F12FE1C0A100B7E402 /* FrameOwnershipAuthority.h in Headers */,
 				5C121E842410208D00486F9B /* FrameTreeNodeData.h in Headers */,
 				2D4AF0892044C3C4006C8817 /* FrontBoardServicesSPI.h in Headers */,
 				CD78E1151DB7D7ED0014A2DE /* FullscreenClient.h in Headers */,
