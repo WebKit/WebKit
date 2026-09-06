@@ -42,6 +42,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
@@ -1686,7 +1687,12 @@ bool AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxe
     auto localAnchorRect = [&] {
         if (anchorBox)
             return anchorBox->visualOverflowRect();
-        return downcast<RenderInline>(*defaultAnchor).linesVisualOverflowBoundingBox();
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(*defaultAnchor))
+            return inlineBox->linesVisualOverflowBoundingBox();
+        if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(*defaultAnchor))
+            return LayoutRect { lineBreak->linesBoundingBox() };
+        ASSERT_NOT_REACHED();
+        return LayoutRect { };
     }();
     auto* anchoredContainingBlock = anchoredBox.container();
 
