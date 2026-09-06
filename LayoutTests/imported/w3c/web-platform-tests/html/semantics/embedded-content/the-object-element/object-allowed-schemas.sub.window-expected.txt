@@ -1,0 +1,8 @@
+
+PASS about: allowed in object
+PASS blob: allowed in object
+PASS data: allowed in object
+PASS https: allowed in object
+PASS http: allowed in object
+PASS javascript: scheme not allowed in object
+
