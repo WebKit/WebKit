@@ -108,6 +108,12 @@ bool MatchedDeclarationsCache::isCacheable(const Element& element, const Style::
     if (element.hasRandomCachingKeyMap())
         return false;
 
+    if (!parentStyle.accentColor().isAuto()) {
+        // If parent has accent-color set to a color, it'll affect AccentColor and
+        // AccentColorText in the element's style.
+        return false;
+    }
+
     // FIXME: counter-style: we might need to resolve cache like for fontSelector here (rdar://103018993).
 
     return true;

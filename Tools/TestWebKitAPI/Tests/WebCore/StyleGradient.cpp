@@ -51,7 +51,7 @@ static WebCore::Style::GradientLinearColorStopList someUncacheableStops()
 {
     return {
         {
-            WebCore::Style::Color { WebCore::Style::CurrentColor { } },
+            WebCore::Style::Color { WebCore::Style::CurrentColor { WebCore::Style::CurrentColor::Property::Color } },
             50_css_percentage
         },
         {
@@ -65,11 +65,11 @@ static WebCore::Style::GradientLinearColorStopList allUncacheableStops()
 {
     return {
         {
-            WebCore::Style::Color { WebCore::Style::CurrentColor { } },
+            WebCore::Style::Color { WebCore::Style::CurrentColor { WebCore::Style::CurrentColor::Property::Color } },
             50_css_percentage
         },
         {
-            WebCore::Style::Color { WebCore::Style::CurrentColor { } },
+            WebCore::Style::Color { WebCore::Style::CurrentColor { WebCore::Style::CurrentColor::Property::Color } },
             100_css_percentage
         }
     };

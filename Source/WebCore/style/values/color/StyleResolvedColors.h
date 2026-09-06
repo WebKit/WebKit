@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,55 +25,32 @@
 
 #pragma once
 
-#include "ColorInterpolationMethod.h"
-#include "StyleColor.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
-#include <wtf/UniqueRef.h>
+#include <WebCore/Color.h>
 
 namespace WebCore {
-
-class Color;
-
-namespace CSS {
-struct ColorMix;
-}
-
 namespace Style {
 
-struct ColorResolutionState;
+class ComputedStyleProperties;
 
-struct ColorMix {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
+// Stores colors from a computed style that a CurrentColor will need to resolve.
+class ResolvedColors {
+    WTF_MAKE_TZONE_ALLOCATED(ResolvedColors);
 
-    struct Component {
-        using Percentage = Style::Percentage<CSS::Range{0, 100}>;
+public:
+    explicit ResolvedColors(WebCore::Color currentColor, WebCore::Color accentColor);
 
-        Color color;
-        std::optional<Percentage> percentage;
+    static ResolvedColors fromStyle(const ComputedStyleProperties&);
 
-        bool operator==(const Component&) const = default;
-    };
+    // This grabs the visited link color from the style, instead of the 'normal' color.
+    static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&);
 
-    ColorInterpolationMethod colorInterpolationMethod;
-    CommaSeparatedVector<Component> components;
+    WebCore::Color currentColor() const { return m_currentColor; }
+    WebCore::Color accentColor() const { return m_accentColor; }
 
-    bool operator==(const ColorMix&) const = default;
+private:
+    WebCore::Color m_currentColor;
+    WebCore::Color m_accentColor;
 };
-
-inline bool operator==(const UniqueRef<ColorMix>& a, const UniqueRef<ColorMix>& b)
-{
-    return a.get() == b.get();
-}
-
-Color toStyleColor(const CSS::ColorMix&, ColorResolutionState&);
-WebCore::Color resolveColor(const ColorMix&, const ResolvedColors&);
-bool containsCurrentColor(const ColorMix&);
-
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const ColorMix&);
 
 } // namespace Style
 } // namespace WebCore

@@ -40,7 +40,7 @@ WebCore::Color ColorResolver::colorApplyingColorFilter(const WebCore::Color& col
 
 WebCore::Color ColorResolver::colorResolvingCurrentColor(const Style::Color& color) const
 {
-    return color.resolveColor(m_style->color());
+    return color.resolveColor(ResolvedColors::fromStyle(m_style));
 }
 
 WebCore::Color ColorResolver::colorResolvingCurrentColorApplyingColorFilter(const Style::Color& color) const
@@ -50,7 +50,7 @@ WebCore::Color ColorResolver::colorResolvingCurrentColorApplyingColorFilter(cons
 
 WebCore::Color ColorResolver::visitedLinkColorResolvingCurrentColor(const Style::Color& color) const
 {
-    return color.resolveColor(m_style->visitedLinkColor());
+    return color.resolveColor(ResolvedColors::fromVisitedLinkStyle(m_style));
 }
 
 WebCore::Color ColorResolver::visitedLinkColorResolvingCurrentColorApplyingColorFilter(const Style::Color& color) const

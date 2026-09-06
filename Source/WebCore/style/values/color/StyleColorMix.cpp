@@ -81,14 +81,14 @@ Color toStyleColor(const CSS::ColorMix& unresolved, ColorResolutionState& state)
 
 // MARK: - Resolve
 
-WebCore::Color resolveColor(const ColorMix& colorMix, const WebCore::Color& currentColor)
+WebCore::Color resolveColor(const ColorMix& colorMix, const ResolvedColors& resolvedColors)
 {
     return mix(
         CSS::ColorMixResolver {
             colorMix.colorInterpolationMethod,
             colorMix.components.map([&](auto& component) {
                 return CSS::ColorMixResolver::Component {
-                    component.color.resolveColor(currentColor),
+                    component.color.resolveColor(resolvedColors),
                     component.percentage,
                 };
             })
