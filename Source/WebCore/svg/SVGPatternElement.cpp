@@ -152,13 +152,6 @@ RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(Style::Compute
     return createRenderer<LegacyRenderSVGResourcePattern>(*this, WTF::move(style));
 }
 
-bool SVGPatternElement::hasPatternTransformAttribute() const
-{
-    if (!attributeWithoutSynchronization(SVGNames::patternTransformAttr).isNull())
-        return true;
-    return !m_patternTransform->baseVal()->isEmpty();
-}
-
 bool SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes)
 {
     if (!renderer())
@@ -222,8 +215,10 @@ void SVGPatternElement::collectOwnPatternAttributes(PatternAttributes& attribute
     if (!attributes.hasPatternContentUnits() && hasAttribute(SVGNames::patternContentUnitsAttr))
         attributes.setPatternContentUnits(patternContentUnits());
 
-    if (!attributes.hasPatternTransform() && hasPatternTransformAttribute())
-        attributes.setPatternTransform(patternTransform().concatenate().value_or(identity));
+    if (!attributes.hasPatternTransform()) {
+        if (auto transform = patternTransform().concatenate())
+            attributes.setPatternTransform(*transform);
+    }
 
     if (!attributes.hasPatternContentElement() && childElementCount())
         attributes.setPatternContentElement(this);

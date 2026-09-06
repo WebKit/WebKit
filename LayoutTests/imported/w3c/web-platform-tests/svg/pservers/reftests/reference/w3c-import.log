@@ -14,7 +14,9 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/gradient-color-interpolation-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/gradient-objectBoundingBox-absolute-units-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/gradient-transform-template-inheritance-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/green-100x100.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/pattern-opacity-01-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/pattern-transform-01-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/pattern-transform-template-inheritance-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/reftests/reference/pattern-viewbox-01-ref.svg

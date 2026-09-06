@@ -7708,7 +7708,6 @@ imported/w3c/web-platform-tests/svg/painting/svg-with-outline.html [ Pass Failur
 imported/w3c/web-platform-tests/svg/painting/color-interpolation-001.svg [ Pass Failure ]
 
 # web-platform-tests/svg/pservers failures
-imported/w3c/web-platform-tests/svg/pservers/scripted/pattern-transform-clear.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/gradient-transform-03.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/pservers/reftests/pattern-transform-03.svg [ ImageOnlyFailure ]
 

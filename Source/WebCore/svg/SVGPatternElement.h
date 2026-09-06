@@ -71,8 +71,6 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(Style::ComputedStyle&&, const RenderTreePosition&) final;
 
-    bool hasPatternTransformAttribute() const;
-
     bool needsPendingResourceHandling() const final { return false; }
     bool selfHasRelativeLengths() const final { return true; }
     bool supportsFocus() const final { return false; }
