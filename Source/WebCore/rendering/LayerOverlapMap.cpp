@@ -32,12 +32,41 @@
 
 namespace WebCore {
 
+static double rectArea(const LayoutRect& rect)
+{
+    return rect.width().toDouble() * rect.height().toDouble();
+}
+
 struct RectList {
     Vector<LayoutRect> rects;
     LayoutRect boundingRect;
-    
+    LayoutRect largestRect;
+
+    static constexpr size_t recentRectsToTestForContainment = 4;
+
+    bool isAlreadyCovered(const LayoutRect& rect) const
+    {
+        if (rects.isEmpty())
+            return false;
+
+        if (largestRect.contains(rect))
+            return true;
+
+        size_t recentCount = std::min(recentRectsToTestForContainment, rects.size());
+        for (size_t i = 0; i < recentCount; ++i) {
+            if (rects[rects.size() - 1 - i].contains(rect))
+                return true;
+        }
+        return false;
+    }
+
     void append(const LayoutRect& rect)
     {
+        if (isAlreadyCovered(rect))
+            return;
+
+        if (rects.isEmpty() || rectArea(rect) > rectArea(largestRect))
+            largestRect = rect;
         rects.append(rect);
         boundingRect.unite(rect);
     }
@@ -46,6 +75,8 @@ struct RectList {
     {
         rects.appendVector(rectList.rects);
         boundingRect.unite(rectList.boundingRect);
+        if (rectArea(rectList.largestRect) > rectArea(largestRect))
+            largestRect = rectList.largestRect;
     }
     
     bool intersects(const LayoutRect& rect) const
