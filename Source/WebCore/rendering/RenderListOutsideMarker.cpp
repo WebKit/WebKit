@@ -174,7 +174,7 @@ void RenderListOutsideMarker::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    updateInlineMarginsAndContent();
+    updateInlineMargins();
     if (CheckedPtr container = contentContainer())
         layoutContentContainer(*container);
 
@@ -249,9 +249,10 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 if (element)
                     element->invalidateStyleAndRenderersForSubtree();
             }
-            if (borderBoxWidth() != image->imageSize(this, style().usedZoom()).width() || borderBoxHeight() != image->imageSize(this, style().usedZoom()).height() || image->errorOccurred())
+            if (borderBoxSize() != LayoutSize(image->imageSize(this, style().usedZoom())) || image->errorOccurred()) {
+                updateInlineMarginsAndContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
-            else
+            } else
                 repaint();
         }
     }
@@ -260,9 +261,7 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
 
 void RenderListOutsideMarker::updateInlineMarginsAndContent()
 {
-    // FIXME: It's messy to use the preferredLogicalWidths dirty bit for this optimization, also unclear if this is premature optimization.
-    if (hasInvalidContentLogicalWidths())
-        updateContent();
+    updateContent();
     updateInlineMargins();
 }
 
@@ -302,9 +301,14 @@ void RenderListOutsideMarker::setContentContainerImageSize(LayoutSize imageSize)
         return;
 
     auto usedZoom = imageRenderer->style().usedZoomForLength();
-    imageRenderer->mutableStyle().setWidth(Style::PreferredSize::Fixed { imageSize.width() / usedZoom.value });
-    imageRenderer->mutableStyle().setHeight(Style::PreferredSize::Fixed { imageSize.height() / usedZoom.value });
-    imageRenderer->setNeedsLayout(MarkingBehavior::MarkOnlyThis);
+    auto logicalWidth = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.width() / usedZoom.value } };
+    auto logicalHeight = Style::PreferredSize { Style::PreferredSize::Fixed { imageSize.height() / usedZoom.value } };
+    if (imageRenderer->style().width() == logicalWidth && imageRenderer->style().height() == logicalHeight)
+        return;
+
+    imageRenderer->mutableStyle().setWidth(WTF::move(logicalWidth));
+    imageRenderer->mutableStyle().setHeight(WTF::move(logicalHeight));
+    imageRenderer->setNeedsLayout();
 }
 
 void RenderListOutsideMarker::updateContentContainerText()
@@ -330,7 +334,6 @@ void RenderListOutsideMarker::updateContentContainerText()
 void RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
-    updateContent();
 
     CheckedPtr container = contentContainer();
     ASSERT(container);
