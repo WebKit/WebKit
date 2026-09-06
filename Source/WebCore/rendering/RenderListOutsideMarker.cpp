@@ -78,8 +78,8 @@ RenderListOutsideMarker::~RenderListOutsideMarker() = default;
 
 void RenderListOutsideMarker::willBeDestroyed()
 {
-    if (m_image)
-        protect(m_image)->removeClient(*this);
+    if (RefPtr image = style().listStyleImage().tryStyleImage())
+        image->removeClient(*this);
     RenderBox::willBeDestroyed();
 }
 
@@ -107,12 +107,15 @@ void RenderListOutsideMarker::styleDidChange(Style::Difference diff, const Style
 
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 
-    if (RefPtr newImage = style().listStyleImage().tryStyleImage(); m_image != newImage) {
-        if (m_image)
-            protect(m_image)->removeClient(*this);
-        m_image = WTF::move(newImage);
-        if (m_image)
-            protect(m_image)->addClient(*this);
+    // A marker that shows an image is the image's client, so that it hears about the image loading, and about it
+    // failing to load, which turns the marker into a text marker (see imageChanged).
+    RefPtr oldImage = oldStyle ? oldStyle->listStyleImage().tryStyleImage() : nullptr;
+    RefPtr newImage = style().listStyleImage().tryStyleImage();
+    if (oldImage != newImage) {
+        if (oldImage)
+            oldImage->removeClient(*this);
+        if (newImage)
+            newImage->addClient(*this);
     }
 }
 
@@ -120,7 +123,7 @@ bool RenderListOutsideMarker::isImage() const
 {
     // `content` supersedes list-style-image (css-lists-3 §3.3), so a marker with generated content
     // is never treated as an image marker (affects inline margins, baseline, and layout attributes).
-    return m_image && !protect(m_image)->errorOccurred() && !hasContentProperty();
+    return !hasContentProperty() && listMarkerImage(style());
 }
 
 bool RenderListOutsideMarker::hasContentProperty() const
@@ -239,7 +242,7 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
 void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
 {
     if (parent()) {
-        RefPtr image = m_image;
+        RefPtr image = style().listStyleImage().tryStyleImage();
         if (image && o == image->data()) {
             if (image->errorOccurred()) {
                 // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
@@ -277,7 +280,7 @@ void RenderListOutsideMarker::updateContent()
         // FIXME: This is a somewhat arbitrary width.
         LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
-        setContentContainerImageSize(calculateImageIntrinsicDimensions(protect(m_image).get(), defaultBulletSize, ScaleByUsedZoom::Yes));
+        setContentContainerImageSize(calculateImageIntrinsicDimensions(listMarkerImage(style()).get(), defaultBulletSize, ScaleByUsedZoom::Yes));
         return;
     }
 
@@ -442,19 +445,19 @@ bool listMarkerIsDisclosure(const RenderElement* renderer)
     return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
 }
 
-bool listMarkerShowsImage(const Style::ComputedStyle& markerStyle)
+RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle)
 {
-    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-image, which in turn draws in place of the
-    // counter style's text unless it failed to load.
-    if (markerStyle.content().isData())
-        return false;
     RefPtr image = markerStyle.listStyleImage().tryStyleImage();
-    return image && !image->errorOccurred();
+    if (!image || image->errorOccurred())
+        return nullptr;
+    return image;
 }
 
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle)
 {
-    if (markerStyle.content().isData() || listMarkerShowsImage(markerStyle))
+    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-type, and a list-style-image draws in place of
+    // the glyph unless it failed to load, so neither leaves us a glyph to draw.
+    if (markerStyle.content().isData() || listMarkerImage(markerStyle))
         return false;
 
     auto& listType = markerStyle.listStyleType();
