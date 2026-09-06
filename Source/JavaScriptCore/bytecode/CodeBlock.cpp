@@ -90,6 +90,10 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/UniquedStringImpl.h>
 
+#if ENABLE(WEBASSEMBLY)
+#include "WebAssemblyModuleRecord.h"
+#endif
+
 #if ENABLE(ASSEMBLER)
 #include "RegisterAtOffsetList.h"
 #endif
@@ -480,6 +484,18 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // Bookkeep the strongly referenced module environments.
     UncheckedKeyHashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
+#if ENABLE(WEBASSEMBLY)
+    auto isWasmMutableGlobalModuleVar = [&](const ResolveOp& op) -> bool {
+        if (op.type != ModuleVar || !op.lexicalEnvironment || !op.importedName)
+            return false;
+        auto* moduleEnv = dynamicDowncast<JSModuleEnvironment>(op.lexicalEnvironment);
+        if (!moduleEnv)
+            return false;
+        auto* wasmRecord = dynamicDowncast<WebAssemblyModuleRecord>(moduleEnv->moduleRecord());
+        return wasmRecord && wasmRecord->isMutableGlobalExport(op.importedName.get());
+    };
+#endif
+
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_objectAllocationProfile.initializeProfile(vm, m_globalObject.get(), this, m_globalObject->objectPrototype(), bytecode.m_inlineCapacity);
     };
@@ -591,6 +607,12 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
+#if ENABLE(WEBASSEMBLY)
+            if (isWasmMutableGlobalModuleVar(op)) {
+                metadata.m_resolveType = Dynamic;
+                break;
+            }
+#endif
             if (op.lexicalEnvironment) {
                 if (op.type == ModuleVar) {
                     // Keep the linked module environment strongly referenced.
@@ -623,8 +645,14 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             ResolveOp op = JSScope::abstractResolve(m_globalObject.get(), bytecode.m_localScopeDepth, scope, ident, Get, bytecode.m_getPutInfo.resolveType(), InitializationMode::NotInitialization);
 
             metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), op.type, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
-            if (op.type == ModuleVar)
-                metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+            if (op.type == ModuleVar) {
+#if ENABLE(WEBASSEMBLY)
+                if (isWasmMutableGlobalModuleVar(op))
+                    metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), Dynamic, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+                else
+#endif
+                    metadata.m_getPutInfo = GetPutInfo(bytecode.m_getPutInfo.resolveMode(), ClosureVar, bytecode.m_getPutInfo.initializationMode(), bytecode.m_getPutInfo.ecmaMode());
+            }
             if (op.type == GlobalVar || op.type == GlobalVarWithVarInjectionChecks || op.type == GlobalLexicalVar || op.type == GlobalLexicalVarWithVarInjectionChecks)
                 metadata.m_watchpointSet = op.watchpointSet;
             else if (op.structure)

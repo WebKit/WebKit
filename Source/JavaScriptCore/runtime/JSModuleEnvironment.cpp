@@ -32,6 +32,10 @@
 #include "AbstractModuleRecord.h"
 #include "JSCInlines.h"
 #include "JSLexicalEnvironmentInlines.h"
+#if ENABLE(WEBASSEMBLY)
+#include "JSWebAssemblyGlobal.h"
+#include "WebAssemblyModuleRecord.h"
+#endif
 
 namespace JSC {
 
@@ -88,6 +92,14 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, JSGlobalObject* glo
         ASSERT(redirectSlot.isValue());
         JSValue value = redirectSlot.getValue(globalObject, resolution.localName);
         scope.assertNoException();
+#if ENABLE(WEBASSEMBLY)
+        if (is<WebAssemblyModuleRecord>(resolution.moduleRecord)) {
+            if (auto* wasmGlobal = dynamicDowncast<JSWebAssemblyGlobal>(value); wasmGlobal && wasmGlobal->global()->mutability() == Wasm::Mutability::Mutable) {
+                value = wasmGlobal->global()->get(globalObject);
+                RETURN_IF_EXCEPTION(scope, false);
+            }
+        }
+#endif
         slot.setValue(thisObject, redirectSlot.attributes(), value);
         return true;
     }
