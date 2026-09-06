@@ -6192,7 +6192,6 @@ ipc/start-message-testing.html [ Skip ]
 # Fixing timeouts/crashes is tracked by https://bugs.webkit.org/show_bug.cgi?id=267714 (rdar://120486467)
 ipc/invalid-fullscreen-enum.html [ Pass Timeout ]
 ipc/invalid-message-to-addTrackBuffer.html [ Pass Timeout ]
-ipc/removeMediaUsageManagerSession-test.html [ Skip ]
 
 # Test is crashing since import.
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-csp.html [ Skip ]
