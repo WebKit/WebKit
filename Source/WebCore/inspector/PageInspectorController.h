@@ -151,6 +151,7 @@ public:
     void frontendInitialized() override;
     WEBCORE_EXPORT WTF::Stopwatch& NODELETE executionStopwatch() const final;
     JSC::Debugger* debugger() override;
+    void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>&) override;
     JSC::VM& vm() override;
 
 private:
