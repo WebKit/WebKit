@@ -165,7 +165,7 @@ struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
         bool hasPushedStreamCollectionEvent { false };
         bool wasStreamStartSent { false };
         bool doesNeedSegmentEvent { true };
-        bool hasPushedFirstBuffer { false }; // Used to get a pipeline dump of the pipeline before buffers are flowing.
+        bool hasPushedFirstBuffer { false }; // Used to get a pipeline dump and determine whether downstream needs flushing.
         GstSegment segment;
         GRefPtr<GstCaps> pendingInitialCaps;
         GRefPtr<GstCaps> previousCaps; // Caps from enqueued samples are compared to these to push CAPS events as needed.
@@ -173,8 +173,7 @@ struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
         Condition queueChangedOrFlushedCondition;
         bool isFlushing { false };
 
-        // Flushes before any buffer has been popped from the queue and sent downstream can be avoided just
-        // by clearing the queue.
+        // Flushes before any buffer has ever been sent downstream can be avoided just by clearing the queue.
         bool hasPoppedFirstObject { false };
     };
     DataMutex<StreamingMembers> streamingMembersDataMutex;
@@ -659,8 +658,8 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
     {
         DataMutexLocker streamingMembers { stream->streamingMembersDataMutex };
 
-        if (!streamingMembers->hasPoppedFirstObject) {
-            GST_DEBUG_OBJECT(stream->source, "Flush request for stream '%" PRIu64 "' occurred before hasPoppedFirstObject, just clearing the queue and readjusting the segment.", stream->track->id());
+        if (!streamingMembers->hasPoppedFirstObject && !streamingMembers->hasPushedFirstBuffer) {
+            GST_DEBUG_OBJECT(stream->source, "Flush request for stream '%" PRIu64 "' occurred before the first buffer was pushed, just clearing the queue and readjusting the segment.", stream->track->id());
             DataMutexLocker queue { stream->track->queueDataMutex() };
             // We use clear() instead of flush() because the WebKitMediaSrc streaming thread could be waiting
             // for the queue. flush() would cancel the notEmptyCallback therefore leaving the streaming thread
