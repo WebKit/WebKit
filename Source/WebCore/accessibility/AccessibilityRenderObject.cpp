@@ -1878,8 +1878,11 @@ bool AccessibilityRenderObject::press()
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(element()); selectElement && selectElement->usesBaseAppearancePicker()) {
         // Base-appearance selects need explicit picker toggling since they no longer use
         // AccessibilityMenuList which had its own press() override.
-        if (selectElement->isDisabledFormControl())
+        if (selectElement->isDisabledFormControl()) {
+            if (CheckedPtr cache = axObjectCache())
+                cache->postNotification(selectElement.get(), AXNotification::PressDidFail);
             return false;
+        }
         if (selectElement->popupIsVisible())
             selectElement->hidePickerPopoverElement();
         else
