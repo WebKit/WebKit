@@ -93,6 +93,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._sourceCodeContentIdentifierMap = new Map;
 
         this._symbolicBreakpoints = [];
+        this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget = new MapOfMaps;
 
         this._nextBreakpointActionIdentifier = 1;
 
@@ -475,7 +476,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             .sort((a, b) => {
                 let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
                 let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
-                return aRank - bRank;
+                return aRank - bRank || a.sourceMapped - b.sourceMapped;
             });
     }
 
@@ -871,6 +872,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._symbolicBreakpoints.remove(breakpoint);
 
+        for (let target of this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.keys())
+            this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.delete(target, breakpoint);
+
         if (!this._restoringBreakpoints)
             WI.objectStores.symbolicBreakpoints.deleteObject(breakpoint);
 
@@ -984,6 +988,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._internalWebKitScripts = [];
         this._targetDebuggerDataMap.clear();
 
+        for (let breakpoint of (this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.get(target)?.keys() || []))
+            this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.set(target, breakpoint, new Map);
+
         this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
 
         // Mark all the breakpoints as unresolved. They will be reported as resolved when
@@ -1015,7 +1022,16 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         let callFrames = [];
         let pauseReason = DebuggerManager.pauseReasonFromPayload(reason);
+
         let pauseData = data || null;
+        if (pauseData?.originalReason)
+            pauseData.originalReason = DebuggerManager.pauseReasonFromPayload(pauseData.originalReason);
+
+        let sourceMappedPause = this._sourceMappedSymbolicBreakpointPause(target, pauseReason, pauseData);
+        if (sourceMappedPause) {
+            pauseReason = sourceMappedPause.pauseReason;
+            pauseData = sourceMappedPause.pauseData;
+        }
 
         for (var i = 0; i < callFramesPayload.length; ++i) {
             var callFramePayload = callFramesPayload[i];
@@ -1358,6 +1374,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (!this._restoringBreakpoints && !this.breakpointsDisabledTemporarily)
             this.breakpointsEnabled = true;
 
+        if (breakpoint.sourceMapped) {
+            this._resolveSourceMappedSymbolicBreakpoints(breakpoint, target, WI.SourceMap.instances);
+            return;
+        }
+
         target.DebuggerAgent.addSymbolicBreakpoint.invoke({
             symbol: breakpoint.symbol,
             caseSensitive: breakpoint.caseSensitive,
@@ -1366,16 +1387,138 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         });
     }
 
+    async _resolveSourceMappedSymbolicBreakpoints(breakpoint, target, sourceMaps)
+    {
+        console.assert(breakpoint.sourceMapped, breakpoint);
+
+        let breakpointIdForSourceMapLocation = this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.getOrInsert(target, breakpoint, new Map);
+
+        let isCurrent = () => this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.get(target, breakpoint) === breakpointIdForSourceMapLocation;
+
+        await Promise.all(sourceMaps.map(async (sourceMap) => {
+            let script = sourceMap.originalSourceCode;
+            if (script.target !== target || !script.id || this.scriptForIdentifier(script.id, target) !== script)
+                return;
+
+            let generatedFunctionInfos = await sourceMap.generatedFunctionInfoForOriginalSymbol(breakpoint);
+            if (!isCurrent())
+                return;
+
+            await Promise.all(generatedFunctionInfos.map(async function({position, endPosition}) {
+                let location = {
+                    scriptId: script.id,
+                    lineNumber: position.lineNumber + script.range.startLine,
+                    columnNumber: position.columnNumber + (!position.lineNumber ? script.range.startColumn : 0),
+                };
+                let key = `${location.scriptId}:${location.lineNumber}:${location.columnNumber}`;
+                if (breakpointIdForSourceMapLocation.has(key))
+                    return;
+
+                let setBreakpointResult;
+                try {
+                    setBreakpointResult = await target.DebuggerAgent.setBreakpoint.invoke({
+                        location,
+                        options: breakpoint.optionsToProtocol(),
+                    });
+                } catch {
+                    // This can fail if another breakpoint has already resolved to the same location.
+                    return;
+                }
+
+                let {breakpointId, actualLocation} = setBreakpointResult;
+                if (!isCurrent()) {
+                    target.DebuggerAgent.removeBreakpoint(breakpointId);
+                    return;
+                }
+
+                if (actualLocation.scriptId !== script.id) {
+                    target.DebuggerAgent.removeBreakpoint(breakpointId);
+                    return;
+                }
+
+                let lineNumber = actualLocation.lineNumber - script.range.startLine;
+                let columnNumber = actualLocation.columnNumber - (!lineNumber ? script.range.startColumn : 0);
+                let actualPosition = new WI.SourceCodePosition(lineNumber, columnNumber);
+                if (actualPosition.isBefore(position) || actualPosition.isAfter(endPosition)) {
+                    target.DebuggerAgent.removeBreakpoint(breakpointId);
+                    return;
+                }
+
+                breakpointIdForSourceMapLocation.set(key, breakpointId);
+            }));
+        }));
+
+        if (isCurrent())
+            this.dispatchEventToListeners(WI.DebuggerManager.Event.SourceMappedSymbolicBreakpointsResolved, {breakpoint, target});
+    }
+
     _removeSymbolicBreakpoint(breakpoint, target)
     {
         console.assert(breakpoint instanceof WI.SymbolicBreakpoint, breakpoint);
         console.assert(WI.SymbolicBreakpoint.supported(target), target);
+
+        if (breakpoint.sourceMapped) {
+            for (let breakpointId of (this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.take(target, breakpoint)?.values() || []))
+                target.DebuggerAgent.removeBreakpoint(breakpointId);
+            return;
+        }
 
         target.DebuggerAgent.removeSymbolicBreakpoint.invoke({
             symbol: breakpoint.symbol,
             caseSensitive: breakpoint.caseSensitive,
             isRegex: breakpoint.isRegex,
         });
+    }
+
+    _symbolicBreakpointForSourceMappedBreakpointId(target, breakpointId)
+    {
+        if (!breakpointId)
+            return null;
+
+        for (let [breakpoint, breakpointIdForSourceMapLocation] of (this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.get(target) || [])) {
+            for (let sourceMappedBreakpointId of breakpointIdForSourceMapLocation.values()) {
+                if (sourceMappedBreakpointId === breakpointId)
+                    return breakpoint;
+            }
+        }
+        return null;
+    }
+
+    _sourceMappedSymbolicBreakpointPause(target, pauseReason, pauseData)
+    {
+        let blackboxed = pauseReason === WI.DebuggerManager.PauseReason.BlackboxedScript;
+
+        let breakpointId;
+        if (blackboxed) {
+            if (pauseData?.originalReason !== WI.DebuggerManager.PauseReason.Breakpoint)
+                return null;
+            breakpointId = pauseData.originalData?.breakpointId;
+        } else {
+            if (pauseReason !== WI.DebuggerManager.PauseReason.Breakpoint)
+                return null;
+            breakpointId = pauseData?.breakpointId;
+        }
+
+        let breakpoint = this._symbolicBreakpointForSourceMappedBreakpointId(target, breakpointId);
+        if (!breakpoint)
+            return null;
+
+        let functionCallPauseData = {name: breakpoint.symbol, symbolicBreakpoint: breakpoint};
+        if (!blackboxed) {
+            return {
+                pauseReason: WI.DebuggerManager.PauseReason.FunctionCall,
+                pauseData: functionCallPauseData,
+            };
+        }
+
+        return {
+            pauseReason,
+            pauseData: {
+                ...pauseData,
+                originalReason: WI.DebuggerManager.PauseReason.FunctionCall,
+                originalData: functionCallPauseData,
+            },
+        };
     }
 
     _setPauseOnExceptions(target)
@@ -1726,6 +1869,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._targetDebuggerDataMap.delete(target);
 
+        this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.delete(target);
+
         if (!this.paused && wasPaused)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
     }
@@ -1783,6 +1928,17 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         if (event.target.supportsScriptBlackboxing)
             this._updateBlackbox(this.#allSupportedTargets(), event.target);
+
+        let {sourceMap} = event.data;
+        if (event.target !== sourceMap.originalSourceCode)
+            return;
+
+        let target = sourceMap.originalSourceCode.target;
+        if (!target)
+            return;
+
+        for (let breakpoint of (this._breakpointIdForSourceMapLocationForSymbolicBreakpointForTarget.get(target)?.keys() || []))
+            this._resolveSourceMappedSymbolicBreakpoints(breakpoint, target, [sourceMap]);
     }
 
     _didResumeInternal(target)
@@ -1849,6 +2005,7 @@ WI.DebuggerManager.Event = {
     BreakpointMoved: "debugger-manager-breakpoint-moved",
     SymbolicBreakpointAdded: "debugger-manager-symbolic-breakpoint-added",
     SymbolicBreakpointRemoved: "debugger-manager-symbolic-breakpoint-removed",
+    SourceMappedSymbolicBreakpointsResolved: "debugger-manager-source-mapped-symbolic-breakpoints-resolved",
     WaitingToPause: "debugger-manager-waiting-to-pause",
     Paused: "debugger-manager-paused",
     Resumed: "debugger-manager-resumed",
