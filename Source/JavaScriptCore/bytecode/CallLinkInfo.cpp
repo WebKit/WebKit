@@ -332,15 +332,18 @@ void CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkInfo, CCallHelpers& ji
     // address for each branch operation. Other MacroAssembler implementations handle this better by
     // using a wider range of scratch registers or more potent branching instructions.
     CCallHelpers::JumpList found;
-    jit.loadPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfMonomorphicCallDestination()), BaselineJITRegisters::Call::callTargetGPR);
     if constexpr (isRISCV64()) {
+        jit.loadPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfMonomorphicCallDestination()), BaselineJITRegisters::Call::callTargetGPR);
         CCallHelpers::Address calleeAddress(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfCallee());
         found.append(jit.branchPtr(CCallHelpers::Equal, calleeAddress, BaselineJITRegisters::Call::calleeGPR));
         found.append(jit.branchTestPtr(CCallHelpers::NonZero, calleeAddress, CCallHelpers::TrustedImm32(polymorphicCalleeMask)));
     } else {
         GPRReg scratchGPR = jit.scratchRegister();
         DisallowMacroScratchRegisterUsage disallowScratch(jit);
-        jit.loadPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfCallee()), scratchGPR);
+        // m_callee is laid out immediately after m_monomorphicCallDestination,
+        // so the two fields this path needs come back in one paired load.
+        static_assert(offsetOfCallee() == offsetOfMonomorphicCallDestination() + static_cast<ptrdiff_t>(sizeof(void*)));
+        jit.loadPairPtr(CCallHelpers::Address(BaselineJITRegisters::Call::callLinkInfoGPR, offsetOfMonomorphicCallDestination()), BaselineJITRegisters::Call::callTargetGPR, scratchGPR);
         found.append(jit.branchPtr(CCallHelpers::Equal, scratchGPR, BaselineJITRegisters::Call::calleeGPR));
         found.append(jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask)));
     }
