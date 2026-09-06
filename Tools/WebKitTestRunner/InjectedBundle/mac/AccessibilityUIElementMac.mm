@@ -2309,7 +2309,11 @@ bool AccessibilityUIElementMac::isInTable() const
 
 void AccessibilityUIElementMac::takeFocus()
 {
-    setAttributeValue(m_element.get(), NSAccessibilityFocusedAttribute, @YES);
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThread([element = m_element] {
+        [element.get() accessibilitySetValue:@YES forAttribute:NSAccessibilityFocusedAttribute];
+    });
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElementMac::takeSelection()
