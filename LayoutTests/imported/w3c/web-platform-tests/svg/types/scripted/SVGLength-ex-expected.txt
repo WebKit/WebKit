@@ -1,0 +1,5 @@
+
+PASS ex unit in SVGLength
+PASS Convert back to ex from new user unit value
+PASS ex unit resolves against the fractional x-height
+
