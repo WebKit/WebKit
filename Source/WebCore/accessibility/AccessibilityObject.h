@@ -852,6 +852,7 @@ public:
 
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = { }; }
     void setIsIgnoredFromParentDataForChild(AccessibilityObject&);
+    AccessibilityIsIgnoredFromParentData computeIsIgnoredFromParentData();
 
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 
@@ -974,7 +975,7 @@ protected:
     void markPlatformWrapperIgnoredStateDirty() const { };
 #endif
 
-    void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData& data) { m_isIgnoredFromParentData = data; }
+    void setIsIgnoredFromParentData(const AccessibilityIsIgnoredFromParentData& data) { m_isIgnoredFromParentData = data; }
     bool ignoredFromPresentationalRole() const;
 
     bool isAccessibilityObject() const override { return true; }
