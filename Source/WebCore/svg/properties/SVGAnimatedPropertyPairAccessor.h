@@ -57,9 +57,10 @@ protected:
         return propertyAccessor;
     }
 
-    // Template arguments for the reason given in SVGAnimatedPrimitivePropertyAccessor::singleton().
-    template<typename AccessorType, auto property1, auto property2, auto initialValue1, auto initialValue2>
-    static SVGMemberAccessor<OwnerType>& singleton()
+    // The properties are template arguments for the reason given in
+    // SVGAnimatedPrimitivePropertyAccessor::singleton(); the initial values need not be.
+    template<typename AccessorType, auto property1, auto property2, typename ValueType1, typename ValueType2>
+    static SVGMemberAccessor<OwnerType>& singleton(ValueType1 initialValue1, ValueType2 initialValue2)
     {
         static NeverDestroyed<AccessorType> propertyAccessor { property1, initialValue1, property2, initialValue2 };
         return propertyAccessor;

@@ -49,11 +49,13 @@ public:
     }
 
 protected:
-    // property and initialValue have to stay template arguments: they are what gives each
-    // attribute its own singleton. As function arguments there would be one per OwnerType, and the
-    // second attribute registered would silently be handed the first one's accessor.
-    template<typename AccessorType, const Ref<AnimatedPropertyType> OwnerType::*property, ValueType initialValue>
-    static const SVGMemberAccessor<OwnerType>& singleton()
+    // property has to stay a template argument: it is what gives each attribute its own
+    // singleton. As a function argument there would be one per OwnerType, and the second
+    // attribute registered would silently be handed the first one's accessor. initialValue does
+    // not have to be one: the singleton is already unique per property, and each property is
+    // registered exactly once, so the first call is the only one.
+    template<typename AccessorType, const Ref<AnimatedPropertyType> OwnerType::*property>
+    static const SVGMemberAccessor<OwnerType>& singleton(ValueType initialValue)
     {
         static NeverDestroyed<AccessorType> propertyAccessor { property, initialValue };
         return propertyAccessor;

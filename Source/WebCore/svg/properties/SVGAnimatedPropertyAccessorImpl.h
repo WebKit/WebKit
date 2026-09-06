@@ -94,8 +94,8 @@ class SVGAnimatedIntegerAccessor final : public SVGAnimatedPrimitivePropertyAcce
 public:
     using Base::Base;
     using Base::property;
-    template<auto property, int initialValue>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerAccessor, property, initialValue>(); }
+    template<auto property>
+    static const SVGMemberAccessor<OwnerType>& singleton(int initialValue) { return Base::template singleton<SVGAnimatedIntegerAccessor, property>(initialValue); }
 
 private:
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
@@ -163,8 +163,8 @@ class SVGAnimatedNumberAccessor final : public SVGAnimatedPrimitivePropertyAcces
 public:
     using Base::Base;
     using Base::property;
-    template<auto property, float initialValue>
-    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberAccessor, property, initialValue>(); }
+    template<auto property>
+    static const SVGMemberAccessor<OwnerType>& singleton(float initialValue) { return Base::template singleton<SVGAnimatedNumberAccessor, property>(initialValue); }
 
 private:
     RefPtr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
