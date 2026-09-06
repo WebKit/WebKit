@@ -56,12 +56,6 @@ public:
     RenderListOutsideMarker(RenderListItem&, Style::ComputedStyle&&);
     virtual ~RenderListOutsideMarker();
 
-    using IncludeSuffix = ListMarkerIncludeSuffix;
-    String textContent(IncludeSuffix includeSuffix = IncludeSuffix::Yes) const
-    {
-        return includeSuffix == IncludeSuffix::Yes ? m_textContent.textWithSuffix : m_textContent.textWithoutSuffix().toString();
-    }
-
     bool isDisclosureMarker() const;
     bool synthesizesGlyph() const;
 
@@ -110,7 +104,7 @@ private:
 
     void updateInlineMargins();
     void updateContent();
-    void updateContentContainerText();
+    void updateContentContainerText(const ListMarkerTextContent&);
     void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
@@ -118,7 +112,6 @@ private:
 
 
 private:
-    ListMarkerTextContent m_textContent;
     RefPtr<Style::Image> m_image;
 
     SingleThreadWeakPtr<RenderListItem> m_listItem;
@@ -130,6 +123,7 @@ private:
 constexpr int listMarkerImagePadding = 7;
 ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle);
+bool listMarkerShowsImage(const Style::ComputedStyle& markerStyle);
 bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
 bool listMarkerIsDisclosure(const RenderElement*);
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);

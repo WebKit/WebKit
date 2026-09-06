@@ -222,7 +222,7 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
             m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };
         } else {
             setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
-            m_layoutBounds = layoutBoundForTextContent(m_textContent.textWithSuffix);
+            m_layoutBounds = layoutBoundForTextContent(m_listItem->markerText());
         }
     }
 
@@ -270,7 +270,6 @@ void RenderListOutsideMarker::updateContent()
     if (hasContentProperty()) {
         // css-lists-3 §3.3: `content` (not normal) supersedes list-style-image/type. The generated
         // content lives in the anonymous inline-block contentContainer(); the marker has no text/image.
-        m_textContent = { };
         return;
     }
 
@@ -279,18 +278,12 @@ void RenderListOutsideMarker::updateContent()
         LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
         LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
         setContentContainerImageSize(calculateImageIntrinsicDimensions(protect(m_image).get(), defaultBulletSize, ScaleByUsedZoom::Yes));
-        m_textContent = {
-            .textWithSuffix = emptyString(),
-            .textWithoutSuffixLength = 0,
-        };
         return;
     }
 
-    m_textContent = listMarkerTextContent(style(), *m_listItem);
-
     // The marker text is only known here (counter values resolve at layout), while the renderers
     // holding it were created from style. Push the text down so the inline formatting context has something to lay out.
-    updateContentContainerText();
+    updateContentContainerText(listMarkerTextContent(style(), *m_listItem));
 }
 
 void RenderListOutsideMarker::setContentContainerImageSize(LayoutSize imageSize)
@@ -311,7 +304,7 @@ void RenderListOutsideMarker::setContentContainerImageSize(LayoutSize imageSize)
     imageRenderer->setNeedsLayout();
 }
 
-void RenderListOutsideMarker::updateContentContainerText()
+void RenderListOutsideMarker::updateContentContainerText(const ListMarkerTextContent& textContent)
 {
     CheckedPtr container = contentContainer();
     if (!container) {
@@ -324,11 +317,11 @@ void RenderListOutsideMarker::updateContentContainerText()
         return;
 
     if (synthesizesGlyph()) {
-        textRenderer->setText(m_textContent.textWithoutSuffix().toString());
+        textRenderer->setText(textContent.textWithoutSuffix().toString());
         return;
     }
 
-    textRenderer->setText(m_textContent.textWithSuffix);
+    textRenderer->setText(textContent.textWithSuffix);
 }
 
 void RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()
@@ -449,13 +442,19 @@ bool listMarkerIsDisclosure(const RenderElement* renderer)
     return listMarkerIsDisclosure(renderer->style(), protect(renderer->document()));
 }
 
-bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle)
+bool listMarkerShowsImage(const Style::ComputedStyle& markerStyle)
 {
-    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-type, and a list-style-image draws in place of
-    // the glyph unless it failed to load, so neither leaves us a glyph to draw.
+    // css-lists-3 §3.3: a non-normal `content` supersedes list-style-image, which in turn draws in place of the
+    // counter style's text unless it failed to load.
     if (markerStyle.content().isData())
         return false;
-    if (RefPtr image = markerStyle.listStyleImage().tryStyleImage(); image && !image->errorOccurred())
+    RefPtr image = markerStyle.listStyleImage().tryStyleImage();
+    return image && !image->errorOccurred();
+}
+
+bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle)
+{
+    if (markerStyle.content().isData() || listMarkerShowsImage(markerStyle))
         return false;
 
     auto& listType = markerStyle.listStyleType();

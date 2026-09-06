@@ -365,7 +365,8 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         ts << " [r="_s << cell->rowIndex() << " c="_s << cell->col() << " rs="_s << cell->rowSpan() << " cs="_s << cell->colSpan() << ']';
 
     if (auto* listMarker = dynamicDowncast<RenderListOutsideMarker>(o)) {
-        auto text = listMarker->textContent(RenderListOutsideMarker::IncludeSuffix::No);
+        CheckedPtr listItem = listMarker->listItem();
+        auto text = listItem ? listItem->markerText(ListMarkerIncludeSuffix::No) : String();
         if (!text.isEmpty()) {
             if (text.length() != 1)
                 text = quoteAndEscapeNonPrintables(text);
@@ -921,7 +922,7 @@ String markerTextForListItem(Element* element)
     auto* renderer = dynamicDowncast<RenderListItem>(element->renderer());
     if (!renderer)
         return String();
-    return renderer->markerText(RenderListOutsideMarker::IncludeSuffix::No);
+    return renderer->markerText(ListMarkerIncludeSuffix::No);
 }
 
 } // namespace WebCore

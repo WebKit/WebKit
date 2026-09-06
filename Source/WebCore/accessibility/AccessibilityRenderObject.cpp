@@ -441,8 +441,10 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     if (auto* listMarker = dynamicDowncast<RenderListOutsideMarker>(*m_renderer)) {
         // A `content` marker has no text of its own; the child walk below reads the renderers holding it.
         if (!listMarker->hasContentProperty()) {
-            if (mode.includeListMarkers == IncludeListMarkerText::Yes)
-                return listMarker->textContent();
+            if (mode.includeListMarkers == IncludeListMarkerText::Yes) {
+                CheckedPtr listItem = listMarker->listItem();
+                return listItem ? listItem->markerText() : String();
+            }
             return { };
         }
     }
@@ -592,10 +594,13 @@ String AccessibilityRenderObject::stringValue() const
 #endif
 
     if (CheckedPtr renderListMarker = dynamicDowncast<RenderListOutsideMarker>(m_renderer.get())) {
+        CheckedPtr listItem = renderListMarker->listItem();
+        if (!listItem)
+            return { };
 #if USE(ATSPI)
-        return renderListMarker->textContent();
+        return listItem->markerText();
 #else
-        return renderListMarker->textContent(RenderListOutsideMarker::IncludeSuffix::No);
+        return listItem->markerText(ListMarkerIncludeSuffix::No);
 #endif
     }
 
@@ -1755,7 +1760,8 @@ AXTextRunLineID AccessibilityRenderObject::listMarkerLineID() const
 String AccessibilityRenderObject::listMarkerText() const
 {
     CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(renderer());
-    return marker ? marker->textContent() : String();
+    CheckedPtr listItem = marker ? marker->listItem() : nullptr;
+    return listItem ? listItem->markerText() : String();
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
