@@ -81,4 +81,9 @@ bool FrameInspectorTargetProxy::isProvisional() const
     return m_isProvisional;
 }
 
+String FrameInspectorTargetProxy::processId() const
+{
+    return toProcessID(protect(m_targetProcess.get())->coreProcessIdentifier());
+}
+
 } // namespace WebKit

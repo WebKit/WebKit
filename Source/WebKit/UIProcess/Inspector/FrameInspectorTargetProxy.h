@@ -48,6 +48,7 @@ public:
 
     void didCommitProvisionalTarget() override;
     bool isProvisional() const override;
+    String processId() const override;
 
     void connect(Inspector::FrontendChannel::ConnectionType) override;
     void disconnect() override;

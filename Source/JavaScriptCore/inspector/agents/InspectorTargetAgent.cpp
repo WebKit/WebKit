@@ -122,6 +122,9 @@ static Ref<Protocol::Target::TargetInfo> buildTargetInfoObject(const InspectorTa
         result->setIsProvisional(true);
     if (target.isPaused())
         result->setIsPaused(true);
+    auto processId = target.processId();
+    if (!processId.isEmpty())
+        result->setProcessId(processId);
     return result;
 }
 

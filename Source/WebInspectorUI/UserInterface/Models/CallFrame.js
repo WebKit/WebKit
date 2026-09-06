@@ -246,7 +246,7 @@ WI.CallFrame = class CallFrame
         else if (url || scriptId) {
             let sourceCode = null;
             if (scriptId) {
-                sourceCode = WI.debuggerManager.scriptForIdentifier(scriptId, target);
+                sourceCode = WI.debuggerManager.scriptForIdentifierInSameProcess(scriptId, target);
                 if (sourceCode && sourceCode.resource)
                     sourceCode = sourceCode.resource;
             }

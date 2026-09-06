@@ -48,4 +48,9 @@ InspectorTargetProxy::InspectorTargetProxy(const String& targetId, Inspector::In
 {
 }
 
+String InspectorTargetProxy::toProcessID(WebCore::ProcessIdentifier processID)
+{
+    return String::number(processID.toUInt64());
+}
+
 }

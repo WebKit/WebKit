@@ -11,7 +11,8 @@
                 { "name": "targetId", "type": "string", "description": "Unique identifier for the target." },
                 { "name": "type", "type": "string", "enum": ["page", "frame", "service-worker", "worker"] },
                 { "name": "isProvisional", "type": "boolean", "optional": true, "description": "Whether this is a provisional page target." },
-                { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." }
+                { "name": "isPaused", "type": "boolean", "optional": true, "description": "Whether the target is paused on start and has to be explicitely resumed by inspector." },
+                { "name": "processId", "type": "string", "optional": true, "description": "Identifier of the process hosting this target. Opaque to the frontend, which only compares it for equality to decide whether two targets share a process." }
             ]
         }
     ],
