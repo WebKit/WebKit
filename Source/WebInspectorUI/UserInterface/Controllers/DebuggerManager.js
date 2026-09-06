@@ -390,6 +390,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     get assertionFailuresBreakpoint() { return this._assertionFailuresBreakpoint; }
     get allMicrotasksBreakpoint() { return this._allMicrotasksBreakpoint; }
     get breakpoints() { return this._breakpoints; }
+    get symbolicBreakpoints() { return this._symbolicBreakpoints; }
 
     createAssertionFailuresBreakpoint(options = {})
     {
@@ -1589,8 +1590,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (breakpoint.disabled)
             return;
 
-        console.assert(breakpoint.editable);
-        if (!breakpoint.editable)
+        console.assert(breakpoint.supportsOptions);
+        if (!breakpoint.supportsOptions)
             return;
 
         // Remove the breakpoint with its old id.
