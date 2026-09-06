@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; }
+        #x {
+            margin-left: 100px;
+            margin-top: 100px;
+        }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        const dataURL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAIAAAAiOjnJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAH5SURBVHhe7dJBDQAgDAAxtKBnZucQE9yvSSX03B34TiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsUiIRUIsEmKREIuEWCTEIiEWCbFIiEVCLBJikRCLhFgkxCIhFgmxSIhFQiwSYpEQi4RYJMQiIRYJsQjsPFtrNgLO0UH1AAAAAElFTkSuQmCC';
+
+        window.addEventListener('load', async () => {
+            description("Test repaint when an &lt;img&gt;'s src is cleared. The renderer's box should collapse to its no-image size and the previously painted region should be invalidated. webkit.org/b/314993");
+
+            const x = document.getElementById('x');
+            const loaded = new Promise(resolve => x.addEventListener('load', resolve, { once: true }));
+            x.src = dataURL;
+            await loaded;
+            await UIHelper.renderingUpdate();
+
+            if (window.internals)
+                internals.startTrackingRepaints();
+
+            x.src = '';
+
+            await UIHelper.renderingUpdate();
+
+            if (window.internals) {
+                debug(window.internals.repaintRectsAsText());
+                internals.stopTrackingRepaints();
+            }
+
+            finishJSTest();
+        }, false);
+    </script>
+</head>
+<body>
+    <img id="x">
+    <div id="console"></div>
+</body>
+</html>
