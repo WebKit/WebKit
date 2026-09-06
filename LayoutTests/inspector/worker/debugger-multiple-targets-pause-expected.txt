@@ -52,6 +52,11 @@ TARGET: worker-debugger-thread-1.js
 TARGET: worker-debugger-thread-2.js
    CALL FRAME #1: laterWorkInThread2
 
+-- Running test case: Worker.Debugger.Threads.Paused.RemoveActiveTarget
+PASS: Worker 1 should be removed.
+PASS: The active call frame should be cleared when its target is removed.
+PASS: The debugger should remain paused while other targets are paused.
+
 -- Running test case: Worker.Debugger.Threads.Complete
 PASS: Received Resume event.
 PASS: All Targets should be unpaused.

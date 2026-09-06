@@ -1716,6 +1716,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         let wasPaused = this.paused;
         let {target} = event.data;
 
+        let activeCallFrameDidChange = this._activeCallFrame?.target === target;
+        if (activeCallFrameDidChange)
+            this._activeCallFrame = null;
+
         target.extraScriptCollection.clear();
         for (let frame of WI.networkManager.frames) {
             for (let script of Array.from(frame.extraScriptCollection)) {
@@ -1728,6 +1732,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (!this.paused && wasPaused)
             this.dispatchEventToListeners(WI.DebuggerManager.Event.Resumed);
+
+        if (activeCallFrameDidChange)
+            this.dispatchEventToListeners(WI.DebuggerManager.Event.ActiveCallFrameDidChange);
     }
 
     _handleFrameWasAdded(event)
