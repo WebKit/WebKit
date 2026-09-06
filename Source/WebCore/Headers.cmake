@@ -3431,7 +3431,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/non-standard/StyleWebKitBorderSpacing.h
     style/values/non-standard/StyleWebKitBoxReflect.h
     style/values/non-standard/StyleWebKitLineBoxContain.h
-    style/values/non-standard/StyleWebKitLineClamp.h
     style/values/non-standard/StyleWebKitLocale.h
     style/values/non-standard/StyleWebKitMarqueeIncrement.h
     style/values/non-standard/StyleWebKitMarqueeRepetition.h

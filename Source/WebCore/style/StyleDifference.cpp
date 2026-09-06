@@ -233,7 +233,7 @@ public:
     {
         ASSERT(&a != &b);
 
-        if (a.lineClamp != b.lineClamp || a.initialLetter != b.initialLetter)
+        if (a.initialLetter != b.initialLetter)
             return true;
 
         if (a.shapeMargin != b.shapeMargin)

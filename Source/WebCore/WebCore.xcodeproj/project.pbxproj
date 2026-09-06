@@ -4768,7 +4768,6 @@
 		AADEFE4525AF4FD60040DD67 /* FocusOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AADEFE4325AF4FCB0040DD67 /* FocusOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6D0AFD6383003FA5FD /* RenderSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = AB247A6B0AFD6383003FA5FD /* RenderSlider.h */; };
-		AB31C91E10AE1B8E000C7B92 /* StyleWebKitLineClamp.h in Headers */ = {isa = PBXBuildFile; fileRef = AB31C91D10AE1B8E000C7B92 /* StyleWebKitLineClamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB67D1A9097F3AE300F9392E /* RenderTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextControl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AB7170880B3118080017123E /* SearchPopupMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = ABB5419D0ACDDFE4002820EB /* RenderListBox.h */; };
@@ -18408,7 +18407,6 @@
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
 		AB247A6B0AFD6383003FA5FD /* RenderSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSlider.h; sourceTree = "<group>"; };
-		AB31C91D10AE1B8E000C7B92 /* StyleWebKitLineClamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleWebKitLineClamp.h; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControl.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextControl.h; sourceTree = "<group>"; };
 		AB7170880B3118080017123E /* SearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SearchPopupMenu.h; sourceTree = "<group>"; };
@@ -37459,7 +37457,6 @@
 				BC731EBE2E65FC2C00A6584F /* StyleWebKitBoxReflect.cpp */,
 				BC2272860E82E70700E7F975 /* StyleWebKitBoxReflect.h */,
 				BC6F796F2EBE7EBD0049BA02 /* StyleWebKitLineBoxContain.h */,
-				AB31C91D10AE1B8E000C7B92 /* StyleWebKitLineClamp.h */,
 				BC452A032ECCE2D700FD066C /* StyleWebKitLocale.cpp */,
 				BC452A012ECCE27900FD066C /* StyleWebKitLocale.h */,
 				BC731F3D2E68BC0E00A6584F /* StyleWebKitMarqueeIncrement.h */,
@@ -49528,7 +49525,6 @@
 				BC2272870E82E70700E7F975 /* StyleWebKitBoxReflect.h in Headers */,
 				BC731EA72E64CCBD00A6584F /* StyleWebKitInitialLetter.h in Headers */,
 				BC6F79712EBE86FE0049BA02 /* StyleWebKitLineBoxContain.h in Headers */,
-				AB31C91E10AE1B8E000C7B92 /* StyleWebKitLineClamp.h in Headers */,
 				BC092AB02E31747F002ACB2C /* StyleWebKitLineGrid.h in Headers */,
 				BC452A022ECCE27E00FD066C /* StyleWebKitLocale.h in Headers */,
 				BC731F3E2E68BC0E00A6584F /* StyleWebKitMarqueeIncrement.h in Headers */,

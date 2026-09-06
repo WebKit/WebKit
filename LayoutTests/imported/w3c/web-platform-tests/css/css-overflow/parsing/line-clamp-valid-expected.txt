@@ -13,8 +13,8 @@ FAIL e.style['line-clamp'] = "no-ellipsis 10" should set the property value asse
 FAIL e.style['line-clamp'] = "auto 11" should set the property value assert_equals: serialization should be canonical expected "11 auto" but got "11"
 FAIL e.style['line-clamp'] = "ellipsis 11" should set the property value assert_not_equals: property should be set got disallowed value ""
 PASS e.style['line-clamp'] = "\" etc., etc. \" 12" should set the property value
-FAIL e.style['line-clamp'] = "1 -webkit-legacy" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['line-clamp'] = "1 -webkit-legacy" should set the property value assert_equals: serialization should be canonical expected "1 -webkit-legacy" but got "1"
 FAIL e.style['line-clamp'] = "auto -webkit-legacy" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['line-clamp'] = "no-ellipsis -webkit-legacy" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['line-clamp'] = "no-ellipsis -webkit-legacy" should set the property value assert_equals: serialization should be canonical expected "auto no-ellipsis -webkit-legacy" but got "none"
 FAIL e.style['line-clamp'] = "3 auto -webkit-legacy" should set the property value assert_not_equals: property should be set got disallowed value ""
 

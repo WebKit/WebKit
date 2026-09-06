@@ -2985,7 +2985,7 @@ bool RenderLayer::shouldTryToScrollForScrollIntoView(const ScrollRectToVisibleOp
 
     // Don't scroll to reveal an overflow layer that is restricted by the -webkit-line-clamp property.
     // FIXME: Is this still needed? It used to be relevant for Safari RSS.
-    if (renderer().parent() && !renderer().parent()->style().lineClamp().isNone())
+    if (renderer().parent() && renderer().parent()->style().hasLegacyLineClamp())
         return false;
 
     auto& box = *renderBox();

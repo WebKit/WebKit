@@ -493,6 +493,11 @@ inline const BorderValue& ComputedStyleBase::columnRule() const
     return m_nonInheritedData->miscData->multiCol->columnRule;
 }
 
+inline bool ComputedStyleBase::hasLegacyLineClamp() const
+{
+    return static_cast<OverflowContinue>(m_nonInheritedData->rareData->overflowContinue) == OverflowContinue::WebkitLegacy && !m_nonInheritedData->rareData->maxLines.isNone();
+}
+
 // MARK: - Properties/descriptors that are not yet generated
 
 inline CursorType ComputedStyleBase::cursorType() const
