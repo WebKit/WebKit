@@ -89,7 +89,8 @@
                 "UnableToUnloadExtension",
                 "NoSuchExtension",
                 "NoSuchUserContext",
-                "NoSuchScript"
+                "NoSuchScript",
+                "NoSuchHandle"
             ]
         },
         {

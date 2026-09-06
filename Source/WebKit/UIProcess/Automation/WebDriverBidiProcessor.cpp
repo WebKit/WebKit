@@ -190,6 +190,8 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
         return "no such user context"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchScript:
         return "no such script"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchHandle:
+        return "no such handle"_s;
     default:
         return "unknown error"_s;
     }
