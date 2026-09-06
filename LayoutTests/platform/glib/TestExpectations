@@ -224,9 +224,15 @@ fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Pass ]
 fast/forms/form-control-refresh/submit-button-appearance-matches-button-window-inactive.html [ Pass ]
 
+fast/forms/month/month-editable-components/month-editable-components-input-and-change-events.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-invalid.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-invalid-uncommitted.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-invalid-with-empty-components.html [ Pass ]
+fast/forms/month/month-editable-components/month-editable-components-user-valid.html [ Pass ]
 fast/forms/month/month-editable-components/month-editable-components-user-valid-uncommitted.html [ Pass ]
+
+fast/forms/time/time-editable-components [ Pass ]
+fast/forms/time/time-editable-components/time-editable-components-focus-and-blur-events.html [ Failure ]
 
 fast/forms/switch/display.html [ Pass ]
 fast/forms/switch/no-pixels-outside-the-box-vertical-lr-rtl.html [ Pass ]
