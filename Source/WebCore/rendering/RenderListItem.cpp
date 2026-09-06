@@ -577,7 +577,7 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     if (!marker)
         return { };
 
-    if (marker->style().content().isData())
+    if (marker->style().content().isData() || listMarkerImage(marker->style()))
         return { };
 
     auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));

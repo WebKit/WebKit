@@ -56,12 +56,6 @@ public:
     RenderListOutsideMarker(RenderListItem&, Style::ComputedStyle&&);
     virtual ~RenderListOutsideMarker();
 
-    using IncludeSuffix = ListMarkerIncludeSuffix;
-    String textContent(IncludeSuffix includeSuffix = IncludeSuffix::Yes) const
-    {
-        return includeSuffix == IncludeSuffix::Yes ? m_textContent.textWithSuffix : m_textContent.textWithoutSuffix().toString();
-    }
-
     bool isDisclosureMarker() const;
     bool synthesizesGlyph() const;
 
@@ -69,11 +63,9 @@ public:
 
     bool isImage() const final;
 
-    // True when the ::marker's `content` property generates the marker box contents
-    // (css-lists-3 §3.3). In that case the contents live in an anonymous inline-block
-    // child (contentContainer()) that this marker lays out and paints itself.
+    // True when the ::marker's `content` property generates the marker box contents (css-lists-3 §3.3),
+    // rather than list-style-image/type.
     bool hasContentProperty() const;
-    bool needsContentContainer() const;
 
     RenderBlockFlow* contentContainer() const;
 
@@ -95,7 +87,7 @@ private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     void computeIntrinsicLogicalWidthContributions() final;
-    bool canHaveChildren() const final { return needsContentContainer(); }
+    bool canHaveChildren() const final { return true; }
     bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
@@ -112,19 +104,13 @@ private:
 
     void updateInlineMargins();
     void updateContent();
-    void updateContentContainerText();
+    void updateContentContainerText(const ListMarkerTextContent&);
+    void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);
 
-    FloatRect relativeMarkerRect();
     LayoutRect NODELETE localSelectionRect();
 
-    RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
-    bool textNeedsBidiResolution() const;
-
 private:
-    ListMarkerTextContent m_textContent;
-    RefPtr<Style::Image> m_image;
-
     SingleThreadWeakPtr<RenderListItem> m_listItem;
     std::pair<float, float> m_layoutBounds;
     std::optional<ExcludedPosition> m_excludedPosition;
@@ -134,6 +120,7 @@ private:
 constexpr int listMarkerImagePadding = 7;
 ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem&);
 bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle);
+RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle);
 bool listMarkerIsDisclosure(const Style::ComputedStyle& markerStyle, Document&);
 bool listMarkerIsDisclosure(const RenderElement*);
 void setListMarkerInlineMargins(Style::ComputedStyle& markerStyle, WritingMode listItemWritingMode, LayoutUnit marginStart, LayoutUnit marginEnd);
