@@ -1,0 +1,7 @@
+
+PASS corner-shape: square scoop bevel notch with shape-outside
+PASS corner-shape: notch round square bevel with shape-outside
+PASS corner-shape: bevel square notch round with shape-outside
+PASS corner-shape: round notch scoop square with shape-outside
+PASS corner-shape: scoop bevel round notch with shape-outside
+
