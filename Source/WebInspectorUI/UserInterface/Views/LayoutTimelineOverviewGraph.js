@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.TimelineOverviewGraph
+WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.RecordBarTimelineOverviewGraph
 {
     constructor(timeline, timelineOverview)
     {
@@ -46,18 +46,8 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
     {
         super.reset();
 
-        function createRecordRow()
-        {
-            var element = document.createElement("div");
-            element.className = "graph-row";
-            this.element.appendChild(element);
-            return {element, recordBars: [], records: []};
-        }
-
-        this.element.removeChildren();
-
-        this._timelineLayoutRecordRow = createRecordRow.call(this);
-        this._timelinePaintRecordRow = createRecordRow.call(this);
+        this._timelineLayoutRecords = [];
+        this._timelinePaintRecords = [];
     }
 
     // Protected
@@ -69,48 +59,19 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
         if (this.hidden)
             return;
 
-        this._updateRowLayout(this._timelinePaintRecordRow);
-        this._updateRowLayout(this._timelineLayoutRecordRow);
-    }
+        let graphWidth = this.timelineOverview.scrollContainerWidth;
+        if (isNaN(graphWidth)) {
+            this.clearCanvas();
+            return;
+        }
 
-    updateSelectedRecord()
-    {
-        super.updateSelectedRecord();
-
-        this.updateSelectedRecordBar([this._timelineLayoutRecordRow.recordBars, this._timelinePaintRecordRow.recordBars]);
+        this.beginRecordBarLayout();
+        this.addRecordBars(this._timelineLayoutRecords, 4, 12, 2, true);
+        this.addRecordBars(this._timelinePaintRecords, 20, 12, 2, true);
+        this.updateCanvas();
     }
 
     // Private
-
-    _updateRowLayout(row)
-    {
-        var secondsPerPixel = this.timelineOverview.secondsPerPixel;
-        var recordBarIndex = 0;
-
-        function createBar(records, renderMode)
-        {
-            var timelineRecordBar = row.recordBars[recordBarIndex];
-            if (!timelineRecordBar)
-                timelineRecordBar = row.recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
-            else {
-                timelineRecordBar.renderMode = renderMode;
-                timelineRecordBar.records = records;
-            }
-
-            timelineRecordBar.refresh(this);
-            if (!timelineRecordBar.element.parentNode)
-                row.element.appendChild(timelineRecordBar.element);
-            ++recordBarIndex;
-        }
-
-        WI.TimelineRecordBar.createCombinedBars(row.records, secondsPerPixel, this, createBar.bind(this));
-
-        // Remove the remaining unused TimelineRecordBars.
-        for (; recordBarIndex < row.recordBars.length; ++recordBarIndex) {
-            row.recordBars[recordBarIndex].records = null;
-            row.recordBars[recordBarIndex].element.remove();
-        }
-    }
 
     _layoutTimelineRecordAdded(event)
     {
@@ -125,8 +86,8 @@ WI.LayoutTimelineOverviewGraph = class LayoutTimelineOverviewGraph extends WI.Ti
     _processRecord(layoutTimelineRecord)
     {
         if (layoutTimelineRecord.eventType === WI.LayoutTimelineRecord.EventType.Paint || layoutTimelineRecord.eventType === WI.LayoutTimelineRecord.EventType.Composite)
-            this._timelinePaintRecordRow.records.push(layoutTimelineRecord);
+            this._timelinePaintRecords.push(layoutTimelineRecord);
         else
-            this._timelineLayoutRecordRow.records.push(layoutTimelineRecord);
+            this._timelineLayoutRecords.push(layoutTimelineRecord);
     }
 };

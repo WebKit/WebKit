@@ -38,8 +38,9 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         this._selectedFrameMarker = document.createElement("div");
         this._selectedFrameMarker.classList.add("frame-marker");
 
-        this._timelineRecordFrames = [];
-        this._selectedTimelineRecordFrame = null;
+        this._cachedDisplayDataForRecord = new WeakMap;
+        this._frameGeometries = [];
+        this._lastSelectedRecordInLayout = null;
         this._graphHeightSeconds = NaN;
         this._framesPerSecondDividerMap = new Map;
 
@@ -67,10 +68,17 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
     {
         super.reset();
 
-        this.element.removeChildren();
-
         this.selectedRecord = null;
 
+        this._selectedFrameMarker.remove();
+        this._cachedDisplayDataForRecord = new WeakMap;
+        this._frameGeometries = [];
+        this._lastSelectedRecordInLayout = null;
+
+        this._graphHeightSeconds = NaN;
+
+        for (let divider of this._framesPerSecondDividerMap.values())
+            divider.remove();
         this._framesPerSecondDividerMap.clear();
     }
 
@@ -83,14 +91,13 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
         record[WI.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol] = filtered;
 
-        // Set filtered style if the frame element is within the visible range.
+        // Update the canvas if the frame is within the visible range.
         const startIndex = Math.floor(this.startTime);
         const endIndex = Math.min(Math.floor(this.endTime), this._renderingFrameTimeline.records.length - 1);
         if (record.frameIndex < startIndex || record.frameIndex > endIndex)
             return;
 
-        const frameIndex = record.frameIndex - startIndex;
-        this._timelineRecordFrames[frameIndex].filtered = filtered;
+        this.needsLayout();
     }
 
     // Protected
@@ -107,35 +114,42 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         if (this.hidden)
             return;
 
-        if (!this._renderingFrameTimeline.records.length)
+        this._frameGeometries = [];
+        this._lastSelectedRecordInLayout = this.selectedRecord;
+
+        let graphWidth = this.timelineOverview.scrollContainerWidth;
+        if (isNaN(graphWidth)) {
+            this.clearCanvas();
             return;
+        }
 
         let records = this._renderingFrameTimeline.records;
-        let startIndex = Math.floor(this.startTime);
+        if (!records.length) {
+            this.clearCanvas();
+            this._updateFrameMarker();
+            return;
+        }
+
+        let startIndex = Math.max(Math.floor(this.startTime), 0);
         let endIndex = Math.min(Math.floor(this.endTime), records.length - 1);
-        let recordFrameIndex = 0;
+        let frameWidth = 1 / this.timelineOverview.secondsPerPixel;
+        let canvasHeight = this.canvasHeight;
 
         for (let i = startIndex; i <= endIndex; ++i) {
             let record = records[i];
-            let timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex];
-            if (!timelineRecordFrame)
-                timelineRecordFrame = this._timelineRecordFrames[recordFrameIndex] = new WI.TimelineRecordFrame(this, record);
-            else
-                timelineRecordFrame.record = record;
-
-            timelineRecordFrame.refresh(this);
-            if (!timelineRecordFrame.element.parentNode)
-                this.element.appendChild(timelineRecordFrame.element);
-
-            timelineRecordFrame.filtered = record[WI.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol] || false;
-            ++recordFrameIndex;
+            let displayData = this._displayDataForRecord(record, canvasHeight);
+            this._frameGeometries.push({
+                record,
+                displayData,
+                x: (record.frameIndex - this.startTime) / this.timelineOverview.secondsPerPixel,
+                width: frameWidth,
+                height: displayData.frameDuration / this.graphHeightSeconds * canvasHeight,
+                filtered: record[WI.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol] || false,
+                selected: record === this.selectedRecord,
+            });
         }
 
-        // Remove the remaining unused TimelineRecordFrames.
-        for (; recordFrameIndex < this._timelineRecordFrames.length; ++recordFrameIndex) {
-            this._timelineRecordFrames[recordFrameIndex].record = null;
-            this._timelineRecordFrames[recordFrameIndex].element.remove();
-        }
+        this.updateCanvas();
 
         this._updateDividers();
         this._updateFrameMarker();
@@ -145,6 +159,9 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
     {
         if (!this.selectedRecord) {
             this._updateFrameMarker();
+
+            if (this._lastSelectedRecordInLayout)
+                this.needsLayout();
             return;
         }
 
@@ -154,7 +171,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         // Reveal a newly selected record if it's outside the visible range.
         if (frameIndex < Math.ceil(this.timelineOverview.scrollStartTime) || frameIndex >= this.timelineOverview.scrollStartTime + visibleDuration) {
             var scrollStartTime = frameIndex;
-            if (!this._selectedTimelineRecordFrame || Math.abs(this._selectedTimelineRecordFrame.record.frameIndex - this.selectedRecord.frameIndex) > 1) {
+            if (!this._lastSelectedRecordInLayout || Math.abs(this._lastSelectedRecordInLayout.frameIndex - this.selectedRecord.frameIndex) > 1) {
                 scrollStartTime -= Math.floor(visibleDuration / 2);
                 scrollStartTime = Math.max(Math.min(scrollStartTime, this.timelineOverview.endTime), this.timelineOverview.startTime);
             }
@@ -164,9 +181,213 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         }
 
         this._updateFrameMarker();
+
+        if (this._lastSelectedRecordInLayout !== this.selectedRecord)
+            this.needsLayout();
+    }
+
+    drawCanvas(context)
+    {
+        let selectedFillStyle = document.body.classList.contains("window-inactive") ? "hsl(0, 0%, 96%)" : this.cssVariableValue("--selected-text-background-color");
+        let tallFrameMaskGradient = null;
+        let canvasHeight = this.canvasHeight;
+
+        for (let frame of this._frameGeometries) {
+            let x = frame.x + 1;
+            let width = Math.max(frame.width - 1, 0);
+            if (frame.selected) {
+                context.fillStyle = selectedFillStyle;
+                context.fillRect(x, 0, width, canvasHeight - 1);
+            }
+
+            context.save();
+            if (frame.filtered)
+                context.globalAlpha = 0.35;
+
+            let bottom = canvasHeight - 1;
+            for (let i = 0; i < frame.displayData.segments.length; ++i) {
+                let segment = frame.displayData.segments[i];
+                let segmentHeight = segment.duration / this.graphHeightSeconds * canvasHeight;
+                let top = bottom - segmentHeight;
+                let styles = WI.RecordBarTimelineOverviewGraph.EventStyles[segment.styleKey];
+
+                context.fillStyle = styles?.fill || "hsl(0, 0%, 90%)";
+                context.fillRect(x, top, width, segmentHeight);
+
+                if (width > 1 && segmentHeight > 1) {
+                    let left = x + 0.5;
+                    let right = x + width - 0.5;
+                    let strokeTop = top + 0.5;
+                    let strokeBottom = bottom - 0.5;
+
+                    context.beginPath();
+                    context.moveTo(left, strokeBottom);
+                    context.lineTo(left, strokeTop);
+                    context.lineTo(right, strokeTop);
+                    context.lineTo(right, strokeBottom);
+                    if (!i)
+                        context.lineTo(left, strokeBottom);
+
+                    context.strokeStyle = styles?.stroke || "hsl(0, 0%, 82%)";
+                    context.lineWidth = 1;
+                    context.stroke();
+                }
+
+                bottom = top;
+            }
+
+            if (frame.selected) {
+                context.fillStyle = "white";
+                context.fillRect(frame.x, canvasHeight - frame.height - 2, frame.width, 1);
+            }
+            context.restore();
+
+            if (frame.height / canvasHeight >= 0.95) {
+                context.save();
+                context.beginPath();
+                context.rect(frame.x, 0, frame.width, canvasHeight);
+                context.clip();
+                context.globalCompositeOperation = "destination-in";
+
+                if (!tallFrameMaskGradient) {
+                    tallFrameMaskGradient = context.createLinearGradient(0, 0, 0, canvasHeight * 0.1);
+                    tallFrameMaskGradient.addColorStop(0, "transparent");
+                    tallFrameMaskGradient.addColorStop(1, "black");
+                }
+                context.fillStyle = tallFrameMaskGradient;
+                context.fillRect(frame.x, 0, frame.width, canvasHeight);
+                context.restore();
+            }
+        }
     }
 
     // Private
+
+    _displayDataForRecord(record, canvasHeight)
+    {
+        let graphHeightSeconds = this.graphHeightSeconds;
+        let displayData = this._cachedDisplayDataForRecord.get(record);
+        if (displayData && displayData.graphHeightSeconds === graphHeightSeconds && displayData.canvasHeight === canvasHeight)
+            return displayData;
+
+        let secondsPerBlock = (graphHeightSeconds / canvasHeight) * 3;
+        let segments = [];
+        let invisibleSegments = [];
+        let currentSegment = null;
+
+        function updateDurationRemainder(segment) {
+            if (segment.duration <= secondsPerBlock) {
+                segment.remainder = 0;
+                return;
+            }
+
+            let roundedDuration = Math.roundTo(segment.duration, secondsPerBlock);
+            segment.remainder = Math.max(segment.duration - roundedDuration, 0);
+        }
+
+        function pushCurrentSegment() {
+            updateDurationRemainder(currentSegment);
+            segments.push(currentSegment);
+            if (currentSegment.duration < secondsPerBlock)
+                invisibleSegments.push({segment: currentSegment, index: segments.length - 1});
+
+            currentSegment = null;
+        }
+
+        // Frame segments aren't shown at arbitrary pixel heights, but are divided into blocks of pixels.
+        // One block represents the minimum displayable duration of a rendering frame, in seconds.
+        // Contiguous tasks less than a block high are grouped until the minimum is met or a task meeting the minimum is found.
+        // The group is then added to the list of segment candidates.
+        // Large tasks (i.e., one block or more) are simply added to the candidate list instead of being grouped with other tasks.
+        for (let key in WI.RenderingFrameTimelineRecord.TaskType) {
+            let taskType = WI.RenderingFrameTimelineRecord.TaskType[key];
+            let duration = record.durationForTask(taskType);
+            if (duration === 0)
+                continue;
+
+            if (currentSegment && duration >= secondsPerBlock)
+                pushCurrentSegment();
+
+            currentSegment ||= {styleKey: null, longestTaskDuration: 0, duration: 0, remainder: 0};
+            currentSegment.duration += duration;
+            if (duration > currentSegment.longestTaskDuration) {
+                currentSegment.styleKey = key.toLowerCase();
+                currentSegment.longestTaskDuration = duration;
+            }
+
+            if (currentSegment.duration >= secondsPerBlock)
+                pushCurrentSegment();
+        }
+
+        if (currentSegment)
+            pushCurrentSegment();
+
+        // A frame consisting of a single segment is always visible.
+        if (segments.length === 1) {
+            segments[0].duration = Math.max(segments[0].duration, secondsPerBlock);
+            invisibleSegments = [];
+        }
+
+        // Handle any groups that are still beneath the minimum displayable duration.
+        // Each sub-block task has one or two adjacent display segments greater than one block.
+        // The rounded-off time from these tasks is added to the sub-block if it's sufficient to create a full block.
+        // Otherwise, the task is merged with an adjacent segment.
+        invisibleSegments.sort((a, b) => a.segment.duration - b.segment.duration);
+
+        for (let item of invisibleSegments) {
+            let segment = item.segment;
+            let previousSegment = item.index > 0 ? segments[item.index - 1] : null;
+            let nextSegment = item.index < segments.length - 1 ? segments[item.index + 1] : null;
+            console.assert(previousSegment || nextSegment, "Invisible segment should have at least one adjacent visible segment.", record, item, segments);
+
+            // Try to increase the segment's size to exactly one block by taking time from neighboring segments.
+            // If there are two neighbors the one with greater subblock duration is borrowed from first.
+            let adjacentSegments;
+            let availableDuration;
+            if (previousSegment && nextSegment) {
+                adjacentSegments = previousSegment.remainder > nextSegment.remainder ? [previousSegment, nextSegment] : [nextSegment, previousSegment];
+                availableDuration = previousSegment.remainder + nextSegment.remainder;
+            } else {
+                adjacentSegments = [previousSegment || nextSegment];
+                availableDuration = adjacentSegments[0].remainder;
+            }
+
+            if (availableDuration < (secondsPerBlock - segment.duration)) {
+                // Merge with largest adjacent segment.
+                let targetSegment;
+                if (previousSegment && nextSegment)
+                    targetSegment = previousSegment.duration > nextSegment.duration ? previousSegment : nextSegment;
+                else
+                    targetSegment = previousSegment || nextSegment;
+
+                targetSegment.duration += segment.duration;
+                updateDurationRemainder(targetSegment);
+                continue;
+            }
+
+            adjacentSegments.forEach(function(adjacentSegment) {
+                if (segment.duration >= secondsPerBlock)
+                    return;
+                let remainder = Math.min(secondsPerBlock - segment.duration, adjacentSegment.remainder);
+                segment.duration += remainder;
+                adjacentSegment.remainder -= remainder;
+            });
+        }
+
+        // Round visible segments to the nearest block and compute the rounded frame duration.
+        let frameDuration = 0;
+        segments = segments.filter(function(segment) {
+            if (segment.duration < secondsPerBlock)
+                return false;
+            segment.duration = Math.roundTo(segment.duration, secondsPerBlock);
+            frameDuration += segment.duration;
+            return true;
+        });
+
+        displayData = {frameDuration, segments, graphHeightSeconds, canvasHeight};
+        this._cachedDisplayDataForRecord.set(record, displayData);
+        return displayData;
+    }
 
     _timelineRecordAdded(event)
     {
@@ -180,7 +401,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
         if (this.graphHeightSeconds === 0)
             return;
 
-        let overviewGraphHeight = this.height;
+        let overviewGraphHeight = this.canvasHeight;
 
         function createDividerAtPosition(framesPerSecond)
         {
@@ -213,14 +434,14 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
     _updateFrameMarker()
     {
-        if (this._selectedTimelineRecordFrame) {
-            this._selectedTimelineRecordFrame.selected = false;
-            this._selectedTimelineRecordFrame = null;
+        if (!this.selectedRecord) {
+            this._selectedFrameMarker.remove();
+            return;
         }
 
-        if (!this.selectedRecord) {
-            if (this._selectedFrameMarker.parentElement)
-                this.element.removeChild(this._selectedFrameMarker);
+        let visibleDuration = this.timelineOverview.visibleDuration;
+        if (!visibleDuration) {
+            this._selectedFrameMarker.remove();
             return;
         }
 
@@ -229,37 +450,21 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
         var markerLeftPosition = this.selectedRecord.frameIndex - this.startTime;
         let property = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
-        this._selectedFrameMarker.style.setProperty(property, ((markerLeftPosition / this.timelineOverview.visibleDuration) * 100).toFixed(2) + "%");
+        this._selectedFrameMarker.style.setProperty(property, ((markerLeftPosition / visibleDuration) * 100).toFixed(2) + "%");
 
         if (!this._selectedFrameMarker.parentElement)
             this.element.appendChild(this._selectedFrameMarker);
-
-        // Find and update the selected frame element.
-        var index = this._timelineRecordFrames.binaryIndexOf(this.selectedRecord, function(record, frame) {
-            return frame.record ? record.frameIndex - frame.record.frameIndex : -1;
-        });
-
-        console.assert(index >= 0 && index < this._timelineRecordFrames.length, "Selected record not within visible graph duration.", this.selectedRecord);
-        if (index < 0 || index >= this._timelineRecordFrames.length)
-            return;
-
-        this._selectedTimelineRecordFrame = this._timelineRecordFrames[index];
-        this._selectedTimelineRecordFrame.selected = true;
     }
 
     _mouseClicked(event)
     {
-        let position;
-        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
-            position = this.element.totalOffsetRight - event.pageX;
-        else
-            position = event.pageX - this.element.totalOffsetLeft;
+        let position = this.canvasPositionForEvent(event);
 
-        var frameIndex = Math.floor(position * this.timelineOverview.secondsPerPixel + this.startTime);
-        if (frameIndex < 0 || frameIndex >= this._renderingFrameTimeline.records.length)
+        let frameIndex = Math.floor(position.x * this.timelineOverview.secondsPerPixel + this.startTime);
+        if (isNaN(frameIndex) || frameIndex < 0 || frameIndex >= this._renderingFrameTimeline.records.length)
             return;
 
-        var newSelectedRecord = this._renderingFrameTimeline.records[frameIndex];
+        let newSelectedRecord = this._renderingFrameTimeline.records[frameIndex];
         if (newSelectedRecord[WI.RenderingFrameTimelineOverviewGraph.RecordWasFilteredSymbol])
             return;
 

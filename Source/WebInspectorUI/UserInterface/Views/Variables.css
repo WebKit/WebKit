@@ -138,25 +138,46 @@
 
     --timeline-scanner-color: hsl(0, 0%, 35%);
 
+    --timeline-record-bar-default-fill-color: hsl(0, 0%, 88%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["default"].fill`. */
+    --timeline-record-bar-default-stroke-color: hsl(0, 0%, 78%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["default"].stroke`. */
+    --timeline-record-bar-network-fill-color: hsl(207, 63%, 67%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["network"].fill`. */
+    --timeline-record-bar-network-stroke-color: hsl(202, 55%, 51%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["network"].stroke`. */
+    --timeline-record-bar-network-inactive-fill-color: hsl(208, 66%, 79%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["network-inactive"].fill`. */
+    --timeline-record-bar-network-inactive-stroke-color: hsl(202, 57%, 68%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["network-inactive"].stroke`. */
+    --timeline-record-bar-layout-fill-color: hsl(0, 65%, 75%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["layout"].fill`. */
+    --timeline-record-bar-layout-stroke-color: hsl(0, 54%, 62%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["layout"].stroke`. */
+    --timeline-record-bar-style-fill-color: hsl(23, 69%, 73%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["style"].fill`. */
+    --timeline-record-bar-style-stroke-color: hsl(11, 54%, 62%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["style"].stroke`. */
+    --timeline-record-bar-paint-fill-color: hsl(76, 49%, 60%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["paint"].fill`. */
+    --timeline-record-bar-paint-stroke-color: hsl(79, 45%, 51%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["paint"].stroke`. */
+    --timeline-record-bar-milestone-fill-color: hsl(172, 48%, 75%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["milestone"].fill`. */
+    --timeline-record-bar-milestone-stroke-color: hsl(173, 46%, 45%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["milestone"].stroke`. */
+    --timeline-record-bar-script-fill-color: hsl(269, 65%, 74%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["script"].fill`. */
+    --timeline-record-bar-script-stroke-color: hsl(273, 33%, 58%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["script"].stroke`. */
+    --timeline-record-bar-garbage-collection-fill-color: hsl(0, 0%, 70%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["garbage-collection"].fill`. */
+    --timeline-record-bar-garbage-collection-stroke-color: hsl(0, 0%, 55%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["garbage-collection"].stroke`. */
+    --timeline-record-bar-media-fill-color: hsl(143, 24%, 66%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["media"].fill`. */
+    --timeline-record-bar-media-stroke-color: hsl(153, 24%, 51%); /* Keep this in sync with `WI.RecordBarTimelineOverviewGraph.EventStyles["media"].stroke`. */
+
     --graph-line-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
 
-    --memory-javascript-fill-color: hsl(269, 65%, 75%);
-    --memory-javascript-stroke-color: hsl(269, 33%, 50%);
-    --memory-images-fill-color: hsl(0, 65%, 75%);
-    --memory-images-stroke-color: hsl(0, 54%, 50%);
-    --memory-layers-fill-color: hsl(76, 49%, 75%);
-    --memory-layers-stroke-color: hsl(79, 45%, 50%);
-    --memory-page-fill-color: hsl(22, 60%, 70%);
-    --memory-page-stroke-color: hsl(22, 40%, 50%);
+    --memory-javascript-fill-color: hsl(269, 65%, 75%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.JavaScript].fill`. */
+    --memory-javascript-stroke-color: hsl(269, 33%, 50%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.JavaScript].stroke`. */
+    --memory-images-fill-color: hsl(0, 65%, 75%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Images].fill`. */
+    --memory-images-stroke-color: hsl(0, 54%, 50%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Images].stroke`. */
+    --memory-layers-fill-color: hsl(76, 49%, 75%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Layers].fill`. */
+    --memory-layers-stroke-color: hsl(79, 45%, 50%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Layers].stroke`. */
+    --memory-page-fill-color: hsl(22, 60%, 70%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Page].fill`. */
+    --memory-page-stroke-color: hsl(22, 40%, 50%); /* Keep this in sync with `WI.MemoryTimelineOverviewGraph._categoryStyles[WI.MemoryCategory.Type.Page].stroke`. */
     --memory-max-comparison-fill-color: hsl(220, 10%, 75%);
     --memory-max-comparison-stroke-color: hsl(220, 10%, 55%);
 
-    --cpu-other-thread-fill-color: hsl(81, 80%, 50%);
-    --cpu-other-thread-stroke-color: hsl(81, 80%, 30%);
-    --cpu-main-thread-fill-color: hsl(118, 43%, 55%);
-    --cpu-main-thread-stroke-color: hsl(118, 33%, 42%);
-    --cpu-worker-thread-fill-color: hsl(59, 79%, 62%);
-    --cpu-worker-thread-stroke-color: hsl(59, 79%, 37%);
+    --cpu-other-thread-fill-color: hsl(81, 80%, 50%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.otherThreads.fill`. */
+    --cpu-other-thread-stroke-color: hsl(81, 80%, 30%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.otherThreads.stroke`. */
+    --cpu-main-thread-fill-color: hsl(118, 43%, 55%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.mainThread.fill`. */
+    --cpu-main-thread-stroke-color: hsl(118, 33%, 42%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.mainThread.stroke`. */
+    --cpu-worker-thread-fill-color: hsl(59, 79%, 62%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.workerThreads.fill`. */
+    --cpu-worker-thread-stroke-color: hsl(59, 79%, 37%); /* Keep this in sync with `WI.CPUTimelineOverviewGraph._sectionStyles.workerThreads.stroke`. */
     --cpu-overlay-color: var(--cpu-main-thread-stroke-color);
 
     --cpu-javascript-fill-color: hsl(269, 65%, 75%);

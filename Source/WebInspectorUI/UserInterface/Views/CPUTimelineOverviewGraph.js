@@ -37,17 +37,12 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         this._cpuTimeline = timeline;
         this._cpuTimeline.addEventListener(WI.Timeline.Event.RecordAdded, this._cpuTimelineRecordAdded, this);
 
-        let size = new WI.Size(0, this.height);
-        this._chart = new WI.StackedColumnChart(size);
-        this._chart.initializeSections(["main-thread-usage", "worker-thread-usage", "total-usage"]);
-        this.addSubview(this._chart);
-        this.element.appendChild(this._chart.element);
-
-        this._chart.element.addEventListener("click", this._handleChartClick.bind(this));
+        this.element.addEventListener("click", this._handleChartClick.bind(this));
 
         this._legendElement = this.element.appendChild(document.createElement("div"));
         this._legendElement.classList.add("legend");
 
+        this._columnGeometries = [];
         this._lastSelectedRecordInLayout = null;
 
         this.reset();
@@ -69,11 +64,10 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
 
         this._maxUsage = 0;
         this._cachedMaxUsage = undefined;
+        this._columnGeometries = [];
         this._lastSelectedRecordInLayout = null;
 
         this._updateLegend();
-        this._chart.clear();
-        this._chart.needsLayout();
     }
 
     layout()
@@ -84,17 +78,20 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             return;
 
         this._updateLegend();
-        this._chart.clear();
-
-        let graphWidth = this.timelineOverview.scrollContainerWidth;
-        if (isNaN(graphWidth))
-            return;
-
+        this._columnGeometries = [];
         this._lastSelectedRecordInLayout = this.selectedRecord;
 
-        if (this._chart.size.width !== graphWidth || this._chart.size.height !== this.height)
-            this._chart.size = new WI.Size(graphWidth, this.height);
+        let graphWidth = this.timelineOverview.scrollContainerWidth;
+        if (isNaN(graphWidth)) {
+            this.clearCanvas();
+            return;
+        }
 
+        this.updateCanvas();
+    }
+
+    drawCanvas(context)
+    {
         let graphStartTime = this.startTime;
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
         let secondsPerPixel = this.timelineOverview.secondsPerPixel;
@@ -104,7 +101,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             return (time - graphStartTime) / secondsPerPixel;
         }
 
-        let height = this.height;
+        let height = this.canvasHeight;
         function yScale(size) {
             return (size / maxCapacity) * height;
         }
@@ -118,14 +115,17 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         const minimumDisplayHeight = 4;
 
         for (let record of visibleRecords) {
-            let additionalClass = record === this.selectedRecord ? "selected" : undefined;
             let w = (record.endTime - record.startTime) / secondsPerPixel;
             let x = xScale(record.startTime);
-            let h1 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage));
-            let h2 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage));
-            let h3 = Math.max(minimumDisplayHeight, yScale(record.usage));
-            this._chart.addColumnSet(x, height, w, [h1, h2, h3], additionalClass);
+            let heights = {
+                mainThread: Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage)),
+                workerThreads: Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage)),
+                otherThreads: Math.max(minimumDisplayHeight, yScale(record.usage)),
+            };
+            this._columnGeometries.push({x, width: w, heights, selected: record === this.selectedRecord});
         }
+
+        this._drawColumns(context);
     }
 
     updateSelectedRecord()
@@ -158,24 +158,71 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         }
     }
 
+    _drawColumns(context)
+    {
+        let selectedFillStyle = this.cssVariableValue("--selected-background-color");
+        let selectedStrokeStyle = this.cssVariableValue("--selected-background-color-active");
+
+        this._drawColumnSection(context, "otherThreads", "workerThreads", selectedFillStyle, selectedStrokeStyle);
+        this._drawColumnSection(context, "workerThreads", "mainThread", selectedFillStyle, selectedStrokeStyle);
+        this._drawColumnSection(context, "mainThread", null, selectedFillStyle, selectedStrokeStyle);
+    }
+
+    _drawColumnSection(context, sectionName, foregroundSectionName, selectedFillStyle, selectedStrokeStyle)
+    {
+        let {fill, stroke} = WI.CPUTimelineOverviewGraph._sectionStyles[sectionName];
+        let canvasHeight = this.canvasHeight;
+
+        context.beginPath();
+        let selectedColumnGeometry = null;
+        for (let columnGeometry of this._columnGeometries) {
+            if (columnGeometry.selected) {
+                selectedColumnGeometry = columnGeometry;
+                continue;
+            }
+
+            let {x, width, heights} = columnGeometry;
+            if (foregroundSectionName && heights[sectionName] === heights[foregroundSectionName])
+                continue;
+
+            let height = heights[sectionName];
+            context.rect(x, canvasHeight - height, width, height);
+        }
+        context.fillStyle = fill;
+        context.fill();
+        context.strokeStyle = stroke;
+        context.stroke();
+
+        if (!selectedColumnGeometry)
+            return;
+
+        let {x, width, heights} = selectedColumnGeometry;
+        if (foregroundSectionName && heights[sectionName] === heights[foregroundSectionName])
+            return;
+
+        let height = heights[sectionName];
+        context.beginPath();
+        context.rect(x, canvasHeight - height, width, height);
+        context.save();
+        context.fillStyle = selectedFillStyle;
+        context.globalAlpha = 0.5;
+        context.fill();
+        context.strokeStyle = selectedStrokeStyle;
+        context.globalAlpha = 0.8;
+        context.stroke();
+        context.restore();
+    }
+
     _graphPositionForMouseEvent(event)
     {
-        // Only trigger if clicking on a rect, not anywhere in the graph.
-        let elements = document.elementsFromPoint(event.pageX, event.pageY);
-        let rectElement = elements.find((x) => x.localName === "rect");
-        if (!rectElement)
-            return NaN;
+        let position = this.canvasPositionForEvent(event);
+        let canvasHeight = this.canvasHeight;
+        for (let columnGeometry of this._columnGeometries) {
+            if (position.x >= columnGeometry.x && position.x <= columnGeometry.x + columnGeometry.width && position.y >= canvasHeight - columnGeometry.heights.otherThreads && position.y <= canvasHeight)
+                return position.x;
+        }
 
-        let chartElement = rectElement.closest(".stacked-column-chart");
-        if (!chartElement)
-            return NaN;
-
-        let rect = chartElement.getBoundingClientRect();
-        let position = event.pageX - rect.left;
-
-        if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
-            return rect.width - position;
-        return position;
+        return NaN;
     }
 
     _handleChartClick(event)
@@ -213,4 +260,19 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
     {
         this._maxUsage = Math.max(this._maxUsage, cpuTimelineRecord.usage);
     }
+};
+
+WI.CPUTimelineOverviewGraph._sectionStyles = {
+    mainThread: {
+        fill: "hsl(118, 43%, 55%)", // Keep this in sync with `--cpu-main-thread-fill-color`.
+        stroke: "hsl(118, 33%, 42%)", // Keep this in sync with `--cpu-main-thread-stroke-color`.
+    },
+    workerThreads: {
+        fill: "hsl(59, 79%, 62%)", // Keep this in sync with `--cpu-worker-thread-fill-color`.
+        stroke: "hsl(59, 79%, 37%)", // Keep this in sync with `--cpu-worker-thread-stroke-color`.
+    },
+    otherThreads: {
+        fill: "hsl(81, 80%, 50%)", // Keep this in sync with `--cpu-other-thread-fill-color`.
+        stroke: "hsl(81, 80%, 30%)", // Keep this in sync with `--cpu-other-thread-stroke-color`.
+    },
 };

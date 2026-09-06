@@ -41,6 +41,8 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         this._scheduledSelectedRecordLayoutUpdateIdentifier = undefined;
         this._selected = false;
         this._hidden = false;
+        this._computedStyle = null;
+        this._cachedCSSVariableValues = new Map;
     }
 
     // Public
@@ -172,9 +174,7 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
         this._hidden = hidden;
 
         this.element.classList.toggle("hidden", this._hidden);
-
-        if (!this._hidden)
-            this.updateLayout();
+        this._timelineOverview.needsLayout();
     }
 
     get selectedRecord()
@@ -232,11 +232,13 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
 
         this._selected = x;
         this.element.classList.toggle("selected", this._selected);
+        this.invalidateCSSVariableValues();
+        this.needsLayout();
     }
 
     reset()
     {
-        // Implemented by sub-classes if needed.
+        this.clearCanvas();
     }
 
     recordWasFiltered(record, filtered)
@@ -269,23 +271,61 @@ WI.TimelineOverviewGraph = class TimelineOverviewGraph extends WI.View
 
     // Protected
 
+    get canvasHeight()
+    {
+        return this._timelineOverview.canvasHeightForOverviewGraph(this);
+    }
+
+    clearCanvas()
+    {
+        this._timelineOverview.clearCanvas(this);
+    }
+
+    updateCanvas()
+    {
+        this._timelineOverview.updateCanvas(this);
+    }
+
+    cssVariableValue(property)
+    {
+        let value = this._cachedCSSVariableValues.get(property);
+        if (value)
+            return value;
+
+        this._computedStyle ||= window.getComputedStyle(this.element);
+        value = this._computedStyle.getPropertyValue(property).trim();
+        this._cachedCSSVariableValues.set(property, value);
+        return value;
+    }
+
+    invalidateCSSVariableValues()
+    {
+        this._computedStyle = null;
+        this._cachedCSSVariableValues.clear();
+    }
+
+    drawCanvasImage(context, image, x, y, width, height)
+    {
+        if (WI.resolvedLayoutDirection() !== WI.LayoutDirection.RTL) {
+            context.drawImage(image, x, y, width, height);
+            return;
+        }
+
+        context.save();
+        context.translate(2 * x + width, 0);
+        context.scale(-1, 1);
+        context.drawImage(image, x, y, width, height);
+        context.restore();
+    }
+
+    canvasPositionForEvent(event)
+    {
+        return this._timelineOverview.canvasPositionForEventInGraph(this, event);
+    }
+
     updateSelectedRecord()
     {
         // Implemented by sub-classes if needed.
-    }
-
-    updateSelectedRecordBar(recordBarsList)
-    {
-        for (let recordBars of recordBarsList) {
-            for (let recordBar of recordBars) {
-                if (recordBar.records.includes(this.selectedRecord)) {
-                    this.selectedRecordBar = recordBar;
-                    return;
-                }
-            }
-        }
-
-        this.selectedRecordBar = null;
     }
 
     // Private
