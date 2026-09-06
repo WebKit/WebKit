@@ -1,0 +1,91 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>sizes=auto allowance is gated on img allowing auto-sizes</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/embedded-content.html#allows-auto-sizes">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/images.html#sizes-attributes">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+  /* Keep all lazy images in the viewport. */
+  img { width: 10px; height: 10px; }
+</style>
+<div id="container"></div>
+<div id="log"></div>
+<script>
+"use strict";
+
+const container = document.getElementById('container');
+
+function waitLoad(img) {
+  return new Promise((resolve, reject) => {
+    img.addEventListener('load', resolve, {once: true});
+    img.addEventListener('error', reject, {once: true});
+  });
+}
+
+function makeSrcset(tag) {
+  return `/images/red-16x16.png?${tag} 50w, /images/green-16x16.png?${tag} 51w`;
+}
+
+function assertSmall(img, msg) {
+  assert_true(img.currentSrc.includes('red-16x16'), msg + ' (got: ' + img.currentSrc + ')');
+}
+
+function assertLarge(img, msg) {
+  assert_true(img.currentSrc.includes('green-16x16'), msg + ' (got: ' + img.currentSrc + ')');
+}
+
+async function makePicture({imgSizes, sourceSizes, tag}) {
+  const picture = document.createElement('picture');
+  const source = document.createElement('source');
+  const img = document.createElement('img');
+
+  img.loading = 'lazy';
+  if (imgSizes !== null)
+    img.setAttribute('sizes', imgSizes);
+
+  source.setAttribute('sizes', sourceSizes);
+  source.srcset = makeSrcset(`${tag}-initial`);
+
+  picture.append(source, img);
+  container.appendChild(picture);
+
+  await waitLoad(img);
+  return {source, img};
+}
+
+promise_test(async () => {
+  const img = document.createElement('img');
+  img.loading = 'lazy';
+  img.setAttribute('sizes', ' auto');
+  img.srcset = makeSrcset('img-leading-space');
+  container.appendChild(img);
+
+  await waitLoad(img);
+  assertLarge(img, 'img sizes=" auto" must not allow auto-sizes');
+}, 'img sizes starting with whitespace does not allow auto-sizes');
+
+promise_test(async () => {
+  const {source, img} = await makePicture({imgSizes: null, sourceSizes: '100vw', tag: 'source-no-img-auto'});
+  assertLarge(img, 'initial source sizes=100vw');
+
+  const reloaded = waitLoad(img);
+  source.setAttribute('sizes', 'auto');
+  source.srcset = makeSrcset('source-no-img-auto-after');
+  await reloaded;
+
+  assertLarge(img, 'source sizes=auto must be ignored when img does not allow auto-sizes');
+}, 'source sizes=auto is ignored when img does not allow auto-sizes');
+
+promise_test(async () => {
+  const {source, img} = await makePicture({imgSizes: 'auto', sourceSizes: '100vw', tag: 'source-img-auto'});
+  assertLarge(img, 'initial source sizes=100vw');
+
+  const reloaded = waitLoad(img);
+  source.setAttribute('sizes', 'auto');
+  source.srcset = makeSrcset('source-img-auto-after');
+  await reloaded;
+
+  assertSmall(img, 'source sizes=auto must be honored when img allows auto-sizes');
+}, 'source sizes=auto is honored when img allows auto-sizes');
+</script>
