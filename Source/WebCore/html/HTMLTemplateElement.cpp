@@ -38,6 +38,7 @@
 #include "ElementRareData.h"
 #include "HTMLNames.h"
 #include "NodeTraversal.h"
+#include "ProcessingInstruction.h"
 #include "SerializedNode.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
@@ -81,6 +82,74 @@ DocumentFragment& HTMLTemplateElement::fragmentForInsertion() const
     return content();
 }
 
+ContainerNode& HTMLTemplateElement::insertionTarget() const
+{
+    if (m_insertionTarget)
+        return *m_insertionTarget;
+    return fragmentForInsertion();
+}
+
+Node* HTMLTemplateElement::insertionNextChild() const
+{
+    if (m_insertionEndMarker && m_insertionEndMarker->parentNode() == m_insertionTarget)
+        return m_insertionEndMarker.get();
+    return nullptr;
+}
+
+bool HTMLTemplateElement::prepareContentPatching(ContainerNode& scope)
+{
+    auto markerName = attributeWithoutSynchronization(forAttr);
+    if (markerName.isEmpty())
+        return false;
+
+    for (RefPtr node = scope.firstChild(); node; node = NodeTraversal::next(*node, &scope)) {
+        RefPtr instruction = dynamicDowncast<ProcessingInstruction>(*node);
+        if (!instruction || instruction->pseudoAttributeValue("name"_s) != markerName)
+            continue;
+
+        if (instruction->target() == "marker"_s) {
+            m_insertionTarget = instruction->parentNode();
+            m_insertionStartMarker = instruction;
+            m_insertionEndMarker = instruction;
+            return true;
+        }
+
+        if (instruction->target() != "start"_s)
+            continue;
+
+        RefPtr parent = instruction->parentNode();
+        if (!parent)
+            return false;
+
+        unsigned nestingLevel = 0;
+        Vector<Ref<Node>> nodesToRemove;
+        RefPtr<ProcessingInstruction> endMarker;
+        for (RefPtr sibling = instruction->nextSibling(); sibling; sibling = sibling->nextSibling()) {
+            if (RefPtr siblingInstruction = dynamicDowncast<ProcessingInstruction>(*sibling)) {
+                if (siblingInstruction->target() == "start"_s)
+                    ++nestingLevel;
+                else if (siblingInstruction->target() == "end"_s) {
+                    if (!nestingLevel) {
+                        endMarker = WTF::move(siblingInstruction);
+                        break;
+                    }
+                    --nestingLevel;
+                }
+            }
+            nodesToRemove.append(*sibling);
+        }
+
+        m_insertionTarget = WTF::move(parent);
+        m_insertionStartMarker = WTF::move(instruction);
+        m_insertionEndMarker = WTF::move(endMarker);
+
+        for (Ref nodeToRemove : nodesToRemove)
+            nodeToRemove->remove();
+        return true;
+    }
+    return false;
+}
+
 DocumentFragment& HTMLTemplateElement::content() const
 {
     ASSERT(!m_declarativeShadowRoot);
@@ -112,6 +181,24 @@ const AtomString& HTMLTemplateElement::shadowRootSlotAssignment() const
 void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
 {
     m_declarativeShadowRoot = shadowRoot;
+}
+
+void HTMLTemplateElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+
+    RefPtr insertionTarget = std::exchange(m_insertionTarget, nullptr);
+    RefPtr startMarker = std::exchange(m_insertionStartMarker, nullptr);
+    RefPtr endMarker = std::exchange(m_insertionEndMarker, nullptr);
+    if (!insertionTarget || !startMarker)
+        return;
+
+    if (RefPtr parent = startMarker->parentNode())
+        parent->parserRemoveChild(*startMarker);
+    if (endMarker && endMarker != startMarker) {
+        if (RefPtr parent = endMarker->parentNode())
+            parent->parserRemoveChild(*endMarker);
+    }
 }
 
 Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry) const

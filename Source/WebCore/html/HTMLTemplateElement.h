@@ -35,7 +35,9 @@
 
 namespace WebCore {
 
+class ContainerNode;
 class DocumentFragment;
+class ProcessingInstruction;
 class TemplateContentDocumentFragment;
 
 class HTMLTemplateElement final : public HTMLElement {
@@ -46,8 +48,12 @@ public:
     virtual ~HTMLTemplateElement();
 
     DocumentFragment& fragmentForInsertion() const;
+    ContainerNode& insertionTarget() const;
+    Node* NODELETE insertionNextChild() const;
     DocumentFragment& content() const;
     DocumentFragment* NODELETE contentIfAvailable() const;
+
+    bool prepareContentPatching(ContainerNode&);
 
     const AtomString& shadowRootMode() const;
     const AtomString& shadowRootSlotAssignment() const;
@@ -62,9 +68,13 @@ private:
     Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) const final;
     SerializedNode serializeNode(CloningOperation) const final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
+    void finishParsingChildren() final;
 
     const RefPtr<TemplateContentDocumentFragment> m_content;
     WeakPtr<ShadowRoot, WeakPtrImplWithEventTargetData> m_declarativeShadowRoot;
+    RefPtr<ContainerNode> m_insertionTarget;
+    RefPtr<ProcessingInstruction> m_insertionStartMarker;
+    RefPtr<ProcessingInstruction> m_insertionEndMarker;
 };
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
-Old content in innerHTML
+New content
 Old content in light DOM
 
-FAIL <template for> in innerHTML patching inner element assert_equals: expected "New content" but got "Old content in innerHTML"
+PASS <template for> in innerHTML patching inner element
 

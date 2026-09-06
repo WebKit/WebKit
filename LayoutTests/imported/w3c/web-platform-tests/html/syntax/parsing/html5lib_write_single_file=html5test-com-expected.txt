@@ -12,7 +12,7 @@ PASS &apos;
 PASS &ImaginaryI;
 PASS &Kopf;
 PASS &notinva;
-FAIL <?import namespace="foo" implementation="#bar"> assert_equals: expected "#document\n| <?import namespace=\"foo\" implementation=\"#bar\"?>\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ?import namespace=\"foo\" implementation=\"#bar\" -->\n| <html>\n|   <head>\n|   <body>"
+PASS <?import namespace="foo" implementation="#bar">
 PASS <!--foo--bar-->
 PASS <svg><title><![CDATA[x]]>
 PASS <svg><foreignobject><![CDATA[x]]>
@@ -31,23 +31,4 @@ PASS <i>A<b>B<p></i>C</b>D
 PASS <div></div>
 PASS <svg></svg>
 PASS <math></math>
-<?import namespace="foo" implementation="#bar">
-
-Input
-
-<?import namespace="foo" implementation="#bar">
-Expected
-
-#document
-| <?import namespace="foo" implementation="#bar"?>
-| <html>
-|   <head>
-|   <body>
-Actual
-
-#document
-| <!-- ?import namespace="foo" implementation="#bar" -->
-| <html>
-|   <head>
-|   <body>
 

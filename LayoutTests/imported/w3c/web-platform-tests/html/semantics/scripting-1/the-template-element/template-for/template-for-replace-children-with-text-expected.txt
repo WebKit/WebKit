@@ -1,4 +1,4 @@
-Old content
+New content
 
-FAIL <template for> replace children with text assert_equals: expected "New content" but got "Old content"
+PASS <template for> replace children with text
 
