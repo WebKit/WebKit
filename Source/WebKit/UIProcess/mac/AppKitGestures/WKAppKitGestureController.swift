@@ -32,7 +32,17 @@ private import WebCore_Private
 import struct Swift.String
 
 final class WKPanGestureRecognizer: NSPanGestureRecognizer {
+    private static let stalenessWindow: TimeInterval = 0.2
+
     private weak var webView: WKWebView?
+
+    var gestureStartTime: TimeInterval?
+    var gestureStartLocationInWindow: NSPoint = .zero
+
+    var lastMovementTime: TimeInterval?
+    var lastMovementLocationInWindow: NSPoint = .zero
+
+    var reachedChangedState = false
 
     init(webView: WKWebView, target: Any?, action: Selector?) {
         self.webView = webView
@@ -43,6 +53,42 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
     @objc
     public required dynamic init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+
+    override func reset() {
+        gestureStartTime = nil
+        gestureStartLocationInWindow = .zero
+        lastMovementTime = nil
+        lastMovementLocationInWindow = .zero
+        reachedChangedState = false
+        super.reset()
+    }
+
+    @objc(wk_velocityInView:)
+    func wk_velocity(in view: NSView?) -> NSPoint {
+        let appKitVelocity = velocity(in: view)
+
+        // Prefer AppKit's velocity if available.
+        // If we've seen "changed" events and AppKit gave us zero, then the velocity is legitimately zero.
+        if reachedChangedState || appKitVelocity != .zero {
+            return appKitVelocity
+        }
+
+        // If we have seen less than two events, we can't work out a velocity at all.
+        guard let gestureStartTime, let lastMovementTime, lastMovementTime > gestureStartTime
+        else {
+            return .zero
+        }
+
+        guard timestamp - lastMovementTime < Self.stalenessWindow else {
+            return .zero
+        }
+
+        let start = view.map { $0.convert(gestureStartLocationInWindow, from: nil) } ?? gestureStartLocationInWindow
+        let end = view.map { $0.convert(lastMovementLocationInWindow, from: nil) } ?? lastMovementLocationInWindow
+
+        let duration = lastMovementTime - gestureStartTime
+        return NSPoint(x: (end.x - start.x) / duration, y: (end.y - start.y) / duration)
     }
 
     #if canImport(AppKit, _version: "2759")
@@ -127,6 +173,14 @@ extension WKAppKitGestureController {
         return deferringGestureRecognizer
     }
 
+    @objc(panVelocityInView:)
+    func panVelocity(in view: NSView?) -> NSPoint {
+        guard let panGestureRecognizer = panGestureRecognizer as? WKPanGestureRecognizer else {
+            return .zero
+        }
+        return panGestureRecognizer.wk_velocity(in: view)
+    }
+
     @objc(loggingDescriptionForGestureRecognizer:)
     class func loggingDescription(for gestureRecognizer: NSGestureRecognizer?) -> String {
         guard let gestureRecognizer else {
@@ -134,7 +188,7 @@ extension WKAppKitGestureController {
         }
 
         var parts: [String] = []
-        parts.append("\(type(of: gestureRecognizer)): \(UInt(bitPattern: ObjectIdentifier(self)))")
+        parts.append("\(type(of: gestureRecognizer)): \(UInt(bitPattern: ObjectIdentifier(gestureRecognizer)))")
 
         if let name = gestureRecognizer.name {
             parts.append("name = \(name)")
