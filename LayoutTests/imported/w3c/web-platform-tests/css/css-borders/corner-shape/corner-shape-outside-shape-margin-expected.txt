@@ -1,0 +1,9 @@
+
+PASS corner-shape: notch with shape-margin
+PASS corner-shape: bevel with shape-margin
+PASS corner-shape: round with shape-margin
+PASS corner-shape: square with shape-margin
+PASS corner-shape: scoop with shape-margin
+PASS corner-shape: superellipse(1.5) with shape-margin
+PASS corner-shape: superellipse(-.8) with shape-margin
+
