@@ -699,7 +699,9 @@ static String NODELETE functionName(JSC::NativeExecutable& nativeExecutable)
 
 static String NODELETE functionName(JSC::FunctionExecutable& functionExecutable)
 {
-    return functionExecutable.ecmaName().string();
+    if (const auto& ecmaName = functionExecutable.ecmaName(); !ecmaName.isEmpty())
+        return ecmaName.string();
+    return functionExecutable.inferredName().string();
 }
 
 static String NODELETE functionName(JSC::CodeBlock& codeBlock)

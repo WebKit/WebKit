@@ -143,6 +143,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
         ensureRareData().m_generatorOrAsyncWrapperFunctionParameterNames = FixedVector<Identifier>(WTF::move(generatorOrAsyncWrapperFunctionParameterNames));
     if (parentPrivateNameEnvironment)
         ensureRareData().m_parentPrivateNameEnvironment = WTF::move(*parentPrivateNameEnvironment);
+    if (!node->inferredName().isEmpty())
+        ensureRareData().m_inferredName = node->inferredName();
 }
 
 const Identifier& UnlinkedFunctionExecutable::name() const

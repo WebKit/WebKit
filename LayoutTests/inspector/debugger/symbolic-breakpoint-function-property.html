@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let testObject = {
+    functionExpressionProperty: function() {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    },
+    arrowFunctionProperty: () => {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    },
+    objectMethod() {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    },
+    get objectGetter() {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    },
+    set objectSetter(value) {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    },
+};
+
+// An anonymous function expression or arrow function assigned to a member
+// expression does not get a `name` per spec (NamedEvaluation only applies to
+// identifier targets), but it does get an inferred name that symbolic
+// breakpoints should be able to match.
+testObject.functionAssignedToProperty = function() {
+    TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+};
+
+testObject.arrowFunctionAssignedToProperty = () => {
+    TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+};
+
+class TestClass {
+    classMethod() {
+        TestPage.dispatchEventToFrontend("TestPage-SymbolicBreakpoint");
+    }
+}
+
+let testClass = new TestClass;
+
+function test()
+{
+    function triggerBreakpoint(expression) {
+        return Promise.all([
+            InspectorTest.awaitEvent("TestPage-SymbolicBreakpoint"),
+            InspectorTest.evaluateInPage(expression),
+        ]);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("SymbolicBreakpoint.FunctionProperty");
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.FunctionProperty.Hit",
+        async test() {
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoint = new WI.SymbolicBreakpoint("functionAssignedToProperty");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+            InspectorTest.assert(WI.debuggerManager.symbolicBreakpointsForSymbol("functionAssignedToProperty")[0] === breakpoint, "Should match breakpoint.");
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint(`testObject.functionAssignedToProperty()`);
+            InspectorTest.expectEqual(pauseCount, 1, "Should pause.");
+
+            InspectorTest.newline();
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint(`testObject.functionAssignedToProperty()`);
+            InspectorTest.expectEqual(pauseCount, 1, "Should not pause again.");
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+    });
+
+    for (let {name, symbol, expression} of [
+        {
+            name: "InferredName.ArrowFunctionAssignment",
+            symbol: "arrowFunctionAssignedToProperty",
+            expression: `testObject.arrowFunctionAssignedToProperty()`,
+        },
+        {
+            name: "ECMAName.FunctionExpressionProperty",
+            symbol: "functionExpressionProperty",
+            expression: `testObject.functionExpressionProperty()`,
+        },
+        {
+            name: "ECMAName.ArrowFunctionProperty",
+            symbol: "arrowFunctionProperty",
+            expression: `testObject.arrowFunctionProperty()`,
+        },
+        {
+            name: "ECMAName.ObjectMethod",
+            symbol: "objectMethod",
+            expression: `testObject.objectMethod()`,
+        },
+        {
+            name: "ECMAName.ObjectGetter",
+            symbol: "objectGetter",
+            expression: `testObject.objectGetter`,
+        },
+        {
+            name: "ECMAName.ObjectSetter",
+            symbol: "objectSetter",
+            expression: `testObject.objectSetter = 42`,
+        },
+        {
+            name: "ECMAName.ClassMethod",
+            symbol: "classMethod",
+            expression: `testClass.classMethod()`,
+        },
+    ]) {
+        suite.addTestCase({
+            name: `SymbolicBreakpoint.FunctionProperty.${name}`,
+            async test() {
+                let pauseCount = 0;
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                InspectorTest.log("Adding breakpoint...");
+                let breakpoint = new WI.SymbolicBreakpoint(symbol);
+                WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+                InspectorTest.assert(WI.debuggerManager.symbolicBreakpointsForSymbol(symbol)[0] === breakpoint, "Should match breakpoint.");
+
+                InspectorTest.log("Triggering breakpoint...");
+                await triggerBreakpoint(expression);
+                InspectorTest.expectEqual(pauseCount, 1, "Should pause.");
+
+                InspectorTest.log("Removing breakpoint...");
+                breakpoint.remove();
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: "SymbolicBreakpoint.FunctionProperty.Miss",
+        async test() {
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Adding breakpoint...");
+            let breakpoint = new WI.SymbolicBreakpoint("someUnrelatedName");
+            WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering breakpoint...");
+            await triggerBreakpoint(`testObject.functionAssignedToProperty()`);
+            InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+
+            InspectorTest.log("Removing breakpoint...");
+            breakpoint.remove();
+
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a SymbolicBreakpoint matches functions defined as properties, including functions assigned to a property (e.g. <code>foo.bar = function(){}</code>) that have an inferred name but no <code>name</code> per spec. <a href="https://bugs.webkit.org/show_bug.cgi?id=292535">Bug 292535</a>.</p>
+</body>
+</html>
