@@ -236,6 +236,50 @@ function testI31Get() {
     WebAssembly.RuntimeError,
     "i31.get_<sx> to a null reference"
   )
+
+  compile(`
+    (module
+      (func (export "f") (result i32)
+        (i31.get_s (ref.null none))))
+  `)
+  compile(`
+    (module
+      (func (export "f") (result i32)
+        (i31.get_u (ref.null none))))
+  `)
+  compile(`
+    (module
+      (func (export "f") (result i32)
+        (i31.get_s (ref.as_non_null (ref.null none)))))
+  `)
+
+  assert.throws(
+    () => {
+      let m = instantiate(`
+        (module
+          (func (export "f") (result i32)
+            (i31.get_s (ref.null none)))
+        )
+      `);
+      m.exports.f();
+    },
+    WebAssembly.RuntimeError,
+    "i31.get_<sx> to a null reference"
+  )
+
+  assert.throws(
+    () => {
+      let m = instantiate(`
+        (module
+          (func (export "f") (result i32)
+            (i31.get_u (ref.null none)))
+        )
+      `);
+      m.exports.f();
+    },
+    WebAssembly.RuntimeError,
+    "i31.get_<sx> to a null reference"
+  )
 }
 
 function testI31JS() {
