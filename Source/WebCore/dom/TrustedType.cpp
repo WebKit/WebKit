@@ -309,37 +309,8 @@ ExceptionOr<String> requireTrustedTypesForPreNavigationCheckPasses(ScriptExecuti
     return String(urlString);
 }
 
-ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString, const JSC::ArgList& args)
+ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC::CompilationType compilationType, String codeString)
 {
-    if (compilationType == CompilationType::Function) {
-        VM& vm = scriptExecutionContext.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        bool isTrusted = true;
-
-        for (size_t i = 0; i < args.size(); i++) {
-            auto arg = args.at(i);
-            if (!arg.isObject()) {
-                isTrusted = false;
-                break;
-            }
-            if (RefPtr trustedScript = JSTrustedScript::toWrapped(vm, arg)) {
-                auto argString = arg.toWTFString(scriptExecutionContext.globalObject());
-                RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-                if (trustedScript->toString() != argString) {
-                    isTrusted = false;
-                    break;
-                }
-            } else {
-                isTrusted = false;
-                break;
-            }
-        }
-
-        if (isTrusted)
-            return true;
-    }
-
     auto sink = compilationType == CompilationType::Function ? "Function"_s : "eval"_s;
 
     auto stringValueHolder = trustedTypeCompliantString(TrustedType::TrustedScript, scriptExecutionContext, codeString, sink);

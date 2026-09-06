@@ -76,7 +76,7 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, Variant<
 
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
 
-ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, String codeString, const JSC::ArgList& args);
+ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, String codeString);
 
 bool isEventHandlerAttribute(const QualifiedName& attributeName);
 
