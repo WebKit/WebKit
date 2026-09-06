@@ -4907,7 +4907,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (action == @selector(copy:)) {
-        if (editorState.isInPasswordField && !editorState.selectionIsRangeInAutoFilledAndViewableField)
+        bool selectionIsInAutoFilledAndViewablePasswordField = editorState.isInPasswordField && !editorState.selectionIsRangeInAutoFilledAndViewableField;
+        bool selectionIsInPluginWithCopyingDisallowed = editorState.isInPlugin && editorState.hasPostLayoutData() && !editorState.postLayoutData->canCopy;
+        if (selectionIsInAutoFilledAndViewablePasswordField || selectionIsInPluginWithCopyingDisallowed)
             return NO;
         return editorState.selectionType == WebCore::SelectionType::Range;
     }

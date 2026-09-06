@@ -4890,12 +4890,12 @@ bool UnifiedPDFPlugin::platformPopulateEditorStateIfNeeded(EditorState& state) c
 
     auto selectedString = String { [selection string] };
     state.postLayoutData = EditorState::PostLayoutData { };
+    state.postLayoutData->selectedTextLength = selectedString.length();
+    state.postLayoutData->canCopy = !selectedString.isEmpty() && [m_pdfDocument allowsCopying];
 #if PLATFORM(IOS_FAMILY)
     state.postLayoutData->isStableStateUpdate = true;
     state.postLayoutData->wordAtSelection = WTF::move(selectedString);
 #endif
-    state.postLayoutData->selectedTextLength = selectedString.length();
-    state.postLayoutData->canCopy = !selectedString.isEmpty();
 
     state.visualData = EditorState::VisualData { };
     state.visualData->rootFrameID = rootFrameID;
