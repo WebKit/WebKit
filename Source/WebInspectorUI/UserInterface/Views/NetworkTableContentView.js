@@ -1817,9 +1817,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let oldDetailView = this._detailView;
 
         this._detailView = this._detailViewMap.get(object);
-        if (this._detailView === oldDetailView)
-            return;
-
         if (!this._detailView) {
             if (object instanceof WI.Resource) {
                 let entry = this._activeCollection.entries.find(e => e.resource === object);
@@ -1854,13 +1851,16 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._detailViewMap.set(object, this._detailView);
         }
 
+        if (this._showingRepresentedObjectCookie)
+            this._detailView.willShowWithCookie(this._showingRepresentedObjectCookie);
+
+        if (this._detailView === oldDetailView)
+            return;
+
         if (oldDetailView)
             this.replaceSubview(oldDetailView, this._detailView);
         else
             this.addSubview(this._detailView);
-
-        if (this._showingRepresentedObjectCookie)
-            this._detailView.willShowWithCookie(this._showingRepresentedObjectCookie);
 
         this.element.classList.add("showing-detail");
         this._table.scrollContainer.style.width = this._nameColumn.width + "px";
