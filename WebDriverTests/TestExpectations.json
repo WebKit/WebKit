@@ -5163,9 +5163,6 @@
     "imported/w3c/webdriver/tests/bidi/script/evaluate/await_promise.py": {
         "expected": { "all": { "status": ["PASS"] }},
             "subtests": {
-                "test_await_promise_rejected": {
-                    "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060" }}
-                },
                 "test_await_resolve_array": {
                     "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060" }}
                 },
@@ -5189,50 +5186,6 @@
                 }
             }
     },
-    "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details_await_promise.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
-        "subtests": {
-            "test_exception_details_await_promise[undefined-expected0]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[null-expected1]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[NaN-expected4]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[-0-expected5]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[Infinity-expected6]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[-Infinity-expected7]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[3-expected8]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[1.4-expected9]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[true-expected10]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[false-expected11]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[42n-expected12]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            },
-            "test_exception_details_await_promise[(Symbol('foo'))-expected13]": {
-                "expected": { "all": { "status": ["SKIP"], "bug": "webkit.org/b/304548" }}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/bidi/script/evaluate/exception_details.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-    },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/internal_id.py": {
         "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
     },
@@ -5253,54 +5206,6 @@
             },
             "test_params_realm_unknown": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_result_ownership_invalid_value[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[max_dom_depth2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_type[max_dom_depth3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_dom_depth_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[_UNKNOWN_]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[max_object_depth2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_type[max_object_depth3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_max_object_depth_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[False]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[42]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[include_shadow_tree2]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_type[include_shadow_tree3]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
-            },
-            "test_params_include_shadow_tree_invalid_value": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
     },
@@ -5308,52 +5213,36 @@
         "expected": { "all": { "status": ["PASS"] }}
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/remote_values.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
         "subtests": {
-            "test_remote_values[(Symbol('foo'))-expected0]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_top_level[True]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[(()=>{})-expected3]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_top_level[False]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[(function(){})-expected4]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_window[True-same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[(async ()=>{})-expected5]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_window[True-cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[(async function(){})-expected6]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_window[False-same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[(function*() { yield 'a'; })-expected7]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_window[False-cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[new RegExp(/foo/g)-expected8]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_content_window[True-same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[new Date(1654004849000)-expected9]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_content_window[True-cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[new Error('SOME_ERROR_TEXT')-expected14]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_content_window[False-same_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             },
-            "test_remote_values[[1, 2][Symbol.iterator]()-expected15]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_remote_values['mystring'[Symbol.iterator]()-expected16]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_remote_values[(new Set([1,2]))[Symbol.iterator]()-expected17]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_remote_values[(new Map([[1,2]]))[Symbol.iterator]()-expected18]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_remote_values[Promise.resolve()-expected22]": {
-                "expected": { "all": { "status": ["PASS"]}}
-            },
-            "test_remote_values[new URL('https://example.com')-expected27]": {
-                "expected": { "all": { "status": ["PASS"]}}
+            "test_window_context_iframe_content_window[False-cross_origin]": {
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}}
             }
         }
     },
