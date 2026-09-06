@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>A fractional background-size with repeat and centered position stays centered</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds-3/#the-background-size">
+<link rel="match" href="background-size-fractional-repeat-centered-expected.html">
+<meta name="fuzzy" content="maxDifference=2; totalPixels=1712">
+<meta name="assert" content="A fractional background-size (12.25px) tiled with background-repeat: repeat and background-position: center produces a pattern that is symmetric about the center of the box. The repeat pitch must not be snapped to device pixels independently of the phase, otherwise the sub-pixel error accumulates and shifts the pattern towards one corner.">
+<style>
+.container {
+    width: 98px;
+    height: 98px;
+    border: 1px solid black;
+    background-image: radial-gradient(circle, #ccc, 4px, transparent 0px);
+    background-repeat: repeat;
+    background-position: center center;
+    background-size: 12.25px 12.25px;
+}
+</style>
+</head>
+<body>
+<!-- The test box, drawn normally. -->
+<div class="container"></div>
+</body>
+</html>

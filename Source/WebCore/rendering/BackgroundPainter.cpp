@@ -611,10 +611,8 @@ static inline std::optional<LayoutUnit> NODELETE getSpace(LayoutUnit areaSize, L
     return std::nullopt;
 }
 
-static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& tileSize, LayoutSize& phase, LayoutSize& space, float scaleFactor)
+static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& space, float scaleFactor)
 {
-    tileSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), tileSize), scaleFactor).size());
-    phase = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), phase), scaleFactor).size());
     space = LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), space), scaleFactor).size());
     destinationRect = LayoutRect(snapRectToDevicePixels(destinationRect, scaleFactor));
 }
@@ -814,7 +812,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     destinationRect.intersect(borderBoxRect);
 
     auto tileSizeWithoutPixelSnapping = tileSize;
-    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);
+    pixelSnapBackgroundImageGeometryForPainting(destinationRect, spaceSize, deviceScaleFactor);
 
     return BackgroundImageGeometry(destinationRect, tileSizeWithoutPixelSnapping, tileSize, phase, spaceSize, fixedAttachment);
 }
