@@ -3134,7 +3134,6 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 # Initial failures on the import of css-content
 
-imported/w3c/web-platform-tests/css/css-content/element-replacement-gradient.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-006.html [ ImageOnlyFailure ]
@@ -4021,7 +4020,6 @@ imported/w3c/web-platform-tests/css/css-pseudo/first-letter-width-2.html [ Image
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-custom-properties-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-currentcolor-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-currentcolor-001a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/marker-text-transform-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-link-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-over-highlight-001.html [ ImageOnlyFailure ]
@@ -4657,7 +4655,6 @@ imported/w3c/web-platform-tests/css/css-images/gradient/gradient-infinity-003.ht
 imported/w3c/web-platform-tests/css/css-images/gradient/gradient-single-stop-none-interpolation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-canvas.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-cross-origin-svg.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/image-rendering-mixed-scaled.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-001e.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-001o.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-002e.html [ ImageOnlyFailure ]
@@ -4735,7 +4732,6 @@ imported/w3c/web-platform-tests/css/css-images/color-stop-color-mix-currentcolor
 imported/w3c/web-platform-tests/css/css-images/color-stop-currentcolor-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/color-stop-light-dark-currentcolor-invalidation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/color-stop-relative-color-currentcolor-invalidation.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/conic-gradient-center.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-images/conic-gradient-line-height-relative-units-003.html [ ImageOnlyFailure ]
@@ -5741,7 +5737,6 @@ webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/first-line-op
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/grammar-error-001.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-010.html [ ImageOnlyFailure ]
 webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-017.html [ ImageOnlyFailure ]
-webkit.org/b/204163 imported/w3c/web-platform-tests/css/css-pseudo/marker-content-018.html [ ImageOnlyFailure ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/marker-list-style-position.html [ ImageOnlyFailure ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/spelling-error-001.html [ ImageOnlyFailure ]
 
@@ -6094,7 +6089,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-letter
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-line-break.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-overflow-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-text-decoration-skip-ink.html [ ImageOnlyFailure ]
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-text-transform-uppercase.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/marker-word-break.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-contenteditable-011.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-input-011.html [ ImageOnlyFailure ]
