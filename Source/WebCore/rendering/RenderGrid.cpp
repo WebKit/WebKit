@@ -28,6 +28,7 @@
 #include "RenderGrid.h"
 
 #include "BaselineAlignmentInlines.h"
+#include "BoxSides.h"
 #include "GridArea.h"
 #include "GridLanesLayout.h"
 #include "GridLayoutFunctions.h"
@@ -2347,6 +2348,25 @@ LayoutRange RenderGrid::gridAreaRangeForOutOfFlow(const RenderBox& gridItem, Sty
         }
     }
     return LayoutRange(start, std::max(end - start, 0_lu));
+}
+
+LayoutRect RenderGrid::gridAreaRectForOutOfFlow(const RenderBox& gridItem) const
+{
+    ASSERT(gridItem.isOutOfFlowPositioned());
+
+    auto physicalRange = [&](BoxAxis physicalAxis) {
+        bool usesColumns = (physicalAxis == BoxAxis::Horizontal) == writingMode().isHorizontal();
+        auto range = gridAreaRangeForOutOfFlow(gridItem, usesColumns ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows);
+        if (usesColumns ? writingMode().isInlineFlipped() : writingMode().isBlockFlipped()) {
+            auto containerSize = physicalAxis == BoxAxis::Horizontal ? borderBoxWidth() : borderBoxHeight();
+            range.moveTo(containerSize - range.max());
+        }
+        return range;
+    };
+
+    auto horizontalRange = physicalRange(BoxAxis::Horizontal);
+    auto verticalRange = physicalRange(BoxAxis::Vertical);
+    return LayoutRect(horizontalRange.min(), verticalRange.min(), horizontalRange.size(), verticalRange.size());
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderGrid::gridAreaPositionForInFlowGridItem(const RenderBox& gridItem, Style::GridTrackSizingDirection direction) const
