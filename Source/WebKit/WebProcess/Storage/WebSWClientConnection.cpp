@@ -144,7 +144,26 @@ void WebSWClientConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     for (auto& port : message.transferredPorts)
         WebMessagePortChannelProvider::singleton().messagePortSentToRemote(port.first);
 
-    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTF::move(message), sourceIdentifier });
+    Vector<URL> blobURLs;
+    if (auto& serializedScriptValue = message.message) {
+        blobURLs = serializedScriptValue->blobURLs().map([](auto& blobURL) {
+            return URL { blobURL };
+        });
+    }
+
+    send(Messages::WebSWServerConnection::PostMessageToServiceWorker { destinationIdentifier, WTF::move(message), sourceIdentifier, WTF::move(blobURLs) });
+}
+
+void WebSWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& source, const SecurityOriginData& sourceOrigin)
+{
+    SWClientConnection::postMessageToServiceWorkerClient(destinationContextIdentifier, WTF::move(message), WTF::move(source), sourceOrigin, { });
+}
+
+void WebSWClientConnection::postMessageToServiceWorkerClientAndNotifyWhenDispatched(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& source, const SecurityOriginData& sourceOrigin, CompletionHandler<void()>&& completionHandler)
+{
+    SWClientConnection::postMessageToServiceWorkerClient(destinationContextIdentifier, WTF::move(message), WTF::move(source), sourceOrigin, CompletionHandlerCallingScope { CompletionHandler<void()> { [completionHandler = WTF::move(completionHandler)]() mutable {
+        ensureOnMainThread(WTF::move(completionHandler));
+    }, CompletionHandlerCallThread::AnyThread } });
 }
 
 void WebSWClientConnection::registerServiceWorkerClient(const ClientOrigin& clientOrigin, WebCore::ServiceWorkerClientData&& data, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>& controllingServiceWorkerRegistrationIdentifier, String&& userAgent)

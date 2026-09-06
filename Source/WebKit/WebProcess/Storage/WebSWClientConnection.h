@@ -84,6 +84,8 @@ private:
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerJobDataIdentifier&, WebCore::ServiceWorkerRegistrationKey&&, WebCore::WorkerFetchResult&&) final;
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
+    void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const WebCore::SecurityOriginData& sourceOrigin);
+    void postMessageToServiceWorkerClientAndNotifyWhenDispatched(WebCore::ScriptExecutionContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const WebCore::SecurityOriginData& sourceOrigin, CompletionHandler<void()>&&);
     void registerServiceWorkerClient(const WebCore::ClientOrigin&, WebCore::ServiceWorkerClientData&&, const std::optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
     void unregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier) final;
     void scheduleUnregisterJobInServer(WebCore::ServiceWorkerRegistrationIdentifier, WebCore::ServiceWorkerOrClientIdentifier, CompletionHandler<void(WebCore::ExceptionOr<bool>&&)>&&) final;

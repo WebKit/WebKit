@@ -120,7 +120,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     MessagePortDisentangled(struct WebCore::MessagePortIdentifier local)
     MessagePortClosed(struct WebCore::MessagePortIdentifier local)
     TakeAllMessagesForPort(struct WebCore::MessagePortIdentifier port) -> (Vector<WebCore::MessageWithMessagePorts> messages, std::optional<WebKit::MessageBatchIdentifier> messageBatchIdentifier)
-    PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote)
+    PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote, Vector<URL> blobURLs)
     DidDeliverMessagePortMessages(WebKit::MessageBatchIdentifier messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
 #if PLATFORM(MAC)

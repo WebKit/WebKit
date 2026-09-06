@@ -127,7 +127,7 @@ void MessagePortChannel::closePort(const MessagePortIdentifier& port, MessagePor
     m_entangledToProcessProtectors[i] = nullptr;
 }
 
-bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
+bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight)
 {
     ASSERT(isMainThread());
 
@@ -137,7 +137,7 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
     if (m_status[i] != MessagePortStatus::Open)
         return false;
 
-    m_pendingMessages[i].append(WTF::move(message));
+    m_pendingMessages[i].append({ WTF::move(message), WTF::move(blobURLsInFlight) });
     LOG(MessagePorts, "MessagePortChannel %s (%p) now has %zu messages pending on port %s", logString().utf8().data(), this, m_pendingMessages[i].size(), remoteTarget.logString().utf8().data());
 
     if (m_pendingMessages[i].size() == 1) {
@@ -165,15 +165,21 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
 
     ASSERT(m_pendingMessageProtectors[i] == this);
 
-    Vector<MessageWithMessagePorts> result;
-    result.swap(m_pendingMessages[i]);
+    auto pendingMessages = std::exchange(m_pendingMessages[i], { });
 
     ++m_messageBatchesInFlight;
 
-    LOG(MessagePorts, "There are %zu messages to take for port %s. Taking them now, messages in flight is now %" PRIu64, result.size(), port.logString().utf8().data(), m_messageBatchesInFlight);
+    LOG(MessagePorts, "There are %zu messages to take for port %s. Taking them now, messages in flight is now %" PRIu64, pendingMessages.size(), port.logString().utf8().data(), m_messageBatchesInFlight);
 
-    auto size = result.size();
-    callback(WTF::move(result), [size, port, protectedThis = WTF::move(m_pendingMessageProtectors[i])] {
+    auto size = pendingMessages.size();
+    auto messages = WTF::map(pendingMessages, [](auto& pendingMessage) {
+        return WTF::move(pendingMessage.first);
+    });
+    auto blobURLsInFlight = WTF::map(WTF::move(pendingMessages), [](auto&& pendingMessage) {
+        return WTF::move(pendingMessage.second);
+    });
+
+    callback(WTF::move(messages), [size, port, blobURLsInFlight = WTF::move(blobURLsInFlight), protectedThis = WTF::move(m_pendingMessageProtectors[i])] {
         UNUSED_PARAM(port);
 #if LOG_DISABLED
         UNUSED_PARAM(size);

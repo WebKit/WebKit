@@ -163,7 +163,11 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
     for (auto& port : message.transferredPorts)
         messagePortSentToRemote(port.first);
 
+    Vector<URL> blobURLs;
     if (auto& serializedScriptValue = message.message) {
+        blobURLs = serializedScriptValue->blobURLs().map([](auto& blobURL) {
+            return URL { blobURL };
+        });
         if (serializedScriptValue->sharedBufferContentsArray() && !serializedScriptValue->sharedBufferContentsArray()->isEmpty()) {
             auto identifier = WebCore::NonSerializedDataIdentifier::generate();
             m_nonSerializedDataRegistry.add(identifier, std::exchange(serializedScriptValue->sharedBufferContentsArray(), nullptr));
@@ -171,7 +175,7 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
         }
     }
 
-    protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget }, 0);
+    protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget, blobURLs }, 0);
 }
 
 } // namespace WebKit

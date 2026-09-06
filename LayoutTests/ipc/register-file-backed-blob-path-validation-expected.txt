@@ -1,2 +1,3 @@
 Unauthorized file-backed blob registration rejected: PASS
+Unauthorized file-backed blob registration with a registered srcURL resolves the srcURL: PASS
 

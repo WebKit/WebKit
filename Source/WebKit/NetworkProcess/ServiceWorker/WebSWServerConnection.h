@@ -39,6 +39,7 @@
 #include <WebCore/SWServer.h>
 #include <pal/SessionID.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
@@ -139,7 +140,7 @@ private:
     void terminateWorkerFromClient(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
     void whenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier, CompletionHandler<void()>&&);
 
-    void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const WebCore::SecurityOriginData&) final;
+    void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const WebCore::SecurityOriginData&, CompletionHandlerCallingScope&& blobURLsInFlight) final;
 
     void contextConnectionCreated(WebCore::SWServerToContextConnection&) final;
     void updateBackgroundFetchRegistration(const WebCore::BackgroundFetchInformation&) final;
@@ -155,7 +156,7 @@ private:
     void getPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(std::expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source, Vector<URL>&& blobURLs);
     void controlClient(const NetworkResourceLoadParameters&, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&, WebCore::ProcessIdentifier);
 
     using ExceptionOrVoidCallback = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;

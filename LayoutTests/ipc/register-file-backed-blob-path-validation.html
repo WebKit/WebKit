@@ -12,6 +12,7 @@ const log = s => { out.textContent += s + '\n'; };
 
 if (!window.IPC) {
     log('Unauthorized file-backed blob registration rejected: PASS');
+    log('Unauthorized file-backed blob registration with a registered srcURL resolves the srcURL: PASS');
     testRunner?.notifyDone();
 } else {
 
@@ -52,6 +53,17 @@ function generalStoragePath() {
     });
     let size = await blobSize(blobURL);
     log('Unauthorized file-backed blob registration rejected: ' + (size === 1 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
+
+    let srcURL = URL.createObjectURL(new Blob([new Uint8Array([1, 2, 3])]));
+    let aliasURL = `blob:blobinternal:///${crypto.randomUUID()}`;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterInternalBlobURLOptionallyFileBacked(0, {
+        url: { string: aliasURL },
+        srcURL: { string: srcURL },
+        fileBackedPath: targetPath,
+        contentType: 'application/octet-stream',
+    });
+    size = await blobSize(aliasURL);
+    log('Unauthorized file-backed blob registration with a registered srcURL resolves the srcURL: ' + (size === 3 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
 
     testRunner?.notifyDone();
 })().catch(e => { log('FAIL: ' + e); testRunner?.notifyDone(); });

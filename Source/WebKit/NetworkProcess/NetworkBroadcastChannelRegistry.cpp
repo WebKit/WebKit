@@ -103,11 +103,17 @@ void NetworkBroadcastChannelRegistry::unregisterChannel(IPC::Connection& connect
     connectionIdentifiersForNameIterator->value.removeFirst(connection.uniqueID());
 }
 
-void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, CompletionHandler<void()>&& completionHandler)
+void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, const WebCore::ClientOrigin& origin, const String& name, WebCore::MessageWithMessagePorts&& message, Vector<URL>&& blobURLs, CompletionHandler<void()>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(isOriginAllowedForConnection(connection, origin), connection, completionHandler());
+
+    if (RefPtr webProcessConnection = m_networkProcess->webProcessConnection(connection)) {
+        completionHandler = [completionHandler = WTF::move(completionHandler), blobURLsInFlight = webProcessConnection->retainBlobURLsWhileMessageIsInFlight(blobURLs)]() mutable {
+            completionHandler();
+        };
+    }
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());
