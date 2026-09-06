@@ -35,6 +35,7 @@
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -55,6 +56,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "NodeName.h"
 #include "NotImplemented.h"
+#include "ProcessingInstruction.h"
 #include "SVGElementInlines.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -136,8 +138,8 @@ static inline bool NODELETE causesFosterParenting(const HTMLStackItem& item)
 static inline void insert(HTMLConstructionSiteTask& task)
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) [[unlikely]] {
-        task.parent = templateElement->fragmentForInsertion();
-        task.nextChild = nullptr;
+        task.parent = templateElement->insertionTarget();
+        task.nextChild = templateElement->insertionNextChild();
     } else {
         if (task.nextChild && task.nextChild->parentNode() != task.parent) [[unlikely]]
             return;
@@ -507,6 +509,26 @@ void HTMLConstructionSite::insertDoctype(AtomHTMLToken&& token)
         setCompatibilityModeFromDoctype(token.name(), publicId, systemId);
 }
 
+void HTMLConstructionSite::insertProcessingInstruction(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    attachLater(protect(currentNode()), ProcessingInstruction::create(protect(ownerDocumentForCurrentNode()), String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
+}
+
+void HTMLConstructionSite::insertProcessingInstructionOnDocument(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    attachLater(protect(m_attachmentRoot), ProcessingInstruction::create(protect(m_document), String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
+}
+
+void HTMLConstructionSite::insertProcessingInstructionOnHTMLHtmlElement(AtomHTMLToken&& token)
+{
+    ASSERT(token.type() == HTMLToken::Type::ProcessingInstruction);
+    Ref parent = m_openElements.rootNode();
+    Ref parentDocument = parent->document();
+    attachLater(WTF::move(parent), ProcessingInstruction::create(parentDocument, String { token.processingInstructionTarget() }, String { token.processingInstructionData() }));
+}
+
 void HTMLConstructionSite::insertComment(AtomHTMLToken&& token)
 {
     ASSERT(token.type() == HTMLToken::Type::Comment);
@@ -563,6 +585,14 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
+    bool hasValidShadowRootMode = false;
+    for (auto& attribute : token.attributes()) {
+        if (attribute.name() == HTMLNames::shadowrootmodeAttr) {
+            hasValidShadowRootMode = !!parseShadowRootMode(attribute.value());
+            break;
+        }
+    }
+
     if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
         auto delegatesFocus = ShadowRootDelegatesFocus::No;
@@ -598,6 +628,34 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             }
         }
     }
+
+    if (document().settings().htmlTemplateForEnabled() && !hasValidShadowRootMode) {
+        auto element = downcast<HTMLTemplateElement>(createHTMLElement(token));
+        if (element->hasAttributeWithoutSynchronization(forAttr)) {
+            HTMLConstructionSiteTask insertionLocation(HTMLConstructionSiteTask::Insert);
+            insertionLocation.parent = currentNode();
+            if (shouldFosterParent())
+                findFosterSite(insertionLocation);
+
+            Ref scope = insertionLocation.parent.releaseNonNull();
+            if (RefPtr parentTemplate = dynamicDowncast<HTMLTemplateElement>(scope.get()))
+                scope = parentTemplate->insertionTarget();
+            else if (scope.ptr() == document().body()) {
+                if (RefPtr parent = scope->parentNode())
+                    scope = parent.releaseNonNull();
+            }
+
+            if (element->prepareContentPatching(scope)) {
+                element->beginParsingChildren();
+                m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+                return;
+            }
+        }
+        attachLater(protect(currentNode()), element.copyRef());
+        m_openElements.push(HTMLStackItem(WTF::move(element), WTF::move(token)));
+        return;
+    }
+
     insertHTMLElement(WTF::move(token));
 }
 
@@ -718,8 +776,11 @@ void HTMLConstructionSite::insertTextNode(const String& characters)
         previousChild = task.nextChild->previousSibling();
     else {
         if (RefPtr templateParent = dynamicDowncast<HTMLTemplateElement>(task.parent.get()); templateParent) [[unlikely]] {
-            RefPtr parentNode = templateParent->contentIfAvailable();
-            previousChild = parentNode ? parentNode->lastChild() : nullptr;
+            Ref parentNode = templateParent->insertionTarget();
+            if (RefPtr nextChild = templateParent->insertionNextChild())
+                previousChild = nextChild->previousSibling();
+            else
+                previousChild = parentNode->lastChild();
         } else
             previousChild = task.parent->lastChild();
     }
@@ -813,28 +874,28 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
 inline TreeScope& HTMLConstructionSite::treeScopeForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion().treeScope();
+        return templateElement->insertionTarget().treeScope();
     return currentNode().treeScope();
 }
 
 inline ContainerNode& HTMLConstructionSite::containerForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion();
+        return templateElement->insertionTarget();
     return currentNode();
 }
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
     if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
-        return templateElement->fragmentForInsertion().document();
+        return templateElement->insertionTarget().document();
     return currentNode().document();
 }
 
 static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope)
 {
     if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode)) {
-        Ref templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
+        Ref templateFragmentTreeScope = templateElement->insertionTarget().treeScope();
         if (templateFragmentTreeScope->rootNode().usesNullCustomElementRegistry())
             return nullptr;
     }

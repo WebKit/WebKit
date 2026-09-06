@@ -24,6 +24,14 @@
 ] interface ProcessingInstruction : CharacterData {
     readonly attribute DOMString target;
 
+    [EnabledBySetting=HTMLTemplateForEnabled] boolean hasAttributes();
+    [EnabledBySetting=HTMLTemplateForEnabled] sequence<DOMString> getAttributeNames();
+    [EnabledBySetting=HTMLTemplateForEnabled] DOMString? getAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLTemplateForEnabled] undefined setAttribute([AtomString] DOMString name, [AtomString] DOMString value);
+    [EnabledBySetting=HTMLTemplateForEnabled] undefined removeAttribute([AtomString] DOMString name);
+    [EnabledBySetting=HTMLTemplateForEnabled] boolean toggleAttribute([AtomString] DOMString name, optional boolean force);
+    [EnabledBySetting=HTMLTemplateForEnabled] boolean hasAttribute([AtomString] DOMString name);
+
     // Extension from CSSOM (https://drafts.csswg.org/cssom/#linkstyle).
     readonly attribute StyleSheet? sheet;
 };

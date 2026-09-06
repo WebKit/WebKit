@@ -33,7 +33,9 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
+#include "MarkupAccumulator.h"
 #include "MediaQueryParser.h"
+#include "NameValidation.h"
 #include "NodeDocument.h"
 #include "NodeInlines.h"
 #include "SerializedNode.h"
@@ -91,8 +93,174 @@ SerializedNode ProcessingInstruction::serializeNode(CloningOperation) const
     return { SerializedNode::ProcessingInstruction { { data() }, m_target } };
 }
 
+void ProcessingInstruction::updateAttributesIfNeeded()
+{
+    if (!m_attributesDirty)
+        return;
+
+    m_attributesDirty = false;
+    m_attributes.clear();
+
+    Ref document = this->document();
+    auto parsedAttributes = parseAttributes(protect(document->cachedResourceLoader()), data());
+    if (!parsedAttributes)
+        return;
+
+    StringView source { data() };
+    unsigned position = 0;
+    while (position < source.length()) {
+        while (position < source.length() && isASCIIWhitespace(source[position]))
+            ++position;
+        if (position == source.length())
+            break;
+
+        unsigned nameStart = position;
+        while (position < source.length() && !isASCIIWhitespace(source[position]) && source[position] != '=')
+            ++position;
+        auto name = source.substring(nameStart, position - nameStart).toString();
+
+        while (position < source.length() && isASCIIWhitespace(source[position]))
+            ++position;
+        if (position == source.length() || source[position++] != '=')
+            return;
+        while (position < source.length() && isASCIIWhitespace(source[position]))
+            ++position;
+        if (position == source.length() || (source[position] != '\'' && source[position] != '"'))
+            return;
+        auto quote = source[position++];
+        while (position < source.length() && source[position] != quote)
+            ++position;
+        if (position == source.length())
+            return;
+        ++position;
+
+        auto iterator = parsedAttributes->find(name);
+        if (iterator == parsedAttributes->end())
+            return;
+        AtomString atomName { name };
+        bool isDuplicate = false;
+        for (auto& attribute : m_attributes) {
+            if (attribute.name == atomName) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        if (!isDuplicate)
+            m_attributes.append({ WTF::move(atomName), AtomString { iterator->value } });
+    }
+}
+
+String ProcessingInstruction::pseudoAttributeValue(ASCIILiteral name)
+{
+    updateAttributesIfNeeded();
+    for (auto& attribute : m_attributes) {
+        if (attribute.name == name)
+            return attribute.value;
+    }
+    return { };
+}
+
+bool ProcessingInstruction::hasAttributes()
+{
+    updateAttributesIfNeeded();
+    return !m_attributes.isEmpty();
+}
+
+Vector<AtomString> ProcessingInstruction::getAttributeNames()
+{
+    updateAttributesIfNeeded();
+    return WTF::map(m_attributes, [](auto& attribute) {
+        return attribute.name;
+    });
+}
+
+String ProcessingInstruction::getAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    for (auto& attribute : m_attributes) {
+        if (attribute.name == name)
+            return attribute.value;
+    }
+    return { };
+}
+
+ExceptionOr<void> ProcessingInstruction::setAttribute(const AtomString& name, const AtomString& value)
+{
+    if (!NameValidation::isValidAttributeName(name))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid attribute name: '"_s, name, '\'') };
+
+    updateAttributesIfNeeded();
+    for (auto& attribute : m_attributes) {
+        if (attribute.name == name) {
+            attribute.value = value;
+            updateDataFromAttributes();
+            return { };
+        }
+    }
+    m_attributes.append({ name, value });
+    updateDataFromAttributes();
+    return { };
+}
+
+void ProcessingInstruction::removeAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    for (size_t index = 0; index < m_attributes.size(); ++index) {
+        if (m_attributes[index].name == name) {
+            m_attributes.removeAt(index);
+            updateDataFromAttributes();
+            return;
+        }
+    }
+}
+
+ExceptionOr<bool> ProcessingInstruction::toggleAttribute(const AtomString& name, std::optional<bool> force)
+{
+    if (!NameValidation::isValidAttributeName(name))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid attribute name: '"_s, name, '\'') };
+
+    bool isPresent = hasAttribute(name);
+    if (!isPresent) {
+        if (!force || *force) {
+            setAttribute(name, emptyAtom());
+            return true;
+        }
+        return false;
+    }
+    if (!force || !*force) {
+        removeAttribute(name);
+        return false;
+    }
+    return true;
+}
+
+bool ProcessingInstruction::hasAttribute(const AtomString& name)
+{
+    updateAttributesIfNeeded();
+    for (auto& attribute : m_attributes) {
+        if (attribute.name == name)
+            return true;
+    }
+    return false;
+}
+
+void ProcessingInstruction::updateDataFromAttributes()
+{
+    StringBuilder builder;
+    for (auto& attribute : m_attributes) {
+        if (!builder.isEmpty())
+            builder.append(' ');
+        builder.append(attribute.name, "=\""_s);
+        MarkupAccumulator::appendCharactersReplacingEntities(builder, attribute.value, { EntityMask::Amp, EntityMask::Lt, EntityMask::Gt, EntityMask::Quot });
+        builder.append('"');
+    }
+    setData(builder.toString());
+    m_attributesDirty = false;
+}
+
 void ProcessingInstruction::checkStyleSheet()
 {
+    m_attributesDirty = true;
     Ref document = this->document();
     if (m_target == "xml-stylesheet"_s && document->frame() && parentNode() == document.ptr()) {
         // see http://www.w3.org/TR/xml-stylesheet/

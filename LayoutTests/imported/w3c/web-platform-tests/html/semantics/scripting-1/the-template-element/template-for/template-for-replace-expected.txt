@@ -1,6 +1,6 @@
-Old content
+New content
 
-FAIL <template for> replace null is not an object (evaluating 'document.getElementById("placeholder").textContent')
-FAIL <template for> should work when chunked assert_equals: expected null but got Element node <template for="p"></template>
-FAIL <template for> should work when elements are sliced in the middle null is not an object (evaluating 'doc.querySelector("#placeholder #main").textContent')
+PASS <template for> replace
+PASS <template for> should work when chunked
+PASS <template for> should work when elements are sliced in the middle
 
