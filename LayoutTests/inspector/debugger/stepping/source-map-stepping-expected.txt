@@ -1,0 +1,286 @@
+Checking that debugger stepping follows source map granularity when the experimental setting is enabled.
+
+
+== Running test suite: Debugger.SourceMapStepping
+-- Running test case: Debugger.SourceMapStepping.StepThrough.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT stepThrough:11:5
+      7        return 3;
+      8    }
+      9    function stepThrough() {
+ ->  10        |debugger;
+     11        a();
+     12        b();
+     13        c();
+
+ACTION: step-over
+PAUSE AT stepThrough:12:5
+      8    }
+      9    function stepThrough() {
+     10        debugger;
+ ->  11        |a();
+     12        b();
+     13        c();
+     14    }
+
+ACTION: step-over
+PAUSE AT stepThrough:15:1
+     11        a();
+     12        b();
+     13        c();
+ ->  14    |}
+     15    function coalesce() {
+     16        debugger;
+     17        Math.max(a(), b(), c());
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.StepThrough.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT stepThrough:11:5
+      7        return 3;
+      8    }
+      9    function stepThrough() {
+ ->  10        |debugger;
+     11        a();
+     12        b();
+     13        c();
+
+ACTION: step-over
+PAUSE AT stepThrough:12:5
+      8    }
+      9    function stepThrough() {
+     10        debugger;
+ ->  11        |a();
+     12        b();
+     13        c();
+     14    }
+
+ACTION: step-over
+PAUSE AT stepThrough:13:5
+      9    function stepThrough() {
+     10        debugger;
+     11        a();
+ ->  12        |b();
+     13        c();
+     14    }
+     15    function coalesce() {
+
+ACTION: step-over
+PAUSE AT stepThrough:14:5
+     10        debugger;
+     11        a();
+     12        b();
+ ->  13        |c();
+     14    }
+     15    function coalesce() {
+     16        debugger;
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Coalesce.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT coalesce:17:5
+     13        c();
+     14    }
+     15    function coalesce() {
+ ->  16        |debugger;
+     17        Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+
+ACTION: step-next
+PAUSE AT coalesce:18:5
+     14    }
+     15    function coalesce() {
+     16        debugger;
+ ->  17        |Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+
+ACTION: step-next
+PAUSE AT coalesce:18:19
+     14    }
+     15    function coalesce() {
+     16        debugger;
+ ->  17        Math.max(a(), |b(), c());
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+
+ACTION: step-next
+PAUSE AT coalesce:18:24
+     14    }
+     15    function coalesce() {
+     16        debugger;
+ ->  17        Math.max(a(), b(), |c());
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+
+ACTION: step-next
+PAUSE AT coalesce:18:5
+     14    }
+     15    function coalesce() {
+     16        debugger;
+ ->  17        |Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+
+ACTION: step-next
+PAUSE AT coalesce:19:1
+     15    function coalesce() {
+     16        debugger;
+     17        Math.max(a(), b(), c());
+ ->  18    |}
+     19    function stepInAndOut() {
+     20        debugger;
+     21        a();
+
+ACTION: step-next
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Coalesce.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT coalesce:17:5
+     13        c();
+     14    }
+     15    function coalesce() {
+ ->  16        |debugger;
+     17        Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+
+ACTION: step-next
+PAUSE AT coalesce:18:5
+     14    }
+     15    function coalesce() {
+     16        debugger;
+ ->  17        |Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+
+ACTION: step-next
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.StepInAndOut.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT stepInAndOut:21:5
+     17        Math.max(a(), b(), c());
+     18    }
+     19    function stepInAndOut() {
+ ->  20        |debugger;
+     21        a();
+     22        b();
+     23    }
+
+ACTION: step-in
+PAUSE AT stepInAndOut:22:5
+     18    }
+     19    function stepInAndOut() {
+     20        debugger;
+ ->  21        |a();
+     22        b();
+     23    }
+     24    function loop() {
+
+ACTION: step-in
+PAUSE AT a:2:5
+      0    function a() {
+ ->   1        |return 1;
+      2    }
+      3    function b() {
+      4        return 2;
+
+ACTION: step-out
+PAUSE AT stepInAndOut:23:5
+     19    function stepInAndOut() {
+     20        debugger;
+     21        a();
+ ->  22        |b();
+     23    }
+     24    function loop() {
+     25        debugger;
+
+ACTION: resume
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Loop.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT loop:26:5
+     22        b();
+     23    }
+     24    function loop() {
+ ->  25        |debugger;
+     26        for (let i = 0; i < 2; i++)
+     27            c();
+     28    }
+
+ACTION: step-over
+PAUSE AT loop:27:5
+     23    }
+     24    function loop() {
+     25        debugger;
+ ->  26        |for (let i = 0; i < 2; i++)
+     27            c();
+     28    }
+     29    window.stepThrough = stepThrough;
+
+ACTION: step-over
+PAUSE AT loop:28:9
+     24    function loop() {
+     25        debugger;
+     26        for (let i = 0; i < 2; i++)
+ ->  27            |c();
+     28    }
+     29    window.stepThrough = stepThrough;
+     30    window.coalesce = coalesce;
+
+ACTION: step-over
+PAUSE AT loop:27:5
+     23    }
+     24    function loop() {
+     25        debugger;
+ ->  26        |for (let i = 0; i < 2; i++)
+     27            c();
+     28    }
+     29    window.stepThrough = stepThrough;
+
+ACTION: step-over
+PAUSE AT loop:28:9
+     24    function loop() {
+     25        debugger;
+     26        for (let i = 0; i < 2; i++)
+ ->  27            |c();
+     28    }
+     29    window.stepThrough = stepThrough;
+     30    window.coalesce = coalesce;
+
+ACTION: step-over
+PAUSE AT loop:27:5
+     23    }
+     24    function loop() {
+     25        debugger;
+ ->  26        |for (let i = 0; i < 2; i++)
+     27            c();
+     28    }
+     29    window.stepThrough = stepThrough;
+
+ACTION: step-over
+PAUSE AT loop:29:1
+     25        debugger;
+     26        for (let i = 0; i < 2; i++)
+     27            c();
+ ->  28    |}
+     29    window.stepThrough = stepThrough;
+     30    window.coalesce = coalesce;
+     31    window.stepInAndOut = stepInAndOut;
+
+ACTION: step-over
+RESUMED
+

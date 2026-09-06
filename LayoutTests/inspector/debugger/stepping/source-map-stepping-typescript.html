@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script src="resources/source-map-stepping-typescript.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.SourceMapStepping.TypeScript");
+
+    async function awaitSourceMap(sourceMappingURL) {
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+        while (true) {
+            let {data} = await WI.SourceCode.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            if (data.sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return data.sourceMap;
+        }
+    }
+
+    let currentSteps = null;
+    let currentStepType = null;
+    let visitedLines = null;
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        if (visitedLines) {
+            let location = WI.debuggerManager.activeCallFrame.sourceCodeLocation;
+            if (location.hasMappedLocation())
+                visitedLines.push(location.displayLineNumber);
+        }
+        if (currentSteps)
+            step(currentSteps.length ? currentSteps.shift() : "resume");
+        else
+            step(currentStepType);
+    });
+
+    function addTestCase({name, description, expression, sourceMapStepping, stepType, steps, assertUniqueLines}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                WI.settings.experimentalSourceMapStepping.value = sourceMapStepping;
+                currentSteps = steps ? steps.slice() : null;
+                currentStepType = stepType || null;
+                visitedLines = assertUniqueLines ? [] : null;
+
+                InspectorTest.log(`SOURCE MAP STEPPING: ${sourceMapStepping ? "enabled" : "disabled"}`);
+
+                let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                InspectorTest.evaluateInPage(expression);
+                await resumed;
+                InspectorTest.log("RESUMED");
+
+                if (assertUniqueLines) {
+                    // The original is TypeScript, which can't be parsed here, so stepping coalesces by
+                    // original line. This function has no loop, so each original line should be surfaced
+                    // at most once -- in particular the two statements on original line 3 (`log(value);
+                    // log(value + 1);`) must collapse into a single stop instead of stopping twice.
+                    let hasDuplicateLine = visitedLines.some((line, i) => visitedLines.indexOf(line) !== i);
+                    InspectorTest.expectFalse(hasDuplicateLine, "Each original line should be surfaced at most once.");
+                    visitedLines = null;
+                }
+
+                WI.settings.experimentalSourceMapStepping.value = false;
+            }
+        });
+    }
+
+    // The original source is TypeScript (type annotations), so it cannot be parsed into statement
+    // boundaries. Stepping falls back to coalescing by original line: the two statements minified onto
+    // original line 3 (`log(value); log(value + 1);` => `log(n),log(n+1)`) collapse into one step.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.TypeScript.Coalesce.Disabled",
+        description: "Step-over a TypeScript original with the setting disabled (generated granularity).",
+        expression: "setTimeout(() => compute(4))",
+        sourceMapStepping: false,
+        stepType: "over",
+    });
+    addTestCase({
+        name: "Debugger.SourceMapStepping.TypeScript.Coalesce.Enabled",
+        description: "Step-over a TypeScript original with the setting enabled (coalesced by original line).",
+        expression: "setTimeout(() => compute(4))",
+        sourceMapStepping: true,
+        stepType: "over",
+        assertUniqueLines: true,
+    });
+
+    // Step into the mapped `log` callee, which lives on a different original line.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.TypeScript.StepInto",
+        description: "Step-into the mapped `log` callee from the coalesced original line.",
+        expression: "setTimeout(() => compute(4))",
+        sourceMapStepping: true,
+        steps: ["over", "in", "out", "resume"],
+    });
+
+    awaitSourceMap("source-map-stepping-typescript.js.map").then(() => {
+        suite.runTestCasesAndFinish();
+    }).catch((error) => {
+        InspectorTest.fail("Failed to load source map: " + error);
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking source map stepping through a non-JavaScript (TypeScript) original, which coalesces by original line since it cannot be parsed into statements.</p>
+</body>
+</html>

@@ -25,21 +25,27 @@
 
 WI.ScriptSyntaxTree = class ScriptSyntaxTree
 {
-    constructor(sourceText, script)
+    constructor(sourceCode, sourceText)
     {
-        console.assert(script && script instanceof WI.Script, script);
+        console.assert(sourceCode instanceof WI.SourceCode, sourceCode);
 
-        this._script = script;
+        this._sourceCode = sourceCode;
 
-        try {
-            let sourceType = this._script.sourceType === WI.Script.SourceType.Module ? "module" : "script";
-            let esprimaSyntaxTree = esprima.parse(sourceText, {loc: true, range: true, sourceType});
-            this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
-            this._parsedSuccessfully = true;
-        } catch (error) {
-            this._parsedSuccessfully = false;
-            this._syntaxTree = null;
-            console.error("Couldn't parse JavaScript File: " + script.url, error);
+        let sourceTypesInOrder = new Set([
+            sourceCode.sourceTypeForScriptSyntaxTree(),
+            WI.Script.SourceType.Module,
+            WI.Script.SourceType.Program,
+        ]);
+
+        this._syntaxTree = null;
+        this._parsedSuccessfully = false;
+        for (let sourceType of sourceTypesInOrder) {
+            try {
+                let esprimaSyntaxTree = esprima.parse(sourceText, {loc: true, range: true, sourceType});
+                this._syntaxTree = this._createInternalSyntaxTree(esprimaSyntaxTree);
+                this._parsedSuccessfully = true;
+                break;
+            } catch (error) { }
         }
     }
 
@@ -186,7 +192,8 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
     updateTypes(nodesToUpdate, callback)
     {
-        console.assert(this._script.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"));
+        console.assert(this._sourceCode instanceof WI.Script, this._sourceCode);
+        console.assert(this._sourceCode.target.hasCommand("Runtime.getRuntimeTypesForVariablesAtOffsets"), this._sourceCode);
         console.assert(Array.isArray(nodesToUpdate) && this._parsedSuccessfully);
 
         if (!this._parsedSuccessfully)
@@ -194,7 +201,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
 
         var allRequests = [];
         var allRequestNodes = [];
-        var sourceID = this._script.id;
+        var sourceID = this._sourceCode.id;
 
         for (var node of nodesToUpdate) {
             switch (node.type) {
@@ -253,7 +260,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
             callback(allRequestNodes);
         }
 
-        this._script.target.RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
+        this._sourceCode.target.RuntimeAgent.getRuntimeTypesForVariablesAtOffsets(allRequests, handleTypes);
     }
 
     // Private
@@ -1176,3 +1183,34 @@ WI.ScriptSyntaxTree.NodeType = {
     WithStatement: Symbol("with-statement"),
     YieldExpression: Symbol("yield-expression"),
 };
+
+WI.ScriptSyntaxTree.BoundaryNodeTypes = new Set([
+    WI.ScriptSyntaxTree.NodeType.BreakStatement,
+    WI.ScriptSyntaxTree.NodeType.ClassDeclaration,
+    WI.ScriptSyntaxTree.NodeType.ContinueStatement,
+    WI.ScriptSyntaxTree.NodeType.DebuggerStatement,
+    WI.ScriptSyntaxTree.NodeType.DoWhileStatement,
+    WI.ScriptSyntaxTree.NodeType.EmptyStatement,
+    WI.ScriptSyntaxTree.NodeType.ExportAllDeclaration,
+    WI.ScriptSyntaxTree.NodeType.ExportDefaultDeclaration,
+    WI.ScriptSyntaxTree.NodeType.ExportNamedDeclaration,
+    WI.ScriptSyntaxTree.NodeType.ExpressionStatement,
+    WI.ScriptSyntaxTree.NodeType.ForInStatement,
+    WI.ScriptSyntaxTree.NodeType.ForOfStatement,
+    WI.ScriptSyntaxTree.NodeType.ForStatement,
+    WI.ScriptSyntaxTree.NodeType.FunctionDeclaration,
+    WI.ScriptSyntaxTree.NodeType.IfStatement,
+    WI.ScriptSyntaxTree.NodeType.ImportDeclaration,
+    WI.ScriptSyntaxTree.NodeType.LabeledStatement,
+    WI.ScriptSyntaxTree.NodeType.MethodDefinition,
+    WI.ScriptSyntaxTree.NodeType.ReturnStatement,
+    WI.ScriptSyntaxTree.NodeType.StaticBlock,
+    WI.ScriptSyntaxTree.NodeType.SwitchCase,
+    WI.ScriptSyntaxTree.NodeType.SwitchStatement,
+    WI.ScriptSyntaxTree.NodeType.ThrowStatement,
+    WI.ScriptSyntaxTree.NodeType.TryStatement,
+    WI.ScriptSyntaxTree.NodeType.VariableDeclaration,
+    WI.ScriptSyntaxTree.NodeType.VariableDeclarator,
+    WI.ScriptSyntaxTree.NodeType.WhileStatement,
+    WI.ScriptSyntaxTree.NodeType.WithStatement,
+]);

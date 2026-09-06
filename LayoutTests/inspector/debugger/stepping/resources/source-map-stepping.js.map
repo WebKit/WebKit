@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "source-map-stepping.js",
+  "sources": [
+    "source-map-stepping-original.js"
+  ],
+  "sourcesContent": [
+    "function a() {\n    return 1;\n}\nfunction b() {\n    return 2;\n}\nfunction c() {\n    return 3;\n}\nfunction stepThrough() {\n    debugger;\n    a();\n    b();\n    c();\n}\nfunction coalesce() {\n    debugger;\n    Math.max(a(), b(), c());\n}\nfunction stepInAndOut() {\n    debugger;\n    a();\n    b();\n}\nfunction loop() {\n    debugger;\n    for (let i = 0; i < 2; i++)\n        c();\n}\nwindow.stepThrough = stepThrough;\nwindow.coalesce = coalesce;\nwindow.stepInAndOut = stepInAndOut;\nwindow.loop = loop;\n"
+  ],
+  "names": [],
+  "mappings": "aACI,sBAGA,sBAGA,gCAGA,SACA,KACA,KACA,GACJ,qBAEI,SACA,SAAS,IAAK,IAAK,IACvB,yBAEI,SACA,IACA,GACJ,iBAEI,SACA,oBACI,GACR"
+}

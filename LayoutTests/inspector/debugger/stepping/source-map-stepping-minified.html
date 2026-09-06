@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script src="resources/source-map-stepping-minified.js"></script>
+<script src="resources/source-map-stepping-inlined.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.SourceMapStepping.Minified");
+
+    async function awaitSourceMap(sourceMappingURL) {
+        for (let sourceMap of WI.SourceMap.instances) {
+            if (sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return sourceMap;
+        }
+        while (true) {
+            let {data} = await WI.SourceCode.awaitEvent(WI.SourceCode.Event.SourceMapAdded);
+            if (data.sourceMap.sourceMappingURL.endsWith(sourceMappingURL))
+                return data.sourceMap;
+        }
+    }
+
+    let currentSteps = null;
+    let currentStepType = null;
+    let monotonicLines = null;
+
+    WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.CallFramesDidChange, (event) => {
+        if (!WI.debuggerManager.activeCallFrame)
+            return;
+        logPauseLocation();
+        if (monotonicLines) {
+            let location = WI.debuggerManager.activeCallFrame.sourceCodeLocation;
+            if (location.hasMappedLocation())
+                monotonicLines.push(location.displayLineNumber);
+        }
+        if (currentSteps)
+            step(currentSteps.length ? currentSteps.shift() : "resume");
+        else
+            step(currentStepType);
+    });
+
+    function addTestCase({name, description, expression, sourceMapStepping, stepType, steps, assertMonotonic}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                WI.settings.experimentalSourceMapStepping.value = sourceMapStepping;
+                currentSteps = steps ? steps.slice() : null;
+                currentStepType = stepType || null;
+                monotonicLines = assertMonotonic ? [] : null;
+
+                InspectorTest.log(`SOURCE MAP STEPPING: ${sourceMapStepping ? "enabled" : "disabled"}`);
+
+                let resumed = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed);
+                InspectorTest.evaluateInPage(expression);
+                await resumed;
+                InspectorTest.log("RESUMED");
+
+                if (assertMonotonic) {
+                    // This function has no loop, so the mapped (original) line should never move
+                    // backwards when following the source map.
+                    let didMoveBackwards = monotonicLines.some((line, i) => i && line < monotonicLines[i - 1]);
+                    InspectorTest.expectFalse(didMoveBackwards, "Stepping should not move backwards in the original source.");
+                    monotonicLines = null;
+                }
+
+                WI.settings.experimentalSourceMapStepping.value = false;
+            }
+        });
+    }
+
+    function addComparison({basename, description, expression, stepType, steps, monotonic}) {
+        addTestCase({name: `${basename}.Disabled`, description, expression, sourceMapStepping: false, stepType, steps});
+        addTestCase({name: `${basename}.Enabled`, description, expression, sourceMapStepping: true, stepType, steps, assertMonotonic: monotonic});
+    }
+
+    // Constant and single-use variable inlining: `let scaled = n * RATE; return scaled;` was
+    // minified to `return n*10` (RATE inlined, `scaled` inlined), so the original `let scaled`
+    // statement no longer exists in the generated code.
+    addComparison({
+        basename: "Debugger.SourceMapStepping.Minified.Constants",
+        description: "Step-over through constant/variable inlining (`let scaled = n * RATE; return scaled;` => `return n*10`).",
+        expression: "setTimeout(() => constants(4))",
+        stepType: "over",
+    });
+
+    // Sequenced expression statements: `step(n); step(n); step(n);` minified to `step(n),step(n),step(n)`.
+    addComparison({
+        basename: "Debugger.SourceMapStepping.Minified.Sequencing",
+        description: "Step-over through `;` replaced by `,` (`step(n); step(n); step(n);` => `step(n),step(n),step(n)`).",
+        expression: "setTimeout(() => sequencing(4))",
+        stepType: "over",
+    });
+
+    // Conditional lowered to `&&`: `if (n) step(n); return n;` minified to `return n&&step(n),n`.
+    addComparison({
+        basename: "Debugger.SourceMapStepping.Minified.Conditional",
+        description: "Step-over through `if` lowered to `&&` (`if (n) step(n); return n;` => `return n&&step(n),n`).",
+        expression: "setTimeout(() => conditional(4))",
+        stepType: "over",
+    });
+
+    // Declarations fused: `let a = helper(n); let b = helper(a);` minified to `let e=helper(n),i=helper(e)`.
+    addComparison({
+        basename: "Debugger.SourceMapStepping.Minified.Inlined",
+        description: "Step-over through fused declarations calling a mapped helper.",
+        expression: "setTimeout(() => inlined(4))",
+        stepType: "over",
+    });
+
+    // Function/variable inlining: `let low = scale(n); let high = scale(n + 1); return low + high;`
+    // was inlined by the minifier to `return scale(n)+scale(n+1)`, so the generated statement maps
+    // back to several original statements out of order (the `return` maps after the inlined `let`s).
+    addComparison({
+        basename: "Debugger.SourceMapStepping.Minified.Inlining",
+        description: "Step-over through inlined single-use variables; enabled stepping should keep moving forwards (never jump backwards to the inlined statements' original lines).",
+        expression: "setTimeout(() => run(4))",
+        stepType: "over",
+        monotonic: true,
+    });
+
+    // Step into the mapped `helper` from the fused declarations.
+    addTestCase({
+        name: "Debugger.SourceMapStepping.Minified.Inlined.StepInto",
+        description: "Step-into the mapped `helper` callee from the fused declarations.",
+        expression: "setTimeout(() => inlined(4))",
+        sourceMapStepping: true,
+        steps: ["over", "in", "in", "out", "resume"],
+    });
+
+    Promise.all([
+        awaitSourceMap("source-map-stepping-minified.js.map"),
+        awaitSourceMap("source-map-stepping-inlined.js.map"),
+    ]).then(() => {
+        suite.runTestCasesAndFinish();
+    }).catch((error) => {
+        InspectorTest.fail("Failed to load source map: " + error);
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking source map stepping through realistic minifier transformations (inlining, constant folding, `;` to `,`, and `if` to `&&`).</p>
+</body>
+</html>
