@@ -98,7 +98,26 @@ public struct Future: Sendable, ~Copyable {
         case signaled
     }
 
-    private let state = Mutex<State>(.initial)
+    private final class Storage: Sendable {
+        let state = Mutex<State>(.initial)
+
+        func signal() {
+            let continuation = state.withLock { state -> CheckedContinuation<Void, Never>? in
+                defer {
+                    state = .signaled
+                }
+
+                if case .waiting(let continuation) = state {
+                    return continuation
+                }
+
+                return nil
+            }
+            continuation?.resume()
+        }
+    }
+
+    private let storage = Storage()
 
     /// Create a new Future.
     public init() {
@@ -106,40 +125,35 @@ public struct Future: Sendable, ~Copyable {
 
     /// Resolves the promise of this Future.
     public func signal() {
-        let continuation = state.withLock { state -> CheckedContinuation<Void, Never>? in
-            defer {
-                state = .signaled
-            }
-
-            if case .waiting(let continuation) = state {
-                return continuation
-            }
-
-            return nil
-        }
-        continuation?.resume()
+        storage.signal()
     }
 
-    /// Waits for the promise of this Future to be resolved.
+    /// Waits for the promise of this Future to be resolved, or for the current task to be cancelled.
     public func wait() async {
-        await withCheckedContinuation { continuation in
-            let resumeImmediately = state.withLock { state in
-                switch state {
-                case .signaled:
-                    return true
+        let storage = self.storage
 
-                case .initial:
-                    state = .waiting(continuation)
-                    return false
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                let resumeImmediately = storage.state.withLock { state in
+                    switch state {
+                    case .signaled:
+                        return true
 
-                case .waiting:
-                    preconditionFailure("Future only supports a single waiter")
+                    case .initial:
+                        state = .waiting(continuation)
+                        return false
+
+                    case .waiting:
+                        preconditionFailure("Future only supports a single waiter")
+                    }
+                }
+
+                if resumeImmediately {
+                    continuation.resume()
                 }
             }
-
-            if resumeImmediately {
-                continuation.resume()
-            }
+        } onCancel: {
+            storage.signal()
         }
     }
 }
