@@ -33,6 +33,15 @@ symbols = [
     "kCGImageProviderBitmapInfo",
 ]
 
+[[temporary-usage]]
+request = "rdar://186571377"
+cleanup = "rdar://186571467"
+symbols = [
+    "kIOSurfaceAlphaChannelMode",
+    "kIOSurfaceAlphaChannelMode_PremultipliedAlpha",
+    "kIOSurfaceAlphaChannelMode_StraightAlpha",
+]
+
 [[not-web-essential]]
 request = "rdar://157890384"
 classes = ["MTMaterialLayer"]
