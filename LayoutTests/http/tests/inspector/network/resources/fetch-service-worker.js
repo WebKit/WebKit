@@ -1,6 +1,10 @@
 self.addEventListener("fetch", (event) => {
     if (event.request.url.includes("test-200")) {
-        event.respondWith(new Response(null, {status: 200, statusText: "Custom Status Text: OK"}));
+        event.respondWith(new Response(null, {
+            status: 200,
+            statusText: "Custom Status Text: OK",
+            headers: {"Content-Type": "text/plain"},
+        }));
         return;
     }
 

@@ -718,7 +718,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
         this.dispatchEventToListeners(WI.Resource.Event.RedirectsDidChange);
 
-        if (oldURL !== request.url) {
+        if (oldURL !== this._url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             this._urlComponents = null;
 
@@ -782,25 +782,25 @@ WI.Resource = class Resource extends WI.SourceCode
             this._estimatedResponseHeadersSize += name.length + this._responseHeaders[name].length + headerPad;
 
         if (!this._cached) {
-            if (statusCode === 304 || (this._responseSource === WI.Resource.ResponseSource.MemoryCache || this._responseSource === WI.Resource.ResponseSource.DiskCache))
+            if (this._statusCode === 304 || (this._responseSource === WI.Resource.ResponseSource.MemoryCache || this._responseSource === WI.Resource.ResponseSource.DiskCache))
                 this.markAsCached();
         }
 
-        if (oldURL !== url) {
+        if (oldURL !== this._url) {
             // Delete the URL components so the URL is re-parsed the next time it is requested.
             this._urlComponents = null;
 
             this.dispatchEventToListeners(WI.Resource.Event.URLDidChange, {oldURL});
         }
 
-        if (oldMIMEType !== mimeType) {
+        if (oldMIMEType !== this._mimeType) {
             // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
             this._mimeTypeComponents = null;
 
             this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
         }
 
-        if (oldType !== type)
+        if (oldType !== this._type)
             this.dispatchEventToListeners(WI.Resource.Event.TypeDidChange, {oldType});
 
         console.assert(isNaN(this._estimatedSize));
@@ -808,7 +808,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
         // The transferSize becomes 0 when status is 304 or Content-Length is available, so
         // notify listeners of that change.
-        if (statusCode === 304 || this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
+        if (this._statusCode === 304 || this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
 
         this.dispatchEventToListeners(WI.Resource.Event.ResponseReceived);
