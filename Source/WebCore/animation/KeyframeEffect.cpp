@@ -2005,11 +2005,13 @@ bool KeyframeEffect::canBeAccelerated(AccountForTimelineAccelerationAbility acco
     if (m_isAssociatedWithProgressBasedTimeline)
         return false;
 
+#if !USE(COORDINATED_GRAPHICS)
     if (m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
         return false;
 
     if (m_someKeyframesUseLinearTimingFunctionWithPoints || isLinearTimingFunctionWithPoints(timingFunction()))
         return false;
+#endif
 
     if (m_compositeOperation != CompositeOperation::Replace)
         return false;
