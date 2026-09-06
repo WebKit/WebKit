@@ -60,6 +60,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobRegistryImpl);
 
 BlobRegistryImpl::~BlobRegistryImpl() = default;
 
+// A null String is the empty value of the hash maps keyed by blob URL below, so it is never a legal
+// key: hashing it would dereference a null StringImpl. Blob URLs reach us from the web process over
+// IPC, and an unparseable URL keeps its input string, so a null URL string has to be rejected here.
+static bool isValidBlobURLKey(const String& urlKey)
+{
+    return !urlKey.isNull();
+}
+
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     return blobRegistry()->blobRegistryImpl()->createResourceHandle(request, client);
@@ -196,7 +204,10 @@ void BlobRegistryImpl::registerInternalBlobURL(const URL& url, Vector<BlobPart>&
             break;
         }
         case BlobPart::Type::Blob: {
-            if (RefPtr blob = m_blobs.get(part.url().string()))
+            auto& partURLKey = part.url().string();
+            if (!isValidBlobURLKey(partURLKey))
+                break;
+            if (RefPtr blob = m_blobs.get(partURLKey))
                 blobData->m_items.appendVector(blob->items());
             break;
         }
@@ -284,6 +295,8 @@ void BlobRegistryImpl::unregisterBlobURL(const URL& url, const std::optional<Web
     ASSERT(isMainThread());
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     auto& urlKey = url.string();
+    if (!isValidBlobURLKey(urlKey))
+        return;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
         RELEASE_LOG_ERROR(Network, "BlobRegistryImpl::unregisterBlobURL: (%p) Rejecting unregistering blob URL with incorrect top origin.", this);
         return;
@@ -298,6 +311,8 @@ BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<
 {
     ASSERT(isMainThread());
     auto urlKey = url.stringWithoutFragmentIdentifier();
+    if (!isValidBlobURLKey(urlKey))
+        return nullptr;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
         RELEASE_LOG_ERROR(Network, "BlobRegistryImpl::blobDataFromURL: (%p) Requested blob URL with incorrect top origin.", this);
         return nullptr;
@@ -434,6 +449,8 @@ Vector<Ref<BlobDataFileReference>> BlobRegistryImpl::filesInBlob(const URL& url,
 void BlobRegistryImpl::addBlobData(const String& url, Ref<BlobData>&& blobData, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
     ASSERT(BlobURL::isInternalURL(URL { { }, url }) || topOrigin);
+    if (!isValidBlobURLKey(url))
+        return;
     auto addResult = m_blobs.set(url, WTF::move(blobData));
     if (!addResult.isNewEntry)
         return;
@@ -446,6 +463,8 @@ void BlobRegistryImpl::registerBlobURLHandle(const URL& url, const std::optional
 {
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     auto urlKey = url.stringWithoutFragmentIdentifier();
+    if (!isValidBlobURLKey(urlKey))
+        return;
     if (!m_blobs.contains(urlKey))
         return;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
@@ -459,6 +478,8 @@ void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::option
 {
     ASSERT(BlobURL::isInternalURL(url) || topOrigin);
     auto urlKey = url.stringWithoutFragmentIdentifier();
+    if (!isValidBlobURLKey(urlKey))
+        return;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
         RELEASE_LOG_ERROR(Network, "BlobRegistryImpl::unregisterBlobURLHandle: (%p) Rejecting unregistering blob URL handle with incorrect top origin", this);
         return;
