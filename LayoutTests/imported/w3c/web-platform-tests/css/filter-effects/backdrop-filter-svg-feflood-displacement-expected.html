@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- The uniform (dx=+8, dy=-8) sampling offset makes the filtered backdrop show the fuchsia
+     square, painted at (110, 110) behind the glass, at (102, 118). Everything else under and
+     around the glass is white. -->
+
+<div class="displacedpattern"></div>
+
+<style>
+body { margin: 0; background: white; }
+.displacedpattern {
+  position: absolute;
+  background: fuchsia;
+  width: 60px;
+  height: 60px;
+  top: 118px;
+  left: 102px;
+}
+</style>

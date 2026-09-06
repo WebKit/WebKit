@@ -1,0 +1,39 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter is clipped to the element's rounded border box</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-border-radius-expected.html">
+<meta name="fuzzy" content="maxDifference=0-255;totalPixels=0-1000">
+<!-- The fuzzy range covers the anti-aliased band along the circular clip edge, which differs
+     between the reference's native backdrop-filter clip and the software reference-filter clip,
+     and varies with platform and device scale. A missing clip (square corners, ~2150px) or a
+     dropped filter still fails. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="invert" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+  border-radius: 50%;
+  backdrop-filter: url(#invert);
+}
+</style>
