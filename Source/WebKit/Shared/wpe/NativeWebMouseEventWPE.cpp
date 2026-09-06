@@ -33,6 +33,10 @@
 
 namespace WebKit {
 
+#if !USE(LIBWPE)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebMouseEvent);
+#endif
+
 Ref<NativeWebMouseEvent> NativeWebMouseEvent::create(WPEEvent* event)
 {
     return adoptRef(*new NativeWebMouseEvent(WebEventFactory::createWebMouseEvent(event)));

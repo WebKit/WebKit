@@ -166,6 +166,7 @@ set(TestWTF_SOURCES
     Tests/WTF/StringView.cpp
     Tests/WTF/SuspendableWorkQueueTests.cpp
     Tests/WTF/SynchronizedFixedQueue.cpp
+    Tests/WTF/TZoneMalloc.cpp
     Tests/WTF/TextBreakIterator.cpp
     Tests/WTF/ThreadAssertionsTest.cpp
     Tests/WTF/ThreadGroup.cpp

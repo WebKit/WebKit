@@ -33,6 +33,10 @@
 
 namespace WebKit {
 
+#if !USE(LIBWPE)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(NativeWebWheelEvent);
+#endif
+
 Ref<NativeWebWheelEvent> NativeWebWheelEvent::create(WPEEvent* event)
 {
     return adoptRef(*new NativeWebWheelEvent(WebEventFactory::createWebWheelEvent(event)));

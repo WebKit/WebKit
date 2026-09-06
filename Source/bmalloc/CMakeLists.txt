@@ -26,6 +26,7 @@ set(bmalloc_SOURCES
     bmalloc/Mutex.cpp
     bmalloc/TZoneHeap.cpp
     bmalloc/TZoneHeapManager.cpp
+    bmalloc/TZoneLog.cpp
     bmalloc/VMAllocate.cpp
     bmalloc/bmalloc.cpp
 
@@ -628,12 +629,6 @@ set(bmalloc_PRIVATE_HEADERS
 if (USE_MIMALLOC)
     list(APPEND bmalloc_PUBLIC_HEADERS
         mimalloc/mimalloc/include/mimalloc.h
-    )
-endif ()
-
-if (APPLE)
-    list(APPEND bmalloc_SOURCES
-        bmalloc/TZoneLog.cpp
     )
 endif ()
 
