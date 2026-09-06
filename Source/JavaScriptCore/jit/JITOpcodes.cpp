@@ -1111,6 +1111,16 @@ void JIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
         emitPutVirtualRegister(dstVReg, regT0);
 }
 
+void JIT::emit_op_to_boolean(const JSInstruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpToBoolean>();
+    emitGetVirtualRegister(bytecode.m_operand, regT0);
+
+    addSlowCase(branchIfNotBoolean(regT0, regT2));
+
+    emitPutVirtualRegister(bytecode.m_dst, regT0);
+}
+
 void JIT::emit_op_to_string(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToString>();

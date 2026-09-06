@@ -221,6 +221,7 @@ namespace JSC::LOL {
     macro(op_to_primitive) \
     macro(op_to_number) \
     macro(op_to_numeric) \
+    macro(op_to_boolean) \
     macro(op_to_string) \
     macro(op_to_object) \
     macro(op_not) \

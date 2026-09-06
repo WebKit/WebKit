@@ -10925,6 +10925,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_to_numeric);
         }
 
+        case op_to_boolean: {
+            auto bytecode = currentInstruction->as<OpToBoolean>();
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(ToBoolean, value));
+            NEXT_OPCODE(op_to_boolean);
+        }
+
         case op_to_string: {
             auto bytecode = currentInstruction->as<OpToString>();
             Node* value = get(bytecode.m_operand);

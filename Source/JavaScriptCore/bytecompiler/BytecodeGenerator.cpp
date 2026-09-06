@@ -1766,9 +1766,22 @@ bool BytecodeGenerator::tryEmitTypeofIsUndefinedForStringComparison(RegisterID* 
 RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, RegisterID* src, ResultType type)
 {
     switch (opcodeID) {
-    case op_not:
-        emitUnaryOp<OpNot>(dst, src);
+    case op_not: {
+        if (!canDoPeepholeOptimization() || !m_lastInstruction->is<OpNot>()) {
+            emitUnaryOp<OpNot>(dst, src);
+            break;
+        }
+
+        auto op = m_lastInstruction->as<OpNot>();
+        if (src->virtualRegister() != op.m_dst || !src->isTemporary()) {
+            emitUnaryOp<OpNot>(dst, src);
+            break;
+        }
+
+        rewind();
+        OpToBoolean::emit(this, dst, op.m_operand);
         break;
+    }
     case op_negate:
         OpNegate::emit(this, dst, src, m_codeBlock->addUnaryArithProfile(), type);
         break;
@@ -1780,6 +1793,9 @@ RegisterID* BytecodeGenerator::emitUnaryOp(OpcodeID opcodeID, RegisterID* dst, R
         break;
     case op_to_numeric:
         OpToNumeric::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
+        break;
+    case op_to_boolean:
+        OpToBoolean::emit(this, dst, src);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1881,6 +1897,12 @@ RegisterID* BytecodeGenerator::emitToNumber(RegisterID* dst, RegisterID* src)
 RegisterID* BytecodeGenerator::emitToNumeric(RegisterID* dst, RegisterID* src)
 {
     OpToNumeric::emit(this, dst, src, m_codeBlock->addUnaryArithProfile());
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitToBoolean(RegisterID* dst, RegisterID* src)
+{
+    OpToBoolean::emit(this, dst, src);
     return dst;
 }
 
