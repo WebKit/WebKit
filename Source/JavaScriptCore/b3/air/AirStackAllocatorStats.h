@@ -32,6 +32,7 @@
 namespace JSC { namespace B3 { namespace Air {
 
 #define FOR_EACH_STACK_ALLOCATOR_STAT(macro) \
+    macro(numBlocks)                         \
     macro(numStackSlots)                     \
     macro(stackSlotInterferenceSizeBytes)    \
     macro(numStackSlotsCoalesceableMoves)    \
@@ -40,7 +41,7 @@ namespace JSC { namespace B3 { namespace Air {
 
 class AirStackAllocatorStats {
 public:
-    AirStackAllocatorStats() = default;
+    AirStackAllocatorStats(const String& label = { }) { setLabel(label); }
 
     ASCIILiteral name() const { return "StackAlloc"_s; }
 

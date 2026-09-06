@@ -29,15 +29,17 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArgInlines.h"
+#include "AirCFG.h"
 #include "AirCode.h"
 #include "AirHandleCalleeSaves.h"
 #include "AirInstInlines.h"
-#include "AirLiveness.h"
 #include "AirPhaseScope.h"
 #include "AirStackAllocation.h"
 #include "AirStackAllocatorStats.h"
+#include "CompilerTimingScope.h"
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/InterferenceGraph.h>
-#include <wtf/ListDump.h>
+#include <wtf/Liveness.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -48,6 +50,272 @@ static constexpr bool verbose = false;
 static constexpr bool reportLargeMemoryUses = false;
 }
 
+// We will perform some spill coalescing. To make that effective, we need to be able to identify
+// coalescable moves and handle them specially in interference analysis.
+bool isCoalescableMove(Inst& inst, bool coalesceSpillSlots)
+{
+    if (!coalesceSpillSlots)
+        return false;
+
+    Width width;
+    switch (inst.kind.opcode) {
+    case Move:
+        width = pointerWidth();
+        break;
+    case Move32:
+    case MoveFloat:
+        width = Width32;
+        break;
+    case MoveDouble:
+        width = Width64;
+        break;
+    case MoveVector:
+        width = Width128;
+        break;
+    default:
+        return false;
+    }
+
+    if (inst.args().size() != 3)
+        return false;
+
+    for (unsigned i = 0; i < 2; ++i) {
+        Arg arg = inst.args()[i];
+        if (!arg.isStack())
+            return false;
+        StackSlot* slot = arg.stackSlot();
+        if (slot->kind() != StackSlotKind::Spill)
+            return false;
+        if (slot->byteSize() != bytesForWidth(width))
+            return false;
+    }
+
+    return true;
+}
+
+bool isUselessMove(Inst& inst, bool coalesceSpillSlots)
+{
+    return isCoalescableMove(inst, coalesceSpillSlots) && inst.args()[0] == inst.args()[1];
+}
+
+// The stack slot mentions, dead store candidates and coalescable move sites of a whole function,
+// collected in one forward walk over the instructions.
+//
+// A mention carries the instruction boundary it happens at, and they land in one flat array sorted by
+// boundary: an early action of instruction i belongs to boundary i and a late action to boundary
+// i + 1, so staging the late actions of i and appending them once i is decoded keeps it sorted.
+//
+// The kill candidates cannot be derived from the mentions: an instruction with no arguments at all
+// satisfies the predicate vacuously. The coalescable moves have to reach coalesceSlots in the order
+// the interference build reports them, because it sorts them with an unstable sort and a different
+// order would silently change which slots get coalesced.
+class StackSlotActions {
+    WTF_MAKE_NONCOPYABLE(StackSlotActions);
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    enum ActionKind : uint8_t { UseAction, EarlyDefAction, LateDefAction };
+
+    struct Action {
+        uint32_t boundary { 0 };
+        uint32_t slotIndex { 0 };
+        ActionKind kind { UseAction };
+        bool isSpill { false };
+    };
+
+    struct MoveSite {
+        uint32_t instIndex { 0 };
+        uint32_t src { 0 };
+        uint32_t dst { 0 };
+    };
+
+    StackSlotActions(Code& code, bool coalesceSpillSlots)
+        : m_code(code)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::actions"_s);
+
+        m_blockData.grow(code.size());
+
+        Vector<Action, 8> lateActions;
+        for (BasicBlock* block : code) {
+            BlockData& data = m_blockData[block->index()];
+            data.actionStart = m_actions.size();
+            data.killStart = m_killCandidates.size();
+            data.moveStart = m_moveSites.size();
+
+            unsigned blockSize = block->size();
+            for (unsigned instIndex = 0; instIndex < blockSize; ++instIndex) {
+                Inst& inst = block->at(instIndex);
+
+                // A dead store candidate has no effects beyond its arguments and defines only spill
+                // slots, late. That is the only kind of dead stack store this phase will see.
+                bool isKillCandidate = !inst.hasNonArgEffects();
+                lateActions.shrink(0);
+                inst.forEachArg(
+                    [&] (Arg& arg, Arg::Role role, Bank, Width) {
+                        bool isSpill = false;
+                        if (arg.isStack()) {
+                            StackSlot* slot = arg.stackSlot();
+                            uint32_t index = slot->index();
+                            isSpill = slot->kind() == StackSlotKind::Spill;
+                            if (Arg::isEarlyUse(role))
+                                m_actions.append({ instIndex, index, UseAction, isSpill });
+                            if (Arg::isEarlyDef(role))
+                                m_actions.append({ instIndex, index, EarlyDefAction, isSpill });
+                            if (Arg::isLateUse(role))
+                                lateActions.append({ instIndex + 1, index, UseAction, isSpill });
+                            if (Arg::isLateDef(role))
+                                lateActions.append({ instIndex + 1, index, LateDefAction, isSpill });
+                        }
+                        if (Arg::isEarlyDef(role))
+                            isKillCandidate = false;
+                        else if (Arg::isLateDef(role) && !isSpill)
+                            isKillCandidate = false;
+                    });
+                m_actions.appendVector(lateActions);
+
+                if (isKillCandidate)
+                    m_killCandidates.append(instIndex);
+
+                if (isCoalescableMove(inst, coalesceSpillSlots)) {
+                    m_moveSites.append({ instIndex, inst.args()[0].stackSlot()->index(), inst.args()[1].stackSlot()->index() });
+                    if (inst.args()[0] == inst.args()[1])
+                        m_sawUselessMove = true;
+                }
+            }
+
+            data.actionEnd = m_actions.size();
+            data.killEnd = m_killCandidates.size();
+            data.moveEnd = m_moveSites.size();
+        }
+    }
+
+    Code& code() const { return m_code; }
+    unsigned numIndices() const { return m_code.stackSlots().size(); }
+    bool sawUselessMove() const { return m_sawUselessMove; }
+
+    std::span<const Action> actionsFor(BasicBlock* block) const
+    {
+        const BlockData& data = m_blockData[block->index()];
+        return m_actions.subspan(data.actionStart, data.actionEnd - data.actionStart);
+    }
+
+    std::span<const uint32_t> killCandidatesFor(BasicBlock* block) const
+    {
+        const BlockData& data = m_blockData[block->index()];
+        return m_killCandidates.subspan(data.killStart, data.killEnd - data.killStart);
+    }
+
+    std::span<const MoveSite> moveSitesFor(BasicBlock* block) const
+    {
+        const BlockData& data = m_blockData[block->index()];
+        return m_moveSites.subspan(data.moveStart, data.moveEnd - data.moveStart);
+    }
+
+    // Boundary numbers restart at zero in every block, so `actions` has to be exactly one block's
+    // actions. The actions of one boundary are contiguous, so a boundary is a subspan and finding the
+    // next one going backwards is a scan over equal boundaries.
+    static std::span<const Action> groupEndingAt(std::span<const Action> actions, size_t end)
+    {
+        ASSERT(end);
+        uint32_t boundary = actions[end - 1].boundary;
+        size_t start = end;
+        while (start && actions[start - 1].boundary == boundary)
+            --start;
+        return actions.subspan(start, end - start);
+    }
+
+private:
+    struct BlockData {
+        uint32_t actionStart { 0 };
+        uint32_t actionEnd { 0 };
+        uint32_t killStart { 0 };
+        uint32_t killEnd { 0 };
+        uint32_t moveStart { 0 };
+        uint32_t moveEnd { 0 };
+    };
+
+    Code& m_code;
+    bool m_sawUselessMove { false };
+    Vector<Action> m_actions;
+    Vector<uint32_t> m_killCandidates;
+    Vector<MoveSite> m_moveSites;
+    Vector<BlockData> m_blockData;
+};
+
+// Boundaries with no mentions are simply absent, which is what keeps the fixpoint proportional to the
+// mentions rather than to the instructions.
+struct StackSlotLivenessAdapter {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    typedef Air::CFG CFG;
+    typedef StackSlot* Thing;
+    using ActionGroup = std::span<const StackSlotActions::Action>;
+
+    StackSlotLivenessAdapter(const StackSlotActions& actions)
+        : actions(actions)
+    {
+    }
+
+    void prepareToCompute() { }
+
+    unsigned numIndices() const { return actions.numIndices(); }
+    unsigned blockSize(BasicBlock* block) const { return block->size(); }
+    static unsigned valueToIndex(StackSlot* slot) { return slot->index(); }
+    StackSlot* indexToValue(unsigned index) const { return actions.code().stackSlots()[index]; }
+
+    template<typename Func>
+    void forEachActionGroupDescending(BasicBlock* block, const Func& func) const
+    {
+        auto blockActions = actions.actionsFor(block);
+        size_t end = blockActions.size();
+        while (end) {
+            ActionGroup group = StackSlotActions::groupEndingAt(blockActions, end);
+            func(group.front().boundary, group);
+            end -= group.size();
+        }
+    }
+
+    template<typename Func>
+    static void forEachUseInGroup(ActionGroup group, const Func& func)
+    {
+        for (const auto& action : group) {
+            if (action.kind == StackSlotActions::UseAction)
+                func(action.slotIndex);
+        }
+    }
+
+    template<typename Func>
+    static void forEachDefInGroup(ActionGroup group, const Func& func)
+    {
+        for (const auto& action : group) {
+            if (action.kind != StackSlotActions::UseAction)
+                func(action.slotIndex);
+        }
+    }
+
+    template<typename Func>
+    void forEachUseAtTail(BasicBlock* block, const Func& func) const
+    {
+        auto blockActions = actions.actionsFor(block);
+        if (blockActions.empty() || blockActions.back().boundary != block->size())
+            return;
+        forEachUseInGroup(StackSlotActions::groupEndingAt(blockActions, blockActions.size()), func);
+    }
+
+    const StackSlotActions& actions;
+};
+
+class StackSlotLiveness final : public WTF::Liveness<StackSlotLivenessAdapter> {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    StackSlotLiveness(Code& code, const StackSlotActions& actions)
+        : WTF::Liveness<StackSlotLivenessAdapter>(code.cfg(), actions)
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::liveness"_s);
+        compute();
+    }
+};
+
 class StackAllocatorBase {
 protected:
     StackAllocatorBase(Code& code)
@@ -56,54 +324,6 @@ protected:
     {
         for (unsigned i = 0; i < m_remappedStackSlotIndices.size(); ++i)
             m_remappedStackSlotIndices[i] = i;
-    }
-
-    // We will perform some spill coalescing. To make that effective, we need to be able to identify
-    // coalescable moves and handle them specially in interference analysis.
-    bool NODELETE isCoalescableMove(Inst& inst) const
-    {
-        if (!Options::coalesceSpillSlots())
-            return false;
-
-        Width width;
-        switch (inst.kind.opcode) {
-        case Move:
-            width = pointerWidth();
-            break;
-        case Move32:
-        case MoveFloat:
-            width = Width32;
-            break;
-        case MoveDouble:
-            width = Width64;
-            break;
-        case MoveVector:
-            width = Width128;
-            break;
-        default:
-            return false;
-        }
-
-        if (inst.args().size() != 3)
-            return false;
-
-        for (unsigned i = 0; i < 2; ++i) {
-            Arg arg = inst.args()[i];
-            if (!arg.isStack())
-                return false;
-            StackSlot* slot = arg.stackSlot();
-            if (slot->kind() != StackSlotKind::Spill)
-                return false;
-            if (slot->byteSize() != bytesForWidth(width))
-                return false;
-        }
-
-        return true;
-    }
-
-    bool NODELETE isUselessMove(Inst& inst) const
-    {
-        return isCoalescableMove(inst) && inst.args()[0] == inst.args()[1];
     }
 
     unsigned NODELETE remap(unsigned slotIndex) const
@@ -138,16 +358,20 @@ public:
         : StackAllocatorBase(code)
         , m_interference()
         , m_coalescableMoves()
+        , m_stats(code.proc().name())
     {
         m_interference.setMaxIndex(m_code.stackSlots().size());
     }
 
     void run(const Vector<StackSlot*>& assignedEscapedStackSlots)
     {
-        StackSlotLiveness liveness(m_code);
+        bool coalesceSpillSlots = Options::coalesceSpillSlots();
 
+        StackSlotActions actions(m_code, coalesceSpillSlots);
+        StackSlotLiveness liveness(m_code, actions);
         buildInterferenceGraph(liveness);
-        coalesceSlots();
+
+        coalesceSlots(coalesceSpillSlots, actions.sawUselessMove());
         assignStackLocations(assignedEscapedStackSlots);
 
         updateFrameSizeBasedOnStackSlots(m_code);
@@ -159,90 +383,130 @@ private:
     {
         CompilerTimingScope timingScope("Air"_s, "StackAllocator::build"_s);
 
+        const StackSlotActions& actions = liveness.actions;
+        auto workset = liveness.makeWorkset();
+
         for (BasicBlock* block : m_code) {
-            StackSlotLiveness::LocalCalc localCalc(liveness, block);
+            auto blockActions = actions.actionsFor(block);
+            auto killCandidates = actions.killCandidatesFor(block);
+            auto moveSites = actions.moveSitesFor(block);
 
-            auto interfere = [&] (unsigned instIndex) {
-                if (AirAllocateStackByGraphColoringInternal::verbose)
-                    dataLog("Interfering: ", WTF::pointerListDump(localCalc.live()), "\n");
+            if (!blockActions.empty() || !killCandidates.empty() || !moveSites.empty()) {
+                liveness.copyLiveAtTailInto(workset, block);
 
-                Inst* prevInst = block->get(instIndex);
-                Inst* nextInst = block->get(instIndex + 1);
-                if (prevInst && isCoalescableMove(*prevInst)) {
-                    CoalescableMove move(prevInst->args()[0].stackSlot()->index(), prevInst->args()[1].stackSlot()->index(), block->frequency());
+                size_t actionEnd = blockActions.size();
+                size_t killIndex = killCandidates.size();
+                size_t moveIndex = moveSites.size();
 
-                    m_coalescableMoves.append(move);
+                for (;;) {
+                    // Visit boundaries from the tail down, skipping any that mentions no stack slot
+                    // and holds neither a kill candidate nor a coalescable move: those cannot change
+                    // the live set or add an edge.
+                    int64_t actionBoundary = actionEnd ? static_cast<int64_t>(blockActions[actionEnd - 1].boundary) : -1;
+                    int64_t killBoundary = killIndex ? static_cast<int64_t>(killCandidates[killIndex - 1]) + 1 : -1;
+                    int64_t moveBoundary = moveIndex ? static_cast<int64_t>(moveSites[moveIndex - 1].instIndex) + 1 : -1;
+                    int64_t boundary = std::max({ actionBoundary, killBoundary, moveBoundary });
+                    if (boundary < 0)
+                        break;
 
-                    for (StackSlot* otherSlot : localCalc.live()) {
-                        unsigned otherSlotIndex = otherSlot->index();
-                        if (otherSlotIndex != move.src)
-                            addEdge(move.dst, otherSlotIndex);
+                    std::span<const StackSlotActions::Action> group;
+                    if (actionBoundary == boundary) {
+                        group = StackSlotActions::groupEndingAt(blockActions, actionEnd);
+                        actionEnd -= group.size();
                     }
 
-                    prevInst = nullptr;
+                    // Completes the previous boundary's transfer. The uses at the tail boundary are
+                    // already part of liveAtTail, so re-adding them is a harmless no-op.
+                    for (const auto& action : group) {
+                        if (action.kind == StackSlotActions::UseAction)
+                            workset.add(action.slotIndex);
+                    }
+
+                    if (AirAllocateStackByGraphColoringInternal::verbose) {
+                        dataLog("Boundary ", boundary, " of block ", block->index(), ", live:");
+                        workset.forEachSetBit(
+                            [&] (unsigned slotIndex) {
+                                dataLog(" ", pointerDump(m_code.stackSlots()[slotIndex]));
+                            });
+                        if (boundary)
+                            dataLog(", after: ", block->at(boundary - 1));
+                        dataLogLn();
+                    }
+
+                    bool killedPreviousInst = false;
+                    if (killBoundary == boundary) {
+                        --killIndex;
+                        uint32_t candidateInstIndex = killCandidates[killIndex];
+                        // All late defs at this boundary belong to the candidate, so the store is dead
+                        // exactly when none of them is live here.
+                        bool isDeadStore = true;
+                        for (const auto& action : group) {
+                            if (action.kind == StackSlotActions::LateDefAction && workset.contains(action.slotIndex)) {
+                                isDeadStore = false;
+                                break;
+                            }
+                        }
+                        if (isDeadStore) {
+                            dataLogLnIf(AirAllocateStackByGraphColoringInternal::verbose, "Killing dead store: ", block->at(candidateInstIndex));
+                            block->at(candidateInstIndex) = Inst();
+                            killedPreviousInst = true;
+                        }
+                    }
+
+                    // A coalescable move's destination does not interfere with its source, so it is
+                    // handled separately and its late def is left out of the loop below. A killed
+                    // store is gone, so it can no longer be coalesced.
+                    bool previousInstIsCoalescableMove = false;
+                    if (moveBoundary == boundary) {
+                        --moveIndex;
+                        if (!killedPreviousInst) {
+                            const auto& site = moveSites[moveIndex];
+                            previousInstIsCoalescableMove = true;
+                            m_coalescableMoves.append(CoalescableMove(site.src, site.dst, block->frequency()));
+                            workset.forEachSetBit(
+                                [&] (unsigned otherSlotIndex) {
+                                    if (otherSlotIndex != site.src)
+                                        addEdge(site.dst, otherSlotIndex);
+                                });
+                        }
+                    }
+
+                    for (const auto& action : group) {
+                        if (action.kind == StackSlotActions::UseAction || !action.isSpill)
+                            continue;
+                        // All late defs at this boundary belong to the previous instruction, so they
+                        // are exactly what a kill or a coalescable move suppresses.
+                        if (action.kind == StackSlotActions::LateDefAction && (killedPreviousInst || previousInstIsCoalescableMove))
+                            continue;
+                        uint32_t slotIndex = action.slotIndex;
+                        workset.forEachSetBit(
+                            [&] (unsigned otherSlotIndex) {
+                                addEdge(slotIndex, otherSlotIndex);
+                            });
+                    }
+
+                    for (const auto& action : group) {
+                        if (action.kind != StackSlotActions::UseAction)
+                            workset.remove(action.slotIndex);
+                    }
                 }
-                Inst::forEachDef<Arg>(
-                    prevInst, nextInst,
-                    [&] (Arg& arg, Arg::Role, Bank, Width) {
-                        if (!arg.isStack())
-                            return;
-                        StackSlot* slot = arg.stackSlot();
-                        if (slot->kind() != StackSlotKind::Spill)
-                            return;
 
-                        for (StackSlot* otherSlot : localCalc.live())
-                            addEdge(slot, otherSlot);
-                    });
-            };
-
-            for (unsigned instIndex = block->size(); instIndex--;) {
-                if (AirAllocateStackByGraphColoringInternal::verbose)
-                    dataLog("Analyzing: ", block->at(instIndex), "\n");
-
-                // Kill dead stores. For simplicity we say that a store is killable if it has only late
-                // defs and those late defs are to things that are dead right now. We only do that
-                // because that's the only kind of dead stack store we will see here.
-                Inst& inst = block->at(instIndex);
-                if (!inst.hasNonArgEffects()) {
-                    bool ok = true;
-                    inst.forEachArg(
-                        [&] (Arg& arg, Arg::Role role, Bank, Width) {
-                            if (Arg::isEarlyDef(role)) {
-                                ok = false;
-                                return;
-                            }
-                            if (!Arg::isLateDef(role))
-                                return;
-                            if (!arg.isStack()) {
-                                ok = false;
-                                return;
-                            }
-                            StackSlot* slot = arg.stackSlot();
-                            if (slot->kind() != StackSlotKind::Spill) {
-                                ok = false;
-                                return;
-                            }
-
-                            if (localCalc.isLive(slot)) {
-                                ok = false;
-                                return;
-                            }
-                        });
-                    if (ok)
-                        inst = Inst();
-                }
-
-                interfere(instIndex);
-                localCalc.execute(instIndex);
+                ASSERT(!actionEnd && !killIndex && !moveIndex);
             }
-            interfere(-1);
 
+            // Unconditional because fixObviousSpills, which runs immediately before this phase, leaves
+            // the instructions it deletes in the block for a later pass to drop.
             block->insts().removeAllMatching(
                 [&] (const Inst& inst) -> bool {
                     return !inst;
                 });
         }
 
+        reportInterferenceGraph();
+    }
+
+    void reportInterferenceGraph()
+    {
         if (AirAllocateStackByGraphColoringInternal::reportLargeMemoryUses && m_interference.memoryUse() > 1024) {
             dataLog("GraphColoringStackAllocator stackSlots, interferenceGraph(kB), coalescable moves(kB): ", m_code.stackSlots().size(), " : ");
             m_interference.dumpMemoryUseInKB();
@@ -260,19 +524,24 @@ private:
         }
     }
 
-    void coalesceSlots()
+    void coalesceSlots(bool coalesceSpillSlots, bool sawUselessMove)
     {
         CompilerTimingScope timingScope("Air"_s, "StackAllocator::coalesce"_s);
 
         if (m_stats.collectingStats()) {
+            m_stats.numBlocks = m_code.size();
             m_stats.numStackSlots = m_code.stackSlots().size();
             m_stats.stackSlotInterferenceSizeBytes = m_interference.memoryUse();
             m_stats.numStackSlotsCoalesceableMoves = m_coalescableMoves.size();
         }
 
         // Now try to coalesce some moves.
+        if (m_coalescableMoves.isEmpty() && !sawUselessMove)
+            return;
+
         std::ranges::sort(m_coalescableMoves, std::ranges::greater { }, &CoalescableMove::frequency);
 
+        bool anyRemapHappened = false;
         for (const CoalescableMove& move : m_coalescableMoves) {
             IndexType slotToKill = remap(move.src);
             IndexType slotToKeep = remap(move.dst);
@@ -283,11 +552,15 @@ private:
 
             m_stats.numStackSlotsCoalesced++;
             m_remappedStackSlotIndices[slotToKill] = slotToKeep;
+            anyRemapHappened = true;
 
             for (IndexType interferingSlot : m_interference[slotToKill])
                 addEdge(interferingSlot, slotToKeep);
             m_interference.mayClear(slotToKill);
         }
+
+        if (!anyRemapHappened && !sawUselessMove)
+            return;
 
         for (BasicBlock* block : m_code) {
             for (Inst& inst : *block) {
@@ -295,7 +568,7 @@ private:
                     if (arg.isStack())
                         arg = Arg::stack(remapStackSlot(arg.stackSlot()), arg.offset());
                 }
-                if (isUselessMove(inst))
+                if (isUselessMove(inst, coalesceSpillSlots))
                     inst = Inst();
             }
         }
@@ -308,7 +581,7 @@ private:
         // Now we assign stack locations. At its heart this algorithm is just first-fit. For each
         // StackSlot we just want to find the offsetFromFP that is least negative while ensuring no
         // overlap with other StackSlots that this overlaps with.
-        Vector<StackSlot*> otherSlots = assignedEscapedStackSlots;
+        Vector<StackSlot*> otherSlots;
         for (StackSlot* slot : m_code.stackSlots()) {
             if (isRemappedSlotIndex(slot->index()))
                 continue;
@@ -369,11 +642,6 @@ private:
         m_interference.add(u, v);
     }
 
-    void addEdge(StackSlot* u, StackSlot* v)
-    {
-        addEdge(u->index(), v->index());
-    }
-
     InterferenceGraph m_interference;
     Vector<CoalescableMove> m_coalescableMoves;
     AirStackAllocatorStats m_stats;
@@ -397,10 +665,15 @@ void allocateStackByGraphColoring(Code& code)
 {
     PhaseScope phaseScope(code, "allocateStackByGraphColoring"_s);
 
-    handleCalleeSaves(code);
+    {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::calleeSaves"_s);
+        handleCalleeSaves(code);
+    }
 
-    Vector<StackSlot*> assignedEscapedStackSlots =
-        allocateAndGetEscapedStackSlotsWithoutChangingFrameSize(code);
+    Vector<StackSlot*> assignedEscapedStackSlots = [&] {
+        CompilerTimingScope timingScope("Air"_s, "StackAllocator::escapedSlots"_s);
+        return allocateAndGetEscapedStackSlotsWithoutChangingFrameSize(code);
+    }();
 
     if (!doTrivialStackAllocation(code)) {
         if (code.stackSlots().size() < WTF::maxSizeForSmallInterferenceGraph) {
@@ -421,4 +694,3 @@ void allocateStackByGraphColoring(Code& code)
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
-

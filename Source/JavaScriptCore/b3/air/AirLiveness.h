@@ -44,7 +44,7 @@ public:
         : WTF::Liveness<Adapter>(code.cfg(), code)
     {
         SuperSamplerScope samplingScope(false);
-        CompilerTimingScope timingScope("Air"_s, "Liveness"_s);
+        CompilerTimingScope timingScope("Air"_s, Adapter::name);
         WTF::Liveness<Adapter>::compute();
     }
 };
@@ -57,7 +57,6 @@ using TmpLiveness = Liveness<TmpLivenessAdapter<bank, minimumTemperature>>;
 typedef Liveness<TmpLivenessAdapter<GP>> GPLiveness;
 typedef Liveness<TmpLivenessAdapter<FP>> FPLiveness;
 typedef Liveness<UnifiedTmpLivenessAdapter> UnifiedTmpLiveness;
-typedef Liveness<StackSlotLivenessAdapter> StackSlotLiveness;
 
 } } } // namespace JSC::B3::Air
 
