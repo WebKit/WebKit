@@ -38,6 +38,7 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/RegularExpression.h>
+#include <JavaScriptCore/WeakGCSet.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -80,7 +81,7 @@ public:
     Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::ArrayOf<Protocol::Debugger::Location>>>> setBreakpointByUrl(int lineNumber, const String& url, const String& urlRegex, std::optional<int>&& columnNumber, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<Protocol::Debugger::Location>>> setBreakpoint(Ref<JSON::Object>&& location, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> removeBreakpoint(const Protocol::Debugger::BreakpointId&) final;
-    Protocol::ErrorStringOr<void> addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Protocol::ErrorStringOr<void> addSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, std::optional<bool>&& matchFunctionCalls, std::optional<bool>&& matchPropertyReads, RefPtr<JSON::Object>&& options) final;
     Protocol::ErrorStringOr<void> removeSymbolicBreakpoint(const String& symbol, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     Protocol::ErrorStringOr<void> continueUntilNextRunLoop() final;
     Protocol::ErrorStringOr<void> continueToLocation(Ref<JSON::Object>&& location) final;
@@ -115,6 +116,8 @@ public:
     void didCreateInternalFunction(JSC::InternalFunction&) final;
     void willCallInternalFunction(JSC::InternalFunction&) final;
     void willEnter(JSC::CallFrame*) final;
+    void willReadProperty(const String&) final;
+
     void didQueueMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void willRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
     void didRunMicrotask(JSC::JSGlobalObject*, JSC::MicrotaskIdentifier) final;
@@ -311,11 +314,14 @@ private:
         bool caseSensitive { true };
         bool isRegex { false };
 
-        // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
+        // These are only used for the breakpoint configuration (i.e. they're irrelevant when comparing).
+        bool matchFunctionCalls { true };
+        bool matchPropertyReads { false };
         RefPtr<JSC::Breakpoint> specialBreakpoint;
 
-        // Avoid having to (re)match the searcher each time a function as called.
+        // Avoid having to (re)match the searcher each time a matching symbol is encountered.
         UncheckedKeyHashSet<String> knownMatchingSymbols;
+        std::unique_ptr<JSC::WeakGCSet<JSC::CodeBlock>> knownMatchingCodeBlocks;
 
         inline bool operator==(const SymbolicBreakpoint& other) const
         {
@@ -325,6 +331,7 @@ private:
         }
 
         bool matches(const String&);
+        bool matches(JSC::CodeBlock&);
 
     private:
         std::optional<ContentSearchUtilities::Searcher> m_symbolSearcher;

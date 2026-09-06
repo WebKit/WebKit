@@ -2825,6 +2825,7 @@ RegisterID* BytecodeGenerator::emitInById(RegisterID* dst, RegisterID* base, con
 
 RegisterID* BytecodeGenerator::emitGetLength(RegisterID* dst, RegisterID* base)
 {
+    emitWillReadPropertyDebugHook(m_vm.propertyNames->length);
     OpGetLength::emit(this, kill(dst), base, nextValueProfileIndex());
     return dst;
 }
@@ -2833,6 +2834,7 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, co
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
+    emitWillReadPropertyDebugHook(property);
     if (property == m_vm.propertyNames->length)
         OpGetLength::emit(this, kill(dst), base, nextValueProfileIndex());
     else
@@ -2844,6 +2846,7 @@ RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, Re
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val.");
 
+    emitWillReadPropertyDebugHook(property);
     OpGetByIdWithThis::emit(this, kill(dst), base, thisVal, addConstant(property), nextValueProfileIndex());
     return dst;
 }
@@ -2852,6 +2855,7 @@ RegisterID* BytecodeGenerator::emitDirectGetById(RegisterID* dst, RegisterID* ba
 {
     ASSERT_WITH_MESSAGE(!parseIndex(property), "Indexed properties should be handled with get_by_val_direct.");
 
+    emitWillReadPropertyDebugHook(property);
     OpGetByIdDirect::emit(this, kill(dst), base, addConstant(property), nextValueProfileIndex());
     return dst;
 }
@@ -2959,17 +2963,24 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
             continue;
 
         // FIXME: We should have a better bytecode rewriter that can resize chunks.
+        emitWillReadPropertyDebugHook(property);
         OpEnumeratorGetByVal::emit<OpcodeSize::Wide32>(this, kill(dst), base, context.mode(), property, context.propertyOffset(), context.enumerator(), nextValueProfileIndex());
         context.addGetInst(m_lastInstruction.offset(), property->index());
         return dst;
     }
 
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillReadPropertyDebugHook(property, protectedProperty);
+    emitWillReadPropertyDebugHook(property);
     OpGetByVal::emit(this, kill(dst), base, property, nextValueProfileIndex());
     return dst;
 }
 
 RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillReadPropertyDebugHook(property, protectedProperty);
+    emitWillReadPropertyDebugHook(property);
     OpGetByValWithThis::emit(this, kill(dst), base, thisValue, property, nextValueProfileIndex());
     return dst;
 }
@@ -4166,6 +4177,34 @@ void BytecodeGenerator::emitDebugHook(StatementNode* statement, RegisterID* data
 void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, RegisterID* data)
 {
     emitDebugHook(WillExecuteStatement, expr->position(), data);
+}
+
+RegisterID* BytecodeGenerator::preparePropertyForWillReadPropertyDebugHook(RegisterID* property, RefPtr<RegisterID>& protectedProperty)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return property;
+
+    protectedProperty = emitToPropertyKeyOrNumber(newTemporary(), property);
+    return protectedProperty.get();
+}
+
+void BytecodeGenerator::emitWillReadPropertyDebugHook(RegisterID* property)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return;
+
+    OpDebug::emit(this, WillReadProperty, property);
+}
+
+void BytecodeGenerator::emitWillReadPropertyDebugHook(const Identifier& property)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return;
+
+    if (property.isSymbol())
+        return;
+
+    OpDebug::emit(this, WillReadProperty, emitLoad(nullptr, property));
 }
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
