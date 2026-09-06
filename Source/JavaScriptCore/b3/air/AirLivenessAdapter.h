@@ -131,6 +131,38 @@ public:
         return block->size();
     }
 
+    // Nearly every instruction mentions a Tmp, so every boundary is worth visiting and a group is
+    // just the one record that holds both of that boundary's lists.
+    using ActionGroup = Actions*;
+
+    template<typename Func>
+    void forEachActionGroupDescending(BasicBlock* block, const Func& func)
+    {
+        ActionsForBoundary& actionsForBoundary = actions[block];
+        for (unsigned boundary = block->size() + 1; boundary--;)
+            func(boundary, &actionsForBoundary[boundary]);
+    }
+
+    template<typename Func>
+    static void forEachUseInGroup(ActionGroup group, const Func& func)
+    {
+        for (unsigned index : group->use)
+            func(index);
+    }
+
+    template<typename Func>
+    static void forEachDefInGroup(ActionGroup group, const Func& func)
+    {
+        for (unsigned index : group->def)
+            func(index);
+    }
+
+    template<typename Func>
+    void forEachUseAtTail(BasicBlock* block, const Func& func)
+    {
+        forEachUse(block, block->size(), func);
+    }
+
     template<typename Func>
     void forEachUse(BasicBlock* block, size_t instBoundaryIndex, const Func& func)
     {
@@ -155,7 +187,7 @@ struct TmpLivenessAdapter : LivenessAdapter<TmpLivenessAdapter<adapterBank, mini
 public:
     typedef LivenessAdapter<TmpLivenessAdapter<adapterBank, minimumTemperature>> Base;
 
-    static constexpr const char* name = "TmpLiveness";
+    static constexpr ASCIILiteral name = "TmpLiveness"_s;
     typedef Tmp Thing;
 
     TmpLivenessAdapter(Code& code)
@@ -186,7 +218,7 @@ struct UnifiedTmpLivenessAdapter : LivenessAdapter<UnifiedTmpLivenessAdapter> {
 public:
     typedef LivenessAdapter<UnifiedTmpLivenessAdapter> Base;
 
-    static constexpr const char* name = "UnifiedTmpLiveness";
+    static constexpr ASCIILiteral name = "UnifiedTmpLiveness"_s;
 
     typedef Tmp Thing;
 
@@ -204,27 +236,6 @@ public:
     static bool acceptsRole(Arg::Role) { return true; }
     unsigned valueToIndex(Tmp tmp) { return tmp.linearlyIndexed(code).index(); }
     Tmp indexToValue(unsigned index) { return Tmp::tmpForLinearIndex(code, index); }
-};
-
-struct StackSlotLivenessAdapter : LivenessAdapter<StackSlotLivenessAdapter> {
-    WTF_MAKE_SEQUESTERED_ARENA_ALLOCATED(StackSlotLivenessAdapter);
-public:
-    static constexpr const char* name = "StackSlotLiveness";
-    typedef StackSlot* Thing;
-
-    StackSlotLivenessAdapter(Code& code)
-        : LivenessAdapter(code)
-    {
-    }
-
-    unsigned numIndices()
-    {
-        return code.stackSlots().size();
-    }
-    static bool acceptsBank(Bank) { return true; }
-    static bool acceptsRole(Arg::Role) { return true; }
-    static unsigned valueToIndex(StackSlot* stackSlot) { return stackSlot->index(); }
-    StackSlot* indexToValue(unsigned index) { return code.stackSlots()[index]; }
 };
 
 } } } // namespace JSC::B3::Air

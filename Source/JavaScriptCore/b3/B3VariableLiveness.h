@@ -38,7 +38,7 @@
 namespace JSC { namespace B3 {
 
 struct VariableLivenessAdapter {
-    static constexpr const char* name = "VariableLiveness";
+    static constexpr ASCIILiteral name = "VariableLiveness"_s;
     typedef B3::CFG CFG;
     typedef Variable* Thing;
     
@@ -62,6 +62,38 @@ struct VariableLivenessAdapter {
     unsigned blockSize(BasicBlock* block)
     {
         return block->size();
+    }
+
+    // Any value boundary can be a Get or a Set, so all of them are visited and a group is just the
+    // boundary itself.
+    struct ActionGroup {
+        BasicBlock* block { nullptr };
+        unsigned boundary { 0 };
+    };
+
+    template<typename Func>
+    void forEachActionGroupDescending(BasicBlock* block, const Func& func)
+    {
+        for (unsigned boundary = block->size() + 1; boundary--;)
+            func(boundary, ActionGroup { block, boundary });
+    }
+
+    template<typename Func>
+    void forEachUseInGroup(ActionGroup group, const Func& func)
+    {
+        forEachUse(group.block, group.boundary, func);
+    }
+
+    template<typename Func>
+    void forEachDefInGroup(ActionGroup group, const Func& func)
+    {
+        forEachDef(group.block, group.boundary, func);
+    }
+
+    template<typename Func>
+    void forEachUseAtTail(BasicBlock* block, const Func& func)
+    {
+        forEachUse(block, block->size(), func);
     }
     
     template<typename Func>
