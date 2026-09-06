@@ -246,6 +246,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     Shared/API/Cocoa/WebKitPrivate.h
     Shared/API/Cocoa/_WKFrameHandle.h
     Shared/API/Cocoa/_WKHitTestResult.h
+    Shared/API/Cocoa/_WKHitTestResultPrivateForTesting.h
     Shared/API/Cocoa/_WKNSFileManagerExtras.h
     Shared/API/Cocoa/_WKNSWindowExtras.h
     Shared/API/Cocoa/_WKRemoteObjectInterface.h

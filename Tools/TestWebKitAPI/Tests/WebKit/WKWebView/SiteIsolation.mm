@@ -86,6 +86,8 @@
 
 #if PLATFORM(MAC)
 #import "Helpers/mac/AppKitSPI.h"
+#import "Helpers/mac/WKWebViewForTestingImmediateActions.h"
+#import <WebKit/_WKHitTestResultPrivateForTesting.h>
 
 @interface NSApplication ()
 - (void)_setKeyWindow:(NSWindow *)newKeyWindow;
@@ -10314,6 +10316,132 @@ TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
     }));
 }
 
+static std::pair<RetainPtr<WKWebViewForTestingImmediateActions>, RetainPtr<TestNavigationDelegate>> siteIsolatedImmediateActionViewAndDelegate(const HTTPServer& server, CGRect viewRect)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+    disableSharedProcess(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebViewForTestingImmediateActions alloc] initWithFrame:viewRect configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+// Returns the text indicator rect that positions the Reveal highlight, in top-level root view coordinates.
+static CGRect lookUpTextBoundingRect(WKWebViewForTestingImmediateActions *webView, NSPoint location)
+{
+    auto [hitTestResult, actionType] = [webView simulateImmediateAction:location];
+    EXPECT_NOT_NULL(hitTestResult.get());
+    if (!hitTestResult)
+        return CGRectZero;
+    EXPECT_EQ(actionType, _WKImmediateActionLookupText);
+    EXPECT_WK_STREQ([hitTestResult lookupText], "test");
+    return [hitTestResult _dictionaryPopupTextBoundingRectForTesting];
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInCrossOriginIframeUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0; font-size: 32px'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedImmediateActionViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Content origin (100, 100) less TextIndicator's default (2, 1) margin. Unconverted: (-2, -1).
+    auto rect = lookUpTextBoundingRect(webView.get(), NSMakePoint(110, 115));
+    EXPECT_EQ(CGRectGetMinX(rect), 98);
+    EXPECT_EQ(CGRectGetMinY(rect), 99);
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInNestedCrossOriginIframesUsesMainFrameCoordinates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://domain3.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0; font-size: 32px'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedImmediateActionViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Both hops must apply: 100 for domain2 plus 50 for domain3, less the (2, 1) margin.
+    auto rect = lookUpTextBoundingRect(webView.get(), NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInSameOriginIframeInsideCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://webkit.org/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0; font-size: 32px'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedImmediateActionViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Both webkit.org frames share a process, so only the outer 100 is missing. Converting from the
+    // inner frame's view instead would double its 50 and land at 198.
+    auto rect = lookUpTextBoundingRect(webView.get(), NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInSameSiteIframeBehindCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/middle'></iframe></body>"_s } },
+        { "/middle"_s, { "<!DOCTYPE html><body style='margin: 0'><iframe style='margin: 50px; width: 200px; height: 150px; border: none;' src='https://example.com/inner'></iframe></body>"_s } },
+        { "/inner"_s, { "<!DOCTYPE html><body style='margin: 0; font-size: 32px'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedImmediateActionViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // The inner frame is same-site with the main frame, so the main frame is local, but the inner
+    // frame is still its own local root behind a RemoteFrame.
+    auto rect = lookUpTextBoundingRect(webView.get(), NSMakePoint(160, 165));
+    EXPECT_EQ(CGRectGetMinX(rect), 148);
+    EXPECT_EQ(CGRectGetMinY(rect), 149);
+}
+
+TEST(SiteIsolation, LookUpTextIndicatorRectInMainFrameIsNotOffset)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; font-size: 32px'>test</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedImmediateActionViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Smoke test: the conversion is an identity in the main frame, so this only checks Look Up still
+    // works with site isolation on.
+    auto rect = lookUpTextBoundingRect(webView.get(), NSMakePoint(10, 15));
+    EXPECT_EQ(CGRectGetMinX(rect), -2);
+    EXPECT_EQ(CGRectGetMinY(rect), -1);
+}
+
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -10687,8 +10815,8 @@ TEST(SiteIsolation, SelectionBoundingRectInMainFrameIsNotOffset)
         Util::spinRunLoop();
     }
 
-    EXPECT_LT(CGRectGetMinX(rect), 50);
-    EXPECT_LT(CGRectGetMinY(rect), 50);
+    EXPECT_LT(CGRectGetMinX(rect), 5);
+    EXPECT_LT(CGRectGetMinY(rect), 5);
 }
 
 TEST(SiteIsolation, SelectionInCrossOriginIframeTracksMainFrameScroll)

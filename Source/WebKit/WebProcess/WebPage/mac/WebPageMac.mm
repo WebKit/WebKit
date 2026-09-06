@@ -841,11 +841,6 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
         }
     }
 
-    RefPtr focusedOrMainFrame = corePage()->focusController().focusedOrMainFrame();
-    if (!focusedOrMainFrame)
-        return;
-    auto selectionRange = focusedOrMainFrame->selection().selection().firstRange();
-
     auto indicatorOptions = [&](const SimpleRange& range) {
         OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges, TextIndicatorOption::UseUserSelectAllCommonAncestor };
         if (ImageOverlay::isInsideOverlay(range))
@@ -930,6 +925,8 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FrameIdentifier f
 std::optional<WebCore::SimpleRange> WebPage::lookupTextAtLocation(FrameIdentifier frameID, FloatPoint locationInViewCoordinates)
 {
     RefPtr currentFrame = WebProcess::singleton().webFrame(frameID);
+    if (!currentFrame)
+        return std::nullopt;
     RefPtr localCurrentFrame = dynamicDowncast<LocalFrame>(currentFrame->coreFrame());
     if (!localCurrentFrame || !localCurrentFrame->view() || !localCurrentFrame->view()->renderView())
         return std::nullopt;

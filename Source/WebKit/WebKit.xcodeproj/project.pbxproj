@@ -1923,6 +1923,7 @@
 		93D6B7B5255268D70058DD3A /* SpeechRecognitionPermissionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */; };
 		93E05E40282CD560000B69EB /* ProcessStateMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E05E3E282CD55D000B69EB /* ProcessStateMonitor.h */; };
 		93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2A1B3C4D2F00000100000002 /* _WKHitTestResultPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A1B3C4D2F00000100000001 /* _WKHitTestResultPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E799882756FAC20074008A /* WebFileSystemStorageConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */; };
 		93E799C7276027460074008A /* StorageAreaRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799C6276027370074008A /* StorageAreaRegistry.h */; };
 		93E799CE2760497B0074008A /* SessionStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E799CA2760497A0074008A /* SessionStorageManager.h */; };
@@ -7601,6 +7602,7 @@
 		93E05E3E282CD55D000B69EB /* ProcessStateMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessStateMonitor.h; sourceTree = "<group>"; };
 		93E05E3F282CD55F000B69EB /* ProcessStateMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessStateMonitor.mm; sourceTree = "<group>"; };
 		93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResult.h; sourceTree = "<group>"; };
+		2A1B3C4D2F00000100000001 /* _WKHitTestResultPrivateForTesting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKHitTestResultPrivateForTesting.h; sourceTree = "<group>"; };
 		93E7997E2756F6700074008A /* WebFileSystemStorageConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebFileSystemStorageConnection.messages.in; sourceTree = "<group>"; };
 		93E799812756FA530074008A /* WebFileSystemStorageConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnectionMessages.h; sourceTree = "<group>"; };
 		93E799822756FA540074008A /* WebFileSystemStorageConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFileSystemStorageConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -13627,6 +13629,7 @@
 				93E6A4ED1BC5DD3900F8A0E7 /* _WKHitTestResult.h */,
 				93A88B371BC70F2E00ABA5C2 /* _WKHitTestResult.mm */,
 				93A88B3A1BC710D900ABA5C2 /* _WKHitTestResultInternal.h */,
+				2A1B3C4D2F00000100000001 /* _WKHitTestResultPrivateForTesting.h */,
 				A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */,
 				A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */,
 				A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */,
@@ -18088,6 +18091,7 @@
 				63C32C281E98119000699BD0 /* _WKGeolocationPositionInternal.h in Headers */,
 				93E6A4EE1BC5DD3900F8A0E7 /* _WKHitTestResult.h in Headers */,
 				93A88B3B1BC710D900ABA5C2 /* _WKHitTestResultInternal.h in Headers */,
+				2A1B3C4D2F00000100000002 /* _WKHitTestResultPrivateForTesting.h in Headers */,
 				510F59101DDE296900412FF5 /* _WKIconLoadingDelegate.h in Headers */,
 				37A64E5518F38E3C00EB30F1 /* _WKInputDelegate.h in Headers */,
 				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
