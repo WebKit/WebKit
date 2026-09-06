@@ -40,6 +40,12 @@ enum SVGTextPathSpacingType {
     SVGTextPathSpacingExact
 };
 
+enum SVGTextPathSideType {
+    SVGTextPathSideUnknown = 0,
+    SVGTextPathSideLeft,
+    SVGTextPathSideRight
+};
+
 template<>
 struct SVGPropertyTraits<SVGTextPathMethodType> {
     static unsigned highestEnumValue() { return SVGTextPathMethodStretch; }
@@ -98,6 +104,35 @@ struct SVGPropertyTraits<SVGTextPathSpacingType> {
     }
 };
 
+template<>
+struct SVGPropertyTraits<SVGTextPathSideType> {
+    static unsigned highestEnumValue() { return SVGTextPathSideRight; }
+
+    static String toString(SVGTextPathSideType type)
+    {
+        switch (type) {
+        case SVGTextPathSideUnknown:
+            return emptyString();
+        case SVGTextPathSideLeft:
+            return "left"_s;
+        case SVGTextPathSideRight:
+            return "right"_s;
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGTextPathSideType fromString(SVGElement&, const String& value)
+    {
+        if (value == "left"_s)
+            return SVGTextPathSideLeft;
+        if (value == "right"_s)
+            return SVGTextPathSideRight;
+        return SVGTextPathSideUnknown;
+    }
+};
+
 class SVGTextPathElement final : public SVGTextContentElement, public SVGURIReference {
     WTF_MAKE_TZONE_ALLOCATED(SVGTextPathElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SVGTextPathElement);
@@ -109,7 +144,10 @@ public:
         TEXTPATH_METHODTYPE_STRETCH = SVGTextPathMethodStretch,
         TEXTPATH_SPACINGTYPE_UNKNOWN = SVGTextPathSpacingUnknown,
         TEXTPATH_SPACINGTYPE_AUTO = SVGTextPathSpacingAuto,
-        TEXTPATH_SPACINGTYPE_EXACT = SVGTextPathSpacingExact
+        TEXTPATH_SPACINGTYPE_EXACT = SVGTextPathSpacingExact,
+        TEXTPATH_SIDETYPE_UNKNOWN = SVGTextPathSideUnknown,
+        TEXTPATH_SIDETYPE_LEFT = SVGTextPathSideLeft,
+        TEXTPATH_SIDETYPE_RIGHT = SVGTextPathSideRight
     };
 
     static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
@@ -117,10 +155,12 @@ public:
     const SVGLengthValue& startOffset() const LIFETIME_BOUND { return m_startOffset->currentValue(); }
     SVGTextPathMethodType method() const { return m_method->currentValue<SVGTextPathMethodType>(); }
     SVGTextPathSpacingType spacing() const { return m_spacing->currentValue<SVGTextPathSpacingType>(); }
+    SVGTextPathSideType side() const { return m_side->currentValue<SVGTextPathSideType>(); }
 
     SVGAnimatedLength& startOffsetAnimated() { return m_startOffset; }
     SVGAnimatedEnumeration& methodAnimated() { return m_method; }
     SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
+    SVGAnimatedEnumeration& sideAnimated() { return m_side; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
 
@@ -147,6 +187,7 @@ private:
     const Ref<SVGAnimatedLength> m_startOffset { SVGAnimatedLength::create(this, SVGLengthMode::Other) };
     const Ref<SVGAnimatedEnumeration> m_method { SVGAnimatedEnumeration::create(this, SVGTextPathMethodAlign) };
     const Ref<SVGAnimatedEnumeration> m_spacing { SVGAnimatedEnumeration::create(this, SVGTextPathSpacingExact) };
+    const Ref<SVGAnimatedEnumeration> m_side { SVGAnimatedEnumeration::create(this, SVGTextPathSideLeft) };
 };
 
 } // namespace WebCore

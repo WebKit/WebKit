@@ -2949,7 +2949,6 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-003.svg [ Image
 imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-shape-inside-002.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-xml-space-001.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-font-face-load-image.html [ Skip ]
 
 # webkit.org/b/61855: textLength with lengthAdjust="spacing" and a list-valued
@@ -8224,8 +8223,6 @@ imported/w3c/web-platform-tests/svg/path/distance/path-length-css-zero.tentative
 imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-path-attr-use-up-to-first-error.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-pathlength-css-display-none.tentative.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-003.svg [ ImageOnlyFailure ]    
-imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-005.svg [ ImageOnlyFailure ]
 
 webkit.org/b/312264 imported/w3c/web-platform-tests/css/cssom-view/interrupt-hidden-smooth-scroll.html [ Pass Failure ]
 

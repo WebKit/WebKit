@@ -2278,6 +2278,9 @@ imported/w3c/web-platform-tests/css/css-tables/paint/table-border-paint-caption-
 
 [ x86_64 ] imported/w3c/web-platform-tests/svg/text/reftests/dominant-baseline-central-large-font-size.svg [ Skip ]
 
+# Flaky: side="right" (mirrored forward-path sampling) vs reversed-path reference differ within the test's tight fuzz under macOS AA. Passes on GTK/WPE/iOS.
+webkit.org/b/311609 imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-001.svg [ Pass ImageOnlyFailure ]
+
 webkit.org/b/296976 [ x86_64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
 
 webkit.org/b/297067 fast/forms/state-restore-form-associated-custom-elements.html [ Pass Timeout Failure ]
