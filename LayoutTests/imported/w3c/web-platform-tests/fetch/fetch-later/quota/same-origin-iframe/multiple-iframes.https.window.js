@@ -56,7 +56,7 @@ promise_test(async _ => {
         // Required, as the size of referrer also take up quota.
         referrer: '',
       }),
-      null, null);
+      QUOTA_PER_ORIGIN, 0);
 
   // Release quota taken by the pending requests for subsequent tests.
   for (const element of document.querySelectorAll('iframe')) {

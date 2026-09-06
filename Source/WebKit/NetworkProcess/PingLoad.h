@@ -45,21 +45,8 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static void create(NetworkProcess& networkProcess, PAL::SessionID sessionID, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
-    {
-        Ref pingLoad = adoptRef(*new PingLoad(networkProcess, sessionID, WTF::move(networkResourceLoadParameters), WTF::move(completionHandler)));
-
-        // Keep the load alive until didFinish.
-        pingLoad->m_selfReference = WTF::move(pingLoad);
-    }
-
-    static void create(NetworkConnectionToWebProcess& networkConnectionToWebProcess, NetworkResourceLoadParameters&& networkResourceLoadParameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler)
-    {
-        Ref pingLoad = adoptRef(*new PingLoad(networkConnectionToWebProcess, WTF::move(networkResourceLoadParameters), WTF::move(completionHandler)));
-
-        // Keep the load alive until didFinish.
-        pingLoad->m_selfReference = WTF::move(pingLoad);
-    }
+    static void create(NetworkProcess&, PAL::SessionID, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
+    static void create(NetworkConnectionToWebProcess&, NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&);
 
     ~PingLoad();
 
@@ -86,7 +73,7 @@ private:
     void loadRequest(NetworkProcess&, WebCore::ResourceRequest&&);
 
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
-    
+
     RefPtr<PingLoad> m_selfReference;
     PAL::SessionID m_sessionID;
     NetworkResourceLoadParameters m_parameters;

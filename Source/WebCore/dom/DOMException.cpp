@@ -30,6 +30,7 @@
 #include "DOMException.h"
 
 #include "Exception.h"
+#include "QuotaExceededError.h"
 
 namespace WebCore {
 
@@ -92,17 +93,23 @@ static DOMException::LegacyCode NODELETE legacyCodeFromName(const String& name)
 
 Ref<DOMException> DOMException::create(ExceptionCode ec, const String& message)
 {
+    if (ec == ExceptionCode::QuotaExceededError)
+        return QuotaExceededError::create(message);
     auto& description = DOMException::description(ec);
     return adoptRef(*new DOMException(description.legacyCode, description.name, !message.isEmpty() ? message : description.message));
 }
 
 Ref<DOMException> DOMException::create(const String& message, const String& name)
 {
+    if (name == "QuotaExceededError"_s)
+        return QuotaExceededError::create(message);
     return adoptRef(*new DOMException(legacyCodeFromName(name), name, message));
 }
 
 Ref<DOMException> DOMException::create(const Exception& exception)
 {
+    if (exception.code() == ExceptionCode::QuotaExceededError)
+        return QuotaExceededError::create(exception.message());
     auto& description = DOMException::description(exception.code());
     return adoptRef(*new DOMException(description.legacyCode, description.name, exception.message().isEmpty() ? description.message : exception.message()));
 }

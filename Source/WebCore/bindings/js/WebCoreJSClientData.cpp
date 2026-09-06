@@ -41,6 +41,7 @@
 #include "JSIDBSerializationGlobalObject.h"
 #include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
+#include "JSQuotaExceededError.h"
 #include "JSServiceWorkerGlobalScope.h"
 #include "JSShadowRealmGlobalScope.h"
 #include "JSSharedWorkerGlobalScope.h"
@@ -101,6 +102,7 @@ JSHeapData::JSHeapData(Heap& heap)
 #endif
     , m_heapCellTypeForJSIDBSerializationGlobalObject(JSC::IsoHeapCellType::Args<JSIDBSerializationGlobalObject>())
     , m_heapCellTypeForJSDOMException(JSC::IsoHeapCellType::Args<JSDOMException>())
+    , m_heapCellTypeForJSQuotaExceededError(JSC::IsoHeapCellType::Args<JSQuotaExceededError>())
 #if ENABLE(WEB_RTC)
     , m_heapCellTypeForJSRTCError(JSC::IsoHeapCellType::Args<JSRTCError>())
 #endif

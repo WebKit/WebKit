@@ -838,6 +838,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+Compat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CookieStore.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+CookieStore.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+FetchLater.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+FetchLater.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceMotion.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMWindow+DeviceOrientation.cpp
@@ -875,6 +877,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStreamDecoder.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDecompressionStreamDecoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeferredRequestInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeferredRequestInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayOptions.cpp
@@ -1110,6 +1114,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequest.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCache.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCache.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCredentials.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchLaterResult.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchLaterResult.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCredentials.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestDestination.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestDestination.h
@@ -2451,6 +2457,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQueuingStrategySize.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQueuingStrategySize.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuotaExceededError.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuotaExceededError.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuotaExceededErrorOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSQuotaExceededErrorOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCAnswerOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCAnswerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRTCCertificate.cpp

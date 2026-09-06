@@ -40,6 +40,6 @@ PASS Error.message: getter is ignored when cloning
 PASS Error.message: undefined property is stringified
 PASS DOMException objects can be cloned
 PASS DOMException objects created by the UA can be cloned
-FAIL QuotaExceededError objects can be cloned Can't find variable: QuotaExceededError
-FAIL QuotaExceededError objects with empty quota/requested can be cloned Can't find variable: QuotaExceededError
+PASS QuotaExceededError objects can be cloned
+PASS QuotaExceededError objects with empty quota/requested can be cloned
 

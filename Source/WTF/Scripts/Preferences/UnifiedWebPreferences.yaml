@@ -3353,6 +3353,20 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
+FetchLaterAPIEnabled:
+  type: bool
+  status: preview
+  category: networking
+  humanReadableName: "fetchLater() API"
+  humanReadableDescription: "Enable the fetchLater() deferred fetch API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FetchUploadStreamsEnabled:
   type: bool
   status: stable

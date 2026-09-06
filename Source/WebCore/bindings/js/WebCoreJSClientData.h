@@ -99,6 +99,7 @@ public:
     // DOM exception wrappers (IDL [Exception] interfaces) are JSC::ErrorInstance subclasses, so
     // they need custom heap cell types.
     JSC::IsoHeapCellType m_heapCellTypeForJSDOMException;
+    JSC::IsoHeapCellType m_heapCellTypeForJSQuotaExceededError;
 #if ENABLE(WEB_RTC)
     JSC::IsoHeapCellType m_heapCellTypeForJSRTCError;
 #endif

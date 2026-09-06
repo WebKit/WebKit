@@ -220,6 +220,13 @@ JSValue createDOMException(JSGlobalObject* lexicalGlobalObject, ExceptionCode ec
 
 JSValue createDOMException(JSGlobalObject& lexicalGlobalObject, Exception&& exception)
 {
+    if (RefPtr attached = exception.takeAttachedException()) {
+        JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(&lexicalGlobalObject);
+        JSValue errorObject = toJS(&lexicalGlobalObject, globalObject, *attached);
+        ASSERT(errorObject);
+        addErrorInfo(&lexicalGlobalObject, asObject(errorObject), true);
+        return errorObject;
+    }
     return createDOMException(&lexicalGlobalObject, exception.code(), exception.releaseMessage());
 }
 

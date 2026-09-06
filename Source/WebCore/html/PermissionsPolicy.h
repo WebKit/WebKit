@@ -50,6 +50,8 @@ public:
         Microphone,
         SpeakerSelection,
         DisplayCapture,
+        DeferredFetch,
+        DeferredFetchMinimal,
         Gamepad,
         Geolocation,
         Payment,
