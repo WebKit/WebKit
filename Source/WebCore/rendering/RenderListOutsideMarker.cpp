@@ -325,10 +325,10 @@ void RenderListOutsideMarker::layout()
     ASSERT(needsLayout());
 
     if (CheckedPtr container = contentContainer()) {
-        updateInlineMarginsAndContent();
+        updateInlineMargins();
         layoutContentContainer(*container);
     } else if (isImage()) {
-        updateInlineMarginsAndContent();
+        updateInlineMargins();
         RefPtr image = m_image;
         setBorderBoxWidth(image->imageSize(this, style().usedZoom()).width());
         setBorderBoxHeight(image->imageSize(this, style().usedZoom()).height());
@@ -403,9 +403,10 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 if (element)
                     element->invalidateStyleAndRenderersForSubtree();
             }
-            if (borderBoxWidth() != image->imageSize(this, style().usedZoom()).width() || borderBoxHeight() != image->imageSize(this, style().usedZoom()).height() || image->errorOccurred())
+            if (borderBoxSize() != LayoutSize(image->imageSize(this, style().usedZoom())) || image->errorOccurred()) {
+                updateInlineMarginsAndContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
-            else
+            } else
                 repaint();
         }
     }
@@ -414,9 +415,7 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
 
 void RenderListOutsideMarker::updateInlineMarginsAndContent()
 {
-    // FIXME: It's messy to use the preferredLogicalWidths dirty bit for this optimization, also unclear if this is premature optimization.
-    if (hasInvalidContentLogicalWidths())
-        updateContent();
+    updateContent();
     updateInlineMargins();
 }
 
@@ -475,7 +474,6 @@ void RenderListOutsideMarker::updateContentContainerText()
 void RenderListOutsideMarker::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
-    updateContent();
 
     if (CheckedPtr container = contentContainer()) {
         // The marker is non-wrapping, so its min- and max-content widths are both the
