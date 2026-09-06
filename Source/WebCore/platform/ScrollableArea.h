@@ -314,6 +314,11 @@ public:
     ScrollType currentScrollType() const { return m_currentScrollType; }
     void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = scrollType; }
 
+    // Physical edges this area has been scrolled toward by a relative scroll (scrollBy, wheel, keyboard,
+    // drag). Sticky and per-axis (scrolling one way clears the opposite edge on that axis); absolute
+    // scrolls (scrollTo, scrollTop/Left) don't change it. Backs scroll-state(scrolled) container queries.
+    RectEdges<bool> scrolledDirections() const { return m_scrolledDirections; }
+
     // This reflects animated scrolls triggered by CSS OM View "smooth" scrolls.
     ScrollAnimationStatus scrollAnimationStatus() { return m_scrollAnimationStatus; }
     void setScrollAnimationStatus(ScrollAnimationStatus status) { m_scrollAnimationStatus = status; }
@@ -445,6 +450,9 @@ public:
     // Anchor positioning
     virtual void updateAnchorPositionedAfterScroll() { }
 
+    // Re-evaluate scroll-state container queries whose scroll state changed as a result of this scroll.
+    virtual void updateScrollStateContainersAfterScroll() { }
+
     // Scroll anchoring
     enum class ComputeNewScrollAnchor : bool {
         No,
@@ -499,6 +507,9 @@ private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
 
+    // Fold the direction of an actual (post-clamp) relative scroll into m_scrolledDirections.
+    void updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
+
     void internalCreateScrollbarsController();
 
     // NOTE: Only called from the ScrollAnimator.
@@ -535,6 +546,14 @@ private:
     ScrollType m_currentScrollType { ScrollType::User };
     ScrollAnimationStatus m_scrollAnimationStatus { ScrollAnimationStatus::NotAnimating };
 
+    RectEdges<bool> m_scrolledDirections;
+
+protected:
+    // Set for the duration of applying a relative scroll (a scrollBy carrying an originalScrollDelta), so
+    // scrollPositionChanged can tell it apart from an absolute scroll. User scrolls use currentScrollType().
+    bool m_currentScrollIsRelative { false };
+
+private:
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };
     bool m_scrollShouldClearLatchedState { false };

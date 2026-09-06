@@ -766,6 +766,7 @@ public:
     ScrollAnchoringController* scrollAnchoringController() const final { return m_scrollAnchoringController.get(); }
 
     void updateAnchorPositionedAfterScroll() final;
+    void updateScrollStateContainersAfterScroll() final;
 
     WEBCORE_EXPORT void scrollbarStyleDidChange();
 

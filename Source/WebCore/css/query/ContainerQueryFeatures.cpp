@@ -43,6 +43,7 @@
 #include "ComputedStyleDependencies.h"
 #include "ContainerQueryEvaluator.h"
 #include "GenericMediaQueryParser.h"
+#include "RectEdges.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
@@ -428,6 +429,97 @@ struct ScrollStateFeatureSchema : public FeatureSchema {
     }
 };
 
+// Shared evaluation for the directional scroll-state features (scrollable, scrolled). `towardSide`
+// answers whether the queried state holds toward a given physical edge; this maps the requested
+// edge/axis/none keyword (resolving logical keywords against the container's writing mode) onto it.
+template<typename TowardSide>
+static EvaluationResult evaluateScrollStateDirectionFeature(const MQ::Feature& feature, WritingMode writingMode, const TowardSide& towardSide)
+{
+    auto towardAxis = [&](BoxAxis axis) {
+        return axis == BoxAxis::Horizontal
+            ? towardSide(BoxSide::Left) || towardSide(BoxSide::Right)
+            : towardSide(BoxSide::Top) || towardSide(BoxSide::Bottom);
+    };
+    bool anyDirection = towardSide(BoxSide::Top) || towardSide(BoxSide::Right)
+        || towardSide(BoxSide::Bottom) || towardSide(BoxSide::Left);
+
+    // Boolean form (e.g. `scroll-state(scrollable)`): holds in any direction.
+    if (!feature.rightComparison)
+        return toEvaluationResult(anyDirection);
+
+    auto* keyword = std::get_if<CSS::Keyword>(&*feature.rightComparison->value);
+    auto requested = keyword ? keyword->value : CSSValueInvalid;
+
+    switch (requested) {
+    case CSSValueNone:
+        return toEvaluationResult(!anyDirection);
+    case CSSValueTop:
+        return toEvaluationResult(towardSide(BoxSide::Top));
+    case CSSValueRight:
+        return toEvaluationResult(towardSide(BoxSide::Right));
+    case CSSValueBottom:
+        return toEvaluationResult(towardSide(BoxSide::Bottom));
+    case CSSValueLeft:
+        return toEvaluationResult(towardSide(BoxSide::Left));
+    case CSSValueBlockStart:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)));
+    case CSSValueBlockEnd:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)));
+    case CSSValueInlineStart:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)));
+    case CSSValueInlineEnd:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)));
+    case CSSValueX:
+        return toEvaluationResult(towardAxis(BoxAxis::Horizontal));
+    case CSSValueY:
+        return toEvaluationResult(towardAxis(BoxAxis::Vertical));
+    case CSSValueBlock:
+        return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block)));
+    case CSSValueInline:
+        return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline)));
+    default:
+        return EvaluationResult::False;
+    }
+}
+
+// scroll-state(scrollable [: <edge> | <axis> | none]): whether the query container can currently be
+// scrolled further toward the given edge/axis (any direction for the boolean form). A container that
+// is not a scroll container, or is already fully scrolled, matches only `none`.
+// https://drafts.csswg.org/css-conditional-5/#scrollable
+struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
+    using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
+
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer.get());
+        if (!renderer)
+            return EvaluationResult::False;
+
+        // An edge is scrollable exactly when the container is not pinned at it.
+        auto pinned = renderer->scrollStatePinnedEdges();
+        return evaluateScrollStateDirectionFeature(feature, renderer->style().writingMode(),
+            [&](BoxSide side) { return !pinned[side]; });
+    }
+};
+
+// scroll-state(scrolled [: <edge> | <axis> | none]): whether the query container has been scrolled
+// toward the given edge/axis by a relative scroll. Sticky per axis; matches `none` until scrolled.
+// https://drafts.csswg.org/css-conditional-5/#scrolled
+struct ScrolledFeatureSchema : public ScrollStateFeatureSchema {
+    using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
+
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        CheckedPtr renderer = dynamicDowncast<RenderBox>(context.renderer.get());
+        if (!renderer)
+            return EvaluationResult::False;
+
+        auto scrolled = renderer->scrollStateScrolledDirections();
+        return evaluateScrollStateDirectionFeature(feature, renderer->style().writingMode(),
+            [&](BoxSide side) { return scrolled[side]; });
+    }
+};
+
 // MARK: - Singleton readonly instances of FeatureSchemas
 
 static const WidthFeatureSchema& widthFeatureSchema()
@@ -474,13 +566,13 @@ static const StyleFeatureSchema& styleFeatureSchema()
 
 static const ScrollStateFeatureSchema& scrollableFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    static MainThreadNeverDestroyed<ScrollableFeatureSchema> schema { "scrollable"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
     return schema;
 }
 
 static const ScrollStateFeatureSchema& scrolledFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    static MainThreadNeverDestroyed<ScrolledFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
     return schema;
 }
 

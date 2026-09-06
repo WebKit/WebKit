@@ -1490,15 +1490,23 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const Style::C
         return LayoutInterleavingAction::None;
 
     auto* existingStyle = element.renderOrDisplayContentsStyle();
-    if (style->containerType().hasSizeContainment() || (existingStyle && existingStyle->containerType().hasSizeContainment())) {
+
+    bool isSizeContainer = style->containerType().hasSizeContainment() || (existingStyle && existingStyle->containerType().hasSizeContainment());
+    bool isScrollStateContainer = style->containerType().hasScrollState() || (existingStyle && existingStyle->containerType().hasScrollState());
+
+    if (isSizeContainer || isScrollStateContainer) {
         // If any of the queries use font-size relative units then a font size change
         // may affect their evaluation, so force re-evaluating all descendants.
-        if (styleChangeAffectsRelativeUnits(*style, existingStyle))
+        if (isSizeContainer && styleChangeAffectsRelativeUnits(*style, existingStyle))
             descendantsToResolve = DescendantsToResolve::All;
 
-        m_queryContainerStates.add(element, QueryContainerState { });
+        m_queryContainerStates.add(element, QueryContainerState { .descendantsResolvedBeforeLayout = isScrollStateContainer && !isSizeContainer });
 
-        return LayoutInterleavingAction::SkipDescendants;
+        // A size container isolates its size from its descendants, so its descendants can be deferred
+        // and resolved after the interleaved layout. A scroll-state container's scroll geometry depends
+        // on descendant layout, so its descendants are resolved first (against the pre-layout state) and
+        // re-evaluated after the interleaved layout provides the real geometry.
+        return isSizeContainer ? LayoutInterleavingAction::SkipDescendants : LayoutInterleavingAction::None;
     }
 
     return LayoutInterleavingAction::None;
@@ -1539,7 +1547,13 @@ std::unique_ptr<Update> TreeResolver::resolve()
     for (auto& [element, state] : m_queryContainerStates) {
         // Ensure that resumed resolution reaches the container.
         if (!state.invalidated) {
-            protect(element)->invalidateForResumingQueryContainerResolution();
+            // A scroll-state container's descendants were already resolved (against the pre-layout
+            // state), so re-evaluating their queries requires invalidating the subtree. A size
+            // container's descendants were deferred, so it only needs to resume their resolution.
+            if (state.descendantsResolvedBeforeLayout)
+                protect(element)->invalidateForQueryContainerChange();
+            else
+                protect(element)->invalidateForResumingQueryContainerResolution();
             state.invalidated = true;
 
             m_needsInterleavedLayout = true;

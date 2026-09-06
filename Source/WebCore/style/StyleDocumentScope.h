@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <WebCore/RectEdges.h>
 #include <WebCore/StyleScope.h>
 
 namespace WebCore {
@@ -69,6 +70,10 @@ public:
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
 
+    // Re-evaluate scroll-state query containers whose scroll state changed since the last update, in
+    // response to a scroll. Layout-driven changes go through invalidateForLayoutDependencies instead.
+    void invalidateForScrollStateChange();
+
     AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     void updateAnchorPositioningStateAfterStyleResolution();
@@ -97,6 +102,8 @@ private:
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;
+    WeakHashMap<Element, RectEdges<bool>, WeakPtrImplWithEventTargetData> m_scrollStatePinnedEdgesOnLastUpdate;
+    WeakHashMap<Element, RectEdges<bool>, WeakPtrImplWithEventTargetData> m_scrollStateScrolledDirectionsOnLastUpdate;
 
     struct AnchorPosition {
         LayoutRect absoluteRect;

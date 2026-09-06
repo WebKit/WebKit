@@ -90,6 +90,7 @@
 #include "ScrollingCoordinator.h"
 #include "ShadowRoot.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleDocumentScope.h"
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -332,6 +333,8 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
         return clampedScrollOffset;
 
     auto scrollTypeScope = ScrollTypeScope(*this, options.type);
+    // A scrollBy carries an originalScrollDelta; scroll-state(scrolled) tracks it as a relative scroll.
+    SetForScope currentScrollIsRelative(m_currentScrollIsRelative, options.originalScrollDelta.has_value());
 
     if (options.animated == ScrollIsAnimated::Yes) {
         registerScrollableAreaForAnimatedScroll();
@@ -2031,6 +2034,16 @@ float RenderLayerScrollableArea::deviceScaleFactor() const
 void RenderLayerScrollableArea::updateAnchorPositionedAfterScroll()
 {
     Style::AnchorPositionEvaluator::updateScrollAdjustments(m_layer.renderer().view());
+}
+
+void RenderLayerScrollableArea::updateScrollStateContainersAfterScroll()
+{
+    auto& renderer = m_layer.renderer();
+    // Invalidating style during layout is unsafe; layout-driven scroll-state changes are handled by the
+    // post-layout DocumentScope::invalidateForLayoutDependencies path instead.
+    if (renderer.view().frameView().layoutContext().isInRenderTreeLayout())
+        return;
+    renderer.document().styleScope().invalidateForScrollStateChange();
 }
 
 std::optional<FrameIdentifier> RenderLayerScrollableArea::rootFrameID() const

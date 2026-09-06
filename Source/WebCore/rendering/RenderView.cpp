@@ -1162,6 +1162,16 @@ void RenderView::unregisterContainerQueryBox(const RenderBox& box)
     m_containerQueryBoxes.remove(box);
 }
 
+void RenderView::registerScrollStateContainerBox(const RenderBox& box)
+{
+    m_scrollStateContainerBoxes.add(box);
+}
+
+void RenderView::unregisterScrollStateContainerBox(const RenderBox& box)
+{
+    m_scrollStateContainerBoxes.remove(box);
+}
+
 void RenderView::registerAnchor(const RenderBoxModelObject& renderer)
 {
     m_anchors.add(renderer);

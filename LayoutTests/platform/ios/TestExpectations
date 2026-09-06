@@ -4075,6 +4075,23 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-conditional/container-queries/pseudo-elements-009.html [ ImageOnlyFailure ]
 
+# The main frame delegates scrolling to the native scroll view here, so scrolling it is handled by
+# the scrolling coordinator and never reaches ScrollableArea::scrollPositionChanged() on the main
+# thread. Scroll-state container queries on the root element are therefore not re-evaluated after a
+# scroll. This is the same limitation the scroll-driven anchor positioning tests hit below.
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrollable-root.html [ Failure ]
+
+# Spacebar scrolling is not performed for the synthesized key events these tests send, so the
+# document never scrolls and scroll-state(scrolled) stays unset.
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-keyboard-scroll-on-body.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-keyboard-scroll-on-root.html [ Failure ]
+
+# These drive scrolling by clicking the scrollbar. Both fail here with a text diff; the tests do
+# guard against overlay scrollbars by bailing out when offsetWidth == clientWidth, so that guard
+# does not hold on this platform. The exact reason has not been established yet.
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-button-clicks.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-track-clicks.html [ Failure ]
+
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
 

@@ -4984,6 +4984,16 @@ void LocalFrameView::updateAnchorPositionedAfterScroll()
         Style::AnchorPositionEvaluator::updateScrollAdjustments(*view);
 }
 
+void LocalFrameView::updateScrollStateContainersAfterScroll()
+{
+    // Invalidating style during layout is unsafe; layout-driven scroll-state changes are handled by the
+    // post-layout DocumentScope::invalidateForLayoutDependencies path instead.
+    if (layoutContext().isInRenderTreeLayout())
+        return;
+    if (RefPtr document = m_frame->document())
+        document->styleScope().invalidateForScrollStateChange();
+}
+
 IntSize LocalFrameView::sizeForResizeEvent() const
 {
 #if PLATFORM(IOS_FAMILY)

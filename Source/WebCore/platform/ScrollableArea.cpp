@@ -63,7 +63,9 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     uint8_t scrollElasticity[2];
     uint8_t scrollbarOverlayStyle;
     bool currentScrollType;
+    bool currentScrollIsRelative;
     uint8_t scrollAnimationStatus;
+    uint8_t scrolledDirections[4];
     bool bytes[4];
     Markable<ScrollingNodeID> scrollingNodeIDForTesting;
 };
@@ -274,7 +276,32 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
         if (CheckedPtr controller = scrollAnchoringController())
             controller->scrollPositionDidChange();
 
+        // scroll-state(scrolled) only tracks relative scrolls: user scrolls (wheel/keyboard/drag) and a
+        // programmatic scrollBy (which sets m_currentScrollIsRelative). Absolute scrolls are ignored.
+        if (m_currentScrollType == ScrollType::User || m_currentScrollIsRelative)
+            updateScrolledDirections(oldPosition, scrollPosition());
+
         updateAnchorPositionedAfterScroll();
+        updateScrollStateContainersAfterScroll();
+    }
+}
+
+void ScrollableArea::updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
+{
+    if (newPosition.y() < oldPosition.y()) {
+        m_scrolledDirections.setTop(true);
+        m_scrolledDirections.setBottom(false);
+    } else if (newPosition.y() > oldPosition.y()) {
+        m_scrolledDirections.setBottom(true);
+        m_scrolledDirections.setTop(false);
+    }
+
+    if (newPosition.x() < oldPosition.x()) {
+        m_scrolledDirections.setLeft(true);
+        m_scrolledDirections.setRight(false);
+    } else if (newPosition.x() > oldPosition.x()) {
+        m_scrolledDirections.setRight(true);
+        m_scrolledDirections.setLeft(false);
     }
 }
 

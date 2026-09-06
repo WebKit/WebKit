@@ -295,6 +295,13 @@ public:
     inline bool isScrollContainerX() const;
     inline bool isScrollContainerY() const;
 
+    // Physical edges this box is pinned at for scroll-state container queries, i.e. edges it cannot be
+    // scrolled further toward. The root element scrolls the viewport (its frame view) rather than its own
+    // layer. A box with no scrollable area is pinned on every edge.
+    RectEdges<bool> scrollStatePinnedEdges() const;
+    // Physical edges this box has been scrolled toward by a relative scroll, for scroll-state(scrolled).
+    RectEdges<bool> scrollStateScrolledDirections() const;
+
     LayoutBoxExtent scrollPaddingForViewportRect(const LayoutRect& viewportRect);
 
     enum class AllowIntrinsic : bool { No, Yes };

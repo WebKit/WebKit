@@ -288,9 +288,52 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     }
 
     for (auto& toInvalidate : containersToInvalidate)
-        toInvalidate->invalidateForQueryContainerSizeChange();
+        toInvalidate->invalidateForQueryContainerChange();
 
     return !containersToInvalidate.isEmpty();
+}
+
+void DocumentScope::invalidateForScrollStateChange()
+{
+    if (!m_document->renderView())
+        return;
+
+    auto previousPinnedEdges = WTF::move(m_scrollStatePinnedEdgesOnLastUpdate);
+    m_scrollStatePinnedEdgesOnLastUpdate.clear();
+    auto previousScrolledDirections = WTF::move(m_scrollStateScrolledDirectionsOnLastUpdate);
+    m_scrollStateScrolledDirectionsOnLastUpdate.clear();
+
+    Vector<CheckedPtr<Element>> containersToInvalidate;
+
+    for (auto& containerRenderer : m_document->renderView()->scrollStateContainerBoxes()) {
+        CheckedPtr containerElement = containerRenderer.element();
+
+        // Invalidation uses real elements, replace ::before/::after with its host.
+        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(containerElement.get()))
+            containerElement = pseudoElement->hostElement();
+
+        if (!containerElement)
+            continue;
+
+        // Only invalidate containers whose scroll state (scrollable pinned edges or scrolled directions)
+        // actually changed, so that scrolling that doesn't cross a state boundary doesn't force a subtree
+        // style recalc every frame.
+        auto pinnedEdges = containerRenderer.scrollStatePinnedEdges();
+        auto scrolledDirections = containerRenderer.scrollStateScrolledDirections();
+
+        auto pinnedIt = previousPinnedEdges.find(*containerElement);
+        auto scrolledIt = previousScrolledDirections.find(*containerElement);
+        bool changed = pinnedIt == previousPinnedEdges.end() || pinnedIt->value != pinnedEdges
+            || scrolledIt == previousScrolledDirections.end() || scrolledIt->value != scrolledDirections;
+        if (changed)
+            containersToInvalidate.append(containerElement);
+
+        m_scrollStatePinnedEdgesOnLastUpdate.add(*containerElement, pinnedEdges);
+        m_scrollStateScrolledDirectionsOnLastUpdate.add(*containerElement, scrolledDirections);
+    }
+
+    for (auto& toInvalidate : containersToInvalidate)
+        toInvalidate->invalidateForQueryContainerChange();
 }
 
 bool DocumentScope::invalidateForAnchorDependencies(LayoutDependencyUpdateContext& context)
