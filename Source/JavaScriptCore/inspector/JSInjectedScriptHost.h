@@ -82,6 +82,8 @@ public:
     JSC::JSValue iteratorEntries(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue queryInstances(JSC::JSGlobalObject*, JSC::CallFrame*);
     JSC::JSValue queryHolders(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue unwatch(JSC::JSGlobalObject*, JSC::CallFrame*);
+    JSC::JSValue watch(JSC::JSGlobalObject*, JSC::CallFrame*);
 
 private:
     JSInjectedScriptHost(JSC::VM&, JSC::Structure*, Ref<InjectedScriptHost>&&);

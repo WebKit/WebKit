@@ -43,6 +43,7 @@
 #include "DFGToFTLDeferredCompilationCallback.h"
 #include "DFGToFTLForOSREntryDeferredCompilationCallback.h"
 #include "DateInstance.h"
+#include "Debugger.h"
 #include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
 #include "FTLForOSREntryJITCode.h"
@@ -169,12 +170,43 @@ char* newTypedArrayWithSize(JSGlobalObject* globalObject, VM& vm, Structure* str
     RELEASE_AND_RETURN(scope, std::bit_cast<char*>(ViewClass::create(globalObject, structure, unsignedSize)));
 }
 
-template <bool strict>
-static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, const Identifier& ident)
+ALWAYS_INLINE static bool willPutWithThisToUncacheableDictionary(CallFrame* callFrame, JSGlobalObject* globalObject, JSValue thisValue)
+{
+    auto* debugger = globalObject->debugger();
+    if (!debugger) [[likely]]
+        return false;
+
+    JSObject* receiver = thisValue.getObject();
+    if (!receiver) [[unlikely]]
+        return false;
+    if (!receiver->structure()->isUncacheableDictionary()) [[likely]]
+        return false;
+
+    auto* codeBlock = callFrame->codeBlock();
+    auto codeOrigin = callFrame->codeOrigin();
+    if (JSC::JITCode::isOptimizingJIT(codeBlock->jitType()))
+        codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, codeBlock->baselineAlternative());
+    if (codeBlock->unlinkedCodeBlock()->isBuiltinFunction()) [[unlikely]]
+        return false;
+
+    auto* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
+    if (!instruction->is<OpPutByIdWithThis>() && !instruction->is<OpPutByValWithThis>()) [[unlikely]]
+        return false;
+
+    debugger->willModifyUncacheableDictionary(*receiver);
+    return true;
+}
+
+template<bool strict>
+static ALWAYS_INLINE void putWithThis(JSGlobalObject* globalObject, CallFrame* callFrame, EncodedJSValue encodedBase, EncodedJSValue encodedThis, EncodedJSValue encodedValue, const Identifier& ident, ThrowScope& scope)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue thisVal = JSValue::decode(encodedThis);
     JSValue putValue = JSValue::decode(encodedValue);
+
+    if (willPutWithThisToUncacheableDictionary(callFrame, globalObject, thisVal)) [[unlikely]]
+        RETURN_IF_EXCEPTION(scope, void());
+
     PutPropertySlot slot(thisVal, strict);
     baseValue.putInline(globalObject, ident, putValue, slot);
 }
@@ -2570,7 +2602,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdWithThisStrict, void, (JSGlobalObject* 
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
-    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, ident);
+    putWithThis<true>(globalObject, callFrame, encodedBase, encodedThis, encodedValue, ident, scope);
     OPERATION_RETURN(scope);
 }
 
@@ -2584,7 +2616,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdWithThis, void, (JSGlobalObject* global
     CacheableIdentifier identifier = CacheableIdentifier::createFromRawBits(rawCacheableIdentifier);
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
-    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, ident);
+    putWithThis<false>(globalObject, callFrame, encodedBase, encodedThis, encodedValue, ident, scope);
     OPERATION_RETURN(scope);
 }
 
@@ -2597,8 +2629,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValWithThisStrict, void, (JSGlobalObject*
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope);
-    scope.release();
-    putWithThis<true>(globalObject, encodedBase, encodedThis, encodedValue, property);
+
+    putWithThis<true>(globalObject, callFrame, encodedBase, encodedThis, encodedValue, property, scope);
     OPERATION_RETURN(scope);
 }
 
@@ -2611,8 +2643,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValWithThis, void, (JSGlobalObject* globa
 
     Identifier property = JSValue::decode(encodedSubscript).toPropertyKey(globalObject);
     OPERATION_RETURN_IF_EXCEPTION(scope);
-    scope.release();
-    putWithThis<false>(globalObject, encodedBase, encodedThis, encodedValue, property);
+
+    putWithThis<false>(globalObject, callFrame, encodedBase, encodedThis, encodedValue, property, scope);
     OPERATION_RETURN(scope);
 }
 

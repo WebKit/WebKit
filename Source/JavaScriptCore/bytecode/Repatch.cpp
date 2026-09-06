@@ -33,6 +33,7 @@
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
 #include "DOMJITGetterSetter.h"
+#include "Debugger.h"
 #include "DirectArguments.h"
 #include "ECMAMode.h"
 #include "ExecutableBaseInlines.h"
@@ -1034,6 +1035,12 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
             return GiveUpOnCache;
 
         JSCell* baseCell = baseValue.asCell();
+
+        if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+            JSObject* receiver = slot.thisValue().getObject();
+            if (receiver && receiver->structure()->isUncacheableDictionary() && debugger->isWatchingObject(*receiver)) [[unlikely]]
+                return GiveUpOnCache;
+        }
 
         RefPtr<AccessCase> newCase;
 

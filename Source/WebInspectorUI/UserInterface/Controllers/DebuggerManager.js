@@ -86,6 +86,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this._allMicrotasksBreakpointSetting = new WI.Setting("all-microtasks-breakpoint", null);
         this._allMicrotasksBreakpoint = null;
 
+        this._watchedObjectBreakpointSetting = new WI.Setting("watched-object-breakpoint", null);
+        this._watchedObjectBreakpoint = null;
+
         this._breakpoints = [];
         this._breakpointContentIdentifierMap = new Multimap;
         this._breakpointScriptIdentifierMap = new Multimap;
@@ -202,6 +205,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                     this.addBreakpoint(this._allMicrotasksBreakpoint);
             }
 
+            if (WI.JavaScriptBreakpoint.supportsWatchedObjectBreakpoint()) {
+                this._watchedObjectBreakpoint = loadSpecialBreakpoint(this._watchedObjectBreakpointSetting);
+                if (this._watchedObjectBreakpoint)
+                    this.addBreakpoint(this._watchedObjectBreakpoint);
+            }
+
             this._restoringBreakpoints = false;
         })());
     }
@@ -236,6 +245,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         if (this._allMicrotasksBreakpoint)
             this._updateSpecialBreakpoint(this._allMicrotasksBreakpoint, target);
+
+        if (this._watchedObjectBreakpoint)
+            this._updateSpecialBreakpoint(this._watchedObjectBreakpoint, target);
 
         target.DebuggerAgent.setAsyncStackTraceDepth(this._asyncStackTraceDepthSetting.value);
 
@@ -326,6 +338,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Listener;
         case InspectorBackend.Enum.Debugger.PausedReason.Microtask:
             return WI.DebuggerManager.PauseReason.Microtask;
+        case InspectorBackend.Enum.Debugger.PausedReason.WatchedObject:
+            return WI.DebuggerManager.PauseReason.WatchedObject;
         case InspectorBackend.Enum.Debugger.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
         case InspectorBackend.Enum.Debugger.PausedReason.Timeout:
@@ -389,6 +403,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     get uncaughtExceptionsBreakpoint() { return this._uncaughtExceptionsBreakpoint; }
     get assertionFailuresBreakpoint() { return this._assertionFailuresBreakpoint; }
     get allMicrotasksBreakpoint() { return this._allMicrotasksBreakpoint; }
+    get watchedObjectBreakpoint() { return this._watchedObjectBreakpoint; }
     get breakpoints() { return this._breakpoints; }
 
     createAssertionFailuresBreakpoint(options = {})
@@ -405,6 +420,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._allMicrotasksBreakpoint = this._createSpecialBreakpoint(options);
         this.addBreakpoint(this._allMicrotasksBreakpoint);
+    }
+
+    createWatchedObjectBreakpoint(options = {})
+    {
+        console.assert(!this._watchedObjectBreakpoint);
+
+        this._watchedObjectBreakpoint = this._createSpecialBreakpoint(options);
+        this.addBreakpoint(this._watchedObjectBreakpoint);
     }
 
     breakpointForIdentifier(id)
@@ -822,6 +845,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             case this._allMicrotasksBreakpoint:
                 this._allMicrotasksBreakpointSetting.reset();
                 this._allMicrotasksBreakpoint = null;
+                break;
+
+            case this._watchedObjectBreakpoint:
+                this._watchedObjectBreakpointSetting.reset();
+                this._watchedObjectBreakpoint = null;
                 break;
             }
         } else if (!this._restoringBreakpoints)
@@ -1447,6 +1475,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             setting = this._allMicrotasksBreakpointSetting;
             command = "setPauseOnMicrotasks";
             break;
+
+        case this._watchedObjectBreakpoint:
+            setting = this._watchedObjectBreakpointSetting;
+            command = "setPauseOnWatchedObject";
+            break;
         }
         console.assert(setting);
 
@@ -1876,6 +1909,7 @@ WI.DebuggerManager.PauseReason = {
     Interval: "interval",
     Listener: "listener",
     Microtask: "microtask",
+    WatchedObject: "watched-object",
     PauseOnNextStatement: "pause-on-next-statement",
     Timeout: "timeout",
     URL: "url",

@@ -4108,6 +4108,16 @@ void JSObject::convertToUncacheableDictionary(VM& vm)
         vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
 }
 
+void JSObject::replaceWithUncacheableDictionary(VM& vm, HasBeenFlattenedBefore hasBeenFlattenedBefore)
+{
+    Structure* oldStructure = structure();
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, oldStructure);
+    Structure* newStructure = Structure::cloneAsUncacheableDictionary(vm, oldStructure, hasBeenFlattenedBefore, &deferredWatchpointFire);
+    setStructure(vm, newStructure);
+    if (mayBePrototype()) [[unlikely]]
+        vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
+}
+
 
 void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM& vm, Structure* structure, size_t outOfLineCapacityAfter)
 {
