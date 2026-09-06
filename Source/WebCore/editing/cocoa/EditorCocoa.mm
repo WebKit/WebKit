@@ -223,7 +223,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
         if (!document->isTextDocument()) {
             content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
             HashMap<FrameIdentifier, AttributedString> remoteFrameContent;
-            if (RefPtr page = document->page(); page && page->hasRemoteFrames()) {
+            if (RefPtr page = document->page(); page && page->mainFrame().tree().containsRemoteFrame()) {
                 LegacyWebArchive::ArchiveOptions options {
                     LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::Yes,
                     LegacyWebArchive::ShouldArchiveSubframes::No

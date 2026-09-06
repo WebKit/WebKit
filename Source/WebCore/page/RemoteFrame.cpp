@@ -66,8 +66,6 @@ RemoteFrame::RemoteFrame(Page& page, ClientCreator&& clientCreator, FrameIdentif
     , m_colorSchemePreference(ColorSchemePreference::NoPreference)
 {
     setView(RemoteFrameView::create(*this));
-
-    page.didAttachRemoteFrame();
 }
 
 RemoteFrame::~RemoteFrame()

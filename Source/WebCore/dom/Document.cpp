@@ -8588,7 +8588,7 @@ void Document::enforceSandboxFlags(SandboxFlags flags, SandboxFlagsSource source
     bool wasSandboxedOrigin = isSandboxed(SandboxFlag::Origin);
     SecurityContext::enforceSandboxFlags(flags, source);
 
-    if (RefPtr page = this->page(); page && page->hasRemoteFrames()) {
+    if (RefPtr page = this->page(); page && page->mainFrame().tree().containsRemoteFrame()) {
         bool sandboxedStateDidChange = wasSandboxedOrigin != isSandboxed(SandboxFlag::Origin);
         if (!sandboxedStateDidChange)
             return;
@@ -10549,7 +10549,7 @@ void Document::updateRemoteIntersectionObservers()
     if (!page)
         return;
 
-    ASSERT(page->hasRemoteFrames());
+    ASSERT(page->mainFrame().tree().containsRemoteFrame());
 
     RefPtr mainFrame = this->page()->mainFrame();
     if (!mainFrame)

@@ -438,10 +438,6 @@ public:
     WEBCORE_EXPORT void setMainFrame(Ref<Frame>&&);
     WEBCORE_EXPORT const URL& NODELETE mainFrameURL() const LIFETIME_BOUND;
 
-    bool hasRemoteFrames() const;
-    void didAttachRemoteFrame() { ++m_remoteFrameCount; }
-    void didDetachRemoteFrame() { ASSERT(m_remoteFrameCount); --m_remoteFrameCount; }
-
     WEBCORE_EXPORT void didObserveFirstPartyUserGesture();
     SecurityOrigin& mainFrameOrigin() const;
     WEBCORE_EXPORT RefPtr<Frame> findFrameByPath(const Vector<uint64_t>& path) const;
@@ -1546,8 +1542,6 @@ private:
     HashSet<WeakRef<LocalFrame>> m_rootFrames;
     const UniqueRef<EditorClient> m_editorClient;
 
-    // Declared before m_mainFrame so a remote main frame can count itself as m_mainFrame is built.
-    unsigned m_remoteFrameCount { 0 };
     Ref<Frame> m_mainFrame;
     String m_mainFrameURLFragment;
 

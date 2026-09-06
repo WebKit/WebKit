@@ -1606,7 +1606,7 @@ bool LocalDOMWindow::consumeTransientActivation()
             window->consumeLastActivationIfNecessary();
     }
 
-    if (RefPtr page = thisFrame ? thisFrame->page() : nullptr; page && page->hasRemoteFrames())
+    if (RefPtr page = thisFrame ? thisFrame->page() : nullptr; page && page->mainFrame().tree().containsRemoteFrame())
         thisFrame->loader().client().didConsumeUserActivation();
 
     return true;
@@ -1692,7 +1692,7 @@ void LocalDOMWindow::notifyActivated(MonotonicTime activationTime)
         updateActivationTimestampAndNotify(*descendantWindow, activationTime, closeWatcherEnabled);
     }
 
-    if (RefPtr page = frame->page(); page && page->hasRemoteFrames())
+    if (RefPtr page = frame->page(); page && page->mainFrame().tree().containsRemoteFrame())
         frame->loader().client().didNotifyUserActivation(activationTime);
 }
 

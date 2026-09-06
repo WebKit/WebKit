@@ -75,7 +75,7 @@ public:
     Frame* NODELETE traverseNextInPostOrder(CanWrap) const;
 
     WEBCORE_EXPORT void appendChild(Frame&);
-    void detachFromParent() { m_parent = nullptr; }
+    WEBCORE_EXPORT void detachFromParent();
     WEBCORE_EXPORT void removeChild(Frame&);
     WEBCORE_EXPORT void replaceChild(Frame&, Frame&);
 
@@ -89,7 +89,7 @@ public:
     WEBCORE_EXPORT Frame& NODELETE top() const;
     unsigned NODELETE depth() const;
 
-    WEBCORE_EXPORT bool hasRemoteFrameDescendant() const;
+    bool hasRemoteFrameDescendant() const { return !!m_remoteFrameDescendantCount; }
 
     WEBCORE_EXPORT RefPtr<Frame> scopedChild(unsigned index) const;
     WEBCORE_EXPORT RefPtr<Frame> scopedChildByUniqueName(const AtomString&) const;
@@ -100,6 +100,12 @@ private:
     Frame* NODELETE deepFirstChild() const;
     Frame* NODELETE deepLastChild() const;
     Frame* NODELETE nextAncestorSibling(const Frame* stayWithin) const;
+
+    int remoteFrameCountIncludingSelf() const;
+    void adjustRemoteFrameDescendantCountForSelfAndAncestors(int delta);
+#if ASSERT_ENABLED
+    int remoteFrameDescendantCountSlow() const;
+#endif
 
     RefPtr<Frame> scopedChild(unsigned index, TreeScope*) const;
     RefPtr<Frame> scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope*) const;
@@ -117,6 +123,7 @@ private:
     RefPtr<Frame> m_firstChild;
     WeakPtr<Frame> m_lastChild;
     mutable unsigned m_scopedChildCount { invalidCount };
+    int m_remoteFrameDescendantCount { 0 };
 };
 
 ASCIILiteral blankTargetFrameName();
