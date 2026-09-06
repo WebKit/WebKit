@@ -44,6 +44,7 @@ class Thread;
 
 namespace WebCore {
 
+class SecurityOriginData;
 class WorkerDebuggerProxy;
 class WorkerLoaderProxy;
 
@@ -65,7 +66,7 @@ public:
     WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
     WorkerRunLoop& runLoop() LIFETIME_BOUND { return m_runLoop; }
 
-    void start(Function<void(const String&)>&& evaluateCallback = { });
+    void start(Function<void(const String&)>&& evaluateCallback = { }, Function<void(SecurityOriginData&&)>&& globalScopeCreatedCallback = { });
     void stop(Function<void()>&& terminatedCallback = { });
 
     void startRunningDebuggerTasks();
@@ -108,6 +109,7 @@ private:
     RefPtr<Thread> m_thread;
     const UniqueRef<WorkerRunLoop> m_runLoop;
     Function<void(const String&)> m_evaluateCallback;
+    Function<void(SecurityOriginData&&)> m_globalScopeCreatedCallback;
     Function<void()> m_stoppedCallback;
     BinarySemaphore m_suspensionSemaphore;
     ThreadSafeWeakHashSet<WorkerOrWorkletThread> m_childThreads;

@@ -1334,6 +1334,7 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
     auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
 
     // Ensure the active realm is destroyed even if the WebProcess terminates first.
+    m_bidiProcessor->scriptAgent().removeDedicatedWorkerRealmsForBrowsingContext(contextHandle);
     if (auto realmID = m_bidiProcessor->scriptAgent().realmIdentifierForBrowsingContext(contextHandle))
         m_bidiProcessor->scriptAgent().notifyRealmDestroyed(*realmID, contextHandle);
 
@@ -3251,8 +3252,36 @@ void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID
     if (it == scriptAgent.activeRealms().end())
         return; // Realm not found or already destroyed.
 
-    auto browsingContext = it->value.context;
-    scriptAgent.notifyRealmDestroyed(realmIdentifier, browsingContext);
+    if (!it->value.context)
+        return;
+    scriptAgent.notifyRealmDestroyed(realmIdentifier, *it->value.context);
+}
+
+void WebAutomationSession::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+{
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
+    RefPtr ownerFrame = WebFrameProxy::webFrame(ownerFrameIdentifier);
+    if (!ownerFrame)
+        return;
+
+    if (!ownerFrame->isMainFrame())
+        return;
+
+    RefPtr page = ownerFrame->page();
+    if (!page || !page->isControlledByAutomation())
+        return;
+
+    auto ownerBrowsingContextIterator = m_webPageHandleMap.find(page->identifier());
+    if (ownerBrowsingContextIterator == m_webPageHandleMap.end())
+        return;
+
+    m_bidiProcessor->scriptAgent().notifyDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, ownerBrowsingContextIterator->value, origin);
+}
+
+void WebAutomationSession::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier)
+{
+    m_bidiProcessor->scriptAgent().notifyDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier);
 }
 #endif
 

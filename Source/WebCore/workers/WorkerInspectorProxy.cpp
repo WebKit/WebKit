@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WorkerInspectorProxy.h"
 
+#include "AutomationInstrumentation.h"
 #include "DocumentPage.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
@@ -146,6 +148,25 @@ auto WorkerInspectorProxy::pageOrWorkerGlobalScopeIdentifier(ScriptExecutionCont
     return context.identifier();
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+static std::optional<FrameIdentifier> automationOwnerFrameIdentifier(const WorkerInspectorProxy& worker)
+{
+    // FIXME: Support dedicated workers owned by iframes and other workers once
+    // those owner realms are registered with the BiDi script agent.
+    RefPtr context = worker.scriptExecutionContext();
+    RefPtr document = dynamicDowncast<Document>(context.get());
+    if (!document)
+        return std::nullopt;
+
+    RefPtr frame = document->frame();
+    RefPtr page = document->page();
+    if (!frame || !frame->isMainFrame() || !page || !page->isControlledByAutomation())
+        return std::nullopt;
+
+    return frame->frameID();
+}
+#endif
+
 void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecutionContext, WorkerThread* thread, const URL& url, const String& name)
 {
     ASSERT(!m_workerThread);
@@ -155,9 +176,48 @@ void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecution
     m_workerThread = thread;
     m_url = url;
     m_name = name;
+    m_isExecutionReady = false;
+    m_wasTerminatedBeforeExecutionReady = false;
+    m_automationOwnerFrameIdentifier = std::nullopt;
+    m_automationSecurityOrigin = std::nullopt;
+#if ENABLE(WEBDRIVER_BIDI)
+    m_automationOwnerFrameIdentifier = automationOwnerFrameIdentifier(*this);
+#endif
     addToProxyMap();
 
     InspectorInstrumentation::workerStarted(*this);
+}
+
+void WorkerInspectorProxy::workerBecameExecutionReady(const SecurityOriginData& origin)
+{
+    ASSERT(!m_scriptExecutionContext || m_scriptExecutionContext->isContextThread());
+    ASSERT(m_workerThread || m_wasTerminatedBeforeExecutionReady);
+    if (m_isExecutionReady)
+        return;
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_automationOwnerFrameIdentifier)
+        m_automationSecurityOrigin = origin.isolatedCopy();
+#else
+    UNUSED_PARAM(origin);
+#endif
+
+    m_isExecutionReady = true;
+
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_automationOwnerFrameIdentifier) {
+        AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(m_identifier, *m_automationOwnerFrameIdentifier, *m_automationSecurityOrigin);
+        if (m_wasTerminatedBeforeExecutionReady)
+            AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(m_identifier, *m_automationOwnerFrameIdentifier);
+    }
+#endif
+
+    if (m_wasTerminatedBeforeExecutionReady) {
+        m_isExecutionReady = false;
+        m_wasTerminatedBeforeExecutionReady = false;
+        m_automationOwnerFrameIdentifier = std::nullopt;
+        m_automationSecurityOrigin = std::nullopt;
+    }
 }
 
 void WorkerInspectorProxy::workerTerminated()
@@ -165,6 +225,19 @@ void WorkerInspectorProxy::workerTerminated()
     if (!m_workerThread)
         return;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_isExecutionReady && m_automationOwnerFrameIdentifier)
+        AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(m_identifier, *m_automationOwnerFrameIdentifier);
+#endif
+
+    if (!m_isExecutionReady)
+        m_wasTerminatedBeforeExecutionReady = true;
+
+    m_isExecutionReady = false;
+    if (!m_wasTerminatedBeforeExecutionReady) {
+        m_automationOwnerFrameIdentifier = std::nullopt;
+        m_automationSecurityOrigin = std::nullopt;
+    }
     InspectorInstrumentation::workerTerminated(*this);
     removeFromProxyMap();
 

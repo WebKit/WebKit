@@ -52,5 +52,6 @@ messages -> WebAutomationSessionProxy {
 
 #if ENABLE(WEBDRIVER_BIDI)
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
+    GetDedicatedWorkerRealms(WebCore::PageIdentifier pageID) -> (Vector<std::tuple<String, WebCore::FrameIdentifier, WebCore::SecurityOriginData>> realms) Async
 #endif
 }

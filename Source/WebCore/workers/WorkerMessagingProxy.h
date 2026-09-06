@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class DedicatedWorkerThread;
+class SecurityOriginData;
 class WeakPtrImplWithEventTargetData;
 class WorkerInspectorProxy;
 class WorkerUserGestureForwarder;
@@ -76,6 +77,7 @@ private:
     void reportErrorToWorkerObject(const String&) final;
     void workerGlobalScopeClosed() final;
     void workerGlobalScopeDestroyed() final;
+    void workerGlobalScopeCreated(SecurityOriginData&&);
 
     // Implementation of WorkerDebuggerProxy.
     // (Only use these functions in the worker context thread.)

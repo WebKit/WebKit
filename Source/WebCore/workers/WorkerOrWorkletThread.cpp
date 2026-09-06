@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerOrWorkletThread.h"
 
+#include "SecurityOrigin.h"
 #include "ThreadGlobalData.h"
 #include "WorkerEventLoop.h"
 #include "WorkerLoaderProxy.h"
@@ -121,6 +122,9 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 
         downcast<WorkerMainRunLoop>(m_runLoop.get()).setGlobalScope(*globalScope());
 
+        if (auto callback = WTF::move(m_globalScopeCreatedCallback))
+            callback(protect(globalScope())->securityOrigin()->data().isolatedCopy());
+
         String exceptionMessage;
         evaluateScriptIfNecessary(exceptionMessage);
 
@@ -164,6 +168,9 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
             scriptController->forbidExecution();
         }
     }
+
+    if (auto callback = WTF::move(m_globalScopeCreatedCallback))
+        callback(protect(globalScope())->securityOrigin()->data().isolatedCopy());
 
     if (shouldWaitForWebInspectorOnStartup()) {
         startRunningDebuggerTasks();
@@ -237,7 +244,7 @@ void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&
     protector->detach();
 }
 
-void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback)
+void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallback, Function<void(SecurityOriginData&&)>&& globalScopeCreatedCallback)
 {
     // Mutex protection is necessary to ensure that m_thread is initialized when the thread starts.
     Locker locker { m_threadCreationAndGlobalScopeLock };
@@ -246,6 +253,7 @@ void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallba
         return;
 
     m_evaluateCallback = WTF::move(evaluateCallback);
+    m_globalScopeCreatedCallback = WTF::move(globalScopeCreatedCallback);
 
     auto thread = createThread();
 
