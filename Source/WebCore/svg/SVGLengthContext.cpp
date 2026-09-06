@@ -358,9 +358,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value)
         return value / initialXHeightPx;
     }
 
-    // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
-    // if this causes problems in real world cases maybe it would be best to remove this
-    float xHeight = std::ceil(style->metricsOfPrimaryFont().xHeight().value_or(0));
+    float xHeight = style->metricsOfPrimaryFont().xHeight().value_or(0);
     if (!xHeight)
         return Exception { ExceptionCode::NotSupportedError };
 
@@ -378,9 +376,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEXSToUserUnits(float value)
         return value * initialXHeightPx;
     }
 
-    // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
-    // if this causes problems in real world cases maybe it would be best to remove this
-    return value * std::ceil(style->metricsOfPrimaryFont().xHeight().value_or(0));
+    return value * style->metricsOfPrimaryFont().xHeight().value_or(0);
 }
 
 std::optional<FloatSize> SVGLengthContext::viewportSize() const
