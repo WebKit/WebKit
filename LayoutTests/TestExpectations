@@ -3489,9 +3489,6 @@ webkit.org/b/165460 compositing/repaint/scroll-fixed-layer-out-of-view.html [ Fa
 webkit.org/b/166911 fast/dom/Window/window-properties-performance.html [ Pass Failure ]
 webkit.org/b/166911 fast/dom/Window/window-properties-performance-resource-timing.html [ Pass Failure ]
 
-webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-skip-no-boxes.html [ ImageOnlyFailure ]
-webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html [ ImageOnlyFailure ]
 
 webkit.org/b/168066 performance-api/performance-now-api.html [ Pass Failure ]
