@@ -1188,6 +1188,7 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
 
 void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1198,6 +1199,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vect
 
 void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer, const std::optional<SecurityOriginData>& topOrigin)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1221,6 +1223,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
 
 void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1231,6 +1234,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& u
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, const std::optional<WebCore::SecurityOriginData>& topOrigin)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1241,6 +1245,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url, const std:
 
 void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;
@@ -1251,6 +1256,7 @@ void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url, const 
 
 void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
 {
+    MESSAGE_CHECK(!url.isEmpty());
     CheckedPtr session = networkSession();
     if (!session)
         return;

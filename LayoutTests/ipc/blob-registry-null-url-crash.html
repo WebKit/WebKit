@@ -1,0 +1,67 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<title>Blob registry messages carrying a null URL must not crash the network process</title>
+<p>This test passes if WebKit does not crash.</p>
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+</script>
+<script type="module">
+if (!window.IPC) {
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import('./coreipc.js');
+const networking = CoreIPC.Networking.NetworkConnectionToWebProcess;
+const connection = 0;
+
+// A null String is the empty value of every hash map keyed by blob URL in the network process, so
+// it is never a legal key: hashing it dereferences a null StringImpl. An unparseable URL keeps its
+// input string, so { string: null } arrives on the other side as a URL with a null string.
+const nullURL = { string: null };
+const internalURL = () => ({ string: `blob:blobinternal:///${crypto.randomUUID()}` });
+const noTopOrigin = { };
+const policyContainer = {
+    contentSecurityPolicyResponseHeaders: { headers: [], httpStatusCode: 0 },
+    crossOriginEmbedderPolicy: { value: 0, reportOnlyValue: 0, reportingEndpoint: '', reportOnlyReportingEndpoint: '' },
+    crossOriginOpenerPolicy: { value: 0, reportOnlyValue: 0, reportingEndpoint: '', reportOnlyReportingEndpoint: '' },
+    referrerPolicy: 0,
+};
+
+// A lookup returns early while the registry's table is still null, so register a real blob first to
+// make sure the null keys below actually reach the hash function.
+const registeredBlobURL = URL.createObjectURL(new Blob([new Uint8Array([1, 2, 3])]));
+
+// Null destination URLs, which are keys of NetworkConnectionToWebProcess's own URL-keyed hash sets.
+networking.RegisterInternalBlobURL(connection, { url: nullURL, blobParts: [], contentType: '' });
+networking.RegisterBlobURL(connection, { url: nullURL, srcURL: nullURL, policyContainer, topOrigin: noTopOrigin });
+networking.RegisterInternalBlobURLForSlice(connection, { url: nullURL, srcURL: nullURL, start: 0, end: 1, contentType: '' });
+networking.UnregisterBlobURL(connection, { url: nullURL, topOrigin: noTopOrigin });
+networking.RegisterBlobURLHandle(connection, { url: nullURL, topOrigin: noTopOrigin });
+networking.UnregisterBlobURLHandle(connection, { url: nullURL, topOrigin: noTopOrigin });
+
+// Null source URLs and null blob part URLs, which are looked up in the registry and must miss.
+networking.RegisterInternalBlobURL(connection, {
+    url: internalURL(),
+    blobParts: [{ m_dataOrURL: { variantType: 'URL', variant: nullURL } }],
+    contentType: 'application/octet-stream',
+});
+networking.RegisterBlobURL(connection, { url: internalURL(), srcURL: nullURL, policyContainer, topOrigin: noTopOrigin });
+networking.RegisterInternalBlobURLForSlice(connection, { url: internalURL(), srcURL: nullURL, start: 0, end: 1, contentType: '' });
+
+// Synchronous lookups of a null blob URL.
+networking.BlobType(connection, { url: nullURL }, () => { });
+networking.BlobSize(connection, { url: nullURL }, () => { });
+
+// A null String in the blob URL vector, which reaches both BlobRegistryImpl::filesInBlob and
+// BlobRegistryImpl::populateBlobsForFileWriting.
+networking.WriteBlobsToTemporaryFilesForIndexedDB(connection, { blobURLs: [null, registeredBlobURL] }, () => {
+    URL.revokeObjectURL(registeredBlobURL);
+    testRunner?.notifyDone();
+});
+
+// WriteBlobsToTemporaryFilesForIndexedDB does not reply in an ephemeral session, so do not hang
+// waiting for it.
+setTimeout(() => testRunner?.notifyDone(), 3000);
+
+}
+</script>
