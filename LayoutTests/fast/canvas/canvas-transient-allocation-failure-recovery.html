@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ runSingly=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+var canvas = document.createElement('canvas');
+canvas.width = 100;
+canvas.height = 100;
+var ctx = canvas.getContext("2d");
+
+if (window.internals)
+    internals.setMaxCanvasArea(1);
+
+ctx.fillRect(0, 0, 100, 100);
+
+if (window.internals)
+    internals.setMaxCanvasArea(100 * 100);
+
+ctx.fillStyle = "green";
+ctx.fillRect(0, 0, 100, 100);
+
+var pixel = ctx.getImageData(50, 50, 1, 1).data;
+shouldBe("pixel[0]", "0");
+shouldBe("pixel[1]", "128");
+shouldBe("pixel[2]", "0");
+shouldBe("pixel[3]", "255");
+</script>
+</body>
+</html>

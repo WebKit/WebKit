@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Canvas area exceeds the maximum limit (width * height > 1).
+PASS pixel[0] is 0
+PASS pixel[1] is 128
+PASS pixel[2] is 0
+PASS pixel[3] is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

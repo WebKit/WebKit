@@ -3359,10 +3359,10 @@ ImageBuffer* CanvasRenderingContext2DBase::buffer() const
 {
     if (m_hasCreatedImageBuffer)
         return m_buffer;
-    m_hasCreatedImageBuffer = true;
     RefPtr buffer = allocateImageBuffer();
     if (!buffer)
         return nullptr;
+    m_hasCreatedImageBuffer = true;
     auto& context = buffer->context();
     context.setShadowsIgnoreTransforms(true);
     context.setImageInterpolationQuality(defaultInterpolationQuality);
