@@ -262,19 +262,79 @@ struct JavaScriptEvaluationGraphDecoder<ID: Hashable & Sendable>: CommonDecoder,
 
     @_lifetime(self: copy self)
     mutating func decodeAny<V: CommonDecodingVisitor>(_ visitor: V) throws(CodingError.Decoding) -> V.DecodedValue {
-        fatalError("\(#function) is not implemented")
+        switch try codableValue() {
+        case .empty:
+            try visitor.visitNone()
+
+        case .bool(let value):
+            try visitor.visit(value)
+
+        case .number(let value):
+            if let integer = Int64(exactly: value) {
+                try visitor.visit(integer)
+            } else if let integer = UInt64(exactly: value) {
+                try visitor.visit(integer)
+            } else {
+                try visitor.visit(value)
+            }
+
+        case .string:
+            try decodeString(visitor)
+
+        case .seconds:
+            fatalError()
+
+        case .array:
+            try decodeArray { decoder throws(CodingError.Decoding) in
+                try visitor.visit(decoder: &decoder)
+            }
+
+        case .object:
+            try decodeStruct { decoder throws(CodingError.Decoding) in
+                try visitor.visit(decoder: &decoder)
+            }
+        }
     }
 
     @_lifetime(self: copy self)
     mutating func decodeBytes<V: DecodingBytesVisitor>(visitor: V) throws(CodingError.Decoding) -> V.DecodedValue {
-        fatalError("\(#function) is not implemented")
+        let value = try codableValue()
+
+        switch value {
+        case .string(let string):
+            guard let data = Data(base64Encoded: string) else {
+                throw CodingError.dataCorrupted(
+                    at: codingPath,
+                    debugDescription: "\(string) is not a valid base64 string."
+                )
+            }
+
+            return try visitor.visitBytes([UInt8](data))
+
+        case .array:
+            let bytes = try decodeArray { decoder throws(CodingError.Decoding) in
+                var bytes: [UInt8] = []
+                bytes.reserveCapacity(decoder.sizeHint ?? 0)
+
+                try decoder.decodeEachElement { elementDecoder throws(CodingError.Decoding) in
+                    bytes.append(try elementDecoder.decode(UInt8.self))
+                }
+
+                return bytes
+            }
+
+            return try visitor.visitBytes(bytes)
+
+        default:
+            throw CodingError.typeMismatch(
+                expectedTypeDescription: "base64 string or byte array",
+                actualValueDescription: "\(value)",
+                at: codingPath
+            )
+        }
     }
 
-    @_disfavoredOverload
-    @_lifetime(self: copy self)
-    mutating func decode<D: Decodable>(_: D.Type) throws(CodingError.Decoding) -> D {
-        fatalError("\(#function) is not implemented")
-    }
+    // Intentionally does not implement the `mutating func decode<D: Decodable>(_: D.Type) throws(CodingError.Decoding) -> D ` requirement; the default implementation is sound.
 }
 
 extension JavaScriptEvaluationGraphDecoder {
