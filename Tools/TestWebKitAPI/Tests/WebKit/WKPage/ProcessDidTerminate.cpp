@@ -32,7 +32,11 @@
 #include "Helpers/Test.h"
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#if OS(WINDOWS)
+#include <windows.h>
+#else
 #include <signal.h>
+#endif
 
 namespace TestWebKitAPI {
 
@@ -74,6 +78,19 @@ static void webProcessCrashed(WKPageRef page, WKProcessTerminationReason reason,
     EXPECT_EQ(kWKProcessTerminationReasonCrash, reason);
 
     crashHandlerCalled = true;
+}
+
+static void killWebProcess(WKPageRef page)
+{
+    auto processIdentifier = WKPageGetProcessIdentifier(page);
+#if OS(WINDOWS)
+    HANDLE process = OpenProcess(PROCESS_TERMINATE, FALSE, processIdentifier);
+    ASSERT_TRUE(process);
+    TerminateProcess(process, 1);
+    CloseHandle(process);
+#else
+    kill(processIdentifier, SIGKILL);
+#endif
 }
 
 TEST(WebKit, ProcessDidTerminateRequestedByClient)
@@ -120,7 +137,7 @@ TEST(WebKit, ProcessDidTerminateWithReasonCrash)
     Util::run(&loadBeforeCrash);
 
     // Simulate a crash by killing the WebProcess.
-    kill(WKPageGetProcessIdentifier(webView.page()), SIGKILL);
+    killWebProcess(webView.page());
 
     Util::run(&crashHandlerCalled);
 }
