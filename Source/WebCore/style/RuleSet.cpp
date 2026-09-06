@@ -268,7 +268,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
                 case CSSSelector::PseudoElement::ViewTransitionImagePair:
                 case CSSSelector::PseudoElement::ViewTransitionOld:
                 case CSSSelector::PseudoElement::ViewTransitionNew:
-                    if (current->stringList()->first() != starAtom())
+                    if (!current->stringList()->first().isNull())
                         namedPseudoElementSelector = current;
                     break;
                 default:

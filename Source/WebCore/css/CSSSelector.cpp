@@ -215,13 +215,14 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector,
         // so whether we add the ClassC specificity shouldn't be observable.
         case CSSSelector::PseudoElement::Slotted:
             return maxSpecificity(simpleSelector.selectorList());
+        case CSSSelector::PseudoElement::Highlight:
         case CSSSelector::PseudoElement::ViewTransitionGroup:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionNew:
         case CSSSelector::PseudoElement::ViewTransitionOld:
             ASSERT(simpleSelector.stringList() && simpleSelector.stringList()->size());
             // Standalone universal selector gets 0 specificity.
-            if (simpleSelector.stringList()->first() == starAtom() && simpleSelector.stringList()->size() == 1)
+            if (simpleSelector.stringList()->first().isNull() && simpleSelector.stringList()->size() == 1)
                 return 0;
             break;
         default:
@@ -593,12 +594,15 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case PseudoElement::ViewTransitionImagePair:
             case PseudoElement::ViewTransitionOld:
             case PseudoElement::ViewTransitionNew:
-                // Name or universal selector always comes first, followed by classes.
+                // Name or universal selector always comes first, followed by classes (view-transition pseudo-elements only).
                 ASSERT(selector->stringList() && !selector->stringList()->isEmpty());
 
                 builder.append("::"_s, selector->serializingValue(), '(',
                     interleave(*selector->stringList(), [&](auto& builder, auto& nameOrClass) {
-                        serializeIdentifierOrStar(nameOrClass, builder);
+                        if (nameOrClass.isNull())
+                            builder.append('*');
+                        else
+                            serializeIdentifier(builder, nameOrClass);
                     }, '.'),
                 ')');
                 break;

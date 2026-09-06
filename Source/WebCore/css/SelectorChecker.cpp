@@ -1399,13 +1399,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         }
 
         case CSSSelector::PseudoElement::Highlight:
-            // Always matches when not specifically requested so it gets added to the collectedPseudoElements.
-            if (!requestedPseudoElement)
-                return true;
-            if (requestedPseudoElement->type != PseudoElementType::Highlight || !selector.stringList())
-                return false;
-            return selector.stringList()->first() == requestedPseudoElement->nameOrPart;
-
         case CSSSelector::PseudoElement::ViewTransitionGroup:
         case CSSSelector::PseudoElement::ViewTransitionImagePair:
         case CSSSelector::PseudoElement::ViewTransitionOld:
@@ -1416,13 +1409,16 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             if (requestedPseudoElement->type != CSSSelector::stylePseudoElementTypeFor(selector.pseudoElement()) || !selector.stringList())
                 return false;
 
+            // A null name means ::highlight(*) or ::view-transition-*(*), which matches any name.
             auto& list = *selector.stringList();
             auto& name = list.first();
-            if (name != starAtom() && name != requestedPseudoElement->nameOrPart)
+            if (!name.isNull() && name != requestedPseudoElement->nameOrPart)
                 return false;
 
             if (list.size() == 1)
                 return true;
+
+            ASSERT(selector.pseudoElement() != CSSSelector::PseudoElement::Highlight);
 
             return std::ranges::all_of(list.span().subspan(1),
                 [&](const AtomString& classSelector) {
