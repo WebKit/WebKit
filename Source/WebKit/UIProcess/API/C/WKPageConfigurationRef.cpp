@@ -35,6 +35,11 @@
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 
+#if ENABLE(APPLICATION_MANIFEST)
+#include "APIApplicationManifest.h"
+#include <WebCore/ApplicationManifestParser.h>
+#endif
+
 using namespace WebKit;
 
 WKTypeID WKPageConfigurationGetTypeID()
@@ -129,6 +134,19 @@ void WKPageConfigurationSetShouldSendConsoleLogsToUIProcessForTesting(WKPageConf
 void WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(WKPageConfigurationRef configuration, uint16_t upgradeFromInsecurePort, uint16_t upgradeToSecurePort)
 {
     toImpl(configuration)->setPortsForUpgradingInsecureSchemeForTesting(upgradeFromInsecurePort, upgradeToSecurePort);
+}
+
+void WKPageConfigurationSetApplicationManifest(WKPageConfigurationRef configuration, WKStringRef json, WKURLRef manifestURL, WKURLRef documentURL)
+{
+#if ENABLE(APPLICATION_MANIFEST)
+    auto manifest = WebCore::ApplicationManifestParser::parse(toWTFString(json), URL(toWTFString(manifestURL)), URL(toWTFString(documentURL)));
+    toImpl(configuration)->setApplicationManifest(API::ApplicationManifest::create(manifest));
+#else
+    UNUSED_PARAM(configuration);
+    UNUSED_PARAM(json);
+    UNUSED_PARAM(manifestURL);
+    UNUSED_PARAM(documentURL);
+#endif
 }
 
 WKWebsitePoliciesRef WKPageConfigurationGetDefaultWebsitePolicies(WKPageConfigurationRef configuration)
