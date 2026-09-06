@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<textarea id="target" style="width: 200px; height: 60px">Hello</textarea>
+
+<script>
+var output = "This tests that a text control's accessible value, character count, and caret are already correct when the AXValueChanged notification for an undo or a redo is delivered.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Sampled inside the notification handler, so these report what an assistive technology would
+    // read on being told the value changed, rather than what settles some time afterwards.
+    var valueAtDelivery = null;
+    var characterCountAtDelivery = null;
+    var caretAtDelivery = null;
+
+    function sampleStateAtDelivery() {
+        var element = accessibilityController.accessibleElementById("target");
+        valueAtDelivery = element.stringValue;
+        characterCountAtDelivery = element.numberOfCharacters;
+        caretAtDelivery = element.selectedTextRange;
+    }
+
+    function characterCount() {
+        return accessibilityController.accessibleElementById("target").numberOfCharacters;
+    }
+
+    async function waitForValueChanged(axTarget, command, argument) {
+        await waitForNotifications(axTarget, "AXValueChanged", 1,
+            () => { document.execCommand(command, false, argument); },
+            sampleStateAtDelivery);
+    }
+
+    setTimeout(async function() {
+        var target = document.getElementById("target");
+        target.focus();
+        target.setSelectionRange(5, 5);
+        var axTarget = accessibilityController.accessibleElementById("target");
+
+        output += "Typing at the end of the value, as one undoable insertion.\n";
+        await waitForValueChanged(axTarget, "insertText", " world");
+        output += expect("characterCountAtDelivery", "11");
+        output += expect("valueAtDelivery", "'AXValue: Hello world'");
+        output += expect("caretAtDelivery", "'{11, 0}'");
+
+        // Undo restores the selection the insertion started from, so the caret returns to where the
+        // typing began rather than staying at the end of the shortened value.
+        output += "\nUndoing the insertion.\n";
+        await waitForValueChanged(axTarget, "undo");
+        output += expect("characterCountAtDelivery", "5");
+        output += expect("valueAtDelivery", "'AXValue: Hello'");
+        output += expect("caretAtDelivery", "'{5, 0}'");
+
+        output += "\nRedoing the insertion.\n";
+        await waitForValueChanged(axTarget, "redo");
+        output += expect("characterCountAtDelivery", "11");
+        output += expect("valueAtDelivery", "'AXValue: Hello world'");
+        output += expect("caretAtDelivery", "'{11, 0}'");
+
+        output += "\nThe value the notification advertised is the one that persists.\n";
+        output += expect("characterCount()", "11");
+
+        document.getElementById("target").style.visibility = "hidden";
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
