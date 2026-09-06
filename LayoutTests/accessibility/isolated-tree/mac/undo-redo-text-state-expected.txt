@@ -1,0 +1,24 @@
+This tests that a text control's accessible value, character count, and caret are already correct when the AXValueChanged notification for an undo or a redo is delivered.
+
+Typing at the end of the value, as one undoable insertion.
+PASS: characterCountAtDelivery === 11
+PASS: valueAtDelivery === 'AXValue: Hello world'
+PASS: caretAtDelivery === '{11, 0}'
+
+Undoing the insertion.
+PASS: characterCountAtDelivery === 5
+PASS: valueAtDelivery === 'AXValue: Hello'
+PASS: caretAtDelivery === '{5, 0}'
+
+Redoing the insertion.
+PASS: characterCountAtDelivery === 11
+PASS: valueAtDelivery === 'AXValue: Hello world'
+PASS: caretAtDelivery === '{11, 0}'
+
+The value the notification advertised is the one that persists.
+PASS: characterCount() === 11
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
