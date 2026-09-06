@@ -3907,6 +3907,20 @@ HTMLInCanvasEnabled:
     WebCore:
       default: false
 
+HTMLTemplateForEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "HTML template for attribute"
+  humanReadableDescription: "Enable declarative out-of-order streaming with HTML template elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 HTTPEquivEnabled:
   type: bool
   status: mature

@@ -1,0 +1,4 @@
+0 abcdef
+
+PASS HTML partial updates - move <?start> while appending has no effect
+

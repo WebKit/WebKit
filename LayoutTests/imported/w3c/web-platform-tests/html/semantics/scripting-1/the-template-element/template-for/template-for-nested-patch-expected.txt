@@ -1,0 +1,6 @@
+
+
+PASS Nested <template for> patches via the shared target (iframe)
+PASS Nested <template for> patches via the shared target (innerHTML)
+FAIL Nested <template for> patches via the shared target (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+

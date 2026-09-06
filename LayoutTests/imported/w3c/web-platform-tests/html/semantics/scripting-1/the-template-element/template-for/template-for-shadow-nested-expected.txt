@@ -1,0 +1,4 @@
+Old content in light DOM
+
+PASS <template contentmethod> inside a <template shadowrootmode><div> should apply directly to its target
+

@@ -1,0 +1,5 @@
+New content
+Old content in light DOM
+
+PASS <template for> in innerHTML patching inner element
+

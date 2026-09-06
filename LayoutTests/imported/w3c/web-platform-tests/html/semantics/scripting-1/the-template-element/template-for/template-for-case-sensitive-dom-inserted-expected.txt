@@ -1,0 +1,4 @@
+def
+
+PASS marker/end/start PI targets are parsed as lower case, but attributes are case-sensitive
+

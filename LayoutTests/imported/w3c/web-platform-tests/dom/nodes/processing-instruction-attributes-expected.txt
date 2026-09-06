@@ -1,0 +1,150 @@
+
+PASS Processing instruction in main parser
+PASS Processing instruction attribute parsing rejects unquoted attributes from html-dom
+PASS Processing instruction attribute mutation from html-dom
+PASS Processing instruction attribute parsing allows _ in attribute names from html-dom
+PASS Processing instruction toggleAttribute from html-dom
+PASS check attribute value: "=" (source: "html-dom")
+PASS check attribute value: "axx"" (source: "html-dom")
+PASS check attribute value: "axx>" (source: "html-dom")
+PASS check attribute value: "some<>" (source: "html-dom")
+PASS check attribute value: "'""'" (source: "html-dom")
+PASS check attribute value: "aa"aa"" (source: "html-dom")
+PASS Invalid attribute name: = (source: html-dom)
+PASS Invalid attribute name: a= (source: html-dom)
+PASS Invalid attribute name: =x (source: html-dom)
+PASS Invalid attribute name: b> (source: html-dom)
+PASS Invalid attribute name: > (source: html-dom)
+PASS Invalid attribute name: >x (source: html-dom)
+PASS Invalid attribute name: /x/ (source: html-dom)
+PASS Invalid attribute name: / (source: html-dom)
+PASS Invalid attribute name: x/ (source: html-dom)
+PASS Invalid attribute name: x	 (source: html-dom)
+PASS Invalid attribute name: 	x (source: html-dom)
+PASS Invalid attribute name: x
+ (source: html-dom)
+PASS Invalid attribute name:
+x (source: html-dom)
+PASS Invalid attribute name: x\r (source: html-dom)
+PASS Invalid attribute name: \rx (source: html-dom)
+PASS Valid attribute name: $ (source: html-dom)
+PASS Valid attribute name: _ (source: html-dom)
+PASS Valid attribute name: $foo (source: html-dom)
+PASS Valid attribute name: _bar (source: html-dom)
+PASS Valid attribute name: a$b (source: html-dom)
+PASS Valid attribute name: a_b (source: html-dom)
+PASS Distinct attribute name (source: html-dom): ABC and abc
+PASS Distinct attribute name (source: html-dom): abC and abc
+PASS Distinct attribute name (source: html-dom): x123A and x123a
+PASS Processing instruction attributes with xml-stylesheet from html-dom
+PASS Processing instruction attribute parsing rejects unquoted attributes from html-parser
+PASS Processing instruction attribute mutation from html-parser
+PASS Processing instruction attribute parsing allows _ in attribute names from html-parser
+PASS Processing instruction toggleAttribute from html-parser
+PASS check attribute value: "=" (source: "html-parser")
+PASS check attribute value: "axx"" (source: "html-parser")
+PASS check attribute value: "axx>" (source: "html-parser")
+PASS check attribute value: "some<>" (source: "html-parser")
+PASS check attribute value: "'""'" (source: "html-parser")
+PASS check attribute value: "aa"aa"" (source: "html-parser")
+PASS Invalid attribute name: = (source: html-parser)
+PASS Invalid attribute name: a= (source: html-parser)
+PASS Invalid attribute name: =x (source: html-parser)
+PASS Invalid attribute name: b> (source: html-parser)
+PASS Invalid attribute name: > (source: html-parser)
+PASS Invalid attribute name: >x (source: html-parser)
+PASS Invalid attribute name: /x/ (source: html-parser)
+PASS Invalid attribute name: / (source: html-parser)
+PASS Invalid attribute name: x/ (source: html-parser)
+PASS Invalid attribute name: x	 (source: html-parser)
+PASS Invalid attribute name: 	x (source: html-parser)
+PASS Invalid attribute name: x
+ (source: html-parser)
+PASS Invalid attribute name:
+x (source: html-parser)
+PASS Invalid attribute name: x\r (source: html-parser)
+PASS Invalid attribute name: \rx (source: html-parser)
+PASS Valid attribute name: $ (source: html-parser)
+PASS Valid attribute name: _ (source: html-parser)
+PASS Valid attribute name: $foo (source: html-parser)
+PASS Valid attribute name: _bar (source: html-parser)
+PASS Valid attribute name: a$b (source: html-parser)
+PASS Valid attribute name: a_b (source: html-parser)
+PASS Distinct attribute name (source: html-parser): ABC and abc
+PASS Distinct attribute name (source: html-parser): abC and abc
+PASS Distinct attribute name (source: html-parser): x123A and x123a
+PASS Processing instruction attribute parsing rejects unquoted attributes from xml-dom
+PASS Processing instruction attribute mutation from xml-dom
+PASS Processing instruction attribute parsing allows _ in attribute names from xml-dom
+PASS Processing instruction toggleAttribute from xml-dom
+PASS check attribute value: "=" (source: "xml-dom")
+PASS check attribute value: "axx"" (source: "xml-dom")
+PASS check attribute value: "axx>" (source: "xml-dom")
+PASS check attribute value: "some<>" (source: "xml-dom")
+PASS check attribute value: "'""'" (source: "xml-dom")
+PASS check attribute value: "aa"aa"" (source: "xml-dom")
+PASS Invalid attribute name: = (source: xml-dom)
+PASS Invalid attribute name: a= (source: xml-dom)
+PASS Invalid attribute name: =x (source: xml-dom)
+PASS Invalid attribute name: b> (source: xml-dom)
+PASS Invalid attribute name: > (source: xml-dom)
+PASS Invalid attribute name: >x (source: xml-dom)
+PASS Invalid attribute name: /x/ (source: xml-dom)
+PASS Invalid attribute name: / (source: xml-dom)
+PASS Invalid attribute name: x/ (source: xml-dom)
+PASS Invalid attribute name: x	 (source: xml-dom)
+PASS Invalid attribute name: 	x (source: xml-dom)
+PASS Invalid attribute name: x
+ (source: xml-dom)
+PASS Invalid attribute name:
+x (source: xml-dom)
+PASS Invalid attribute name: x\r (source: xml-dom)
+PASS Invalid attribute name: \rx (source: xml-dom)
+PASS Valid attribute name: $ (source: xml-dom)
+PASS Valid attribute name: _ (source: xml-dom)
+PASS Valid attribute name: $foo (source: xml-dom)
+PASS Valid attribute name: _bar (source: xml-dom)
+PASS Valid attribute name: a$b (source: xml-dom)
+PASS Valid attribute name: a_b (source: xml-dom)
+PASS Distinct attribute name (source: xml-dom): ABC and abc
+PASS Distinct attribute name (source: xml-dom): abC and abc
+PASS Distinct attribute name (source: xml-dom): x123A and x123a
+PASS Processing instruction attributes with xml-stylesheet from xml-dom
+PASS Processing instruction attribute parsing rejects unquoted attributes from xml-parser
+PASS Processing instruction attribute mutation from xml-parser
+PASS Processing instruction attribute parsing allows _ in attribute names from xml-parser
+PASS Processing instruction toggleAttribute from xml-parser
+PASS check attribute value: "=" (source: "xml-parser")
+PASS check attribute value: "axx"" (source: "xml-parser")
+PASS check attribute value: "axx>" (source: "xml-parser")
+PASS check attribute value: "some<>" (source: "xml-parser")
+PASS check attribute value: "'""'" (source: "xml-parser")
+PASS check attribute value: "aa"aa"" (source: "xml-parser")
+PASS Invalid attribute name: = (source: xml-parser)
+PASS Invalid attribute name: a= (source: xml-parser)
+PASS Invalid attribute name: =x (source: xml-parser)
+PASS Invalid attribute name: b> (source: xml-parser)
+PASS Invalid attribute name: > (source: xml-parser)
+PASS Invalid attribute name: >x (source: xml-parser)
+PASS Invalid attribute name: /x/ (source: xml-parser)
+PASS Invalid attribute name: / (source: xml-parser)
+PASS Invalid attribute name: x/ (source: xml-parser)
+PASS Invalid attribute name: x	 (source: xml-parser)
+PASS Invalid attribute name: 	x (source: xml-parser)
+PASS Invalid attribute name: x
+ (source: xml-parser)
+PASS Invalid attribute name:
+x (source: xml-parser)
+PASS Invalid attribute name: x\r (source: xml-parser)
+PASS Invalid attribute name: \rx (source: xml-parser)
+PASS Valid attribute name: $ (source: xml-parser)
+PASS Valid attribute name: _ (source: xml-parser)
+PASS Valid attribute name: $foo (source: xml-parser)
+PASS Valid attribute name: _bar (source: xml-parser)
+PASS Valid attribute name: a$b (source: xml-parser)
+PASS Valid attribute name: a_b (source: xml-parser)
+PASS Distinct attribute name (source: xml-parser): ABC and abc
+PASS Distinct attribute name (source: xml-parser): abC and abc
+PASS Distinct attribute name (source: xml-parser): x123A and x123a
+PASS Processing instruction attributes with xml-stylesheet from xml-parser
+

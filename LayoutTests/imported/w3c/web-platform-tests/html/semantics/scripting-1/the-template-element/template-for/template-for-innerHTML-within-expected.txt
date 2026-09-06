@@ -1,0 +1,4 @@
+New content
+
+PASS <template for> in innerHTML patching inner element
+

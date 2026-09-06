@@ -1,0 +1,13 @@
+
+
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (iframe)
+PASS Unclosed element in <template for> with <?marker> still removes markers (iframe)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (innerHTML)
+PASS Unclosed element in <template for> with <?marker> still removes markers (innerHTML)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (template)
+PASS Unclosed element in <template for> with <?marker> still removes markers (template)
+PASS Unclosed element in <template for> with <?start>/<?end> still removes markers (DOMParser)
+PASS Unclosed element in <template for> with <?marker> still removes markers (DOMParser)
+FAIL Unclosed element in <template for> with <?start>/<?end> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+FAIL Unclosed element in <template for> with <?marker> still removes markers (stream) promise_test: Unhandled rejection with value: object "TypeError: div.streamAppendHTMLUnsafe is not a function. (In 'div.streamAppendHTMLUnsafe()', 'div.streamAppendHTMLUnsafe' is undefined)"
+

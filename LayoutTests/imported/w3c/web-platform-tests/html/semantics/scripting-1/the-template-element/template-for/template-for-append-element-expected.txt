@@ -1,0 +1,4 @@
+Some content
+
+PASS <template for> appending element
+

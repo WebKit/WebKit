@@ -1,0 +1,4 @@
+ab
+
+PASS empty hash matches marker without name attribute
+

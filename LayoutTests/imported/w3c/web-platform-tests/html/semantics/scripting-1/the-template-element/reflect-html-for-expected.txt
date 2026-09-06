@@ -1,0 +1,366 @@
+
+PASS template.title: typeof IDL attribute
+PASS template.title: IDL get with DOM attribute unset
+PASS template.title: setAttribute() to ""
+PASS template.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.title: setAttribute() to undefined
+PASS template.title: setAttribute() to 7
+PASS template.title: setAttribute() to 1.5
+PASS template.title: setAttribute() to "5%"
+PASS template.title: setAttribute() to "+100"
+PASS template.title: setAttribute() to ".5"
+PASS template.title: setAttribute() to true
+PASS template.title: setAttribute() to false
+PASS template.title: setAttribute() to object "[object Object]"
+PASS template.title: setAttribute() to NaN
+PASS template.title: setAttribute() to Infinity
+PASS template.title: setAttribute() to -Infinity
+PASS template.title: setAttribute() to "\0"
+PASS template.title: setAttribute() to null
+PASS template.title: setAttribute() to object "test-toString"
+PASS template.title: setAttribute() to object "test-valueOf"
+PASS template.title: IDL set to ""
+PASS template.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.title: IDL set to undefined
+PASS template.title: IDL set to 7
+PASS template.title: IDL set to 1.5
+PASS template.title: IDL set to "5%"
+PASS template.title: IDL set to "+100"
+PASS template.title: IDL set to ".5"
+PASS template.title: IDL set to true
+PASS template.title: IDL set to false
+PASS template.title: IDL set to object "[object Object]"
+PASS template.title: IDL set to NaN
+PASS template.title: IDL set to Infinity
+PASS template.title: IDL set to -Infinity
+PASS template.title: IDL set to "\0"
+PASS template.title: IDL set to null
+PASS template.title: IDL set to object "test-toString"
+PASS template.title: IDL set to object "test-valueOf"
+PASS template.lang: typeof IDL attribute
+PASS template.lang: IDL get with DOM attribute unset
+PASS template.lang: setAttribute() to ""
+PASS template.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.lang: setAttribute() to undefined
+PASS template.lang: setAttribute() to 7
+PASS template.lang: setAttribute() to 1.5
+PASS template.lang: setAttribute() to "5%"
+PASS template.lang: setAttribute() to "+100"
+PASS template.lang: setAttribute() to ".5"
+PASS template.lang: setAttribute() to true
+PASS template.lang: setAttribute() to false
+PASS template.lang: setAttribute() to object "[object Object]"
+PASS template.lang: setAttribute() to NaN
+PASS template.lang: setAttribute() to Infinity
+PASS template.lang: setAttribute() to -Infinity
+PASS template.lang: setAttribute() to "\0"
+PASS template.lang: setAttribute() to null
+PASS template.lang: setAttribute() to object "test-toString"
+PASS template.lang: setAttribute() to object "test-valueOf"
+PASS template.lang: IDL set to ""
+PASS template.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.lang: IDL set to undefined
+PASS template.lang: IDL set to 7
+PASS template.lang: IDL set to 1.5
+PASS template.lang: IDL set to "5%"
+PASS template.lang: IDL set to "+100"
+PASS template.lang: IDL set to ".5"
+PASS template.lang: IDL set to true
+PASS template.lang: IDL set to false
+PASS template.lang: IDL set to object "[object Object]"
+PASS template.lang: IDL set to NaN
+PASS template.lang: IDL set to Infinity
+PASS template.lang: IDL set to -Infinity
+PASS template.lang: IDL set to "\0"
+PASS template.lang: IDL set to null
+PASS template.lang: IDL set to object "test-toString"
+PASS template.lang: IDL set to object "test-valueOf"
+PASS template.dir: typeof IDL attribute
+PASS template.dir: IDL get with DOM attribute unset
+PASS template.dir: setAttribute() to ""
+PASS template.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.dir: setAttribute() to undefined
+PASS template.dir: setAttribute() to 7
+PASS template.dir: setAttribute() to 1.5
+PASS template.dir: setAttribute() to "5%"
+PASS template.dir: setAttribute() to "+100"
+PASS template.dir: setAttribute() to ".5"
+PASS template.dir: setAttribute() to true
+PASS template.dir: setAttribute() to false
+PASS template.dir: setAttribute() to object "[object Object]"
+PASS template.dir: setAttribute() to NaN
+PASS template.dir: setAttribute() to Infinity
+PASS template.dir: setAttribute() to -Infinity
+PASS template.dir: setAttribute() to "\0"
+PASS template.dir: setAttribute() to null
+PASS template.dir: setAttribute() to object "test-toString"
+PASS template.dir: setAttribute() to object "test-valueOf"
+PASS template.dir: setAttribute() to "ltr"
+PASS template.dir: setAttribute() to "xltr"
+PASS template.dir: setAttribute() to "ltr\0"
+PASS template.dir: setAttribute() to "tr"
+PASS template.dir: setAttribute() to "LTR"
+PASS template.dir: setAttribute() to "rtl"
+PASS template.dir: setAttribute() to "xrtl"
+PASS template.dir: setAttribute() to "rtl\0"
+PASS template.dir: setAttribute() to "tl"
+PASS template.dir: setAttribute() to "RTL"
+PASS template.dir: setAttribute() to "auto"
+PASS template.dir: setAttribute() to "xauto"
+PASS template.dir: setAttribute() to "auto\0"
+PASS template.dir: setAttribute() to "uto"
+PASS template.dir: setAttribute() to "AUTO"
+PASS template.dir: IDL set to ""
+PASS template.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.dir: IDL set to undefined
+PASS template.dir: IDL set to 7
+PASS template.dir: IDL set to 1.5
+PASS template.dir: IDL set to "5%"
+PASS template.dir: IDL set to "+100"
+PASS template.dir: IDL set to ".5"
+PASS template.dir: IDL set to true
+PASS template.dir: IDL set to false
+PASS template.dir: IDL set to object "[object Object]"
+PASS template.dir: IDL set to NaN
+PASS template.dir: IDL set to Infinity
+PASS template.dir: IDL set to -Infinity
+PASS template.dir: IDL set to "\0"
+PASS template.dir: IDL set to null
+PASS template.dir: IDL set to object "test-toString"
+PASS template.dir: IDL set to object "test-valueOf"
+PASS template.dir: IDL set to "ltr"
+PASS template.dir: IDL set to "xltr"
+PASS template.dir: IDL set to "ltr\0"
+PASS template.dir: IDL set to "tr"
+PASS template.dir: IDL set to "LTR"
+PASS template.dir: IDL set to "rtl"
+PASS template.dir: IDL set to "xrtl"
+PASS template.dir: IDL set to "rtl\0"
+PASS template.dir: IDL set to "tl"
+PASS template.dir: IDL set to "RTL"
+PASS template.dir: IDL set to "auto"
+PASS template.dir: IDL set to "xauto"
+PASS template.dir: IDL set to "auto\0"
+PASS template.dir: IDL set to "uto"
+PASS template.dir: IDL set to "AUTO"
+PASS template.className (<template class>): typeof IDL attribute
+PASS template.className (<template class>): IDL get with DOM attribute unset
+PASS template.className (<template class>): setAttribute() to ""
+PASS template.className (<template class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.className (<template class>): setAttribute() to undefined
+PASS template.className (<template class>): setAttribute() to 7
+PASS template.className (<template class>): setAttribute() to 1.5
+PASS template.className (<template class>): setAttribute() to "5%"
+PASS template.className (<template class>): setAttribute() to "+100"
+PASS template.className (<template class>): setAttribute() to ".5"
+PASS template.className (<template class>): setAttribute() to true
+PASS template.className (<template class>): setAttribute() to false
+PASS template.className (<template class>): setAttribute() to object "[object Object]"
+PASS template.className (<template class>): setAttribute() to NaN
+PASS template.className (<template class>): setAttribute() to Infinity
+PASS template.className (<template class>): setAttribute() to -Infinity
+PASS template.className (<template class>): setAttribute() to "\0"
+PASS template.className (<template class>): setAttribute() to null
+PASS template.className (<template class>): setAttribute() to object "test-toString"
+PASS template.className (<template class>): setAttribute() to object "test-valueOf"
+PASS template.className (<template class>): IDL set to ""
+PASS template.className (<template class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.className (<template class>): IDL set to undefined
+PASS template.className (<template class>): IDL set to 7
+PASS template.className (<template class>): IDL set to 1.5
+PASS template.className (<template class>): IDL set to "5%"
+PASS template.className (<template class>): IDL set to "+100"
+PASS template.className (<template class>): IDL set to ".5"
+PASS template.className (<template class>): IDL set to true
+PASS template.className (<template class>): IDL set to false
+PASS template.className (<template class>): IDL set to object "[object Object]"
+PASS template.className (<template class>): IDL set to NaN
+PASS template.className (<template class>): IDL set to Infinity
+PASS template.className (<template class>): IDL set to -Infinity
+PASS template.className (<template class>): IDL set to "\0"
+PASS template.className (<template class>): IDL set to null
+PASS template.className (<template class>): IDL set to object "test-toString"
+PASS template.className (<template class>): IDL set to object "test-valueOf"
+PASS template.autofocus: typeof IDL attribute
+PASS template.autofocus: IDL get with DOM attribute unset
+PASS template.autofocus: setAttribute() to ""
+PASS template.autofocus: setAttribute() to " foo "
+PASS template.autofocus: setAttribute() to undefined
+PASS template.autofocus: setAttribute() to null
+PASS template.autofocus: setAttribute() to 7
+PASS template.autofocus: setAttribute() to 1.5
+PASS template.autofocus: setAttribute() to "5%"
+PASS template.autofocus: setAttribute() to "+100"
+PASS template.autofocus: setAttribute() to ".5"
+PASS template.autofocus: setAttribute() to true
+PASS template.autofocus: setAttribute() to false
+PASS template.autofocus: setAttribute() to object "[object Object]"
+PASS template.autofocus: setAttribute() to NaN
+PASS template.autofocus: setAttribute() to Infinity
+PASS template.autofocus: setAttribute() to -Infinity
+PASS template.autofocus: setAttribute() to "\0"
+PASS template.autofocus: setAttribute() to object "test-toString"
+PASS template.autofocus: setAttribute() to object "test-valueOf"
+PASS template.autofocus: setAttribute() to "autofocus"
+PASS template.autofocus: IDL set to ""
+PASS template.autofocus: IDL set to " foo "
+PASS template.autofocus: IDL set to undefined
+PASS template.autofocus: IDL set to null
+PASS template.autofocus: IDL set to 7
+PASS template.autofocus: IDL set to 1.5
+PASS template.autofocus: IDL set to "5%"
+PASS template.autofocus: IDL set to "+100"
+PASS template.autofocus: IDL set to ".5"
+PASS template.autofocus: IDL set to true
+PASS template.autofocus: IDL set to false
+PASS template.autofocus: IDL set to object "[object Object]"
+PASS template.autofocus: IDL set to NaN
+PASS template.autofocus: IDL set to Infinity
+PASS template.autofocus: IDL set to -Infinity
+PASS template.autofocus: IDL set to "\0"
+PASS template.autofocus: IDL set to object "test-toString"
+PASS template.autofocus: IDL set to object "test-valueOf"
+PASS template.hidden: typeof IDL attribute
+PASS template.hidden: IDL get with DOM attribute unset
+PASS template.hidden: setAttribute() to ""
+PASS template.hidden: setAttribute() to " foo "
+PASS template.hidden: setAttribute() to undefined
+PASS template.hidden: setAttribute() to null
+PASS template.hidden: setAttribute() to 7
+PASS template.hidden: setAttribute() to 1.5
+PASS template.hidden: setAttribute() to "5%"
+PASS template.hidden: setAttribute() to "+100"
+PASS template.hidden: setAttribute() to ".5"
+PASS template.hidden: setAttribute() to true
+PASS template.hidden: setAttribute() to false
+PASS template.hidden: setAttribute() to object "[object Object]"
+PASS template.hidden: setAttribute() to NaN
+PASS template.hidden: setAttribute() to Infinity
+PASS template.hidden: setAttribute() to -Infinity
+PASS template.hidden: setAttribute() to "\0"
+PASS template.hidden: setAttribute() to object "test-toString"
+PASS template.hidden: setAttribute() to object "test-valueOf"
+PASS template.hidden: setAttribute() to "hidden"
+PASS template.hidden: IDL set to ""
+PASS template.hidden: IDL set to " foo "
+PASS template.hidden: IDL set to undefined
+PASS template.hidden: IDL set to null
+PASS template.hidden: IDL set to 7
+PASS template.hidden: IDL set to 1.5
+PASS template.hidden: IDL set to "5%"
+PASS template.hidden: IDL set to "+100"
+PASS template.hidden: IDL set to ".5"
+PASS template.hidden: IDL set to true
+PASS template.hidden: IDL set to false
+PASS template.hidden: IDL set to object "[object Object]"
+PASS template.hidden: IDL set to NaN
+PASS template.hidden: IDL set to Infinity
+PASS template.hidden: IDL set to -Infinity
+PASS template.hidden: IDL set to "\0"
+PASS template.hidden: IDL set to object "test-toString"
+PASS template.hidden: IDL set to object "test-valueOf"
+PASS template.accessKey: typeof IDL attribute
+PASS template.accessKey: IDL get with DOM attribute unset
+PASS template.accessKey: setAttribute() to ""
+PASS template.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.accessKey: setAttribute() to undefined
+PASS template.accessKey: setAttribute() to 7
+PASS template.accessKey: setAttribute() to 1.5
+PASS template.accessKey: setAttribute() to "5%"
+PASS template.accessKey: setAttribute() to "+100"
+PASS template.accessKey: setAttribute() to ".5"
+PASS template.accessKey: setAttribute() to true
+PASS template.accessKey: setAttribute() to false
+PASS template.accessKey: setAttribute() to object "[object Object]"
+PASS template.accessKey: setAttribute() to NaN
+PASS template.accessKey: setAttribute() to Infinity
+PASS template.accessKey: setAttribute() to -Infinity
+PASS template.accessKey: setAttribute() to "\0"
+PASS template.accessKey: setAttribute() to null
+PASS template.accessKey: setAttribute() to object "test-toString"
+PASS template.accessKey: setAttribute() to object "test-valueOf"
+PASS template.accessKey: IDL set to ""
+PASS template.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.accessKey: IDL set to undefined
+PASS template.accessKey: IDL set to 7
+PASS template.accessKey: IDL set to 1.5
+PASS template.accessKey: IDL set to "5%"
+PASS template.accessKey: IDL set to "+100"
+PASS template.accessKey: IDL set to ".5"
+PASS template.accessKey: IDL set to true
+PASS template.accessKey: IDL set to false
+PASS template.accessKey: IDL set to object "[object Object]"
+PASS template.accessKey: IDL set to NaN
+PASS template.accessKey: IDL set to Infinity
+PASS template.accessKey: IDL set to -Infinity
+PASS template.accessKey: IDL set to "\0"
+PASS template.accessKey: IDL set to null
+PASS template.accessKey: IDL set to object "test-toString"
+PASS template.accessKey: IDL set to object "test-valueOf"
+PASS template.tabIndex: typeof IDL attribute
+PASS template.tabIndex: setAttribute() to -36
+PASS template.tabIndex: setAttribute() to -1
+PASS template.tabIndex: setAttribute() to 0
+PASS template.tabIndex: setAttribute() to 1
+PASS template.tabIndex: setAttribute() to 2147483647
+PASS template.tabIndex: setAttribute() to -2147483648
+PASS template.tabIndex: setAttribute() to "-1"
+PASS template.tabIndex: setAttribute() to "-0"
+PASS template.tabIndex: setAttribute() to "0"
+PASS template.tabIndex: setAttribute() to "1"
+PASS template.tabIndex: setAttribute() to "\t7"
+PASS template.tabIndex: setAttribute() to "\f7"
+PASS template.tabIndex: setAttribute() to " 7"
+PASS template.tabIndex: setAttribute() to "\n7"
+PASS template.tabIndex: setAttribute() to "\r7"
+PASS template.tabIndex: setAttribute() to "7\v"
+PASS template.tabIndex: setAttribute() to 1.5
+PASS template.tabIndex: setAttribute() to "5%"
+PASS template.tabIndex: setAttribute() to "+100"
+PASS template.tabIndex: setAttribute() to object "2"
+PASS template.tabIndex: setAttribute() to object "3"
+PASS template.tabIndex: IDL set to -36
+PASS template.tabIndex: IDL set to -1
+PASS template.tabIndex: IDL set to 0
+PASS template.tabIndex: IDL set to 1
+PASS template.tabIndex: IDL set to 2147483647
+PASS template.tabIndex: IDL set to -2147483648
+PASS template.htmlFor (<template for>): typeof IDL attribute
+PASS template.htmlFor (<template for>): IDL get with DOM attribute unset
+PASS template.htmlFor (<template for>): setAttribute() to ""
+PASS template.htmlFor (<template for>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.htmlFor (<template for>): setAttribute() to undefined
+PASS template.htmlFor (<template for>): setAttribute() to 7
+PASS template.htmlFor (<template for>): setAttribute() to 1.5
+PASS template.htmlFor (<template for>): setAttribute() to "5%"
+PASS template.htmlFor (<template for>): setAttribute() to "+100"
+PASS template.htmlFor (<template for>): setAttribute() to ".5"
+PASS template.htmlFor (<template for>): setAttribute() to true
+PASS template.htmlFor (<template for>): setAttribute() to false
+PASS template.htmlFor (<template for>): setAttribute() to object "[object Object]"
+PASS template.htmlFor (<template for>): setAttribute() to NaN
+PASS template.htmlFor (<template for>): setAttribute() to Infinity
+PASS template.htmlFor (<template for>): setAttribute() to -Infinity
+PASS template.htmlFor (<template for>): setAttribute() to "\0"
+PASS template.htmlFor (<template for>): setAttribute() to null
+PASS template.htmlFor (<template for>): setAttribute() to object "test-toString"
+PASS template.htmlFor (<template for>): setAttribute() to object "test-valueOf"
+PASS template.htmlFor (<template for>): IDL set to ""
+PASS template.htmlFor (<template for>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
+PASS template.htmlFor (<template for>): IDL set to undefined
+PASS template.htmlFor (<template for>): IDL set to 7
+PASS template.htmlFor (<template for>): IDL set to 1.5
+PASS template.htmlFor (<template for>): IDL set to "5%"
+PASS template.htmlFor (<template for>): IDL set to "+100"
+PASS template.htmlFor (<template for>): IDL set to ".5"
+PASS template.htmlFor (<template for>): IDL set to true
+PASS template.htmlFor (<template for>): IDL set to false
+PASS template.htmlFor (<template for>): IDL set to object "[object Object]"
+PASS template.htmlFor (<template for>): IDL set to NaN
+PASS template.htmlFor (<template for>): IDL set to Infinity
+PASS template.htmlFor (<template for>): IDL set to -Infinity
+PASS template.htmlFor (<template for>): IDL set to "\0"
+PASS template.htmlFor (<template for>): IDL set to null
+PASS template.htmlFor (<template for>): IDL set to object "test-toString"
+PASS template.htmlFor (<template for>): IDL set to object "test-valueOf"
+(Note: missing tests for types tokenlist.)

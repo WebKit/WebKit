@@ -1,0 +1,6 @@
+New content
+
+PASS <template for> replace
+PASS <template for> should work when chunked
+PASS <template for> should work when elements are sliced in the middle
+
