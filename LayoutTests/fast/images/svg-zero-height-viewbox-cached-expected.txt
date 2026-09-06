@@ -1,0 +1,4 @@
+
+
+PASS img is not stretched when the image is available before it is attached
+

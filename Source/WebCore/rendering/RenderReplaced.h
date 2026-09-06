@@ -32,6 +32,7 @@ public:
     virtual ~RenderReplaced();
 
     virtual bool shouldRespectZeroIntrinsicWidth() const;
+    virtual bool shouldRespectZeroIntrinsicHeight() const;
 
     void computeReplacedOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues&) const;
     void computeReplacedOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValues&) const;
