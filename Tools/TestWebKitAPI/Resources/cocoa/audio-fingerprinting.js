@@ -76,6 +76,39 @@ async function testFeedbackCycle() {
     return renderedBuffer.length;
 }
 
+async function testOscillatorCompressorAfterCopyToChannel() {
+    // Regression test for noise injection being negated by AudioBuffer.copyToChannel(): the
+    // rendered buffer's noise multiplier was cleared on any write, even though copyToChannel()
+    // only overwrites part of one channel. Writing a single sample therefore handed back
+    // pristine, un-noised data for every other channel and every untouched frame.
+    const context = new OfflineAudioContext(2, 5000, 44100);
+    const oscillator = context.createOscillator();
+    oscillator.type = "triangle";
+    oscillator.frequency.value = 1000;
+
+    const compressor = context.createDynamicsCompressor();
+    compressor.threshold.value = -50;
+    compressor.knee.value = 40;
+    compressor.ratio.value = 12;
+    compressor.attack.value = 0;
+    compressor.release.value = 0.2;
+
+    oscillator.connect(compressor);
+    compressor.connect(context.destination);
+
+    oscillator.start();
+    const renderedBuffer = await context.startRendering();
+    oscillator.disconnect();
+    compressor.disconnect();
+
+    // Overwrite a single sample of channel 0, then fingerprint only data this write did not
+    // touch: the remainder of channel 0, plus the whole of channel 1.
+    renderedBuffer.copyToChannel(new Float32Array(1), 0, 0);
+
+    return combineSamples(renderedBuffer.getChannelData(0).subarray(1))
+        + combineSamples(renderedBuffer.getChannelData(1));
+}
+
 function testOscillatorCompressorWorklet() {
     return new Promise(async resolve => {
         const context = new AudioContext;
