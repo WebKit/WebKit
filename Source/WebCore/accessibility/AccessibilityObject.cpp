@@ -4293,14 +4293,24 @@ std::optional<InputType::Type> AccessibilityObject::inputType() const
 
 bool AccessibilityObject::isARIAHidden() const
 {
-    if (isFocused())
-        return false;
-
     if (shouldIgnoreARIAHidden())
         return false;
 
     RefPtr node = this->node();
     RefPtr element = dynamicDowncast<Element>(node);
+
+    // Check whether aria-hidden="true" is specified before doing anything else. Every remaining condition
+    // below can only turn a true result into false, so the vast majority of objects, which don't
+    // specify aria-hidden at all, can bail out here without paying for the focus and tag name checks.
+    bool isHiddenByAssignedSlot = false;
+    if (RefPtr assignedSlot = node ? node->assignedSlot() : nullptr)
+        isHiddenByAssignedSlot = equalLettersIgnoringASCIICase(assignedSlot->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s);
+    if (!isHiddenByAssignedSlot && !(element && equalLettersIgnoringASCIICase(element->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s)))
+        return false;
+
+    if (isFocused())
+        return false;
+
     AtomString tag = element ? element->localName() : nullAtom();
     // https://github.com/w3c/aria/pull/1880
     // To prevent authors from hiding all content from assistive technology users, do not respect
@@ -4309,11 +4319,7 @@ bool AccessibilityObject::isARIAHidden() const
     if (bodyTag->hasLocalName(tag) || htmlTag->hasLocalName(tag) || (SVGNames::svgTag->hasLocalName(tag) && !element->parentNode()))
         return false;
 
-    if (RefPtr assignedSlot = node ? node->assignedSlot() : nullptr) {
-        if (equalLettersIgnoringASCIICase(assignedSlot->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s))
-            return true;
-    }
-    return element && equalLettersIgnoringASCIICase(element->attributeWithDefaultARIA(aria_hiddenAttr), "true"_s);
+    return true;
 }
 
 bool AccessibilityObject::isShowingValidationMessage() const
