@@ -242,9 +242,13 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     _contentAvailable(parameters)
     {
         if (parameters.error) {
-            // A 304 Not Modified request that is missing content means we didn't have a cached copy.
-            if (parameters.sourceCode.statusCode === 304 && parameters.reason === "Missing content of resource for given requestId") {
-                this.showNoCachedContentMessage();
+            // A finished resource with no content (for example an empty beacon, a 204, or many POST XHRs) is not an
+            // error, so show a friendly message instead. A 304 Not Modified with missing content means no cached copy.
+            if (parameters.reason === "Missing content of resource for given requestId" && parameters.sourceCode.finished && !parameters.sourceCode.hadLoadingError()) {
+                if (parameters.sourceCode.statusCode === 304)
+                    this.showNoCachedContentMessage();
+                else
+                    this.showGenericNoContentMessage();
                 return;
             }
             
