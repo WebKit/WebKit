@@ -49,6 +49,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOriginData.h"
 #include "Settings.h"
 #include "SocketProvider.h"
 #include "StorageConnection.h"
@@ -186,7 +187,9 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     }
 
     workerThreadCreated(thread.get());
-    thread->start();
+    thread->WorkerOrWorkletThread::start({ }, [this](SecurityOriginData&& origin) {
+        workerGlobalScopeCreated(WTF::move(origin));
+    });
 
     m_inspectorProxy->workerStarted(*scriptExecutionContext, thread.ptr(), scriptURL, name);
 }
@@ -459,6 +462,16 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
 
     ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this](auto&) {
         workerGlobalScopeDestroyedInternal();
+    });
+}
+
+void WorkerMessagingProxy::workerGlobalScopeCreated(SecurityOriginData&& origin)
+{
+    if (!m_scriptExecutionContextIdentifier)
+        return;
+
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, origin = WTF::move(origin).isolatedCopy()](auto&) {
+        m_inspectorProxy->workerBecameExecutionReady(origin);
     });
 }
 
