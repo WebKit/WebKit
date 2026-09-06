@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Replays a memory-cached raw resource whose buffered data has more than one
+segment to a second client, and destroys that client from inside the first
+segment's callout. This test passes if the web process does not crash.</p>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").appendChild(document.createTextNode(message + "\n"));
+}
+
+var url = "resources/cacheable-chunks.py";
+var segmentCount = 0;
+var firstNonce = null;
+
+var first = new XMLHttpRequest();
+first.open("GET", url, true);
+first.onreadystatechange = function () {
+    if (first.readyState === 3) {
+        ++segmentCount;
+        return;
+    }
+    if (first.readyState !== 4)
+        return;
+    firstNonce = first.responseText.split("\n")[0];
+    log(segmentCount > 1 ? "PASS: response was buffered in more than one segment."
+        : "FAIL: response arrived as a single chunk, so the replay only dispatches one segment.");
+    replayFromMemoryCache();
+};
+first.send();
+
+function replayFromMemoryCache()
+{
+    // The same URL is a memory cache hit. For raw resources CachedResource::addClientToSet()
+    // always defers the callbacks to a zero-delay timer, so the buffered segments are
+    // dispatched from CachedRawResource::didAddClient().
+    var second = new XMLHttpRequest();
+    second.open("GET", url, true);
+    second.onreadystatechange = function () {
+        if (second.readyState !== 3)
+            return;
+        var nonce = second.responseText.split("\n")[0];
+        log(nonce === firstNonce ? "PASS: second request was served from the memory cache."
+            : "FAIL: second request went back to the network, so didAddClient() did not replay the buffer.");
+        // Destroy the DocumentThreadableLoader while the remaining segments are still
+        // to be dispatched, which leaves didAddClient()'s client WeakPtr null.
+        second.abort();
+        second = null;
+        setTimeout(finish, 0);
+    };
+    second.send();
+}
+
+function finish()
+{
+    log("PASS: did not crash.");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>
