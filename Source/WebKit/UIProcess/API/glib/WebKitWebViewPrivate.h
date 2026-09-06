@@ -85,6 +85,8 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest
 void webKitWebViewDidReceiveSnapshot(WebKitWebView*, uint64_t callbackID, WebKit::WebImage*);
 #endif
 void webkitWebViewMaximizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
+void webkitWebViewFullscreenWindow(WebKitWebView*, CompletionHandler<void()>&&);
+void webkitWebViewUnfullscreenWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewMinimizeWindow(WebKitWebView*, CompletionHandler<void()>&&);
 void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&&);
 #if ENABLE(FULLSCREEN_API)

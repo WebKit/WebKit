@@ -136,7 +136,7 @@ gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRe
 struct WindowStateEvent {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(WindowStateEvent);
 
-    enum class Type { Maximize, Minimize, Restore };
+    enum class Type { Fullscreen, Maximize, Minimize, Restore, Unfullscreen };
 
     WindowStateEvent(Type type, CompletionHandler<void()>&& completionHandler)
         : type(type)
@@ -165,6 +165,10 @@ struct WindowStateEvent {
 
 static const char* gWindowStateEventID = "wk-window-state-event";
 
+#if ENABLE(DEVELOPER_MODE)
+static const char* gXvfbFullscreenID = "wk-xvfb-fullscreen";
+#endif // ENABLE(DEVELOPER_MODE)
+
 #if USE(GTK4)
 static void surfaceStateChangedCallback(GdkSurface* surface, GParamSpec*, WebKitWebView* view)
 {
@@ -177,6 +181,10 @@ static void surfaceStateChangedCallback(GdkSurface* surface, GParamSpec*, WebKit
     auto surfaceState = gdk_toplevel_get_state(GDK_TOPLEVEL(surface));
     bool eventCompleted = false;
     switch (state->type) {
+    case WindowStateEvent::Type::Fullscreen:
+        if (surfaceState & GDK_TOPLEVEL_STATE_FULLSCREEN)
+            eventCompleted = true;
+        break;
     case WindowStateEvent::Type::Maximize:
         if (surfaceState & GDK_TOPLEVEL_STATE_MAXIMIZED)
             eventCompleted = true;
@@ -186,7 +194,11 @@ static void surfaceStateChangedCallback(GdkSurface* surface, GParamSpec*, WebKit
             eventCompleted = true;
         break;
     case WindowStateEvent::Type::Restore:
-        if (!(surfaceState & GDK_TOPLEVEL_STATE_MAXIMIZED) && !(surfaceState & GDK_TOPLEVEL_STATE_MINIMIZED))
+        if (!(surfaceState & GDK_TOPLEVEL_STATE_FULLSCREEN) && !(surfaceState & GDK_TOPLEVEL_STATE_MAXIMIZED) && !(surfaceState & GDK_TOPLEVEL_STATE_MINIMIZED))
+            eventCompleted = true;
+        break;
+    case WindowStateEvent::Type::Unfullscreen:
+        if (!(surfaceState & GDK_TOPLEVEL_STATE_FULLSCREEN))
             eventCompleted = true;
         break;
     }
@@ -207,6 +219,10 @@ static gboolean windowStateEventCallback(GtkWidget* window, GdkEventWindowState*
 
     bool eventCompleted = false;
     switch (state->type) {
+    case WindowStateEvent::Type::Fullscreen:
+        if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)
+            eventCompleted = true;
+        break;
     case WindowStateEvent::Type::Maximize:
         if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
             eventCompleted = true;
@@ -216,7 +232,11 @@ static gboolean windowStateEventCallback(GtkWidget* window, GdkEventWindowState*
             eventCompleted = true;
         break;
     case WindowStateEvent::Type::Restore:
-        if (!(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) && !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+        if (!(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) && !(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) && !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+            eventCompleted = true;
+        break;
+    case WindowStateEvent::Type::Unfullscreen:
+        if (!(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN))
             eventCompleted = true;
         break;
     }
@@ -233,12 +253,21 @@ static gboolean windowStateEventCallback(GtkWidget* window, GdkEventWindowState*
 static void
 webkitWebViewMonitorWindowState(WebKitWebView* view, GtkWindow* window, WindowStateEvent::Type type, CompletionHandler<void()>&& completionHandler)
 {
+#if USE(GTK4)
+    gtk_widget_realize(GTK_WIDGET(window));
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(window));
+    if (!surface) {
+        completionHandler();
+        return;
+    }
+#endif // USE(GTK4)
+
     g_object_set_data_full(G_OBJECT(view), gWindowStateEventID, new WindowStateEvent(type, WTF::move(completionHandler)), [](gpointer userData) {
         delete static_cast<WindowStateEvent*>(userData);
     });
 
 #if USE(GTK4)
-    g_signal_connect_object(gtk_native_get_surface(GTK_NATIVE(window)), "notify::state", G_CALLBACK(surfaceStateChangedCallback), view, G_CONNECT_AFTER);
+    g_signal_connect_object(surface, "notify::state", G_CALLBACK(surfaceStateChangedCallback), view, G_CONNECT_AFTER);
 #else
     g_signal_connect_object(window, "window-state-event", G_CALLBACK(windowStateEventCallback), view, G_CONNECT_AFTER);
 #endif
@@ -269,10 +298,132 @@ void webkitWebViewMaximizeWindow(WebKitWebView* view, CompletionHandler<void()>&
             auto screenRect = WebCore::screenAvailableRect(nullptr);
             gtk_window_move(window, screenRect.x(), screenRect.y());
             gtk_window_resize(window, screenRect.width(), screenRect.height());
+            if (auto* state = static_cast<WindowStateEvent*>(g_object_get_data(G_OBJECT(view), gWindowStateEventID)))
+                state->complete();
+            g_object_set_data(G_OBJECT(view), gWindowStateEventID, nullptr);
         }
     }
 #endif
     gtk_widget_show(topLevel);
+}
+
+static bool webkitWebViewWindowIsFullscreen(GtkWidget* topLevel)
+{
+#if USE(GTK4)
+    auto* surface = gtk_native_get_surface(GTK_NATIVE(topLevel));
+    return surface && gdk_toplevel_get_state(GDK_TOPLEVEL(surface)) & GDK_TOPLEVEL_STATE_FULLSCREEN;
+#else // USE(GTK4)
+    auto* gdkWindow = gtk_widget_get_window(topLevel);
+    return gdkWindow && gdk_window_get_state(gdkWindow) & GDK_WINDOW_STATE_FULLSCREEN;
+#endif // !USE(GTK4)
+}
+
+enum class WindowFullscreenState {
+    Fullscreen,
+    Unfullscreen,
+};
+
+static void webkitWebViewSetWindowFullscreen(GtkWidget* topLevel, WindowFullscreenState state)
+{
+    if (G_IS_ACTION_GROUP(topLevel) && g_action_group_has_action(G_ACTION_GROUP(topLevel), "toggle-fullscreen")) {
+        g_action_group_activate_action(G_ACTION_GROUP(topLevel), "toggle-fullscreen", nullptr);
+        return;
+    }
+    if (state == WindowFullscreenState::Fullscreen)
+        gtk_window_fullscreen(GTK_WINDOW(topLevel));
+    else
+        gtk_window_unfullscreen(GTK_WINDOW(topLevel));
+}
+
+#if ENABLE(DEVELOPER_MODE)
+
+static bool webkitWebViewIsUnderXvfb()
+{
+    return WebKit::Display::singleton().isX11() && !g_strcmp0(g_getenv("UNDER_XVFB"), "yes");
+}
+
+static void webkitWebViewCompleteWindowStateEvent(WebKitWebView* view)
+{
+    g_object_set_data(G_OBJECT(view), gWindowStateEventID, nullptr);
+}
+
+#endif // ENABLE(DEVELOPER_MODE)
+
+void webkitWebViewFullscreenWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+    auto* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    if (!gtk_widget_is_toplevel(topLevel)) {
+        completionHandler();
+        return;
+    }
+
+    auto* window = GTK_WINDOW(topLevel);
+    gtk_widget_realize(topLevel);
+
+#if ENABLE(DEVELOPER_MODE)
+    bool isUnderXvfb = webkitWebViewIsUnderXvfb();
+    bool isFullscreen = isUnderXvfb ? GPOINTER_TO_INT(g_object_get_data(G_OBJECT(view), gXvfbFullscreenID)) : webkitWebViewWindowIsFullscreen(topLevel);
+#else // ENABLE(DEVELOPER_MODE)
+    bool isFullscreen = webkitWebViewWindowIsFullscreen(topLevel);
+#endif // !ENABLE(DEVELOPER_MODE)
+    if (isFullscreen) {
+        completionHandler();
+        return;
+    }
+
+    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Fullscreen, WTF::move(completionHandler));
+#if ENABLE(DEVELOPER_MODE)
+    if (isUnderXvfb)
+        g_object_set_data(G_OBJECT(view), gXvfbFullscreenID, GINT_TO_POINTER(true));
+#endif // ENABLE(DEVELOPER_MODE)
+    webkitWebViewSetWindowFullscreen(topLevel, WindowFullscreenState::Fullscreen);
+    gtk_widget_show(topLevel);
+
+#if ENABLE(DEVELOPER_MODE)
+    if (isUnderXvfb) {
+        auto screenRect = WebCore::screenRect(nullptr);
+        gtk_window_move(window, screenRect.x(), screenRect.y());
+        gtk_window_resize(window, screenRect.width(), screenRect.height());
+        webkitWebViewCompleteWindowStateEvent(view);
+    }
+#endif // ENABLE(DEVELOPER_MODE)
+}
+
+void webkitWebViewUnfullscreenWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
+{
+    auto* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+    if (!gtk_widget_is_toplevel(topLevel)) {
+        completionHandler();
+        return;
+    }
+
+    auto* window = GTK_WINDOW(topLevel);
+    gtk_widget_realize(topLevel);
+
+#if ENABLE(DEVELOPER_MODE)
+    bool isUnderXvfb = webkitWebViewIsUnderXvfb();
+    bool isFullscreen = isUnderXvfb ? GPOINTER_TO_INT(g_object_get_data(G_OBJECT(view), gXvfbFullscreenID)) : webkitWebViewWindowIsFullscreen(topLevel);
+#else // ENABLE(DEVELOPER_MODE)
+    bool isFullscreen = webkitWebViewWindowIsFullscreen(topLevel);
+#endif // !ENABLE(DEVELOPER_MODE)
+    if (!isFullscreen) {
+        completionHandler();
+        return;
+    }
+
+    webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Unfullscreen, WTF::move(completionHandler));
+    webkitWebViewSetWindowFullscreen(topLevel, WindowFullscreenState::Unfullscreen);
+    gtk_widget_show(topLevel);
+
+#if ENABLE(DEVELOPER_MODE)
+    if (isUnderXvfb) {
+        g_object_set_data(G_OBJECT(view), gXvfbFullscreenID, nullptr);
+        int width, height;
+        gtk_window_get_default_size(window, &width, &height);
+        gtk_window_resize(window, width, height);
+        webkitWebViewCompleteWindowStateEvent(view);
+    }
+#endif // ENABLE(DEVELOPER_MODE)
 }
 
 void webkitWebViewMinimizeWindow(WebKitWebView* view, CompletionHandler<void()>&& completionHandler)
@@ -298,7 +449,14 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
     }
 
     auto* window = GTK_WINDOW(topLevel);
-    if (gtk_widget_get_mapped(topLevel) && !gtk_window_is_maximized(window)) {
+    gtk_widget_realize(topLevel);
+#if ENABLE(DEVELOPER_MODE)
+    bool isUnderXvfb = webkitWebViewIsUnderXvfb();
+    bool isFullscreen = isUnderXvfb ? GPOINTER_TO_INT(g_object_get_data(G_OBJECT(view), gXvfbFullscreenID)) : webkitWebViewWindowIsFullscreen(topLevel);
+#else // ENABLE(DEVELOPER_MODE)
+    bool isFullscreen = webkitWebViewWindowIsFullscreen(topLevel);
+#endif // !ENABLE(DEVELOPER_MODE)
+    if (gtk_widget_get_mapped(topLevel) && !isFullscreen && !gtk_window_is_maximized(window)) {
         completionHandler();
         return;
     }
@@ -306,18 +464,22 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
     webkitWebViewMonitorWindowState(view, window, WindowStateEvent::Type::Restore, WTF::move(completionHandler));
     if (gtk_window_is_maximized(window))
         gtk_window_unmaximize(window);
+    if (isFullscreen) {
+        webkitWebViewSetWindowFullscreen(topLevel, WindowFullscreenState::Unfullscreen);
+#if ENABLE(DEVELOPER_MODE)
+        if (isUnderXvfb)
+            g_object_set_data(G_OBJECT(view), gXvfbFullscreenID, nullptr);
+#endif // ENABLE(DEVELOPER_MODE)
+    }
     if (!gtk_widget_get_mapped(topLevel))
         gtk_window_unminimize(window);
 
 #if ENABLE(DEVELOPER_MODE)
     // Xvfb doesn't support maximize, so we resize the window to the default size.
-    if (WebKit::Display::singleton().isX11()) {
-        const char* underXvfb = g_getenv("UNDER_XVFB");
-        if (!g_strcmp0(underXvfb, "yes")) {
-            int x, y;
-            gtk_window_get_default_size(window, &x, &y);
-            gtk_window_resize(window, x, y);
-        }
+    if (isUnderXvfb) {
+        int width, height;
+        gtk_window_get_default_size(window, &width, &height);
+        gtk_window_resize(window, width, height);
     }
 #endif
     gtk_widget_show(topLevel);
