@@ -120,13 +120,6 @@ GradientColorStops SVGGradientElement::buildStops()
     return stops;
 }
 
-bool SVGGradientElement::hasGradientTransformAttribute() const
-{
-    if (!attributeWithoutSynchronization(SVGNames::gradientTransformAttr).isNull())
-        return true;
-    return !m_gradientTransform->baseVal()->isEmpty();
-}
-
 void SVGGradientElement::collectCommonGradientAttributes(GradientAttributes& attributes)
 {
     if (!attributes.hasSpreadMethod() && hasAttribute(SVGNames::spreadMethodAttr))
@@ -135,8 +128,10 @@ void SVGGradientElement::collectCommonGradientAttributes(GradientAttributes& att
     if (!attributes.hasGradientUnits() && hasAttribute(SVGNames::gradientUnitsAttr))
         attributes.setGradientUnits(gradientUnits());
 
-    if (!attributes.hasGradientTransform() && hasGradientTransformAttribute())
-        attributes.setGradientTransform(gradientTransform().concatenate().value_or(identity));
+    if (!attributes.hasGradientTransform()) {
+        if (auto transform = gradientTransform().concatenate())
+            attributes.setGradientTransform(*transform);
+    }
 
     if (!attributes.hasStops())
         attributes.setStops(buildStops());
