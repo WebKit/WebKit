@@ -74,12 +74,33 @@ function test()
     suite.addTestCase({
         name: "RuntimeManager.prototype.evaluateInInspectedWindow.AwaitConvenience",
         description: "Test evaluating a simple await expression wraps it into an async function and eventually resolves the value.",
-        test(resolve, reject) {
+        async test() {
             function testSource(expression, callback) {
-                WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
-                    InspectorTest.log("Source: " + expression);
-                    callback(result, wasThrown);
+                return new Promise((resolve) => {
+                    WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
+                        InspectorTest.log("Source: " + expression);
+                        callback(result, wasThrown);
+                        resolve();
+                    });
                 });
+            }
+
+            function awaitConsoleMessage() {
+                return new Promise((resolve) => {
+                    function handleConsoleMessage() {
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, handleConsoleMessage);
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, handleConsoleMessage);
+                        resolve();
+                    }
+                    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, handleConsoleMessage);
+                    WI.consoleManager.addEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, handleConsoleMessage);
+                });
+            }
+
+            async function testTransformedSource(expression) {
+                let consoleMessagePromise = awaitConsoleMessage();
+                await testSource(expression, expectUndefined);
+                await consoleMessagePromise;
             }
 
             function expectUndefined(result, wasThrown) {
@@ -91,36 +112,38 @@ function test()
             }
 
             // The convenience will detect these and make an async task.
-            const expected = 6;
-            testSource("await 1", expectUndefined);
-            testSource("   await 2   ", expectUndefined);
-            testSource("var x = await 3", expectUndefined);
-            testSource("await causeExceptionImmediately()", expectUndefined);
-            testSource("await Promise.resolve(4)", expectUndefined);
-            testSource("await Promise.reject('Promise.reject')", expectUndefined);
-            testSource("await rejectedEventually()", expectUndefined);
-            testSource("await asyncOperation()", expectUndefined);
-            testSource("x = await asyncOperation()", expectUndefined);
+            await testTransformedSource("await 1");
+            await testTransformedSource("   await 2   ");
+            await testTransformedSource("var x = await 3");
+            await testTransformedSource("await causeExceptionImmediately()");
+            await testTransformedSource("await Promise.resolve(4)");
+            await testTransformedSource("await Promise.reject('Promise.reject')");
+            await testTransformedSource("await rejectedEventually()");
+            await testTransformedSource("await asyncOperation()");
+            await testTransformedSource("x = await asyncOperation()");
+            await testTransformedSource("x = y = await 10");
+            await testTransformedSource("1 + await Promise.resolve(1)");
+            await testTransformedSource("Math.max(await Promise.resolve(1))");
+            await testTransformedSource("globalThis.awaitConvenienceProperty = await Promise.resolve(1)");
+            await testTransformedSource("const foo = await Promise.resolve(1)");
+            await testTransformedSource("await (async () => await Promise.resolve(1))()");
+            await testTransformedSource("awaiting = (await(Promise.resolve(1)))");
+            await testTransformedSource("const bar = (await(Promise.resolve(1)));");
+            await testTransformedSource("1 + await(Promise.resolve(1))");
+            await testTransformedSource("Math.max(await(Promise.resolve(1)))");
+            await testTransformedSource("(await(Promise.resolve(Math.max)))(1, 2)");
+            await testTransformedSource("x += await Promise.resolve(2)");
 
             InspectorTest.log("");
 
             // The convenience will not apply to these expressions.
-            testSource("return 10", expectException);
-            testSource("await 10; 1", expectException);
-            testSource("1; await 10;", expectException);
-            testSource("x = y = await 10", expectException);
-
-            // We can resolve after receiving the expected number of console.info messages.
-            let seen = 0;
-            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
-                let consoleMessage = event.data.message;
-                if (consoleMessage.level !== WI.ConsoleMessage.MessageLevel.Info)
-                    return;
-                if (++seen !== expected)
-                    return;
-                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
-                resolve();
-            });
+            await testSource("return 10", expectException);
+            await testSource("await 10; 1", expectException);
+            await testSource("1; await 10;", expectException);
+            await testSource("new.target + (async () => await(Promise.resolve(1)))", expectException);
+            await testSource("(() => await(Promise.resolve(1)))()", expectException);
+            await testSource("console.await(Promise.resolve(1));", expectException);
+            await testSource("await(Promise.resolve(1)); console.log(42);", expectException);
         }
     });
 

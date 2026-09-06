@@ -7,6 +7,18 @@ CONSOLE MESSAGE: Promise.reject
 CONSOLE MESSAGE: Rejection
 CONSOLE MESSAGE: %o
 CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
+CONSOLE MESSAGE: %o
 Tests for RuntimeManager operations.
 
 
@@ -30,7 +42,6 @@ Source: ;{ let a = 1; a += 1; a }
 PASS: Evaluation should produce the labeled statement's value.
 
 -- Running test case: RuntimeManager.prototype.evaluateInInspectedWindow.AwaitConvenience
-
 Source: await 1
 PASS: Transformed. Should log the value or an exception.
 Source:    await 2
@@ -49,12 +60,43 @@ Source: await asyncOperation()
 PASS: Transformed. Should log the value or an exception.
 Source: x = await asyncOperation()
 PASS: Transformed. Should log the value or an exception.
+Source: x = y = await 10
+PASS: Transformed. Should log the value or an exception.
+Source: 1 + await Promise.resolve(1)
+PASS: Transformed. Should log the value or an exception.
+Source: Math.max(await Promise.resolve(1))
+PASS: Transformed. Should log the value or an exception.
+Source: globalThis.awaitConvenienceProperty = await Promise.resolve(1)
+PASS: Transformed. Should log the value or an exception.
+Source: const foo = await Promise.resolve(1)
+PASS: Transformed. Should log the value or an exception.
+Source: await (async () => await Promise.resolve(1))()
+PASS: Transformed. Should log the value or an exception.
+Source: awaiting = (await(Promise.resolve(1)))
+PASS: Transformed. Should log the value or an exception.
+Source: const bar = (await(Promise.resolve(1)));
+PASS: Transformed. Should log the value or an exception.
+Source: 1 + await(Promise.resolve(1))
+PASS: Transformed. Should log the value or an exception.
+Source: Math.max(await(Promise.resolve(1)))
+PASS: Transformed. Should log the value or an exception.
+Source: (await(Promise.resolve(Math.max)))(1, 2)
+PASS: Transformed. Should log the value or an exception.
+Source: x += await Promise.resolve(2)
+PASS: Transformed. Should log the value or an exception.
+
 Source: return 10
 PASS: Exception. Should not get transformed and produce a SyntaxError.
 Source: await 10; 1
 PASS: Exception. Should not get transformed and produce a SyntaxError.
 Source: 1; await 10;
 PASS: Exception. Should not get transformed and produce a SyntaxError.
-Source: x = y = await 10
+Source: new.target + (async () => await(Promise.resolve(1)))
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: (() => await(Promise.resolve(1)))()
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: console.await(Promise.resolve(1));
+PASS: Exception. Should not get transformed and produce a SyntaxError.
+Source: await(Promise.resolve(1)); console.log(42);
 PASS: Exception. Should not get transformed and produce a SyntaxError.
 
