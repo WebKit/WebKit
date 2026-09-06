@@ -82,13 +82,17 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         providers.append(gdk_content_provider_new_for_bytes("text/html", bytes.get()));
     }
 
+    // Web content must not export file:// URIs, as a uri-list or a GdkFileList.
     if (m_selectionData->hasURIList()) {
-        CString uriList = m_selectionData->uriList().utf8();
-        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(uriList.data(), uriList.length()));
-        providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        auto sanitizedURIList = SelectionData::uriListWithoutFilenames(m_selectionData->uriList());
+        if (!sanitizedURIList.isEmpty()) {
+            CString uriList = sanitizedURIList.utf8();
+            GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(uriList.data(), uriList.length()));
+            providers.append(gdk_content_provider_new_for_bytes("text/uri-list", bytes.get()));
+        }
     }
 
-    if (m_selectionData->hasURL()) {
+    if (m_selectionData->hasURL() && !m_selectionData->url().protocolIsFile()) {
         CString urlString = m_selectionData->url().string().utf8();
         gchar* url = g_strdup_printf("%s\n%s", urlString.data(), m_selectionData->hasText() ? m_selectionData->text().utf8().data() : urlString.data());
         IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")

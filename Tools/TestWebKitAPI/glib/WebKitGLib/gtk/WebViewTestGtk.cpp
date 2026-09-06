@@ -130,6 +130,24 @@ void WebViewTest::emitPopupMenuSignal()
     g_signal_emit_by_name(viewWidget, "popup-menu", &handled);
 }
 
+void WebViewTest::dropFiles(const char* uriList, Vector<String>&& portalFilenames, DropSource source, int x, int y)
+{
+    g_assert_nonnull(m_parentWindow);
+    FileDropSource dropSource;
+    switch (source) {
+    case DropSource::External:
+        dropSource = FileDropSource::External;
+        break;
+    case DropSource::WebOrSameApp:
+        dropSource = FileDropSource::WebOrSameApp;
+        break;
+    case DropSource::UntrustedURIList:
+        dropSource = FileDropSource::UntrustedURIList;
+        break;
+    }
+    webkitWebViewBaseSynthesizeFileDropForTesting(WEBKIT_WEB_VIEW_BASE(m_webView.get()), String::fromUTF8(uriList), WTF::move(portalFilenames), dropSource, x, y);
+}
+
 void WebViewTest::keyStroke(unsigned keyVal, OptionSet<Modifiers> keyModifiers)
 {
     g_assert_nonnull(m_parentWindow);
