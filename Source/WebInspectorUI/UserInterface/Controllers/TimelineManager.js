@@ -44,6 +44,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._capturingStartTime = NaN;
         this._capturingEndTime = NaN;
 
+        this._openConsoleTimeRecords = new WeakMap;
+
         this._initiatedByBackendStart = false;
         this._initiatedByBackendStop = false;
 
@@ -129,6 +131,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         defaultTypes.push(WI.TimelineRecord.Type.RenderingFrame);
         defaultTypes.push(WI.TimelineRecord.Type.CPU);
 
+        if (WI.UserTimingInstrument.supported())
+            defaultTypes.push(WI.TimelineRecord.Type.UserTiming);
+
         return defaultTypes;
     }
 
@@ -138,8 +143,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript || WI.sharedApp.debuggableType === WI.DebuggableType.ServiceWorker || WI.sharedApp.debuggableType === WI.DebuggableType.ITML)
             return types;
 
-        types.push(WI.TimelineRecord.Type.Memory);
-        types.push(WI.TimelineRecord.Type.HeapAllocations);
+        let cpuIndex = types.indexOf(WI.TimelineRecord.Type.CPU);
+        types.insertAtIndex(WI.TimelineRecord.Type.Memory, cpuIndex + 1);
+        types.insertAtIndex(WI.TimelineRecord.Type.HeapAllocations, cpuIndex + 2);
 
         types.insertAtIndex(WI.TimelineRecord.Type.Media, types.indexOf(WI.TimelineRecord.Type.Layout) + 1);
 
@@ -169,6 +175,9 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         if (this._capturingState === TimelineManager.CapturingState.Starting || this._capturingState === TimelineManager.CapturingState.Active)
             this.stopCapturing();
+
+        for (let recording of this._recordings ?? [])
+            recording.close();
 
         this._recordings = [];
         this._activeRecording = null;
@@ -528,7 +537,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             if (entry.index < recordPayloads.length) {
                 var recordPayload = recordPayloads[entry.index];
-                var record = this._processEvent(target, recordPayload, entry.parent);
+                var record = this._processRecord(target, recordPayload, entry.parent);
                 if (record) {
                     record.parent = entry.parentRecord;
                     records.push(record);
@@ -952,6 +961,48 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             this._webTimelineScriptRecordsExpectingScriptProfilerEventsForTarget.getOrInsert(target, []).push(record);
             return record;
 
+        case InspectorBackend.Enum.Timeline.EventType.TimeStamp: {
+            let eventMarker = new WI.TimelineMarker(startTime, WI.TimelineMarker.Type.TimeStamp, recordPayload.data.message);
+            this._activeRecording.addEventMarker(eventMarker);
+            return null;
+        }
+
+        case InspectorBackend.Enum.Timeline.EventType.PerformanceMark: {
+            let eventMarker = new WI.TimelineMarker(startTime, WI.TimelineMarker.Type.PerformanceMark, recordPayload.data.message);
+            this._activeRecording.addEventMarker(eventMarker);
+            return null;
+        }
+
+        case InspectorBackend.Enum.Timeline.EventType.Time: {
+            let label = recordPayload.data.message;
+            let openRecords = this._openConsoleTimeRecords.getOrInsert(target, new Map);
+            if (openRecords.has(label))
+                return null;
+            let record = new WI.UserTimingTimelineRecord(WI.UserTimingTimelineRecord.EventType.ConsoleTime, label, startTime, stackTrace, sourceCodeLocation);
+            openRecords.set(label, record);
+            return record;
+        }
+
+        case InspectorBackend.Enum.Timeline.EventType.TimeEnd: {
+            let label = recordPayload.data.message;
+            let record = this._openConsoleTimeRecords.get(target)?.take(label);
+            if (!record)
+                return null;
+            record.finish(startTime);
+            return null;
+        }
+
+        case InspectorBackend.Enum.Timeline.EventType.PerformanceMeasure: {
+            let label = recordPayload.data.message;
+            let measureStartTime = this._activeRecording.computeElapsedTime(recordPayload.data.startTime);
+            let measureEndTime = this._activeRecording.computeElapsedTime(recordPayload.data.endTime);
+            return new WI.UserTimingTimelineRecord(WI.UserTimingTimelineRecord.EventType.PerformanceMeasure, label, measureStartTime, stackTrace, sourceCodeLocation, {
+                endTime: measureEndTime,
+                target,
+                detail: recordPayload.data.detail || null,
+            });
+        }
+
         case InspectorBackend.Enum.Timeline.EventType.ConsoleProfile:
             return new WI.ScriptTimelineRecord(target, WI.ScriptTimelineRecord.EventType.ConsoleProfileRecorded, startTime, endTime, {
                 stackTrace,
@@ -1115,30 +1166,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         return null;
     }
 
-    _processEvent(target, recordPayload, parentRecordPayload)
-    {
-        console.assert(this.isCapturing());
-
-        switch (recordPayload.type) {
-        case InspectorBackend.Enum.Timeline.EventType.TimeStamp:
-            var timestamp = this._activeRecording.computeElapsedTime(recordPayload.startTime);
-            var eventMarker = new WI.TimelineMarker(timestamp, WI.TimelineMarker.Type.TimeStamp, recordPayload.data.message);
-            this._activeRecording.addEventMarker(eventMarker);
-            break;
-
-        case InspectorBackend.Enum.Timeline.EventType.Time:
-        case InspectorBackend.Enum.Timeline.EventType.TimeEnd:
-            // FIXME: <https://webkit.org/b/150690> Web Inspector: Show console.time/timeEnd ranges in Timeline
-            // FIXME: Make use of "message" payload properties.
-            break;
-
-        default:
-            return this._processRecord(target, recordPayload, parentRecordPayload);
-        }
-
-        return null;
-    }
-
     _loadNewRecording()
     {
         if (this._activeRecording && this._activeRecording.isEmpty())
@@ -1157,6 +1184,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         var oldRecording = this._activeRecording;
         if (oldRecording)
             oldRecording.unloaded();
+
+        this._openConsoleTimeRecords = new WeakMap;
 
         this._activeRecording = newRecording;
 
@@ -1476,6 +1505,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 case WI.TimelineRecord.Type.Network:
                 case WI.TimelineRecord.Type.RenderingFrame:
                 case WI.TimelineRecord.Type.Layout:
+                case WI.TimelineRecord.Type.UserTiming:
                     instrumentSet.add(InspectorBackend.Enum.Timeline.Instrument.Timeline);
                     break;
                 case WI.TimelineRecord.Type.CPU:

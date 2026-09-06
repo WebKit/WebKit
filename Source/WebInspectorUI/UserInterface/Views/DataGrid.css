@@ -155,8 +155,18 @@
     background-color: var(--odd-zebra-stripe-row-background-color);
 }
 
+.data-grid.variable-height-rows table.data tr:nth-child(odd).filler {
+    background-image: linear-gradient(to bottom, var(--odd-zebra-stripe-row-background-color), var(--odd-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color) 50%, var(--even-zebra-stripe-row-background-color));
+    background-size: 100% 40px;
+}
+
 .data-grid.variable-height-rows table.data tr:nth-child(even) {
     background-color: var(--even-zebra-stripe-row-background-color);
+}
+
+.data-grid.variable-height-rows table.data tr:nth-child(even).filler {
+    background-image: linear-gradient(to bottom, var(--even-zebra-stripe-row-background-color), var(--even-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color) 50%, var(--odd-zebra-stripe-row-background-color));
+    background-size: 100% 40px;
 }
 
 .data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(odd) {
@@ -165,11 +175,6 @@
 
 .data-grid.variable-height-rows.even-first-zebra-stripe table.data tr:nth-child(even) {
     background-color: var(--odd-zebra-stripe-row-background-color);
-}
-
-.data-grid.variable-height-rows table.data tr.filler {
- /* FIXME: This should show an alternating stripe, but it needs to know if the last row is even or odd. */
-    background-color: var(--even-zebra-stripe-row-background-color);
 }
 
 .data-grid td {

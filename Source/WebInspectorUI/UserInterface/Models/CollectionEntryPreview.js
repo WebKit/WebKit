@@ -36,7 +36,6 @@ WI.CollectionEntryPreview = class CollectionEntryPreview
 
     // Static
 
-    // Runtime.EntryPreview.
     static fromPayload(payload)
     {
         if (payload.key)
@@ -45,6 +44,19 @@ WI.CollectionEntryPreview = class CollectionEntryPreview
             payload.value = WI.ObjectPreview.fromPayload(payload.value);
 
         return new WI.CollectionEntryPreview(payload.key, payload.value);
+    }
+
+    // Import / Export
+
+    exportData()
+    {
+        // Only expected to be used by timeline recordings.
+        let json = {
+            value: this._value.exportData(),
+        };
+        if (this._key)
+            json.key = this._key.exportData();
+        return json;
     }
 
     // Public

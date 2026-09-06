@@ -44,7 +44,6 @@ WI.PropertyPreview = class PropertyPreview
 
     // Static
 
-    // Runtime.PropertyPreview.
     static fromPayload(payload)
     {
         return new WI.PropertyPreview(payload.name, payload.type, {
@@ -54,6 +53,28 @@ WI.PropertyPreview = class PropertyPreview
             isPrivateProperty: payload.isPrivate,
             isInternalProperty: payload.internal,
         });
+    }
+
+    // Import / Export
+
+    exportData()
+    {
+        // Only expected to be used by timeline recordings.
+        let json = {
+            name: this._name,
+            type: this._type,
+        };
+        if (this._subtype)
+            json.subtype = this._subtype;
+        if (this._value)
+            json.value = this._value;
+        if (this._valuePreview)
+            json.valuePreview = this._valuePreview.exportData();
+        if (this._private)
+            json.isPrivate = this._private;
+        if (this._internal)
+            json.internal = this._internal;
+        return json;
     }
 
     // Public

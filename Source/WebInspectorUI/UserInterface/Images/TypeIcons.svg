@@ -292,6 +292,8 @@
     <g id="AuditTestGroupResult-light" class="light grey"><use href="#box"/><use href="#T"/></g>
     <g id="CallTrees-dark" class="dark grey"><use href="#box"/><use href="#calltree"/></g>
     <g id="CallTrees-light" class="light grey"><use href="#box"/><use href="#calltree"/></g>
+    <g id="ConsoleTime-dark" class="dark green"><use href="#box"/><use href="#C"/></g>
+    <g id="ConsoleTime-light" class="light green"><use href="#box"/><use href="#C"/></g>
     <g id="DebuggerStatement-dark" class="dark blue"><use href="#box"/><use href="#D"/></g>
     <g id="DebuggerStatement-light" class="light blue"><use href="#box"/><use href="#D"/></g>
     <g id="DOMBreakpointAttributeModified-dark" class="dark blue"><use href="#box"/><use href="#A"/></g>
@@ -351,6 +353,8 @@
     <g id="PausedBreakpoint-light" class="light red"><use href="#box"/><use href="#P"/></g>
     <g id="PerformanceEntry-dark" class="dark teal"><use href="#box"/><use href="#P"/></g>
     <g id="PerformanceEntry-light" class="light teal"><use href="#box"/><use href="#P"/></g>
+    <g id="PerformanceMeasure-dark" class="dark grey"><use href="#box"/><use href="#M"/></g>
+    <g id="PerformanceMeasure-light" class="light grey"><use href="#box"/><use href="#M"/></g>
     <g id="Program-dark" class="dark purple"><use href="#box"/><use href="#S"/></g>
     <g id="Program-light" class="light purple"><use href="#box"/><use href="#S"/></g>
     <g id="PseudoElement-dark" class="dark red"><use href="#box"/><use href="#P"/></g>

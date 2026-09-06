@@ -557,6 +557,7 @@ localizedStrings["Delete this breakpoint action"] = "Delete this breakpoint acti
 localizedStrings["Demo Audit"] = "Demo Audit";
 localizedStrings["Detach into separate window"] = "Detach into separate window";
 localizedStrings["Detached"] = "Detached";
+localizedStrings["Detail"] = "Detail";
 localizedStrings["Details"] = "Details";
 /* Label for the details sidebar. */
 localizedStrings["Details @ Sidebar"] = "Details";
@@ -718,6 +719,7 @@ localizedStrings["Enabled"] = "Enabled";
 localizedStrings["Enabled Timelines @ Timelines Tab"] = "Enabled Timelines";
 localizedStrings["Encoded"] = "Encoded";
 localizedStrings["Encoding"] = "Encoding";
+localizedStrings["End Time"] = "End Time";
 localizedStrings["Energy Impact"] = "Energy Impact";
 localizedStrings["Ensure aria-hidden=\u0022%s\u0022 is not used."] = "Ensure aria-hidden=\u0022%s\u0022 is not used.";
 localizedStrings["Ensure that \u201C%s\u201D is spelled correctly."] = "Ensure that \u201C%s\u201D is spelled correctly.";
@@ -1926,6 +1928,7 @@ localizedStrings["Use strict word boundary checks for glob pattern matching"] = 
 localizedStrings["User Agent"] = "User Agent";
 localizedStrings["User Agent Style Sheet"] = "User Agent Style Sheet";
 localizedStrings["User Style Sheet"] = "User Style Sheet";
+localizedStrings["User Timing"] = "User Timing";
 localizedStrings["User preferences overridden"] = "User preferences overridden";
 localizedStrings["Valid From"] = "Valid From";
 localizedStrings["Valid Until"] = "Valid Until";

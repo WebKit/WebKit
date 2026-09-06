@@ -1149,6 +1149,12 @@ void InspectorInstrumentation::performanceMarkImpl(InstrumentingAgents& instrume
         timelineAgent->didPerformanceMark(label, timestamp);
 }
 
+void InspectorInstrumentation::performanceMeasureImpl(InstrumentingAgents& instrumentingAgents, const String& label, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject& globalObject)
+{
+    if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
+        timelineAgent->performanceMeasure(label, startTime, endTime, detail, globalObject);
+}
+
 void InspectorInstrumentation::didEnqueueFirstContentfulPaintImpl(InstrumentingAgents& instrumentingAgents)
 {
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())

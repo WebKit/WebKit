@@ -126,6 +126,15 @@ Ref<JSON::Object> TimelineRecordFactory::createTimeStampData(const String& messa
     return data;
 }
 
+Ref<JSON::Object> TimelineRecordFactory::createTimeRangeData(const String& message, double startTime, double endTime)
+{
+    Ref<JSON::Object> data = JSON::Object::create();
+    data->setString("message"_s, message);
+    data->setDouble("startTime"_s, startTime);
+    data->setDouble("endTime"_s, endTime);
+    return data;
+}
+
 Ref<JSON::Object> TimelineRecordFactory::createLargestContentfulPaintData(Inspector::Protocol::DOM::NodeId nodeId, unsigned area)
 {
     Ref<JSON::Object> data = JSON::Object::create();

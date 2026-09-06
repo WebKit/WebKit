@@ -543,6 +543,15 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
     if (measure.hasException())
         return measure.releaseException();
 
+    if (InspectorInstrumentation::hasFrontends()) [[unlikely]] {
+        if (RefPtr context = scriptExecutionContext()) {
+            Ref entry = measure.returnValue();
+            auto startTime = monotonicTimeFromRelativeTime(entry->startTime());
+            auto endTime = monotonicTimeFromRelativeTime(entry->startTime() + entry->duration());
+            InspectorInstrumentation::performanceMeasure(*context, measureName, startTime, endTime, entry->detail(globalObject), globalObject);
+        }
+    }
+
     if (isSignpostEnabled()) {
         Ref entry { measure.returnValue() };
         auto message = measureName.utf8();

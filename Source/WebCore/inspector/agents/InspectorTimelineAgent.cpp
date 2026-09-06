@@ -48,7 +48,10 @@
 #include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Stopwatch.h>
@@ -65,6 +68,7 @@ InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context)
     : InspectorAgentBase("Timeline"_s, context)
     , m_frontendDispatcher(makeUniqueRef<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(protect(context.backendDispatcher), this))
+    , m_injectedScriptManager(context.injectedScriptManager)
 {
 }
 
@@ -99,9 +103,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::disable()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::optional<int>&& maxCallStackDepth)
+Inspector::Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::optional<int>&& maxCallStackDepth, const String& objectGroup)
 {
     m_trackingFromFrontend = true;
+
+    m_userTimingObjectGroup = objectGroup;
 
     if (!tracking())
         internalStart(WTF::move(maxCallStackDepth));
@@ -345,7 +351,33 @@ void InspectorTimelineAgent::didPerformanceMark(const String& label, std::option
         if (!timestamp)
             return; // Stopwatch wasn't running at the time of timeInMonotonicTime.
     }
-    appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::TimeStamp, true, timestamp);
+    appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::PerformanceMark, true, timestamp);
+}
+
+void InspectorTimelineAgent::performanceMeasure(const String& label, MonotonicTime startTime, MonotonicTime endTime, JSC::JSValue detail, JSC::JSGlobalObject& globalObject)
+{
+    if (endTime < startTime)
+        std::swap(startTime, endTime);
+
+    auto endTimestamp = timestampFromMonotonicTime(endTime);
+    if (!endTimestamp)
+        return;
+
+    double startTimestamp = timestampFromMonotonicTime(startTime).value_or(0.0);
+
+    auto data = TimelineRecordFactory::createTimeRangeData(label, startTimestamp, *endTimestamp);
+
+    if (!detail.isUndefinedOrNull()) {
+        auto injectedScript = m_injectedScriptManager->injectedScriptFor(&globalObject);
+        ASSERT(!injectedScript.hasNoValue());
+        if (!injectedScript.hasNoValue()) {
+            auto objectGroup = !m_userTimingObjectGroup.isEmpty() ? m_userTimingObjectGroup : "timeline-recording"_s;
+            if (auto wrappedDetail = injectedScript.wrapObject(detail, objectGroup, true))
+                data->setValue("detail"_s, wrappedDetail.releaseNonNull());
+        }
+    }
+
+    appendRecord(WTF::move(data), TimelineRecordType::PerformanceMeasure, true, startTimestamp);
 }
 
 void InspectorTimelineAgent::didEnqueueFirstContentfulPaint()
@@ -571,6 +603,10 @@ static Inspector::Protocol::Timeline::EventType NODELETE toProtocol(TimelineReco
         return Inspector::Protocol::Timeline::EventType::Time;
     case TimelineRecordType::TimeEnd:
         return Inspector::Protocol::Timeline::EventType::TimeEnd;
+    case TimelineRecordType::PerformanceMark:
+        return Inspector::Protocol::Timeline::EventType::PerformanceMark;
+    case TimelineRecordType::PerformanceMeasure:
+        return Inspector::Protocol::Timeline::EventType::PerformanceMeasure;
 
     case TimelineRecordType::FunctionCall:
         return Inspector::Protocol::Timeline::EventType::FunctionCall;
