@@ -1248,6 +1248,28 @@ UNIFIED_PDF_TEST(CopySelectedText)
     EXPECT_WK_STREQ(@"Test", [[UIPasteboard generalPasteboard] string]);
 }
 
+static void doCopyEditActionTest(String resourceName, bool copyAllowed)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:resourceName.createNSString() withExtension:@"pdf"]]];
+    [webView waitForNextPresentationUpdate];
+
+    [webView selectTextInGranularity:UITextGranularityDocument atPoint:CGPointMake(100, 100)];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ([webView canPerformAction:@selector(copy:) withSender:nil], copyAllowed);
+}
+
+UNIFIED_PDF_TEST(CopyEditActionOnRegularContent)
+{
+    doCopyEditActionTest("test"_s, true);
+}
+
+UNIFIED_PDF_TEST(CopyEditActionOnDisallowedContent)
+{
+    doCopyEditActionTest("copying-disabled"_s, false);
+}
+
 UNIFIED_PDF_TEST(SelectTextInRotatedPage)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
