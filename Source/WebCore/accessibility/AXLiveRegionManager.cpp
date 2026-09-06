@@ -35,6 +35,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/CharacterProperties.h>
 
 namespace WebCore {
 
@@ -56,6 +57,7 @@ struct LiveRegionObjectMetadata {
 
 AXLiveRegionManager::AXLiveRegionManager(AXObjectCache& cache)
     : m_cache(cache)
+    , m_emptyRegionSettleTimer(*this, &AXLiveRegionManager::emptyRegionSettleTimerFired)
 {
 }
 
@@ -160,6 +162,23 @@ static OptionSet<LiveRegionRelevant> stringToLiveRegionRelevant(const String& st
     return result;
 }
 
+// How long a live region has to stay empty before the clear is treated as something the page meant,
+// rather than the gap between tearing the region down and rebuilding it.
+static constexpr Seconds emptyRegionSettleDelay { 100_ms };
+
+// Whether two snapshots hold the same text laid out the same way.
+static bool hasSameObjectTexts(const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)
+{
+    if (oldSnapshot.objects.size() != newSnapshot.objects.size())
+        return false;
+
+    for (size_t i = 0; i < oldSnapshot.objects.size(); ++i) {
+        if (oldSnapshot.objects[i].text != newSnapshot.objects[i].text)
+            return false;
+    }
+    return true;
+}
+
 void AXLiveRegionManager::handleLiveRegionChange(AccessibilityObject& object, AnnouncementContents contents)
 {
     // If this is a new live region, don't speak it upon registering.
@@ -170,11 +189,101 @@ void AXLiveRegionManager::handleLiveRegionChange(AccessibilityObject& object, An
     }
 
     LiveRegionSnapshot oldSnapshot = contents == AnnouncementContents::All ? LiveRegionSnapshot { } : iterator->value;
+    bool baselineHadText = iterator->value.hasAnyText;
+    bool baselineSettledEmpty = iterator->value.settledEmpty;
+
     LiveRegionSnapshot newSnapshot = buildLiveRegionSnapshot(object);
 
-    iterator->value = newSnapshot;
+    // Streaming pages often re-render a region by emptying it and refilling it in a later task, so this
+    // empty state is transient rather than a change. Adopting it as the baseline would make the refilled
+    // text look entirely new, so instead, only keep the last baseline that had text.
+    if (!newSnapshot.hasAnyText && baselineHadText) {
+        m_regionsPendingEmpty.add(object.objectID());
+        if (!m_emptyRegionSettleTimer.isActive())
+            m_emptyRegionSettleTimer.startOneShot(emptyRegionSettleDelay);
+
+        // The baseline is kept, but a region that asked to hear removals still has to hear that its
+        // content went away.
+        if (newSnapshot.liveRegionRelevant.containsAny({ LiveRegionRelevant::Removals, LiveRegionRelevant::All })) {
+            // Re-find rather than reusing the iterator, which building the snapshot above may have invalidated.
+            auto baseline = m_liveRegions.find(object.objectID());
+            if (baseline != m_liveRegions.end() && !baseline->value.announcedEmptyRemoval) {
+                baseline->value.announcedEmptyRemoval = true;
+                postAnnouncementForChange(object, oldSnapshot, newSnapshot);
+            }
+        }
+        return;
+    }
+
+    // Content is present, so whatever empty state was being waited on was only part of a render.
+    m_regionsPendingEmpty.remove(object.objectID());
+
+    // The region was cleared, stayed cleared, and has now come back saying exactly what it said before,
+    // split across objects in the same way. Reset the old snapshot so an announcement can be made.
+    if (baselineSettledEmpty && hasSameObjectTexts(oldSnapshot, newSnapshot))
+        oldSnapshot = LiveRegionSnapshot { };
+
+    // Re-find rather than reusing the iterator, which building the snapshot above may have invalidated.
+    m_liveRegions.set(object.objectID(), newSnapshot);
 
     postAnnouncementForChange(object, oldSnapshot, newSnapshot);
+}
+
+// Nothing came back while the timer ran, so these regions were cleared rather than caught mid-render.
+void AXLiveRegionManager::emptyRegionSettleTimerFired()
+{
+    for (auto axID : std::exchange(m_regionsPendingEmpty, { })) {
+        if (auto iterator = m_liveRegions.find(axID); iterator != m_liveRegions.end())
+            iterator->value.settledEmpty = true;
+    }
+}
+
+// Cap on the aggregated text, so that content made of a few enormous nodes cannot overflow the builder
+// or make comparison arbitrarily expensive. Exceeding it truncates the snapshot rather than failing.
+static constexpr size_t maximumAggregateLength = 131072;
+
+// Concatenates the objects' text, separated by a single space, with each object's own whitespace runs
+// collapsed and its leading and trailing whitespace dropped.
+static String aggregateText(const Vector<LiveRegionObject>& objects, bool& isTruncated, Vector<size_t>* objectEndOffsets = nullptr)
+{
+    size_t lengthHint = 0;
+    for (auto& object : objects)
+        lengthHint += object.text.length() + 1;
+
+    StringBuilder builder;
+    builder.reserveCapacity(std::min(lengthHint, maximumAggregateLength + 1));
+    if (objectEndOffsets)
+        objectEndOffsets->reserveInitialCapacity(objects.size());
+
+    for (auto& object : objects) {
+        String text = object.text.simplifyWhiteSpace(isUnicodeWhitespace);
+        if (!text.isEmpty()) {
+            if (builder.length())
+                builder.append(' ');
+            builder.append(text);
+        }
+
+        if (builder.length() > maximumAggregateLength) {
+            isTruncated = true;
+            return { };
+        }
+
+        if (objectEndOffsets)
+            objectEndOffsets->append(builder.length());
+    }
+    return builder.toString();
+}
+
+// True when text carries no word of its own, which is not worth announcing. Resolving inline markup can
+// split a trailing punctuation mark into its own object, which would otherwise be announced as just ".".
+static bool isPunctuationOnly(const String& text)
+{
+    for (unsigned i = 0; i < text.length(); ++i) {
+        char16_t character = text[i];
+        if (!isPunctuation(character) && !isUnicodeWhitespace(character))
+            return false;
+    }
+    return true;
 }
 
 // Limit on the number of objects visited during snapshot building to prevent
@@ -190,9 +299,11 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
     snapshot.liveRegionRelevant = stringToLiveRegionRelevant(object.liveRegionRelevant());
 
     size_t objectsVisited = 0;
-    std::function<void(AccessibilityObject&)> buildObjectList = [this, &buildObjectList, &snapshot, &objectsVisited] (AccessibilityObject& object) {
-        if (objectsVisited >= maximumSnapshotObjects)
+    std::function<void(AccessibilityObject&)> buildObjectList = [protectedThis = CheckedRef { *this }, &buildObjectList, &snapshot, &objectsVisited] (AccessibilityObject& object) {
+        if (objectsVisited >= maximumSnapshotObjects) {
+            snapshot.isTruncated = true;
             return;
+        }
         ++objectsVisited;
 
         // Treat atomic objects as one object, so when they change the entire subtree is announced.
@@ -200,9 +311,11 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
             HashSet<AXID> descendants;
 
             // Collect all atomic-region descendants to detect when nodes are added/removed within the atomic region.
-            std::function<void(AccessibilityObject&)> collectDescendants = [&collectDescendants, &descendants, &objectsVisited] (AccessibilityObject& descendant) {
-                if (objectsVisited >= maximumSnapshotObjects)
+            std::function<void(AccessibilityObject&)> collectDescendants = [&collectDescendants, &descendants, &objectsVisited, &snapshot] (AccessibilityObject& descendant) {
+                if (objectsVisited >= maximumSnapshotObjects) {
+                    snapshot.isTruncated = true;
                     return;
+                }
                 ++objectsVisited;
 
                 descendants.add(descendant.objectID());
@@ -213,19 +326,27 @@ LiveRegionSnapshot AXLiveRegionManager::buildLiveRegionSnapshot(AccessibilityObj
             for (auto& child : object.unignoredChildren())
                 collectDescendants(downcast<AccessibilityObject>(child.get()));
 
-            snapshot.objects.append({ object.objectID(), object.announcementText(), object.languageIncludingAncestors(), WTF::move(descendants) });
+            String text = object.announcementText();
+            snapshot.hasAnyText |= !text.isEmpty();
+            snapshot.hasAtomicRegion = true;
+            snapshot.objects.append({ object.objectID(), WTF::move(text), object.languageIncludingAncestors(), WTF::move(descendants), /* isTextContent */ false });
             return;
         }
 
-        if (shouldIncludeInSnapshot(object))
-            snapshot.objects.append({ object.objectID(), object.announcementText(), object.languageIncludingAncestors(), { }, object.isStaticText() });
-        else {
+        if (protectedThis->shouldIncludeInSnapshot(object)) {
+            String text = object.announcementText();
+            snapshot.hasAnyText |= !text.isEmpty();
+            snapshot.objects.append({ object.objectID(), WTF::move(text), object.languageIncludingAncestors(), { }, object.isStaticText() });
+        } else {
             for (auto& child : object.unignoredChildren())
                 buildObjectList(downcast<AccessibilityObject>(child.get()));
         }
     };
 
     buildObjectList(object);
+
+    if (!snapshot.isTruncated)
+        snapshot.aggregatedText = aggregateText(snapshot.objects, snapshot.isTruncated, &snapshot.objectEndOffsets);
 
     return snapshot;
 }
@@ -263,27 +384,161 @@ bool AXLiveRegionManager::shouldIncludeInSnapshot(AccessibilityObject& object) c
     return false;
 }
 
-AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Vector<LiveRegionObject>& oldObjects, const Vector<LiveRegionObject>& newObjects) const
+// Returns the objects carrying text the region did not have before, which is empty when its text did
+// not change at all. Streaming pages re-render their whole live region as each chunk arrives, which
+// spreads already-announced text across a different set of objects. For example, a paragraph that splits
+// into three once a bold span or citation resolves, and once the response is complete the many small nodes
+// are coalesced into a few large ones. Comparing objects individually sees all of those as brand new and
+// re-announces the whole response, so the region's combined text is what has to be compared.
+//
+// Returns std::nullopt when the text changed in some way other than growing at the end, or when either snapshot
+// is too incomplete to compare.
+static std::optional<Vector<LiveRegionObject>> appendedObjects(const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)
+{
+    // A truncated snapshot's text can stop growing while the region keeps growing, which would read as
+    // "nothing changed" and silence the rest of the content. Fall back to comparing objects instead.
+    if (oldSnapshot.isTruncated || newSnapshot.isTruncated)
+        return std::nullopt;
+
+    // Atomic regions are announced whole, so they must not be reduced to their appended text.
+    if (oldSnapshot.hasAtomicRegion || newSnapshot.hasAtomicRegion)
+        return std::nullopt;
+
+    const String& oldAggregate = oldSnapshot.aggregatedText;
+    const String& newAggregate = newSnapshot.aggregatedText;
+
+    if (oldAggregate.isEmpty())
+        return std::nullopt;
+
+    // The same text spread across a different set of objects. Streaming pages coalesce their many
+    // small nodes into fewer, larger ones once the response is complete, which leaves the text
+    // unchanged but matches up with none of the previous objects. Nothing was added, so there is
+    // nothing to announce.
+    if (newAggregate == oldAggregate)
+        return Vector<LiveRegionObject> { };
+
+    if (!newAggregate.startsWith(oldAggregate))
+        return std::nullopt;
+
+    // Streaming often delivers partial words, so the point where the old text ended can fall in the
+    // middle of a word. Back up to the start of that word and announce it whole rather than announcing a
+    // fragment of it.
+    static constexpr size_t maximumWordBoundaryBackup = 32;
+    // A region whose entire text is this short is treated as a single value, such as a counter, where
+    // the new value should be announced in full rather than only the characters that changed.
+    static constexpr size_t maximumSingleValueLength = 8;
+
+    size_t splitOffset = oldAggregate.length();
+    if (!isUnicodeWhitespace(newAggregate[splitOffset])) {
+        size_t limit = splitOffset > maximumWordBoundaryBackup ? splitOffset - maximumWordBoundaryBackup : 0;
+        size_t candidate = splitOffset;
+        while (candidate > limit && !isUnicodeWhitespace(newAggregate[candidate - 1]))
+            --candidate;
+
+        if (candidate && isUnicodeWhitespace(newAggregate[candidate - 1]))
+            splitOffset = candidate;
+        else if (oldAggregate.length() <= maximumSingleValueLength) {
+            // No word boundary was found. Scripts that do not separate words with spaces (Chinese,
+            // Japanese, Thai) never have one, so only rewind the whole text when it is short enough to
+            // plausibly be a single value. Otherwise the entire region would be re-announced per chunk.
+            splitOffset = 0;
+        }
+    }
+
+    // Offsets were recorded alongside the text when the snapshot was built. They only cover every object
+    // when the walk ran to completion, which the truncation check above has already established.
+    const Vector<size_t>& objectEndOffsets = newSnapshot.objectEndOffsets;
+    ASSERT(objectEndOffsets.size() == newSnapshot.objects.size());
+
+    Vector<LiveRegionObject> appended;
+    size_t objectStart = 0;
+    for (size_t i = 0; i < newSnapshot.objects.size(); ++i) {
+        size_t objectEnd = objectEndOffsets[i];
+        size_t contributionStart = std::exchange(objectStart, objectEnd);
+
+        // Skip objects that contributed nothing, and those whose text was entirely announced already.
+        if (objectEnd <= contributionStart || objectEnd <= splitOffset)
+            continue;
+
+        LiveRegionObject object = newSnapshot.objects[i];
+        size_t announceFrom = contributionStart;
+        if (contributionStart < splitOffset) {
+            // Only text content can be cut mid-object. Anything else is a single accessible name or
+            // value (a button's title, an image's alt text), where announcing part of one would say
+            // something like "over" for a button relabelled "Start over", so those are announced whole.
+            if (object.isTextContent)
+                announceFrom = splitOffset;
+        }
+
+        // Take the text from the aggregate, which is already whitespace-collapsed.
+        object.text = newAggregate.substring(announceFrom, objectEnd - announceFrom).trim(isUnicodeWhitespace);
+        if (object.text.isEmpty() || isPunctuationOnly(object.text))
+            continue;
+
+        appended.append(WTF::move(object));
+    }
+
+    return appended;
+}
+
+AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot) const
 {
     // Here we compare the old and new live region to compute:
     // - Additions: New objects, or atomic regions where nodes were added AND text changed.
     // - Deletions: Objects that were removed from the region, or atomic regions where nodes were removed AND text changed.
     // - Changes: Text content/values that changed between the same object (without node additions/removals).
 
+    const Vector<LiveRegionObject>& oldObjects = oldSnapshot.objects;
+    const Vector<LiveRegionObject>& newObjects = newSnapshot.objects;
+
     LiveRegionDiff diff;
+
+    if (auto appended = appendedObjects(oldSnapshot, newSnapshot)) {
+        // The region's text only grew at the end, so announce just the new text. This has to be checked
+        // before comparing objects individually, because a re-render can spread the same text across a
+        // different set of objects, which object-level comparison sees as entirely new content.
+        // Text that grew on an object that was already there is a text change. Text on an object that
+        // was not there is an addition. aria-relevant distinguishes the two, so a region asking only for
+        // "additions" must not hear text edits, and one asking only for "text" must still hear them.
+        for (auto& object : *appended) {
+            bool objectExistedBefore = oldObjects.containsIf([&] (const auto& oldObject) {
+                return oldObject.objectID == object.objectID;
+            });
+            if (objectExistedBefore)
+                diff.changed.append(object);
+            else
+                diff.added.append(object);
+        }
+        return diff;
+    }
 
     // Build a map of old objects for lookup. As we match them with new objects, we'll remove them.
     // Whatever remains unmatched at the end represents removals.
     HashMap<AXID, LiveRegionObjectMetadata> unmatchedOldObjects;
     unmatchedOldObjects.reserveInitialCapacity(oldObjects.size());
 
-    for (auto& object : oldObjects)
-        unmatchedOldObjects.set(object.objectID, LiveRegionObjectMetadata { object.text, object.language, object.descendants });
+    // Index the old objects by text too, so content that survived a re-render can still be matched
+    // even though the objects backing it are new. See the second pass below.
+    HashMap<String, Vector<AXID>> oldObjectIDsByText;
 
-    for (auto& newObject : newObjects) {
+    for (auto& object : oldObjects) {
+        unmatchedOldObjects.set(object.objectID, LiveRegionObjectMetadata { object.text, object.language, object.descendants });
+        if (!object.text.isEmpty())
+            oldObjectIDsByText.add(object.text, Vector<AXID> { }).iterator->value.append(object.objectID);
+    }
+
+    // Additions are collected with the index of the object that produced them, so that the two passes
+    // below can be merged back into document order before anything is announced.
+    Vector<std::pair<size_t, LiveRegionObject>> additions;
+
+    // First pass. Try to match by AXID. This has to finish before any text matching happens below, so that
+    // objects which still exist are always paired with themselves rather than consumed by a text match.
+    Vector<size_t> unmatchedNewObjectIndices;
+    for (size_t i = 0; i < newObjects.size(); ++i) {
+        const auto& newObject = newObjects[i];
         auto iterator = unmatchedOldObjects.find(newObject.objectID);
         if (iterator == unmatchedOldObjects.end())
-            diff.added.append(newObject);
+            unmatchedNewObjectIndices.append(i);
         else {
             bool textChanged = iterator->value.text != newObject.text;
 
@@ -298,7 +553,7 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Ve
                 bool nodesRemoved = oldDescendantsCopy.size();
 
                 if (nodesAdded && textChanged)
-                    diff.added.append(newObject);
+                    additions.append({ i, newObject });
                 else if (nodesRemoved && textChanged)
                     diff.removed.append(newObject);
 
@@ -311,9 +566,46 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Ve
         }
     }
 
-    // Anything left in unmatchedOldObjects is a removal.
-    for (auto& entry : unmatchedOldObjects)
-        diff.removed.append({ entry.key, entry.value.text, entry.value.language, { } });
+    // Second pass. For new objects that had no AXID match, try to match them to a leftover old object with
+    // identical text. Re-rendering a region destroys and recreates the objects holding text that was
+    // already announced, so matching only by AXID makes that text look new and announces it again.
+    for (auto index : unmatchedNewObjectIndices) {
+        const auto& newObject = newObjects[index];
+
+        bool matchedIdenticalText = false;
+        // The text is only looked up when it is non-empty, matching how oldObjectIDsByText was built.
+        if (!newObject.text.isEmpty()) {
+            if (auto iterator = oldObjectIDsByText.find(newObject.text); iterator != oldObjectIDsByText.end()) {
+                // An old object's text can only be claimed once, so drop candidates already matched by AXID above.
+                while (!iterator->value.isEmpty()) {
+                    if (unmatchedOldObjects.remove(iterator->value.takeLast())) {
+                        matchedIdenticalText = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Text carried over unchanged from the previous snapshot has nothing to announce.
+        if (!matchedIdenticalText)
+            additions.append({ index, newObject });
+    }
+
+    // Merge the two passes back into document order. Announcing a new object before a changed atomic
+    // region that precedes it would reverse the reading order of the announcement.
+    std::sort(additions.begin(), additions.end(), [] (const auto& a, const auto& b) {
+        return a.first < b.first;
+    });
+    diff.added.reserveInitialCapacity(additions.size());
+    for (auto& addition : additions)
+        diff.added.append(WTF::move(addition.second));
+
+    // Anything left unmatched is a removal. Walk the old objects rather than the map so that removals
+    // come out in document order rather than hash order.
+    for (auto& oldObject : oldObjects) {
+        if (unmatchedOldObjects.contains(oldObject.objectID))
+            diff.removed.append({ oldObject.objectID, oldObject.text, oldObject.language, { } });
+    }
 
     return diff;
 }
@@ -321,12 +613,12 @@ AXLiveRegionManager::LiveRegionDiff AXLiveRegionManager::computeChanges(const Ve
 static const size_t maximumAnnouncementLength = 2500;
 enum class IsLiveRegionRemoval : bool { No, Yes };
 
-AttributedString AXLiveRegionManager::computeAnnouncement(const LiveRegionSnapshot& newSnapshot, const LiveRegionDiff& diff) const
+AttributedString AXLiveRegionManager::computeAnnouncement(OptionSet<LiveRegionRelevant> liveRegionRelevant, const LiveRegionDiff& diff) const
 {
-    bool hasAll = newSnapshot.liveRegionRelevant.contains(LiveRegionRelevant::All);
-    bool hasAdditions = hasAll || newSnapshot.liveRegionRelevant.contains(LiveRegionRelevant::Additions);
-    bool hasRemovals = hasAll || newSnapshot.liveRegionRelevant.contains(LiveRegionRelevant::Removals);
-    bool hasText = hasAll || newSnapshot.liveRegionRelevant.contains(LiveRegionRelevant::Text);
+    bool hasAll = liveRegionRelevant.contains(LiveRegionRelevant::All);
+    bool hasAdditions = hasAll || liveRegionRelevant.contains(LiveRegionRelevant::Additions);
+    bool hasRemovals = hasAll || liveRegionRelevant.contains(LiveRegionRelevant::Removals);
+    bool hasText = hasAll || liveRegionRelevant.contains(LiveRegionRelevant::Text);
 
     StringBuilder stringBuilder;
     Vector<std::pair<AttributedString::Range, HashMap<String, AttributedString::AttributeValue>>> attributes;
@@ -399,7 +691,7 @@ AttributedString AXLiveRegionManager::computeAnnouncement(const LiveRegionSnapsh
 
 void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object, const LiveRegionSnapshot& oldSnapshot, const LiveRegionSnapshot& newSnapshot)
 {
-    auto diff = computeChanges(oldSnapshot.objects, newSnapshot.objects);
+    auto diff = computeChanges(oldSnapshot, newSnapshot);
     if (diff.added.isEmpty() && diff.removed.isEmpty() && diff.changed.isEmpty())
         return;
 
@@ -420,7 +712,11 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
     // also applies maximumAnnouncementLength to the translated text, which matters because
     // translations commonly run longer than their source.
     auto expectedSegmentCount = segments.size();
-    auto assemble = [this, object = Ref { object }, diff, newSnapshot, expectedSegmentCount](Vector<String>&& translatedSegments, const String& language) mutable {
+    // Capture only the two values the announcement needs. Capturing the snapshot would deep copy every
+    // object in the region on every update just to read them.
+    auto liveRegionStatus = newSnapshot.liveRegionStatus;
+    auto liveRegionRelevant = newSnapshot.liveRegionRelevant;
+    auto assemble = [protectedThis = CheckedRef { *this }, object = Ref { object }, diff, liveRegionStatus, liveRegionRelevant, expectedSegmentCount](Vector<String>&& translatedSegments, const String& language) mutable {
         if (translatedSegments.size() == expectedSegmentCount) {
             size_t index = 0;
             auto applyTranslation = [&](Vector<LiveRegionObject>& objects) {
@@ -435,11 +731,11 @@ void AXLiveRegionManager::postAnnouncementForChange(AccessibilityObject& object,
             applyTranslation(diff.changed);
         }
 
-        AttributedString announcement = computeAnnouncement(newSnapshot, diff);
+        AttributedString announcement = protectedThis->computeAnnouncement(liveRegionRelevant, diff);
         if (announcement.isNull() || announcement.string.isEmpty())
             return;
 
-        CheckedRef { m_cache }->postLiveRegionNotification(object, newSnapshot.liveRegionStatus, announcement);
+        CheckedRef { protectedThis->m_cache }->postLiveRegionNotification(object, liveRegionStatus, announcement);
     };
 
     CheckedRef { m_cache }->translateAnnouncementThenAssemble(Ref { object }, WTF::move(segments), WTF::move(assemble));

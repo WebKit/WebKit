@@ -34,7 +34,10 @@
 #include <WebCore/AXAnnouncementTypes.h>
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/AttributedString.h>
+#include <WebCore/Timer.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -42,15 +45,20 @@ namespace WebCore {
 class AccessibilityObject;
 class AXObjectCache;
 
-class AXLiveRegionManager {
+class AXLiveRegionManager : public CanMakeCheckedPtr<AXLiveRegionManager> {
     WTF_MAKE_NONCOPYABLE(AXLiveRegionManager);
     WTF_MAKE_TZONE_ALLOCATED(AXLiveRegionManager);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AXLiveRegionManager);
 public:
     explicit AXLiveRegionManager(AXObjectCache&);
     ~AXLiveRegionManager() = default;
 
     void registerLiveRegion(AccessibilityObject&, bool = false);
-    void unregisterLiveRegion(AXID axID) { m_liveRegions.remove(axID); }
+    void unregisterLiveRegion(AXID axID)
+    {
+        m_liveRegions.remove(axID);
+        m_regionsPendingEmpty.remove(axID);
+    }
 
     void handleLiveRegionChange(AccessibilityObject&, AnnouncementContents = AnnouncementContents::Changes);
 
@@ -68,11 +76,16 @@ private:
     LiveRegionSnapshot buildLiveRegionSnapshot(AccessibilityObject&) const;
     bool shouldIncludeInSnapshot(AccessibilityObject&) const;
     void postAnnouncementForChange(AccessibilityObject&, const LiveRegionSnapshot&, const LiveRegionSnapshot&);
-    LiveRegionDiff computeChanges(const Vector<LiveRegionObject>&, const Vector<LiveRegionObject>&) const;
-    AttributedString computeAnnouncement(const LiveRegionSnapshot&, const LiveRegionDiff&) const;
+    LiveRegionDiff computeChanges(const LiveRegionSnapshot&, const LiveRegionSnapshot&) const;
+    AttributedString computeAnnouncement(OptionSet<LiveRegionRelevant>, const LiveRegionDiff&) const;
+    void emptyRegionSettleTimerFired();
 
     CheckedRef<AXObjectCache> m_cache;
     HashMap<AXID, LiveRegionSnapshot> m_liveRegions;
+    // Regions that had content but are now empty. We wait to see whether
+    // content comes back based on this timer. See handleLiveRegionChange().
+    HashSet<AXID> m_regionsPendingEmpty;
+    Timer m_emptyRegionSettleTimer;
     mutable unsigned m_snapshotBuildCount { 0 };
 };
 

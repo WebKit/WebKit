@@ -1,0 +1,29 @@
+This tests that a live region streaming content in, the way an AI chat response is rendered, announces each piece of text only once. Re-rendering the region backs already-announced text with new accessibility objects, spreads it across a different number of objects as markup resolves, coalesces it into fewer objects once the response is complete, and momentarily leaves the region empty. Each of those used to make the text look new and replay the whole response from the top.
+
+PASS: chunk.includes('You must fork') === true
+PASS: chunk.includes('the repo') === true
+PASS: chunk.includes('You must') === false
+PASS: chunk.includes('repository') === true
+PASS: chunk.includes('You must fork') === false
+PASS: chunk.includes('quickly and clone it.') === true
+PASS: chunk.includes('repository') === false
+PASS: chunk.includes('Then enable submodules.') === true
+PASS: chunk.includes('quickly') === false
+PASS: announcements[announcements.length - 1].includes("Sentinel changed.") === true
+PASS: announcements.length === 6
+PASS: announcements[announcements.length - 1].includes("Sentinel changed again.") === true
+PASS: announcements.length === 7
+PASS: chunk.includes('Beta paragraph edited.') === true
+PASS: chunk.includes('Alpha') === false
+PASS: chunk.includes('Gamma') === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Alpha paragraph.
+
+Beta paragraph edited.
+
+Gamma paragraph.
+
+Sentinel changed again.

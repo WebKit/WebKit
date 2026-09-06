@@ -1,0 +1,16 @@
+This tests that emptying a live region entirely announces the removal, exactly once, for a region that asked to hear removals. Streamed content is re-rendered by emptying the region and refilling it later, so the snapshot the region is compared against deliberately survives the empty state. That makes it possible to announce the same removal on every later update, and to mistake the refilled text for new content.
+
+PASS: announcement.includes('Giants') === true
+PASS: announcement.includes('AXIsLiveRegionRemoval = 1') === true
+PASS: announcement.includes('Cubs') === true
+PASS: announcement.includes('AXIsLiveRegionRemoval = 1') === true
+PASS: announcement.includes('Bears') === true
+PASS: announcement.includes('Cubs') === false
+PASS: announcements.length === 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cubs
+
+Bears
