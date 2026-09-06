@@ -77,7 +77,7 @@ The implementation follows the **GDB Remote Serial Protocol** standard with [was
 
 #### 3. **Helper Classes** - Supporting Components
 
-- **ModuleManager**: Virtual address space management and module tracking
+- **ModuleManager**: Virtual address space management, module and instance tracking
 - **BreakpointManager**: Breakpoint storage and management
 - **VirtualAddress**: 64-bit virtual address encoding for LLDB compatibility
 
@@ -88,12 +88,12 @@ The debugger uses a sophisticated virtual address encoding system to present Web
 ```txt
 Address Format (64-bit):
 - Bits 63-62: Address Type (2 bits)
-- Bits 61-32: ID (30 bits) - ModuleID for code, InstanceID for memory
+- Bits 61-32: InstanceId (30 bits)
 - Bits 31-0:  Offset (32 bits)
 
 Address Types:
-- 0x00 (Memory): Instance linear memory
-- 0x01 (Module): Module code/bytecode
+- 0x00 (Memory): The instance's linear memory
+- 0x01 (Module): The instance's view of its module image (bytecode)
 - 0x02 (Invalid): Invalid/unmapped regions
 - 0x03 (Invalid2): Invalid/unmapped regions
 
@@ -102,6 +102,24 @@ Virtual Memory Layout:
 - 0x4000000000000000 - 0x7FFFFFFFFFFFFFFF: Module regions
 - 0x8000000000000000 - 0xFFFFFFFFFFFFFFFF: Invalid regions
 ```
+
+Wasm scopes linear memory, globals, tables and data segments to an instance rather than to a
+module, so both halves of the address space are keyed by instance ID. That ID is what identifies
+the instance in `qWasmGlobal`, so every live instance needs one of its own and gets one library
+entry, one module image and one linear memory region. The ID only has to be unique among
+instances that are currently live.
+
+LLDB merges libraries that share a name, so only one instance per module may carry the module's
+declared name; the rest are suffixed as `<name>@<id>`. The first instance registered wins and
+keeps the name even after it dies, so no library is ever renamed. A module that declares neither
+a name section nor a source URL falls back to `0x<image-base>.wasm`, which is already unique.
+
+Instances of one module execute the same bytecode buffer, which is what a breakpoint patches, so
+breakpoints are keyed by that bytecode rather than by a virtual address. A breakpoint set through
+one instance therefore stops all instances of the module, and the stop is reported against
+whichever instance ran into it. That is also what lets LLDB step over a breakpoint it resolved
+into several instances: removing it through any of them restores the bytecode.
+
 
 ## Testing
 
@@ -234,8 +252,8 @@ The following references correspond to the numbered citations used throughout th
 - [19] [qWasmInstance](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasminstance-qsupported-feature) —
   advertised in the `qSupported` reply to opt into naming a module instance in a Wasm query. It
   adds the form `qWasmGlobal:<global-index>;instance:<instance-id>;`, which reads a global from a
-  named instance rather than from the instance a stack frame is executing. The instance id is the
-  id a Wasm virtual address carries in bits 61:32, which is a module id. Added to LLDB by
+  named instance rather than from the instance a stack frame is executing. The instance ID is the
+  ID a Wasm virtual address carries in bits 61:32. Added to LLDB by
   [llvm/llvm-project#213176](https://github.com/llvm/llvm-project/pull/213176), resolving
-  [llvm/llvm-project#212833](https://github.com/llvm/llvm-project/issues/212833). A module with no
-  live instance, or with more than one, has no single value to report and answers with an error.
+  [llvm/llvm-project#212833](https://github.com/llvm/llvm-project/issues/212833). An ID with no
+  live instance answers with an error.

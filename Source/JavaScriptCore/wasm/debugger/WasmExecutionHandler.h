@@ -83,13 +83,13 @@ public:
     JS_EXPORT_PRIVATE void resume();
     JS_EXPORT_PRIVATE void step();
     JS_EXPORT_PRIVATE void interrupt();
-    void notifyDebuggerOfNewModule(VM&);
+    void notifyDebuggerOfNewInstance(VM&);
     void handleThreadStopInfo(StringView packet);
     String callStackStringFor(uint64_t threadId);
     JS_EXPORT_PRIVATE void reset();
 
-    JS_EXPORT_PRIVATE void setBreakpointAtEntry(JSWebAssemblyInstance*, IPIntCallee*, Breakpoint::Type);
-    void setBreakpointAtPC(JSWebAssemblyInstance*, FunctionCodeIndex, Breakpoint::Type, const uint8_t* pc);
+    JS_EXPORT_PRIVATE void setBreakpointAtEntry(IPIntCallee*, Breakpoint::Type);
+    void setBreakpointAtPC(Breakpoint::Type, const uint8_t* pc);
     void setBreakpoint(StringView packet);
     void removeBreakpoint(StringView packet);
     JS_EXPORT_PRIVATE BreakpointManager* breakpointManager() { return m_breakpointManager.get(); };

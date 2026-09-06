@@ -452,9 +452,11 @@ void DebugServer::trackInstance(JSWebAssemblyInstance* instance)
     // 2. A Module can be compiled speculatively without ever being instantiated (e.g. via
     //    WebAssembly.compile). Only when a JSWebAssemblyInstance is created do we know the
     //    module will actually be used, making this the right moment to notify LLDB.
+    // Every instance is a library of its own, so a second instance of a known module is a load
+    // LLDB has to hear about too.
     m_moduleManager->registerInstance(instance);
-    if (isDebuggerReady() && m_moduleManager->needsNewModuleNotification(instance))
-        m_executionHandler->notifyDebuggerOfNewModule(instance->vm());
+    if (isDebuggerReady())
+        m_executionHandler->notifyDebuggerOfNewInstance(instance->vm());
 }
 
 void DebugServer::trackModule(Module& module)

@@ -36,6 +36,7 @@
 #include "VM.h"
 #include "VMManager.h"
 #include "WasmBreakpointManager.h"
+#include "WasmCallee.h"
 #include "WasmCalleeGroup.h"
 #include "WasmDebugServer.h"
 #include "WasmDebugServerUtilities.h"
@@ -43,6 +44,7 @@
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
 #include "WasmModuleManager.h"
+#include "WasmVirtualAddress.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
@@ -149,19 +151,14 @@ static void setBreakpointsAtAllFunctionEntries(Breakpoint::Type type)
     ModuleManager& moduleManager = debugServer->moduleManager();
     uint32_t maxInstanceId = moduleManager.nextInstanceId();
 
-    // Breakpoints patch module bytecode, which all instances of a module share, so visit each once.
-    UncheckedKeyHashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> patchedModuleIds;
-
+    // Instances of one module share the bytecode a breakpoint patches, so visiting every
+    // instance sets the same breakpoint repeatedly, which is a no-op after the first.
     for (uint32_t instanceId = 0; instanceId < maxInstanceId; ++instanceId) {
         JSWebAssemblyInstance* instance = moduleManager.jsInstance(instanceId);
         if (!instance)
             continue;
 
-        auto& module = instance->module();
-        if (!patchedModuleIds.add(module.debugId()).isNewEntry)
-            continue;
-
-        auto& moduleInfo = module.moduleInformation();
+        auto& moduleInfo = instance->module().moduleInformation();
         uint32_t internalCount = moduleInfo.internalFunctionCount();
 
         VLOG("  Instance ", instanceId, ": ", internalCount, " functions");
@@ -169,7 +166,7 @@ static void setBreakpointsAtAllFunctionEntries(Breakpoint::Type type)
         for (uint32_t funcIndex = 0; funcIndex < internalCount; ++funcIndex) {
             FunctionSpaceIndex spaceIndex = moduleInfo.toSpaceIndex(JSC::Wasm::FunctionCodeIndex(funcIndex));
             auto callee = instance->calleeGroup()->ipintCalleeFromFunctionIndexSpace(spaceIndex);
-            executionHandler->setBreakpointAtEntry(instance, callee.ptr(), type);
+            executionHandler->setBreakpointAtEntry(callee.ptr(), type);
             count++;
         }
     }
@@ -286,13 +283,12 @@ static void testBreakpointSingleStepping()
         // Simulate lldb behavior:
         // 1. If at Regular breakpoint: remove it, step, then re-insert it
         // 2. If at one-time breakpoint: just step directly
-        Breakpoint* breakpoint = executionHandler->breakpointManager()->findBreakpoint(beforeStepAddress);
-        Breakpoint breakpointCopy;
+        uint8_t* stoppedPC = state->stopData->pc;
+        Breakpoint* breakpoint = executionHandler->breakpointManager()->findBreakpoint(stoppedPC);
 
         if (breakpoint) {
-            breakpointCopy = *breakpoint;
             CHECK(breakpoint->type == Breakpoint::Type::Regular, "One-time breakpoints are cleared before stop. So, this must be a regular breakpoint");
-            executionHandler->breakpointManager()->removeBreakpoint(beforeStepAddress);
+            executionHandler->breakpointManager()->removeBreakpoint(stoppedPC);
         }
 
         unsigned expectedReplyCount = getReplyCount() + 1;
@@ -303,7 +299,7 @@ static void testBreakpointSingleStepping()
         });
 
         if (breakpoint)
-            executionHandler->breakpointManager()->setBreakpoint(beforeStepAddress, WTF::move(breakpointCopy));
+            executionHandler->breakpointManager()->setBreakpoint(stoppedPC, Breakpoint::Type::Regular);
 
         state = executionHandler->debuggeeStateForTest();
         CHECK(state->isStoppedAtBytecode(), "Should be at breakpoint after step");
@@ -320,53 +316,109 @@ static void testBreakpointSingleStepping()
     TEST_LOG(failuresFound == initialFailures ? "PASS" : "FAIL");
 }
 
-static void testSoleInstanceOfModule()
+// Collects the live instances of each registered module, keyed by module debug id.
+using ModuleIdToInstanceIds = UncheckedKeyHashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+static ModuleIdToInstanceIds liveInstancesByModule()
 {
-    TEST_LOG("\n=== Sole Instance Of Module Lookup ===");
-
-    interrupt();
-
     ModuleManager& moduleManager = debugServer->moduleManager();
     uint32_t maxInstanceId = moduleManager.nextInstanceId();
 
-    // Derive the expectation from what is registered, so this holds for every test script.
-    using ModuleIdToCount = UncheckedKeyHashMap<uint32_t, unsigned, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    using ModuleIdToInstance = UncheckedKeyHashMap<uint32_t, JSWebAssemblyInstance*, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
-    ModuleIdToCount liveInstanceCount;
-    ModuleIdToInstance firstLiveInstance;
-    uint32_t highestModuleId = 0;
-
+    ModuleIdToInstanceIds result;
     for (uint32_t instanceId = 0; instanceId < maxInstanceId; ++instanceId) {
         JSWebAssemblyInstance* instance = moduleManager.jsInstance(instanceId);
         if (!instance)
             continue;
-
-        uint32_t moduleId = instance->module().debugId();
-        liveInstanceCount.add(moduleId, 0).iterator->value++;
-        firstLiveInstance.add(moduleId, instance);
-        highestModuleId = std::max(highestModuleId, moduleId);
+        result.add(instance->module().debugId(), Vector<uint32_t>()).iterator->value.append(instanceId);
     }
+    return result;
+}
 
-    CHECK(!liveInstanceCount.isEmpty(), "Expected at least one live instance while stopped");
+static void testInstanceScopedAddressing()
+{
+    TEST_LOG("\n=== Instance Scoped Addressing ===");
 
-    unsigned soleModules = 0;
-    unsigned ambiguousModules = 0;
-    for (const auto& pair : liveInstanceCount) {
-        JSWebAssemblyInstance* resolved = moduleManager.soleInstanceOfModule(pair.key);
-        if (pair.value == 1) {
-            soleModules++;
-            CHECK(resolved == firstLiveInstance.get(pair.key), "Module ", pair.key, " has one live instance and should resolve to it");
-        } else {
-            ambiguousModules++;
-            CHECK(!resolved, "Module ", pair.key, " has ", pair.value, " live instances and should not resolve");
+    interrupt();
+
+    ModuleManager& moduleManager = debugServer->moduleManager();
+    auto instancesByModule = liveInstancesByModule();
+    CHECK(!instancesByModule.isEmpty(), "Expected at least one live instance while stopped");
+
+    unsigned liveInstances = 0;
+    unsigned sharedModules = 0;
+    UncheckedKeyHashSet<uint64_t> codeBaseAddresses;
+    for (const auto& pair : instancesByModule) {
+        if (pair.value.size() > 1)
+            sharedModules++;
+        for (uint32_t instanceId : pair.value) {
+            liveInstances++;
+            JSWebAssemblyInstance* instance = moduleManager.jsInstance(instanceId);
+            CHECK(instance, "Instance ", instanceId, " should still resolve");
+            CHECK(instance->debugId() == instanceId, "Instance ", instanceId, " should carry its own debug id");
+
+            // Every instance owns a slice of the address space, even siblings sharing a module.
+            uint64_t codeBase = JSC::Wasm::VirtualAddress::createModule(instanceId).value();
+            CHECK(codeBaseAddresses.add(codeBase).isNewEntry, "Instance ", instanceId, " should get an address range of its own");
         }
     }
 
-    CHECK(!moduleManager.soleInstanceOfModule(highestModuleId + 1), "An unregistered module ID should not resolve");
+    CHECK(!moduleManager.jsInstance(moduleManager.nextInstanceId()), "An unregistered instance ID should not resolve");
 
     resume();
 
-    TEST_LOG("PASS (", soleModules, " module(s) with one live instance, ", ambiguousModules, " with several)");
+    TEST_LOG("PASS (", liveInstances, " live instance(s), ", sharedModules, " module(s) with several)");
+}
+
+static void testSharedBytecodeBreakpoints()
+{
+    TEST_LOG("\n=== Shared Bytecode Breakpoints ===");
+
+    interrupt();
+
+    ModuleManager& moduleManager = debugServer->moduleManager();
+    auto* breakpointManager = executionHandler->breakpointManager();
+
+    // Siblings of one module execute the same bytecode buffer, so a breakpoint reached through
+    // any of them is one and the same, and taking it away through any of them unpatches — which
+    // is what lets LLDB step over a breakpoint it resolved into several instances.
+    unsigned modulesChecked = 0;
+    for (const auto& pair : liveInstancesByModule()) {
+        if (pair.value.size() < 2)
+            continue;
+        modulesChecked++;
+
+        const uint8_t* sharedPC = nullptr;
+        uint8_t originalBytecode = 0;
+        for (uint32_t instanceId : pair.value) {
+            JSWebAssemblyInstance* instance = moduleManager.jsInstance(instanceId);
+            auto& moduleInfo = instance->module().moduleInformation();
+            FunctionSpaceIndex spaceIndex = moduleInfo.toSpaceIndex(JSC::Wasm::FunctionCodeIndex(0));
+            auto callee = instance->calleeGroup()->ipintCalleeFromFunctionIndexSpace(spaceIndex);
+
+            if (!sharedPC) {
+                sharedPC = callee->bytecode();
+                originalBytecode = *sharedPC;
+            } else
+                CHECK(sharedPC == callee->bytecode(), "Instances of module ", pair.key, " should share function 0's bytecode");
+
+            // Instance-scoped addresses, one shared breakpoint.
+            auto address = JSC::Wasm::VirtualAddress::toVirtual(instance, callee->functionIndex(), sharedPC);
+            CHECK(address.instanceId() == instanceId, "A pc in instance ", instanceId, " should carry its instance id");
+
+            executionHandler->setBreakpointAtEntry(callee.ptr(), Breakpoint::Type::Regular);
+            auto* breakpoint = breakpointManager->findBreakpoint(sharedPC);
+            CHECK(breakpoint, "Instance ", instanceId, " should reach a breakpoint at ", address);
+            CHECK(breakpoint->originalBytecode == originalBytecode, "Setting the same breakpoint again should not displace the patch byte");
+        }
+
+        CHECK(*sharedPC != originalBytecode, "The shared bytecode should be patched");
+        CHECK(breakpointManager->removeBreakpoint(sharedPC), "The shared breakpoint should be removable");
+        CHECK(*sharedPC == originalBytecode, "Removing the breakpoint should restore the displaced opcode");
+        CHECK(!breakpointManager->removeBreakpoint(sharedPC), "Removing it again should report there was nothing to remove");
+    }
+
+    resume();
+
+    TEST_LOG(modulesChecked ? "PASS" : "PASS (no module with several live instances)");
 }
 
 // ========== TEST ORCHESTRATION HELPERS ==========
@@ -472,7 +524,8 @@ UNUSED_FUNCTION static int runTests()
         testVMContextSwitching();
         testBreakpointContinueCycles();
         testBreakpointSingleStepping();
-        testSoleInstanceOfModule();
+        testInstanceScopedAddressing();
+        testSharedBytecodeBreakpoints();
 
         cleanupAfterScript(script, workerThread);
 

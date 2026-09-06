@@ -137,8 +137,10 @@ DebuggerTrapStatus ExecutionHandler::handleDebuggerTrapIfNeeded(CallFrame* callF
 {
     VM& debuggee = instance->vm();
     if (exceptionType == Wasm::ExceptionType::Unreachable && hasBreakpoints()) {
-        VirtualAddress address = VirtualAddress::toVirtual(instance, callee->functionIndex(), pc);
-        if (auto* breakpoint = m_breakpointManager->findBreakpoint(address)) {
+        // Breakpoints live on the module's bytecode, so this may be one set through a sibling
+        // instance. Report it against the instance that actually ran into it.
+        if (auto* breakpoint = m_breakpointManager->findBreakpoint(pc)) {
+            VirtualAddress address = VirtualAddress::toVirtual(instance, callee->functionIndex(), pc);
             debuggee.debugState()->setBreakpointStopData(breakpoint->type, address, breakpoint->originalBytecode, pc, mc, stack, callee, instance, callFrame);
             dataLogLnIf(Options::verboseWasmDebugger(), "[Code][handleDebuggerTrapIfNeeded] Breakpoint at ", *breakpoint, " with ", *debuggee.debugState()->stopData);
             stopTheWorld(debuggee, StopTheWorldEvent::WasmProgramStop);
@@ -336,7 +338,7 @@ void ExecutionHandler::resumeImpl(Locker<Lock>& locker)
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Continue] Confirmed that code is running...");
 }
 
-void ExecutionHandler::notifyDebuggerOfNewModule(VM& vm)
+void ExecutionHandler::notifyDebuggerOfNewInstance(VM& vm)
 {
     vm.debugState()->isNewModuleLoad = true;
     stopTheWorld(vm, StopTheWorldEvent::WasmProgramStop);
@@ -423,7 +425,7 @@ void ExecutionHandler::step()
         resumeAll = stepAtBytecode(locker, state);
     else {
         RELEASE_ASSERT(state->isStoppedAtPrologue());
-        setBreakpointAtEntry(state->stopData->instance, state->stopData->callee.get(), Breakpoint::Type::Step);
+        setBreakpointAtEntry(state->stopData->callee.get(), Breakpoint::Type::Step);
     }
 
     if (resumeAll) {
@@ -450,18 +452,13 @@ bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
     uint8_t* currentPC = stopData.pc;
 
     auto setStepBreakpoint = [&](const uint8_t* nextPC) WTF_REQUIRES_LOCK(m_lock) {
-        VirtualAddress nextAddress = VirtualAddress(stopData.address.value() + (nextPC - currentPC));
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step][SetOneTimeBreakpoint] current PC=", RawPointer(currentPC), "(", stopData.address, "), next PC=", RawPointer(nextPC), "(", nextAddress, ")");
-        if (m_breakpointManager->findBreakpoint(nextAddress))
-            return;
-        m_breakpointManager->setBreakpoint(nextAddress, Breakpoint(const_cast<uint8_t*>(nextPC), Breakpoint::Type::Step));
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step][SetOneTimeBreakpoint] current PC=", RawPointer(currentPC), "(", stopData.address, "), next PC=", RawPointer(nextPC));
+        setBreakpointAtPC(Breakpoint::Type::Step, nextPC);
     };
 
     auto setStepBreakpointAtCaller = [&]() WTF_REQUIRES_LOCK(m_lock) {
-        uint8_t* returnPC = nullptr;
-        VirtualAddress virtualReturnPC;
-        if (getWasmReturnPC(stopData.callFrame, returnPC, virtualReturnPC))
-            m_breakpointManager->setBreakpoint(virtualReturnPC, Breakpoint(const_cast<uint8_t*>(returnPC), Breakpoint::Type::Step));
+        if (uint8_t* returnPC = getWasmReturnPC(stopData.callFrame))
+            setBreakpointAtPC(Breakpoint::Type::Step, returnPC);
     };
 
     auto setStepBreakpointsFromDebugInfo = [&]() WTF_REQUIRES_LOCK(m_lock) {
@@ -551,9 +548,8 @@ void ExecutionHandler::setStepIntoBreakpointForCall(VM& callerVM, CalleeBits box
             return;
 
         // Set breakpoint at the callee's entry point.
-        // Use calleeInstance (not caller's instance) because callee may be in a different Wasm module instance.
         RELEASE_ASSERT(&calleeInstance->vm() == &callerVM);
-        setBreakpointAtEntry(calleeInstance, downcast<IPIntCallee>(wasmCallee.get()), Breakpoint::Type::Step);
+        setBreakpointAtEntry(downcast<IPIntCallee>(wasmCallee.get()), Breakpoint::Type::Step);
     }();
 
     stopTheWorld(callerVM, StopTheWorldEvent::WasmStepIntoSiteReached);
@@ -592,27 +588,22 @@ void ExecutionHandler::setStepIntoBreakpointForThrow(VM& throwVM)
         }
 
         // Set breakpoint at the exception handler.
-        // Use catchInstance (not thrower's instance) because exception may be caught in a different Wasm module instance.
-        JSWebAssemblyInstance* catchInstance = throwVM.callFrameForCatch->wasmInstance();
-        RELEASE_ASSERT(&catchInstance->vm() == &throwVM);
-        setBreakpointAtPC(catchInstance, catchCallee->functionIndex(), Breakpoint::Type::Step, handlerPC);
+        RELEASE_ASSERT(&throwVM.callFrameForCatch->wasmInstance()->vm() == &throwVM);
+        setBreakpointAtPC(Breakpoint::Type::Step, handlerPC);
     }();
 
     stopTheWorld(throwVM, StopTheWorldEvent::WasmStepIntoSiteReached);
 }
 
-void ExecutionHandler::setBreakpointAtEntry(JSWebAssemblyInstance* instance, IPIntCallee* callee, Breakpoint::Type type)
+void ExecutionHandler::setBreakpointAtEntry(IPIntCallee* callee, Breakpoint::Type type)
 {
-    setBreakpointAtPC(instance, callee->functionIndex(), type, callee->bytecode());
+    setBreakpointAtPC(type, callee->bytecode());
 }
 
-void ExecutionHandler::setBreakpointAtPC(JSWebAssemblyInstance* instance, FunctionCodeIndex functionIndex, Breakpoint::Type type, const uint8_t* pc)
+void ExecutionHandler::setBreakpointAtPC(Breakpoint::Type type, const uint8_t* pc)
 {
     RELEASE_ASSERT(pc);
-    VirtualAddress address = VirtualAddress::toVirtual(instance, functionIndex, pc);
-    if (m_breakpointManager->findBreakpoint(address))
-        return;
-    m_breakpointManager->setBreakpoint(address, Breakpoint(const_cast<uint8_t*>(pc), type));
+    m_breakpointManager->setBreakpoint(const_cast<uint8_t*>(pc), type);
 }
 
 void ExecutionHandler::setBreakpoint(StringView packet)
@@ -653,12 +644,6 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
-    if (m_breakpointManager->findBreakpoint(address)) {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] Breakpoint already exists at address: ", address);
-        sendErrorReply(ProtocolError::InvalidAddress);
-        return;
-    }
-
     uint8_t* pc = address.toPhysicalPC(m_moduleManager);
     if (!pc) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] Failed to convert virtual address to physical: ", address);
@@ -666,8 +651,10 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
-    m_breakpointManager->setBreakpoint(address, Breakpoint(pc, Breakpoint::Type::Regular));
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Successfully set breakpoint at ", address, " (physical: ", RawPointer(pc), ", original: 0x", hex(*pc, 2, Lowercase), ")");
+    // Setting one is idempotent: LLDB resolves a source breakpoint into every instance of a
+    // module and sends one Z0 per instance, all of them naming the same bytecode.
+    m_breakpointManager->setBreakpoint(pc, Breakpoint::Type::Regular);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Successfully set breakpoint at ", address, " (physical: ", RawPointer(pc), ")");
     sendReplyOK();
 }
 
@@ -701,14 +688,25 @@ void ExecutionHandler::removeBreakpoint(StringView packet)
         return;
     }
 
-    // Delegate to breakpoint manager
-    if (m_breakpointManager->removeBreakpoint(address)) {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Breakpoint removed successfully from ", address);
-        sendReplyOK();
-    } else {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Breakpoint not found at address: ", address);
+    VirtualAddress::Type addressType = address.type();
+    if (addressType != VirtualAddress::Type::Module) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] Breakpoint must be in module code region, got type: ", (int)addressType);
         sendErrorReply(ProtocolError::InvalidAddress);
+        return;
     }
+
+    uint8_t* pc = address.toPhysicalPC(m_moduleManager);
+    if (!pc) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[ExecutionHandler] Failed to convert virtual address to physical: ", address);
+        sendErrorReply(ProtocolError::InvalidAddress);
+        return;
+    }
+
+    // Removal is idempotent for the same reason setting is: the second instance's z0 names
+    // bytecode the first one already restored.
+    if (!m_breakpointManager->removeBreakpoint(pc))
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] No breakpoint to remove at ", address);
+    sendReplyOK();
 }
 
 void ExecutionHandler::handleThreadStopInfo(StringView packet)
@@ -826,19 +824,19 @@ void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t v
     reply.append("reason:"_s, stopInfo.reasonSuffix, ';');
 
     // Append library:; to prompt LLDB to re-query qXfer:libraries:read when there are pending
-    // library changes: (1) new-module-load stop, (2) piggybacked on any natural stop when a module
-    // was loaded but no dedicated stop fired yet, (3) module removal via unregisterModule().
+    // library changes: (1) new-instance-load stop, (2) piggybacked on any natural stop when an
+    // instance was created but no dedicated stop fired yet, (3) instance or module teardown.
     // Gated on isDebuggerReady() to avoid sending library:; in the ? reply before the initial
     // qXfer:libraries:read handshake completes.
     if (m_moduleManager.needsLibraryRequery() && m_debugServer.isDebuggerReady()) {
         reply.append("library:;"_s);
-        // Include a human-readable description only for dedicated new-module-load stops.
+        // Include a human-readable description only for dedicated new-instance-load stops.
         if (state->isNewModuleLoad) {
             RELEASE_ASSERT(state->isStoppedAtSystemCall());
             reply.append("description:"_s);
             StringBuilder description;
-            description.append("loaded new wasm module with ids: "_s);
-            auto ids = m_moduleManager.unnotifiedModuleIds();
+            description.append("loaded new wasm module instance with ids: "_s);
+            auto ids = m_moduleManager.unnotifiedInstanceIds();
             for (size_t i = 0; i < ids.size(); ++i) {
                 if (i)
                     description.append(", "_s);

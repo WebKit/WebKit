@@ -273,14 +273,14 @@ Unlike Web Inspector which initializes/tears down controllers per page, WebAssem
 
 **Virtual Address Space Fragmentation** (Critical Technical Limitation):
    LLDB requires a **unified virtual address space** for debugging. With per-page targets:
-   - Each page would have its own Module ID 0, creating address collisions
+   - Each page would have its own instance ID 0, creating address collisions
    - LLDB breakpoint at virtual address `0x4000000000000100` - which page does this refer to?
-   - Same module in different pages would report different IDs, breaking module sharing
+   - Same instance in different pages would report different IDs, breaking module sharing
    - Memory inspection fails (instance IDs would overlap between pages)
    - Stack traces and disassembly become ambiguous
 
    Process-wide target provides:
-   - Global module ID allocation (Module A = ID 0 across ALL pages)
+   - Global instance ID allocation (each instance gets one id across ALL pages)
    - Unique instance IDs (each page's instance gets unique ID)
    - Coherent virtual address space LLDB expects
    - Stable addresses for breakpoints regardless of which page uses the module

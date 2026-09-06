@@ -303,7 +303,7 @@ uint32_t parseDecimal(StringView, uint32_t defaultValue = 0);
 
 Vector<StringView> splitWithDelimiters(StringView packet, StringView delimiters);
 
-bool getWasmReturnPC(CallFrame* currentFrame, uint8_t*& returnPC, VirtualAddress& virtualReturnPC);
+uint8_t* getWasmReturnPC(CallFrame* currentFrame);
 
 struct FrameInfo {
     VirtualAddress address;

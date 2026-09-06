@@ -1632,9 +1632,9 @@ class DynamicModuleLoadTestCase:
         # Disassembly confirms the stopped instruction is 'end' at the expected address.
         self.session.cmd("c", patterns=["Process 1 stopped", "->  0x4000000000000023: end"])
 
-        # Resume: stops for the module-load notification (library:; T-packet) when module 2 is
-        # instantiated.  LLDB re-queries qXfer:libraries:read and loads module 2.
-        self.session.cmd("c", patterns=["Process 1 stopped", "loaded new wasm module with ids: 1"])
+        # Resume: stops for the library notification (library:; T-packet) when module 2 is
+        # instantiated.  LLDB re-queries qXfer:libraries:read and loads its instance.
+        self.session.cmd("c", patterns=["Process 1 stopped", "loaded new wasm module instance with ids: 1"])
 
         # Set a breakpoint at the 'end' instruction of func_b in module 2 (virtual address
         # 0x4000000100000023).  Module 2 is now loaded, so the breakpoint resolves immediately.
@@ -1659,14 +1659,42 @@ class SwiftWasmDynamicModuleLoadTestCase:
         # Resume: stops at the func_a breakpoint (module A), confirming that the breakpoint is set and hit correctly.
         self.session.cmd("c", patterns=["Process 1 stopped", "func_a"])
 
-        # Resume: stops at when Module B is loaded and the associated instance is created. This stop trigger
+        # Resume: stops when Module B is loaded and the associated instance is created. This stop triggers
         # LLDB re-querying debug info and resolving the pending breakpoint for func_b, confirming that dynamic
         # module load triggers pending breakpoint resolution.
-        self.session.cmd("c", patterns=["Process 1 stopped", "loaded new wasm module with ids: 1"])
+        self.session.cmd("c", patterns=["Process 1 stopped", "loaded new wasm module instance with ids: 1"])
         self.session.cmd("br list", patterns=["func_a", "func_b"])
 
         # Resume: stops at the func_b breakpoint (module B) on the first call, confirming that the pending breakpoint was resolved via debug info.
         self.session.cmd("c", patterns=["Process 1 stopped", "func_b"])
+
+
+class MultiInstanceSameModuleTestCase:
+    test_file = "resources/wasm/multi-instance-same-module.js"
+
+    def execute(self):
+        # One library per instance. LLDB merges libraries that share a name, so only the first
+        # instance carries the module's plain name and the second is suffixed with its id.
+        self.session.cmd("image list", patterns=["mymodule", "mymodule@1"])
+        self.session.cmd(
+            "target modules list",
+            patterns=["0x4000000000000000", "0x4000000100000000"],
+        )
+
+        # Only instance 0 runs. The bytecode a breakpoint patches belongs to the module, so
+        # placing one through the idle instance's address stops the running one — reported at
+        # instance 0's address, not the one the breakpoint was set at.
+        self.session.cmd("b 0x4000000100000023", patterns=["Breakpoint 1"])
+        self.session.cmd("c", patterns=["Process 1 stopped", "->  0x4000000000000023: nop"])
+
+        # The same breakpoint reached through instance 0's own address.
+        self.session.cmd("b 0x4000000000000023", patterns=["Breakpoint 2"])
+        self.session.cmd(
+            "c",
+            patterns=["Process 1 stopped", "stop reason = breakpoint", "->  0x4000000000000023: nop"],
+        )
+
+        self.session.cmd("br del -f", patterns=["All breakpoints removed. (2 breakpoints)"])
 
 
 class ModuleNamingFromNameSectionTestCase:
@@ -1762,6 +1790,7 @@ ALL_TESTS = [
     WasmOobMemoryTrapTestCase,
     DynamicModuleLoadTestCase,
     SwiftWasmDynamicModuleLoadTestCase,
+    MultiInstanceSameModuleTestCase,
     ModuleNamingFromNameSectionTestCase,
     StreamingModuleSourceURLTestCase,
     StreamingModuleLoadTestCase,

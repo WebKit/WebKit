@@ -59,7 +59,7 @@ private:
     bool readMemoryData(VirtualAddress, size_t length, StringBuilder& data);
 
     void handleWasmMemoryRegionInfo(VirtualAddress, uint32_t instanceId, uint32_t offset);
-    void handleWasmModuleRegionInfo(VirtualAddress, uint32_t moduleId, uint32_t offset);
+    void handleWasmModuleRegionInfo(VirtualAddress, uint32_t instanceId, uint32_t offset);
     void sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name);
     void sendMemoryRegionReply(uint64_t start, uint64_t size, StringView permissions, StringView name, StringView type);
     void sendUnmappedRegionReply(uint64_t start, uint64_t size);

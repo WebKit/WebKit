@@ -31,7 +31,6 @@
 #include "Options.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmModuleInformation.h"
-#include "WasmVirtualAddress.h"
 #include <wtf/DataLog.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -88,10 +87,10 @@ FunctionDebugInfo& ModuleDebugInfo::ensureFunctionDebugInfo(FunctionCodeIndex fu
     return info;
 }
 
-String ModuleDebugInfo::debugName() const
+String ModuleDebugInfo::declaredName() const
 {
-    if (m_cachedDebugName)
-        return *m_cachedDebugName;
+    if (m_cachedDeclaredName)
+        return *m_cachedDeclaredName;
 
     StringBuilder result;
 
@@ -113,15 +112,9 @@ String ModuleDebugInfo::debugName() const
         result.append(rawName.span());
     }
 
-    if (!result.isEmpty())
-        m_cachedDebugName = result.toString();
-    else {
-        // Fallback for modules with neither a name section nor a source URL.
-        m_cachedDebugName = makeString("0x"_s, VirtualAddress::createModule(id).hex(), ".wasm"_s);
-    }
-
-    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo][debugName] ", *m_cachedDebugName);
-    return *m_cachedDebugName;
+    m_cachedDeclaredName = result.toString();
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo][declaredName] ", *m_cachedDeclaredName);
+    return *m_cachedDeclaredName;
 }
 
 } // namespace Wasm
