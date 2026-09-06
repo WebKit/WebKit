@@ -800,5 +800,15 @@ String serializationForCSS(const Child& child, const SerializationOptions& optio
     return builder.toString();
 }
 
+void serializationForCSSAsFunctionArgument(StringBuilder& builder, const Child& child, const SerializationOptions& options)
+{
+    SerializationState state {
+        .groupingParenthesis = SerializationState::GroupingParenthesis::Omit,
+        .range = options.range,
+        .serializationContext = options.serializationContext,
+    };
+    serializeCalculationTree(builder, child, state);
+}
+
 } // namespace CSSCalc
 } // namespace WebCore

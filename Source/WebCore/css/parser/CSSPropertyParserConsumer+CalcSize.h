@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,22 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericRange.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class CSSParserTokenRange;
+class CSSValue;
+
 namespace CSS {
-struct SerializationContext;
+struct PropertyParserState;
 }
 
-namespace CSSCalc {
+namespace CSSPropertyParserHelpers {
 
-struct Child;
-struct Tree;
+// MARK: <calc-size()> consuming
+// https://drafts.csswg.org/css-values-5/#calc-size
+RefPtr<CSSValue> consumeCalcSize(CSSParserTokenRange&, CSS::PropertyParserState&);
 
-struct SerializationOptions {
-    // `range` represents the allowed numeric range for the calculated result.
-    CSS::Range range;
-
-    // `serializationContext` is the context used for CSS serialization state.
-    const CSS::SerializationContext& serializationContext;
-};
-
-// https://drafts.csswg.org/css-values-4/#serialize-a-math-function
-void serializationForCSS(StringBuilder&, const Tree&, const SerializationOptions&);
-String serializationForCSS(const Tree&, const SerializationOptions&);
-
-void serializationForCSS(StringBuilder&, const Child&, const SerializationOptions&);
-String serializationForCSS(const Child&, const SerializationOptions&);
-
-// Serializes a `<calc-sum>` in the position of a math function argument, which per
-// https://drafts.csswg.org/css-values-4/#serialize-a-math-function step 4 drops the grouping
-// parentheses a nested calculation would otherwise get. Used by value types outside CSSCalc::Tree
-// that take `<calc-sum>` arguments, such as `calc-size()`.
-void serializationForCSSAsFunctionArgument(StringBuilder&, const Child&, const SerializationOptions&);
-
-} // namespace CSSCalc
+} // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -66,6 +66,10 @@ struct ParserOptions {
 // Parses and simplifies the provided `CSSParserTokenRange` into a CSSCalc::Tree. Returns `std::nullopt` on failure.
 std::optional<Tree> parseAndSimplify(CSSParserTokenRange&, CSS::PropertyParserState&, const ParserOptions&, const SimplificationOptions&);
 
+// Parses and simplifies a bare `<calc-sum>`, one that is not wrapped in a math function. Used for
+// the arguments of `calc-size()`. Returns `std::nullopt` on failure.
+std::optional<Tree> parseAndSimplifyCalcSum(CSSParserTokenRange&, CSS::PropertyParserState&, const ParserOptions&, const SimplificationOptions&);
+
 // Returns whether the provided `CSSValueID` is one of the functions that should be parsed as a `calc()`.
 bool NODELETE isCalcFunction(CSSValueID function);
 

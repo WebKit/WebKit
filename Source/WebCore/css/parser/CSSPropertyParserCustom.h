@@ -55,6 +55,7 @@
 #include "CSSPropertyParserConsumer+Background.h"
 #include "CSSPropertyParserConsumer+Box.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
+#include "CSSPropertyParserConsumer+CalcSize.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+ColorAdjust.h"
 #include "CSSPropertyParserConsumer+Content.h"

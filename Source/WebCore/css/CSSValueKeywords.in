@@ -836,6 +836,11 @@ fit-content
 -webkit-fit-content
 
 //
+// calc-size() basis
+//
+any
+
+//
 // CSS_PROP_TEXT_OVERFLOW
 //
 clip
@@ -1545,6 +1550,7 @@ xywh
 
 calc
 calc-mix
+calc-size
 -webkit-calc
 min
 max

@@ -10625,7 +10625,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData", "flexibleBox"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::FlexBasis",
-                "parser-grammar": "auto | content | <width-or-height-keyword> | <length-percentage [0,inf]>"
+                "parser-grammar": "auto | content | <width-or-height-keyword> | <calc-size> | <length-percentage [0,inf]>"
             },
             "specification": {
                 "category": "css-flexbox",
@@ -14696,6 +14696,11 @@
             "longname": "CSS Viewport Module",
             "url": "https://drafts.csswg.org/css-viewport/"
         },
+        "css-values": {
+            "shortname": "CSS Values and Units",
+            "longname": "CSS Values and Units Module Level 5",
+            "url": "https://drafts.csswg.org/css-values-5/"
+        },
         "css-view-transitions": {
             "shortname": "CSS View Transitions",
             "longname": "CSS View Transitions Module",
@@ -14872,8 +14877,17 @@
         "<width-or-height-keyword>": {
             "grammar":  "stretch | intrinsic | min-intrinsic | min-content | -webkit-min-content | max-content | -webkit-max-content | -webkit-fill-available | fit-content | -webkit-fit-content"
         },
+        "<calc-size>": {
+            "grammar-function": "consumeCalcSize",
+            "grammar-unused": "calc-size( <length-percentage> , <length-percentage> )",
+            "grammar-unused-reason": "The basis is a sizing keyword, a <calc-sum> or a nested calc-size(), and the calculation can use the `size` keyword. None of that is expressible in the grammar.",
+            "specification": {
+                "category": "css-values",
+                "url": "https://drafts.csswg.org/css-values-5/#calc-size"
+            }
+        },
         "<width-or-height>": {
-            "grammar":  "auto | <width-or-height-keyword> | <length-percentage [0,inf] anchor-size=allowed>",
+            "grammar":  "auto | <width-or-height-keyword> | <calc-size> | <length-percentage [0,inf] anchor-size=allowed>",
             "exported": true,
             "comment": "Doesn't match current specification",
             "specification": {
@@ -14882,7 +14896,7 @@
             }
         },
         "<max-width-or-height>": {
-            "grammar": "none | <width-or-height-keyword> | <length-percentage [0,inf] anchor-size=allowed>",
+            "grammar": "none | <width-or-height-keyword> | <calc-size> | <length-percentage [0,inf] anchor-size=allowed>",
             "comment": "Doesn't match current specification",
             "specification": {
                 "category": "css-sizing",

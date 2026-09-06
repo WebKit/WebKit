@@ -1254,6 +1254,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/shapes/CSSShapeFunction.h
     css/values/shapes/CSSXywhFunction.h
 
+    css/values/sizing/CSSCalcSizeFunction.h
+
     css/values/text-decoration/CSSTextShadow.h
 
     cssjit/CompiledSelector.h

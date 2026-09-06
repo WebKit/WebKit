@@ -5078,6 +5078,8 @@
 		BA6920702E0E93A80014E98A /* SpeculationRulesMatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = BA69206E2E0E939C0014E98A /* SpeculationRulesMatcher.h */; };
 		BA96836B2E8FDAA30035D494 /* LoadableSpeculationRules.h in Headers */ = {isa = PBXBuildFile; fileRef = BA9683692E8FDA9A0035D494 /* LoadableSpeculationRules.h */; };
 		BC000BE72C6011020033AA75 /* CSSCalcTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BC000BDB2C5A9D4F0033AA75 /* CSSCalcTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C5000000000000000006 /* CSSCalcSizeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C5000000000000000005 /* CSSCalcSizeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C5000000000000000003 /* CSSCalcSizeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C5000000000000000002 /* CSSCalcSizeValue.h */; };
 		BC000BE82C60110B0033AA75 /* CSSCalcType.h in Headers */ = {isa = PBXBuildFile; fileRef = BC000BD82C5A96850033AA75 /* CSSCalcType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC00F0150E0A189500FD04E3 /* JSFile.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00F0110E0A189500FD04E3 /* JSFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC00F0170E0A189500FD04E3 /* JSFileList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC00F0130E0A189500FD04E3 /* JSFileList.h */; };
@@ -12378,6 +12380,8 @@
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimation.h; sourceTree = "<group>"; };
 		49AE2D8C134EE50C0072920A /* CSSCalcValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcValue.cpp; sourceTree = "<group>"; };
 		49AE2D8D134EE50C0072920A /* CSSCalcValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSCalcValue.h; sourceTree = "<group>"; };
+		BCA1C5000000000000000001 /* CSSCalcSizeValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcSizeValue.cpp; sourceTree = "<group>"; };
+		BCA1C5000000000000000002 /* CSSCalcSizeValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcSizeValue.h; sourceTree = "<group>"; };
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* LegacyDisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyDisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
 		49B53D402B1AA58A0056A172 /* RenderTreeUpdaterViewTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterViewTransition.h; sourceTree = "<group>"; };
@@ -20384,6 +20388,8 @@
 		BCB271A02CBD7D4C00265123 /* CSSGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGradient.cpp; sourceTree = "<group>"; };
 		BCB271A22CBD7D4C00265123 /* CSSCircleFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCircleFunction.h; sourceTree = "<group>"; };
 		BCB271A32CBD7D4C00265123 /* CSSCircleFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCircleFunction.cpp; sourceTree = "<group>"; };
+		BCA1C5000000000000000004 /* CSSCalcSizeFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCalcSizeFunction.cpp; sourceTree = "<group>"; };
+		BCA1C5000000000000000005 /* CSSCalcSizeFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcSizeFunction.h; sourceTree = "<group>"; };
 		BCB271A42CBD7D4C00265123 /* CSSEllipseFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSEllipseFunction.h; sourceTree = "<group>"; };
 		BCB271A52CBD7D4C00265123 /* CSSEllipseFunction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSEllipseFunction.cpp; sourceTree = "<group>"; };
 		BCB271A62CBD7D4C00265123 /* CSSInsetFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSInsetFunction.h; sourceTree = "<group>"; };
@@ -20750,6 +20756,8 @@
 		BCE411DF2CF2B6F000731E47 /* CSSPropertyParserConsumer+Scrollbars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Scrollbars.h"; sourceTree = "<group>"; };
 		BCE411E02CF2B6F000731E47 /* CSSPropertyParserConsumer+Scrollbars.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+Scrollbars.cpp"; sourceTree = "<group>"; };
 		BCE411E12CF2B70300731E47 /* CSSPropertyParserConsumer+Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Display.h"; sourceTree = "<group>"; };
+		BCA1C5000000000000000007 /* CSSPropertyParserConsumer+CalcSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+CalcSize.cpp"; sourceTree = "<group>"; };
+		BCA1C5000000000000000008 /* CSSPropertyParserConsumer+CalcSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+CalcSize.h"; sourceTree = "<group>"; };
 		BCE411E22CF2B70300731E47 /* CSSPropertyParserConsumer+Display.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+Display.cpp"; sourceTree = "<group>"; };
 		BCE411E72CF2B86300731E47 /* CSSPropertyParserConsumer+UI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+UI.h"; sourceTree = "<group>"; };
 		BCE411E82CF2B86300731E47 /* CSSPropertyParserConsumer+UI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+UI.cpp"; sourceTree = "<group>"; };
@@ -33910,6 +33918,8 @@
 				BCEA073F2CC724F9000AC148 /* CSSPropertyParserConsumer+Background.h */,
 				BCE411D82CF25B9800731E47 /* CSSPropertyParserConsumer+Box.cpp */,
 				BCE411D72CF25B9800731E47 /* CSSPropertyParserConsumer+Box.h */,
+				BCA1C5000000000000000007 /* CSSPropertyParserConsumer+CalcSize.cpp */,
+				BCA1C5000000000000000008 /* CSSPropertyParserConsumer+CalcSize.h */,
 				BC7C5E642BE2A8FB00AE645C /* CSSPropertyParserConsumer+Color.cpp */,
 				BC7C5E652BE2A8FB00AE645C /* CSSPropertyParserConsumer+Color.h */,
 				BCEA07852CCC0B58000AC148 /* CSSPropertyParserConsumer+ColorAdjust.cpp */,
@@ -38827,6 +38837,7 @@
 				BC0D73442FB78BA000952D29 /* non-standard */,
 				BCB271D72CC013E900265123 /* primitives */,
 				BCB271B22CBD7D4C00265123 /* shapes */,
+				BCA1C5000000000000000009 /* sizing */,
 				BC3078DE2D0286E900630D75 /* text-decoration */,
 				BC89E31B2D11ECD10016DF06 /* CSSNoConversionDataRequiredToken.h */,
 				BC5C89AC2D556F29000F45B7 /* CSSSerializationContext.cpp */,
@@ -39165,6 +39176,15 @@
 				BCB271B02CBD7D4C00265123 /* CSSXywhFunction.h */,
 			);
 			path = shapes;
+			sourceTree = "<group>";
+		};
+		BCA1C5000000000000000009 /* sizing */ = {
+			isa = PBXGroup;
+			children = (
+				BCA1C5000000000000000004 /* CSSCalcSizeFunction.cpp */,
+				BCA1C5000000000000000005 /* CSSCalcSizeFunction.h */,
+			);
+			path = sizing;
 			sourceTree = "<group>";
 		};
 		BCB271B52CBD7D6B00265123 /* images */ = {
@@ -41987,6 +42007,8 @@
 				357B581C27F7909A00B93E4E /* CSSBorderImageWidthValue.h */,
 				BC3078EF2D03667800630D75 /* CSSBoxShadowPropertyValue.cpp */,
 				BC3078F02D03667800630D75 /* CSSBoxShadowPropertyValue.h */,
+				BCA1C5000000000000000001 /* CSSCalcSizeValue.cpp */,
+				BCA1C5000000000000000002 /* CSSCalcSizeValue.h */,
 				BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */,
 				BC6049CB0DB560C200204739 /* CSSCanvasValue.h */,
 				BC9156362FC0D87D00C668BF /* CSSClipValue.cpp */,
@@ -45073,6 +45095,8 @@
 				BC3079472D0783D500630D75 /* CSSCalcRandomCachingKey.h in Headers */,
 				BC3079462D0783C900630D75 /* CSSCalcRandomCachingKeyMap.h in Headers */,
 				62E7A81B328ECC03C163FD37 /* CSSCalcRandomSharing.h in Headers */,
+				BCA1C5000000000000000006 /* CSSCalcSizeFunction.h in Headers */,
+				BCA1C5000000000000000003 /* CSSCalcSizeValue.h in Headers */,
 				BC3301312BEC1AA700A2A878 /* CSSCalcSymbolsAllowed.h in Headers */,
 				BC709DE0266323CF00B9A21C /* CSSCalcSymbolTable.h in Headers */,
 				BC000BE72C6011020033AA75 /* CSSCalcTree.h in Headers */,

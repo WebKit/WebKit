@@ -40,6 +40,7 @@
 #include "CSSBorderImageSourceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSBoxShadowPropertyValue.h"
+#include "CSSCalcSizeValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSClipValue.h"
 #include "CSSColorImageValue.h"
@@ -150,6 +151,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSBoxShadowPropertyValue>(*this));
     case Canvas:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCanvasValue>(*this));
+    case CalcSize:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCalcSizeValue>(*this));
     case Clip:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSClipValue>(*this));
     case Color:
@@ -338,6 +341,8 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
     }
     if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))
         asPrimitiveValue->collectComputedStyleDependencies(dependencies);
+    if (auto* asCalcSizeValue = dynamicDowncast<CSSCalcSizeValue>(*this))
+        asCalcSizeValue->collectComputedStyleDependencies(dependencies);
 }
 
 bool CSSValue::equals(const CSSValue& other) const

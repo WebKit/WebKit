@@ -117,6 +117,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssRandomItemFunctionEnabled { settings.cssRandomItemFunctionEnabled() }
     , cssRubyDisplayTypesEnabled { settings.cssRubyDisplayTypesInAuthorStylesEnabled() }
     , cssTreeCountingFunctionsEnabled { settings.cssTreeCountingFunctionsEnabled() }
+    , cssCalcSizeFunctionEnabled { settings.cssCalcSizeFunctionEnabled() }
     , cssURLModifiersEnabled { settings.cssURLModifiersEnabled() }
     , cssURLIntegrityModifierEnabled { settings.cssURLIntegrityModifierEnabled() }
     , cssAxisRelativePositionKeywordsEnabled { settings.cssAxisRelativePositionKeywordsEnabled() }
@@ -167,6 +168,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssRandomItemFunctionEnabled,
         context.cssRubyDisplayTypesEnabled,
         context.cssTreeCountingFunctionsEnabled,
+        context.cssCalcSizeFunctionEnabled,
         context.cssURLModifiersEnabled,
         context.cssURLIntegrityModifierEnabled,
         context.cssAxisRelativePositionKeywordsEnabled,

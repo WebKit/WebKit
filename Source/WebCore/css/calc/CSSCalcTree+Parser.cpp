@@ -161,6 +161,29 @@ std::optional<Tree> parseAndSimplify(CSSParserTokenRange& range, CSS::PropertyPa
     return result;
 }
 
+std::optional<Tree> parseAndSimplifyCalcSum(CSSParserTokenRange& tokens, CSS::PropertyParserState& propertyParserState, const ParserOptions& parserOptions, const SimplificationOptions& simplificationOptions)
+{
+    ParserState state {
+        .propertyParserState = propertyParserState,
+        .parserOptions = parserOptions,
+        .simplificationOptions = &simplificationOptions
+    };
+
+    auto root = parseCalcSum(tokens, 0, state);
+    if (!root)
+        return std::nullopt;
+
+    if (!root->type.matches(parserOptions.category))
+        return std::nullopt;
+
+    return Tree {
+        .root = WTF::move(root->child),
+        .type = root->type,
+        .stage = CSSCalc::Stage::Specified,
+        .requiresConversionData = state.requiresConversionData,
+    };
+}
+
 bool isCalcFunction(CSSValueID functionId)
 {
     switch (functionId) {
