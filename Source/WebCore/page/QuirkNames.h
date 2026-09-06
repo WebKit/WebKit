@@ -45,7 +45,6 @@ enum class QuirkSite : uint8_t {
     IHeart,
     InVideo,
     LinkedIn,
-    MyBinder,
     NBA,
     Netflix,
     Outlook,

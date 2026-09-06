@@ -827,6 +827,7 @@
 				WebCore/PublicSuffix.cpp,
 				WebCore/PushDatabase.cpp,
 				WebCore/PushMessageCrypto.cpp,
+				WebCore/QuirkElementSelector.cpp,
 				WebCore/Quirks.cpp,
 				WebCore/RegionTests.cpp,
 				WebCore/RegistrableDomain.cpp,
