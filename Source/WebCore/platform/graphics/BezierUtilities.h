@@ -54,6 +54,9 @@ WEBCORE_EXPORT std::optional<BezierCurvesIntersection> findMonotonicBezierCurves
 
 WEBCORE_EXPORT void trimMonotonicBezierCurvesAtIntersection(Vector<BezierSegment>& first, Vector<BezierSegment>& second, const BezierCurvesIntersection&);
 
+// How many times `curve` crosses the line segment from `segmentStart` to `segmentEnd`.
+WEBCORE_EXPORT unsigned numberOfCrossingsWithSegment(const BezierSegment& curve, const FloatPoint& segmentStart, const FloatPoint& segmentEnd);
+
 // `parameter` is the Bézier curve parameter t in [0, 1]: 0 is the start point, 1 is the end point (not arc length).
 FloatPoint pointOnBezierAtParameter(const BezierSegment& curve, double parameter);
 
