@@ -28,7 +28,6 @@
 
 #include "PublicSuffixStore.h"
 #include <wtf/URL.h>
-#include <wtf/glib/ChassisType.h>
 
 namespace WebCore {
 
@@ -113,14 +112,14 @@ static bool urlRequiresFirefoxBrowser(const String& domain, const String& baseDo
     return false;
 }
 
-static bool urlRequiresMacintoshPlatform(const String& domain, const String& baseDomain)
+static bool urlRequiresMacintoshPlatform(const String& domain, const String& baseDomain, UserAgentType userAgentType)
 {
     // At least finance.yahoo.com displays a mobile version with WebKitGTK's standard user agent.
-    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "yahoo.com"_s)
+    if (userAgentType != UserAgentType::Mobile && baseDomain == "yahoo.com"_s)
         return true;
 
     // taobao.com displays a mobile version with WebKitGTK's standard user agent.
-    if (chassisType() != WTF::ChassisType::Mobile && baseDomain == "taobao.com"_s)
+    if (userAgentType != UserAgentType::Mobile && baseDomain == "taobao.com"_s)
         return true;
 
     // web.whatsapp.com completely blocks users with WebKitGTK's standard user agent.
@@ -201,7 +200,7 @@ static bool urlRequiresUnbrandedUserAgent(const String& domain)
     return false;
 }
 
-UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
+UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url, UserAgentType userAgentType)
 {
     ASSERT(!url.isNull());
 
@@ -214,7 +213,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url)
     else if (urlRequiresFirefoxBrowser(domain, baseDomain))
         quirks.add(UserAgentQuirks::NeedsFirefoxBrowser);
 
-    if (urlRequiresMacintoshPlatform(domain, baseDomain))
+    if (urlRequiresMacintoshPlatform(domain, baseDomain, userAgentType))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
     else if (urlRequiresAndroidPlatform(baseDomain))
         quirks.add(UserAgentQuirks::NeedsAndroidPlatform);
@@ -240,7 +239,7 @@ String UserAgentQuirks::stringForQuirk(UserAgentQuirk quirk)
     case NumUserAgentQuirks:
         ASSERT_NOT_REACHED();
     }
-    return ""_s;
+    return { };
 }
 
 }

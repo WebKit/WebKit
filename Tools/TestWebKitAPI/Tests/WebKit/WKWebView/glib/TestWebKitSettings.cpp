@@ -615,6 +615,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(funkyUserAgent, ==, webkit_settings_get_user_agent(settings.get()));
     assertThatUserAgentIsSentInHeaders(test, funkyUserAgent);
 
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK", 0);
     const char* userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
     g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.data()), ==, userAgentWithNullVersion);
@@ -624,12 +625,25 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion);
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebCatGTK+", "3.4.5");
+    G_GNUC_END_IGNORE_DEPRECATIONS;
     const char* newUserAgent = webkit_settings_get_user_agent(settings.get());
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "3.4.5"));
     g_assert_nonnull(g_strstr_len(newUserAgent, -1, "WebCatGTK+"));
 
     GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.data(), "WebCatGTK+/3.4.5"));
     g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));
+
+    // Test setting user agent built via WebKitUserAgent
+    g_autoptr(WebKitUserAgent) mobileUA = webkit_user_agent_new(WEBKIT_USER_AGENT_TYPE_MOBILE);
+    webkit_settings_set_user_agent(settings.get(), webkit_user_agent_to_string(mobileUA));
+    CString mobileUserAgentString = webkit_settings_get_user_agent(settings.get());
+    g_assert_nonnull(g_strstr_len(mobileUserAgentString.data(), -1, "Mobile"));
+    g_assert_nonnull(g_strstr_len(mobileUserAgentString.data(), -1, "Android"));
+    assertThatUserAgentIsSentInHeaders(test, mobileUserAgentString.data());
+
+    // Setting user agent to nullptr reverts to default user agent.
+    webkit_settings_set_user_agent(settings.get(), nullptr);
+    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, defaultUserAgent.data());
 }
 #endif // PLATFORM(GTK)
 
@@ -694,4 +708,3 @@ void afterAll()
 {
     delete gServer;
 }
-

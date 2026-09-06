@@ -31,7 +31,6 @@
 #include "UserAgentQuirks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
-#include <wtf/glib/ChassisType.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -47,21 +46,33 @@
 
 namespace WebCore {
 
-static ASCIILiteral platformForUAString()
+static bool isMobileUA(UserAgentType type)
+{
+    switch (type) {
+    case UserAgentType::Default:
+    case UserAgentType::Desktop:
+        return false;
+    case UserAgentType::Mobile:
+        return true;
+    }
+    return false;
+}
+
+static ASCIILiteral platformForUAString(bool isMobile)
 {
 #if OS(MACOS)
     return "Macintosh"_s;
 #else
-    if (chassisType() == WTF::ChassisType::Mobile)
+    if (isMobile)
         return "Linux"_s;
     return "X11"_s;
 #endif
 }
 
-static const String platformVersionForUAString()
+static const String platformVersionForUAString(bool isMobile)
 {
 #if OS(UNIX)
-    if (chassisType() == WTF::ChassisType::Mobile)
+    if (isMobile)
         return "like Android 4.4"_s;
 
     struct utsname name;
@@ -76,7 +87,7 @@ static const String platformVersionForUAString()
 #endif
 }
 
-static String buildUserAgentString(const UserAgentQuirks& quirks)
+static String buildUserAgentString(const UserAgentQuirks& quirks, bool isMobile)
 {
     StringBuilder uaString;
     uaString.append("Mozilla/5.0 ("_s);
@@ -86,11 +97,11 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     else if (quirks.contains(UserAgentQuirks::NeedsAndroidPlatform))
         uaString.append(UserAgentQuirks::stringForQuirk(UserAgentQuirks::NeedsAndroidPlatform));
     else {
-        uaString.append(platformForUAString(), "; "_s);
+        uaString.append(platformForUAString(isMobile), "; "_s);
 #if defined(USER_AGENT_BRANDING)
         uaString.append(USER_AGENT_BRANDING "; "_s);
 #endif
-        uaString.append(platformVersionForUAString());
+        uaString.append(platformVersionForUAString(isMobile));
     }
 
     if (quirks.contains(UserAgentQuirks::NeedsFirefoxBrowser)) {
@@ -115,20 +126,24 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
         // https://webkit.org/b/284775
         uaString.append("Version/60.5 "_s);
 
-    if (chassisType() == WTF::ChassisType::Mobile)
+    if (isMobile)
         uaString.append("Mobile "_s);
     uaString.append("Safari/605.1.15"_s);
 
     return uaString.toString();
 }
 
-static const String standardUserAgentStatic()
+static const String standardUserAgentStatic(UserAgentType type)
 {
-    static NeverDestroyed<const String> uaStatic(buildUserAgentString(UserAgentQuirks()));
-    return uaStatic;
+    if (isMobileUA(type)) {
+        static NeverDestroyed<const String> uaMobileStatic(buildUserAgentString(UserAgentQuirks(), true));
+        return uaMobileStatic;
+    }
+    static NeverDestroyed<const String> uaDesktopStatic(buildUserAgentString(UserAgentQuirks(), false));
+    return uaDesktopStatic;
 }
 
-String standardUserAgent(const String& applicationName, const String& applicationVersion)
+String standardUserAgent(const String& applicationName, const String& applicationVersion, UserAgentType type)
 {
     // Create a default user agent string with a liberal interpretation of
     // https://developer.mozilla.org/en-US/docs/User_Agent_Strings_Reference
@@ -141,12 +156,12 @@ String standardUserAgent(const String& applicationName, const String& applicatio
 
     String userAgent;
     if (applicationName.isEmpty()) {
-        userAgent = standardUserAgentStatic();
+        userAgent = standardUserAgentStatic(type);
     } else {
         String finalApplicationVersion = applicationVersion;
         if (finalApplicationVersion.isEmpty())
             finalApplicationVersion = "605.1.15"_s;
-        userAgent = makeString(standardUserAgentStatic(), ' ', applicationName, '/', finalApplicationVersion);
+        userAgent = makeString(standardUserAgentStatic(type), ' ', applicationName, '/', finalApplicationVersion);
     }
 
     static bool checked = false;
@@ -160,16 +175,17 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     return userAgent;
 }
 
-String standardUserAgentForURL(const URL& url)
+String standardUserAgentForURL(const URL& url, UserAgentType type)
 {
-    auto quirks = UserAgentQuirks::quirksForURL(url);
+    bool isMobile = isMobileUA(type);
+    auto quirks = UserAgentQuirks::quirksForURL(url, type);
     // The null string means we don't need a specific UA for the given URL.
     // Note: UserAgentQuirks::NeedsUnbrandedUserAgent is implemented by simply
     // not returning here.
     if (quirks.isEmpty())
-        return String();
+        return { };
 
-    String userAgent(buildUserAgentString(quirks));
+    String userAgent(buildUserAgentString(quirks, isMobile));
     ASSERT(isValidUserAgentHeaderValue(userAgent));
     return userAgent;
 }
