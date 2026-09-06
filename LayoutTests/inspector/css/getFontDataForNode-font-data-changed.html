@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let inMemoryFontFace;
+
+async function prepareInMemoryFont(eventName)
+{
+    let inMemoryFontData = await fetch("../../resources/Ahem.otf").then((response) => response.arrayBuffer());
+    inMemoryFontFace = new FontFace("InspectorInMemory", inMemoryFontData);
+    await inMemoryFontFace.load();
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function activateInMemoryFont(eventName)
+{
+    document.fonts.add(inMemoryFontFace);
+    TestPage.dispatchEventToFrontend(eventName);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getFontDataForNode.FontDataChanged");
+
+    suite.addTestCase({
+        name: "CSS.getFontDataForNode.FontDataChanged.InMemoryFontActivation",
+        description: "Activating an in-memory FontFace should invalidate cached font data without a Resource loading event.",
+        async test() {
+            const preparedEventName = "TestPage-InMemoryFontPrepared";
+            await Promise.all([
+                InspectorTest.awaitEvent(preparedEventName),
+                InspectorTest.evaluateInPage(`prepareInMemoryFont("${preparedEventName}")`),
+            ]);
+
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#in-memory-font");
+            let node = WI.domManager.nodeForId(nodeId);
+            InspectorTest.assert(node, "Should find #in-memory-font.");
+
+            let nodeStyles = WI.cssManager.stylesForNode(node);
+            await nodeStyles.refreshIfNeeded();
+            InspectorTest.expectFalse(nodeStyles.renderedFonts.some((font) => font.name === "Ahem"), "The in-memory font should not be active initially.");
+
+            let needsRefreshPromise = nodeStyles.awaitEvent(WI.DOMNodeStyles.Event.NeedsRefresh);
+            const activatedEventName = "TestPage-InMemoryFontActivated";
+            await Promise.all([
+                needsRefreshPromise,
+                InspectorTest.awaitEvent(activatedEventName),
+                InspectorTest.evaluateInPage(`activateInMemoryFont("${activatedEventName}")`),
+            ]);
+            InspectorTest.expectTrue(nodeStyles.needsRefresh, "CSS.fontDataChanged should invalidate cached font data.");
+
+            await nodeStyles.refreshIfNeeded();
+            InspectorTest.expectTrue(nodeStyles.renderedFonts.some((font) => font.name === "Ahem"), "Refreshing should report the activated in-memory font.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+#in-memory-font {
+    font: 20px/1 InspectorInMemory, system-ui;
+}
+</style>
+</head>
+<body onload="runTest();">
+<p>Test target-wide font-data invalidation after in-memory font activation.</p>
+<span id="in-memory-font">A</span>
+</body>
+</html>
+

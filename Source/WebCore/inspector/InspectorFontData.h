@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Devin Rousso <webkit@devinrousso.com>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .label {
-    min-width: 105px; /* Width of `Historical Figures` or `Optical Size (opsz)` in English. */
-}
+#pragma once
 
-.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value .secondary {
-    color: var(--text-color-secondary);
-    word-break: normal;
-}
+#include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <optional>
 
-.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters {
-    direction: ltr;
-    unicode-bidi: isolate;
-}
+namespace WebCore {
 
-.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters > span {
-    unicode-bidi: isolate;
-}
+class Node;
 
-.sidebar > .panel.details.style-font > .content .details-section > .content > .group > .row.simple > .value > .characters > .code-point {
-    display: inline-block;
-    margin-inline: 2px;
-    padding: 0 3px;
-    font-family: Menlo, monospace;
-    color: var(--text-color-secondary);
-    background-color: var(--background-color-alternate);
-    border: 1px solid var(--border-color-secondary);
-    border-radius: 3px;
-}
+struct FontData {
+    Ref<Inspector::Protocol::CSS::Font> primaryFont;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>> renderedFonts;
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>> missingCharacterRanges;
+};
+
+std::optional<FontData> getFontData(Node&);
+
+} // namespace WebCore

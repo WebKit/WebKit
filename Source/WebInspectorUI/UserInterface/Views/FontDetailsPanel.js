@@ -62,6 +62,20 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         if (this._skipNextUpdate)
             return;
 
+        let primaryFont = this.nodeStyles.computedPrimaryFont;
+        if (!primaryFont) {
+            this._fontStyles = null;
+            if (this._renderedFontsSection) {
+                this._renderedFontsSection.groups = [];
+                this._renderedFontsSection.element.hidden = true;
+            }
+            if (this._missingCharactersSection) {
+                this._missingCharactersSection.groups = [];
+                this._missingCharactersSection.element.hidden = true;
+            }
+            return;
+        }
+
         this._fontStyles?.refresh();
 
         if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh)
@@ -94,7 +108,10 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             }
         }
 
-        this._fontNameRow.value = this.nodeStyles.computedPrimaryFont.name;
+        this._fontNameRow.value = primaryFont.name;
+        this._fontSourceRow.value = this._sourceValue(primaryFont.url);
+        this._updateRenderedFontsSection();
+        this._updateMissingCharactersSection();
 
         // Feature properties
         this._fontVariantLigaturesRow.value = this._formatLigatureValue(this._fontPropertiesMap.get("font-variant-ligatures"));
@@ -190,7 +207,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         // Identity
         this._fontNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Name", "Name @ Font Details Sidebar Property", "Property title for the family name of the font."));
-        let previewGroup = new WI.DetailsSectionGroup([this._fontNameRow]);
+        this._fontSourceRow = new WI.DetailsSectionSimpleRow(WI.UIString("Source", "Source @ Font Details Sidebar Property", "Property title for the source URL of the font."));
+        let previewGroup = new WI.DetailsSectionGroup([this._fontNameRow, this._fontSourceRow]);
 
         let fontNameSection = new WI.DetailsSection("font-identity", WI.UIString("Identity", "Identity @ Font Details Sidebar Section", "Section title for font identity information."), [previewGroup]);
         this.element.appendChild(fontNameSection.element);
@@ -220,6 +238,14 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
         let fontVariationPropertiesSection = new WI.DetailsSection("font-variation-properties", WI.UIString("Variation Properties", "Variation Properties @ Font Details Sidebar Section", "Section title for font variation properties."), [this._fontVariationsGroup]);
         this.element.appendChild(fontVariationPropertiesSection.element);
+
+        this._renderedFontsSection = new WI.DetailsSection("font-rendered-fonts", WI.UIString("Rendered Text", "Rendered Text @ Font Details Sidebar Section", "Section title for text grouped by rendered font."));
+        this._renderedFontsSection.element.hidden = true;
+        this.element.appendChild(this._renderedFontsSection.element);
+
+        this._missingCharactersSection = new WI.DetailsSection("font-missing-characters", WI.UIString("Missing Characters", "Missing Characters @ Font Details Sidebar Section", "Section title for characters for which no font glyph was found."));
+        this._missingCharactersSection.element.hidden = true;
+        this.element.appendChild(this._missingCharactersSection.element);
     }
 
     // Private
@@ -237,6 +263,106 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     get _fontFeaturesMap()
     {
         return this._fontStyles?.featuresMap ?? new Map;
+    }
+
+    _updateRenderedFontsSection()
+    {
+        let renderedFonts = this.nodeStyles.renderedFonts;
+        if (!renderedFonts.length) {
+            this._renderedFontsSection.element.hidden = true;
+            this._renderedFontsSection.groups = [];
+            return;
+        }
+
+        this._renderedFontsSection.element.hidden = false;
+        this._renderedFontsSection.groups = renderedFonts.map((font) => new WI.DetailsSectionGroup([
+            new WI.DetailsSectionSimpleRow(WI.UIString("Name", "Name @ Rendered Font Details Sidebar Property", "Property title for the family name of a rendered font."), font.name),
+            new WI.DetailsSectionSimpleRow(WI.UIString("Source", "Source @ Rendered Font Details Sidebar Property", "Property title for the source URL of a rendered font."), this._sourceValue(font.url)),
+            new WI.DetailsSectionSimpleRow(WI.UIString("Characters", "Characters @ Rendered Font Details Sidebar Property", "Property title for character ranges rendered by a font."), this._characterSequence(font.characterRanges)),
+        ]));
+    }
+
+    _updateMissingCharactersSection()
+    {
+        let characterRanges = this.nodeStyles.missingCharacterRanges;
+        if (!characterRanges.length) {
+            this._missingCharactersSection.element.hidden = true;
+            this._missingCharactersSection.groups = [];
+            return;
+        }
+
+        this._missingCharactersSection.element.hidden = false;
+        this._missingCharactersSection.groups = [new WI.DetailsSectionGroup([
+            new WI.DetailsSectionSimpleRow(WI.UIString("Characters", "Characters @ Missing Font Details Sidebar Property", "Property title for character ranges for which no font glyph was found."), this._characterSequence(characterRanges)),
+        ])];
+    }
+
+    _characterSequence(characterRanges)
+    {
+        if (!characterRanges.length)
+            return null;
+
+        let formatCodePoint = (value) => `U+${value.toString(16).toUpperCase().padStart(4, "0")}`;
+
+        let container = document.createElement("span");
+        container.classList.add("characters");
+
+        let lastCodePoint = -1;
+        for (let {start, end} of characterRanges.slice().sort((a, b) => a.start - b.start || a.end - b.end)) {
+            if (start < 0 || end > 0x10FFFF || start > end)
+                continue;
+
+            start = Math.max(start, lastCodePoint + 1);
+
+            for (let codePoint = start; codePoint <= end; ++codePoint) {
+                let formattedCodePoint = formatCodePoint(codePoint);
+                let character = String.fromCodePoint(codePoint);
+
+                let span = container.appendChild(document.createElement("span"));
+                span.title = formattedCodePoint;
+                if (this._isCharacterDisplayable(character))
+                    span.textContent = character;
+                else {
+                    span.classList.add("code-point");
+                    span.textContent = formattedCodePoint;
+                }
+            }
+
+            lastCodePoint = Math.max(lastCodePoint, end);
+        }
+
+        return container.childNodes.length ? container : null;
+    }
+
+    _isCharacterDisplayable(character)
+    {
+        if (!character.trim())
+            return false;
+
+        return !/[\p{Cc}\p{Cf}\p{Cs}\p{Cn}]/u.test(character);
+    }
+
+    _sourceValue(url)
+    {
+        if (!url)
+            return null;
+
+        let resource = this._fontResourceForURL(url);
+        if (resource)
+            return WI.createResourceLink(resource, "font-resource-link");
+
+        return WI.truncateURL(url);
+    }
+
+    _fontResourceForURL(url)
+    {
+        let isFontResource = (resource) => resource.type === WI.Resource.Type.Font;
+        let frame = this.nodeStyles.node.frame;
+        return frame?.resourcesForURL(url).find(isFontResource)
+            || frame?.resourcesForURL(WI.urlWithoutFragment(url)).find(isFontResource)
+            || WI.networkManager.resourcesForURL(url).find(isFontResource)
+            || WI.networkManager.resourcesForURL(WI.urlWithoutFragment(url)).find(isFontResource)
+            || null;
     }
 
     _createDetailsSectionRowForProperty(propertyName)
