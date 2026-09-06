@@ -114,6 +114,12 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
             || this._type === WI.CSSGrouping.Type.MediaStyleNode;
     }
 
+    get isLayer()
+    {
+        return this._type === WI.CSSGrouping.Type.LayerRule
+            || this._type === WI.CSSGrouping.Type.LayerImportRule;
+    }
+
     get isStartingStyle()
     {
         return this._type === WI.CSSGrouping.Type.StartingStyleRule;
