@@ -1,0 +1,17 @@
+This test verifies when an unlabeled image takes its accessible name from an ancestor figure's figcaption.
+
+PASS: descriptionOf('captionNamed') === 'AXDescription: A ripe apple'
+PASS: descriptionOf('flowContentSibling') === 'AXDescription: '
+PASS: descriptionOf('altNamed') === 'AXDescription: Alt text'
+
+Removing the paragraph, leaving the figcaption as the figure's only other child.
+PASS: descriptionOf('flowContentSibling') === 'AXDescription: A ripe pear'
+
+Adding a paragraph to the first figure.
+PASS: descriptionOf('captionNamed') === 'AXDescription: '
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

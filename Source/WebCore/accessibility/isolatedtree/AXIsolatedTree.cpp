@@ -770,6 +770,9 @@ void AXIsolatedTree::updateNodeProperties(AccessibilityObject& axObject, const A
                 properties.append({ AXProperty::ExplicitOrientation, *orientation });
             break;
         }
+        case AXProperty::Description:
+            properties.append({ AXProperty::Description, axObject.description().isolatedCopy() });
+            break;
         case AXProperty::ExtendedDescription:
             properties.append({ AXProperty::ExtendedDescription, axObject.extendedDescription().isolatedCopy() });
             break;
@@ -1019,6 +1022,19 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     };
     updateRelatedObjects(axObject);
 
+    // An <img> with neither alt nor title takes its accessible name from an ancestor <figure>'s <figcaption>.
+    // If this is a <figure>, update image text underneath.
+    auto updateFigureCaptionedImages = [this] (AccessibilityObject& object) {
+        if (!object.isFigureElement())
+            return;
+
+        Accessibility::enumerateDescendantsIncludingIgnored<AXCoreObject>(object, false, [this, protectedThis = Ref { *this }] (auto& descendant) {
+            if (descendant.isImage())
+                queueNodeUpdate(descendant.objectID(), { { AXProperty::AccessibilityText, AXProperty::Description } });
+        });
+    };
+    updateFigureCaptionedImages(axObject);
+
     // When a row gains or loses cells, or a table changes rows in a row group, the column count of the table can change.
     bool updateTableAncestorColumns = axObject.isExposedTableRow() || isRowGroup(axObject.node());
     for (RefPtr ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
@@ -1032,6 +1048,7 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
         }
 
         updateRelatedObjects(*ancestor);
+        updateFigureCaptionedImages(*ancestor);
     }
 }
 
