@@ -922,6 +922,9 @@ private:
                 case MovHint:
                 case Upsilon:
                 case ForwardVarargs:
+                case CallVarargsWithSpread:
+                case VarargsLengthWithSpread:
+                case LoadVarargsWithSpread:
                 case CallForwardVarargs:
                 case TailCallForwardVarargs:
                 case TailCallForwardVarargsInlinedCaller:

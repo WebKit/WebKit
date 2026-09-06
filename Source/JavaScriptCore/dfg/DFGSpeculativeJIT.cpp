@@ -8508,6 +8508,99 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
 
 }
 
+EncodedJSValue* SpeculativeJIT::fillSpreadArgumentsBuffer(Node* node, unsigned base, unsigned numArgs, VarargsSpreadForwardDescriptor*& descriptors, bool& hasForward)
+{
+    BitVector* bitVector = node->bitVector();
+    // Co-allocate the value buffer and the forward-descriptor array in one scratch buffer: values in
+    // [0, numArgs), descriptors past them. Only the value region is marked active for GC; the descriptor
+    // region holds InlineCallFrame* (not a heap cell) and small ints, so even conservative scanning is inert.
+    size_t scratchSize = numArgs * sizeof(EncodedJSValue) + numArgs * sizeof(VarargsSpreadForwardDescriptor);
+    ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(scratchSize);
+    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+    descriptors = std::bit_cast<VarargsSpreadForwardDescriptor*>(buffer + numArgs);
+    hasForward = false;
+
+    for (unsigned e = 0; e < numArgs; ++e) {
+        Edge use = m_graph.varArgChild(node, base + e);
+        if (bitVector->get(e)) {
+            Node* operand = use.node();
+            // An eliminated spread survived arguments elimination as a PhantomSpread. A forwarded rest
+            // (PhantomCreateRest) has no value: leave the empty-JSValue sentinel and describe the segment so
+            // the *Forward op copies it from the caller frame. A PhantomNewArrayBuffer is a constant butterfly
+            // cell, so it flows through the ordinary spread-cell path with no descriptor.
+            if (operand->op() == PhantomSpread) {
+                Node* inner = operand->child1().node();
+                if (inner->op() == PhantomCreateRest) {
+                    store64(TrustedImm64(JSValue::encode(JSValue())), &buffer[e]);
+                    store64(TrustedImm64(std::bit_cast<int64_t>(inner->origin.semantic.inlineCallFrame())), &descriptors[e].inlineCallFrame);
+                    store32(TrustedImm32(inner->numberOfArgumentsToSkip()), &descriptors[e].numberOfArgumentsToSkip);
+                    hasForward = true;
+                } else {
+                    ASSERT(inner->op() == PhantomNewArrayBuffer);
+                    GPRTemporary scratch(this);
+                    loadLinkableConstant(LinkableConstant(*this, inner->castOperand<JSCellButterfly*>()), scratch.gpr());
+                    storeCell(scratch.gpr(), &buffer[e]);
+                }
+                continue;
+            }
+            SpeculateCellOperand spread(this, use);
+            storeCell(spread.gpr(), &buffer[e]);
+        } else {
+            JSValueOperand literal(this, use);
+            storeValue(literal.jsValueRegs(), &buffer[e]);
+        }
+    }
+
+    return buffer;
+}
+
+void SpeculativeJIT::compileVarargsLengthWithSpread(Node* node)
+{
+    unsigned numArgs = node->numChildren();
+    VarargsSpreadForwardDescriptor* descriptors = nullptr;
+    bool hasForward = false;
+    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 0, numArgs, descriptors, hasForward);
+
+    flushRegisters();
+
+    if (hasForward)
+        callOperation(operationSizeOfVarargsWithSpreadForward, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numArgs), TrustedImmPtr(descriptors));
+    else
+        callOperation(operationSizeOfVarargsWithSpread, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numArgs));
+
+    lock(GPRInfo::returnValueGPR);
+    GPRTemporary argCountIncludingThis(this);
+    GPRReg argCountIncludingThisGPR = argCountIncludingThis.gpr();
+    unlock(GPRInfo::returnValueGPR);
+
+    add32(TrustedImm32(1), GPRInfo::returnValueGPR, argCountIncludingThisGPR);
+    strictInt32Result(argCountIncludingThisGPR, node);
+}
+
+void SpeculativeJIT::compileLoadVarargsWithSpread(Node* node)
+{
+    LoadVarargsData* data = node->loadVarargsData();
+
+    SpeculateStrictInt32Operand argumentCount(this, m_graph.varArgChild(node, 0));
+    GPRReg argumentCountIncludingThis = argumentCount.gpr();
+
+    unsigned numArgs = node->numChildren() - 1;
+    VarargsSpreadForwardDescriptor* descriptors = nullptr;
+    bool hasForward = false;
+    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 1, numArgs, descriptors, hasForward);
+
+    speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
+    speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
+
+    flushRegisters();
+    store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
+    if (hasForward)
+        callOperation(operationLoadVarargsWithSpreadForward, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), TrustedImmPtr(buffer), TrustedImm32(numArgs), TrustedImmPtr(descriptors), argumentCountIncludingThis, TrustedImm32(data->mandatoryMinimum));
+    else
+        callOperation(operationLoadVarargsWithSpread, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), TrustedImmPtr(buffer), TrustedImm32(numArgs), argumentCountIncludingThis, TrustedImm32(data->mandatoryMinimum));
+    noResult(node);
+}
+
 void SpeculativeJIT::compileForwardVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();

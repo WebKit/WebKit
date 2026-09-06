@@ -73,6 +73,17 @@ void JIT::compileSetupFrame(const Op& bytecode)
         int firstFreeRegister = bytecode.m_firstFree.offset(); // FIXME: Why is this a virtual register if we never use it as one...
         int firstVarArgOffset = bytecode.m_firstVarArg;
 
+        JumpList slowVarargs;
+        std::optional<Jump> fastVarargsDone;
+        // Fast path: when 'arguments' is a small dense Int32/Contiguous JSArray, build the callee frame
+        // inline (hot in spread-heavy code). See emitInlineVarargsFrameForContiguousArray.
+        if (!firstVarArgOffset) {
+            emitGetVirtualRegister(arguments, JSValueRegs(regT2));
+            move(TrustedImm32(-firstFreeRegister), regT1);
+            emitInlineVarargsFrameForContiguousArray(vm(), *this, regT2 /*array*/, regT1 /*numUsedSlots*/, regT5 /*resultFrame*/, regT0, regT3, regT4, slowVarargs);
+            fastVarargsDone = jump();
+        }
+        slowVarargs.link(this);
         {
             constexpr GPRReg globalObjectGPR = preferredArgumentGPR<S_JITOperation_GJZZ, 0>();
             constexpr GPRReg argumentsGPR = preferredArgumentGPR<S_JITOperation_GJZZ, 1>();
@@ -93,6 +104,47 @@ void JIT::compileSetupFrame(const Op& bytecode)
             F_JITOperation_GFJZZ setupOperation = operationSetupVarargsFrame;
             loadGlobalObject(regT4);
             callOperation(setupOperation, regT4, regT1, regT2, firstVarArgOffset, regT0);
+            move(returnValueGPR, regT5);
+        }
+
+        if (fastVarargsDone)
+            fastVarargsDone->link(this);
+
+        // Profile the argument count.
+        load32(Address(regT5, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + LowWordOffset), regT2);
+        move(TrustedImm32(CallLinkInfo::maxProfiledArgumentCountIncludingThisForVarargs), regT0);
+        moveConditionally32(Above, regT2, regT0, regT0, regT2, regT2);
+        materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), regT0);
+        load8(Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()), regT1);
+        Jump notBiggest = branch32(Above, regT1, regT2);
+        store8(regT2, Address(regT0, CallLinkInfo::offsetOfMaxArgumentCountIncludingThisForVarargs()));
+        notBiggest.link(this);
+
+        // Initialize 'this'.
+        constexpr JSValueRegs thisJSR = jsRegT10;
+        emitGetVirtualRegister(thisValue, thisJSR);
+        storeValue(thisJSR, Address(regT5, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+
+        addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), regT5, stackPointerRegister);
+    } else if constexpr (opcodeID == op_call_varargs_with_spread) {
+        VirtualRegister thisValue = bytecode.m_thisValue;
+        int firstFreeRegister = bytecode.m_firstFree.offset();
+        int argvOffset = bytecode.m_argv.offset();
+        int argc = bytecode.m_argc;
+        const BitVector* bitVector = &m_unlinkedCodeBlock->bitVector(bytecode.m_bitVector);
+
+        {
+            loadGlobalObject(regT3);
+            callOperation(operationSizeFrameForVarargsWithSpread, regT3, argvOffset, argc, TrustedImmPtr(bitVector), -firstFreeRegister);
+            move(TrustedImm32(-firstFreeRegister), regT1);
+            emitSetVarargsFrame(*this, returnValueGPR, false, regT1, regT1);
+        }
+
+        addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), regT1, stackPointerRegister);
+
+        {
+            loadGlobalObject(regT4);
+            callOperation(operationSetupVarargsFrameWithSpread, regT4, regT1, argvOffset, argc, TrustedImmPtr(bitVector), regT0);
             move(returnValueGPR, regT5);
         }
 
@@ -307,6 +359,11 @@ void JIT::emit_op_call_direct_eval(const JSInstruction* currentInstruction)
 void JIT::emit_op_call_varargs(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpCallVarargs>(currentInstruction);
+}
+
+void JIT::emit_op_call_varargs_with_spread(const JSInstruction* currentInstruction)
+{
+    compileOpCall<OpCallVarargsWithSpread>(currentInstruction);
 }
 
 void JIT::emit_op_tail_call_varargs(const JSInstruction* currentInstruction)

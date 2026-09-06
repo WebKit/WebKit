@@ -364,6 +364,7 @@ namespace JSC {
         void emit_op_tail_call(const JSInstruction*);
         void emit_op_call_direct_eval(const JSInstruction*);
         void emit_op_call_varargs(const JSInstruction*);
+        void emit_op_call_varargs_with_spread(const JSInstruction*);
         void emit_op_tail_call_varargs(const JSInstruction*);
         void emit_op_construct_varargs(const JSInstruction*);
         void emit_op_super_construct_varargs(const JSInstruction*);

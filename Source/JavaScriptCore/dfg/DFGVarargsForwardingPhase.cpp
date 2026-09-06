@@ -146,6 +146,13 @@ private:
                 if (m_graph.uses(node, candidate))
                     lastUserIndex = nodeIndex;
                 break;
+
+            case VarargsLengthWithSpread:
+            case LoadVarargsWithSpread:
+                // These do not forward a candidate; any use must escape.
+                if (defaultEscape())
+                    return;
+                break;
                 
             case CallVarargs:
             case ConstructVarargs:

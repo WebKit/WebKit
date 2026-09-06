@@ -43,7 +43,8 @@ async function main() {
     for (let i = 0; i < N; i++)
         assert((await asyncGeneratorTamperDuring(false)) === "0|1,2,3", "warm iteration " + i);
 
-    assert((await asyncGeneratorTamperDuring(true)) === "3|1,2,3", "async-gen tamper-during");
+    var result = (await asyncGeneratorTamperDuring(true));
+    assert(result === "3|1,2,3", "async-gen tamper-during");
 }
 
 main().then(() => { done = true; }, (e) => { error = e; });

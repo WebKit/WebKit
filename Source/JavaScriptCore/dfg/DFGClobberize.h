@@ -833,6 +833,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Construct:
     case DirectConstruct:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case CallForwardVarargs:
     case TailCallVarargsInlinedCaller:
     case TailCallForwardVarargsInlinedCaller:
@@ -1047,7 +1048,21 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         
     case VarargsLength: {
         clobberTop();
-        return;  
+        return;
+    }
+
+    case VarargsLengthWithSpread: {
+        clobberTop();
+        return;
+    }
+
+    case LoadVarargsWithSpread: {
+        clobberTop();
+        LoadVarargsData* data = node->loadVarargsData();
+        write(AbstractHeap(Stack, data->count));
+        for (unsigned i = data->limit; i--;)
+            write(AbstractHeap(Stack, data->start + static_cast<int>(i)));
+        return;
     }
 
     case LoadVarargs: {

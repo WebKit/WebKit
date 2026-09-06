@@ -272,6 +272,8 @@ struct EntrySwitchData {
 
 struct CallVarargsData {
     int firstVarArgOffset;
+    // Only for CallVarargsWithSpread: marks which interleaved arguments are spreads.
+    BitVector* bitVector { nullptr };
 };
 
 struct LoadVarargsData {
@@ -282,6 +284,8 @@ struct LoadVarargsData {
     unsigned offset; // Which array element to start with. Usually this is 0.
     unsigned mandatoryMinimum; // The number of elements on the stack that must be initialized; if the array is too short then the missing elements must get undefined. Does not include "this".
     unsigned limit; // Maximum number of elements to load. Includes "this".
+    // Only for VarargsLengthWithSpread / LoadVarargsWithSpread: marks which operands are spreads.
+    BitVector* bitVector { nullptr };
 };
 
 struct StackAccessData {
@@ -1552,7 +1556,12 @@ public:
 
     BitVector* bitVector()
     {
-        ASSERT(op() == NewArrayWithSpread || op() == PhantomNewArrayWithSpread);
+        ASSERT(op() == NewArrayWithSpread || op() == PhantomNewArrayWithSpread || op() == CallVarargsWithSpread || op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread);
+        // The spread nodes carry their BitVector inside CallVarargsData / LoadVarargsData.
+        if (op() == CallVarargsWithSpread)
+            return m_opInfo.as<CallVarargsData*>()->bitVector;
+        if (op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread)
+            return m_opInfo.as<LoadVarargsData*>()->bitVector;
         return m_opInfo.as<BitVector*>();
     }
 
@@ -1672,6 +1681,7 @@ public:
     {
         switch (op()) {
         case CallVarargs:
+        case CallVarargsWithSpread:
         case CallForwardVarargs:
         case TailCallVarargs:
         case TailCallForwardVarargs:
@@ -1684,16 +1694,28 @@ public:
             return false;
         }
     }
-    
+
     CallVarargsData* callVarargsData()
     {
         ASSERT(hasCallVarargsData());
         return m_opInfo.as<CallVarargsData*>();
     }
+
+    // CallVarargsWithSpread's children are [callee, thisValue, elem0, ...]; bitVector()->get(i) marks
+    // elem i (child 2 + i) as a spread.
+    bool isCallVarargsWithSpread()
+    {
+        return op() == CallVarargsWithSpread;
+    }
+    unsigned numCallVarargsSpreadArguments()
+    {
+        ASSERT(op() == CallVarargsWithSpread);
+        return numChildren() - 2;
+    }
     
     bool hasLoadVarargsData()
     {
-        return op() == LoadVarargs || op() == ForwardVarargs || op() == VarargsLength;
+        return op() == LoadVarargs || op() == ForwardVarargs || op() == VarargsLength || op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread;
     }
     
     LoadVarargsData* loadVarargsData()
@@ -2153,6 +2175,7 @@ public:
         case Construct:
         case DirectConstruct:
         case CallVarargs:
+        case CallVarargsWithSpread:
         case CallDirectEval:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:

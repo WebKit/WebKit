@@ -607,6 +607,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CallLinkInfo::CallType callType;
     bool isVarargs = false;
     bool isForwardVarargs = false;
+    bool isSpreadVarargs = false;
     bool isTail = false;
     bool isEmulatedTail = false;
     bool isDirect = false;
@@ -633,6 +634,11 @@ void SpeculativeJIT::emitCall(Node* node)
     case CallVarargs:
         callType = CallLinkInfo::CallVarargs;
         isVarargs = true;
+        break;
+    case CallVarargsWithSpread:
+        callType = CallLinkInfo::CallVarargs;
+        isVarargs = true;
+        isSpreadVarargs = true;
         break;
     case TailCallVarargs:
         callType = CallLinkInfo::TailCallVarargs;
@@ -719,7 +725,13 @@ void SpeculativeJIT::emitCall(Node* node)
         CallVarargsData* data = node->callVarargsData();
 
         int numUsedStackSlots = m_graph.m_nextMachineLocal;
-        
+
+        // The varargs frame-setup fast paths below branch across code that performs DFG register
+        // allocation (JSValueOperand construction inside loadArgumentsGPR, callOperation). Suppress
+        // register-allocation validation for the whole frame-setup region, matching the direct-call
+        // fast-path emission above.
+        SuppressRegisterAllocationValidation suppressScope(*this);
+
         if (isForwardVarargs) {
             flushRegisters();
             if (node->child3())
@@ -747,6 +759,71 @@ void SpeculativeJIT::emitCall(Node* node)
             callOperation(operationThrowStackOverflowForVarargs, LinkableConstant::globalObject(*this, node));
             abortWithReason(DFGVarargsThrowingPathDidNotThrow);
             done.link(this);
+        } else if (isSpreadVarargs) {
+            unsigned numElems = node->numChildren() - 2;
+            BitVector* bitVector = node->bitVector();
+            VarargsSpreadForwardDescriptor* descriptors = nullptr;
+            bool hasForward = false;
+            EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 2, numElems, descriptors, hasForward);
+
+            // emitCall consumes children explicitly (UseChildrenCalledExplicitly), so the spread
+            // element edges filled above must be use()d here; otherwise they stay live to the end of
+            // the block and trip the RELEASE_ASSERT(!info.alive()) consistency check. Forwarded (phantom)
+            // operands have no value but are still real edges, so they are use()d too (matching the
+            // isForwardVarargs path's use(child3) of a phantom argumentsChild).
+            for (unsigned e = 0; e < numElems; ++e)
+                use(m_graph.varArgChild(node, 2 + e));
+
+            flushRegisters();
+
+            // Fast path for the single-trailing-spread shape f(prefix..., ...c): build the frame inline
+            // with no C calls. Bails to the buffer ops otherwise. Disabled when any operand is a forwarded
+            // rest, whose empty sentinel would defeat the inline butterfly load.
+            bool singleTrailingSpread = !hasForward && numElems && bitVector->get(numElems - 1);
+            for (unsigned e = 0; singleTrailingSpread && e + 1 < numElems; ++e) {
+                if (bitVector->get(e))
+                    singleTrailingSpread = false;
+            }
+            std::optional<Jump> spreadFastDone;
+            if (singleTrailingSpread) {
+                unsigned numPrefix = numElems - 1;
+                GPRReg bufBaseGPR = selectScratchGPR();
+                move(TrustedImmPtr(buffer), bufBaseGPR);
+                GPRReg butterflyGPR = selectScratchGPR(bufBaseGPR);
+                load64(Address(bufBaseGPR, numPrefix * sizeof(EncodedJSValue)), butterflyGPR);
+                GPRReg numUsedGPR = selectScratchGPR(bufBaseGPR, butterflyGPR);
+                move(TrustedImm32(numUsedStackSlots), numUsedGPR);
+                GPRReg resultFrameGPR = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR);
+                GPRReg spreadScratch1 = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR, resultFrameGPR);
+                GPRReg spreadScratch2 = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR, resultFrameGPR, spreadScratch1);
+                JumpList slowSpread;
+                emitInlineVarargsFrameForSpreadButterfly(vm(), *this, butterflyGPR, numUsedGPR, resultFrameGPR, spreadScratch1, spreadScratch2, slowSpread, numPrefix);
+                for (unsigned p = 0; p < numPrefix; ++p) {
+                    load64(Address(bufBaseGPR, p * sizeof(EncodedJSValue)), spreadScratch1);
+                    store64(spreadScratch1, calleeArgumentSlot(1 + p));
+                }
+                spreadFastDone = jump();
+                slowSpread.link(this);
+            }
+
+            if (hasForward)
+                callOperation(operationSizeFrameForVarargsWithSpreadForwardBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numElems), TrustedImmPtr(descriptors), numUsedStackSlots);
+            else
+                callOperation(operationSizeFrameForVarargsWithSpreadBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numElems), numUsedStackSlots);
+
+            GPRReg scratchGPR1 = selectScratchGPR(GPRInfo::returnValueGPR);
+            move(TrustedImm32(numUsedStackSlots), scratchGPR1);
+            emitSetVarargsFrame(*this, GPRInfo::returnValueGPR, false, scratchGPR1, scratchGPR1);
+            addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), scratchGPR1, stackPointerRegister);
+
+            if (hasForward)
+                callOperation(operationSetupVarargsFrameWithSpreadForwardBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR1, TrustedImmPtr(buffer), TrustedImm32(numElems), TrustedImmPtr(descriptors), GPRInfo::returnValueGPR);
+            else
+                callOperation(operationSetupVarargsFrameWithSpreadBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR1, TrustedImmPtr(buffer), TrustedImm32(numElems), GPRInfo::returnValueGPR);
+            addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, stackPointerRegister);
+
+            if (spreadFastDone)
+                spreadFastDone->link(this);
         } else {
             GPRReg argumentsGPR;
             GPRReg scratchGPR1;
@@ -768,31 +845,52 @@ void SpeculativeJIT::emitCall(Node* node)
             };
             
             loadArgumentsGPR(InvalidGPRReg);
-            
+
             DFG_ASSERT(m_graph, node, isFlushed());
-            
+
+            JumpList slowVarargs;
+            std::optional<Jump> fastVarargsDone;
+            // Fast path: build the callee frame inline for a small dense Int32/Contiguous JSArray. The
+            // fast path clobbers argumentsGPR (reused as the butterfly), so the slow path reloads it.
+            if (!data->firstVarArgOffset) {
+                GPRReg fpS1 = selectScratchGPR(argumentsGPR);
+                GPRReg fpS2 = selectScratchGPR(argumentsGPR, fpS1);
+                GPRReg fpS3 = selectScratchGPR(argumentsGPR, fpS1, fpS2);
+                GPRReg fpS4 = selectScratchGPR(argumentsGPR, fpS1, fpS2, fpS3);
+                GPRReg fpS5 = selectScratchGPR(argumentsGPR, fpS1, fpS2, fpS3, fpS4);
+                move(TrustedImm32(numUsedStackSlots), fpS1);
+                emitInlineVarargsFrameForContiguousArray(vm(), *this, argumentsGPR, fpS1 /*numUsed*/, fpS2 /*resultFrame*/, fpS3, fpS4, fpS5, slowVarargs);
+                fastVarargsDone = jump();
+            }
+
+            slowVarargs.link(this);
+            loadArgumentsGPR(InvalidGPRReg); // The fast path clobbers argumentsGPR; reconstruct it.
+
             // Right now, arguments is in argumentsGPR and the register file is flushed.
             callOperation(operationSizeFrameForVarargs, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), argumentsGPR, numUsedStackSlots, data->firstVarArgOffset);
-            
+
             // Now we have the argument count of the callee frame, but we've lost the arguments operand.
             // Reconstruct the arguments operand while preserving the callee frame.
             loadArgumentsGPR(GPRInfo::returnValueGPR);
             move(TrustedImm32(numUsedStackSlots), scratchGPR1);
             emitSetVarargsFrame(*this, GPRInfo::returnValueGPR, false, scratchGPR1, scratchGPR1);
             addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), scratchGPR1, stackPointerRegister);
-            
+
             callOperation(operationSetupVarargsFrame, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR1, argumentsGPR, data->firstVarArgOffset, GPRInfo::returnValueGPR);
             addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, stackPointerRegister);
+
+            if (fastVarargsDone)
+                fastVarargsDone->link(this);
         }
         
         DFG_ASSERT(m_graph, node, isFlushed());
         
         // We don't need the arguments array anymore.
-        if (isVarargs)
+        if (isVarargs && !isSpreadVarargs)
             use(node->child3());
 
         // Now set up the "this" argument.
-        JSValueOperand thisArgument(this, node->child2());
+        JSValueOperand thisArgument(this, m_graph.child(node, 1));
         GPRReg thisArgumentGPR = thisArgument.gpr();
         thisArgument.use();
         
@@ -5904,6 +6002,7 @@ void SpeculativeJIT::compile(Node* node)
     case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
     case CallForwardVarargs:
@@ -5924,8 +6023,18 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case VarargsLengthWithSpread: {
+        compileVarargsLengthWithSpread(node);
+        break;
+    }
+
     case LoadVarargs: {
         compileLoadVarargs(node);
+        break;
+    }
+
+    case LoadVarargsWithSpread: {
+        compileLoadVarargsWithSpread(node);
         break;
     }
         

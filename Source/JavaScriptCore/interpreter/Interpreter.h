@@ -34,6 +34,7 @@
 #include <JavaScriptCore/MacroAssemblerCodeRef.h>
 #include <JavaScriptCore/VMEntryRecord.h>
 #include <span>
+#include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
 #include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
@@ -199,10 +200,15 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
     unsigned sizeOfVarargs(JSGlobalObject*, JSValue arguments, uint32_t firstVarArgOffset);
     static constexpr unsigned maxArguments = 0x100000;
     unsigned sizeFrameForVarargs(JSGlobalObject*, CallFrame*, VM&, JSValue arguments, unsigned numUsedStackSlots, uint32_t firstVarArgOffset);
+    unsigned sizeFrameForVarargsWithSpread(JSGlobalObject*, CallFrame*, VM&, JSValue* values, unsigned argc, const BitVector&, unsigned numUsedStackSlots);
     unsigned sizeFrameForForwardArguments(JSGlobalObject*, CallFrame*, VM&, unsigned numUsedStackSlots);
     void loadVarargs(JSGlobalObject*, JSValue* firstElementDest, JSValue source, uint32_t offset, uint32_t length);
     void setupVarargsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
     void setupVarargsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue arguments, uint32_t firstVarArgOffset, uint32_t length);
+    void setupVarargsFrameWithSpread(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue* values, unsigned argc, const BitVector&, unsigned length);
+    void setupVarargsFrameWithSpreadAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, JSValue* values, unsigned argc, const BitVector&, unsigned length);
+    unsigned sizeFrameForVarargsWithSpreadBuffer(JSGlobalObject*, CallFrame*, VM&, JSValue* buffer, unsigned argc, unsigned numUsedStackSlots);
+    void setupVarargsFrameWithSpreadBuffer(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue* buffer, unsigned argc, unsigned length);
     void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, uint32_t length);
     void setupForwardArgumentsFrameAndSetThis(JSGlobalObject*, CallFrame* execCaller, CallFrame* execCallee, JSValue thisValue, uint32_t length);
 

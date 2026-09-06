@@ -63,6 +63,7 @@
     macro(op_construct) \
     macro(op_super_construct) \
     macro(op_call_varargs) \
+    macro(op_call_varargs_with_spread) \
     macro(op_construct_varargs) \
     macro(op_super_construct_varargs) \
     macro(op_get_by_id) \

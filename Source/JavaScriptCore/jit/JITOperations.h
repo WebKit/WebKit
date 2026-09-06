@@ -38,10 +38,14 @@
 #include <JavaScriptCore/UGPRPair.h>
 #include <wtf/text/UniquedStringImpl.h>
 
+namespace WTF {
+class BitVector;
+}
+
 namespace JSC {
 
 typedef int64_t EncodedJSValue;
-    
+
 class ArrayAllocationProfile;
 class ArrayProfile;
 class UnaryArithProfile;
@@ -380,6 +384,10 @@ JSC_DECLARE_JIT_OPERATION(operationSizeFrameForForwardArguments, size_t, (JSGlob
 JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargs, size_t, (JSGlobalObject*, EncodedJSValue arguments, int32_t numUsedStackSlots, int32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationSetupForwardArgumentsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrame, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue arguments, int32_t firstVarArgOffset, int32_t length));
+JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargsWithSpread, size_t, (JSGlobalObject*, int32_t argvOffset, int32_t argc, const WTF::BitVector*, int32_t numUsedStackSlots));
+JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrameWithSpread, CallFrame*, (JSGlobalObject*, CallFrame*, int32_t argvOffset, int32_t argc, const WTF::BitVector*, int32_t length));
+JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargsWithSpreadBuffer, size_t, (JSGlobalObject*, EncodedJSValue* buffer, int32_t argc, int32_t numUsedStackSlots));
+JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrameWithSpreadBuffer, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue* buffer, int32_t argc, int32_t length));
 
 JSC_DECLARE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex));
 JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));

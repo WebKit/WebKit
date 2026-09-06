@@ -39,6 +39,17 @@ void emitSetVarargsFrame(CCallHelpers&, GPRReg lengthGPR, bool lengthIncludesThi
 // the newly created frame plus the native header. scratchGPR2 may be the same as numUsedSlotsGPR.
 void emitSetupVarargsFrameFastCase(VM&, CCallHelpers&, GPRReg numUsedSlotsGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, InlineCallFrame*, unsigned firstVarArgOffset, CCallHelpers::JumpList& slowCase);
 
+// Fast path for a varargs call whose 'arguments' is a small dense Int32/Contiguous JSArray: builds the
+// callee frame inline, leaving the frame pointer in resultFrameGPR (the caller stores 'this'). Bails to
+// slowCase otherwise. arrayGPR is clobbered (reused as the butterfly). numPrefix reserves leading slots
+// for a literal prefix (for op_call_varargs_with_spread's single-trailing-spread fast path).
+void emitInlineVarargsFrameForContiguousArray(VM&, CCallHelpers&, GPRReg arrayGPR, GPRReg numUsedSlotsGPR, GPRReg resultFrameGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, GPRReg scratchGPR3, CCallHelpers::JumpList& slowCase, unsigned numPrefix = 0);
+
+// Fast path for op_call_varargs_with_spread's single-trailing-spread shape f(prefix..., ...spread):
+// builds the callee frame inline from the spread butterfly after numPrefix reserved slots. Bails to
+// slowCase for too-long/stack-overflow. spreadButterflyGPR is preserved.
+void emitInlineVarargsFrameForSpreadButterfly(VM&, CCallHelpers&, GPRReg spreadButterflyGPR, GPRReg numUsedSlotsGPR, GPRReg resultFrameGPR, GPRReg scratchGPR1, GPRReg scratchGPR2, CCallHelpers::JumpList& slowCase, unsigned numPrefix);
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

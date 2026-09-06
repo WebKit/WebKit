@@ -487,6 +487,7 @@ private:
     Terminality handleCall(const JSInstruction* pc, NodeType op, CallMode, BytecodeIndex osrExitIndex, Node* newTarget);
     template<typename CallOp>
     Terminality handleVarargsCall(const JSInstruction* pc, NodeType op, CallMode);
+    Terminality handleCallVarargsWithSpread(const JSInstruction* pc);
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
@@ -494,7 +495,9 @@ private:
     bool handleRecursiveTailCall(Node* callTargetNode, CallVariant, int registerOffset, int argumentCountIncludingThis, const ChecksFunctor& emitFunctionCheckIfNeeded);
     std::tuple<unsigned, InlineAttribute> inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleVarargsInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind);
+    // emitLoadArguments loads the arguments into the inlined frame (only invoked if we actually inline).
+    template<typename EmitLoadArgumentsFunctor>
+    bool handleVarargsInlining(Node* callTargetNode, Operand result, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, unsigned argumentsOffset, NodeType callOp, InlineCallFrame::Kind, const EmitLoadArgumentsFunctor& emitLoadArguments);
     unsigned getInliningBalance(const CallLinkStatus&, CodeSpecializationKind);
     enum class CallOptimizationResult { OptimizedToJump, Inlined, InlinedTerminal, DidNothing };
     CallOptimizationResult handleCallVariant(Node* callTargetNode, Operand result, CallVariant, int registerOffset, VirtualRegister thisArgument, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction, Node* newTarget, unsigned& inliningBalance, BasicBlock* continuationBlock, bool needsToCheckCallee);
@@ -1836,9 +1839,15 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const JSInstructio
         addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
 
         if (handleVarargsInlining(callTarget, bytecode.m_dst,
-            callLinkStatus, firstFreeReg, bytecode.m_thisValue, bytecode.m_arguments,
+            callLinkStatus, firstFreeReg, bytecode.m_thisValue,
             firstVarArgOffset, op,
-            InlineCallFrame::varargsKindFor(callMode))) {
+            InlineCallFrame::varargsKindFor(callMode),
+            [&] (LoadVarargsData* data, Operand argCountTmp) {
+                Node* arguments = get(bytecode.m_arguments);
+                setDirect(argCountTmp, addToGraph(VarargsLength, OpInfo(data), arguments));
+                progressToNextCheckpoint();
+                addToGraph(LoadVarargs, OpInfo(data), getLocalOrTmp(argCountTmp), arguments);
+            })) {
             if (m_graph.compilation()) [[unlikely]]
                 m_graph.compilation()->noticeInlinedCall();
             return NonTerminal;
@@ -1862,6 +1871,61 @@ ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const JSInstructio
     }
 
     Node* call = addToGraph(op, OpInfo(data), OpInfo(prediction), callTarget, thisChild, argumentsChild);
+    if (bytecode.m_dst.isValid())
+        set(bytecode.m_dst, call);
+    return NonTerminal;
+}
+
+ByteCodeParser::Terminality ByteCodeParser::handleCallVarargsWithSpread(const JSInstruction* pc)
+{
+    auto bytecode = pc->as<OpCallVarargsWithSpread>();
+
+    SpeculatedType prediction = getPrediction();
+    Node* callTarget = get(bytecode.m_callee);
+    Node* thisArg = get(bytecode.m_thisValue);
+
+    CallLinkStatus callLinkStatus = CallLinkStatus::computeFor(
+        m_inlineStackTop->m_profiledBlock, currentCodeOrigin(),
+        m_inlineStackTop->m_baselineMap, m_icContextStack);
+    refineStatically(callLinkStatus, callTarget);
+
+    const BitVector& bitVector = m_inlineStackTop->m_profiledBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
+    int startOperand = bytecode.m_argv.offset();
+    int numOperands = bytecode.m_argc;
+
+    if (callLinkStatus.canOptimize()) {
+        addToGraph(FilterCallLinkStatus, OpInfo(m_graph.m_plan.recordedStatuses().addCallLinkStatus(currentCodeOrigin(), callLinkStatus)), callTarget);
+        if (handleVarargsInlining(callTarget, bytecode.m_dst, callLinkStatus,
+            bytecode.m_firstFree.offset(), bytecode.m_thisValue, 0 /* argumentsOffset */, CallVarargs,
+            InlineCallFrame::varargsKindFor(CallMode::Regular),
+            [&] (LoadVarargsData* data, Operand argCountTmp) {
+                data->bitVector = m_graph.m_bitVectors.add(bitVector);
+                for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
+                    addVarArgChild(get(VirtualRegister(operandIdx)));
+                setDirect(argCountTmp, addToGraph(Node::VarArg, VarargsLengthWithSpread, OpInfo(data)));
+                progressToNextCheckpoint();
+
+                addVarArgChild(getLocalOrTmp(argCountTmp));
+                for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
+                    addVarArgChild(get(VirtualRegister(operandIdx)));
+                addToGraph(Node::VarArg, LoadVarargsWithSpread, OpInfo(data));
+            })) {
+            if (m_graph.compilation()) [[unlikely]]
+                m_graph.compilation()->noticeInlinedCall();
+            return NonTerminal;
+        }
+    }
+
+    addVarArgChild(Edge(callTarget));
+    addVarArgChild(Edge(thisArg));
+    for (int operandIdx = startOperand; operandIdx > startOperand - numOperands; --operandIdx)
+        addVarArgChild(get(VirtualRegister(operandIdx)));
+
+    CallVarargsData* data = m_graph.m_callVarargsData.add();
+    data->firstVarArgOffset = 0;
+    data->bitVector = m_graph.m_bitVectors.add(bitVector);
+
+    Node* call = addToGraph(Node::VarArg, CallVarargsWithSpread, OpInfo(data), OpInfo(prediction));
     if (bytecode.m_dst.isValid())
         set(bytecode.m_dst, call);
     return NonTerminal;
@@ -2441,10 +2505,11 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
     return CallOptimizationResult::Inlined;
 }
 
+template<typename EmitLoadArgumentsFunctor>
 bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
     const CallLinkStatus& callLinkStatus, int firstFreeReg, VirtualRegister thisArgument,
-    VirtualRegister argumentsArgument, unsigned argumentsOffset,
-    NodeType callOp, InlineCallFrame::Kind kind)
+    unsigned argumentsOffset,
+    NodeType callOp, InlineCallFrame::Kind kind, const EmitLoadArgumentsFunctor& emitLoadArguments)
 {
     VERBOSE_LOG("Handling inlining (Varargs)...\nStack: ", currentCodeOrigin(), "\n");
 
@@ -2528,12 +2593,8 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
                 argumentCount = addToGraph(JSConstant, OpInfo(m_graph.freeze(jsNumber(inlineCallFrame()->argumentCountIncludingThis))));
             addToGraph(ForwardVarargs, OpInfo(data), argumentCount);
         } else {
-            Node* arguments = get(argumentsArgument);
             auto argCountTmp = m_inlineStackTop->remapOperand(Operand::tmp(OpCallVarargs::argCountIncludingThis));
-            setDirect(argCountTmp, addToGraph(VarargsLength, OpInfo(data), arguments));
-            progressToNextCheckpoint();
-
-            addToGraph(LoadVarargs, OpInfo(data), getLocalOrTmp(argCountTmp), arguments);
+            emitLoadArguments(data, argCountTmp);
         }
         
         // LoadVarargs may OSR exit. Hence, we need to keep alive callTargetNode, thisArgument
@@ -10209,6 +10270,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             handleVarargsCall<OpCallVarargs>(currentInstruction, CallVarargs, CallMode::Regular);
             ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleVarargsCall, which may have inlined the callee, trashed m_currentInstruction");
             NEXT_OPCODE(op_call_varargs);
+        }
+
+        case op_call_varargs_with_spread: {
+            handleCallVarargsWithSpread(currentInstruction);
+            ASSERT_WITH_MESSAGE(m_currentInstruction == currentInstruction, "handleCallVarargsWithSpread, which may have inlined the callee, trashed m_currentInstruction");
+            NEXT_OPCODE(op_call_varargs_with_spread);
         }
 
         case op_tail_call_varargs: {

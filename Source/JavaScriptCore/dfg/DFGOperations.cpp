@@ -5621,6 +5621,215 @@ JSC_DEFINE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject* globalObje
     OPERATION_RETURN(scope);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpread, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue* buffer, uint32_t argc))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    CheckedUint32 length = 0;
+    for (uint32_t i = 0; i < argc; ++i) {
+        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(JSValue::decode(buffer[i])))
+            length += array->publicLength();
+        else
+            length += 1U;
+    }
+
+    // On overflow return a value that stays above the varargs limit without wrapping, so the caller's
+    // limit check turns it into a VarargsOverflow exit.
+    if (length.hasOverflowed())
+        OPERATION_RETURN(scope, toUCPUStrictInt32(maxArguments));
+    OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLoadVarargsWithSpread, void, (JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum))
+{
+    VirtualRegister firstElement { firstElementDest };
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(firstElement));
+    for (uint32_t i = 0; i < argc; ++i) {
+        JSValue value = JSValue::decode(buffer[i]);
+        if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
+            unsigned n = array->publicLength();
+            array->copyToArguments(globalObject, dest, 0, n);
+            dest += n;
+        } else
+            *dest++ = value;
+    }
+
+    for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
+        callFrame->r(firstElement + i) = jsUndefined();
+    OPERATION_RETURN(scope);
+}
+
+// Mirrors AssemblyHelpers::argumentsStart: the machine register at which the (contiguous) arguments of the
+// frame described by inlineCallFrame begin. Reading forwarded rest arguments from here is correct for both
+// fixed-argument-count and varargs frames, unlike m_argumentsWithFixup which only covers declared params.
+static VirtualRegister argumentsStartForForwardDescriptor(InlineCallFrame* inlineCallFrame)
+{
+    if (!inlineCallFrame)
+        return VirtualRegister(CallFrame::argumentOffset(0));
+    if (inlineCallFrame->m_argumentsWithFixup.size() <= 1)
+        return virtualRegisterForLocal(0);
+    ValueRecovery recovery = inlineCallFrame->m_argumentsWithFixup[1];
+    RELEASE_ASSERT(recovery.technique() == DisplacedInJSStack);
+    return recovery.virtualRegister();
+}
+
+static ALWAYS_INLINE unsigned forwardedRestLengthForDescriptor(CallFrame* callFrame, const VarargsSpreadForwardDescriptor& descriptor)
+{
+    InlineCallFrame* inlineCallFrame = descriptor.inlineCallFrame;
+    unsigned lengthIncludingThis;
+    if (inlineCallFrame && inlineCallFrame->argumentCountRegister.isValid())
+        lengthIncludingThis = callFrame->r(inlineCallFrame->argumentCountRegister).unboxedInt32();
+    else if (inlineCallFrame)
+        lengthIncludingThis = inlineCallFrame->argumentCountIncludingThis;
+    else
+        lengthIncludingThis = callFrame->argumentCountIncludingThis();
+
+    unsigned length = lengthIncludingThis > 1 ? lengthIncludingThis - 1 : 0;
+    unsigned skip = descriptor.numberOfArgumentsToSkip;
+    return length > skip ? length - skip : 0;
+}
+
+// Copies `count` forwarded rest arguments (past numberOfArgumentsToSkip) from the caller frame into dest. The
+// source values live on the caller frame; the callee varargs frame we write into sits below it, so source and
+// destination never overlap regardless of copy order.
+static ALWAYS_INLINE void copyForwardedRestForDescriptor(CallFrame* callFrame, const VarargsSpreadForwardDescriptor& descriptor, JSValue* dest, unsigned count)
+{
+    VirtualRegister start = argumentsStartForForwardDescriptor(descriptor.inlineCallFrame) + descriptor.numberOfArgumentsToSkip;
+    JSValue* source = std::bit_cast<JSValue*>(&callFrame->r(start));
+    for (unsigned i = 0; i < count; ++i)
+        dest[i] = source[i];
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSizeOfVarargsWithSpreadForward, UCPUStrictInt32, (JSGlobalObject* globalObject, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    CheckedUint32 length = 0;
+    for (uint32_t i = 0; i < argc; ++i) {
+        JSValue value = JSValue::decode(buffer[i]);
+        if (!value)
+            length += forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
+        else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value))
+            length += array->publicLength();
+        else
+            length += 1U;
+    }
+
+    // On overflow return a value that stays above the varargs limit without wrapping, so the caller's
+    // limit check turns it into a VarargsOverflow exit.
+    if (length.hasOverflowed())
+        OPERATION_RETURN(scope, toUCPUStrictInt32(maxArguments));
+    OPERATION_RETURN(scope, toUCPUStrictInt32(length.value()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationLoadVarargsWithSpreadForward, void, (JSGlobalObject* globalObject, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors, uint32_t lengthIncludingThis, uint32_t mandatoryMinimum))
+{
+    VirtualRegister firstElement { firstElementDest };
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(firstElement));
+    for (uint32_t i = 0; i < argc; ++i) {
+        JSValue value = JSValue::decode(buffer[i]);
+        if (!value) {
+            unsigned n = forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
+            copyForwardedRestForDescriptor(callFrame, descriptors[i], dest, n);
+            dest += n;
+        } else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
+            unsigned n = array->publicLength();
+            array->copyToArguments(globalObject, dest, 0, n);
+            dest += n;
+        } else
+            *dest++ = value;
+    }
+
+    for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
+        callFrame->r(firstElement + i) = jsUndefined();
+    OPERATION_RETURN(scope);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSizeFrameForVarargsWithSpreadForwardBuffer, size_t, (JSGlobalObject* globalObject, EncodedJSValue* buffer, int32_t argc, const VarargsSpreadForwardDescriptor* descriptors, int32_t numUsedStackSlots))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    CheckedUint32 checkedLength = 0;
+    for (int32_t i = 0; i < argc; ++i) {
+        JSValue value = JSValue::decode(buffer[i]);
+        if (!value)
+            checkedLength += forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
+        else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value))
+            checkedLength += array->publicLength();
+        else
+            checkedLength += 1U;
+    }
+
+    if (checkedLength.hasOverflowed() || checkedLength > maxArguments) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        OPERATION_RETURN(scope, 0);
+    }
+
+    unsigned length = checkedLength;
+    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
+    if (!vm.ensureJSStackCapacityFor(calleeFrame->registers())) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        OPERATION_RETURN(scope, 0);
+    }
+
+    OPERATION_RETURN(scope, length);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationSetupVarargsFrameWithSpreadForwardBuffer, CallFrame*, (JSGlobalObject* globalObject, CallFrame* newCallFrame, EncodedJSValue* buffer, int32_t argc, const VarargsSpreadForwardDescriptor* descriptors, int32_t length))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    ActiveScratchBufferScope activeScratchBufferScope(ScratchBuffer::fromData(buffer), argc);
+
+    VirtualRegister calleeFrameOffset(newCallFrame - callFrame);
+    JSValue* dest = std::bit_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0)));
+
+    for (int32_t i = 0; i < argc; ++i) {
+        JSValue value = JSValue::decode(buffer[i]);
+        if (!value) {
+            unsigned n = forwardedRestLengthForDescriptor(callFrame, descriptors[i]);
+            copyForwardedRestForDescriptor(callFrame, descriptors[i], dest, n);
+            dest += n;
+        } else if (JSCellButterfly* array = dynamicDowncast<JSCellButterfly>(value)) {
+            unsigned n = array->publicLength();
+            array->copyToArguments(globalObject, dest, 0, n);
+            dest += n;
+        } else
+            *dest++ = value;
+    }
+
+    newCallFrame->setArgumentCountIncludingThis(length + 1);
+    OPERATION_RETURN(scope, newCallFrame);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationFModOnInts, double, (int32_t a, int32_t b))
 {
     return fmod(a, b);

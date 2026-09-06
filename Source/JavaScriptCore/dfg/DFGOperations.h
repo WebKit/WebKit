@@ -430,6 +430,22 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNotifyWrite, void, (VM*, InlineWatch
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowForVarargs, void, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationSizeOfVarargs, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum));
+JSC_DECLARE_JIT_OPERATION(operationSizeOfVarargsWithSpread, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue* buffer, uint32_t argc));
+JSC_DECLARE_JIT_OPERATION(operationLoadVarargsWithSpread, void, (JSGlobalObject*, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, uint32_t length, uint32_t mandatoryMinimum));
+
+// Mixed-mode varargs-with-spread: a value buffer slot holding the empty JSValue is a *forwarded* segment
+// (an eliminated PhantomCreateRest whose arguments are still live on the caller frame); descriptors[i] then
+// describes it. Non-empty slots are materialized array cells (JSCellButterfly) or plain literals, exactly as
+// in the non-forward buffer ops. This lets a single call mix eliminated and materialized spreads.
+struct VarargsSpreadForwardDescriptor {
+    InlineCallFrame* inlineCallFrame;
+    unsigned numberOfArgumentsToSkip;
+};
+
+JSC_DECLARE_JIT_OPERATION(operationSizeOfVarargsWithSpreadForward, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors));
+JSC_DECLARE_JIT_OPERATION(operationLoadVarargsWithSpreadForward, void, (JSGlobalObject*, int32_t firstElementDest, EncodedJSValue* buffer, uint32_t argc, const VarargsSpreadForwardDescriptor* descriptors, uint32_t length, uint32_t mandatoryMinimum));
+JSC_DECLARE_JIT_OPERATION(operationSizeFrameForVarargsWithSpreadForwardBuffer, size_t, (JSGlobalObject*, EncodedJSValue* buffer, int32_t argc, const VarargsSpreadForwardDescriptor* descriptors, int32_t numUsedStackSlots));
+JSC_DECLARE_JIT_OPERATION(operationSetupVarargsFrameWithSpreadForwardBuffer, CallFrame*, (JSGlobalObject*, CallFrame*, EncodedJSValue* buffer, int32_t argc, const VarargsSpreadForwardDescriptor* descriptors, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationThrowDFG, void, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationThrowStaticError, void, (JSGlobalObject*, JSString*, uint32_t));
 

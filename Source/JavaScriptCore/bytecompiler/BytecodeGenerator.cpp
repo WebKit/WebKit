@@ -3505,6 +3505,53 @@ RegisterID* BytecodeGenerator::emitNewArrayWithSpread(RegisterID* dst, ElementNo
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitCallVarargsWithSpread(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, ElementNode* elements, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
+{
+    BitVector bitVector;
+    Vector<RefPtr<RegisterID>, 16> argv;
+    for (ElementNode* node = elements; node; node = node->next()) {
+        bitVector.set(argv.size(), node->value()->isSpreadExpression());
+
+        argv.append(newTemporary());
+        // op_call_varargs_with_spread requires the initial values to be a sequential range of registers.
+        RELEASE_ASSERT(argv.size() == 1 || argv[argv.size() - 1]->index() == argv[argv.size() - 2]->index() - 1);
+    }
+    RELEASE_ASSERT(argv.size());
+
+    {
+        unsigned i = 0;
+        for (ElementNode* node = elements; node; node = node->next()) {
+            if (node->value()->isSpreadExpression()) {
+                auto* spread = static_cast<SpreadExpressionNode*>(node->value());
+                ExpressionNode* expression = spread->expression();
+                RefPtr<RegisterID> tmp = newTemporary();
+                emitNode(tmp.get(), expression);
+
+                emitExpressionInfo(spread->divot(), spread->divotStart(), spread->divotEnd());
+                OpSpread::emit(this, argv[i].get(), tmp.get());
+            } else
+                emitNode(argv[i].get(), node->value());
+            i++;
+        }
+    }
+
+    unsigned bitVectorIndex = m_codeBlock->addBitVector(WTF::move(bitVector));
+
+    // firstFree must be below every argv register so that numUsedStackSlots (= -firstFree) covers the
+    // whole argument block and the callee frame is placed beneath it.
+    RefPtr<RegisterID> firstFreeRegister = newTemporary();
+
+    if (shouldEmitDebugHooks() && debuggableCall == DebuggableCall::Yes)
+        emitDebugHook(WillExecuteExpression, divotStart);
+
+    emitExpressionInfo(divot, divotStart, divotEnd);
+
+    ASSERT(dst != ignoredResult());
+    OpCallVarargsWithSpread::emit(this, dst, func, thisRegister, firstFreeRegister.get(), argv[0].get(), argv.size(), bitVectorIndex, nextValueProfileIndex());
+    ASSERT(m_codeBlock->hasCheckpoints());
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitNewArrayWithSize(RegisterID* dst, RegisterID* length)
 {
     OpNewArrayWithSize::emit(this, dst, length);
@@ -3824,6 +3871,18 @@ RegisterID* BytecodeGenerator::emitCall(RegisterID* dst, RegisterID* func, Expec
                     OpSpread::emit(this, argumentRegister.get(), argumentRegister.get());
 
                     return emitCallVarargs<typename VarArgsOp<CallOp>::type>(dst, func, callArguments.thisRegister(), argumentRegister.get(), newTemporary(), 0, divot, divotStart, divotEnd, debuggableCall);
+                }
+
+                if (VarArgsOp<CallOp>::type::opcodeID == op_call_varargs && elements) {
+                    bool fusable = true;
+                    for (ElementNode* node = elements; node; node = node->next()) {
+                        if (node->elision()) {
+                            fusable = false;
+                            break;
+                        }
+                    }
+                    if (fusable)
+                        return emitCallVarargsWithSpread(dst, func, callArguments.thisRegister(), elements, divot, divotStart, divotEnd, debuggableCall);
                 }
             }
             RefPtr<RegisterID> argumentRegister;

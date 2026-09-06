@@ -58,6 +58,8 @@ class SpeculateDoubleOperand;
 class SpeculateCellOperand;
 class SpeculateBooleanOperand;
 
+struct VarargsSpreadForwardDescriptor;
+
 enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandJSValue};
 
 // === SpeculativeJIT ===
@@ -1538,6 +1540,9 @@ public:
     void compileForwardVarargs(Node*);
     void compileVarargsLength(Node*);
     void compileLoadVarargs(Node*);
+    void compileVarargsLengthWithSpread(Node*);
+    void compileLoadVarargsWithSpread(Node*);
+    EncodedJSValue* fillSpreadArgumentsBuffer(Node*, unsigned base, unsigned numArgs, VarargsSpreadForwardDescriptor*& descriptors, bool& hasForward);
     void compileCreateActivation(Node*);
     void compileCreateDirectArguments(Node*);
     void compileGetFromArguments(Node*);
