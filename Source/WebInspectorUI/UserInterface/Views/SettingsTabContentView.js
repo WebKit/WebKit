@@ -408,6 +408,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         
         let consoleGroup = experimentalSettingsView.addGroup(WI.UIString("Console:"));
         consoleGroup.addSetting(WI.settings.experimentalGroupSourceMapErrors, WI.UIString("Group source map network errors"));
+        consoleGroup.addSetting(WI.settings.experimentalConsoleVirtualization, WI.UIString("Virtualize the console (detach off-screen messages)", "Virtualize the console @ Experimental Settings", "Label for setting that only keeps on-screen console messages in the DOM for performance."));
         
         experimentalSettingsView.addSeparator();
 
