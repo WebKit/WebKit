@@ -1185,26 +1185,18 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
     if (blobFileAccessEnforcementEnabled() && shouldCheckBlobFileAccess())
         MESSAGE_CHECK(isFilePathAllowed(path));
 
-    RefPtr sandboxExtension = SandboxExtension::create(WTF::move(extensionHandle));
-
-    if (!replacementPath.isEmpty()) {
 #if PLATFORM(COCOA)
-        // For transcoded files, check if the WebProcess has actual sandbox access
-        // via the extension granted for the original file, rather than checking
-        // our internal allowed paths list (which won't include temporary transcoded files).
-        MESSAGE_CHECK(sandboxExtension);
-        // sandbox_check returns 0 on success (has access), non-zero on failure
-        if (sandbox_check(m_connection->remoteProcessID(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH | SANDBOX_CHECK_NO_REPORT), FileSystem::fileSystemRepresentation(replacementPath).data())) {
-            CONNECTION_RELEASE_LOG_ERROR(Sandbox, "registerInternalFileBlobURL: WebProcess does not have sandbox access to replacementPath");
-            MESSAGE_CHECK(false);
-        }
-#else
-        MESSAGE_CHECK(isFilePathAllowed(replacementPath));
-#endif
+    // FIXME: Promote to MESSAGE_CHECK.
+    if (!replacementPath.isEmpty() && !isFilePathAllowed(replacementPath)) {
+        RELEASE_LOG_FAULT(Loading, "NetworkConnectionToWebProcess::registerInternalFileBlobURL replacementPath is not allowed");
+        return;
     }
+#else
+    MESSAGE_CHECK(replacementPath.isEmpty() || isFilePathAllowed(replacementPath));
+#endif
 
     m_blobURLs.add({ url, std::nullopt });
-    session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, WTF::move(sandboxExtension)), contentType);
+    session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTF::move(extensionHandle))), contentType);
 }
 
 void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)

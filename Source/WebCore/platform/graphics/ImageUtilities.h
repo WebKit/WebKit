@@ -49,6 +49,9 @@ WEBCORE_EXPORT Vector<String> findImagesForTranscoding(const Vector<String>& pat
 // happens while transcoding, a null string will be added to the returned list.
 WEBCORE_EXPORT Vector<String> transcodeImages(const Vector<String>& paths, const String& destinationUTI, const String& destinationExtension);
 
+// Same as transcodeImages, but performs the work on a background queue and invokes the completion handler on the main thread with the transcoded paths.
+WEBCORE_EXPORT void transcodeImagesInBackgroundQueue(Vector<String>&& paths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
+
 enum class ImageDecodingError : uint8_t {
     Internal,
     BadData,

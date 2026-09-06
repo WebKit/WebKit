@@ -31,6 +31,7 @@
 #include "BarcodeFormatInterface.h"
 #include "FaceDetectorInterface.h"
 #include "FaceDetectorOptionsInterface.h"
+#include "ImageUtilities.h"
 #include "PointerLockController.h"
 #include "ScrollableArea.h"
 #include "ScrollbarsController.h"
@@ -47,6 +48,18 @@ namespace WebCore {
 ChromeClient::ChromeClient() = default;
 
 ChromeClient::~ChromeClient() = default;
+
+void ChromeClient::transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&& completion)
+{
+#if PLATFORM(MAC)
+    transcodeImagesInBackgroundQueue(WTF::move(transcodingPaths), WTF::move(destinationUTI), WTF::move(destinationExtension), WTF::move(completion));
+#else
+    UNUSED_PARAM(transcodingPaths);
+    UNUSED_PARAM(destinationUTI);
+    UNUSED_PARAM(destinationExtension);
+    completion({ });
+#endif
+}
 
 std::unique_ptr<WorkerClient> ChromeClient::createWorkerClient(SerialFunctionDispatcher&)
 {

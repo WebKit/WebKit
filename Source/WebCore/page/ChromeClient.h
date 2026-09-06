@@ -415,6 +415,7 @@ public:
     virtual void updateTextIndicator(RefPtr<TextIndicator>&&) const = 0;
 
     virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
+    WEBCORE_EXPORT virtual void transcodeChosenFiles(Vector<String>&& transcodingPaths, String&& destinationUTI, String&& destinationExtension, CompletionHandler<void(Vector<String>&&)>&&);
     virtual void showShareSheet(ShareDataWithParsedURL&&, CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(ContactsRequestData&&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
 
