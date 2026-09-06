@@ -744,6 +744,7 @@ localizedStrings["Estimated energy impact."] = "Estimated energy impact.";
 localizedStrings["Estimated memory usage of this canvas and its associated graphics resources"] = "Estimated memory usage of this canvas and its associated graphics resources";
 localizedStrings["Eval Code"] = "Eval Code";
 localizedStrings["Evaluate JavaScript"] = "Evaluate JavaScript";
+localizedStrings["Evaluation previews"] = "Evaluation previews";
 localizedStrings["Evaluations"] = "Evaluations";
 localizedStrings["Event"] = "Event";
 localizedStrings["Event Breakpoint\u2026"] = "Event Breakpoint\u2026";
