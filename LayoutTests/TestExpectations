@@ -8233,7 +8233,9 @@ imported/w3c/web-platform-tests/scroll-animations/animation-trigger/timeline-tri
 
 webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/multiple-redirects-TAO.html [ Pass Failure ]
 
-# Compression Dictionary Transport is not fully implemented, so these fail waiting for a dictionary that is never registered.
+# Compression Dictionary Transport only advertises and decodes dictionaries on the GLib ports, so
+# these fail elsewhere waiting for a dictionary-compressed response that is never decoded.
+# platform/glib/TestExpectations unskips them.
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-001.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-002.tentative.https.html [ Skip ]
 webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary/compressed-large-resources-dictionary-hashes.tentative.https.html [ Skip ]

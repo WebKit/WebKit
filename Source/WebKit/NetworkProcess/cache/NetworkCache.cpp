@@ -37,6 +37,7 @@
 #include "NetworkStorageSession.h"
 #include "WebsiteDataType.h"
 #include <WebCore/CacheValidation.h>
+#include <WebCore/ExceptionOr.h>
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LowPowerModeNotifier.h>
@@ -45,6 +46,8 @@
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ThermalMitigationNotifier.h>
+#include <WebCore/URLPattern.h>
+#include <WebCore/URLPatternOptions.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -631,6 +634,76 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
     auto record = cacheEntry->encodeAsStorageRecord();
 
     m_storage->store(record, nullptr);
+}
+
+// https://www.rfc-editor.org/rfc/rfc9842#name-multiple-matching-dictionar
+static bool isBetterCompressionDictionaryMatch(const CompressionDictionaryEntry& candidate, const CompressionDictionaryEntry& best)
+{
+    if (candidate.info().matchDest.isEmpty() != best.info().matchDest.isEmpty())
+        return !candidate.info().matchDest.isEmpty();
+    if (candidate.info().match.length() != best.info().match.length())
+        return candidate.info().match.length() > best.info().match.length();
+    return candidate.timeStamp() > best.timeStamp();
+}
+
+// https://fetch.spec.whatwg.org/#find-the-best-matching-dictionary
+void Cache::retrieveCompressionDictionaryBestMatch(WebCore::ResourceRequest&& request, WebCore::FetchOptions::Destination destination, Function<void(WebCore::ResourceRequest&&, std::optional<CompressionDictionaryMatch>&&)>&& completionHandler)
+{
+    LOG(NetworkCache, "(NetworkProcess) retrieving best compression dictionary for %s", request.url().string().latin1().data());
+
+    auto partition = request.cachePartition();
+    traverseCompressionDictionaryRecords(partition, [request = WTF::move(request), destination, bestMatch = std::unique_ptr<CompressionDictionaryEntry> { }, completionHandler = WTF::move(completionHandler)](const TraversalRecord* traversalRecord) mutable {
+        if (!traversalRecord) {
+            std::optional<CompressionDictionaryMatch> match;
+            if (bestMatch)
+                match = CompressionDictionaryMatch { bestMatch->key(), bestMatch->hash(), bestMatch->info().id };
+            completionHandler(WTF::move(request), WTF::move(match));
+            return;
+        }
+
+        auto entry = CompressionDictionaryEntry::decodeStorageRecord(traversalRecord->record);
+        if (!entry)
+            return;
+
+        // https://www.rfc-editor.org/rfc/rfc9842#name-dictionary-freshness-requir
+        if (entry->info().expirationTime <= WallTime::now())
+            return;
+
+        // https://www.rfc-editor.org/rfc/rfc9842#name-match-dest
+        if (!entry->info().matchDest.isEmpty() && !entry->info().matchDest.contains(destination))
+            return;
+
+        if (bestMatch && !isBetterCompressionDictionaryMatch(*entry, *bestMatch))
+            return;
+
+        auto patternOrException = WebCore::URLPattern::createWithoutRegExpSupport(entry->info().match, String { entry->key().identifier() }, { });
+        if (patternOrException.hasException())
+            return;
+        Ref pattern = patternOrException.releaseReturnValue();
+        if (!pattern->testWithoutRegExp(request.url()))
+            return;
+
+        bestMatch = WTF::move(entry);
+    });
+}
+
+void Cache::retrieveCompressionDictionary(const Key& key, const CompressionDictionaryHash& hash, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+{
+    m_storage->retrieve(key, 1, [hash, completionHandler = WTF::move(completionHandler)](Storage::Record&& record, const Storage::Timings&) mutable {
+        auto entry = record.isNull() ? nullptr : CompressionDictionaryEntry::decodeStorageRecord(record);
+        if (!entry) {
+            completionHandler(nullptr);
+            return false;
+        }
+
+        RefPtr<WebCore::SharedBuffer> buffer;
+        if (entry->hash() == hash) {
+            if (RefPtr entryBuffer = entry->buffer())
+                buffer = entryBuffer->makeContiguous();
+        }
+        completionHandler(WTF::move(buffer));
+        return true;
+    });
 }
 
 std::optional<RecordType> Cache::TraversalRecord::type() const

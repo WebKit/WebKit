@@ -265,6 +265,8 @@ private:
 
     enum class FirstLoad : bool { No, Yes };
     void startNetworkLoad(WebCore::ResourceRequest&&, FirstLoad);
+    bool shouldFetchWithCompressionDictionary(const WebCore::ResourceRequest&) const;
+    void continueStartNetworkLoad(WebCore::ResourceRequest&&, NetworkLoadParameters&&);
     void restartNetworkLoad(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void continueDidReceiveResponse();
     void didReceiveMainResourceResponse(const WebCore::ResourceResponse&);
@@ -413,6 +415,7 @@ private:
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
     bool m_hasReceivedEarlyHints { false };
+    bool m_canUseCompressionDictionary { false };
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;

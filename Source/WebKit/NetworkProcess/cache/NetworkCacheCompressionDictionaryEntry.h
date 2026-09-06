@@ -88,6 +88,12 @@ public:
     Storage::Record encodeAsStorageRecord() const;
     static std::unique_ptr<CompressionDictionaryEntry> decodeStorageRecord(const Storage::Record&);
 
+    const Key& key() const LIFETIME_BOUND { return m_key; }
+    WallTime timeStamp() const { return m_timeStamp; }
+    const Info& info() const LIFETIME_BOUND { return m_info; }
+    const std::array<uint8_t, hashSize>& hash() const LIFETIME_BOUND { return m_hash; }
+    RefPtr<WebCore::FragmentedSharedBuffer> buffer() const;
+
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
 private:
@@ -95,6 +101,7 @@ private:
     WallTime m_timeStamp;
     Info m_info;
     std::array<uint8_t, hashSize> m_hash { };
+    Storage::Record m_sourceStorageRecord { };
     mutable RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
 };
 

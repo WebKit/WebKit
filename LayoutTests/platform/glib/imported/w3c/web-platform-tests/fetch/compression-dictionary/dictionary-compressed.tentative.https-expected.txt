@@ -1,0 +1,7 @@
+
+PASS Decompression using gzip-encoded dictionary works as expected
+PASS Decompression using Brotli-encoded dictionary works as expected
+PASS Decompression using Zstandard-encoded dictionary works as expected
+PASS A dcb dictionary-compressed dictionary can be used as a dictionary for future requests.
+PASS A dcz dictionary-compressed dictionary can be used as a dictionary for future requests.
+

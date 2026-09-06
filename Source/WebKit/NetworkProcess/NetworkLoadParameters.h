@@ -27,6 +27,7 @@
 
 #include "NavigationActionData.h"
 #include "NetworkActivityTracker.h"
+#include "NetworkCacheKey.h"
 #include "PolicyDecision.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/BlobDataFileReference.h>
@@ -72,6 +73,12 @@ struct NetworkLoadParameters {
     // the WebProcess). We should block storage access cookies on this load's network requests without
     // revoking the frame's storage from JS until the navigation load commits.
     bool navigationLosesFrameSpecificStorageAccess { false };
+
+    bool canUseCompressionDictionary { false };
+    NetworkCache::Key compressionDictionaryKey { };
+    std::optional<std::array<uint8_t, 32>> compressionDictionaryHash { };
+    String compressionDictionaryID { };
+    WebCore::FetchOptions::Destination compressionDictionaryDestination { WebCore::FetchOptions::Destination::EmptyString };
 };
 
 } // namespace WebKit

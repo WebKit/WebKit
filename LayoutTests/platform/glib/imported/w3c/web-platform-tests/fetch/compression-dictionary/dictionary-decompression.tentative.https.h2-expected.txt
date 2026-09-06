@@ -1,0 +1,6 @@
+
+PASS Decompression using Brotli with the dictionary works as expected (HTTP/2)
+PASS Decompression using Zstandard with the dictionary works as expected (HTTP/2)
+PASS Decompression using Brotli with the dictionary works as expected (HTTP/2, chunked compressed data)
+PASS Decompression using Zstandard with the dictionary works as expected (HTTP/2, chunked compressed data)
+

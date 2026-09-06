@@ -1,0 +1,18 @@
+
+PASS Simple dictionary registration and unregistration
+PASS Dictionary registration with dictionary ID
+PASS New dictionary registration overrides the existing one
+PASS Dictionary registration does not invalidate cache entry
+PASS Expired dictionary is not used
+PASS Dictionary with invalid match string is not registered
+PASS Dictionary with match string for a different origin is not registered
+PASS Dictionary with unsupported type is not registered
+PASS Dictionary registration with 1024 character dictionary ID
+PASS Dictionary with 1025 character dictionary ID is not registered
+PASS Dictionary registration with unknown extra options succeeds
+PASS Dictionary with malformed structured header is not registered
+PASS Dictionary with max-age=0 is not registered
+PASS Dictionary registration with dictionary ID (valid characters and backslash escaping)
+PASS Dictionary with invalid character in dictionary ID is not registered
+PASS Available-Dictionary header is added when target of redirect matches dictionary
+

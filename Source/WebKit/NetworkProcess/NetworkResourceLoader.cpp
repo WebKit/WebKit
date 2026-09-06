@@ -490,6 +490,65 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
         parameters.blobFileReferences = networkSession->blobRegistry().filesInBlob(originalRequest().url(), parameters.topOrigin ? std::optional { parameters.topOrigin->data() } : std::nullopt);
     }
 
+    m_canUseCompressionDictionary = shouldFetchWithCompressionDictionary(request);
+    parameters.canUseCompressionDictionary = m_canUseCompressionDictionary;
+    parameters.compressionDictionaryDestination = m_parameters.options.destination;
+    if (parameters.canUseCompressionDictionary) {
+        // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+        // 8. Let bestMatch be the result of finding the best matching dictionary in
+        //    compressionDictionaryCache for request.
+        auto destination = parameters.compressionDictionaryDestination;
+        protect(m_cache)->retrieveCompressionDictionaryBestMatch(WTF::move(request), destination, [weakThis = WeakPtr { *this }, parameters = WTF::move(parameters)](ResourceRequest&& request, auto&& match) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            // 9. If bestMatch is null, then return the result of running fallback.
+            // 10-12. Available-Dictionary, Dictionary-ID and the Accept-Encoding update are left to
+            //        the network layer, which has to redo this for a redirect anyway.
+            if (match) {
+                parameters.compressionDictionaryKey = match->key;
+                parameters.compressionDictionaryHash = match->hash;
+                parameters.compressionDictionaryID = match->id;
+            }
+            protectedThis->continueStartNetworkLoad(WTF::move(request), WTF::move(parameters));
+        });
+        return;
+    }
+
+    continueStartNetworkLoad(WTF::move(request), WTF::move(parameters));
+}
+
+// https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+bool NetworkResourceLoader::shouldFetchWithCompressionDictionary(const ResourceRequest& request) const
+{
+    if (!connectionToWebProcess().compressionDictionaryEnabled() || !canUseCache(request))
+        return false;
+
+    // 3. If request's mode is "no-cors", then return the result of running fallback.
+    // Same-origin is allowed through: what this step guards against is an opaque response, and the
+    // WPT tests require a no-cors subresource of its own origin to be served a dictionary.
+    if (m_parameters.options.mode == FetchOptions::Mode::NoCors && !(m_networkLoadChecker && m_networkLoadChecker->isSameOriginRequest()))
+        return false;
+
+    // 4. If the user agent is configured to block cookies for request, then return the result of
+    //    running fallback.
+    CheckedPtr networkStorageSession = connectionToWebProcess().networkProcess().storageSession(sessionID());
+    if (!networkStorageSession || networkStorageSession->shouldBlockCookies(originalRequest().firstPartyForCookies(), request.url(), frameID(), webPageProxyID(), ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No))
+        return false;
+
+    // 5. If request's client is not a secure context, then return the result of running fallback.
+    return shouldTreatAsPotentiallyTrustworthy(request.url());
+}
+
+void NetworkResourceLoader::continueStartNetworkLoad(ResourceRequest&& request, NetworkLoadParameters&& parameters)
+{
+    CheckedPtr networkSession = protect(connectionToWebProcess())->networkSession();
+    if (!networkSession) {
+        didFailLoading(internalError(request.url()));
+        return;
+    }
+
     if (shouldSendResourceLoadMessages()) {
         std::optional<IPC::FormDataReference> httpBody;
         if (RefPtr formData = request.httpBody()) {
@@ -991,6 +1050,18 @@ static const String* stringBareItem(const RFC8941::ItemOrInnerList& value)
     return bareItem ? std::get_if<String>(bareItem) : nullptr;
 }
 
+// https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch step 14-15.
+static bool isCompressionDictionaryEncoded(const ResourceResponse& response)
+{
+    auto contentEncoding = response.httpHeaderField(HTTPHeaderName::ContentEncoding);
+    for (auto coding : StringView { contentEncoding }.split(',')) {
+        auto trimmedCoding = coding.trim(isASCIIWhitespace<char16_t>);
+        if (equalLettersIgnoringASCIICase(trimmedCoding, "dcb"_s) || equalLettersIgnoringASCIICase(trimmedCoding, "dcz"_s))
+            return true;
+    }
+    return false;
+}
+
 // https://fetch.spec.whatwg.org/#http-network-or-cache-fetch step 19, and
 // https://www.rfc-editor.org/rfc/rfc9842#name-use-as-dictionary.
 void NetworkResourceLoader::processUseAsDictionaryHeader(const ResourceResponse& response)
@@ -1036,8 +1107,8 @@ void NetworkResourceLoader::processUseAsDictionaryHeader(const ResourceResponse&
                 if (auto destination = NetworkCache::parseFetchDestination(*destinationString))
                     info.matchDest.add(*destination);
             }
-            // Unsupported destinations are dropped, but at least one must remain.
-            if (info.matchDest.isEmpty())
+            // An empty list matches every destination; a list of only unsupported ones matches none.
+            if (!matchDest->isEmpty() && info.matchDest.isEmpty())
                 return;
         }
     }
@@ -1344,6 +1415,28 @@ void NetworkResourceLoader::continueDidReceiveResponseAfterLocalNetworkAccessChe
                 protectedThis->didFailLoading(error);
         });
         return completionHandler(PolicyAction::Ignore);
+    }
+
+    // https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+    // 15. If codings is null or does not contain `dcb` or `dcz`, then return response.
+    // A load that was never eligible handed the network layer no dictionary, so it decoded nothing
+    // and the codings have to be left alone for the consumer to reject.
+    if (m_canUseCompressionDictionary && isCompressionDictionaryEncoded(m_response)) {
+        // 16. If request's response tainting is "opaque", then return a network error.
+        if (m_response.tainting() == ResourceResponse::Tainting::Opaque) {
+            LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Blocking load because a compression dictionary was used with an opaque response tainting.");
+            RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, url = m_response.url()] {
+                if (protectedThis->m_networkLoad)
+                    protectedThis->didFailLoading(ResourceError { errorDomainWebKitInternal, 0, url, "Load was blocked because a compression dictionary was used with an opaque response tainting."_s, ResourceError::Type::AccessControl });
+            });
+            return completionHandler(PolicyAction::Ignore);
+        }
+
+        // 17-21. The network library was handed the hash and decodes the body itself, so there is no
+        //        Available-Dictionary header on the request here to validate against.
+
+        // 22. Delete `Content-Encoding` from response's header list.
+        m_response.removeHTTPHeaderField(HTTPHeaderName::ContentEncoding);
     }
 
     processClearSiteDataHeader(m_response, [this, protectedThis = Ref { *this }, privateRelayed, resourceLoadInfo = WTF::move(resourceLoadInfo), completionHandler = WTF::move(completionHandler)] () mutable {
