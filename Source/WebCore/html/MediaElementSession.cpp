@@ -199,10 +199,6 @@ MediaElementSession::MediaElementSession(HTMLMediaElement& element)
     , m_mainContentCheckTimer(*this, &MediaElementSession::mainContentCheckTimerFired)
     , m_clientDataBufferingTimer(*this, &MediaElementSession::clientDataBufferingTimerFired)
 {
-#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
-    if (RefPtr manager = sessionManager())
-        manager->ensureMediaDeviceRouteControllerMonitoring();
-#endif
 }
 
 MediaElementSession::~MediaElementSession()

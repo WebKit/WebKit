@@ -2061,6 +2061,11 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
     // The resource fetch algorithm
     m_networkState = NETWORK_LOADING;
 
+#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    if (RefPtr manager = sessionManager())
+        manager->ensureMediaDeviceRouteControllerMonitoring();
+#endif
+
     // Log that we started loading a media element.
     protect(page->diagnosticLoggingClient())->logDiagnosticMessage(isVideo() ? DiagnosticLoggingKeys::videoKey() : DiagnosticLoggingKeys::audioKey(), DiagnosticLoggingKeys::loadingKey(), ShouldSample::No);
 

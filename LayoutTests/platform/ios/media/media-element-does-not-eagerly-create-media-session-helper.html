@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true UseGPUProcessForMediaEnabled=true ] -->
+<!DOCTYPE html>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../media/media-file.js"></script>
+<body>
+<script>
+
+// RemoteMediaSessionHelper sends EnsureMediaSessionHelper at most once per web process, so this
+// counter is cumulative across both phases below rather than reset between them.
+let ensureMediaSessionHelperCount = 0;
+
+if (window.IPC) {
+    IPC.addOutgoingMessageListener("GPU", message => {
+        if (message.description === "GPUConnectionToWebProcess_EnsureMediaSessionHelper")
+            ensureMediaSessionHelperCount++;
+    });
+}
+
+async function settle()
+{
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => setTimeout(resolve, 0));
+}
+
+promise_test(async () => {
+    assert_true(!!window.IPC, "this test requires IPCTestingAPIEnabled");
+
+    const video = document.createElement("video");
+    document.body.appendChild(video);
+    await settle();
+
+    assert_equals(ensureMediaSessionHelperCount, 0,
+        "a media element that never loads a resource should not create the GPU process MediaSessionHelper");
+
+    const loadStarted = new Promise(resolve => video.addEventListener("loadstart", resolve, { once: true }));
+    video.src = findMediaFile("video", "../../../media/content/test");
+    await loadStarted;
+    await settle();
+
+    assert_equals(ensureMediaSessionHelperCount, 1,
+        "loading a media resource should create the GPU process MediaSessionHelper");
+}, "A media element creates the GPU process MediaSessionHelper when it loads a resource, not when it is created");
+
+</script>
+</body>

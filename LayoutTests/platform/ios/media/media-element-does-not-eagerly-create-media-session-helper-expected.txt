@@ -1,0 +1,3 @@
+
+PASS A media element creates the GPU process MediaSessionHelper when it loads a resource, not when it is created
+
