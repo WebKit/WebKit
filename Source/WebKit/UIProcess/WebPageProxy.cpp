@@ -11803,10 +11803,19 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
 #endif
 
 #if HAVE(DIGITAL_CREDENTIALS_UI)
+            RefPtr requestingFrame = frameID ? WebFrameProxy::webFrame(*frameID) : nullptr;
+            // The frame can be gone due to a site isolation race, or frameID absent for a detached
+            // document, so deny rather than treat it as a bad message.
+            if (!requestingFrame) {
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "The digital credential request came from a frame that is no longer present."_s }));
+                return;
+            }
+
+            Ref requestingProcess = WebProcessProxy::fromConnection(connection);
             MESSAGE_CHECK_COMPLETION_BASE(
-                requestData.topOrigin.securityOrigin()->isSameOriginDomain(SecurityOrigin::create(protect(mainFrame())->url())),
+                requestingFrame->page() == this && &requestingFrame->process() == requestingProcess.ptr(),
                 connection,
-                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request is not same-origin with top-level navigable."_s }))
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::SecurityError, "Digital credentials request did not come from a frame hosted in the requesting process."_s }))
             );
 
             auto lastActivationTimestamp = internals().lastActivationTimestamp;
@@ -11817,8 +11826,24 @@ void WebPageProxy::showDigitalCredentialsChooser(IPC::Connection& connection, st
             }
             internals().lastConsumedDigitalCredentialsActivationTimestamp = lastActivationTimestamp;
 
+            RefPtr mainFrame = this->mainFrame();
+            if (!mainFrame) {
+                completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "The digital credential request has no main frame."_s }));
+                return;
+            }
+
+            Ref documentOrigin = requestingFrame->securityOrigin();
+            Ref topOrigin = mainFrame->securityOrigin();
+
+            // Present the request to the wallet with the trusted UI-process origins, not the ones
+            // supplied by the (untrusted) web content, so the wallet UI cannot be made to display a
+            // spoofed origin. FIXME: <rdar://182265208>
+            auto trustedRequestData = requestData;
+            trustedRequestData.topOrigin = topOrigin->data();
+            trustedRequestData.documentOrigin = documentOrigin->data();
+
             LOG(DigitalCredentials, "WebPageProxy::showDigitalCredentialsChooser() - UIProcess: passing to pageClient to present chooser UI");
-            protect(pageClient())->showDigitalCredentialsChooser(requestData, WTF::move(completionHandler));
+            protect(pageClient())->showDigitalCredentialsChooser(trustedRequestData, WTF::move(completionHandler));
 #else
             completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials UI is not supported."_s }));
 #endif
