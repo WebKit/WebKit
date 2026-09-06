@@ -941,6 +941,7 @@ private:
     static Seconds announcementTranslationTimeout();
 
     void liveRegionChangedNotificationPostTimerFired();
+    void processChangedLiveRegions();
 
     void performCacheUpdateTimerFired() { performDeferredCacheUpdate(ForceLayout::No); }
 

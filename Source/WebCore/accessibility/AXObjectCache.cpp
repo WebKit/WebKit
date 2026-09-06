@@ -3617,22 +3617,26 @@ void AXObjectCache::postLiveRegionChangeNotification(AccessibilityObject& object
 void AXObjectCache::liveRegionChangedNotificationPostTimerFired()
 {
     m_liveRegionChangedPostTimer.stop();
+    processChangedLiveRegions();
+}
 
+void AXObjectCache::processChangedLiveRegions()
+{
     if (m_changedLiveRegions.isEmpty())
         return;
 
+    auto changedLiveRegions = std::exchange(m_changedLiveRegions, { });
+
 #if PLATFORM(COCOA)
     if (m_liveRegionManager) {
-        for (auto& object : m_changedLiveRegions)
+        for (auto& object : changedLiveRegions)
             m_liveRegionManager->handleLiveRegionChange(object.get());
-        m_changedLiveRegions.clear();
         return;
     }
 #endif
 
-    for (auto& object : m_changedLiveRegions)
+    for (auto& object : changedLiveRegions)
         postNotification(object.ptr(), protect(object->document()).get(), AXNotification::LiveRegionChanged);
-    m_changedLiveRegions.clear();
 }
 
 void AXObjectCache::onScrollbarUpdate(ScrollView& view)
@@ -5955,6 +5959,13 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 #endif
 
     platformPerformDeferredCacheUpdate();
+
+#if PLATFORM(COCOA)
+    if (m_liveRegionManager && !m_changedLiveRegions.isEmpty()) {
+        m_liveRegionChangedPostTimer.stop();
+        processChangedLiveRegions();
+    }
+#endif
 }
 
 void AXObjectCache::handleDeferredPopoverToggle(AccessibilityObject& axPopover)
