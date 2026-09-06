@@ -84,11 +84,9 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
     addChildForRepresentedObject(representedObject)
     {
         var settings = this._settingsForRepresentedObject(representedObject);
-        console.assert(settings);
-        if (!settings) {
-            console.error("No settings for represented object", representedObject);
+        console.assert(settings, representedObject);
+        if (!settings)
             return;
-        }
 
         if (!this.treeOutline) {
             // Just mark as needing to update to avoid doing work that might not be needed.
@@ -275,7 +273,7 @@ WI.FolderizedTreeElement = class FolderizedTreeElement extends WI.GeneralTreeEle
 
         let settings = this._settingsForRepresentedObject(representedObject);
         if (!settings) {
-            console.error("Unknown representedObject", representedObject);
+            console.assert(false, representedObject);
             return this;
         }
 

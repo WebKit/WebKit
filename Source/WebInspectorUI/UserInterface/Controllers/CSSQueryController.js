@@ -27,7 +27,7 @@ WI.CSSQueryController = class CSSQueryController extends WI.QueryController
 {
     constructor(values)
     {
-        console.assert(Array.isArray(values), values);
+        console.assert(!values || Array.isArray(values), values);
 
         super();
 

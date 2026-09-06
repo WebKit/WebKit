@@ -73,7 +73,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
                 pageSize += size;
                 break;
             default:
-                console.warn("Unhandled Memory.CategoryDataType: " + type);
+                console.assert(false, type);
                 break;
             }
         }

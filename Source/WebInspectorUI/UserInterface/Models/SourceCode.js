@@ -58,7 +58,7 @@ WI.SourceCode = class SourceCode extends WI.Object
     get displayName()
     {
         // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
+        console.assert(false, this);
         return "";
     }
 
@@ -249,14 +249,14 @@ WI.SourceCode = class SourceCode extends WI.Object
     requestContentFromBackend()
     {
         // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
+        console.assert(false, this);
         return Promise.reject(new Error("Needs to be implemented by a subclass."));
     }
 
     get mimeType()
     {
         // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
+        console.assert(false, this);
         return null;
     }
 

@@ -45,7 +45,7 @@ WI.DebuggableType.fromString = function(type) {
         return WI.DebuggableType.WebPage;
     }
 
-    console.assert(false, "Unknown debuggable type", type);
+    console.assert(false, type);
     return null;
 };
 

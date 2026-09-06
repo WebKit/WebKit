@@ -249,7 +249,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
             return;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, reason);
     }
 
     messageRepeatCountUpdated(target, count, timestamp)

@@ -3,13 +3,6 @@ Test that CanvasManager is able to record actions made to offscreen 2D canvas co
 
 == Running test suite: Canvas.recording2D
 -- Running test case: Canvas.recording2D.multipleFrames.OffscreenCanvas2D
-WARN: Recording Warning: "createPattern" threw an error
-WARN: Recording Warning: "createPattern" threw an error
-WARN: Recording Warning: "createPattern" threw an error
-WARN: Recording Warning: "createPattern" threw an error
-WARN: Recording Warning: "drawImage" threw an error
-WARN: Recording Warning: "drawImage" threw an error
-WARN: Recording Warning: "drawImage" threw an error
 initialState:
   attributes:
     width: 2

@@ -182,10 +182,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         message = WI.UIString("HAR Import Error: %s").format(message);
 
-        if (window.InspectorTest) {
-            console.error(message);
+        if (window.InspectorTest)
             return;
-        }
 
         let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
         consoleMessage.shouldRevealConsole = true;
@@ -489,10 +487,10 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     removeLocalResourceOverride(localResourceOverride)
     {
-        console.assert(localResourceOverride instanceof WI.LocalResourceOverride);
+        console.assert(localResourceOverride instanceof WI.LocalResourceOverride, localResourceOverride);
 
         if (!this._localResourceOverrides.remove(localResourceOverride)) {
-            console.assert(false, "Attempted to remove a local resource override that was not known.");
+            console.assert(false, localResourceOverride);
             return;
         }
 
@@ -562,7 +560,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return false;
         case WI.Resource.Type.WebSocket:
             // Non-HTTP traffic.
-            console.assert(false, "Scheme check above should have been sufficient.");
+            console.assert(false, resource);
             return false;
         }
 
@@ -1385,7 +1383,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._waitingForMainFrameResourceTreePayload = false;
 
         if (error) {
-            console.error(JSON.stringify(error));
+            WI.reportInternalError(error);
             return;
         }
 
@@ -1415,7 +1413,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._waitingForMainFrameResourceTreePayload = false;
 
         if (error) {
-            console.error(JSON.stringify(error));
+            WI.reportInternalError(error);
             return;
         }
 
@@ -1668,10 +1666,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         this.dispatchEventToListeners(WI.NetworkManager.Event.SourceMapParseFailed, {sourceMapURL});
 
-        if (window.InspectorTest) {
-            console.warn(message);
+        if (window.InspectorTest)
             return;
-        }
 
         let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
         consoleMessage.shouldRevealConsole = true;

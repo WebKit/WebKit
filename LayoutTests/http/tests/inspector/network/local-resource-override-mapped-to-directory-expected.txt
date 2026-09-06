@@ -26,7 +26,6 @@ Resource Content: 'PASS: Should load from file.'
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
 Linking to file...
 Triggering load...
-WARN: Local Override: could not load “DOES NOT EXIST”
 PASS: Resource Loaded.
 Resource status code: 200
 Resource status text: OK
@@ -38,7 +37,6 @@ Resource Content: 'default override.txt content
 Creating Local Resource Override for: http://127.0.0.1:8000/inspector/network/resources/(.+)
 Linking to file...
 Triggering load...
-WARN: Local Override: could not load “DOES NOT EXIST”
 PASS: Resource Loaded.
 Resource status code: 200
 Resource status text: OK

@@ -175,7 +175,7 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             return WI.UIString("Dark", "Dark @ User Preferences Overrides", "Label for the dark color scheme preference.");
         }
 
-        console.assert(false, "Unknown user preference", preferenceValue);
+        console.assert(false, preferenceValue);
         return "";
     }
 

@@ -203,7 +203,7 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
             return this._instancesPathComponent;
         if (contentView === this._objectGraphContentView)
             return this._objectGraphPathComponent;
-        console.error("Unknown contentView.");
+        console.assert(false, contentView);
         return null;
     }
 
@@ -216,7 +216,7 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
             return WI.HeapSnapshotClusterContentView.InstancesIdentifier;
         if (contentView === this._objectGraphContentView)
             return WI.HeapSnapshotClusterContentView.ObjectGraphIdentifier;
-        console.error("Unknown contentView.");
+        console.assert(false, contentView);
         return null;
     }
 

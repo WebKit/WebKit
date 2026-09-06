@@ -110,6 +110,6 @@ WI.FormatterWorkerProxy = class FormatterWorkerProxy
             return;
         }
 
-        console.error("Unexpected FormatterWorker message", data);
+        console.assert(false, data);
     }
 };

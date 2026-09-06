@@ -410,7 +410,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                     return;
                 }
 
-                console.assert();
+                console.assert(false, this._message);
                 break;
             }
             }
@@ -709,10 +709,8 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             type = "object";
         else if (parameter instanceof WI.RemoteObject)
             type = parameter.subtype || parameter.type;
-        else {
-            console.assert(false, "no longer reachable");
+        else
             type = typeof parameter;
-        }
 
         var formatters = {
             "object": this._formatParameterAsObject,

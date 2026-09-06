@@ -353,7 +353,7 @@ WI.Popover = class Popover extends WI.Object
         case WI.RectEdge.MAX_Y: // Displayed below the target, arrow points up.
             return "arrow-up";
         }
-        console.error("Unknown edge.");
+        console.assert(false, edge);
         return "arrow-up";
     }
 

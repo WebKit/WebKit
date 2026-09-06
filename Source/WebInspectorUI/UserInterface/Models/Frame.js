@@ -62,7 +62,7 @@ WI.Frame = class Frame extends WI.Object
 
     initialize(name, securityOrigin, loaderIdentifier, mainResource)
     {
-        console.assert(loaderIdentifier);
+        console.assert(!loaderIdentifier || typeof loaderIdentifier === "string", loaderIdentifier);
         console.assert(mainResource);
 
         var oldName = this._name;
@@ -294,14 +294,14 @@ WI.Frame = class Frame extends WI.Object
 
     markDOMContentReadyEvent(timestamp)
     {
-        console.assert(isNaN(this._domContentReadyEventTimestamp));
+        console.assert(isNaN(this._domContentReadyEventTimestamp), this, this._domContentReadyEventTimestamp, timestamp);
 
         this._domContentReadyEventTimestamp = timestamp || NaN;
     }
 
     markLoadEvent(timestamp)
     {
-        console.assert(isNaN(this._loadEventTimestamp));
+        console.assert(isNaN(this._loadEventTimestamp), this, this._loadEventTimestamp, timestamp);
 
         this._loadEventTimestamp = timestamp || NaN;
     }

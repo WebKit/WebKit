@@ -378,11 +378,11 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     selectProperties(anchorIndex, focusIndex)
     {
-        console.assert(anchorIndex < this._propertyViews.length, `anchorIndex (${anchorIndex}) is greater than the last property index (${this._propertyViews.length})`);
-        console.assert(focusIndex < this._propertyViews.length, `focusIndex (${focusIndex}) is greater than the last property index (${this._propertyViews.length})`);
+        console.assert(anchorIndex < this._propertyViews.length, anchorIndex, this._propertyViews.length);
+        console.assert(focusIndex < this._propertyViews.length, focusIndex, this._propertyViews.length);
 
         if (isNaN(anchorIndex) || isNaN(focusIndex)) {
-            console.error(`Nothing to select. anchorIndex (${anchorIndex}) and focusIndex (${focusIndex}) must be numbers.`);
+            console.assert(false, anchorIndex, focusIndex);
             this.deselectProperties();
             return;
         }
@@ -554,7 +554,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     spreadsheetStylePropertyDidPressEsc(propertyView)
     {
         let index = this._propertyViews.indexOf(propertyView);
-        console.assert(index !== -1, `Can't find StyleProperty to select (${propertyView.property.name})`);
+        console.assert(index !== -1, propertyView);
         if (index !== -1)
             this.selectProperties(index, index);
     }

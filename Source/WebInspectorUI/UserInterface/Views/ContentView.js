@@ -155,7 +155,7 @@ WI.ContentView = class ContentView extends WI.View
             else if (representedObject.sourceCode instanceof WI.Script)
                 resultView = new WI.ScriptContentView(representedObject.sourceCode, extraArguments);
             else
-                console.error("Unknown SourceCode", representedObject.sourceCode);
+                console.assert(false, representedObject.sourceCode);
 
             var textRangeToSelect = representedObject.sourceCodeTextRange.formattedTextRange;
             var startPosition = textRangeToSelect.startPosition();

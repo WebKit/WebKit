@@ -35,7 +35,7 @@ WI.Completions = class Completions
         if (completion instanceof WI.QueryResult)
             return completion.value;
 
-        console.assert(false, "completion should be either String or WI.QueryResult; got", completion);
+        console.assert(false, completion);
         return "";
     }
 };

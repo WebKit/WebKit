@@ -102,7 +102,8 @@ WI.ProfileNodeDataGridNode = class ProfileNodeDataGridNode extends WI.TimelineDa
                 break;
             default:
                 title = WI.UIString("(anonymous function)");
-                console.error("Unknown ProfileNode type: " + this._profileNode.type);
+                console.assert(false, this._profileNode);
+                break;
             }
         }
 

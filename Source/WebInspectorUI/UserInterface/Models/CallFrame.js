@@ -261,7 +261,6 @@ WI.CallFrame = class CallFrame
                 sourceCodeLocation = sourceCode.createLazySourceCodeLocation(lineNumber, payload.columnNumber);
             } else {
                 // Treat this as native code if we were unable to find a source.
-                console.assert(!url, "We should have detected source code for something with a url");
                 nativeCode = true;
             }
         }

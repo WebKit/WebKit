@@ -110,7 +110,7 @@ WI.FontStyles = class FontStyles
             if (degrees && tag === "slnt")
                 return parseFloat(degrees);
 
-            console.assert(false, `Unexpected font property value associated with variation axis ${tag}`, value);
+            console.assert(false, tag, value);
             break;
         }
         default:

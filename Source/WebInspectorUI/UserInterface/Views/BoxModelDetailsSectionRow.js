@@ -403,7 +403,6 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        console.assert(selectionRange, "We should have a range if we are handling a key down event");
         if (!element.contains(selectionRange.commonAncestorContainer))
             return;
 
@@ -486,7 +485,7 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
 
         if (this._getPropertyValue(computedStyle, "box-sizing") === "border-box" && (styleProperty === "width" || styleProperty === "height")) {
             if (!userInput.match(/px$/)) {
-                console.error("For elements with box-sizing: border-box, only absolute content area dimensions can be applied");
+                console.assert(false, userInput);
                 return;
             }
 

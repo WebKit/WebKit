@@ -9,19 +9,12 @@ null
 null
 
 -- Running test case: Recording.fromPayload.emptyObject
-ERROR: Recording Error: non-number version
 null
 
 -- Running test case: Recording.fromPayload.invalidTopLevelMembers
-ERROR: Recording Error: non-number version
 null
 
 -- Running test case: Recording.fromPayload.invalidSubMembers
-WARN: Recording Warning: unknown type "test"
-WARN: Recording Warning: non-object initialState.attributes
-WARN: Recording Warning: non-array initialState.states
-WARN: Recording Warning: non-array initialState.attributes
-WARN: Recording Warning: non-string initialState.content
 {
   "version": 1,
   "type": "test",
@@ -37,8 +30,6 @@ WARN: Recording Warning: non-string initialState.content
 }
 
 -- Running test case: Recording.fromPayload.invalidFrame
-WARN: Recording Warning: unknown type "test"
-WARN: Recording Warning: non-array actions
 {
   "version": 1,
   "type": "test",
@@ -67,7 +58,6 @@ WARN: Recording Warning: non-array actions
 }
 
 -- Running test case: Recording.fromPayload.invalidAction
-WARN: Recording Warning: unknown type "test"
 {
   "version": 1,
   "type": "test",
@@ -105,11 +95,6 @@ WARN: Recording Warning: unknown type "test"
 }
 
 -- Running test case: Recording.fromPayload.invalidActionMembers
-WARN: Recording Warning: unknown type "test"
-WARN: Recording Warning: non-number name
-WARN: Recording Warning: non-array parameters
-WARN: Recording Warning: non-array swizzleTypes
-WARN: Recording Warning: non-number stackTrace
 {
   "version": 1,
   "type": "test",
@@ -147,7 +132,6 @@ WARN: Recording Warning: non-number stackTrace
 }
 
 -- Running test case: Recording.fromPayload.valid
-WARN: Recording Warning: unknown type "test"
 {
   "version": 1,
   "type": "test",

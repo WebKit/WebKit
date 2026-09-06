@@ -141,7 +141,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
 
     set hidden(x)
     {
-        console.assert(false, "not expected to be called");
+        console.assert(false, this, x);
 
         if (this._hidden === x)
             return;
@@ -667,7 +667,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             return;
         }
 
-        console.assert(this.allowsMultipleSelection, "Cannot select TreeElements with multiple selection disabled.");
+        console.assert(this.allowsMultipleSelection, treeElements);
         if (!this.allowsMultipleSelection)
             return;
 

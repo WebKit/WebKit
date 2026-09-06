@@ -174,7 +174,7 @@ WI.StorageSidebarPanel = class StorageSidebarPanel extends WI.NavigationSidebarP
             return;
         }
 
-        console.error("Unknown tree element", treeElement);
+        console.assert(false, treeElement);
     }
 
     _domStorageObjectWasAdded(event)

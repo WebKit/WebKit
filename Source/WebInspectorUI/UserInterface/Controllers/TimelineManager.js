@@ -148,14 +148,10 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     static synthesizeImportError(message)
     {
-        message = WI.UIString("Timeline Recording Import Error: %s").format(message);
-
-        if (window.InspectorTest) {
-            console.error(message);
+        if (window.InspectorTest)
             return;
-        }
 
-        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, WI.UIString("Timeline Recording Import Error: %s").format(message));
         consoleMessage.shouldRevealConsole = true;
 
         WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
@@ -970,7 +966,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             // FunctionCall always happens as a child of another record, and since the FunctionCall record
             // has useful info we just make the timeline record here (combining the data from both records).
             if (!parentRecordPayload) {
-                console.warn("Unexpectedly received a FunctionCall timeline record without a parent record");
+                console.assert(false, recordPayload);
                 break;
             }
 
@@ -1039,7 +1035,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
                 break;
 
             default:
-                console.assert(false, "Missed FunctionCall embedded inside of: " + parentRecordPayload.type);
+                console.assert(false, parentRecordPayload);
                 break;
             }
 
@@ -1109,7 +1105,8 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             return new WI.ScreenshotsTimelineRecord(startTime, recordPayload.data.imageData);
 
         default:
-            console.error("Missing handling of Timeline Event Type: " + recordPayload.type);
+            console.assert(false, recordPayload);
+            break;
         }
 
         return null;
@@ -1437,13 +1434,13 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Profiler Record is entirely after the Web Record. This would mean an empty web record.
             if (profilerRecord.startTime > webRecord.endTime) {
-                console.warn("Unexpected case of a Timeline record not containing a ScriptProfiler event and profile data");
+                console.assert(false, profilerRecord, webRecord);
                 webRecord = nextWebTimelineRecord();
                 continue;
             }
 
             // Non-wrapped profiler record.
-            console.warn("Unexpected case of a ScriptProfiler event not being contained by a Timeline record");
+            console.assert(false, profilerRecord, webRecord);
             this._addRecord(profilerRecord);
             profilerRecord = nextScriptProfilerRecord();
         }

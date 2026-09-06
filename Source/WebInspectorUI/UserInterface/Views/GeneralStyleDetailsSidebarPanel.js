@@ -65,7 +65,7 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         if (!this._panel)
             return;
 
-        console.assert(this.visible, `Shown panel ${this._identifier} must be visible.`);
+        console.assert(this.visible, this._identifier);
 
         this._panel.markAsNeedsRefresh(this.domNode);
     }

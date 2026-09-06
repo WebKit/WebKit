@@ -293,7 +293,7 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
 
         let representedObject = selectedElement.representedObject;
         if (!this.canShowRepresentedObject(representedObject)) {
-            console.assert(false, "Unexpected representedObject.", representedObject);
+            console.assert(false, representedObject);
             return;
         }
 

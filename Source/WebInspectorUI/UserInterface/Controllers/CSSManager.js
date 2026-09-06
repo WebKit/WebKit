@@ -256,7 +256,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::-webkit-scrollbar-corner");
 
         default:
-            console.error("Unknown pseudo id", pseudoId);
+            console.assert(false, pseudoId);
             return "";
         }
     }
@@ -280,7 +280,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString(":visited");
         }
 
-        console.assert(false, "Unknown pseudo class", pseudoClass);
+        console.assert(false, pseudoClass);
         return "";
     }
 
@@ -339,7 +339,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             break;
 
         default:
-            console.assert(false, "Unknown appearance", name);
+            console.assert(false, name);
             return;
         }
 
@@ -382,7 +382,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             return !!InspectorBackend.Enum.CSS.ForceablePseudoClass;
         }
 
-        console.assert(false, "Unknown pseudo class", pseudoClass);
+        console.assert(false, pseudoClass);
         return false;
     }
 
@@ -543,7 +543,7 @@ WI.CSSManager = class CSSManager extends WI.Object
             break;
 
         default:
-            console.error("Unknown default appearance name:", protocolName);
+            console.assert(false, protocolName);
             break;
         }
 

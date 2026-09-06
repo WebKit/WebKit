@@ -370,7 +370,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     dataForTarget(target)
     {
-        console.assert(target.hasDomain("Debugger"), `Target of type "${target.type}" does not have "Debugger" domain.`);
+        console.assert(target.hasDomain("Debugger"), target);
 
         if (!target.hasDomain("Debugger"))
             return this.dataForTarget(WI.assumingMainTarget());
@@ -1102,7 +1102,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // COMPATIBILITY (macOS X.Y, iOS X.Y): Older backends could report the same script more than once.
         let existingScript = targetData.scriptForIdentifier(scriptIdentifier);
         if (existingScript) {
-            console.assert(existingScript.url === (url || null));
+            console.assert(!url || existingScript.url === url, existingScript, url);
             console.assert(existingScript.range.startLine === startLine);
             console.assert(existingScript.range.startColumn === startColumn);
             console.assert(existingScript.range.endLine === endLine);
@@ -1251,7 +1251,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             type = WI.ScopeChainNode.Type.GlobalLexicalEnvironment;
             break;
         default:
-            console.error("Unknown type: " + payload.type);
+            console.assert(false, payload.type);
             break;
         }
 
@@ -1261,7 +1261,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _setBreakpoint(breakpoint, specificTarget)
     {
-        console.assert(!breakpoint.disabled);
+        console.assert(!breakpoint.disabled, breakpoint);
 
         if (breakpoint.disabled)
             return;
@@ -1480,7 +1480,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         };
 
         let sourceRanges = sourceCode.sourceMaps.flatMap((sourceMap) => sourceMap.calculateBlackboxSourceRangesForProtocol());
-        console.assert(sourceCode instanceof WI.Script || !sourceRanges.length, sourceCode);
+        console.assert(sourceCode instanceof WI.Resource || sourceCode instanceof WI.Script || !sourceRanges.length, sourceCode);
         if (sourceRanges.length) {
             commandArguments.shouldBlackbox = true;
             commandArguments.sourceRanges = sourceRanges;

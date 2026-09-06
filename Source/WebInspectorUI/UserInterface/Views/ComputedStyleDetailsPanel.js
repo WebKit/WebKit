@@ -55,7 +55,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             return WI.UIString("Other", "Other @ Computed Style variables section", "Section header for the generic group of CSS variables");
         }
 
-        console.assert(false, "Unknown group type", variablesGroupType);
+        console.assert(false, variablesGroupType);
         return "";
     }
 
@@ -83,7 +83,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     get variablesGroupingMode()
     {
-        console.assert(this._variablesGroupingModeScopeBar.selectedItems[0], "No selected variables grouping mode", this._variablesGroupingModeScopeBar.selectedItems);
+        console.assert(this._variablesGroupingModeScopeBar.selectedItems[0], this._variablesGroupingModeScopeBar.selectedItems);
         return this._variablesGroupingModeScopeBar.selectedItems[0].id;
     }
 

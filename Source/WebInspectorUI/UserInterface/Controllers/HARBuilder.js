@@ -416,8 +416,7 @@ WI.HARBuilder = class HARBuilder
         case WI.Resource.ResponseSource.InspectorOverride:
             return "Inspector Override";
         }
-
-        console.assert();
+        console.assert(false, responseSource);
         return undefined;
     }
 
@@ -431,8 +430,7 @@ WI.HARBuilder = class HARBuilder
         case WI.Resource.NetworkPriority.High:
             return "high";
         }
-
-        console.assert();
+        console.assert(false, priority);
         return undefined;
     }
 
@@ -460,8 +458,7 @@ WI.HARBuilder = class HARBuilder
             return "spdy/3.1";
         }
 
-        if (protocol)
-            console.warn("Unknown HAR protocol value", protocol);
+        console.assert(!protocol, protocol);
         return null;
     }
 
@@ -480,8 +477,7 @@ WI.HARBuilder = class HARBuilder
             return WI.Resource.ResponseSource.InspectorOverride;
         }
 
-        if (fetchType)
-            console.warn("Unknown HAR _fetchType value", fetchType);
+        console.assert(!fetchType, fetchType);
         return WI.Resource.ResponseSource.Other;
     }
 
@@ -496,8 +492,7 @@ WI.HARBuilder = class HARBuilder
             return WI.Resource.NetworkPriority.High;
         }
 
-        if (priority)
-            console.warn("Unknown HAR priority value", priority);
+        console.assert(!priority, priority);
         return WI.Resource.NetworkPriority.Unknown;
     }
 };

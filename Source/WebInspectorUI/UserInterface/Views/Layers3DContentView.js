@@ -397,7 +397,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
             };
             const onProgress = undefined;
             let onError = (error) => {
-                console.error("Failed to load layer texture:", error);
+                WI.reportInternalError(error);
                 this._pendingTextureLoads.delete(layer.layerId);
                 callback(null);
             };

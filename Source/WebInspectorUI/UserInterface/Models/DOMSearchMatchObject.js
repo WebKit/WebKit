@@ -80,7 +80,7 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
             return title;
 
         default:
-            console.error("Unknown DOM node type: ", domNode.nodeType());
+            console.assert(false, domNode.nodeType());
             return domNode.nodeNameInCorrectCase();
         }
     }
@@ -156,7 +156,7 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
             return WI.DOMSearchMatchObject.DOMMatchDocumentTypeIconStyleClassName;
 
         default:
-            console.error("Unknown DOM node type: ", this._domNode.nodeType());
+            console.assert(false, this._domNode.nodeType());
             return WI.DOMSearchMatchObject.DOMMatchNodeIconStyleClassName;
         }
     }

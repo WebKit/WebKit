@@ -282,7 +282,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._property.overridden) {
             if (!this._jumpToEffectivePropertyButton && this._delegate && this._delegate.spreadsheetStylePropertySelectByProperty && WI.settings.experimentalEnableStylesJumpToEffective.value) {
-                console.assert(this._property.overridingProperty, `Overridden property is missing overridingProperty: ${this._property.formattedText}`);
+                console.assert(this._property.overridingProperty, this._property);
                 if (this._property.overridingProperty) {
                     this._jumpToEffectivePropertyButton = WI.createGoToArrowButton();
                     this._jumpToEffectivePropertyButton.classList.add("select-effective-property");

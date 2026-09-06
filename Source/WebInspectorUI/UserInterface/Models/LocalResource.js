@@ -329,12 +329,8 @@ WI.LocalResource = class LocalResource extends WI.Resource
         else if (!WI.LocalResource._pathsThatFailedToLoadFromFileSystem.has(path)) {
             WI.LocalResource._pathsThatFailedToLoadFromFileSystem.add(path);
 
-            let message = WI.UIString("Local Override: could not load \u201C%s\u201D").format(path);
-
-            if (window.InspectorTest)
-                console.warn(message);
-            else {
-                let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+            if (!window.InspectorTest) {
+                let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, WI.UIString("Local Override: could not load \u201C%s\u201D").format(path));
                 consoleMessage.shouldRevealConsole = true;
 
                 WI.consoleLogViewController.appendConsoleMessage(consoleMessage);

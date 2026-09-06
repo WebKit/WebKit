@@ -34,12 +34,6 @@ null
 }
 
 -- Running test case: AuditTestGroup.fromPayload.validWithInvalidOptionals
-WARN: Audit Warning: "validWithInvalidOptionals test name" has a non-string "description" value
-WARN: Audit Warning: "validWithInvalidOptionals test name" has a non-string "setup" value
-WARN: Audit Warning: "validWithInvalidOptionals test name" is too new to run in this Web Inspector
-WARN: Audit Warning: "validWithInvalidOptionals group name" has a non-string "description" value
-WARN: Audit Warning: "validWithInvalidOptionals group name" has a non-string "setup" value
-WARN: Audit Warning: "validWithInvalidOptionals group name" is too new to run in this Web Inspector
 {
   "type": "test-group",
   "name": "validWithInvalidOptionals group name",
@@ -200,7 +194,6 @@ PASS: Test1 should be supported.
 PASS: Test2 should be supported.
 
 -- Running test case: AuditTestGroup.Supports.Constructor.Unsupported
-WARN: Audit Warning: "Group" is too new to run in this Web Inspector
 PASS: Group should not be supported.
 PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
@@ -216,7 +209,6 @@ PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
 
 -- Running test case: AuditTestGroup.Supports.ChangeGroup.UnsupportedGroup
-WARN: Audit Warning: "Group" is too new to run in this Web Inspector
 PASS: Group should not be supported.
 PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
@@ -227,8 +219,6 @@ PASS: Test1 should be supported.
 PASS: Test2 should be supported.
 
 -- Running test case: AuditTestGroup.Supports.ChangeGroup.UnsupportedTests
-WARN: Audit Warning: "Test1" is too new to run in this Web Inspector
-WARN: Audit Warning: "Test2" is too new to run in this Web Inspector
 PASS: Group should not be supported.
 PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
@@ -254,7 +244,6 @@ PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
 
 -- Running test case: AuditTestGroup.Supports.ChangeTests.UnsupportedGroup
-WARN: Audit Warning: "Group" is too new to run in this Web Inspector
 PASS: Group should not be supported.
 PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
@@ -270,8 +259,6 @@ PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.
 
 -- Running test case: AuditTestGroup.Supports.ChangeTests.UnsupportedTests
-WARN: Audit Warning: "Test1" is too new to run in this Web Inspector
-WARN: Audit Warning: "Test2" is too new to run in this Web Inspector
 PASS: Group should not be supported.
 PASS: Test1 should not be supported.
 PASS: Test2 should not be supported.

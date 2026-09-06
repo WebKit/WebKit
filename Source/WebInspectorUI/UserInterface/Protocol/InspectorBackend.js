@@ -346,7 +346,7 @@ InspectorBackend.Domain = class InspectorBackendDomain
                 return command._makeCallable(connection).invoke(commandArguments, callback);
         }
 
-        console.assert();
+        console.assert(false, commandName, targetType);
     }
 };
 
@@ -456,7 +456,6 @@ InspectorBackend.Callable.prototype = {
         let connection = this._instance._connection;
 
         function deliverFailure(message) {
-            console.error(`Protocol Error: ${message}`);
             if (callback)
                 setTimeout(callback.bind(null, message), 0);
             else
@@ -498,7 +497,6 @@ InspectorBackend.Callable.prototype = {
         let callback = typeof commandArguments.lastValue === "function" ? commandArguments.pop() : null;
 
         function deliverFailure(message) {
-            console.error(`Protocol Error: ${message}`);
             if (callback)
                 setTimeout(callback.bind(null, message), 0);
             else

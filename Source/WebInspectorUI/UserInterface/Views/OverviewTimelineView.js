@@ -249,7 +249,7 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
             if (dataGridNode instanceof WI.SourceCodeTimelineTimelineDataGridNode)
                 return dataGridNode.sourceCodeTimeline.startTime;
 
-            console.error("Unknown data grid node.", dataGridNode);
+            console.assert(false, dataGridNode);
             return 0;
         }
 
@@ -347,12 +347,15 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
 
         for (var representedObject of this._pendingRepresentedObjects) {
             if (this._shouldGroupBySourceCode) {
-                if (representedObject instanceof WI.Resource)
+                if (representedObject instanceof WI.Resource) {
                     this._addResourceToDataGridIfNeeded(representedObject);
-                else if (representedObject instanceof WI.SourceCodeTimeline)
+                    continue;
+                }
+                if (representedObject instanceof WI.SourceCodeTimeline) {
                     this._addSourceCodeTimeline(representedObject);
-                else
-                    console.error("Unknown represented object", representedObject);
+                    continue;
+                }
+                console.assert(false, representedObject);
             } else {
                 const options = {
                     graphDataSource: this,

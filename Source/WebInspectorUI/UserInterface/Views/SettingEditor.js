@@ -178,7 +178,7 @@ WI.SettingEditor = class SettingEditor extends WI.Object
         }
 
         default:
-            console.error("Unknown editor type: " + this._type);
+            console.assert(false, this._type);
         }
 
         return editorElement;

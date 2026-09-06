@@ -42,7 +42,7 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
     static glyphPath(alignment)
     {
         let glyphs = WI.AlignmentEditor._glyphsForType(alignment.type);
-        console.assert(glyphs, `No glyphs found for propertyName: ${alignment.type}`);
+        console.assert(glyphs, alignment);
         return glyphs?.[alignment.text] || WI.AlignmentEditor.UnknownValueGlyph;
     }
 
@@ -59,7 +59,7 @@ WI.AlignmentEditor = class AlignmentEditor extends WI.Object
         case WI.AlignmentData.Type.AlignSelf:
             return false;
         }
-        console.assert(false, "Unsupported type", type);
+        console.assert(false, type);
         return false;
     }
 

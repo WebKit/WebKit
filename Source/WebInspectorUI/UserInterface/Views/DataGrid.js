@@ -969,7 +969,7 @@ WI.DataGrid = class DataGrid extends WI.View
     setColumnVisible(columnIdentifier, visible)
     {
         let column = this.columns.get(columnIdentifier);
-        console.assert(column, "Missing column info for identifier: " + columnIdentifier);
+        console.assert(column, columnIdentifier);
         console.assert(typeof visible === "boolean", "New visible state should be explicit boolean", typeof visible);
 
         if (!column || ("hidden" in column && visible === !column.hidden))
@@ -1064,7 +1064,7 @@ WI.DataGrid = class DataGrid extends WI.View
         // Calculate leading offsets and widths.
         for (let columnIdentifier of this.orderedColumns) {
             let column = this.columns.get(columnIdentifier);
-            console.assert(column, "Missing column data for header cell with columnIdentifier " + columnIdentifier);
+            console.assert(column, columnIdentifier);
             if (!column)
                 continue;
 
@@ -1678,7 +1678,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         let columnIdentifier = headerCellElement.columnIdentifier;
         let column = this.columns.get(columnIdentifier);
-        console.assert(column, "Missing column info for identifier: " + columnIdentifier);
+        console.assert(column, columnIdentifier);
         if (!column)
             return;
 
