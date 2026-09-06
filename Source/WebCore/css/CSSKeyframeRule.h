@@ -84,7 +84,7 @@ public:
     void NODELETE reattach(StyleRuleBase&) final;
 
     String keyText() const { return m_keyframe->keyText(); }
-    void setKeyText(const String& text) { m_keyframe->setKeyText(text); }
+    void setKeyText(const String&);
 
     CSSStyleProperties& style();
 

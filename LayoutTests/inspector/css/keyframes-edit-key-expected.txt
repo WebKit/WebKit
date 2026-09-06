@@ -1,0 +1,9 @@
+
+== Running test suite: CSS.Keyframes
+-- Running test case: CSS.Keyframes.EditKeyTextRestylesAnimation
+PASS: First keyframe key is `0%`.
+PASS: Keyframe key is editable.
+PASS: Paused at 0%: opacity 0.2.
+PASS: Second keyframe key persisted as `0%`.
+PASS: Moving the `100%` key to `0%` restyles the paused animation to opacity 0.8.
+

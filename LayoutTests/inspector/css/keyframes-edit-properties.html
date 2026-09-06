@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<style>
+    @keyframes anim { from { opacity: 0.2; } to { opacity: 0.8; } }
+    #target { animation: anim 100s linear paused; }
+</style>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("CSS.Keyframes.EditProperties");
+    let domNodeStyles;
+    function opacity() { return InspectorTest.evaluateInPage(`getComputedStyle(document.getElementById("target")).opacity`); }
+    function color() { return InspectorTest.evaluateInPage(`getComputedStyle(document.getElementById("target")).color`); }
+    function fromKeyframe() { return domNodeStyles.keyframes[0]; }
+    async function editAndWait(fn) { fn(); for (let i = 0; i < 50; ++i) await domNodeStyles.refresh(); }
+
+    suite.addTestCase({
+        name: "ModifyExistingProperty",
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(await documentNode.querySelector("#target")));
+            await domNodeStyles.refresh();
+
+            let before = undefined;
+            while (before !== "0.2") before = await opacity();
+            InspectorTest.expectEqual(before, "0.2", "Paused at `from`: opacity 0.2.");
+
+            fromKeyframe().style.text = "opacity: 0.6;";
+
+            let after = undefined;
+            while (after !== "0.6") after = await opacity();
+            InspectorTest.expectEqual(after, "0.6", "Modify opacity -> 0.6 changes animation.");
+        },
+    });
+    suite.addTestCase({
+        name: "AddProperty",
+        async test() {
+            await domNodeStyles.refresh();
+
+            fromKeyframe().style.text = "opacity: 0.6; color: rgb(10, 20, 30);";
+
+            let value = undefined;
+            while (value !== "rgb(10, 20, 30)") value = await color();
+            InspectorTest.expectEqual(value, "rgb(10, 20, 30)", "Added color is applied to `from`.");
+        },
+    });
+    suite.addTestCase({
+        name: "RemoveProperty",
+        async test() {
+            await domNodeStyles.refresh();
+
+            fromKeyframe().style.text = "opacity: 0.6;";
+            await domNodeStyles.refresh();
+
+            InspectorTest.expectFalse(fromKeyframe().style.text.includes("color"), "Removed color no longer in keyframe text.");
+        },
+    });
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()"><div id="target"></div></body>
+</html>

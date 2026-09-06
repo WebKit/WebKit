@@ -1,0 +1,448 @@
+Testing CSS.getMatchedStylesForNode.
+
+
+Keyframes for "#single":
+[
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "0%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 2,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0",
+          "text": "opacity: 0;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "50%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 3,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0.5",
+          "text": "opacity: 0.5;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0.5; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "100%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 4,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "1",
+          "text": "opacity: 1;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 1; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  }
+]
+
+Keyframes for "#multiple":
+[
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "0%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 2,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0",
+          "text": "opacity: 0;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "50%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 3,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0.5",
+          "text": "opacity: 0.5;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0.5; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "100%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 4,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "1",
+          "text": "opacity: 1;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 1; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "0%,100%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 8,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "transform",
+          "value": "rotate(0deg)",
+          "text": "transform: rotate(0deg);",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " transform: rotate(0deg); "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "spin",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "50%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 9,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "transform",
+          "value": "rotate(180deg)",
+          "text": "transform: rotate(180deg);",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " transform: rotate(180deg); "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "spin",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  }
+]
+
+Keyframes for "#pseudo":
+[
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "0%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 2,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0",
+          "text": "opacity: 0;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "50%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 3,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "0.5",
+          "text": "opacity: 0.5;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 0.5; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [],
+      "text": "100%",
+      "range": "<filtered>"
+    },
+    "sourceLine": 4,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "opacity",
+          "value": "1",
+          "text": "opacity: 1;",
+          "range": "<filtered>",
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": "<filtered>",
+      "cssText": " opacity: 1; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "groupings": [
+      {
+        "type": "keyframes-rule",
+        "ruleId": "<filtered>",
+        "text": "fade",
+        "range": "<filtered>",
+        "sourceURL": "<filtered>"
+      }
+    ],
+    "isImplicitlyNested": false
+  }
+]
+
+Keyframes for "#none":
+
+Keyframes for "#missing":
+

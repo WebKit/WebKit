@@ -1,0 +1,9 @@
+
+== Running test suite: CSS.Keyframes.Rename
+-- Running test case: CSS.Keyframes.RenameRelinksAnimation
+PASS: @keyframes is named `fade`.
+PASS: @keyframes name is editable.
+PASS: Paused at `from`, opacity is 0.1.
+PASS: @keyframes renamed to `renamed`.
+PASS: Renaming `fade` unlinks the animation (opacity reverts to 1).
+

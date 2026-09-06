@@ -1,0 +1,77 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    let documentNodeId = null;
+
+    function getKeyframesFor(selector) {
+        return InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: {nodeId: documentNodeId, selector},
+        }).then(({nodeId}) => {
+            ProtocolTest.newline();
+            ProtocolTest.log(`Keyframes for "${selector}":`);
+            return InspectorProtocol.awaitCommand({
+                method: "CSS.getMatchedStylesForNode",
+                params: {nodeId, includePseudo: true, includeKeyframes: true},
+            });
+        }).then(({pseudoElements, keyframes}) => {
+            function reducer(key, value) {
+                if (key === "ruleId" || key === "styleId" || key === "sourceURL" || key === "range")
+                    return "<filtered>";
+                return value;
+            }
+
+            if (keyframes.length)
+                ProtocolTest.json(keyframes, reducer);
+
+            for (let pseudoElement of pseudoElements) {
+                if (pseudoElement.keyframes.length)
+                    ProtocolTest.json(pseudoElement.keyframes, reducer);
+            }
+        });
+    }
+
+    InspectorProtocol.awaitCommand({method: "DOM.getDocument", params: {}})
+        .then(({root}) => {
+            documentNodeId = root.nodeId;
+        })
+        .then(() => getKeyframesFor("#single"))
+        .then(() => getKeyframesFor("#multiple"))
+        .then(() => getKeyframesFor("#pseudo"))
+        .then(() => getKeyframesFor("#none"))
+        .then(() => getKeyframesFor("#missing"))
+        .catch((error) => ProtocolTest.error(error))
+        .finally(() => ProtocolTest.completeTest());
+}
+</script>
+</head>
+<body onLoad="runTest()">
+<p>Testing CSS.getMatchedStylesForNode.</p>
+<style>
+    @keyframes fade {
+        from { opacity: 0; }
+        50% { opacity: 0.5; }
+        to { opacity: 1; }
+    }
+
+    @keyframes spin {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+    }
+
+    #single { animation: fade 1s; }
+    #multiple { animation: fade 1s, spin 2s; }
+    #pseudo::before { content: ""; animation: fade 1s; }
+    #none { color: red; }
+    #missing { animation: doesNotExist 1s; }
+</style>
+<div id="single"></div>
+<div id="multiple"></div>
+<div id="pseudo"></div>
+<div id="none"></div>
+<div id="missing"></div>
+</body>
+</html>
