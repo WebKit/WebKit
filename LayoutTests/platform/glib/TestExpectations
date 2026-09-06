@@ -470,7 +470,7 @@ imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-ch
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/mediaqueries/display-mode.html [ Failure ]
+imported/w3c/web-platform-tests/css/mediaqueries/display-mode.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.no-cxt-filter.rotation.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-bitmap-swap-width-height.tentative.html [ Pass ]
@@ -5033,8 +5033,12 @@ webkit.org/b/310543 fast/repaint/body-innerhtml-quirks-mode.html [ Pass ImageOnl
 
 webkit.org/b/310742 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/editing/other/fire-selection-change-on-deleting-empty-element.html [ Pass ]
-# Not supported on GTK/WPE
-webkit.org/b/158205 applicationmanifest/ [ Skip ]
+
+# Application Manifest tests
+http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
+http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked-cross-origin.sub.html [ Pass ]
 
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-disabled-scrollbar-tentative.html [ Skip ]
 webkit.org/b/309872 imported/w3c/web-platform-tests/permissions-policy/experimental-features/vertical-scroll-scrollintoview.tentative.html [ Skip ]
