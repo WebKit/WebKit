@@ -26,58 +26,25 @@
 
 #pragma once
 
-#include <WebCore/StylePrimitiveNumeric.h>
+#include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
 namespace Style {
 
 // <'text-decoration-thickness'> = auto | from-font | <length-percentage>
 // https://drafts.csswg.org/css-text-decor-4/#propdef-text-decoration-thickness
-struct TextDecorationThickness {
-    using LengthPercentage = Style::LengthPercentage<>;
+struct TextDecorationThickness : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::Keyword::Auto, CSS::Keyword::FromFont> {
+    using Base::Base;
 
-    TextDecorationThickness(CSS::Keyword::Auto keyword)
-        : m_value { keyword }
-    {
-    }
-
-    TextDecorationThickness(CSS::Keyword::FromFont keyword)
-        : m_value { keyword }
-    {
-    }
-
-    TextDecorationThickness(LengthPercentage&& value)
-        : m_value { WTF::move(value) }
-    {
-    }
-
-    bool isAuto() const { return WTF::holdsAlternative<CSS::Keyword::Auto>(m_value); }
-    bool isFromFont() const { return WTF::holdsAlternative<CSS::Keyword::FromFont>(m_value); }
-    bool isLengthPercentage() const { return WTF::holdsAlternative<LengthPercentage>(m_value); }
+    ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }
+    ALWAYS_INLINE bool isFromFont() const { return holdsAlternative<CSS::Keyword::FromFont>(); }
 
     float resolve(const Style::ComputedStyle&) const;
-
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
-    {
-        return WTF::switchOn(m_value, std::forward<F>(f)...);
-    }
-
-    bool operator==(const TextDecorationThickness&) const = default;
-
-private:
-    Variant<CSS::Keyword::Auto, CSS::Keyword::FromFont, LengthPercentage> m_value;
 };
 
 // MARK: - Conversion
 
 template<> struct CSSValueConversion<TextDecorationThickness> { auto operator()(BuilderState&, const CSSValue&) -> TextDecorationThickness; };
-
-// MARK: - Blending
-
-template<> struct Blending<TextDecorationThickness> {
-    auto canBlend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    auto blend(const TextDecorationThickness&, const TextDecorationThickness&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextDecorationThickness;
-};
 
 } // namespace Style
 } // namespace WebCore

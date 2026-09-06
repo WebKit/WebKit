@@ -25,8 +25,6 @@
 #include "config.h"
 #include "StyleTextUnderlineOffset.h"
 
-#include "AnimationUtilities.h"
-#include "StyleBuilderState.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
@@ -49,26 +47,6 @@ float TextUnderlineOffset::resolve(const Style::ComputedStyle& style, float auto
             return Style::evaluate<float>(percentage, style.usedFontSize());
         }
     );
-}
-
-// MARK: - Blending
-
-auto Blending<TextUnderlineOffset>::canBlend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
-{
-    if (a.isAuto() || b.isAuto())
-        return false;
-
-    return a.resolve(aStyle) != b.resolve(bStyle);
-}
-
-auto Blending<TextUnderlineOffset>::blend(const TextUnderlineOffset& a, const TextUnderlineOffset& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const BlendingContext& context) -> TextUnderlineOffset
-{
-    if (context.isDiscrete) {
-        ASSERT(!context.progress || context.progress == 1.0);
-        return context.progress ? b : a;
-    }
-
-    return TextUnderlineOffset { TextUnderlineOffset::Fixed { WebCore::blend(a.resolve(aStyle), b.resolve(bStyle), context) } };
 }
 
 } // namespace Style

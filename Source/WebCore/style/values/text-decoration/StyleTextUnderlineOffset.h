@@ -39,13 +39,6 @@ struct TextUnderlineOffset : PrimitiveNumericOrKeyword<LengthPercentage<>, CSS::
     float resolve(const Style::ComputedStyle&, float autoValue = 0.0f) const;
 };
 
-// MARK: - Blending
-
-template<> struct Blending<TextUnderlineOffset> {
-    auto canBlend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&) -> bool;
-    auto blend(const TextUnderlineOffset&, const TextUnderlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&, const BlendingContext&) -> TextUnderlineOffset;
-};
-
 } // namespace Style
 } // namespace WebCore
 
