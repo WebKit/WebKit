@@ -3069,10 +3069,6 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
         if (!provisionalDocumentLoader->isLoadingInAPISense() || provisionalDocumentLoader->isStopping()) {
             FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderCheckLoadCompleteForThisFrameFailedProvisionalLoad, error.isTimeout(), error.isCancellation(), error.errorCode(), isHTTPSFirstApplicable);
 
-            // Provisional load failed before didBeginDocument() could clear the async-wait state;
-            // clear it here so this frame stops blocking its parent's completion.
-            clearAsyncBackForwardNavigationState();
-
             if (loadWillContinueInAnotherProcess == LoadWillContinueInAnotherProcess::No) {
                 auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgressOrUpgradeDisabled()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
 
@@ -3099,6 +3095,10 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
                 if (!unreachableURL.isEmpty() && unreachableURL == provisionalDocumentLoader->request().url())
                     shouldReset = false;
             }
+
+            // Re-enters this function for this frame through the parent frame, so it must not run until the failure has
+            // been dispatched and the provisional load cleared.
+            clearAsyncBackForwardNavigationState();
         }
         if (shouldReset && item) {
             if (RefPtr page = m_frame->page())
