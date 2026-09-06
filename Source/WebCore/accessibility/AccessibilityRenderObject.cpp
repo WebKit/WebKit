@@ -1603,6 +1603,22 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     float lineHeight = 0.0;
 
     bool isHorizontal = fontOrientation() == FontOrientation::Horizontal;
+
+    bool didComputeBoundsOffsets = false;
+    float containingBlockOffset = 0;
+    LayoutUnit elementRectOffset;
+    auto computeBoundsOffsetsIfNeeded = [&] {
+        if (didComputeBoundsOffsets)
+            return;
+        didComputeBoundsOffsets = true;
+
+        if (CheckedPtr containingBlock = renderText->containingBlock())
+            containingBlockOffset = isHorizontal ? containingBlock->absoluteBoundingBoxRect().x() : containingBlock->absoluteBoundingBoxRect().y();
+
+        LayoutRect rect = elementRect();
+        elementRectOffset = isHorizontal ? rect.x() : rect.y();
+    };
+
     // Appends text to the current lineString, collapsing whitespace as necessary (similar to how TextIterator::handleTextRun() does).
     auto appendToLineString = [&] (const InlineIterator::TextBoxIterator& textBox) {
         auto text = textBox->originalText();
@@ -1632,11 +1648,8 @@ AXTextRuns AccessibilityRenderObject::textRuns()
         // non-zero value indicates it was already set by an earlier text box.
         if (!didComputeDistanceFromBounds) {
             didComputeDistanceFromBounds = true;
-            float containingBlockOffset = 0;
-            if (CheckedPtr containingBlock = renderText->containingBlock())
-                containingBlockOffset = isHorizontal ? containingBlock->absoluteBoundingBoxRect().x() : containingBlock->absoluteBoundingBoxRect().y();
-
-            distanceFromBoundsInDirection = isHorizontal ? textRun.xPos() + lineBox->contentLogicalLeft() + containingBlockOffset - elementRect().x() : -textRun.xPos() + containingBlockOffset - elementRect().y();
+            computeBoundsOffsetsIfNeeded();
+            distanceFromBoundsInDirection = isHorizontal ? textRun.xPos() + lineBox->contentLogicalLeft() + containingBlockOffset - elementRectOffset : -textRun.xPos() + containingBlockOffset - elementRectOffset;
         }
 
         // Populate GlyphBuffer with all of the glyphs for the text runs, enabling us to measure character widths.
