@@ -456,7 +456,7 @@ void RenderImage::setImageDevicePixelRatio(float factor)
 
 bool RenderImage::isShowingMissingOrImageError() const
 {
-    return !imageResource().cachedImage() || imageResource().errorOccurred();
+    return !imageResource().hasStyleImage() || imageResource().errorOccurred();
 }
 
 bool RenderImage::isShowingAltText() const
@@ -662,7 +662,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
     }
 
-    if (!imageResource().cachedImage() || shouldDisplayBrokenImageIcon()) {
+    if (!imageResource().hasStyleImage() || shouldDisplayBrokenImageIcon()) {
         paintMissingImageState(paintInfo, paintOffset);
         return;
     }
@@ -787,7 +787,7 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
 
 ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!imageResource().cachedImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
+    if (isShowingMissingOrImageError() || rect.width() <= 0 || rect.height() <= 0)
         return ImageDrawResult::DidNothing;
 
     RefPtr<Image> img = imageResource().image(flooredIntSize(rect.size()));

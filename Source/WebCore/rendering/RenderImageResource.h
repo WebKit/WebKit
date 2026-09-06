@@ -52,6 +52,7 @@ public:
     void clearCachedImage();
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_styleImage ? m_styleImage->cachedImage() : nullptr; }
+    bool hasStyleImage() const { return !!m_styleImage; }
 
     void resetAnimation();
 
