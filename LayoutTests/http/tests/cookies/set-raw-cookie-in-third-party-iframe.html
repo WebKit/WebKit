@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Test that internals.setCookie from a third-party iframe does not terminate the WebProcess.</p>
+<pre id="out"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const log = s => document.getElementById('out').textContent += s + '\n';
+
+window.addEventListener('message', (event) => {
+    log(event.data);
+    testRunner?.notifyDone();
+});
+
+const iframe = document.createElement('iframe');
+iframe.src = 'http://localhost:8000/cookies/resources/set-raw-cookie-in-third-party-iframe-frame.html';
+document.body.appendChild(iframe);
+</script>
+</body>
+</html>
