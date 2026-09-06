@@ -1,0 +1,75 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// A document's own IP address space is what every Local Network Access comparison is made against, and
+// FrameLoader::didBeginDocument seeds it from the document's response. Nothing else covers that, and it
+// is invisible from a page without internals.documentIPAddressSpace().
+//
+// This matters beyond bookkeeping: performLocalNetworkAccessCheck coerces an undetermined client space
+// to public, so a document whose space failed to seed silently starts treating loopback subresources
+// -- and loopback iframe navigations -- as local network requests.
+
+internals.settings.setLocalNetworkAccessEnabled(true);
+
+test(() => {
+    // Served from http://localhost:8800, which resolves to a loopback address.
+    assert_equals(internals.documentIPAddressSpace(), 'loopback');
+}, 'a document served over loopback knows it is loopback');
+
+// about:blank and srcdoc children take their policy container from the initiator, which is what carries
+// the address space across. Nothing else covers that inheritance, and PolicyContainer only started
+// serializing the field recently.
+//
+// Read synchronously rather than waiting for a load event: a src-less iframe's document exists as soon as
+// it is appended, and its load event has already fired by then.
+test(() => {
+    const frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+
+    assert_equals(frame.contentWindow.internals.documentIPAddressSpace(), 'loopback');
+}, 'an about:blank document inherits its initiator address space');
+
+// HTML gives a blob: document a clone of the creating environment's policy container, so a blob made by
+// this loopback page must read as loopback rather than falling back to the public default. The address
+// space has no header form, so this is the one policy that cannot ride the blob response and is instead
+// remembered at URL.createObjectURL() time.
+promise_test(async (t) => {
+    const reported = new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+        t.step_timeout(() => resolve('no reply'), 4000);
+    });
+
+    const blobURL = URL.createObjectURL(new Blob(
+        ['<script>parent.postMessage(internals.documentIPAddressSpace(), "*")<\/script>'],
+        { type: 'text/html' }));
+    t.add_cleanup(() => URL.revokeObjectURL(blobURL));
+
+    const frame = document.createElement('iframe');
+    frame.src = blobURL;
+    document.body.appendChild(frame);
+
+    assert_equals(await reported, 'loopback');
+}, 'a blob: document inherits the address space of the environment that created it');
+
+// srcdoc parses asynchronously, so this one reports from inside the child instead of guessing when it is
+// ready.
+promise_test(async (t) => {
+    const reported = new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+        t.step_timeout(() => resolve('no reply'), 4000);
+    });
+
+    const frame = document.createElement('iframe');
+    frame.srcdoc = '<script>parent.postMessage(internals.documentIPAddressSpace(), "*")<\/script>';
+    document.body.appendChild(frame);
+
+    assert_equals(await reported, 'loopback');
+}, 'a srcdoc document inherits its parent address space');
+
+</script>
+</body>
+</html>

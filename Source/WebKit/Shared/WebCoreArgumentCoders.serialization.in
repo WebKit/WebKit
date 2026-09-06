@@ -3527,6 +3527,7 @@ struct WebCore::PolicyContainer {
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     WebCore::CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     WebCore::ReferrerPolicy referrerPolicy;
+    WebCore::IPAddressSpace ipAddressSpace;
 };
 
 [Nested] enum class WebCore::SubstituteData::SessionHistoryVisibility : bool

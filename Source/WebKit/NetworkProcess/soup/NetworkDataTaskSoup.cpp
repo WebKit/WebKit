@@ -36,8 +36,10 @@
 #include "WebErrors.h"
 #include "WebKitDirectoryInputStream.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/DNS.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/HTTPStatusCodes.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -414,9 +416,27 @@ static ShouldStartHTTPRedirection shouldStartHTTPRedirection(const WebCore::Reso
     return ShouldStartHTTPRedirection::Yes;
 }
 
+WebCore::IPAddressSpace NetworkDataTaskSoup::resolvedIPAddressSpace() const
+{
+    if (!m_soupMessage)
+        return WebCore::IPAddressSpace::Unknown;
+
+    auto* address = soup_message_get_remote_address(m_soupMessage.get());
+    if (!G_IS_INET_SOCKET_ADDRESS(address))
+        return WebCore::IPAddressSpace::Unknown;
+
+    GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address))));
+    auto resolvedIPAddress = WebCore::IPAddress::fromString(String::fromUTF8(ipAddress.get()));
+    if (!resolvedIPAddress)
+        return WebCore::IPAddressSpace::Unknown;
+
+    return WebCore::classifyIPAddressSpace(*resolvedIPAddress);
+}
+
 void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
     m_response = ResourceResponse(m_soupMessage.get(), m_sniffedContentType);
+    m_response.setIPAddressSpace(resolvedIPAddressSpace());
 
     switch (shouldStartHTTPRedirection(m_response)) {
     case ShouldStartHTTPRedirection::Yes:

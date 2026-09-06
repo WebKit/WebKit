@@ -77,6 +77,7 @@ private:
     static void sendRequestCallback(SoupSession*, GAsyncResult*, SendRequestData*);
     void didSendRequest(GRefPtr<GInputStream>&&);
     void dispatchDidReceiveResponse();
+    WebCore::IPAddressSpace resolvedIPAddressSpace() const;
     void dispatchDidCompleteWithError(const WebCore::ResourceError&);
 
     static void preconnectCallback(SoupSession*, GAsyncResult*, NetworkDataTaskSoup*);

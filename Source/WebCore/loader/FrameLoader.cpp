@@ -144,6 +144,7 @@
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
+#include "ThreadableBlobRegistry.h"
 #include "UnloadCountIncrementer.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -849,6 +850,23 @@ static AtomString extractContentLanguageFromHeader(const String& header)
     return StringView(header).left(commaIndex).trim(isASCIIWhitespace).toAtomString();
 }
 
+// A blob: URL is a local scheme, so HTML's "determine navigation params policy container" takes the
+// initiator's policy container for it, while "create a policy container from a fetch response" takes the
+// blob URL entry's environment's. The two disagree only when the creating and navigating documents were
+// classified differently, which needs the host's resolution to have changed between their loads -- the
+// rebinding case Local Network Access exists for. Neither source is safe in both directions, so take
+// whichever is more public: that can only add checks, never skip them.
+static IPAddressSpace blobDocumentIPAddressSpace(const URL& url, const NavigationAction& triggeringAction)
+{
+    auto creatorAddressSpace = ThreadableBlobRegistry::cachedIPAddressSpace(url);
+
+    auto initiatorAddressSpace = IPAddressSpace::Unknown;
+    if (auto& requester = triggeringAction.requester())
+        initiatorAddressSpace = requester->policyContainer.ipAddressSpace;
+
+    return morePublicOf(creatorAddressSpace, initiatorAddressSpace);
+}
+
 void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow)
 {
     m_needsClear = true;
@@ -883,6 +901,12 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
 
         if (document->url().protocolIsInHTTPFamily() || document->url().protocolIsBlob()) {
             document->setCrossOriginEmbedderPolicy(obtainCrossOriginEmbedderPolicy(documentLoader->response(), document.ptr()));
+
+            auto ipAddressSpace = document->url().protocolIsBlob()
+                ? blobDocumentIPAddressSpace(document->url(), documentLoader->triggeringAction())
+                : documentLoader->response().ipAddressSpace();
+            if (ipAddressSpace != IPAddressSpace::Unknown)
+                document->setIPAddressSpace(ipAddressSpace);
 
             if (frame->settings().originAgentClusterEnabled() && !m_stateMachine.creatingInitialEmptyDocument())
                 document->setIsOriginKeyed(documentLoader->isOriginKeyedFromUIProcess());

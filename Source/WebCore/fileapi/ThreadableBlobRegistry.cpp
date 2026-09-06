@@ -37,6 +37,7 @@
 #include "BlobRegistry.h"
 #include "BlobURL.h"
 #include "CrossOriginOpenerPolicy.h"
+#include "IPAddressSpace.h"
 #include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 #include "URLKeepingBlobAlive.h"
@@ -68,6 +69,14 @@ static HashCountedSet<String>& NODELETE blobURLReferencesMap()
     return map;
 }
 
+using BlobURLAddressSpaceMap = HashMap<String, IPAddressSpace>;
+
+static BlobURLAddressSpaceMap& NODELETE addressSpaceMap()
+{
+    static MainThreadNeverDestroyed<BlobURLAddressSpaceMap> map;
+    return map;
+}
+
 static inline bool isBlobURLContainingNullOrigin(const URL& url)
 {
     ASSERT(url.protocolIsBlob());
@@ -86,6 +95,23 @@ static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& o
     originMap().add(urlWithoutFragment, origin.releaseNonNull());
     blobURLReferencesMap().add(urlWithoutFragment);
 };
+
+// HTML gives a blob: document a clone of the creating environment's policy container, but the address
+// space has no header form so it cannot travel on the response the way the other policies do. Record it
+// here instead, and read it back in FrameLoader::didBeginDocument.
+static void rememberAddressSpaceForBlobURL(const URL& url, IPAddressSpace ipAddressSpace)
+{
+    ASSERT(isMainThread());
+    if (ipAddressSpace == IPAddressSpace::Unknown)
+        return;
+    addressSpaceMap().set(url.stringWithoutFragmentIdentifier(), ipAddressSpace);
+}
+
+static void forgetAddressSpaceForBlobURL(const URL& url)
+{
+    ASSERT(isMainThread());
+    addressSpaceMap().remove(url.stringWithoutFragmentIdentifier());
+}
 
 void ThreadableBlobRegistry::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
 {
@@ -131,6 +157,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
 {
     if (isMainThread()) {
         addToOriginMapIfNecessary(url, origin);
+        rememberAddressSpaceForBlobURL(url, policyContainer.ipAddressSpace);
         blobRegistry()->registerBlobURL(url, srcURL, policyContainer, topOrigin);
         return;
     }
@@ -141,6 +168,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyConta
 
     callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTF::move(policyContainer)), strongOrigin = WTF::move(strongOrigin), topOrigin = crossThreadCopy(topOrigin)]() mutable {
         addToOriginMapIfNecessary(url, WTF::move(strongOrigin));
+        rememberAddressSpaceForBlobURL(url, policyContainer.ipAddressSpace);
         blobRegistry()->registerBlobURL(url, srcURL, policyContainer, topOrigin);
     });
 }
@@ -204,6 +232,7 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url, const std::option
 {
     ensureOnMainThread([url = url.isolatedCopy(), topOrigin = crossThreadCopy(topOrigin)] {
         unregisterBlobURLOriginIfNecessaryOnMainThread(url);
+        forgetAddressSpaceForBlobURL(url);
         blobRegistry()->unregisterBlobURL(url, topOrigin);
     });
 }
@@ -229,6 +258,19 @@ void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url, const std::
         unregisterBlobURLOriginIfNecessaryOnMainThread(url);
         blobRegistry()->unregisterBlobURLHandle(url, topOrigin);
     });
+}
+
+IPAddressSpace ThreadableBlobRegistry::cachedIPAddressSpace(const URL& url)
+{
+    ASSERT(url.protocolIsBlob());
+    auto ipAddressSpace = IPAddressSpace::Unknown;
+    callOnMainThreadAndWait([url = url.isolatedCopy(), &ipAddressSpace] {
+        // Not HashMap::get(): the empty value for an enum is 0, which is Public, not Unknown.
+        auto iterator = addressSpaceMap().find<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier());
+        if (iterator != addressSpaceMap().end())
+            ipAddressSpace = iterator->value;
+    });
+    return ipAddressSpace;
 }
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)

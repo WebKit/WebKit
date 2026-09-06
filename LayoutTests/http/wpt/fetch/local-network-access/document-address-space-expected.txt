@@ -1,0 +1,7 @@
+
+
+PASS a document served over loopback knows it is loopback
+PASS an about:blank document inherits its initiator address space
+PASS a blob: document inherits the address space of the environment that created it
+PASS a srcdoc document inherits its parent address space
+

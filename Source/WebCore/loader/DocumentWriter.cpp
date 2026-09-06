@@ -215,6 +215,7 @@ bool DocumentWriter::begin(const URL& urlReference, bool dispatch, Document* own
         document->setCookieURL(ownerDocument->cookieURL());
         document->setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
         document->setCrossOriginEmbedderPolicy(ownerDocument->crossOriginEmbedderPolicy());
+        document->setIPAddressSpace(ownerDocument->ipAddressSpace());
 
         document->setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { url }, document));
         CheckedRef contentSecurityPolicy = *document->contentSecurityPolicy();
