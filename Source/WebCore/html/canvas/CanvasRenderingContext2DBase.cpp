@@ -79,6 +79,7 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "SVGImageElement.h"
+#include "SVGImageForContainer.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptTrackingPrivacyCategory.h"
 #include "SecurityOrigin.h"
@@ -1659,7 +1660,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
             orientation = Style::toPlatform(computedStyle->imageOrientation()).orientation();
     }
 
-    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageRect, srcRect, dstRect, op, blendMode, orientation);
+    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageElement.currentURL(), imageRect, srcRect, dstRect, op, blendMode, orientation);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1682,7 +1683,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& image
 
     auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
 
-    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageRect, srcRect, dstRect, op, blendMode);
+    URL imageSourceURL = protect(imageElement.document())->encodingParseURL(imageElement.imageSourceURL());
+
+    auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageSourceURL, imageRect, srcRect, dstRect, op, blendMode);
 
     if (!result.hasException())
         checkOrigin(&imageElement);
@@ -1699,7 +1702,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CSSStyleImageValue& im
         return { };
     auto imageRect = FloatRect(FloatPoint(), size(image));
 
-    auto result = drawImage(*imageDocument, *cachedImage, nullptr, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
+    // FIXME: A CSS image value carrying an svgView() fragment is not handled here.
+    // CachedResource::url() has no fragment for an http or https image, since
+    // CachedResourceRequest splits it off in its constructor, so the fragment has
+    // to come from the CSS value. Tracked separately, as it can only be tested by
+    // a reference test: drawing a CSS image value always taints the canvas.
+    auto result = drawImage(*imageDocument, *cachedImage, nullptr, URL { }, imageRect, srcRect, dstRect, state().globalComposite, state().globalBlend);
 
     if (!result.hasException())
         checkOrigin(image);
@@ -1734,7 +1742,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
 }
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage& cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage& cachedImage, const RenderObject* renderer, const URL& imageSourceURL, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
 {
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -1771,8 +1779,15 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     ImageObserverDisableScope imageObserverDisabler(*image, drawsSVGImage);
     auto shouldPostProcess { true };
 
-    if (drawsSVGImage)
+    if (drawsSVGImage) {
         image->setContainerSize(imageRect.size());
+
+        // SVGImageCache only carries the fragment on a per-renderer container.
+        if (!renderer && imageSourceURL.hasFragmentIdentifier()) {
+            if (RefPtr svgImage = dynamicDowncast<SVGImage>(*image))
+                image = SVGImageForContainer::create(svgImage.get(), { .containerSize = imageRect.size(), .initialFragmentURL = imageSourceURL });
+        }
+    }
 
     if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)

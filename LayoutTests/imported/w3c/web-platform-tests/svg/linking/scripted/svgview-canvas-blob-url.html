@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<title>SVG fragment identifier: svgView() applies to an image loaded from a blob: URL</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/linking.html#SVGFragmentIdentifiersDefinitions">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<!--
+  The companion to svgview-canvas-drawimage.html, with the SVG served through a
+  blob: URL instead of a file, since an implementation may treat the fragment
+  differently depending on the scheme the image arrived by.
+
+  The SVG is 200x200 with four solid quadrants:
+
+        red    | green
+        blue   | yellow
+
+  svgView(viewBox(100,0,100,100)) selects the top-right one, so an image drawn
+  with that fragment must be entirely green.
+
+  Each test creates its own blob: URL, so that a view applied by one test cannot
+  change what a later test draws. Do not hoist the URL out of the tests.
+-->
+
+<div id="host"></div>
+
+<script>
+const SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"'
+  + ' viewBox="0 0 200 200">'
+  + '<rect x="0" y="0" width="100" height="100" fill="#ff0000"/>'
+  + '<rect x="100" y="0" width="100" height="100" fill="#00ff00"/>'
+  + '<rect x="0" y="100" width="100" height="100" fill="#0000ff"/>'
+  + '<rect x="100" y="100" width="100" height="100" fill="#ffff00"/></svg>';
+
+const TOP_RIGHT = '#svgView(viewBox(100,0,100,100))';
+const TOP_LEFT = '#svgView(viewBox(0,0,100,100))';
+
+const RED = '255,0,0';
+const GREEN = '0,255,0';
+
+function freshURL() {
+  return URL.createObjectURL(new Blob([SVG], { type: 'image/svg+xml' }));
+}
+
+function loadDetached(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('failed to load ' + url));
+    img.src = url;
+  });
+}
+
+// Inserted in the document and given a layout size, so it has a renderer.
+function loadAttached(url) {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement('img');
+    img.width = 100;
+    img.height = 100;
+    img.onload = () => {
+      // Force layout so the img has a renderer before the draw. Without it the
+      // first image on a cold page can be drawn before layout has run, and the
+      // case stops being a control for the renderer path.
+      img.getBoundingClientRect();
+      requestAnimationFrame(() => resolve(img));
+    };
+    img.onerror = () => reject(new Error('failed to load ' + url));
+    document.getElementById('host').appendChild(img);
+    img.src = url;
+  });
+}
+
+function colours(img) {
+  const N = 32;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = N;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, N, N);
+  const data = ctx.getImageData(0, 0, N, N).data;
+  const counts = new Map();
+  for (let i = 0; i < data.length; i += 4) {
+    const key = data[i] + ',' + data[i + 1] + ',' + data[i + 2];
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([rgb, n]) => ({ rgb: rgb, pct: Math.round(n / (N * N) * 100) }));
+}
+
+function assertSolid(list, expectedRgb, description) {
+  assert_equals(list.length, 1, description + ': expected one colour, got '
+    + list.map((c) => c.rgb + ' at ' + c.pct + '%').join(' '));
+  assert_equals(list[0].rgb, expectedRgb, description + ': wrong colour');
+}
+
+// Controls first, so that "four colours" cannot be read as the SVG having failed
+// to draw at all.
+promise_test(async () => {
+  const list = colours(await loadDetached(freshURL()));
+  assert_equals(list.length, 4, 'four quadrants must give four colours, got '
+    + list.map((c) => c.rgb).join(' '));
+  assert_equals(list[0].pct, 25, 'each quadrant covers a quarter of the image');
+}, 'control: a blob: URL with no fragment draws the whole image');
+
+promise_test(async () => {
+  const list = colours(await loadAttached(freshURL() + TOP_LEFT));
+  assertSolid(list, RED, 'top-left quadrant');
+}, 'control: a different viewBox() selects a different quadrant');
+
+promise_test(async () => {
+  const list = colours(await loadAttached(freshURL() + TOP_RIGHT));
+  assertSolid(list, GREEN, 'top-right quadrant, image in the document');
+}, 'svgView() applies to a blob: URL image that is in the document');
+
+promise_test(async () => {
+  const list = colours(await loadDetached(freshURL() + TOP_RIGHT));
+  assertSolid(list, GREEN, 'top-right quadrant, image not in the document');
+}, 'svgView() applies to a blob: URL image that is not in the document');
+
+promise_test(async () => {
+  const shared = freshURL();
+  const first = colours(await loadAttached(shared + TOP_LEFT));
+  const second = colours(await loadDetached(shared + TOP_RIGHT));
+  assertSolid(first, RED, 'first consumer asked for the top-left quadrant');
+  assertSolid(second, GREEN, 'second consumer asked for the top-right quadrant');
+}, 'two references to one blob: URL with different svgView() fragments do not share a view');
+</script>

@@ -1,0 +1,7 @@
+
+PASS control: an SVG image element drawn with no fragment gives four colours
+PASS control: a different viewBox() selects a different quadrant
+PASS svgView() applies when drawing an SVG image element that is rendered
+PASS svgView() applies when drawing an SVG image element in a display:none svg
+PASS two SVG image elements on one URL with different svgView() fragments do not share a view
+
