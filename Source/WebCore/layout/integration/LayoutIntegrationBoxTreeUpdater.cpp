@@ -230,12 +230,9 @@ void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, Style::C
         adjustStyle(*firstLineStyle);
 }
 
-static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttribute(const RenderListOutsideMarker& listMarkerRenderer)
+static Layout::ElementBox::IsListMarkerImage isListMarkerImage(const RenderListOutsideMarker& listMarkerRenderer)
 {
-    auto listMarkerAttributes = EnumSet<Layout::ElementBox::ListMarkerAttribute> { };
-    if (listMarkerRenderer.isImage())
-        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
-    return listMarkerAttributes;
+    return listMarkerRenderer.isImage() ? Layout::ElementBox::IsListMarkerImage::Yes : Layout::ElementBox::IsListMarkerImage::No;
 }
 
 static bool markerTextSynthesizesGlyph(const RenderText& textRenderer)
@@ -306,7 +303,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
     adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
 
     if (CheckedPtr listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderElement))
-        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), calculateListMarkerAttribute(*listMarkerRenderer), WTF::move(style), WTF::move(firstLineStyle));
+        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), isListMarkerImage(*listMarkerRenderer), WTF::move(style), WTF::move(firstLineStyle));
 
     return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTF::move(style), WTF::move(firstLineStyle));
 };
@@ -411,7 +408,7 @@ void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
     layoutBox->updateStyle(WTF::move(newStyle), WTF::move(firstLineNewStyle));
     if (auto* listMarkerRenderer = dynamicDowncast<RenderListOutsideMarker>(renderer)) {
         if (auto* elementBox = dynamicDowncast<Layout::ElementBox>(*layoutBox))
-            elementBox->setListMarkerAttributes(calculateListMarkerAttribute(*listMarkerRenderer));
+            elementBox->setIsListMarkerImage(isListMarkerImage(*listMarkerRenderer));
     }
 }
 
