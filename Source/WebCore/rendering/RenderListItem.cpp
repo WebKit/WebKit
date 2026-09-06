@@ -424,7 +424,7 @@ void RenderListItem::updateMarkerContent()
         return;
 
     auto textContent = listMarkerTextContent(marker->style(), *this);
-    if (!listMarkerSynthesizesGlyph(marker->style())) {
+    if (!listMarkerSynthesizesGlyph(marker->style(), protect(document()))) {
         textRenderer->setText(textContent.textWithSuffix);
         return;
     }
@@ -577,7 +577,7 @@ String RenderListItem::markerText(ListMarkerIncludeSuffix includeSuffix) const
     if (!marker)
         return { };
 
-    if (marker->style().content().isData() || listMarkerImage(marker->style()))
+    if (listMarkerHasContent(marker->style(), protect(document())) || listMarkerImage(marker->style()))
         return { };
 
     auto textContent = listMarkerTextContent(marker->style(), const_cast<RenderListItem&>(*this));

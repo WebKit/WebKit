@@ -240,7 +240,7 @@ static bool markerTextSynthesizesGlyph(const RenderText& textRenderer)
     // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
     for (CheckedPtr marker = textRenderer.parent(); marker; marker = marker->parent()) {
         if (marker->style().isListMarkerStyle())
-            return listMarkerSynthesizesGlyph(marker->style());
+            return listMarkerSynthesizesGlyph(marker->style(), protect(marker->document()));
         if (!marker->isAnonymous())
             return false;
     }

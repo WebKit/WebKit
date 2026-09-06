@@ -128,7 +128,7 @@ bool RenderListOutsideMarker::isImage() const
 
 bool RenderListOutsideMarker::hasContentProperty() const
 {
-    return document().settings().cssMarkerContentEnabled() && style().content().isData();
+    return listMarkerHasContent(style(), protect(document()));
 }
 
 RenderBlockFlow* RenderListOutsideMarker::contentContainer() const
@@ -453,11 +453,16 @@ RefPtr<Style::Image> listMarkerImage(const Style::ComputedStyle& markerStyle)
     return image;
 }
 
-bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle)
+bool listMarkerHasContent(const Style::ComputedStyle& markerStyle, Document& document)
+{
+    return document.settings().cssMarkerContentEnabled() && markerStyle.content().isData();
+}
+
+bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Document& document)
 {
     // css-lists-3 §3.3: a non-normal `content` supersedes list-style-type, and a list-style-image draws in place of
     // the glyph unless it failed to load, so neither leaves us a glyph to draw.
-    if (markerStyle.content().isData() || listMarkerImage(markerStyle))
+    if (listMarkerHasContent(markerStyle, document) || listMarkerImage(markerStyle))
         return false;
 
     auto& listType = markerStyle.listStyleType();
@@ -488,11 +493,7 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
 
 bool RenderListOutsideMarker::synthesizesGlyph() const
 {
-    // `content` supersedes list-style-type, so a content marker never draws in place of a glyph, and a list-style-image marker draws the image instead.
-    if (hasContentProperty() || isImage())
-        return false;
-    auto& listType = style().listStyleType();
-    return listType.isCircle() || listType.isDisc() || listType.isSquare();
+    return listMarkerSynthesizesGlyph(style(), protect(document()));
 }
 
 std::pair<float, float> RenderListOutsideMarker::layoutBoundForTextContent(String text) const

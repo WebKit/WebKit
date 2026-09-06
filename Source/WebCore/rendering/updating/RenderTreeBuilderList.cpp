@@ -101,7 +101,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
 
     auto newStyle = listItemRenderer.computeMarkerStyle();
     auto markerContentEnabled = listItemRenderer.document().settings().cssMarkerContentEnabled();
-    auto markerHasContent = markerContentEnabled && newStyle.content().isData();
+    auto markerHasContent = listMarkerHasContent(newStyle, listItemRenderer.document());
 
     // css-content-3: `content: none` on the ::marker suppresses the marker box entirely, regardless
     // of list-style-type/image. Otherwise (css-lists-3 §3.3) a non-normal `content` generates the
