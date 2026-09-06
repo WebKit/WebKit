@@ -28,6 +28,31 @@
 (function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
+const jsonStringify = JSON.stringify;
+const reflectApply = Reflect.apply;
+
+function safelyReadStringProperty(value, property)
+{
+    if (value === null || value === undefined)
+        return undefined;
+
+    try {
+        let propertyValue = value[property];
+        if (typeof propertyValue === "string")
+            return propertyValue;
+    } catch { }
+
+    return undefined;
+}
+
+function createBidiScriptError(error, name, fallbackMessage)
+{
+    let message = typeof error === "string" ? error : safelyReadStringProperty(error, "message");
+    return {
+        name,
+        message: message || fallbackMessage
+    };
+}
 
 let AutomationSessionProxy = class AutomationSessionProxy
 {
@@ -49,9 +74,33 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
-            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
-            .catch(error => { resultCallback(frameID, callbackID, error); });
+        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout).then(result => {
+            let serializedResult;
+            let serializationError;
+            try {
+                serializedResult = jsonStringify(result);
+            } catch (error) {
+                serializationError = createBidiScriptError(error, "InternalError", "Script result serialization failed.");
+            }
+
+            if (serializationError) {
+                resultCallback(frameID, callbackID, serializationError);
+                return;
+            }
+
+            if (typeof serializedResult !== "string") {
+                resultCallback(frameID, callbackID, createBidiScriptError(undefined, "InternalError", "Script result serialization failed."));
+                return;
+            }
+
+            resultCallback(frameID, callbackID, serializedResult);
+        }, error => {
+            let name = safelyReadStringProperty(error, "name");
+            if (name !== "JavaScriptTimeout")
+                name = "InternalError";
+            let fallbackMessage = name === "JavaScriptTimeout" ? "Script evaluation timed out." : "Script evaluation failed.";
+            resultCallback(frameID, callbackID, createBidiScriptError(error, name, fallbackMessage));
+        });
     }
 
     nodeForIdentifier(identifier)
@@ -144,29 +193,47 @@ let AutomationSessionProxy = class AutomationSessionProxy
         }
 
         let promise = new Promise((resolve, reject) => {
-            try {
-                // Execute expression using globalThis.eval pattern (like original implementation).
-                let result = globalThis.eval(expression);
+            let resolveWithExceptionResult = error => {
+                let errorProperties = {
+                    name: safelyReadStringProperty(error, "name"),
+                    message: safelyReadStringProperty(error, "message"),
+                    stack: safelyReadStringProperty(error, "stack")
+                };
+                resolve({ success: false, error: errorProperties });
+            };
 
-                if (awaitPromise && result && typeof result.then === "function") {
-                    // Handle promises for awaitPromise: true.
-                    result.then(
-                        value => {
-                            let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
-                            resolve({ success: true, result: serializedValue });
-                        },
-                        error => {
-                            reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
-                        }
-                    );
-                } else {
-                    // Handle synchronous results or non-promises.
-                    let serializedValue = this.serializeBidiRemoteValue(result, maxObjectDepth);
+            let serializeAndResolveResult = value => {
+                try {
+                    let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
                     resolve({ success: true, result: serializedValue });
+                } catch (error) {
+                    reject(createBidiScriptError(error, "InternalError", "Script result serialization failed."));
                 }
+            };
+
+            let result;
+            try {
+                // Evaluate the expression in the target global scope.
+                result = globalThis.eval(expression);
             } catch (error) {
-                reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+                resolveWithExceptionResult(error);
+                return;
             }
+
+            if (awaitPromise && result) {
+                try {
+                    let then = result.then;
+                    if (typeof then === "function") {
+                        reflectApply(then, result, [serializeAndResolveResult, resolveWithExceptionResult]);
+                        return;
+                    }
+                } catch (error) {
+                    resolveWithExceptionResult(error);
+                    return;
+                }
+            }
+
+            serializeAndResolveResult(result);
         });
 
         let promises = [promise];
@@ -325,7 +392,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _clearStaleNodes()
     {
-        for (var [node, identifier] of this._nodeToIdMap) {
+        for (let [node, identifier] of this._nodeToIdMap) {
             const rootNode = node.getRootNode({ composed: true });
             if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
@@ -336,7 +403,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
-    serializeBidiRemoteValue(value, maxObjectDepth = 1, depth = 0, visitedObjects = new Set())
+    serializeBidiRemoteValue(value, maxObjectDepth = null, depth = 0, visitedObjects = new Set())
     {
         // Handle primitives.
         if (value === null) return { type: "null" };
@@ -402,8 +469,8 @@ let AutomationSessionProxy = class AutomationSessionProxy
             if (visitedObjects.has(value))
                 return { type: "object", value: {} };
 
-            // Check depth limit.
-            if (depth >= maxObjectDepth)
+            // Check depth limit (null means no limit per BiDi spec).
+            if (maxObjectDepth !== null && depth >= maxObjectDepth)
                 return { type: "object", value: {} };
 
             visitedObjects.add(value);

@@ -2649,13 +2649,29 @@ static WebEventModifier NODELETE protocolModifierToWebEventModifier(Inspector::P
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
-void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
+static String normalizedBidiScriptEvaluationError(const String& errorType, const String& errorDetails)
+{
+    using ErrorMessage = Inspector::Protocol::Automation::ErrorMessage;
+
+    auto parsedError = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<ErrorMessage>(errorType);
+    bool isMissingBrowsingContext = parsedError && (*parsedError == ErrorMessage::WindowNotFound || *parsedError == ErrorMessage::FrameNotFound);
+
+    String details = errorDetails;
+    if (details.isEmpty())
+        details = isMissingBrowsingContext ? "The browsing context is no longer available."_s : "Script evaluation failed."_s;
+
+    if (isMissingBrowsingContext)
+        return STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(FrameNotFound, details);
+    return STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, details);
+}
+
+void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, std::optional<int> maxObjectDepth, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, FrameNotFound, "The browsing context is no longer available."_s);
     bool frameNotFound = false;
     auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(frameNotFound, FrameNotFound, "The browsing context is no longer available."_s);
 
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTF::move(callback));
@@ -2666,7 +2682,7 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
             return;
 
         if (!errorType.isEmpty()) {
-            callback(makeUnexpected(errorType));
+            callback(makeUnexpected(normalizedBidiScriptEvaluationError(errorType, result)));
             return;
         }
 

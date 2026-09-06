@@ -508,7 +508,7 @@ void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIden
         callback(String(result), String(errorType));
 }
 
-void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
+void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& expression, bool awaitPromise, std::optional<int> maxObjectDepth, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page)
@@ -538,7 +538,7 @@ void WebAutomationSessionProxy::evaluateBidiScript(WebCore::PageIdentifier pageI
     JSValueRef functionArguments[] = {
         toJSValue(context, expression),
         JSValueMakeBoolean(context, awaitPromise),
-        JSValueMakeNumber(context, maxObjectDepth),
+        maxObjectDepth ? JSValueMakeNumber(context, *maxObjectDepth) : JSValueMakeNull(context),
         JSValueMakeNumber(context, frameID.toUInt64()),
         JSValueMakeNumber(context, callbackID.toUInt64()),
         JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
