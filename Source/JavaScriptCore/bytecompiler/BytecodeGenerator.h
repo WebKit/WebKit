@@ -794,6 +794,7 @@ namespace JSC {
 
         RegisterID* emitToNumber(RegisterID* dst, RegisterID* src);
         RegisterID* emitToNumeric(RegisterID* dst, RegisterID* src);
+        RegisterID* emitToBoolean(RegisterID* dst, RegisterID* src);
         RegisterID* emitToString(RegisterID* dst, RegisterID* src);
         RegisterID* emitToObject(RegisterID* dst, RegisterID* src, const Identifier& message);
         RegisterID* emitToThis(RegisterID* srcDst);

@@ -506,6 +506,7 @@ namespace JSC {
         void emit_op_throw(const JSInstruction*);
         void emit_op_to_number(const JSInstruction*);
         void emit_op_to_numeric(const JSInstruction*);
+        void emit_op_to_boolean(const JSInstruction*);
         void emit_op_to_string(const JSInstruction*);
         void emit_op_to_object(const JSInstruction*);
         void emit_op_to_primitive(const JSInstruction*);

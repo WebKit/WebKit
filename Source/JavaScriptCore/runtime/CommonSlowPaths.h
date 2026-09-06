@@ -274,6 +274,7 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_inc);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_dec);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_number);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_numeric);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_boolean);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_string);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_object);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_negate);
