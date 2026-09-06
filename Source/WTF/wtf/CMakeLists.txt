@@ -332,6 +332,7 @@ set(WTF_PUBLIC_HEADERS
     SpanningTree.h
     SparseBitVector.h
     Spectrum.h
+    SpinBackoff.h
     StackAllocation.h
     StackBounds.h
     StackCheck.h

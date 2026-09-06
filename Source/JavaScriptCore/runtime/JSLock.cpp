@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
 #include "VMTrapsInlines.h"
+#include <wtf/SpinBackoff.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Threading.h>
 #include <wtf/threads/Signals.h>
@@ -368,9 +370,10 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
     ASSERT(!currentThreadIsHoldingLock());
     lock(droppedLockCount);
 
+    SpinBackoff backoff;
     while (dropper->dropDepth() != m_lockDropDepth) {
         unlock(droppedLockCount);
-        Thread::yield();
+        backoff.spinOnce();
         lock(droppedLockCount);
     }
 

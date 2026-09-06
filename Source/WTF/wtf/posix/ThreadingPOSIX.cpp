@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Justin Haygood <jhaygood@reaktix.com>
  * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +36,7 @@
 #if USE(PTHREADS)
 
 #include <errno.h>
+#include <time.h>
 #include <wtf/Logging.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
@@ -867,7 +869,9 @@ void Thread::yield()
     constexpr mach_msg_timeout_t timeoutInMS = 1;
     thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
 #else
-    sched_yield();
+    // A one nanosecond sleep costs a whole timer slack period, 50us by default on Linux (see PR_SET_TIMERSLACK)
+    struct timespec minimalSleep { 0, 1 };
+    nanosleep(&minimalSleep, nullptr);
 #endif
 }
 

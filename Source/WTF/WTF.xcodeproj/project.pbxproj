@@ -332,6 +332,7 @@
 		DD3DC87527A4BF8E007E5B61 /* Scope.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3524AA1D63A2FF0031729B /* Scope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87627A4BF8E007E5B61 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87727A4BF8E007E5B61 /* Spectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4730D151A825B004123FF /* Spectrum.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9FA6E9C851704768955938F6 /* SpinBackoff.h in Headers */ = {isa = PBXBuildFile; fileRef = 94A250FE7BAD45FC95BF810C /* SpinBackoff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87827A4BF8E007E5B61 /* Liveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4B4C41E88939C00DBBE86 /* Liveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FA1B2C30000000000000002 /* SSACalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA1B2C30000000000000001 /* SSACalculator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC87927A4BF8E007E5B61 /* RefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472FF151A825B004123FF /* RefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1700,6 +1701,7 @@
 		A8A4730B151A825B004123FF /* SinglyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinglyLinkedList.h; sourceTree = "<group>"; };
 		A8A4730C151A825B004123FF /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
 		A8A4730D151A825B004123FF /* Spectrum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spectrum.h; sourceTree = "<group>"; };
+		94A250FE7BAD45FC95BF810C /* SpinBackoff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinBackoff.h; sourceTree = "<group>"; };
 		A8A4730E151A825B004123FF /* StackBounds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackBounds.cpp; sourceTree = "<group>"; };
 		A8A4730F151A825B004123CF /* StackAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackAllocation.h; sourceTree = "<group>"; };
 		A8A4730F151A825B004123FF /* StackBounds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackBounds.h; sourceTree = "<group>"; };
@@ -2802,6 +2804,7 @@
 				79038E05224B05A7004C0738 /* SpanningTree.h */,
 				02F0B57890A842688F808D7C /* SparseBitVector.h */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
+				94A250FE7BAD45FC95BF810C /* SpinBackoff.h */,
 				0FA1B2C30000000000000001 /* SSACalculator.h */,
 				A8A4730F151A825B004123CF /* StackAllocation.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
@@ -3980,6 +3983,7 @@
 				DD3DC8CD27A4BF8E007E5B61 /* SpanningTree.h in Headers */,
 				08982C1A106045F4A68DF4F1 /* SparseBitVector.h in Headers */,
 				DD3DC87727A4BF8E007E5B61 /* Spectrum.h in Headers */,
+				9FA6E9C851704768955938F6 /* SpinBackoff.h in Headers */,
 				0FA1B2C30000000000000002 /* SSACalculator.h in Headers */,
 				DD3DC97F27A4BF8E007E5BC1 /* StackAllocation.h in Headers */,
 				DD3DC97F27A4BF8E007E5B61 /* StackBounds.h in Headers */,
