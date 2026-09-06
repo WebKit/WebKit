@@ -56,6 +56,20 @@ end
 
 FileUtils.mkdir_p(options[:outputDirectory])
 
+# Keep in sync with GeneratePreferences.rb, which validates this shape.
+FRONTENDS = %w{ WebKitLegacy WebKit WebCore }
+
+# "defaultValue" is the value shared by every frontend the preference is in,
+# either directly or as a map of build conditions ending in "default". A frontend
+# is listed under it only where its value differs.
+def defaultValueFor(options, frontend)
+  specification = options["defaultValue"]
+  return { "default" => specification } if !specification.is_a?(Hash)
+
+  value = specification.fetch(frontend, specification.reject { |key, _| FRONTENDS.include?(key) })
+  value.is_a?(Hash) ? value : { "default" => value }
+end
+
 def load(path)
   parsed = begin
     YAML.load_file(path)
@@ -96,7 +110,7 @@ class Setting
     @options = options
     @type = options["refinedType"] || options["type"]
     @status = options["status"]
-    @defaultValues = options["defaultValue"]["WebCore"]
+    @defaultValues = defaultValueFor(options, "WebCore")
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
     @disableInLockdownMode = options["disableInLockdownMode"] || false
     @condition = options["condition"]
