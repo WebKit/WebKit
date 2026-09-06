@@ -8189,7 +8189,6 @@ webkit.org/b/281267 imported/w3c/web-platform-tests/html/semantics/interactive-e
 imported/w3c/web-platform-tests/cookies/third-party-cookies/third-party-cookie-heuristics.tentative.https.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/canvas-descendants-focusability-006.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation_by_user_activation_with_user_gesture.html [ Skip ] # Timeout
-imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-allowed-schemas.sub.window.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-autoplay-when-visible.html [ Skip ] # Timeout
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-loading-lazy-in-viewport.html [ Skip ] # Timeout
 webkit.org/b/200128 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video_timeupdate_on_seek.html [ Skip ]
