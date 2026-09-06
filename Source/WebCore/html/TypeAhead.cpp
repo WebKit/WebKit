@@ -93,11 +93,13 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
         index %= optionCount;
 
         String prefixWithCaseFolded(prefix.foldCase());
-        for (int i = 0; i < optionCount; ++i, index = (index + 1) % optionCount) {
+        for (int i = 0; i < optionCount; ++i) {
             // Fold the option string and check if its prefix is equal to the folded prefix.
             String text = m_dataSource->optionAtIndex(index);
             if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded))
                 return index;
+            if (++index >= optionCount)
+                index = 0;
         }
     }
 
