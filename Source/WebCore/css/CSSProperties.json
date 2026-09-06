@@ -11406,16 +11406,15 @@
         },
         "-webkit-line-clamp": {
             "animation-type": "not animatable (legacy)",
-            "initial": "none",
-            "values": [
-                "none"
-            ],
             "codegen-properties": {
-                "computed-style-initial-constexpr": true,
-                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
-                "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::WebkitLineClamp",
-                "parser-grammar": "none | <integer [1,inf]>"
+                "longhands": [
+                    "max-lines",
+                    "block-ellipsis",
+                    "continue"
+                ],
+                "parser-function": "consumeLineClampShorthand",
+                "parser-grammar-unused": "none | <integer [1,inf]>",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
             },
             "status": "non-standard"
         },
