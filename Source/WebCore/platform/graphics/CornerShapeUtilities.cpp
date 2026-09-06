@@ -361,8 +361,19 @@ static BezierSegment shallowConcaveCornerBezier(const Corner& corner, const Floa
 
 using CornerCurves = Vector<BezierSegment, 2>;
 
+static BezierSegment straightBezierSegment(const FloatPoint& start, const FloatPoint& end)
+{
+    auto delta = end - start;
+    return { start, start + delta * (1.0f / 3.0f), start + delta * (2.0f / 3.0f), end };
+}
+
 static CornerCurves cornerCurveBeziers(const ResolvedCorner& corner)
 {
+    if (isNotch(corner.adjusted) || isSquare(corner.adjusted)) {
+        auto turningPoint = isNotch(corner.adjusted) ? corner.adjusted.center : corner.adjusted.outer;
+        return { straightBezierSegment(corner.adjusted.start, turningPoint), straightBezierSegment(turningPoint, corner.adjusted.end) };
+    }
+
     if (isShallowConcave(corner.adjusted) && corner.tangentVertex)
         return { shallowConcaveCornerBezier(corner.adjusted, *corner.tangentVertex) };
 
@@ -428,17 +439,87 @@ static FloatPoint sharpInnerCornerPoint(const FloatRect& innerRect, BoxCorner or
     return { };
 }
 
-static Vector<BezierSegment> trimmedSuperellipseCornerCurves(const ResolvedCorner& corner, const FloatRect& innerRect)
+static Vector<BezierSegment> curvesTrimmedToRect(const CornerCurves& curves, const FloatRect& innerRect)
 {
     Vector<BezierSegment> clippedCurves;
-    for (const auto& bezier : cornerCurveBeziers(corner)) {
+    for (const auto& bezier : curves) {
         for (const auto& curve : trimBezierToRect(bezier, innerRect))
             clippedCurves.append(curve);
     }
     return clippedCurves;
 }
 
-static void addSuperellipseCornerCurves(Path& path, const Vector<BezierSegment>& curves, const FloatPoint& sharpCornerPoint, bool& started)
+struct PreparedCorner {
+    ResolvedCorner resolved;
+    bool insetToTargetRect { false };
+    bool isElided { false };
+    // The whole corner curve, describing the area this corner removes from the target rect.
+    CornerCurves fullCurves;
+    // The part of that curve the contour draws: trimmed to the target rect, then to the neighboring corners.
+    Vector<BezierSegment> curves;
+};
+
+// A corner's curve, together with the two edges that meet at its vertex, encloses the area that the corner
+// removes from the target rect, so a point lies inside that area when the segment joining it to the vertex
+// crosses the curve an even number of times.
+static bool cornerRemovesPoint(const PreparedCorner& corner, const FloatPoint& point)
+{
+    const auto& adjusted = corner.resolved.adjusted;
+
+    if (isSquare(adjusted))
+        return false;
+
+    FloatRect cornerBox { adjusted.outer, FloatSize { } };
+    cornerBox.extend(adjusted.center);
+    if (!cornerBox.contains(point))
+        return false;
+
+    unsigned crossings = 0;
+    for (const auto& curve : corner.fullCurves)
+        crossings += numberOfCrossingsWithSegment(curve, point, adjusted.outer);
+    return !(crossings % 2);
+}
+
+static bool contourEnclosesArea(const Vector<PreparedCorner, 4>& corners, const FloatRect& targetRect)
+{
+    bool anyCornerIsConcave = false;
+    for (const auto& corner : corners) {
+        if (!corner.insetToTargetRect)
+            return true;
+        anyCornerIsConcave |= isConcave(corner.resolved.adjusted);
+    }
+
+    if (!anyCornerIsConcave)
+        return true;
+
+    auto isRemovedByAnyCorner = [&](const FloatPoint& point, const PreparedCorner* pointLiesOn) {
+        for (const auto& corner : corners) {
+            if (&corner != pointLiesOn && cornerRemovesPoint(corner, point))
+                return true;
+        }
+        return false;
+    };
+
+    for (const auto& corner : corners) {
+        if (corner.isElided)
+            continue;
+
+        if (corner.curves.isEmpty()) {
+            if (!isRemovedByAnyCorner(sharpInnerCornerPoint(targetRect, corner.resolved.adjusted.orientation), nullptr))
+                return true;
+            continue;
+        }
+
+        for (const auto& curve : corner.curves) {
+            if (!isRemovedByAnyCorner(pointOnBezierAtParameter(curve, 0.5), &corner))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+static void addInsetCornerCurves(Path& path, const Vector<BezierSegment>& curves, const FloatPoint& sharpCornerPoint, bool& started)
 {
     auto lineOrMoveTo = [&](FloatPoint point) {
         if (!started) {
@@ -459,31 +540,10 @@ static void addSuperellipseCornerCurves(Path& path, const Vector<BezierSegment>&
     }
 }
 
-static void addClampedSharpCorner(Path& path, const ResolvedCorner& corner, const FloatRect& targetRect, bool& started)
-{
-    auto clampToTarget = [&](FloatPoint point) {
-        return FloatPoint {
-            std::clamp(point.x(), targetRect.x(), targetRect.maxX()),
-            std::clamp(point.y(), targetRect.y(), targetRect.maxY())
-        };
-    };
-    auto lineOrMoveTo = [&](FloatPoint point) {
-        if (!started) {
-            path.moveTo(point);
-            started = true;
-        } else
-            path.addLineTo(point);
-    };
-
-    lineOrMoveTo(clampToTarget(corner.miterStart));
-    path.addLineTo(clampToTarget(isNotch(corner.adjusted) ? corner.adjusted.center : corner.adjusted.outer));
-    path.addLineTo(clampToTarget(corner.miterEnd));
-}
-
 } // namespace
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, ContourStart contourStart)
+ContourResult borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, ContourStart contourStart)
 {
     bool started = false;
 
@@ -503,14 +563,6 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
 
     static constexpr std::array<BoxCorner, 4> contourOrder { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft };
 
-    struct PreparedCorner {
-        ResolvedCorner resolved;
-        bool insetToTargetRect { false };
-        bool usesCurves { false };
-        bool isSwallowed { false };
-        Vector<BezierSegment> curves;
-    };
-
     Vector<PreparedCorner, 4> corners;
     for (auto key : contourOrder) {
         const auto& input = cornerRects[key];
@@ -518,13 +570,15 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
         auto resolved = resolveCorner(makeCorner(input), input.startInset, input.endInset);
         bool insetToTargetRect = targetRect && input.startInset >= 0.0 && input.endInset >= 0.0
             && !isEmpty(resolved.adjusted);
-        bool usesCurves = insetToTargetRect && std::isfinite(resolved.adjusted.curvature);
 
+        CornerCurves fullCurves;
         Vector<BezierSegment> curves;
-        if (usesCurves)
-            curves = trimmedSuperellipseCornerCurves(resolved, *targetRect);
+        if (insetToTargetRect) {
+            fullCurves = cornerCurveBeziers(resolved);
+            curves = curvesTrimmedToRect(fullCurves, *targetRect);
+        }
 
-        corners.append(PreparedCorner { WTF::move(resolved), insetToTargetRect, usesCurves, false, WTF::move(curves) });
+        corners.append(PreparedCorner { WTF::move(resolved), insetToTargetRect, false, WTF::move(fullCurves), WTF::move(curves) });
     }
 
     // Concave corners can intersect; trim them at the cusp. A corner's inset curve can also intersect with non-adjacent edges.
@@ -534,7 +588,7 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
             auto& first = corners[index];
             auto& second = corners[(index + gap) % corners.size()];
 
-            if (!first.usesCurves || !second.usesCurves || first.isSwallowed || second.isSwallowed)
+            if (!first.insetToTargetRect || !second.insetToTargetRect || first.isElided || second.isElided)
                 continue;
 
             auto intersection = findMonotonicBezierCurvesIntersection(first.curves, second.curves);
@@ -550,22 +604,22 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
             trimMonotonicBezierCurvesAtIntersection(first.curves, second.curves, *intersection);
 
             for (size_t between = 1; between < gap; ++between)
-                corners[(index + between) % corners.size()].isSwallowed = true;
+                corners[(index + between) % corners.size()].isElided = true;
         }
     }
 
+    if (targetRect && !contourEnclosesArea(corners, *targetRect))
+        return ContourResult::Empty;
+
     for (auto& prepared : corners) {
-        if (prepared.isSwallowed)
+        if (prepared.isElided)
             continue;
 
         const auto& corner = prepared.resolved;
         const auto& adjusted = corner.adjusted;
 
         if (prepared.insetToTargetRect) {
-            if (prepared.usesCurves)
-                addSuperellipseCornerCurves(path, prepared.curves, sharpInnerCornerPoint(*targetRect, adjusted.orientation), started);
-            else
-                addClampedSharpCorner(path, corner, *targetRect, started);
+            addInsetCornerCurves(path, prepared.curves, sharpInnerCornerPoint(*targetRect, adjusted.orientation), started);
             continue;
         }
 
@@ -583,6 +637,7 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
         path.addLineTo(corner.miterEnd);
     }
     path.closeSubpath();
+    return ContourResult::Contour;
 }
 
 static Vector<FloatPoint> normalizedInnerCornerHull(double curvature)

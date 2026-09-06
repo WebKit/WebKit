@@ -380,4 +380,34 @@ TEST(BezierUtilities, FindMonotonicCurvesDoesNotModifyTheRuns)
     expectPointNear(second[0].start, 0, 10);
 }
 
+// Counting crossings tells a caller which side of a curve a point is on: the corner contour builder
+// walks from the point to the corner's vertex and treats an even count as "the corner removed this point".
+TEST(BezierUtilities, CountsCrossingsOfASegmentThatCutsTheCurve)
+{
+    auto curve = lineCurve({ 0, 10 }, { 20, 10 });
+
+    EXPECT_EQ(1u, numberOfCrossingsWithSegment(curve, { 10, 0 }, { 10, 20 }));
+    EXPECT_EQ(1u, numberOfCrossingsWithSegment(curve, { 10, 20 }, { 10, 0 }));
+}
+
+// Crossings past either end of the segment don't count, so a point can be tested against a nearby vertex.
+TEST(BezierUtilities, CountsNoCrossingsForASegmentStoppingShortOfTheCurve)
+{
+    auto curve = lineCurve({ 0, 10 }, { 20, 10 });
+
+    EXPECT_EQ(0u, numberOfCrossingsWithSegment(curve, { 10, 0 }, { 10, 9 }));
+    EXPECT_EQ(0u, numberOfCrossingsWithSegment(curve, { 10, 11 }, { 10, 20 }));
+    // Alongside the curve rather than across it.
+    EXPECT_EQ(0u, numberOfCrossingsWithSegment(curve, { 5, 0 }, { 15, 0 }));
+}
+
+// A curve that doubles back crosses the same segment twice, which is what keeps the even/odd test honest.
+TEST(BezierUtilities, CountsBothCrossingsOfACurveThatDoublesBack)
+{
+    BezierSegment archedCurve { { 0, 10 }, { 5, -10 }, { 15, -10 }, { 20, 10 } };
+
+    EXPECT_EQ(2u, numberOfCrossingsWithSegment(archedCurve, { -5, 5 }, { 25, 5 }));
+    EXPECT_EQ(0u, numberOfCrossingsWithSegment(archedCurve, { -5, 15 }, { 25, 15 }));
+}
+
 } // namespace TestWebKitAPI

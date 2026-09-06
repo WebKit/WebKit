@@ -447,7 +447,7 @@ static bool cornersUseAlignedToCurveOffset(const RectCorners<float>& cornerCurva
 }
 
 // Offset the border-box reference curve to targetRect at constant thickness: outset corners miter out to the edges along their tangent, inset corners trim to the rect.
-static void addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& referenceSnapped, const RectCorners<float>& cornerCurvatures, const FloatRect& targetRect)
+static ContourResult addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& referenceSnapped, const RectCorners<float>& cornerCurvatures, const FloatRect& targetRect)
 {
     auto referenceRect = referenceSnapped.rect();
     double leftOffset = referenceRect.x() - targetRect.x();
@@ -458,7 +458,7 @@ static void addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& r
     RectCorners<CornerInput> referenceCorners;
     buildCornerInputs(referenceSnapped, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, referenceCorners);
 
-    borderContourPath(path, referenceCorners, &targetRect);
+    return borderContourPath(path, referenceCorners, &targetRect);
 }
 
 static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
@@ -492,21 +492,23 @@ std::optional<Path> BorderShape::pathForShapedRect(const FloatRoundedRect& round
 Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
 {
     Path path;
-    bool useAlignedToCurve = snappedOffsetReference
-        && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
-            || cornersHaveConvexSuperellipse(m_cornerCurvatures));
+    bool useAlignedToCurve = snappedOffsetReference && (cornersUseAlignedToCurveOffset(m_cornerCurvatures) || cornersHaveConvexSuperellipse(m_cornerCurvatures));
     if (useAlignedToCurve) {
-        addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, outerSnapped.rect());
+        if (addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, outerSnapped.rect()) == ContourResult::Empty)
+            return path;
+
         if (!path.isEmpty())
             return path;
     }
+
     addOuterCornerShapeToPath(path, outerSnapped, m_cornerCurvatures, snappedOffsetReference);
     if (!path.isEmpty())
         return path;
+
     return pathForOuterRoundedRect(outerSnapped);
 }
 
-static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
+static ContourResult addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
 {
     auto outerRect = outerSnapped.rect();
     auto innerRect = innerSnapped.rect();
@@ -519,23 +521,27 @@ static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
     RectCorners<CornerInput> cornerRects;
     buildCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
     rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, innerRect);
-    borderContourPath(path, cornerRects, &innerRect);
+    return borderContourPath(path, cornerRects, &innerRect);
 }
 
 Path BorderShape::pathForInnerCornerShape(const FloatRoundedRect& outerSnapped, const FloatRoundedRect& innerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
 {
     Path path;
-    bool useAlignedToCurve = snappedOffsetReference
-        && (cornersUseAlignedToCurveOffset(m_cornerCurvatures)
-            || cornersHaveConvexSuperellipse(m_cornerCurvatures));
+    bool useAlignedToCurve = snappedOffsetReference && (cornersUseAlignedToCurveOffset(m_cornerCurvatures) || cornersHaveConvexSuperellipse(m_cornerCurvatures));
     if (useAlignedToCurve) {
-        addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, innerSnapped.rect());
+        if (addAlignedToCurveOffsetContour(path, *snappedOffsetReference, m_cornerCurvatures, innerSnapped.rect()) == ContourResult::Empty)
+            return path;
+
         if (!path.isEmpty())
             return path;
     }
-    addInnerCornerShapeToPath(path, outerSnapped, innerSnapped, m_cornerCurvatures, snappedOffsetReference);
+
+    if (addInnerCornerShapeToPath(path, outerSnapped, innerSnapped, m_cornerCurvatures, snappedOffsetReference) == ContourResult::Empty)
+        return path;
+
     if (path.isEmpty())
         return pathForInnerRoundedRect(innerSnapped);
+
     return path;
 }
 
@@ -553,6 +559,7 @@ Path BorderShape::pathForInnerShape(float deviceScaleFactor) const
     auto innerSnapped = m_innerEdgeRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
     if (hasNonRoundCornerShape())
         return pathForInnerCornerShape(outerSnapped, innerSnapped, snappedOffsetReferenceRect(deviceScaleFactor));
+
     return pathForInnerRoundedRect(innerSnapped);
 }
 

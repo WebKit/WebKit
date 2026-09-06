@@ -418,4 +418,9 @@ void trimMonotonicBezierCurvesAtIntersection(Vector<BezierSegment>& first, Vecto
     second = curvesFromIntersection(second, intersection.indexOnSecond, intersection.parameterOnSecond);
 }
 
+unsigned numberOfCrossingsWithSegment(const BezierSegment& curve, const FloatPoint& segmentStart, const FloatPoint& segmentEnd)
+{
+    return intersectBezierAndLine(curve, segmentStart, segmentEnd).size();
+}
+
 } // namespace WebCore
