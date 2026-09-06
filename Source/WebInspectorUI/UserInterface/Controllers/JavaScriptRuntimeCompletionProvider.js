@@ -143,6 +143,9 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 bracketNotation = false;
         }
 
+        let activeCallFrame = WI.debuggerManager.activeCallFrame;
+        let target = activeCallFrame?.target || WI.runtimeManager.activeExecutionContext.target;
+
         // Start an completion request. We must now decrement before calling completionController.updateCompletions.
         this._incrementOngoingCompletionRequests();
 
@@ -160,7 +163,6 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         this._lastBase = base;
         this._lastPropertyNames = null;
 
-        var activeCallFrame = WI.debuggerManager.activeCallFrame;
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else {
@@ -291,8 +293,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 if (savedResultAlias)
                     propertyNames.push(savedResultAlias + "_");
 
-                let target = WI.runtimeManager.activeExecutionContext.target;
-                let targetData = (WI.debuggerManager.paused && WI.debuggerManager.dataForTarget(target)) || {};
+                let targetData = (activeCallFrame && WI.debuggerManager.dataForTarget(target)) || {};
 
                 function shouldExposeEvent() {
                     switch (completionController.mode) {
@@ -423,7 +424,15 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         console.assert(this._ongoingCompletionRequests >= 0, "Unbalanced increments / decrements.");
 
-        if (this._ongoingCompletionRequests <= 0)
-            WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
+        if (this._ongoingCompletionRequests > 0)
+            return;
+
+        for (let target of WI.targets) {
+            // FIXME: <https://webkit.org/b/298910> Add Runtime support for FrameTarget.
+            if (target instanceof WI.FrameTarget)
+                continue;
+
+            target.RuntimeAgent.releaseObjectGroup("completion");
+        }
     }
 };
