@@ -110,7 +110,8 @@ ScrollTimeline* StyleOriginatedTimelinesController::determineTreeOrder(const Vec
                 }
                 // Prefer the nearest timeline in hierarchy.
                 for (auto& matchedTimeline : matchedTimelines | std::views::reverse) {
-                    if (styleable.element.isComposedTreeDescendantOf(*originatingElement(matchedTimeline).element()))
+                    RefPtr matchedTimelineElement = originatingElement(matchedTimeline).element();
+                    if (matchedTimelineElement && styleable.element.isComposedTreeDescendantOf(*matchedTimelineElement))
                         return matchedTimeline.unsafePtr();
                 }
                 // Otherwise return the last of the matching timelines per https://github.com/w3c/csswg-drafts/issues/12581.
@@ -157,9 +158,11 @@ static bool timelineIsInScopeForTarget(const Ref<ScrollTimeline>& timeline, Elem
     if (!targetElement.isConnected())
         return false;
     RefPtr timelineOriginatingElement { originatingElement(timeline).element() };
-    ASSERT(timelineOriginatingElement);
+    if (!timelineOriginatingElement || !timelineOriginatingElement->isConnected())
+        return false;
     CheckedPtr scrollTimelineNameStyleScope = Style::Scope::forOrdinal(*timelineOriginatingElement, timeline->name().scopeOrdinal);
-    ASSERT(scrollTimelineNameStyleScope);
+    if (!scrollTimelineNameStyleScope)
+        return false;
     return Style::resolveTreeScopedReference(targetElement, { timeline->name().name, animationTimelineNameScopeOrdinal }, [&](const Style::Scope& scope, const Style::ScopedName&) {
         return scrollTimelineNameStyleScope == &scope;
     });
