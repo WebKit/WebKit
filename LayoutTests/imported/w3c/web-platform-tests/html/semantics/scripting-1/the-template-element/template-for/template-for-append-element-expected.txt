@@ -1,0 +1,4 @@
+Some
+
+FAIL <template for> appending element assert_equals: expected "Some<span> </span><span>content</span>" but got "Some<!--?start name=\"p\"?-->"
+

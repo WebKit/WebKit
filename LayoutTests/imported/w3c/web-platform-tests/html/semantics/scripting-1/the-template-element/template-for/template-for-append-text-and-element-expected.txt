@@ -1,0 +1,4 @@
+Some
+
+FAIL <template for> with text assert_equals: expected "Some content" but got "Some"
+

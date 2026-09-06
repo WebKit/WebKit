@@ -1,0 +1,4 @@
+Sometext remove
+
+FAIL HTML partial updates - mutation records for removal assert_array_equals: lengths differ, expected array ["added [3:#text:'Some'] removed []", "added [7:start:'name=\"n\"'] removed []", "added [3:#text:'text'] removed []", "added [1:SPAN:'remove'] removed []", "added [7:end:''] removed []", "added [3:#text:''] removed []", "added [] removed [3:#text:'text']", "added [] removed [1:SPAN:'remove']", "added [1:SPAN:'content'] removed []", "added [] removed [7:start:'name=\"n\"']", "added [] removed [7:end:'']"] length 11, got ["added [3:#text:'Some'] removed []", "added [8:#comment:'?start name=\"n\"'] removed []", "added [3:#text:'text'] removed []", "added [1:SPAN:'remove'] removed []", "added [8:#comment:'?end'] removed []", "added [3:#text:''] removed []"] length 6
+
