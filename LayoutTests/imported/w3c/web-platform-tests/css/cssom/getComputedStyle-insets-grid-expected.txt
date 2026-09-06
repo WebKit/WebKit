@@ -1,4 +1,7 @@
-abcdef
 
-FAIL Position absolute getComputedStyle left (for display: grid) assert_equals: Invalid gCS($("body > span > span"))['left']; expected "0px" but got "100px"
+PASS Position absolute getComputedStyle insets for display: grid (ltr)
+PASS Position absolute getComputedStyle insets for display: grid (rtl)
+PASS Position absolute getComputedStyle insets for display: grid (vlr)
+PASS Position absolute getComputedStyle insets for display: grid (vrl)
+PASS Position absolute getComputedStyle insets for display: grid (slr)
 

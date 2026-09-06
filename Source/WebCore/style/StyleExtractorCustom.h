@@ -375,6 +375,18 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
             if (AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(box.style()) && AnchorPositionEvaluator::defaultAnchorForBox(box)) [[unlikely]]
                 return LayoutUnit { };
 
+            if (CheckedPtr grid = dynamicDowncast<RenderGrid>(container)) {
+                auto gridArea = grid->gridAreaRectForOutOfFlow(box);
+                if constexpr (propertyID == CSSPropertyTop)
+                    return box.offsetTop() - box.marginTop() - (gridArea.y() - grid->borderTop());
+                else if constexpr (propertyID == CSSPropertyRight)
+                    return (gridArea.maxX() - grid->borderLeft()) - (box.offsetLeft() + box.offsetWidth() + box.marginRight());
+                else if constexpr (propertyID == CSSPropertyBottom)
+                    return (gridArea.maxY() - grid->borderTop()) - (box.offsetTop() + box.offsetHeight() + box.marginBottom());
+                else if constexpr (propertyID == CSSPropertyLeft)
+                    return box.offsetLeft() - box.marginLeft() - (gridArea.x() - grid->borderLeft());
+            }
+
             auto paddingBoxWidth = [&]() -> LayoutUnit {
                 if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(container))
                     return renderBlock->paddingBoxWidth();
