@@ -5396,14 +5396,12 @@
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/sandbox.py": {
-        "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060"}},
+        "expected": { "all": { "status": ["PASS"] }},
         "subtests": {
-            "test_sandbox_with_side_effects": {
-                "expected": { "all": { "status": ["PASS"] } }
-            },
-            "test_sandbox_with_empty_name": {
-                "expected": { "all": { "status": ["PASS"] } }
-            }
+            "test_sandbox_returns_same_node": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - RemoteReference support not yet implemented"}}},
+            "test_exception_details[True]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Exception details not yet fully implemented"}}},
+            "test_exception_details[False]": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Exception details not yet fully implemented"}}},
+            "test_target_realm": { "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288060 - Realm target resolution not yet implemented"}}}
         }
     },
     "imported/w3c/webdriver/tests/bidi/script/evaluate/user_activation.py": {
@@ -5501,15 +5499,6 @@
     "imported/w3c/webdriver/tests/bidi/script/realm_destroyed/realm_destroyed.py": {
         "expected": { "all": { "status": ["PASS"]}},
         "subtests": {
-            "test_subscribe_to_one_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_sandbox[evaluate]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
-            "test_sandbox[call_function]": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
             "test_iframe[same_origin]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
@@ -5527,9 +5516,6 @@
             },
             "test_reload_context": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
-            },
-            "test_subscribe_after_sandbox_creation": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             }
         }
     },
