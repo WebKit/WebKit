@@ -432,18 +432,6 @@ static StringImpl* stringForQuoteCharacter(char16_t character)
     return StringImpl::empty();
 }
 
-static inline StringImpl* quotationMarkString()
-{
-    static NeverDestroyed<Ref<StringImpl>> quotationMarkString { *stringForQuoteCharacter(quotationMark) };
-    return quotationMarkString->ptr();
-}
-
-static inline StringImpl* apostropheString()
-{
-    static NeverDestroyed<Ref<StringImpl>> apostropheString { *stringForQuoteCharacter(apostrophe) };
-    return apostropheString->ptr();
-}
-
 void RenderQuote::updateTextRenderer(RenderTreeBuilder& builder)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(document().inRenderTreeUpdate());
@@ -470,14 +458,16 @@ String RenderQuote::computeText() const
     case QuoteType::OpenQuote:
         isOpenQuote = true;
         [[fallthrough]];
-    case QuoteType::CloseQuote:
+    case QuoteType::CloseQuote: {
         if (!style().quotes().isAuto())
             return isOpenQuote ? style().quotes().openQuote(m_depth).impl() : style().quotes().closeQuote(m_depth).impl();
-        if (const auto* quotes = quotesForLanguage(Style::toPlatform(style().computedLocale())))
-            return stringForQuoteCharacter(isOpenQuote ? (m_depth ? quotes->open2 : quotes->open1) : (m_depth ? quotes->close2 : quotes->close1));
-        // FIXME: Should the default be the quotes for "en" rather than straight quotes?
-        // (According to https://html.spec.whatwg.org/multipage/rendering.html#quotes, the answer is "yes".)
-        return m_depth ? apostropheString() : quotationMarkString();
+        auto* quotes = quotesForLanguage(Style::toPlatform(style().computedLocale()));
+        if (!quotes) {
+            quotes = quotesForLanguage("en"_s);
+            ASSERT(quotes);
+        }
+        return stringForQuoteCharacter(isOpenQuote ? (m_depth ? quotes->open2 : quotes->open1) : (m_depth ? quotes->close2 : quotes->close1));
+    }
     }
     ASSERT_NOT_REACHED();
     return emptyString();

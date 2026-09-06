@@ -3151,9 +3151,7 @@ imported/w3c/web-platform-tests/css/css-content/quotes-023.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-030.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-034.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-content/quotes-first-letter-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/attr-chained-pseudo-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-content/quotes-first-line.html [ ImageOnlyFailure ]
 
