@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+.line {
+    width: 100px;
+}
+.clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<div id="content">
+<div id="clamped" class="line clamped" tabindex="0">Alpha bravo charlie delta echo foxtrot golf hotel india juliet.</div>
+<div id="unclamped" class="line" tabindex="0">Alpha bravo charlie delta echo foxtrot golf hotel india juliet.</div>
+</div>
+
+<script>
+var output = "This tests that line clamp drops the lines past the clamp visually without changing the text accessibility reports for the element.\n\n";
+
+if (window.accessibilityController) {
+    function textOf(id) {
+        return accessibilityController.accessibleElementById(id).stringForRange(0, 63);
+    }
+
+    function heightOf(id) {
+        return accessibilityController.accessibleElementById(id).height;
+    }
+
+    // The rest only means anything if the clamp is really clipping, which the shorter box proves.
+    output += expect("heightOf('clamped') < heightOf('unclamped')", "true");
+
+    output += "\nBoth elements hold the same text, and the clamped one reports all of it.\n";
+    output += expect("textOf('clamped')", "'Alpha bravo charlie delta echo foxtrot golf hotel india juliet.'");
+    output += expect("textOf('unclamped')", "'Alpha bravo charlie delta echo foxtrot golf hotel india juliet.'");
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>
