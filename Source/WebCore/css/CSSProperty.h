@@ -25,6 +25,7 @@
 #include <WebCore/CSSValue.h>
 #include <WebCore/IsImportant.h>
 #include <wtf/BitSet.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -34,6 +35,15 @@ class WritingMode;
 struct CSSParserContext;
 
 enum class IsImplicit : bool { No, Yes };
+
+// Builtin value types that a property's grammar can reference.
+enum class CSSPropertyValueType : uint8_t {
+    Color          = 1 << 0,
+    Image          = 1 << 1,
+    EasingFunction = 1 << 2,
+    BasicShape     = 1 << 3,
+    URL            = 1 << 4,
+};
 
 struct StylePropertyMetadata {
     StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, IsImplicit implicit)
@@ -151,6 +161,10 @@ public:
     // Checks if a keyword is valid for a property, taking settings flags into account.
     // This is used by the Inspector to filter keywords based on enabled settings.
     static bool isKeywordValidForPropertyValues(CSSPropertyID, CSSValueID, const CSSParserContext&);
+
+    // Returns the builtin value types referenced by a property's grammar (e.g. <color>, <image>, etc.).
+    // This is used by the Inspector to derive color/timing/etc. function existence and completions.
+    static OptionSet<CSSPropertyValueType> valueTypesForProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const LIFETIME_BOUND { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)

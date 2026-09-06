@@ -40,6 +40,7 @@
 #include "CSSValueKeywords.h"
 #include "StyleEasingFunction.h"
 #include "TimingFunction.h"
+#include <array>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
@@ -283,7 +284,37 @@ static std::optional<CSS::EasingFunction> consumeUnresolvedSpringEasingFunction(
     };
 }
 
-// MARK: - <easing-function>
+static constexpr std::array allEasingFunctions = {
+    CSSValueCubicBezier,
+    CSSValueLinear,
+    CSSValueSpring,
+    CSSValueSteps,
+};
+static_assert(std::size(allEasingFunctions) == allEasingFunctionsCount);
+
+Vector<CSSValueID, allEasingFunctionsCount> enabledEasingFunctions(const CSSParserContext& context)
+{
+    Vector<CSSValueID, allEasingFunctionsCount> result;
+    for (auto functionId : allEasingFunctions) {
+        if (functionId == CSSValueSpring && !context.springTimingFunctionEnabled)
+            continue;
+        result.append(functionId);
+    }
+    return result;
+}
+
+static void validateEasingFunction(CSSValueID functionId, const CSSParserContext& context)
+{
+    UNUSED_PARAM(functionId);
+    UNUSED_PARAM(context);
+#if ASSERT_ENABLED
+    if (std::ranges::find(allEasingFunctions, functionId) == allEasingFunctions.end())
+        return;
+
+    auto enabledFunctionIds = enabledEasingFunctions(context);
+    RELEASE_ASSERT(std::ranges::find(enabledFunctionIds, functionId) != enabledFunctionIds.end());
+#endif
+}
 
 std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
@@ -328,7 +359,9 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
         break;
     }
 
-    switch (range.peek().functionId()) {
+    auto functionId = range.peek().functionId();
+    validateEasingFunction(functionId, state.context);
+    switch (functionId) {
     case CSSValueLinear:
         return consumeUnresolvedLinearEasingFunction(range, state);
 

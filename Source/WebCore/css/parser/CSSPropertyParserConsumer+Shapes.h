@@ -31,6 +31,8 @@ namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSValue;
+struct CSSParserContext;
+enum CSSValueID : uint16_t;
 
 namespace CSS {
 struct PropertyParserState;
@@ -44,6 +46,9 @@ enum class BasicShapeParsingOptions : uint8_t {
     RejectPathFunction         = 1 << 1,
     RejectShapeFunction        = 1 << 2,
 };
+
+inline constexpr size_t allBasicShapeFunctionsCount = 8;
+Vector<CSSValueID, allBasicShapeFunctionsCount> enabledBasicShapeFunctions(const CSSParserContext&);
 
 // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
 // https://drafts.csswg.org/css-shapes/#typedef-basic-shape

@@ -925,6 +925,28 @@ bool CSSProperty::isKeywordValidForPropertyValues(CSSPropertyID id, CSSValueID k
     }
 }
 
+OptionSet<CSSPropertyValueType> CSSProperty::valueTypesForProperty(CSSPropertyID id)
+{
+    switch (id) {
+    case CSSPropertyID::CSSPropertyTestColor:
+        return { CSSPropertyValueType::Color };
+    case CSSPropertyID::CSSPropertyTestColorAllowsTypesAbsolute:
+        return { CSSPropertyValueType::Color };
+    case CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport:
+        return { CSSPropertyValueType::Color };
+    case CSSPropertyID::CSSPropertyTestImage:
+        return { CSSPropertyValueType::Image };
+    case CSSPropertyID::CSSPropertyTestImageNoImageSet:
+        return { CSSPropertyValueType::Image };
+    case CSSPropertyID::CSSPropertyTestUrlWithModifiers:
+        return { CSSPropertyValueType::URL };
+    case CSSPropertyID::CSSPropertyTestUrlWithNoModifiers:
+        return { CSSPropertyValueType::URL };
+    default:
+        return { };
+    }
+}
+
 } // namespace WebCore
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

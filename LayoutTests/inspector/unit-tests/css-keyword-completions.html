@@ -138,7 +138,7 @@ function test()
         description: "Test that the `word-spacing` property provides its expected completions.",
         propertyName: "word-spacing",
         text: "",
-        expectedCompletions: ["normal", "calc()"],
+        expectedCompletions: ["normal"],
     });
 
     // `border: 1px | red`
@@ -283,6 +283,8 @@ function test()
     });
 
     // `-apple-sys|`
+    // Keep this tokenizer test independent of backend-supplied completion values.
+    WI.CSSKeywordCompletions.KeywordsForPropertyName.add("font-family", "-apple-system");
     addTestForPartialPropertyValue({
         name: "WI.CSSKeywordCompletions.forPartialPropertyValue.ApplePrefixedFontValue",
         description: "Test that an `-apple-`-prefixed font value uses the whole identifier as the prefix, so applying a completion does not produce `-apple--apple-system`.",
@@ -342,3 +344,4 @@ function test()
     <p>Testing WI.CSSKeywordCompletions.</p>
 </body>
 </html>
+

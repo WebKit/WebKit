@@ -2,57 +2,80 @@
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
 <script>
+// Keep the expected output independent of each port's experimental feature defaults.
+window.internals.settings.setSpringTimingFunctionEnabled(false);
+
 function test()
 {
     InspectorProtocol.sendCommand("CSS.getSupportedCSSProperties", {}, (messageObject) => {
-        if ("error" in messageObject)
+        if ("error" in messageObject) {
             ProtocolTest.log(messageObject.error.message);
-        else {
-            let entries = messageObject["result"]["cssProperties"];
+            ProtocolTest.completeTest();
+            return;
+        }
 
-            const expectedProperties = [
-                "background-repeat",
-                "box-sizing",
-                "display",
-                "filter",
-                "font-style",
-                "margin",
-                "text-transform",
-            ];
+        let result = messageObject["result"];
+        let entries = result["cssProperties"];
 
-            for (let expectedProperty of expectedProperties) {
-                for (let entry of entries) {
-                    if (entry.name !== expectedProperty)
-                        continue;
+        const expectedProperties = [
+            "background-color",
+            "background-image",
+            "background-repeat",
+            "box-sizing",
+            "clip-path",
+            "display",
+            "filter",
+            "font-style",
+            "margin",
+            "text-transform",
+            "transition-timing-function",
+        ];
 
-                    ProtocolTest.log(`"${expectedProperty}" is supported`);
+        for (let expectedProperty of expectedProperties) {
+            for (let entry of entries) {
+                if (entry.name !== expectedProperty)
+                    continue;
 
-                    if (entry.aliases) {
-                        ProtocolTest.log(`"${expectedProperty}" has aliases:`);
-                        for (let alias of entry.aliases)
-                            ProtocolTest.log(` - "${alias}"`);
-                    }
+                ProtocolTest.log(`"${expectedProperty}" is supported`);
 
-                    if (entry.longhands) {
-                        ProtocolTest.log(`"${expectedProperty}" has longhands:`);
-                        for (let longhand of entry.longhands)
-                            ProtocolTest.log(` - "${longhand}"`);
-                    }
-
-                    if (entry.inherited)
-                        ProtocolTest.log(`"${expectedProperty}" is inherited`);
-
-                    if (entry.values) {
-                        ProtocolTest.log(`"${expectedProperty}" has keyword values:`);
-                        for (let value of entry.values)
-                            ProtocolTest.log(` - "${value}"`);
-                    }
-
-                    break;
+                if (entry.aliases) {
+                    ProtocolTest.log(`"${expectedProperty}" has aliases:`);
+                    for (let alias of entry.aliases)
+                        ProtocolTest.log(` - "${alias}"`);
                 }
 
-                ProtocolTest.log("");
+                if (entry.longhands) {
+                    ProtocolTest.log(`"${expectedProperty}" has longhands:`);
+                    for (let longhand of entry.longhands)
+                        ProtocolTest.log(` - "${longhand}"`);
+                }
+
+                if (entry.inherited)
+                    ProtocolTest.log(`"${expectedProperty}" is inherited`);
+
+                if (entry.isColorAware)
+                    ProtocolTest.log(`"${expectedProperty}" is color-aware`);
+
+                if (entry.isEasingAware)
+                    ProtocolTest.log(`"${expectedProperty}" is easing-aware`);
+
+                if (entry.values) {
+                    ProtocolTest.log(`"${expectedProperty}" has values:`);
+                    for (let value of entry.values)
+                        ProtocolTest.log(` - "${value}"`);
+                }
+
+                break;
             }
+
+            ProtocolTest.log("");
+        }
+
+        let colors = result["colors"];
+        ProtocolTest.log(`"colors" is ${colors ? "present" : "absent"}`);
+        if (colors) {
+            for (let expectedColor of ["red", "currentcolor", "transparent", "rgb()", "color-mix()"])
+                ProtocolTest.log(` - includes "${expectedColor}": ${colors.includes(expectedColor)}`);
         }
 
         ProtocolTest.completeTest();
@@ -63,3 +86,4 @@ function test()
 <body onLoad="runTest()">
 </body>
 </html>
+

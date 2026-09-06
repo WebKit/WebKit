@@ -65,6 +65,7 @@
 #include "Color.h"
 #include "ColorLuminance.h"
 #include "StyleKeyword+Mappings.h"
+#include <array>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/MakeString.h>
 
@@ -714,7 +715,48 @@ static std::optional<CSS::Color> consumeRelativeAlphaColorFunction(CSSParserToke
     };
 }
 
-// MARK: - Color function dispatch
+static constexpr std::array allColorFunctions = {
+    CSSValueAlpha,
+    CSSValueColor,
+    CSSValueColorLayers,
+    CSSValueColorMix,
+    CSSValueContrastColor,
+    CSSValueHsl,
+    CSSValueHsla,
+    CSSValueHwb,
+    CSSValueLab,
+    CSSValueLch,
+    CSSValueLightDark,
+    CSSValueOklab,
+    CSSValueOklch,
+    CSSValueRgb,
+    CSSValueRgba,
+};
+static_assert(std::size(allColorFunctions) == allColorFunctionsCount);
+
+Vector<CSSValueID, allColorFunctionsCount> enabledColorFunctions(const CSSParserContext& context)
+{
+    Vector<CSSValueID, allColorFunctionsCount> result;
+    for (auto functionId : allColorFunctions) {
+        if (functionId == CSSValueColorLayers && !context.colorLayersEnabled)
+            continue;
+        result.append(functionId);
+    }
+    return result;
+}
+
+static void validateColorFunction(CSSValueID functionId, const CSSParserContext& context)
+{
+    UNUSED_PARAM(functionId);
+    UNUSED_PARAM(context);
+#if ASSERT_ENABLED
+    if (std::ranges::find(allColorFunctions, functionId) == allColorFunctions.end())
+        return;
+
+    auto enabledFunctionIds = enabledColorFunctions(context);
+    RELEASE_ASSERT(std::ranges::find(enabledFunctionIds, functionId) != enabledFunctionIds.end());
+#endif
+}
 
 // NOTE: This is named "consume*A*ColorFunction" to differentiate if from the
 // the function that consumes a `color()` explicitly.
@@ -722,6 +764,7 @@ static std::optional<CSS::Color> consumeAColorFunction(CSSParserTokenRange& rang
 {
     CSSParserTokenRange colorRange = range;
     CSSValueID functionId = range.peek().functionId();
+    validateColorFunction(functionId, state.propertyParserState.context);
     std::optional<CSS::Color> color;
     switch (functionId) {
     case CSSValueRgb:

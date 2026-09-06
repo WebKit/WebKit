@@ -31,6 +31,8 @@ namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSValue;
+struct CSSParserContext;
+enum CSSValueID : uint16_t;
 
 namespace CSS {
 struct PropertyParserState;
@@ -47,6 +49,9 @@ enum class AllowedImageType : uint8_t {
 
 // MARK: <image>
 // https://drafts.csswg.org/css-images-4/#image-values
+
+inline constexpr size_t allImageFunctionsCount = 22;
+Vector<CSSValueID, allImageFunctionsCount> enabledImageFunctions(const CSSParserContext&);
 
 RefPtr<CSSValue> consumeImage(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<AllowedImageType> = { AllowedImageType::URLFunction, AllowedImageType::ImageSet, AllowedImageType::GeneratedImage });

@@ -28,8 +28,14 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
+#include "CSSKeywordColor.h"
 #include "CSSParserContext.h"
+#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+Easing.h"
+#include "CSSPropertyParserConsumer+Image.h"
+#include "CSSPropertyParserConsumer+Shapes.h"
 #include "CSSPropertyParserState.h"
 #include "CSSPropertyParsing.h"
 #include "CSSPropertySourceData.h"
@@ -696,13 +702,26 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     return rule.releaseNonNull();
 }
 
-Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> InspectorCSSAgent::getSupportedCSSProperties()
+Inspector::Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>>> InspectorCSSAgent::getSupportedCSSProperties()
+{
+    return buildSupportedCSSProperties(m_inspectedPage->settings());
+}
+
+std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>> InspectorCSSAgent::buildSupportedCSSProperties(const Settings& settings)
 {
     auto cssProperties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
 
     // Create a CSSParserContext with the page's settings for keyword validation.
-    auto& settings = m_inspectedPage->settings();
     auto parserContext = CSSParserContext { settings };
+
+    auto appendFunctions = [&](JSON::ArrayOf<String>& values, std::span<const CSSValueID> functionIDs) {
+        for (auto functionID : functionIDs)
+            values.addItem(makeString(nameString(functionID), "()"_s));
+    };
+
+    auto enabledImageFunctions = CSSPropertyParserHelpers::enabledImageFunctions(parserContext);
+    auto enabledEasingFunctions = CSSPropertyParserHelpers::enabledEasingFunctions(parserContext);
+    auto enabledBasicShapeFunctions = CSSPropertyParserHelpers::enabledBasicShapeFunctions(parserContext);
 
     for (auto propertyID : allCSSProperties()) {
         if (!isExposed(propertyID, &settings))
@@ -731,39 +750,58 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
                 property->setLonghands(WTF::move(longhands));
         }
 
+        auto values = JSON::ArrayOf<String>::create();
+
         if (CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(propertyID)) {
             auto propertyParserState = CSS::PropertyParserState {
                 .context = parserContext,
             };
-            auto values = JSON::ArrayOf<String>::create();
             for (auto valueID : allCSSValueKeywords()) {
                 if (CSSPropertyParsing::isKeywordValidForStyleProperty(propertyID, valueID, propertyParserState))
                     values->addItem(nameString(valueID));
             }
-            if (values->length())
-                property->setValues(WTF::move(values));
         } else {
             // For properties that aren't keyword-fast-path eligible (e.g., display),
             // use the values from CSSProperties.json if available, filtered by settings.
-            auto validKeywords = CSSProperty::validKeywordsForProperty(propertyID);
-            if (!validKeywords.empty()) {
-                auto values = JSON::ArrayOf<String>::create();
-                for (auto valueID : validKeywords) {
-                    if (CSSProperty::isKeywordValidForPropertyValues(propertyID, valueID, parserContext))
-                        values->addItem(nameString(valueID));
-                }
-                if (values->length())
-                    property->setValues(WTF::move(values));
+            for (auto valueID : CSSProperty::validKeywordsForProperty(propertyID)) {
+                if (CSSProperty::isKeywordValidForPropertyValues(propertyID, valueID, parserContext))
+                    values->addItem(nameString(valueID));
             }
         }
+
+        auto valueTypes = CSSProperty::valueTypesForProperty(propertyID);
+        if (valueTypes.containsAny({ CSSPropertyValueType::Image, CSSPropertyValueType::URL }))
+            values->addItem("url()"_s);
+        if (valueTypes.contains(CSSPropertyValueType::Image))
+            appendFunctions(values, enabledImageFunctions);
+        if (valueTypes.contains(CSSPropertyValueType::EasingFunction))
+            appendFunctions(values, enabledEasingFunctions);
+        if (valueTypes.contains(CSSPropertyValueType::BasicShape))
+            appendFunctions(values, enabledBasicShapeFunctions);
+
+        if (values->length())
+            property->setValues(WTF::move(values));
 
         if (CSSProperty::isInheritedProperty(propertyID))
             property->setInherited(true);
 
+        if (valueTypes.contains(CSSPropertyValueType::Color) || CSSProperty::isColorProperty(propertyID))
+            property->setIsColorAware(true);
+
+        if (valueTypes.contains(CSSPropertyValueType::EasingFunction))
+            property->setIsEasingAware(true);
+
         cssProperties->addItem(WTF::move(property));
     }
 
-    return cssProperties;
+    auto colors = JSON::ArrayOf<String>::create();
+    for (auto valueID : allCSSValueKeywords()) {
+        if (CSS::isColorKeyword(valueID) && CSSPropertyParserHelpers::isColorKeywordAllowed(valueID, parserContext))
+            colors->addItem(nameString(valueID));
+    }
+    appendFunctions(colors, CSSPropertyParserHelpers::enabledColorFunctions(parserContext));
+
+    return { WTF::move(cssProperties), WTF::move(colors) };
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorCSSAgent::getSupportedSystemFontFamilyNames()

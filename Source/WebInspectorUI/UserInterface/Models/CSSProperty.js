@@ -52,7 +52,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     static isInheritedPropertyName(name)
     {
         console.assert(typeof name === "string");
-        if (WI.CSSKeywordCompletions.InheritedProperties.has(name))
+        if (WI.CSSKeywordCompletions.InheritedPropertyNames.has(name))
             return true;
         return WI.CSSProperty.isVariable(name);
     }
@@ -244,7 +244,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._rawValue = this._rawValue.replace(/\n\s+/g, "\n");
 
         this._isShorthand = undefined;
-        this._shorthandPropertyNames = undefined;
+        this._hasShorthand = undefined;
 
         this._updateName(name);
         this._relatedShorthandProperty = null;
@@ -524,24 +524,17 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     get isShorthand()
     {
-        if (this._isShorthand === undefined) {
-            this._isShorthand = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.has(this._name);
-            if (this._isShorthand) {
-                let longhands = WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty.get(this._name);
-                if (longhands && longhands.length === 1)
-                    this._isShorthand = false;
-            }
-        }
+        this._isShorthand ??= WI.CSSKeywordCompletions.LonghandPropertyNamesForShorthandPropertyName.get(this._name)?.size > 1;
         return this._isShorthand;
     }
 
-    get shorthandPropertyNames()
+    get hasShorthand()
     {
-        if (!this._shorthandPropertyNames) {
-            this._shorthandPropertyNames = WI.CSSKeywordCompletions.ShorthandNamesForLongHandProperty.get(this._name) || [];
-            this._shorthandPropertyNames.remove("all");
+        if (this._hasShorthand === undefined) {
+            let shorthandPropertyNames = WI.CSSKeywordCompletions.ShorthandPropertyNamesForLonghandPropertyName.get(this._name);
+            this._hasShorthand = shorthandPropertyNames && (shorthandPropertyNames.size > 1 || shorthandPropertyNames.firstValue !== "all");
         }
-        return this._shorthandPropertyNames;
+        return this._hasShorthand;
     }
 
     get isNewProperty() { return this._isNewProperty; }
