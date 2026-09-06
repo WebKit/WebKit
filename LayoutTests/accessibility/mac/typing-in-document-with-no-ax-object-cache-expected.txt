@@ -1,0 +1,8 @@
+This tests that typing does not crash when accessibility is enabled after the document loaded, leaving the document without an AXObjectCache.
+
+PASS: input.value === 'a'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

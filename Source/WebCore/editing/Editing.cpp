@@ -992,7 +992,8 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     auto position = visiblePosition.deepEquivalent();
     Ref document = *position.document();
 
-    auto editableRoot = highestEditableRoot(position, AXObjectCache::accessibilityEnabled() ? HasEditableAXRole : ContentIsEditable);
+    bool useAccessibilityEditability = AXObjectCache::accessibilityEnabled() && document->existingAXObjectCache();
+    auto editableRoot = highestEditableRoot(position, useAccessibilityEditability ? HasEditableAXRole : ContentIsEditable);
     if (editableRoot && !document->inDesignMode())
         scope = editableRoot;
     else {

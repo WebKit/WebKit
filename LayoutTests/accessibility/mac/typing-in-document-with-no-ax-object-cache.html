@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input id="input">
+
+<script>
+var output = "This tests that typing does not crash when accessibility is enabled after the document loaded, leaving the document without an AXObjectCache.\n\n";
+
+var input = document.getElementById("input");
+
+function runTest() {
+    // Focus while accessibility is still off, so nothing on the focus path creates a cache.
+    input.focus();
+
+    // Turns accessibility but doesn't necessarily create an AXObjectCache.
+    accessibilityController.enableEnhancedAccessibility(true);
+
+    document.execCommand("InsertText", false, "a");
+    output += expect("input.value", "'a'");
+
+    debug(output);
+    finishJSTest();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    // Waiting for load matters for reproducing the bug. Enabling accessibility any earlier lets
+    // Document::implicitClose() create the AXObjectCache this test needs to be missing.
+    window.addEventListener("load", runTest);
+}
+</script>
+</body>
+</html>
