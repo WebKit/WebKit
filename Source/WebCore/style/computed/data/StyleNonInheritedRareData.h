@@ -120,18 +120,13 @@ public:
 
     Contain usedContain() const;
 
-    ContainIntrinsicSize containIntrinsicWidth;
-    ContainIntrinsicSize containIntrinsicHeight;
-
-    WebkitLineClamp lineClamp;
+    TouchAction touchAction;
 
     Zoom zoom;
 
-    MaximumLines maxLines;
-
-    TouchAction touchAction;
-
     WebkitInitialLetter initialLetter;
+    WebkitLineClamp lineClamp;
+    MaximumLines maxLines;
 
     DataRef<MarqueeData> marquee;
     DataRef<BackdropFilterData> backdropFilter;
@@ -140,9 +135,14 @@ public:
     DataRef<MaskBorderData> maskBorder;
 
     Clip clip;
+    ClipPath clipPath;
+    OverflowClipMargin overflowClipMargin;
 
     ScrollMarginBox scrollMargin;
     ScrollPaddingBox scrollPadding;
+    ScrollSnapType scrollSnapType;
+    ScrollSnapAlign scrollSnapAlign;
+    ScrollbarGutter scrollbarGutter;
 
     CounterIncrement counterIncrement;
     CounterReset counterReset;
@@ -159,20 +159,20 @@ public:
     ShapeMargin shapeMargin;
     ShapeImageThreshold shapeImageThreshold;
 
-    Perspective perspective;
-    PerspectiveOrigin perspectiveOrigin;
-
-    ClipPath clipPath;
-
     DataRef<CustomPropertyData> customProperties;
     HashSet<AtomString> customPaintWatchedProperties;
 
     Rotate rotate;
     Scale scale;
     Translate translate;
+    Perspective perspective;
+    PerspectiveOrigin perspectiveOrigin;
     PortalTransform portalTransform;
 
+    Style::ContainerType containerType;
     ContainerNames containerNames;
+    ContainIntrinsicSize containIntrinsicWidth;
+    ContainIntrinsicSize containIntrinsicHeight;
 
     LinkParameters linkParameters;
 
@@ -194,17 +194,10 @@ public:
 
     ScrollTimelines scrollTimelines;
     ViewTimelines viewTimelines;
-
     NameScope timelineScope;
 
     NameScope triggerScope;
     TimelineTriggers timelineTriggers;
-
-    ScrollbarGutter scrollbarGutter;
-    Style::ContainerType containerType;
-
-    ScrollSnapType scrollSnapType;
-    ScrollSnapAlign scrollSnapAlign;
 
     AtomString pseudoElementNameArgument;
 
@@ -215,28 +208,36 @@ public:
     PositionTryFallbacks positionTryFallbacks;
     std::optional<size_t> usedPositionOptionIndex;
 
-    OverflowClipMargin overflowClipMargin;
-
     BlockStepSize blockStepSize;
+
     PREFERRED_TYPE(BlockStepAlign) unsigned blockStepAlign : 2;
     PREFERRED_TYPE(BlockStepInsert) unsigned blockStepInsert : 2;
     PREFERRED_TYPE(BlockStepRound) unsigned blockStepRound : 2;
-    PREFERRED_TYPE(SpatialType) unsigned spatial : 1;
-    PREFERRED_TYPE(PortalActionType) unsigned portalAction : 1;
 
     PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorX : 2;
     PREFERRED_TYPE(OverscrollBehavior) unsigned overscrollBehaviorY : 2;
+    PREFERRED_TYPE(ScrollbarWidth) unsigned scrollbarWidth : 2;
+    PREFERRED_TYPE(ScrollBehavior) unsigned scrollBehavior : 1;
+    PREFERRED_TYPE(OverflowAnchor) unsigned overflowAnchor : 1;
+    PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
+    PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 2;
+    PREFERRED_TYPE(ContentVisibility) unsigned contentVisibility : 2;
+
+    PREFERRED_TYPE(SpatialType) unsigned spatial : 1;
+    PREFERRED_TYPE(PortalActionType) unsigned portalAction : 1;
 
     PREFERRED_TYPE(TransformStyle3D) unsigned transformStyle3D : 2;
     PREFERRED_TYPE(bool) unsigned transformStyleForcedToFlat : 1; // The used value for transform-style is forced to flat by a grouping property.
     PREFERRED_TYPE(BackfaceVisibility) unsigned backfaceVisibility : 1;
 
-    PREFERRED_TYPE(ScrollBehavior) unsigned scrollBehavior : 1;
+    PREFERRED_TYPE(BlendMode) unsigned effectiveBlendMode: 5;
+
     PREFERRED_TYPE(TextDecorationStyle) unsigned textDecorationStyle : 3;
     PREFERRED_TYPE(TextGroupAlign) unsigned textGroupAlign : 3;
-    PREFERRED_TYPE(ContentVisibility) unsigned contentVisibility : 2;
-    PREFERRED_TYPE(BlendMode) unsigned effectiveBlendMode: 5;
+
     PREFERRED_TYPE(Isolation) unsigned isolation : 1;
+    PREFERRED_TYPE(Contain) unsigned contain : 5;
+
     PREFERRED_TYPE(InputSecurity) unsigned inputSecurity : 1;
 #if ENABLE(APPLE_PAY)
     PREFERRED_TYPE(ApplePayButtonStyle) unsigned applePayButtonStyle : 2;
@@ -245,26 +246,25 @@ public:
     PREFERRED_TYPE(BreakBetween) unsigned breakBefore : 4;
     PREFERRED_TYPE(BreakBetween) unsigned breakAfter : 4;
     PREFERRED_TYPE(BreakInside) unsigned breakInside : 3;
+    PREFERRED_TYPE(MarginTrim) unsigned marginTrim : 2;
+
     PREFERRED_TYPE(TextBoxTrim) unsigned textBoxTrim : 2;
-    PREFERRED_TYPE(OverflowAnchor) unsigned overflowAnchor : 1;
-    PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
-    PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 5;
-    PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
     PREFERRED_TYPE(WrapInside) unsigned wrapInside : 1;
-    PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
+    PREFERRED_TYPE(WhiteSpaceTrim) unsigned whiteSpaceTrim : 3;
+
 #if HAVE(CORE_MATERIAL)
     PREFERRED_TYPE(AppleVisualEffect) unsigned appleVisualEffect : 5;
 #endif
-    PREFERRED_TYPE(ScrollbarWidth) unsigned scrollbarWidth : 2;
+    PREFERRED_TYPE(FieldSizing) unsigned fieldSizing : 1;
+    PREFERRED_TYPE(bool) unsigned nativeAppearanceDisabled : 1;
+
+    PREFERRED_TYPE(PositionTryOrder) unsigned positionTryOrder : 3;
+    PREFERRED_TYPE(PositionVisibility) unsigned positionVisibility : 5;
     PREFERRED_TYPE(bool) unsigned usesAnchorFunctions : 1;
     PREFERRED_TYPE(EnumSet<BoxAxis>) unsigned anchorFunctionScrollCompensatedAxes : 2;
     PREFERRED_TYPE(bool) unsigned isPopoverInvoker : 1;
+
     PREFERRED_TYPE(bool) unsigned useSVGZoomRulesForLength : 1;
-    PREFERRED_TYPE(MarginTrim) unsigned marginTrim : 2;
-    PREFERRED_TYPE(Contain) unsigned contain : 5;
-    PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 2;
-    PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
-    PREFERRED_TYPE(WhiteSpaceTrim) unsigned whiteSpaceTrim : 3;
 
 private:
     NonInheritedRareData();
