@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+
+<select id="select" disabled>
+    <option>Alpha</option>
+    <option selected>Bravo</option>
+    <option>Charlie</option>
+</select>
+
+<script>
+var output = "This tests that pressing a disabled base-appearance select posts AXPressDidFail, and that the select still reports itself collapsed when the notification arrives.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var select = accessibilityController.accessibleElementById("select");
+    var pressDidFailCount = 0;
+    var pressListener = null;
+    var expandedAtDelivery = null;
+
+    function pressDidFailDeliveries() {
+        if (!pressListener) {
+            pressListener = function(element, notification, userInfo) {
+                if (notification != "AXPressDidFail")
+                    return;
+                pressDidFailCount++;
+                expandedAtDelivery = select.isExpanded;
+            };
+            accessibilityController.addNotificationListener(pressListener);
+        }
+        return pressDidFailCount;
+    }
+
+    output += expect("pressDidFailDeliveries()", "0");
+
+    setTimeout(async function() {
+        select.press();
+        output += await expectAsync("pressDidFailDeliveries()", "1");
+        output += expect("expandedAtDelivery", "false");
+
+        document.getElementById("select").style.display = "none";
+        accessibilityController.removeNotificationListener(pressListener);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
