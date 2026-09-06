@@ -1254,11 +1254,49 @@ final class WebBackForwardList {
         }
     }
 
+    // The sender is not required to host the frame: BackForwardController substitutes
+    // Page::mainFrame().frameID() when a caller passes none, and under site isolation that frame lives
+    // in another process. A miss is not a message check either, since a frame can be destroyed while a
+    // synchronous request naming it is still in flight.
+    private func requestedFrameOnPage(
+        frameID: WebCore.FrameIdentifier,
+        page: WebKit.WebPageProxy
+    ) -> WebKit.WebFrameProxy? {
+        guard let frame = webFrameForFrameID(frameID), let framePage = frame.page() else {
+            return nil
+        }
+        // We can't use == here due to rdar://162357139
+        guard contentsMatch(framePage.identifier(), page.identifier()) else {
+            return nil
+        }
+        return frame
+    }
+
     @used
     func backForwardAllItems(
+        connection: IPC.Connection,
         frameID: WebCore.FrameIdentifier,
         completionHandler: CompletionHandlers.WebBackForwardList.BackForwardAllItemsCompletionHandler
     ) {
+        guard let webPageProxy = page.get() else {
+            completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: []))
+            return
+        }
+
+        let process = WebKit.WebProcessProxy.fromConnection(connection)
+        if messageCheckCompletion(
+            process: process,
+            completionHandler: { completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: [])) },
+            process.ptr().isAssociatedWithPage(webPageProxy.identifier())
+        ) {
+            return
+        }
+
+        guard requestedFrameOnPage(frameID: frameID, page: webPageProxy) != nil else {
+            completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: []))
+            return
+        }
+
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
@@ -1284,13 +1322,38 @@ final class WebBackForwardList {
             return
         }
 
-        // FIXME: This should verify that the web process requesting the item hosts the specified frame.
+        guard let webPageProxy = page.get() else {
+            completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
+            return
+        }
+
+        if messageCheckCompletion(
+            process: process,
+            completionHandler: { completionHandler.pointee(consuming: WebKit.RefPtrFrameState()) },
+            process.ptr().isAssociatedWithPage(webPageProxy.identifier())
+        ) {
+            return
+        }
+
+        guard let frame = requestedFrameOnPage(frameID: frameID, page: webPageProxy) else {
+            completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
+            return
+        }
+
         let delta = Int(delta)
         guard let item = itemAtDeltaFromCurrentIndex(delta: delta, allowSkipping: false) else {
             completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
             return
         }
         guard let frameItem = item.mainFrameItem().childItemForFrameID(frameID) else {
+            // An entry does not always know its frame identifiers: session state does not encode them
+            // and a provisional page's main frame gets a new one, so the lookup above misses for
+            // legitimate main frame requests. Only a main frame may fall back to the entry's main
+            // frame state.
+            guard frame.isMainFrame() else {
+                completionHandler.pointee(consuming: WebKit.RefPtrFrameState())
+                return
+            }
             completionHandler.pointee(consuming: WebKit.RefPtrFrameState(item.copyMainFrameStateWithChildren().ptr()))
             return
         }

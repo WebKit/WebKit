@@ -1,0 +1,11 @@
+
+PASS BackForwardItemAtIndexForWebContent serves the main frame process asking for its own frameID
+PASS BackForwardAllItems serves the main frame process asking for its own frameID
+PASS BackForwardItemAtIndexForWebContent serves a cross-site subframe process asking for the main frame's frameID
+PASS BackForwardAllItems serves a cross-site subframe process asking for the main frame's frameID
+PASS BackForwardItemAtIndexForWebContent does not fall back to main frame state for a cross-site subframe asking for its own frameID
+PASS BackForwardItemAtIndexForWebContent rejects a frameID naming no frame at all
+PASS BackForwardAllItems rejects a frameID naming no frame at all
+PASS BackForwardItemAtIndexForWebContent rejects the main frame identifier of a different page
+PASS BackForwardAllItems rejects the main frame identifier of a different page
+

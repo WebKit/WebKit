@@ -924,8 +924,30 @@ void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier ite
     goToItem(*item);
 }
 
-void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+// The sender is not required to host the frame: BackForwardController substitutes
+// Page::mainFrame().frameID() when a caller passes none, and under site isolation that frame lives in
+// another process. A miss is not a message check either, since a frame can be destroyed while a
+// synchronous request naming it is still in flight.
+static RefPtr<WebFrameProxy> requestedFrameOnPage(FrameIdentifier frameID, WebPageProxy& page)
 {
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != &page)
+        return nullptr;
+    return frame;
+}
+
+void WebBackForwardList::backForwardAllItems(IPC::Connection& connection, FrameIdentifier frameID, CompletionHandler<void(Vector<Ref<FrameState>>&&)>&& completionHandler)
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler({ });
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, process->isAssociatedWithPage(page->identifier()), completionHandler({ }));
+
+    if (!requestedFrameOnPage(frameID, *page))
+        return completionHandler({ });
+
     auto frameItems = WTF::compactMap(entries(), [frameID](const auto& item) -> RefPtr<WebBackForwardListFrameItem> {
         return item->mainFrameItem().childItemForFrameID(frameID);
     });
@@ -937,15 +959,33 @@ void WebBackForwardList::backForwardAllItems(FrameIdentifier frameID, Completion
 
 void WebBackForwardList::backForwardItemAtIndexForWebContent(IPC::Connection& connection, int32_t delta, FrameIdentifier frameID, CompletionHandler<void(RefPtr<FrameState>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION_BASE(delta != std::numeric_limits<int32_t>::min(), connection, completionHandler(nullptr));
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, delta != std::numeric_limits<int32_t>::min(), completionHandler(nullptr));
 
-    // FIXME: This should verify that the web process requesting the item hosts the specified frame.
-    if (RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No)) {
-        if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
-            return completionHandler(frameItem->copyFrameStateWithChildren());
-        completionHandler(item->copyMainFrameStateWithChildren());
-    } else
-        completionHandler(nullptr);
+    RefPtr page = m_page.get();
+    if (!page)
+        return completionHandler(nullptr);
+
+    MESSAGE_CHECK_COMPLETION(process, process->isAssociatedWithPage(page->identifier()), completionHandler(nullptr));
+
+    RefPtr frame = requestedFrameOnPage(frameID, *page);
+    if (!frame)
+        return completionHandler(nullptr);
+
+    RefPtr item = itemAtDeltaFromCurrentIndex(delta, AllowSkippingBackForwardItems::No);
+    if (!item)
+        return completionHandler(nullptr);
+
+    if (RefPtr frameItem = item->mainFrameItem().childItemForFrameID(frameID))
+        return completionHandler(frameItem->copyFrameStateWithChildren());
+
+    // An entry does not always know its frame identifiers: session state does not encode them and a
+    // provisional page's main frame gets a new one, so the lookup above misses for legitimate main
+    // frame requests. Only a main frame may fall back to the entry's main frame state.
+    if (!frame->isMainFrame())
+        return completionHandler(nullptr);
+
+    completionHandler(item->copyMainFrameStateWithChildren());
 }
 
 void WebBackForwardList::backForwardListCounts(CompletionHandler<void(WebBackForwardListCounts&&)>&& completionHandler)
