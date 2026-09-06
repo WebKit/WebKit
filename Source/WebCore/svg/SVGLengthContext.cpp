@@ -81,7 +81,8 @@ FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitT
     }
 
     SVGLengthContext lengthContext(context, viewport.size());
-    return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
+    auto origin = context ? FloatPoint { } : viewport.location();
+    return FloatRect(origin.x() + x.value(lengthContext), origin.y() + y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
 }
 
 FloatPoint SVGLengthContext::resolvePoint(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const SVGLengthValue& x, const SVGLengthValue& y)
