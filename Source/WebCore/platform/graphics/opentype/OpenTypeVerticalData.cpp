@@ -109,7 +109,7 @@ struct VORGTable {
         OpenType::Int16 vertOriginY;
     } vertOriginYMetrics[1];
 
-    size_t requiredSize() const { return sizeof(*this) + sizeof(VertOriginYMetrics) * (numVertOriginYMetrics - 1); }
+    size_t requiredSize() const { return offsetof(VORGTable, vertOriginYMetrics) + sizeof(VertOriginYMetrics) * static_cast<size_t>(numVertOriginYMetrics); }
 };
 
 struct SubstitutionSubTable : TableBase {
@@ -241,10 +241,9 @@ struct FeatureList : TableBase {
 
     const FeatureTable* findFeature(OpenType::Tag tag, const SharedBuffer& buffer) const
     {
-        uint16_t count = featureCount;
-        if (!isValidEnd(buffer, &features[count]))
-            return nullptr;
-        for (uint16_t i = 0; i < count; ++i) {
+        if (!isValidEnd(buffer, &features[featureCount]))
+            return 0;
+        for (uint16_t i = 0; i < featureCount; ++i) {
             if (features[i].featureTag == tag)
                 return validateOffset<FeatureTable>(buffer, features[i].featureOffset);
         }
