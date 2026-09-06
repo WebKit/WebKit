@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-    RenderSVGTransformableContainer {g} at (75,13.95) size 216.69x13.81
+    RenderSVGTransformableContainer {g} at (75,13.75) size 216.69x14.02
       RenderSVGText {text} at (0,0) size 217x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 217x14
           chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 43 width 216.68: "Test that removal of 'tref' does not crash."
       RenderSVGText {text}
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGHiddenContainer {defs} at (-75,-105.97) size 170.66x115.02
+      RenderSVGHiddenContainer {defs} at (-75,-105.77) size 170.66x115.02
         RenderSVGText {text} at (0,0) size 171x115 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,75) size 11x21
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "F"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
           RenderSVGTSpan {tspan} at (160,75) size 11x22
             RenderSVGInlineText {#text} at (160,75) size 11x21
               chunk 1 text run 1 at (160.64,0.00) startOffset 0 endOffset 1 width 10.01: "d"
-    RenderSVGTransformableContainer {g} at (10,310.55) size 229.47x36.81
+    RenderSVGTransformableContainer {g} at (10,310.36) size 229.47x37
       RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 230x37
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"

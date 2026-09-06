@@ -8,11 +8,11 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (8,0) size 350x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 349x45
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 348.75: "Test of 'text-anchor'"
-      RenderSVGHiddenContainer {defs} at (3.52,-18.19) size 77.30x18.41
-        RenderSVGText {text} at (0,0) size 78x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x19
+      RenderSVGHiddenContainer {defs} at (3.52,-17.78) size 77.30x18
+        RenderSVGText {text} at (0,0) size 78x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 77.30: "end text tref"
-        RenderSVGPath {path} at (-5,274.41) size 225x0 [fill={[type=SOLID] [color=#000000]}] [data="M -5 260 L 220 260"]
+        RenderSVGPath {path} at (-5,274) size 225x0 [fill={[type=SOLID] [color=#000000]}] [data="M -5 260 L 220 260"]
       RenderSVGText {text} at (23,49) size 219x34 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 219x34
           chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 218.45: "Tspan, tref, toap"

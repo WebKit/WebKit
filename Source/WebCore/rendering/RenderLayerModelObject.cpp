@@ -817,56 +817,16 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
             svgModel->updateLocalTransform();
             return { previousTransform, svgModel->localTransform() };
         }
-        // RenderSVGText is probed, not cached: writing m_localTransform before layout would feed
-        // updateScaledFont() a reference box that is only final after layout. The caller writes it
-        // once the scale is known unchanged, or leaves it for layout on a scale change.
+        // RenderSVGText is probed, not cached: the repaint at the bottom of this function measures
+        // the move by writing the transform between two rect snapshots, so the first one still has
+        // to see the old one.
         if (auto* text = dynamicDowncast<RenderSVGText>(this))
             return { text->localTransform(), text->computeLocalTransform() };
         return { identity, identity };
     };
 
-    // A re-layout is only necessary when the effective x/y scale changes: the next RenderSVGText
-    // layout then sees a different screen font scaling factor, text metrics, etc.
-    auto scaleChangedBetween = [](const AffineTransform& previousTransform, const AffineTransform& currentTransform) {
-        return previousTransform != currentTransform
-            && (!WTF::areEssentiallyEqual(previousTransform.xScale(), currentTransform.xScale())
-                || !WTF::areEssentiallyEqual(previousTransform.yScale(), currentTransform.yScale()));
-    };
-
     auto [previousTransform, currentTransform] = refreshTransform();
 
-    // A scale change re-measures the text at the new on-screen font size (SVG sizes glyphs by the
-    // transform scale). Mark the affected text - this renderer when the transform is on a <text>,
-    // otherwise the transformed container's text descendants - and let layout recompute its metrics,
-    // refresh its cached transform and repaint. setNeedsLayout() also defers the flush's position
-    // update, which would otherwise run with the new transform but pre-relayout metrics.
-    if (scaleChangedBetween(previousTransform, currentTransform)) {
-        auto markTextForRelayout = [](RenderSVGText& text) {
-            text.setNeedsTextMetricsUpdate();
-            text.setNeedsLayout();
-        };
-        if (auto* text = dynamicDowncast<RenderSVGText>(this)) {
-            markTextForRelayout(*text);
-            repaintClientsOfReferencedSVGResources();
-            return;
-        }
-        bool markedAny = false;
-        for (auto& text : descendantsOfType<RenderSVGText>(*this)) {
-            markTextForRelayout(text);
-            markedAny = true;
-        }
-        if (markedAny) {
-            repaintClientsOfReferencedSVGResources();
-            return;
-        }
-    }
-
-    // An ancestor container's own bounding boxes (its object, stroke and repaint bounding boxes) and
-    // cached visual overflow rect are computed from its descendants, so they include this renderer's
-    // transformed bounds and go stale when its transform changes. This path skips the layout that would
-    // recompute them, so when the transform actually
-    // changed, invalidate both up the ancestor chain to the SVG root, giving getBBox() and paint or
-    // hit-test culling a fresh rect. The scale-change paths above already scheduled a relayout for this.
     if (previousTransform != currentTransform) {
         for (CheckedPtr ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
             if (CheckedPtr svgAncestor = dynamicDowncast<RenderLayerModelObject>(ancestor.get())) {
@@ -878,8 +838,8 @@ void RenderLayerModelObject::updateTransformAndRepaintForSVGAfterAttributeChange
         }
     }
 
-    // Scale unchanged, so no relayout is needed - just repaint the move. For a non-layered renderer
-    // the batched transform flush repaints the moved region by comparing the renderer's repaint rect
+    // No relayout was queued, so just repaint the move. For a non-layered renderer the batched
+    // transform flush repaints the moved region by comparing the renderer's repaint rect
     // from before and after the change, but it skips RenderSVGText because a text rect depends on
     // metrics the flush does not recompute. So non-layered text caches its transform here
     // (refreshTransform() only probed it) and compares its own before and after rects. Other

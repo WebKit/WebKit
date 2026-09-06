@@ -485,10 +485,7 @@ namespace WebCore {
 
 static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const SVGTextFragment& fragment, unsigned startPosition, FloatRect& extent)
 {
-    float scalingFactor = queryData->textRenderer->scalingFactor();
-    ASSERT(scalingFactor);
-
-    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor));
+    extent.setLocation(FloatPoint(fragment.x, fragment.y - queryData->textRenderer->usedFont().metricsOfPrimaryFont().ascent()));
 
     if (startPosition) {
         SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, startPosition);
@@ -511,10 +508,7 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
 
 static inline FloatRect calculateFragmentBoundaries(const RenderSVGInlineText& textRenderer, const SVGTextFragment& fragment)
 {
-    float scalingFactor = textRenderer.scalingFactor();
-    ASSERT(scalingFactor);
-
-    float baseline = textRenderer.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
+    float baseline = textRenderer.usedFont().metricsOfPrimaryFont().ascent();
 
     AffineTransform fragmentTransform;
     FloatRect fragmentRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height);

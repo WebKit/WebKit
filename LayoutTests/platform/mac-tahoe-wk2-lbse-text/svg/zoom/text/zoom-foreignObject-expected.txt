@@ -25,15 +25,15 @@ layer at (260,0) size 250x200 scrollHeight 204
 layer at (260,0) size 250x200
   RenderSVGRoot {svg} at (0,0) size 250x200
     RenderSVGViewportContainer at (0,0) size 250x200
-layer at (260,1.67) size 83x59
-  RenderSVGTransformableContainer {g} at (0,1.67) size 82.22x58.33
-    RenderSVGText {text} at (0,0) size 83x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 83x19
+layer at (260,2) size 83x58
+  RenderSVGTransformableContainer {g} at (0,2) size 82.22x58
+    RenderSVGText {text} at (0,0) size 83x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 83x18
         chunk 1 text run 1 at (0.00,16.00) startOffset 0 endOffset 14 width 82.21: "This is a text"
-    RenderSVGTransformableContainer {a} at (0,19) size 67.09x18.33
-      RenderSVGText {text} at (0,0) size 68x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 68x19
+    RenderSVGTransformableContainer {a} at (0,19) size 67.09x18
+      RenderSVGText {text} at (0,0) size 68x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 68x18
           chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 11 width 67.09: "and a link."
-    RenderSVGText {text} at (0,40) size 43x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 43x19
+    RenderSVGText {text} at (0,40) size 43x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 43x18
         chunk 1 text run 1 at (0.00,56.00) startOffset 0 endOffset 5 width 42.66: "[SVG]"

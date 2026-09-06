@@ -6,24 +6,24 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 100x50
   RenderSVGTransformableContainer {g} at (0,0) size 100x50
-    RenderSVGHiddenContainer {defs} at (42,20.33) size 16x24.67
+    RenderSVGHiddenContainer {defs} at (42,20) size 16x25
       RenderSVGText {text} at (0,0) size 16x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 16x14
           chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
-      RenderSVGEllipse {circle} at (3,14.67) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
-    RenderSVGTransformableContainer {g} at (42,20.33) size 16x24.67
-layer at (42,20.33) size 16x14
-  RenderSVGTransformableContainer {use} at (0,0) size 16x13.67
+      RenderSVGEllipse {circle} at (3,15) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
+    RenderSVGTransformableContainer {g} at (42,20) size 16x25
+layer at (42,20) size 16x14
+  RenderSVGTransformableContainer {use} at (0,0) size 16x14
     RenderSVGText {text} at (0,0) size 16x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 16x14
         chunk 1 (middle anchor) text run 1 at (42.00,31.00) startOffset 0 endOffset 3 width 16.00: "use"
-layer at (45,35) size 10x11
-  RenderSVGTransformableContainer {use} at (3,14.67) size 10x10
+layer at (45,35) size 10x10
+  RenderSVGTransformableContainer {use} at (3,15) size 10x10
     RenderSVGEllipse {circle} at (0,0) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=40.00] [r=5.00]
 layer at (0,0) size 100x50
   RenderSVGRect {rect} at (0,0) size 100x50 [opacity=0.20] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
-layer at (0,-10.72) size 296x44 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,-10.72) size 295.25x43.67
+layer at (0,-11.05) size 296x45 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-11.05) size 295.25x44
     RenderSVGText {text} at (0,0) size 296x44 contains 1 chunk(s)
       RenderSVGTSpan {tspan} at (0,0) size 289x14
         RenderSVGInlineText {#text} at (0,0) size 289x14

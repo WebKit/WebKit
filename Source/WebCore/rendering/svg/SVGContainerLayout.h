@@ -40,7 +40,6 @@ public:
     void positionChildrenRelativeToContainer();
 
     static void verifyLayoutLocationConsistency(const RenderLayerModelObject&);
-    static bool NODELETE transformToRootChanged(const RenderObject* ancestor);
 
 private:
     bool NODELETE layoutSizeOfNearestViewportChanged() const;

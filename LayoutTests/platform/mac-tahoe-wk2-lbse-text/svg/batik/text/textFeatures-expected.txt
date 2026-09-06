@@ -7,11 +7,11 @@ layer at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGHiddenContainer {filter} at (0,0) size 0x0
         RenderSVGHiddenContainer {feGaussianBlur} at (0,0) size 0x0
-    RenderSVGTransformableContainer {g} at (0,-36.03) size 381.19x514.78
+    RenderSVGTransformableContainer {g} at (0,-36) size 381.19x514.75
       RenderSVGText {text} at (149,72) size 152x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 152x17
           chunk 1 (middle anchor) text run 1 at (149.14,50.00) startOffset 0 endOffset 21 width 151.73: "Text Element Features"
-      RenderSVGTransformableContainer {g} at (0,0) size 381.19x514.78
+      RenderSVGTransformableContainer {g} at (0,0) size 381.19x514.75
         RenderSVGText {text} at (45,108) size 319x36 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,14) size 103x17
             chunk 1 text run 1 at (45.00,100.00) startOffset 0 endOffset 16 width 102.03: "Text can change "
@@ -55,7 +55,7 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (274,0) size 55x17
               chunk 1 text run 1 at (319.12,175.00) startOffset 0 endOffset 9 width 54.54: "typeface."
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGRect {rect} at (45,236.03) size 202.50x50 [fill={[type=SOLID] [color=#1E90FF]}] [x=45.00] [y=200.00] [width=202.50] [height=50.00]
+        RenderSVGRect {rect} at (45,236) size 202.50x50 [fill={[type=SOLID] [color=#1E90FF]}] [x=45.00] [y=200.00] [width=202.50] [height=50.00]
         RenderSVGText {text} at (45,247) size 304x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 165x17
             chunk 1 text run 1 at (45.00,225.00) startOffset 0 endOffset 28 width 164.96: "Graphics attributes such as "
@@ -145,14 +145,14 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (45,497) size 149x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 149x17
             chunk 1 text run 1 at (45.00,475.00) startOffset 0 endOffset 25 width 148.69: "filtered and transformed."
-layer at (0,-36.03) size 129x47 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 128.89x46.03
-    RenderSVGText {text} at (0,0) size 129x47 contains 1 chunk(s)
+layer at (0,-36) size 129x46 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 128.89x46
+    RenderSVGText {text} at (0,0) size 129x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 129x46
         chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 128.89: "Shadow"
-layer at (0,-36.03) size 129x46 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGText {text} at (0,0) size 129x47 contains 1 chunk(s)
-    RenderSVGInlineText {#text} at (0,0) size 129x47
+layer at (0,-36) size 129x46 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGText {text} at (0,0) size 129x46 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 129x46
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 128.89: "Shadow"
 layer at (0,0) size 447x497
   RenderSVGTransformableContainer {use} at (0,0) size 447x497

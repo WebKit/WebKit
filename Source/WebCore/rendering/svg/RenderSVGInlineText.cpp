@@ -39,10 +39,8 @@
 #include "RenderSVGText.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBoxInlines.h"
-#include "SVGRenderingContext.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextBoxPainter.h"
-#include "SVGTransformComputation.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
 #include "VisiblePosition.h"
@@ -79,7 +77,6 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
 
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
     : RenderText(Type::SVGInlineText, textNode, applySVGWhitespaceRules(string, false))
-    , m_scalingFactor(1)
     , m_layoutAttributes(*this)
 {
     ASSERT(isRenderSVGInlineText());
@@ -111,7 +108,7 @@ void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
 void RenderSVGInlineText::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
-    updateScaledFont();
+    updateUsedFont();
 
     bool newPreserves = style().whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
     bool oldPreserves = oldStyle && oldStyle->whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve;
@@ -172,9 +169,6 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
 
 static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox, const SVGTextFragment& fragment, float position)
 {
-    float scalingFactor = textBox.renderer().scalingFactor();
-    ASSERT(scalingFactor);
-
     TextRun textRun = constructTextRun(textBox.renderer().text(), textBox.direction(), textBox.style(), fragment);
 
     // Eventually handle lengthAdjust="spacingAndGlyphs".
@@ -185,7 +179,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
         textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
     const bool includePartialGlyphs = true;
-    return fragment.characterOffset - textBox.start() + textBox.renderer().scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
+    return fragment.characterOffset - textBox.start() + textBox.renderer().usedFont().offsetForPosition(textRun, position, includePartialGlyphs);
 }
 
 PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
@@ -193,7 +187,7 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
     if (!InlineIterator::lineLeftmostTextBoxFor(*this) || text().isEmpty())
         return createPositionWithAffinity(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();
+    float baseline = m_usedFont.metricsOfPrimaryFont().ascent();
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);
@@ -238,46 +232,25 @@ PositionWithAffinity RenderSVGInlineText::positionForPoint(const LayoutPoint& po
     return createPositionWithAffinity(offset + closestDistanceBox->start(), offset > 0 ? Affinity::Upstream : Affinity::Downstream);
 }
 
-void RenderSVGInlineText::updateScaledFont()
+void RenderSVGInlineText::updateUsedFont()
 {
-    if (computeNewScaledFontForStyle(*this, style(), m_scalingFactor, m_scaledFont))
+    if (computeUsedFontForStyle(*this, style(), m_usedFont))
         m_canUseSimplifiedTextMeasuring = { };
 }
 
-float RenderSVGInlineText::computeScalingFactorForRenderer(const RenderObject& renderer)
+bool RenderSVGInlineText::computeUsedFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, FontCascade& usedFont)
 {
-    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
-        if (const auto* layerRenderer = lineageOfType<RenderLayerModelObject>(renderer).first())
-            return SVGTransformComputation(*layerRenderer).calculateScreenFontSizeScalingFactor();
-    }
-    return SVGRenderingContext::calculateScreenFontSizeScalingFactor(renderer);
-}
-
-bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& renderer, const Style::ComputedStyle& style, float& scalingFactor, FontCascade& scaledFont)
-{
-    // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
-    scalingFactor = computeScalingFactorForRenderer(renderer);
-    if (!scalingFactor) {
-        scalingFactor = 1;
-        scaledFont = style.fontCascade();
-        return false;
-    }
-
-    if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
-        scalingFactor = 1;
-
     auto fontDescription = style.fontDescription();
 
-    // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
-    fontDescription.setUsedSize(Style::usedFontSizeFromComputedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, protect(renderer.document())));
+    // SVG controls its own glyph orientation, rather than letting writing-mode affect it.
+    if (fontDescription.orientation() == FontOrientation::Horizontal) {
+        usedFont = style.fontCascade();
+        return false;
+    }
+    fontDescription.setOrientation(FontOrientation::Horizontal);
 
-    // SVG controls its own glyph orientation, so don't allow writing-mode
-    // to affect it.
-    if (fontDescription.orientation() != FontOrientation::Horizontal)
-        fontDescription.setOrientation(FontOrientation::Horizontal);
-
-    scaledFont = FontCascade(WTF::move(fontDescription));
-    scaledFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
+    usedFont = FontCascade(WTF::move(fontDescription));
+    usedFont.update(protect(protect(renderer.document())->fontSelector()).ptr());
     return true;
 }
 

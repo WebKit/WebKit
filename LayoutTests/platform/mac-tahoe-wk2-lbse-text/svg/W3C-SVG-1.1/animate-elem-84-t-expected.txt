@@ -18,7 +18,7 @@ layer at (0,0) size 340x250
       RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGTransformableContainer {g} at (240,150) size 100x100
       RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=150.00] [width=100.00] [height=100.00]
-    RenderSVGTransformableContainer {g} at (14.23,42.67) size 294.05x90.83
+    RenderSVGTransformableContainer {g} at (14.23,42.50) size 294.05x91
       RenderSVGText {text} at (0,75) size 72x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 72x16
           chunk 1 (middle anchor) text run 1 at (14.23,130.00) startOffset 0 endOffset 12 width 71.53: "currentColor"

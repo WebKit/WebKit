@@ -307,12 +307,8 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
         bool needsLayout = selfNeedsLayout;
         bool childEverHadLayout = child.everHadLayout();
 
-        if (transformChanged) {
-            // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
-            if (auto* text = dynamicDowncast<RenderSVGText>(child))
-                text->setNeedsTextMetricsUpdate();
+        if (transformChanged)
             needsLayout = true;
-        }
 
         if (layoutSizeChanged) {
             // When selfNeedsLayout is false and the layout size changed, we have to check whether this child uses relative lengths

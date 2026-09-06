@@ -21,10 +21,10 @@ layer at (0,0) size 600x400
         chunk 1 (middle anchor) text run 1 at (7.30,90.00) startOffset 0 endOffset 42 width 85.40: "The orange line should be 600 pixels long:"
     RenderSVGPath {line} at (0,366) size 600x4 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=92.00] [x2=125.00] [y2=92.00]
     RenderSVGText {text} at (-25,87) size 2x4 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 2x4
+      RenderSVGInlineText {#text} at (0,0) size 2x3
         chunk 1 text run 1 at (-25.00,90.00) startOffset 0 endOffset 1 width 1.50: "0"
     RenderSVGPath {line} at (0,362) size 2x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=92.00] [x2=-25.00] [y2=90.50]
     RenderSVGText {text} at (120,87) size 5x4 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 5x4
+      RenderSVGInlineText {#text} at (0,0) size 5x3
         chunk 1 (end anchor) text run 1 at (120.50,90.00) startOffset 0 endOffset 3 width 4.50: "600"
     RenderSVGPath {line} at (598,362) size 2x6 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=92.00] [x2=125.00] [y2=90.50]

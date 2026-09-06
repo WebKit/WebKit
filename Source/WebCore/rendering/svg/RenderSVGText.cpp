@@ -39,7 +39,6 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
-#include "LegacyRenderSVGRoot.h"
 #include "LegacyRootInlineBox.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlockFlowInlines.h"
@@ -52,7 +51,6 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGModelObject.h"
-#include "RenderSVGRoot.h"
 #include "RenderSVGTextPath.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineFlowBox.h"
@@ -302,7 +300,7 @@ static inline void updateFontInAllDescendants(RenderSVGText& text)
 {
     for (RenderObject* descendant = &text; descendant; descendant = descendant->nextInPreOrder(&text)) {
         if (CheckedPtr text = dynamicDowncast<RenderSVGInlineText>(*descendant))
-            text->updateScaledFont();
+            text->updateUsedFont();
     }
 }
 
@@ -337,8 +335,6 @@ void RenderSVGText::layout()
     bool updateCachedBoundariesInParents = false;
     auto previousReferenceBoxRect = transformReferenceBoxRect();
 
-    // We update the transform now because updateScaledFont() needs it, but we do it a second time at the end of the layout,
-    // since the transform reference box may change because of the font change.
     if (!isLayerBasedSVGEngineEnabled() && m_needsTransformUpdate) {
         m_localTransform = protect(textElement())->animatedLocalTransform();
         updateCachedBoundariesInParents = true;
@@ -367,15 +363,7 @@ void RenderSVGText::layout()
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
     } else {
-        bool isLayoutSizeChanged = false;
-        if (auto* legacyRootObject = lineageOfType<LegacyRenderSVGRoot>(*this).first())
-            isLayoutSizeChanged = legacyRootObject->isLayoutSizeChanged();
-        else if (auto* rootObject = lineageOfType<RenderSVGRoot>(*this).first())
-            isLayoutSizeChanged = rootObject->isLayoutSizeChanged();
-
-        if (m_needsTextMetricsUpdate || isLayoutSizeChanged || m_needsTransformUpdate) {
-            // If the root layout size changed (eg. window size changes) or the transform to the root
-            // context has changed then recompute the on-screen font size.
+        if (m_needsTextMetricsUpdate) {
             updateFontInAllDescendants(*this);
 
             ASSERT(!m_needsReordering);
@@ -763,10 +751,7 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
             if (!locationInContainer.intersects(rect))
                 continue;
 
-            float scalingFactor = renderer.scalingFactor();
-            ASSERT(scalingFactor);
-
-            float baseline = renderer.scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
+            float baseline = renderer.usedFont().metricsOfPrimaryFont().ascent();
 
             AffineTransform fragmentTransform;
             for (auto& fragment : textBox->textFragments()) {
@@ -785,7 +770,6 @@ bool RenderSVGText::hitTestInlineChildren(const HitTestRequest& request, HitTest
         }
         return false;
     };
-
 
     if (hitTestInlineBoxes()) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(accumulatedOffset));

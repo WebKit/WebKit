@@ -61,10 +61,10 @@ private:
     void paintTextWithShadows(const Style::ComputedStyle&, TextRun&, const SVGTextFragment&, unsigned startPosition, unsigned endPosition);
     void paintText(const Style::ComputedStyle&, const Style::ComputedStyle& selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
-    bool acquirePaintingResource(SVGPaintServerHandling&, float scalingFactor, const RenderBoxModelObject&, const Style::ComputedStyle&);
+    bool acquirePaintingResource(SVGPaintServerHandling&, const RenderBoxModelObject&, const Style::ComputedStyle&);
     void releasePaintingResource(SVGPaintServerHandling&);
 
-    bool acquireLegacyPaintingResource(GraphicsContext*&, float scalingFactor, RenderBoxModelObject&, const Style::ComputedStyle&);
+    bool acquireLegacyPaintingResource(GraphicsContext*&, RenderBoxModelObject&, const Style::ComputedStyle&);
     void releaseLegacyPaintingResource(GraphicsContext*&, const Path*);
 
     std::pair<unsigned, unsigned> selectionStartEnd() const;
