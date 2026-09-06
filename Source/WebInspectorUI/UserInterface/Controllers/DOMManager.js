@@ -1081,33 +1081,43 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     highlightDOMNodeList(nodes, mode)
     {
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        this.cancelPendingHighlightHide();
 
-        let nodeIds = [];
+        // A single highlightNodeList carries IDs for one target only, so group by owning target and
+        // send one command each. Frame-target nodes need their raw backend ID, not the scoped one.
+        let nodeIdsByTarget = new Map;
         for (let node of nodes) {
             console.assert(node instanceof WI.DOMNode, node);
+            if (!(node instanceof WI.DOMNode))
+                continue;
+
             console.assert(!node.destroyed, node);
             if (node.destroyed)
                 continue;
-            nodeIds.push(node.id);
+
+            let target = node.owningTarget || WI.assumingMainTarget();
+            var nodeIds = nodeIdsByTarget.get(target);
+            if (!nodeIds) {
+                nodeIds = [];
+                nodeIdsByTarget.set(target, nodeIds);
+            }
+            nodeIds.push(node.backendNodeId);
         }
 
-        let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightNodeList.invoke({
-            nodeIds,
-            ...WI.DOMManager.buildHighlightConfigs(mode),
-        });
+        // Clear targets not receiving a list, so a stale highlight elsewhere does not draw alongside.
+        this.hideDOMNodeHighlight({excludedTargets: new Set(nodeIdsByTarget.keys())});
+
+        for (let [target, nodeIds] of nodeIdsByTarget) {
+            target.DOMAgent.highlightNodeList.invoke({
+                nodeIds,
+                ...WI.DOMManager.buildHighlightConfigs(mode),
+            });
+        }
     }
 
     highlightSelector(selectorString, frameId, mode)
     {
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        this.cancelPendingHighlightHide();
 
         let target = WI.assumingMainTarget();
         target.DOMAgent.highlightSelector.invoke({
@@ -1131,25 +1141,45 @@ WI.DOMManager = class DOMManager extends WI.Object
         });
     }
 
-    hideDOMNodeHighlight()
+    cancelPendingHighlightHide()
+    {
+        if (!this._hideDOMNodeHighlightTimeout)
+            return;
+
+        clearTimeout(this._hideDOMNodeHighlightTimeout);
+        this._hideDOMNodeHighlightTimeout = undefined;
+    }
+
+    hideDOMNodeHighlight({excludedTargets} = {})
     {
         for (let target of WI.targets) {
-            if (target instanceof WI.FrameTarget)
+            if (excludedTargets?.has(target))
                 continue;
             if (target.hasCommand("DOM.hideHighlight"))
                 target.DOMAgent.hideHighlight();
         }
     }
 
-    highlightDOMNodeForTwoSeconds(nodeId)
+    hideDOMNodeHighlightIfNeeded()
     {
-        let node = this._idToDOMNode[nodeId];
-        if (!node)
+        if (this._hideDOMNodeHighlightTimeout)
+            return;
+
+        this._hideDOMNodeHighlightTimeout = setTimeout(() => {
+            this._hideDOMNodeHighlightTimeout = undefined;
+            this.hideDOMNodeHighlight();
+        }, 2000);
+    }
+
+    highlightDOMNodeForTwoSeconds(node)
+    {
+        console.assert(!node || node instanceof WI.DOMNode, node);
+        if (!node || node.destroyed)
             return;
 
         node.highlight();
 
-        this._hideDOMNodeHighlightTimeout = setTimeout(this.hideDOMNodeHighlight.bind(this), 2000);
+        this.hideDOMNodeHighlightIfNeeded();
     }
 
     get inspectModeEnabled()

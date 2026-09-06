@@ -15277,6 +15277,8 @@
 		7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallback.cpp; sourceTree = "<group>"; };
 		7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMCallback.h; sourceTree = "<group>"; };
 		7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlay.cpp; sourceTree = "<group>"; };
+		7C522D5015B477E8009B7C96 /* InspectorOverlayConfigParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlayConfigParser.cpp; sourceTree = "<group>"; };
+		7C522D5115B477E8009B7C97 /* InspectorOverlayConfigParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorOverlayConfigParser.h; sourceTree = "<group>"; };
 		7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorOverlay.h; sourceTree = "<group>"; };
 		7C5266961F1B02FC000F068B /* StringAdaptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringAdaptors.h; sourceTree = "<group>"; };
 		7C57BFE61EDE2F5B00534A48 /* JSDOMAbstractOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAbstractOperations.h; sourceTree = "<group>"; };
@@ -26461,6 +26463,8 @@
 				504AACCC1834455900E3D9BC /* InspectorNodeFinder.h */,
 				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
 				7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */,
+				7C522D5015B477E8009B7C96 /* InspectorOverlayConfigParser.cpp */,
+				7C522D5115B477E8009B7C97 /* InspectorOverlayConfigParser.h */,
 				2EDDAF4527920EC3005D18E4 /* InspectorOverlayLabel.cpp */,
 				2EDDAF4327920EB4005D18E4 /* InspectorOverlayLabel.h */,
 				9940EAFA2E8DBD6E007F64DD /* InspectorResourceType.h */,

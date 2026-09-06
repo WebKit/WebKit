@@ -587,8 +587,8 @@
         },
         {
             "name": "highlightRect",
-            "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.",
-            "targetTypes": ["page"],
+            "description": "Highlights given rectangle. Coordinates are absolute with respect to the target's viewport: the main frame viewport for a page target, or the frame's own viewport for a frame target.",
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -601,8 +601,8 @@
         },
         {
             "name": "highlightQuad",
-            "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport.",
-            "targetTypes": ["page"],
+            "description": "Highlights given quad. Coordinates are absolute with respect to the target's viewport: the main frame viewport for a page target, or the frame's own viewport for a frame target.",
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
                 { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
@@ -702,7 +702,7 @@
         {
             "name": "showGridOverlay",
             "description": "Shows a grid overlay for a node that begins a 'grid' layout context. The command has no effect if <code>nodeId</code> is invalid or the associated node does not begin a 'grid' layout context. A node can only have one grid overlay at a time; subsequent calls with the same <code>nodeId</code> will override earlier calls.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a grid overlay should be shown." },
                 { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "description": "Configuration options for the grid overlay." }
@@ -711,7 +711,7 @@
         {
             "name": "hideGridOverlay",
             "description": "Hides a grid overlay for a node that begins a 'grid' layout context. The command has no effect if <code>nodeId</code> is specified and invalid, or if there is not currently an overlay set for the <code>nodeId</code>.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "The node for which a grid overlay should be hidden. If a <code>nodeId</code> is not specified, all grid overlays will be hidden." }
             ]
@@ -719,7 +719,7 @@
         {
             "name": "showFlexOverlay",
             "description": "Shows a flex overlay for a node that begins a 'flex' layout context. The command has no effect if <code>nodeId</code> is invalid or the associated node does not begin a 'flex' layout context. A node can only have one flex overlay at a time; subsequent calls with the same <code>nodeId</code> will override earlier calls.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a flex overlay should be shown." },
                 { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "description": "Configuration options for the flex overlay." }
@@ -728,7 +728,7 @@
         {
             "name": "hideFlexOverlay",
             "description": "Hides a flex overlay for a node that begins a 'flex' layout context. The command has no effect if <code>nodeId</code> is specified and invalid, or if there is not currently an overlay set for the <code>nodeId</code>.",
-            "targetTypes": ["page"],
+            "targetTypes": ["frame", "page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "The node for which a flex overlay should be hidden. If a <code>nodeId</code> is not specified, all flex overlays will be hidden." }
             ]

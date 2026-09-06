@@ -1,0 +1,102 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlightTargetHandoff");
+
+    // Highlight state is per-target, so highlighting in one target must clear the others -- otherwise
+    // the page keeps highlighting the owner iframe while the frame highlights the inner node.
+
+    let frameTarget = null;
+    let frameContainerNode = null;
+    let iframeNode = null;
+
+    suite.addTestCase({
+        name: "Setup",
+        description: "Resolve the iframe element in the page target and #container in the frame target.",
+        async test() {
+            frameTarget = await frameTargetForURLContaining("highlight-frame.html");
+            InspectorTest.expectNotNull(frameTarget, "Should find the cross-origin frame target.");
+
+            if (frameTarget.isProvisional) {
+                let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+                frameTarget = committedEvent.data.target;
+            }
+            await frameTarget.ensureTargetExecutionContext();
+
+            let frameDoc = WI.domManager.frameTargetDocumentForTarget(frameTarget);
+            if (!frameDoc) {
+                let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+                frameDoc = docEvent.data.document;
+            }
+
+            let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+            await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+            let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+            InspectorTest.expectNotNull(bodyNode, "Frame document should have a BODY.");
+            await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+            frameContainerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+            InspectorTest.expectNotNull(frameContainerNode, "Frame document should have #container.");
+            await new Promise((resolve) => frameContainerNode.getChildNodes(resolve));
+
+            // The <iframe> element itself lives in the page target.
+            let pageDocument = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            let iframeNodeId = await pageDocument.querySelector("iframe");
+            iframeNode = WI.domManager.nodeForId(iframeNodeId);
+            InspectorTest.expectNotNull(iframeNode, "Page target should resolve the iframe element.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "InnerNodeRoutesToFrameTarget",
+        description: "A node inside the frame should carry the frame target and its raw backend nodeId.",
+        async test() {
+            let targetNodeId = await frameContainerNode.querySelector("#target");
+            let targetNode = WI.domManager.nodeForIdInFrameTarget(targetNodeId, frameTarget);
+            InspectorTest.expectNotNull(targetNode, "Should resolve #target in the frame target.");
+
+            InspectorTest.expectEqual(targetNode.owningTarget, frameTarget, "Inner node should report the frame target as its owning target.");
+            InspectorTest.expectEqual(targetNode.backendNodeId, targetNodeId, "backendNodeId should be the raw protocol nodeId, not the scoped id.");
+            InspectorTest.expectThat(targetNode.id !== targetNodeId, "The scoped frontend id should differ from the backend nodeId.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "IframeElementRoutesToPageTarget",
+        description: "The iframe element should belong to the page target and use an unscoped id.",
+        async test() {
+            InspectorTest.expectNull(iframeNode.owningTarget, "The iframe element should have no owning frame target.");
+            InspectorTest.expectEqual(iframeNode.backendNodeId, iframeNode.id, "A page-target node's backendNodeId should equal its id.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "BothTargetsAcceptHideHighlight",
+        description: "Highlighting an inner node must be clearable on both targets, or both keep drawing.",
+        async test() {
+            // Observed through the protocol: no Internals hook exposes the backend overlay per frame.
+            let pageTarget = WI.assumingMainTarget();
+            InspectorTest.expectThat(pageTarget !== frameTarget, "Page and frame targets should be distinct.");
+            InspectorTest.expectThat(pageTarget.hasCommand("DOM.hideHighlight"), "Page target should support DOM.hideHighlight.");
+            InspectorTest.expectThat(frameTarget.hasCommand("DOM.hideHighlight"), "Frame target should support DOM.hideHighlight.");
+
+            let targetNodeId = await frameContainerNode.querySelector("#target");
+            let targetNode = WI.domManager.nodeForIdInFrameTarget(targetNodeId, frameTarget);
+            targetNode.highlight();
+
+            await frameTarget.DOMAgent.hideHighlight();
+            await pageTarget.DOMAgent.hideHighlight();
+            InspectorTest.log("Both targets accepted DOM.hideHighlight.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that highlighting hands off cleanly between the page target and a cross-origin frame target.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-frame.html" width="300" height="200"></iframe>
+</body>
