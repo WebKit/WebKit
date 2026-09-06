@@ -152,6 +152,12 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 for (let serializedSymbolicBreakpoint of serializedSymbolicBreakpoints) {
                     let symbolicBreakpoint = WI.SymbolicBreakpoint.fromJSON(serializedSymbolicBreakpoint);
 
+                    if (!symbolicBreakpoint.matchFunctionCalls) {
+                        // COMPATIBILITY (macOS X.Y, iOS X.Y): Debugger.addSymbolicBreakpoint did not have a "matchPropertyWrites" parameter yet.
+                        if (symbolicBreakpoint.matchPropertyWrites && !InspectorBackend.hasCommand("Debugger.addSymbolicBreakpoint", "matchPropertyWrites"))
+                            continue;
+                    }
+
                     const key = null;
                     WI.objectStores.symbolicBreakpoints.associateObject(symbolicBreakpoint, key, serializedSymbolicBreakpoint);
 
@@ -328,6 +334,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Microtask;
         case InspectorBackend.Enum.Debugger.PausedReason.PauseOnNextStatement:
             return WI.DebuggerManager.PauseReason.PauseOnNextStatement;
+        case InspectorBackend.Enum.Debugger.PausedReason.PropertyWrite:
+            return WI.DebuggerManager.PauseReason.PropertyWrite;
         case InspectorBackend.Enum.Debugger.PausedReason.Timeout:
             return WI.DebuggerManager.PauseReason.Timeout;
         case InspectorBackend.Enum.Debugger.PausedReason.Timer:
@@ -458,7 +466,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         return null;
     }
 
-    symbolicBreakpointsForSymbol(symbol)
+    symbolicBreakpointsForSymbol(symbol, {matchFunctionCalls, matchPropertyWrites} = {})
     {
         console.assert(WI.SymbolicBreakpoint.supported());
 
@@ -471,7 +479,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             (breakpoint) => !breakpoint.caseSensitive && breakpoint.isRegex,  // case-insensitive regex
         ];
         return this._symbolicBreakpoints
-            .filter((breakpoint) => breakpoint.matches(symbol))
+            .filter((breakpoint) => {
+                if (matchFunctionCalls && !breakpoint.matchFunctionCalls)
+                    return false;
+                if (matchPropertyWrites && !breakpoint.matchPropertyWrites)
+                    return false;
+                return breakpoint.matches(symbol);
+            })
             .sort((a, b) => {
                 let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
                 let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
@@ -1362,6 +1376,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             symbol: breakpoint.symbol,
             caseSensitive: breakpoint.caseSensitive,
             isRegex: breakpoint.isRegex,
+            matchFunctionCalls: breakpoint.matchFunctionCalls,
+            matchPropertyWrites: breakpoint.matchPropertyWrites,
             options: breakpoint.optionsToProtocol(),
         });
     }
@@ -1877,6 +1893,7 @@ WI.DebuggerManager.PauseReason = {
     Listener: "listener",
     Microtask: "microtask",
     PauseOnNextStatement: "pause-on-next-statement",
+    PropertyWrite: "property-write",
     Timeout: "timeout",
     URL: "url",
     Other: "other",

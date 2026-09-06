@@ -100,6 +100,7 @@ using JSOrWasmInstruction = Variant<const JSInstruction*, uintptr_t /* IPIntOffs
         WillExecuteExpression,
         WillAwait,
         DidAwait,
+        WillWriteProperty,
     };
 
     enum StackFrameCodeType {

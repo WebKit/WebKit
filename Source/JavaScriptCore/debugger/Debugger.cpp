@@ -25,9 +25,12 @@
 #include "CodeBlock.h"
 #include "DebuggerCallFrame.h"
 #include "DebuggerScope.h"
+#include "FunctionExecutable.h"
 #include "HeapIterationScope.h"
+#include "Identifier.h"
 #include "JSAsyncFunctionGenerator.h"
 #include "JSCInlines.h"
+#include "JSString.h"
 #include "JSWebAssemblyModule.h"
 #include "MarkedSpaceInlines.h"
 #include "MarkedVector.h"
@@ -947,10 +950,9 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
     if (!m_vm.topCallFrame)
         return;
 
-    if (specialBreakpoint) {
-        ASSERT(!m_specialBreakpoint);
+    if (specialBreakpoint)
         m_specialBreakpoint = WTF::move(specialBreakpoint);
-    } else
+    else
         m_pauseAtNextOpportunity = true;
 
     setSteppingMode(SteppingModeEnabled);
@@ -1322,6 +1324,34 @@ void Debugger::atExpression(CallFrame* callFrame)
 
     PauseReasonDeclaration reason(*this, PausedAtExpression);
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callFrame), callFrame, shouldAttemptPause ? AttemptPause : NoPause);
+}
+
+void Debugger::willWriteProperty(JSGlobalObject* globalObject, JSValue data)
+{
+    if (m_isPaused)
+        return;
+
+    String name;
+    if (data.isString())
+        name = asString(data)->tryGetValue();
+    if (name.isNull()) {
+        auto scope = DECLARE_THROW_SCOPE(m_vm);
+        auto identifier = data.toPropertyKey(globalObject);
+        RETURN_IF_EXCEPTION(scope, void());
+        scope.release();
+
+        if (identifier.isSymbol()) {
+            auto* symbol = static_cast<SymbolImpl*>(identifier.impl());
+            if (symbol->isNullSymbol())
+                return;
+            name = StringView(identifier.string()).toString();
+        } else
+            name = identifier.string();
+    }
+
+    dispatchFunctionToObservers([&] (Observer& observer) {
+        observer.willWriteProperty(name);
+    });
 }
 
 void Debugger::willAwait(CallFrame* callFrame, JSValue generatorValue)

@@ -173,6 +173,7 @@ static void dumpExpressionInfoDetails(size_t index, const JSInstructionStream& i
         case WillLeaveCallFrame: event = " WillLeaveCallFrame"; break;
         case WillExecuteStatement: event = " WillExecuteStatement"; break;
         case WillExecuteExpression: event = " WillExecuteExpression"; break;
+        case WillWriteProperty: event = " WillWriteProperty"; break;
         case WillAwait: event = " WillAwait"; break;
         case DidAwait: event = " DidAwait"; break;
         }
