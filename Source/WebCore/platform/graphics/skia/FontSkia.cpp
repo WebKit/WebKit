@@ -105,8 +105,12 @@ void Font::platformInit()
     SkFontMetrics metrics;
     font.getMetrics(&metrics);
 
-    auto ascent = SkScalarRoundToScalar(-metrics.fAscent);
-    auto descent = SkScalarRoundToScalar(metrics.fDescent);
+    auto ascent = -metrics.fAscent;
+    auto descent = metrics.fDescent;
+    if (!font.isLinearMetrics()) {
+        ascent = SkScalarRoundToScalar(ascent);
+        descent = SkScalarRoundToScalar(descent);
+    }
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
 

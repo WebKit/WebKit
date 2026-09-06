@@ -5,18 +5,19 @@
 <style>
   body {
     margin: 0px;
-    font-size: 16px;
   }
   ::selection {
     background: rgba(255, 0, 0, 0.9);
   }
-  text { 
-    fill: transparent; 
+  text {
+    font-family: Ahem;
+    font-size: 20px;
+    fill: transparent;
   }
 </style>
 </head>
 <body>
-<svg id=container><text x="20" y="20">foobar test</text></svg>
+<svg id=container><text x="20.5" y="20.5">foobar test</text></svg>
 <script>
   var range = document.createRange(); 
   range.selectNode(document.getElementById("container")); 

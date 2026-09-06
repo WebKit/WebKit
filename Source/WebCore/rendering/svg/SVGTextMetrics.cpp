@@ -30,14 +30,9 @@ namespace WebCore {
 
 SVGTextMetrics::SVGTextMetrics(const RenderSVGInlineText& textRenderer, const TextRun& run)
 {
-    float scalingFactor = textRenderer.scalingFactor();
-    ASSERT(scalingFactor);
-
-    const FontCascade& scaledFont = textRenderer.scaledFont();
-
-    // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
-    m_width = scaledFont.width(run) / scalingFactor;
-    m_height = scaledFont.metricsOfPrimaryFont().height() / scalingFactor;
+    const FontCascade& usedFont = textRenderer.usedFont();
+    m_width = usedFont.width(run);
+    m_height = usedFont.metricsOfPrimaryFont().height();
 
     m_length = static_cast<unsigned>(run.length());
 }
@@ -65,11 +60,8 @@ SVGTextMetrics SVGTextMetrics::measureCharacterRange(const RenderSVGInlineText& 
 
 SVGTextMetrics::SVGTextMetrics(const RenderSVGInlineText& text, unsigned length, float width)
 {
-    float scalingFactor = text.scalingFactor();
-    ASSERT(scalingFactor);
-
-    m_width = width / scalingFactor;
-    m_height = text.scaledFont().metricsOfPrimaryFont().height() / scalingFactor;
+    m_width = width;
+    m_height = text.usedFont().metricsOfPrimaryFont().height();
 
     m_length = length;
 }

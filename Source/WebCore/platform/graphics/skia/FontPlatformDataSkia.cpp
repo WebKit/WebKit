@@ -136,20 +136,22 @@ void FontPlatformData::platformDataInit()
     m_font.setSkewX(m_metadata.isSyntheticOblique ? -SK_Scalar1 / 4 : 0);
 
     bool useSubpixelPositioning = FontRenderOptions::singleton().useSubpixelPositioning();
+    bool isSmallerThanAPixel = m_metadata.pointSize < 1;
 
     m_font.setEdging(FontRenderOptions::singleton().antialias());
     if (m_font.getEdging() == SkFont::Edging::kAlias) {
         // Force full hinting when antialiasing is disabled like Cairo does.
         m_font.setHinting(SkFontHinting::kFull);
-    } else if (useSubpixelPositioning) {
-        // Disable hinting when subpixel positioning is enabled.
+    } else if (useSubpixelPositioning || isSmallerThanAPixel) {
+        // Disable hinting when subpixel positioning is enabled, or when there is no grid to fit to.
         m_font.setHinting(SkFontHinting::kNone);
     } else
         m_font.setHinting(FontRenderOptions::singleton().hinting());
 
-    // Force subpixel positioning when not running tests and full hinting was not requested.
-    bool forceSubpixel = !FontRenderOptions::singleton().isHintingDisabledForTesting() && m_font.getHinting() != SkFontHinting::kFull;
-    m_font.setSubpixel(forceSubpixel || useSubpixelPositioning);
+    // Force subpixel positioning when not running tests and full hinting was not requested, and
+    // always below a pixel, where whole pixel positioning would round the advances away.
+    bool forceSubpixel = isSmallerThanAPixel || !FontRenderOptions::singleton().isHintingDisabledForTesting();
+    m_font.setSubpixel((forceSubpixel && m_font.getHinting() != SkFontHinting::kFull) || useSubpixelPositioning);
 
     m_font.setLinearMetrics(m_font.getHinting() == SkFontHinting::kNone && m_font.isSubpixel());
 

@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-    RenderSVGTransformableContainer {g} at (18.72,52.69) size 441.30x194.81
+    RenderSVGTransformableContainer {g} at (18.72,52.50) size 441.30x195
       RenderSVGText {text} at (73,0) size 369x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 368x35
           chunk 1 (end anchor) text run 1 at (92.27,80.00) startOffset 0 endOffset 37 width 367.73 RTL: "\x{644}\x{645}\x{627}\x{630}\x{627} \x{644}\x{627} \x{64A}\x{62A}\x{643}\x{644}\x{645}\x{648}\x{646} \x{627}\x{644}\x{644}\x{651}\x{63A}\x{629} \x{627}\x{644}\x{639}\x{631}\x{628}\x{64A}\x{629} \x{641}\x{62D}\x{633}\x{628}\x{61F}"
-      RenderSVGText {text} at (0,74) size 442x43 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 442x42
+      RenderSVGText {text} at (0,75) size 442x42 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 442x41
           chunk 1 (end anchor) text run 1 at (18.72,160.00) startOffset 0 endOffset 37 width 441.28 RTL: "\x{644}\x{645}\x{627}\x{630}\x{627} \x{644}\x{627} \x{64A}\x{62A}\x{643}\x{644}\x{645}\x{648}\x{646} \x{627}\x{644}\x{644}\x{651}\x{63A}\x{629} \x{627}\x{644}\x{639}\x{631}\x{628}\x{64A}\x{629} \x{641}\x{62D}\x{633}\x{628}\x{61F}"
       RenderSVGText {text} at (73,160) size 369x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 368x35

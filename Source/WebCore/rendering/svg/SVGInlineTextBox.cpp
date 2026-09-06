@@ -95,10 +95,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
 {
     FloatRect textRect;
 
-    float scalingFactor = renderer().scalingFactor();
-    ASSERT(scalingFactor);
-
-    float baseline = renderer().scaledFont().metricsOfPrimaryFont().ascent() / scalingFactor;
+    float baseline = renderer().usedFont().metricsOfPrimaryFont().ascent();
 
     AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();

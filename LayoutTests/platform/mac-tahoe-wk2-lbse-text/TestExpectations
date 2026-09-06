@@ -19,7 +19,6 @@
 # Filter issues
 svg/W3C-SVG-1.1/filters-morph-01-f.svg                                                 [ ImageOnlyFailure ]
 svg/batik/text/smallFonts.svg                                                          [ ImageOnlyFailure ]
-svg/batik/text/textFeatures.svg                                                        [ ImageOnlyFailure ]
 svg/crash-svg-filter-empty-viewport.svg                                                [ Failure ]
 svg/filters/filter-on-filter-for-text.svg                                              [ ImageOnlyFailure ]
 svg/filters/sourceAlpha.svg                                                            [ ImageOnlyFailure ]
@@ -32,26 +31,17 @@ svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html                
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html                        [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html                      [ ImageOnlyFailure ]
 svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html                    [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html                                [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html                             [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html                             [ ImageOnlyFailure ]
-svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html                             [ ImageOnlyFailure ]
 svg/filters/big-sized-filter.svg                                                       [ ImageOnlyFailure ]
 svg/filters/css-filter-specified-on-svg-root.html                                      [ ImageOnlyFailure ]
 svg/filters/css-repaint-reference-filter-on-root.html                                  [ Failure ]
 svg/filters/feDropShadow.svg                                                           [ ImageOnlyFailure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
-svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
 svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
-svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]
 svg/filters/filter-source-position.svg                                                 [ ImageOnlyFailure ]
 
 # Precision differences
-svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
 svg/zoom/zoomed-inline-svg-getscreenctm.html [ Failure ]
 
 # Pattern problems
@@ -223,6 +213,7 @@ imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform.svg 
 imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-rotate-transform.svg                                [ Pass ]
 imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-transform.svg                                       [ Pass ]
 imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform.svg                                       [ Pass ]
+imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html                              [ Pass ]
 svg/W3C-SVG-1.1/paths-data-03-f.svg                                                                               [ Pass ]
 svg/W3C-SVG-1.1/text-altglyph-01-b.svg                                                                            [ Pass ]
 svg/W3C-SVG-1.1/text-intro-01-t.svg                                                                               [ Pass ]

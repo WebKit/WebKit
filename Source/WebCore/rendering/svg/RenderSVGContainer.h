@@ -44,7 +44,6 @@ public:
         return m_objectBoundingBoxValid;
     }
     bool isLayoutSizeChanged() const { return m_isLayoutSizeChanged; }
-    bool didTransformToRootUpdate() const { return m_didTransformToRootUpdate; }
 
     FloatRect objectBoundingBox() const final
     {
@@ -79,7 +78,6 @@ protected:
     void addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* container) const override;
 
     bool m_isLayoutSizeChanged { false };
-    bool m_didTransformToRootUpdate { false };
 
 private:
     // Recompute m_objectBoundingBox / m_strokeBoundingBox lazily after a descendant transform

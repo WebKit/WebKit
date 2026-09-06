@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,23) size 290x325
+    RenderSVGContainer {g} at (125,22) size 290x326
       RenderSVGText {text} at (75,13) size 174x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 174x14
           chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 34 width 173.70: "Test removing tref's text content."
@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (150.63,0.00) startOffset 0 endOffset 1 width 10.01: "e"
           RenderSVGInlineText {#text} at (160,75) size 11x21
             chunk 1 text run 1 at (160.64,0.00) startOffset 0 endOffset 1 width 10.01: "d"
-      RenderSVGText {text} at (75,166) size 151x43 contains 1 chunk(s)
-        RenderSVGInline {tref} at (0,0) size 151x42
-          RenderSVGInlineText {#text} at (0,0) size 151x42
+      RenderSVGText {text} at (75,167) size 151x42 contains 1 chunk(s)
+        RenderSVGInline {tref} at (0,0) size 151x41
+          RenderSVGInlineText {#text} at (0,0) size 151x41
             chunk 1 text run 1 at (75.00,200.00) startOffset 0 endOffset 9 width 150.10: "Flattened"
         RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,517) size 384x62

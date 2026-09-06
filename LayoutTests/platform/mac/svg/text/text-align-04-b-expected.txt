@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 349x45
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 348.75: "Test of 'text-anchor'"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGText {text} at (0,-15) size 78x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x19
+        RenderSVGText {text} at (0,-14) size 78x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 77.30: "end text tref"
         RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M -5 260 L 220 260"]
       RenderSVGText {text} at (20,52) size 219x35 contains 1 chunk(s)

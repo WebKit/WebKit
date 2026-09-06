@@ -45,7 +45,6 @@ struct UsedFontSize {
 
 float usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const SettingsValues&);
 UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSize, bool useSVGZoomRules, const ComputedStyle&, const Document&);
-float usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 float NODELETE adjustedFontSize(float size, const WebCore::FontSizeAdjust&, const FontMetrics&);
 
 // Given a CSS keyword id in the range (CSSValueXxSmall to CSSValueXxxLarge), this function will return

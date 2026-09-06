@@ -17,10 +17,10 @@ layer at (0,0) size 800x600
     RenderSVGTransformableContainer {g} at (0,0) size 396.94x192.25
       RenderSVGTransformableContainer {g} at (0,0) size 396.94x192.25
         RenderSVGText {text} at (0,22) size 397x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 397x11
+          RenderSVGInlineText {#text} at (0,0) size 397x10
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 108 width 396.92: "All svgs below should look the same, since all have viewBox with syntax errors and default should be chosen."
         RenderSVGText {text} at (0,182) size 230x11 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 230x11
+          RenderSVGInlineText {#text} at (0,0) size 230x10
             chunk 1 text run 1 at (0.00,190.00) startOffset 0 endOffset 62 width 229.97: "All svgs below should look the same, all have valid viewBoxes."
 layer at (0,0) size 30x60
   RenderSVGTransformableContainer {g} at (0,0) size 30x60

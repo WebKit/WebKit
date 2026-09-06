@@ -66,17 +66,13 @@ void RenderSVGContainer::layout()
     auto checkForRepaintOverride = isRenderSVGResourceMarker() ? std::make_optional(LayoutRepainter::CheckForRepaint::No) : std::nullopt;
     LayoutRepainter repainter(*this, checkForRepaintOverride);
 
-    // Update layer transform before laying out children (SVG needs access to the transform matrices during layout for on-screen text font-size calculations).
+    // Update the layer transform before laying out children, which are positioned relative to it.
     // Eventually re-update if the transform reference box, relevant for transform-origin, has changed during layout.
-    //
-    // FIXME: LBSE should not repeat the same mistake -- remove the on-screen text font-size hacks that predate the modern solutions to this.
     {
         ASSERT(!m_isLayoutSizeChanged);
         SetForScope trackLayoutSizeChanges(m_isLayoutSizeChanged, updateLayoutSizeIfNeeded());
 
-        ASSERT(!m_didTransformToRootUpdate);
         SVGLayerTransformUpdater transformUpdater(*this);
-        SetForScope trackTransformChanges(m_didTransformToRootUpdate, transformUpdater.layerTransformChanged() || SVGContainerLayout::transformToRootChanged(parent()));
         layoutChildren();
     }
 

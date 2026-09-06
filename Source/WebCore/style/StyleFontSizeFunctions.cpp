@@ -102,11 +102,6 @@ UsedFontSize usedFontSizeFromComputedSize(float computedSize, bool isAbsoluteSiz
     return { usedFontSizeFromComputedSize(computedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues()), zoomFactor };
 }
 
-float usedFontSizeFromComputedSizeForSVGInlineText(float computedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
-{
-    return usedFontSizeFromComputedSize(computedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settingsValues());
-}
-
 constexpr int fontSizeTableMax = 16;
 constexpr int fontSizeTableMin = 9;
 

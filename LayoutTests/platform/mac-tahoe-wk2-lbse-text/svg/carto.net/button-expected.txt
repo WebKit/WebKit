@@ -79,14 +79,14 @@ layer at (0,0) size 800x600
         RenderSVGEllipse {ellipse} at (349,144) size 25x25 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=361.50] [cy=156.50] [rx=12.50] [ry=12.50]
         RenderSVGEllipse {ellipse} at (351,146) size 25x25 [fill={[type=SOLID] [color=#000080]}] [cx=363.50] [cy=158.50] [rx=12.50] [ry=12.50]
         RenderSVGEllipse {ellipse} at (350,145) size 25x25 [fill={[type=SOLID] [color=#B0C4DE]}] [cx=362.50] [cy=157.50] [rx=12.50] [ry=12.50]
-    RenderSVGText {text} at (100,195) size 69x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 69x19
+    RenderSVGText {text} at (100,196) size 69x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 69x18
         chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 68.44: "StatusText"
-    RenderSVGText {text} at (430,305) size 455x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 455x19
+    RenderSVGText {text} at (430,306) size 455x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 455x18
         chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 454.59: "Click this text to randomly resize the multiline textbutton (textbutton7)"
-    RenderSVGText {text} at (430,325) size 482x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 482x19
+    RenderSVGText {text} at (430,326) size 482x18 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 482x18
         chunk 1 text run 1 at (430.00,340.00) startOffset 0 endOffset 77 width 481.27: "Click this text to randomly reposition the multiline textbutton (textbutton7)"
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 7.25x14

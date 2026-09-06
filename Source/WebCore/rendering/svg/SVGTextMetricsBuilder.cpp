@@ -102,13 +102,13 @@ void SVGTextMetricsBuilder::advanceIterator(ComplexTextController& complexTextCo
     m_totalWidth = m_complexStartToCurrentMetrics.width();
 }
 
-static inline bool NODELETE shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& scaledFont)
+static inline bool NODELETE shouldUseComplexTextController(FontCascade::CodePath codePathToUse, const FontCascade& usedFont)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    if (codePathToUse != FontCascade::CodePath::Complex && scaledFont.shouldUseComplexTextControllerForSimpleText())
+    if (codePathToUse != FontCascade::CodePath::Complex && usedFont.shouldUseComplexTextControllerForSimpleText())
         return true;
 #else
-    UNUSED_PARAM(scaledFont);
+    UNUSED_PARAM(usedFont);
 #endif
     return codePathToUse == FontCascade::CodePath::Complex;
 }
@@ -121,9 +121,9 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     m_complexStartToCurrentMetrics = SVGTextMetrics();
     m_totalWidth = 0;
 
-    const FontCascade& scaledFont = text.scaledFont();
+    const FontCascade& usedFont = text.usedFont();
     m_run = SVGTextMetrics::constructTextRun(text);
-    m_isComplexText = shouldUseComplexTextController(scaledFont.codePath(m_run), scaledFont);
+    m_isComplexText = shouldUseComplexTextController(usedFont.codePath(m_run), usedFont);
 
     if (m_isComplexText)
         FontCascadeCache::forCurrentThread().invalidate();
@@ -134,8 +134,8 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
             m_canUseSimplifiedTextMeasuring = cachedValue.value();
         else {
             // Currently SVG implementation does not support first-line, so we always pass nullptr for firstLineStyle.
-            // When supporting first-line, we also need to update firstLineStyle's FontCascade to be aligned with scaledFont in RenderSVGInlineText.
-            m_canUseSimplifiedTextMeasuring = Layout::TextUtil::canUseSimplifiedTextMeasuring(m_run.text(), scaledFont, text.style().collapseWhiteSpace(), nullptr);
+            // When supporting first-line, we also need to update firstLineStyle's FontCascade to be aligned with usedFont in RenderSVGInlineText.
+            m_canUseSimplifiedTextMeasuring = Layout::TextUtil::canUseSimplifiedTextMeasuring(m_run.text(), usedFont, text.style().collapseWhiteSpace(), nullptr);
             text.setCanUseSimplifiedTextMeasuring(m_canUseSimplifiedTextMeasuring);
         }
     }
@@ -165,7 +165,7 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
 
     initializeMeasurementWithTextRenderer(text);
 
-    auto& scaledFont = text.scaledFont();
+    auto& usedFont = text.usedFont();
     if (m_canUseSimplifiedTextMeasuring && data.processRenderer) {
         // If we are not specifying specific configuration for characters, data.allCharactersMap has only 1 entry for default case.
         // This is extremely common, and that's why we crafted a fast path here.
@@ -183,9 +183,7 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
             auto view = m_run.text();
             unsigned length = view.length();
             unsigned skippedCharacters = 0;
-            float scalingFactor = text.scalingFactor();
-            ASSERT(scalingFactor);
-            float scaledHeight = scaledFont.metricsOfPrimaryFont().height() / scalingFactor;
+            float height = usedFont.metricsOfPrimaryFont().height();
 
             // m_canUseSimplifiedTextMeasuring ensures that this does not include surrogate pairs. So we do not need to consider about them.
             for (unsigned i = 0; i < length; ++i) {
@@ -201,9 +199,8 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
                 if ((valueListPosition + i - skippedCharacters + 1) == defaultPosition)
                     attributes->characterDataMap().set(i + 1, characterData);
 
-                float width = scaledFont.widthForTextUsingSimplifiedMeasuring(view.substring(i, 1), TextDirection::LTR);
-                float scaledWidth = width / scalingFactor;
-                textMetricsValues.append(SVGTextMetrics(1, scaledWidth, scaledHeight));
+                float width = usedFont.widthForTextUsingSimplifiedMeasuring(view.substring(i, 1), TextDirection::LTR);
+                textMetricsValues.append(SVGTextMetrics(1, width, height));
                 lastCharacter = currentCharacter;
             }
 
@@ -212,11 +209,11 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
     }
 
     if (m_isComplexText) {
-        ComplexTextController iterator(scaledFont, m_run, true);
+        ComplexTextController iterator(usedFont, m_run, true);
         return measureTextRendererWithIterator(iterator, text, data, state);
     }
 
-    WidthIterator iterator(scaledFont, m_run);
+    WidthIterator iterator(usedFont, m_run);
     return measureTextRendererWithIterator(iterator, text, data, state);
 }
 

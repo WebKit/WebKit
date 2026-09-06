@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (125,23) size 362x24
+    RenderSVGContainer {g} at (125,22) size 362x25
       RenderSVGText {text} at (75,13) size 217x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 217x14
           chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 43 width 216.68: "Test that removal of 'tref' does not crash."
