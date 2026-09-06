@@ -125,6 +125,7 @@ private:
     void processStartTag(AtomHTMLToken&&);
     void processEndTag(AtomHTMLToken&&);
     void processComment(AtomHTMLToken&&);
+    void processProcessingInstruction(AtomHTMLToken&&);
     void processCharacter(AtomHTMLToken&&);
     void processEndOfFile(AtomHTMLToken&&);
 

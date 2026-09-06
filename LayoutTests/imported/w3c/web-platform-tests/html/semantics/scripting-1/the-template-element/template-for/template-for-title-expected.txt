@@ -1,3 +1,3 @@
 
-FAIL HTML partial updates - update title assert_equals: expected "New title" but got "HTML partial updates - update title"
+PASS New title
 

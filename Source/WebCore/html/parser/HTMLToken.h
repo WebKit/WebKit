@@ -50,6 +50,7 @@ public:
         StartTag,
         EndTag,
         Comment,
+        ProcessingInstruction,
         Character,
         EndOfFile,
     };
@@ -136,8 +137,18 @@ public:
     void appendToComment(ASCIILiteral);
     void appendToComment(char16_t);
 
+    // Processing instruction.
+
+    const DataVector& processingInstructionTarget() const LIFETIME_BOUND;
+    const DataVector& processingInstructionData() const LIFETIME_BOUND;
+
+    void beginProcessingInstruction();
+    void appendToProcessingInstructionTarget(char16_t);
+    void appendToProcessingInstructionData(char16_t);
+
 private:
     DataVector m_data;
+    DataVector m_processingInstructionTarget;
     char16_t m_data8BitCheck { 0 };
     Type m_type { Type::Uninitialized };
 
@@ -156,6 +167,7 @@ inline void HTMLToken::clear()
 {
     m_type = Type::Uninitialized;
     m_data.clear();
+    m_processingInstructionTarget.clear();
     m_data8BitCheck = 0;
 }
 
@@ -429,6 +441,39 @@ inline void HTMLToken::appendToComment(char16_t character)
 {
     ASSERT(character);
     ASSERT(m_type == Type::Comment);
+    m_data.append(character);
+    m_data8BitCheck |= character;
+}
+
+inline const HTMLToken::DataVector& HTMLToken::processingInstructionTarget() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_processingInstructionTarget;
+}
+
+inline const HTMLToken::DataVector& HTMLToken::processingInstructionData() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_data;
+}
+
+inline void HTMLToken::beginProcessingInstruction()
+{
+    ASSERT(m_type == Type::Uninitialized);
+    m_type = Type::ProcessingInstruction;
+}
+
+inline void HTMLToken::appendToProcessingInstructionTarget(char16_t character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Type::ProcessingInstruction);
+    m_processingInstructionTarget.append(character);
+}
+
+inline void HTMLToken::appendToProcessingInstructionData(char16_t character)
+{
+    ASSERT(character);
+    ASSERT(m_type == Type::ProcessingInstruction);
     m_data.append(character);
     m_data8BitCheck |= character;
 }
