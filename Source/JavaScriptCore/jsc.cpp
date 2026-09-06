@@ -65,6 +65,7 @@
 #include "LLIntThunks.h"
 #include "LinkBuffer.h"
 #include "NativeCallee.h"
+#include "OSCheck.h"
 #include "ObjectConstructor.h"
 #include "ParserError.h"
 #include "ProfilerDatabase.h"
@@ -4599,7 +4600,8 @@ int jscmain(int argc, char** argv)
     WTF::initializeMainThread();
 
     // Match the QoS of the WebKit WebContent process.
-    WTF::Thread::setCurrentThreadIsUserInteractive(-1);
+    if constexpr (isDarwin())
+        WTF::Thread::setCurrentThreadIsUserInteractive(-1);
 
     // Note that the options parsing can affect VM creation, and thus
     // comes first.
