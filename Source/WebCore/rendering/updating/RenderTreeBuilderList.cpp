@@ -101,7 +101,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
 
     auto newStyle = listItemRenderer.computeMarkerStyle();
     auto markerContentEnabled = listItemRenderer.document().settings().cssMarkerContentEnabled();
-    auto markerHasContent = markerContentEnabled && newStyle.content().isData();
+    auto markerHasContent = listMarkerHasContent(newStyle, listItemRenderer.document());
 
     // css-content-3: `content: none` on the ::marker suppresses the marker box entirely, regardless
     // of list-style-type/image. Otherwise (css-lists-3 §3.3) a non-normal `content` generates the
@@ -135,23 +135,16 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, { });
 
     if (auto* markerRenderer = listItemRenderer.markerBox()) {
-        // Whether the marker box holds inline content depends on `content` and on list-style-type
-        // (only text markers with right-to-left content need it). The container also inherits
-        // unicode-bidi, so rebuild on that too, to carry the new value into it.
-        auto contentChanged = markerRenderer->style().content() != newStyle.content() || markerRenderer->style().unicodeBidi() != newStyle.unicodeBidi() || markerRenderer->style().listStyleType() != newStyle.listStyleType();
+        auto contentChanged = markerRenderer->style().content() != newStyle.content() || markerRenderer->style().unicodeBidi() != newStyle.unicodeBidi()
+            || markerRenderer->style().listStyleType() != newStyle.listStyleType() || markerRenderer->style().listStyleImage() != newStyle.listStyleImage();
         markerRenderer->setStyle(WTF::move(newStyle));
         // list-style-type, the counter style it resolves to and the writing mode all decide the marker's text.
         m_builder.addListItemNeedingMarkerUpdate(listItemRenderer);
 
-        // Recomputing this here rather than diffing the style properties it is made of also picks up
-        // what is not the marker's own style: its direction, and what the document's counter style
-        // registry currently resolves list-style-type to.
-        auto needsContentContainer = markerRenderer->needsContentContainer();
-        if (contentChanged || needsContentContainer != !!markerRenderer->contentContainer()) {
+        if (contentChanged) {
             if (auto* existingContainer = markerRenderer->contentContainer())
                 m_builder.destroy(*existingContainer);
-            if (needsContentContainer)
-                buildMarkerContentRenderers(*markerRenderer);
+            buildMarkerContentRenderers(*markerRenderer);
         } else if (auto* container = markerRenderer->contentContainer()) {
             // Content unchanged but other style changed: refresh the generated image/quote children
             // (RenderText/RenderCounter are handled by propagateStyleToAnonymousChildren on setStyle).
@@ -207,8 +200,7 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     }
     m_builder.attach(*searchResult.parent, WTF::move(newMarkerRenderer), firstNonMarkerChild(*searchResult.parent));
 
-    if (listItemRenderer.markerBox()->needsContentContainer())
-        buildMarkerContentRenderers(*listItemRenderer.markerBox());
+    buildMarkerContentRenderers(*listItemRenderer.markerBox());
 }
 
 static CheckedRef<RenderBlock> parentForInlineMarker(RenderListItem& listItemRenderer, const RenderInline& marker)
@@ -253,7 +245,6 @@ void RenderTreeBuilder::List::buildInlineMarker(RenderListItem& listItemRenderer
 
 void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListOutsideMarker& marker)
 {
-    ASSERT(marker.needsContentContainer());
     ASSERT(!marker.contentContainer());
 
     // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
@@ -266,6 +257,14 @@ void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListOutsideMarke
     m_builder.attach(marker, WTF::move(newContainer));
 
     if (!marker.hasContentProperty()) {
+        // css-lists-3 §3.3: a list-style-image draws in place of the counter style's text, as an image of its own.
+        if (RefPtr styleImage = marker.style().listStyleImage().tryStyleImage(); styleImage && !styleImage->errorOccurred()) {
+            auto imageRenderer = WebCore::createRenderer<RenderImage>(RenderObject::Type::Image, marker.document(), Style::ComputedStyle::createStyleInheritingFromPseudoStyle(marker.style()), styleImage.get());
+            imageRenderer->initializeStyle();
+            m_builder.attach(container.get(), WTF::move(imageRenderer));
+            return;
+        }
+
         // list-style-type text that needs renderers of its own, so inline layout can bidi-resolve it.
         // The text itself is only known once counter values resolve, so start empty and let
         // RenderListOutsideMarker::updateContent() fill it in at layout time.
