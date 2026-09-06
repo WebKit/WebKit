@@ -905,6 +905,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         const options = {
             dontFloat: true,
             ignoreSearchTab: true,
+            stackTrace: entry.resource.initiatorStackTrace,
         };
         cell.appendChild(WI.createSourceCodeLocationLink(initiatorLocation, options));
     }
