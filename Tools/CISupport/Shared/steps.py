@@ -42,8 +42,8 @@ CURRENT_HOSTNAME = socket.gethostname().strip()
 
 GITHUB_URL = 'https://github.com/'
 SCAN_BUILD_OUTPUT_DIR = 'scan-build-output'
-LLVM_DIR = 'llvm-project'
 SWIFT_DIR = 'swift-project/swift'
+SCAN_BUILD_PATH = '../swift-project/llvm-project/clang/tools/scan-build/bin/scan-build'
 SWIFT_TOOLCHAIN_NAME = 'swift-webkit'
 SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER = 'org.webkit.swift'
 USER_TOOLCHAINS_DIR = '/Users/buildbot/Library/Developer/Toolchains'
@@ -191,38 +191,6 @@ class InstallNinja(shell.ShellCommand, ShellMixin):
     def getResultSummary(self):
         if self.results != SUCCESS:
             self.summary = f'Failed to install Ninja'
-        return {u'step': self.summary}
-
-
-class GetLLVMVersion(shell.ShellCommand, ShellMixin):
-    name = 'get-llvm-version'
-    summary = 'Found LLVM version'
-
-    def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, timeout=60, **kwargs)
-
-    @defer.inlineCallbacks
-    def run(self):
-        self.command = self.shell_command('cat Tools/CISupport/safer-cpp-llvm-version')
-
-        self.log_observer = logobserver.BufferLogObserver()
-        self.addLogObserver('stdio', self.log_observer)
-
-        rc = yield super().run()
-        if rc != SUCCESS:
-            return defer.returnValue(rc)
-
-        log_text = self.log_observer.getStdout().strip()
-        if log_text:
-            self.setProperty('canonical_llvm_revision', log_text)
-            self.summary = f"Canonical LLVM version: {self.getProperty('canonical_llvm_revision')}"
-            return defer.returnValue(SUCCESS)
-
-        return defer.returnValue(FAILURE)
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            self.summary = f'Failed to find canonical LLVM version'
         return {u'step': self.summary}
 
 
@@ -484,151 +452,6 @@ fi
         if self.results == SKIPPED:
             return {'step': 'Metal toolchain installation skipped'}
         return {'step': self.summary}
-
-
-class CheckOutLLVMProject(git.Git, AddToLogMixin):
-    name = 'checkout-llvm-project'
-    directory = 'llvm-project'
-    branch = 'webkit'
-    CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
-    GIT_HASH_LENGTH = 40
-    haltOnFailure = False
-
-    def __init__(self, **kwargs):
-        repourl = f'{GITHUB_URL}rniwa/llvm-project.git'
-        super().__init__(
-            repourl=repourl,
-            workdir=self.directory,
-            retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
-            timeout=5 * 60,
-            branch=self.branch,
-            alwaysUseLatest=False,
-            logEnviron=False,
-            progress=True,
-            **kwargs
-        )
-
-    @defer.inlineCallbacks
-    def run_vc(self, branch, revision, patch):
-        rc = yield super().run_vc(self.branch, self.getProperty('canonical_llvm_revision'), None)
-        return rc
-
-    @defer.inlineCallbacks
-    def parseGotRevision(self, _=None):
-        stdout = yield self._dovccmd(['rev-parse', 'HEAD'], collectStdout=True)
-        revision = stdout.strip()
-        if len(revision) != self.GIT_HASH_LENGTH:
-            raise buildstep.BuildStepFailed()
-        return SUCCESS
-
-    def doStepIf(self, step):
-        return self.getProperty('canonical_llvm_revision') and self.getProperty('current_llvm_revision', '') != self.getProperty('canonical_llvm_revision')
-
-    def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'llvm-project is already up to date'}
-        elif self.results != SUCCESS:
-            return {'step': 'Failed to update llvm-project directory'}
-        else:
-            return {'step': 'Cleaned and updated llvm-project directory'}
-
-
-class UpdateClang(steps.ShellSequence, ShellMixin):
-    name = 'update-clang'
-    description = 'updating clang'
-    descriptionDone = 'Successfully updated clang'
-    flunkOnFailure = False
-    warnOnFailure = False
-
-    def __init__(self, **kwargs):
-        super().__init__(logEnviron=True, workdir=LLVM_DIR, **kwargs)
-        self.commands = []
-        self.summary = ''
-
-    @defer.inlineCallbacks
-    def run(self):
-        self.env['PATH'] = f"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/CMake.app/Contents/bin/:{self.getProperty('builddir')}"
-        self.commands = [
-            util.ShellArg(command=self.shell_command('rm -r build-new; mkdir build-new'), logname='stdio', flunkOnFailure=False),
-            util.ShellArg(command=self.shell_command('cd build-new; xcrun cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_BUILD_TYPE=Release -G Ninja ../llvm -DCMAKE_MAKE_PROGRAM=$(xcrun --sdk macosx --find ninja)'), logname='stdio', haltOnFailure=True),
-            util.ShellArg(command=self.shell_command('cd build-new; ninja clang'), logname='stdio', haltOnFailure=True),
-            util.ShellArg(command=['rm', '-r', '../build/WebKitBuild'], logname='stdio', flunkOnFailure=False),  # Need a clean build after complier update
-        ]
-
-        if not self.getProperty('canonical_llvm_revision'):
-            self.summary = 'Could not find canonical revision, using previous build'
-            return WARNINGS
-
-        rc = yield super().run()
-        if rc != SUCCESS:
-            if self.getProperty('current_llvm_revision', ''):
-                self.summary = 'Failed to update clang, using previous build'
-                return WARNINGS
-            self.summary = 'Failed to update clang'
-            self.build.buildFinished(['Failed to set up analyzer, retrying build'], RETRY)
-            return defer.returnValue(rc)
-
-        self.summary = 'Successfully updated clang'
-        self.build.addStepsAfterCurrentStep([PrintClangVersionAfterUpdate()])
-        defer.returnValue(rc)
-
-    def doStepIf(self, step):
-        return self.getProperty('current_llvm_revision', '') != self.getProperty('canonical_llvm_revision')
-
-    def getResultSummary(self):
-        if self.results == SKIPPED:
-            return {'step': 'Clang is already up to date'}
-        return {'step': self.summary}
-
-
-class PrintClangVersion(shell.ShellCommand):
-    name = 'print-clang-version'
-    haltOnFailure = False
-    flunkOnFailure = False
-    warnOnFailure = False
-    CLANG_VERSION_RE = '(.*clang version.+) \\((.+?)\\)'
-    summary = ''
-
-    def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, workdir=LLVM_DIR, timeout=60, **kwargs)
-        self.command = ['./build/bin/clang', '--version']
-
-    @defer.inlineCallbacks
-    def run(self):
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-        rc = yield super().run()
-        log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-        match = re.search(self.CLANG_VERSION_RE, log_text)
-        if match:
-            self.setProperty('current_llvm_revision', match.group(2).split()[1])
-            self.summary = match.group(0)
-        elif 'No such file or directory' in log_text:
-            self.summary = 'Clang executable does not exist'
-            rc = SUCCESS
-        return defer.returnValue(rc)
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            return {'step': 'Failed to print clang version'}
-        return {'step': self.summary}
-
-
-class PrintClangVersionAfterUpdate(PrintClangVersion, ShellMixin):
-    name = 'print-clang-version-after-update'
-    haltOnFailure = True
-
-    @defer.inlineCallbacks
-    def run(self):
-        command = './build-new/bin/clang --version; rm -r build; mv build-new build'
-        self.command = self.shell_command(command)
-        rc = yield super().run()
-        return defer.returnValue(rc)
-
-    def getResultSummary(self):
-        if self.results != SUCCESS:
-            self.build.buildFinished(['Failed to set up analyzer, retrying build'], RETRY)
-        return super().getResultSummary()
 
 
 class PruneCoreSymbolicationdCacheIfTooLarge(shell.ShellCommand):
