@@ -442,7 +442,7 @@ void InjectedBundle::outputText(StringView output, IsFinalTestOutput isFinalTest
     // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
     // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.
     auto messageName = isFinalTestOutput == IsFinalTestOutput::Yes ? toWK("FinalTextOutput") : toWK("TextOutput");
-    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), toWK(string ? string->data() : "Out of memory\n").get());
+    WKBundlePagePostMessageIgnoringFullySynchronousMode(page()->page(), messageName.get(), toWK(string ? string->characters() : "Out of memory\n").get());
 }
 
 void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)

@@ -149,7 +149,7 @@ void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& c
 
     m_cancellable = adoptGRef(g_cancellable_new());
     GUniquePtr<char> inspectorAddress(
-        g_strdup_printf("%s:%u", targetIp.isEmpty() ? "127.0.0.1" : targetIp.latin1().data(), targetPort > 0 ? targetPort : freePort())
+        g_strdup_printf("%s:%u", targetIp.isEmpty() ? "127.0.0.1" : targetIp.latin1().characters(), targetPort > 0 ? targetPort : freePort())
     );
     if (!targetIp.isEmpty()) {
         m_isRemoteBrowser = true;

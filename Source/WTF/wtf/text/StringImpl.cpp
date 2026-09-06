@@ -1578,17 +1578,17 @@ size_t NODELETE StringImpl::sizeInBytes() const
     return size + sizeof(*this);
 }
 
-std::expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
+std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
-        return CString { converted };
+        return UTF8CString { converted };
     }, source);
 }
 
-std::expected<CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const char16_t> characters, ConversionMode mode)
+std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const char16_t> characters, ConversionMode mode)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {
-        return CString { converted };
+        return UTF8CString { converted };
     }, characters, mode);
 }
 
@@ -1630,7 +1630,7 @@ size_t StringImpl::tryConvertUTF16ToUTF8(std::span<const char16_t> source, std::
     return notFound;
 }
 
-std::expected<CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
+std::expected<UTF8CString, UTF8ConversionError> StringImpl::tryGetUTF8(ConversionMode mode) const
 {
     if (is8Bit())
         return utf8ForCharacters(span8());

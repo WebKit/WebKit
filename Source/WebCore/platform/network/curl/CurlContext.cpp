@@ -407,7 +407,7 @@ void CurlHandle::setURL(const URL& url, LocalhostAlias localhostAlias)
     }
 
     // url is in ASCII so latin1() will only convert it to char* without character translation.
-    curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().data());
+    curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().characters());
 
     if (url.protocolIs("https"_s))
         enableSSL();

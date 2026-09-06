@@ -1607,7 +1607,7 @@ xmlDocPtr xmlDocPtrForString(CachedResourceLoader& cachedResourceLoader, const S
         return nullptr;
 
     XMLDocumentParserScope scope(&cachedResourceLoader, errorFunc);
-    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), url.latin1().data(), encoding, XSLT_PARSE_OPTIONS);
+    return xmlReadMemory(characters.data(), static_cast<int>(sizeInBytes), url.latin1().characters(), encoding, XSLT_PARSE_OPTIONS);
 }
 #endif
 

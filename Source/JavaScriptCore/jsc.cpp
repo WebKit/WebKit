@@ -1271,18 +1271,18 @@ static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& b
         fprintf(stderr, "Error when parsing file name: %s\n", fileName.ascii().data());
         return false;
     }
-    if (stat(fileNameUTF->data(), &statBuf) == -1) {
-        fprintf(stderr, "Could not open file: %s\n", fileNameUTF->data());
+    if (stat(fileNameUTF->characters(), &statBuf) == -1) {
+        SAFE_FPRINTF(stderr, "Could not open file: %s\n", *fileNameUTF);
         return false;
     }
 
     if ((statBuf.st_mode & S_IFMT) != S_IFREG) {
-        fprintf(stderr, "Trying to open a non-file: %s\n", fileNameUTF->data());
+        SAFE_FPRINTF(stderr, "Trying to open a non-file: %s\n", *fileNameUTF);
         return false;
     }
-    auto* f = fopen(fileNameUTF->data(), "rb");
+    auto* f = fopen(fileNameUTF->characters(), "rb");
     if (!f) {
-        fprintf(stderr, "Could not open file: %s\n", fileNameUTF->data());
+        SAFE_FPRINTF(stderr, "Could not open file: %s\n", *fileNameUTF);
         return false;
     }
 
@@ -1570,7 +1570,7 @@ void GlobalObject::promiseRejectionTracker(JSGlobalObject*, JSPromise*, JSPromis
 
 #endif // ENABLE(FUZZILLI)
 
-static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, std::expected<CString, UTF8ConversionError> expectedString)
+static UTF8CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, std::expected<UTF8CString, UTF8ConversionError> expectedString)
 {
     if (expectedString)
         return expectedString.value();
@@ -1586,7 +1586,7 @@ static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, std::e
     return { };
 }
 
-template<typename T> static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
+template<typename T> static UTF8CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& string)
 {
     return toCString(globalObject, scope, string.tryGetUTF8());
 }
@@ -3787,7 +3787,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
         if (stackString.length()) {
             auto expectedUtf8 = stackString.tryGetUTF8();
             if (expectedUtf8)
-                printf("%s\n", expectedUtf8.value().data());
+                SAFE_PRINTF("%s\n", expectedUtf8.value());
         }
     }
 

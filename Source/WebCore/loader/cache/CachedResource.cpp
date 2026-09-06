@@ -147,7 +147,7 @@ void CachedResource::deref() const
 void CachedResource::failBeforeStarting()
 {
     // FIXME: What if resources in other frames were waiting for this revalidation?
-    LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().data());
+    LOG(ResourceLoading, "Cannot start loading '%s'", url().string().latin1().characters());
     if (allowsCaching() && m_resourceToRevalidate)
         MemoryCache::singleton().revalidationFailed(*this);
     error(CachedResource::LoadError);

@@ -80,7 +80,7 @@ void printInternal(PrintStream& out, const char* string)
     out.printf("%s", string);
 }
 
-static void printExpectedCStringHelper(PrintStream& out, const char* type, std::expected<CString, UTF8ConversionError> expectedCString)
+static void printExpectedCStringHelper(PrintStream& out, const char* type, std::expected<UTF8CString, UTF8ConversionError> expectedCString)
 {
     if (!expectedCString) [[unlikely]] {
         if (expectedCString.error() == UTF8ConversionError::OutOfMemory) {

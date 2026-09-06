@@ -214,7 +214,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_uni)(options, maxStreamsUni);
         MAYBE_SOFT_LINK(nw_webtransport_options_set_initial_max_streams_bidi)(options, maxStreamsBidi);
         for (auto& header : additionalHeaders)
-            MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, header.key.latin1().data(), header.value.latin1().data());
+            MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, header.key.latin1().characters(), header.value.latin1().characters());
         MAYBE_SOFT_LINK(nw_webtransport_options_add_connect_request_header)(options, "wt-available-protocols", protocols.utf8().data());
     };
 

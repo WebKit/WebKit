@@ -392,21 +392,21 @@ Vector<String> String::splitAllowingEmptyEntries(StringView separator) const
     return splitInternal<true>(separator);
 }
 
-CString String::ascii() const
+ASCIICString String::ascii() const
 {
     // Printable ASCII characters 32..127 and the null character are
     // preserved, characters outside of this range are converted to '?'.
 
     if (isEmpty()) {
         std::span<char> characterBuffer;
-        return CString::newUninitialized(0, characterBuffer);
+        return ASCIICString::newUninitialized(0, characterBuffer);
     }
 
     if (this->is8Bit()) {
         auto characters = this->span8();
 
         std::span<char> characterBuffer;
-        CString result = CString::newUninitialized(characters.size(), characterBuffer);
+        auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
 
         size_t characterBufferIndex = 0;
         for (auto character : characters)
@@ -417,7 +417,7 @@ CString String::ascii() const
 
     auto characters = span16();
     std::span<char> characterBuffer;
-    CString result = CString::newUninitialized(characters.size(), characterBuffer);
+    auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
 
     size_t characterBufferIndex = 0;
     for (auto character : characters)
@@ -426,41 +426,41 @@ CString String::ascii() const
     return result;
 }
 
-CString String::latin1() const
+Latin1CString String::latin1() const
 {
     // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
     // preserved, characters outside of this range are converted to '?'.
 
     if (isEmpty())
-        return ""_span;
+        return Latin1CString { ""_span8 };
 
     if (is8Bit())
-        return CString(this->span8());
+        return Latin1CString { this->span8() };
 
     auto characters = this->span16();
-    std::span<char> characterBuffer;
-    CString result = CString::newUninitialized(characters.size(), characterBuffer);
+    std::span<Latin1Character> characterBuffer;
+    auto result = Latin1CString::newUninitialized(characters.size(), characterBuffer);
 
     size_t characterBufferIndex = 0;
     for (auto character : characters)
-        characterBuffer[characterBufferIndex++] = !isLatin1(character) ? '?' : character;
+        characterBuffer[characterBufferIndex++] = !isLatin1(character) ? '?' : static_cast<Latin1Character>(character);
 
     return result;
 }
 
-std::expected<CString, UTF8ConversionError> String::tryGetUTF8(ConversionMode mode) const
+std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8(ConversionMode mode) const
 {
-    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->tryGetUTF8(mode) : CString { ""_span };
+    SUPPRESS_UNCOUNTED_ARG return m_impl ? m_impl->tryGetUTF8(mode) : UTF8CString { u8""_span };
 }
 
-std::expected<CString, UTF8ConversionError> String::tryGetUTF8() const
+std::expected<UTF8CString, UTF8ConversionError> String::tryGetUTF8() const
 {
     return tryGetUTF8(LenientConversion);
 }
 
 CString String::utf8(ConversionMode mode) const
 {
-    std::expected<CString, UTF8ConversionError> expectedString = tryGetUTF8(mode);
+    auto expectedString = tryGetUTF8(mode);
     RELEASE_ASSERT(expectedString);
     return expectedString.value();
 }

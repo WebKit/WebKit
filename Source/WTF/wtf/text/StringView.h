@@ -127,7 +127,8 @@ public:
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSStringWithoutCopying() const;
 #endif
 
-    WTF_EXPORT_PRIVATE std::expected<CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
+    WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
+    // FIXME: Should return a UTF8CString, like tryGetUTF8() above already does.
     WTF_EXPORT_PRIVATE CString utf8(ConversionMode = LenientConversion) const;
 
     template<typename Func>

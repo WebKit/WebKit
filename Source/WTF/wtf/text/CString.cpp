@@ -178,25 +178,25 @@ bool CStringHash::equal(const CString& a, const CString& b)
 enum class ASCIICase { Lower, Upper };
 
 template<ASCIICase type>
-CString convertASCIICase(std::span<const char8_t> input)
+UTF8CString convertASCIICase(std::span<const char8_t> input)
 {
     if (input.empty())
-        return CString(""_s);
+        return UTF8CString(""_s);
 
-    std::span<char> characters;
-    auto result = CString::newUninitialized(input.size(), characters);
+    std::span<char8_t> characters;
+    auto result = UTF8CString::newUninitialized(input.size(), characters);
     size_t i = 0;
     for (auto character : input)
         characters[i++] = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
     return result;
 }
 
-CString convertToASCIILowercase(std::span<const char8_t> string)
+UTF8CString convertToASCIILowercase(std::span<const char8_t> string)
 {
     return convertASCIICase<ASCIICase::Lower>(string);
 }
 
-CString convertToASCIIUppercase(std::span<const char8_t> string)
+UTF8CString convertToASCIIUppercase(std::span<const char8_t> string)
 {
     return convertASCIICase<ASCIICase::Upper>(string);
 }

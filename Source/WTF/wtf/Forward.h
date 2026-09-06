@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <wtf/Platform.h>
+#include <wtf/text/Latin1Character.h>
 
 #if defined(__has_feature)
 #if __has_feature(objc_arc)
@@ -121,6 +122,10 @@ template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class Awaitable;
 template<typename> class Borrow;
+template<typename> class CStringWithEncoding;
+using UTF8CString = CStringWithEncoding<char8_t>;
+using Latin1CString = CStringWithEncoding<Latin1Character>;
+using ASCIICString = CStringWithEncoding<char>;
 template<typename> class CompactPtr;
 template<typename> class CompletionHandler;
 template<typename, size_t = 0> class Deque;
