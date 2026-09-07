@@ -973,15 +973,19 @@ void RewriteGlobalVariables::packArrayResource(AST::Variable& global, const Type
     );
     packedType.m_inferredType = packedElementType;
 
-    auto& arrayTypeName = downcast<AST::ArrayTypeExpression>(*global.maybeTypeName());
+    auto& typeName = *global.maybeTypeName();
+    auto* maybeArrayTypeName = dynamicDowncast<AST::ArrayTypeExpression>(typeName);
     auto& packedArrayTypeName = m_shaderModule.astBuilder().construct<AST::ArrayTypeExpression>(
-        arrayTypeName.span(),
+        typeName.span(),
         &packedType,
-        arrayTypeName.maybeElementCount()
+        maybeArrayTypeName ? maybeArrayTypeName->maybeElementCount() : nullptr
     );
     packedArrayTypeName.m_inferredType = packedArrayType;
 
-    m_shaderModule.replace(arrayTypeName, packedArrayTypeName);
+    if (maybeArrayTypeName)
+        m_shaderModule.replace(*maybeArrayTypeName, packedArrayTypeName);
+    else
+        m_shaderModule.replace(downcast<AST::IdentifierExpression>(typeName), packedArrayTypeName);
     updateReference(global, packedArrayTypeName);
     m_shaderModule.replace(&global.role(), AST::VariableRole::PackedResource);
 }
