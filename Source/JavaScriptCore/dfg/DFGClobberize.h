@@ -2013,6 +2013,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::Int32:
             sourceHeap = IndexedInt32Properties;
             break;
+        case Array::Double:
+            sourceHeap = IndexedDoubleProperties;
+            break;
         case Array::Contiguous:
             sourceHeap = IndexedContiguousProperties;
             break;
@@ -2034,6 +2037,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         switch (node->arrayMode().type()) {
         case Array::Int32:
             targetHeap = IndexedInt32Properties;
+            break;
+        case Array::Double:
+            targetHeap = IndexedDoubleProperties;
             break;
         case Array::Contiguous:
             targetHeap = IndexedContiguousProperties;
