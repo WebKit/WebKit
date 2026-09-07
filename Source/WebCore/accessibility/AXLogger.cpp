@@ -1076,9 +1076,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::LinethroughColor:
         stream << "LinethroughColor";
         break;
-    case AXProperty::ListMarkerLineID:
-        stream << "ListMarkerLineID";
-        break;
     case AXProperty::ListMarkerText:
         stream << "ListMarkerText";
         break;

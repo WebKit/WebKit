@@ -553,7 +553,7 @@ String listMarkerTextOnSameLine(const AXTextMarker& marker)
         if (RefPtr listMarker = findUnignoredDescendant(*listItemAncestor, /* includeSelf */ false, [] (const auto& descendant) {
             return descendant.role() == AccessibilityRole::ListMarker;
         })) {
-            auto lineID = listMarker->listMarkerLineID();
+            auto lineID = AXTextMarker { *listItemAncestor, 0 }.toTextRunMarker().lineID();
             if (lineID && lineID == marker.lineID())
                 return listMarker->listMarkerText();
         }

@@ -112,7 +112,6 @@ public:
     bool isReplacedElementForTextEmission() const final { return boolAttributeValue(AXProperty::IsReplacedElementForTextEmission); }
     bool isInUserAgentShadowTree() const final { return boolAttributeValue(AXProperty::IsInUserAgentShadowTree); }
     bool isInsideNativeTextControl() const final { return boolAttributeValue(AXProperty::IsInsideNativeTextControl); }
-    AXTextRunLineID listMarkerLineID() const final { return propertyValue<AXTextRunLineID>(AXProperty::ListMarkerLineID); };
     String listMarkerText() const final { return stringAttributeValue(AXProperty::ListMarkerText); }
     FontOrientation fontOrientation() const final { return propertyValue<FontOrientation>(AXProperty::FontOrientation); }
 

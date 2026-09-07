@@ -120,7 +120,6 @@ public:
     String selectedText() const final;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AXTextRuns textRuns() final;
-    AXTextRunLineID listMarkerLineID() const final;
     String listMarkerText() const final;
 #endif
 

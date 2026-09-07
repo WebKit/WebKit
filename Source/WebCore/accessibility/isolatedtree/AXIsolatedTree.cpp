@@ -2405,10 +2405,8 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         case TextEmissionBehavior::None:
             break;
         }
-        if (object.role() == AccessibilityRole::ListMarker) {
+        if (object.role() == AccessibilityRole::ListMarker)
             setProperty(AXProperty::ListMarkerText, object.listMarkerText().isolatedCopy());
-            setProperty(AXProperty::ListMarkerLineID, object.listMarkerLineID());
-        }
 
         String language = object.language();
         if (!language.isEmpty())

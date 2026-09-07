@@ -1771,12 +1771,6 @@ AXTextRuns AccessibilityRenderObject::textRuns()
     return { renderText->containingBlock(), WTF::move(runs), fullString.toString().isolatedCopy(), containsOnlyASCII };
 }
 
-AXTextRunLineID AccessibilityRenderObject::listMarkerLineID() const
-{
-    AX_ASSERT(role() == AccessibilityRole::ListMarker);
-    return { renderer() ? renderer()->containingBlock() : nullptr, 0 };
-}
-
 String AccessibilityRenderObject::listMarkerText() const
 {
     CheckedPtr marker = dynamicDowncast<RenderListOutsideMarker>(renderer());

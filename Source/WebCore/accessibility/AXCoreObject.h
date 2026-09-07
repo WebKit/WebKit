@@ -978,7 +978,6 @@ public:
     // True when this object's node is in the shadow tree of an <input> or <textarea>, as opposed to
     // an ARIA text control.
     virtual bool isInsideNativeTextControl() const = 0;
-    virtual AXTextRunLineID listMarkerLineID() const = 0;
     virtual String listMarkerText() const = 0;
     virtual FontOrientation fontOrientation() const = 0;
 #endif
