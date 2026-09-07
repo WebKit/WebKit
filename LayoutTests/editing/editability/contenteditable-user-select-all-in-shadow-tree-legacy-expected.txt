@@ -1,0 +1,34 @@
+Slotted in content.
+
+Slotted span
+Regular content (no shadow trees involved).
+
+---:2:---
+
+Verifies that '-webkit-user-select: all' has the same effect on editability inside and outside a shadow tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Baseline result: -webkit-user-select: all forbids carets from being placed into the element
+PASS checkEditabilityAndUserSelect(lightParagraph) is "isContentEditable: true, canTypeInto: false, computed -webkit-user-select: all, probed -webkit-user-select: all"
+PASS checkEditabilityAndUserSelect(lightSpan) is "isContentEditable: true, canTypeInto: false, computed -webkit-user-select: all, probed -webkit-user-select: all"
+
+The span can be removed due the editable parent:
+PASS canReplaceByTyping(lightParagraph, "1") is false
+PASS canReplaceByTyping(lightSpan, "2") is true
+
+Same should happen in content that was slotted in:
+PASS checkEditabilityAndUserSelect(slottedParagraph) is "isContentEditable: true, canTypeInto: false, computed -webkit-user-select: all, probed -webkit-user-select: all"
+PASS checkEditabilityAndUserSelect(slottedSpan) is "isContentEditable: true, canTypeInto: false, computed -webkit-user-select: all, probed -webkit-user-select: all"
+PASS canReplaceByTyping(slottedParagraph, "3") is false
+FAIL canReplaceByTyping(slottedSpan, "4") should be true. Was false.
+
+Inside the shadow tree, 'all' doesn't stop the placement of carets:
+PASS checkEditabilityAndUserSelect(shadowParagraph) is "isContentEditable: true, canTypeInto: true, computed -webkit-user-select: all, probed -webkit-user-select: all"
+PASS checkEditabilityAndUserSelect(shadowSpan) is "isContentEditable: true, canTypeInto: true, computed -webkit-user-select: all, probed -webkit-user-select: all"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

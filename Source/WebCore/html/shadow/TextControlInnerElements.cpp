@@ -136,7 +136,7 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
 
     // The used value of user-select needs adjusting here because the adjuster won't run
     // on this style later (because it was not produced by the cascade).
-    Style::Adjuster adjuster(document(), *shadowHostStyle, nullptr, nullptr);
+    Style::Adjuster adjuster(document(), *shadowHostStyle, nullptr, nullptr, shadowHostStyle);
     adjuster.adjustUsedUserSelect(*newStyle);
 
     if (isStrongPasswordTextField(shadowHost())) {

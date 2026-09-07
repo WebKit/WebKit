@@ -35,7 +35,7 @@ class HTMLSlotElement final : public HTMLElement {
 public:
     using ElementOrText = Variant<Ref<Element>, Ref<Text>>;
 
-    static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
+    static Ref<HTMLSlotElement> create(const QualifiedName&, Document&, bool forcedNotEditable = false);
 
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodes() const;
     struct AssignedNodesOptions {
@@ -56,8 +56,10 @@ public:
     bool isInInsertedIntoAncestor() const { return m_isInInsertedIntoAncestor; }
 
     void updateAccessibilityOnSlotChange() const;
+
+    bool forcedNotEditable() const { return m_forcedNotEditable; }
 private:
-    HTMLSlotElement(const QualifiedName&, Document&);
+    HTMLSlotElement(const QualifiedName&, Document&, bool forcedNotEditable);
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode&) final;
@@ -67,6 +69,10 @@ private:
 
     bool m_inSignalSlotList { false };
     bool m_isInInsertedIntoAncestor { false };
+
+    // Only used in user-agent shadow trees; causes editability of
+    // the slotted in element to be forced to ReadOnly
+    const bool m_forcedNotEditable { false };
     Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_manuallyAssignedNodes;
 };
 

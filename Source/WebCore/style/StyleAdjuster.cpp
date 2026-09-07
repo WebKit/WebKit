@@ -74,6 +74,7 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleFontSizeFunctions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
+#include "StyleProperties.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextDecorationLine.h"
 #include "StyleUpdate.h"
@@ -105,11 +106,12 @@ namespace Style {
 using namespace CSS::Literals;
 using namespace HTMLNames;
 
-Adjuster::Adjuster(const Document& document, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element* element)
+Adjuster::Adjuster(const Document& document, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element* element, const Style::ComputedStyle* shadowHostStyle)
     : m_document(document)
     , m_parentStyle(parentStyle)
     , m_parentBoxStyle(parentBoxStyle ? *parentBoxStyle : m_parentStyle)
     , m_element(element)
+    , m_shadowHostStyle(shadowHostStyle)
 {
 }
 
@@ -818,6 +820,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 
     adjustForSiteSpecificQuirks(style);
 
+    adjustUserModifyForSlot(style);
     adjustUsedUserSelect(style);
     // Don't allow selecting individual glyphs on text recognized inside an image:
 #if ENABLE(IMAGE_ANALYSIS)
@@ -828,6 +831,37 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         style.setUsedUserSelect(userSelect);
     }
 #endif
+}
+
+void Adjuster::adjustUserModifyForSlot(Style::ComputedStyle& style) const
+{
+    // Editability should propagate through the contenteditable attribute, not
+    // style, so it must not follow the flattened tree. This means assigned
+    // slots need patching so they inherit from the shadow host:
+
+    RefPtr slot = dynamicDowncast<HTMLSlotElement>(m_element.get());
+    if (!slot || !slot->assignedNodes())
+        return;
+
+    // Some user-agent shadow trees simply force non-editability instead:
+    if (slot->forcedNotEditable()) {
+        style.setUserModify(UserModify::ReadOnly);
+        return;
+    }
+
+    // m_shadowHostStyle will be unavailable if we got here from Element::resolveComputedStyle():
+    CheckedPtr hostStyle = m_shadowHostStyle;
+    if (!hostStyle) {
+        RefPtr host = slot->shadowHost();
+        hostStyle = host ? host->existingComputedStyle() : nullptr;
+    }
+
+    // If we're resolving the slot, the shadow host's has already been resolved:
+    ASSERT(hostStyle);
+    if (!hostStyle)
+        return;
+
+    style.setUserModify(hostStyle->userModify());
 }
 
 static bool considerUnprefixedUserSelect()
