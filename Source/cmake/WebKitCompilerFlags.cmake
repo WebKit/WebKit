@@ -7,7 +7,8 @@ function(WEBKIT_CHECK_COMPILER_FLAGS _compiler _result)
     foreach (_flag IN LISTS ARGN)
         # If an equals (=) character is present in a variable name, it will
         # not be cached correctly, and the check will be retried ad nauseam.
-        string(REPLACE "=" "__" _cachevar "${_compiler}_COMPILER_SUPPORTS_${_flag}")
+        # And, an minus (-) character causes a C macro name issue.
+        string(REGEX REPLACE "[=-]" "__" _cachevar "${_compiler}_COMPILER_SUPPORTS_${_flag}")
         if (CMAKE_${_compiler}_COMPILER_ID STREQUAL "AppleClang")
             set(${_cachevar} TRUE)
         elseif (${_compiler} STREQUAL CXX)
