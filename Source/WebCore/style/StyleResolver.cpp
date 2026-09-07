@@ -318,6 +318,9 @@ UnadjustedStyle Resolver::unadjustedStyleForElement(Element& element, const Reso
         matchedPseudoElements.add(state.parentStyle()->highlightPseudoElementTypes());
     if (matchedPseudoElements)
         style.setHasPseudoStyles(matchedPseudoElements);
+    auto pseudoElementsWithoutContent = matchedPseudoElements;
+    pseudoElementsWithoutContent.remove(collector.matchedPseudoElementsRequiringStyle());
+    style.setCanOmitPseudoElementStyles(pseudoElementsWithoutContent);
 
     auto elementStyleRelations = commitRelationsToRenderStyle(style, element, collector.styleRelations());
 

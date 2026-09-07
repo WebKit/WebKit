@@ -599,6 +599,8 @@ public:
     inline bool hasPseudoStyle(PseudoElementType) const;
     inline EnumSet<PseudoElementType> highlightPseudoElementTypes() const;
     inline void setHasPseudoStyles(EnumSet<PseudoElementType>);
+    inline bool canOmitPseudoElementStyle(PseudoElementType) const;
+    inline void setCanOmitPseudoElementStyles(EnumSet<PseudoElementType>);
 
     Style::ComputedStyle* NODELETE pseudoElementStyle(const PseudoElementIdentifier&) const;
     Style::ComputedStyle* addPseudoElementStyle(std::unique_ptr<Style::ComputedStyle>);
@@ -784,6 +786,8 @@ public:
         PREFERRED_TYPE(bool) unsigned isLink : 1;
         PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits;
         unsigned pseudoBits : PublicPseudoIDBits;
+        PREFERRED_TYPE(bool) unsigned canOmitBeforeStyle : 1;
+        PREFERRED_TYPE(bool) unsigned canOmitAfterStyle : 1;
     };
 
     struct InheritedFlags {

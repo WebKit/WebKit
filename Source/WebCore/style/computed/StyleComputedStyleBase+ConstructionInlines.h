@@ -85,6 +85,8 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.isLink = false;
     m_nonInheritedFlags.pseudoElementType = 0;
     m_nonInheritedFlags.pseudoBits = 0;
+    m_nonInheritedFlags.canOmitBeforeStyle = false;
+    m_nonInheritedFlags.canOmitAfterStyle = false;
 
     static_assert((sizeof(InheritedFlags) <= 8), "InheritedFlags does not grow");
     static_assert((sizeof(NonInheritedFlags) <= 12), "NonInheritedFlags does not grow");

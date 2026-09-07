@@ -62,6 +62,7 @@ public:
     unsigned selectorListIndex() const { return m_selectorListIndex; }
 
     bool canMatchPseudoElement() const { return m_canMatchPseudoElement; }
+    bool canGeneratePseudoElement() const { return m_canGeneratePseudoElement; }
     MatchBasedOnRuleHash matchBasedOnRuleHash() const { return static_cast<MatchBasedOnRuleHash>(m_matchBasedOnRuleHash); }
     unsigned linkMatchType() const { return m_linkMatchType; }
     void setLinkMatchType(unsigned value) { m_linkMatchType = value; }
@@ -84,6 +85,7 @@ private:
     unsigned m_propertyAllowlist : 3;
     unsigned m_isStartingStyle : 1;
     unsigned m_isEnabled : 1;
+    unsigned m_canGeneratePseudoElement : 1;
     // If we have more rules than 2^bitcount here we'll get confused about rule order.
     unsigned m_position : 21;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
