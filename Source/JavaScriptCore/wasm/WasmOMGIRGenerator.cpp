@@ -1795,18 +1795,49 @@ auto OMGIRGenerator::addTableGet(unsigned tableIndex, ExpressionType index, Expr
 
 auto OMGIRGenerator::addTableSet(unsigned tableIndex, ExpressionType index, ExpressionType value) -> PartialResult
 {
-    // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-    auto shouldThrow = callWasmOperation(m_currentBlock, B3::Int32, operationSetWasmTableElement,
-        instanceValue(), constant(Int32, tableIndex), addressOperand(m_info.table(tableIndex).addressType().is64Bit(), index), get(value));
-    {
+    auto& tableInformation = m_info.table(tableIndex);
+    if (tableInformation.type() == TableElementType::Funcref) {
+        auto shouldThrow = callWasmOperation(m_currentBlock, B3::Int32, operationSetWasmTableElement,
+            instanceValue(), constant(Int32, tableIndex), addressOperand(tableInformation.addressType().is64Bit(), index), get(value));
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), shouldThrow, constant(Int32, 0)));
-
         check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsTableAccess);
         });
+        return { };
     }
 
+    auto* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)));
+    m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_tables[tableIndex], table);
+    table->setReadsMutability(B3::Mutability::Immutable);
+    table->setControlDependent(false);
+
+    Value* indexValue = addressOperand(tableInformation.addressType().is64Bit(), index);
+    auto* length32 = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), table, safeCast<int32_t>(Table::offsetOfLength()));
+    m_heaps.decorateMemory(&m_heaps.WasmTable_length, length32);
+    Value* length = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), length32);
+
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+        m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), indexValue, length));
+    check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsTableAccess);
+    });
+
+    auto* owner = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(Table::offsetOfOwner()));
+    m_heaps.decorateMemory(&m_heaps.WasmTable_owner, owner);
+    owner->setReadsMutability(B3::Mutability::Immutable);
+    owner->setControlDependent(false);
+
+    auto* jsValues = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(ExternOrAnyRefTable::offsetOfJSValues()));
+    m_heaps.decorateMemory(&m_heaps.WasmExternOrAnyRefTable_jsValues, jsValues);
+
+    static_assert(sizeof(WriteBarrier<Unknown>) == 8);
+    Value* offset = m_currentBlock->appendNew<Value>(m_proc, Shl, origin(), indexValue, constant(Int32, 3));
+    Value* slot = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), jsValues, offset);
+    auto* store = m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), get(value), slot);
+    m_heaps.decorateMemory(&m_heaps.WasmExternOrAnyRefTable_jsValuesBuffer.atAnyIndex(), store);
+
+    emitWriteBarrier(owner);
     return { };
 }
 
