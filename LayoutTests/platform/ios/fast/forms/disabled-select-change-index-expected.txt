@@ -4,44 +4,20 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (0,0) size 53x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,-1) size 0x19
       RenderMenuList {SELECT} at (0,20) size 53x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,19) size 0x19
       RenderMenuList {SELECT} at (0,40) size 53x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,39) size 0x19
       RenderMenuList {SELECT} at (0,60) size 53x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,59) size 0x19
       RenderMenuList {SELECT} at (0,80) size 53x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,79) size 0x19
       RenderMenuList {SELECT} at (0,100) size 53x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,99) size 0x19
       RenderMenuList {SELECT} at (0,120) size 53x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,119) size 0x19
       RenderMenuList {SELECT} at (0,140) size 53x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 41x14
-          RenderText {#text} at (0,-1) size 29x15
-            text run at (0,0) width 29: "PASS"
       RenderBR {BR} at (53,139) size 0x19
       RenderText {#text} at (0,160) size 495x18
         text run at (0,160) width 495: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
@@ -67,3 +43,35 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,286) size 445x18
         text run at (0,286) width 445: "PASS: sel8 correctly set to selectedIndex 1 by sel8.selectedIndex = 1."
       RenderBR {BR} at (444,286) size 1x18
+layer at (14,12) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,32) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,52) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,72) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,92) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,112) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,132) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"
+layer at (14,152) size 41x13
+  RenderBlock {DIV} at (6,3) size 41x14
+    RenderText {#text} at (0,-1) size 29x15
+      text run at (0,0) width 29: "PASS"

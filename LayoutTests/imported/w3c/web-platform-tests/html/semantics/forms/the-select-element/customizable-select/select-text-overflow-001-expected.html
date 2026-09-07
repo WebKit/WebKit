@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<link rel=stylesheet href="resources/customizable-select-styles.css">
+<link rel=stylesheet href="update.css">
+
+<style>
+.customizable-select-button {
+  width: 150px;
+}
+.customizable-select-selectedcontent {
+  background: aqua;
+}
+#ellipsis .customizable-select-selectedcontent { text-overflow: ellipsis; }
+#clip .customizable-select-selectedcontent { text-overflow: clip; }
+</style>
+
+<div class=customizable-select-button id=ellipsis>
+  <span class=customizable-select-selectedcontent>This option label is much longer than the select</span>
+</div>
+<br><br>
+<div class=customizable-select-button id=clip>
+  <span class=customizable-select-selectedcontent>This option label is much longer than the select</span>
+</div>

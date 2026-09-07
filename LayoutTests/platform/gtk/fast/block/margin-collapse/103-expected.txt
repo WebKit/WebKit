@@ -38,23 +38,14 @@ layer at (0,0) size 785x1803
               RenderText {#text} at (0,2) size 125x16
                 text run at (0,2) width 125: "Your degree program*"
             RenderMenuList {SELECT} at (325,74) size 180x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 117x18
-                  text run at (5,5) width 117: "Program options"
             RenderBlock (floating) {SPAN} at (0,104) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 111x16
                 text run at (0,2) width 111: "Your year of study*"
             RenderMenuList {SELECT} at (325,104) size 180x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 167x18
-                  text run at (5,5) width 167: "Years you've been here"
             RenderBlock (floating) {SPAN} at (0,134) size 325x20 [color=#333333]
               RenderText {#text} at (0,2) size 161x16
                 text run at (0,2) width 161: "Shakespeare classes taken"
             RenderMenuList {SELECT} at (325,134) size 180x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 100x18
-                  text run at (5,5) width 100: "Number taken"
             RenderBlock {P} at (0,177) size 560x21 [color=#333333]
               RenderText {#text} at (0,2) size 150x16
                 text run at (0,2) width 150: "* indicates a required field"
@@ -65,17 +56,11 @@ layer at (0,0) size 785x1803
               RenderText {#text} at (0,2) size 321x16
                 text run at (0,2) width 321: "What percentage of your research time is spent online?"
             RenderMenuList {SELECT} at (325,248) size 180x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 141x18
-                  text run at (5,5) width 141: "Percentages of time"
             RenderBlock (floating) {SPAN} at (0,278) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 299x36
                 text run at (0,2) width 299: "What is holding you back from doing more research"
                 text run at (0,22) width 41: "online?"
             RenderMenuList {SELECT} at (325,278) size 180x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 64x18
-                  text run at (5,5) width 64: "Reasons"
             RenderBlock (floating) {SPAN} at (0,308) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 219x16
                 text run at (0,2) width 219: "Your research is primarily focused on:"
@@ -113,16 +98,10 @@ layer at (0,0) size 785x1803
               RenderText {#text} at (0,2) size 279x16
                 text run at (0,2) width 279: "Which area of the ISE did you find most useful?"
             RenderMenuList {SELECT} at (325,487) size 180x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 135x18
-                  text run at (5,5) width 135: "Sections of the ISE"
             RenderBlock (floating) {SPAN} at (0,517) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 253x16
                 text run at (0,2) width 253: "How did you find the navigation of the ISE?"
             RenderMenuList {SELECT} at (325,517) size 180x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-              RenderBlock {DIV} at (1,1) size 178x28
-                RenderText {#text} at (5,5) size 118x18
-                  text run at (5,5) width 118: "Level of difficulty"
             RenderBlock (floating) {SPAN} at (0,547) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 214x16
                 text run at (0,2) width 214: "Please describe your use of the ISE."
@@ -165,6 +144,34 @@ layer at (441,302) size 180x18
   RenderBlock {DIV} at (3,3) size 180x18
 layer at (441,326) size 180x18
   RenderBlock {DIV} at (3,3) size 180x18
+layer at (439,348) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 117x18
+      text run at (5,5) width 117: "Program options"
+layer at (439,378) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 167x18
+      text run at (5,5) width 167: "Years you've been here"
+layer at (439,408) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 100x18
+      text run at (5,5) width 100: "Number taken"
+layer at (439,522) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 141x18
+      text run at (5,5) width 141: "Percentages of time"
+layer at (439,552) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 64x18
+      text run at (5,5) width 64: "Reasons"
+layer at (439,762) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 135x18
+      text run at (5,5) width 135: "Sections of the ISE"
+layer at (439,792) size 178x28
+  RenderBlock {DIV} at (1,1) size 178x28
+    RenderText {#text} at (5,5) size 118x18
+      text run at (5,5) width 118: "Level of difficulty"
 layer at (113,846) size 506x106 clip at (114,847) size 504x104
   RenderTextControl {TEXTAREA} at (0,572) size 506x107 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x18

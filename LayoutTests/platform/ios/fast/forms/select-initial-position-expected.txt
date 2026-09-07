@@ -7,49 +7,55 @@ layer at (0,0) size 800x600
         text run at (0,0) width 98: "initial selected:"
       RenderBR {BR} at (97,0) size 1x18
       RenderMenuList {SELECT} at (0,18) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderBR {BR} at (146,17) size 0x19
       RenderText {#text} at (0,38) size 165x18
         text run at (0,38) width 165: "dynamic selected change:"
       RenderBR {BR} at (164,38) size 1x18
       RenderMenuList {SELECT} at (0,56) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (146,55) size 0x19
       RenderText {#text} at (0,76) size 217x18
         text run at (0,76) width 217: "dynamic insert of selected option:"
       RenderBR {BR} at (216,76) size 1x18
       RenderMenuList {SELECT} at (0,94) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderBR {BR} at (146,93) size 0x19
       RenderText {#text} at (0,114) size 98x18
         text run at (0,114) width 98: "initial selected:"
       RenderBR {BR} at (97,114) size 1x18
       RenderMenuList {SELECT} at (0,132) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderBR {BR} at (146,131) size 0x19
       RenderText {#text} at (0,152) size 165x18
         text run at (0,152) width 165: "dynamic selected change:"
       RenderBR {BR} at (164,152) size 1x18
       RenderMenuList {SELECT} at (0,170) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderText {#text} at (0,0) size 0x0
       RenderBR {BR} at (146,169) size 0x19
       RenderText {#text} at (0,190) size 217x18
         text run at (0,190) width 217: "dynamic insert of selected option:"
       RenderBR {BR} at (216,190) size 1x18
       RenderMenuList {SELECT} at (0,208) size 146x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-        RenderBlock {DIV} at (6,3) size 134x14
-          RenderText {#text} at (0,-1) size 122x15
-            text run at (0,0) width 122: "this should be selected"
       RenderText {#text} at (0,0) size 0x0
+layer at (14,30) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"
+layer at (14,68) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"
+layer at (14,106) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"
+layer at (14,144) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"
+layer at (14,182) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"
+layer at (14,220) size 134x13
+  RenderBlock {DIV} at (6,3) size 134x14
+    RenderText {#text} at (0,-1) size 122x15
+      text run at (0,0) width 122: "this should be selected"

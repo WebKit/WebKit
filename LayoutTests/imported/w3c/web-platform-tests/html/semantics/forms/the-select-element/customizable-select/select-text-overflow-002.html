@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>select::picker(select), select::picker-icon { transition-duration: 0s !important; }</style>
+<link rel=author href="https://fantasai.inkedblade.net/contact">
+<link rel=help href="https://github.com/w3c/csswg-drafts/issues/14323">
+<link rel=match href="select-text-overflow-001-ref.html">
+<meta name=assert content="text-overflow set on a base-select <select> inherits through an explicit <selectedcontent> to clip/ellipsize the selected content.">
+
+<style>
+select {
+  appearance: base-select;
+  width: 150px;
+}
+select selectedcontent {
+  background: aqua;
+}
+#ellipsis { text-overflow: ellipsis; }
+#clip { text-overflow: clip; }
+</style>
+
+<select id=ellipsis>
+  <button><selectedcontent></selectedcontent></button>
+  <option>This option label is much longer than the select</option>
+</select>
+<br><br>
+<select id=clip>
+  <button><selectedcontent></selectedcontent></button>
+  <option>This option label is much longer than the select</option>
+</select>

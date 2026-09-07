@@ -17,13 +17,15 @@ layer at (0,0) size 800x600
           text run at (711,0) width 5: "."
       RenderBlock {P} at (0,34) size 784x20
         RenderMenuList {SELECT} at (0,0) size 151x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 139x14
-            RenderText {#text} at (0,-1) size 127x15
-              text run at (0,0) width 127: "This text should be gray"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,70) size 784x20
         RenderMenuList {SELECT} at (0,0) size 156x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 144x14
-            RenderText {#text} at (0,-1) size 132x15
-              text run at (0,0) width 132: "This text should be black"
         RenderText {#text} at (0,0) size 0x0
+layer at (14,46) size 139x13
+  RenderBlock {DIV} at (6,3) size 139x14
+    RenderText {#text} at (0,-1) size 127x15
+      text run at (0,0) width 127: "This text should be gray"
+layer at (14,82) size 144x13
+  RenderBlock {DIV} at (6,3) size 144x14
+    RenderText {#text} at (0,-1) size 132x15
+      text run at (0,0) width 132: "This text should be black"
