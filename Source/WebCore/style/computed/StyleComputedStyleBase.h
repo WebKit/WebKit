@@ -833,7 +833,7 @@ public:
         PREFERRED_TYPE(PrintColorAdjust) unsigned char printColorAdjust : 1;
         PREFERRED_TYPE(InsideLink) unsigned char insideLink : 2;
 
-        unsigned autosizeStatus : 5;
+        unsigned char autosizeStatus : 5;
         // Total = 59 bits (fits in 8 bytes)
     };
 
