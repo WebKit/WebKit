@@ -109,7 +109,6 @@ StorageTracker::StorageTracker(const String& storagePath)
 
 String StorageTracker::trackerDatabasePath()
 {
-    ASSERT(!m_databaseMutex.tryLock());
     return FileSystem::pathByAppendingComponent(m_storageDirectoryPath, "LegacyStorageTracker.db"_s);
 }
 
@@ -127,8 +126,6 @@ void StorageTracker::openTrackerDatabase(bool createIfDoesNotExist)
     ASSERT(!isMainThread());
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
-
-    ASSERT(!m_databaseMutex.tryLock());
 
     if (m_database.isOpen())
         return;
@@ -168,7 +165,7 @@ void StorageTracker::importOriginIdentifiers()
 
 void StorageTracker::finishedImportingOriginIdentifiers()
 {
-    Locker locker { m_databaseMutex };
+    Locker locker { m_clientMutex };
     if (m_client)
         m_client->didFinishLoadingOrigins();
 }
@@ -561,7 +558,6 @@ void StorageTracker::syncDeleteOrigin(const String& originIdentifier)
     
 void StorageTracker::willDeleteAllOrigins()
 {
-    ASSERT(!m_originSetMutex.tryLock());
 
     OriginSet::const_iterator end = m_originSet.end();
     for (OriginSet::const_iterator it = m_originSet.begin(); it != end; ++it)
@@ -571,14 +567,12 @@ void StorageTracker::willDeleteAllOrigins()
 void StorageTracker::willDeleteOrigin(const String& originIdentifier)
 {
     ASSERT(isMainThread());
-    ASSERT(!m_originSetMutex.tryLock());
 
     m_originsBeingDeleted.add(originIdentifier);
 }
     
 bool StorageTracker::canDeleteOrigin(const String& originIdentifier)
 {
-    ASSERT(!m_databaseMutex.tryLock());
     Locker locker { m_originSetMutex };
     return m_originsBeingDeleted.contains(originIdentifier);
 }
@@ -603,7 +597,6 @@ void StorageTracker::setIsActive(bool flag)
     
 String StorageTracker::databasePathForOrigin(const String& originIdentifier)
 {
-    ASSERT(!m_databaseMutex.tryLock());
     ASSERT(m_isActive);
     
     if (!m_database.isOpen())

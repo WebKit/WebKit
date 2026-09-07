@@ -50,7 +50,7 @@ class AXIsolatedTree;
     ThreadSafeWeakPtr<WebCore::AXIsolatedTree> m_isolatedTree;
 
     Lock m_windowLock;
-    WeakObjCPtr<id> m_window;
+    WeakObjCPtr<id> m_window WTF_GUARDED_BY_LOCK(m_windowLock);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     WebCore::IntPoint m_remoteFrameOffset;

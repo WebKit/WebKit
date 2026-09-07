@@ -74,7 +74,7 @@ public:
 private:
     Thunks() = default;
 
-    UncheckedKeyHashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> m_stubs;
+    UncheckedKeyHashMap<ThunkGenerator, MacroAssemblerCodeRef<JITThunkPtrTag>> m_stubs WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_lock;
 };
 

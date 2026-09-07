@@ -67,7 +67,7 @@ bool SharedVideoFrameWriter::wait(const Function<void(IPC::Semaphore&)>& newSema
         newSemaphoreCallback(m_semaphore.get());
         return true;
     }
-    return !m_isDisabled && m_semaphore->waitFor(defaultTimeout);
+    return !WTF::atomicLoad(&m_isDisabled, std::memory_order_relaxed) && m_semaphore->waitFor(defaultTimeout);
 }
 
 bool SharedVideoFrameWriter::allocateStorage(size_t size, NOESCAPE const Function<void(SharedMemory::Handle&&)>& newMemoryCallback)
@@ -201,7 +201,7 @@ void SharedVideoFrameWriter::signalInCaseOfError()
 
 void SharedVideoFrameWriter::disable()
 {
-    m_isDisabled = true;
+    WTF::atomicStore(&m_isDisabled, true, std::memory_order_relaxed);
     m_semaphore->signal();
 }
 

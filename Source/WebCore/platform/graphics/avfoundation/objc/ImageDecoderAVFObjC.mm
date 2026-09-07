@@ -423,6 +423,10 @@ void ImageDecoderAVFObjC::readSamples()
 
 void ImageDecoderAVFObjC::readTrackMetadata()
 {
+    // m_imageRotationSession and m_size are read on the image decoding work queue by
+    // createFrameImageAtIndex(), so replacing them here must not race with it.
+    Locker locker { m_sampleGeneratorLock };
+
     AffineTransform finalTransform = CGAffineTransformConcat(m_asset.get().preferredTransform, m_track.get().preferredTransform);
     auto size = expandedIntSize(FloatSize(m_track.get().naturalSize));
     if (finalTransform.isIdentity()) {

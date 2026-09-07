@@ -50,7 +50,7 @@ public:
 private:
     RealtimeIncomingVideoSourceCocoa(Ref<webrtc::VideoTrackInterface>&&, String&&);
     RetainPtr<CVPixelBufferRef> pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
-    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType);
+    CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
     RefPtr<VideoFrame> toVideoFrame(const webrtc::VideoFrame&, VideoFrameRotation);
     Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(RetainPtr<CVPixelBufferRef>&&, VideoFrameRotation, int64_t);
 
@@ -65,9 +65,9 @@ private:
 #endif
     Lock m_pixelBufferPoolLock;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
-    size_t m_pixelBufferPoolWidth { 0 };
-    size_t m_pixelBufferPoolHeight { 0 };
-    webrtc::BufferType m_pixelBufferPoolBufferType;
+    size_t m_pixelBufferPoolWidth WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock) { 0 };
+    size_t m_pixelBufferPoolHeight WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock) { 0 };
+    webrtc::BufferType m_pixelBufferPoolBufferType WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
 };
 
 } // namespace WebCore

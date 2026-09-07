@@ -84,7 +84,7 @@ private:
     bool m_eagerFailed WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_finalized WTF_GUARDED_BY_LOCK(m_lock) { false };
     bool m_threadedCompilationStarted { false };
-    std::optional<WebAssemblyCompileOptions> m_compileOptions;
+    std::optional<WebAssemblyCompileOptions> m_compileOptions WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
     ThreadSafeWeakPtr<DeferredWorkTimer::Ticket> m_ticket;

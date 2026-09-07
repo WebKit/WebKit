@@ -108,12 +108,12 @@ private:
     WebCore::FetchIdentifier m_fetchIdentifier;
     RefPtr<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
-    bool m_waitingForContinueDidReceiveResponseMessage { false };
-    Variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
-    WebCore::NetworkLoadMetrics m_networkLoadMetrics;
-    bool m_didFinish { false };
-    bool m_isDownload { false };
-    bool m_didSendResponse { false };
+    bool m_waitingForContinueDidReceiveResponseMessage WTF_GUARDED_BY_LOCK(m_connectionLock) { false };
+    Variant<std::nullptr_t, WebCore::SharedBufferBuilder, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData WTF_GUARDED_BY_LOCK(m_connectionLock);
+    WebCore::NetworkLoadMetrics m_networkLoadMetrics WTF_GUARDED_BY_LOCK(m_connectionLock);
+    bool m_didFinish WTF_GUARDED_BY_LOCK(m_connectionLock) { false };
+    bool m_isDownload WTF_GUARDED_BY_LOCK(m_connectionLock) { false };
+    bool m_didSendResponse WTF_GUARDED_BY_LOCK(m_connectionLock) { false };
     Function<void()> m_cancelledCallback;
 };
 

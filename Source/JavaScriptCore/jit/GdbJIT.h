@@ -67,7 +67,7 @@ private:
     static GdbJIT& singleton();
 
     Lock m_lock;
-    GdbJITCodeMap m_map;
+    GdbJITCodeMap m_map WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace JSC

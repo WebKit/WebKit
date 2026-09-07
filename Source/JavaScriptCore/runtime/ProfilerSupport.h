@@ -80,8 +80,8 @@ private:
     void write(const AbstractLocker&, uint64_t start, uint64_t end, const CString& message) WTF_REQUIRES_LOCK(m_lock);
 
     const Ref<WorkQueue> m_queue;
-    std::array<HashMap<const void*, uint64_t>, numberOfCategories> m_markers;
-    WTF::FileSystemImpl::FileHandle m_file { };
+    std::array<HashMap<const void*, uint64_t>, numberOfCategories> m_markers WTF_GUARDED_BY_LOCK(m_tableLock);
+    WTF::FileSystemImpl::FileHandle m_file WTF_GUARDED_BY_LOCK(m_lock) { };
     Lock m_tableLock;
     Lock m_lock;
 };

@@ -94,9 +94,9 @@ private:
     RefPtr<VideoInfo> m_videoInfo WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     Lock m_pixelBufferPoolLock;
-    size_t m_pixelBufferPoolWidth { 0 };
-    size_t m_pixelBufferPoolHeight { 0 };
-    OSType m_pixelBufferPoolType;
+    size_t m_pixelBufferPoolWidth WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock) { 0 };
+    size_t m_pixelBufferPoolHeight WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock) { 0 };
+    OSType m_pixelBufferPoolType WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     const UniqueRef<webrtc::VideoDecoder> m_internalDecoder WTF_GUARDED_BY_CAPABILITY(vpxDecoderQueueSingleton());
     const bool m_useIOSurface { false };
     const bool m_treatNoOutputAsError { true };

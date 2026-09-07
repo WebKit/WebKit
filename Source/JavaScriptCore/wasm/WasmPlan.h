@@ -99,7 +99,7 @@ protected:
 
     Ref<ModuleInformation> m_moduleInformation; // noconst
 
-    Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
+    Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks WTF_GUARDED_BY_LOCK(m_lock);
 
     String m_errorMessage;
     std::optional<FunctionCodeIndex> m_errorFunctionIndex;

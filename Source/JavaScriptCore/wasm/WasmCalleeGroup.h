@@ -276,7 +276,7 @@ private:
 
     CalleeGroup(VM&, MemoryMode, ModuleInformation&, Ref<IPIntCallees>&&);
     CalleeGroup(MemoryMode, const CalleeGroup&);
-    void setCompilationFinished();
+    void setCompilationFinished() WTF_REQUIRES_LOCK(m_lock);
 
     OptimizedCallees* optimizedCalleesTuple(const AbstractLocker&, FunctionCodeIndex index) WTF_REQUIRES_LOCK(m_lock)
     {
@@ -345,7 +345,7 @@ private:
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntrypoints;
     FixedVector<RefPtr<Wasm::IPIntCallee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
-    RefPtr<EntryPlan> m_plan;
+    RefPtr<EntryPlan> m_plan WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;
 public:

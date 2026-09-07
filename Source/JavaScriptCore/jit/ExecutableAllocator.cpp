@@ -1103,7 +1103,7 @@ private:
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
     Lock m_pageLock;
-    uint8_t* m_pageWriterCounts;
+    uint8_t* m_pageWriterCounts WTF_GUARDED_BY_LOCK(m_pageLock);
 #endif
 
     size_t m_bytesReserved { 0 };

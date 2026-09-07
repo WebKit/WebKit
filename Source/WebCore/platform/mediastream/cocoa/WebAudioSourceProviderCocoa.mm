@@ -260,6 +260,7 @@ void WebAudioSourceProviderCocoa::receivedNewAudioSamples(const PlatformAudioDat
 
 void WebAudioSourceProviderCocoa::setNeedsFlush()
 {
+    Locker locker { m_lock };
     if (!m_ringBuffer)
         return;
     auto [startFrame, endFrame, writeAhead] = m_ringBuffer->getFetchTimeBounds();

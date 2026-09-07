@@ -115,7 +115,7 @@ private:
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
     bool m_isLooping WTF_GUARDED_BY_LOCK(m_processLock) { false }; // Only modified on the main thread but queried on the audio thread.
 
-    bool m_wasBufferSet { false };
+    bool m_wasBufferSet { false }; // Only used on the main thread, in setBufferForBindings().
 
     double m_loopStart WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // Only modified on the main thread but queried on the audio thread.
     double m_loopEnd WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // Only modified on the main thread but queried on the audio thread.

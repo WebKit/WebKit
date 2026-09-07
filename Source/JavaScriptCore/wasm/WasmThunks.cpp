@@ -344,6 +344,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(ThunkGenerator generator)
 
 MacroAssemblerCodeRef<JITThunkPtrTag> Thunks::stub(const AbstractLocker& locker, ThunkGenerator generator)
 {
+    assertIsHeld(m_lock);
     ASSERT(!!generator);
     {
         auto addResult = m_stubs.add(generator, MacroAssemblerCodeRef<JITThunkPtrTag>());

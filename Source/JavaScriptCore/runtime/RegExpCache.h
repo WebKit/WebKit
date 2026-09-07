@@ -77,7 +77,7 @@ private:
 
     unsigned m_nextEntryInStrongCache { 0 };
     Lock m_lock;
-    RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
+    RegExpCacheMap m_weakCache WTF_GUARDED_BY_LOCK(m_lock); // Holds all regular expressions currently live.
     std::array<RegExp*, maxStrongCacheableEntries> m_strongCache { }; // Holds a select few regular expressions that have compiled and executed
     RegExp* m_emptyRegExp { nullptr };
 };

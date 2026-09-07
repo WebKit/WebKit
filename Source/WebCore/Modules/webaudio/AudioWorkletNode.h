@@ -80,7 +80,7 @@ private:
 
     enum class ProcessorError { ConstructorError, ProcessError };
     void fireProcessorErrorOnMainThread(ProcessorError, std::optional<ExceptionDetails>&& = std::nullopt);
-    void didFinishProcessingOnRenderingThread(std::optional<ExceptionDetails>&&);
+    void didFinishProcessingOnRenderingThread(std::optional<ExceptionDetails>&&) WTF_REQUIRES_LOCK(m_processLock);
 
     // AudioNode.
     void process(size_t framesToProcess) final;
@@ -103,9 +103,9 @@ private:
     // destructor since the node is destroyed on the main thread.
     NO_UNIQUE_ADDRESS ThreadLikeAssertion m_renderingThread { noneThreadLike };
 
-    RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
+    RefPtr<AudioWorkletProcessor> m_processor WTF_GUARDED_BY_LOCK(m_processLock); // Should only be used on the rendering thread.
     MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
-    RefPtr<WTF::Thread> m_workletThread;
+    RefPtr<WTF::Thread> m_workletThread WTF_GUARDED_BY_LOCK(m_processLock);
 
     // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order
     // to pass them to AudioWorkletProcessor.

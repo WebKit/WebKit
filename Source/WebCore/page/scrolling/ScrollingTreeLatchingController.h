@@ -59,12 +59,12 @@ public:
     void clearLatchedNode();
 
 private:
-    bool latchedNodeHasRecentInteraction() const;
+    bool latchedNodeHasRecentInteraction() const WTF_REQUIRES_LOCK(m_latchedNodeLock);
 
     mutable Lock m_latchedNodeLock;
     std::optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
-    std::optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture;
-    MonotonicTime m_lastLatchedNodeInterationTime;
+    std::optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
+    MonotonicTime m_lastLatchedNodeInterationTime WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
 };
 
 }

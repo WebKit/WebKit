@@ -90,15 +90,15 @@ private:
     bool provideInputInternal(AudioBus&, size_t);
     WEBCORE_EXPORT void setClient(WeakPtr<AudioSourceProviderClient>&&) final;
 
-    void prepare(const AudioStreamBasicDescription&);
+    void prepare(const AudioStreamBasicDescription&) WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
     WeakPtr<AudioSourceProviderClient> m_client;
 
-    std::unique_ptr<PitchShiftAudioUnit> m_pitchShifter;
-    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
-    std::optional<CAAudioStreamDescription> m_inputDescription;
-    std::optional<CAAudioStreamDescription> m_outputDescription;
+    std::unique_ptr<PitchShiftAudioUnit> m_pitchShifter WTF_GUARDED_BY_LOCK(m_lock);
+    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_lock);
+    std::optional<CAAudioStreamDescription> m_inputDescription WTF_GUARDED_BY_LOCK(m_lock);
+    std::optional<CAAudioStreamDescription> m_outputDescription WTF_GUARDED_BY_LOCK(m_lock);
     std::unique_ptr<AudioBufferList, WTF::SystemFree<AudioBufferList>> m_list;
     AudioConverterRef m_converter;
     std::unique_ptr<CARingBuffer> m_ringBuffer;

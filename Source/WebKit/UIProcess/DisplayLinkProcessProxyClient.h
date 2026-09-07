@@ -50,7 +50,7 @@ private:
     void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
 
     Lock m_connectionLock;
-    RefPtr<IPC::Connection> m_connection;
+    RefPtr<IPC::Connection> m_connection WTF_GUARDED_BY_LOCK(m_connectionLock);
 };
 
 } // namespace WebKit

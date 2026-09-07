@@ -34,6 +34,8 @@
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/SharedMemory.h>
+#include <atomic>
+#include <wtf/Atomics.h>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -80,7 +82,7 @@ public:
     std::optional<SharedVideoFrame::Buffer> writeBuffer(const WebCore::VideoFrame&, NOESCAPE const Function<void(IPC::Semaphore&)>&, NOESCAPE const Function<void(WebCore::SharedMemory::Handle&&)>&);
 
     void disable();
-    bool isDisabled() const { return m_isDisabled; }
+    bool isDisabled() { return WTF::atomicLoad(&m_isDisabled, std::memory_order_relaxed); }
 
 private:
     static constexpr Seconds defaultTimeout = 3_s;
@@ -98,6 +100,10 @@ private:
     RefPtr<WebCore::SharedMemory> m_storage;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_compressedPixelBufferConformer;
     bool m_isSemaphoreInUse { false };
+    // Written by disable() from another thread without holding any lock, so that a writer
+    // blocked in wait() while holding m_encodersConnectionLock can be unblocked without deadlock.
+    // Accessed with WTF::atomicLoad/atomicStore rather than declared std::atomic so that this
+    // class stays assignable from a default-constructed temporary.
     bool m_isDisabled { false };
     bool m_shouldSignalInCaseOfError { false };
 };
