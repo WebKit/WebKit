@@ -93,6 +93,7 @@
 #include "TextUtil.h"
 #include "WebCodecsVideoFrame.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <numbers>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -110,8 +111,6 @@ static constexpr InterpolationQuality defaultInterpolationQuality = Interpolatio
 
 static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;
 
-const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
-const ASCIILiteral CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif"_s;
 static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 
 // putImageData data smaller than this is cached in anticipation for next getImageData.
@@ -2747,7 +2746,7 @@ FloatRect CanvasRenderingContext2DBase::inflatedStrokeRect(const FloatRect& rect
     // Fast approximation of the stroke's bounding rect.
     // This yields a slightly oversized rect but is very fast
     // compared to Path::strokeBoundingRect().
-    static const float root2 = sqrtf(2);
+    static constexpr float root2 = std::numbers::sqrt2_v<float>;
     float delta = state().lineWidth / 2;
     if (state().lineJoin == LineJoin::Miter)
         delta *= state().miterLimit;

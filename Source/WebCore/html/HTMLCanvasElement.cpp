@@ -113,8 +113,8 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLCanvasElement);
 using namespace HTMLNames;
 
 // These values come from the WhatWG/W3C HTML spec.
-const int defaultWidth = 300;
-const int defaultHeight = 150;
+constexpr int defaultWidth = 300;
+constexpr int defaultHeight = 150;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document, TypeFlag::HasDidMoveToNewDocument)
