@@ -24,7 +24,124 @@
 import time
 import unittest
 
-from .events import CommitClassifier, GitHubEventHandlerNoEdits
+from .events import CommitClassifier, GitHubEventHandlerNoEdits, MAX_FAILING_TESTS_TO_REPORT, failing_tests_for_build
+
+
+class TestFailingTestsForBuild(unittest.TestCase):
+    def test_none_or_empty_properties(self) -> None:
+        self.assertEqual(failing_tests_for_build(None), ([], 0, ''))
+        self.assertEqual(failing_tests_for_build({}), ([], 0, ''))
+
+    def test_layout_test_failures_are_sorted(self) -> None:
+        properties = {
+            'new_failures_introduced_by_patch': [
+                [
+                    'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-002.html',
+                    'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-001.html',
+                ],
+                'Layout Tests',
+            ],
+        }
+        self.assertEqual(failing_tests_for_build(properties), ([
+            'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-001.html',
+            'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-002.html',
+        ], 2, 'layout'))
+
+    def test_layout_group_wins_over_api_group(self) -> None:
+        properties = {
+            'new_failures_introduced_by_patch': [
+                ['imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-001.html'],
+                'Layout Tests',
+            ],
+            'new_api_failures_introduced_by_patch': [
+                ['TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses'],
+                'API Tests',
+            ],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(names, ['imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-001.html'])
+        self.assertEqual(count, 1)
+        self.assertEqual(category, 'layout')
+        self.assertNotIn('TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses', names)
+
+    def test_api_group_reports_api_category(self) -> None:
+        properties = {
+            'new_api_failures_introduced_by_patch': [
+                ['TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses'],
+                'API Tests',
+            ],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(names, ['TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses'])
+        self.assertEqual(count, 1)
+        self.assertEqual(category, 'api')
+
+    def test_static_analysis_group_reports_static_analysis_category(self) -> None:
+        properties = {
+            'test_failures': [
+                ['some/safer-cpp-violation.cpp'],
+                'Safer C++',
+            ],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(names, ['some/safer-cpp-violation.cpp'])
+        self.assertEqual(count, 1)
+        self.assertEqual(category, 'static-analysis')
+
+    def test_jsc_properties_are_unioned_and_deduplicated(self) -> None:
+        properties = {
+            'jsc_stress_test_failures_filtered': [
+                ['stress/regress-flex-wrap-balance.js', 'stress/regress-shared.js'],
+                'JSC Tests',
+            ],
+            'jsc_binary_failures_filtered': [
+                ['testapi.regress-shared', 'stress/regress-shared.js'],
+                'JSC Tests',
+            ],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(names, ['stress/regress-flex-wrap-balance.js', 'stress/regress-shared.js', 'testapi.regress-shared'])
+        self.assertEqual(count, 3)
+        self.assertEqual(category, 'jsc')
+
+    def test_over_cap_input_is_capped_but_count_is_true_total(self) -> None:
+        test_names = [f'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-{i:03}.html' for i in range(MAX_FAILING_TESTS_TO_REPORT + 5)]
+        properties = {
+            'test_failures': [test_names, 'Layout Tests'],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(len(names), MAX_FAILING_TESTS_TO_REPORT)
+        self.assertEqual(count, MAX_FAILING_TESTS_TO_REPORT + 5)
+        self.assertEqual(names, sorted(test_names)[:MAX_FAILING_TESTS_TO_REPORT])
+        self.assertEqual(category, 'static-analysis')
+
+    def test_malformed_values_are_skipped_without_raising(self) -> None:
+        properties = {
+            'new_failures_introduced_by_patch': [
+                'imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-balance-001.html',
+                'Layout Tests',
+            ],
+            'new_api_failures_introduced_by_patch': [
+                ['TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses', 12345],
+                'API Tests',
+            ],
+        }
+        names, count, category = failing_tests_for_build(properties)
+        self.assertEqual(names, ['TestWebKitAPI.ContextMenuTests.MenuTrackingCancelledWhenPageCloses'])
+        self.assertEqual(count, 1)
+        self.assertEqual(category, 'api')
+
+    def test_none_property_entry_does_not_raise(self) -> None:
+        properties = {
+            'new_failures_introduced_by_patch': None,
+        }
+        self.assertEqual(failing_tests_for_build(properties), ([], 0, ''))
+
+    def test_empty_list_property_entry_does_not_raise(self) -> None:
+        properties = {
+            'new_failures_introduced_by_patch': [],
+        }
+        self.assertEqual(failing_tests_for_build(properties), ([], 0, ''))
 
 
 class TestCommitClassifier(unittest.TestCase):
