@@ -428,11 +428,9 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         }
     }
 
-    // Make sure the frameRect doesn't extend outside the buffer.
-    if (frameRect.maxX() > size().width())
-        frameRect.setWidth(size().width() - frameContext->xOffset);
-    if (frameRect.maxY() > size().height())
-        frameRect.setHeight(size().height() - frameContext->yOffset);
+    // A frame offset can exceed the canvas, since the logical screen size is only published for the
+    // first frame. A subtracted extent would be negative there.
+    frameRect.intersect(IntRect(IntPoint(), size()));
 
     buffer->backingStore()->setFrameRect(frameRect);
 
