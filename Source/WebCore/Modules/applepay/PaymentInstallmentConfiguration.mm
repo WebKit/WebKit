@@ -138,8 +138,7 @@ static PKInstallmentRetailChannel NODELETE platformRetailChannel(ApplePayInstall
 static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
 {
     ASSERT(PAL::getPKPaymentInstallmentItemClassSingleton());
-    // FIXME: This is a safer cpp false positive.
-    SUPPRESS_UNRETAINED_ARG auto installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstance() init]);
+    RetainPtr installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstance() init]);
     [installmentItem setInstallmentItemType:platformItemType(item.type)];
     [installmentItem setAmount:protect(toDecimalNumber(item.amount)).get()];
     [installmentItem setCurrencyCode:item.currencyCode.createNSString().get()];

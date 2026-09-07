@@ -219,7 +219,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
 {
     // Update document layout once before removing styles so that we avoid the expense of
     // updating before each and every call to check a computed style.
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     auto start = startPosition();
     auto end = endPosition();
@@ -569,7 +569,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
     auto start = startPosition();
@@ -668,7 +668,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     RefPtr styleToApply = style;
     if (textDirection) {
@@ -775,7 +775,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
     if (m_removeOnly)
         return;
 
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     Vector<InlineRunToApplyStyle> runs;
     RefPtr node = startNode;
@@ -836,7 +836,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
             run.positionForStyleComputation = positionToComputeInlineStyleChange(*run.start, run.dummyElement);
     }
 
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     for (auto& run : runs)
         run.change = StyleChange(&style, run.positionForStyleComputation);

@@ -50,7 +50,7 @@ void SimplifyMarkupCommand::doApply()
     RefPtr rootNode = m_firstNode->parentNode();
     Vector<Ref<Node>> nodesToRemove;
     
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     // Walk through the inserted nodes, to see if there are elements that could be removed
     // without affecting the style. The goal is to produce leaner markup even when starting

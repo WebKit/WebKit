@@ -102,8 +102,7 @@ void BarcodeDetector::detect(ScriptExecutionContext& scriptExecutionContext, Ima
             return;
         }
 
-        // FIXME: This is a safer cpp false positive (rdar://160082559).
-        SUPPRESS_UNCOUNTED_ARG RefPtr imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        RefPtr imageBuffer = protect(imageBitmap.returnValue())->takeImageBuffer();
         if (!imageBuffer) {
             promise.resolve({ });
             return;

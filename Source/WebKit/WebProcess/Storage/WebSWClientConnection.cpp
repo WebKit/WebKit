@@ -480,7 +480,7 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
                 }
 
                 page->focusController().setFocusedFrame(frame.get());
-                // FIXME: This is a safer cpp false positive.
+                // FIXME: This is a safer cpp false positive (rdar://186727155).
                 SUPPRESS_UNCOUNTED_ARG callback(ServiceWorkerClientData::from(*document));
             });
         };

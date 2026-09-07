@@ -1671,8 +1671,7 @@ RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdent
         [ensureMutableRequest() addValue:StringView(protocol).createNSString().get() forHTTPHeaderField:@"Sec-WebSocket-Protocol"];
 
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
-    // FIXME: This is a static analysis false positive.
-    SUPPRESS_UNRETAINED_ARG [nsRequest _setProperty:@NO forKey:bridge_cast(_kCFURLConnectionPropertyShouldSniff)];
+    [nsRequest _setProperty:@NO forKey:bridge_cast(_kCFURLConnectionPropertyShouldSniff)];
 
 #if ENABLE(APP_PRIVACY_REPORT)
     if (!request.isAppInitiated())

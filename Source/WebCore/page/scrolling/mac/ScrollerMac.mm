@@ -203,8 +203,7 @@ enum class FeatureToAnimate {
     if (!pair)
         return [NSAppearance currentDrawingAppearance];
     // The base system does not support dark Aqua, so we might get a null result.
-    // FIXME: This is a static analysis false positive.
-    SUPPRESS_UNRETAINED_ARG if (auto *appearance = [NSAppearance appearanceNamed:pair->useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
+    if (auto *appearance = [NSAppearance appearanceNamed:pair->useDarkAppearance() ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
     return [NSAppearance currentDrawingAppearance];
 }

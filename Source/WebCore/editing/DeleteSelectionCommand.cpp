@@ -564,7 +564,7 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
         
         ASSERT(is<Element>(node));
         auto element = downcast<Element>(WTF::move(protectedNode));
-        document().updateLayoutIgnorePendingStylesheets();
+        protect(document())->updateLayoutIgnorePendingStylesheets();
         // Check if we need to insert a placeholder for descendant table cells.
         RefPtr descendant { ElementTraversal::next(element, element.ptr()) };
         while (descendant) {
@@ -758,7 +758,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
 void DeleteSelectionCommand::fixupWhitespace()
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
     // FIXME: isRenderedCharacter should be removed, and we should use VisiblePosition::characterAfter and VisiblePosition::characterBefore
     if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter()) {
         if (RefPtr textNode = dynamicDowncast<Text>(*m_leadingWhitespace.deprecatedNode())) {

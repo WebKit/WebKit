@@ -1537,7 +1537,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     auto frame = core(self);
     if (!frame)
         return 0;
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     return frame->selection().selection().visibleStart().characterBefore();
 }
 
@@ -1546,7 +1546,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     auto frame = core(self);
     if (!frame)
         return 0;
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     return frame->selection().selection().visibleEnd().characterAfter();
 }
 
@@ -1590,7 +1590,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     auto frame = core(self);
     if (!frame)
         return NO;
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     return isStartOfDocument(frame->selection().selection().visibleStart());
 }
 
@@ -1601,7 +1601,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     if (frame->selection().selection().isNone())
         return NO;
         
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     
     return frame->selection().selectionAtSentenceStart();
 }
@@ -1613,7 +1613,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     if (frame->selection().selection().isNone())
         return NO;
         
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     
     return frame->selection().selectionAtWordStart();
 }

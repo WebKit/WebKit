@@ -1052,7 +1052,7 @@ void CompositeEditCommand::deleteInsignificantText(Text& textNode, unsigned star
     if (start >= end)
         return;
 
-    document().updateLayout();
+    protect(document())->updateLayout();
 
     bool wholeTextNodeIsEmpty = false;
     String string;
@@ -1141,7 +1141,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
     }
     if (!nodes.isEmpty()) {
         // Callers expect render tree to be in sync.
-        document().updateLayoutIgnorePendingStylesheets();
+        protect(document())->updateLayoutIgnorePendingStylesheets();
     }
 }
 
@@ -1182,7 +1182,7 @@ RefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* containe
     if (!container)
         return nullptr;
 
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -1230,7 +1230,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
     if (pos.isNull())
         return nullptr;
     
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
     
     // It's strange that this function is responsible for verifying that pos has not been invalidated
     // by an earlier call to this function.  The caller, applyBlockStyle, should do this.
