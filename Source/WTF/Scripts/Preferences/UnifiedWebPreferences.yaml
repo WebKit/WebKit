@@ -1455,7 +1455,7 @@ CSSMathDepthEnabled:
       default: true
     WebCore:
       default: true
-      
+
 CSSObjectViewBoxEnabled:
   type: bool
   status: stable
@@ -5561,6 +5561,20 @@ MathFontFamily:
       default: '""_str'
     WebCore:
       default: '""_str'
+
+MathMLAnchorElementEnabled:
+  type: bool
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  status: internal
+  category: dom
+  humanReadableName: "MathML <a> element"
+  humanReadableDescription: "Enable support for the MathML <a> element and href attribute."
 
 MathMLDisableHrefOnNonAnchorElement:
   type: bool

@@ -76,16 +76,17 @@ protected:
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
+
     void defaultEventHandler(Event&) override;
+    bool supportsFocus() const override;
+    bool isMouseFocusable() const override;
+    bool isKeyboardFocusable(const FocusEventData&) const override;
+    bool NODELETE isURLAttribute(const Attribute&) const override;
+    bool canStartSelection() const override;
 
 private:
-    bool canStartSelection() const final;
-    bool isKeyboardFocusable(const FocusEventData&) const final;
-    bool isMouseFocusable() const final;
-    bool NODELETE isURLAttribute(const Attribute&) const final;
     bool NODELETE allowsHref() const;
-    bool supportsFocus() const final;
-    int defaultTabIndex() const final;
+    int defaultTabIndex() const override;
     Node::NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode& parentOfInsertedTree) final;
 };
 

@@ -1633,6 +1633,7 @@ history/BackForwardController.cpp
 history/CachedFrame.cpp @header:RenderStyleGetters
 history/CachedPage.cpp
 history/HistoryItem.cpp
+html/AnchorElementUtils.cpp
 html/AttachmentAssociatedElement.cpp
 html/Autocapitalize.cpp
 html/Autofill.cpp
@@ -2246,6 +2247,7 @@ loader/cache/KeepaliveRequestTracker.cpp
 loader/cache/MemoryCache.cpp
 loader/cache/TrustedFonts.cpp
 loader/icon/IconLoader.cpp
+mathml/MathMLAnchorElement.cpp @header:RenderStyleGetters
 mathml/MathMLAnnotationElement.cpp @header:RenderStyleGetters
 mathml/MathMLElement.cpp @header:RenderStyleGetters
 mathml/MathMLFractionElement.cpp @header:RenderStyleGetters
@@ -4668,6 +4670,7 @@ JSLongRange.cpp
 JSManagedMediaSource.cpp
 JSManagedSourceBuffer.cpp
 JSMapperCallback.cpp
+JSMathMLAnchorElement.cpp
 JSMathMLElement.cpp
 JSMathMLMathElement.cpp
 JSMediaCapabilities.cpp

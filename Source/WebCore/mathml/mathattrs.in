@@ -11,6 +11,7 @@ close
 color
 columnspan
 definitionURL
+download
 denomalign
 depth
 dir
@@ -24,6 +25,7 @@ fontstyle
 fontweight
 form
 height
+hreflang
 href
 largeop
 linethickness
@@ -38,6 +40,9 @@ movablelimits
 notation
 numalign
 open
+ping
+referrerpolicy
+rel
 rowspan
 rspace
 scriptlevel
@@ -48,6 +53,8 @@ src
 stretchy
 symmetric
 subscriptshift
+type
 superscriptshift
+target
 voffset
 width

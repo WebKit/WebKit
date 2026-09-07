@@ -309,6 +309,7 @@ namespace WebCore {
     macro(LockManager) \
     macro(ManagedMediaSource) \
     macro(ManagedSourceBuffer) \
+    macro(MathMLAnchorElement) \
     macro(MathMLElement) \
     macro(MathMLMathElement) \
     macro(MediaCapabilities) \

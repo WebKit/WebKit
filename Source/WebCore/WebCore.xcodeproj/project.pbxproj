@@ -7361,6 +7361,8 @@
 		FA9B50212BCA438500CDAB22 /* JSDOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9B50202BCA438500CDAB22 /* JSDOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA9CD6322A01A78000EA5CAC /* OriginAccessPatterns.h in Headers */ = {isa = PBXBuildFile; fileRef = FA9CD6312A0186BC00EA5CAC /* OriginAccessPatterns.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAA4E2FD2A156D57003F5E50 /* FrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FAA4E2FC2A156D57003F5E50 /* FrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FABE72F51059C1EB00D889A1 /* MathMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D889A1 /* MathMLAnchorElement.h */; };
+		FABE72F51059C1EB00D889A6 /* AnchorElementUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D889A6 /* AnchorElementUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */; };
 		FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72EE1059C1EB00D999DD /* MathMLElement.h */; };
 		FABE72F71059C1EB00D999DD /* MathMLPresentationElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FABE72F01059C1EB00D999DD /* MathMLPresentationElement.h */; };
@@ -23693,6 +23695,13 @@
 		FA9CD6302A0186BC00EA5CAC /* OriginAccessPatterns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessPatterns.cpp; sourceTree = "<group>"; };
 		FA9CD6312A0186BC00EA5CAC /* OriginAccessPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OriginAccessPatterns.h; sourceTree = "<group>"; };
 		FAA4E2FC2A156D57003F5E50 /* FrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderClient.h; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A1 /* MathMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLAnchorElement.h; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A2 /* MathMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLAnchorElement.cpp; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A3 /* JSMathMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMathMLAnchorElement.h; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A4 /* JSMathMLAnchorElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMathMLAnchorElement.cpp; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A5 /* MathMLAnchorElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MathMLAnchorElement.idl; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A6 /* AnchorElementUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnchorElementUtils.h; sourceTree = "<group>"; };
+		FABE72EE1059C1EB00D889A7 /* AnchorElementUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnchorElementUtils.cpp; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D888CC /* MathMLAnnotationElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLAnnotationElement.cpp; sourceTree = "<group>"; };
 		FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElement.cpp; sourceTree = "<group>"; };
 		FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLAnnotationElement.h; sourceTree = "<group>"; };
@@ -33342,6 +33351,8 @@
 				4150F9ED12B6E0990008C860 /* shadow */,
 				B1AD4E7713A12A7200846B27 /* track */,
 				3AD4AB8B2C3CADF700A3E7F3 /* Allowlist.h */,
+				FABE72EE1059C1EB00D889A7 /* AnchorElementUtils.cpp */,
+				FABE72EE1059C1EB00D889A6 /* AnchorElementUtils.h */,
 				E5F67D942B65CC8F00CC30DE /* AttachmentAssociatedElement.cpp */,
 				E5F67D932B65CC2400CC30DE /* AttachmentAssociatedElement.h */,
 				A5F6E16C132ED46E008EDAE3 /* Autocapitalize.cpp */,
@@ -36140,6 +36151,8 @@
 		AACC83D92316578600EB6BF5 /* MATHML */ = {
 			isa = PBXGroup;
 			children = (
+				FABE72EE1059C1EB00D889A4 /* JSMathMLAnchorElement.cpp */,
+				FABE72EE1059C1EB00D889A3 /* JSMathMLAnchorElement.h */,
 				AA11C04D2316973D009D9831 /* JSMathMLMathElement.cpp */,
 				AA11C04E23169782009D9831 /* JSMathMLMathElement.h */,
 			);
@@ -43549,6 +43562,9 @@
 			isa = PBXGroup;
 			children = (
 				FA654A671108ABE2002615E0 /* mathattrs.in */,
+				FABE72EE1059C1EB00D889A2 /* MathMLAnchorElement.cpp */,
+				FABE72EE1059C1EB00D889A1 /* MathMLAnchorElement.h */,
+				FABE72EE1059C1EB00D889A5 /* MathMLAnchorElement.idl */,
 				FABE72ED1059C1EB00D888CC /* MathMLAnnotationElement.cpp */,
 				FABE72EE1059C1EB00D888CC /* MathMLAnnotationElement.h */,
 				FABE72ED1059C1EB00D999DD /* MathMLElement.cpp */,
@@ -44226,6 +44242,7 @@
 				5C53DCE124465DFC00A93124 /* ApplePaySetupFeatureWebCore.h in Headers */,
 				5C53DCEA24468FB400A93124 /* ApplePaySetupWebCore.h in Headers */,
 				5C53DCE724468AD200A93124 /* PaymentInstallmentConfigurationWebCore.h in Headers */,
+				FABE72F51059C1EB00D889A6 /* AnchorElementUtils.h */,
 				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				DD308A2D2A82F684000A2687 /* AbstractLineBuilder.h in Headers */,
@@ -47565,6 +47582,7 @@
 				E45BA6AA2374926C004DFC07 /* MatchedDeclarationsCache.h in Headers */,
 				E44A0256273AE0C000993A56 /* MatchResult.h in Headers */,
 				E4EF455E2D9D3E0500120306 /* MatchResultCache.h in Headers */,
+				FABE72F51059C1EB00D889A1 /* MathMLAnchorElement.h in Headers */,
 				FABE72F51059C1EB00D888CC /* MathMLAnnotationElement.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,

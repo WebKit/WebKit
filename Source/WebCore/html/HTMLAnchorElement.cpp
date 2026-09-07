@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLAnchorElement.h"
 
+#include "AnchorElementUtils.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
@@ -180,7 +181,7 @@ void HTMLAnchorElement::defaultEventHandler(Event& event)
     }
 
     if (isLink()) {
-        if (focused() && isEnterKeyKeydownEvent(event) && treatLinkAsLiveForEventType(NonMouseEvent)) {
+        if (focused() && KeyboardEvent::isEnterKeyKeydownEvent(event) && treatLinkAsLiveForEventType(NonMouseEvent)) {
             event.setDefaultHandled();
             dispatchSimulatedClick(&event);
             return;
@@ -223,14 +224,14 @@ void HTMLAnchorElement::setActive(bool down, Style::InvalidationScope invalidati
             if (down && document().frame() && document().frame()->selection().selection().rootEditableElement() == rootEditableElement())
                 return;
             break;
-        
+
         case EditableLinkBehavior::NeverLive:
         case EditableLinkBehavior::OnlyLiveWithShiftKey:
             return;
 
         }
     }
-    
+
     HTMLElement::setActive(down, invalidationScope);
 }
 
@@ -241,18 +242,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
     if (name == hrefAttr)
         setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
     else if (name == relAttr) {
-        // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
-        static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
-        static MainThreadNeverDestroyed<const AtomString> noOpener("noopener"_s);
-        static MainThreadNeverDestroyed<const AtomString> opener("opener"_s);
-        m_linkRelations = { };
-        SpaceSplitString relValue(newValue, SpaceSplitString::ShouldFoldCase::Yes);
-        if (relValue.contains(noReferrer))
-            m_linkRelations.add(Relation::NoReferrer);
-        if (relValue.contains(noOpener))
-            m_linkRelations.add(Relation::NoOpener);
-        if (relValue.contains(opener))
-            m_linkRelations.add(Relation::Opener);
+        m_linkRelations = AnchorElementUtils::relationsForRelAttribute(newValue);
         if (m_relList)
             m_relList->associatedAttributeValueChanged();
     } else if (name == nameAttr)
@@ -299,15 +289,7 @@ bool HTMLAnchorElement::hasRel(Relation relation) const
 DOMTokenList& HTMLAnchorElement::relList()
 {
     if (!m_relList) {
-        lazyInitialize(m_relList, makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::relAttr, [](Document& document, StringView token) {
-#if USE(SYSTEM_PREVIEW)
-            if (equalLettersIgnoringASCIICase(token, "ar"_s))
-                return document.settings().systemPreviewEnabled();
-#else
-            UNUSED_PARAM(document);
-#endif
-            return equalLettersIgnoringASCIICase(token, "noreferrer"_s) || equalLettersIgnoringASCIICase(token, "noopener"_s) || equalLettersIgnoringASCIICase(token, "opener"_s);
-        }));
+        lazyInitialize(m_relList, makeUniqueWithoutRefCountedCheck<DOMTokenList>(*this, HTMLNames::relAttr, AnchorElementUtils::isSupportedRelToken));
     }
     return *m_relList;
 }
@@ -355,21 +337,6 @@ void HTMLAnchorElement::setText(String&& text)
 bool HTMLAnchorElement::isLiveLink() const
 {
     return isLink() && treatLinkAsLiveForEventType(m_wasShiftKeyDownOnMouseDown ? MouseEventWithShiftKey : MouseEventWithoutShiftKey);
-}
-
-void HTMLAnchorElement::sendPings(const URL& destinationURL)
-{
-    if (!document().frame())
-        return;
-
-    const auto& pingValue = attributeWithoutSynchronization(pingAttr);
-    if (pingValue.isNull())
-        return;
-
-    Ref document = this->document();
-    SpaceSplitString pingURLs(pingValue, SpaceSplitString::ShouldFoldCase::No);
-    for (auto& pingURL : pingURLs)
-        PingLoader::sendPing(*protect(document->frame()), document->encodingParseURL(pingURL), destinationURL);
 }
 
 #if USE(SYSTEM_PREVIEW)
@@ -511,7 +478,7 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
         protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
         return std::nullopt;
     }
-    
+
     if (attributionSourceID.value() > std::numeric_limits<uint8_t>::max()) {
         protect(document())->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("attributionsourceid must have a non-negative value less than or equal to "_s, std::numeric_limits<uint8_t>::max(), " for Private Click Measurement."_s));
         return std::nullopt;
@@ -582,15 +549,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    AtomString downloadAttribute;
-    if (document->settings().downloadAttributeEnabled()) {
-        // Ignore the download attribute completely if the href URL is cross origin.
-        bool isSameOrigin = completedURL.protocolIsData() || protect(document->securityOrigin())->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
-        if (isSameOrigin)
-            downloadAttribute = AtomString { ResourceResponse::sanitizeSuggestedFilename(attributeWithoutSynchronization(downloadAttr)) };
-        else if (hasAttributeWithoutSynchronization(downloadAttr))
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
-    }
+    AtomString downloadAttribute = AnchorElementUtils::parseDownloadAttribute(*this, completedURL, downloadAttr);
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)
@@ -609,21 +568,18 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : this->referrerPolicy();
+    auto referrerPolicy = AnchorElementUtils::effectiveReferrerPolicy(m_linkRelations, this->referrerPolicy());
 
     auto effectiveTarget = this->effectiveTarget();
-    NewFrameOpenerPolicy newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
-    if (hasRel(Relation::NoOpener) || hasRel(Relation::NoReferrer) || (!hasRel(Relation::Opener) && isBlankTargetFrameName(effectiveTarget) && !completedURL.protocolIsJavaScript()))
-        newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
     auto privateClickMeasurement = parsePrivateClickMeasurement(completedURL);
     // A matching triggering event needs to happen before an attribution report can be sent.
     // Thus, URLs should be empty for now.
     ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportClickSourceURL().isNull() && privateClickMeasurement->attributionReportClickDestinationURL().isNull()));
-    
-    frame->loader().changeLocation(completedURL, effectiveTarget, &event, referrerPolicy, document->shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute, WTF::move(privateClickMeasurement), NavigationHistoryBehavior::Auto, this);
 
-    sendPings(completedURL);
+    AnchorElementUtils::navigateHyperlink(*this, event, completedURL, effectiveTarget, m_linkRelations, referrerPolicy, downloadAttribute, WTF::move(privateClickMeasurement));
+
+    AnchorElementUtils::sendPings(*this, pingAttr, completedURL);
 
     // Preconnect to the link's target for improved page load time.
     if (completedURL.protocolIsInHTTPFamily() && document->settings().linkPreconnectEnabled() && ((frame->isMainFrame() && isSelfTargetFrameName(effectiveTarget)) || isBlankTargetFrameName(effectiveTarget))) {
@@ -672,14 +628,6 @@ bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
 
     ASSERT_NOT_REACHED();
     return false;
-}
-
-bool isEnterKeyKeydownEvent(Event& event)
-{
-    if (event.type() != eventNames().keydownEvent)
-        return false;
-    auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
-    return keyboardEvent && keyboardEvent->keyIdentifier() == "Enter"_s;
 }
 
 bool shouldProhibitLinks(Element* element)

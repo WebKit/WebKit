@@ -74,6 +74,14 @@ static inline int NODELETE windowsVirtualKeyCodeWithoutLocation(int keycode)
     }
 }
 
+bool KeyboardEvent::isEnterKeyKeydownEvent(Event& event)
+{
+    if (event.type() != eventNames().keydownEvent)
+        return false;
+    auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
+    return keyboardEvent && keyboardEvent->keyIdentifier() == "Enter"_s;
+}
+
 static inline KeyboardEvent::KeyLocationCode NODELETE keyLocationCode(const PlatformKeyboardEvent& key)
 {
     if (key.isKeypad())

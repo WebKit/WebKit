@@ -1,3 +1,5 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+Link Empty Target
+
+PASS MathML <a> with target='' falls back to <base target>
 

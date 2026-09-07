@@ -4,6 +4,7 @@ guardFactoryWith="ENABLE(MATHML)"
 fallbackInterfaceName="MathMLUnknownElement"
 fallbackJSInterfaceName="MathMLElement"
 
+a interfaceName=MathMLAnchorElement, JSInterfaceName=MathMLAnchorElement
 annotation interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
 annotation-xml interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
 maction interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement

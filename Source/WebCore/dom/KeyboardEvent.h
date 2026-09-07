@@ -69,11 +69,13 @@ public:
     static Ref<KeyboardEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
 
     virtual ~KeyboardEvent();
-    
+
     WEBCORE_EXPORT void initKeyboardEvent(const AtomString& type, bool canBubble, bool cancelable, RefPtr<WindowProxy>&&,
         const AtomString& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
-    
+
+    static bool isEnterKeyKeydownEvent(Event&);
+
     const String& key() const LIFETIME_BOUND { return m_key; }
     const String& code() const LIFETIME_BOUND { return m_code; }
     const AtomString& keyIdentifier() const LIFETIME_BOUND { return m_keyIdentifier; }
