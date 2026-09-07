@@ -765,6 +765,8 @@ void FrameSelection::respondToNodeModification(Node& node, bool anchorRemoved, b
 
             // Trigger a selection update so the selection will be set again.
             m_selectionRevealIntent = AXTextStateChangeIntent();
+            // Relocating the selection due to node removal is not user-initiated, so don't scroll to follow it.
+            m_selectionRevealMode = SelectionRevealMode::DoNotReveal;
             m_pendingSelectionUpdate = true;
             protect(renderView->frameView())->scheduleSelectionUpdate();
         }
