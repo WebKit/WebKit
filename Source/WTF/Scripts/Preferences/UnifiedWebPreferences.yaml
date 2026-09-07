@@ -9963,6 +9963,19 @@ WantsBalancedSetDefersLoadingBehavior:
     WebCore:
       default: false
 
+WasmCompactImportSectionEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "WebAssembly Compact Import Section"
+  humanReadableDescription: "Allow the compact import section encodings from the wasm compact-import-section spec."
+  webcoreBinding: none
+  jscOptionName: useWasmCompactImportSection
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 WasmJSStringBuiltinsEnabled:
   type: bool
   status: stable
