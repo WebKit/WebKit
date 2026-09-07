@@ -29,6 +29,8 @@
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
@@ -231,8 +233,12 @@ void HTMLObjectElement::updateWidget(CreatePlugins createPlugins)
     bool success = attributeWithoutSynchronization(classidAttr).isEmpty() && canLoadURL(url);
     if (success)
         success = requestObject(url, serviceType, paramNames, paramValues);
-    if (!success && hasFallbackContent())
-        renderFallbackContent();
+    if (!success) {
+        if (protect(document())->encodingParseURL(url).protocolIsJavaScript())
+            dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        if (hasFallbackContent())
+            renderFallbackContent();
+    }
 }
 
 Node::NeedsPostConnectionSteps HTMLObjectElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
