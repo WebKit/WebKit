@@ -5886,7 +5886,7 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     
     // We can't consult child layers if we clip, since they might cover
     // parts of the rect that are clipped out.
-    if (renderer().hasNonVisibleOverflow())
+    if (renderer().hasNonVisibleOverflow() || renderer().hasClipPath() || renderer().hasMask())
         return false;
     
     return listBackgroundIsKnownToBeOpaqueInRect(positiveZOrderLayers(), localRect)
