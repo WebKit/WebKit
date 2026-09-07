@@ -48,9 +48,6 @@ public:
     // removed once all clients are fixed.
     WEBCORE_EXPORT Ref<const DisplayList> copyDisplayList();
 
-    WEBCORE_EXPORT void replaceFontsWithRebuildData();
-    WEBCORE_EXPORT void rebuildFonts();
-
     void save(GraphicsContextState::Purpose) final;
     void restore(GraphicsContextState::Purpose) final;
     void translate(float x, float y) final;
@@ -97,7 +94,7 @@ public:
     void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect&, const Color&) final;
     void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
-    void drawGlyphsImmediate(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
+    void drawGlyphsImmediate(const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
     void drawDisplayList(const DisplayList&, ControlFactory&) final;
 #if ENABLE(VIDEO)
     void drawVideoFrame(const VideoFrame&, const FloatRect& destination, ImageOrientation, bool shouldDiscardAlpha) final;

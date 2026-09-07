@@ -69,9 +69,9 @@ class ComputedStyle;
 
 #if USE(CORE_TEXT)
 AffineTransform computeBaseOverallTextMatrix(const std::optional<AffineTransform>& syntheticOblique);
-AffineTransform computeOverallTextMatrix(const Font&);
+AffineTransform computeOverallTextMatrix(const FontBase&);
 AffineTransform computeBaseVerticalTextMatrix(const AffineTransform& previousTextMatrix);
-AffineTransform computeVerticalTextMatrix(const Font&, const AffineTransform& previousTextMatrix);
+AffineTransform computeVerticalTextMatrix(const FontBase&, const AffineTransform& previousTextMatrix);
 #endif
 
 class TextLayoutDeleter {
@@ -117,7 +117,7 @@ public:
 
     using CustomFontNotReadyAction = FontCascadeCustomFontNotReadyAction;
     WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = CustomFontNotReadyAction::DoNotPaintIfFontNotReady) const;
-    static void drawGlyphs(GraphicsContext&, const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
+    static void drawGlyphs(GraphicsContext&, const FontBase&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
     void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
 
     Vector<FloatSegment> lineSegmentsForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;

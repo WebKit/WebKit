@@ -2685,6 +2685,7 @@ platform/graphics/FloatRoundedRect.cpp
 platform/graphics/FloatSegment.cpp
 platform/graphics/FloatSize.cpp
 platform/graphics/Font.cpp
+platform/graphics/FontBase.cpp
 platform/graphics/FontCache.cpp
 platform/graphics/FontCascade.cpp
 platform/graphics/FontCascadeCache.cpp

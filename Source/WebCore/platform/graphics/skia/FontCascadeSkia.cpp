@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& position, FontSmoothingMode smoothingMode)
+void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const FontBase& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& position, FontSmoothingMode smoothingMode)
 {
     auto blob = font.buildTextBlob(glyphs, advances, smoothingMode);
     if (!blob)

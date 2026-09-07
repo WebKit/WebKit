@@ -3014,6 +3014,7 @@
 		722AF2E227E1C4050078D997 /* PlatformGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2E427E1CF130078D997 /* TextRunIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E327E1CF110078D997 /* TextRunIterator.h */; };
 		722AF2E627E1D0A10078D997 /* CGContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E527E1D09E0078D997 /* CGContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7243D1DF304A2CB7001B5FB2 /* FontBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 7243D1DD304A299E001B5FB2 /* FontBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246963B275C5FA600A9156A /* CSSFilterRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F53FB83213B1BB800C40D34 /* CSSFilterRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246963D275C614400A9156A /* FilterEffectVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 7214B9B7274458FA003BE6DF /* FilterEffectVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7246963E275C616700A9156A /* FilterImageVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 72B4EF7C274EE37F00293C2F /* FilterImageVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3082,6 +3083,7 @@
 		72E5023129B669EE00E5B8E7 /* RenderingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 72E5023029B669ED00E5B8E7 /* RenderingResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72E5768B281B2B5500A75432 /* CopyImageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 72E5768A281B292600A75432 /* CopyImageOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72ECA8AE2B62FBB40094F595 /* ImageAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72ED001B304A94B400E8D759 /* ThreadSafeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 72ED001A304A82D800E8D759 /* ThreadSafeFont.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72F667E1260C26AC00EE36AD /* DiagnosticLoggingDomain.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F667DF260C264400EE36AD /* DiagnosticLoggingDomain.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72F7E746279B8F7500D82D2D /* SourceImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F7E744279B8F7400D82D2D /* SourceImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72F9A6CD2D30DE880019DE4B /* ImageBufferDisplayListBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72F9A6C92D30BE6E0019DE4B /* ImageBufferDisplayListBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14585,6 +14587,8 @@
 		724136212898652A007B3FCD /* FECompositeSoftwareArithmeticApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FECompositeSoftwareArithmeticApplier.h; sourceTree = "<group>"; };
 		72435EF4273D07670005E7EE /* FilterImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterImage.h; sourceTree = "<group>"; };
 		72435EF5273D07670005E7EE /* FilterImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FilterImage.cpp; sourceTree = "<group>"; };
+		7243D1DD304A299E001B5FB2 /* FontBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FontBase.h; sourceTree = "<group>"; };
+		7243D1DE304A299E001B5FB2 /* FontBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontBase.cpp; sourceTree = "<group>"; };
 		7246F0202A1540ED00FD74F1 /* PathStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathStream.h; sourceTree = "<group>"; };
 		7246F0212A1540EF00FD74F1 /* PathStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathStream.cpp; sourceTree = "<group>"; };
 		7246F0222A1540F000FD74F1 /* PathImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathImpl.h; sourceTree = "<group>"; };
@@ -14805,6 +14809,7 @@
 		72EB15893021754500E59EAD /* JSWebCodecsImageDecoderCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebCodecsImageDecoderCustom.cpp; sourceTree = "<group>"; };
 		72ECA8AB2B62FBB30094F595 /* ImageAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageAdapter.cpp; sourceTree = "<group>"; };
 		72ECA8AC2B62FBB40094F595 /* ImageAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageAdapter.h; sourceTree = "<group>"; };
+		72ED001A304A82D800E8D759 /* ThreadSafeFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafeFont.h; sourceTree = "<group>"; };
 		72F1AD9F1A3904C300014E18 /* EXTFragDepth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTFragDepth.cpp; sourceTree = "<group>"; };
 		72F1ADA01A3904C300014E18 /* EXTFragDepth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTFragDepth.h; sourceTree = "<group>"; };
 		72F1ADA11A3904C300014E18 /* EXTFragDepth.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTFragDepth.idl; sourceTree = "<group>"; };
@@ -36912,6 +36917,8 @@
 				58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */,
 				B2C3DA530D006CD600EF6F26 /* Font.cpp */,
 				B2C3DA540D006CD600EF6F26 /* Font.h */,
+				7243D1DE304A299E001B5FB2 /* FontBase.cpp */,
+				7243D1DD304A299E001B5FB2 /* FontBase.h */,
 				BCB92D4E1293550B00C8387F /* FontBaseline.h */,
 				B2C3DA510D006CD600EF6F26 /* FontCache.cpp */,
 				B2C3DA520D006CD600EF6F26 /* FontCache.h */,
@@ -37224,6 +37231,7 @@
 				CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */,
 				CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */,
 				BE0787A729B2279D0067473E /* TextTransform.h */,
+				72ED001A304A82D800E8D759 /* ThreadSafeFont.h */,
 				1AF89A411518FDEA00E547B5 /* TiledBacking.h */,
 				0FC9E65A2BF3D0930065730C /* TileGridIdentifier.h */,
 				5A67F23B284966AC00964D2E /* TrackBuffer.cpp */,
@@ -45818,6 +45826,7 @@
 				1AC2D89D1B1E291F00D52E87 /* FontAntialiasingStateSaver.h in Headers */,
 				F4E57EDC213F3F5F004EA98E /* FontAttributeChanges.h in Headers */,
 				F48D2A7E2157182600C6752B /* FontAttributes.h in Headers */,
+				7243D1DF304A2CB7001B5FB2 /* FontBase.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
 				C2458E631FE897B000594759 /* FontCacheCoreText.h in Headers */,
@@ -49876,6 +49885,7 @@
 				7A56200A28F04DCB0060BF91 /* ThreadedScrollingTreeScrollingNodeDelegate.h in Headers */,
 				E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */,
 				51D7EFEA1BDE8F8C00E93E10 /* ThreadSafeDataBuffer.h in Headers */,
+				72ED001B304A94B400E8D759 /* ThreadSafeFont.h in Headers */,
 				185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */,
 				7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */,
 				1F72BF0B187FD45C0009BCB3 /* TileControllerMemoryHandlerIOS.h in Headers */,

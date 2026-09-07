@@ -98,7 +98,7 @@ bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2
     return CTFontHasTable(ctFont, tableTag1) || CTFontHasTable(ctFont, tableTag2);
 }
 
-void Font::platformInit()
+void FontBase::platformInit()
 {
     auto constexpr syntheticBoldScaleFactor = 36.0f;
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? (m_platformData.size() / syntheticBoldScaleFactor) : 0.f;
@@ -166,20 +166,6 @@ void Font::platformInit()
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 #endif
 
-    CGFloat xHeight = 0;
-    if (m_platformData.size()) {
-        if (platformData().orientation() == FontOrientation::Horizontal) {
-            // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
-            // reported x-height to only include the portion of the glyph that is above the baseline.
-            Glyph xGlyph = glyphForCharacter('x');
-            if (xGlyph)
-                xHeight = -CGRectGetMinY(platformBoundsForGlyph(xGlyph));
-            else
-                xHeight = CTFontGetXHeight(ctFont.get());
-        } else
-            xHeight = verticalRightOrientationFont().fontMetrics().xHeight().value_or(0);
-    }
-
     if (CTFontGetSymbolicTraits(ctFont.get()) & kCTFontTraitColorGlyphs) {
         if (RetainPtr cfBitVector = adoptCF(CTFontCopyColorGlyphCoverage(ctFont.get())))
             m_emojiType = SomeEmojiGlyphs { BitVector(cfBitVector.get()) };
@@ -193,7 +179,6 @@ void Font::platformInit()
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);
     m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setXHeight(xHeight);
     m_fontMetrics.setLineSpacing(lineSpacing);
     m_fontMetrics.setUnderlinePosition(-CTFontGetUnderlinePosition(ctFont.get()));
     m_fontMetrics.setUnderlineThickness(CTFontGetUnderlineThickness(ctFont.get()));
@@ -225,6 +210,27 @@ void Font::platformCharWidthInit()
 
     // Fallback to a cross-platform estimate, which will populate these values if they are non-positive.
     initCharWidths();
+}
+
+void Font::platformCharHeightInit()
+{
+    CGFloat xHeight = 0;
+    if (m_platformData.size()) {
+        if (platformData().orientation() == FontOrientation::Horizontal) {
+            // Measure the actual character "x", since it's possible for it to extend below the baseline, and we need the
+            // reported x-height to only include the portion of the glyph that is above the baseline.
+            Glyph xGlyph = glyphForCharacter('x');
+            if (xGlyph)
+                xHeight = -CGRectGetMinY(platformBoundsForGlyph(xGlyph));
+            else {
+                RetainPtr ctFont = this->ctFont();
+                xHeight = CTFontGetXHeight(ctFont);
+            }
+        } else
+            xHeight = verticalRightOrientationFont().fontMetrics().xHeight().value_or(0);
+    }
+
+    m_fontMetrics.setXHeight(xHeight);
 }
 
 bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) const
@@ -287,14 +293,14 @@ static void injectTrueTypeCoverage(int type, int selector, CTFontRef font, BitVe
     unionBitVectors(result, source.get());
 }
 
-bool Font::supportsOpenTypeAlternateHalfWidths() const
+bool FontBase::supportsOpenTypeAlternateHalfWidths() const
 {
     if (m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Unknown)
         m_supportsOpenTypeAlternateHalfWidths = supportsOpenTypeFeature(protect(ctFont()).get(), CFSTR("halt")) ? SupportsFeature::Yes : SupportsFeature::No;
     return m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Yes;
 }
 
-bool Font::supportsSmallCaps() const
+bool FontBase::supportsSmallCaps() const
 {
     if (m_supportsSmallCaps == SupportsFeature::Unknown) {
         BitVector glyphsSupportedBySmallCaps;
@@ -306,7 +312,7 @@ bool Font::supportsSmallCaps() const
     return m_supportsSmallCaps == SupportsFeature::Yes;
 }
 
-bool Font::supportsAllSmallCaps() const
+bool FontBase::supportsAllSmallCaps() const
 {
     if (m_supportsAllSmallCaps == SupportsFeature::Unknown) {
         BitVector glyphsSupportedByAllSmallCaps;
@@ -320,7 +326,7 @@ bool Font::supportsAllSmallCaps() const
     return m_supportsAllSmallCaps == SupportsFeature::Yes;
 }
 
-bool Font::supportsPetiteCaps() const
+bool FontBase::supportsPetiteCaps() const
 {
     if (m_supportsPetiteCaps == SupportsFeature::Unknown) {
         BitVector glyphsSupportedByPetiteCaps;
@@ -332,7 +338,7 @@ bool Font::supportsPetiteCaps() const
     return m_supportsPetiteCaps == SupportsFeature::Yes;
 }
 
-bool Font::supportsAllPetiteCaps() const
+bool FontBase::supportsAllPetiteCaps() const
 {
     if (m_supportsAllPetiteCaps == SupportsFeature::Unknown) {
         BitVector glyphsSupportedByAllPetiteCaps;
@@ -855,7 +861,7 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
     return !hasGlyphsForCharacterRange(platformFont.get(), ' ', '~', false) && !hasGlyphsForCharacterRange(platformFont.get(), 0x0600, 0x06FF, true);
 }
 
-const PAL::OTSVGTable& Font::otSVGTable() const
+const PAL::OTSVGTable& FontBase::otSVGTable() const
 {
     if (!m_otSVGTable) {
         if (auto tableData = adoptCF(CTFontCopyTable(protect(ctFont()).get(), kCTFontTableSVG, kCTFontTableOptionNoOptions)))
@@ -896,7 +902,7 @@ void Font::ComplexColorFormatGlyphs::set(Glyph glyph, bool value)
         m_bits.set(bitForValue(glyph));
 }
 
-bool Font::hasComplexColorFormatTables() const
+bool FontBase::hasComplexColorFormatTables() const
 {
     if (otSVGTable().table)
         return true;
@@ -909,7 +915,7 @@ bool Font::hasComplexColorFormatTables() const
     return false;
 }
 
-Font::ComplexColorFormatGlyphs& Font::glyphsWithComplexColorFormat() const
+FontBase::ComplexColorFormatGlyphs& FontBase::glyphsWithComplexColorFormat() const
 {
     if (!m_glyphsWithComplexColorFormat) {
         if (hasComplexColorFormatTables()) {
@@ -924,7 +930,7 @@ Font::ComplexColorFormatGlyphs& Font::glyphsWithComplexColorFormat() const
     return m_glyphsWithComplexColorFormat.value();
 }
 
-bool Font::glyphHasComplexColorFormat(Glyph glyphID) const
+bool FontBase::glyphHasComplexColorFormat(Glyph glyphID) const
 {
 #if HAVE(CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION)
     if (PAL::canLoad_CoreText_CTFontHasComplexColorFormatForGlyph())
@@ -962,7 +968,7 @@ std::optional<BitVector> Font::findOTSVGGlyphs(std::span<const GlyphBufferGlyph>
     return result;
 }
 
-bool Font::hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph> glyphs) const
+bool FontBase::hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph> glyphs) const
 {
     auto& complexGlyphs = glyphsWithComplexColorFormat();
     if (!complexGlyphs.hasRelevantTables())
@@ -1049,7 +1055,7 @@ IPCFontData Font::toSerializableFont() const
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
-MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const
+MultiRepresentationHEICMetrics FontBase::metricsForMultiRepresentationHEIC() const
 {
     CGRect bounds = CTFontGetTypographicBoundsForAdaptiveImageProvider(ctFont(), nullptr);
 

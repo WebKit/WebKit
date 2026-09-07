@@ -491,16 +491,11 @@ private:
     const Ref<Filter> m_filter;
 };
 
-struct FontRebuildData {
-    FontInternalAttributes attributes;
-    FontPlatformData platformData;
-};
-
 class DrawGlyphs {
 public:
     static constexpr char name[] = "draw-glyphs";
 
-    DrawGlyphs(Ref<const Font>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+    DrawGlyphs(Ref<const FontBase>&& font, Vector<GlyphBufferGlyph>&& glyphs, Vector<GlyphBufferAdvance>&& advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
         : m_font(WTF::move(font))
         , m_glyphs(WTF::move(glyphs))
         , m_advances(WTF::move(advances))
@@ -509,17 +504,7 @@ public:
     {
     }
 
-    Ref<const Font> font() const { return std::get<Ref<const Font>>(m_font); }
-    void replaceFontWithRebuildData()
-    {
-        Ref<const Font> font = std::get<Ref<const Font>>(m_font);
-        m_font = FontRebuildData { font->attributes(), font->platformData() };
-    }
-    void rebuildFont()
-    {
-        auto& rebuildData = std::get<FontRebuildData>(m_font);
-        m_font = Ref<const Font> { Font::create(FontInternalAttributes { rebuildData.attributes }, FontPlatformData { rebuildData.platformData }) };
-    }
+    Ref<const FontBase> font() const { return m_font; }
     const Vector<GlyphBufferGlyph>& glyphs() const LIFETIME_BOUND { return m_glyphs; }
     const Vector<GlyphBufferAdvance>& advances() const LIFETIME_BOUND { return m_advances; }
     size_t length() const { return m_glyphs.size(); }
@@ -531,7 +516,7 @@ public:
     void dump(TextStream&, OptionSet<AsTextFlag>) const;
 
 private:
-    Variant<Ref<const Font>, FontRebuildData> m_font;
+    Ref<const FontBase> m_font;
     Vector<GlyphBufferGlyph> m_glyphs;
     Vector<GlyphBufferAdvance> m_advances;
     FloatPoint m_localAnchor;

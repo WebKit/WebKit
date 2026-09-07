@@ -49,7 +49,7 @@
 
 namespace WebCore {
 
-void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::span<const GlyphBufferGlyph> glyphs,
+void FontCascade::drawGlyphs(GraphicsContext& context, const FontBase& font, std::span<const GlyphBufferGlyph> glyphs,
     std::span<const GlyphBufferAdvance> advances, const FloatPoint& point,
     FontSmoothingMode fontSmoothingMode)
 {

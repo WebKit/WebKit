@@ -38,7 +38,7 @@
 namespace WebCore {
 
 #if ENABLE(OPENTYPE_VERTICAL)
-inline const OpenTypeVerticalData* Font::verticalData() const { return m_verticalData.get(); }
+inline const OpenTypeVerticalData* FontBase::verticalData() const { return m_verticalData.get(); }
 #endif
 
 ALWAYS_INLINE FloatRect Font::boundsForGlyph(Glyph glyph) const

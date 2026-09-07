@@ -315,18 +315,6 @@ void ImageBuffer::submitDrawingCommands()
         backend->submitDrawingCommands();
 }
 
-void ImageBuffer::replaceFontsWithRebuildData()
-{
-    if (auto* backend = ensureBackend())
-        backend->replaceFontsWithRebuildData();
-}
-
-void ImageBuffer::rebuildFonts()
-{
-    if (auto* backend = ensureBackend())
-        backend->rebuildFonts();
-}
-
 void ImageBuffer::prepareForDisplay()
 {
     flushDrawingContextAsync();

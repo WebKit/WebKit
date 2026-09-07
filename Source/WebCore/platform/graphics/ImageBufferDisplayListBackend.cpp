@@ -86,14 +86,4 @@ String ImageBufferDisplayListBackend::debugDescription() const
     return stream.release();
 }
 
-void ImageBufferDisplayListBackend::replaceFontsWithRebuildData()
-{
-    m_drawingContext.replaceFontsWithRebuildData();
-}
-
-void ImageBufferDisplayListBackend::rebuildFonts()
-{
-    m_drawingContext.rebuildFonts();
-}
-
 } // namespace WebCore

@@ -2533,6 +2533,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FloatSize.h
     platform/graphics/FloatSizeHash.h
     platform/graphics/Font.h
+    platform/graphics/FontBase.h
     platform/graphics/FontBaseline.h
     platform/graphics/FontCache.h
     platform/graphics/FontCascade.h
@@ -2721,6 +2722,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TextRun.h
     platform/graphics/TextShapingResultAndDisplayList.h
     platform/graphics/TextTrackRepresentation.h
+    platform/graphics/ThreadSafeFont.h
     platform/graphics/TileGridIdentifier.h
     platform/graphics/TiledBacking.h
     platform/graphics/TrackBuffer.h

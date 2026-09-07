@@ -280,7 +280,7 @@ void DrawFilteredImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) 
 
 void DrawGlyphs::apply(GraphicsContext& context) const
 {
-    context.drawGlyphs(std::get<Ref<const Font>>(m_font).get(), m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
+    context.drawGlyphsImmediate(m_font, m_glyphs.span(), m_advances.span(), m_localAnchor, m_fontSmoothingMode);
 }
 
 void DrawGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag>) const
