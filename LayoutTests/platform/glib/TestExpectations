@@ -96,6 +96,11 @@ imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-079.xht 
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-080.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-155.xht [ Pass ]
 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonymous-objects-156.xht [ Pass ]
+# These drive the scroll from synthesized user input, which only reaches the
+# scroller on the GLib ports; they are skipped elsewhere.
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-keyboard-scroll-on-body.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-button-clicks.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-track-clicks.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-dynamic-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-min-line-count-006.html [ Pass ]

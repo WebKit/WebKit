@@ -76,6 +76,8 @@ public:
     struct ScrollState {
         // Edges the container can currently be scrolled further toward.
         RectEdges<bool> scrollableEdges { false, false, false, false };
+        // Edges the container has been scrolled toward by its most recent relative scroll.
+        RectEdges<bool> scrolledDirections { false, false, false, false };
 
         bool operator==(const ScrollState&) const = default;
     };

@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Scrollbar track click scroll
 

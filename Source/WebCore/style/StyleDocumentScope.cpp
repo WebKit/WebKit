@@ -296,14 +296,15 @@ bool DocumentScope::invalidateForContainerDependencies(LayoutDependencyUpdateCon
     return !containersToInvalidate.isEmpty();
 }
 
-// Edges the container can currently be scrolled further toward.
-static RectEdges<bool> scrollableEdges(const RenderBox& containerRenderer)
+// The scroll state a scroll-state query container exposes: which edges it can still be scrolled
+// toward, and which it was most recently scrolled toward.
+static DocumentScope::ScrollState scrollStateFor(const RenderBox& containerRenderer)
 {
-    // This mirrors ScrollableArea::edgePinnedState(), except for where it takes the axes from. That
-    // function decides whether an axis can scroll at all from the Scrollbar objects the area owns,
-    // and a frame view has none when scrolling is delegated to a native scroll view, so it reports
-    // every edge as pinned there. Take the axes from the renderer and the frame view instead, like
-    // RenderLayerScrollableArea::hasScrollableHorizontalOverflow() and LocalFrameView::isScrollable().
+    // ScrollableArea::edgePinnedState() decides whether an axis can scroll at all from the Scrollbar
+    // objects the area owns, and a frame view owns none when scrolling is delegated to a native scroll
+    // view, so it reports every edge as pinned there. Take the axes from the renderer and the frame
+    // view instead, like RenderLayerScrollableArea::hasScrollableHorizontalOverflow() and
+    // LocalFrameView::isScrollable().
     CheckedPtr<const ScrollableArea> scrollableArea;
     bool canScrollHorizontally = false;
     bool canScrollVertically = false;
@@ -323,20 +324,23 @@ static RectEdges<bool> scrollableEdges(const RenderBox& containerRenderer)
         canScrollVertically = containerRenderer.scrollsOverflowY();
     }
 
-    // A container with no scrollable area is not a scroll container, so it is scrollable nowhere.
+    // A container with no scrollable area is not a scroll container, so it has no scroll state.
     if (!scrollableArea)
-        return { false, false, false, false };
+        return { };
 
     auto scrollPosition = scrollableArea->scrollPosition();
     auto minimumScrollPosition = scrollableArea->minimumScrollPosition();
     auto maximumScrollPosition = scrollableArea->maximumScrollPosition();
 
-    // Top, right, bottom, left.
     return {
-        canScrollVertically && scrollPosition.y() > minimumScrollPosition.y(),
-        canScrollHorizontally && scrollPosition.x() < maximumScrollPosition.x(),
-        canScrollVertically && scrollPosition.y() < maximumScrollPosition.y(),
-        canScrollHorizontally && scrollPosition.x() > minimumScrollPosition.x()
+        // Top, right, bottom, left.
+        {
+            canScrollVertically && scrollPosition.y() > minimumScrollPosition.y(),
+            canScrollHorizontally && scrollPosition.x() < maximumScrollPosition.x(),
+            canScrollVertically && scrollPosition.y() < maximumScrollPosition.y(),
+            canScrollHorizontally && scrollPosition.x() > minimumScrollPosition.x()
+        },
+        scrollableArea->scrolledDirections()
     };
 }
 
@@ -360,7 +364,7 @@ void DocumentScope::updateScrollStateSnapshots()
         if (!containerElement)
             continue;
 
-        auto scrollState = ScrollState { scrollableEdges(containerRenderer) };
+        auto scrollState = scrollStateFor(containerRenderer);
 
         // Keyed on the container itself, ::before/::after included, since evaluation looks the state
         // up by the container it is querying. Folding a pseudo-element into its host here would make
