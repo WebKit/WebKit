@@ -1,43 +1,46 @@
-# Swift macro plugin used by WebKit's Swift sources.
+# Standalone host-tool project for WebKit's Swift macro plugin.
 #
-# The plugin is a compiler plugin: it runs inside swiftc on the *build* machine,
-# so it is always compiled for the host, never for the target being
-# cross-compiled to. It links against the swift-syntax libraries shipped inside
-# the toolchain (usr/lib/swift/host), so WebKit does not vendor swift-syntax.
+# A Swift macro is a compiler plugin: swiftc dlopens it on the *build* machine,
+# so it must be built for the host, never for the target WebKit is being
+# cross-compiled to. CMake fixes its toolchain per build tree rather than per
+# target, so this is a separate project, configured natively by the superbuild
+# glue in Source/cmake/WebKitSwiftMacroPlugin.cmake, which consumes the plugin
+# straight out of this project's build tree.
 #
-# CMake's Swift language support is configured for the target platform, which is
-# why this uses a raw swiftc invocation rather than add_library().
+# Do NOT add_subdirectory() this from the WebKit build; that would give it the
+# target toolchain and produce a plugin swiftc cannot load.
+#
+# The plugin links the swift-syntax libraries shipped inside the toolchain
+# (usr/lib/swift/host), so WebKit does not vendor swift-syntax.
 
-get_filename_component(_swift_bin_dir "${ORIGINAL_Swift_COMPILER}" DIRECTORY)
+cmake_minimum_required(VERSION 3.20)
+
+if (POLICY CMP0157)
+    cmake_policy(SET CMP0157 NEW)
+endif ()
+
+project(WebKitSwiftMacros LANGUAGES Swift)
+
+get_filename_component(_swift_bin_dir "${CMAKE_Swift_COMPILER}" DIRECTORY)
 get_filename_component(_swift_usr_dir "${_swift_bin_dir}" DIRECTORY)
 set(SWIFT_HOST_LIBRARY_DIR "${_swift_usr_dir}/lib/swift/host")
 
-if (NOT EXISTS "${SWIFT_HOST_LIBRARY_DIR}/libSwiftSyntaxMacros.dylib")
+set(_swift_syntax_probe
+    "${SWIFT_HOST_LIBRARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}SwiftSyntaxMacros${CMAKE_SHARED_LIBRARY_SUFFIX}")
+if (NOT EXISTS "${_swift_syntax_probe}")
     message(FATAL_ERROR "swift-syntax host libraries not found in ${SWIFT_HOST_LIBRARY_DIR}")
 endif ()
 
-set(WEBKIT_SWIFT_MACRO_PLUGIN "${CMAKE_CURRENT_BINARY_DIR}/libWebKitSwiftMacros.dylib" CACHE INTERNAL "")
+add_library(WebKitSwiftMacros SHARED CxxCopyMacros.swift)
 
-set(WebKitSwiftMacros_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/CxxCopyMacros.swift
+target_compile_options(WebKitSwiftMacros PRIVATE "SHELL:-swift-version 5")
+target_include_directories(WebKitSwiftMacros PRIVATE "${SWIFT_HOST_LIBRARY_DIR}")
+# Link by name rather than by path: the .swiftmodule files carry autolink
+# directives for further swift-syntax libraries (SwiftSyntaxBuilder and
+# friends), which only resolve if the host directory is on the search path.
+target_link_directories(WebKitSwiftMacros PRIVATE "${SWIFT_HOST_LIBRARY_DIR}")
+target_link_libraries(WebKitSwiftMacros PRIVATE SwiftSyntax SwiftSyntaxMacros)
+
+set_target_properties(WebKitSwiftMacros PROPERTIES
+    BUILD_RPATH "${SWIFT_HOST_LIBRARY_DIR}"
 )
-
-add_custom_command(
-    OUTPUT ${WEBKIT_SWIFT_MACRO_PLUGIN}
-    COMMAND ${ORIGINAL_Swift_COMPILER}
-        -emit-library
-        -o ${WEBKIT_SWIFT_MACRO_PLUGIN}
-        -module-name WebKitSwiftMacros
-        -swift-version 5
-        -I ${SWIFT_HOST_LIBRARY_DIR}
-        -L ${SWIFT_HOST_LIBRARY_DIR}
-        -lSwiftSyntax
-        -lSwiftSyntaxMacros
-        -Xlinker -rpath -Xlinker ${SWIFT_HOST_LIBRARY_DIR}
-        ${WebKitSwiftMacros_SOURCES}
-    DEPENDS ${WebKitSwiftMacros_SOURCES}
-    COMMENT "Building Swift macro plugin WebKitSwiftMacros"
-    VERBATIM
-)
-
-add_custom_target(WebKitSwiftMacros ALL DEPENDS ${WEBKIT_SWIFT_MACRO_PLUGIN})

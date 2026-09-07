@@ -1401,8 +1401,8 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # this also keeps PAL/WebGPU/WebKit on the same module-cache hash.
         list(APPEND _swift_options "-swift-version" "6")
         # Load WebKit's Swift macro plugin (Source/WebKitSwiftMacros). The plugin
-        # is a host dylib built by a custom command, so the dependency has to be
-        # declared by hand.
+        # is a host tool built by a nested project, and the flag is opaque to
+        # CMake, so the dependency has to be declared by hand.
         if (WEBKIT_SWIFT_MACRO_PLUGIN)
             list(APPEND _swift_options "-load-plugin-library" "${WEBKIT_SWIFT_MACRO_PLUGIN}")
             add_dependencies(${_target} WebKitSwiftMacros)
@@ -1594,6 +1594,13 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # rewrites the file when it actually changes, so this settles instead
         # of looping.
         set(_trigger_deps "${_resp_path}" "${_swift_depfile}")
+        # -load-plugin-library is opaque to CMake, so the macro plugin has to be
+        # named here for a macro edit to re-expand it. It is staged through
+        # copy_if_different, so a plugin rebuild that changes nothing leaves the
+        # mtime alone and recompiles nothing.
+        if (WEBKIT_SWIFT_MACRO_PLUGIN)
+            list(APPEND _trigger_deps "${WEBKIT_SWIFT_MACRO_PLUGIN}")
+        endif ()
         if (NOT (DEFINED ${_target}_SWIFT_INTEROP_SOURCES OR
             _skip_swift_cxx_header))
             list(APPEND _trigger_deps "${_header_stamp_path}")
