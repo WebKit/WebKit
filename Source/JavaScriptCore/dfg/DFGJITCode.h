@@ -150,18 +150,16 @@ class JITData final : public ButterflyArray<JITData, HandlerPropertyInlineCache,
     friend class JSC::LLIntOffsetsExtractor;
 public:
     using Base = ButterflyArray<JITData, HandlerPropertyInlineCache, void*>;
-    using ExitVector = FixedVector<MacroAssemblerCodeRef<OSRExitPtrTag>>;
+    using ExitJumpTable = FixedVector<CodePtr<OSRExitPtrTag>>;
 
-    static constexpr ptrdiff_t offsetOfExits() { return OBJECT_OFFSETOF(JITData, m_exits); }
+    static constexpr ptrdiff_t offsetOfExitJumpTable() { return OBJECT_OFFSETOF(JITData, m_exitJumpTable); }
     static constexpr ptrdiff_t offsetOfIsInvalidated() { return OBJECT_OFFSETOF(JITData, m_isInvalidated); }
 
-    static std::unique_ptr<JITData> tryCreate(VM&, CodeBlock*, const JITCode&, ExitVector&& exits);
+    static std::unique_ptr<JITData> tryCreate(VM&, CodeBlock*, const JITCode&, ExitJumpTable&&);
 
-    void setExitCode(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code)
-    {
-        m_exits[exitIndex] = WTF::move(code);
-    }
-    const MacroAssemblerCodeRef<OSRExitPtrTag>& exitCode(unsigned exitIndex) const { return m_exits[exitIndex]; }
+    void appendExitStub(unsigned exitIndex, MacroAssemblerCodeRef<OSRExitPtrTag> code) { m_exitStubs.append({ exitIndex, WTF::move(code) }); }
+    void setExitJumpTableEntry(unsigned exitIndex, CodePtr<OSRExitPtrTag> code) { m_exitJumpTable[exitIndex] = code; }
+    const OSRExitStubs& exitStubs() const LIFETIME_BOUND { return m_exitStubs; }
 
     bool isInvalidated() const { return !!m_isInvalidated; }
 
@@ -196,7 +194,7 @@ public:
     static constexpr ptrdiff_t offsetOfTierUpTotalCount() { return OBJECT_OFFSETOF(JITData, m_tierUpCounter) + OBJECT_OFFSETOF(UpperTierExecutionCounter, m_totalCount); }
     static constexpr ptrdiff_t offsetOfNeverExecutedEntry() { return OBJECT_OFFSETOF(JITData, m_neverExecutedEntry); }
 
-    explicit JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode&, ExitVector&&);
+    explicit JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode&, ExitJumpTable&&);
 
     void reconcileWeakReferencesAtGCEnd()
     {
@@ -213,7 +211,8 @@ private:
     UpperTierExecutionCounter m_tierUpCounter;
     FixedVector<OptimizingCallLinkInfo> m_callLinkInfos;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
-    ExitVector m_exits;
+    ExitJumpTable m_exitJumpTable;
+    OSRExitStubs m_exitStubs;
     uint8_t m_isInvalidated { 0 };
     uint8_t m_neverExecutedEntry { 1 };
 };
@@ -284,7 +283,7 @@ private:
 public:
     CommonData common;
     FixedVector<DFG::OSREntryData> m_osrEntry;
-    FixedVector<DFG::OSRExit> m_osrExit;
+    DFG::OSRExitStream m_osrExits;
     FixedVector<DFG::SpeculationRecovery> m_speculationRecovery;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;
@@ -322,9 +321,9 @@ public:
 #endif // ENABLE(FTL_JIT)
 };
 
-inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitVector&& exits)
+inline std::unique_ptr<JITData> JITData::tryCreate(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode, ExitJumpTable&& exitJumpTable)
 {
-    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedPropertyInlineCaches.size(), jitCode.m_linkerIR.size(), jitCode, WTF::move(exits)) };
+    auto result = std::unique_ptr<JITData> { createImpl(jitCode.m_unlinkedPropertyInlineCaches.size(), jitCode.m_linkerIR.size(), jitCode, WTF::move(exitJumpTable)) };
     if (result->tryInitialize(vm, codeBlock, jitCode))
         return result;
     return nullptr;

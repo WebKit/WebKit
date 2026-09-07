@@ -3237,19 +3237,18 @@ void CodeBlock::tallyFrequentExitSites()
     switch (jitType()) {
     case JITType::DFGJIT: {
         auto* jitCode = m_jitCode->dfg();
-        for (auto& exit : jitCode->m_osrExit)
-            exit.considerAddingAsFrequentExitSite(profiledBlock);
+        if (auto* jitData = dfgJITData()) {
+            for (auto& stub : jitData->exitStubs())
+                jitCode->m_osrExits.at(stub.exitIndex).considerAddingAsFrequentExitSite(profiledBlock);
+        }
         break;
     }
 
 #if ENABLE(FTL_JIT)
     case JITType::FTLJIT: {
-        // There is no easy way to avoid duplicating this code since the FTL::JITCode::m_osrExit
-        // vector contains a totally different type, that just so happens to behave like
-        // DFG::JITCode::m_osrExit.
         auto* jitCode = m_jitCode->ftl();
-        for (auto& exit : jitCode->m_osrExit)
-            exit.considerAddingAsFrequentExitSite(profiledBlock);
+        for (auto& stub : jitCode->m_osrExitStubs)
+            jitCode->m_osrExit[stub.exitIndex].considerAddingAsFrequentExitSite(profiledBlock);
         break;
     }
 #endif
