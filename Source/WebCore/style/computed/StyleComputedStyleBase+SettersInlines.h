@@ -235,6 +235,12 @@ inline void ComputedStyleBase::setHasPseudoStyles(EnumSet<PseudoElementType> set
     m_nonInheritedFlags.setHasPseudoStyles(set);
 }
 
+inline void ComputedStyleBase::setCanOmitPseudoElementStyles(EnumSet<PseudoElementType> set)
+{
+    m_nonInheritedFlags.canOmitBeforeStyle = set.contains(PseudoElementType::Before);
+    m_nonInheritedFlags.canOmitAfterStyle = set.contains(PseudoElementType::After);
+}
+
 inline void ComputedStyleBase::setPseudoElementIdentifier(std::optional<PseudoElementIdentifier>&& identifier)
 {
     if (identifier) {

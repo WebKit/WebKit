@@ -281,6 +281,8 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     } else {
         // If pseudo-element is not requested then just mark the bits that tell that this element has these.
         m_matchedPseudoElements.add(pseudoElementTypes & allPublicPseudoElementTypes);
+        auto requiringStyle = isHTMLElement ? ruleSet.universalHTMLPseudoElementTypesRequiringStyle() : ruleSet.universalPseudoElementTypesRequiringStyle();
+        m_matchedPseudoElementsRequiringStyle.add(requiringStyle & allPublicPseudoElementTypes);
     }
 }
 
@@ -634,6 +636,14 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     }
 
     m_matchedPseudoElements.add(context.publicPseudoElements);
+    if (context.publicPseudoElements) {
+        auto requiringStyle = context.publicPseudoElements;
+        if (!ruleData.canGeneratePseudoElement()) {
+            requiringStyle.remove(PseudoElementType::Before);
+            requiringStyle.remove(PseudoElementType::After);
+        }
+        m_matchedPseudoElementsRequiringStyle.add(requiringStyle);
+    }
     m_styleRelations.appendVector(context.styleRelations);
 
     return selectorMatches;

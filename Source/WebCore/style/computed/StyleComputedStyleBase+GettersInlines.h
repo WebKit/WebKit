@@ -303,6 +303,12 @@ inline bool ComputedStyleBase::hasPseudoStyle(PseudoElementType pseudo) const
     return m_nonInheritedFlags.hasPseudoStyle(pseudo);
 }
 
+inline bool ComputedStyleBase::canOmitPseudoElementStyle(PseudoElementType pseudo) const
+{
+    return (pseudo == PseudoElementType::Before && m_nonInheritedFlags.canOmitBeforeStyle)
+        || (pseudo == PseudoElementType::After && m_nonInheritedFlags.canOmitAfterStyle);
+}
+
 inline bool ComputedStyleBase::hasAnyPublicPseudoStyles() const
 {
     return m_nonInheritedFlags.hasAnyPublicPseudoStyles();

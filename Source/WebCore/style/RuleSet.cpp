@@ -530,6 +530,11 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
         m_universalHTMLPseudoElementTypes.add(*stylePseudoElement);
         if (!isHTMLNamespace)
             m_universalPseudoElementTypes.add(*stylePseudoElement);
+        if (ruleData.canGeneratePseudoElement() || (*stylePseudoElement != PseudoElementType::Before && *stylePseudoElement != PseudoElementType::After)) {
+            m_universalHTMLPseudoElementTypesRequiringStyle.add(*stylePseudoElement);
+            if (!isHTMLNamespace)
+                m_universalPseudoElementTypesRequiringStyle.add(*stylePseudoElement);
+        }
         return true;
     };
 
