@@ -22,12 +22,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Unit test for webkitdirs::determineIsCMakeBuild last-built tiebreaker:
-# when both trees exist and the Xcode build database (XCBuildData/build.db) is
-# newer than the CMake tree's Ninja build log (.ninja_log) (or the CMake log is
-# absent), the pre-existing "Xcode wins" default should hold. The function
-# caches its answer in a script-global, so each scenario lives in its own .pl
-# file (test-webkitperl runs each in a fresh process).
+# Unit test for webkitdirs::determineIsCMakeBuild with neither an argument nor a
+# BuildSystem marker: Cocoa defaults to Xcode, even though a CMake tree is
+# present in the build directory. The function caches its answer in a
+# script-global, so each scenario lives in its own .pl file (test-webkitperl runs
+# each in a fresh process).
 use strict;
 use warnings;
 use File::Path qw(make_path);
@@ -36,40 +35,29 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 1);
+plan(tests => 2);
 
-# The tiebreaker is gated on isAppleCocoaWebKit(); force it on so the test
-# is platform-independent (webkitperl runs on non-Cocoa bots too).
+# isCMakeBuild() short-circuits to true on non-Cocoa ports, so force
+# isAppleCocoaWebKit() on to keep the assertions platform-independent
+# (webkitperl runs on non-Cocoa bots too).
 no warnings qw(redefine prototype);
 *webkitdirs::isAppleCocoaWebKit = sub () { 1 };
 use warnings qw(redefine prototype);
 
 my $configuration = "Debug";
 my $base = tempdir(CLEANUP => 1);
-# The tiebreaker compares each build system's own build log: .ninja_log in the
-# CMake tree vs. the shared XCBuildData/build.db for Xcode. It only runs when
-# both tree directories exist, so create the (otherwise empty) Xcode tree dir.
-my $cmakeMarker = File::Spec->catfile($base, "cmake-mac", $configuration, ".ninja_log");
-my $xcodeMarker = File::Spec->catfile($base, "XCBuildData", "build.db");
-make_path(File::Spec->catdir($base, $configuration));
 
-for my $marker ($cmakeMarker, $xcodeMarker) {
-    my ($volume, $dir, $file) = File::Spec->splitpath($marker);
-    make_path(File::Spec->catpath($volume, $dir, ""));
-    open(my $fh, ">", $marker) or die "Could not create $marker: $!";
-    close($fh);
-}
-
-# Make the Xcode build database the more recently built one.
-my $now = time();
-utime($now - 100, $now - 100, $cmakeMarker);
-utime($now, $now, $xcodeMarker);
+# A configured CMake tree no longer selects itself; only the marker does.
+my $cmakeBuild = File::Spec->catdir($base, "cmake-mac", $configuration);
+make_path($cmakeBuild);
+open(my $fh, ">", File::Spec->catfile($cmakeBuild, "CMakeCache.txt")) or die "Could not create CMakeCache.txt: $!";
+close($fh);
 
 setBaseProductDir($base);
 setConfiguration($configuration);
-enableLastBuiltTiebreaker();
 
 @ARGV = ();
 webkitdirs::determineIsCMakeBuild();
 
-ok(!isCMakeBuild(), "last-built tiebreaker keeps Xcode when its build database is newer");
+ok(!isCMakeBuild(), "no BuildSystem marker defaults to Xcode");
+is(productDir(), File::Spec->catdir($base, $configuration), "productDir() names the Xcode tree");

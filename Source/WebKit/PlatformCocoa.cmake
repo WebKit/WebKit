@@ -2666,6 +2666,18 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
         set(PRODUCT_NAME ${_bundle_identifier})
         configure_file(${_info_plist} ${_service_dir}/Info.plist)
 
+        # This WebKit is loaded from the build directory rather than from its
+        # install name, and launchd starts a service with no environment pointing
+        # at it, so bake in the way back to the frameworks beside the framework
+        # the service lives in. Xcode does the same through
+        # WK_PATH_FROM_SERVICE_EXECUTABLE_TO_FRAMEWORKS.
+        file(RELATIVE_PATH _path_to_frameworks
+            "${_service_dir}/MacOS" "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+        target_link_options(${_target} PRIVATE
+            "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/${_path_to_frameworks}"
+            "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/${_path_to_frameworks}"
+        )
+
         set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_service_dir}/MacOS")
     endfunction()
 

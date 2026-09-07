@@ -66,6 +66,10 @@ maybeUseContainerSDKRootDir();
 my $originalWorkingDirectory = getcwd();
 chdirWebKit();
 
+# The settings given here become the defaults for every later command, so that
+# they resolve the build that was made last.
+recordBuildSettings();
+
 my $showHelp = 0;
 my $verbose = 0;
 my $clean = 0;
@@ -115,6 +119,13 @@ Usage: $programName [options] [options to pass to build system]
   --generate-project-only           Only generate project files
   --debug                           Compile with Debug configuration
   --release                         Compile with Release configuration
+  --cmake                           Build with CMake
+  --xcode                           Build with Xcode
+
+  The configuration, build system and sanitizers given above are remembered, so
+  that later commands act on this build without being given them again. Use
+  set-webkit-configuration to change them without building.
+
   --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
   --architecture=<architecture>     Compile for a specific architecture (or architectures)
   --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
