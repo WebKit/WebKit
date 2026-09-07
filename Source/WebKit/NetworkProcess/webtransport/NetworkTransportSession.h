@@ -36,7 +36,15 @@
 #include <wtf/TZoneMalloc.h>
 
 #if PLATFORM(COCOA)
+#if __has_include(<Network/Network.h>)
 #include <Network/Network.h>
+#else
+#include <os/object.h>
+OS_OBJECT_DECL(nw_connection);
+OS_OBJECT_DECL(nw_connection_group);
+OS_OBJECT_DECL(nw_endpoint);
+OS_OBJECT_DECL(nw_protocol_metadata);
+#endif
 #include <wtf/RetainPtr.h>
 #endif
 

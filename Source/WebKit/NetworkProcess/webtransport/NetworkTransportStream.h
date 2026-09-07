@@ -33,7 +33,12 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
+#if __has_include(<Network/Network.h>)
 #include <Network/Network.h>
+#else
+#include <os/object.h>
+OS_OBJECT_DECL(nw_connection);
+#endif
 #include <wtf/RetainPtr.h>
 #endif
 

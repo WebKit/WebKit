@@ -31,7 +31,7 @@
 DECLARE_SYSTEM_HEADER
 
 // FIXME: Remove the `__has_feature(modules)` condition when possible.
-#if (!PLATFORM(WATCHOS) || USE(APPLE_INTERNAL_SDK)) && !__has_feature(modules)
+#if ((!PLATFORM(WATCHOS) && !PLATFORM(APPLETV)) || USE(APPLE_INTERNAL_SDK)) && !__has_feature(modules)
 #import <LinkPresentation/LinkPresentation.h>
 #else
 #import <Foundation/Foundation.h>

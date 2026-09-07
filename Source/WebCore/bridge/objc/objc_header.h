@@ -29,7 +29,6 @@
 #ifdef __OBJC__
 
 #include <objc/objc.h>
-#include <objc/objc-class.h>
 #include <objc/runtime.h>
 
 typedef Class ClassStructPtr;
