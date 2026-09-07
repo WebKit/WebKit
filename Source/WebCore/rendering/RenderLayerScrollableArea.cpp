@@ -332,6 +332,7 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
         return clampedScrollOffset;
 
     auto scrollTypeScope = ScrollTypeScope(*this, options.type);
+    setCurrentScrollRelativity(scrollRelativityFor(options.snapPointSelectionMethod));
 
     if (options.animated == ScrollIsAnimated::Yes) {
         registerScrollableAreaForAnimatedScroll();

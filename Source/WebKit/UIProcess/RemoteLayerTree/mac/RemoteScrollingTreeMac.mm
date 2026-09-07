@@ -230,6 +230,7 @@ void RemoteScrollingTreeMac::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNo
             .updateType = ScrollUpdateType::PositionUpdate,
             .updateLayerPositionAction = action,
             .layoutViewportOriginOrOverrideRect = layoutViewportOrigin,
+            .scrollRelativity = relativityForScrollUpdate(),
         }
     };
     addPendingScrollUpdate(WTF::move(scrollUpdate));

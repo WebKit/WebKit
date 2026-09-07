@@ -378,6 +378,27 @@ enum class ScrollSnapPointSelectionMethod : uint8_t {
     Paging,
 };
 
+// Delta scroll: moves by an amount from the current position.
+// Absolute scroll: goes to a position of its own.
+// https://drafts.csswg.org/css-scroll-snap-1/#relative-scroll
+enum class ScrollRelativity : uint8_t {
+    Delta,
+    Absolute,
+};
+
+// Snapping to the closest position means the scroll named where to go.
+inline ScrollRelativity scrollRelativityFor(ScrollSnapPointSelectionMethod method)
+{
+    return method == ScrollSnapPointSelectionMethod::Closest ? ScrollRelativity::Absolute : ScrollRelativity::Delta;
+}
+
+// Document granularity goes to the start or end of the document. The others step from the current
+// position.
+inline ScrollRelativity scrollRelativityFor(ScrollGranularity granularity)
+{
+    return granularity == ScrollGranularity::Document ? ScrollRelativity::Absolute : ScrollRelativity::Delta;
+}
+
 using ScrollbarControlState = unsigned;
 using ScrollbarControlPartMask = unsigned;
 

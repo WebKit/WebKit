@@ -262,6 +262,7 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
             .updateType = ScrollUpdateType::PositionUpdate,
             .updateLayerPositionAction = scrollingLayerPositionAction,
             .layoutViewportOriginOrOverrideRect = layoutViewportOrigin,
+            .scrollRelativity = relativityForScrollUpdate(),
         },
     };
 
