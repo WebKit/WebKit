@@ -269,8 +269,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
         return false;
 
     scratchBuffer->applyGain(m_volume);
-    scratchBuffer->mixFrom(buffer, sampleCount);
-    if (scratchBuffer->copyTo(buffer, sampleCount))
+    if (scratchBuffer->mixTo(buffer, sampleCount))
         return false;
 
     return true;
