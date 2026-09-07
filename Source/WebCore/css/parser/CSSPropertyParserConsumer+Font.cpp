@@ -30,8 +30,11 @@
 #include "CSSPropertyParserConsumer+Font.h"
 
 #include "CSSCalcSymbolTable.h"
+#include "CSSColorInterpolationMethod.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontPaletteMix.h"
+#include "CSSFontPaletteValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"
@@ -43,6 +46,7 @@
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+CSSPrimitiveValueResolver.h"
 #include "CSSPropertyParserConsumer+Color.h"
+#include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+IntegerDefinitions.h"
 #include "CSSPropertyParserConsumer+KeywordDefinitions.h"
@@ -483,6 +487,117 @@ RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange& range, CSS::Property
         return value;
 
     return CSSValuePair::create(metric.releaseNonNull(), value.releaseNonNull());
+}
+
+// MARK: 'font-palette'
+
+static std::optional<CSS::FontPaletteMixParameters::Component> consumeFontPaletteMixComponent(CSSParserTokenRange& args, CSS::PropertyParserState& state)
+{
+    // <font-palette-mix-component> = <'font-palette'> && <percentage [0,100]>?
+    // https://drafts.csswg.org/css-fonts-4/#funcdef-palette-mix (subset)
+
+    auto percentage = MetaConsumer<CSS::FontPaletteMixParameters::Component::Percentage>::consume(args, state);
+
+    auto palette = consumeFontPaletteUnresolved(args, state);
+    if (!palette)
+        return std::nullopt;
+
+    if (!percentage)
+        percentage = MetaConsumer<CSS::FontPaletteMixParameters::Component::Percentage>::consume(args, state);
+
+    return CSS::FontPaletteMixParameters::Component {
+        .palette = WTF::move(*palette),
+        .percentage = WTF::move(percentage)
+    };
+}
+
+static std::optional<CSS::FontPaletteMixFunction> consumeFontPaletteMixFunctionUnresolved(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <palette-mix()> = palette-mix( <color-interpolation-method>? , [ <'font-palette'> && <percentage [0,100]>? ]# )
+    // https://drafts.csswg.org/css-fonts-4/#funcdef-palette-mix
+    ASSERT(range.peek().functionId() == CSSValuePaletteMix);
+
+    if (!state.context.cssFontPaletteMixFunctionEnabled)
+        return std::nullopt;
+
+    auto args = consumeFunction(range);
+
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod = CSS::defaultInterpolationMethodForPaletteMix;
+    if (args.peek().id() == CSSValueIn) {
+        colorInterpolationMethod = consumeColorInterpolationMethod(args, state);
+        if (!colorInterpolationMethod)
+            return std::nullopt;
+
+        if (!consumeCommaIncludingWhitespace(args))
+            return std::nullopt;
+    }
+
+    CommaSeparatedVector<CSS::FontPaletteMixParameters::Component> components;
+    do {
+        auto component = consumeFontPaletteMixComponent(args, state);
+        if (!component)
+            return std::nullopt;
+        components.value.append(WTF::move(*component));
+    } while (consumeCommaIncludingWhitespace(args));
+
+    if (!args.atEnd())
+        return std::nullopt;
+
+    return CSS::FontPaletteMixFunction {
+        CSS::FontPaletteMixFunctionValue {
+            .parameters = CSS::FontPaletteMixParameters {
+                .colorInterpolationMethod = WTF::move(*colorInterpolationMethod),
+                .components = WTF::move(components),
+            }
+        }
+    };
+}
+
+std::optional<CSS::FontPalette> consumeFontPaletteUnresolved(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'font-palette'> = normal | light | dark | <palette-identifier> | <palette-mix()>
+    // https://drafts.csswg.org/css-fonts-4/#propdef-font-palette
+
+    switch (range.peek().id()) {
+    case CSSValueInvalid:
+        break;
+    case CSSValueNormal:
+        range.consumeIncludingWhitespace();
+        return CSS::FontPalette { CSS::Keyword::Normal { } };
+    case CSSValueLight:
+        range.consumeIncludingWhitespace();
+        return CSS::FontPalette { CSS::Keyword::Light { } };
+    case CSSValueDark:
+        range.consumeIncludingWhitespace();
+        return CSS::FontPalette { CSS::Keyword::Dark { } };
+    default:
+        return std::nullopt;
+    }
+
+    switch (range.peek().functionId()) {
+    case CSSValueInvalid:
+        break;
+    case CSSValuePaletteMix:
+        return consumeFontPaletteMixFunctionUnresolved(range, state);
+    default:
+        return std::nullopt;
+    }
+
+    auto paletteIdentifier = consumeUnresolvedDashedIdent(range, state);
+    if (!paletteIdentifier)
+        return std::nullopt;
+
+    return CSS::FontPalette { WTF::move(*paletteIdentifier) };
+}
+
+RefPtr<CSSValue> consumeFontPalette(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <'font-palette'> = normal | light | dark | <palette-identifier> | <palette-mix()>
+    // https://drafts.csswg.org/css-fonts-4/#propdef-font-palette
+
+    if (auto unresolved = consumeFontPaletteUnresolved(range, state))
+        return CSSFontPaletteValue::create(WTF::move(*unresolved));
+    return nullptr;
 }
 
 // MARK: - @-rule descriptor consumers:

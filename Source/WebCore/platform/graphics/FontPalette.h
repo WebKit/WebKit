@@ -25,54 +25,72 @@
 
 #pragma once
 
-#include <wtf/Hasher.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/Variant.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-struct FontPalette {
-    bool operator==(const FontPalette& other) const
-    {
-        if (type == Type::Custom)
-            return other.type == Type::Custom && identifier == other.identifier;
-        return type == other.type;
-    }
+struct FontPaletteMixFunction;
 
-    enum class Type : uint8_t {
+struct FontPalette {
+    enum class Keyword : uint8_t {
         Normal,
         Light,
         Dark,
-        Custom
-    } type;
+    };
 
-    AtomString identifier;
+    FontPalette(Keyword);
+    FontPalette(AtomString&&);
+    FontPalette(FontPaletteMixFunction&&);
+
+    FontPalette(FontPalette&&);
+    FontPalette& operator=(FontPalette&&);
+    WEBCORE_EXPORT FontPalette(const FontPalette&);
+    WEBCORE_EXPORT FontPalette& operator=(const FontPalette&);
+
+    WEBCORE_EXPORT ~FontPalette();
+
+    bool isNormal() const;
+    bool isLight() const;
+    bool isDark() const;
+    std::optional<AtomString> ident() const;
+
+    template<typename... F> decltype(auto) switchOn(F&&...) const;
+
+    bool operator==(const FontPalette&) const;
+
+private:
+    using Kind = Variant<
+        Keyword,
+        AtomString,
+        UniqueRef<FontPaletteMixFunction>
+    >;
+    Kind copy(const Kind&);
+
+    Kind m_value;
 };
 
-inline void add(Hasher& hasher, const FontPalette& request)
+template<typename... F> decltype(auto) FontPalette::switchOn(F&&... f) const
 {
-    add(hasher, request.type);
-    if (request.type == FontPalette::Type::Custom)
-        add(hasher, request.identifier);
+    auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+    using ResultType = decltype(visitor(std::declval<Keyword>()));
+
+    return WTF::switchOn(m_value,
+        [&](const Keyword& keyword) -> ResultType {
+            return visitor(keyword);
+        },
+        [&](const AtomString& ident) -> ResultType {
+            return visitor(ident);
+        },
+        [&](const UniqueRef<FontPaletteMixFunction>& mix) -> ResultType {
+            return visitor(mix.get());
+        }
+    );
 }
 
-inline TextStream& operator<<(TextStream& ts, const FontPalette& fontPalette)
-{
-    switch (fontPalette.type) {
-    case FontPalette::Type::Normal:
-        ts << "normal"_s;
-        break;
-    case FontPalette::Type::Light:
-        ts << "light"_s;
-        break;
-    case FontPalette::Type::Dark:
-        ts << "dark"_s;
-        break;
-    case FontPalette::Type::Custom:
-        ts << "custom: "_s << fontPalette.identifier;
-        break;
-    }
-    return ts;
-}
+void add(Hasher&, const FontPalette&);
 
-}
+TextStream& operator<<(TextStream&, const FontPalette&);
+
+} // namespace WebCore

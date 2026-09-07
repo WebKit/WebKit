@@ -1,0 +1,18 @@
+
+PASS e.style['font-palette'] = "palette-mix(in oklab,         dark -10%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab,         dark 150%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab          dark  60%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab,         dark  60%    light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(   oklab,         dark  60%    light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(                  dark  60%,   light 40%, in oklab)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklch hue,     dark  60%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklch shorter, dark  60%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklch foo,     dark  60%,   light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab,         dark  60%, , light 40%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab,         dark  60%, , light 40% foo)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab, dark -10%)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab, dark -10%, light 50%, --for)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab, dark -10%, light,     --foo)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab, dark 150%, light 50%, --foo)" should not set the property value
+PASS e.style['font-palette'] = "palette-mix(in oklab, dark 150%, light,     --foo)" should not set the property value
+

@@ -2006,3 +2006,6 @@ param
 
 // continue
 -webkit-legacy
+
+// palette-mix()
+palette-mix

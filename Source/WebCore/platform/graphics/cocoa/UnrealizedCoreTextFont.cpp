@@ -154,21 +154,27 @@ static void addAttributesForCustomFontPalettes(CFMutableDictionaryRef attributes
 
 static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, const FontPalette& fontPalette, const FontPaletteValues* fontPaletteValues)
 {
-    switch (fontPalette.type) {
-    case FontPalette::Type::Normal:
-        break;
-    case FontPalette::Type::Light:
-        addLightPalette(attributes);
-        break;
-    case FontPalette::Type::Dark:
-        addDarkPalette(attributes);
-        break;
-    case FontPalette::Type::Custom: {
-        if (fontPaletteValues)
-            addAttributesForCustomFontPalettes(attributes, fontPaletteValues->basePalette(), fontPaletteValues->overrideColors());
-        break;
-    }
-    }
+    WTF::switchOn(fontPalette,
+        [&](const FontPalette::Keyword& keyword) {
+            switch (keyword) {
+            case FontPalette::Keyword::Normal:
+                break;
+            case FontPalette::Keyword::Light:
+                addLightPalette(attributes);
+                break;
+            case FontPalette::Keyword::Dark:
+                addDarkPalette(attributes);
+                break;
+            }
+        },
+        [&](const AtomString&) {
+            if (fontPaletteValues)
+                addAttributesForCustomFontPalettes(attributes, fontPaletteValues->basePalette(), fontPaletteValues->overrideColors());
+        },
+        [&](const FontPaletteMixFunction&) {
+            // FIXME: Add support for palette-mix() in CoreText backend.
+        }
+    );
 }
 
 static void applyFeatures(CFMutableDictionaryRef attributes, const FeaturesMap& featuresToBeApplied)

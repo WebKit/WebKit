@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,29 +30,33 @@
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
+
+namespace CSS {
+struct FontPalette;
+}
+
 namespace Style {
 
 // <'font-palette'> = normal | light | dark | <palette-identifier> | <palette-mix()>
-// FIXME: <palette-mix()> is not yet supported.
 // https://drafts.csswg.org/css-fonts/#propdef-font-palette
 struct FontPalette {
     FontPalette(CSS::Keyword::Normal)
-        : m_platform { .type = WebCore::FontPalette::Type::Normal, .identifier = nullAtom() }
+        : m_platform { WebCore::FontPalette::Keyword::Normal }
     {
     }
 
     FontPalette(CSS::Keyword::Light)
-        : m_platform { .type = WebCore::FontPalette::Type::Light, .identifier = nullAtom() }
+        : m_platform { WebCore::FontPalette::Keyword::Light }
     {
     }
 
     FontPalette(CSS::Keyword::Dark)
-        : m_platform { .type = WebCore::FontPalette::Type::Dark, .identifier = nullAtom() }
+        : m_platform { WebCore::FontPalette::Keyword::Dark }
     {
     }
 
     FontPalette(CustomIdent&& identifier)
-        : m_platform { .type = WebCore::FontPalette::Type::Custom, .identifier = WTF::move(identifier.value) }
+        : m_platform { WTF::move(identifier.value) }
     {
     }
 
@@ -66,24 +70,10 @@ struct FontPalette {
     {
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
-    {
-        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
-
-        switch (m_platform.type) {
-        case WebCore::FontPalette::Type::Normal:
-            return visitor(CSS::Keyword::Normal { });
-        case WebCore::FontPalette::Type::Light:
-            return visitor(CSS::Keyword::Light { });
-        case WebCore::FontPalette::Type::Dark:
-            return visitor(CSS::Keyword::Dark { });
-        case WebCore::FontPalette::Type::Custom:
-            return visitor(CustomIdent { m_platform.identifier });
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    template<typename... F> decltype(auto) switchOn(F&&...) const;
 
     const WebCore::FontPalette& platform() const LIFETIME_BOUND { return m_platform; }
+    WebCore::FontPalette takePlatform() { return WTF::move(m_platform); }
 
     bool operator==(const FontPalette&) const = default;
 
@@ -93,7 +83,18 @@ private:
 
 // MARK: - Conversion
 
+template<> struct ToCSS<FontPalette> { auto operator()(const FontPalette&, const ComputedStyle&) -> CSS::FontPalette; };
+template<> struct ToStyle<CSS::FontPalette> { auto operator()(const CSS::FontPalette&, const BuilderState&) -> FontPalette; };
+
 template<> struct CSSValueConversion<FontPalette> { auto operator()(BuilderState&, const CSSValue&) -> FontPalette; };
+template<> struct CSSValueCreation<FontPalette> { Ref<CSSValue> operator()(CSSValuePool&, const ComputedStyle&, const FontPalette&); };
+
+// MARK: - Blending
+
+template<> struct Blending<FontPalette> {
+    constexpr bool canBlend(const FontPalette&, const FontPalette&) { return true; }
+    auto blend(const FontPalette&, const FontPalette&, const BlendingContext&) -> FontPalette;
+};
 
 } // namespace Style
 } // namespace WebCore

@@ -39,7 +39,7 @@ namespace WebCore {
 
 FontDescription::FontDescription()
     : m_variantAlternates(FontVariantAlternates::Normal())
-    , m_fontPalette({ FontPalette::Type::Normal, nullAtom() })
+    , m_fontPalette(FontPalette::Keyword::Normal)
     , m_fontSelectionRequest { normalWeightValue(), normalWidthValue(), std::nullopt }
     , m_orientation(std::to_underlying(FontOrientation::Horizontal))
     , m_nonCJKGlyphOrientation(std::to_underlying(NonCJKGlyphOrientation::Mixed))

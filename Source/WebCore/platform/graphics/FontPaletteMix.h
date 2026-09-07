@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,55 +25,40 @@
 
 #pragma once
 
-#include "StyleColor.h"
-#include "StyleColorInterpolationMethod.h"
-#include "StylePrimitiveNumericTypes.h"
+#include "ColorInterpolationMethod.h"
+#include "FontPalette.h"
 #include <optional>
-#include <wtf/UniqueRef.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Color;
-
-namespace CSS {
-struct ColorMix;
-}
-
-namespace Style {
-
-struct ColorResolutionState;
-
-struct ColorMix {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorMix);
+struct FontPaletteMixFunction {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FontPaletteMixFunction);
 
     struct Component {
-        using Percentage = Style::Percentage<CSS::Range{0, 100}>;
-
-        Color color;
-        std::optional<Percentage> percentage;
+        FontPalette palette;
+        std::optional<double> percentage;
 
         bool operator==(const Component&) const = default;
     };
+    using Components = Vector<Component>;
 
     ColorInterpolationMethod colorInterpolationMethod;
-    CommaSeparatedVector<Component> components;
+    Components components;
 
-    bool operator==(const ColorMix&) const = default;
+    bool operator==(const FontPaletteMixFunction&) const = default;
 };
 
-inline bool operator==(const UniqueRef<ColorMix>& a, const UniqueRef<ColorMix>& b)
+// Overload of operator== for UniqueRef<FontPaletteFunction> to make FontPalette::Kind's operator== work.
+inline bool operator==(const UniqueRef<FontPaletteMixFunction>& a, const UniqueRef<FontPaletteMixFunction>& b)
 {
-    return a.get() == b.get();
+    return arePointingToEqualData(a, b);
 }
 
-Color toStyleColor(const CSS::ColorMix&, ColorResolutionState&);
-WebCore::Color resolveColor(const ColorMix&, const WebCore::Color& currentColor);
-bool containsCurrentColor(const ColorMix&);
+void add(Hasher&, const FontPaletteMixFunction::Component&);
+void add(Hasher&, const FontPaletteMixFunction&);
 
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorMix&);
+TextStream& operator<<(TextStream&, const FontPaletteMixFunction::Component&);
+TextStream& operator<<(TextStream&, const FontPaletteMixFunction&);
 
-WTF::TextStream& operator<<(WTF::TextStream&, const ColorMix&);
-
-} // namespace Style
 } // namespace WebCore

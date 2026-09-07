@@ -47,6 +47,7 @@
 #include "ScopedName.h"
 #include "Settings.h"
 #include "StyleComputedStyle+SettersInlines.h"
+#include "StyleFontPaletteInlines.h"
 #include "StyleDynamicRangeLimit.h"
 #include "StyleImageWrapper.h"
 #include "StyleInterpolationClient.h"

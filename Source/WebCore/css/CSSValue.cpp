@@ -58,6 +58,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFamilyNameValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontPaletteValue.h"
 #include "CSSFontStyleRangeValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontValue.h"
@@ -188,6 +189,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontFamilyNameValue>(*this));
     case FontFeature:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontFeatureValue>(*this));
+    case FontPalette:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontPaletteValue>(*this));
     case FontStyleWithAngle:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSFontStyleWithAngleValue>(*this));
     case FontStyleRange:

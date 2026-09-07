@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,29 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CSSFontPaletteValue.h"
 
-#include "CSSColorInterpolationMethod.h"
-#include "Color.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
+#include "CSSFontPaletteMix.h"
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
-namespace CSS {
 
-struct ColorMixResolver {
-    struct Component {
-        using Percentage = Style::Percentage<Range{0, 100}>;
+Ref<CSSFontPaletteValue> CSSFontPaletteValue::create(CSS::FontPalette&& fontPalette)
+{
+    return adoptRef(*new CSSFontPaletteValue(WTF::move(fontPalette)));
+}
 
-        WebCore::Color color;
-        std::optional<Percentage> percentage;
-    };
+CSSFontPaletteValue::CSSFontPaletteValue(CSS::FontPalette&& fontPalette)
+    : CSSValue(ClassType::FontPalette)
+    , m_fontPalette(WTF::move(fontPalette))
+{
+}
 
-    ColorInterpolationMethod colorInterpolationMethod;
-    Vector<Component> components;
-};
+String CSSFontPaletteValue::customCSSText(const CSS::SerializationContext& context) const
+{
+    return CSS::serializationForCSS(context, m_fontPalette);
+}
 
-WebCore::Color mix(const ColorMixResolver&);
+bool CSSFontPaletteValue::equals(const CSSFontPaletteValue& other) const
+{
+    return m_fontPalette == other.m_fontPalette;
+}
 
-} // namespace CSS
+IterationStatus CSSFontPaletteValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return CSS::visitCSSValueChildren(func, m_fontPalette);
+}
+
 } // namespace WebCore

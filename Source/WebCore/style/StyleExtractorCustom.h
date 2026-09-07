@@ -61,6 +61,7 @@
 #include "SVGLengthContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
+#include "StyleFontPaletteInlines.h"
 #include "StyleExtractorState.h"
 #include "StyleInterpolation.h"
 #include "StyleKeyword+CSSValueConversion.h"

@@ -51,6 +51,7 @@ enum class FontTechnology : uint8_t;
 struct CSSParserContext;
 
 namespace CSS {
+struct FontPalette;
 struct FontStyleRange;
 struct PropertyParserState;
 }
@@ -120,6 +121,11 @@ WebKitFontFamilyNames::FamilyNamesIndex NODELETE genericFontFamilyIndex(CSSValue
 // MARK: 'font-size-adjust'
 // https://drafts.csswg.org/css-fonts-4/#font-size-adjust-prop
 RefPtr<CSSValue> consumeFontSizeAdjust(CSSParserTokenRange&, CSS::PropertyParserState&);
+
+// MARK: 'font-palette'
+// https://drafts.csswg.org/css-fonts-4/#propdef-font-palette
+std::optional<CSS::FontPalette> consumeFontPaletteUnresolved(CSSParserTokenRange&, CSS::PropertyParserState&);
+RefPtr<CSSValue> consumeFontPalette(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 // MARK: - @font-face descriptor consumers
 

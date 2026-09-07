@@ -27,8 +27,8 @@
 #pragma once
 
 #include "CSSColor.h"
+#include "CSSColorInterpolationMethod.h"
 #include "CSSPrimitiveNumericTypes.h"
-#include "ColorInterpolationMethod.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -58,7 +58,12 @@ struct ColorMix {
     bool operator==(const ColorMix&) const = default;
 };
 
-static constexpr auto defaultInterpolationMethodForColorMix = ColorInterpolationMethod { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied };
+inline constexpr auto defaultInterpolationMethodForColorMix = ColorInterpolationMethod {
+    WebCore::ColorInterpolationMethod {
+        WebCore::ColorInterpolationMethod::OKLab { },
+        AlphaPremultiplication::Premultiplied
+    }
+};
 
 WebCore::Color createColor(const ColorMix&, PlatformColorResolutionState&);
 bool containsCurrentColor(const ColorMix&);

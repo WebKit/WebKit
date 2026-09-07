@@ -1273,6 +1273,20 @@ CSSFontFaceMetricOverrideDescriptorsEnabled:
     WebCore:
       default: true
 
+CSSFontPaletteMixFunctionEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS palette-mix() function"
+  humanReadableDescription: "Enable the CSS palette-mix() function"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSFontSynthesisStyleObliqueOnlyEnabled:
   type: bool
   status: preview

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +26,10 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
 
+#include "CSSColorInterpolationMethod.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSValueKeywords.h"
-#include "ColorInterpolationMethod.h"
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
@@ -48,17 +49,18 @@ static std::optional<HueInterpolationMethod> consumeHueInterpolationMethod(CSSPa
     return consumeIdentUsingMapping(range, hueInterpolationMethodMap);
 }
 
-std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args, CSS::PropertyParserState&)
+std::optional<CSS::ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange& args, CSS::PropertyParserState&)
 {
     // <rectangular-color-space> = srgb | srgb-linear | display-p3 | a98-rgb | prophoto-rgb | rec2020 | lab | oklab | xyz | xyz-d50 | xyz-d65
     // <polar-color-space> = hsl | hwb | lch | oklch
     // <hue-interpolation-method> = [ shorter | longer | increasing | decreasing ] hue
     // <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? ]
+    // https://drafts.csswg.org/css-color-5/#color-interpolation-method
 
     ASSERT(args.peek().id() == CSSValueIn);
     consumeIdentRaw(args);
 
-    auto consumePolarColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<ColorInterpolationMethod> {
+    auto consumePolarColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<CSS::ColorInterpolationMethod> {
         // Consume the color space identifier.
         args.consumeIncludingWhitespace();
 
@@ -66,7 +68,7 @@ std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParse
         // specified in the passed in 'colorInterpolationMethod' parameter.
         auto hueInterpolationMethod = consumeHueInterpolationMethod(args);
         if (!hueInterpolationMethod)
-            return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
+            return CSS::ColorInterpolationMethod { .value = { colorInterpolationMethod, AlphaPremultiplication::Premultiplied } };
 
         // If the hue-interpolation-method was provided it must be followed immediately by the 'hue' identifier.
         if (!consumeIdentRaw<CSSValueHue>(args))
@@ -74,14 +76,14 @@ std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParse
 
         colorInterpolationMethod.hueInterpolationMethod = *hueInterpolationMethod;
 
-        return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
+        return CSS::ColorInterpolationMethod { .value = { colorInterpolationMethod, AlphaPremultiplication::Premultiplied } };
     };
 
-    auto consumeRectangularColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<ColorInterpolationMethod> {
+    auto consumeRectangularColorSpace = [](CSSParserTokenRange& args, auto colorInterpolationMethod) -> std::optional<CSS::ColorInterpolationMethod> {
         // Consume the color space identifier.
         args.consumeIncludingWhitespace();
 
-        return {{ colorInterpolationMethod, AlphaPremultiplication::Premultiplied }};
+        return CSS::ColorInterpolationMethod { .value = { colorInterpolationMethod, AlphaPremultiplication::Premultiplied } };
     };
 
     switch (args.peek().id()) {
