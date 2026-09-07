@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>SVG dominant-baseline and alignment-baseline support the SVG 1.1 edge baselines as legacy aliases</title>
+<link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#AlignmentBaselineProperty">
+<link rel="help" href="https://drafts.csswg.org/css-inline-3/#alignment-baseline-svg-legacy">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<svg id="svg">
+  <text id="text">text</text>
+</svg>
+<script>
+// css-inline-3 renamed the SVG 1.1 edge baselines text-before-edge and text-after-edge to
+// text-top and text-bottom, keeping the SVG spellings only as aliases so that legacy content
+// keeps working. An alias computes to the value it aliases.
+const aliases = [["text-before-edge", "text-top"], ["text-after-edge", "text-bottom"]];
+
+// before-edge and after-edge were removed by SVG 2 without a modern equivalent, so they are not
+// aliases of anything.
+const removedValues = ["before-edge", "after-edge"];
+
+function computedValueFor(property, value) {
+  const text = document.getElementById("text");
+  text.style.cssText = "";
+  text.style.setProperty(property, value);
+  return getComputedStyle(text).getPropertyValue(property);
+}
+
+for (const property of ["dominant-baseline", "alignment-baseline"]) {
+  test(() => {
+    for (const [legacy, modern] of aliases) {
+      assert_true(CSS.supports(property, legacy), legacy + " should be supported");
+      assert_equals(computedValueFor(property, legacy), modern,
+        legacy + " should compute to " + modern);
+    }
+  }, property + " supports the SVG 1.1 edge baselines as aliases of the css-inline-3 names");
+
+  test(() => {
+    for (const [, modern] of aliases) {
+      assert_true(CSS.supports(property, modern), modern + " should be supported");
+      assert_equals(computedValueFor(property, modern), modern,
+        modern + " should compute to itself");
+    }
+  }, property + " supports the css-inline-3 edge baseline names");
+}
+
+test(() => {
+  for (const value of removedValues)
+    assert_equals(computedValueFor("alignment-baseline", value), value,
+      value + " should compute to itself");
+}, "alignment-baseline keeps before-edge and after-edge as distinct values");
+
+test(() => {
+  for (const value of removedValues) {
+    assert_false(CSS.supports("dominant-baseline", value), value + " should not be supported");
+    assert_equals(computedValueFor("dominant-baseline", value), "auto",
+      value + " should not apply");
+  }
+}, "dominant-baseline does not support before-edge or after-edge");
+</script>

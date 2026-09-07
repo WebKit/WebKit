@@ -1769,40 +1769,33 @@
             "initial": "baseline",
             "values": [
                 "baseline",
-                {
-                    "value": "text-bottom",
-                    "status": "unimplemented"
-                },
+                "text-bottom",
                 "alphabetic",
                 "ideographic",
                 "middle",
                 "central",
                 "mathematical",
+                "hanging",
+                "text-top",
                 {
-                    "value": "text-top",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "after-edge",
-                    "status": "deprecated"
+                    "value": "text-before-edge",
+                    "status": "deprecated",
+                    "comment": "Legacy SVG 1.1 alias for 'text-top'."
                 },
                 {
                     "value": "text-after-edge",
                     "status": "deprecated",
-                    "comment": "Should alias to 'text-bottom' once it is implemented."
-                },
-                {
-                    "value": "hanging",
-                    "status": "deprecated"
+                    "comment": "Legacy SVG 1.1 alias for 'text-bottom'."
                 },
                 {
                     "value": "before-edge",
-                    "status": "deprecated"
+                    "status": "deprecated",
+                    "comment": "Removed in SVG 2 with no modern equivalent; kept for legacy content."
                 },
                 {
-                    "value": "text-before-edge",
+                    "value": "after-edge",
                     "status": "deprecated",
-                    "comment": "Should alias to 'text-top' once it is implemented."
+                    "comment": "Removed in SVG 2 with no modern equivalent; kept for legacy content."
                 }
             ],
             "codegen-properties": {
@@ -4839,14 +4832,24 @@
             "initial": "auto",
             "values": [
                 "auto",
-                "ideographic",
+                "text-bottom",
                 "alphabetic",
-                "hanging",
-                "mathematical",
-                "central",
+                "ideographic",
                 "middle",
-                "text-before-edge",
-                "text-after-edge"
+                "central",
+                "mathematical",
+                "hanging",
+                "text-top",
+                {
+                    "value": "text-before-edge",
+                    "status": "deprecated",
+                    "comment": "Legacy SVG 1.1 alias for 'text-top'."
+                },
+                {
+                    "value": "text-after-edge",
+                    "status": "deprecated",
+                    "comment": "Legacy SVG 1.1 alias for 'text-bottom'."
+                }
             ],
             "codegen-properties": {
                 "computed-style-storage-path": ["m_svgData", "nonInheritedFlags"],

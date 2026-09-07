@@ -85,10 +85,10 @@ AlignmentBaseline SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseli
         return AlignmentBaseline::Central;
     case DominantBaseline::Middle:
         return AlignmentBaseline::Middle;
-    case DominantBaseline::TextAfterEdge:
-        return AlignmentBaseline::TextAfterEdge;
-    case DominantBaseline::TextBeforeEdge:
-        return AlignmentBaseline::TextBeforeEdge;
+    case DominantBaseline::TextBottom:
+        return AlignmentBaseline::TextBottom;
+    case DominantBaseline::TextTop:
+        return AlignmentBaseline::TextTop;
     default:
         ASSERT_NOT_REACHED();
         return AlignmentBaseline::Baseline;
@@ -113,14 +113,14 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
     // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
     switch (baseline) {
     case AlignmentBaseline::BeforeEdge:
-    case AlignmentBaseline::TextBeforeEdge:
+    case AlignmentBaseline::TextTop:
         return ascent;
     case AlignmentBaseline::Middle:
         return fontMetrics.xHeight().value_or(0.f) / 2;
     case AlignmentBaseline::Central:
         return (ascent - descent) / 2;
     case AlignmentBaseline::AfterEdge:
-    case AlignmentBaseline::TextAfterEdge:
+    case AlignmentBaseline::TextBottom:
     case AlignmentBaseline::Ideographic:
         return -descent;
     case AlignmentBaseline::Alphabetic:

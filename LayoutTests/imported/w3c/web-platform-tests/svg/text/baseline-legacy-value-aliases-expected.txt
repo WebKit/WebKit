@@ -1,0 +1,9 @@
+text
+
+PASS dominant-baseline supports the SVG 1.1 edge baselines as aliases of the css-inline-3 names
+PASS dominant-baseline supports the css-inline-3 edge baseline names
+PASS alignment-baseline supports the SVG 1.1 edge baselines as aliases of the css-inline-3 names
+PASS alignment-baseline supports the css-inline-3 edge baseline names
+PASS alignment-baseline keeps before-edge and after-edge as distinct values
+PASS dominant-baseline does not support before-edge or after-edge
+
