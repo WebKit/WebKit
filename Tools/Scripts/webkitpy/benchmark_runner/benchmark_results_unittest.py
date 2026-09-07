@@ -35,12 +35,12 @@ class BenchmarkResultsTest(unittest.TestCase):
 
     def test_format(self):
         result = BenchmarkResults({'SomeTest': {'metrics': {'Time': {'current': [1, 2, 3]}}}})
-        self.assertEqual(result.format(), 'SomeTest:Time: 2.0ms stdev=50.0%\n')
+        self.assertEqual(result.format(), 'SomeTest:Time: 2.0ms stdev=50.0% per-iteration=[1.0, 2.0, 3.0]\n')
 
         result = BenchmarkResults({'SomeTest': {'metrics': {'Time': {'current': [1, 2, 3]}, 'Score': {'current': [2, 3, 4]}}}})
         self.assertEqual(result.format(), '''
-SomeTest:Score: 3.0pt stdev=33.3%
-        :Time: 2.0ms stdev=50.0%
+SomeTest:Score: 3.0pt stdev=33.3% per-iteration=[2.0, 3.0, 4.0]
+        :Time: 2.0ms stdev=50.0% per-iteration=[1.0, 2.0, 3.0]
 '''[1:])
 
         result = BenchmarkResults({'SomeTest': {
@@ -49,10 +49,17 @@ SomeTest:Score: 3.0pt stdev=33.3%
                 'SubTest1': {'metrics': {'Time': {'current': [1, 2, 3]}}},
                 'SubTest2': {'metrics': {'Time': {'current': [4, 5, 6]}}}}}})
         self.assertEqual(result.format(), '''
-SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
-        :Time:Total: 7.0ms stdev=28.6%
-        SubTest1:Time: 2.0ms stdev=50.0%
-        SubTest2:Time: 5.0ms stdev=20.0%
+SomeTest:Time:Arithmetic: 3.0ms stdev=33.3% per-iteration=[2.0, 3.0, 4.0]
+        :Time:Total: 7.0ms stdev=28.6% per-iteration=[5.0, 7.0, 9.0]
+        SubTest1:Time: 2.0ms stdev=50.0% per-iteration=[1.0, 2.0, 3.0]
+        SubTest2:Time: 5.0ms stdev=20.0% per-iteration=[4.0, 5.0, 6.0]
+'''[1:])
+
+        self.assertEqual(result.format(show_iteration_raw_values=True), '''
+SomeTest:Time:Arithmetic: 3.0ms stdev=33.3% raw=[2.0, 3.0, 4.0]
+        :Time:Total: 7.0ms stdev=28.6% raw=[5.0, 7.0, 9.0]
+        SubTest1:Time: 2.0ms stdev=50.0% raw=[1.0, 2.0, 3.0]
+        SubTest2:Time: 5.0ms stdev=20.0% raw=[4.0, 5.0, 6.0]
 '''[1:])
 
     def test_format_with_depth_limit(self):
@@ -62,8 +69,28 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
                 'SubTest1': {'metrics': {'Time': {'current': [1, 2, 3]}}},
                 'SubTest2': {'metrics': {'Time': {'current': [4, 5, 6]}}}}}})
         self.assertEqual(result.format(max_depth=1), '''
-SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
-        :Time:Total: 7.0ms stdev=28.6%
+SomeTest:Time:Arithmetic: 3.0ms stdev=33.3% per-iteration=[2.0, 3.0, 4.0]
+        :Time:Total: 7.0ms stdev=28.6% per-iteration=[5.0, 7.0, 9.0]
+'''[1:])
+
+    def test_format_without_iteration_aggregates(self):
+        result = BenchmarkResults({'SomeTest': {
+            'metrics': {'Time': ['Total']},
+            'tests': {
+                'SubTest1': {'metrics': {'Time': {'current': [1, 2, 3]}}},
+                'SubTest2': {'metrics': {'Time': {'current': [4, 5, 6]}}}}}})
+        self.assertEqual(result.format(show_iteration_aggregates=False), '''
+SomeTest:Time:Total: 7.0ms stdev=28.6%
+        SubTest1:Time: 2.0ms stdev=50.0%
+        SubTest2:Time: 5.0ms stdev=20.0%
+'''[1:])
+        self.assertEqual(result.format(max_depth=1, show_iteration_aggregates=False), '''
+SomeTest:Time:Total: 7.0ms stdev=28.6%
+'''[1:])
+        self.assertEqual(result.format(), '''
+SomeTest:Time:Total: 7.0ms stdev=28.6% per-iteration=[5.0, 7.0, 9.0]
+        SubTest1:Time: 2.0ms stdev=50.0% per-iteration=[1.0, 2.0, 3.0]
+        SubTest2:Time: 5.0ms stdev=20.0% per-iteration=[4.0, 5.0, 6.0]
 '''[1:])
 
     def test_format_values_with_large_error(self):
@@ -123,31 +150,56 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
         self.assertEqual(BenchmarkResults._format_values('Runs', [0.00001, 0.00002, 0.00003], scale_unit=False), '0.000/s stdev=50.0%')
         self.assertEqual(BenchmarkResults._format_values('Runs', [0.000001, 0.000002, 0.000003], scale_unit=False), '0.000/s stdev=50.0%')
 
-    def test_format_values_with_iteration_values(self):
-        self.assertEqual(BenchmarkResults._format_values('Time', [1, 2, 3], show_iteration_values=True), '2.0ms stdev=50.0% [1.0, 2.0, 3.0]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [10, 20, 30], show_iteration_values=True), '20ms stdev=50.0% [10, 20, 30]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [100, 200, 300], show_iteration_values=True), '200ms stdev=50.0% [100, 200, 300]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [1000, 2000, 3000], show_iteration_values=True), '2.0s stdev=50.0% [1.0, 2.0, 3.0]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [10000, 20000, 30000], show_iteration_values=True), '20s stdev=50.0% [10, 20, 30]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [100000, 200000, 300000], show_iteration_values=True), '200s stdev=50.0% [100, 200, 300]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [0.11, 0.12, 0.13], show_iteration_values=True), '120us stdev=8.3% [110, 120, 130]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [0.011, 0.012, 0.013], show_iteration_values=True), '12.0us stdev=8.3% [11.0, 12.0, 13.0]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [0.0011, 0.0012, 0.0013], show_iteration_values=True), '1.20us stdev=8.3% [1.10, 1.20, 1.30]')
-        self.assertEqual(BenchmarkResults._format_values('Time', [0.00011, 0.00012, 0.00013], show_iteration_values=True), '120ns stdev=8.3% [110, 120, 130]')
+    def test_format_values_with_iteration_raw_values(self):
+        self.assertEqual(BenchmarkResults._format_values('Time', [1, 2, 3], show_iteration_raw_values=True), '2.0ms stdev=50.0% raw=[1.0, 2.0, 3.0]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [10, 20, 30], show_iteration_raw_values=True), '20ms stdev=50.0% raw=[10, 20, 30]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [100, 200, 300], show_iteration_raw_values=True), '200ms stdev=50.0% raw=[100, 200, 300]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [1000, 2000, 3000], show_iteration_raw_values=True), '2.0s stdev=50.0% raw=[1.0, 2.0, 3.0]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [10000, 20000, 30000], show_iteration_raw_values=True), '20s stdev=50.0% raw=[10, 20, 30]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [100000, 200000, 300000], show_iteration_raw_values=True), '200s stdev=50.0% raw=[100, 200, 300]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [0.11, 0.12, 0.13], show_iteration_raw_values=True), '120us stdev=8.3% raw=[110, 120, 130]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [0.011, 0.012, 0.013], show_iteration_raw_values=True), '12.0us stdev=8.3% raw=[11.0, 12.0, 13.0]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [0.0011, 0.0012, 0.0013], show_iteration_raw_values=True), '1.20us stdev=8.3% raw=[1.10, 1.20, 1.30]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [0.00011, 0.00012, 0.00013], show_iteration_raw_values=True), '120ns stdev=8.3% raw=[110, 120, 130]')
 
-    def test_format_values_with_no_unit_scaling_and_iteration_values(self):
-        self.assertEqual(BenchmarkResults._format_values('Runs', [1, 2, 3], scale_unit=False, show_iteration_values=True),
-            '2.000/s stdev=50.0% [1.000, 2.000, 3.000]')
-        self.assertEqual(BenchmarkResults._format_values('Runs', [100, 200, 300], scale_unit=False, show_iteration_values=True),
-            '200.000/s stdev=50.0% [100.000, 200.000, 300.000]')
-        self.assertEqual(BenchmarkResults._format_values('Runs', [1000, 2000, 3000], scale_unit=False, show_iteration_values=True),
-            '2000.000/s stdev=50.0% [1000.000, 2000.000, 3000.000]')
-        self.assertEqual(BenchmarkResults._format_values('Runs', [1000000, 2000000, 3000000], scale_unit=False, show_iteration_values=True),
-            '2000000.000/s stdev=50.0% [1000000.000, 2000000.000, 3000000.000]')
-        self.assertEqual(BenchmarkResults._format_values('Runs', [0.1, 0.2, 0.3], scale_unit=False, show_iteration_values=True),
-            '0.200/s stdev=50.0% [0.100, 0.200, 0.300]')
-        self.assertEqual(BenchmarkResults._format_values('Runs', [0.0001, 0.0002, 0.0003], scale_unit=False, show_iteration_values=True),
-            '0.000/s stdev=50.0% [0.000, 0.000, 0.000]')
+    def test_format_values_with_no_unit_scaling_and_iteration_raw_values(self):
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [1, 2, 3], scale_unit=False, show_iteration_raw_values=True),
+            '2.000/s stdev=50.0% raw=[1.000, 2.000, 3.000]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [100, 200, 300], scale_unit=False, show_iteration_raw_values=True),
+            '200.000/s stdev=50.0% raw=[100.000, 200.000, 300.000]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [1000, 2000, 3000], scale_unit=False, show_iteration_raw_values=True),
+            '2000.000/s stdev=50.0% raw=[1000.000, 2000.000, 3000.000]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [1000000, 2000000, 3000000], scale_unit=False, show_iteration_raw_values=True),
+            '2000000.000/s stdev=50.0% raw=[1000000.000, 2000000.000, 3000000.000]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [0.1, 0.2, 0.3], scale_unit=False, show_iteration_raw_values=True),
+            '0.200/s stdev=50.0% raw=[0.100, 0.200, 0.300]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [0.0001, 0.0002, 0.0003], scale_unit=False, show_iteration_raw_values=True),
+            '0.000/s stdev=50.0% raw=[0.000, 0.000, 0.000]')
+
+    def test_format_values_with_iteration_aggregates(self):
+        self.assertEqual(
+            BenchmarkResults._format_values('Time', [1, 2, 3], show_iteration_aggregates=True),
+            '2.0ms stdev=50.0% per-iteration=[1.0, 2.0, 3.0]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Time', [1000, 2000, 3000], show_iteration_aggregates=True),
+            '2.0s stdev=50.0% per-iteration=[1.0, 2.0, 3.0]')
+        self.assertEqual(BenchmarkResults._format_values('Time', [1, 2, 3]), '2.0ms stdev=50.0%')
+
+        self.assertEqual(
+            BenchmarkResults._format_values('Time', [[1000, 3000], [2000, 6000]], show_iteration_aggregates=True),
+            '3.0s stdev=72.0% per-iteration=[2.0, 4.0]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Runs', [[1, 3], [2, 6]], scale_unit=False, show_iteration_aggregates=True),
+            '3.000/s stdev=72.0% per-iteration=[2.000, 4.000]')
+        self.assertEqual(
+            BenchmarkResults._format_values('Time', [[1000, 3000], [2000, 6000]], show_iteration_raw_values=True),
+            '3.0s stdev=72.0% raw=[1.0, 3.0, 2.0, 6.0]')
 
     def test_format_values_with_no_error(self):
         self.assertEqual(BenchmarkResults._format_values('Time', [1, 1, 1]), '1.00ms stdev=0.0%')
@@ -199,10 +251,28 @@ SomeTest:Time:Arithmetic: 3.0ms stdev=33.3%
                     'SubTest1': {'metrics': {'Time': {'current': [[1, 2], [3, 4]]}}},
                     'SubTest2': {'metrics': {'Time': {'current': [[5, 6], [7, 8]]}}}}}}),
             {'SomeTest': {
-                'metrics': {'Time': {'Total': {'current': [6, 8, 10, 12]}}},
+                'metrics': {'Time': {'Total': {'current': [[6, 8], [10, 12]]}}},
                 'tests': {
-                    'SubTest1': {'metrics': {'Time': {None: {'current': [1, 2, 3, 4]}}}, 'tests': {}},
-                    'SubTest2': {'metrics': {'Time': {None: {'current': [5, 6, 7, 8]}}}, 'tests': {}}}}})
+                    'SubTest1': {'metrics': {'Time': {None: {'current': [[1, 2], [3, 4]]}}}, 'tests': {}},
+                    'SubTest2': {'metrics': {'Time': {None: {'current': [[5, 6], [7, 8]]}}}, 'tests': {}}}}})
+
+    def test_format_results_with_groups(self):
+        result = BenchmarkResults({'SomeTest': {
+            'metrics': {'Time': ['Total']},
+            'tests': {
+                'SubTest1': {'metrics': {'Time': {'current': [[1, 2], [3, 4]]}}},
+                'SubTest2': {'metrics': {'Time': {'current': [[5, 6], [7, 8]]}}}}}})
+        self.assertEqual(result.format(scale_unit=False), '''
+SomeTest:Time:Total: 9.000ms stdev=28.7% per-iteration=[7.000, 11.000]
+        SubTest1:Time: 2.500ms stdev=51.6% per-iteration=[1.500, 3.500]
+        SubTest2:Time: 6.500ms stdev=19.9% per-iteration=[5.500, 7.500]
+'''[1:])
+
+        self.assertEqual(result.format(scale_unit=False, show_iteration_raw_values=True), '''
+SomeTest:Time:Total: 9.000ms stdev=28.7% raw=[6.000, 8.000, 10.000, 12.000]
+        SubTest1:Time: 2.500ms stdev=51.6% raw=[1.000, 2.000, 3.000, 4.000]
+        SubTest2:Time: 6.500ms stdev=19.9% raw=[5.000, 6.000, 7.000, 8.000]
+'''[1:])
 
     def test_aggregate_nested_results(self):
         self.maxDiff = None

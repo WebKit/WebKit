@@ -21,7 +21,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import io
+import os
 import unittest
+from contextlib import redirect_stdout
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 
@@ -99,3 +102,129 @@ class ConstructSubtestURLTest(unittest.TestCase):
         self.assertEqual(
             self._construct(plan, subtests),
             '&test=HashSet-String&test=bomb-workers')
+
+
+def iteration_result_with_score(score):
+    return {'Speedometer': {
+        'metrics': {'Score': ['Geometric']},
+        'tests': {
+            'SubTest1': {'metrics': {'Score': {'current': [score]}}},
+            'SubTest2': {'metrics': {'Score': {'current': [score * 4]}}}}}}
+
+
+class FormatIterationResultsTest(unittest.TestCase):
+
+    def test_only_top_level_metrics_are_formatted(self):
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_results(iteration_result_with_score(10)),
+            'Speedometer:Score:Geometric: 20.0pt stdev=0.0%\n')
+
+    def test_scale_unit_is_honored(self):
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_results(iteration_result_with_score(10), scale_unit=False),
+            'Speedometer:Score:Geometric: 20.000pt stdev=0.0%\n')
+
+    def test_debug_output_is_ignored(self):
+        result = iteration_result_with_score(10)
+        result['debugOutput'] = ['some debug output']
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_results(result),
+            'Speedometer:Score:Geometric: 20.0pt stdev=0.0%\n')
+
+    def test_grouped_values_within_one_iteration(self):
+        result = {'Speedometer': {
+            'metrics': {'Time': ['Total']},
+            'tests': {
+                'SubTest1': {'metrics': {'Time': {'current': [[1, 2]]}}},
+                'SubTest2': {'metrics': {'Time': {'current': [[5, 6]]}}}}}}
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_results(result, scale_unit=False),
+            'Speedometer:Time:Total: 7.000ms stdev=20.2%\n')
+        self.assertEqual(
+            BenchmarkRunner._format_iteration_results(result, scale_unit=False, show_iteration_raw_values=True),
+            'Speedometer:Time:Total: 7.000ms stdev=20.2% raw=[6.000, 8.000]\n')
+
+
+class MockBrowserDriver:
+
+    def prepare_initial_env(self, config):
+        pass
+
+    def prepare_env(self, config):
+        pass
+
+    def restore_env(self):
+        pass
+
+    def restore_env_after_all_testing(self):
+        pass
+
+
+class FakeBenchmarkRunner(BenchmarkRunner):
+    def __init__(self, iteration_results, scale_unit=True, show_iteration_raw_values=False):
+        self._iteration_results = iteration_results
+        self._plan = {'entry_point': 'index.html', 'options': {}}
+        self._plan_name = 'fake'
+        self._subtests = None
+        self._browser_driver = MockBrowserDriver()
+        self._config = {}
+        self._generate_pgo_profiles = False
+        self._diagnose_dir = None
+        self._output_file = os.devnull
+        self._scale_unit = scale_unit
+        self._show_iteration_raw_values = show_iteration_raw_values
+
+    def _run_one_test(self, web_root, test_file, iteration):
+        return self._iteration_results[iteration - 1]
+
+
+class ShowIterationResultsTest(unittest.TestCase):
+
+    def test_logs_top_level_metrics(self):
+        runner = FakeBenchmarkRunner([])
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            runner._show_iteration_results(2, iteration_result_with_score(10))
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Top level results of the iteration 2:\nSpeedometer:Score:Geometric: 20.0pt stdev=0.0%\n'])
+
+    def test_honors_runner_formatting_options(self):
+        runner = FakeBenchmarkRunner([], scale_unit=False)
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            runner._show_iteration_results(1, iteration_result_with_score(10))
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Top level results of the iteration 1:\nSpeedometer:Score:Geometric: 20.000pt stdev=0.0%\n'])
+
+    def test_honors_show_iteration_raw_values(self):
+        runner = FakeBenchmarkRunner([], show_iteration_raw_values=True)
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            runner._show_iteration_results(1, iteration_result_with_score(10))
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Top level results of the iteration 1:\nSpeedometer:Score:Geometric: 20.0pt stdev=0.0% raw=[20.0]\n'])
+
+    def test_malformed_results_are_reported_but_not_raised(self):
+        runner = FakeBenchmarkRunner([])
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='WARNING') as logs:
+            runner._show_iteration_results(3, {'Speedometer': {}})
+        self.assertEqual(
+            [record.getMessage() for record in logs.records],
+            ['Cannot format the results of the iteration 3: "Speedometer" does not contain metrics or tests'])
+
+
+class RunBenchmarkIterationLoggingTest(unittest.TestCase):
+
+    def test_top_level_metrics_are_logged_after_each_iteration(self):
+        runner = FakeBenchmarkRunner([iteration_result_with_score(10), iteration_result_with_score(20)])
+        with self.assertLogs('webkitpy.benchmark_runner.benchmark_runner', level='INFO') as logs:
+            with redirect_stdout(io.StringIO()):
+                runner._run_benchmark(2, '/fake/web/root')
+        self.assertEqual([record.getMessage() for record in logs.records], [
+            'Start the iteration 1 of 2 for current benchmark',
+            'End the iteration 1 of 2 for current benchmark',
+            'Top level results of the iteration 1:\nSpeedometer:Score:Geometric: 20.0pt stdev=0.0%\n',
+            'Start the iteration 2 of 2 for current benchmark',
+            'End the iteration 2 of 2 for current benchmark',
+            'Top level results of the iteration 2:\nSpeedometer:Score:Geometric: 40.0pt stdev=0.0%\n',
+            'Dumping the results to file {}'.format(os.devnull)])

@@ -53,11 +53,13 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self, scale_unit=True, show_iteration_values=False, max_depth=sys.maxsize):
-        return self._format_tests(self._results, scale_unit, show_iteration_values, max_depth)
+    def format(self, scale_unit=True, show_iteration_raw_values=False, max_depth=sys.maxsize, show_iteration_aggregates=None):
+        if show_iteration_aggregates is None:
+            show_iteration_aggregates = not show_iteration_raw_values
+        return self._format_tests(self._results, scale_unit, show_iteration_raw_values, max_depth, show_iteration_aggregates)
 
     @classmethod
-    def _format_tests(cls, tests, scale_unit, show_iteration_values, max_depth, indent=''):
+    def _format_tests(cls, tests, scale_unit, show_iteration_raw_values, max_depth, show_iteration_aggregates=False, indent=''):
         output = ''
         config_name = 'current'
         for test_name in sorted(tests.keys()):
@@ -76,14 +78,24 @@ class BenchmarkResults(object):
                     output += ':' + metric_name + ':'
                     if aggregator_name:
                         output += aggregator_name + ':'
-                    output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit, show_iteration_values) + '\n'
+                    output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit, show_iteration_raw_values, show_iteration_aggregates) + '\n'
             if 'tests' in test and max_depth > 1:
-                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, max_depth - 1, indent=(indent + ' ' * len(test_name)))
+                output += cls._format_tests(test['tests'], scale_unit, show_iteration_raw_values, max_depth - 1, show_iteration_aggregates, indent=(indent + ' ' * len(test_name)))
         return output
 
     @classmethod
-    def _format_values(cls, metric_name, values, scale_unit=True, show_iteration_values=False):
+    def _format_values(cls, metric_name, values, scale_unit=True, show_iteration_raw_values=False, show_iteration_aggregates=False):
+        if values and isinstance(values[0], list):
+            iteration_values = [cls._mean(cls._flatten_list(group)) for group in values]
+            values = cls._flatten_list(values)
+        else:
+            iteration_values = list(values)
+        if not show_iteration_aggregates:
+            iteration_values = None
+
         values = list(map(float, values))
+        if iteration_values is not None:
+            iteration_values = list(map(float, iteration_values))
         total = sum(values)
         mean = total / len(values)
         square_sum = sum([x * x for x in values])
@@ -104,14 +116,18 @@ class BenchmarkResults(object):
             if mean:
                 delta = sample_stdev / mean
             formatted_value = '{mean:.3f}{unit} stdev={delta:.1%}'.format(mean=mean, delta=delta, unit=unit)
-            if show_iteration_values:
-                formatted_value += ' [' + ', '.join(['{value:.3f}'.format(value=value) for value in values]) + ']'
+            if show_iteration_raw_values:
+                formatted_value += ' raw=[' + ', '.join(['{value:.3f}'.format(value=value) for value in values]) + ']'
+            if iteration_values is not None:
+                formatted_value += ' per-iteration=[' + ', '.join(['{value:.3f}'.format(value=value) for value in iteration_values]) + ']'
             return formatted_value
 
         if unit == 'ms':
             unit = 's'
             mean = float(mean) / 1000
             values = list([float(value) / 1000 for value in values])
+            if iteration_values is not None:
+                iteration_values = list([value / 1000 for value in iteration_values])
             sample_stdev /= 1000
 
         base = 1024 if unit == 'B' else 1000
@@ -138,9 +154,15 @@ class BenchmarkResults(object):
         if mean:
             delta = sample_stdev / mean
         formatted_value = '{mean}{prefix}{unit} stdev={delta:.1%}'.format(mean=format_scaled(scaled_mean), delta=delta, prefix=SI_prefix, unit=unit)
-        if show_iteration_values:
-            formatted_value += ' [' + ', '.join([format_scaled(value * scaling_factor) for value in values]) + ']'
+        if show_iteration_raw_values:
+            formatted_value += ' raw=[' + ', '.join([format_scaled(value * scaling_factor) for value in values]) + ']'
+        if iteration_values is not None:
+            formatted_value += ' per-iteration=[' + ', '.join([format_scaled(value * scaling_factor) for value in iteration_values]) + ']'
         return formatted_value
+
+    @classmethod
+    def _mean(cls, values):
+        return sum(values) / len(values)
 
     @classmethod
     def _unit_from_metric(cls, metric_name):
@@ -163,7 +185,7 @@ class BenchmarkResults(object):
             if not isinstance(metric, list):
                 results[metric_name] = {None: {}}
                 for config_name, values in iteritems(metric):
-                    results[metric_name][None][config_name] = cls._flatten_list(values)
+                    results[metric_name][None][config_name] = values
                 continue
 
             # Filter duplicate aggregators that could have arisen from merging JSONs.
@@ -173,9 +195,15 @@ class BenchmarkResults(object):
                 values_by_config_iteration = cls._subtest_values_by_config_iteration(subtest_results, metric_name, aggregator)
                 for config_name, values_by_iteration in iteritems(values_by_config_iteration):
                     results[metric_name].setdefault(aggregator, {})
-                    results[metric_name][aggregator][config_name] = [cls._aggregate_values(aggregator, values) for values in values_by_iteration]
+                    results[metric_name][aggregator][config_name] = cls._aggregate_values_by_iteration(aggregator, values_by_iteration)
 
         return {'metrics': results, 'tests': subtest_results}
+
+    @classmethod
+    def _aggregate_values_by_iteration(cls, aggregator, values_by_iteration):
+        if values_by_iteration and values_by_iteration[0] and isinstance(values_by_iteration[0][0], list):
+            return [cls._aggregate_values_by_iteration(aggregator, group) for group in values_by_iteration]
+        return [cls._aggregate_values(aggregator, values) for values in values_by_iteration]
 
     @classmethod
     def _flatten_list(cls, nested_list):
@@ -201,10 +229,24 @@ class BenchmarkResults(object):
             else:
                 results_for_aggregator = {}
             for config_name, values in iteritems(results_for_aggregator):
-                values_by_config_iteration.setdefault(config_name, [[] for _ in values])
-                for iteration, value in enumerate(values):
-                    values_by_config_iteration[config_name][iteration].append(value)
+                if config_name not in values_by_config_iteration:
+                    values_by_config_iteration[config_name] = cls._value_buckets_like(values)
+                cls._collect_values(values_by_config_iteration[config_name], values)
         return values_by_config_iteration
+
+    @classmethod
+    def _value_buckets_like(cls, values):
+        return [cls._value_buckets_like(value) if isinstance(value, list) else [] for value in values]
+
+    @classmethod
+    def _collect_values(cls, buckets, values):
+        if len(buckets) != len(values):
+            raise TypeError('Subtests have mismatching value shapes: %s' % json.dumps(values))
+        for bucket, value in zip(buckets, values):
+            if isinstance(value, list):
+                cls._collect_values(bucket, value)
+            else:
+                bucket.append(value)
 
     @classmethod
     def _aggregate_values(cls, aggregator, values):
