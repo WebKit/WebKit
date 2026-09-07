@@ -800,11 +800,12 @@ void CanvasRenderingContext2DBase::setLineDash(const Vector<double>& dash)
         return;
 
     realizeSaves();
-    modifiableState().lineDash = dash;
+    auto& state = modifiableState();
+    state.lineDash = dash;
     // Spec requires the concatenation of two copies the dash list when the
     // number of elements is odd
     if (dash.size() % 2)
-        modifiableState().lineDash.appendVector(dash);
+        state.lineDash.appendVector(dash);
 
     applyLineDash();
 }
@@ -835,10 +836,11 @@ void CanvasRenderingContext2DBase::applyLineDash() const
     GraphicsContext* c = effectiveDrawingContext();
     if (!c)
         return;
-    DashArray convertedLineDash(state().lineDash.size());
-    for (size_t i = 0; i < state().lineDash.size(); ++i)
-        convertedLineDash[i] = static_cast<DashArrayElement>(state().lineDash[i]);
-    c->setLineDash(convertedLineDash, state().lineDashOffset);
+    auto& state = this->state();
+    DashArray convertedLineDash(state.lineDash.size());
+    for (size_t i = 0; i < state.lineDash.size(); ++i)
+        convertedLineDash[i] = static_cast<DashArrayElement>(state.lineDash[i]);
+    c->setLineDash(convertedLineDash, state.lineDashOffset);
 }
 
 void CanvasRenderingContext2DBase::setGlobalAlpha(double alpha)
@@ -2022,7 +2024,7 @@ void CanvasRenderingContext2DBase::clearCanvas()
 
     c->save();
     c->setCTM(baseTransform());
-    c->clearRect(FloatRect(0, 0, protect(canvasBase())->width(), protect(canvasBase())->height()));
+    c->clearRect(backingStoreBounds());
     c->restore();
 }
 
@@ -2043,13 +2045,13 @@ Path CanvasRenderingContext2DBase::transformAreaToDevice(const FloatRect& rect) 
 bool CanvasRenderingContext2DBase::rectContainsCanvas(const FloatRect& rect) const
 {
     FloatQuad quad(rect);
-    FloatQuad canvasQuad(FloatRect(0, 0, protect(canvasBase())->width(), protect(canvasBase())->height()));
+    FloatQuad canvasQuad(backingStoreBounds());
     return state().transform.mapQuad(quad).containsQuad(canvasQuad);
 }
 
 template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBufferRect(const T& area, IntSize* croppedOffset)
 {
-    IntRect canvasRect(0, 0, protect(canvasBase())->width(), protect(canvasBase())->height());
+    IntRect canvasRect(enclosingIntRect(backingStoreBounds()));
     canvasRect = baseTransform().mapRect(canvasRect);
     Path path = transformAreaToDevice(area);
     IntRect bufferRect = enclosingIntRect(path.fastBoundingRect());
@@ -2062,7 +2064,7 @@ template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBuff
 
 void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const IntRect& bufferRect, CompositeOperator op)
 {
-    IntRect canvasRect(0, 0, protect(canvasBase())->width(), protect(canvasBase())->height());
+    IntRect canvasRect(enclosingIntRect(backingStoreBounds()));
     canvasRect = baseTransform().mapRect(canvasRect);
 
     auto* c = effectiveDrawingContext();
@@ -2986,7 +2988,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
 
 #if USE(CG)
     const CanvasStyle& drawStyle = fill ? state().fillStyle : state().strokeStyle;
-    if (drawStyle.canvasGradient() || drawStyle.canvasPattern()) {
+    if (drawStyle.isGradientOrPattern()) {
         IntRect maskRect = enclosingIntRect(textRect);
 
         willUpdateContents(FloatRect { maskRect });

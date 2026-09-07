@@ -49,6 +49,7 @@ public:
     String colorString() const;
     RefPtr<CanvasGradient> canvasGradient() const;
     RefPtr<CanvasPattern> canvasPattern() const;
+    bool isGradientOrPattern() const { return !std::holds_alternative<Color>(m_style); }
 
     template<typename... F>
     decltype(auto) visit(F&&... f) const
