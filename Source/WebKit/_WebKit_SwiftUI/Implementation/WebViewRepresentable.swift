@@ -363,8 +363,26 @@ extension WebViewCoordinator {
 }
 #endif // ENABLE_SWIFTUI_REFRESHABLE_MODIFIER
 
-#if WTF_PLATFORM_IOS_FAMILY
-extension WebViewRepresentable: UIViewRepresentable {
+#if WTF_PLATFORM_MAC
+extension WebViewRepresentable: NSViewRepresentable {
+    func makeNSView(context: Context) -> CocoaWebViewAdapter {
+        makePlatformView(context: context)
+    }
+
+    func updateNSView(_ nsView: CocoaWebViewAdapter, context: Context) {
+        updatePlatformView(nsView, context: context)
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView: CocoaWebViewAdapter, context: Context) -> CGSize? {
+        sizeThatFits(proposal, platformView: nsView, context: context)
+    }
+
+    static func dismantleNSView(_ nsView: CocoaWebViewAdapter, coordinator: WebViewCoordinator) {
+        dismantlePlatformView(nsView, coordinator: coordinator)
+    }
+}
+#elseif WTF_PLATFORM_WATCHOS
+extension WebViewRepresentable: _UIViewRepresentable {
     func makeUIView(context: Context) -> CocoaWebViewAdapter {
         makePlatformView(context: context)
     }
@@ -382,21 +400,21 @@ extension WebViewRepresentable: UIViewRepresentable {
     }
 }
 #else
-extension WebViewRepresentable: NSViewRepresentable {
-    func makeNSView(context: Context) -> CocoaWebViewAdapter {
+extension WebViewRepresentable: UIViewRepresentable {
+    func makeUIView(context: Context) -> CocoaWebViewAdapter {
         makePlatformView(context: context)
     }
 
-    func updateNSView(_ nsView: CocoaWebViewAdapter, context: Context) {
-        updatePlatformView(nsView, context: context)
+    func updateUIView(_ uiView: CocoaWebViewAdapter, context: Context) {
+        updatePlatformView(uiView, context: context)
     }
 
-    func sizeThatFits(_ proposal: ProposedViewSize, nsView: CocoaWebViewAdapter, context: Context) -> CGSize? {
-        sizeThatFits(proposal, platformView: nsView, context: context)
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: CocoaWebViewAdapter, context: Context) -> CGSize? {
+        sizeThatFits(proposal, platformView: uiView, context: context)
     }
 
-    static func dismantleNSView(_ nsView: CocoaWebViewAdapter, coordinator: WebViewCoordinator) {
-        dismantlePlatformView(nsView, coordinator: coordinator)
+    static func dismantleUIView(_ uiView: CocoaWebViewAdapter, coordinator: WebViewCoordinator) {
+        dismantlePlatformView(uiView, coordinator: coordinator)
     }
 }
 #endif
