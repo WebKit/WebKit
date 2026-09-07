@@ -577,9 +577,9 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
     }
 
     {
-        MarkedArgumentBuffer namedPropertyValues;
         bool canUseFastPath = false;
-        if (!target->canHaveExistingOwnIndexedGetterSetterProperties() && !target->hasNonReifiedStaticProperties()) {
+        unsigned namedPropertyCount = 0;
+        if (!target->canHaveExistingOwnIndexedGetterSetterProperties() && !target->hasNonReifiedStaticProperties() && !globalObject->isHavingABadTime()) {
             Structure* targetStructure = target->structure();
             if (targetStructure->canPerformFastPropertyEnumerationCommon()) {
                 canUseFastPath = true;
@@ -590,14 +590,13 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
                     if (entry.key()->isSymbol())
                         return true;
 
-                    namedPropertyValues.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+                    ++namedPropertyCount;
                     return true;
                 });
             }
         }
 
         if (canUseFastPath) {
-            Structure* arrayStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
             MarkedArgumentBuffer indexedPropertyValues;
             if (target->canHaveExistingOwnIndexedProperties()) {
                 target->forEachOwnIndexedProperty<JSObject::SortMode::Ascending>(globalObject, [&](unsigned, JSValue value) {
@@ -607,19 +606,29 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
             }
             RETURN_IF_EXCEPTION(scope, { });
 
-            {
-                ObjectInitializationScope initializationScope(vm);
-                JSArray* result = nullptr;
-                if ((result = JSArray::tryCreateUninitializedRestricted(initializationScope, nullptr, arrayStructure, indexedPropertyValues.size() + namedPropertyValues.size()))) [[likely]] {
-                    for (unsigned i = 0; i < indexedPropertyValues.size(); ++i)
-                        result->initializeIndex(initializationScope, i, indexedPropertyValues.at(i));
-                    for (unsigned i = 0; i < namedPropertyValues.size(); ++i)
-                        result->initializeIndex(initializationScope, indexedPropertyValues.size() + i, namedPropertyValues.at(i));
-                    return JSValue::encode(result);
-                }
+            JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), indexedPropertyValues.size() + namedPropertyCount);
+            if (!result) [[unlikely]] {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
             }
-            throwOutOfMemoryError(globalObject, scope);
-            return { };
+
+            auto values = result->butterfly()->contiguous();
+            unsigned index = 0;
+            for (; index < indexedPropertyValues.size(); ++index)
+                values.at(result, index).setWithoutWriteBarrier(indexedPropertyValues.at(index));
+            target->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+                if (entry.attributes() & PropertyAttribute::DontEnum)
+                    return true;
+
+                if (entry.key()->isSymbol())
+                    return true;
+
+                values.at(result, index++).setWithoutWriteBarrier(target->getDirect(entry.offset()));
+                return true;
+            });
+            ASSERT(index == result->length());
+            vm.writeBarrier(result);
+            return JSValue::encode(result);
         }
     }
 
