@@ -145,7 +145,7 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
             if (!m_client.didUpdateHistoryTitle)
                 return;
 
-            m_client.didUpdateHistoryTitle(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toAPI(title.impl()), WebKit::toURLRef(url), WebKit::toAPI(&frame), m_client.base.clientInfo);
+            m_client.didUpdateHistoryTitle(WebKit::toAPI(&processPool), WebKit::toAPI(&page), WebKit::toAPI(title), WebKit::toURLRef(url), WebKit::toAPI(&frame), m_client.base.clientInfo);
         }
 
         void populateVisitedLinks(WebKit::WebProcessPool& processPool) override
@@ -214,14 +214,14 @@ void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadCli
             if (!m_client.decideDestinationWithSuggestedFilename)
                 return completionHandler(WebKit::AllowOverwrite::No, { });
             bool allowOverwrite = false;
-            auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename), &allowOverwrite, m_client.base.clientInfo));
             completionHandler(allowOverwrite ? WebKit::AllowOverwrite::Yes : WebKit::AllowOverwrite::No, WebKit::toWTFString(destination.get()));
         }
         void didCreateDestination(WebKit::DownloadProxy& downloadProxy, const String& path) final
         {
             if (!m_client.didCreateDestination)
                 return;
-            m_client.didCreateDestination(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(path.impl()), m_client.base.clientInfo);
+            m_client.didCreateDestination(m_context, WebKit::toAPI(&downloadProxy), WebKit::toAPI(path), m_client.base.clientInfo);
         }
         void didFinish(WebKit::DownloadProxy& downloadProxy) final
         {

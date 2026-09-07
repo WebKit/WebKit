@@ -51,7 +51,7 @@ void WebURLSchemeHandler::startTask(WebPageProxy& page, WebProcessProxy& process
     ASSERT(!pageEntry.iterator->value.contains(taskIdentifier));
     pageEntry.iterator->value.add(taskIdentifier);
 
-    platformStartTask(page, result.iterator->value);
+    platformStartTask(page, protect(result.iterator->value));
 }
 
 void WebURLSchemeHandler::stopAllTasksForPage(WebPageProxy& page, WebProcessProxy* process)

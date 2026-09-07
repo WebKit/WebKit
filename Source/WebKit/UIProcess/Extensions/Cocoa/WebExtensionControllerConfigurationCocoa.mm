@@ -72,7 +72,7 @@ Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::co
 
     result->setStorageDirectory(storageDirectory());
     result->setWebViewConfiguration([m_webViewConfiguration copy]);
-    result->setDefaultWebsiteDataStore(m_defaultWebsiteDataStore.get());
+    result->setDefaultWebsiteDataStore(protect(m_defaultWebsiteDataStore));
 
     return result.releaseNonNull();
 }

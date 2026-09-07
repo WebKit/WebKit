@@ -58,20 +58,20 @@
         return nil;
     _card = card;
     _invalidationHandler = WTF::move(handler);
-    [_card addObserver:self forKeyPath:@"valid" options:NSKeyValueObservingOptionNew context:nil];
+    [protect(_card) addObserver:self forKeyPath:@"valid" options:NSKeyValueObservingOptionNew context:nil];
     return self;
 }
 
 - (void)dealloc
 {
-    [_card removeObserver:self forKeyPath:@"valid"];
+    [protect(_card) removeObserver:self forKeyPath:@"valid"];
     [super dealloc];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"valid"]) {
-        BOOL valid = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+        BOOL valid = [protect([change objectForKey:NSKeyValueChangeNewKey]) boolValue];
         if (!valid) {
             @synchronized(self) {
                 if (_invalidationHandler) {

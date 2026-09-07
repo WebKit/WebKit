@@ -42,7 +42,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessage(WebPageProxy* page, co
     if (!m_client.logDiagnosticMessage)
         return;
 
-    m_client.logDiagnosticMessage(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), m_client.base.clientInfo);
+    m_client.logDiagnosticMessage(toAPI(page), toAPI(message), toAPI(description), m_client.base.clientInfo);
 }
 
 void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy* page, const String& message, const String& description, WebCore::DiagnosticLoggingResultType result)
@@ -50,7 +50,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithResult(WebPageProxy
     if (!m_client.logDiagnosticMessageWithResult)
         return;
 
-    m_client.logDiagnosticMessageWithResult(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(result), m_client.base.clientInfo);
+    m_client.logDiagnosticMessageWithResult(toAPI(page), toAPI(message), toAPI(description), toAPI(result), m_client.base.clientInfo);
 }
 
 void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy* page, const String& message, const String& description, const String& value)
@@ -58,7 +58,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithValue(WebPageProxy*
     if (!m_client.logDiagnosticMessageWithValue)
         return;
 
-    m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), toAPI(value.impl()), m_client.base.clientInfo);
+    m_client.logDiagnosticMessageWithValue(toAPI(page), toAPI(message), toAPI(description), toAPI(value), m_client.base.clientInfo);
 }
 
 void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy* page, const String& message, const String& description)
@@ -66,7 +66,7 @@ void WebPageDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(Web
     if (!m_client.logDiagnosticMessageWithEnhancedPrivacy)
         return;
 
-    m_client.logDiagnosticMessageWithEnhancedPrivacy(toAPI(page), toAPI(message.impl()), toAPI(description.impl()), m_client.base.clientInfo);
+    m_client.logDiagnosticMessageWithEnhancedPrivacy(toAPI(page), toAPI(message), toAPI(description), m_client.base.clientInfo);
 }
 
 } // namespace WebKit

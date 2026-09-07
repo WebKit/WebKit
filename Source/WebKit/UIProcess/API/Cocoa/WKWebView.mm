@@ -5772,7 +5772,7 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 - (void)_clearBackForwardCache
 {
     THROW_IF_SUSPENDED;
-    _page->configuration().processPool().backForwardCache().removeEntriesForPage(*_page);
+    protect(_page->configuration().processPool().backForwardCache())->removeEntriesForPage(*_page);
 }
 
 + (BOOL)_handlesSafeBrowsing

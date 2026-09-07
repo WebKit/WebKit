@@ -847,8 +847,8 @@ void WebProcessPool::registerNotificationObservers()
 
 #if !PLATFORM(IOS_FAMILY)
     m_powerObserver = makeUnique<WebCore::PowerObserver>([weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->sendToAllProcesses(Messages::WebProcess::SystemWillPowerOn());
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->sendToAllProcesses(Messages::WebProcess::SystemWillPowerOn());
     });
     m_systemSleepListener = PAL::SystemSleepListener::create(*this);
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.

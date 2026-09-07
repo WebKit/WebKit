@@ -305,7 +305,7 @@ public:
 
 private:
     WebUserMessageHandlerDescriptorProxy(WebUserContentController& controller, const AtomString& name, InjectedBundleScriptWorld& world, ScriptMessageHandlerIdentifier identifier)
-        : WebCore::UserMessageHandlerDescriptor(name, world.coreWorld())
+        : WebCore::UserMessageHandlerDescriptor(name, protect(world.coreWorld()))
         , m_controller(controller)
         , m_identifier(identifier)
     {
@@ -697,7 +697,7 @@ void WebUserContentController::forEachUserMessageHandler(NOESCAPE const Function
 {
     for (auto& userMessageHandlerVector : m_userMessageHandlers.values()) {
         for (auto& pair : userMessageHandlerVector)
-            functor(pair.second.get());
+            functor(protect(pair.second.get()));
     }
 }
 #endif

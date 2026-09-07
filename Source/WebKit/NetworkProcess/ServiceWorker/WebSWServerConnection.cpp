@@ -328,11 +328,12 @@ RefPtr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkRes
 
 void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWorker& worker)
 {
-    auto runServerWorkerAndStartFetch = [weakThis = WeakPtr { *this }, task = WeakPtr { task }](bool success) mutable {
+    auto runServerWorkerAndStartFetch = [weakThis = WeakPtr { *this }, weakTask = WeakPtr { task }](bool success) mutable {
+        RefPtr task = weakTask;
         if (!task)
             return;
 
-        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedThis = weakThis;
         if (!protectedThis) {
             task->cannotHandle();
             return;
@@ -690,10 +691,12 @@ void WebSWServerConnection::subscribeToPushService(WebCore::ServiceWorkerRegistr
     }
 
     session->notificationManager().subscribeToPushService(registration->scopeURLWithoutFragment(), WTF::move(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), registrableDomain = RegistrableDomain(registration->data().scopeURL)] (std::expected<PushSubscriptionData, ExceptionData>&& result) mutable {
-        if (RefPtr resourceLoadStatistics = weakThis && weakThis->session() ? weakThis->session()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
-            return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTF::move(registrableDomain), [result = WTF::move(result), completionHandler = WTF::move(completionHandler)] () mutable {
-                completionHandler(WTF::move(result));
-            });
+        if (RefPtr protectedThis = weakThis) {
+            if (RefPtr resourceLoadStatistics = protectedThis->session() ? protectedThis->session()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
+                return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTF::move(registrableDomain), [result = WTF::move(result), completionHandler = WTF::move(completionHandler)] () mutable {
+                    completionHandler(WTF::move(result));
+                });
+            }
         }
         completionHandler(WTF::move(result));
     });

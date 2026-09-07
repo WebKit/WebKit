@@ -65,7 +65,7 @@ void Attachment::doWithFileWrapper(NOESCAPE Function<void(NSFileWrapper *)>&& fu
 {
     Locker locker { m_fileWrapperLock };
 
-    function(m_fileWrapper.get());
+    function(protect(m_fileWrapper).get());
 }
 
 WTF::String Attachment::mimeType() const
@@ -101,10 +101,11 @@ WTF::String Attachment::fileName() const
 {
     Locker locker { m_fileWrapperLock };
 
-    if ([m_fileWrapper filename].length)
-        return [m_fileWrapper filename];
+    RetainPtr fileWrapper = m_fileWrapper;
+    if ([fileWrapper filename].length)
+        return [fileWrapper filename];
 
-    return [m_fileWrapper preferredFilename];
+    return [fileWrapper preferredFilename];
 }
 
 void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, NSString *contentType)
@@ -114,7 +115,7 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
         if (fileWrapper.directory)
             updatedContentType = UTTypeDirectory.identifier;
         else if (fileWrapper.regularFile) {
-            if (RetainPtr<NSString> pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
+            if (RetainPtr<NSString> pathExtension = protect(protect(fileWrapper.filename).get().length ? fileWrapper.filename : fileWrapper.preferredFilename).get().pathExtension)
                 updatedContentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(pathExtension.get())).createNSString();
             if (!updatedContentType.get().length)
                 updatedContentType = UTTypeData.identifier;
@@ -129,15 +130,16 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
     Locker locker { m_fileWrapperLock };
 
-    if (![m_fileWrapper isRegularFile]) {
+    RetainPtr fileWrapper = m_fileWrapper;
+    if (![fileWrapper isRegularFile]) {
         // FIXME: We should display a size estimate for directory-type file wrappers.
         return std::nullopt;
     }
 
-    if (auto fileSize = [[m_fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
+    if (auto fileSize = [[fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
         return fileSize;
 
-    return [m_fileWrapper regularFileContents].length;
+    return [fileWrapper regularFileContents].length;
 }
 
 RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() const
@@ -149,10 +151,11 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() cons
     {
         Locker locker { m_fileWrapperLock };
 
-        if (![m_fileWrapper isRegularFile])
+        RetainPtr fileWrapper = m_fileWrapper;
+        if (![fileWrapper isRegularFile])
             return nullptr;
 
-        data = [m_fileWrapper regularFileContents];
+        data = [fileWrapper regularFileContents];
     }
 
     if (!data)
@@ -165,10 +168,11 @@ RetainPtr<NSData> Attachment::associatedElementNSData() const
 {
     Locker locker { m_fileWrapperLock };
 
-    if (![m_fileWrapper isRegularFile])
+    RetainPtr fileWrapper = m_fileWrapper;
+    if (![fileWrapper isRegularFile])
         return nil;
 
-    return [m_fileWrapper regularFileContents];
+    return [fileWrapper regularFileContents];
 }
 
 bool Attachment::isEmpty() const
@@ -184,10 +188,11 @@ RefPtr<WebCore::SharedBuffer> Attachment::createSerializedRepresentation() const
     {
         Locker locker { m_fileWrapperLock };
 
-        if (!m_fileWrapper || !m_webPage)
+        RetainPtr fileWrapper = m_fileWrapper;
+        if (!fileWrapper || !m_webPage)
             return nullptr;
 
-        serializedData = [NSKeyedArchiver archivedDataWithRootObject:m_fileWrapper.get() requiringSecureCoding:YES error:nullptr];
+        serializedData = [NSKeyedArchiver archivedDataWithRootObject:fileWrapper.get() requiringSecureCoding:YES error:nullptr];
     }
     if (!serializedData)
         return nullptr;
@@ -224,7 +229,7 @@ void Attachment::cloneFileWrapperTo(Attachment& other)
     other.m_isCreatedFromSerializedRepresentation = m_isCreatedFromSerializedRepresentation;
 
     Locker locker { m_fileWrapperLock };
-    other.setFileWrapper(m_fileWrapper.get());
+    other.setFileWrapper(protect(m_fileWrapper));
 }
 
 bool Attachment::shouldUseFileWrapperIconForDirectory() const
@@ -237,7 +242,7 @@ bool Attachment::shouldUseFileWrapperIconForDirectory() const
 
     {
         Locker locker { m_fileWrapperLock };
-        if (![m_fileWrapper isDirectory])
+        if (![protect(m_fileWrapper) isDirectory])
             return false;
     }
 

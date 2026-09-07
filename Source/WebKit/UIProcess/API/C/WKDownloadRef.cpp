@@ -107,7 +107,7 @@ void WKDownloadSetClient(WKDownloadRef download, WKDownloadClientBase* client)
                 completionHandler(WebKit::AllowOverwrite::No, { });
                 return;
             }
-            auto destination = adoptRef(toImpl(m_client.decideDestinationWithResponse(toAPI(download), toAPI(response), toAPI(suggestedFilename.impl()), m_client.base.clientInfo)));
+            RefPtr destination = adoptRef(toImpl(m_client.decideDestinationWithResponse(toAPI(download), toAPI(response), toAPI(suggestedFilename), m_client.base.clientInfo)));
             if (!destination) {
                 completionHandler(WebKit::AllowOverwrite::No, { });
                 return;

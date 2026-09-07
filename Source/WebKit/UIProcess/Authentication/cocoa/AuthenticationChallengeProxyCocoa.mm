@@ -43,7 +43,7 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
     OSObjectPtr message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     xpc_dictionary_set_string(message.get(), ClientCertificateAuthentication::XPCMessageNameKey, ClientCertificateAuthentication::XPCMessageNameValue);
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCChallengeIDKey, challengeID.toUInt64());
-    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, OSObjectPtr<xpc_endpoint_t> { RetainPtr { secKeyProxyStore.get() }.get().endpoint._endpoint }.get());
+    xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, OSObjectPtr<xpc_endpoint_t> { protect(RetainPtr { secKeyProxyStore.get() }.get().endpoint).get()._endpoint }.get());
     OSObjectPtr certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
     RetainPtr nsCredential = credential.nsCredential();
     for (id certificate in nsCredential.get().certificates) {

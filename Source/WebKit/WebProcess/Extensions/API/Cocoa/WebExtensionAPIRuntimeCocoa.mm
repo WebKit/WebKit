@@ -182,7 +182,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
             // callbackAggregatorWrapper ensures that callbackAggregator remains in scope.
             auto senderInfo = toWebAPI(listener->globalContext(), senderParameters);
             auto returnValue = listener->call(toJSValueRef(listener->globalContext(), message), senderInfo, toJSValueRef(listener->globalContext(), ^(JSValue *replyMessage) {
-                callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
+                protect(callbackAggregatorWrapper.get().aggregator).get()(replyMessage, IsDefaultReply::No);
             }));
 
             if (JSValueIsBoolean(listener->globalContext(), returnValue) && JSValueToBoolean(listener->globalContext(), returnValue)) {
@@ -197,7 +197,7 @@ void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionC
             anyListenerHandledMessage = true;
 
             auto resolveBlock = ^(JSValue *replyMessage) {
-                callbackAggregatorWrapper.get().aggregator(replyMessage, IsDefaultReply::No);
+                protect(callbackAggregatorWrapper.get().aggregator).get()(replyMessage, IsDefaultReply::No);
             };
 
             auto rejectBlock = ^(JSValue *error) {

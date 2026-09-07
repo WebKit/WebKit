@@ -690,7 +690,7 @@ void WebExtensionContext::tabsMove(Vector<WebExtensionTabIdentifier> tabIdentifi
             return tab->delegate();
         }).get();
 
-        if (!moveTabsToIndexInWindow(tabDelegates, destinationWindow.get()))
+        if (!moveTabsToIndexInWindow(tabDelegates, protect(destinationWindow).get()))
             return;
     }
 }

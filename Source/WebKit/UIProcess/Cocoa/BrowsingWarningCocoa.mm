@@ -131,7 +131,7 @@ static NSString *browsingWarningTitleText(SSBServiceLookupResult *result)
 static NSString *browsingWarningTitleText(BrowsingWarning::Data data)
 {
     return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
-        return browsingWarningTitleText(data.result.get());
+        return browsingWarningTitleText(protect(data.result));
     }, [&] (BrowsingWarning::HTTPSNavigationFailureData) {
         return WEB_UI_NSSTRING(@"This Connection Is Not Secure", "Not Secure Connection warning page title");
     });
@@ -151,7 +151,7 @@ static NSString *browsingWarningText(SSBServiceLookupResult *result)
 static NSString *browsingWarningText(BrowsingWarning::Data data)
 {
     return WTF::switchOn(data, [&] (BrowsingWarning::SafeBrowsingWarningData data) {
-        return browsingWarningText(data.result.get());
+        return browsingWarningText(protect(data.result));
     }, [&] (BrowsingWarning::HTTPSNavigationFailureData) {
         return WEB_UI_NSSTRING(@"This website does not support connecting securely over HTTPS. The information you see and enter on this website, including credit cards, phone numbers, and passwords, can be read and altered by other people.", "Not Secure Connection warning text");
     });
@@ -201,7 +201,7 @@ static NSMutableAttributedString *browsingDetailsText(const URL& url, SSBService
 static NSMutableAttributedString *browsingDetailsText(const URL& url, BrowsingWarning::Data data)
 {
     if (auto* safeBrowsingData = std::get_if<BrowsingWarning::SafeBrowsingWarningData>(&data))
-        return browsingDetailsText(url, safeBrowsingData->result.get());
+        return browsingDetailsText(url, protect(safeBrowsingData->result));
     return nil;
 }
 

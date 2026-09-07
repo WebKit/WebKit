@@ -67,7 +67,7 @@ WebPermissionController::~WebPermissionController()
     WebProcess::singleton().removeMessageReceiver(Messages::WebPermissionController::messageReceiverName());
 }
 
-void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, const WeakPtr<WebCore::Page>& page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, WebCore::Page* page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (WebCore::DeprecatedGlobalSettings::builtInNotificationsEnabled() && (descriptor.name == WebCore::PermissionName::Notifications || descriptor.name == WebCore::PermissionName::Push)) {
@@ -126,7 +126,7 @@ void WebPermissionController::notifyObserversIfNeeded(WebCore::PermissionName pe
         if (!observer->page() && (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker))
             continue;
 
-        query(WebCore::ClientOrigin { observer->origin() }, WebCore::PermissionDescriptor { permissionName }, observer->page(), source, [weakObserver = WeakPtr { observer.get() }](auto newState) {
+        query(WebCore::ClientOrigin { observer->origin() }, WebCore::PermissionDescriptor { permissionName }, protect(observer->page()), source, [weakObserver = WeakPtr { observer.get() }](auto newState) {
             CheckedPtr observer = weakObserver.get();
             if (observer && newState != observer->currentState())
                 observer->stateChanged(*newState);

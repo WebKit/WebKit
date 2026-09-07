@@ -178,7 +178,7 @@ private:
 
 /* Special cases. */
 
-inline ProxyingRefPtr<API::String> toAPI(StringImpl* string)
+inline ProxyingRefPtr<API::String> toAPI(const String& string)
 {
     return ProxyingRefPtr<API::String>(API::String::create(string));
 }

@@ -199,6 +199,18 @@ template<typename T, typename RetainTraits> inline OSObjectPtr<T, RetainTraits> 
     return OSObjectPtr<T, RetainTraits> { typename OSObjectPtr<T, RetainTraits>::AdoptOSObject { }, WTF::move(ptr) };
 }
 
+template<typename T, typename RetainTraits>
+ALWAYS_INLINE CLANG_POINTER_CONVERSION OSObjectPtr<T, RetainTraits> protect(const OSObjectPtr<T, RetainTraits>& ptr)
+{
+    return ptr;
+}
+
+template<typename T, typename RetainTraits>
+OSObjectPtr<T, RetainTraits> protect(OSObjectPtr<T, RetainTraits>&&)
+{
+    static_assert(WTF::unreachableForType<T>, "Calling protect() on an rvalue is unnecessary; the caller already owns the value.");
+}
+
 template<typename T, typename U, typename RetainTraits>
 SUPPRESS_NODELETE ALWAYS_INLINE void NODELETE lazyInitialize(const OSObjectPtr<T, RetainTraits>& ptr, OSObjectPtr<U, RetainTraits>&& obj)
 {

@@ -262,8 +262,8 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
 
 void AuthenticatorPresenterCoordinator::requestLAContextForUserVerification(CompletionHandler<void(LAContext *)>&& completionHandler)
 {
-    if (m_laContext) {
-        completionHandler(m_laContext.get());
+    if (RetainPtr laContext = m_laContext) {
+        completionHandler(laContext.get());
         return;
     }
 

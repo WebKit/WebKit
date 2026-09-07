@@ -993,9 +993,8 @@ void WebPageProxy::setUpHighlightsObserver()
     WeakPtr weakThis { *this };
     auto updateAppHighlightsVisibility = ^(BOOL isVisible) {
         ensureOnMainRunLoop([weakThis, isVisible] {
-            if (!weakThis)
-                return;
-            weakThis->setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+            if (RefPtr protectedThis = weakThis)
+                protectedThis->setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
         });
     };
     

@@ -521,7 +521,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
 
         bool frameProcessChanged = m_frameProcess.ptr() != pageMainFrameProcess.ptr();
         if (frameProcessChanged)
-            pageMainFrame->setProcess(m_frameProcess);
+            pageMainFrame->setProcess(protect(m_frameProcess));
 
         // Record that this page needs a remote-page transition. The actual
         // IPC + transitionPageToRemotePage() call is deferred to

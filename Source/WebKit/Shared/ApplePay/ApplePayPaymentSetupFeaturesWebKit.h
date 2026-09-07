@@ -54,7 +54,7 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<PaymentSetupFeatures>;
-    RetainPtr<NSArray> m_platformFeatures;
+    const RetainPtr<NSArray> m_platformFeatures;
 };
 
 } // namespace WebKit

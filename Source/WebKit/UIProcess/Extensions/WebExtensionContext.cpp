@@ -935,12 +935,12 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
-        if (urlMatchesPatternIgnoringWildcardHostPatterns(deniedPermissionEntry.key))
+        if (urlMatchesPatternIgnoringWildcardHostPatterns(protect(deniedPermissionEntry.key)))
             return cacheResultAndReturn(PermissionState::DeniedExplicitly);
     }
 
     for (auto& grantedPermissionEntry : grantedPermissionMatchPatterns) {
-        if (urlMatchesPatternIgnoringWildcardHostPatterns(grantedPermissionEntry.key))
+        if (urlMatchesPatternIgnoringWildcardHostPatterns(protect(grantedPermissionEntry.key)))
             return cacheResultAndReturn(PermissionState::GrantedExplicitly);
     }
 
@@ -954,12 +954,12 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
-        if (urlMatchesWildcardHostPatterns(deniedPermissionEntry.key))
+        if (urlMatchesWildcardHostPatterns(protect(deniedPermissionEntry.key)))
             return cacheResultAndReturn(PermissionState::DeniedImplicitly);
     }
 
     for (auto& grantedPermissionEntry : grantedPermissionMatchPatterns) {
-        if (urlMatchesWildcardHostPatterns(grantedPermissionEntry.key))
+        if (urlMatchesWildcardHostPatterns(protect(grantedPermissionEntry.key)))
             return cacheResultAndReturn(PermissionState::GrantedImplicitly);
     }
 
@@ -1033,12 +1033,12 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
-        if (urlMatchesPatternIgnoringWildcardHostPatterns(deniedPermissionEntry.key))
+        if (urlMatchesPatternIgnoringWildcardHostPatterns(protect(deniedPermissionEntry.key)))
             return PermissionState::DeniedExplicitly;
     }
 
     for (auto& grantedPermissionEntry : grantedPermissionMatchPatterns) {
-        if (urlMatchesPatternIgnoringWildcardHostPatterns(grantedPermissionEntry.key))
+        if (urlMatchesPatternIgnoringWildcardHostPatterns(protect(grantedPermissionEntry.key)))
             return PermissionState::GrantedExplicitly;
     }
 
@@ -1053,12 +1053,12 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     };
 
     for (auto& deniedPermissionEntry : deniedPermissionMatchPatterns) {
-        if (urlMatchesWildcardHostPatterns(deniedPermissionEntry.key))
+        if (urlMatchesWildcardHostPatterns(protect(deniedPermissionEntry.key)))
             return PermissionState::DeniedImplicitly;
     }
 
     for (auto& grantedPermissionEntry : grantedPermissionMatchPatterns) {
-        if (urlMatchesWildcardHostPatterns(grantedPermissionEntry.key))
+        if (urlMatchesWildcardHostPatterns(protect(grantedPermissionEntry.key)))
             return PermissionState::GrantedImplicitly;
     }
 
@@ -1686,7 +1686,7 @@ WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedI
         extension->serializeManifest(),
         extension->manifestVersion(),
         m_storageAccessLevels,
-        extensionController()->configuration().defaultWebsiteDataStore().sessionID(),
+        protect(extensionController()->configuration())->defaultWebsiteDataStore().sessionID(),
         backgroundPageIdentifier(destinationProcess),
 #if ENABLE(INSPECTOR_EXTENSIONS)
         inspectorPageIdentifiers(),

@@ -86,7 +86,7 @@ public:
 
     bool isURLForThisExtension(const URL&) const;
 
-    RefPtr<JSON::Object> manifest() const { return m_manifest ? m_manifest.get()->asObject() : nullptr; }
+    RefPtr<JSON::Object> manifest() const { return m_manifest ? protect(m_manifest)->asObject() : nullptr; }
 
     double manifestVersion() const { return m_manifestVersion; }
     bool supportsManifestVersion(double version) const { return manifestVersion() >= version; }

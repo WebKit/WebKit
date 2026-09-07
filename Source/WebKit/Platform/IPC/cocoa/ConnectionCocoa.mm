@@ -136,13 +136,13 @@ void Connection::cancelSendSource()
     m_sendPort = MACH_PORT_NULL;
     if (!m_sendSource)
         return;
-    dispatch_source_cancel(m_sendSource.get());
+    dispatch_source_cancel(protect(m_sendSource));
     m_sendSource = nullptr;
 }
 
 void Connection::cancelReceiveSource()
 {
-    dispatch_source_cancel(m_receiveSource.get());
+    dispatch_source_cancel(protect(m_receiveSource));
     m_receiveSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
 }
@@ -208,11 +208,12 @@ void Connection::platformOpen()
     // Change the message queue length for the receive port.
     setMachPortQueueLength(m_receivePort, largeOutgoingMessageQueueCountThreshold);
 
-    m_receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, protect(m_connectionQueue->dispatchQueue()).get()));
-    dispatch_source_set_event_handler(m_receiveSource.get(), [this, protectedThis = Ref { *this }] {
+    OSObjectPtr receiveSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_receivePort, 0, protect(m_connectionQueue->dispatchQueue()).get()));
+    m_receiveSource = receiveSource;
+    dispatch_source_set_event_handler(receiveSource, [this, protectedThis = Ref { *this }] {
         receiveSourceEventHandler();
     });
-    dispatch_source_set_cancel_handler(m_receiveSource.get(), [protectedThis = Ref { *this }, receivePort = m_receivePort] {
+    dispatch_source_set_cancel_handler(receiveSource, [protectedThis = Ref { *this }, receivePort = m_receivePort] {
 #if !PLATFORM(WATCHOS)
         mach_port_unguard(mach_task_self(), receivePort, reinterpret_cast<mach_port_context_t>(protectedThis.ptr()));
 #endif
@@ -221,7 +222,7 @@ void Connection::platformOpen()
     });
 
     m_connectionQueue->dispatch([strongRef = Ref { *this }, this] {
-        dispatch_resume(m_receiveSource.get());
+        dispatch_resume(protect(m_receiveSource));
     });
 
     // Cache the audit token in case the XPC connection will be closed.
@@ -448,17 +449,18 @@ void Connection::initializeSendSource()
         return;
     RELEASE_ASSERT(m_sendPort != MACH_PORT_NULL);
 
-    m_sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
-    dispatch_source_set_registration_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
+    OSObjectPtr sendSource = adoptOSObject(dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_SEND, m_sendPort, DISPATCH_MACH_SEND_POSSIBLE, protect(m_connectionQueue->dispatchQueue()).get()));
+    m_sendSource = sendSource;
+    dispatch_source_set_registration_handler(sendSource, [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
         resumeSendSource();
     });
-    dispatch_source_set_event_handler(m_sendSource.get(), [this, protectedThis = Ref { *this }] {
+    dispatch_source_set_event_handler(sendSource, [this, protectedThis = Ref { *this }] {
         if (!m_sendSource)
             return;
 
-        unsigned long data = dispatch_source_get_data(m_sendSource.get());
+        unsigned long data = dispatch_source_get_data(protect(m_sendSource));
 
         if (data & DISPATCH_MACH_SEND_POSSIBLE) {
             // FIXME: Figure out why we get spurious DISPATCH_MACH_SEND_POSSIBLE events.
@@ -468,11 +470,11 @@ void Connection::initializeSendSource()
     });
 
     mach_port_t sendPort = m_sendPort;
-    dispatch_source_set_cancel_handler(m_sendSource.get(), ^{
+    dispatch_source_set_cancel_handler(sendSource, ^{
         // Release our send right.
         deallocateSendRightSafely(sendPort);
     });
-    dispatch_resume(m_sendSource.get());
+    dispatch_resume(sendSource);
 }
 
 void Connection::resumeSendSource()
@@ -728,7 +730,7 @@ std::optional<audit_token_t> Connection::getAuditToken()
         return std::nullopt;
 
     audit_token_t auditToken;
-    xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);
+    xpc_connection_get_audit_token(protect(m_xpcConnection), &auditToken);
     m_auditToken = auditToken;
     return WTF::move(auditToken);
 }
@@ -736,9 +738,9 @@ std::optional<audit_token_t> Connection::getAuditToken()
 #if !USE(EXTENSIONKIT_PROCESS_TERMINATION)
 bool Connection::kill(std::optional<MessageName> invalidMessageName)
 {
-    if (m_xpcConnection) {
+    if (OSObjectPtr xpcConnection = m_xpcConnection) {
         auto reasonCode = invalidMessageName ? WebKit::ReasonCode::MessageCheckKilled : WebKit::ReasonCode::ConnectionKilled;
-        terminateWithReason(m_xpcConnection.get(), reasonCode, "Connection::kill", invalidMessageName);
+        terminateWithReason(xpcConnection, reasonCode, "Connection::kill", invalidMessageName);
         m_didRequestProcessTermination = true;
         return true;
     }
@@ -748,10 +750,8 @@ bool Connection::kill(std::optional<MessageName> invalidMessageName)
 
 pid_t Connection::remoteProcessID() const
 {
-    if (!m_xpcConnection)
-        return 0;
-
-    return xpc_connection_get_pid(m_xpcConnection.get());
+    OSObjectPtr xpcConnection = m_xpcConnection;
+    return xpcConnection ? xpc_connection_get_pid(xpcConnection) : 0;
 }
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()

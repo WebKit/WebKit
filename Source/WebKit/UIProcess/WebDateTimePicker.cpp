@@ -46,7 +46,7 @@ void WebDateTimePicker::showDateTimePicker(WebCore::DateTimeChooserParameters&& 
 
 void WebDateTimePicker::endPicker()
 {
-    if (auto page = std::exchange(m_page, nullptr))
+    if (RefPtr page = std::exchange(m_page, nullptr))
         page->didEndDateTimePicker();
 }
 

@@ -2499,7 +2499,7 @@ void WebPage::loadDataInFrame(std::span<const uint8_t> data, String&& type, Stri
     Ref sharedBuffer = SharedBuffer::create(data);
     ResourceResponse response(URL { baseURL }, WTF::move(type), sharedBuffer->size(), WTF::move(encodingName));
     SubstituteData substituteData(WTF::move(sharedBuffer), URL { baseURL }, WTF::move(response), SubstituteData::SessionHistoryVisibility::Hidden);
-    frame->coreLocalFrame()->loader().load(FrameLoadRequest(*frame->coreLocalFrame(), ResourceRequest(WTF::move(baseURL)), WTF::move(substituteData)));
+    protect(frame->coreLocalFrame()->loader())->load(FrameLoadRequest(protect(*frame->coreLocalFrame()), ResourceRequest(WTF::move(baseURL)), WTF::move(substituteData)));
 }
 
 void WebPage::applyMonitorUnloadToIFrameElement(FrameIdentifier frameID, WebCore::IFrameUnloadReason reason)
@@ -2728,11 +2728,11 @@ void WebPage::loadAlternateHTML(LoadParameters&& loadParameters)
         ASSERT_NOT_REACHED();
         return;
     }
-    m_mainFrame->coreLocalFrame()->loader().setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
+    protect(m_mainFrame->coreLocalFrame()->loader())->setProvisionalLoadErrorBeingHandledURL(provisionalLoadErrorURL);
 
     ResourceResponse response(URL(), WTF::move(loadParameters.MIMEType), sharedBuffer->size(), WTF::move(loadParameters.encodingName));
     loadDataImpl(loadParameters.navigationID, loadParameters.shouldTreatAsContinuingLoad, WTF::move(loadParameters.websitePolicies), sharedBuffer.releaseNonNull(), ResourceRequest(WTF::move(baseURL)), WTF::move(response), WTF::move(unreachableURL), loadParameters.userData, loadParameters.isNavigatingToAppBoundDomain, WebCore::SubstituteData::SessionHistoryVisibility::Hidden);
-    m_mainFrame->coreLocalFrame()->loader().setProvisionalLoadErrorBeingHandledURL({ });
+    protect(m_mainFrame->coreLocalFrame()->loader())->setProvisionalLoadErrorBeingHandledURL({ });
 }
 
 void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, ResourceResponse&& simulatedResponse)
@@ -2792,7 +2792,7 @@ void WebPage::reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCo
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTF::move(sandboxExtensionHandle));
     if (m_page && mainFrame->coreLocalFrame()) {
         bool isRequestFromClientOrUserInput = true;
-        mainFrame->coreLocalFrame()->loader().reload(reloadOptions, isRequestFromClientOrUserInput);
+        protect(mainFrame->coreLocalFrame()->loader())->reload(reloadOptions, isRequestFromClientOrUserInput);
     } else
         ASSERT_NOT_REACHED();
 
@@ -2827,7 +2827,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     {
         auto ignoreHistoryItemChangesForScope = m_historyItemClient->ignoreChangesForScope();
         ASSERT(!corePage()->settings().useUIProcessForBackForwardItemLoading() || parameters.frameState->children.isEmpty());
-        item = toHistoryItem(m_historyItemClient, parameters.frameState);
+        item = toHistoryItem(m_historyItemClient, protect(parameters.frameState));
         if (RefPtr localMainFrame = corePage()->localMainFrame(); localMainFrame && item)
             localMainFrame->loader().setNavigationUpgradeToHTTPSBehavior(item->url().protocolIs("http"_s) ? NavigationUpgradeToHTTPSBehavior::Disabled : NavigationUpgradeToHTTPSBehavior::BasedOnPolicy);
     }
@@ -3408,8 +3408,9 @@ void WebPage::setEnableHorizontalRubberBanding(bool enableHorizontalRubberBandin
 
 void WebPage::setBackgroundExtendsBeyondPage(bool backgroundExtendsBeyondPage)
 {
-    if (m_page->settings().backgroundShouldExtendBeyondPage() != backgroundExtendsBeyondPage)
-        m_page->settings().setBackgroundShouldExtendBeyondPage(backgroundExtendsBeyondPage);
+    RefPtr settings = m_page->settings();
+    if (settings->backgroundShouldExtendBeyondPage() != backgroundExtendsBeyondPage)
+        settings->setBackgroundShouldExtendBeyondPage(backgroundExtendsBeyondPage);
 }
 
 void WebPage::setPaginationMode(Pagination::Mode mode)
@@ -4615,7 +4616,7 @@ bool WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, Scroll
 
 bool WebPage::scrollBy(WebCore::ScrollDirection scrollDirection, WebCore::ScrollGranularity scrollGranularity)
 {
-    return scroll(m_page.get(), static_cast<ScrollDirection>(scrollDirection), static_cast<ScrollGranularity>(scrollGranularity));
+    return scroll(protect(m_page), static_cast<ScrollDirection>(scrollDirection), static_cast<ScrollGranularity>(scrollGranularity));
 }
 
 void WebPage::centerSelectionInVisibleArea()
@@ -6342,7 +6343,7 @@ void WebPage::didChooseDate(const String& date)
 
 void WebPage::didEndDateTimePicker()
 {
-    if (auto chooser = std::exchange(m_activeDateTimeChooser, nullptr))
+    if (RefPtr chooser = std::exchange(m_activeDateTimeChooser, nullptr))
         chooser->didEndChooser();
 }
 
@@ -8549,7 +8550,7 @@ void WebPage::testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionH
 
 std::optional<SimpleRange> WebPage::currentSelectionAsRange()
 {
-    RefPtr frame = frameWithSelection(m_page.get());
+    RefPtr frame = frameWithSelection(protect(m_page));
     if (!frame)
         return std::nullopt;
 
@@ -8990,17 +8991,17 @@ void WebPage::allowGamepadAccess()
 #if ENABLE(POINTER_LOCK)
 void WebPage::didAcquirePointerLock()
 {
-    corePage()->pointerLockController().didAcquirePointerLock();
+    protect(corePage()->pointerLockController())->didAcquirePointerLock();
 }
 
 void WebPage::didNotAcquirePointerLock()
 {
-    corePage()->pointerLockController().didNotAcquirePointerLock();
+    protect(corePage()->pointerLockController())->didNotAcquirePointerLock();
 }
 
 void WebPage::didLosePointerLock()
 {
-    corePage()->pointerLockController().didLosePointerLock();
+    protect(corePage()->pointerLockController())->didLosePointerLock();
 }
 #endif
 
@@ -9414,19 +9415,19 @@ void WebPage::systemPreviewActionTriggered(WebCore::SystemPreviewInfo previewInf
 #if ENABLE(SPEECH_SYNTHESIS)
 void WebPage::speakingErrorOccurred()
 {
-    if (auto observer = corePage()->speechSynthesisClient()->observer())
+    if (RefPtr observer = protect(corePage()->speechSynthesisClient())->observer())
         observer->speakingErrorOccurred();
 }
 
 void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength)
 {
-    if (auto observer = corePage()->speechSynthesisClient()->observer())
+    if (RefPtr observer = protect(corePage()->speechSynthesisClient())->observer())
         observer->boundaryEventOccurred(wordBoundary, charIndex, charLength);
 }
 
 void WebPage::voicesDidChange()
 {
-    if (auto observer = corePage()->speechSynthesisClient()->observer())
+    if (RefPtr observer = protect(corePage()->speechSynthesisClient())->observer())
         observer->voicesChanged();
 }
 #endif

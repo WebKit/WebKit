@@ -219,7 +219,7 @@ void WKWebsiteDataStoreSetStatisticsVeryPrevalentResource(WKWebsiteDataStoreRef 
 void WKWebsiteDataStoreDumpResourceLoadStatistics(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreDumpResourceLoadStatisticsFunction callback)
 {
     protect(WebKit::toImpl(dataStoreRef))->dumpResourceLoadStatistics([context, callback] (const String& resourceLoadStatistics) {
-        callback(WebKit::toAPI(resourceLoadStatistics.impl()), context);
+        callback(WebKit::toAPI(resourceLoadStatistics), context);
     });
 }
 

@@ -95,7 +95,7 @@ void CcidService::restartDiscoveryInternal()
 void CcidService::removeObservers()
 {
     if (m_slotsObserver) {
-        [[TKSmartCardSlotManager defaultManager] removeObserver:m_slotsObserver.get() forKeyPath:@"slotNames"];
+        [[TKSmartCardSlotManager defaultManager] removeObserver:protect(m_slotsObserver) forKeyPath:@"slotNames"];
         m_slotsObserver.clear();
     }
     for (auto observer : m_slotObservers.values())
@@ -111,7 +111,7 @@ void CcidService::platformStartDiscovery()
     m_connection = nullptr;
     removeObservers();
     m_slotsObserver = adoptNS([[_WKSmartCardSlotObserver alloc] initWithService:this]);
-    [[TKSmartCardSlotManager defaultManager] addObserver:m_slotsObserver.get() forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+    [[TKSmartCardSlotManager defaultManager] addObserver:protect(m_slotsObserver) forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
 }
 
 void CcidService::onValidCard(RetainPtr<TKSmartCard>&& smartCard, RetainPtr<TKSmartCardSlot>&& slot)
@@ -149,7 +149,7 @@ void CcidService::updateSlots(NSArray *slots)
     for (auto& slotPair : m_slotObservers) {
         if (!slotsSet.contains(slotPair.key)) {
             staleSlots.add(slotPair.key);
-            [slotPair.value removeObserver];
+            [protect(slotPair.value) removeObserver];
         }
     }
     for (const String& slot : staleSlots)
@@ -203,7 +203,7 @@ void CcidService::updateSlots(NSArray *slots)
 
     if (!m_service)
         return;
-    int state = [change[NSKeyValueChangeNewKey] intValue];
+    int state = [protect(change[NSKeyValueChangeNewKey]) intValue];
     switch (state) {
     case TKSmartCardSlotStateMissing:
         RELEASE_LOG(WebAuthn, "_WKSmartCardSlotStateObserver: state=Missing");
@@ -239,7 +239,7 @@ void CcidService::updateSlots(NSArray *slots)
 - (void)removeObserver
 {
     if (m_slot) {
-        [m_slot removeObserver:self forKeyPath:@"state"];
+        [protect(m_slot) removeObserver:self forKeyPath:@"state"];
         m_slot.clear();
     }
 }
