@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('Tests that the Cookie Store API set() rejects, and does not leave a phantom entry visible to document.cookie, when an HttpOnly cookie of the same name already exists. RFC 6265bis section 5.6 requires a cookie received from a non-HTTP API to be ignored entirely in that case.');
+jsTestIsAsync = true;
+
+// internals.getCookies() observes the cookie store directly, including HttpOnly cookies.
+// document.cookie goes through the web process cookie cache, which is where a phantom entry
+// would show up.
+function storeValueOf(name)
+{
+    for (let cookie of internals.getCookies()) {
+        if (cookie.name === name)
+            return cookie.value;
+    }
+    return null;
+}
+
+function documentCookieValueOf(name)
+{
+    for (let pair of document.cookie.split('; ')) {
+        let index = pair.indexOf('=');
+        if (index !== -1 && pair.substring(0, index) === name)
+            return pair.substring(index + 1);
+    }
+    return null;
+}
+
+function setViaHTTP(cookie)
+{
+    if (!setCookies(cookie))
+        testFailed(`Could not set cookie via HTTP: ${cookie}`);
+}
+
+function deleteViaHTTP(name)
+{
+    // An HTTP-originated Set-Cookie may delete an HttpOnly cookie; a script write may not.
+    setCookies(`${name}=; path=/; Max-Age=0`);
+}
+
+async function trySet(options)
+{
+    try {
+        await cookieStore.set(options);
+        return 'resolved';
+    } catch (e) {
+        return 'rejected';
+    }
+}
+
+async function testRejectsWhenHTTPOnlyCookieExists()
+{
+    debug('An HttpOnly cookie of the same name already exists:');
+    let name = 'httponly-shadowed';
+    setViaHTTP(`${name}=fromHTTP; path=/; HttpOnly`);
+
+    let result = await trySet({ name: name, value: 'fromScript', path: '/' });
+    if (result === 'rejected')
+        testPassed('cookieStore.set() rejected.');
+    else
+        testFailed('cookieStore.set() resolved, but the write cannot succeed.');
+
+    if (storeValueOf(name) === 'fromHTTP')
+        testPassed('The existing HttpOnly cookie is unchanged in the cookie store.');
+    else
+        testFailed(`The HttpOnly cookie was modified; store value is ${storeValueOf(name)}.`);
+
+    if (documentCookieValueOf(name) === null)
+        testPassed('document.cookie does not expose a phantom entry.');
+    else
+        testFailed(`document.cookie exposes '${documentCookieValueOf(name)}', which is not in the cookie store.`);
+
+    deleteViaHTTP(name);
+}
+
+async function testSetsWhenNoCookieExists()
+{
+    debug('No cookie of that name exists:');
+    let name = 'httponly-fresh';
+
+    let result = await trySet({ name: name, value: 'fromScript', path: '/' });
+    if (result === 'resolved')
+        testPassed('cookieStore.set() resolved.');
+    else
+        testFailed('cookieStore.set() rejected, but the write should have succeeded.');
+
+    if (storeValueOf(name) === 'fromScript')
+        testPassed('The cookie is in the cookie store.');
+    else
+        testFailed(`The cookie is missing from the store; store value is ${storeValueOf(name)}.`);
+
+    deleteViaHTTP(name);
+}
+
+async function testOverwritesNonHTTPOnlyCookie()
+{
+    debug('A cookie of the same name exists and is not HttpOnly:');
+    let name = 'httponly-absent';
+    setViaHTTP(`${name}=fromHTTP; path=/`);
+
+    let result = await trySet({ name: name, value: 'fromScript', path: '/' });
+    if (result === 'resolved')
+        testPassed('cookieStore.set() resolved.');
+    else
+        testFailed('cookieStore.set() rejected, but overwriting a non-HttpOnly cookie is allowed.');
+
+    if (storeValueOf(name) === 'fromScript')
+        testPassed('The cookie was overwritten in the cookie store.');
+    else
+        testFailed(`The cookie was not overwritten; store value is ${storeValueOf(name)}.`);
+
+    deleteViaHTTP(name);
+}
+
+async function testExpiredSetDeletesCookie()
+{
+    debug('A set() whose expiry is already in the past is a deletion:');
+    let name = 'httponly-expired';
+    setViaHTTP(`${name}=fromHTTP; path=/`);
+
+    let result = await trySet({ name: name, value: 'fromScript', path: '/', expires: Date.now() - 86400000 });
+    if (result === 'resolved')
+        testPassed('cookieStore.set() resolved.');
+    else
+        testFailed('cookieStore.set() rejected, but the deletion should have succeeded.');
+
+    if (storeValueOf(name) === null)
+        testPassed('The cookie was removed from the cookie store.');
+    else
+        testFailed(`The cookie is still in the store with value ${storeValueOf(name)}.`);
+
+    deleteViaHTTP(name);
+}
+
+onload = async () => {
+    await testRejectsWhenHTTPOnlyCookieExists();
+    await testSetsWhenNoCookieExists();
+    await testOverwritesNonHTTPOnlyCookie();
+    await testExpiredSetDeletesCookie();
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

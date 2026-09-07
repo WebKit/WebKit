@@ -1969,6 +1969,7 @@ streams/readable-stream-byob-request-worker.html [ Skip ]
 imported/w3c/web-platform-tests/cookiestore [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
+http/tests/cookies/cookie-store-set-rejects-when-httponly-cookie-exists.https.html [ Skip ] # NetworkStorageSession::setCookieFromDOM is a stub that always returns false for curl.
 cookies/cookie-store-start-listening-for-change-with-null-url-crash.html [ Skip ] # crash
 http/tests/navigation/ping-attribute/anchor-cookie.html [ Skip ]
 http/tests/navigation/ping-attribute/cross-site-url-anchor-cookie-preexisting-cookie.html [ Skip ]
