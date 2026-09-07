@@ -31,7 +31,6 @@ namespace JSC {
 class BytecodeGenerator;
 class SymbolTable;
 class UnlinkedCodeBlockGenerator;
-class SymbolTable;
 
 struct JSOpcodeTraits;
 template<typename> struct BaseInstruction;
@@ -39,6 +38,6 @@ template<typename> class InstructionStreamWriter;
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 using JSInstructionStreamWriter = InstructionStreamWriter<JSInstruction>;
 
-void performGeneratorification(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, JSInstructionStreamWriter&, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex);
+void performGeneratorification(BytecodeGenerator&, UnlinkedCodeBlockGenerator*, JSInstructionStreamWriter&, SymbolTable* generatorFrameSymbolTable);
 
 } // namespace JSC

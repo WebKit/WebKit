@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayPrototype.h"
+#include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
@@ -1981,6 +1982,18 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 }
                 case op_call_ignore_result:
                     return { };
+                case op_restore_generator_locals: {
+                    if (node->op() != GetClosureVar)
+                        return { };
+                    auto bytecode = instruction->as<OpRestoreGeneratorLocals>();
+                    VirtualRegister local;
+                    forEachLiveGeneratorLocal(profiledBlock, bytecode, [&](VirtualRegister candidate, ScopeOffset offset) {
+                        if (offset == node->scopeOffset())
+                            local = candidate;
+                    });
+                    ASSERT(local.isValid());
+                    return MethodOfGettingAValueProfile::lazyOperandValueProfile(node->origin.semantic, remapOperand(node->origin.semantic.inlineCallFrame(), local));
+                }
                 default: {
                     auto* valueProfile = profiledBlock->tryGetValueProfileForBytecodeIndex(node->origin.semantic.bytecodeIndex());
                     if (!valueProfile)

@@ -1249,6 +1249,23 @@ private:
         return objectNode;
     }
     
+    SpeculatedType fuzzPrediction(CodeBlock* codeBlock, const CodeOrigin& codeOrigin, SpeculatedType prediction)
+    {
+        auto* fuzzerAgent = m_vm->fuzzerAgent();
+        if (fuzzerAgent) [[unlikely]]
+            return fuzzerAgent->getPrediction(codeBlock, codeOrigin, prediction) & SpecBytecodeTop;
+        return prediction;
+    }
+
+    // ResolvedClosureVar is not used normally. It is very special internal ResolveType, mainly used for generators and private fields.
+    // In these variables, it can happen that we use JSEmpty as a result of op_get_from_scope (which becomes a TDZ error in normal ClosureVar).
+    // And this JSEmpty is still legit. The problem is that ValueProfile never tells about JSEmpty since it sees no value is stored when JSEmpty
+    // is stored. We workaround this very special internal use case by explicitly setting SpecEmpty when ValueProfile tells this is SpecNone.
+    static SpeculatedType resolvedClosureVarPrediction(SpeculatedType prediction)
+    {
+        return prediction == SpecNone ? SpecEmpty : prediction;
+    }
+
     SpeculatedType getPredictionWithoutOSRExit(BytecodeIndex bytecodeIndex)
     {
         auto getValueProfilePredictionFromForCodeBlockAndBytecodeOffset = [&] (InlineStackEntry* inlineStackEntry, const CodeOrigin& codeOrigin)
@@ -1263,11 +1280,7 @@ private:
 
             JSValue* specFailValue = inlineStackEntry->m_specFailValueProfileBuckets.get(bytecodeIndex);
             SpeculatedType prediction = codeBlock->valueProfilePredictionForBytecodeIndex(codeOrigin.bytecodeIndex(), specFailValue);
-            auto* fuzzerAgent = m_vm->fuzzerAgent();
-            if (fuzzerAgent) [[unlikely]]
-                return fuzzerAgent->getPrediction(codeBlock, codeOrigin, prediction) & SpecBytecodeTop;
-
-            return prediction;
+            return fuzzPrediction(codeBlock, codeOrigin, prediction);
         };
 
         SpeculatedType prediction = getValueProfilePredictionFromForCodeBlockAndBytecodeOffset(m_inlineStackTop, CodeOrigin(bytecodeIndex, inlineCallFrame()));
@@ -10580,15 +10593,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 }
 
                 SpeculatedType prediction = SpecNone;
-                if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
-                    // ResolvedClosureVar is not used normally. It is very special internal ResolveType, mainly used for generators and private fields.
-                    // In these variables, it can happen that we use JSEmpty as a result of op_get_from_scope (which becomes a TDZ error in normal ClosureVar).
-                    // And this JSEmpty is still legit. The problem is that ValueProfile never tells about JSEmpty since it sees no value is stored when JSEmpty
-                    // is stored. We workaround this very special internal use case by explicitly setting SpecEmpty when ValueProfile tells this is SpecNone.
-                    prediction = getPredictionWithoutOSRExit();
-                    if (prediction == SpecNone)
-                        prediction = SpecEmpty;
-                } else
+                if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar)
+                    prediction = resolvedClosureVarPrediction(getPredictionWithoutOSRExit());
+                else
                     prediction = getPrediction();
                 set(bytecode.m_dst, addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
                 break;
@@ -10764,6 +10771,36 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), OpInfo(initialValue), scope);
             set(bytecode.m_dst, lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);
+        }
+
+        case op_save_generator_locals: {
+            auto bytecode = currentInstruction->as<OpSaveGeneratorLocals>();
+            Node* scopeNode = get(bytecode.m_scope);
+            forEachLiveGeneratorLocal(codeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+                addToGraph(PutClosureVar, OpInfo(offset.offset()), scopeNode, get(local));
+                emitExitOK();
+            });
+            forEachClearedGeneratorSlot(codeBlock, bytecode, [&](ScopeOffset offset) {
+                addToGraph(PutClosureVar, OpInfo(offset.offset()), scopeNode, jsConstant(jsUndefined()));
+                emitExitOK();
+            });
+            addToGraph(Phantom, scopeNode);
+            NEXT_OPCODE(op_save_generator_locals);
+        }
+
+        case op_restore_generator_locals: {
+            auto bytecode = currentInstruction->as<OpRestoreGeneratorLocals>();
+            Node* scopeNode = get(bytecode.m_scope);
+            addToGraph(Phantom, scopeNode);
+            unsigned valueProfile = bytecode.m_valueProfile;
+            forEachLiveGeneratorLocal(codeBlock, bytecode, [&](VirtualRegister local, ScopeOffset offset) {
+                SpeculatedType prediction = m_inlineStackTop->m_profiledBlock->valueProfileForOffset(valueProfile++).computeUpdatedPrediction();
+                mergeSpeculation(prediction, m_inlineStackTop->m_lazyOperands.prediction(LazyOperandValueProfileKey(m_currentIndex, m_inlineStackTop->remapOperand(local))));
+                prediction = resolvedClosureVarPrediction(fuzzPrediction(m_inlineStackTop->m_profiledBlock, currentCodeOrigin(), prediction));
+                set(local, addToGraph(GetClosureVar, OpInfo(offset.offset()), OpInfo(prediction), scopeNode), ImmediateSetWithFlush);
+                emitExitOK();
+            });
+            NEXT_OPCODE(op_restore_generator_locals);
         }
 
         case op_push_with_scope: {

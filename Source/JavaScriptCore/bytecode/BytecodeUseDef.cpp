@@ -44,7 +44,7 @@ namespace JSC {
 #define USES USES_OR_DEFS
 #define DEFS USES_OR_DEFS
 
-void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
+void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor, const ScopedLambda<const BitVector&(unsigned)>& bitVector)
 {
     OpcodeID opcodeID = instruction->opcodeID();
 
@@ -292,6 +292,16 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpPutInternalField, base, value)
 
     USES(OpYield, argument)
+    USES(OpRestoreGeneratorLocals, scope)
+
+    case op_save_generator_locals: {
+        auto bytecode = instruction->as<OpSaveGeneratorLocals>();
+        functor(bytecode.m_scope);
+        bitVector(bytecode.m_liveLocals).forEachSetBit([&](size_t index) {
+            functor(virtualRegisterForLocal(index));
+        });
+        return;
+    }
 
     USES(OpEnumeratorNext, mode, index, base, enumerator)
     USES(OpEnumeratorGetByVal, base, mode, propertyName, index, enumerator)
@@ -386,7 +396,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     }
 }
 
-void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
+void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor, const ScopedLambda<const BitVector&(unsigned)>& bitVector)
 {
 
     auto defAt = [&] (Checkpoint target, VirtualRegister operand) {
@@ -459,6 +469,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_log_shadow_chicken_prologue:
     case op_log_shadow_chicken_tail:
     case op_yield:
+    case op_save_generator_locals:
     case op_nop:
     case op_unreachable:
     case op_super_sampler_begin:
@@ -642,6 +653,14 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_enter: {
         for (unsigned i = numVars; i--;)
             functor(virtualRegisterForLocal(i));
+        return;
+    }
+
+    case op_restore_generator_locals: {
+        auto bytecode = instruction->as<OpRestoreGeneratorLocals>();
+        bitVector(bytecode.m_liveLocals).forEachSetBit([&](size_t index) {
+            functor(virtualRegisterForLocal(index));
+        });
         return;
     }
 

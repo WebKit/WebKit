@@ -1176,6 +1176,23 @@ op :yield,
         argument: VirtualRegister,
     }
 
+# FIXME: Bytecode dumps print liveLocals as a bit vector table index. Dump the locals it names.
+op :save_generator_locals,
+    args: {
+        scope: VirtualRegister,
+        liveLocals: unsigned,
+        firstScopeOffset: unsigned,
+        numberOfSlots: unsigned,
+    }
+
+op :restore_generator_locals,
+    args: {
+        scope: VirtualRegister,
+        liveLocals: unsigned,
+        firstScopeOffset: unsigned,
+        valueProfile: unsigned,
+    }
+
 op :check_traps
 
 op :log_shadow_chicken_prologue,

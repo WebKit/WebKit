@@ -2301,6 +2301,10 @@ slowPathOp(unreachable)
 slowPathOp(new_promise)
 slowPathOp(new_generator)
 slowPathOp(new_async_function_generator)
+# FIXME: Suspension points with one or two live locals are a few percent slower here than the
+# op_put_to_scope / op_get_from_scope sequences they replace. Add a fast path for inline bit vectors.
+slowPathOp(save_generator_locals)
+slowPathOp(restore_generator_locals)
 
 macro llintSlowPathOp(opcodeName)
     llintOp(op_%opcodeName%, unused, macro (unused, unused, dispatch)
