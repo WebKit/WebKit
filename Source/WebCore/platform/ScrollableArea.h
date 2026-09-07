@@ -314,6 +314,10 @@ public:
     ScrollType currentScrollType() const { return m_currentScrollType; }
     void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = scrollType; }
 
+    // Physical edges this area has most recently been scrolled toward by a relative scroll. Sticky,
+    // and per-axis: scrolling one way clears the opposite edge on that axis but leaves the other axis.
+    RectEdges<bool> scrolledDirections() const { return m_scrolledDirections; }
+
     // This reflects animated scrolls triggered by CSS OM View "smooth" scrolls.
     ScrollAnimationStatus scrollAnimationStatus() { return m_scrollAnimationStatus; }
     void setScrollAnimationStatus(ScrollAnimationStatus status) { m_scrollAnimationStatus = status; }
@@ -493,6 +497,17 @@ protected:
     bool isAwaitingScrollend() const { return m_isAwaitingScrollend; }
     void setIsAwaitingScrollend(bool isAwaitingScrollend) { m_isAwaitingScrollend = isAwaitingScrollend; }
 
+    // How the scroll being applied relates to the previous position, set by whichever entry point
+    // starts it. A scroll may be animated and so outlive the call that classified it, which is why
+    // this is reset by the next scroll rather than on leaving a scope.
+    void setCurrentScrollRelativity(ScrollRelativity relativity) { m_currentScrollRelativity = relativity; }
+
+    // Whether scroll-state(scrolled) tracks the scroll being applied, and folding in its direction,
+    // which is taken from the actual post-clamp positions. A frame view reports its own scrolls
+    // rather than going through scrollPositionChanged(), so it calls these itself.
+    bool shouldTrackScrolledDirections() const;
+    void updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
+
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
@@ -532,6 +547,9 @@ private:
 
     ScrollType m_currentScrollType { ScrollType::User };
     ScrollAnimationStatus m_scrollAnimationStatus { ScrollAnimationStatus::NotAnimating };
+
+    RectEdges<bool> m_scrolledDirections;
+    ScrollRelativity m_currentScrollRelativity { ScrollRelativity::Unclassified };
 
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };

@@ -1313,6 +1313,7 @@ fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Skip ]
 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-keyboard-scroll-on-body.html [ Skip ]
 
 # Volume is locked on iOS
 media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ Skip ]
@@ -1624,6 +1625,8 @@ compositing/iframes/iframe-content-flipping.html [ Failure ]
 compositing/iframes/iframe-scrolling-change.html [ Failure ]
 http/tests/site-isolation/compositing/iframes/iframe-content-flipping.html [ Failure ]
 http/tests/site-isolation/compositing/iframes/iframe-scrolling-change.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-button-clicks.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-scrollbar-track-clicks.html [ Skip ]
 
 # CSS tests to triage
 webkit.org/b/178588 css3/zoom-coords.xhtml [ Failure ]
@@ -2956,6 +2959,7 @@ webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-sticky.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-conditional/container-queries/scroll-state/scroll-state-scrolled-mouse-drag-scroll.html [ Skip ]
 
 # DumpRenderTree doesn't support logging calls to runOpenPanel and iOS's WebKitTestRunner doesn't support eventSender.mouseDown.
 fast/forms/file/open-file-panel.html [ Skip ]

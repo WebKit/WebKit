@@ -430,6 +430,81 @@ struct ScrollStateFeatureSchema : public FeatureSchema {
     }
 };
 
+// Shared evaluation for the directional scroll-state features (scrollable, scrolled). They differ
+// only in which part of the container's snapshotted scroll state they read, which `extract` picks;
+// the keyword mapping, including resolving the logical keywords against the container's writing
+// mode, is the same for both.
+template<typename Extract>
+static EvaluationResult evaluateScrollStateDirectionFeature(const MQ::Feature& feature, const FeatureEvaluationContext& context, const Extract& extract)
+{
+    // A container with no principal box, or one that is not a box, has no directions to report, so
+    // the directional values do not match while none does.
+    RectEdges<bool> directions;
+    if (CheckedPtr renderer = context.renderer.get()) {
+        // The scroll state is snapshotted after layout rather than read live here, so that style
+        // changes caused by a scroll-state query cannot feed back into the state it queries within
+        // the same style and layout update.
+        // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
+        if (CheckedPtr containerElement = renderer->element())
+            directions = extract(context.document->styleScope().scrollStateSnapshotFor(*containerElement));
+    }
+
+    auto towardSide = [&](BoxSide side) {
+        return directions[side];
+    };
+    auto towardAxis = [&](BoxAxis axis) {
+        return axis == BoxAxis::Horizontal
+            ? towardSide(BoxSide::Left) || towardSide(BoxSide::Right)
+            : towardSide(BoxSide::Top) || towardSide(BoxSide::Bottom);
+    };
+    bool anyDirection = towardSide(BoxSide::Top) || towardSide(BoxSide::Right)
+        || towardSide(BoxSide::Bottom) || towardSide(BoxSide::Left);
+
+    // Boolean form, e.g. `scroll-state(scrollable)`: holds in any direction.
+    if (!feature.rightComparison)
+        return toEvaluationResult(anyDirection);
+
+    auto requested = WTF::switchOn(*feature.rightComparison->value,
+        [](const CSS::Keyword& keyword) {
+            return keyword.value;
+        },
+        [](const auto&) {
+            return CSSValueInvalid;
+        });
+
+    auto writingMode = context.conversionData.style().writingMode();
+    switch (requested) {
+    case CSSValueNone:
+        return toEvaluationResult(!anyDirection);
+    case CSSValueTop:
+        return toEvaluationResult(towardSide(BoxSide::Top));
+    case CSSValueRight:
+        return toEvaluationResult(towardSide(BoxSide::Right));
+    case CSSValueBottom:
+        return toEvaluationResult(towardSide(BoxSide::Bottom));
+    case CSSValueLeft:
+        return toEvaluationResult(towardSide(BoxSide::Left));
+    case CSSValueBlockStart:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)));
+    case CSSValueBlockEnd:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)));
+    case CSSValueInlineStart:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)));
+    case CSSValueInlineEnd:
+        return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)));
+    case CSSValueX:
+        return toEvaluationResult(towardAxis(BoxAxis::Horizontal));
+    case CSSValueY:
+        return toEvaluationResult(towardAxis(BoxAxis::Vertical));
+    case CSSValueBlock:
+        return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block)));
+    case CSSValueInline:
+        return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline)));
+    default:
+        return EvaluationResult::False;
+    }
+}
+
 // scroll-state(scrollable [: <edge> | <axis> | none]): whether the query container can currently be
 // scrolled further toward the given edge/axis (any direction for the boolean form). A container that
 // is not a scroll container, or is already fully scrolled, matches only `none`.
@@ -439,61 +514,24 @@ struct ScrollableFeatureSchema : public ScrollStateFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
     {
-        RectEdges<bool> scrollable;
-        if (CheckedPtr renderer = context.renderer.get()) {
-            if (CheckedPtr containerElement = renderer->element())
-                scrollable = context.document->styleScope().scrollStateSnapshotFor(*containerElement).scrollableEdges;
-        }
+        return evaluateScrollStateDirectionFeature(feature, context, [](const auto& scrollState) {
+            return scrollState.scrollableEdges;
+        });
+    }
+};
 
-        // Edges the container can currently be scrolled further toward.
-        auto towardSide = [&](BoxSide side) { return scrollable[side]; };
-        auto towardAxis = [&](BoxAxis axis) {
-            return axis == BoxAxis::Horizontal
-                ? towardSide(BoxSide::Left) || towardSide(BoxSide::Right)
-                : towardSide(BoxSide::Top) || towardSide(BoxSide::Bottom);
-        };
-        bool scrollableAnywhere = towardSide(BoxSide::Top) || towardSide(BoxSide::Right)
-            || towardSide(BoxSide::Bottom) || towardSide(BoxSide::Left);
+// scroll-state(scrolled [: <edge> | <axis> | none]): the direction of the query container's most
+// recent relative scroll. Sticky and per-axis, so opposite edges on different axes can match at the
+// same time; a container that has not been scrolled relatively yet matches only `none`.
+// https://drafts.csswg.org/css-conditional-5/#scrolled
+struct ScrolledFeatureSchema : public ScrollStateFeatureSchema {
+    using ScrollStateFeatureSchema::ScrollStateFeatureSchema;
 
-        // Boolean form `scroll-state(scrollable)`: scrollable in any direction.
-        if (!feature.rightComparison)
-            return toEvaluationResult(scrollableAnywhere);
-
-        auto requested = WTF::switchOn(*feature.rightComparison->value,
-            [](const CSS::Keyword& keyword) { return keyword.value; },
-            [](const auto&) { return CSSValueInvalid; });
-
-        auto writingMode = context.conversionData.style().writingMode();
-        switch (requested) {
-        case CSSValueNone:
-            return toEvaluationResult(!scrollableAnywhere);
-        case CSSValueTop:
-            return toEvaluationResult(towardSide(BoxSide::Top));
-        case CSSValueRight:
-            return toEvaluationResult(towardSide(BoxSide::Right));
-        case CSSValueBottom:
-            return toEvaluationResult(towardSide(BoxSide::Bottom));
-        case CSSValueLeft:
-            return toEvaluationResult(towardSide(BoxSide::Left));
-        case CSSValueBlockStart:
-            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockStart)));
-        case CSSValueBlockEnd:
-            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::BlockEnd)));
-        case CSSValueInlineStart:
-            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineStart)));
-        case CSSValueInlineEnd:
-            return toEvaluationResult(towardSide(mapSideLogicalToPhysical(writingMode, LogicalBoxSide::InlineEnd)));
-        case CSSValueX:
-            return toEvaluationResult(towardAxis(BoxAxis::Horizontal));
-        case CSSValueY:
-            return toEvaluationResult(towardAxis(BoxAxis::Vertical));
-        case CSSValueBlock:
-            return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Block)));
-        case CSSValueInline:
-            return toEvaluationResult(towardAxis(mapAxisLogicalToPhysical(writingMode, LogicalBoxAxis::Inline)));
-        default:
-            return EvaluationResult::False;
-        }
+    EvaluationResult evaluate(const MQ::Feature& feature, const FeatureEvaluationContext& context) const override
+    {
+        return evaluateScrollStateDirectionFeature(feature, context, [](const auto& scrollState) {
+            return scrollState.scrolledDirections;
+        });
     }
 };
 
@@ -549,7 +587,7 @@ static const ScrollStateFeatureSchema& scrollableFeatureSchema()
 
 static const ScrollStateFeatureSchema& scrolledFeatureSchema()
 {
-    static MainThreadNeverDestroyed<ScrollStateFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
+    static MainThreadNeverDestroyed<ScrolledFeatureSchema> schema { "scrolled"_s, FixedVector<CSSValueID> { CSSValueNone, CSSValueTop, CSSValueRight, CSSValueBottom, CSSValueLeft, CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd, CSSValueBlock, CSSValueInline, CSSValueX, CSSValueY } };
     return schema;
 }
 

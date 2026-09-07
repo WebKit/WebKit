@@ -549,6 +549,8 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
     if (prohibitsScrolling())
         return;
 
+    setCurrentScrollRelativity(scrollRelativityFor(options.snapPointSelectionMethod));
+
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating) {
         scrollAnimator().cancelAnimations();
         stopAsyncAnimatedScroll();

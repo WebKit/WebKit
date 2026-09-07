@@ -64,6 +64,8 @@ struct SameSizeAsScrollableArea : public CanMakeWeakPtr<SameSizeAsScrollableArea
     uint8_t scrollbarOverlayStyle;
     bool currentScrollType;
     uint8_t scrollAnimationStatus;
+    uint8_t scrolledDirections[4];
+    uint8_t currentScrollRelativity;
     bool bytes[4];
     Markable<ScrollingNodeID> scrollingNodeIDForTesting;
 };
@@ -133,6 +135,8 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     if (!scrollbar)
         return false;
 
+    setCurrentScrollRelativity(scrollRelativityFor(granularity));
+
     float step = 0;
     switch (granularity) {
     case ScrollGranularity::Line:
@@ -168,6 +172,10 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
 void ScrollableArea::beginKeyboardScroll(const KeyboardScroll& scrollData)
 {
+    // Smooth keyboard scrolling takes this path rather than scroll(), and may hand the scroll to the
+    // scrolling thread, so it is classified here instead of where the position is applied.
+    setCurrentScrollRelativity(scrollRelativityFor(scrollData.granularity));
+
     bool startedAnimation = requestStartKeyboardScrollAnimation(scrollData);
 
     if (startedAnimation)
@@ -219,6 +227,11 @@ void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, c
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, ScrollClamping clamping)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToOffsetWithoutAnimation " << offset);
+
+    // Scrolling to an offset says where to end up rather than how far to move, so it bears no relation
+    // to the previous position. Dragging the scrollbar thumb reaches here, since the thumb maps to a
+    // position in the content. https://drafts.csswg.org/css-scroll-snap-1/#relative-scroll
+    setCurrentScrollRelativity(ScrollRelativity::Absolute);
 
     auto position = scrollPositionFromOffset(offset, toFloatSize(scrollOrigin()));
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
@@ -274,7 +287,43 @@ void ScrollableArea::scrollPositionChanged(const ScrollPosition& position)
         if (CheckedPtr controller = scrollAnchoringController())
             controller->scrollPositionDidChange();
 
+        if (shouldTrackScrolledDirections())
+            updateScrolledDirections(oldPosition, scrollPosition());
+
         updateAnchorPositionedAfterScroll();
+    }
+}
+
+// scroll-state(scrolled) only tracks relative scrolls; absolute ones leave the state alone.
+// https://drafts.csswg.org/css-conditional-5/#scrolled
+bool ScrollableArea::shouldTrackScrolledDirections() const
+{
+    if (m_currentScrollRelativity != ScrollRelativity::Unclassified)
+        return m_currentScrollRelativity == ScrollRelativity::Relative;
+
+    // Nothing classified this scroll. The paths that reach here without going through an entry point
+    // that does are user input, which is relative; a programmatic scroll is always classified.
+    return currentScrollType() == ScrollType::User;
+}
+
+void ScrollableArea::updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
+{
+    // Scrolling along an axis clears the opposite edge on that axis, but leaves the other axis alone,
+    // so scroll-state(scrolled: top) and (scrolled: left) can hold at the same time.
+    if (newPosition.y() < oldPosition.y()) {
+        m_scrolledDirections.setTop(true);
+        m_scrolledDirections.setBottom(false);
+    } else if (newPosition.y() > oldPosition.y()) {
+        m_scrolledDirections.setBottom(true);
+        m_scrolledDirections.setTop(false);
+    }
+
+    if (newPosition.x() < oldPosition.x()) {
+        m_scrolledDirections.setLeft(true);
+        m_scrolledDirections.setRight(false);
+    } else if (newPosition.x() > oldPosition.x()) {
+        m_scrolledDirections.setRight(true);
+        m_scrolledDirections.setLeft(false);
     }
 }
 
@@ -294,6 +343,9 @@ bool ScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& whee
 {
     if (!isScrollableOrRubberbandable())
         return false;
+
+    // A wheel scroll moves by a delta from the current position.
+    setCurrentScrollRelativity(ScrollRelativity::Relative);
 
     bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
     
