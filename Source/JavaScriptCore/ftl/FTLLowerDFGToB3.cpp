@@ -3181,7 +3181,7 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         if (m_node->child1().useKind() == Int32Use || m_node->child1().useKind() == KnownInt32Use) {
             LValue operand = lowInt32(m_node->child1());
-            setInt32(m_out.ctlz32(operand));
+            setInt32(m_out.ctlz(operand));
             return;
         }
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
@@ -12383,6 +12383,18 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock checkDUCET = m_out.newBlock();
         LBasicBlock is8Bit = m_out.newBlock();
         LBasicBlock loopSetup = m_out.newBlock();
+        LBasicBlock shortString = m_out.newBlock();
+        LBasicBlock wordLoop = m_out.newBlock();
+        LBasicBlock wordPairSame = m_out.newBlock();
+        LBasicBlock wordPairAdvance = m_out.newBlock();
+        LBasicBlock wordPairDiffer = m_out.newBlock();
+        LBasicBlock wordPairDifferASCII = m_out.newBlock();
+        LBasicBlock wordPairRescan = m_out.newBlock();
+        LBasicBlock wordTail = m_out.newBlock();
+        LBasicBlock wordTailSame = m_out.newBlock();
+        LBasicBlock wordTailDiffer = m_out.newBlock();
+        LBasicBlock wordTailDifferASCII = m_out.newBlock();
+        LBasicBlock wordTailRescan = m_out.newBlock();
         LBasicBlock loop = m_out.newBlock();
         LBasicBlock checkASCII = m_out.newBlock();
         LBasicBlock checkWeights = m_out.newBlock();
@@ -12426,20 +12438,104 @@ IGNORE_CLANG_WARNINGS_END
             m_out.testIsZero32(m_out.bitAnd(leftFlag, rightFlag), m_out.constInt32(StringImpl::flagIs8Bit())),
             rarely(slowCase), usually(loopSetup));
 
+        // Scanning string content a whole word at a time is much cheaper than the byte loop
+        // below. Semantics must match the byte loop exactly:
+        // - equal words containing a byte >= 128 need full collation for that byte: bail
+        // - differing words locate the first differing byte; when no byte in the pair has the
+        //   high bit set the level-1 lookup at that byte decides, but if any byte >= 128 is
+        //   present the word pair is rescanned byte by byte so that an equal non-ASCII prefix
+        //   bails and a differing non-ASCII byte still goes through the weight table.
+        constexpr uint64_t highBitMask = 0x8080808080808080ULL;
+        constexpr unsigned wordSize = sizeof(uint64_t);
+
+        // The lowest addressed byte is the least significant one, so the earliest differing byte
+        // of a pair is the lowest set bit of their xor.
+        //
+        // For example, "abcdefgh" vs "abXdefgh"
+        //
+        // left         = 0x6867666564636261    ('a' = 0x61 sits in the least significant byte)
+        // right        = 0x6867666564586261    ('X' = 0x58 replaces 'c' = 0x63)
+        // diff         = 0x00000000003B0000    (0x63 ^ 0x58 = 0x3B, in lane 2)
+        // diff & -diff = 0x0000000000010000    (bit 16)
+        // clz = 47  ->  63 - 47 = 16  ->  16 >> 3 = 2
+        auto firstDifferingByteOffset = [&](LValue diff) {
+            LValue lowestSetBit = m_out.bitAnd(diff, m_out.neg(diff));
+            return m_out.lShr(m_out.sub(m_out.constInt64(wordSize * 8 - 1), m_out.ctlz(lowestSetBit)), m_out.constInt32(3));
+        };
+
         // Load lengths and data pointers
-        m_out.appendTo(loopSetup, loop);
+        m_out.appendTo(loopSetup, shortString);
         LValue leftLength = m_out.zeroExtPtr(m_out.load32(leftImpl, m_heaps.StringImpl_length));
         LValue rightLength = m_out.zeroExtPtr(m_out.load32(rightImpl, m_heaps.StringImpl_length));
         LValue leftData = m_out.loadPtr(leftImpl, m_heaps.StringImpl_data);
         LValue rightData = m_out.loadPtr(rightImpl, m_heaps.StringImpl_data);
         LValue commonLength = m_out.select(m_out.below(leftLength, rightLength), leftLength, rightLength);
+        LValue lastWordIndex = m_out.sub(commonLength, m_out.constIntPtr(wordSize));
         LValue tableBase = m_out.constIntPtr(ducetLevel1Weights);
-        ValueFromBlock indexAtStart = m_out.anchor(m_out.intPtrZero);
+        ValueFromBlock wordIndexAtStart = m_out.anchor(m_out.intPtrZero);
+        m_out.branch(m_out.aboveOrEqual(commonLength, m_out.constIntPtr(wordSize)), unsure(wordLoop), unsure(shortString));
+
+        m_out.appendTo(shortString, wordLoop);
+        ValueFromBlock shortStringStart = m_out.anchor(m_out.intPtrZero);
         m_out.branch(m_out.isNull(commonLength), unsure(loopDone), unsure(loop));
+
+        m_out.appendTo(wordLoop, wordPairSame);
+        LValue wordIndex = m_out.phi(pointerType(), wordIndexAtStart);
+        LValue leftWord = m_out.load64(TypedPointer(m_heaps.characters8.atAnyIndex(), m_out.add(leftData, wordIndex)));
+        LValue rightWord = m_out.load64(TypedPointer(m_heaps.characters8.atAnyIndex(), m_out.add(rightData, wordIndex)));
+        LValue wordDiff = m_out.bitXor(leftWord, rightWord);
+        m_out.branch(m_out.notZero64(wordDiff), unsure(wordPairDiffer), unsure(wordPairSame));
+
+        m_out.appendTo(wordPairSame, wordPairAdvance);
+        m_out.branch(
+            m_out.testIsZero64(leftWord, m_out.constInt64(highBitMask)),
+            usually(wordPairAdvance), rarely(slowCase));
+
+        m_out.appendTo(wordPairAdvance, wordPairDiffer);
+        LValue nextWordIndex = m_out.add(wordIndex, m_out.constIntPtr(wordSize));
+        m_out.addIncomingToPhi(wordIndex, m_out.anchor(nextWordIndex));
+        m_out.branch(m_out.belowOrEqual(nextWordIndex, lastWordIndex), unsure(wordLoop), unsure(wordTail));
+
+        m_out.appendTo(wordPairDiffer, wordPairDifferASCII);
+        m_out.branch(
+            m_out.testIsZero64(m_out.bitOr(leftWord, rightWord), m_out.constInt64(highBitMask)),
+            usually(wordPairDifferASCII), unsure(wordPairRescan));
+
+        m_out.appendTo(wordPairDifferASCII, wordPairRescan);
+        ValueFromBlock wordDifferingStart = m_out.anchor(m_out.add(wordIndex, firstDifferingByteOffset(wordDiff)));
+        m_out.jump(loop);
+
+        m_out.appendTo(wordPairRescan, wordTail);
+        ValueFromBlock wordRescanStart = m_out.anchor(wordIndex);
+        m_out.jump(loop);
+
+        m_out.appendTo(wordTail, wordTailSame);
+        LValue leftTailWord = m_out.load64(TypedPointer(m_heaps.characters8.atAnyIndex(), m_out.add(leftData, lastWordIndex)));
+        LValue rightTailWord = m_out.load64(TypedPointer(m_heaps.characters8.atAnyIndex(), m_out.add(rightData, lastWordIndex)));
+        LValue tailDiff = m_out.bitXor(leftTailWord, rightTailWord);
+        m_out.branch(m_out.notZero64(tailDiff), unsure(wordTailDiffer), unsure(wordTailSame));
+
+        m_out.appendTo(wordTailSame, wordTailDiffer);
+        m_out.branch(
+            m_out.testIsZero64(leftTailWord, m_out.constInt64(highBitMask)),
+            usually(loopDone), rarely(slowCase));
+
+        m_out.appendTo(wordTailDiffer, wordTailDifferASCII);
+        m_out.branch(
+            m_out.testIsZero64(m_out.bitOr(leftTailWord, rightTailWord), m_out.constInt64(highBitMask)),
+            usually(wordTailDifferASCII), unsure(wordTailRescan));
+
+        m_out.appendTo(wordTailDifferASCII, wordTailRescan);
+        ValueFromBlock wordTailDifferingStart = m_out.anchor(m_out.add(lastWordIndex, firstDifferingByteOffset(tailDiff)));
+        m_out.jump(loop);
+
+        m_out.appendTo(wordTailRescan, loop);
+        ValueFromBlock wordTailRescanStart = m_out.anchor(nextWordIndex);
+        m_out.jump(loop);
 
         // Main loop: load bytes and branch on equality
         m_out.appendTo(loop, checkASCII);
-        LValue index = m_out.phi(pointerType(), indexAtStart);
+        LValue index = m_out.phi(pointerType(), shortStringStart, wordDifferingStart, wordRescanStart, wordTailDifferingStart, wordTailRescanStart);
         LValue leftByte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, leftData, index));
         LValue rightByte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, rightData, index));
         m_out.branch(m_out.notEqual(leftByte, rightByte), unsure(checkWeights), unsure(checkASCII));
