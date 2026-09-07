@@ -81,6 +81,7 @@ public:
     void readyStateFromMediaSourceChanged() final;
     void mediaSourceHasRetrievedAllData() final;
     void characteristicsFromMediaSourceChanged() final;
+    void seekableRangesFromMediaSourceChanged() final;
 
     void setInitialVideoSize(const FloatSize&);
 

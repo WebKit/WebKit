@@ -355,15 +355,33 @@ void MediaSourcePrivate::durationChanged(const MediaTime& duration)
         Locker locker { m_lock };
         m_duration = duration;
     }
+    // seekable also moved, but HTMLMediaElement::durationChanged() covers that for every engine.
     for (Ref sourceBuffer : sourceBuffers())
         sourceBuffer->setMediaSourceDuration(duration);
 }
 
 void MediaSourcePrivate::bufferedChanged(PlatformTimeRanges&& buffered)
 {
-    Locker locker { m_lock };
+    {
+        Locker locker { m_lock };
+        m_buffered = WTF::move(buffered);
+    }
+    notifySeekableRangesChanged();
+}
 
-    m_buffered = WTF::move(buffered);
+// seekable is computed from m_duration, m_buffered and m_liveSeekable. Duration is handled by
+// HTMLMediaElement::durationChanged(); the other two end up here. Must be called with m_lock
+// released: ensureOnMainThread runs the lambda inline when already on the main thread, and
+// seekable() takes the lock.
+void MediaSourcePrivate::notifySeekableRangesChanged()
+{
+    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        if (RefPtr player = protectedThis->player())
+            player->seekableRangesFromMediaSourceChanged();
+    });
 }
 
 void MediaSourcePrivate::trackBufferedChanged(SourceBufferPrivate& sourceBuffer, Vector<PlatformTimeRanges>&& ranges)
@@ -570,16 +588,20 @@ PlatformTimeRanges MediaSourcePrivate::seekable() const
 
 void MediaSourcePrivate::setLiveSeekableRange(const PlatformTimeRanges& ranges)
 {
-    Locker locker { m_lock };
-
-    m_liveSeekable = ranges;
+    {
+        Locker locker { m_lock };
+        m_liveSeekable = ranges;
+    }
+    notifySeekableRangesChanged();
 }
 
 void MediaSourcePrivate::clearLiveSeekableRange()
 {
-    Locker locker { m_lock };
-
-    m_liveSeekable.clear();
+    {
+        Locker locker { m_lock };
+        m_liveSeekable.clear();
+    }
+    notifySeekableRangesChanged();
 }
 
 const PlatformTimeRanges& MediaSourcePrivate::liveSeekableRange() const

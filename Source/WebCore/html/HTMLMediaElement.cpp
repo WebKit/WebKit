@@ -3274,6 +3274,9 @@ void HTMLMediaElement::durationChanged()
     if (m_textTracks)
         m_textTracks->setDuration(durationMediaTime());
     scheduleEvent(eventNames().durationchangeEvent);
+
+    // Every engine derives its seekable range from the duration, one way or another.
+    seekableRangesChanged();
 }
 
 void HTMLMediaElement::applyConfiguration(const RemotePlaybackConfiguration& configuration)
@@ -8907,6 +8910,11 @@ void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
     });
 }
 
+void HTMLMediaElement::mediaPlayerSeekableTimeRangesChanged()
+{
+    seekableRangesChanged();
+}
+
 void HTMLMediaElement::removeBehaviorRestrictionsAfterFirstUserGesture(MediaElementSession::BehaviorRestrictions mask)
 {
     MediaElementSession::BehaviorRestrictions restrictionsToRemove = mask &
@@ -9939,6 +9947,10 @@ void HTMLMediaElement::addClient(HTMLMediaElementClient& client)
 {
     ASSERT(!m_clients.contains(client));
     m_clients.add(client);
+
+    // The seekable range may have last changed long before this client subscribed, so hand it the
+    // current one now rather than leaving it to wait for a change that may never come.
+    client.seekableRangesChanged();
 }
 
 void HTMLMediaElement::removeClient(const HTMLMediaElementClient& client)
@@ -10003,6 +10015,13 @@ void HTMLMediaElement::mediaSessionCaptionsEnabledChanged()
 {
     m_clients.forEach([](auto& client) {
         client.captionsEnabledChanged();
+    });
+}
+
+void HTMLMediaElement::seekableRangesChanged()
+{
+    m_clients.forEach([](auto& client) {
+        client.seekableRangesChanged();
     });
 }
 

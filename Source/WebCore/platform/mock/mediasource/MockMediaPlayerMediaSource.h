@@ -68,6 +68,7 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void readyStateFromMediaSourceChanged() final;
     void characteristicsFromMediaSourceChanged() final;
+    void seekableRangesFromMediaSourceChanged() final;
     void setNetworkState(MediaPlayer::NetworkState);
 
 #if !RELEASE_LOG_DISABLED

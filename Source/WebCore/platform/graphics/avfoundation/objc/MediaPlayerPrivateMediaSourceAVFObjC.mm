@@ -1311,6 +1311,13 @@ void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsFromMediaSourceChanged
         player->characteristicChanged();
 }
 
+void MediaPlayerPrivateMediaSourceAVFObjC::seekableRangesFromMediaSourceChanged()
+{
+    assertIsMainThread();
+    if (RefPtr player = m_player.get())
+        player->seekableTimeRangesChanged();
+}
+
 RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullscreenLayer()
 {
     return adoptNS([[CALayer alloc] init]);

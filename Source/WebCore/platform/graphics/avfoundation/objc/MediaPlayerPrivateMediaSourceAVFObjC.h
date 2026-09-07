@@ -110,6 +110,7 @@ public:
     void notifyEndOfMediaIfNeeded();
     void setNaturalSize(const FloatSize&);
     void characteristicsFromMediaSourceChanged() final;
+    void seekableRangesFromMediaSourceChanged() final;
 
     MediaTime currentTime() const override;
     MediaTime currentOrPendingSeekTime() const final { return currentTime(); }
