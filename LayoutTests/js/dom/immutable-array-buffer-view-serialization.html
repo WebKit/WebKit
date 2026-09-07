@@ -1,0 +1,40 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ImmutableArrayBufferEnabled=true ] -->
+<html>
+<head>
+<title>Immutable ArrayBuffer views serialization</title>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Views deserialized over an immutable ArrayBuffer must stay immutable, including from JIT-compiled code");
+
+var immutableBuffer = new ArrayBuffer(16).transferToImmutable();
+
+var clonedTypedArray = structuredClone(new Uint8Array(immutableBuffer, 4));
+shouldBeTrue(`clonedTypedArray.buffer.immutable`);
+shouldBe(`clonedTypedArray.length`, `12`);
+shouldBe(`clonedTypedArray.byteOffset`, `4`);
+shouldThrowErrorName(`(function() { "use strict"; clonedTypedArray[0] = 1; })()`, "TypeError");
+
+function store(view, value) { view[0] = value; }
+for (var i = 0; i < 100000; ++i)
+    store(clonedTypedArray, 1);
+shouldBe(`clonedTypedArray[0]`, `0`);
+
+var clonedDataView = structuredClone(new DataView(immutableBuffer));
+shouldBeTrue(`clonedDataView.buffer.immutable`);
+shouldBe(`clonedDataView.byteLength`, `16`);
+shouldThrowErrorName(`clonedDataView.setUint8(0, 1)`, "TypeError");
+
+function storeDataView(view, value) {
+    try {
+        view.setUint8(0, value);
+    } catch (e) { }
+}
+for (var i = 0; i < 100000; ++i)
+    storeDataView(clonedDataView, 1);
+shouldBe(`clonedDataView.getUint8(0)`, `0`);
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

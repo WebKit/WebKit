@@ -109,4 +109,17 @@ template<typename PassedAdaptor> inline const ClassInfo* JSGenericResizableOrGro
     }
 }
 
+template<typename PassedAdaptor> inline const ClassInfo* JSGenericImmutableTypedArrayView<PassedAdaptor>::info()
+{
+    switch (Base::Adaptor::typeValue) {
+#define JSC_GET_CLASS_INFO(type) \
+    case Type##type: return getImmutable##type##ArrayClassInfo();
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_GET_CLASS_INFO)
+#undef JSC_GET_CLASS_INFO
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 } // namespace JSC

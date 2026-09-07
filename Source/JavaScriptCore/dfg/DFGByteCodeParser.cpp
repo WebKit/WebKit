@@ -5279,6 +5279,12 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
+            // DataViewSet on an immutable-backed DataView always throws; leave it to the runtime call.
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedImmutableArrayBufferView))
+                return CallOptimizationResult::DidNothing;
+            if (getArrayMode(Array::Read).mayBeImmutableTypedArray())
+                return CallOptimizationResult::DidNothing;
+
             if (intrinsic == DataViewSetFloat16 && !CCallHelpers::supportsFloat16())
                 return CallOptimizationResult::DidNothing;
 

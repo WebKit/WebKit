@@ -7610,6 +7610,13 @@ IGNORE_CLANG_WARNINGS_END
 
             ASSERT(isTypedView(type));
             {
+                // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+                // (OversizeTypedArray shares the isImmutableMode bit, so the buffer-having bit is tested along with it.)
+                if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(child1))) {
+                    LValue mode = m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode);
+                    speculate(UnexpectedImmutableArrayBufferView, jsValueValue(base), m_node, m_out.equal(m_out.bitAnd(mode, m_out.constInt32(immutableModeMask)), m_out.constInt32(immutableModeMask)));
+                }
+
                 TypedPointer pointer = TypedPointer(
                     m_heaps.TypedArrayProperties,
                     m_out.add(
@@ -7810,6 +7817,12 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         if (arrayModes & arrayModesForTypedArrays) {
+            // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+            if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge))) {
+                LValue mode = m_out.load8ZeroExt32(base, m_heaps.JSArrayBufferView_mode);
+                speculate(UnexpectedImmutableArrayBufferView, jsValueValue(base), m_node, m_out.equal(m_out.bitAnd(mode, m_out.constInt32(immutableModeMask)), m_out.constInt32(immutableModeMask)));
+            }
+
             auto arrayModeToTypedArrayType = [&](ArrayModes oneArrayMode) {
                 switch (oneArrayMode) {
                 case Int8ArrayMode:
@@ -22026,6 +22039,12 @@ IGNORE_CLANG_WARNINGS_END
             isLittleEndian = lowBoolean(m_graph.varArgChild(m_node, 3));
 
         DataViewData data = m_node->dataViewData();
+
+        // Stores to DataViews on immutable ArrayBuffers always fail; exit so the site falls back to the generic call.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(m_node, 0)))) {
+            LValue mode = m_out.load8ZeroExt32(dataView, m_heaps.JSArrayBufferView_mode);
+            speculate(UnexpectedImmutableArrayBufferView, jsValueValue(dataView), m_node, m_out.equal(m_out.bitAnd(mode, m_out.constInt32(immutableModeMask)), m_out.constInt32(immutableModeMask)));
+        }
 
         LValue length = typedArrayLength(dataView, data.isResizable, TypeDataView, m_graph.varArgChild(m_node, 0));
 

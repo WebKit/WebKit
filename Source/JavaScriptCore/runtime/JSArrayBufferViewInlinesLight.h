@@ -35,12 +35,14 @@ inline bool JSArrayBufferView::isShared()
 {
     switch (m_mode) {
     case WastefulTypedArray:
+    case ImmutableWastefulTypedArray:
     case ResizableNonSharedWastefulTypedArray:
     case ResizableNonSharedAutoLengthWastefulTypedArray:
     case GrowableSharedWastefulTypedArray:
     case GrowableSharedAutoLengthWastefulTypedArray:
         return existingBufferInButterfly()->isShared();
     case DataViewMode:
+    case ImmutableDataViewMode:
     case ResizableNonSharedDataViewMode:
     case ResizableNonSharedAutoLengthDataViewMode:
     case GrowableSharedDataViewMode:
@@ -59,12 +61,14 @@ inline ArrayBuffer* JSArrayBufferView::possiblySharedBufferImpl()
 
     switch (m_mode) {
     case WastefulTypedArray:
+    case ImmutableWastefulTypedArray:
     case ResizableNonSharedWastefulTypedArray:
     case ResizableNonSharedAutoLengthWastefulTypedArray:
     case GrowableSharedWastefulTypedArray:
     case GrowableSharedAutoLengthWastefulTypedArray:
         return existingBufferInButterfly();
     case DataViewMode:
+    case ImmutableDataViewMode:
     case ResizableNonSharedDataViewMode:
     case ResizableNonSharedAutoLengthDataViewMode:
     case GrowableSharedDataViewMode:

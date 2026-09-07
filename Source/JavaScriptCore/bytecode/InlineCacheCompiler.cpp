@@ -2695,8 +2695,14 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         GPRReg propertyGPR = m_propertyCache.propertyGPR();
 
         fallThrough.append(jit.branch8(CCallHelpers::NotEqual, CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
-        if (!isResizableOrGrowableShared)
+        if (!isResizableOrGrowableShared) {
             fallThrough.append(jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), CCallHelpers::TrustedImm32(isResizableOrGrowableSharedMode)));
+            // Views on immutable ArrayBuffers cannot be stored to. OversizeTypedArray shares the
+            // isImmutableMode bit, so the buffer-having bit must be tested along with it.
+            jit.load8(CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), scratchGPR);
+            jit.and32(CCallHelpers::TrustedImm32(immutableModeMask), scratchGPR);
+            fallThrough.append(jit.branch32(CCallHelpers::Equal, scratchGPR, CCallHelpers::TrustedImm32(immutableModeMask)));
+        }
 
         if (isInt(type))
             m_failAndRepatch.append(jit.branchIfNotInt32(valueGPR));

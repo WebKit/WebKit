@@ -3495,6 +3495,14 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
     ASSERT(valueGPR != storageReg);
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
 
+    // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+    // (OversizeTypedArray shares the isImmutableMode bit, so the buffer-having bit is tested along with it.)
+    if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(child1))) {
+        load8(Address(baseReg, JSArrayBufferView::offsetOfMode()), scratchGPR);
+        and32(TrustedImm32(immutableModeMask), scratchGPR);
+        speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseReg), node, branch32(Equal, scratchGPR, TrustedImm32(immutableModeMask)));
+    }
+
     switch (elementSize(type)) {
     case 1:
         store8(value.gpr(), BaseIndex(storageReg, propertyReg, TimesOne));
@@ -3629,6 +3637,15 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
     GPRReg storageReg = storage.gpr();
 
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+
+    // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+    // (OversizeTypedArray shares the isImmutableMode bit, so the buffer-having bit is tested along with it.)
+    if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(node, 0)))) {
+        load8(Address(baseReg, JSArrayBufferView::offsetOfMode()), scratchGPR);
+        and32(TrustedImm32(immutableModeMask), scratchGPR);
+        speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseReg), node, branch32(Equal, scratchGPR, TrustedImm32(immutableModeMask)));
+    }
+
     switch (elementSize(type)) {
     case 2: {
         convertDoubleToFloat16(valueFPR, scratchFPR);

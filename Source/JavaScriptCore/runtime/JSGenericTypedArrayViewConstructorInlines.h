@@ -338,6 +338,9 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
         if (arrayBuffer->isResizableOrGrowableShared()) {
             structure = JSC_GET_DERIVED_STRUCTURE(vm, resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
             RETURN_IF_EXCEPTION(scope, { });
+        } else if (arrayBuffer->isImmutable()) {
+            structure = JSC_GET_DERIVED_STRUCTURE(vm, immutableTypedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
+            RETURN_IF_EXCEPTION(scope, { });
         } else {
             structure = JSC_GET_DERIVED_STRUCTURE(vm, typedArrayStructureWithTypedArrayType<ViewClass::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
             RETURN_IF_EXCEPTION(scope, { });
@@ -441,6 +444,9 @@ static EncodedJSValue constructDataViewImpl(JSGlobalObject* globalObject, CallFr
     Structure* structure = nullptr;
     if (arrayBuffer->isResizableOrGrowableShared()) {
         structure = JSC_GET_DERIVED_STRUCTURE(vm, resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType<JSDataView::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
+        RETURN_IF_EXCEPTION(scope, { });
+    } else if (arrayBuffer->isImmutable()) {
+        structure = JSC_GET_DERIVED_STRUCTURE(vm, immutableTypedArrayStructureWithTypedArrayType<JSDataView::TypedArrayStorageType>, newTarget, callFrame->jsCallee());
         RETURN_IF_EXCEPTION(scope, { });
     } else {
         structure = JSC_GET_DERIVED_STRUCTURE(vm, typedArrayStructureWithTypedArrayType<JSDataView::TypedArrayStorageType>, newTarget, callFrame->jsCallee());

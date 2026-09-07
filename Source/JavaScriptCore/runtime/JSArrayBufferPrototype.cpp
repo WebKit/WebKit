@@ -42,13 +42,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSliceToImmutable);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncResize);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncTransfer);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncTransferToFixedLength);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncTransferToImmutable);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncResizable);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncMaxByteLength);
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncDetached);
+static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncImmutable);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncGrow);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
@@ -129,6 +132,12 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
         // 19. If IsDetachedBuffer(new) is true, throw a TypeError exception.
         if (result->impl()->isDetached()) {
             throwVMTypeError(globalObject, scope, "Created ArrayBuffer is detached"_s);
+            return errorResult;
+        }
+        // https://tc39.es/proposal-immutable-arraybuffer/#sec-arraybuffer.prototype.slice
+        // If IsImmutableBuffer(new) is true, throw a TypeError exception.
+        if (result->impl()->isImmutable()) {
+            throwVMTypeError(globalObject, scope, "Species construction returns immutable ArrayBuffer"_s);
             return errorResult;
         }
     } else {
@@ -327,9 +336,11 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncResize, (JSGlobalObject* globalObje
 }
 
 // https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffercopyanddetach
+// https://tc39.es/proposal-immutable-arraybuffer/#sec-arraybuffercopyanddetach
 enum class CopyAndDetachMode {
     PreserveResizability,
-    FixedLength
+    FixedLength,
+    Immutable
 };
 static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSArrayBuffer* arrayBuffer, size_t newByteLength, CopyAndDetachMode mode)
 {
@@ -344,6 +355,19 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
         return nullptr;
     }
 
+    // If IsImmutableBuffer(arrayBuffer) is true, throw a TypeError exception.
+    if (arrayBuffer->impl()->isImmutable()) [[unlikely]] {
+        throwVMTypeError(globalObject, scope, "Cannot transfer an immutable ArrayBuffer"_s);
+        return nullptr;
+    }
+
+    // If arrayBuffer.[[ArrayBufferDetachKey]] is not undefined, throw a TypeError exception.
+    // WebAssembly.Memory's buffer cannot be detached.
+    if (arrayBuffer->impl()->isWasmMemory()) [[unlikely]] {
+        throwVMTypeError(globalObject, scope, "Receiver cannot be detached because it is WebAssembly.Memory"_s);
+        return nullptr;
+    }
+
     if (!isResizable && newByteLength == arrayBuffer->impl()->byteLength()) {
         // We should just transfer!
         ArrayBufferContents contents;
@@ -352,6 +376,8 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
             return nullptr;
         }
         auto newBuffer = ArrayBuffer::create(WTF::move(contents));
+        if (mode == CopyAndDetachMode::Immutable)
+            newBuffer->makeImmutable();
         return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTF::move(newBuffer));
     }
 
@@ -382,6 +408,8 @@ static JSArrayBuffer* arrayBufferCopyAndDetach(JSGlobalObject* globalObject, JSA
     }
     size_t copyLength = std::min<size_t>(newByteLength, arrayBuffer->impl()->byteLength());
     memcpy(newBuffer->data(), arrayBuffer->impl()->data(), copyLength);
+    if (mode == CopyAndDetachMode::Immutable)
+        newBuffer->makeImmutable();
 
     ArrayBufferContents dummyContents;
     if (!arrayBuffer->impl()->transferTo(vm, dummyContents)) [[unlikely]] {
@@ -400,12 +428,6 @@ static JSArrayBuffer* arrayBufferProtoFuncTransferImpl(JSGlobalObject* globalObj
     JSArrayBuffer* thisObject = dynamicDowncast<JSArrayBuffer>(arrayBufferValue);
     if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode())) {
         throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
-        return nullptr;
-    }
-
-    // WebAssembly.Memory's buffer cannot be detached.
-    if (thisObject->impl()->isWasmMemory()) [[unlikely]] {
-        throwVMTypeError(globalObject, scope, "Receiver cannot be detached because it is WebAssembly.Memory"_s);
         return nullptr;
     }
 
@@ -431,6 +453,72 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncTransfer, (JSGlobalObject* globalOb
 JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncTransferToFixedLength, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     return JSValue::encode(arrayBufferProtoFuncTransferImpl(globalObject, callFrame->thisValue(), callFrame->argument(0), CopyAndDetachMode::FixedLength));
+}
+
+// https://tc39.es/proposal-immutable-arraybuffer/#sec-arraybuffer.prototype.transfertoimmutable
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncTransferToImmutable, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    return JSValue::encode(arrayBufferProtoFuncTransferImpl(globalObject, callFrame->thisValue(), callFrame->argument(0), CopyAndDetachMode::Immutable));
+}
+
+// https://tc39.es/proposal-immutable-arraybuffer/#sec-arraybuffer.prototype.slicetoimmutable
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoFuncSliceToImmutable, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSArrayBuffer* thisObject = dynamicDowncast<JSArrayBuffer>(callFrame->thisValue());
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
+
+    // If IsDetachedBuffer(O) is true, throw a TypeError exception.
+    if (thisObject->impl()->isDetached())
+        return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
+
+    // Bounds are resolved against the original length, before any coercion side effects.
+    size_t byteLength = thisObject->impl()->byteLength();
+
+    size_t firstIndex = 0;
+    double relativeStart = callFrame->argument(0).toIntegerOrInfinity(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (relativeStart < 0)
+        firstIndex = static_cast<size_t>(std::max<double>(byteLength + relativeStart, 0));
+    else
+        firstIndex = static_cast<size_t>(std::min<double>(relativeStart, byteLength));
+    ASSERT(firstIndex <= byteLength);
+
+    size_t finalIndex = 0;
+    JSValue endValue = callFrame->argument(1);
+    if (!endValue.isUndefined()) {
+        double relativeEnd = endValue.toIntegerOrInfinity(globalObject);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (relativeEnd < 0)
+            finalIndex = static_cast<size_t>(std::max<double>(byteLength + relativeEnd, 0));
+        else
+            finalIndex = static_cast<size_t>(std::min<double>(relativeEnd, byteLength));
+    } else
+        finalIndex = byteLength;
+    ASSERT(finalIndex <= byteLength);
+
+    size_t newLength = (finalIndex >= firstIndex) ? finalIndex - firstIndex : 0;
+
+    // Coercion above may have run user code, so the receiver's state needs revalidation.
+    if (thisObject->impl()->isDetached())
+        return throwVMTypeError(globalObject, scope, "Receiver is detached"_s);
+
+    size_t currentByteLength = thisObject->impl()->byteLength();
+    if (currentByteLength < finalIndex)
+        return throwVMRangeError(globalObject, scope, "ArrayBuffer shrunk during sliceToImmutable"_s);
+
+    auto newBuffer = ArrayBuffer::tryCreate(newLength, 1, std::nullopt);
+    if (!newBuffer) [[unlikely]]
+        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
+    ASSERT(firstIndex + newLength <= currentByteLength);
+    memcpy(newBuffer->data(), static_cast<const char*>(thisObject->impl()->data()) + firstIndex, newLength);
+    newBuffer->makeImmutable();
+
+    Structure* structure = globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default);
+    return JSValue::encode(JSArrayBuffer::create(vm, structure, WTF::move(newBuffer)));
 }
 
 // http://tc39.github.io/ecmascript_sharedmem/shmem.html#sec-get-arraybuffer.prototype.bytelength
@@ -480,6 +568,19 @@ JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncDetached, (JSGlobalObject* gl
         return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
 
     return JSValue::encode(jsBoolean(thisObject->impl()->isDetached()));
+}
+
+// https://tc39.es/proposal-immutable-arraybuffer/#sec-get-arraybuffer.prototype.immutable
+JSC_DEFINE_HOST_FUNCTION(arrayBufferProtoGetterFuncImmutable, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = dynamicDowncast<JSArrayBuffer>(callFrame->thisValue());
+    if (!thisObject || (ArrayBufferSharingMode::Shared == thisObject->impl()->sharingMode()))
+        return throwVMTypeError(globalObject, scope, "Receiver must be ArrayBuffer"_s);
+
+    return JSValue::encode(jsBoolean(thisObject->impl()->isImmutable()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -574,6 +675,11 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->resizable, arrayBufferProtoGetterFuncResizable, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->maxByteLength, arrayBufferProtoGetterFuncMaxByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->detached, arrayBufferProtoGetterFuncDetached, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+        if (Options::useImmutableArrayBuffer()) {
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->transferToImmutable, arrayBufferProtoFuncTransferToImmutable, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
+            JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->sliceToImmutable, arrayBufferProtoFuncSliceToImmutable, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+            JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->immutable, arrayBufferProtoGetterFuncImmutable, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+        }
     } else {
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, sharedArrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
         JSC_NATIVE_GETTER_WITHOUT_TRANSITION(vm.propertyNames->byteLength, sharedArrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);

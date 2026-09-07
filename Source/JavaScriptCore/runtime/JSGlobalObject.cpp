@@ -1178,29 +1178,41 @@ void JSGlobalObject::init(VM& vm)
             init.setStructure(JS ## type ## Array::createStructure(init.vm, init.global, init.prototype)); \
             init.setConstructor(JS ## type ## ArrayConstructor::create(init.vm, init.global, JS ## type ## ArrayConstructor::createStructure(init.vm, init.global, init.global->m_typedArraySuperConstructor.get(init.global)), init.prototype, #type "Array"_s)); \
             init.global->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ true); /* Initialize resizable Structure too */ \
+            init.global->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ false, /* isImmutable */ true); /* Initialize immutable Structure too */ \
         }); \
     m_resizableOrGrowableSharedTypedArray ## type ## Structure.initLater( \
         [] (const Initializer<Structure>& init) { \
             init.set(JSResizableOrGrowableShared ## type ## Array::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(Type##type))); \
             init.owner->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ false); /* Initialize non-resizable Structure too */ \
         }); \
+    m_immutableTypedArray ## type ## Structure.initLater( \
+        [] (const Initializer<Structure>& init) { \
+            init.set(JSImmutable ## type ## Array::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(Type##type))); \
+            init.owner->typedArrayStructure(Type##type, /* isResizableOrGrowableShared */ false); /* Initialize non-immutable Structure too */ \
+        }); \
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::type##Array)].initLater([](const Initializer<JSCell>& init) { \
             init.set(init.owner->typedArrayConstructor(TypedArrayType::Type##type)); \
         });
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(INIT_TYPED_ARRAY_LATER)
 #undef INIT_TYPED_ARRAY_LATER
-    
+
     m_typedArrayDataView.initLater(
         [] (LazyClassStructure::Initializer& init) {
             init.setPrototype(JSDataViewPrototype::create(init.vm, init.global, JSDataViewPrototype::createStructure(init.vm, init.global, init.global->m_objectPrototype.get())));
             init.setStructure(JSDataView::createStructure(init.vm, init.global, init.prototype));
             init.setConstructor(JSDataViewConstructor::create(init.vm, init.global, JSDataViewConstructor::createStructure(init.vm, init.global, init.global->m_functionPrototype.get()), init.prototype, "DataView"_s));
             init.global->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ true); /* Initialize resizable Structure too */
+            init.global->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ false, /* isImmutable */ true); /* Initialize immutable Structure too */
         });
     m_resizableOrGrowableSharedTypedArrayDataViewStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSResizableOrGrowableSharedDataView::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(TypeDataView)));
             init.owner->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ false); /* Initialize non-resizable Structure too */
+        });
+    m_immutableTypedArrayDataViewStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSImmutableArrayBufferDataView::createStructure(init.vm, init.owner, init.owner->typedArrayPrototype(TypeDataView)));
+            init.owner->typedArrayStructure(TypeDataView, /* isResizableOrGrowableShared */ false); /* Initialize non-immutable Structure too */
         });
 
     m_lexicalEnvironmentStructure.set(vm, this, JSLexicalEnvironment::createStructure(vm, this));
@@ -2031,6 +2043,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isResizableOrGrowableSharedTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 1, "typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView"_s, typedArrayViewPrivateFuncIsResizableOrGrowableSharedTypedArrayView, ImplementationVisibility::Private));
+        });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::isImmutableTypedArrayView)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, init.owner, 1, "typedArrayViewPrivateFuncIsImmutableTypedArrayView"_s, typedArrayViewPrivateFuncIsImmutableTypedArrayView, ImplementationVisibility::Private));
         });
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::typedArrayFromFast)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, init.owner, 2, "typedArrayViewTypedArrayFromFast"_s, typedArrayViewPrivateFuncTypedArrayFromFast, ImplementationVisibility::Private));
