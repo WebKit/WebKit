@@ -49,6 +49,23 @@ function test() {
                 InspectorTest.pass("setEmulatedConditions reset should succeed under Site Isolation.");
             }
         });
+
+        suite.addTestCase({
+            name: "SiteIsolation.Network.SetEmulatedConditions.Negative",
+            description: "Network.setEmulatedConditions should reject negative bandwidth and latency on the backend target.",
+            async test() {
+                try {
+                    await InspectorTest.expectException(async () => {
+                        await WI.backendTarget.NetworkAgent.setEmulatedConditions(-1);
+                    });
+                    await InspectorTest.expectException(async () => {
+                        await WI.backendTarget.NetworkAgent.setEmulatedConditions(0, -1);
+                    });
+                } finally {
+                    await WI.backendTarget.NetworkAgent.setEmulatedConditions(0, 0);
+                }
+            }
+        });
     }
 
     suite.addTestCase({

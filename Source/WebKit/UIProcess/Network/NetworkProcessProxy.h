@@ -361,7 +361,7 @@ public:
     void cookiesDidChange(PAL::SessionID);
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    void setEmulatedConditions(PAL::SessionID, std::optional<int64_t>&& bytesPerSecondLimit);
+    void setEmulatedConditions(PAL::SessionID, std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency);
 #endif
 
     void notifyMediaStreamingActivity(bool);

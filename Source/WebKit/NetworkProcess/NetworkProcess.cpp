@@ -3035,10 +3035,10 @@ void NetworkProcess::getAppBadgeForTesting(PAL::SessionID sessionID, CompletionH
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void NetworkProcess::setEmulatedConditions(PAL::SessionID sessionID, std::optional<int64_t>&& bytesPerSecondLimit)
+void NetworkProcess::setEmulatedConditions(PAL::SessionID sessionID, std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
     if (CheckedPtr session = networkSession(sessionID))
-        session->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+        session->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency);
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

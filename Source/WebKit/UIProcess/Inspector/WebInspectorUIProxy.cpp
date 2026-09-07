@@ -814,10 +814,10 @@ void WebInspectorUIProxy::setDeveloperPreferenceOverride(WebCore::InspectorBacke
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-void WebInspectorUIProxy::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+void WebInspectorUIProxy::setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    if (auto inspectedPage = this->inspectedPage())
-        inspectedPage->websiteDataStore().setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+    if (RefPtr inspectedPage = m_inspectedPage.get())
+        protect(inspectedPage->websiteDataStore())->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency);
 }
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)

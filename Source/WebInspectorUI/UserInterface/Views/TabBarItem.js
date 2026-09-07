@@ -28,6 +28,8 @@ WI.TabBarItem = class TabBarItem
 {
     constructor(representedObject, image, displayName, title)
     {
+        console.assert(!representedObject || representedObject instanceof WI.TabContentView, representedObject);
+
         this._representedObject = representedObject || null;
         this._parentTabBar = null;
 
@@ -44,6 +46,9 @@ WI.TabBarItem = class TabBarItem
         this._element.appendChild(this._iconElement);
 
         this._element.createChild("div", "flex-space");
+
+        if (this._representedObject)
+            this._element.classList.add(this._representedObject.identifier);
 
         this.displayName = displayName;
         this.title = title;

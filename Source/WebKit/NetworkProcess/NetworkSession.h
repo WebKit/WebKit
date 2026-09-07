@@ -282,8 +282,9 @@ public:
     const Vector<WebCore::SecurityOriginData>& mockPushSubscriptionOriginsForTesting() const { return m_mockPushSubscriptionOriginsForTesting; }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    std::optional<int64_t> bytesPerSecondLimit() const { return m_bytesPerSecondLimit; }
-    void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
+    std::optional<uint64_t> emulatedBandwidthBytesPerSecond() const { return m_emulatedBandwidthBytesPerSecond; }
+    Seconds emulatedLatency() const { return m_emulatedLatency; }
+    void setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency);
 #endif
 
 #if HAVE(NW_PROXY_CONFIG)
@@ -420,7 +421,8 @@ protected:
     const Ref<NetworkNotificationManager> m_notificationManager;
 #endif
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    std::optional<int64_t> m_bytesPerSecondLimit;
+    std::optional<uint64_t> m_emulatedBandwidthBytesPerSecond;
+    Seconds m_emulatedLatency;
 #endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool m_isDeclarativeWebPushEnabled { false };

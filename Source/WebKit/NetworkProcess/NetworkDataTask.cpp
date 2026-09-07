@@ -71,10 +71,6 @@ Ref<NetworkDataTask> NetworkDataTask::create(NetworkSession& session, NetworkDat
 #endif
     }();
 
-#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-    dataTask->setEmulatedConditions(session.bytesPerSecondLimit());
-#endif
-
     return dataTask;
 }
 

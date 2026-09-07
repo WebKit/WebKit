@@ -69,9 +69,9 @@ void WebInspectorBackendProxy::setDeveloperPreferenceOverride(WebCore::Inspector
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
-void WebInspectorBackendProxy::setEmulatedConditions(std::optional<int64_t> bytesPerSecondLimit)
+void WebInspectorBackendProxy::setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    protect(m_proxy)->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
+    protect(m_proxy)->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency);
 }
 #endif
 

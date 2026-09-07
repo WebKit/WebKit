@@ -406,12 +406,13 @@ void WebInspectorBackendClient::setDeveloperPreferenceOverride(WebCore::Inspecto
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-bool WebInspectorBackendClient::setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit)
+bool WebInspectorBackendClient::setEmulatedConditions(std::optional<uint64_t>&& bandwidthBytesPerSecond, Seconds latency)
 {
-    RefPtr page = m_page.get();
-    if (page && page->inspector()) {
-        page->inspector()->setEmulatedConditions(WTF::move(bytesPerSecondLimit));
-        return true;
+    if (RefPtr page = m_page.get()) {
+        if (RefPtr inspector = page->inspector()) {
+            inspector->setEmulatedConditions(WTF::move(bandwidthBytesPerSecond), latency);
+            return true;
+        }
     }
 
     return false;

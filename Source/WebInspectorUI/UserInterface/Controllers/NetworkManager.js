@@ -1571,7 +1571,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (!target.hasCommand("Network.setEmulatedConditions"))
             return;
 
-        target.NetworkAgent.setEmulatedConditions(this._emulatedCondition.bytesPerSecondLimit);
+        target.NetworkAgent.setEmulatedConditions(this._emulatedCondition.bandwidth, this._emulatedCondition.latency);
     }
 
     _dispatchFrameWasAddedEvent(frame)
@@ -1790,43 +1790,50 @@ WI.NetworkManager.EmulatedCondition = {
     // Keep this first.
     None: {
         id: "none",
-        bytesPerSecondLimit: 0,
+        bandwidth: 0,
+        latency: 0,
         get displayName() { return WI.UIString("No throttling", "Label indicating that network throttling is inactive."); }
     },
 
     Mobile3G: {
         id: "mobile-3g",
-        bytesPerSecondLimit: 780 * 1000 / 8, // 780kbps
+        bandwidth: 780 * 1000 / 8, // 780kbps
+        latency: 100, // 100ms
         get displayName() { return WI.UIString("3G", "Label indicating that network activity is being simulated with 3G connectivity."); }
     },
 
     DSL: {
         id: "dsl",
-        bytesPerSecondLimit: 2 * 1000 * 1000 / 8, // 2mbps
+        bandwidth: 2 * 1000 * 1000 / 8, // 2mbps
+        latency: 5, // 5ms
         get displayName() { return WI.UIString("DSL", "Label indicating that network activity is being simulated with DSL connectivity."); }
     },
 
     Edge: {
         id: "edge",
-        bytesPerSecondLimit: 240 * 1000 / 8, // 240kbps
+        bandwidth: 240 * 1000 / 8, // 240kbps
+        latency: 400, // 400ms
         get displayName() { return WI.UIString("Edge", "Label indicating that network activity is being simulated with Edge connectivity."); }
     },
 
     LTE: {
         id: "lte",
-        bytesPerSecondLimit: 50 * 1000 * 1000 / 8, // 50mbps
+        bandwidth: 50 * 1000 * 1000 / 8, // 50mbps
+        latency: 50, // 50ms
         get displayName() { return WI.UIString("LTE", "Label indicating that network activity is being simulated with LTE connectivity"); }
     },
 
     WiFi: {
         id: "wifi",
-        bytesPerSecondLimit: 40 * 1000 * 1000 / 8, // 40mbps
+        bandwidth: 40 * 1000 * 1000 / 8, // 40mbps
+        latency: 5, // 5ms
         get displayName() { return WI.UIString("Wi-Fi", "Label indicating that network activity is being simulated with Wi-Fi connectivity"); }
     },
 
     WiFi802_11ac: {
         id: "wifi-802_11ac",
-        bytesPerSecondLimit: 250 * 1000 * 1000 / 8, // 250mbps
+        bandwidth: 250 * 1000 * 1000 / 8, // 250mbps
+        latency: 2, // 2ms
         get displayName() { return WI.UIString("Wi-Fi 802.11ac", "Label indicating that network activity is being simulated with Wi-Fi 802.11ac connectivity"); }
     },
 };

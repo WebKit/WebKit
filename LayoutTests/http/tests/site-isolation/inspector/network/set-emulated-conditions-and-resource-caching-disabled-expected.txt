@@ -3,6 +3,16 @@ Test that Network.setEmulatedConditions and Network.setResourceCachingDisabled a
 
 
 == Running test suite: SiteIsolation.Network.SetEmulatedConditionsAndResourceCachingDisabled
+-- Running test case: SiteIsolation.Network.SetEmulatedConditions.SucceedsUnderSiteIsolation
+PASS: setEmulatedConditions with a byte limit should succeed under Site Isolation.
+PASS: setEmulatedConditions reset should succeed under Site Isolation.
+
+-- Running test case: SiteIsolation.Network.SetEmulatedConditions.Negative
+PASS: Should produce an exception.
+Error: bandwidth cannot be negative
+PASS: Should produce an exception.
+Error: latency cannot be negative
+
 -- Running test case: SiteIsolation.Network.SetResourceCachingDisabled.CrossOriginIFrameBypassesCache
 PASS: With caching enabled, the first load should come from the network.
 PASS: With caching enabled, the second load should be served from the cache.

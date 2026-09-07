@@ -440,9 +440,8 @@
 #define ENABLE_INSPECTOR_EXTENSIONS 1
 #endif
 
-// FIXME: Disabled pending rdar://122224142 (Per process network link conditioner SPI)
 #if !defined(ENABLE_INSPECTOR_NETWORK_THROTTLING)
-#define ENABLE_INSPECTOR_NETWORK_THROTTLING 0
+#define ENABLE_INSPECTOR_NETWORK_THROTTLING 1
 #endif
 
 #if !defined(ENABLE_INSPECTOR_TELEMETRY)
