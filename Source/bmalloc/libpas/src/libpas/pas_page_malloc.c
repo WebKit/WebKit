@@ -385,7 +385,7 @@ static void commit_impl(void* ptr, size_t size, bool do_mprotect, bool is_symmet
 
 #if PAS_OS(LINUX)
     PAS_ASSERT(!is_symmetric);
-    PAS_SYSCALL(madvise(ptr, size, MADV_DODUMP));
+    PAS_SYSCALL_NO_RETRY(madvise(ptr, size, MADV_DODUMP));
 #elif PAS_OS(WINDOWS)
     if (is_symmetric) {
         /*
@@ -474,7 +474,6 @@ static void decommit_impl(void* ptr, size_t size,
 #elif PAS_OS(LINUX)
     PAS_ASSERT(!is_symmetric);
     PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
-    PAS_SYSCALL(madvise(ptr, size, MADV_DONTDUMP));
 #elif PAS_OS(WINDOWS)
     if (is_symmetric) {
         /*
