@@ -1,4 +1,9 @@
 
-Harness Error (FAIL), message = Error: assert_implements: Basic support for scroll-state container queries required undefined
-
+PASS Check that scroll-state(scrolled) state before scrolling
+PASS Scrolling up when scrollbar is on the top should not change  scroll-state(scrolled)
+PASS Relative scroll followed by absolute scroll should change scroll scrolled
+PASS scroll-state(scrolled) after scrolling bottom
+PASS scroll-state(scrolled) after scrolling top
+PASS scroll-state(scrolled) after scrolling right
+PASS scroll-state(scrolled) after scrolling left
 

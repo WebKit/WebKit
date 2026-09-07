@@ -314,6 +314,10 @@ public:
     ScrollType currentScrollType() const { return m_currentScrollType; }
     void setCurrentScrollType(ScrollType scrollType) { m_currentScrollType = scrollType; }
 
+    // Physical edges this area has most recently been scrolled toward by a relative scroll, which
+    // scroll-state(scrolled) queries. https://drafts.csswg.org/css-conditional-5/#scrolled
+    RectEdges<bool> scrolledDirections() const { return m_scrolledDirections; }
+
     // This reflects animated scrolls triggered by CSS OM View "smooth" scrolls.
     ScrollAnimationStatus scrollAnimationStatus() { return m_scrollAnimationStatus; }
     void setScrollAnimationStatus(ScrollAnimationStatus status) { m_scrollAnimationStatus = status; }
@@ -493,6 +497,13 @@ protected:
     bool isAwaitingScrollend() const { return m_isAwaitingScrollend; }
     void setIsAwaitingScrollend(bool isAwaitingScrollend) { m_isAwaitingScrollend = isAwaitingScrollend; }
 
+    // Whether the scroll being applied is a relative one, which decides whether scroll-state(scrolled)
+    // records its direction. https://drafts.csswg.org/css-scroll-snap-1/#relative-scroll
+    void setCurrentScrollRelativity(ScrollRelativity relativity) { m_currentScrollRelativity = relativity; }
+
+    bool shouldTrackScrolledDirections() const;
+    void updateScrolledDirections(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
+
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;
     void scrollPositionChanged(const ScrollPosition&);
@@ -532,6 +543,9 @@ private:
 
     ScrollType m_currentScrollType { ScrollType::User };
     ScrollAnimationStatus m_scrollAnimationStatus { ScrollAnimationStatus::NotAnimating };
+
+    RectEdges<bool> m_scrolledDirections;
+    ScrollRelativity m_currentScrollRelativity { ScrollRelativity::Unclassified };
 
     bool m_inLiveResize { false };
     bool m_scrollOriginChanged { false };
