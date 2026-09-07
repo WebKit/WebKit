@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Reference: point-reflected fractional background pattern</title>
+<style>
+.container {
+    width: 98px;
+    height: 98px;
+    border: 1px solid black;
+    background-image: radial-gradient(circle, #ccc, 4px, transparent 0px);
+    background-repeat: repeat;
+    background-position: center center;
+    background-size: 12.25px 12.25px;
+    /* Point-reflect the box about its center. A pattern that is correctly
+       centered is identical to its own 180deg rotation, so this must match
+       the (unrotated) test. The buggy drift towards a corner would not. */
+    transform: scale(-1, -1);
+}
+</style>
+</head>
+<body>
+<div class="container"></div>
+</body>
+</html>
