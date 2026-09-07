@@ -45,7 +45,7 @@ public:
         EncodingFromParentFrame
     };
 
-    enum ContentType { PlainText, HTML, XML, CSS }; // PlainText only checks for BOM.
+    enum ContentType { PlainText, HTML, XML, CSS, JSON }; // PlainText and JSON only check for BOM.
 
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(const String& mimeType, const PAL::TextEncoding& defaultEncoding = { }, bool usesEncodingDetector = false);
     WEBCORE_EXPORT static Ref<TextResourceDecoder> create(ContentType, const PAL::TextEncoding&, bool usesEncodingDetector);

@@ -1,0 +1,6 @@
+
+PASS application/json with no charset is decoded as UTF-8 under a windows-1251 parent frame
+PASS application/json;charset=utf-8 is decoded as UTF-8
+PASS text/json with no charset is decoded as UTF-8
+PASS application/json;charset=windows-1251 honors the explicit charset
+
