@@ -6444,6 +6444,18 @@
    },
    {
       "emails" : [
+         "morne@apple.com",
+         "morne@morneveldsman.com"
+      ],
+      "expertise" : "Web Compatibility",
+      "github" : "mveldsman",
+      "name" : "Morne Veldsman",
+      "nicks" : [
+         "mveldsman"
+      ]
+   },
+   {
+      "emails" : [
          "Ms2ger@igalia.com",
          "Ms2ger@gmail.com"
       ],
