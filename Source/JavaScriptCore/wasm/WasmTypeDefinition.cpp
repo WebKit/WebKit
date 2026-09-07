@@ -64,9 +64,8 @@ void StorageType::dump(PrintStream& out) const
 
 RefPtr<RTT> RTT::tryCreateFunction(bool isFinalType, RTTFunctionPayload&& payload)
 {
-    auto result = tryFastMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Function, isFinalType, /*fieldCount*/ 0, WTF::move(payload)));
 }
@@ -74,9 +73,8 @@ RefPtr<RTT> RTT::tryCreateFunction(bool isFinalType, RTTFunctionPayload&& payloa
 RefPtr<RTT> RTT::tryCreateFunction(const RTT& supertype, bool isFinalType, RTTFunctionPayload&& payload)
 {
     unsigned allocationCount = std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize);
-    auto result = tryFastMalloc(allocationSize(allocationCount));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(allocationCount));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Function, supertype, isFinalType, /*fieldCount*/ 0, WTF::move(payload)));
 }
@@ -84,9 +82,8 @@ RefPtr<RTT> RTT::tryCreateFunction(const RTT& supertype, bool isFinalType, RTTFu
 RefPtr<RTT> RTT::tryCreateStruct(bool isFinalType, RTTStructPayload&& payload)
 {
     StructFieldCount fieldCount = payload.fieldCount();
-    auto result = tryFastMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Struct, isFinalType, fieldCount, WTF::move(payload)));
 }
@@ -95,18 +92,16 @@ RefPtr<RTT> RTT::tryCreateStruct(const RTT& supertype, bool isFinalType, RTTStru
 {
     StructFieldCount fieldCount = payload.fieldCount();
     unsigned allocationCount = std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize);
-    auto result = tryFastMalloc(allocationSize(allocationCount));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(allocationCount));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Struct, supertype, isFinalType, fieldCount, WTF::move(payload)));
 }
 
 RefPtr<RTT> RTT::tryCreateArray(bool isFinalType, RTTArrayPayload&& payload)
 {
-    auto result = tryFastMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(std::max(1u, inlinedDisplaySize)));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Array, isFinalType, /*fieldCount*/ 0, WTF::move(payload)));
 }
@@ -114,9 +109,8 @@ RefPtr<RTT> RTT::tryCreateArray(bool isFinalType, RTTArrayPayload&& payload)
 RefPtr<RTT> RTT::tryCreateArray(const RTT& supertype, bool isFinalType, RTTArrayPayload&& payload)
 {
     unsigned allocationCount = std::max(supertype.displaySizeExcludingThis() + 2, inlinedDisplaySize);
-    auto result = tryFastMalloc(allocationSize(allocationCount));
-    void* memory = nullptr;
-    if (!result.getValue(memory))
+    void* memory = Malloc::tryMalloc(allocationSize(allocationCount));
+    if (!memory)
         return nullptr;
     return adoptRef(new (NotNull, memory) RTT(RTTKind::Array, supertype, isFinalType, /*fieldCount*/ 0, WTF::move(payload)));
 }
