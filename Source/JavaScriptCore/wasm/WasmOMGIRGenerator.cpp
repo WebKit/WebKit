@@ -877,7 +877,7 @@ public:
     using ValueResults = Vector<Value*, 16>;
     void fillCallResults(Value* callResult, const RTT& signature, ValueResults&);
     [[nodiscard]] PartialResult emitDirectCall(unsigned, FunctionSpaceIndex functionIndexSpace, const RTT&, const ArgumentList& args, ValueResults&, CallType = CallType::Call);
-    [[nodiscard]] PartialResult emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const RTT&, const ArgumentList& args, ValueResults&, CallType = CallType::Call);
+    [[nodiscard]] PartialResult emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* wrapper, const RTT&, const ArgumentList& args, ValueResults&, CallType = CallType::Call);
 
     Vector<ConstrainedValue> createCallConstrainedArgs(BasicBlock*, const CallInformation& wasmCalleeInfo, const ArgumentList&);
     auto createCallPatchpoint(BasicBlock*, const RTT&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
@@ -2044,7 +2044,7 @@ static void emitWasmCallStackResultsAndSPRestore(CCallHelpers& jit,
     jit.addPtr(CCallHelpers::TrustedImm32(-frameSize), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
 }
 
-auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const RTT& signature, const ArgumentList& args, ValueResults& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, Value* wrapper, const RTT& signature, const ArgumentList& args, ValueResults& results, CallType callType) -> PartialResult
 {
     const bool isTailCallRootCaller = callType == CallType::TailCall && !m_inlineParent;
 
@@ -2072,6 +2072,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         unsigned patchArgsIndex = patchpoint->reps().size();
         patchpoint->append(calleeCode, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
         patchpoint->append(calleeInstance, ValueRep::SomeRegister);
+        patchpoint->append(wrapper, ValueRep(GPRInfo::nonPreservedNonArgumentGPR1));
         // Cross-instance setup below reloads pinned registers before the tail-call shuffle consumes late inputs.
         patchpoint->clobberLate(RegisterSet::wasmPinnedRegisters());
         // emitRestoreInstanceFrameIfNeeded needs two scratches. wasmBaseMemoryPointer is
@@ -2085,6 +2086,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex, callerStackSize = static_cast<int32_t>(callerStackSize), mode = m_mode](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             GPRReg calleeInstanceGPR = params[patchArgsIndex + 1].gpr();
             GPRReg scratch2 = mode == MemoryMode::Signaling ? params.gpScratch(0) : GPRInfo::wasmBoundsCheckingSizeRegister;
+            auto constructedJSFunction = jit.branchTestPtr(CCallHelpers::Zero, calleeInstanceGPR);
             auto sameInstance = jit.branchPtr(CCallHelpers::Equal, calleeInstanceGPR, GPRInfo::wasmContextInstancePointer);
             {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2102,7 +2104,16 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
                 jit.cageConditionally(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, calleeInstanceGPR);
             }
             sameInstance.link(&jit);
+            GPRReg wrapperGPR = params[patchArgsIndex + 2].gpr();
+            jit.move(CCallHelpers::TrustedImmPtr(nullptr), wrapperGPR);
+            auto afterContextSwitch = jit.jump();
+            constructedJSFunction.link(&jit);
+            afterContextSwitch.link(&jit);
             prepareForCall->run(jit, params);
+            auto noWrapper = jit.branchTestPtr(CCallHelpers::Zero, wrapperGPR);
+            jit.loadPtr(CCallHelpers::Address(wrapperGPR, WebAssemblyFunctionBase::offsetOfCallLinkInfo()), wrapperGPR);
+            jit.storePtr(wrapperGPR, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
+            noWrapper.link(&jit);
             AllowMacroScratchRegisterUsage allowScratch(jit);
             jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         });
@@ -2114,10 +2125,13 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         BasicBlock* continuation = m_proc.addBlock();
         BasicBlock* doContextSwitch = m_proc.addBlock();
 
+        Value* isNullInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+            calleeInstance, constant(pointerType(), 0));
         Value* isSameContextInstance = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
             calleeInstance, instanceValue());
+        Value* skipContextSwitch = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(), isNullInstance, isSameContextInstance);
         m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
-            isSameContextInstance, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
+            skipContextSwitch, FrequentedBlock(continuation), FrequentedBlock(doContextSwitch));
 
         PatchpointValue* patchpoint = doContextSwitch->appendNew<PatchpointValue>(m_proc, B3::Void, origin());
         patchpoint->effects.writesPinned = true;
@@ -2157,6 +2171,8 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
     unsigned patchArgsIndex = patchpoint->reps().size();
     patchpoint->append(calleeCode, ValueRep::SomeRegister);
     patchpoint->append(boxedCalleeCallee, ValueRep::SomeRegister);
+    patchpoint->append(wrapper, ValueRep::SomeRegister);
+    patchpoint->append(calleeInstance, ValueRep::SomeRegister);
     patchArgsIndex += m_proc.resultCount(patchpoint->type());
     patchpoint->setGenerator([this, handle = handle, prepareForCall = prepareForCall, patchArgsIndex, signature = Ref<const RTT>(signature), wasmCalleeInfo = WTF::move(wasmCalleeInfo)](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2166,6 +2182,12 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
             handle->collectStackMap(this, params);
 
         jit.storeWasmCalleeToCalleeCallFrame(params[patchArgsIndex + 1].gpr());
+        GPRReg wrapperGPR = params[patchArgsIndex + 2].gpr();
+        GPRReg calleeInstanceGPR = params[patchArgsIndex + 3].gpr();
+        auto hasTargetInstance = jit.branchTestPtr(CCallHelpers::NonZero, calleeInstanceGPR);
+        jit.loadPtr(CCallHelpers::Address(wrapperGPR, WebAssemblyFunctionBase::offsetOfCallLinkInfo()), wrapperGPR);
+        jit.storePtr(wrapperGPR, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+        hasTargetInstance.link(&jit);
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         emitWasmCallStackResultsAndSPRestore(jit, params, signature, wasmCalleeInfo);
     });
@@ -6800,6 +6822,18 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
     Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfTargetInstance()));
     m_heaps.decorateMemory(&m_heaps.WasmFuncRefTableFunction_targetInstance, calleeInstance);
 
+    auto* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)));
+    m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_tables[tableIndex], table);
+    table->setReadsMutability(B3::Mutability::Immutable);
+    table->setControlDependent(false);
+
+    Value* wrappers = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(FuncRefTable::offsetOfWrappers()));
+    m_heaps.decorateMemory(&m_heaps.WasmFuncRefTable_wrappers, wrappers);
+
+    Value* wrapper = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<Value>(m_proc, Add, origin(), wrappers,
+            m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), calleeIndex, constant(pointerType(), sizeof(void*)))));
+
     auto inliningResult = tryInliningPolymorphicCalls(callProfileIndex, calleeInstance, calleeCallee, signature, args, callType, isTailCallRootCaller, continuation);
     if (!inliningResult.has_value()) [[unlikely]]
         return makeUnexpected(WTF::move(inliningResult.error()));
@@ -6862,7 +6896,7 @@ auto OMGIRGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIn
     m_heaps.decorateMemory(&m_heaps.WasmWasmCallableFunctionLocation_value, calleeCode);
 
     ValueResults slowValues;
-    auto result = emitIndirectCall(calleeInstance, calleeCode, calleeCallee, signature, args, slowValues, callType);
+    auto result = emitIndirectCall(calleeInstance, calleeCode, calleeCallee, wrapper, signature, args, slowValues, callType);
     if (!result.has_value()) [[unlikely]]
         return result;
 
@@ -6926,6 +6960,8 @@ auto OMGIRGenerator::addCallRef(unsigned callProfileIndex, const RTT& signature,
     Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, wrapTrapping(Load), pointerType(), origin(), pointerOfWasmRef(callee), offset);
     m_heaps.decorateMemory(&m_heaps.WebAssemblyFunctionBase_targetInstance, calleeInstance);
 
+    Value* wrapper = pointerOfWasmRef(callee);
+
     Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointerOfWasmRef(callee), safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfBoxedCallee()));
     m_heaps.decorateMemory(&m_heaps.WebAssemblyFunctionBase_boxedCallee, calleeCallee);
 
@@ -6944,7 +6980,7 @@ auto OMGIRGenerator::addCallRef(unsigned callProfileIndex, const RTT& signature,
     m_heaps.decorateMemory(&m_heaps.WasmWasmCallableFunctionLocation_value, calleeCode);
 
     ValueResults slowValues;
-    auto result = emitIndirectCall(calleeInstance, calleeCode, calleeCallee, signature, args, slowValues, callType);
+    auto result = emitIndirectCall(calleeInstance, calleeCode, calleeCallee, wrapper, signature, args, slowValues, callType);
     if (!result.has_value()) [[unlikely]]
         return result;
 

@@ -146,6 +146,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     wasm/js/WebAssemblyGlobalPrototype.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp
     wasm/js/WebAssemblyInstancePrototype.cpp
+    wasm/js/WebAssemblyJSFunctionConstructor.cpp
+    wasm/js/WebAssemblyJSFunctionPrototype.cpp
     wasm/js/WebAssemblyLinkErrorConstructor.cpp
     wasm/js/WebAssemblyLinkErrorPrototype.cpp
     wasm/js/WebAssemblyMemoryConstructor.cpp

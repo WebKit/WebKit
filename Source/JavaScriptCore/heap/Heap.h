@@ -195,7 +195,7 @@ class Heap;
     v(webAssemblyTableSpace, webAssemblyTableHeapCellType, JSWebAssemblyTable) \
     v(webAssemblyTagSpace, webAssemblyTagHeapCellType, JSWebAssemblyTag) \
     v(webAssemblyStreamingContextSpace, destructibleCellHeapCellType, JSWebAssemblyStreamingContext) \
-    v(webAssemblyWrapperFunctionSpace, cellHeapCellType, WebAssemblyWrapperFunction)
+    v(webAssemblyWrapperFunctionSpace, webAssemblyWrapperFunctionHeapCellType, WebAssemblyWrapperFunction)
 
 // FIXME: This is a bit confusingly named since the objects in here are exclusive to the subspace but they can vary in size thus can't be in an IsoSubspace.
 #define FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_NON_ISO_SUBSPACE(v) \
@@ -1102,6 +1102,7 @@ public:
 #if ENABLE(WEBASSEMBLY)
     IsoHeapCellType webAssemblyExceptionHeapCellType;
     IsoHeapCellType webAssemblyFunctionHeapCellType;
+    IsoHeapCellType webAssemblyWrapperFunctionHeapCellType;
     IsoHeapCellType webAssemblyGlobalHeapCellType;
     // We can use IsoHeapCellType for instances because it's allocated out of a PreciseSubspace reserved for just instances.
     IsoHeapCellType webAssemblyInstanceHeapCellType;

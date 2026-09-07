@@ -314,6 +314,8 @@
 #include "WebAssemblyGlobalPrototype.h"
 #include "WebAssemblyInstanceConstructor.h"
 #include "WebAssemblyInstancePrototype.h"
+#include "WebAssemblyJSFunctionConstructor.h"
+#include "WebAssemblyJSFunctionPrototype.h"
 #include "WebAssemblyLinkErrorConstructor.h"
 #include "WebAssemblyLinkErrorPrototype.h"
 #include "WebAssemblyMemoryConstructor.h"
@@ -333,6 +335,7 @@
 #include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyTagConstructor.h"
 #include "WebAssemblyTagPrototype.h"
+#include "WebAssemblyWrapperFunction.h"
 #include "WrapForValidIteratorPrototypeInlines.h"
 #include "runtime/VM.h"
 #include <wtf/CryptographicallyRandomNumber.h>
@@ -2177,11 +2180,17 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             });
         m_webAssemblyFunctionStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                init.set(WebAssemblyFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+                JSValue prototype = Options::useWasmJSTypes()
+                    ? init.owner->webAssemblyJSFunctionStructure()->storedPrototype()
+                    : init.owner->m_functionPrototype.get();
+                init.set(WebAssemblyFunction::createStructure(init.vm, init.owner, prototype));
             });
         m_webAssemblyWrapperFunctionStructure.initLater(
             [] (const Initializer<Structure>& init) {
-                init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+                JSValue prototype = Options::useWasmJSTypes()
+                    ? init.owner->webAssemblyJSFunctionStructure()->storedPrototype()
+                    : init.owner->m_functionPrototype.get();
+                init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, prototype));
             });
         m_webAssemblyJSTag.initLater(
             [] (const Initializer<JSWebAssemblyTag>& init) {
@@ -2209,6 +2218,8 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             webAssembly->putDirectWithoutTransition(vm, Identifier::fromString(vm, "Suspending"_s), webAssemblySuspendingConstructor(), static_cast<unsigned>(PropertyAttribute::DontEnum));
             webAssembly->putDirectWithoutTransition(vm, Identifier::fromString(vm, "SuspendError"_s), webAssemblySuspendErrorConstructor(), static_cast<unsigned>(PropertyAttribute::DontEnum));
         }
+        if (Options::useWasmJSTypes())
+            webAssembly->putDirectWithoutTransition(vm, Identifier::fromString(vm, "Function"_s), webAssemblyJSFunctionConstructor(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     }
 #endif // ENABLE(WEBASSEMBLY)
 

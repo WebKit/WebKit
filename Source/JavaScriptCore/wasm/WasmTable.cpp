@@ -340,7 +340,7 @@ void FuncRefTable::setFunction(uint32_t index, WebAssemblyFunctionBase* function
 {
     ASSERT(index < length());
     ASSERT_WITH_SECURITY_IMPLICATION(isSubtype(function->type(), wasmType()));
-    VM& vm = function->instance()->vm();
+    VM& vm = m_owner->vm();
     auto& slot = m_importableFunctions.get()[index];
     slot = function->importableFunction();
     m_wrappers.get()[index].set(vm, m_owner, function);
