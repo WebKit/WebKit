@@ -7111,6 +7111,19 @@ ProcessSwapOnCrossSiteNavigationEnabled:
       "PLATFORM(PLAYSTATION)": false
       default: true
 
+PromiseAllKeyedEnabled:
+  type: bool
+  status: testable
+  category: javascript
+  humanReadableName: "Promise.allKeyed"
+  humanReadableDescription: "Expose the Promise.allKeyed and Promise.allSettledKeyed methods."
+  webcoreBinding: none
+  jscOptionName: usePromiseAllKeyed
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 PromiseIsPromiseEnabled:
   type: bool
   status: testable

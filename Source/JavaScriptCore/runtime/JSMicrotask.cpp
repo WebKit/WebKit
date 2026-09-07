@@ -507,6 +507,50 @@ static void promiseAnyResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromise
     }
 }
 
+static void promiseAllKeyedResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromiseCombinatorsGlobalContext* globalContext, JSValue resolution, uint64_t elementKey, JSPromise::Status status)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    switch (status) {
+    case JSPromise::Status::Pending: {
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    case JSPromise::Status::Fulfilled: {
+        RELEASE_AND_RETURN(scope, resolveKeyedPromiseCombinatorElement(globalObject, globalContext, elementKey, resolution));
+    }
+    case JSPromise::Status::Rejected: {
+        auto* promise = uncheckedDowncast<JSPromise>(globalContext->promise());
+        scope.release();
+        promise->reject(vm, resolution);
+        break;
+    }
+    }
+}
+
+static void promiseAllSettledKeyedResolveJob(JSGlobalObject* globalObject, VM& vm, JSPromiseCombinatorsGlobalContext* globalContext, JSValue resolution, uint64_t elementKey, JSPromise::Status status)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* resultObject = nullptr;
+    switch (status) {
+    case JSPromise::Status::Pending: {
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    case JSPromise::Status::Fulfilled: {
+        resultObject = createPromiseAllSettledFulfilledResult(globalObject, resolution);
+        break;
+    }
+    case JSPromise::Status::Rejected: {
+        resultObject = createPromiseAllSettledRejectedResult(globalObject, resolution);
+        break;
+    }
+    }
+
+    RELEASE_AND_RETURN(scope, resolveKeyedPromiseCombinatorElement(globalObject, globalContext, elementKey, resultObject));
+}
+
 static void asyncGeneratorBodyCall(JSGlobalObject*, JSAsyncGenerator*, JSValue resumeValue, int32_t resumeMode, MicrotaskCallCache*);
 static void asyncGeneratorCompleteStep(JSGlobalObject*, JSAsyncGenerator*, JSValue, bool isThrow, bool done);
 static void asyncGeneratorDrainQueue(JSGlobalObject*, JSAsyncGenerator*);
@@ -1830,6 +1874,18 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         auto* globalContext = uncheckedDowncast<JSPromiseCombinatorsGlobalContext>(arguments[0]);
         auto* resultPromise = uncheckedDowncast<JSPromise>(globalContext->promise());
         RELEASE_AND_RETURN(scope, promiseAnyResolveJob(resultPromise->realm(), vm, globalContext, arguments[1], static_cast<uint64_t>(arguments[2].asAnyInt()), static_cast<JSPromise::Status>(payload)));
+    }
+
+    case InternalMicrotask::PromiseAllKeyedResolveJob: {
+        auto* globalContext = uncheckedDowncast<JSPromiseCombinatorsGlobalContext>(arguments[0]);
+        auto* resultPromise = uncheckedDowncast<JSPromise>(globalContext->promise());
+        RELEASE_AND_RETURN(scope, promiseAllKeyedResolveJob(resultPromise->realm(), vm, globalContext, arguments[1], static_cast<uint64_t>(arguments[2].asAnyInt()), static_cast<JSPromise::Status>(payload)));
+    }
+
+    case InternalMicrotask::PromiseAllSettledKeyedResolveJob: {
+        auto* globalContext = uncheckedDowncast<JSPromiseCombinatorsGlobalContext>(arguments[0]);
+        auto* resultPromise = uncheckedDowncast<JSPromise>(globalContext->promise());
+        RELEASE_AND_RETURN(scope, promiseAllSettledKeyedResolveJob(resultPromise->realm(), vm, globalContext, arguments[1], static_cast<uint64_t>(arguments[2].asAnyInt()), static_cast<JSPromise::Status>(payload)));
     }
 
     case InternalMicrotask::PromiseReactionJob: {

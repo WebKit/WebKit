@@ -586,6 +586,12 @@ public:
     WriteBarrier<NativeExecutable> m_promiseAllSettledSlowRejectFunctionExecutable;
     WriteBarrier<NativeExecutable> m_promiseAnyRejectFunctionExecutable;
     WriteBarrier<NativeExecutable> m_promiseAnySlowRejectFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllKeyedFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllKeyedSlowFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledKeyedFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledKeyedRejectFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledKeyedSlowFulfillFunctionExecutable;
+    WriteBarrier<NativeExecutable> m_promiseAllSettledKeyedSlowRejectFunctionExecutable;
 
     WriteBarrier<JSCell> m_orderedHashTableDeletedValue;
     WriteBarrier<JSCell> m_orderedHashTableSentinel;
@@ -689,6 +695,12 @@ public:
     inline NativeExecutable* promiseAllSettledSlowRejectFunctionExecutable();
     inline NativeExecutable* promiseAnyRejectFunctionExecutable();
     inline NativeExecutable* promiseAnySlowRejectFunctionExecutable();
+    inline NativeExecutable* promiseAllKeyedFulfillFunctionExecutable();
+    inline NativeExecutable* promiseAllKeyedSlowFulfillFunctionExecutable();
+    inline NativeExecutable* promiseAllSettledKeyedFulfillFunctionExecutable();
+    inline NativeExecutable* promiseAllSettledKeyedRejectFunctionExecutable();
+    inline NativeExecutable* promiseAllSettledKeyedSlowFulfillFunctionExecutable();
+    inline NativeExecutable* promiseAllSettledKeyedSlowRejectFunctionExecutable();
 
     WeakGCMap<WTF::SymbolImpl*, Symbol, PtrHash<WTF::SymbolImpl*>> symbolImplToSymbolMap;
     WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> atomStringToJSStringMap;
@@ -1163,6 +1175,12 @@ private:
     NativeExecutable* promiseAllSettledSlowRejectFunctionExecutableSlow();
     NativeExecutable* promiseAnyRejectFunctionExecutableSlow();
     NativeExecutable* promiseAnySlowRejectFunctionExecutableSlow();
+    NativeExecutable* promiseAllKeyedFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllKeyedSlowFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledKeyedFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledKeyedRejectFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledKeyedSlowFulfillFunctionExecutableSlow();
+    NativeExecutable* promiseAllSettledKeyedSlowRejectFunctionExecutableSlow();
 
     void updateStackLimits();
 
