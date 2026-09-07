@@ -12,6 +12,14 @@ add_definitions(-DWEBRTC_WEBKIT_BUILD=1)
 # Suppress all warnings for third-party libwebrtc code.
 add_compile_options(-w)
 
+# The top-level Cocoa build compiles everything -fvisibility=hidden, which turns
+# these symbols private-extern; -exported_symbols_list cannot then export them
+# from libwebrtc.dylib. The Xcode build leaves them external, so match it. The
+# export list is what restricts the dylib's surface, not visibility.
+if (APPLE)
+    add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX>:-fvisibility=default>")
+endif ()
+
 # Match the Xcode build (Configurations/Base.xcconfig: CLANG_ENABLE_OBJC_ARC = YES).
 # The webkit_sdk Objective-C(++) sources rely on ARC for block/object ownership —
 # e.g. RTCVideoEncoderH264 stores its callback blocks via plain ivar assignment,
@@ -264,7 +272,6 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/api/stats/rtc_stats_report.cc
     Source/webrtc/api/stats/rtcstats_objects.cc
     Source/webrtc/api/task_queue/default_task_queue_factory_stdlib.cc
-    Source/webrtc/api/task_queue/default_task_queue_factory_win.cc
     Source/webrtc/api/task_queue/pending_task_safety_flag.cc
     Source/webrtc/api/task_queue/task_queue_base.cc
     Source/webrtc/api/transport/bitrate_settings.cc
@@ -611,17 +618,12 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_input.cc
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_replacement_input.cc
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtp_dump_input.cc
-    Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_stats_getter.cc
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_stats_plotter.cc
     Source/webrtc/modules/audio_coding/neteq/tools/packet_source.cc
     Source/webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.cc
-    Source/webrtc/modules/audio_coding/neteq/tools/rtp_analyze.cc
-    Source/webrtc/modules/audio_coding/neteq/tools/rtp_encode.cc
     Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
     Source/webrtc/modules/audio_coding/neteq/tools/rtp_generator.cc
-    Source/webrtc/modules/audio_coding/neteq/tools/rtp_jitter.cc
-    Source/webrtc/modules/audio_coding/neteq/tools/rtpcat.cc
     Source/webrtc/modules/audio_coding/neteq/underrun_optimizer.cc
     Source/webrtc/modules/audio_device/audio_device_buffer.cc
     Source/webrtc/modules/audio_device/audio_device_data_observer.cc
@@ -1377,6 +1379,20 @@ list(APPEND webrtc_SOURCES
     Source/webrtc/video/video_stream_encoder.cc
 )
 
+# default_task_queue_factory_win.cc duplicates CreateDefaultTaskQueueFactory and
+# each neteq tool carries a main(). Unreferenced members of a static archive are
+# never pulled in, but libwebrtc.dylib links every object it is given.
+if (NOT APPLE)
+    list(APPEND webrtc_SOURCES
+        Source/webrtc/api/task_queue/default_task_queue_factory_win.cc
+        Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
+        Source/webrtc/modules/audio_coding/neteq/tools/rtp_analyze.cc
+        Source/webrtc/modules/audio_coding/neteq/tools/rtp_encode.cc
+        Source/webrtc/modules/audio_coding/neteq/tools/rtp_jitter.cc
+        Source/webrtc/modules/audio_coding/neteq/tools/rtpcat.cc
+    )
+endif ()
+
 if (WIN32)
     list(APPEND websrc_SOURCES
         Source/webrtc/modules/audio_device/win/audio_device_core_win.cc
@@ -1943,21 +1959,6 @@ set(CRYPTO_SOURCES_ASM
   ${CRYPTO_PATH}/curve25519/asm/x25519-asm-arm.S
   ${CRYPTO_PATH}/hrss/asm/poly_rq_mul.S
   ${CRYPTO_PATH}/poly1305/poly1305_arm_asm.S
-  Source/third_party/boringssl/src/gen/crypto/aes128gcmsiv-x86_64-apple.S
-  Source/third_party/boringssl/src/gen/crypto/aes128gcmsiv-x86_64-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-armv4-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-armv8-apple.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-armv8-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-armv8-win.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-x86-apple.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-x86-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-x86_64-apple.S
-  Source/third_party/boringssl/src/gen/crypto/chacha-x86_64-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-apple.S
-  Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-linux.S
-  Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-win.S
-  Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_x86_64-apple.S
-  Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_x86_64-linux.S
   Source/third_party/boringssl/src/third_party/fiat/asm/fiat_curve25519_adx_mul.S
   Source/third_party/boringssl/src/third_party/fiat/asm/fiat_curve25519_adx_square.S
   Source/third_party/boringssl/src/third_party/fiat/asm/fiat_p256_adx_sqr.S
@@ -1975,6 +1976,29 @@ perlasm(CRYPTO_SOURCES x86_64 chacha/chacha-x86_64 ${CRYPTO_PATH}/chacha/asm/cha
 perlasm(CRYPTO_SOURCES x86_64 cipher/aes128gcmsiv-x86_64 ${CRYPTO_PATH}/cipher/asm/aes128gcmsiv-x86_64.pl)
 perlasm(CRYPTO_SOURCES x86_64 cipher/chacha20_poly1305_x86_64 ${CRYPTO_PATH}/cipher/asm/chacha20_poly1305_x86_64.pl)
 perlasm(CRYPTO_SOURCES x86_64 test/trampoline-x86_64 ${CRYPTO_PATH}/test/asm/trampoline-x86_64.pl)
+
+# The perlasm() calls above regenerate this same assembly, so carrying the
+# checked-in copies too would give libwebrtc.dylib duplicate symbols; a static
+# archive never pulled in the unreferenced duplicates.
+if (NOT APPLE)
+    list(APPEND CRYPTO_SOURCES_ASM
+        Source/third_party/boringssl/src/gen/crypto/aes128gcmsiv-x86_64-apple.S
+        Source/third_party/boringssl/src/gen/crypto/aes128gcmsiv-x86_64-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-armv4-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-armv8-apple.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-armv8-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-armv8-win.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-x86-apple.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-x86-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-x86_64-apple.S
+        Source/third_party/boringssl/src/gen/crypto/chacha-x86_64-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-apple.S
+        Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-linux.S
+        Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_armv8-win.S
+        Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_x86_64-apple.S
+        Source/third_party/boringssl/src/gen/crypto/chacha20_poly1305_x86_64-linux.S
+    )
+endif ()
 
 # TODO: _NASM support for platforms that require it.
 list(APPEND webrtc_SOURCES ${BCM_SOURCES_ASM})
@@ -2287,7 +2311,13 @@ else ()
     endif ()
 endif ()
 
-add_library(webrtc STATIC ${webrtc_SOURCES})
+if (APPLE)
+    # Built as libwebrtc.dylib and loaded from WebCore.framework/Frameworks, the
+    # way the Xcode build ships it -- there is no libwebrtc.a on Apple.
+    add_library(webrtc SHARED ${webrtc_SOURCES})
+else ()
+    add_library(webrtc STATIC ${webrtc_SOURCES})
+endif ()
 
 target_compile_options(webrtc PRIVATE
     "$<$<COMPILE_LANGUAGE:CXX>:-std=c++2b>"
@@ -2440,7 +2470,9 @@ if (APPLE)
     if (ENABLE_AV1)
         list(APPEND webrtc_INCLUDE_DIRECTORIES PRIVATE "${_dav1d_fwd}")
     endif ()
-    target_link_libraries(webrtc opus vpx yuv libsrtp)
+    # webm supplies the parser and mkvmuxer that WebCore reaches through
+    # libwebrtc.dylib's export list, so it links here rather than into WebCore.
+    target_link_libraries(webrtc opus vpx yuv libsrtp webm)
     if (ENABLE_AV1)
         target_link_libraries(webrtc aom dav1d)
     endif ()
@@ -3602,4 +3634,67 @@ if (ENABLE_AV1 AND APPLE)
             $<$<COMPILE_LANGUAGE:CXX>:-march=armv8.2-a+dotprod>
         )
     endif ()
+endif ()
+
+if (APPLE)
+    # The export list is what determines libwebrtc.dylib's surface. ld treats the
+    # names in it as roots, so it pulls the defining members out of the archives
+    # linked below -- mkvmuxer comes out of libwebm.a that way, as in Xcode.
+    set(_libwebrtc_exp_base "${CMAKE_CURRENT_SOURCE_DIR}/Configurations/libwebrtc.exp")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_libwebrtc_exp_config "${CMAKE_CURRENT_SOURCE_DIR}/Configurations/libwebrtc.debug.exp")
+    else ()
+        set(_libwebrtc_exp_config "${CMAKE_CURRENT_SOURCE_DIR}/Configurations/libwebrtc.release.exp")
+    endif ()
+    set(_libwebrtc_exp "${libwebrtc_DERIVED_SOURCES_DIR}/libwebrtc.generated.exp")
+
+    file(READ ${_libwebrtc_exp_base} _libwebrtc_exp_contents)
+    file(READ ${_libwebrtc_exp_config} _libwebrtc_exp_config_contents)
+    file(WRITE ${_libwebrtc_exp} "${_libwebrtc_exp_contents}${_libwebrtc_exp_config_contents}")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        ${_libwebrtc_exp_base} ${_libwebrtc_exp_config})
+
+    target_sources(webrtc PRIVATE $<TARGET_OBJECTS:webrtc_objc_categories>)
+
+    # target_link_options rather than target_link_libraries: the latter is used
+    # with the plain signature above, which would make these PUBLIC and push
+    # -exported_symbols_list onto WebCore's link line, where it collides with
+    # WebCore's own -unexported_symbols_list.
+    # SHELL: keeps each pair intact -- CMake deduplicates repeated LINK_OPTIONS
+    # items, which would collapse the six -framework tokens into one.
+    target_link_options(webrtc PRIVATE
+        "LINKER:-exported_symbols_list,${_libwebrtc_exp}"
+        "SHELL:-framework CoreFoundation"
+        "SHELL:-framework CoreGraphics"
+        "SHELL:-framework CoreMedia"
+        "SHELL:-framework CoreVideo"
+        "SHELL:-framework Foundation"
+        "SHELL:-framework VideoToolbox"
+    )
+
+    if (WEBKIT_SDK_IS_MACOS)
+        # audio_device_mac.cc and audio_mixer_manager_mac.cc are macOS-only and
+        # call into the CoreAudio HAL and AudioConverter.
+        target_link_options(webrtc PRIVATE
+            "SHELL:-framework AudioToolbox"
+            "SHELL:-framework CoreAudio"
+        )
+    endif ()
+
+    # INSTALL_NAME_DIR only sets LC_ID_DYLIB; the file itself stays in the build
+    # directory, matching DYLIB_INSTALL_NAME_BASE in Configurations/libwebrtc.xcconfig.
+    set_target_properties(webrtc PROPERTIES
+        MACOSX_RPATH OFF
+        BUILD_WITH_INSTALL_NAME_DIR ON
+        INSTALL_NAME_DIR "/System/Library/PrivateFrameworks/WebCore.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
+    )
+    set_property(TARGET webrtc APPEND PROPERTY LINK_DEPENDS ${_libwebrtc_exp})
+
+    # WEBKIT_FRAMEWORK/WEBKIT_EXECUTABLE sign what they create; a plain
+    # add_library does not, and an unsigned dylib in /System/Library is rejected
+    # when the device loads it.
+    add_custom_command(TARGET webrtc POST_BUILD
+        COMMAND /usr/bin/codesign --force --sign ${WEBKIT_CODE_SIGN_IDENTITY}
+            $<TARGET_FILE:webrtc>
+        COMMENT "Code signing libwebrtc.dylib")
 endif ()

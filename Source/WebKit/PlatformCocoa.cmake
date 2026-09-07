@@ -260,10 +260,11 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
 )
 
-# FIXME: These should not have Development in production builds.
-set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
-set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
-set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU.Development)
+# Xcode names each service executable after its bundle; the .Development suffix
+# belongs to the separate WebContent bundle built below.
+set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent)
+set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking)
+set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU)
 
 # Entry point shared by all three auxiliary processes on both SDKs.
 set(WebProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
@@ -786,6 +787,21 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-DHAVE_CORE_PREDICTION=1>")
 
+# Xcode injects UIDeviceFamily into processed Info.plists from the platform's
+# default TARGETED_DEVICE_FAMILY -- 7 for visionOS, 1 for iOS -- which none of
+# the XPC service targets override. Read it from the same place instead of
+# keeping a table here.
+get_filename_component(_wk_platform_dir "${CMAKE_OSX_SYSROOT}/../../.." ABSOLUTE)
+execute_process(
+    COMMAND plutil -extract DefaultProperties.TARGETED_DEVICE_FAMILY raw -o - "${_wk_platform_dir}/Info.plist"
+    OUTPUT_VARIABLE WEBKIT_UI_DEVICE_FAMILY
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET)
+if (NOT WEBKIT_UI_DEVICE_FAMILY MATCHES "^[0-9,]+$")
+    message(FATAL_ERROR "Could not read TARGETED_DEVICE_FAMILY from ${_wk_platform_dir}/Info.plist")
+endif ()
+unset(_wk_platform_dir)
+
 set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
 set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
 set(PRODUCT_NAME "WebKit")
@@ -1101,6 +1117,12 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
     module WKWebViewConfigurationInternal {
         requires objc
         header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h\"
+        export *
+    }
+
+    module UIWindowScene_Extras {
+        requires objc
+        header \"${WEBKIT_DIR}/UIProcess/Cocoa/UIWindowScene+Extras.h\"
         export *
     }
 
@@ -1871,40 +1893,29 @@ with open(sys.argv[2], 'wb') as f:
     string(REGEX MATCH "^([0-9]+)" _host_major "${_host_os_ver}")
     math(EXPR _target_macos_major "${_host_major} * 10000")
 
-    function(WEBKIT_IOS_XPC_SERVICE _target _bundle_identifier _info_plist _executable_name _xpc_entitlements)
+    # Wraps an already-built executable in one .xpc bundle. Separate from
+    # WEBKIT_IOS_XPC_SERVICE so a target can be packaged more than once: Xcode
+    # ships WebContent both under its own name and as
+    # com.apple.WebKit.WebContent.Development.
+    function(WEBKIT_IOS_XPC_SERVICE_BUNDLE _target _bundle_identifier _info_plist _executable_name _xpc_entitlements)
         set(_service_dir ${WebKit_XPC_SERVICE_DIR}/${_bundle_identifier}.xpc)
         file(MAKE_DIRECTORY ${_service_dir})
 
         set(BUNDLE_VERSION ${MACOSX_FRAMEWORK_BUNDLE_VERSION})
         set(SHORT_VERSION_STRING ${WEBKIT_MAC_VERSION})
         set(EXECUTABLE_NAME ${_executable_name})
-        set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_identifier}.Service)
+        # launchd registers the XPC service under its CFBundleIdentifier, and
+        # ProcessLauncherCocoa.mm looks it up as "com.apple.WebKit.WebContent"
+        # (see :168). A ".Service" suffix here makes that look-up fail with
+        # "No such process", so the process never launches.
+        set(PRODUCT_BUNDLE_IDENTIFIER ${_bundle_identifier})
         set(PRODUCT_NAME ${_bundle_identifier})
         configure_file(${_info_plist} ${_service_dir}/Info.plist)
 
         execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_service_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1]" ${_service_dir}/Info.plist)
+        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${WEBKIT_UI_DEVICE_FAMILY}]" ${_service_dir}/Info.plist)
         execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_service_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_service_dir}/Info.plist)
-
-        target_link_options(${_target} PRIVATE
-            "LINKER:-rpath,@executable_path/.."
-            "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
-            "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/.."
-        )
-
-        if (_is_simulator)
-            set(_xpc_der "${CMAKE_CURRENT_BINARY_DIR}/${_bundle_identifier}.entitlements.der")
-            WEBKIT_GENERATE_DER_ENTITLEMENTS(${_default_sim_entitlements} ${_xpc_der})
-            target_link_options(${_target} PRIVATE
-                "LINKER:-sectcreate,__TEXT,__entitlements,${_default_sim_entitlements}"
-                "LINKER:-sectcreate,__TEXT,__ents_der,${_xpc_der}")
-        endif ()
-
-        target_link_libraries(${_target} PRIVATE
-            "-framework Foundation"
-            "-framework CoreFoundation"
-        )
+        execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_SDK_NAME}" ${_service_dir}/Info.plist)
 
         add_custom_command(TARGET ${_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E rm -f
@@ -1931,32 +1942,72 @@ with open(sys.argv[2], 'wb') as f:
         endif ()
     endfunction()
 
-    WEBKIT_RESOLVE_ENTITLEMENTS(_webcontent_xpc_ents "WebContentXPCService.entitlements")
+    function(WEBKIT_IOS_XPC_SERVICE _target _bundle_identifier _info_plist _executable_name _xpc_entitlements)
+        target_link_options(${_target} PRIVATE
+            "LINKER:-rpath,@executable_path/.."
+            "LINKER:-dyld_env,DYLD_FRAMEWORK_PATH=@executable_path/.."
+            "LINKER:-dyld_env,DYLD_LIBRARY_PATH=@executable_path/.."
+        )
+
+        if (_is_simulator)
+            set(_xpc_der "${CMAKE_CURRENT_BINARY_DIR}/${_bundle_identifier}.entitlements.der")
+            WEBKIT_GENERATE_DER_ENTITLEMENTS(${_default_sim_entitlements} ${_xpc_der})
+            target_link_options(${_target} PRIVATE
+                "LINKER:-sectcreate,__TEXT,__entitlements,${_default_sim_entitlements}"
+                "LINKER:-sectcreate,__TEXT,__ents_der,${_xpc_der}")
+        endif ()
+
+        target_link_libraries(${_target} PRIVATE
+            "-framework Foundation"
+            "-framework CoreFoundation"
+        )
+
+        WEBKIT_IOS_XPC_SERVICE_BUNDLE(${_target} ${_bundle_identifier} ${_info_plist}
+            ${_executable_name} "${_xpc_entitlements}")
+    endfunction()
+
+    # Sign the bundles with the entitlements webkit_generate_entitlements()
+    # produced above, not with the checked-in stubs: those hold two keys for
+    # WebContent, one for GPU and none for Networking, and a process missing
+    # com.apple.developer.hardened-process is killed as it launches on a device.
     WEBKIT_IOS_XPC_SERVICE(WebProcess
         "com.apple.WebKit.WebContent"
         ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
         ${WebProcess_OUTPUT_NAME}
-        ${_webcontent_xpc_ents})
+        ${WebProcess_CODE_SIGN_ENTITLEMENTS})
 
-    WEBKIT_RESOLVE_ENTITLEMENTS(_networking_xpc_ents "NetworkingXPCService.entitlements")
+    # The same executable packaged a second time, which ProcessLauncherCocoa.mm
+    # asks for when non-valid injected code is allowed -- a launch that does not
+    # go through BrowserEngineKit and is not installed in the system location.
+    # process-entitlements.sh has no iOS-family case for this product name, so
+    # it gets only the entitlements every process receives.
+    WEBKIT_GENERATE_ENTITLEMENTS(WebProcess
+        USING Scripts/process-entitlements.sh
+        NAME WebProcessDevelopment
+        BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.Development)
+    WEBKIT_IOS_XPC_SERVICE_BUNDLE(WebProcess
+        "com.apple.WebKit.WebContent.Development"
+        ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
+        com.apple.WebKit.WebContent.Development
+        ${WebProcessDevelopment_CODE_SIGN_ENTITLEMENTS})
+
     WEBKIT_IOS_XPC_SERVICE(NetworkProcess
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist
         ${NetworkProcess_OUTPUT_NAME}
-        ${_networking_xpc_ents})
+        ${NetworkProcess_CODE_SIGN_ENTITLEMENTS})
 
     if (ENABLE_GPU_PROCESS)
-        WEBKIT_RESOLVE_ENTITLEMENTS(_gpu_xpc_ents "GPUXPCService.entitlements")
         WEBKIT_IOS_XPC_SERVICE(GPUProcess
             "com.apple.WebKit.GPU"
             ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist
             ${GPUProcess_OUTPUT_NAME}
-            ${_gpu_xpc_ents})
+            ${GPUProcess_CODE_SIGN_ENTITLEMENTS})
     endif ()
 
     function(WEBKIT_IOS_WEBCONTENT_VARIANT _variant)
         set(_target WebProcess${_variant})
-        set(_exec_name com.apple.WebKit.WebContent.${_variant}.Development)
+        set(_exec_name com.apple.WebKit.WebContent.${_variant})
         add_executable(${_target} ${WebProcess_SOURCES})
         target_link_libraries(${_target} PRIVATE WebKit)
         target_include_directories(${_target} PRIVATE
@@ -1964,11 +2015,14 @@ with open(sys.argv[2], 'wb') as f:
             $<TARGET_PROPERTY:WebKit,INCLUDE_DIRECTORIES>)
         target_compile_options(${_target} PRIVATE -Wno-unused-parameter)
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_exec_name})
+        WEBKIT_GENERATE_ENTITLEMENTS(${_target}
+            USING Scripts/process-entitlements.sh
+            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant})
         WEBKIT_IOS_XPC_SERVICE(${_target}
             "com.apple.WebKit.WebContent.${_variant}"
             ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
             ${_exec_name}
-            ${_webcontent_xpc_ents})
+            ${${_target}_CODE_SIGN_ENTITLEMENTS})
     endfunction()
     WEBKIT_IOS_WEBCONTENT_VARIANT(EnhancedSecurity)
     WEBKIT_IOS_WEBCONTENT_VARIANT(CaptivePortal)
@@ -2023,6 +2077,12 @@ with open(sys.argv[2], 'wb') as f:
         COMMAND ${CMAKE_COMMAND} -E rm -rf
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Versions
         COMMAND ${CMAKE_COMMAND} -E rm -rf
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
+        COMMAND ${CMAKE_COMMAND} -E create_symlink ../../libWebKitSwift.dylib
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks/libWebKitSwift.dylib
+        COMMAND ${CMAKE_COMMAND} -E rm -rf
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices
         COMMAND ${CMAKE_COMMAND} -E make_directory
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices
@@ -2038,10 +2098,11 @@ with open(sys.argv[2], 'wb') as f:
         COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
         COMMENT "Installing WebKit.framework resources and codesigning")
 
-    # Note: GPU.xpc symlink, when ENABLE_GPU_PROCESS is on, MUST be created
-    # in the same POST_BUILD chain as codesign above. Adding it via a
-    # separate add_custom_command(POST_BUILD ...) modifies the framework
-    # after the seal, breaking codesign verification at sim runtime.
+    # Note: the GPU.xpc symlink, when ENABLE_GPU_PROCESS is on, and the
+    # Frameworks/libWebKitSwift.dylib symlink MUST be created in the same
+    # POST_BUILD chain as codesign above. Adding either via a separate
+    # add_custom_command(POST_BUILD ...) modifies the framework after the
+    # seal, breaking codesign verification at sim runtime.
 
     function(WEBKIT_IOS_EXTENSION _name _bundle_id _info_plist _swift_source _entitlements)
         if (NOT WEBKIT_SDK_TARGET_OS STREQUAL "ios")
@@ -2059,7 +2120,16 @@ with open(sys.argv[2], 'wb') as f:
 
         # Add platform keys required by runningboardd/ExtensionKit validation.
         execute_process(COMMAND plutil -insert CFBundleSupportedPlatforms -json "[\"${WEBKIT_PLATFORM_NAME}\"]" ${_appex_dir}/Info.plist)
-        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[1,2]" ${_appex_dir}/Info.plist)
+        # Extensions override the platform default. Read the value out of the
+        # xcconfig so there is one source of truth for it.
+        file(STRINGS ${WEBKIT_DIR}/Configurations/BaseExtension.xcconfig _ext_family_line
+            REGEX "^TARGETED_DEVICE_FAMILY[ \t]*=")
+        string(REGEX REPLACE "^TARGETED_DEVICE_FAMILY[ \t]*=[ \t]*([0-9,]+).*$" "\\1"
+            _ext_family "${_ext_family_line}")
+        if (NOT _ext_family MATCHES "^[0-9,]+$")
+            message(FATAL_ERROR "Could not read TARGETED_DEVICE_FAMILY from BaseExtension.xcconfig")
+        endif ()
+        execute_process(COMMAND plutil -insert UIDeviceFamily -json "[${_ext_family}]" ${_appex_dir}/Info.plist)
         execute_process(COMMAND plutil -insert MinimumOSVersion -string "${CMAKE_OSX_DEPLOYMENT_TARGET}" ${_appex_dir}/Info.plist)
         execute_process(COMMAND plutil -insert DTPlatformName -string "${WEBKIT_PLATFORM_NAME}" ${_appex_dir}/Info.plist)
 
@@ -2152,6 +2222,47 @@ with open(sys.argv[2], 'wb') as f:
             ${_gpu_ext_ents})
     endif ()
 
+    # Daemons. These are command-line tools whose product sits at the top of the
+    # build directory and is installed into WebKit.framework/Daemons.
+    function(WEBKIT_IOS_DAEMON _target _source)
+        add_executable(${_target} ${_source})
+        add_dependencies(${_target} WebKit)
+
+        set_target_properties(${_target} PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            MACOSX_BUNDLE FALSE)
+
+        target_compile_options(${_target} PRIVATE
+            -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
+        target_link_libraries(${_target} PRIVATE
+            "-F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+            "-framework WebKit"
+            "-framework Foundation"
+        )
+
+        if (_is_simulator)
+            set(_daemon_entitlements ${_sim_get_task_allow})
+        else ()
+            set(_daemon_entitlements ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
+            WEBKIT_GENERATE_ENTITLEMENTS(${_target}
+                USING Scripts/process-entitlements.sh
+                OUTPUT ${_daemon_entitlements})
+        endif ()
+
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND codesign --force --sign -
+                --timestamp=none --generate-entitlement-der
+                --entitlements ${_daemon_entitlements}
+                "$<TARGET_FILE:${_target}>"
+            COMMENT "Codesigning ${_target}")
+    endfunction()
+
+    WEBKIT_IOS_DAEMON(webpushd
+        ${WEBKIT_DIR}/webpushd/webpushd.cpp)
+    WEBKIT_IOS_DAEMON(adattributiond
+        ${WEBKIT_DIR}/Shared/EntryPointUtilities/Cocoa/Daemon/adattributiond.cpp)
+
     set(_sb_profiles_dir "${WEBKIT_DIR}/Resources/SandboxProfiles/ios")
     set(_sb_output_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Resources")
     file(MAKE_DIRECTORY ${_sb_output_dir})
@@ -2231,8 +2342,51 @@ set_target_properties(WebKitSwift PROPERTIES
     PREFIX "lib"
     SUFFIX ".dylib"
     Swift_MODULE_NAME WebKitSwift
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+    # Nothing links this library, so an @rpath install name would only resolve
+    # for a loader that happens to carry a matching LC_RPATH. Record the path it
+    # is installed to, as Configurations/WebKitSwift.xcconfig does.
+    MACOSX_RPATH OFF
+    BUILD_WITH_INSTALL_NAME_DIR ON
+    INSTALL_NAME_DIR "/System/Library/Frameworks/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Frameworks"
 )
+
+# WebKitAdditions ships these Swift sources with a .swift.in extension so that a
+# build without the internal SDK leaves them out. Copy each one into the derived
+# sources directory and compile it, as DerivedSources.make does for the Xcode
+# build. Without this the declarations they implement, such as
+# -[UIWindowScene setUsesDefaultGeometry:], resolve at compile time through
+# UIWindowScene+Extras.h but have no implementation at runtime.
+if (USE_APPLE_INTERNAL_SDK)
+    foreach (_additions_swift_source
+        AppKitGesturesExtras
+        TestWebKitAPILibraryAdditions
+        UIWindowScene+Extras
+        WKSExperienceController+Transitions
+        WKWebView+SystemTextExtraction)
+        add_custom_command(
+            OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${WebKitAdditions_HEADERS_DIR}/${_additions_swift_source}.swift.in
+                ${WebKit_DERIVED_SOURCES_DIR}/${_additions_swift_source}.swift
+            DEPENDS
+                ${WebKitAdditions_HEADERS_DIR}/${_additions_swift_source}.swift.in
+                WebKitAdditions_CopyHeaders
+            COMMENT "Copying ${_additions_swift_source}.swift"
+            VERBATIM
+        )
+    endforeach ()
+
+    list(APPEND WebKit_SOURCES
+        ${WebKit_DERIVED_SOURCES_DIR}/AppKitGesturesExtras.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/TestWebKitAPILibraryAdditions.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/UIWindowScene+Extras.swift
+        ${WebKit_DERIVED_SOURCES_DIR}/WKWebView+SystemTextExtraction.swift
+    )
+    target_sources(WebKitSwift PRIVATE
+        ${WebKit_DERIVED_SOURCES_DIR}/WKSExperienceController+Transitions.swift
+    )
+endif ()
 
 target_include_directories(WebKitSwift PRIVATE
     ${_wks_dir}
@@ -2290,6 +2444,15 @@ target_compile_options(WebKitSwift PRIVATE
 
 target_link_libraries(WebKitSwift PRIVATE WebKit)
 add_dependencies(WebKitSwift WebKit)
+
+# WEBKIT_FRAMEWORK/WEBKIT_EXECUTABLE sign what they create; a plain add_library
+# does not. The framework's own signature does not cover this file either, since
+# WebKit.framework/Frameworks/libWebKitSwift.dylib is a symlink to it, and an
+# unsigned dylib in /System/Library is rejected when the device loads it.
+add_custom_command(TARGET WebKitSwift POST_BUILD
+    COMMAND /usr/bin/codesign --force --sign ${WEBKIT_CODE_SIGN_IDENTITY}
+        $<TARGET_FILE:WebKitSwift>
+    COMMENT "Code signing libWebKitSwift.dylib")
 
 unset(_wks_dir)
 
@@ -2686,10 +2849,43 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             ${GPUProcess_OUTPUT_NAME})
     endif ()
 
+    # The same executable packaged a second time, which ProcessLauncherCocoa.mm
+    # asks for when non-valid injected code is allowed. This is the case a local
+    # macOS build hits: it launches without BrowserEngineKit and is not
+    # installed in the system location. WEBKIT_XPC_SERVICE builds the executable
+    # straight into its bundle, so this one takes a copy of it instead.
+    set(_dev_bundle com.apple.WebKit.WebContent.Development)
+    set(_dev_service_dir ${WebKit_XPC_SERVICE_DIR}/${_dev_bundle}.xpc/Contents)
+    file(MAKE_DIRECTORY ${_dev_service_dir}/MacOS)
+    file(MAKE_DIRECTORY ${_dev_service_dir}/_CodeSignature)
+    file(MAKE_DIRECTORY ${_dev_service_dir}/Resources)
+
+    set(BUNDLE_VERSION ${WEBKIT_VERSION})
+    set(SHORT_VERSION_STRING ${WEBKIT_VERSION_MAJOR})
+    set(EXECUTABLE_NAME ${_dev_bundle})
+    set(PRODUCT_BUNDLE_IDENTIFIER ${_dev_bundle})
+    set(PRODUCT_NAME ${_dev_bundle})
+    configure_file(${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-OSX.plist
+        ${_dev_service_dir}/Info.plist)
+
+    WEBKIT_GENERATE_ENTITLEMENTS(WebProcess
+        USING Scripts/process-entitlements.sh
+        NAME WebProcessDevelopment
+        BUNDLE_IDENTIFIER ${_dev_bundle})
+
+    add_custom_command(TARGET WebProcess POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            "$<TARGET_FILE:WebProcess>"
+            "${_dev_service_dir}/MacOS/${_dev_bundle}"
+        COMMAND /usr/bin/codesign --force --sign ${WEBKIT_CODE_SIGN_IDENTITY}
+            --entitlements ${WebProcessDevelopment_CODE_SIGN_ENTITLEMENTS}
+            "${_dev_service_dir}/MacOS/${_dev_bundle}"
+        COMMENT "Copying WebContent into ${_dev_bundle}.xpc")
+
     # Without these XPC bundles, process swaps fail with "Invalid connection identifier".
     function(WEBKIT_WEBCONTENT_VARIANT _variant)
         set(_target WebProcess${_variant})
-        set(_exec_name com.apple.WebKit.WebContent.${_variant}.Development)
+        set(_exec_name com.apple.WebKit.WebContent.${_variant})
         WEBKIT_EXECUTABLE_DECLARE(${_target})
         set(${_target}_SOURCES ${WebProcess_SOURCES})
         set(${_target}_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}
