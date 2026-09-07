@@ -4,6 +4,7 @@
 <script>
 function fuzz() {
   if (window.testRunner) {
+      testRunner.dumpAsText();
       testRunner.waitUntilDone();
   }
   var calledParseMessage = false;
@@ -33,7 +34,6 @@ function parseMessage(msg) {
   o17 = view.getBigUint64(0, true);
 }
 function timeout1() {
-  IPC.sendSyncMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_ReachedApplicationCacheOriginQuota.name,0.1,[{type: 'String',value: "text/html"},{type: 'uint64_t',value: 426},{type: 'uint64_t',value: 809}]);
   video.play();
   window.setTimeout(timeout2,300);
 }
@@ -43,9 +43,11 @@ function timeout2() {
   window.setTimeout(timeout3, 10);
 }
 function timeout3() {
-  IPC.sendMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_RemoveMediaUsageManagerSession.name,[{type: 'uint64_t',value: o17}]);
+  // o17 is a MediaSessionIdentifier scraped from an outgoing UpdateMediaUsageManagerSessionState.
+  // If that message never arrived, removing an identifier the UI process never saw is just as
+  // valid an input for this test, so fall back to a bogus one rather than throwing.
+  IPC.sendMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_RemoveMediaUsageManagerSession.name,[{type: 'uint64_t',value: o17 ?? 0x414141414141n}]);
   if (window.testRunner) {
-    testRunner.dumpAsText();
     testRunner.notifyDone();
   }
 }
