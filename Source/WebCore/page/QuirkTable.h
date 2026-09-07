@@ -28,27 +28,100 @@
 #include <WebCore/QuirkNames.h>
 #include <WebCore/QuirksData.h>
 #include <WebCore/URLMatch.h>
+#include <array>
 #include <initializer_list>
 #include <optional>
+#include <span>
+#include <wtf/Vector.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
+
+class Document;
+class Node;
+
+struct QuirkBehavior {
+    constexpr QuirkBehavior(SiteSpecificQuirk quirk)
+        : quirk(quirk)
+    {
+    }
+
+    constexpr QuirkBehavior(SiteSpecificQuirk quirk, ASCIILiteral selector)
+        : quirk(quirk)
+        , selector(selector)
+    {
+    }
+
+    SiteSpecificQuirk quirk;
+    ASCIILiteral selector;
+};
+
+struct QuirkElementCondition {
+    SiteSpecificQuirk quirk { };
+    ASCIILiteral selector;
+};
+
+[[nodiscard]] WEBCORE_EXPORT bool quirkSelectorMatches(ASCIILiteral selector, const Node*);
 
 class QuirkBehaviors {
 public:
     constexpr QuirkBehaviors() = default;
 
-    consteval QuirkBehaviors(std::initializer_list<SiteSpecificQuirk> quirks)
+    consteval QuirkBehaviors(std::initializer_list<QuirkBehavior> behaviors)
     {
-        for (auto quirk : quirks)
-            m_bits.set(static_cast<size_t>(quirk));
+        for (auto& behavior : behaviors) {
+            RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!m_bits.get(static_cast<size_t>(behavior.quirk)));
+            m_bits.set(static_cast<size_t>(behavior.quirk));
+
+            if (behavior.selector.isNull())
+                continue;
+
+            RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(m_conditionCount < maximumConditions);
+            m_conditions[m_conditionCount++] = { behavior.quirk, behavior.selector };
+        }
     }
 
     constexpr const QuirkBitSet& bits() const LIFETIME_BOUND { return m_bits; }
 
-    constexpr void exclude(const QuirkBitSet& quirks) { m_bits.exclude(quirks); }
+    constexpr std::span<const QuirkElementCondition> conditions() const LIFETIME_BOUND
+    {
+        return std::span { m_conditions }.first(m_conditionCount);
+    }
+
+    constexpr QuirkBitSet unconditionalBits() const
+    {
+        auto bits = m_bits;
+        bits.exclude(conditionalBits());
+        return bits;
+    }
+
+    constexpr QuirkBitSet conditionalBits() const
+    {
+        QuirkBitSet bits;
+        for (auto& condition : conditions())
+            bits.set(static_cast<size_t>(condition.quirk));
+        return bits;
+    }
+
+    constexpr void exclude(const QuirkBitSet& quirks)
+    {
+        m_bits.exclude(quirks);
+
+        size_t remaining = 0;
+        for (size_t i = 0; i < m_conditionCount; ++i) {
+            if (!quirks.get(static_cast<size_t>(m_conditions[i].quirk)))
+                m_conditions[remaining++] = m_conditions[i];
+        }
+        m_conditionCount = remaining;
+    }
 
 private:
+    // Every row pays for this capacity; raise it only when a row needs more.
+    static constexpr size_t maximumConditions = 2;
+
     QuirkBitSet m_bits;
+    std::array<QuirkElementCondition, maximumConditions> m_conditions { };
+    size_t m_conditionCount { 0 };
 };
 
 enum class IsTopDocument : bool { No, Yes };
@@ -88,18 +161,26 @@ private:
     std::optional<URLMatch> m_topMatch;
 };
 
+struct ResolvedQuirks {
+    QuirksData data;
+    Vector<QuirkElementCondition, 2> elementConditions;
+};
+
 struct Quirk {
     QuirkURLMatch match;
     QuirkBehaviors behaviors { };
     std::optional<QuirkSite> site { };
     bool availableWhen { true };
 
-    void apply(QuirksData&) const;
+    void apply(ResolvedQuirks&) const;
 };
 
-WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
+WEBCORE_EXPORT ResolvedQuirks resolveSiteSpecificQuirks(const URL& topURL, const URL& documentURL, IsTopDocument);
 
-// For callers with no Document, which therefore only see top-URL quirks.
 WEBCORE_EXPORT QuirksData resolveTopURLQuirks(const URL&);
+
+WEBCORE_EXPORT std::span<const Quirk> quirkTableForTesting();
+
+[[nodiscard]] WEBCORE_EXPORT bool quirkSelectorParsesForTesting(ASCIILiteral, const Document&);
 
 } // namespace WebCore

@@ -115,7 +115,7 @@ TEST_F(QuirksTest, EmbeddedMatchesNeverApplyToTheTopDocument)
 #if PLATFORM(COCOA)
 static WebCore::QuirksData resolveQuirksForEmbeddedDocument(ASCIILiteral topURLString, ASCIILiteral documentURLString)
 {
-    return WebCore::resolveSiteSpecificQuirks(URL { topURLString }, URL { documentURLString }, WebCore::IsTopDocument::No);
+    return WebCore::resolveSiteSpecificQuirks(URL { topURLString }, URL { documentURLString }, WebCore::IsTopDocument::No).data;
 }
 
 TEST_F(QuirksTest, EmbeddedQuirksResolveFromTheDocumentURL)
@@ -145,6 +145,29 @@ TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
     EXPECT_TRUE(unrelatedSiteQuirks.activeQuirks.isEmpty());
     EXPECT_FALSE(unrelatedSiteQuirks.isSite(WebCore::QuirkSite::IHeart));
 }
+
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+TEST_F(QuirksTest, ConditionalQuirksAreNotUnconditionallyEnabled)
+{
+    using SiteSpecificQuirk = WebCore::SiteSpecificQuirk;
+    constexpr auto quirk = SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsQuirk;
+
+    // facebook.com gates this quirk on a selector, so it must only ever show up as "may be
+    // enabled". Callers that ask quirkIsEnabled() here would disable the quirk outright.
+    auto gated = resolveQuirksForTopURL("https://www.facebook.com/"_s);
+    EXPECT_FALSE(gated.activeQuirks.get(static_cast<size_t>(quirk)));
+    EXPECT_TRUE(gated.conditionalQuirks.get(static_cast<size_t>(quirk)));
+    EXPECT_TRUE(gated.quirkMayBeEnabled(quirk));
+
+    // flipkart.com enables it for every element, so both accessors agree.
+    auto ungated = resolveQuirksForTopURL("https://www.flipkart.com/"_s);
+    EXPECT_TRUE(ungated.quirkIsEnabled(quirk));
+    EXPECT_TRUE(ungated.quirkMayBeEnabled(quirk));
+
+    auto unrelated = resolveQuirksForTopURL("https://www.example.com/"_s);
+    EXPECT_FALSE(unrelated.quirkMayBeEnabled(quirk));
+}
+#endif
 
 TEST_F(QuirksTest, NeedsIPadMiniUserAgent)
 {

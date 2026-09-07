@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Event.h>
+#include <WebCore/QuirkTable.h>
 #include <WebCore/QuirksData.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/UserAgent.h>
@@ -356,11 +357,13 @@ private:
     bool needsQuirks() const;
     URL topDocumentURL() const;
 
+    bool elementMatchesQuirk(SiteSpecificQuirk, const Node*) const;
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
 
     mutable QuirksData m_quirksData;
-
+    Vector<QuirkElementCondition, 2> m_elementConditions;
     mutable QuirkBitSet m_probedQuirks;
 
     template<typename Probe>

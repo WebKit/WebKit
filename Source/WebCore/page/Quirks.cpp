@@ -225,6 +225,22 @@ inline bool Quirks::needsQuirks() const
     return m_document && m_document->settings().needsSiteSpecificQuirks();
 }
 
+bool Quirks::elementMatchesQuirk(SiteSpecificQuirk quirk, const Node* node) const
+{
+    auto index = static_cast<size_t>(quirk);
+    if (m_quirksData.activeQuirks.get(index))
+        return true;
+
+    if (!m_quirksData.conditionalQuirks.get(index))
+        return false;
+
+    for (auto& condition : m_elementConditions) {
+        if (condition.quirk == quirk && quirkSelectorMatches(condition.selector, node))
+            return true;
+    }
+    return false;
+}
+
 bool Quirks::shouldIgnoreInvalidSignal() const
 {
     return needsQuirks();
@@ -448,15 +464,6 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
 // mybinder.org rdar://51770057
-template<typename Predicate> static bool targetOrAncestorMatches(const EventTarget* target, NOESCAPE Predicate&& predicate)
-{
-    for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
-        if (auto* element = dynamicDowncast<Element>(*node); element && predicate(*element))
-            return true;
-    }
-    return false;
-}
-
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
     if (m_document->settings().mouseEventsSimulationEnabled())
@@ -464,29 +471,14 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (!m_quirksData.quirkIsEnabled(SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsQuirk))
+    if (!m_quirksData.quirkMayBeEnabled(SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsQuirk))
         return false;
 
     auto* loader = m_document->loader();
     if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
         return false;
 
-    // facebook.com rdar://174179871
-    // tiktok.com rdar://174179805
-    if (m_quirksData.isSite(QuirkSite::Facebook) || m_quirksData.isSite(QuirkSite::TikTok)) {
-        return targetOrAncestorMatches(target, [](auto& element) {
-            return element.attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s;
-        });
-    }
-
-    // mybinder.org rdar://51770057
-    if (m_quirksData.isSite(QuirkSite::MyBinder)) {
-        return targetOrAncestorMatches(target, [](auto& element) {
-            return element.hasClassName("lm-DockPanel-tabBar"_s);
-        });
-    }
-
-    return true;
+    return elementMatchesQuirk(SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsQuirk, dynamicDowncast<Node>(target));
 }
 
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
@@ -2584,6 +2576,7 @@ void Quirks::determineRelevantQuirks()
 {
     RELEASE_ASSERT(m_document);
     m_quirksData = { };
+    m_elementConditions = { };
     m_probedQuirks = { };
 
 #if PLATFORM(IOS_FAMILY)
@@ -2612,7 +2605,9 @@ void Quirks::determineRelevantQuirks()
         return;
 
     Ref document = *protect(m_document);
-    m_quirksData.merge(resolveSiteSpecificQuirks(quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No));
+    auto resolved = resolveSiteSpecificQuirks(quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No);
+    m_quirksData.merge(resolved.data);
+    m_elementConditions = WTF::move(resolved.elementConditions);
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460
@@ -2645,8 +2640,7 @@ void Quirks::logQuirksToConsoleIfNecessary() const
 Vector<String> Quirks::activeQuirks() const
 {
     Vector<String> result;
-
-    for (auto quirk : m_quirksData.activeQuirks)
+    for (auto quirk : m_quirksData.possiblyEnabledQuirks())
         result.append(String { WTF::enumName(static_cast<SiteSpecificQuirk>(quirk)) });
 
     std::ranges::sort(result, codePointCompareLessThan);
@@ -2655,7 +2649,7 @@ Vector<String> Quirks::activeQuirks() const
 
 bool Quirks::hasRelevantQuirks() const
 {
-    return !m_quirksData.activeQuirks.isEmpty();
+    return !m_quirksData.possiblyEnabledQuirks().isEmpty();
 }
 
 }
