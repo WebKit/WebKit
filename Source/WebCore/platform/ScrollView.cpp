@@ -369,6 +369,11 @@ IntSize ScrollView::layoutSize() const
     return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? sizeForUnobscuredContent() : m_fixedLayoutSize;
 }
 
+IntSize ScrollView::layoutSizeIncludingScrollbars() const
+{
+    return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? sizeForUnobscuredContent(VisibleContentRectIncludesScrollbars::Yes) : m_fixedLayoutSize;
+}
+
 IntSize ScrollView::fixedLayoutSize() const
 {
     return m_fixedLayoutSize;

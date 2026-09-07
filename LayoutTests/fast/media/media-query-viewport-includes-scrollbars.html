@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+html {
+    overflow: hidden;
+}
+
+body {
+    height: 200vh;
+    width: 200vw;
+}
+</style>
+</head>
+<body>
+<script>
+internals.setUsesOverlayScrollbars(false);
+
+promise_test(async () => {
+    const viewportWidth = innerWidth;
+    const viewportHeight = innerHeight;
+    const widthQuery = matchMedia(`(width: ${viewportWidth}px)`);
+    const heightQuery = matchMedia(`(height: ${viewportHeight}px)`);
+    const aspectRatioQuery = matchMedia(`(aspect-ratio: ${viewportWidth}/${viewportHeight})`);
+
+    assert_true(widthQuery.matches, "width matches before scrollbars are shown");
+    assert_true(heightQuery.matches, "height matches before scrollbars are shown");
+    assert_true(aspectRatioQuery.matches, "aspect-ratio matches before scrollbars are shown");
+
+    document.documentElement.style.overflow = "scroll";
+    document.documentElement.clientWidth;
+    await new Promise(requestAnimationFrame);
+
+    assert_greater_than(innerWidth, document.documentElement.clientWidth, "the vertical scrollbar occupies viewport space");
+    assert_greater_than(innerHeight, document.documentElement.clientHeight, "the horizontal scrollbar occupies viewport space");
+    assert_true(widthQuery.matches, "width includes the vertical scrollbar");
+    assert_true(heightQuery.matches, "height includes the horizontal scrollbar");
+    assert_true(aspectRatioQuery.matches, "aspect-ratio includes both scrollbars");
+    assert_true(matchMedia(`(width: ${viewportWidth}px)`).matches, "a newly evaluated width includes the vertical scrollbar");
+    assert_true(matchMedia(`(height: ${viewportHeight}px)`).matches, "a newly evaluated height includes the horizontal scrollbar");
+    assert_true(matchMedia(`(aspect-ratio: ${viewportWidth}/${viewportHeight})`).matches, "a newly evaluated aspect-ratio includes both scrollbars");
+}, "Viewport media features include rendered scrollbars");
+</script>
+</body>
+</html>
