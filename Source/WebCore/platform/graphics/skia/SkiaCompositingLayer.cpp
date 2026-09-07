@@ -1046,6 +1046,10 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
             childBounds = m_children[0]->m_rect;
         if (m_children[0]->m_contentsBuffer || m_children[0]->m_imageBackingStore || (m_children[0]->m_contentsSolidColor.isValid() && m_children[0]->m_contentsSolidColor.isVisible()))
             childBounds.unite(m_children[0]->m_contentsRect);
+
+        if (auto childFilter = m_children[0]->filter(); childFilter && !childFilter->outsets.isZero() && !m_children[0]->m_masksToBounds && !m_children[0]->m_mask)
+            childBounds.expand(toFloatBoxExtent(childFilter->outsets));
+
         return matrix.mapRect(SkRect(rect.rect())).contains(childMatrix.mapRect(SkRect(childBounds)));
     };
 
