@@ -4014,6 +4014,28 @@ void BBQJIT::prepareForExceptions()
     return { };
 }
 
+BranchHint BBQJIT::currentBranchHint() const
+{
+    ASSERT(m_parser);
+    return m_info.getBranchHint(m_functionIndex, m_parser->currentOpcodeStartingOffset());
+}
+
+void BBQJIT::emitHintedBrIf(ControlData& target, GPRReg condition, std::span<TypedExpression> results)
+{
+    currentControlData().flushAtBlockBoundary(*this, 0, results, false);
+    if (branchHintMarksTakenRare(currentBranchHint()) && target.targetLocations().isEmpty()) {
+        target.addBranch(m_jit.branchTest32(ResultCondition::NonZero, condition));
+        currentControlData().finalizeBlock(*this, 0, results, true);
+        return;
+    }
+
+    Jump ifNotTaken = m_jit.branchTest32(ResultCondition::Zero, condition);
+    currentControlData().addExit(*this, target.targetLocations(), results);
+    target.addBranch(m_jit.jump());
+    ifNotTaken.link(&m_jit);
+    currentControlData().finalizeBlock(*this, target.targetLocations().size(), results, true);
+}
+
 [[nodiscard]] PartialResult BBQJIT::addBranch(ControlData& target, Value condition, std::span<TypedExpression> results)
 {
     if (condition.isConst() && !condition.asI32()) // If condition is known to be false, this is a no-op.
@@ -4039,14 +4061,8 @@ void BBQJIT::prepareForExceptions()
     if (condition.isConst() || condition.isNone()) {
         currentControlData().flushAndSingleExit(*this, target, results, false, condition.isNone());
         target.addBranch(m_jit.jump()); // We know condition is true, since if it was false we would have returned early.
-    } else {
-        currentControlData().flushAtBlockBoundary(*this, 0, results, condition.isNone());
-        Jump ifNotTaken = m_jit.branchTest32(ResultCondition::Zero, conditionLocation.asGPR());
-        currentControlData().addExit(*this, target.targetLocations(), results);
-        target.addBranch(m_jit.jump());
-        ifNotTaken.link(&m_jit);
-        currentControlData().finalizeBlock(*this, target.targetLocations().size(), results, true);
-    }
+    } else
+        emitHintedBrIf(target, conditionLocation.asGPR(), results);
 
     return { };
 }
