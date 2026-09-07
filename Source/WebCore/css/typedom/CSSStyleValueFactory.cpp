@@ -40,6 +40,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterValue.h"
+#include "CSSFontPaletteValue.h"
 #include "CSSGridLineValue.h"
 #include "CSSGridTemplateListValue.h"
 #include "CSSGridTrackSizesValue.h"
@@ -471,6 +472,18 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Document& docum
                 return WebCore::reifyValue(keyword);
             },
             [&](const CSS::ClipRect&) -> ExceptionOr<Ref<CSSStyleValue>> {
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), WTF::move(associatedProperty));
+            }
+        );
+    } else if (RefPtr property = dynamicDowncast<CSSFontPaletteValue>(cssValue)) {
+        return WTF::switchOn(property->fontPalette(),
+            [&]<CSSValueID Id>(const Constant<Id>& keyword) -> ExceptionOr<Ref<CSSStyleValue>> {
+                return WebCore::reifyValue(keyword);
+            },
+            [&](const CSS::CustomIdent& customIdent) -> ExceptionOr<Ref<CSSStyleValue>> {
+                return WebCore::reifyValue(customIdent);
+            },
+            [&](const CSS::FontPaletteMixFunction&) -> ExceptionOr<Ref<CSSStyleValue>> {
                 return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), WTF::move(associatedProperty));
             }
         );

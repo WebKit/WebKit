@@ -1007,18 +1007,20 @@
             }
         },
         "font-palette": {
-            "animation-type": "discrete",
-            "animation-type-comment": "Current spec animation type is 'by computed value'",
+            "animation-type": "by computed value",
             "inherited": true,
             "initial": "normal",
             "codegen-properties": {
                 "font-property": true,
                 "high-priority": true,
+                "computed-style-getter-nodelete": false,
                 "computed-style-storage-container": "opaque",
                 "computed-style-storage-path": ["m_inheritedData", "fontData", "fontCascade"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::FontPalette",
-                "parser-grammar": "normal | light | dark | <palette-identifier>"
+                "parser-function": "consumeFontPalette",
+                "parser-grammar-unused": "normal | light | dark | <palette-identifier> | <palette-mix()>",
+                "parser-grammar-unused-reason": "Needs support for the strong value representation."
             },
             "specification": {
                 "category": "css-fonts",

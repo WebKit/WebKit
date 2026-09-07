@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2025-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,73 @@
 
 #include "config.h"
 #include "StyleFontPalette.h"
+#include "StyleFontPaletteInlines.h"
 
+#include "AnimationUtilities.h"
+#include "CSSCustomIdentValue.h"
+#include "CSSFontPaletteValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "FontPaletteMix.h"
 #include "StyleBuilderChecking.h"
-#include "StyleValueTypes+CSSValueConversion.h"
+#include "StyleFontPaletteMix.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 namespace Style {
 
 // MARK: - Conversion
+
+static WebCore::FontPaletteMixFunction toPlatformFontPaletteMixFunction(const CSS::FontPaletteMixParameters& parameters, const BuilderState& state)
+{
+    auto toPlatformPercentage = [](auto& percentage, auto& state) -> std::optional<double> {
+        if (auto stylePercentage = toStyle(percentage, state))
+            return stylePercentage->value;
+        return std::nullopt;
+    };
+
+    return {
+        .colorInterpolationMethod = parameters.colorInterpolationMethod.value,
+        .components = WTF::map(parameters.components, [&](auto& component) {
+            return WebCore::FontPaletteMixFunction::Component {
+                .palette = toStyle(component.palette, state).takePlatform(),
+                .percentage = toPlatformPercentage(component.percentage, state),
+            };
+        })
+    };
+}
+
+auto ToStyle<CSS::FontPalette>::operator()(const CSS::FontPalette& value, const BuilderState& state) -> FontPalette
+{
+    return WTF::switchOn(value,
+        [&](CSS::SpecificKeyword auto const& keyword) -> FontPalette {
+            return toStyle(keyword, state);
+        },
+        [&](const CSS::CustomIdent& customIdent) -> FontPalette {
+            return toStyle(customIdent, state);
+        },
+        [&](const CSS::FontPaletteMixFunction& mix) -> FontPalette {
+            // We bypass Style::FontPaletteMixFunction and convert directly to the platform type
+            // to avoid an unnecessary extra transient allocation.
+            return WebCore::FontPalette { toPlatformFontPaletteMixFunction(mix.value.parameters, state) };
+        }
+    );
+}
+
+auto ToCSS<FontPalette>::operator()(const FontPalette& value, const ComputedStyle& style) -> CSS::FontPalette
+{
+    return WTF::switchOn(value,
+        [&](CSS::SpecificKeyword auto const& keyword) -> CSS::FontPalette {
+            return toCSS(keyword, style);
+        },
+        [&](const CustomIdent& customIdent) -> CSS::FontPalette {
+            return toCSS(customIdent, style);
+        },
+        [&](const FontPaletteMixFunction& mix) -> CSS::FontPalette {
+            return toCSS(mix, style);
+        }
+    );
+}
 
 auto CSSValueConversion<FontPalette>::operator()(BuilderState& state, const CSSValue& value) -> FontPalette
 {
@@ -55,7 +112,50 @@ auto CSSValueConversion<FontPalette>::operator()(BuilderState& state, const CSSV
         }
     }
 
-    return toStyleFromCSSValue<CustomIdent>(state, value);
+    if (auto* customIdentValue = dynamicDowncast<CSSCustomIdentValue>(value))
+        return toStyleFromCSSValue<CustomIdent>(state, *customIdentValue);
+
+    RefPtr fontPaletteValue = requiredDowncast<CSSFontPaletteValue>(state, value);
+    if (!fontPaletteValue)
+        return CSS::Keyword::Normal { };
+
+    return toStyle(fontPaletteValue->fontPalette(), state);
+}
+
+Ref<CSSValue> CSSValueCreation<FontPalette>::operator()(CSSValuePool&, const ComputedStyle& style, const FontPalette& value)
+{
+    return CSSFontPaletteValue::create(toCSS(value, style));
+}
+
+// MARK: - Blending
+
+auto Blending<FontPalette>::blend(const FontPalette& a, const FontPalette& b, const BlendingContext& context) -> FontPalette
+{
+    if (context.progress <= 0)
+        return a;
+    if (context.progress >= 1)
+        return b;
+
+    auto aMixPercentage = (1.0 - context.progress) * 100.0;
+    auto bMixPercentage = (context.progress) * 100.0;
+
+    return FontPalette {
+        WebCore::FontPalette {
+            WebCore::FontPaletteMixFunction {
+                .colorInterpolationMethod = CSS::defaultInterpolationMethodForPaletteMix.value,
+                .components = {
+                    WebCore::FontPaletteMixFunction::Component {
+                        .palette = a.platform(),
+                        .percentage = aMixPercentage,
+                    },
+                    WebCore::FontPaletteMixFunction::Component {
+                        .palette = b.platform(),
+                        .percentage = bMixPercentage,
+                    }
+                },
+            }
+        }
+    };
 }
 
 } // namespace Style

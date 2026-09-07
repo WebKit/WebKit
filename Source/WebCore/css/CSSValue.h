@@ -100,6 +100,7 @@ public:
     bool isFontFaceSrcResourceValue() const { return m_classType == ClassType::FontFaceSrcResource; }
     bool isFontFamilyNameValue() const { return m_classType == ClassType::FontFamilyName; }
     bool isFontFeatureValue() const { return m_classType == ClassType::FontFeature; }
+    bool isFontPaletteValue() const { return m_classType == ClassType::FontPalette; }
     bool isFontStyleRangeValue() const { return m_classType == ClassType::FontStyleRange; }
     bool isFontStyleWithAngleValue() const { return m_classType == ClassType::FontStyleWithAngle; }
     bool isFontValue() const { return m_classType == ClassType::Font; }
@@ -242,6 +243,7 @@ protected:
         FontFaceSrcResource,
         FontFamilyName,
         FontFeature,
+        FontPalette,
         FontStyleRange,
         FontStyleWithAngle,
         FontVariation,

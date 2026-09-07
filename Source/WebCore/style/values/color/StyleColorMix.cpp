@@ -123,8 +123,7 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
 {
     builder.append("color-mix("_s);
     if (colorMix.colorInterpolationMethod != CSS::defaultInterpolationMethodForColorMix) {
-        builder.append("in "_s);
-        WebCore::serializationForCSS(builder, colorMix.colorInterpolationMethod);
+        CSS::serializationForCSS(builder, context, colorMix.colorInterpolationMethod);
         builder.append(", "_s);
     }
     builder.append(interleave(colorMix.components, [&](auto& builder, auto& component) {
@@ -154,7 +153,7 @@ static WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorMix::Componen
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorMix& colorMix)
 {
     ts << "color-mix("_s;
-    ts << "in "_s << colorMix.colorInterpolationMethod;
+    ts << colorMix.colorInterpolationMethod;
     ts << ", "_s << colorMix.components;
     ts << ')';
 

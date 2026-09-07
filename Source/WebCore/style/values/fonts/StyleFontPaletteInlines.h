@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,27 +25,37 @@
 
 #pragma once
 
-#include "CSSColorInterpolationMethod.h"
-#include "Color.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
+#include "StyleFontPalette.h"
+#include "StyleFontPaletteMix.h"
 
 namespace WebCore {
-namespace CSS {
+namespace Style {
 
-struct ColorMixResolver {
-    struct Component {
-        using Percentage = Style::Percentage<Range{0, 100}>;
+template<typename... F> decltype(auto) FontPalette::switchOn(F&&... f) const
+{
+    auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+    using ResultType = decltype(visitor(std::declval<CSS::Keyword::Normal>()));
 
-        WebCore::Color color;
-        std::optional<Percentage> percentage;
-    };
+    return WTF::switchOn(m_platform,
+        [&](const WebCore::FontPalette::Keyword& keyword) -> ResultType {
+            switch (keyword) {
+            case WebCore::FontPalette::Keyword::Normal:
+                return visitor(CSS::Keyword::Normal { });
+            case WebCore::FontPalette::Keyword::Light:
+                return visitor(CSS::Keyword::Light { });
+            case WebCore::FontPalette::Keyword::Dark:
+                return visitor(CSS::Keyword::Dark { });
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const AtomString& ident) -> ResultType {
+            return visitor(CustomIdent { ident });
+        },
+        [&](const WebCore::FontPaletteMixFunction& mix) -> ResultType {
+            return visitor(fromPlatform(mix));
+        }
+    );
+}
 
-    ColorInterpolationMethod colorInterpolationMethod;
-    Vector<Component> components;
-};
-
-WebCore::Color mix(const ColorMixResolver&);
-
-} // namespace CSS
+} // namespace Style
 } // namespace WebCore

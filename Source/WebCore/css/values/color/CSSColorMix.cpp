@@ -93,8 +93,7 @@ void Serialize<ColorMix>::operator()(StringBuilder& builder, const Serialization
 {
     builder.append("color-mix("_s);
     if (value.colorInterpolationMethod != CSS::defaultInterpolationMethodForColorMix) {
-        builder.append("in "_s);
-        WebCore::serializationForCSS(builder, value.colorInterpolationMethod);
+        serializationForCSS(builder, context, value.colorInterpolationMethod);
         builder.append(", "_s);
     }
 

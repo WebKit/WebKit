@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,27 +25,27 @@
 
 #pragma once
 
-#include "CSSColorInterpolationMethod.h"
-#include "Color.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
+#include "CSSFontPalette.h"
+#include "CSSValue.h"
 
 namespace WebCore {
-namespace CSS {
 
-struct ColorMixResolver {
-    struct Component {
-        using Percentage = Style::Percentage<Range{0, 100}>;
+class CSSFontPaletteValue final : public CSSValue {
+public:
+    static Ref<CSSFontPaletteValue> create(CSS::FontPalette&&);
 
-        WebCore::Color color;
-        std::optional<Percentage> percentage;
-    };
+    const CSS::FontPalette& fontPalette() const LIFETIME_BOUND { return m_fontPalette; }
 
-    ColorInterpolationMethod colorInterpolationMethod;
-    Vector<Component> components;
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSFontPaletteValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+
+private:
+    CSSFontPaletteValue(CSS::FontPalette&&);
+
+    const CSS::FontPalette m_fontPalette;
 };
 
-WebCore::Color mix(const ColorMixResolver&);
-
-} // namespace CSS
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontPaletteValue, isFontPaletteValue())

@@ -29,6 +29,7 @@
 #include "CSSCanvasValue.h"
 #include "CSSColor.h"
 #include "CSSColorImageValue.h"
+#include "CSSColorInterpolationMethod.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFilterImageValue.h"
@@ -340,7 +341,7 @@ static bool stopColorIs8Bit(const Markable<CSS::Color>& color)
     return !color || stopColorIs8Bit(*color);
 }
 
-template<typename Stop> static CSS::GradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<ColorInterpolationMethod> parsedColorInterpolationMethod, const CSS::GradientColorStopList<Stop>& stops)
+template<typename Stop> static CSS::GradientColorInterpolationMethod computeGradientColorInterpolationMethod(std::optional<CSS::ColorInterpolationMethod> parsedColorInterpolationMethod, const CSS::GradientColorStopList<Stop>& stops)
 {
     // We detect whether stops use legacy vs. non-legacy CSS color syntax using the following rules:
     //  - A CSSValueID is always considered legacy since all keyword based colors are considered legacy by the spec.
@@ -359,18 +360,18 @@ template<typename Stop> static CSS::GradientColorInterpolationMethod computeGrad
     }
 
     if (parsedColorInterpolationMethod)
-        return { *parsedColorInterpolationMethod, defaultColorInterpolationMethod };
+        return { .method = *parsedColorInterpolationMethod, .defaultMethod = defaultColorInterpolationMethod };
 
     switch (defaultColorInterpolationMethod) {
     case CSS::GradientColorInterpolationMethod::Default::SRGB:
-        return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
+        return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
 
     case CSS::GradientColorInterpolationMethod::Default::OKLab:
-        return { { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
+        return { .method = { ColorInterpolationMethod::OKLab { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
     }
 
     ASSERT_NOT_REACHED();
-    return { { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, defaultColorInterpolationMethod };
+    return { .method = { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Premultiplied }, .defaultMethod = defaultColorInterpolationMethod };
 }
 
 // MARK: Compat <gradient> values
@@ -645,7 +646,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeLinearGradient(CSSParse
         }
     };
 
-    std::optional<ColorInterpolationMethod> colorInterpolationMethod;
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(range, state);
@@ -719,7 +720,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeRadialGradient(CSSParse
 
     static constexpr auto defaultExtent = CSS::RadialGradient::Extent { CSS::Keyword::FarthestCorner { } };
 
-    std::optional<ColorInterpolationMethod> colorInterpolationMethod;
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(range, state);
@@ -918,7 +919,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumeConicGradient(CSSParser
     //   <angular-color-stop-list>
     // )
 
-    std::optional<ColorInterpolationMethod> colorInterpolationMethod;
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod;
 
     if (range.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(range, state);

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,32 +20,35 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "FontPaletteMix.h"
 
-#include "CSSColorInterpolationMethod.h"
-#include "Color.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
+#include <wtf/Hasher.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
-namespace CSS {
 
-struct ColorMixResolver {
-    struct Component {
-        using Percentage = Style::Percentage<Range{0, 100}>;
+void add(Hasher& hasher, const FontPaletteMixFunction::Component& component)
+{
+    add(hasher, component.palette, component.percentage);
+}
 
-        WebCore::Color color;
-        std::optional<Percentage> percentage;
-    };
+void add(Hasher& hasher, const FontPaletteMixFunction& mix)
+{
+    add(hasher, mix.colorInterpolationMethod, mix.components);
+}
 
-    ColorInterpolationMethod colorInterpolationMethod;
-    Vector<Component> components;
-};
+TextStream& operator<<(TextStream& ts, const FontPaletteMixFunction::Component& component)
+{
+    return ts << component.palette << " "_s << component.percentage;
+}
 
-WebCore::Color mix(const ColorMixResolver&);
+TextStream& operator<<(TextStream& ts, const FontPaletteMixFunction& mix)
+{
+    return ts << "palette-mix("_s << mix.colorInterpolationMethod << ", "_s << mix.components << ")"_s;
+}
 
-} // namespace CSS
 } // namespace WebCore

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,27 +25,25 @@
 
 #pragma once
 
-#include "CSSColorInterpolationMethod.h"
-#include "Color.h"
-#include "StylePrimitiveNumericTypes.h"
-#include <optional>
+#include <WebCore/CSSValueTypes.h>
+#include <WebCore/ColorInterpolationMethod.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 namespace CSS {
 
-struct ColorMixResolver {
-    struct Component {
-        using Percentage = Style::Percentage<Range{0, 100}>;
+// <color-interpolation-method> = in [ <rectangular-color-space> | <polar-color-space> <hue-interpolation-method>? | <custom-color-space> ]
+// https://drafts.csswg.org/css-color-5/#color-interpolation-method
+struct ColorInterpolationMethod {
+    WebCore::ColorInterpolationMethod value;
 
-        WebCore::Color color;
-        std::optional<Percentage> percentage;
-    };
-
-    ColorInterpolationMethod colorInterpolationMethod;
-    Vector<Component> components;
+    bool operator==(const ColorInterpolationMethod&) const = default;
 };
 
-WebCore::Color mix(const ColorMixResolver&);
+template<> struct Serialize<ColorInterpolationMethod> { void operator()(StringBuilder&, const SerializationContext&, const ColorInterpolationMethod&); };
+template<> struct ComputedStyleDependenciesCollector<ColorInterpolationMethod> { constexpr void operator()(ComputedStyleDependencies&, const ColorInterpolationMethod&) { } };
+template<> struct CSSValueChildrenVisitor<ColorInterpolationMethod> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const ColorInterpolationMethod&) { return IterationStatus::Continue; } };
+WTF::TextStream& operator<<(WTF::TextStream&, const ColorInterpolationMethod&);
 
 } // namespace CSS
 } // namespace WebCore

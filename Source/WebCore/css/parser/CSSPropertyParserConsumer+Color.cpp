@@ -32,6 +32,7 @@
 #include "CSSColor.h"
 #include "CSSColorConversion+Normalize.h"
 #include "CSSColorDescriptors.h"
+#include "CSSColorInterpolationMethod.h"
 #include "CSSColorLayers.h"
 #include "CSSColorMix.h"
 #include "CSSContrastColor.h"
@@ -576,7 +577,7 @@ static std::optional<CSS::Color> consumeColorMixFunction(CSSParserTokenRange& ra
 
     auto args = consumeFunction(range);
 
-    std::optional<ColorInterpolationMethod> colorInterpolationMethod = CSS::defaultInterpolationMethodForColorMix;
+    std::optional<CSS::ColorInterpolationMethod> colorInterpolationMethod = CSS::defaultInterpolationMethodForColorMix;
     if (args.peek().id() == CSSValueIn) {
         colorInterpolationMethod = consumeColorInterpolationMethod(args, state.propertyParserState);
         if (!colorInterpolationMethod)

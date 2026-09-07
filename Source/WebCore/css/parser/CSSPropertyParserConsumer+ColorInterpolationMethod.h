@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +30,16 @@
 namespace WebCore {
 
 class CSSParserTokenRange;
-struct ColorInterpolationMethod;
 
 namespace CSS {
+struct ColorInterpolationMethod;
 struct PropertyParserState;
 }
 
 namespace CSSPropertyParserHelpers {
 
 // MARK: <color-interpolation-method> consuming (raw)
-std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange&, CSS::PropertyParserState&);
+std::optional<CSS::ColorInterpolationMethod> consumeColorInterpolationMethod(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

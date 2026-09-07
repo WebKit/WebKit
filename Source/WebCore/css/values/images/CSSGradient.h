@@ -27,9 +27,9 @@
 #pragma once
 
 #include <WebCore/CSSColor.h>
+#include <WebCore/CSSColorInterpolationMethod.h>
 #include <WebCore/CSSPosition.h>
 #include <WebCore/CSSValueTypes.h>
-#include <WebCore/ColorInterpolationMethod.h>
 
 namespace WebCore {
 namespace CSS {
@@ -54,7 +54,10 @@ struct GradientColorInterpolationMethod {
 
     static GradientColorInterpolationMethod legacyMethod(AlphaPremultiplication alphaPremultiplication)
     {
-        return { { ColorInterpolationMethod::SRGB { }, alphaPremultiplication }, Default::SRGB };
+        return {
+            .method = { WebCore::ColorInterpolationMethod::SRGB { }, alphaPremultiplication },
+            .defaultMethod = Default::SRGB
+        };
     }
 
     bool operator==(const GradientColorInterpolationMethod&) const = default;
