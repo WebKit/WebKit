@@ -108,10 +108,10 @@ void AudioSampleBufferList::applyGain(float gain)
     applyGain(m_bufferList.get(), gain, m_internalFormat.format());
 }
 
-static void mixBuffers(WebAudioBufferList& destinationBuffer, const AudioBufferList& sourceBuffer, AudioStreamDescription::PCMFormat format, size_t frameCount)
+static void mixBuffers(AudioBufferList& destinationBuffer, const AudioBufferList& sourceBuffer, AudioStreamDescription::PCMFormat format, size_t frameCount)
 {
     auto sourceBufferSpan = span(sourceBuffer);
-    auto destinationBufferSpan = span(*destinationBuffer.list());
+    auto destinationBufferSpan = span(destinationBuffer);
     for (auto [source, destination] : zippedRange(sourceBufferSpan, destinationBufferSpan)) {
         switch (format) {
         case AudioStreamDescription::Int16: {
@@ -232,6 +232,17 @@ OSStatus AudioSampleBufferList::mixFrom(const AudioBufferList& source, size_t fr
         return kAudio_ParamError;
 
     mixBuffers(bufferList(), source, m_internalFormat.format(), frameCount);
+    return 0;
+}
+
+OSStatus AudioSampleBufferList::mixTo(AudioBufferList& buffer, size_t frameCount)
+{
+    if (frameCount > m_sampleCount)
+        return kAudio_ParamError;
+    if (buffer.mNumberBuffers > m_bufferList->bufferCount())
+        return kAudio_ParamError;
+
+    mixBuffers(buffer, bufferList(), m_internalFormat.format(), frameCount);
     return 0;
 }
 

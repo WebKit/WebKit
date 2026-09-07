@@ -56,6 +56,7 @@ public:
     OSStatus mixFrom(const AudioSampleBufferList&, size_t count = SIZE_MAX);
 
     OSStatus mixFrom(const AudioBufferList&, size_t count = SIZE_MAX);
+    OSStatus mixTo(AudioBufferList&, size_t count = SIZE_MAX);
     OSStatus copyTo(AudioBufferList&, size_t count = SIZE_MAX);
 
     const AudioStreamBasicDescription& streamDescription() const LIFETIME_BOUND { return m_internalFormat.streamDescription(); }
