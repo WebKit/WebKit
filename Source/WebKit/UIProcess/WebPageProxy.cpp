@@ -87,6 +87,7 @@
 #include "FocusedElementInformation.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "FrameOwnershipAuthority.h"
 #include "FrameProcess.h"
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
@@ -7962,16 +7963,26 @@ void WebPageProxy::preferencesDidChange()
     protect(websiteDataStore())->propagateSettingUpdates();
 }
 
-void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
+void WebPageProxy::didCreateSubframe(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedParentID, FrameIdentifier newFrameID, String&& frameName, SandboxFlags sandboxFlags, ReferrerPolicy referrerPolicy, ScrollbarMode scrollingMode)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, parentID, untrustedParentID, FrameHostedBySenderAuthority { process, *this });
+
     RefPtr parent = WebFrameProxy::webFrame(parentID);
     if (!parent)
         return;
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
-void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
+void WebPageProxy::didDestroyFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID)
 {
+    // FIXME: This wants FrameHostedBySenderAuthority too, but validating it changes teardown as
+    // well as rejecting forgeries. A process running a provisional load holds a frame with the
+    // committed frame's identifier, so when that load is abandoned this arrives from a process that
+    // does not host the frame, and treating it as a lost race would stop disconnecting a frame that
+    // is disconnected today. That needs its own change, with tests.
+    auto frameID = WTF::move(untrustedFrameID).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
@@ -8272,8 +8283,11 @@ void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::Fram
     }
 }
 
-void WebPageProxy::updateOpener(IPC::Connection& connection, WebCore::FrameIdentifier frameID, std::optional<WebCore::FrameIdentifier> newOpener)
+void WebPageProxy::updateOpener(IPC::Connection& connection, IPC::Untrusted<WebCore::FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::FrameIdentifier> newOpener)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
+
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->updateOpener(newOpener);
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
@@ -8429,13 +8443,15 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
 #endif
 }
 
-void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, FrameIdentifier frameID, URL&& url, String&& mimeType)
+void WebPageProxy::didExplicitOpenForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, URL&& url, String&& mimeType)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
 
-    Ref process = WebProcessProxy::fromConnection(connection);
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, url)) {
         WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "Ignoring WebPageProxy::DidExplicitOpenForFrame() IPC from the WebContent process because the file URL is outside the sandbox");
         return;
@@ -9450,15 +9466,18 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
     }
 }
 
-void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, URL&& url, const UserData& userData)
+void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection, IPC::Untrusted<FrameIdentifier>&& untrustedFrameID, std::optional<WebCore::NavigationIdentifier> navigationID, SameDocumentNavigationType navigationType, URL&& url, const UserData& userData)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    EXTRACT_WITH_MESSAGE_CHECK(process, frameID, untrustedFrameID, FrameHostedBySenderAuthority { process, *this });
+
     RefPtr protectedPageClient { pageClient() };
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
 
-    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
+    MESSAGE_CHECK_URL(process, url);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrame: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), std::to_underlying(navigationType));
 
