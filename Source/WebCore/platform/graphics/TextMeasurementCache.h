@@ -27,11 +27,13 @@
 
 #include <WebCore/TextRun.h>
 #include <WebCore/TextSpacing.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Hasher.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/SharedCacheBudget.h>
 #include <wtf/ZippedRange.h>
 #include <wtf/text/RapidHash.h>
 #include <wtf/text/StringCommon.h>
@@ -55,6 +57,11 @@ static constexpr int minInterval = -3; // A cache hit pays for about 3 cache mis
 static constexpr int maxInterval = 20; // Sampling at this interval has almost no overhead.
 static constexpr unsigned maxSize = 500000; // Just enough to guard against pathological growth.
 static constexpr unsigned maxTextLength = 64; // Maximum text length for SmallStringKey.
+#if PLATFORM(WPE)
+static constexpr unsigned maxSharedSize = maxSize * 2; // All instances are limited to 2 * individual cache size.
+#else
+static constexpr unsigned maxSharedSize = maxSize * 1024; // Virtually infinity.
+#endif
 }
 
 template <typename CachedType,
@@ -178,6 +185,7 @@ public:
     void clear()
     {
         ASSERT(isMainThread());
+        s_budget.releaseCacheEntries(m_singleCharMap.size() + m_map.size());
         m_singleCharMap.clear();
         m_map.clear();
     }
@@ -190,6 +198,20 @@ private:
     {
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             return nullptr;
+
+        if (!s_budget.acquireCacheEntry()) {
+            if (!m_singleCharMap.isEmpty() && (m_map.isEmpty() || WTF::cryptographicallyRandomNumber<unsigned>() % 2)) {
+                m_singleCharMap.remove(m_singleCharMap.random());
+                s_budget.releaseCacheEntries(1);
+            } else if (!m_map.isEmpty()) {
+                m_map.remove(m_map.random());
+                s_budget.releaseCacheEntries(1);
+            } else
+                return nullptr;
+
+            if (!s_budget.acquireCacheEntry())
+                return nullptr;
+        }
 
         unsigned length = text.length();
         bool isNewEntry;
@@ -207,6 +229,9 @@ private:
             value = &addResult.iterator->value;
         }
 
+        if (!isNewEntry)
+            s_budget.releaseCacheEntries(1);
+
         // Cache hit: ramp up by sampling the next few words.
         if (!isNewEntry) {
             m_interval = MinInterval;
@@ -222,8 +247,7 @@ private:
             return value;
 
         // No need to be fancy: we're just trying to avoid pathological growth.
-        m_singleCharMap.clear();
-        m_map.clear();
+        clear();
         return nullptr;
     }
 
@@ -246,6 +270,8 @@ private:
 
     using Map = HashMap<SmallStringKey, CachedType, DefaultHash<SmallStringKey>, SmallStringKeyHashTraits>;
     using SingleCharMap = HashMap<uint32_t, CachedType, DefaultHash<uint32_t>, HashTraits<uint32_t>>;
+
+    static WTF::SharedCacheBudget s_budget;
 
     int m_interval;
     int m_countdown;
