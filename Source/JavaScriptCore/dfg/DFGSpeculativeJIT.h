@@ -1442,6 +1442,7 @@ public:
     void compileValueRep(Node*);
     void compileDoubleRep(Node*);
     
+    void compileDoubleToInt32(FPRReg, GPRReg);
     void compileValueToInt32(Node*);
     void compileUInt32ToNumber(Node*);
     void compileDoubleAsInt32(Node*);
