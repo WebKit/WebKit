@@ -1678,6 +1678,9 @@ void MediaPlayerPrivateWebM::clearTracks() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         });
     }
     m_audioTracks.clear();
+
+    m_trackBufferMap.clear();
+    m_requestReadyForMoreSamplesSetMap.clear();
 }
 
 void MediaPlayerPrivateWebM::startVideoFrameMetadataGathering()

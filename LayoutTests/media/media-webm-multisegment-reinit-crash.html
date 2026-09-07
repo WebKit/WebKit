@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebM multi-segment re-initialization does not crash</title>
+<script src="video-test.js"></script>
+<script>
+    // content/test-vp8-multisegment.webm is content/test-vp8.webm concatenated with itself, producing
+    // two complete WebM streams (two EBML headers) that re-use the same track IDs. Parsing the second
+    // stream re-fires the initialization segment, driving MediaPlayerPrivateWebM::didParseInitializationData()
+    // -> clearTracks() -> addTrackBuffer() for an already-present track ID. Before the fix, clearTracks()
+    // left m_trackBufferMap populated, so addTrackBuffer() hit its ASSERT in debug builds (crash) and
+    // silently kept a stale track buffer/format in release builds. This test passes if the second stream
+    // is parsed without crashing the media pipeline or failing playback.
+    async function runTest()
+    {
+        findMediaElement();
+        waitFor(video, 'error').then(failTest);
+        run('video.preload = "auto"');
+        run('video.src = "content/test-vp8-multisegment.webm"');
+        await waitFor(video, 'loadedmetadata');
+        testExpected('video.videoTracks.length', 1);
+
+        // The second concatenated stream is parsed as the remaining file data is appended, which is
+        // where the re-initialization (and, before the fix, the crash) happens. Play to completion and
+        // let the append/demux queue settle so the second initialization segment is fully processed.
+        run('video.play()');
+        await sleepFor(500);
+
+        testExpected('video.error', null);
+        consoleWrite('Parsed multi-segment WebM without crashing.');
+        endTest();
+    }
+
+    window.addEventListener('load', event => {
+        runTest().catch(failTest);
+    });
+</script>
+</head>
+<body>
+<video id="video"></video>
+</body>
+</html>
