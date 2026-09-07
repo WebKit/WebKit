@@ -6918,7 +6918,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 {
     ASSERT(!WebThreadIsEnabled() || WebThreadIsLocked());
     frame->view()->setPaintBehavior(WebCore::PaintBehavior::SelectionOnly | (forceBlackText ? OptionSet<WebCore::PaintBehavior>(WebCore::PaintBehavior::ForceBlackText) : OptionSet<WebCore::PaintBehavior>()));
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
     CGImageRef result = imageFromRect(frame, frame->selection().selectionBounds());
     frame->view()->setPaintBehavior(WebCore::PaintBehavior::Normal);
     return result;

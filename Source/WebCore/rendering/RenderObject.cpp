@@ -3226,7 +3226,7 @@ void printGraphicsLayerTreeForLiveDocuments()
             continue;
         if (document->frame() && document->frame()->isRootFrame()) {
             WTFLogAlways("Graphics layer tree for root document %p %s", document.ptr(), document->url().string().utf8().data());
-            showGraphicsLayerTreeForCompositor(document->renderView()->compositor());
+            showGraphicsLayerTreeForCompositor(protect(document->renderView())->compositor());
         }
     }
 }

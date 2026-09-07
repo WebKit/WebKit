@@ -54,7 +54,7 @@ void computePageRectsForFrame(LocalFrame* frame, const IntRect& printRect, float
 
 GDIObject<HBITMAP> imageFromSelection(LocalFrame* frame, bool forceBlackText)
 {
-    frame->document()->updateLayout();
+    protect(frame->document())->updateLayout();
 
     frame->view()->setPaintBehavior(OptionSet<PaintBehavior>(PaintBehavior::SelectionOnly) | (forceBlackText ? OptionSet<PaintBehavior>(PaintBehavior::ForceBlackText) : OptionSet<PaintBehavior>()));
     FloatRect fr = frame->selection().selectionBounds();

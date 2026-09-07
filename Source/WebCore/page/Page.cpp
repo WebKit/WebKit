@@ -2446,8 +2446,7 @@ void Page::updateRendering()
         document.evaluateMediaQueriesAndReportChanges();
     });
 
-    // FIXME: This suppression shouldn't be needed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE runProcessingStep(RenderingUpdateStep::AdjustVisibility, [&] (auto& document) {
+    runProcessingStep(RenderingUpdateStep::AdjustVisibility, [&] (auto& document) {
         m_elementTargetingController->adjustVisibilityInRepeatedlyTargetedRegions(document);
     });
 
@@ -2483,8 +2482,7 @@ void Page::updateRendering()
 
     layoutIfNeeded();
 
-    // FIXME: This suppression shouldn't be needed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
+    runProcessingStep(RenderingUpdateStep::ResizeObservations, [&] (Document& document) {
         document.updateResizeObservations(*this);
     });
 

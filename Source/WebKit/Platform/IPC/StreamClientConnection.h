@@ -402,8 +402,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
         return { { Error::CantWaitForSyncReplies } };
 
-    // FIXME (rdar://162215050): Ideally SaferCPP would notice that a self-calling lambda expression doesn't escape.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE auto decoderResult = [&] -> std::optional<Connection::DecoderOrError> {
+    auto decoderResult = [&] -> std::optional<Connection::DecoderOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span };
         messageEncoder << syncRequestID;
         message.encode(messageEncoder);

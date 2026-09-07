@@ -356,7 +356,7 @@ void WebFullScreenManager::enterFullScreenForElement(Element& element, HTMLMedia
             m_scaleFactor = m_page->viewportConfiguration().layoutSizeScaleFactor();
             m_minEffectiveWidth = m_page->viewportConfiguration().minimumEffectiveDeviceWidth();
             m_page->setViewportConfigurationViewLayoutSize(maxViewportSize, m_scaleFactor, m_minEffectiveWidth);
-            element.document().updateLayoutIgnorePendingStylesheets();
+            protect(element.document())->updateLayoutIgnorePendingStylesheets();
 
             URL newURL;
             if (imageElement)

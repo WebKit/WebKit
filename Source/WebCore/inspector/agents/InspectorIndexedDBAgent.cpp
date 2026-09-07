@@ -146,8 +146,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    // FIXME: This is a safer cpp false positive (rdar://160082559).
-    SUPPRESS_UNCOUNTED_ARG result.releaseReturnValue()->addEventListener(eventNames().successEvent, OpenDatabaseCallback::create(*this));
+    protect(result.returnValue())->addEventListener(eventNames().successEvent, OpenDatabaseCallback::create(*this));
 }
 
 

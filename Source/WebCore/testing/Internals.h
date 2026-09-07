@@ -729,7 +729,7 @@ public:
         RGBA16F,
 #endif
     };
-    void NODELETE setScreenContentsFormatsForTesting(const Vector<Internals::ContentsFormat>&);
+    void setScreenContentsFormatsForTesting(const Vector<Internals::ContentsFormat>&);
 
 #if ENABLE(VIDEO)
     bool NODELETE isChangingPresentationMode(HTMLVideoElement&) const;
@@ -1374,7 +1374,7 @@ public:
 
     void notifyResourceLoadObserver();
 
-    unsigned NODELETE primaryScreenDisplayID();
+    unsigned primaryScreenDisplayID();
 
     bool capsLockIsOn();
         

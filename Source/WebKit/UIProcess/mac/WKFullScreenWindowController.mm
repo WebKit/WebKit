@@ -967,8 +967,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 {
     RetainPtr<NSArray<NSLayoutConstraint *>> constraints = view.constraints;
     RetainPtr<NSIndexSet> validConstraints = [constraints indexesOfObjectsPassingTest:^BOOL(NSLayoutConstraint *constraint, NSUInteger, BOOL *) {
-        // FIXME: isKindOfClass call can cause a static analysis false positive (https://github.com/llvm/llvm-project/issues/162979).
-        SUPPRESS_UNRETAINED_ARG return ![constraint isKindOfClass:objc_getClass("NSAutoresizingMaskLayoutConstraint")];
+        return ![constraint isKindOfClass:protect(objc_getClass("NSAutoresizingMaskLayoutConstraint"))];
     }];
     self.savedConstraints = [constraints objectsAtIndexes:validConstraints.get()];
 }

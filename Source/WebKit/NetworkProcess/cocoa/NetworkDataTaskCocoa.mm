@@ -155,16 +155,12 @@ void NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeede
     auto mutableRequest = adoptNS([nsRequest mutableCopy]);
 
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-    if (contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Disable) {
-        // FIXME: webkit.org/b/295204 This is a static analyzer false-positive due to the @YES/@NO constants.
-        SUPPRESS_UNRETAINED_ARG [mutableRequest _setProperty:@YES forKey:bridge_cast(kCFURLRequestContentDecoderSkipURLCheck)];
-    }
+    if (contentEncodingSniffingPolicy == WebCore::ContentEncodingSniffingPolicy::Disable)
+        [mutableRequest _setProperty:@YES forKey:bridge_cast(kCFURLRequestContentDecoderSkipURLCheck)];
 #endif
 
-    if (!shouldContentSniff) {
-        // FIXME: FIXME: webkit.org/b/295204 This is a static analyzer false-positive due to the @YES/@NO constants.
-        SUPPRESS_UNRETAINED_ARG [mutableRequest _setProperty:@NO forKey:bridge_cast(_kCFURLConnectionPropertyShouldSniff)];
-    }
+    if (!shouldContentSniff)
+        [mutableRequest _setProperty:@NO forKey:bridge_cast(_kCFURLConnectionPropertyShouldSniff)];
 
     if (!boundInterfaceIdentifier.isNull())
         [mutableRequest setBoundInterfaceIdentifier:boundInterfaceIdentifier.createNSString().get()];

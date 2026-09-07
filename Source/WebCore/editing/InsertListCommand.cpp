@@ -460,7 +460,7 @@ RefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePosition& o
     }
 
     // Inserting list element and list item list may change start of pargraph to move. We calculate start of paragraph again.
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
     start = startOfParagraph(startOfParagraph(start, CanSkipOverEditingBoundary));
     end = endOfParagraph(endOfParagraph(start, CanSkipOverEditingBoundary));
     moveParagraph(start, end, positionBeforeNode(placeholder), true);

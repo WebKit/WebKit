@@ -910,7 +910,7 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
             insertNodeBefore(WTF::move(protectedNode), *nodeToSplitTo);
     }
 
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     bool safeToRemoveAncestor = true;
     for (RefPtr child = ancestor.firstChild(); child; child = child->nextSibling()) {
@@ -933,7 +933,7 @@ void ReplaceSelectionCommand::moveNodeOutOfAncestor(Node& node, Node& ancestor, 
 
 void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& insertedNodes)
 {
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     RefPtr lastLeafInserted { insertedNodes.lastLeafInserted() };
     if (RefPtr text = dynamicDowncast<Text>(lastLeafInserted); text && !hasRenderedText(*text)
@@ -943,7 +943,7 @@ void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds(InsertedNodes& ins
         removeNode(*lastLeafInserted);
     }
 
-    document().updateLayoutIgnorePendingStylesheets();
+    protect(document())->updateLayoutIgnorePendingStylesheets();
 
     // We don't have to make sure that firstNodeInserted isn't inside a select or script element
     // because it is a top level node in the fragment and the user can't insert into those elements.
@@ -1450,7 +1450,7 @@ void ReplaceSelectionCommand::doApply()
         RefPtr parent { endBR->parentNode() };
         insertedNodes.willRemoveNode(endBR.get());
         removeNode(*endBR);
-        document().updateLayoutIgnorePendingStylesheets();
+        protect(document())->updateLayoutIgnorePendingStylesheets();
         if (RefPtr nodeToRemove = highestNodeToRemoveInPruning(parent.get())) {
             insertedNodes.willRemovePossibleAncestorNode(nodeToRemove.get());
             removeNode(*nodeToRemove);

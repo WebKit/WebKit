@@ -116,8 +116,7 @@ public:
     {
         m_wasInitialized = true;
         setCachedListData(WTF::move(data));
-        // FIXME: This is a safer cpp false positive (rdar://161384112).
-        SUPPRESS_FORWARD_DECL_ARG m_observers.forEach([](ListDataObserver& observer) {
+        m_observers.forEach([](ListDataObserver& observer) {
             observer.invokeCallback();
         });
     }

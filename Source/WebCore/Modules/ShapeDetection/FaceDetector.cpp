@@ -79,8 +79,7 @@ void FaceDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageB
             return;
         }
 
-        // FIXME: This is a safer cpp false positive (rdar://160082559).
-        SUPPRESS_UNCOUNTED_ARG RefPtr imageBuffer = imageBitmap.releaseReturnValue()->takeImageBuffer();
+        RefPtr imageBuffer = protect(imageBitmap.returnValue())->takeImageBuffer();
         RefPtr<NativeImage> image = imageBuffer ? imageBuffer->copyNativeImage() : nullptr;
         if (!image) {
             promise.resolve({ });
