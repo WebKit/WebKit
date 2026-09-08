@@ -66,11 +66,11 @@ WK_PRESERVE_MOST_DEFINES = $(WK_PRESERVE_MOST_DEFINES_$(LLVM_LTO));
 WK_PRESERVE_MOST_DEFINES_YES = HAVE_PRESERVE_MOST=1;
 WK_PRESERVE_MOST_DEFINES_YES_THIN = HAVE_PRESERVE_MOST=1;
 
-WK_COMMON_OTHER_CFLAGS = $(WK_AVAILABILITY_OVERLAY_FLAGS) $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_PGO_$(WK_OR_$(WK_ENABLE_PGO_USE)_$(ENABLE_LLVM_PROFILE_GENERATION)));
+WK_COMMON_OTHER_CFLAGS = $(WK_AVAILABILITY_OVERLAY_FLAGS) $(WK_SANITIZER_OTHER_CFLAGS) $(WK_COMMON_OTHER_CFLAGS_CLANG_PGO_$(WK_OR_$(WK_ENABLE_CLANG_PGO_USE)_$(ENABLE_LLVM_PROFILE_GENERATION)));
 // Work around rdar://141760829 until the fix is available on all clang-1700
 // based toolchains.
 // Fix from rdar://178983382 to avoid symbol module prefix differences causing performance loss.
-WK_COMMON_OTHER_CFLAGS_PGO_YES = -mllvm -system-headers-coverage -mllvm -static-func-full-module-prefix=false;
+WK_COMMON_OTHER_CFLAGS_CLANG_PGO_YES = -mllvm -system-headers-coverage -mllvm -static-func-full-module-prefix=false;
 
 OTHER_CFLAGS = $(inherited) $(WK_COMMON_OTHER_CFLAGS);
 

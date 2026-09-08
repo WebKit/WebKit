@@ -126,8 +126,8 @@ WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INI
 WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 
 OTHER_LDFLAGS_BASE = $(OTHER_LDFLAGS_JAVASCRIPTCORE_DEPS) -unexported_symbols_list $(SRCROOT)/unexported-libc++.txt -force_load $(WTF_ARCHIVE) -force_load $(BMALLOC_ARCHIVE) -force_load $(LIBJAVASCRIPTCORE_ARCHIVE) $(SOURCE_VERSION_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
-OTHER_LDFLAGS[sdk=embedded*] = $(inherited) $(OTHER_LDFLAGS_BASE) $(WK_PGO_USE_LDFLAGS) $(WK_PGO_GEN_FLAGS);
-OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices $(WK_PGO_USE_LDFLAGS) $(WK_PGO_GEN_FLAGS);
+OTHER_LDFLAGS[sdk=embedded*] = $(inherited) $(OTHER_LDFLAGS_BASE) $(WK_CLANG_PGO_USE_LDFLAGS) $(WK_CLANG_PGO_GEN_FLAGS);
+OTHER_LDFLAGS[sdk=macosx*] = $(inherited) $(OTHER_LDFLAGS_BASE) -framework CoreServices $(WK_CLANG_PGO_USE_LDFLAGS) $(WK_CLANG_PGO_GEN_FLAGS);
 
 // Use order files from WebKitAdditions for internal SDK macOS production builds
 WK_ORDER_FILE = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/OrderFiles/JavaScriptCore.order.txt;
