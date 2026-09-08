@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/gesture-recognizers/pinch.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<script src="../../../resources/js-test.js"></script>
+<script type="text/javascript">
+
+description("This test checks that PinchGestureRecognizer computes the distance between the two active pointers on platforms that do not natively support GestureEvent, reading from the base class's _targetPointers map rather than a non-existent _targetTouches property.");
+
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+// Force the code path used on touch platforms that don't provide native gesture events.
+GestureRecognizer.SupportsGestures = false;
+
+const target = document.createElement("div");
+document.body.appendChild(target);
+
+let states = [];
+const delegate = {
+    gestureRecognizerShouldBegin() { return true; },
+    gestureRecognizerStateDidChange(gestureRecognizer) { states.push(gestureRecognizer.state); }
+};
+
+const recognizer = new PinchGestureRecognizer(target, delegate);
+
+function pointerEvent(type, pointerId, x, y)
+{
+    return new PointerEvent(type, { pointerId, clientX: x, clientY: y, bubbles: true });
+}
+
+// The first finger touches down: not enough touches to start tracking yet.
+target.dispatchEvent(pointerEvent("pointerdown", 1, 0, 0));
+
+// The second finger touches down: the recognizer now has 2 pointers and must
+// compute the starting distance. This used to throw because _distance() read
+// from the undefined this._targetTouches instead of this._targetPointers.
+shouldNotThrow('target.dispatchEvent(pointerEvent("pointerdown", 2, 30, 40))');
+
+// The initial distance between (0, 0) and (30, 40) is 50.
+shouldBe("recognizer._startDistance", "50");
+shouldBeTrue("states.includes('began')");
+
+// Moving the second finger to double the distance should yield a scale of 2.
+recognizer._captureTarget.dispatchEvent(pointerEvent("pointermove", 2, 60, 80));
+shouldBe("recognizer.scale", "2");
+shouldBeTrue("states.includes('changed')");
+
+target.remove();
+
+</script>
+</body>
+</html>
