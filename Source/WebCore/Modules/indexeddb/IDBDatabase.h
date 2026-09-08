@@ -122,6 +122,7 @@ private:
 
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
+    void eventListenersDidChange() final;
     void stop() final;
 
     void maybeCloseInServer();
@@ -130,6 +131,7 @@ private:
     IDBDatabaseInfo m_info;
     IDBDatabaseConnectionIdentifier m_databaseConnectionIdentifier;
 
+    bool m_hasRelevantEventListener { false };
     bool m_closePending { false };
     bool m_closedInServer { false };
 
@@ -138,7 +140,7 @@ private:
     HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_committingTransactions;
     HashMap<IDBResourceIdentifier, Ref<IDBTransaction>> m_abortingTransactions;
     
-    const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
+    const EventNames& m_eventNames;
     std::atomic<bool> m_isContextSuspended { false };
 };
 

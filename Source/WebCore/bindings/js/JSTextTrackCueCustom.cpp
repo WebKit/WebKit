@@ -50,14 +50,16 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
         return true;
     }
 
-    // If the cue is not associated with a track, it is not reachable.
-    if (!textTrackCue.track())
+    // If the cue is not associated with a track, it is not reachable. This runs on the parallel GC
+    // marking threads, so the test is done by TextTrackCue under m_trackLockForGC rather than
+    // through track(), which is only for the owner thread.
+    if (!textTrackCue.containsTrackAsOpaqueRootInGCThread(visitor))
         return false;
 
     if (reason) [[unlikely]]
         *reason = "TextTrack is an opaque root"_s;
 
-    SUPPRESS_UNCHECKED_ARG return containsWebCoreOpaqueRoot(visitor, textTrackCue.track());
+    return true;
 }
 
 template<typename Visitor>

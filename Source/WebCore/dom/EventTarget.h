@@ -118,6 +118,9 @@ public:
     bool setAttributeEventListener(const AtomString& eventType, RefPtr<EventListener>&&, DOMWrapperWorld&);
     RefPtr<JSEventListener> attributeEventListener(const AtomString& eventType, DOMWrapperWorld&);
 
+    // hasEventListeners() locks and is safe from any thread. The eventType overload does not, and is
+    // owner thread only: GC thread callers such as virtualHasPendingActivity() must instead cache the
+    // answer in eventListenersDidChange(), as DOMAudioSession and MediaDevices do.
     inline bool hasEventListeners() const; // Defined in EventTargetInlines.h
     inline bool hasEventListeners(const AtomString& eventType) const; // Defined in EventTargetInlines.h
     bool hasAnyEventListeners(std::span<const AtomString> eventTypes) const;

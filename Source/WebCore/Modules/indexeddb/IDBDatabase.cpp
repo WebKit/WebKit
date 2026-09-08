@@ -95,7 +95,15 @@ bool IDBDatabase::virtualHasPendingActivity() const
     if (!m_activeTransactions.isEmpty() || !m_committingTransactions.isEmpty() || !m_abortingTransactions.isEmpty())
         return true;
 
-    return hasEventListeners(m_eventNames.abortEvent) || hasEventListeners(m_eventNames.errorEvent) || hasEventListeners(m_eventNames.versionchangeEvent);
+    return m_hasRelevantEventListener;
+}
+
+void IDBDatabase::eventListenersDidChange()
+{
+    bool hasRelevantEventListener = hasEventListeners(m_eventNames.abortEvent)
+        || hasEventListeners(m_eventNames.errorEvent)
+        || hasEventListeners(m_eventNames.versionchangeEvent);
+    m_hasRelevantEventListener = hasRelevantEventListener;
 }
 
 const String IDBDatabase::name() const

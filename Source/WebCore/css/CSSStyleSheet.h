@@ -192,7 +192,9 @@ private:
     WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
     mutable Lock m_opaqueRootLockForGC;
-    CheckedPtr<Node> m_ownerNode;
+    // Only mutated on the main thread while holding m_opaqueRootLockForGC, so main-thread reads
+    // use assertIsOwnerThread() instead of locking; the GC thread must lock even to read.
+    CheckedPtr<Node> m_ownerNode WTF_GUARDED_BY_LOCK(m_opaqueRootLockForGC);
     CheckedPtr<CSSImportRule> m_ownerRule;
 
     TextPosition m_startPosition;

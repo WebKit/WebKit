@@ -115,6 +115,7 @@ private:
     // ActiveDOMObject
     void stop() final;
     bool virtualHasPendingActivity() const final;
+    void eventListenersDidChange() final;
 
     // EventTarget.
     enum EventTargetInterfaceType eventTargetInterface() const final { return EventTargetInterfaceType::MediaDevices; }
@@ -134,8 +135,9 @@ private:
 
     RunLoop::Timer m_scheduledEventTimer;
     Markable<UserMediaClient::DeviceChangeObserverToken> m_deviceChangeToken;
-    const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
+    const EventNames& m_eventNames;
     bool m_listeningForDeviceChanges { false };
+    bool m_hasDeviceChangeEventListener { false };
 
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;

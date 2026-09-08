@@ -88,6 +88,7 @@ Attr::~Attr()
 
 ExceptionOr<void> Attr::setValue(const AtomString& value)
 {
+    assertIsOwnerThread(m_elementLockForGC, mainThreadLike);
     if (RefPtr element = m_element.get()) {
         auto verifiedValue = value;
         if (protect(document())->contextDocument().requiresTrustedTypes()) {
@@ -135,6 +136,7 @@ CSSStyleProperties* Attr::style()
 {
     // This is not part of the DOM API, and therefore not available to webpages. However, WebKit SPI
     // lets clients use this via the Objective-C and JavaScript bindings.
+    assertIsOwnerThread(m_elementLockForGC, mainThreadLike);
     RefPtr styledElement = dynamicDowncast<StyledElement>(m_element.get());
     if (!styledElement)
         return nullptr;
@@ -146,6 +148,7 @@ CSSStyleProperties* Attr::style()
 
 AtomString Attr::value() const
 {
+    assertIsOwnerThread(m_elementLockForGC, mainThreadLike);
     if (RefPtr element = m_element.get())
         return element->getAttributeForBindings(qualifiedName());
     return m_standaloneValue;
@@ -153,11 +156,11 @@ AtomString Attr::value() const
 
 void Attr::detachFromElementWithValue(const AtomString& value)
 {
-    ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());
     m_standaloneValue = value;
     {
         Locker locker { m_elementLockForGC };
+        ASSERT(m_element);
         m_element = nullptr;
     }
     setTreeScopeRecursively(Ref<Document> { document() });
@@ -165,9 +168,9 @@ void Attr::detachFromElementWithValue(const AtomString& value)
 
 void Attr::attachToElement(Element& element)
 {
-    ASSERT(!m_element);
     {
         Locker locker { m_elementLockForGC };
+        ASSERT(!m_element);
         m_element = &element;
     }
     m_standaloneValue = nullAtom();

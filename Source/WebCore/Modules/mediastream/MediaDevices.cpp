@@ -476,7 +476,12 @@ void MediaDevices::scheduledEventTimerFired()
 
 bool MediaDevices::virtualHasPendingActivity() const
 {
-    return hasEventListeners(m_eventNames.devicechangeEvent);
+    return m_hasDeviceChangeEventListener;
+}
+
+void MediaDevices::eventListenersDidChange()
+{
+    m_hasDeviceChangeEventListener = hasEventListeners(m_eventNames.devicechangeEvent);
 }
 
 ScriptExecutionContext* MediaDevices::scriptExecutionContext() const

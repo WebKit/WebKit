@@ -79,6 +79,7 @@ private:
     // ActiveDOMObject
     void NODELETE stop() final;
     bool virtualHasPendingActivity() const final;
+    void eventListenersDidChange() final;
 
     // InterruptionObserver
     void beginAudioSessionInterruption() final;
@@ -89,6 +90,7 @@ private:
     State currentState() const;
 
     bool m_hasScheduleStateChangeEvent { false };
+    bool m_hasStateChangeEventListener { false };
     mutable std::optional<State> m_state;
 };
 

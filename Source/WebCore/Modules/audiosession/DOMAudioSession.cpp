@@ -186,7 +186,12 @@ void DOMAudioSession::stop()
 
 bool DOMAudioSession::virtualHasPendingActivity() const
 {
-    return hasEventListeners(eventNames().statechangeEvent);
+    return m_hasStateChangeEventListener;
+}
+
+void DOMAudioSession::eventListenersDidChange()
+{
+    m_hasStateChangeEventListener = hasEventListeners(eventNames().statechangeEvent);
 }
 
 void DOMAudioSession::beginAudioSessionInterruption()

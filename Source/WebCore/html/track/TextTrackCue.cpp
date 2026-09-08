@@ -275,7 +275,16 @@ void TextTrackCue::didChange(bool affectOrder)
 
 TextTrack* TextTrackCue::track() const
 {
+    assertIsOwnerThread(m_trackLockForGC, mainThreadLike);
     return m_track.get();
+}
+
+bool TextTrackCue::containsTrackAsOpaqueRootInGCThread(JSC::AbstractSlotVisitor& visitor) const
+{
+    Locker locker { m_trackLockForGC };
+    if (!m_track)
+        return false;
+    SUPPRESS_UNCHECKED_ARG return containsWebCoreOpaqueRoot(visitor, m_track.get());
 }
 
 void TextTrackCue::setTrack(TextTrack* track)

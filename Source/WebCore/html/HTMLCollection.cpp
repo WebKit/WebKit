@@ -162,6 +162,7 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
 
 Element* HTMLCollection::namedItemSlow(const AtomString& name) const
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     // The pathological case. We need to walk the entire subtree.
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
@@ -182,6 +183,7 @@ Element* HTMLCollection::namedItemSlow(const AtomString& name) const
 // Documented in https://dom.spec.whatwg.org/#interface-htmlcollection.
 const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
 
@@ -190,6 +192,7 @@ const Vector<AtomString>& HTMLCollection::supportedPropertyNames()
 
 bool HTMLCollection::isSupportedPropertyName(const AtomString& name)
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     updateNamedElementCache();
     ASSERT(m_namedElementCache);
 
@@ -227,6 +230,7 @@ void HTMLCollection::updateNamedElementCache() const
 
 Vector<Ref<Element>> HTMLCollection::namedItems(const AtomString& name) const
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     // FIXME: This non-virtual function can't possibly be doing the correct thing for
     // any derived class that overrides the virtual namedItem function.
 

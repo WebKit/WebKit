@@ -31,6 +31,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
@@ -91,7 +92,7 @@ public:
     String type() const override { return "text/xml"_s; }
     bool disabled() const override { return m_isDisabled; }
     void setDisabled(bool b) override { m_isDisabled = b; }
-    Node* ownerNode() const override { return m_ownerNode.get(); }
+    Node* ownerNode() const override { assertIsOwnerThread(m_opaqueRootLockForGC, mainThreadLike); return m_ownerNode.get(); }
     String href() const override { return m_originalURL; }
     String title() const override { return { }; }
 
@@ -110,7 +111,9 @@ private:
     void clearXSLStylesheetDocument();
 
     mutable Lock m_opaqueRootLockForGC;
-    CheckedPtr<Node> m_ownerNode;
+    // Only mutated on the main thread while holding m_opaqueRootLockForGC, so main-thread reads
+    // use assertIsOwnerThread() instead of locking; the GC thread must lock even to read.
+    CheckedPtr<Node> m_ownerNode WTF_GUARDED_BY_LOCK(m_opaqueRootLockForGC);
     String m_originalURL;
     URL m_finalURL;
     bool m_isDisabled { false };

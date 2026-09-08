@@ -40,11 +40,11 @@
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Compiler.h>
-#include <wtf/CurrentThread.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/Platform.h>
+#include <wtf/ThreadAssertions.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -62,7 +62,7 @@ class EventListenerMap {
 public:
     WEBCORE_EXPORT EventListenerMap();
 
-    bool isEmpty() const { return m_entries.isEmpty(); }
+    bool isEmpty() const;
     bool contains(const AtomString& eventType) const { return find(eventType); }
     bool NODELETE containsCapturing(const AtomString& eventType) const;
     bool NODELETE containsActive(const AtomString& eventType) const;
@@ -71,19 +71,22 @@ public:
     void clearEntriesForTearDown()
     {
         releaseAssertOrSetThreadUID();
+        Locker locker { m_lock };
         m_entries.clear();
     }
 
     void replacePreservingOptions(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture = false);
     bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomString& eventType, EventListener&, bool useCapture);
-    WEBCORE_EXPORT EventListenerVector* NODELETE find(const AtomString& eventType);
-    const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
+    // Returns a pointer into m_entries, so it must be const: handing out a mutable pointer would let
+    // callers write to guarded state without thread safety analysis being able to check them.
+    WEBCORE_EXPORT const EventListenerVector* NODELETE find(const AtomString& eventType) const;
     Vector<AtomString> eventTypes() const;
 
     template<typename CallbackType>
     void enumerateEventListenerTypes(NOESCAPE const CallbackType& callback) const
     {
+        assertIsOwnerThreadForReading();
         for (auto& entry : m_entries) {
             uint32_t capturingCount = 0;
             uint32_t bubblingCount = 0;
@@ -100,6 +103,7 @@ public:
     template<typename CallbackType>
     bool containsMatchingEventListener(NOESCAPE const CallbackType& callback) const
     {
+        assertIsOwnerThreadForReading();
         for (auto& entry : m_entries) {
             if (callback(entry.first, m_entries))
                 return true;
@@ -111,28 +115,41 @@ public:
     void copyEventListenersNotCreatedFromMarkupToTarget(EventTarget*);
     
     template<typename Visitor> void visitJSEventListenersInGCThread(Visitor&);
-    Lock& lock() LIFETIME_BOUND { return m_lock; }
 
 private:
+    // 294937@main disabled these assertions when the web thread is enabled, after the release
+    // assertion failed in the field: on USE(WEB_THREAD), isMainThread() is false on the web thread
+    // whenever the web thread lock is momentarily dropped, so an owner latched in that window would
+    // reject later legitimate access from the UI thread. WebThreadIsEnabled() is not visible to WTF,
+    // so this bypass has to live here rather than in ThreadLikeReleaseAssertion.
+    void assertIsOwnerThreadForReading() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_lock)
+    {
+#if PLATFORM(IOS_FAMILY)
+        if (WebThreadIsEnabled())
+            return;
+#endif
+        assertIsOwnerThread(m_lock, m_ownerThread);
+    }
+
     void releaseAssertOrSetThreadUID()
     {
 #if PLATFORM(IOS_FAMILY)
         if (WebThreadIsEnabled())
             return;
 #endif
-        if (!m_threadUID) {
-            ASSERT(!currentThreadMayBeGCThread());
-            m_threadUID = currentThreadID();
-            return;
-        }
-        if (m_threadUID == currentThreadID()) [[likely]]
-            return;
-        RELEASE_ASSERT(currentThreadMayBeGCThread());
+        releaseAssertIsCurrentAndLatch(m_ownerThread);
     }
 
-    Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;
-    Lock m_lock;
-    uint32_t m_threadUID { 0 };
+    // Mutating lookup, for callers that write through the result. Requires the lock, so that those
+    // writes are covered even though thread safety analysis cannot follow the returned pointer.
+    EventListenerVector* NODELETE findForWriting(const AtomString& eventType) WTF_REQUIRES_LOCK(m_lock);
+
+    // Only mutated on the owner thread while holding m_lock, so owner-thread reads use
+    // assertIsOwnerThread() instead of locking; the GC thread must lock even to read
+    // (see visitJSEventListenersInGCThread()).
+    Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries WTF_GUARDED_BY_LOCK(m_lock);
+    mutable Lock m_lock;
+    ThreadLikeReleaseAssertion m_ownerThread;
 };
 
 template<typename Visitor>

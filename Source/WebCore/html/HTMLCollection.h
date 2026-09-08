@@ -109,7 +109,10 @@ protected:
 
     const Ref<ContainerNode> m_ownerNode;
 
-    mutable std::unique_ptr<CollectionNamedElementCache> m_namedElementCache;
+    // Only mutated on the main thread while holding m_namedElementCacheAssignmentLock, so
+    // main-thread reads use assertIsOwnerThread() instead of locking; memoryCost() runs on the
+    // GC thread and must lock even to read.
+    mutable std::unique_ptr<CollectionNamedElementCache> m_namedElementCache WTF_GUARDED_BY_LOCK(m_namedElementCacheAssignmentLock);
 };
 
 inline size_t CollectionNamedElementCache::memoryCost() const

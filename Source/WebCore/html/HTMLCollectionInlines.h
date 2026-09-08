@@ -111,16 +111,17 @@ inline void HTMLCollection::invalidateCache()
 
 inline bool HTMLCollection::hasNamedElementCache() const
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     return !!m_namedElementCache;
 }
 
 inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedElementCache> cache) const
 {
     ASSERT(cache);
-    ASSERT(!m_namedElementCache);
     cache->didPopulate();
     {
         Locker locker { m_namedElementCacheAssignmentLock };
+        ASSERT(!m_namedElementCache);
         m_namedElementCache = WTF::move(cache);
     }
     document().collectionCachedIdNameMap(*this);
@@ -128,6 +129,7 @@ inline void HTMLCollection::setNamedItemCache(std::unique_ptr<CollectionNamedEle
 
 inline const CollectionNamedElementCache& HTMLCollection::namedItemCaches() const LIFETIME_BOUND
 {
+    assertIsOwnerThread(m_namedElementCacheAssignmentLock, mainThreadLike);
     ASSERT(!!m_namedElementCache);
     return *m_namedElementCache;
 }

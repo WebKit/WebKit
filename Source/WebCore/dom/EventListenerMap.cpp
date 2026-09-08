@@ -87,6 +87,7 @@ void EventListenerMap::clear()
 
 Vector<AtomString> EventListenerMap::eventTypes() const
 {
+    assertIsOwnerThreadForReading();
     return m_entries.map([](auto& entry) {
         return entry.first;
     });
@@ -107,7 +108,7 @@ void EventListenerMap::replacePreservingOptions(const AtomString& eventType, Eve
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    auto* listeners = find(eventType);
+    auto* listeners = findForWriting(eventType);
     ASSERT(listeners);
     size_t index = findListener(*listeners, oldListener, useCapture);
     ASSERT(index != notFound);
@@ -122,7 +123,7 @@ bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& lis
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    if (auto* listeners = find(eventType)) {
+    if (auto* listeners = findForWriting(eventType)) {
         if (findListener(*listeners, listener, options.capture) != notFound)
             return false; // Duplicate listener.
         listeners->append(RegisteredEventListener::create(WTF::move(listener), options));
@@ -161,7 +162,24 @@ bool EventListenerMap::remove(const AtomString& eventType, EventListener& listen
     return false;
 }
 
-EventListenerVector* EventListenerMap::find(const AtomString& eventType)
+bool EventListenerMap::isEmpty() const
+{
+    Locker locker { m_lock };
+    return m_entries.isEmpty();
+}
+
+const EventListenerVector* EventListenerMap::find(const AtomString& eventType) const
+{
+    assertIsOwnerThreadForReading();
+    for (auto& entry : m_entries) {
+        if (entry.first == eventType)
+            return &entry.second;
+    }
+
+    return nullptr;
+}
+
+EventListenerVector* EventListenerMap::findForWriting(const AtomString& eventType)
 {
     for (auto& entry : m_entries) {
         if (entry.first == eventType)
@@ -198,7 +216,7 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomStrin
     }
 }
 
-static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, EventListenerVector& listenerVector, EventTarget* target)
+static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, const EventListenerVector& listenerVector, EventTarget* target)
 {
     for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
@@ -210,7 +228,8 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventTyp
 
 void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarget* target)
 {
-    for (auto& entry : m_entries)
+    assertIsOwnerThreadForReading();
+    for (const auto& entry : m_entries)
         copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second, target);
 }
 
