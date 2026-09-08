@@ -23,6 +23,7 @@
 import json
 import logging
 import os
+import shutil
 import subprocess
 
 from webkitcorepy import AutoInstall
@@ -70,6 +71,20 @@ class SkillTest(object):
         log.debug('\nRunning: %s', ' '.join(cmd))
         return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
 
+    def _setup_files(self, cwd):
+        tests_dir = os.path.dirname(self.path)
+        for filename in self.files:
+            source = os.path.join(tests_dir, filename)
+            if not os.path.exists(source):
+                continue
+            dest = os.path.join(cwd, filename)
+            if os.path.isdir(source):
+                if os.path.exists(dest):
+                    shutil.rmtree(dest)
+                shutil.copytree(source, dest)
+            else:
+                shutil.copy2(source, dest)
+
     def _cleanup_files(self, cwd):
         for filename in self.files:
             filepath = os.path.join(cwd, filename)
@@ -77,7 +92,6 @@ class SkillTest(object):
                 if os.path.isfile(filepath):
                     os.remove(filepath)
                 elif os.path.isdir(filepath):
-                    import shutil
                     shutil.rmtree(filepath)
             except OSError:
                 pass
@@ -127,6 +141,7 @@ class SkillTest(object):
     def run(self, cwd):
         dump_path = os.path.join(cwd, '.llm_test_dump.txt')
         try:
+            self._setup_files(cwd)
             test_result = self._invoke_claude(self.test_prompt, self.test_args, cwd)
 
             with open(dump_path, 'w') as f:

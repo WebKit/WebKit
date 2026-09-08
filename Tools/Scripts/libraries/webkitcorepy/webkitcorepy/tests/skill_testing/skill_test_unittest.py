@@ -21,6 +21,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import tempfile
 import unittest
 
 from webkitcorepy import testing
@@ -183,3 +184,62 @@ class SkillTestDiscoverTest(testing.PathTestCase):
         skill = SkillFile(os.path.join(skill_dir, 'SKILL.md'))
         tests = SkillTest.discover(skill)
         self.assertEqual(len(tests), 0)
+
+
+class SkillTestSetupFilesTest(testing.PathTestCase):
+    basepath = 'mock/skills/my-skill/tests'
+
+    def _make_test(self, files):
+        path = os.path.join(self.path, 'basic.yaml')
+        with open(path, 'w') as f:
+            f.write(
+                'name: setup-test\n'
+                'test:\n'
+                '  prompt: "do thing"\n'
+                'validation:\n'
+                '  prompt: "check"\n'
+                'files: {}\n'.format(files)
+            )
+        return SkillTest(path)
+
+    def test_copies_file_from_tests_dir(self):
+        with open(os.path.join(self.path, 'fixture.py'), 'w') as f:
+            f.write('print("hi")\n')
+        st = self._make_test('["fixture.py"]')
+        with tempfile.TemporaryDirectory() as cwd:
+            st._setup_files(cwd)
+            with open(os.path.join(cwd, 'fixture.py'), 'r') as f:
+                self.assertEqual(f.read(), 'print("hi")\n')
+
+    def test_skips_files_not_in_tests_dir(self):
+        st = self._make_test('["output.txt"]')
+        with tempfile.TemporaryDirectory() as cwd:
+            st._setup_files(cwd)
+            self.assertFalse(os.path.exists(os.path.join(cwd, 'output.txt')))
+
+    def test_copies_directory(self):
+        src = os.path.join(self.path, 'fixture_dir')
+        os.makedirs(src)
+        with open(os.path.join(src, 'a.txt'), 'w') as f:
+            f.write('a\n')
+        st = self._make_test('["fixture_dir"]')
+        with tempfile.TemporaryDirectory() as cwd:
+            st._setup_files(cwd)
+            with open(os.path.join(cwd, 'fixture_dir', 'a.txt'), 'r') as f:
+                self.assertEqual(f.read(), 'a\n')
+
+    def test_overwrites_existing_directory(self):
+        src = os.path.join(self.path, 'fixture_dir')
+        os.makedirs(src)
+        with open(os.path.join(src, 'a.txt'), 'w') as f:
+            f.write('new\n')
+        st = self._make_test('["fixture_dir"]')
+        with tempfile.TemporaryDirectory() as cwd:
+            stale = os.path.join(cwd, 'fixture_dir')
+            os.makedirs(stale)
+            with open(os.path.join(stale, 'old.txt'), 'w') as f:
+                f.write('old\n')
+            st._setup_files(cwd)
+            self.assertFalse(os.path.exists(os.path.join(stale, 'old.txt')))
+            with open(os.path.join(stale, 'a.txt'), 'r') as f:
+                self.assertEqual(f.read(), 'new\n')
