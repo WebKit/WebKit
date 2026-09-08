@@ -6,7 +6,7 @@
 <script>
 function createImageRequest() {
     let img = document.createElement("img");
-    img.src = "https://localhost:8443/resources/square100.png";
+    img.src = "https://localhost:8443/resources/square100.png?" + Math.random();
     document.body.appendChild(img);
 }
 
@@ -24,6 +24,16 @@ function test()
         name: "Resource.TimingData.Basic",
         description: "Check if a resource has timing information.",
         test(resolve, reject) {
+            // Capture the raw `Network.ResourceTiming` payload sent by the backend, before it
+            // passes through WI.ResourceTimingData's own (separately buggy) sanitization, so
+            // that this test verifies exactly what InspectorNetworkAgent computed.
+            let rawTimingPayload = null;
+            let originalFromPayload = WI.ResourceTimingData.fromPayload;
+            WI.ResourceTimingData.fromPayload = function(payload, resource) {
+                rawTimingPayload = payload;
+                return originalFromPayload.call(WI.ResourceTimingData, payload, resource);
+            };
+
             Promise.all([
                 WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
                 WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
@@ -35,6 +45,10 @@ function test()
                 InspectorTest.expectThat(resource instanceof WI.Resource, "Resource should be created.");
                 InspectorTest.expectThat(resource === responseReceivedEvent.target, "Added Resource received a response.");
                 InspectorTest.expectThat(resource === loadingDidFinishEvent.target, "Added Resource did finish loading.");
+
+                InspectorTest.expectThat(!!rawTimingPayload, "Should have captured a raw ResourceTiming payload.");
+                InspectorTest.expectEqual(rawTimingPayload.redirectStart, 0, "Non-redirected resource should have a redirectStart of 0 in the raw protocol payload.");
+                InspectorTest.expectEqual(rawTimingPayload.redirectEnd, 0, "Non-redirected resource should have a redirectEnd of 0 in the raw protocol payload.");
 
                 let timingData = resource.timingData;
                 InspectorTest.expectThat(timingData instanceof WI.ResourceTimingData, "Newly added resource should have a resource timing model.");
@@ -50,6 +64,12 @@ function test()
                 InspectorTest.expectThat(isNaN(timingData.secureConnectionStart) || timingData.connectStart <= timingData.secureConnectionStart, "A secure connection should be reused or secureConnectionStart should come after connectStart.");
                 InspectorTest.expectLessThanOrEqual(timingData.requestStart, timingData.responseStart, "responseStart should come after requestStart.");
                 InspectorTest.expectLessThanOrEqual(timingData.responseStart, timingData.responseEnd, "responseEnd should come after responseStart.");
+            })
+            .then(() => {
+                WI.ResourceTimingData.fromPayload = originalFromPayload;
+            }, (error) => {
+                WI.ResourceTimingData.fromPayload = originalFromPayload;
+                throw error;
             })
             .then(resolve, reject);
 
