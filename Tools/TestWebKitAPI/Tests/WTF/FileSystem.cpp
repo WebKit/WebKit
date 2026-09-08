@@ -1043,6 +1043,19 @@ TEST_F(FileSystemTest, createTemporaryFileInDirectory)
     EXPECT_TRUE(FileSystem::isAncestor(tempEmptyFolderPath(), filePath));
     EXPECT_TRUE(FileSystem::parentPath(filePath) == tempEmptyFolderPath());
 }
-#endif
+
+#if !PLATFORM(PLAYSTATION)
+// The WTF::openTemporaryFile() implementation on Windows and Playstation asserts that the suffix is empty.
+TEST_F(FileSystemTest, createTemporaryFileInDirectoryWithSuffix)
+{
+    auto [filePath, fileHandle] = FileSystem::openTemporaryFile("tempTestFile"_s, ".html"_s, tempEmptyFolderPath());
+    EXPECT_TRUE(!!fileHandle);
+    EXPECT_TRUE(FileSystem::fileType(filePath) == FileSystem::FileType::Regular);
+    EXPECT_TRUE(FileSystem::isAncestor(tempEmptyFolderPath(), filePath));
+    EXPECT_TRUE(FileSystem::parentPath(filePath) == tempEmptyFolderPath());
+    EXPECT_TRUE(filePath.endsWith(".html"_s));
+}
+#endif // !PLATFORM(PLAYSTATION)
+#endif // !OS(WINDOWS)
 
 } // namespace TestWebKitAPI
