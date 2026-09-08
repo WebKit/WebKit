@@ -79,6 +79,7 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetTextCheckerState(OptionSet<WebKit::TextCheckerState> textCheckerState)
 
     SetEnhancedAccessibility(bool flag)
+    SetAccessibilityMode(enum:uint8_t WebCore::AccessibilityMode mode)
     BindAccessibilityFrameWithData(WebCore::FrameIdentifier frameID, std::span<const uint8_t> data);
 
     GarbageCollectJavaScriptObjects()

@@ -1575,7 +1575,6 @@ public:
     void updateAccessibilityFrameGeometry();
     void scheduleAccessibilityFrameGeometryUpdate();
 #endif
-    void setAccessibilityMode(WebCore::AccessibilityMode);
 
 #if PLATFORM(MAC)
     NSDictionary *getAccessibilityWebProcessDebugInfo();
@@ -3945,7 +3944,6 @@ private:
 
     bool m_isEditable { false };
 
-    WebCore::AccessibilityMode m_accessibilityMode { };
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     MonotonicTime m_lastAccessibilityFrameGeometryUpdate;
     RefPtr<RunLoop::DispatchTimer> m_pendingAccessibilityFrameGeometryUpdateTimer;

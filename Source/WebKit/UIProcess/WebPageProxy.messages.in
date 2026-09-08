@@ -62,7 +62,6 @@ messages -> WebPageProxy {
     RelayAriaNotifyNotification(struct WebCore::AriaNotifyData notificationData)
     RelayLiveRegionNotification(struct WebCore::LiveRegionAnnouncementData notificationData)
 #endif
-    SetAccessibilityMode(enum:uint8_t WebCore::AccessibilityMode mode)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message, std::optional<WebCore::FrameIdentifier> rootFrameID)

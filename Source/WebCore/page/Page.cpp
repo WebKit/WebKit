@@ -2697,8 +2697,6 @@ bool Page::shouldUpdateAccessibilityRegions() const
                 protectedMainDocument = owner->document();
         }
 
-        // If accessibility is enabled and we have a main document, that document should have an AX object cache.
-        ASSERT(!protectedMainDocument || protectedMainDocument->existingAXObjectCache());
         if (CheckedPtr topAxObjectCache = protectedMainDocument ? protectedMainDocument->existingAXObjectCache() : nullptr)
             topAxObjectCache->scheduleObjectRegionsUpdate();
         return false;

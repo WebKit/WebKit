@@ -1051,12 +1051,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->setPresentingApplicationAuditToken(process.coreProcessIdentifier(), m_webPageID, m_presentingApplicationAuditToken);
 #endif
-    // Inherit accessibility mode from the related page (if any), so that the new page starts with the correct mode.
-    if (RefPtr relatedPage = m_configuration->relatedPage()) {
-        if (auto mode = relatedPage->m_accessibilityMode; !WebCore::isAccessibilityModeOff(mode))
-            m_accessibilityMode = mode;
-    }
-
     if (protect(preferences())->siteIsolationEnabled()) {
         if (m_configuration->relatedPage()) {
             // relatedPage should only be used after setting browsing context group.
@@ -6737,29 +6731,6 @@ void WebPageProxy::accessibilitySettingsDidChange()
     send(Messages::WebPage::AccessibilitySettingsDidChange());
 }
 
-void WebPageProxy::setAccessibilityMode(WebCore::AccessibilityMode mode)
-{
-    if (std::optional resolvedMode = WebCore::resolveAccessibilityModeTransition(m_accessibilityMode, mode)) {
-        bool modeWasOff = WebCore::isAccessibilityModeOff(m_accessibilityMode);
-        m_accessibilityMode = *resolvedMode;
-        bool modeIsOn = !WebCore::isAccessibilityModeOff(m_accessibilityMode);
-
-        forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-            webProcess.send(Messages::WebPage::InheritAccessibilityMode(m_accessibilityMode), pageID);
-        });
-
-#if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-        // When transitioning from off to any on state, eagerly compute frame
-        // geometry so it's available as soon as accessibility clients need it.
-        if (modeWasOff && modeIsOn)
-            scheduleAccessibilityFrameGeometryUpdate();
-#else
-        UNUSED_VARIABLE(modeWasOff);
-        UNUSED_VARIABLE(modeIsOn);
-#endif
-    }
-}
-
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     // This check is fine as the value is initialized in the web
@@ -11070,7 +11041,7 @@ void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, Comple
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 void WebPageProxy::requestFrameScreenPosition(FrameIdentifier frameID)
 {
-    if (WebCore::isAccessibilityModeOff(m_accessibilityMode))
+    if (WebCore::isAccessibilityModeOff(WebProcessProxy::accessibilityModeForWebContent()))
         return;
 
     static constexpr float unitRectSize = 1000;
@@ -11134,7 +11105,7 @@ void WebPageProxy::updateAccessibilityFrameGeometry()
 
 void WebPageProxy::scheduleAccessibilityFrameGeometryUpdate()
 {
-    if (WebCore::isAccessibilityModeOff(m_accessibilityMode))
+    if (WebCore::isAccessibilityModeOff(WebProcessProxy::accessibilityModeForWebContent()))
         return;
 
     // Fire immediately on the first call (or if enough time has elapsed), but
@@ -14368,7 +14339,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     parameters.textManipulationParameters = m_internals->textManipulationParameters;
 
-    parameters.accessibilityMode = m_accessibilityMode;
+    parameters.accessibilityMode = WebProcessProxy::accessibilityModeForWebContent();
     parameters.shouldForceSiteIsolationAlwaysOnForTesting = WebPreferences::forcedSiteIsolationAlwaysOnForTesting();
     parameters.shouldEnableNetworkInstrumentation = inspectorController().isNetworkInstrumentationEnabled();
     parameters.shouldEnablePageInstrumentation = inspectorController().isPageInstrumentationEnabled();

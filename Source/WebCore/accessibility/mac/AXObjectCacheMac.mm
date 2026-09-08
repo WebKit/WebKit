@@ -48,6 +48,7 @@
 #import "WebAccessibilityObjectWrapperMac.h"
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
+#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -802,12 +803,14 @@ bool AXObjectCache::clientSupportsIsolatedTree()
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-AXObjectCache::PlatformAXThreadSupport AXObjectCache::platformAXThreadSupport(ForceAXThreadMode forceAXThread)
+AXObjectCache::PlatformAXThreadSupport AXObjectCache::platformAXThreadSupport(AXThreadModePreconditions preconditions)
 {
     if (!(_AXSIsolatedTreeModeFunctionIsAvailable()))
         return PlatformAXThreadSupport::NotSupported;
 
-    if (forceAXThread == ForceAXThreadMode::No && !shouldForceAccessibilityEnabled()) {
+    // Only RequireClientAndSetting needs a client. The setting itself is enforced by
+    // transitionToAXThreadModeIfNeeded.
+    if (preconditions == AXThreadModePreconditions::RequireClientAndSetting && !shouldForceAccessibilityEnabled()) {
         if (!clientSupportsIsolatedTree())
             return PlatformAXThreadSupport::NotSupported;
 
@@ -831,10 +834,15 @@ AXObjectCache::PlatformAXThreadSupport AXObjectCache::platformAXThreadSupport(Fo
 
 AXObjectCache::DidStartThread AXObjectCache::platformStartSecondaryThread()
 {
+    AX_ASSERT(isInWebProcess());
+
     auto error = _AXUIElementUseSecondaryAXThread(true);
     // Starting the true AX thread doesn't work in testing contexts.
     // This is OK because we fake it with the AXThread class.
-    AX_ASSERT(error == kAXErrorSuccess || clientIsInTestMode());
+    //
+    // If there is no client (as is the case at some points during tests), we can't determine whether this
+    // failure is OK, so relax the assert for now. Ideally we can eliminate this relaxation in the future.
+    AX_ASSERT(error == kAXErrorSuccess || clientIsInTestMode() || _AXGetClientForCurrentRequestUntrusted() == kAXClientTypeNoActiveRequestFound);
     return error == kAXErrorSuccess ? DidStartThread::Yes : DidStartThread::No;
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
