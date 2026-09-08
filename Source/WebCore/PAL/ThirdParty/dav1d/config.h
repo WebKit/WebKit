@@ -38,10 +38,16 @@
 #endif
 
 #define ARCH_LOONGARCH 0
+#define ARCH_LOONGARCH32 0
+#define ARCH_LOONGARCH64 0
 
 #define ARCH_PPC64LE 0
 
 #define ARCH_RISCV 0
+
+#define ARCH_RV32 0
+
+#define ARCH_RV64 0
 
 #define ARCH_X86 0
 
@@ -69,7 +75,32 @@
 
 #define ENDIANNESS_BIG 0
 
+#if ARCH_AARCH64 && defined(__LP64__)
+#define HAVE_ASM 1
+#else
 #define HAVE_ASM 0
+#endif
+
+#if ARCH_AARCH64
+#define AS_ARCH_LEVEL armv8.6-a+crc
+
+#define HAVE_AS_ARCH_DIRECTIVE 1
+#define HAVE_AS_ARCHEXT_DOTPROD_DIRECTIVE 1
+#define HAVE_AS_ARCHEXT_I8MM_DIRECTIVE 1
+#define HAVE_AS_ARCHEXT_SVE_DIRECTIVE 1
+#define HAVE_AS_ARCHEXT_SVE2_DIRECTIVE 1
+
+#define HAVE_DOTPROD 1
+#define HAVE_I8MM 1
+#define HAVE_SVE 1
+#define HAVE_SVE2 1
+
+#define HAVE_AS_FUNC 0
+
+// Mach-O prepends an underscore to C symbol names, asm also needs to do the same.
+#define PREFIX 1
+
+#endif // ARCH_AARCH64
 
 #define HAVE_ELF_AUX_INFO 0
 

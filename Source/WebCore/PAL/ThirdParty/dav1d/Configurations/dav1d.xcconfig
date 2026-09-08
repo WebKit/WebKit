@@ -24,6 +24,11 @@
 #include "../../../../../Configurations/Version.xcconfig"
 #include "BaseTarget.xcconfig"
 
+EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_ARM_SOURCE_FILE_NAMES);
+EXCLUDED_ARM_SOURCE_FILE_NAMES = *.S arm/*;
+EXCLUDED_ARM_SOURCE_FILE_NAMES[arch=arm64] = ;
+EXCLUDED_ARM_SOURCE_FILE_NAMES[arch=arm64e] = ;
+
 FRAMEWORK_SEARCH_PATHS[sdk=iphone*] = $(FRAMEWORK_SEARCH_PATHS_ios_$(CONFIGURATION));
 FRAMEWORK_SEARCH_PATHS_ios_Debug = $(BUILT_PRODUCTS_DIR);
 FRAMEWORK_SEARCH_PATHS_ios_Release = $(FRAMEWORK_SEARCH_PATHS_ios_Debug);
