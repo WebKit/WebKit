@@ -260,6 +260,7 @@ private:
     bool isFullScreen() override;
     void enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool)>&&) override;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
+    bool isUsingQuickLook() const override;
     void updateImageSource() override;
 #endif
     void exitFullScreen(CompletionHandler<void()>&&) override;
