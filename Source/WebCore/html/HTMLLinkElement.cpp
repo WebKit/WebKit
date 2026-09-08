@@ -620,7 +620,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
 
     // FIXME: Set the visibility option based on m_sheet being clean or not.
     // Best approach might be to set it on the style sheet content itself or its context parser otherwise.
-    if (!styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, protect(document->securityOrigin()).ptr())) {
+    if (!styleSheet.get().parseAuthorStyleSheet(*cachedStyleSheet, protect(document->securityOrigin()).ptr())) {
         m_loading = false;
         sheetLoaded();
         notifyLoadedSheetAndAllCriticalSubresources(true);

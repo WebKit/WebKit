@@ -85,7 +85,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
         m_styleSheet->setAsLoadedFromOpaqueSource();
 
     RefPtr securityOrigin = document ? &document->securityOrigin() : nullptr;
-    bool parseSucceeded = protect(m_styleSheet)->parseAuthorStyleSheet(cachedStyleSheet, securityOrigin.get());
+    bool parseSucceeded = protect(m_styleSheet)->parseAuthorStyleSheet(*cachedStyleSheet, securityOrigin.get());
 
     m_loading = false;
 

@@ -69,7 +69,7 @@ public:
     const AtomString& NODELETE namespaceURIFromPrefix(const AtomString& prefix);
     const CSSNamespacePrefixMap& namespacePrefixMap() const { return m_namespacePrefixMap; }
 
-    bool parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
+    bool parseAuthorStyleSheet(const CachedCSSStyleSheet&, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
 
     bool isCacheable() const;
