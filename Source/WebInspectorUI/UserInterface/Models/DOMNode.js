@@ -602,6 +602,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
             object.callFunction(inspectedPage_node_toggleClass, [className, flag]);
             object.release();
+        }).catch((error) => {
+            // Bail if the DOM node was removed while we were waiting for the async response.
+            console.assert(false, "Cannot resolve node.", error, this);
         });
     }
 
@@ -816,6 +819,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
             object.callFunction(inspectedPage_node_scrollIntoView);
             object.release();
+        }).catch((error) => {
+            // Bail if the DOM node was removed while we were waiting for the async response.
+            console.assert(false, "Cannot resolve node.", error, this);
         });
     }
 
