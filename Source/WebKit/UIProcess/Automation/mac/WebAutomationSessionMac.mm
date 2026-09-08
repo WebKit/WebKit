@@ -886,6 +886,15 @@ void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const
 
 #if ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
+static NSScreen *firstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    // WebDriver sessions can run without a WindowServer session, so log rather than assert.
+    if (!firstScreen) [[unlikely]]
+        RELEASE_LOG_ERROR(Automation, "firstScreen: No screens found, possibly due to no WindowServer session.");
+    return firstScreen;
+}
+
 void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, const WebCore::IntPoint& locationInViewport, const WebCore::IntSize& delta)
 {
     static constexpr auto scrollWheelCount = 2;
@@ -897,7 +906,7 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
     // Set the CGEvent location in flipped coords relative to the first screen, which compensates for the behavior of
     // +[NSEvent eventWithCGEvent:] when the event has no associated window. See <rdar://problem/17180591>.
     auto locationOnScreen = [window convertPointToScreen:locationInWindow];
-    locationOnScreen = CGPointMake(locationOnScreen.x, NSScreen.screens.firstObject.frame.size.height - locationOnScreen.y);
+    locationOnScreen = CGPointMake(locationOnScreen.x, [firstScreen() frame].size.height - locationOnScreen.y);
     CGEventSetLocation(cgScrollEvent.get(), locationOnScreen);
 
     RetainPtr<NSEvent> scrollEvent = [[NSEvent eventWithCGEvent:cgScrollEvent.get()] _eventRelativeToWindow:window.get()];

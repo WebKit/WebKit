@@ -291,8 +291,10 @@ extension WebPage {
 
         // CGEvent locations are in flipped, global screen coordinates.
         let locationInScreen = window.convertPoint(toScreen: location)
-        let primaryScreenHeight = NSScreen.screens.first?.frame.height ?? 0
-        cgEvent.location = CGPoint(x: locationInScreen.x, y: primaryScreenHeight - locationInScreen.y)
+        guard let primaryScreen = NSScreen.screens.first else {
+            preconditionFailure("No screens found, possibly due to no WindowServer session. This configuration is not supported.")
+        }
+        cgEvent.location = CGPoint(x: locationInScreen.x, y: primaryScreen.frame.height - locationInScreen.y)
 
         guard let event = NSEvent(cgEvent: cgEvent) else {
             preconditionFailure("Could not create scroll NSEvent.")

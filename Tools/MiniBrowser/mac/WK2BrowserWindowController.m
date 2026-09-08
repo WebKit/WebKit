@@ -253,9 +253,11 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
     if (features.x)
         frameRect.origin.x = features.x.doubleValue;
 
-    if (features.y)
-        frameRect.origin.y = NSMaxY(NSScreen.screens.firstObject.frame) - features.y.doubleValue - NSHeight(frameRect);
-    else
+    if (features.y) {
+        NSScreen *firstScreen = [[NSScreen screens] firstObject];
+        NSCAssert(firstScreen, @"No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+        frameRect.origin.y = NSMaxY([firstScreen frame]) - features.y.doubleValue - NSHeight(frameRect);
+    } else
         frameRect.origin.y = NSMaxY(window.frame) - NSHeight(frameRect);
 
     return [window constrainFrameRect:frameRect toScreen:nil];
