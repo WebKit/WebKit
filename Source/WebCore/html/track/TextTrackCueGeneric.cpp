@@ -150,17 +150,17 @@ bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& otherTextTrackCue
 
 bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 {
-    if (VTTCue::isOrderedBefore(that))
-        return true;
-
     if (auto* thatCue = dynamicDowncast<TextTrackCueGeneric>(*that); thatCue && startTime() == that->startTime() && endTime() == that->endTime()) {
-        // Further order generic cues by their calculated line value.
+        // For generic cues with identical timing, order by their calculated line value. This tiebreak must be
+        // decided before falling back to VTTCue::isOrderedBefore(), which resolves the same case by cue index;
+        // consulting both would let isOrderedBefore(a, b) and isOrderedBefore(b, a) both be true, breaking the
+        // strict weak ordering required by the cue-sorting callers (e.g. HTMLMediaElement::updateActiveTextTrackCues).
         auto thisPosition = getPositionCoordinates();
         auto thatPosition = thatCue->getPositionCoordinates();
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
 
-    return false;
+    return VTTCue::isOrderedBefore(that);
 }
 
 bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
