@@ -32,6 +32,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
+#include "SecurityFlags.h"
 #include "WebSharedWorker.h"
 #include "WebSharedWorkerObjectConnectionMessages.h"
 #include "WebSharedWorkerServer.h"

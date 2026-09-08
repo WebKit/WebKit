@@ -1,0 +1,115 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+
+// On a redirect, NetworkDataTaskCocoa::willPerformHTTPRedirection blocks cookies
+// when the new firstPartyForCookies has an empty registrable domain. It does so
+// before the request is sent to the web content process for WillSendRequest, and
+// ResourceRequest::updateFromDelegatePreservingOldProperties does not preserve
+// m_allowCookies -- it is "*this = delegateProvidedRequest". So whatever the web
+// content process replies with is what reaches nsURLRequest.
+//
+// This forges that reply: it names about:blank as the first party (which
+// allowsFirstPartyForCookiesSAL3 permits, since its registrable domain is empty)
+// and sets allowCookies back to true. Cookies must not be sent on the redirected
+// request.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const origin = "http://127.0.0.1:8000";
+const echoURL = origin + "/cookies/resources/echo-cookies.py";
+const redirectURL = counter => origin + "/resources/redirect.py?url=" + echoURL + "?x=" + counter;
+
+const failures = [];
+
+function expect(condition, message)
+{
+    if (!condition)
+        failures.push("FAIL: " + message);
+}
+
+function forgedRequest(url)
+{
+    return {
+        getRequestDataToSerialize: {
+            variantType: "WebCore::ResourceRequest::RequestData",
+            variant: {
+                m_url: { string: url },
+                m_firstPartyForCookies: { string: "about:blank" },
+                m_timeoutInterval: 60.0,
+                m_httpMethod: "GET",
+                m_httpHeaderFields: { commonHeaders: [], uncommonHeaders: [] },
+                m_responseContentDispositionEncodingFallbackArray: [],
+                m_cachePolicy: 0,
+                m_sameSiteDisposition: 0,
+                m_priority: 1,
+                m_requester: 0,
+                m_allowCookies: true,
+                m_isTopSite: false,
+                m_isAppInitiated: true,
+                m_privacyProxyFailClosedForUnreachableNonMainHosts: false,
+                m_useAdvancedPrivacyProtections: false,
+                m_didFilterLinkDecoration: false,
+                m_isPrivateTokenUsageByThirdPartyAllowed: false,
+                m_wasSchemeOptimisticallyUpgraded: false,
+                m_targetAddressSpace: 0,
+            },
+        },
+        shouldBlockThirdPartyStorage: true,
+        hiddenFromInspector: false,
+    };
+}
+
+async function main()
+{
+    if (!window.IPC)
+        return;
+
+    const { CoreIPC } = await import("/ipc/coreipc.js");
+
+    document.cookie = "sar3redirect=present; path=/";
+
+    // Control: cookies normally follow a same-origin redirect.
+    const control = await (await fetch(redirectURL(1), { credentials: "include" })).text();
+    expect(control.includes("sar3redirect"),
+        "control: cookies should follow an unmodified same-origin redirect, got " + JSON.stringify(control));
+
+    // The listener runs before Connection::dispatchMessage hands the message to
+    // WebResourceLoader, so this reply reaches the network process first and
+    // takes the async reply handler; the real one is then dropped.
+    let forged = false;
+    IPC.addIncomingMessageListener("Networking", message => {
+        if (forged || message.name !== IPC.messages.WebResourceLoader_WillSendRequest.name)
+            return;
+        forged = true;
+        CoreIPC.Networking.WebResourceLoader.WillSendRequestReply(message.listenerID, {
+            newRequest: forgedRequest(echoURL + "?x=2"),
+            isAllowedToAskUserForCredentials: true,
+        });
+    });
+
+    const attacked = await (await fetch(redirectURL(2), { credentials: "include" })).text();
+    expect(forged, "setup: the WillSendRequest message was never intercepted");
+    expect(!attacked.includes("sar3redirect"),
+        "cookies were sent on a redirect whose firstPartyForCookies has an empty registrable domain, got " + JSON.stringify(attacked));
+}
+
+window.onload = () => {
+    main().then(() => {
+        document.body.textContent = failures.length ? failures.join("\n") : "PASS";
+    }, error => {
+        document.body.textContent = "FAIL: " + error;
+    }).then(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+
+</script>
+</head>
+<body></body>
+</html>

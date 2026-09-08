@@ -46,6 +46,7 @@
 #include "PrivateClickMeasurementManager.h"
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "RemoteWorkerType.h"
+#include "SecurityFlags.h"
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -795,7 +796,7 @@ void NetworkSession::removeSyntheticLoaderAwaitingWebProcessTransferForTesting(N
 }
 #endif
 
-RefPtr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, IsInitiatedByDedicatedWorker)
+RefPtr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, WebCore::ResourceRequest&&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy, IsInitiatedByDedicatedWorker)
 {
     return nullptr;
 }
@@ -978,7 +979,15 @@ void NetworkSession::appBoundDomains(CompletionHandler<void(HashSet<WebCore::Reg
 
 void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier webProcessIdentifier, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
 {
-    if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && m_networkProcess->allowsFirstPartyForCookies(requestingProcessIdentifier.value(), firstPartyForCookies) != NetworkProcess::AllowCookieAccess::Allow) {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (SecurityFlags::radar176384129()) {
+        if (requestingProcessIdentifier && requestingProcessIdentifier != webProcessIdentifier && !m_networkProcess->allowsFirstPartyForCookies(*requestingProcessIdentifier, firstPartyForCookies)) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    } else
+#endif
+    if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && m_networkProcess->allowsFirstPartyForCookiesLegacy(requestingProcessIdentifier.value(), firstPartyForCookies) != NetworkProcess::AllowCookieAccess::Allow) {
         ASSERT_NOT_REACHED();
         return;
     }

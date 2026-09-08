@@ -1,0 +1,5 @@
+<script>
+    if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText() }
+    document.cookie = 'origin=' + window.origin + ';path=/';
+    window.location = 'http://localhost:8000/sar3/security/resources/check-cookie-access.html?method=syncxhr'
+</script>

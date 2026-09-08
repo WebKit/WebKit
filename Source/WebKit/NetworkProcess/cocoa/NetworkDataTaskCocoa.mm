@@ -35,6 +35,7 @@
 #import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
+#import "SecurityFlags.h"
 #import "WebPrivacyHelpers.h"
 #import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/AuthenticationChallenge.h>
@@ -223,6 +224,11 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         // FIXME: Support Digest authentication, and Proxy-Authorization.
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (SecurityFlags::radar176384129() && WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+        request.setAllowCookies(false);
+#endif
 
     auto thirdPartyCookieBlockingDecision = requestThirdPartyCookieBlockingDecision(request);
     restrictRequestReferrerToOriginIfNeeded(request);
@@ -519,6 +525,10 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 return completionHandler({ });
             if (!request.isNull())
                 protectedThis->restrictRequestReferrerToOriginIfNeeded(request);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            if (SecurityFlags::radar176384129() && WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+                request.setAllowCookies(false);
+#endif
             protectedThis->m_previousRequest = request;
             completionHandler(WTF::move(request));
         });

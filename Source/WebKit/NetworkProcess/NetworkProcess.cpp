@@ -527,9 +527,25 @@ void NetworkProcess::addAllowedFirstPartyDomainForCookies(WebCore::ProcessIdenti
     completionHandler();
 }
 
-auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty) -> AllowCookieAccess
+#ifndef RC_REMOVE_SEC_ACCEL_3
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
 {
-    auto allowCookieAccess = allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
+    // FIXME: When merging this back to main, remove allowsFirstPartyForCookiesLegacy and put its logic here
+    // but without the special treatment of about:blank and null, which are now effectively allowed at the
+    // IPC layer but disabled at network interface layer.
+    return allowsFirstPartyForCookiesLegacy(processIdentifier, firstParty) != AllowCookieAccess::Terminate;
+}
+
+bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
+{
+    // FIXME: When merging this back to main, remove allowsFirstPartyForCookiesLegacy and put its logic here.
+    return allowsFirstPartyForCookiesLegacy(processIdentifier, firstPartyDomain) != AllowCookieAccess::Terminate;
+}
+#endif
+
+auto NetworkProcess::allowsFirstPartyForCookiesLegacy(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty) -> AllowCookieAccess
+{
+    auto allowCookieAccess = allowsFirstPartyForCookiesLegacy(processIdentifier, RegistrableDomain { firstParty });
     if (allowCookieAccess == NetworkProcess::AllowCookieAccess::Terminate) {
         // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
         // we should set it to be the inherited origin then remove this exception.
@@ -543,7 +559,7 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return allowCookieAccess;
 }
 
-auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain) -> AllowCookieAccess
+auto NetworkProcess::allowsFirstPartyForCookiesLegacy(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain) -> AllowCookieAccess
 {
     // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
     auto terminateOrDisallow = firstPartyDomain.isEmpty() ? AllowCookieAccess::Disallow : AllowCookieAccess::Terminate;

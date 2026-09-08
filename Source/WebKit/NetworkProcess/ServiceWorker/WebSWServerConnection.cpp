@@ -37,6 +37,7 @@
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
 #include "RemoteWorkerType.h"
+#include "SecurityFlags.h"
 #include "SharedBufferReference.h"
 #include "SharedPreferencesForWebProcess.h"
 #include "WebProcess.h"
@@ -1050,7 +1051,12 @@ bool WebSWServerConnection::checkTopOrigin(const WebCore::SecurityOriginData& or
         return false;
 
     RefPtr networkProcess = networkConnectionToWebProcess->networkProcess();
-    MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate, false);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (SecurityFlags::radar176384129())
+        MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookies(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())), false);
+    else
+#endif
+        MESSAGE_CHECK_WITH_RETURN_VALUE(networkProcess->allowsFirstPartyForCookiesLegacy(networkConnectionToWebProcess->webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(origin.host())) != NetworkProcess::AllowCookieAccess::Terminate, false);
     return true;
 }
 

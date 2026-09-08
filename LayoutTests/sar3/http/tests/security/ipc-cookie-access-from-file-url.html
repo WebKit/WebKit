@@ -1,0 +1,132 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<head>
+<script>
+
+// A web content process may only name a firstPartyForCookies whose registrable
+// domain the UI process granted it. RegistrableDomain() of both "about:blank"
+// and "file:///" is empty ("nullOrigin"), which the allow-list cannot tell
+// apart from each other, so allowsCookieAccess() in
+// NetworkConnectionToWebProcess.cpp lets such a first party reach only cookies
+// that likewise belong to no registrable domain. A local file document reading
+// its own cookies keeps working; this page is loaded from 127.0.0.1, so
+// nothing it names may reach 127.0.0.1's cookies.
+//
+// An empty first party also makes thirdPartyCookieBlockingDecisionForRequest()
+// return None, so a request that names one is exempt from third-party cookie
+// blocking as well.
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const ownOrigin = "http://127.0.0.1:8000/";
+const ungrantedOrigin = "http://localhost:8000/";
+
+const failures = [];
+
+function expect(condition, message)
+{
+    if (!condition)
+        failures.push("FAIL: " + message);
+}
+
+let CoreIPC;
+let frameID;
+
+// Takes and clears the last message check failure recorded on this connection.
+function takeMessageCheckFailure()
+{
+    let error = "";
+    CoreIPC.Networking.NetworkConnectionToWebProcess.TakeInvalidMessageStringForTesting(0, { },
+        reply => { error = reply.error || ""; });
+    return error;
+}
+
+// Asks the network process for cookies the way a compromised web content
+// process would, naming whatever first party and url it likes. webPageProxyID
+// is left null because a null identifier carries no page context to validate.
+function cookiesFor(firstParty, url = ownOrigin)
+{
+    takeMessageCheckFailure();
+
+    let cookieString = null;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.CookieRequestHeaderFieldValue(0, {
+        firstParty: { string: firstParty },
+        sameSiteInfo: { isSameSite: false, isTopSite: false, isSafeHTTPMethod: true },
+        url: { string: url },
+        frameID: { optionalValue: BigInt(frameID) },
+        pageID: { optionalValue: BigInt(IPC.pageID) },
+        includeSecureCookies: 1,
+        webPageProxyID: { },
+    }, reply => { cookieString = reply.cookieString; });
+
+    return { cookies: cookieString || "", rejected: takeMessageCheckFailure().includes("Message check failed") };
+}
+
+async function main()
+{
+    if (!window.IPC)
+        return;
+
+    ({ CoreIPC } = await import("/ipc/coreipc.js"));
+    frameID = Array.isArray(IPC.frameID) ? IPC.frameID[0] : IPC.frameID;
+
+    document.cookie = "sar3own=present; path=/";
+
+    // The granted first party works, so an empty reply below means refusal
+    // rather than a malformed message or a missing cookie.
+    const granted = cookiesFor(ownOrigin);
+    expect(!granted.rejected, "control: the granted first party should not fail a message check");
+    expect(granted.cookies.includes("sar3own"),
+        "control: the granted first party should return our cookie, got " + JSON.stringify(granted.cookies));
+
+    // A first party naming a domain this process was never granted is refused.
+    const ungranted = cookiesFor(ungrantedOrigin);
+    expect(ungranted.rejected, "control: an ungranted first party should fail a message check");
+    expect(!ungranted.cookies.includes("sar3own"),
+        "control: an ungranted first party should return no cookies, got " + JSON.stringify(ungranted.cookies));
+
+    // A first party with an empty registrable domain is refused.
+    const aboutBlank = cookiesFor("about:blank");
+    expect(!aboutBlank.cookies.includes("sar3own"),
+        "control: an about:blank first party should return no cookies, got " + JSON.stringify(aboutBlank.cookies));
+
+    // file:/// has the same empty registrable domain, so it must be refused too.
+    const file = cookiesFor("file:///");
+    expect(!file.cookies.includes("sar3own"),
+        "a file: first party was accepted from a process that was never granted one, got " + JSON.stringify(file.cookies));
+
+    // A file URL that carries a host is not host-less: its registrable domain
+    // is that host, so it is checked against the allow-list like any other
+    // first party rather than taking the empty-domain path above.
+    const fileHost = cookiesFor("file://127.0.0.2/");
+    expect(fileHost.rejected, "a file: first party naming an ungranted host should fail a message check");
+    expect(!fileHost.cookies.includes("sar3own"),
+        "a file: first party naming an ungranted host should return no cookies, got " + JSON.stringify(fileHost.cookies));
+
+    // The empty first party above may only reach cookies that belong to no
+    // registrable domain either. Cookies are not bound to a scheme, so a file
+    // URL carrying a host is a way to ask for that host's cookies: checking
+    // only that the url is a file URL would hand over 127.0.0.1's cookies here.
+    const fileURLWithHost = cookiesFor("file:///", "file://127.0.0.1/");
+    expect(!fileURLWithHost.cookies.includes("sar3own"),
+        "a file: first party reached a hosted file: url's cookies, got " + JSON.stringify(fileURLWithHost.cookies));
+}
+
+window.onload = () => {
+    main().then(() => {
+        document.body.textContent = failures.length ? failures.join("\n") : "PASS";
+    }, error => {
+        document.body.textContent = "FAIL: " + error;
+    }).then(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+
+</script>
+</head>
+<body></body>
+</html>

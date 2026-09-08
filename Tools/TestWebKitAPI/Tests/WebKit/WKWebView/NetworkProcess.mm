@@ -611,6 +611,57 @@ TEST(_WKDataTask, Basic)
     Util::run(&done);
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+TEST(_WKDataTask, Cookies)
+{
+    using namespace TestWebKitAPI;
+    Vector<char> receivedRequest;
+    HTTPServer server([&](Connection connection) {
+        connection.receiveHTTPRequest([&, connection](Vector<char>&& request) {
+            auto cookies = HTTPServer::parseCookies(request);
+            receivedRequest = WTF::move(request);
+            connection.send(HTTPResponse(cookies).serialize());
+        });
+    });
+
+    RetainPtr dataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: @"testkey",
+        NSHTTPCookieValue: @"testvalue",
+        NSHTTPCookieDomain: @"127.0.0.1",
+    }];
+    __block bool setCookieDone = false;
+    [dataStore.get().httpCookieStore setCookie:cookie.get() completionHandler:^{
+        setCookieDone = true;
+    }];
+    Util::run(&setCookieDone);
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    __block bool done = false;
+    __block RetainPtr<NSMutableData> receivedData = adoptNS([NSMutableData new]);
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        RetainPtr delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            [receivedData appendData:data];
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_NULL(error);
+            done = true;
+        };
+    }];
+    Util::run(&done);
+
+    RetainPtr echoedCookies = adoptNS([[NSString alloc] initWithData:receivedData.get() encoding:NSUTF8StringEncoding]);
+    EXPECT_WK_STREQ(echoedCookies.get(), "testkey=testvalue");
+    EXPECT_TRUE(contains(receivedRequest.span(), "Cookie: testkey=testvalue\r\n"_span));
+}
+#endif
+
 TEST(_WKDataTask, Challenge)
 {
     using namespace TestWebKitAPI;

@@ -477,9 +477,14 @@ public:
     void deleteWebsiteDataForOrigin(PAL::SessionID, OptionSet<WebsiteDataType>, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostnames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
+    bool allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
+#endif
     enum class AllowCookieAccess : uint8_t { Disallow, Allow, Terminate };
-    AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const URL&);
-    AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
+
+    AllowCookieAccess allowsFirstPartyForCookiesLegacy(WebCore::ProcessIdentifier, const URL&);
+    AllowCookieAccess allowsFirstPartyForCookiesLegacy(WebCore::ProcessIdentifier, const RegistrableDomain&);
 
     // Unlike allowsFirstPartyForCookies, this compares the scheme as well as the registrable domain.
     bool allowsFirstPartySite(WebCore::ProcessIdentifier, const WebCore::Site&) const;

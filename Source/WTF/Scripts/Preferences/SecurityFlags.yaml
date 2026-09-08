@@ -12,6 +12,9 @@
 #
 # Sorted by radar number.
 
+radar176384129:
+  humanReadableDescription: "Disallow cookie use with firstPartyForCookies without a non-empty checked domain"
+
 radar183491061:
   humanReadableDescription: "Enforces access to back/forward items in the UI process can only come from web content processes that own the item"
 

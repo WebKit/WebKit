@@ -40,6 +40,7 @@
 #import "NetworkProcessProxyMessages.h"
 #import "NetworkSessionCreationParameters.h"
 #import "PrivateRelayed.h"
+#import "SecurityFlags.h"
 #import "WKURLSessionTaskDelegate.h"
 #import "WebErrors.h"
 #import "WebPageNetworkParameters.h"
@@ -52,6 +53,7 @@
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceRequestCFNet.h>
@@ -1689,8 +1691,13 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 #endif
 }
 
-RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
+RefPtr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, NetworkSocketChannel& channel, WebCore::ResourceRequest&& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (SecurityFlags::radar176384129() && WebCore::RegistrableDomain(request.firstPartyForCookies()).isEmpty())
+        request.setAllowCookies(false);
+#endif
+
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
     RetainPtr nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
     if (!nsRequest || ![nsRequest URL])
@@ -1945,6 +1952,12 @@ void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, Web
         return;
     }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // This does not have a call to request.setAllowCookies(false) if RegistrableDomain(request.firstPartyForCookies()).isEmpty()
+    // because calls to this don't come from the web content process, and it would break SPI behavior
+    // to introduce such a call. We could add a call to setFirstPartyForCookies, but that would be equivalent
+    // to not having the domain check.
+#endif
     auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt)->session;
     RetainPtr task = [session dataTaskWithRequest:nsRequest.get()];
     auto delegate = adoptNS([[WKURLSessionTaskDelegate alloc] initWithTask:task.get() identifier:identifier session:*this]);

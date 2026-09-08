@@ -47,6 +47,7 @@
 #include "NetworkStorageManager.h"
 #include "PrivateRelayed.h"
 #include "ResourceLoadInfo.h"
+#include "SecurityFlags.h"
 #include "ServiceWorkerFetchTask.h"
 #include "SharedBufferReference.h"
 #include "WebErrors.h"
@@ -1508,8 +1509,14 @@ void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& 
         if (newRequest.isNull())
             return completionHandler({ });
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        if (SecurityFlags::radar176384129()) {
+            if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest)
+                MESSAGE_CHECK_COMPLETION_BASE(connection->networkProcess().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies()), connection->connection(), completionHandler({ }));
+        } else
+#endif
         if (newRequest.firstPartyForCookies() != firstPartyForCookiesFromRedirectRequest) {
-            auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookies(connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
+            auto allowCookieAccess = connection->networkProcess().allowsFirstPartyForCookiesLegacy(connection->webProcessIdentifier(), newRequest.firstPartyForCookies());
             MESSAGE_CHECK_COMPLETION_BASE(allowCookieAccess == NetworkProcess::AllowCookieAccess::Allow, connection->connection(), completionHandler({ }));
         }
 
