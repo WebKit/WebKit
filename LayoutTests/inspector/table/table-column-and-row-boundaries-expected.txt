@@ -1,4 +1,4 @@
-Tests Table row-visibility boundary checks and showing a column into an empty visible column set.
+Tests Table row-visibility boundary checks, showing a column into an empty visible column set, and resetting column visibility to defaults.
 
 
 == Running test suite: Table.ColumnAndRowBoundaries
@@ -12,4 +12,12 @@ PASS: End index is exclusive, so row 20 should not be visible.
 PASS: No columns should be visible.
 PASS: The shown column should no longer be hidden.
 PASS: Only the shown column should be visible.
+
+-- Running test case: Table.ResetColumnVisibility
+PASS: Index column should be hidden before reset.
+PASS: Name column should be hidden before reset.
+PASS: Extra column should be visible before reset.
+PASS: Index column should be restored to its default visible state.
+PASS: Name column should be restored to its default visible state.
+PASS: Extra column should be restored to its default hidden state.
 
