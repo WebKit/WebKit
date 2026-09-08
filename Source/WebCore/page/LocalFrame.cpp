@@ -356,6 +356,9 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
     ASSERT(!m_doc || m_doc->window());
     ASSERT(!m_doc || m_doc->window()->frame() == this);
 
+    if (newDocument && newDocument->firstPartyForCookies().isEmpty())
+        loader().updateFirstPartyForCookies();
+
     // Don't use m_doc because it can be overwritten and we want to guarantee
     // that the document is not destroyed during this function call.
     if (newDocument)

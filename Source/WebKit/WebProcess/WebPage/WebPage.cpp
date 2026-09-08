@@ -634,6 +634,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_webPageTesting(WebPageTesting::create(*this))
     , m_mainFrame(WebFrame::create(*this, parameters.mainFrameIdentifier))
     , m_pageGroup(WebProcess::singleton().webPageGroup(WTF::move(parameters.pageGroupData)))
+    , m_userAgent(WTF::move(parameters.userAgent))
 #if ENABLE(TILED_CA_DRAWING_AREA)
     , m_drawingAreaType(parameters.drawingAreaType)
 #endif
@@ -1168,8 +1169,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if HAVE(NSREFRESHCONTROLLER)
     setHasRefreshController(parameters.hasRefreshController);
 #endif
-
-    m_userAgent = WTF::move(parameters.userAgent);
 
     setMediaVolume(parameters.mediaVolume);
 

@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ blockThirdPartyStorage=true ] -->
+<!DOCTYPE html>
+<title>MemoryCache key must not change while the resource is cached</title>
+<script>
+// A @font-face in an injected user style sheet is registered while a frame's document is being
+// created, before FrameLoader::didBeginDocument() has set firstPartyForCookies on it. The font
+// resource is therefore added to the memory cache with an empty cache partition. Loading it fills
+// in firstPartyForCookies, which changes the partition ResourceRequest::cachePartition() derives
+// from it, so the resource's memory cache key no longer matches the key it is stored under. The
+// second frame then re-requests the font, MemoryCache::remove() looks up the new key and evicts a
+// different resource, and adding the new font hits the release assert in MemoryCache::add().
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addUserStyleSheet('@font-face { font-family: userStyleSheetFont; src: url(http://127.0.0.1:8000/cache/resources/no-store-font.py); }', true);
+}
+
+let loadedFrameCount = 0;
+
+function frameDone()
+{
+    // The font is served with Cache-Control: no-store so that re-requesting it is a Reload rather
+    // than a cache hit.
+    if (++loadedFrameCount == 1) {
+        addFrame();
+        return;
+    }
+    document.body.appendChild(document.createTextNode('PASS did not crash'));
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function addFrame()
+{
+    let frame = document.createElement('iframe');
+    frame.src = 'resources/memory-cache-partition-drift-frame.html';
+    document.body.appendChild(frame);
+}
+
+window.onload = addFrame;
+</script>
+<body>
+</body>
