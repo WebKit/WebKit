@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Reftest Reference</title>
+<link rel="author" name="Ahmad Saleem" href="mailto:ahmad.saleem792+github@gmail.com">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<script src="support/selections.js"></script>
+<style>
+    #layers {
+        position: relative;
+        z-index: 0;
+        margin-left: 20px;
+    }
+    #backdrop {
+        position: absolute;
+        z-index: -1;
+        left: -15px;
+        top: 0;
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+    #target {
+        position: absolute;
+        left: 0;
+        top: 0;
+        writing-mode: vertical-lr;
+        font: 100px/70px Ahem;
+        color: transparent;
+    }
+    #target::selection {
+        background: green;
+        color: transparent;
+    }
+</style>
+<p>Test passes if there is a filled square and <strong>no red</strong>.</p>
+<div id="layers">
+    <div id="backdrop"></div>
+    <div id="target">x</div>
+</div>
+<script>
+    const target = document.getElementById("target");
+    selectRangeWith(range => {
+        range.setStart(target.firstChild, 0);
+        range.setEnd(target.firstChild, 1);
+    });
+</script>
