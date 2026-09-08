@@ -1,0 +1,83 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true ] -->
+<html>
+<head>
+<meta http-equiv="content-language" content="en">
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="region" aria-live="polite" aria-relevant="removals additions"><p>Giants</p><p>Cubs</p></div>
+
+<script>
+var output = "This tests that emptying a live region entirely announces the removal, exactly once, for a region that asked to hear removals. Streamed content is re-rendered by emptying the region and refilling it later, so the snapshot the region is compared against deliberately survives the empty state. That makes it possible to announce the same removal on every later update, and to mistake the refilled text for new content.\n\n";
+
+var announcements = [];
+var region = document.getElementById("region");
+var announcement;
+var announcementCount;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested")
+        announcements.push(userInfo["AXAnnouncementKey"]);
+}
+
+async function mutateAndWaitForAnnouncement(mutate) {
+    var count = announcements.length;
+    mutate();
+    await waitFor(() => announcements.length > count);
+    announcement = announcements[announcements.length - 1];
+}
+
+async function runTest() {
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("region");
+    // The live region manager is initialized at the end of a cache update, so let one run before
+    // mutating anything.
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // Removing one of two children leaves the region with text, so this is an ordinary removal.
+    await mutateAndWaitForAnnouncement(() => region.firstElementChild.remove());
+    output += expect("announcement.includes('Giants')", "true");
+    output += expect("announcement.includes('AXIsLiveRegionRemoval = 1')", "true");
+
+    // Removing the rest empties the region. The text that went away still has to be announced, even
+    // though the snapshot it is compared against is kept rather than replaced by the empty state.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "");
+    output += expect("announcement.includes('Cubs')", "true");
+    output += expect("announcement.includes('AXIsLiveRegionRemoval = 1')", "true");
+
+    // A further update that leaves the region empty has nothing new to report. Waiting for the snapshot
+    // to be rebuilt is what makes this a distinct update: batched into the refill below, the region would
+    // never be compared while empty at all. This is the only live region on the page, so the build count
+    // tracks it alone.
+    announcementCount = announcements.length;
+    var buildCount = internals.liveRegionSnapshotBuildCount();
+    region.appendChild(document.createElement("span"));
+    await waitFor(() => internals.liveRegionSnapshotBuildCount() > buildCount);
+
+    // Refilling restores "Cubs" and adds "Bears". Only "Bears" is new: the kept snapshot still holds
+    // "Cubs", so it must not be announced a second time.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Cubs</p><p>Bears</p>");
+    output += expect("announcement.includes('Bears')", "true");
+    output += expect("announcement.includes('Cubs')", "false");
+    // Exactly one announcement since the region was emptied: the refill's.
+    output += expect("announcements.length", `${announcementCount + 1}`);
+
+    debug(output);
+    accessibilityController.removeNotificationListener();
+    finishJSTest();
+}
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+
+    runTest().catch(error => {
+        debug(output);
+        testFailed(`runTest() threw: ${error}`);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>

@@ -59,6 +59,27 @@ struct LiveRegionSnapshot {
     Vector<LiveRegionObject> objects;
     LiveRegionStatus liveRegionStatus { LiveRegionStatus::Off };
     OptionSet<LiveRegionRelevant> liveRegionRelevant { { LiveRegionRelevant::Additions, LiveRegionRelevant::Text } };
+    // Every object's text concatenated with runs of whitespace collapsed. Cached because change
+    // detection compares it on every update, and the previous snapshot's copy would otherwise be
+    // rebuilt from scratch each time.
+    String aggregatedText;
+    // For each object, the offset just past the last character it contributed to aggregatedText, so
+    // object i covers [end(i - 1), end(i)). Cached alongside the text because deriving it later would
+    // mean rebuilding the whole aggregate, and it is only meaningful when isTruncated is false.
+    Vector<size_t> objectEndOffsets;
+    // Whether any object carries text.
+    bool hasAnyText { false };
+    // Whether the region contains an atomic region, which must be announced in its entirety. Not
+    // derivable from an object's descendants, which are empty when its text comes from a label.
+    bool hasAtomicRegion { false };
+    // Whether this baseline was kept after the region went empty and that removal was already announced.
+    // The baseline is deliberately not replaced by the empty state, so without this the same removal
+    // would be announced again on every subsequent update that leaves the region empty.
+    bool announcedEmptyRemoval { false };
+    // Whether the region stayed empty long enough to count as genuinely cleared rather than mid-render.
+    bool settledEmpty { false };
+    // True when a limit stopped the walk, so this is an incomplete view of the region.
+    bool isTruncated { false };
 };
 
 } // namespace WebCore

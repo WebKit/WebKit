@@ -1,0 +1,119 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAriaLiveRegionManagementEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<meta http-equiv="content-language" content="en">
+<script src="../../../../resources/accessibility-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="region" aria-live="polite"></div>
+
+<script>
+var output = "This tests that a live region which is cleared and then given the same text again announces it again, the way status feedback like \"Moved Up\" repeated on a second arrow key press has to. Text identical to what the region held before is otherwise treated as unchanged, because a streamed response re-chunks into different objects holding the same text when it finishes. The two are told apart by how long the region stays empty -- a page rebuilding a region refills it within a task or two, while anything driven by a user action does not -- and by whether the text comes back in the same shape, since re-chunking can outlast that.\n\n";
+
+var announcements = [];
+var region = document.getElementById("region");
+var announcement;
+var announcementCount;
+
+// Comfortably longer than the settle delay in AXLiveRegionManager, so the clear counts as deliberate.
+var pastSettleDelay = 400;
+
+function notificationCallback(object, notification, userInfo) {
+    if (notification == "AXAnnouncementRequested")
+        announcements.push(userInfo["AXAnnouncementKey"]);
+}
+
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function mutateAndWaitForAnnouncement(mutate) {
+    var count = announcements.length;
+    mutate();
+    await waitFor(() => announcements.length > count);
+    announcement = announcements[announcements.length - 1];
+}
+
+async function runTest() {
+    accessibilityController.addNotificationListener(notificationCallback);
+    accessibilityController.accessibleElementById("region");
+    // The live region manager is initialized at the end of a cache update, so let one run before
+    // mutating anything.
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Moved Up</p>");
+    output += expect("announcement.includes('Moved Up')", "true");
+
+    // Clearing on its own says nothing: the default aria-relevant does not ask for removals.
+    announcementCount = announcements.length;
+    region.innerHTML = "";
+    await wait(pastSettleDelay);
+    output += expect("announcements.length", `${announcementCount}`);
+
+    // The same text again, after the region sat empty. This is a second thing to announce, not the
+    // first one restated.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Moved Up</p>");
+    output += expect("announcement.includes('Moved Up')", "true");
+    output += expect("announcements.length", `${announcementCount + 1}`);
+
+    // A region emptied and refilled with the same text in the next task over is one render in progress,
+    // not content being repeated, and stays silent. This is what a streamed response does when it
+    // finishes and its many small nodes collapse into a few large ones holding the same text.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Alpha</p><p>Beta</p>");
+    output += expect("announcement.includes('Alpha Beta')", "true");
+    announcementCount = announcements.length;
+    region.innerHTML = "";
+    await wait(10);
+    region.innerHTML = "<p>Alpha Beta</p>";
+    await wait(pastSettleDelay);
+    output += expect("announcements.length", `${announcementCount}`);
+
+    // Content returning after a deliberate clear is only new where it differs. Streaming that resumes
+    // must not replay everything the region already said.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>One two</p>");
+    region.innerHTML = "";
+    await wait(pastSettleDelay);
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>One two three</p>");
+    output += expect("announcement.includes('three')", "true");
+    output += expect("announcement.includes('One two')", "false");
+
+    // Text that comes back split across a different set of objects was rebuilt rather than repeated, so
+    // it stays silent even though the region sat empty for a while first. A response that takes its time
+    // collapsing its many small nodes into one at the end of a stream must not replay the whole thing.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Alpha</p><p>Beta</p><p>Gamma</p>");
+    announcementCount = announcements.length;
+    region.innerHTML = "";
+    await wait(pastSettleDelay);
+    region.innerHTML = "<p>Alpha Beta Gamma</p>";
+    await wait(pastSettleDelay);
+    output += expect("announcements.length", `${announcementCount}`);
+
+    // Streaming that resumes into an extra object announces only what it added. The object already there
+    // came back saying the same thing, so comparing the objects pairwise without also comparing how many
+    // there are would call this a repeat and replay the part the region had already said.
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Delta</p>");
+    region.innerHTML = "";
+    await wait(pastSettleDelay);
+    await mutateAndWaitForAnnouncement(() => region.innerHTML = "<p>Delta</p><p>Epsilon</p>");
+    output += expect("announcement.includes('Epsilon')", "true");
+    output += expect("announcement.includes('Delta')", "false");
+
+    debug(output);
+    accessibilityController.removeNotificationListener();
+    finishJSTest();
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    runTest().catch(error => {
+        debug(output);
+        testFailed(`runTest() threw: ${error}`);
+        finishJSTest();
+    });
+}
+</script>
+</body>
+</html>
