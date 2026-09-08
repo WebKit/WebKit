@@ -442,13 +442,8 @@ static void setOwnerWithIdentity(id<MTLResourceSPI> resource, auto webProcessID)
 
 void Device::setOwnerWithIdentity(id<MTLResource> resource) const
 {
-    if (auto optionalWebProcessID = webProcessID()) {
-        auto webProcessID = optionalWebProcessID->sendRight();
-        if (!webProcessID)
-            return;
-
+    if (auto webProcessID = this->webProcessID())
         WebGPU::setOwnerWithIdentity((id<MTLResourceSPI>)resource, webProcessID);
-    }
 }
 
 void Device::destroy()
@@ -657,10 +652,10 @@ void Device::setLabel(String&&)
     // Because MTLDevices are process-global, we can't set the label on it, because 2 contexts' labels would fight each other.
 }
 
-const std::optional<const MachSendRight> Device::webProcessID() const
+mach_port_t Device::webProcessID() const
 {
     auto scheduler = instance();
-    return scheduler ? scheduler->webProcessID() : std::nullopt;
+    return scheduler ? scheduler->webProcessID().sendRight() : MACH_PORT_NULL;
 }
 
 id<MTLBuffer> Device::dispatchCallBuffer()

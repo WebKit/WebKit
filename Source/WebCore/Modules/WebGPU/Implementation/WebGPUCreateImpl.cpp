@@ -57,9 +57,9 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction, const WebCore::P
         .cocoaDescriptor = WGPUInstanceCocoaDescriptor {
             .scheduleWorkBlock = scheduleWorkBlock.get(),
 #if HAVE(TASK_IDENTITY_TOKEN)
-            .webProcessResourceOwner = webProcessIdentity ? &webProcessIdentity->taskId() : nullptr,
+            .webProcessResourceOwner = webProcessIdentity ? webProcessIdentity->taskIdToken() : MACH_PORT_NULL,
 #else
-            .webProcessResourceOwner = nullptr,
+            .webProcessResourceOwner = MACH_PORT_NULL,
 #endif
         }
     };

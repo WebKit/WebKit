@@ -82,9 +82,7 @@ private:
     Deque<Ref<Texture>> m_inFlightFrames;
     size_t m_maximumInFlightFrames { 0 };
     Seconds m_lastDrainedFrameGPUCost { 0_s };
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    std::optional<const MachSendRight> m_webProcessID;
-#endif
+    const MachSendRight m_webProcessID;
     WGPUColorSpace m_colorSpace { WGPUColorSpace::SRGB };
     WGPUToneMappingMode m_toneMappingMode { WGPUToneMappingMode_Standard };
     WGPUCompositeAlphaMode m_alphaMode { WGPUCompositeAlphaMode_Premultiplied };

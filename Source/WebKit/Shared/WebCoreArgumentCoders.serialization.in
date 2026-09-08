@@ -3284,7 +3284,7 @@ header: <WebCore/ImageBuffer.h>
 
 [RValue] class WebCore::ProcessIdentity {
 #if HAVE(TASK_IDENTITY_TOKEN)
-    MachSendRight m_taskIdToken;
+    MachSendRight copyTaskIdSendRight();
 #endif
 };
 

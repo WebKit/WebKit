@@ -29,6 +29,7 @@
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 #include <wtf/ArgumentCoder.h>
+#include <wtf/Box.h>
 #include <wtf/MachSendRight.h>
 #else
 #endif
@@ -47,23 +48,33 @@ public:
 
     // Creates an empty process identity that does not grant any access.
     ProcessIdentity() = default;
-    WEBCORE_EXPORT ProcessIdentity(const ProcessIdentity&) = default;
+    ProcessIdentity(const ProcessIdentity&) = default;
+    ProcessIdentity(ProcessIdentity&&) = default;
 
     // Returns true for a process identity or false on empty identity.
     WEBCORE_EXPORT operator bool() const;
 
-    WEBCORE_EXPORT ProcessIdentity& operator=(const ProcessIdentity&);
+    // Two identities are equal when they grant access to the same process.
+#if HAVE(TASK_IDENTITY_TOKEN)
+    bool operator==(const ProcessIdentity& other) const { return taskIdToken() == other.taskIdToken(); }
+#else
+    bool operator==(const ProcessIdentity&) const { return true; }
+#endif
+
+    ProcessIdentity& operator=(const ProcessIdentity&) = default;
+    ProcessIdentity& operator=(ProcessIdentity&&) = default;
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-    task_id_token_t taskIdToken() const { return m_taskIdToken.sendRight(); }
-    const MachSendRight& taskId() const LIFETIME_BOUND { return m_taskIdToken; }
+    task_id_token_t taskIdToken() const { return m_taskIdToken ? m_taskIdToken->sendRight() : MACH_PORT_NULL; }
 #endif
 
 private:
 #if HAVE(TASK_IDENTITY_TOKEN)
     friend struct IPC::ArgumentCoder<ProcessIdentity>;
-    WEBCORE_EXPORT ProcessIdentity(MachSendRight&& taskIdToken);
-    MachSendRight m_taskIdToken;
+    WEBCORE_EXPORT explicit ProcessIdentity(MachSendRight&& taskIdToken);
+    MachSendRight copyTaskIdSendRight() const { return m_taskIdToken ? MachSendRight { *m_taskIdToken } : MachSendRight { }; }
+
+    Box<MachSendRight> m_taskIdToken;
 #endif
 };
 

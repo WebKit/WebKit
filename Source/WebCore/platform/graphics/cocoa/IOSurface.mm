@@ -894,6 +894,8 @@ void IOSurface::setContentsAlphaPremultiplication(std::optional<AlphaPremultipli
 void IOSurface::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
 {
     ASSERT(resourceOwner);
+    if (resourceOwner == m_resourceOwner)
+        return;
     m_resourceOwner = resourceOwner;
     setOwnershipIdentity(m_surface.get(), resourceOwner);
 }

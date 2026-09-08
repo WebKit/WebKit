@@ -336,7 +336,7 @@
     [Legacy] StructureParam WebKit::CoreIPCCVPixelBufferRef.m_sendRight
     [Legacy] StructureParam WebCore::GraphicsContextGLExternalImageSourceIOSurfaceHandle.handle
     [Legacy] StructureParam WebCore::GraphicsContextGLExternalImageSourceMTLSharedTextureHandle.handle
-    [Legacy] StructureParam WebCore::ProcessIdentity.m_taskIdToken
+    [Legacy] StructureParam WebCore::ProcessIdentity.copyTaskIdSendRight()
     [Legacy] StructureParam WebCore::SharedMemoryHandle.m_handle
     [Legacy] StructureParam WTF::MachSendRightAnnotated.sendRight
 

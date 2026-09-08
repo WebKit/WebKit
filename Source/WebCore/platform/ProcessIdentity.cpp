@@ -40,7 +40,7 @@ ProcessIdentity::ProcessIdentity(CurrentProcessTag)
     task_id_token_t identityToken;
     kern_return_t kr = task_create_identity_token(mach_task_self(), &identityToken);
     if (kr == KERN_SUCCESS)
-        m_taskIdToken = MachSendRight::adopt(identityToken);
+        m_taskIdToken = Box<MachSendRight>::create(MachSendRight::adopt(identityToken));
     else
         RELEASE_LOG_ERROR(Process, "task_create_identity_token() failed: %{private}s (%x)", mach_error_string(kr), kr);
 #endif
@@ -57,18 +57,10 @@ ProcessIdentity::operator bool() const
 
 #if HAVE(TASK_IDENTITY_TOKEN)
 ProcessIdentity::ProcessIdentity(MachSendRight&& taskIdToken)
-    : m_taskIdToken(WTF::move(taskIdToken))
 {
+    if (taskIdToken)
+        m_taskIdToken = Box<MachSendRight>::create(WTF::move(taskIdToken));
 }
 #endif
-
-ProcessIdentity& ProcessIdentity::operator=(const ProcessIdentity& other)
-{
-#if HAVE(TASK_IDENTITY_TOKEN)
-    m_taskIdToken = MachSendRight { other.m_taskIdToken };
-#endif
-    UNUSED_PARAM(other);
-    return *this;
-}
 
 }

@@ -220,7 +220,9 @@ public:
     RefPtr<XRSubImage> getXRViewSubImage(XRProjectionLayer&);
     RefPtr<XRSubImage> NODELETE getXRViewSubImage() const;
     id<MTLTexture> _Nullable getXRViewSubImageDepthTexture() const;
-    const std::optional<const MachSendRight> webProcessID() const;
+    // The task identity token of the process the resources should be attributed to,
+    // or MACH_PORT_NULL if the resources should not be attributed.
+    mach_port_t webProcessID() const;
 #if CPU(X86_64)
     bool isIntel() const { return [m_device.name localizedCaseInsensitiveContainsString:@"intel"]; }
 #else

@@ -57,11 +57,11 @@ Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
     const WGPUInstanceCocoaDescriptor& cocoaDescriptor = descriptor.cocoaDescriptor;
 
-    return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor.webProcessResourceOwner)));
+    return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, MachSendRight::create(cocoaDescriptor.webProcessResourceOwner)));
 }
 
-Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, const MachSendRight* webProcessResourceOwner)
-    : m_webProcessID(webProcessResourceOwner ? std::optional<MachSendRight>(*webProcessResourceOwner) : std::nullopt)
+Instance::Instance(WGPUScheduleWorkBlock scheduleWorkBlock, MachSendRight webProcessResourceOwner)
+    : m_webProcessID(WTF::move(webProcessResourceOwner))
     , m_scheduleWorkBlock(scheduleWorkBlock ? WTF::move(scheduleWorkBlock) : ^(WGPUWorkItem workItem) { defaultScheduleWork(WTF::move(workItem)); })
 {
 }
@@ -84,7 +84,7 @@ void Instance::scheduleWork(WorkItem&& workItem)
     m_scheduleWorkBlock(makeBlockPtr(WTF::move(workItem)).get());
 }
 
-const std::optional<const MachSendRight>& Instance::webProcessID() const
+const MachSendRight& Instance::webProcessID() const
 {
     return m_webProcessID;
 }

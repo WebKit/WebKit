@@ -53,13 +53,8 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
 }
 
 PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&, const Instance& instance)
-#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     : m_webProcessID(instance.webProcessID())
-#endif
 {
-#if !(HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN))
-    UNUSED_PARAM(instance);
-#endif
 }
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
@@ -69,12 +64,9 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
     m_existingRenderBuffers = WTF::move(m_renderBuffers);
     m_ioSurfaces = ioSurfaces;
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
-    if (m_webProcessID) {
-        mach_port_t webProcessID = m_webProcessID->sendRight();
-        if (webProcessID) {
-            for (IOSurface *surface in ioSurfaces)
-                IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
-        }
+    if (auto webProcessID = m_webProcessID.sendRight()) {
+        for (IOSurface *surface in ioSurfaces)
+            IOSurfaceSetOwnershipIdentity(bridge_cast(surface), webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
     }
 #endif
     m_renderBuffers.clear();
