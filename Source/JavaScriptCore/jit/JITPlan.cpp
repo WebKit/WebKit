@@ -214,15 +214,15 @@ void JITPlan::beginSignpostImpl()
     switch (m_stage) {
     case JITPlanStage::Preparing:
         WTFBeginSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
-        detalString = makeString("JSCJITPlanQueued:"_s, m_signpostMessage);
+        detalString = makeString("JSCJITPlanQueued:"_s, byteCast<char8_t>(m_signpostMessage.span()));
         break;
     case JITPlanStage::Compiling:
         WTFBeginSignpost(id, JSCJITCompiler, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
-        detalString = makeString("JSCJITCompiler:"_s, m_signpostMessage);
+        detalString = makeString("JSCJITCompiler:"_s, byteCast<char8_t>(m_signpostMessage.span()));
         break;
     case JITPlanStage::Ready:
         WTFBeginSignpost(id, JSCJITPlanReady, "%" PUBLIC_LOG_STRING, m_signpostMessage.data());
-        detalString = makeString("JSCJITPlanReady:"_s, m_signpostMessage);
+        detalString = makeString("JSCJITPlanReady:"_s, byteCast<char8_t>(m_signpostMessage.span()));
         break;
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
@@ -243,15 +243,15 @@ void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
     switch (m_stage) {
     case JITPlanStage::Preparing:
         WTFEndSignpost(id, JSCJITPlanQueued, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
-        detalString = makeString("JSCJITPlanQueued:"_s, m_signpostMessage, " "_s, detailStr);
+        detalString = makeString("JSCJITPlanQueued:"_s, byteCast<char8_t>(m_signpostMessage.span()), " "_s, detailStr);
         break;
     case JITPlanStage::Compiling:
         WTFEndSignpost(id, JSCJITCompiler, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
-        detalString = makeString("JSCJITCompiler:"_s, m_signpostMessage, " "_s, detailStr);
+        detalString = makeString("JSCJITCompiler:"_s, byteCast<char8_t>(m_signpostMessage.span()), " "_s, detailStr);
         break;
     case JITPlanStage::Ready:
         WTFEndSignpost(id, JSCJITPlanReady, "%" PUBLIC_LOG_STRING " %" PUBLIC_LOG_STRING, m_signpostMessage.data(), detailStr.characters());
-        detalString = makeString("JSCJITPlanReady:"_s, m_signpostMessage, " "_s, detailStr);
+        detalString = makeString("JSCJITPlanReady:"_s, byteCast<char8_t>(m_signpostMessage.span()), " "_s, detailStr);
         break;
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();

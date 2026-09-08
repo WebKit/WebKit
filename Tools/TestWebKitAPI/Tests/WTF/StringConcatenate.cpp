@@ -31,6 +31,8 @@
 #include <cstdint>
 #include <unicode/uvernum.h>
 #include <wtf/HexNumber.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
@@ -61,6 +63,33 @@ struct S {
 TEST(WTF, StringConcatenate)
 {
     EXPECT_STREQ("hello world", makeString("hello"_s, " "_s, "world"_s).utf8().data());
+}
+
+TEST(WTF, StringConcatenate_CString)
+{
+    // CString does not know its encoding, so it cannot be concatenated; the caller has to pick one.
+    static_assert(!std::is_constructible_v<WTF::StringTypeAdapter<CString>, const CString&>);
+
+    // U+00E9 is the two bytes 0xC3 0xA9 in UTF-8, and two separate characters in Latin-1.
+    CString bytes { u8"jos\u00e9"_span };
+    EXPECT_EQ(5UZ, bytes.length());
+
+    auto utf8 = makeString(byteCast<char8_t>(bytes.span()));
+    EXPECT_EQ(4U, utf8.length());
+    EXPECT_EQ(String::fromUTF8(bytes.span()), utf8);
+    EXPECT_STREQ(bytes.data(), utf8.utf8().data());
+
+    auto latin1 = makeString(byteCast<Latin1Character>(bytes.span()));
+    EXPECT_EQ(5U, latin1.length());
+    EXPECT_EQ(String::fromLatin1(bytes.data()), latin1);
+}
+
+TEST(WTF, StringConcatenate_CStringView)
+{
+    static constexpr char8_t utf8WithNullTerminator[] = u8"jos\u00e9";
+    auto utf8 = CStringView::fromUTF8(std::span { utf8WithNullTerminator });
+    EXPECT_EQ(4U, makeString(utf8).length());
+    EXPECT_EQ(String::fromUTF8(u8"jos\u00e9"_span), makeString(utf8));
 }
 
 TEST(WTF, StringConcatenate_Int)

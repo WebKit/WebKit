@@ -256,7 +256,7 @@ void WebInspectorUIProxy::platformSave(Vector<WebCore::InspectorFrontendClient::
     // as web-inspector. So we can't rely on the URL being a valid file:/// URL
     // unfortunately.
     URL url { saveDatas[0].url };
-    auto filename = url.path().substring(1).utf8();
+    auto filename = url.path().substring(1);
 
     const gchar* downloadsDir = g_get_user_special_dir(G_USER_DIRECTORY_DOWNLOAD);
     if (!downloadsDir) {

@@ -133,7 +133,7 @@ TextStream& TextStream::operator<<(const AtomString& string)
 
 TextStream& TextStream::operator<<(const CString& string)
 {
-    m_text.append(string);
+    m_text.append(byteCast<Latin1Character>(string.span()));
     return *this;
 }
 

@@ -534,7 +534,7 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
     if (!findBidiCommand(messageObject, &handler, parameters)) {
         RELEASE_LOG(WebDriverBiDi, "Failed to find appropriate BiDi command on WebDriver service. Relaying to the browser.");
         auto sessionID = m_session->id();
-        m_session->relayBidiCommand(makeString(message.payload), *commandId, [completionHandler = WTF::move(completionHandler), sessionID, this](WebSocketMessageHandler::Message&& resultMessage) {
+        m_session->relayBidiCommand(String::fromUTF8(message.payload.span()), *commandId, [completionHandler = WTF::move(completionHandler), sessionID, this](WebSocketMessageHandler::Message&& resultMessage) {
             auto connection = m_bidiServer->connection(sessionID);
             if (!connection) {
                 RELEASE_LOG(WebDriverBiDi, "Failed to find connection for session ID %s. Ignoring message.", sessionID.utf8().data());

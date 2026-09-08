@@ -312,17 +312,17 @@ static String preferredBufferFormats(WebKitURISchemeRequest* request, JSON::Arra
         builder.append("<li>Formats for "_s);
         switch (tranche.usage) {
         case RendererBufferFormat::Usage::Rendering:
-            builder.append("<b>rendering</b> using device <i>"_s, !drmDevice.renderNode.isNull() ? drmDevice.renderNode : drmDevice.primaryNode, "</i>"_s);
+            builder.append("<b>rendering</b> using device <i>"_s, String::fromUTF8(!drmDevice.renderNode.isNull() ? drmDevice.renderNode.span() : drmDevice.primaryNode.span()), "</i>"_s);
             jsonObject->setString("Usage"_s, "Rendering"_s);
             jsonObject->setString("Device"_s, String::fromUTF8(!drmDevice.renderNode.isNull() ? drmDevice.renderNode.span() : drmDevice.primaryNode.span()));
             break;
         case RendererBufferFormat::Usage::Scanout:
-            builder.append("<b>scanout</b> using device <i>"_s, drmDevice.primaryNode, "</i>"_s);
+            builder.append("<b>scanout</b> using device <i>"_s, String::fromUTF8(drmDevice.primaryNode.span()), "</i>"_s);
             jsonObject->setString("Usage"_s, "Scanout"_s);
             jsonObject->setString("Device"_s, String::fromUTF8(drmDevice.primaryNode.span()));
             break;
         case RendererBufferFormat::Usage::Mapping:
-            builder.append("<b>mapping</b> using device <i>"_s, drmDevice.primaryNode, "</i>"_s);
+            builder.append("<b>mapping</b> using device <i>"_s, String::fromUTF8(drmDevice.primaryNode.span()), "</i>"_s);
             jsonObject->setString("Usage"_s, "Mapping"_s);
             jsonObject->setString("Device"_s, String::fromUTF8(drmDevice.primaryNode.span()));
             break;

@@ -58,7 +58,7 @@ CString InlineCallFrame::inferredName() const
 
 String InlineCallFrame::inferredNameWithHash() const
 {
-    return makeString(inferredName(), "#"_s, hash());
+    return makeString(byteCast<char8_t>(inferredName().span()), "#"_s, hash());
 }
 
 void InlineCallFrame::dumpBriefFunctionInformation(PrintStream& out) const
