@@ -106,6 +106,8 @@ NS_SWIFT_UI_ACTOR
 - (void)resetDOMDoubleClickGestureRecognizer;
 - (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
 
+- (NSPoint)panVelocityInView:(nullable NSView *)view;
+
 + (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;
 
 @end
