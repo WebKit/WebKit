@@ -93,6 +93,15 @@ MediaTime MediaFragmentURIParser::endTime()
     return m_endTime;
 }
 
+Vector<String> MediaFragmentURIParser::trackIdentifiers()
+{
+    if (!m_url.isValid())
+        return { };
+    if (m_timeFormat == None)
+        parseTimeFragment();
+    return m_trackIdentifiers;
+}
+
 void MediaFragmentURIParser::parseFragments()
 {
     auto fragmentString = m_url.fragmentIdentifier();
@@ -160,8 +169,17 @@ void MediaFragmentURIParser::parseTimeFragment()
         ASSERT(fragment.first.is8Bit());
         ASSERT(fragment.second.is8Bit());
 
+        // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#naming-track
+        // Track selection is denoted by the name track. Multiple track dimensions are allowed,
+        // so every occurrence is kept (unlike the "last occurrence wins" rule that applies to
+        // the temporal dimension below).
+        if (fragment.first == "track"_s) {
+            m_trackIdentifiers.append(fragment.second);
+            continue;
+        }
+
         // http://www.w3.org/2008/WebVideo/Fragments/WD-media-fragments-spec/#naming-time
-        // Temporal clipping is denoted by the name t, and specified as an interval with a begin 
+        // Temporal clipping is denoted by the name t, and specified as an interval with a begin
         // time and an end time
         if (fragment.first != "t"_s)
             continue;

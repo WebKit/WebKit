@@ -1,0 +1,10 @@
+When a "track=" fragment is repeated, every occurrence is considered (unlike "t="), and the last id that matches an audio track is the one that gets selected.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks.length == '2') OK
+EVENT(canplaythrough)
+EXPECTED (video.audioTracks[0].enabled == 'false') OK
+EXPECTED (video.audioTracks[1].enabled == 'true') OK
+END OF TEST
+
