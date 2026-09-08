@@ -9,7 +9,7 @@ class LayoutNode
     {
 
         if (!stringOrElement)
-            this.element = document.createElement("div");
+            this.element = createHTMLElement("div");
         else if (stringOrElement instanceof Element)
             this.element = stringOrElement;
         else if (typeof stringOrElement === "string" || stringOrElement instanceof String)
@@ -363,9 +363,21 @@ function performScheduledLayout()
     nodesRequiringChildrenUpdate.clear();
 }
 
+// Always create the controls in the HTML namespace. The media element's document is not
+// necessarily an HTML or XHTML document: it may be an SVG (image/svg+xml), MathML or generic
+// XML document, in which case document.createElement() creates elements in the null namespace.
+// Those elements are not HTMLElements, so they have no style property and no offsetWidth or
+// offsetHeight, and a <style> element in the null namespace is not a stylesheet at all.
+function createHTMLElement(tagName)
+{
+    return document.createElementNS("http://www.w3.org/1999/xhtml", tagName);
+}
+
 function elementFromString(elementString)
 {
-    const element = document.createElement("div");
+    // The parsed fragment inherits the namespace of the element it is parsed in, so creating
+    // the container in the HTML namespace is enough for the whole subtree to be HTML elements.
+    const element = createHTMLElement("div");
     element.innerHTML = elementString;
     return element.firstElementChild;
 }

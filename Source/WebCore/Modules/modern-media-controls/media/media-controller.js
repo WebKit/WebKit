@@ -83,7 +83,7 @@ class MediaController
 
         this.hasPlayed = !media.paused || !!media.played.length;
 
-        this.container = shadowRoot.appendChild(document.createElement("div"));
+        this.container = shadowRoot.appendChild(createHTMLElement("div"));
 
         this._updateControlsIfNeeded();
         this._usesLTRUserInterfaceLayoutDirection = false;
@@ -311,18 +311,18 @@ class MediaController
         if (this._statsContainer)
             return true;
 
-        this._statsContainer = this.container.appendChild(document.createElement("div"))
+        this._statsContainer = this.container.appendChild(createHTMLElement("div"))
         this._statsContainer.className = "stats-container";
 
-        let table = this._statsContainer.appendChild(document.createElement("table"));
+        let table = this._statsContainer.appendChild(createHTMLElement("table"));
 
         function createRow(label) {
-            let rowElement = table.appendChild(document.createElement("tr"));
+            let rowElement = table.appendChild(createHTMLElement("tr"));
 
-            let labelElement = rowElement.appendChild(document.createElement("th"));
+            let labelElement = rowElement.appendChild(createHTMLElement("th"));
             labelElement.textContent = label;
 
-            let valueElement = rowElement.appendChild(document.createElement("td"));
+            let valueElement = rowElement.appendChild(createHTMLElement("td"));
             return valueElement;
         }
         let sourceValueElement = createRow(UIString("Source"));
@@ -467,8 +467,8 @@ class MediaController
         // content box of its host (excluding borders). These properties are not affected
         // by CSS transforms, so they give the correct dimensions regardless of any
         // transform applied to the media element or its ancestors.
-        this.controls.width = Math.round(this.container.offsetWidth * this.controls.scaleFactor);
-        this.controls.height = Math.round(this.container.offsetHeight * this.controls.scaleFactor);
+        this.controls.width = Math.round((this.container.offsetWidth ?? 0) * this.controls.scaleFactor);
+        this.controls.height = Math.round((this.container.offsetHeight ?? 0) * this.controls.scaleFactor);
     }
 
     _updateTextTracksClassList()
