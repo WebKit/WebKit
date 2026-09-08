@@ -463,7 +463,7 @@ RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decod
     }
 
     if (!decoder.connection) {
-        FramePromise::AutoRejectProducer producer;
+        FramePromise::AutoRejectProducer producer("Decoding task did not complete"_s);
         auto promise = producer.promise();
 
         decoder.pendingFrames.append({ timeStamp, data, width, height, WTF::move(producer) });
