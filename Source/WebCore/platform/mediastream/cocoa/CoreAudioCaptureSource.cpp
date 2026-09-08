@@ -88,8 +88,10 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const CaptureDevice& device,
     auto source = adoptRef(*new CoreAudioCaptureSource(device, coreAudioDevice->deviceID(), WTF::move(hashSalts), pageIdentifier));
 #elif PLATFORM(IOS_FAMILY)
     auto coreAudioDevice = AVAudioSessionCaptureDeviceManager::singleton().audioSessionDeviceWithUID(device.persistentId());
-    if (!coreAudioDevice)
+    if (!coreAudioDevice && !device.isDefault()) {
+        AVAudioSessionCaptureDeviceManager::singleton().scheduleUpdateCaptureDevices();
         return CaptureSourceOrError({ "No AVAudioSessionCaptureDevice device"_s, MediaAccessDenialReason::PermissionDenied });
+    }
 
     auto source = adoptRef(*new CoreAudioCaptureSource(device, 0, WTF::move(hashSalts), pageIdentifier));
 #endif
