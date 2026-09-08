@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "MediaImage.h"
+#include <WebCore/CallToActionLabel.h>
+#include <WebCore/MediaImage.h>
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -39,6 +40,9 @@ struct MediaMetadataInit {
     String trackIdentifier;
 #endif
     Vector<MediaImage> artwork;
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    CallToActionLabel callToActionLabel { CallToActionLabel::Visit };
+#endif
 };
 
 }

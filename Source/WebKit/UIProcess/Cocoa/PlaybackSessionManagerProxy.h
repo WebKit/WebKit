@@ -125,6 +125,9 @@ private:
     void skipAd() final;
     void canSkipAdChanged(bool);
 #endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void canShowCallToActionChanged(bool hasHandler, WebCore::CallToActionLabel);
+#endif
     void seekToTime(double, double, double) final;
     void fastSeek(double time) final;
     void beginScanningForward() final;
@@ -321,6 +324,9 @@ private:
     void isInWindowFullscreenActiveChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool isInWindow);
 #if HAVE(PIP_SKIP_PREROLL)
     void canSkipAdChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool value);
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void canShowCallToActionChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool hasHandler, WebCore::CallToActionLabel);
 #endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(IPC::Connection&, WebCore::HTMLMediaElementIdentifier, bool);

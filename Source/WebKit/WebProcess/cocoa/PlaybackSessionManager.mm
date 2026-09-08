@@ -46,6 +46,7 @@
 #import <WebCore/EventNames.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/MediaMetadata.h>
 #import <WebCore/MediaSelectionOption.h>
 #import <WebCore/Navigator.h>
 #import <WebCore/NavigatorMediaSession.h>
@@ -321,7 +322,7 @@ void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElem
 
     page->videoControlsManagerDidChange();
     page->send(Messages::PlaybackSessionManagerProxy::SetUpPlaybackControlsManagerWithID(*m_controlsManagerContextId, mediaElement.isVideo()));
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     setMediaSessionAndRegisterAsObserver();
 #endif
 }
@@ -584,7 +585,7 @@ void PlaybackSessionManager::selectLegibleMediaOption(WebCore::HTMLMediaElementI
     legibleMediaSelectionIndexChanged(contextId, model->legibleMediaSelectedIndex());
 }
 
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
 void PlaybackSessionManager::setMediaSessionAndRegisterAsObserver()
 {
     if (!m_controlsManagerContextId) {
@@ -612,7 +613,7 @@ void PlaybackSessionManager::setMediaSessionAndRegisterAsObserver()
 
     if (mediaSession.get() != m_mediaSession.get()) {
         m_mediaSession = mediaSession;
-        m_mediaSession->addObserver(*this);
+        protect(m_mediaSession)->addObserver(*this);
         actionHandlersChanged();
     }
 }
@@ -625,6 +626,7 @@ void PlaybackSessionManager::actionHandlersChanged()
     if (!m_controlsManagerContextId)
         return;
 
+#if HAVE(PIP_SKIP_PREROLL)
     bool skipAdHasHandler = m_mediaSession->hasActionHandler(MediaSessionAction::Skipad);
 
     bool skipAdIsDisabledQuirk = false;
@@ -633,14 +635,43 @@ void PlaybackSessionManager::actionHandlersChanged()
 
     if (RefPtr page = m_page.get(); page && !skipAdIsDisabledQuirk)
         page->send(Messages::PlaybackSessionManagerProxy::CanSkipAdChanged(*m_controlsManagerContextId, skipAdHasHandler));
-}
+#endif
 
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    updateCallToActionState();
+#endif
+}
+#endif // HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+
+#if HAVE(PIP_SKIP_PREROLL)
 void PlaybackSessionManager::skipAd(WebCore::HTMLMediaElementIdentifier contextId)
 {
     if (!m_mediaSession)
         return;
 
     m_mediaSession->callActionHandler({ .action = MediaSessionAction::Skipad });
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void PlaybackSessionManager::updateCallToActionState()
+{
+    if (!m_mediaSession || !m_controlsManagerContextId)
+        return;
+
+    bool hasHandler = protect(m_mediaSession)->hasActionHandler(MediaSessionAction::CallToAction);
+    auto label = m_mediaSession->metadata() ? m_mediaSession->metadata()->callToActionLabel() : CallToActionLabel::Visit;
+
+    RELEASE_LOG(Media, "PlaybackSessionManager::updateCallToActionState hasHandler=%d label=%hhu", hasHandler, static_cast<uint8_t>(label));
+
+    if (RefPtr page = m_page.get())
+        page->send(Messages::PlaybackSessionManagerProxy::CanShowCallToActionChanged(*m_controlsManagerContextId, hasHandler, label));
+}
+
+void PlaybackSessionManager::metadataChanged(const RefPtr<WebCore::MediaMetadata>& metadata)
+{
+    RELEASE_LOG(Media, "PlaybackSessionManager::metadataChanged hasMetadata=%d title=%s artist=%s album=%s", !!metadata, metadata ? metadata->title().utf8().data() : "", metadata ? metadata->artist().utf8().data() : "", metadata ? metadata->album().utf8().data() : "");
+    updateCallToActionState();
 }
 #endif
 
