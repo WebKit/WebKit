@@ -70,6 +70,12 @@ class ScrubbingSupport extends MediaControllerSupport
         delete this._wasPausedWhenScrubbingStarted;
     }
 
+    seekToTime(time)
+    {
+        this.mediaController.media.currentTime = time;
+        this.mediaController.controls.timeControl.currentTime = time;
+    }
+
     syncControl()
     {
         const media = this.mediaController.media;

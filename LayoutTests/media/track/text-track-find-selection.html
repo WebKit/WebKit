@@ -1,0 +1,99 @@
+<!-- webkit-test-runner [ FindInVideoEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../video-test.js></script>
+        <script>
+
+            var videoA, videoB, cueMatchCount;
+
+            async function loadAndShowTrack(video)
+            {
+                const trackEl = video.querySelector('track');
+                await Promise.all([
+                    video.readyState >= HTMLMediaElement.HAVE_METADATA
+                        ? Promise.resolve()
+                        : new Promise(r => video.addEventListener('loadedmetadata', r, { once: true })),
+                    trackEl.readyState === HTMLTrackElement.LOADED
+                        ? Promise.resolve()
+                        : new Promise(r => trackEl.addEventListener('load', r, { once: true }))
+                ]);
+                video.textTracks[0].mode = "showing";
+            }
+
+            async function runTest()
+            {
+                if (!window.internals) {
+                    failTest("This test requires window.internals.");
+                    return;
+                }
+
+                videoA = document.getElementsByTagName('video')[0];
+                videoB = document.getElementsByTagName('video')[1];
+                await loadAndShowTrack(videoA);
+                await loadAndShowTrack(videoB);
+
+                cueMatchCount = internals.findCueMatches("findme", []).length;
+                consoleWrite("** Both videos contribute their 5 cues to the match set.");
+                testExpected("cueMatchCount", 10);
+
+                consoleWrite("<br>** Forward navigation advances video A's selected index; video B stays unselected.");
+                for (var i = 0; i < 5; ++i) {
+                    await testRunner.findString("findme", ["WrapAround"]);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoA)", i);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoB)", null);
+                }
+
+                consoleWrite("<br>** Crossing forward into video B advances its index and deselects video A.");
+                for (var i = 0; i < 5; ++i) {
+                    await testRunner.findString("findme", ["WrapAround"]);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoB)", i);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoA)", null);
+                }
+
+                consoleWrite("<br>** Backwards navigation walks video B back down; video A stays unselected.");
+                for (var i = 3; i >= 0; --i) {
+                    await testRunner.findString("findme", ["Backwards", "WrapAround"]);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoB)", i);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoA)", null);
+                }
+
+                consoleWrite("<br>** Crossing backwards into video A walks back through its cues and deselects video B.");
+                for (var i = 4; i >= 0; --i) {
+                    await testRunner.findString("findme", ["Backwards", "WrapAround"]);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoA)", i);
+                    testExpected("internals.selectedCaptionFindMatchIndex(videoB)", null);
+                }
+
+                consoleWrite("<br>** Backwards WrapAround from video A's first cue wraps to video B's last cue.");
+                await testRunner.findString("findme", ["Backwards", "WrapAround"]);
+                testExpected("internals.selectedCaptionFindMatchIndex(videoB)", 4);
+                testExpected("internals.selectedCaptionFindMatchIndex(videoA)", null);
+
+                consoleWrite("<br>** Forward WrapAround from video B's last cue wraps to video A's first cue.");
+                await testRunner.findString("findme", ["WrapAround"]);
+                testExpected("internals.selectedCaptionFindMatchIndex(videoA)", 0);
+                testExpected("internals.selectedCaptionFindMatchIndex(videoB)", null);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p><br/>Tests that Find advances the selected caption marker and highlights only one marker across multiple videos.</p>
+        <video controls width="600">
+            <source src="../content/long-test.mp4" type="video/mp4">
+            <track src="captions-webvtt/find-selection.vtt" kind="captions" default>
+        </video>
+        <video controls width="600">
+            <source src="../content/long-test.mp4" type="video/mp4">
+            <track src="captions-webvtt/find-selection.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

@@ -217,6 +217,12 @@ class MediaController
         this._updateControlsSize();
     }
 
+    set captionFindMatchStateGeneration(generation)
+    {
+        // The parameter is unused, the assignment itself signals that the match state changed.
+        this._updateCaptionFindMatchTimes();
+    }
+
     set usesLTRUserInterfaceLayoutDirection(flag)
     {
         if (this._usesLTRUserInterfaceLayoutDirection === flag)
@@ -379,6 +385,14 @@ class MediaController
 
     // Private
 
+    _updateCaptionFindMatchTimes()
+    {
+        if (!this.controls || !this.controls.timeControl)
+            return;
+        this.controls.timeControl.captionFindMatchTimes = (this.host && this.host.captionFindMatchTimes) || [];
+        this.controls.timeControl.captionFindMatchSelectedIndex = this.host ? this.host.captionFindMatchSelectedIndex : null;
+    }
+
     _updateControlsIfNeeded()
     {
         const layoutTraits = this.layoutTraits;
@@ -410,6 +424,7 @@ class MediaController
             this.controls.fadeIn();
             this.container.replaceChild(this.controls.element, previousControls.element);
             this.controls.usesLTRUserInterfaceLayoutDirection = previousControls.usesLTRUserInterfaceLayoutDirection;
+            this._updateCaptionFindMatchTimes();
         } else
             this.container.appendChild(this.controls.element);
 

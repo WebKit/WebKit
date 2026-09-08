@@ -39,6 +39,8 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DocumentMarkers.h>
 #include <WebCore/DocumentView.h>
+#include <WebCore/Element.h>
+#include <WebCore/EventHandler.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FindRevealAlgorithms.h>
 #include <WebCore/FloatQuad.h>
@@ -48,11 +50,14 @@
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLMediaElement.h>
+#include <WebCore/HitTestRequest.h>
+#include <WebCore/HitTestResult.h>
 #include <WebCore/ImageAnalysisQueue.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageOverlay.h>
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/NodeInlines.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PathUtilities.h>
@@ -62,8 +67,10 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
+#include <algorithm>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -126,33 +133,25 @@ static size_t cueIndexNearestPlayhead(const Vector<FindMatch>& merged, size_t ma
     auto* cue = std::get_if<CueMatch>(&merged[matchIndex]);
     if (!cue)
         return matchIndex;
+
     RefPtr media = cue->mediaElement.get();
     if (!media)
         return matchIndex;
 
-    auto isSameMediaCue = [&](size_t index) {
-        auto* candidate = std::get_if<CueMatch>(&merged[index]);
-        return candidate && candidate->mediaElement.get() == media.get();
-    };
+    auto& times = media->captionFindMatchTimes();
+    if (times.isEmpty())
+        return matchIndex;
+    auto currentTime = MediaTime::createWithDouble(media->currentTime());
 
-    double currentTime = media->currentTime();
-    size_t nearestIndex = matchIndex;
-
+    // matchIndex is the run's first cue going forward, its last going backward.
+    size_t lastIndex = times.size() - 1;
     if (!backwards) {
-        for (size_t index = matchIndex; index < merged.size() && isSameMediaCue(index); ++index) {
-            nearestIndex = index;
-            if (std::get<CueMatch>(merged[index]).seekTime.toDouble() >= currentTime)
-                return index;
-        }
-        return nearestIndex;
+        size_t stepsForward = static_cast<size_t>(std::ranges::lower_bound(times, currentTime) - times.begin());
+        return matchIndex + std::min(stepsForward, lastIndex);
     }
 
-    for (size_t index = matchIndex + 1; index && isSameMediaCue(index - 1); --index) {
-        nearestIndex = index - 1;
-        if (std::get<CueMatch>(merged[index - 1]).seekTime.toDouble() <= currentTime)
-            return index - 1;
-    }
-    return nearestIndex;
+    size_t stepsBack = static_cast<size_t>(times.end() - std::ranges::upper_bound(times, currentTime));
+    return matchIndex - std::min(stepsBack, lastIndex);
 }
 
 static std::optional<size_t> indexClosestToSelection(const Vector<FindMatch>& merged, const std::optional<SimpleRange>& selection, bool backwards)
@@ -315,6 +314,100 @@ std::optional<FrameIdentifier> FindController::applyFindMatch(const FindMatch& m
     return std::nullopt;
 #endif
 }
+
+#if ENABLE(VIDEO)
+void FindController::updateCaptionFindMatchIndicators(const Vector<CueMatch>& cueMatches)
+{
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return;
+    protect(webPage->corePage())->clearCaptionFindMatchIndicators();
+
+    RefPtr<HTMLMediaElement> runElement;
+    Vector<MediaTime> runTimes;
+    auto flushRun = [&] {
+        if (runElement && !runTimes.isEmpty())
+            runElement->setCaptionFindMatchTimes(WTF::move(runTimes));
+        runTimes = { };
+    };
+
+    for (const auto& match : cueMatches) {
+        RefPtr element = match.mediaElement.get();
+        if (!element)
+            continue;
+        if (element != runElement) {
+            flushRun();
+            runElement = WTF::move(element);
+        }
+        runTimes.append(match.seekTime);
+    }
+    flushRun();
+}
+
+void FindController::updateSelectedCaptionFindMatch()
+{
+    RefPtr<HTMLMediaElement> selectedElement;
+    std::optional<unsigned> selectedIndex;
+
+    if (m_lastFoundRange) {
+        if (auto* cue = std::get_if<CueMatch>(&*m_lastFoundRange)) {
+            if (RefPtr element = cue->mediaElement.get()) {
+                auto& times = element->captionFindMatchTimes();
+                auto it = std::ranges::lower_bound(times, cue->seekTime);
+                if (it != times.end() && *it == cue->seekTime) {
+                    selectedElement = WTF::move(element);
+                    selectedIndex = static_cast<unsigned>(it - times.begin());
+                }
+            }
+        }
+    }
+
+    // At most one marker should be highlighted across all videos, so clear the previously selected one.
+    if (RefPtr previous = m_selectedCaptionMatchElement.get(); previous && previous != selectedElement)
+        previous->setCaptionFindMatchSelectedIndex(std::nullopt);
+
+    if (selectedElement) {
+        selectedElement->setCaptionFindMatchSelectedIndex(selectedIndex);
+        m_selectedCaptionMatchElement = *selectedElement;
+    } else
+        m_selectedCaptionMatchElement = nullptr;
+}
+
+void FindController::selectClickedCaptionMatch(HTMLMediaElement& element, unsigned cueIndex)
+{
+    RefPtr webPage = m_webPage.get();
+    if (!webPage || m_lastFindString.isEmpty())
+        return;
+
+    // Rebuild so the index reflects the current document rather than a stale snapshot.
+    auto coreOptions = core(m_lastFindOptions);
+    auto cueMatches = protect(webPage->corePage())->findCueMatches(m_lastFindString, coreOptions);
+    auto domRanges = protect(webPage->corePage())->findTextMatches(m_lastFindString, coreOptions, m_lastFindMaxMatchCount, false).ranges;
+    auto merged = mergeByDocumentOrder(*protect(webPage->corePage()), WTF::move(domRanges), WTF::move(cueMatches));
+
+    std::optional<size_t> clickedIndex;
+    unsigned elementCueCount = 0;
+    for (size_t index = 0; index < merged.size(); ++index) {
+        auto* cue = std::get_if<CueMatch>(&merged[index]);
+        if (!cue || cue->mediaElement.get() != &element)
+            continue;
+        if (elementCueCount == cueIndex) {
+            clickedIndex = index;
+            break;
+        }
+        ++elementCueCount;
+    }
+    if (!clickedIndex)
+        return;
+
+    m_lastFoundRange = WTF::move(merged[*clickedIndex]);
+    m_foundStringMatchIndex = static_cast<uint32_t>(*clickedIndex);
+    updateSelectedCaptionFindMatch();
+
+    // Sync the find UI.
+    webPage->send(Messages::WebPageProxy::DidUpdateFoundMatchIndex(m_lastFindString, static_cast<uint32_t>(merged.size()), static_cast<int32_t>(*clickedIndex)));
+}
+#endif // ENABLE(VIDEO)
 
 void FindController::updateFindUIAfterIncrementalFind(bool found, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap didWrap, std::optional<FrameIdentifier> idOfFrameContainingString, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<IntRect>&&, uint32_t, int32_t, bool)>&& completionHandler)
 {
@@ -509,6 +602,13 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
     WebCore::FindOptions coreOptions = core(options);
 
+#if ENABLE(VIDEO)
+    // Remember the search so a later cue-marker click can rebuild the merged match list.
+    m_lastFindString = string;
+    m_lastFindOptions = options;
+    m_lastFindMaxMatchCount = maxMatchCount;
+#endif
+
     // iOS will reveal the selection through a different mechanism, and
     // we need to avoid sending the non-painted selection change to the UI process
     // so that it does not clear the selection out from under us.
@@ -531,6 +631,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 #if ENABLE(VIDEO)
         cueMatches = protect(webPage->corePage())->findCueMatches(string, coreOptions);
         cueMatchCount = cueMatches.size();
+        updateCaptionFindMatchIndicators(cueMatches);
         if (cueMatches.isEmpty())
 #endif
         {
@@ -633,6 +734,10 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
         }
     }
 
+#if ENABLE(VIDEO)
+    updateSelectedCaptionFindMatch();
+#endif
+
     if (found && !options.contains(FindOptions::DoNotSetSelection)) {
         RefPtr selectedFrame = frameWithSelection(protect(m_webPage->corePage()).get());
         m_findIndicator->didFindString(selectedFrame);
@@ -727,6 +832,7 @@ void FindController::hideFindUI()
     m_lastFoundRange = std::nullopt;
 #if ENABLE(VIDEO)
     protect(protect(m_webPage.get())->corePage())->clearFindCaptionTracks();
+    protect(protect(m_webPage.get())->corePage())->clearCaptionFindMatchIndicators();
 #endif
     if (RefPtr findPageOverlay = m_findPageOverlay.get())
         m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
@@ -884,10 +990,61 @@ void FindController::didScrollAffectingFindIndicatorPosition()
         m_findIndicator->update(frameWithSelection(protect(m_webPage->corePage())), true, false);
 }
 
+#if ENABLE(VIDEO)
+struct MediaControlsHit {
+    Ref<HTMLMediaElement> mediaElement;
+    std::optional<unsigned> cueIndex;
+};
+
+// Hit-test each local root frame since the selected frame may be remote
+static std::optional<MediaControlsHit> mediaControlsHitAtPoint(Page& page, const IntPoint& windowPosition)
+{
+    constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+    AtomString cueIndexAttribute { "data-find-cue-index"_s };
+
+    for (auto& rootFrame : page.rootFrames()) {
+        RefPtr view = rootFrame->view();
+        if (!view)
+            continue;
+
+        auto result = rootFrame->eventHandler().hitTestResultAtPoint(view->windowToContents(windowPosition), hitType);
+        RefPtr node = result.innerNonSharedNode();
+        if (!node || !node->isInShadowTree())
+            continue;
+
+        std::optional<unsigned> cueIndex;
+        for (RefPtr current = node; current; current = current->parentOrShadowHostNode()) {
+            if (!cueIndex) {
+                if (RefPtr element = dynamicDowncast<Element>(current.get()); element && element->hasAttribute(cueIndexAttribute))
+                    cueIndex = parseInteger<unsigned>(element->getAttribute(cueIndexAttribute));
+            }
+            if (RefPtr mediaElement = dynamicDowncast<HTMLMediaElement>(current.get()))
+                return MediaControlsHit { Ref { *mediaElement }, cueIndex };
+        }
+    }
+
+    return std::nullopt;
+}
+#endif // ENABLE(VIDEO)
+
 bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEvent)
 {
-    if (mouseEvent.type() == PlatformEvent::Type::MousePressed)
-        hideFindUI();
+    if (mouseEvent.type() == PlatformEvent::Type::MousePressed) {
+        bool pressOnMediaControls = false;
+#if ENABLE(VIDEO)
+        if (RefPtr webPage = m_webPage.get()) {
+            Ref corePage = *protect(webPage->corePage());
+            const auto clickPoint = flooredIntPoint(mouseEvent.position());
+            if (auto mediaHit = mediaControlsHitAtPoint(corePage, clickPoint)) {
+                pressOnMediaControls = true;
+                if (mediaHit->cueIndex)
+                    selectClickedCaptionMatch(mediaHit->mediaElement.get(), *mediaHit->cueIndex);
+            }
+        }
+#endif
+        if (!pressOnMediaControls)
+            hideFindUI();
+    }
 
     return false;
 }

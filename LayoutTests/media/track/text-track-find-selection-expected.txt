@@ -1,0 +1,63 @@
+
+Tests that Find advances the selected caption marker and highlights only one marker across multiple videos.
+
+
+** Both videos contribute their 5 cues to the match set.
+EXPECTED (cueMatchCount == '10') OK
+
+** Forward navigation advances video A's selected index; video B stays unselected.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '0') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '1') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '2') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '3') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '4') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+
+** Crossing forward into video B advances its index and deselects video A.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '0') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '1') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '2') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '3') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '4') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+
+** Backwards navigation walks video B back down; video A stays unselected.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '3') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '2') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '1') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '0') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+
+** Crossing backwards into video A walks back through its cues and deselects video B.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '4') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '3') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '2') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '1') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '0') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+
+** Backwards WrapAround from video A's first cue wraps to video B's last cue.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == '4') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == 'null') OK
+
+** Forward WrapAround from video B's last cue wraps to video A's first cue.
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoA) == '0') OK
+EXPECTED (internals.selectedCaptionFindMatchIndex(videoB) == 'null') OK
+
+END OF TEST
+
