@@ -55,7 +55,6 @@
         },
         {
             "name": "clearDOMStorageItems",
-            "targetTypes": ["page"],
             "parameters": [
                 { "name": "storageId", "$ref": "StorageId" }
             ]
