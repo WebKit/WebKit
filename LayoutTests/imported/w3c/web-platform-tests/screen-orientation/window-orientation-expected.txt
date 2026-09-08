@@ -1,0 +1,13 @@
+
+FAIL window.orientation attribute should be present assert_true: window.orientation should exist expected true got false
+FAIL window.orientation should return a number assert_equals: window.orientation should be a number expected "number" but got "undefined"
+FAIL window.orientation should return a valid orientation angle assert_true: window.orientation should be one of the valid values expected true got false
+FAIL window.onorientationchange attribute should be present assert_true: window.onorientationchange should exist expected true got false
+FAIL window.onorientationchange should be null by default assert_equals: window.onorientationchange should be null initially expected (object) null but got (undefined) undefined
+PASS window.onorientationchange should be settable and gettable
+FAIL orientationchange event should fire when orientation is changed programmatically promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+FAIL window.orientation should correctly map screen.orientation.angle values assert_equals: window.orientation (undefined) should match expected mapping of screen.orientation.angle (0) expected (number) 0 but got (undefined) undefined
+FAIL window.orientation should only return standardized values assert_unreached: Invalid orientation value: undefined Reached unreachable code
+FAIL window.orientation should return correct values for different orientation locks promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+FAIL Multiple orientation changes should fire multiple orientationchange events with valid values promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
+
