@@ -18,6 +18,7 @@ imported/w3c/web-platform-tests/content-security-policy/inheritance/about-blank-
 #######################
 # Tests that time out #
 #######################
+editing/secure-input/bfcache-restore-preserves-secure-input.html [ Skip ]
 fast/events/pageshow-pagehide-on-back-cached-with-frames.html [ Timeout ]
 fast/events/pageshow-pagehide-on-back-cached.html [ Timeout ]
 fast/history/back-from-page-with-focused-iframe.html [ Timeout ]
@@ -51,6 +52,8 @@ http/tests/media/media-stream/speech-recognition-iframe-allow-attribute.html [ F
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/navigation/cross-origin-navigation-fires-onload.html [ Failure ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ Failure ]
+http/tests/secure-input/cross-origin-subframe-navigation-from-focused-password-resets-secure-input.html [ Failure ]
+http/tests/secure-input/mainframe-navigation-with-focused-cross-origin-subframe-password-resets-secure-input.html [ Failure ]
 http/tests/site-isolation/inspector/debugger/pause-in-cross-origin-iframe.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/scriptParsed-frame-target.html [ Pass ]
 http/tests/site-isolation/inspector/debugger/setBreakpoint-cross-origin-iframe.html [ Pass ]

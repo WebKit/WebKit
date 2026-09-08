@@ -1783,6 +1783,10 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
 void WebLocalFrameLoaderClient::didRestoreFromBackForwardCache()
 {
     m_frameCameFromBackForwardCache = true;
+
+    // Schedule a full editor state update in case the secure input state needs to be updated.
+    if (RefPtr webPage = m_frame->page())
+        webPage->scheduleFullEditorStateUpdate();
 }
 
 void WebLocalFrameLoaderClient::didCacheBackForwardItem(BackForwardItemIdentifier itemID, BackForwardFrameItemIdentifier frameItemID)
