@@ -47,6 +47,14 @@ using namespace WebCore;
 
 enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste, Custom };
 
+static OptionSet<DragApplicationFlags> applicationFlagsForDrop(GdkDragContext* context)
+{
+    OptionSet<DragApplicationFlags> flags;
+    if (context && gtk_drag_get_source_widget(context))
+        flags.add(DragApplicationFlags::IsSource);
+    return flags;
+}
+
 DropTarget::DropTarget(GtkWidget* webView)
     : m_webView(webView)
     , m_leaveTimer(RunLoop::mainSingleton(), "DropTarget::LeaveTimer"_s, this, &DropTarget::leaveTimerFired)
@@ -154,7 +162,7 @@ void DropTarget::enter(IntPoint&& position, unsigned time)
     ASSERT(page);
     page->resetCurrentDragInformation();
 
-    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())), applicationFlagsForDrop(m_drop.get()));
     page->dragEntered(dragData);
 }
 
@@ -168,7 +176,7 @@ void DropTarget::update(IntPoint&& position, unsigned time)
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())));
+    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())), applicationFlagsForDrop(m_drop.get()));
     page->dragUpdated(dragData);
 }
 
@@ -196,8 +204,10 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     case DropTargetType::URIList: {
         gint length;
         const auto* uriListData = gtk_selection_data_get_data_with_length(data, &length);
-        if (length > 0)
-            m_selectionData->setURIList(String(unsafeMakeSpan(uriListData, length)));
+        if (length > 0) {
+            // GTK3 has no portal file list, so the uri-list is the grant.
+            m_selectionData->setTrustedDrop(String(unsafeMakeSpan(uriListData, length)), { });
+        }
         break;
     }
     case DropTargetType::NetscapeURL: {
@@ -248,7 +258,7 @@ void DropTarget::leaveTimerFired()
     ASSERT(page);
 
     SelectionData emptyData;
-    DragData dragData(m_selectionData ? &m_selectionData.value() : &emptyData, *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), { });
+    DragData dragData(m_selectionData ? &m_selectionData.value() : &emptyData, *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), { }, applicationFlagsForDrop(m_drop.get()));
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 
@@ -276,7 +286,7 @@ void DropTarget::drop(IntPoint&& position, unsigned time)
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    OptionSet<DragApplicationFlags> flags;
+    OptionSet<DragApplicationFlags> flags = applicationFlagsForDrop(m_drop.get());
     if (gdk_drag_context_get_selected_action(m_drop.get()) == GDK_ACTION_COPY)
         flags.add(DragApplicationFlags::IsCopyKeyDown);
     DragData dragData(&m_selectionData.value(), position, convertWidgetPointToScreenPoint(m_webView, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(m_drop.get())), flags);

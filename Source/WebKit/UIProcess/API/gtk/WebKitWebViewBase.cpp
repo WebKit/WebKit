@@ -68,6 +68,7 @@
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/DragData.h>
 #include <WebCore/Image.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NotImplemented.h>
@@ -2595,6 +2596,36 @@ void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& 
 void webkitWebViewBaseDidPerformDragControllerAction(WebKitWebViewBase* webViewBase)
 {
     webViewBase->priv->dropTarget->didPerformAction();
+}
+
+void webkitWebViewBaseSynthesizeFileDropForTesting(WebKitWebViewBase* webViewBase, const String& uriList, Vector<String>&& portalFilenames, FileDropSource source, int x, int y)
+{
+    RefPtr page = webViewBase->priv->pageProxy.get();
+    if (!page)
+        return;
+
+    // Same trust decision DropTarget makes, so the test runs the production logic.
+    SelectionData selectionData;
+    OptionSet<DragApplicationFlags> flags;
+
+    switch (source) {
+    case FileDropSource::External:
+        selectionData.setTrustedDrop(uriList, WTF::move(portalFilenames));
+        break;
+    case FileDropSource::WebOrSameApp:
+        selectionData.setTrustedDrop(uriList, WTF::move(portalFilenames));
+        flags.add(DragApplicationFlags::IsSource);
+        break;
+    case FileDropSource::UntrustedURIList:
+        selectionData.setURIList(uriList);
+        break;
+    }
+
+    IntPoint position(x, y);
+    DragData dragData(&selectionData, position, position, DragOperation::Copy, flags);
+    page->dragEntered(dragData);
+    page->dragUpdated(dragData);
+    page->performDragOperation(dragData, { }, { }, { });
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

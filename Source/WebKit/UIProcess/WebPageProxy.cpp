@@ -4507,6 +4507,9 @@ void WebPageProxy::didPerformDragControllerAction(std::optional<WebCore::DragOpe
 void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, std::optional<ShareableBitmap::Handle>&& dragImageHandle, IntPoint&& dragImageHotspot)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
+    // Filenames are a UIProcess grant and never valid coming up from the web process.
+    selectionData.clearFilenames();
+
     if (RefPtr pageClient = this->pageClient()) {
         RefPtr dragImage = dragImageHandle ? ShareableBitmap::create(WTF::move(*dragImageHandle)) : nullptr;
         pageClient->startDrag(WTF::move(selectionData), dragOperationMask, WTF::move(dragImage), WTF::move(dragImageHotspot));

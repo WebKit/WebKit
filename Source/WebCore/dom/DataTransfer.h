@@ -125,6 +125,9 @@ private:
     {
 #if PLATFORM(COCOA)
         return !forDrag() || forFileDrag();
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+        // Paste stays denied: the GTK3 clipboard still maps uri-list to paths.
+        return forFileDrag();
 #else
         // Check https://webkit.org/b/271957 before allowing file access for your port.
         return false;
