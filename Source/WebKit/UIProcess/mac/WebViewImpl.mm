@@ -822,6 +822,48 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @end
 
+@interface WKPromisedImageContext : NSObject
+- (instancetype)initWithFileName:(NSString *)fileName data:(NSData *)data url:(NSString *)url;
+
+@property (nonatomic, readonly) NSString *fileName;
+@property (nonatomic, readonly) NSData *data;
+@property (nonatomic, readonly) NSString *url;
+@end
+
+@implementation WKPromisedImageContext {
+    RetainPtr<NSString> _fileName;
+    RetainPtr<NSData> _data;
+    RetainPtr<NSString> _url;
+}
+
+- (instancetype)initWithFileName:(NSString *)fileName data:(NSData *)data url:(NSString *)url
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _fileName = fileName;
+    _data = data;
+    _url = url;
+    return self;
+}
+
+- (NSString *)fileName
+{
+    return _fileName;
+}
+
+- (NSData *)data
+{
+    return _data;
+}
+
+- (NSString *)url
+{
+    return _url;
+}
+
+@end
+
 #if HAVE(TOUCH_BAR)
 
 @interface WKTextListTouchBarViewController : NSViewController {
@@ -4791,8 +4833,8 @@ NSString *WebViewImpl::fileNameForFilePromiseProvider(NSFilePromiseProvider *pro
     if (RetainPtr userInfo = dynamic_objc_cast<WKPromisedAttachmentContext>(provider.userInfo))
         return [userInfo fileName];
 
-    if (m_promisedImageDragData)
-        return m_promisedImageDragData->filename.createNSString().autorelease();
+    if (RetainPtr imageContext = dynamic_objc_cast<WKPromisedImageContext>(provider.userInfo))
+        return [imageContext fileName];
 
     return nil;
 }
@@ -4825,20 +4867,18 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
         return;
     }
 
-    if (m_promisedImageDragData) {
-        RetainPtr<NSData> data;
-        Ref image = m_promisedImageDragData->image;
-        if (image->data() && !image->data()->isEmpty())
-            data = protect(image->data())->makeContiguous()->createNSData();
-        if (!data && !m_promisedImageDragData->url.isEmpty()) {
-            RetainPtr imageURL = adoptNS([[NSURL alloc] initWithString:m_promisedImageDragData->url.createNSString().get()]);
+    if (RetainPtr imageContext = dynamic_objc_cast<WKPromisedImageContext>(provider.userInfo)) {
+        String imageURLString { [imageContext url] };
+        RetainPtr data = [imageContext data];
+        if (!data && !imageURLString.isEmpty()) {
+            RetainPtr imageURL = adoptNS([[NSURL alloc] initWithString:[imageContext url]]);
             data = [NSData dataWithContentsOfURL:imageURL.get()];
         }
         if (data) {
             NSError *error = nil;
             if ([data writeToURL:fileURL options:NSDataWritingAtomic error:&error]) {
-                if (!m_promisedImageDragData->url.isEmpty())
-                    FileSystem::setMetadataURL(fileURL.path, m_promisedImageDragData->url);
+                if (!imageURLString.isEmpty())
+                    FileSystem::setMetadataURL(fileURL.path, imageURLString);
                 completionHandler(nil);
             } else
                 completionHandler(error);
@@ -4987,8 +5027,15 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, ShareableBitmap::Hand
                     [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
                     draggingItems = @[ defaultDraggingItem.get() ];
                 } else if (canUseFilePromiseForImageDrag) {
-                    RetainPtr imageUTI = protectedThis->m_promisedImageDragData->imageUTI.createNSString();
+                    auto& promisedImageDragData = *protectedThis->m_promisedImageDragData;
+                    RetainPtr imageUTI = promisedImageDragData.imageUTI.createNSString();
                     RetainPtr provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:imageUTI.get() delegate:(id<NSFilePromiseProviderDelegate>)view.get()]);
+                    RetainPtr<NSData> imageData;
+                    Ref image = promisedImageDragData.image;
+                    if (image->data() && !image->data()->isEmpty())
+                        imageData = protect(image->data())->makeContiguous()->createNSData();
+                    RetainPtr context = adoptNS([[WKPromisedImageContext alloc] initWithFileName:promisedImageDragData.filename.createNSString() data:imageData url:promisedImageDragData.url.createNSString()]);
+                    [provider setUserInfo:context];
                     RetainPtr defaultDraggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
                     [defaultDraggingItem setDraggingFrame:draggingFrame contents:dragNSImage];
                     draggingItems = @[ defaultDraggingItem.get() ];
