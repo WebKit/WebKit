@@ -108,8 +108,6 @@ private:
     bool needsPendingResourceHandling() const override { return false; }
     void childrenChanged(const ChildChange&) override;
 
-    bool hasGradientTransformAttribute() const;
-
     const Ref<SVGAnimatedEnumeration> m_spreadMethod { SVGAnimatedEnumeration::create(this, SVGSpreadMethodPad) };
     const Ref<SVGAnimatedEnumeration> m_gradientUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
     const Ref<SVGAnimatedTransformList> m_gradientTransform { SVGAnimatedTransformList::create(this) };
