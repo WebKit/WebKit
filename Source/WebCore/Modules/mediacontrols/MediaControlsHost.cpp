@@ -1054,11 +1054,12 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
     if (inWindowFullscreen())
         return;
 
-    RefPtr previouslySelectedTextTrack = m_previouslySelectedTextTrack;
+    RefPtr previouslySelectedTextTrack = std::exchange(m_previouslySelectedTextTrack, nullptr);
     if (!previouslySelectedTextTrack)
         return;
 
-    RefPtr textTracks = m_mediaElement->textTracks();
+    Ref mediaElement = m_mediaElement.get();
+    RefPtr textTracks = mediaElement->textTracks();
     for (unsigned i = 0; textTracks && i < textTracks->length(); ++i) {
         RefPtr textTrack = textTracks->item(i);
         ASSERT(textTrack);
@@ -1068,8 +1069,8 @@ void MediaControlsHost::restorePreviouslySelectedTextTrackIfNecessary()
         if (previouslySelectedTextTrack != textTrack)
             textTrack->setMode(TextTrack::Mode::Disabled);
     }
-    previouslySelectedTextTrack->setMode(TextTrack::Mode::Showing);
-    m_previouslySelectedTextTrack = nullptr;
+
+    mediaElement->setSelectedTextTrack(previouslySelectedTextTrack.get());
 }
 
 #if ENABLE(MEDIA_SESSION)
