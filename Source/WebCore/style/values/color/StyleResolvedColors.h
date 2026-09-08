@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +25,32 @@
 
 #pragma once
 
-#include "CSSColorLayers.h"
-#include "StyleColor.h"
-#include <wtf/UniqueRef.h>
+#include <WebCore/Color.h>
 
 namespace WebCore {
-
-enum class BlendMode : uint8_t;
-class Color;
-
 namespace Style {
 
-struct ColorResolutionState;
+class ComputedStyleProperties;
 
-struct ColorLayers {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ColorLayers);
+// Stores colors from a computed style that a CurrentColor will need to resolve.
+class ResolvedColors {
+    WTF_MAKE_TZONE_ALLOCATED(ResolvedColors);
 
-    BlendMode blendMode;
-    CommaSeparatedVector<Color> colors;
+public:
+    explicit ResolvedColors(WebCore::Color currentColor, WebCore::Color accentColor);
 
-    bool operator==(const ColorLayers&) const = default;
+    static ResolvedColors fromStyle(const ComputedStyleProperties&);
+
+    // This grabs the visited link color from the style, instead of the 'normal' color.
+    static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&);
+
+    WebCore::Color currentColor() const { return m_currentColor; }
+    WebCore::Color accentColor() const { return m_accentColor; }
+
+private:
+    WebCore::Color m_currentColor;
+    WebCore::Color m_accentColor;
 };
-
-inline bool operator==(const UniqueRef<ColorLayers>& a, const UniqueRef<ColorLayers>& b)
-{
-    return a.get() == b.get();
-}
-
-Color toStyleColor(const CSS::ColorLayers&, ColorResolutionState&);
-WebCore::Color resolveColor(const ColorLayers&, const ResolvedColors&);
-bool containsCurrentColor(const ColorLayers&);
-
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ColorLayers&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ColorLayers&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const ColorLayers&);
 
 } // namespace Style
 } // namespace WebCore

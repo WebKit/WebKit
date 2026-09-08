@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "StyleColor.h"
+#include "StyleColorResolutionState.h"
 #include "StyleKeyword+Logging.h"
 #include "StylePrimitiveNumericTypes+Logging.h"
 #include "StyleResolvedColor.h"
@@ -88,11 +89,11 @@ template<typename D> Style::Color toStyleColor(const CSS::RelativeColor<D>& unre
     return { ResolvedColor { WTF::move(color) } };
 }
 
-template<typename D> WebCore::Color resolveColor(const RelativeColor<D>& relative, const WebCore::Color& currentColor)
+template<typename D> WebCore::Color resolveColor(const RelativeColor<D>& relative, const ResolvedColors& resolvedColors)
 {
     return resolveNoConversionDataRequired(
         CSS::RelativeColorResolver<D> {
-            .origin = relative.origin.resolveColor(currentColor),
+            .origin = relative.origin.resolveColor(resolvedColors),
             .components = relative.components
         }
     );

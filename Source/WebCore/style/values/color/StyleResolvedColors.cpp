@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <WebCore/CSSResolvedColor.h>
-#include <WebCore/Color.h>
-#include <wtf/Forward.h>
+#include "config.h"
+#include "StyleResolvedColors.h"
 
 namespace WebCore {
 namespace Style {
 
-struct Color;
-struct ColorResolutionState;
-
-struct ResolvedColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ResolvedColor);
-
-    WebCore::Color color;
-
-    bool operator==(const ResolvedColor&) const = default;
-};
-
-Color toStyleColor(const CSS::ResolvedColor&, ColorResolutionState&);
-
-inline WebCore::Color resolveColor(const ResolvedColor& absoluteColor, const ResolvedColors&)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor, WebCore::Color accentColor)
+    : m_currentColor(currentColor)
+    , m_accentColor(accentColor)
 {
-    return absoluteColor.color;
 }
 
-constexpr bool containsCurrentColor(const ResolvedColor&)
+ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
 {
-    return false;
+    auto currentColor = style.color();
+    WebCore::Color resolvedAccentColor = [&] () {
+        auto accentColorOrDefault = style.accentColor().colorOrDefaultColor();
+
+        // We're sure that style.accentColor() won't have any AccentColor, since those got
+        // replaced with the parent's accent color during style building. So just give a null
+        // color for AccentColor, it doesn't matter since we won't need to use it.
+        return resolveColor(accentColorOrDefault, ResolvedColors { currentColor, { } });
+    }();
+
+    return ResolvedColors(style.color(), resolvedAccentColor);
 }
 
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ResolvedColor&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ResolvedColor&);
+ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
+{
+    auto currentColor = style.color();
+    WebCore::Color resolvedAccentColor = [&] () {
+        auto accentColorOrDefault = style.accentColor().colorOrDefaultColor();
+        return resolveColor(accentColorOrDefault, ResolvedColors { currentColor, { } });
+    }();
 
-WTF::TextStream& operator<<(WTF::TextStream&, const ResolvedColor&);
+    return ResolvedColors(style.visitedLinkColorResolvingCurrentColor(), resolvedAccentColor);
+}
 
 } // namespace Style
 } // namespace WebCore
