@@ -607,6 +607,13 @@ void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, uns
     [NSApp _setCurrentEvent:nil];
 }
 
+static NSScreen *firstScreen()
+{
+    NSScreen *firstScreen = [[NSScreen screens] firstObject];
+    RELEASE_ASSERT_WITH_MESSAGE(firstScreen, "No screens found, possibly due to no WindowServer session. This configuration is not supported.");
+    return firstScreen;
+}
+
 void EventSenderProxy::mouseScrollBy(int x, int y)
 {
     auto cgScrollEvent = adoptCF(CGEventCreateScrollWheelEvent2(0, kCGScrollEventUnitLine, 2, y, x, 0));
@@ -614,7 +621,7 @@ void EventSenderProxy::mouseScrollBy(int x, int y)
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - m_position.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [firstScreen() frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     NSEvent *event = [NSEvent eventWithCGEvent:cgScrollEvent.get()];
@@ -636,7 +643,7 @@ void EventSenderProxy::mouseScrollByWithWheelAndMomentumPhases(int x, int y, int
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [[[NSScreen screens] objectAtIndex:0] frame].size.height - m_position.y);
+    CGPoint lastGlobalMousePosition = CGPointMake(m_position.x, [firstScreen() frame].size.height - m_position.y);
     CGEventSetLocation(cgScrollEvent.get(), lastGlobalMousePosition);
 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
@@ -702,7 +709,7 @@ void EventSenderProxy::sendWheelEvent(EventTimestamp timestamp, double windowX, 
     // Set the CGEvent location in flipped coords relative to the first screen, which
     // compensates for the behavior of +[NSEvent eventWithCGEvent:] when the event has
     // no associated window. See <rdar://problem/17180591>.
-    CGPoint flippedWindowMousePosition = CGPointMake(windowX, [[[NSScreen screens] objectAtIndex:0] frame].size.height - windowY);
+    CGPoint flippedWindowMousePosition = CGPointMake(windowX, [firstScreen() frame].size.height - windowY);
     CGEventSetLocation(cgScrollEvent.get(), flippedWindowMousePosition);
 
     CGEventSetIntegerValueField(cgScrollEvent.get(), kCGScrollWheelEventIsContinuous, 1);
