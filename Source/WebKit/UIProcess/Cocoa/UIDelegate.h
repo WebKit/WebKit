@@ -187,6 +187,9 @@ private:
         void requestWebAuthenticationConditonalMediationRegistration(const WTF::String&, Vector<WTF::String>&& relatedOrigins, CompletionHandler<void(std::optional<bool>)>&&) final;
 #endif
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+#if ENABLE(APPLE_PAY)
+        void didCompleteApplePayPayment(WebPageProxy&) final;
+#endif
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
         void didDisableInspectorBrowserDomain(WebPageProxy&) final;
 
@@ -316,6 +319,9 @@ private:
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler : 1;
         bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler : 1;
+#endif
+#if ENABLE(APPLE_PAY)
+        bool webViewDidCompleteApplePayPayment : 1;
 #endif
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;

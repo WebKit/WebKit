@@ -32,6 +32,7 @@
 #include "MessageSenderInlines.h"
 #include "PaymentSetupConfigurationWebKit.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcess.h"
@@ -151,7 +152,14 @@ void WebPaymentCoordinator::completeCouponCodeChange(std::optional<WebCore::Appl
 
 void WebPaymentCoordinator::completePaymentSession(WebCore::ApplePayPaymentAuthorizationResult&& result)
 {
+    bool didSucceed = result.isFinalState() && result.status == WebCore::ApplePayPaymentAuthorizationResult::Success;
+
     send(Messages::WebPaymentCoordinatorProxy::CompletePaymentSession(WTF::move(result)));
+
+    if (didSucceed) {
+        if (RefPtr webPage = m_webPage.get())
+            webPage->send(Messages::WebPageProxy::DidCompleteApplePayPayment());
+    }
 }
 
 void WebPaymentCoordinator::abortPaymentSession()
