@@ -1,5 +1,7 @@
 
 PASS Property justify-items value 'normal'
+PASS Property justify-items value 'unsafe normal'
+PASS Property justify-items value 'safe normal'
 PASS Property justify-items value 'stretch'
 PASS Property justify-items value 'baseline'
 PASS Property justify-items value 'last baseline'

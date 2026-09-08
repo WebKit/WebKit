@@ -11,4 +11,10 @@ PASS e.style['place-items'] = "last baseline flex-start" should not set unrelate
 PASS e.style['place-items'] = "stretch right legacy" should set align-items
 PASS e.style['place-items'] = "stretch right legacy" should set justify-items
 PASS e.style['place-items'] = "stretch right legacy" should not set unrelated longhands
+PASS e.style['place-items'] = "safe normal" should set align-items
+PASS e.style['place-items'] = "safe normal" should set justify-items
+PASS e.style['place-items'] = "safe normal" should not set unrelated longhands
+PASS e.style['place-items'] = "safe normal unsafe normal" should set align-items
+PASS e.style['place-items'] = "safe normal unsafe normal" should set justify-items
+PASS e.style['place-items'] = "safe normal unsafe normal" should not set unrelated longhands
 

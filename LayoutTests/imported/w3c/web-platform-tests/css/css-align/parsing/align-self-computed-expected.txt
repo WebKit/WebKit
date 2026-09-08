@@ -1,6 +1,8 @@
 
 PASS Property align-self value 'auto'
 PASS Property align-self value 'normal'
+PASS Property align-self value 'unsafe normal'
+PASS Property align-self value 'safe normal'
 PASS Property align-self value 'stretch'
 PASS Property align-self value 'baseline'
 PASS Property align-self value 'last baseline'

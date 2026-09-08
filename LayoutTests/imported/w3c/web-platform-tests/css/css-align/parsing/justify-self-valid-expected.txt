@@ -1,6 +1,8 @@
 
 PASS e.style['justify-self'] = "auto" should set the property value
 PASS e.style['justify-self'] = "normal" should set the property value
+PASS e.style['justify-self'] = "unsafe normal" should set the property value
+PASS e.style['justify-self'] = "safe normal" should set the property value
 PASS e.style['justify-self'] = "stretch" should set the property value
 PASS e.style['justify-self'] = "baseline" should set the property value
 PASS e.style['justify-self'] = "first baseline" should set the property value

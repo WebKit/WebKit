@@ -10341,7 +10341,7 @@
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::AlignItems",
                 "parser-function": "consumeAlignItems",
-                "parser-grammar-unused": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
+                "parser-grammar-unused": "[ <overflow-position>? normal ] | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals.",
                 "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | baseline | stretch"
             },
@@ -10380,7 +10380,7 @@
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::AlignSelf",
                 "parser-function": "consumeAlignSelf",
-                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
+                "parser-grammar-unused": "auto | [ <overflow-position>? normal ] | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals.",
                 "comment": "Alternate definition in css-flexbox - auto | flex-start | flex-end | center | baseline | stretch"
             },
@@ -10652,7 +10652,7 @@
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::JustifySelf",
                 "parser-function": "consumeJustifySelf",
-                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ]",
+                "parser-grammar-unused": "auto | [ <overflow-position>? normal ] | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."
             },
             "specification": {
@@ -10672,7 +10672,7 @@
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::JustifyItems",
                 "parser-function": "consumeJustifyItems",
-                "parser-grammar-unused": "[ normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ] | legacy | legacy ] && [ left | right | center ]",
+                "parser-grammar-unused": "[ [ <overflow-position>? normal ] | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ] | legacy | legacy ] && [ left | right | center ]",
                 "parser-grammar-unused-reason": "Needs support for default values on optionals."
             },
             "specification": {

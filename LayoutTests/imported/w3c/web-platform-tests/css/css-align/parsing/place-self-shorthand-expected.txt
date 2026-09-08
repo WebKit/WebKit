@@ -11,4 +11,10 @@ PASS e.style['place-self'] = "last baseline flex-start" should not set unrelated
 PASS e.style['place-self'] = "unsafe self-start stretch" should set align-self
 PASS e.style['place-self'] = "unsafe self-start stretch" should set justify-self
 PASS e.style['place-self'] = "unsafe self-start stretch" should not set unrelated longhands
+PASS e.style['place-self'] = "safe normal" should set align-self
+PASS e.style['place-self'] = "safe normal" should set justify-self
+PASS e.style['place-self'] = "safe normal" should not set unrelated longhands
+PASS e.style['place-self'] = "safe normal unsafe normal" should set align-self
+PASS e.style['place-self'] = "safe normal unsafe normal" should set justify-self
+PASS e.style['place-self'] = "safe normal unsafe normal" should not set unrelated longhands
 

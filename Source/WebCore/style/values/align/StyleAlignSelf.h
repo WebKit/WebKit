@@ -32,13 +32,13 @@
 namespace WebCore {
 namespace Style {
 
-// <'align-self'> = auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>
+// <'align-self'> = auto | <overflow-position>? normal | stretch | <baseline-position> | <overflow-position>? <self-position>
 // https://drafts.csswg.org/css-align/#propdef-align-self
-// Additional values, `anchor-center` added to <self-position> by CSS Anchor Positioning.
+// Additional value, `anchor-center` added to <self-position> by CSS Anchor Positioning.
 // https://drafts.csswg.org/css-anchor-position-1/#anchor-center
 struct AlignSelf {
     constexpr AlignSelf(CSS::Keyword::Auto);
-    constexpr AlignSelf(CSS::Keyword::Normal);
+    constexpr AlignSelf(CSS::Keyword::Normal, std::optional<OverflowPosition> = std::nullopt);
     constexpr AlignSelf(CSS::Keyword::Stretch);
     constexpr AlignSelf(CSS::Keyword::Baseline, std::optional<BaselineAlignmentPreference> = std::nullopt);
     constexpr AlignSelf(CSS::Keyword::Center, std::optional<OverflowPosition> = std::nullopt);
@@ -109,8 +109,8 @@ constexpr AlignSelf::AlignSelf(CSS::Keyword::Auto)
 {
 }
 
-constexpr AlignSelf::AlignSelf(CSS::Keyword::Normal)
-    : AlignSelf { PrimaryKind::Normal }
+constexpr AlignSelf::AlignSelf(CSS::Keyword::Normal, std::optional<OverflowPosition> overflow)
+    : AlignSelf { PrimaryKind::Normal, overflow }
 {
 }
 
@@ -211,10 +211,10 @@ constexpr bool AlignSelf::canHaveOverflowPosition(PrimaryKind primary)
 {
     switch (primary) {
     case PrimaryKind::Auto:
-    case PrimaryKind::Normal:
     case PrimaryKind::Stretch:
     case PrimaryKind::Baseline:
         return false;
+    case PrimaryKind::Normal:
     case PrimaryKind::Center:
     case PrimaryKind::Start:
     case PrimaryKind::End:
@@ -236,7 +236,7 @@ template<typename... F> constexpr decltype(auto) AlignSelf::switchOn(F&&... f) c
     case PrimaryKind::Auto:
         return visitor(CSS::Keyword::Auto { });
     case PrimaryKind::Normal:
-        return visitor(CSS::Keyword::Normal { });
+        return visitOverflowPosition(CSS::Keyword::Normal { }, overflowPosition(), visitor);
     case PrimaryKind::Stretch:
         return visitor(CSS::Keyword::Stretch { });
     case PrimaryKind::Baseline:

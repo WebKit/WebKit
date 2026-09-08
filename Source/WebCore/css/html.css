@@ -1147,6 +1147,7 @@ select::picker-icon {
     min-inline-size: -internal-auto-base(unset, anchor-size(self-inline));
     min-block-size: 1lh;
     max-block-size: calc(100svb - 8px);
+    align-self: safe normal;
     overflow: auto;
     overscroll-behavior: contain;
     box-shadow:

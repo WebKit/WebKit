@@ -71,6 +71,14 @@
 #alignItemsSafeFlexEnd {
     align-items: safe flex-end;
 }
+
+#alignItemsUnsafeNormal {
+    align-items: unsafe normal;
+}
+
+#alignItemsSafeNormal {
+    align-items: safe normal;
+}
 </style>
 <p>Test that setting and getting align-items works as expected</p>
 <div id="alignItemsBaseline"></div>
@@ -92,6 +100,8 @@
 <div id="alignItemsSafeSelfStart"></div>
 <div id="alignItemsUnsafeFlexStart"></div>
 <div id="alignItemsSafeFlexEnd"></div>
+<div id="alignItemsUnsafeNormal"></div>
+<div id="alignItemsSafeNormal"></div>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
 <script src="resources/alignment-parsing-utils-th.js"></script>
@@ -134,6 +144,10 @@ test(function() {
     checkValues(alignItemsUnsafeFlexStart, "alignItems", "align-items", "", "unsafe flex-start");
     var alignItemsSafeFlexEnd = document.getElementById("alignItemsSafeFlexEnd");
     checkValues(alignItemsSafeFlexEnd, "alignItems", "align-items", "", "safe flex-end");
+    var alignItemsUnsafeNormal = document.getElementById("alignItemsUnsafeNormal");
+    checkValues(alignItemsUnsafeNormal, "alignItems", "align-items", "", "unsafe normal");
+    var alignItemsSafeNormal = document.getElementById("alignItemsSafeNormal");
+    checkValues(alignItemsSafeNormal, "alignItems", "align-items", "", "safe normal");
 }, "Test getting align-items set through CSS.");
 
 test(function() {
@@ -192,8 +206,9 @@ test(function() {
     checkBadValues(element, "alignItems", "align-items",  "auto left");
     checkBadValues(element, "alignItems", "align-items",  "safe left");
     checkBadValues(element, "alignItems", "align-items",  "unsafe right");
-    checkBadValues(element, "alignItems", "align-items",  "unsafe normal");
     checkBadValues(element, "alignItems", "align-items",  "normal stretch");
+    checkBadValues(element, "alignItems", "align-items",  "normal safe");
+    checkBadValues(element, "alignItems", "align-items",  "normal unsafe");
     checkBadValues(element, "alignItems", "align-items",  "baseline normal");
     checkBadValues(element, "alignItems", "align-items",  "baseline safe");
     checkBadValues(element, "alignItems", "align-items",  "baseline center");

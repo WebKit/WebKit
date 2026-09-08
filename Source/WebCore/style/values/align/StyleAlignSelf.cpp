@@ -58,7 +58,7 @@ StyleSelfAlignmentData AlignSelf::resolve(const Style::ComputedStyle* containerS
         ASSERT_NOT_REACHED();
         return { ItemPosition::Auto };
     case PrimaryKind::Normal:
-        return { ItemPosition::Normal };
+        return resolveOverflowPosition(ItemPosition::Normal);
     case PrimaryKind::Stretch:
         return { ItemPosition::Stretch };
     case PrimaryKind::Baseline:
@@ -149,6 +149,8 @@ auto CSSValueConversion<AlignSelf>::operator()(BuilderState& state, const CSSVal
 
     auto consumeAfterOverflowPosition = [&](auto overflowPosition, auto secondValueID) -> AlignSelf {
         switch (applyPositionTryFallbackTactics(state, secondValueID)) {
+        case CSSValueNormal:
+            return { CSS::Keyword::Normal { }, overflowPosition };
         case CSSValueStart:
             return { CSS::Keyword::Start { }, overflowPosition };
         case CSSValueEnd:
