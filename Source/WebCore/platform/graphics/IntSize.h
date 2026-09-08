@@ -149,6 +149,11 @@ public:
         return Checked<unsigned, T>(unclampedArea());
     }
 
+    bool canOverflow() const
+    {
+        return area<RecordOverflow>().hasOverflowed();
+    }
+
     uint64_t unclampedArea() const
     {
         return static_cast<uint64_t>(std::abs(static_cast<int64_t>(m_width) * m_height));
