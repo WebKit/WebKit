@@ -3391,6 +3391,45 @@ void WebAutomationSession::scriptDedicatedWorkerRealmDestroyed(IPC::Connection& 
     MESSAGE_CHECK_BASE(*existingWorkerMatches, connection);
     scriptAgent.notifyRealmDestroyedFromWorker(workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier);
 }
+
+void WebAutomationSession::scriptSharedWorkerRealmStateChanged(IPC::Connection& connection, WebCore::SharedWorkerIdentifier workerIdentifier, RealmIdentifier realmIdentifier, Vector<WebCore::FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier>&& attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
+    HashSet<WebCore::FrameIdentifier> attachedOwnerFrames;
+    for (auto frameIdentifier : attachedOwnerFrameIdentifiers)
+        attachedOwnerFrames.add(frameIdentifier);
+    for (auto frameIdentifier : activeOwnerFrameIdentifiers)
+        MESSAGE_CHECK_BASE(attachedOwnerFrames.contains(frameIdentifier), connection);
+
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    if (auto existingWorkerMatches = scriptAgent.sharedWorkerRealmMatches(realmIdentifier, workerIdentifier))
+        MESSAGE_CHECK_BASE(*existingWorkerMatches, connection);
+    else
+        MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    scriptAgent.notifySharedWorkerRealmStateChanged(workerIdentifier, realmIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin);
+}
+
+void WebAutomationSession::scriptSharedWorkerRealmDestroyed(IPC::Connection& connection, WebCore::SharedWorkerIdentifier workerIdentifier, RealmIdentifier realmIdentifier)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    if (auto existingWorkerMatches = scriptAgent.sharedWorkerRealmMatches(realmIdentifier, workerIdentifier))
+        MESSAGE_CHECK_BASE(*existingWorkerMatches, connection);
+    else
+        MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+    scriptAgent.notifySharedWorkerRealmDestroyed(workerIdentifier, realmIdentifier);
+}
+
+void WebAutomationSession::webProcessDidDisconnect(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_bidiProcessor->scriptAgent().removeSharedWorkerRealmsForProcess(processIdentifier);
+}
 #endif
 
 #if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)

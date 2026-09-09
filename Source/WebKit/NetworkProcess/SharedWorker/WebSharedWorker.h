@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/SharedWorkerKey.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
@@ -37,6 +38,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -70,12 +72,16 @@ public:
     WebCore::Site topSite() const;
     WebSharedWorkerServerToContextConnection* contextConnection() const;
 
-    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&);
+    void addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::TransferredMessagePort&);
     void removeSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier);
     void suspend(WebCore::SharedWorkerObjectIdentifier);
     void resume(WebCore::SharedWorkerObjectIdentifier);
     unsigned sharedWorkerObjectsCount() const { return m_sharedWorkerObjects.size(); }
     void forEachSharedWorkerObject(NOESCAPE const Function<void(WebCore::SharedWorkerObjectIdentifier, const WebCore::TransferredMessagePort&)>&) const;
+#if ENABLE(WEBDRIVER_BIDI)
+    Vector<WebCore::FrameIdentifier> activeOwnerFrameIdentifiers() const { return ownerFrameIdentifiers(OwnerFrameFilter::ActiveOnly); }
+    Vector<WebCore::FrameIdentifier> attachedOwnerFrameIdentifiers() const { return ownerFrameIdentifiers(OwnerFrameFilter::AllAttached); }
+#endif
     std::optional<WebCore::ProcessIdentifier> NODELETE firstSharedWorkerObjectProcess() const;
 
     void didCreateContextConnection(WebSharedWorkerServerToContextConnection&);
@@ -93,6 +99,9 @@ public:
     void launch(WebSharedWorkerServerToContextConnection&);
 
     struct SharedWorkerObjectState {
+#if ENABLE(WEBDRIVER_BIDI)
+        std::optional<WebCore::FrameIdentifier> ownerFrameIdentifier;
+#endif
         bool isSuspended { false };
         std::optional<WebCore::TransferredMessagePort> port;
     };
@@ -112,6 +121,11 @@ private:
 
     void suspendIfNeeded();
     void resumeIfNeeded();
+#if ENABLE(WEBDRIVER_BIDI)
+    enum class OwnerFrameFilter : bool { ActiveOnly, AllAttached };
+    Vector<WebCore::FrameIdentifier> ownerFrameIdentifiers(OwnerFrameFilter) const;
+#endif
+    void sendOwnerFrameIdentifiers() const;
 
     WeakPtr<WebSharedWorkerServer> m_server;
     WebCore::SharedWorkerKey m_key;

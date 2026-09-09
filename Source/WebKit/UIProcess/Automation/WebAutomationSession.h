@@ -58,6 +58,8 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "IdentifierTypes.h"
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/SharedWorkerIdentifier.h>
 #endif
 
 namespace API {
@@ -314,6 +316,7 @@ public:
     Inspector::CommandResult<void> emitActiveBidiScriptRealmCreatedEvents() override;
     void sendBidiMessage(const String&);
     WebDriverBidiProcessor& bidiProcessor() const { return m_bidiProcessor; }
+    void webProcessDidDisconnect(WebCore::ProcessIdentifier);
 #endif
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -391,6 +394,8 @@ private:
     void scriptRealmDestroyed(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier);
     void scriptDedicatedWorkerRealmCreated(IPC::Connection&, const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptDedicatedWorkerRealmDestroyed(IPC::Connection&, const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier);
+    void scriptSharedWorkerRealmStateChanged(IPC::Connection&, WebCore::SharedWorkerIdentifier, RealmIdentifier, Vector<WebCore::FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier>&& attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptSharedWorkerRealmDestroyed(IPC::Connection&, WebCore::SharedWorkerIdentifier, RealmIdentifier);
 #endif
 
     // Platform-dependent implementations.

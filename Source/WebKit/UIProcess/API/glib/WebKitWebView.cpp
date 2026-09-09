@@ -6056,6 +6056,29 @@ void webkitSetCachedProcessSuspensionDelayForTesting(double seconds)
     WebKit::WebsiteDataStore::setCachedProcessSuspensionDelayForTesting(Seconds(seconds));
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+bool webkitSetUseSeparateRemoteWorkerProcessForTesting(bool useSeparateProcess)
+{
+    bool previousValue = WebKit::WebProcessPool::useSeparateServiceWorkerProcess();
+    WebKit::WebProcessPool::setUseSeparateServiceWorkerProcess(useSeparateProcess);
+    return previousValue;
+}
+
+bool webkitWebViewTerminateStandaloneSharedWorkerProcessForTesting(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
+
+    auto& processPool = getPage(webView).legacyMainFrameProcess().processPool();
+    for (Ref process : processPool.processes()) {
+        if (!process->isStandaloneSharedWorkerProcess())
+            continue;
+        process->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
+        return true;
+    }
+    return false;
+}
+#endif
+
 /**
  * webkit_web_view_get_web_extension_mode:
  * @web_view: a #WebKitWebView

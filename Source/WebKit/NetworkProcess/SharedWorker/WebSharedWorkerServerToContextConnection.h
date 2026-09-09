@@ -79,6 +79,9 @@ public:
     void launchSharedWorker(WebSharedWorker&);
     void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&, CompletionHandler<void(bool)>&&);
     void terminateSharedWorker(const WebSharedWorker&);
+#if ENABLE(WEBDRIVER_BIDI)
+    void updateSharedWorkerOwnerFrameIdentifiers(const WebSharedWorker&);
+#endif
 
     void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
     void resumeSharedWorker(WebCore::SharedWorkerIdentifier);

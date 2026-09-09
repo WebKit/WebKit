@@ -1438,6 +1438,41 @@ void WebAutomationSessionProxy::getDedicatedWorkerRealms(WebCore::PageIdentifier
     completionHandler(WTF::move(workerRealmSnapshots));
 }
 
+void WebAutomationSessionProxy::scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier workerIdentifier, WebCore::ScriptExecutionContextIdentifier contextIdentifier, const Vector<WebCore::FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<WebCore::FrameIdentifier>& attachedOwnerFrameIdentifiers, const WebCore::SecurityOriginData& origin)
+{
+    auto realmIdentifier = m_sharedWorkerRealmIdentifiersByContextIdentifier.ensure(contextIdentifier, [] {
+        return RealmIdentifier::generate();
+    }).iterator->value;
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptSharedWorkerRealmStateChanged(workerIdentifier, realmIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier workerIdentifier, WebCore::ScriptExecutionContextIdentifier contextIdentifier)
+{
+    auto realmIdentifier = m_sharedWorkerRealmIdentifiersByContextIdentifier.takeOptional(contextIdentifier);
+    if (!realmIdentifier)
+        return;
+
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptSharedWorkerRealmDestroyed(workerIdentifier, *realmIdentifier), 0);
+}
+
+void WebAutomationSessionProxy::getSharedWorkerRealms(CompletionHandler<void(Vector<SharedWorkerRealmSnapshot>&&)>&& completionHandler)
+{
+    Vector<SharedWorkerRealmSnapshot> workerRealmSnapshots;
+    for (auto& [workerIdentifier, contextIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin] : AutomationInstrumentation::sharedWorkerRealms()) {
+        auto realmIdentifier = m_sharedWorkerRealmIdentifiersByContextIdentifier.ensure(contextIdentifier, [] {
+            return RealmIdentifier::generate();
+        }).iterator->value;
+        workerRealmSnapshots.append({
+            workerIdentifier,
+            realmIdentifier,
+            WTF::move(activeOwnerFrameIdentifiers),
+            WTF::move(attachedOwnerFrameIdentifiers),
+            WTF::move(origin)
+        });
+    }
+    completionHandler(WTF::move(workerRealmSnapshots));
+}
+
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

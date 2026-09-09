@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#endif
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -43,6 +48,9 @@ public:
     WEBCORE_EXPORT static SharedWorkerContextManager& NODELETE singleton();
 
     SharedWorkerThreadProxy* sharedWorker(SharedWorkerIdentifier) const;
+#if ENABLE(WEBDRIVER_BIDI)
+    Vector<Ref<SharedWorkerThreadProxy>> sharedWorkers() const;
+#endif
     void stopSharedWorker(SharedWorkerIdentifier);
     void suspendSharedWorker(SharedWorkerIdentifier);
     void resumeSharedWorker(SharedWorkerIdentifier);
@@ -63,6 +71,9 @@ public:
 
         // IPC message handlers.
         WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+        WEBCORE_EXPORT void setSharedWorkerOwnerFrameIdentifiers(SharedWorkerIdentifier, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers);
+#endif
         WEBCORE_EXPORT void terminateSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void suspendSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void resumeSharedWorker(SharedWorkerIdentifier);
@@ -85,6 +96,9 @@ private:
 
     RefPtr<Connection> m_connection;
     HashMap<SharedWorkerIdentifier, Ref<SharedWorkerThreadProxy>> m_workerMap;
+#if ENABLE(WEBDRIVER_BIDI)
+    HashMap<ScriptExecutionContextIdentifier, Ref<SharedWorkerThreadProxy>> m_terminatingWorkersByContextIdentifier;
+#endif
 };
 
 } // namespace WebCore

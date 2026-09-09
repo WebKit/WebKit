@@ -34,6 +34,8 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "DOMWrapperWorld.h"
+#include "SharedWorkerContextManager.h"
+#include "SharedWorkerThreadProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/NeverDestroyed.h>
@@ -125,6 +127,42 @@ void AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(const String
         if (RefPtr client = automationClient().get())
             client->scriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier, ownerDocumentIdentifier);
     });
+}
+
+void AutomationInstrumentation::scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier workerIdentifier, ScriptExecutionContextIdentifier contextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData& origin)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptSharedWorkerRealmStateChanged(workerIdentifier, contextIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin);
+}
+
+void AutomationInstrumentation::scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier workerIdentifier, ScriptExecutionContextIdentifier contextIdentifier)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptSharedWorkerRealmDestroyed(workerIdentifier, contextIdentifier);
+}
+
+Vector<AutomationInstrumentation::SharedWorkerRealmSnapshot> AutomationInstrumentation::sharedWorkerRealms()
+{
+    ASSERT(isMainThread());
+    Vector<SharedWorkerRealmSnapshot> snapshots;
+
+    for (Ref worker : SharedWorkerContextManager::singleton().sharedWorkers()) {
+        const auto& origin = worker->automationSecurityOrigin();
+        if (!origin)
+            continue;
+
+        snapshots.append(SharedWorkerRealmSnapshot {
+            worker->identifier(),
+            worker->contextIdentifier(),
+            worker->activeOwnerFrameIdentifiers(),
+            worker->attachedOwnerFrameIdentifiers(),
+            origin->isolatedCopy()
+        });
+    }
+
+    return snapshots;
 }
 
 } // namespace WebCore
