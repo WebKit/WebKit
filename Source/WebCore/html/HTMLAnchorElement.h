@@ -141,12 +141,18 @@ private:
     enum class PrefetchEagerness : uint8_t {
         None,
         Conservative,
+        Moderate,
         Immediate,
     };
+
+    void startModerateHoverTimer();
+    void cancelModerateHoverTimer();
+    void moderateHoverTimerFired();
 
     PrefetchEagerness m_prefetchEagerness { PrefetchEagerness::None };
     Vector<String> m_speculationRulesTags;
     std::optional<ReferrerPolicy> m_prefetchReferrerPolicy;
+    std::unique_ptr<Timer> m_moderateHoverTimer;
 
     bool m_hasRootEditableElementForSelectionOnMouseDown { false };
     bool m_wasShiftKeyDownOnMouseDown { false };

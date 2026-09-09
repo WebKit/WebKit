@@ -1,0 +1,262 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpeculationRulesPrefetchEnabled=true ] -->
+<meta charset="utf-8">
+<meta name="timeout" content="long">
+<title>Moderate eagerness prefetches on hover after 200ms delay</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/utils.js"></script>
+<body>
+<script>
+
+setup(() => {
+  assert_implements(
+      'supports' in HTMLScriptElement,
+      'HTMLScriptElement.supports must be supported');
+  assert_implements(
+      HTMLScriptElement.supports('speculationrules'),
+      '<script type="speculationrules"> must be supported');
+});
+
+const PREFETCH_RESOURCE_URL = new URL('/speculation-rules/prefetch/resources/prefetch.py', location.href);
+
+function getPrefetchUrl(extra_params = {}) {
+  let params = new URLSearchParams({ uuid: token(), ...extra_params });
+  return new URL(`${PREFETCH_RESOURCE_URL}?${params}`);
+}
+
+async function isUrlPrefetched(url) {
+  let response = await fetch(url, { redirect: 'follow' });
+  return response.json();
+}
+
+async function waitForPrefetch(url, timeout = 5000) {
+  const start = performance.now();
+  while (performance.now() - start < timeout) {
+    if (await isUrlPrefetched(url) > 0)
+      return true;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return false;
+}
+
+async function flushNetworking() {
+  await fetch('/resources/blank.html');
+  await fetch('/resources/blank.html');
+}
+
+function insertSpeculationRules(body) {
+  let script = document.createElement('script');
+  script.type = 'speculationrules';
+  script.textContent = JSON.stringify(body);
+  document.head.appendChild(script);
+  return script;
+}
+
+function addLink(href, className, parent = document.body) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.textContent = 'link';
+  if (className)
+    a.className = className;
+  parent.appendChild(a);
+  return a;
+}
+
+function triggerPointerEnter(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  element.dispatchEvent(new PointerEvent('pointerenter', {
+    bubbles: false, cancelable: false, view: window,
+    clientX: x, clientY: y, pointerType: 'mouse'
+  }));
+}
+
+function triggerPointerLeave(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  element.dispatchEvent(new PointerEvent('pointerleave', {
+    bubbles: false, cancelable: false, view: window,
+    clientX: x, clientY: y, pointerType: 'mouse'
+  }));
+}
+
+function triggerPointerDown(element) {
+  const rect = element.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+
+  element.dispatchEvent(new PointerEvent('pointerdown', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, button: 0, pointerType: 'mouse'
+  }));
+  element.dispatchEvent(new MouseEvent('mousedown', {
+    bubbles: true, cancelable: true, view: window,
+    clientX: x, clientY: y, button: 0
+  }));
+}
+
+// Test: Moderate document rule with moderate-only rules stays lazy (no upfront scan).
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate-lazy-scan' });
+
+  const link = addLink(url, 'mod-link');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { selector_matches: '.mod-link' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  // With moderate-only rules, the anchor scan is skipped (like conservative).
+  if (window.internals)
+    assert_equals(internals.anchorPrefetchEagerness(link), 'none', 'eagerness should be none (scan skipped for moderate-only rules)');
+}, 'Moderate-only rules skip the upfront anchor scan');
+
+// Test: Hover for 200ms triggers prefetch for moderate eagerness.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate-hover' });
+
+  const link = addLink(url, 'hover-link');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { selector_matches: '.hover-link' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  triggerPointerEnter(link);
+
+  // After hover, the lazy match should mark the anchor as moderate.
+  if (window.internals)
+    assert_equals(internals.anchorPrefetchEagerness(link), 'moderate', 'eagerness should be moderate after hover triggers lazy match');
+
+  // Should not be prefetched immediately on hover (200ms timer not yet fired).
+  await flushNetworking();
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched immediately on hover');
+
+  // Wait for the 200ms timer to fire plus some margin.
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+
+  assert_true(await waitForPrefetch(url), 'should be prefetched after hover timer fires');
+}, 'Moderate eagerness prefetches after hovering for 200ms');
+
+// Test: Short hover (< 200ms) followed by pointerleave does NOT trigger prefetch.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate-short-hover' });
+
+  const link = addLink(url, 'short-hover-link');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { selector_matches: '.short-hover-link' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  triggerPointerEnter(link);
+
+  // Leave before the 200ms timer fires.
+  await new Promise(resolve => t.step_timeout(resolve, 50));
+  triggerPointerLeave(link);
+
+  // Wait long enough for the timer to have fired if it wasn't cancelled.
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+  await flushNetworking();
+
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched after short hover + leave');
+}, 'Short hover followed by pointerleave cancels moderate prefetch');
+
+// Test: Pointerdown on moderate link triggers immediate prefetch (no 200ms wait).
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'moderate-pointerdown' });
+
+  const link = addLink(url, 'click-link');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { selector_matches: '.click-link' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  assert_equals(await isUrlPrefetched(url), 0, 'should not be prefetched before interaction');
+
+  triggerPointerDown(link);
+  assert_true(await waitForPrefetch(url), 'should be prefetched after pointerdown');
+}, 'Moderate eagerness prefetches immediately on pointerdown');
+
+// Test: Conservative rule does NOT trigger prefetch on hover.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'conservative-no-hover' });
+
+  const link = addLink(url, 'conservative-link');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'conservative',
+      where: { selector_matches: '.conservative-link' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  triggerPointerEnter(link);
+
+  // Wait longer than the 200ms moderate timer.
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+  await flushNetworking();
+
+  assert_equals(await isUrlPrefetched(url), 0, 'conservative link should not be prefetched on hover');
+}, 'Conservative eagerness does not prefetch on hover');
+
+// Test: Non-matching link does NOT trigger prefetch on hover.
+promise_test(async t => {
+  const url = getPrefetchUrl({ test: 'no-match-hover' });
+
+  const link = addLink(url, 'no-match');
+  link.addEventListener('click', e => e.preventDefault());
+  t.add_cleanup(() => link.remove());
+
+  const rules = insertSpeculationRules({
+    prefetch: [{
+      source: 'document',
+      eagerness: 'moderate',
+      where: { selector_matches: '.some-other-class' }
+    }]
+  });
+  t.add_cleanup(() => rules.remove());
+
+  triggerPointerEnter(link);
+
+  await new Promise(resolve => t.step_timeout(resolve, 500));
+  await flushNetworking();
+
+  assert_equals(await isUrlPrefetched(url), 0, 'non-matching link should not be prefetched on hover');
+}, 'Non-matching link is not prefetched on hover with moderate rules');
+
+</script>
+</body>

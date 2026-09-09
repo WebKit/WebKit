@@ -1,0 +1,8 @@
+
+PASS Moderate-only rules skip the upfront anchor scan
+PASS Moderate eagerness prefetches after hovering for 200ms
+PASS Short hover followed by pointerleave cancels moderate prefetch
+PASS Moderate eagerness prefetches immediately on pointerdown
+PASS Conservative eagerness does not prefetch on hover
+PASS Non-matching link is not prefetched on hover with moderate rules
+
