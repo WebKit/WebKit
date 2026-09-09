@@ -481,6 +481,11 @@ void TestRunner::closeWebInspector()
     WKBundlePageCloseInspectorForTest(page());
 }
 
+void TestRunner::disconnectFrameInspectorTarget(JSContextRef context)
+{
+    WKBundleFrameDisconnectInspectorTargetForTest(WKBundleFrameForJavaScriptContext(context));
+}
+
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
     WKBundlePageEvaluateScriptInInspectorForTest(page(), toWK(script).get());

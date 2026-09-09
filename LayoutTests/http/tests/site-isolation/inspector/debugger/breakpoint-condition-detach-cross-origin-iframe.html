@@ -1,0 +1,51 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="resources/site-isolation-debugger-test-utilities.js"></script>
+<script src="resources/breakpoint-detach-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Debugger.BreakpointConditionDetach");
+
+    let crossOriginTarget;
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointConditionDetach.Setup",
+        description: "Find the cross-origin frame target.",
+        async test() {
+            crossOriginTarget = await frameTargetForURLContaining("breakpoint-condition-detach-frame.html");
+            InspectorTest.expectNotNull(crossOriginTarget, "Should find the cross-origin frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Debugger.BreakpointConditionDetach.ConditionExceptionAbandoned",
+        description: "A breakpoint condition that disconnects the frame target and then throws should neither pause the frame nor report the exception.",
+        async test() {
+            await setBreakpointInFrameScript(crossOriginTarget, {condition: "disconnectFrameInspectorTargetAndThrow()"});
+
+            await InspectorTest.evaluateInPage("runFunctionWithBreakpointInFrame()");
+
+            await waitForExpressionInTarget(WI.assumingMainTarget(), `messagesFromFrameJoined().includes("execution continued")`);
+
+            let messages = await InspectorTest.evaluateInPage("messagesFromFrameJoined()");
+            InspectorTest.log(messages);
+
+            // The condition path never pauses -- evaluateBreakpointCondition() bails out once the
+            // exception is abandoned -- so this only confirms the frame ran to completion, which is
+            // what makes the message list below complete. The exception assertion covers the fix.
+            InspectorTest.expectThat(messages.includes("execution continued after the breakpoint"), "Frame should run to completion.");
+
+            // A reported exception also shows up as a leading CONSOLE MESSAGE line in this test's
+            // output, but the frame's own 'error' event is what this asserts on.
+            InspectorTest.expectFalse(messages.includes("exception was reported"), "The condition's exception should be abandoned instead of reported.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Test that a cross-origin iframe's breakpoint condition that disconnects the frame's inspector target and then throws neither pauses the frame nor reports the exception.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/debugger/resources/breakpoint-condition-detach-frame.html"></iframe>
+</body>
