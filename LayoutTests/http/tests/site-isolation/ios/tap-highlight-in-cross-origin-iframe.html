@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Tapping a button inside a cross-origin iframe should show a tap highlight over the button.");
+jsTestIsAsync = true;
+
+const iframeTop = 100;
+const buttonHeight = 60;
+let highlightWidth;
+let highlightHeight;
+let highlightTop;
+let buttonWasClicked = false;
+
+async function waitForTapHighlightToAppear()
+{
+    let rect;
+    for (let i = 0; i < 100; i++) {
+        rect = await UIHelper.tapHighlightViewRect();
+        if (rect.width > 0 && rect.height > 0)
+            break;
+        await UIHelper.ensurePresentationUpdate();
+    }
+    return rect;
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "clicked") {
+        buttonWasClicked = true;
+        return;
+    }
+    if (event.data !== "ready")
+        return;
+
+    await UIHelper.ensurePresentationUpdate();
+
+    await UIHelper.activateAt(100, iframeTop + buttonHeight / 2);
+
+    const rect = await waitForTapHighlightToAppear();
+    highlightWidth = rect.width;
+    highlightHeight = rect.height;
+    highlightTop = rect.top;
+
+    shouldBeTrue("buttonWasClicked");
+    shouldBeGreaterThan("highlightWidth", "0");
+    shouldBeGreaterThan("highlightHeight", "0");
+    shouldBeGreaterThanOrEqual("highlightTop", "iframeTop - 20");
+
+    finishJSTest();
+});
+</script>
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 300px; border: none;" src="http://localhost:8000/site-isolation/resources/tap-target-frame.html"></iframe>

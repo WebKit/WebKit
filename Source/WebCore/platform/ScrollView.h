@@ -342,6 +342,8 @@ public:
     FloatRect viewToContents(FloatRect) const;
     FloatRect contentsToView(FloatRect) const;
 
+    FloatQuad contentsToView(const FloatQuad&) const;
+
     IntPoint contentsToContainingViewContents(const IntPoint&) const;
     IntRect contentsToContainingViewContents(IntRect) const;
 

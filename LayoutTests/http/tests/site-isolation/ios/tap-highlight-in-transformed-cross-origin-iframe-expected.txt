@@ -1,0 +1,16 @@
+Tapping a button inside a cross-origin iframe that has a scale transform should show a tap highlight over the button, scaled to match it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS buttonWasClicked is true
+PASS highlightWidth is > 0
+PASS highlightHeight is > 0
+PASS highlightTop is > iframeTop - 20
+PASS highlightWidth < expectedWidthScaled + 40 is true
+PASS highlightHeight < expectedHeightScaled + 40 is true
+PASS highlightTop < 160 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

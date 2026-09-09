@@ -1036,6 +1036,16 @@ FloatRect ScrollView::contentsToView(FloatRect rect) const
     return rect;
 }
 
+FloatQuad ScrollView::contentsToView(const FloatQuad& quad) const
+{
+    FloatQuad result;
+    result.setP1(contentsToView(quad.p1()));
+    result.setP2(contentsToView(quad.p2()));
+    result.setP3(contentsToView(quad.p3()));
+    result.setP4(contentsToView(quad.p4()));
+    return result;
+}
+
 IntPoint ScrollView::contentsToContainingViewContents(const IntPoint& point) const
 {
     if (const RefPtr parentScrollView = parent()) {

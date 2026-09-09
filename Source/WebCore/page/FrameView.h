@@ -132,6 +132,8 @@ public:
     WEBCORE_EXPORT FloatQuad convertToRootViewAcrossIsolatedFrames(const FloatQuad&) const;
     WEBCORE_EXPORT FloatRect rootViewToContentsAcrossIsolatedFrames(FloatRect) const;
 
+    WEBCORE_EXPORT FloatQuad contentsToMainFrameView(const FloatQuad&) const;
+
     WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
 
     // Computes the visible area of a child frame in this frame as a rectangle.
