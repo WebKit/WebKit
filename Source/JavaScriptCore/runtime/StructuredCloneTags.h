@@ -97,6 +97,7 @@ namespace JSC {
  *    | WasmMemoryTag <value:uint32_t>
  *    | RTCDataChannelTransferTag <identifier:uint32_t>
  *    | DOMExceptionTag <message:String> <name:String>
+ *    | QuotaExceededErrorTag <message:String> <name:String> <hasQuota:bool> [<quota:double>] <hasRequested:bool> [<requested:double>]
  *    | WebCodecsEncodedVideoChunkTag <identifier:uint32_t>
  *    | MediaStreamTrackTag <identifier:uint32_t>
  *    | MediaSourceHandleTransferTag <identifier:uint32_t>
@@ -325,6 +326,7 @@ enum SerializationTag {
     WritableStreamTag = 66,
     TransformStreamTag = 67,
     FileSystemHandleTag = 68,
+    QuotaExceededErrorTag = 69,
     ErrorTag = 255
 };
 
@@ -590,6 +592,7 @@ inline ASCIILiteral name(SerializationTag tag)
     case WritableStreamTag: return "WritableStreamTag"_s;
     case TransformStreamTag : return "TransformStreamTag"_s;
     case FileSystemHandleTag: return "FileSystemHandleTag"_s;
+    case QuotaExceededErrorTag: return "QuotaExceededErrorTag"_s;
     case ErrorTag: return "ErrorTag"_s;
     }
     return "<unknown tag>"_s;

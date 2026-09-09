@@ -80,6 +80,7 @@
 #include "JSWebCodecsEncodedVideoChunk.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "JSWritableStream.h"
+#include "QuotaExceededError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValueInternals.h"
@@ -243,6 +244,7 @@ static bool NODELETE isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObje
     case RTCDataChannelTransferTag:
 #endif
     case DOMExceptionTag:
+    case QuotaExceededErrorTag:
 #if ENABLE(WEB_CODECS)
     case WebCodecsEncodedVideoChunkTag:
     case WebCodecsVideoFrameTag:
@@ -1186,13 +1188,25 @@ private:
             return;
         }
 
-        write(DOMExceptionTag);
+        RefPtr quotaExceededError = dynamicDowncast<QuotaExceededError>(exception);
+        write(quotaExceededError ? QuotaExceededErrorTag : DOMExceptionTag);
         write(exception->message());
         write(exception->name());
         write(errorInformation->line);
         write(errorInformation->column);
         writeNullableString(errorInformation->sourceURL);
         writeNullableString(errorInformation->stack);
+
+        if (quotaExceededError) {
+            auto quota = quotaExceededError->quota();
+            write(!!quota);
+            if (quota)
+                write(*quota);
+            auto requested = quotaExceededError->requested();
+            write(!!requested);
+            if (requested)
+                write(*requested);
+        }
     }
 
 public:
@@ -3484,7 +3498,7 @@ private:
         return getJSValue(WTF::move(bitmap));
     }
 
-    JSValue readDOMException()
+    JSValue readDOMException(bool isQuotaExceededError = false)
     {
         CachedStringRef message;
         if (!readStringData(message))
@@ -3503,7 +3517,20 @@ private:
                 return JSValue();
         }
 
-        auto exception = DOMException::create(message->string(), name->string());
+        std::optional<double> quota;
+        std::optional<double> requested;
+        if (isQuotaExceededError) {
+            bool hasQuota;
+            if (!read(hasQuota) || (hasQuota && !read(quota.emplace())))
+                return JSValue();
+            bool hasRequested;
+            if (!read(hasRequested) || (hasRequested && !read(requested.emplace())))
+                return JSValue();
+        }
+
+        Ref<DOMException> exception = isQuotaExceededError
+            ? Ref<DOMException> { QuotaExceededError::create(message->string(), { quota, requested }) }
+            : DOMException::create(message->string(), name->string());
         JSValue result = getJSValue(exception);
         // Creating the wrapper captured a stack trace of the frame doing the deserializing; replace
         // it with the serialized one so the clone reports the same stack as the original did.
@@ -3954,6 +3981,8 @@ public:
 #endif
         case DOMExceptionTag:
             return readDOMException();
+        case QuotaExceededErrorTag:
+            return readDOMException(true);
 
         case FileSystemHandleTag:
             return readFileSystemHandle();
