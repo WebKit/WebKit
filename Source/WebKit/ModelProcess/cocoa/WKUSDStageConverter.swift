@@ -42,6 +42,13 @@ extension Logger {
 extension WKUSDStageConverter {
     @objc(convert:)
     class func convert(_ data: Data) -> Data? {
+        #if !RC_REMOVE_SEC_ACCEL_3
+        if ModelAssetPolicy.referencesExternalAssets(modelData: data) {
+            Logger.usdStageConverter.error("WKUSDStageConverter: Refusing to open a stage that references assets outside itself")
+            return nil
+        }
+        #endif
+
         let stage: UsdStage
         do {
             stage = try UsdStage.open(buffer: data)

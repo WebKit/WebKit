@@ -94,6 +94,13 @@ extension WKRKEntity {
 
     @objc(loadFromData:withAttributionTaskID:entityMemoryLimit:completionHandler:)
     class func load(from data: Data, withAttributionTaskID attributionTaskId: String?, entityMemoryLimit: Int) async -> WKRKEntity? {
+        #if !RC_REMOVE_SEC_ACCEL_3
+        if ModelAssetPolicy.referencesExternalAssets(modelData: data) {
+            Logger.realityKitEntity.error("Refusing to load entity from data that references assets outside itself")
+            return nil
+        }
+        #endif
+
         #if canImport(RealityKit, _version: "403.0.3")
         do {
             #if canImport(CoreRE)

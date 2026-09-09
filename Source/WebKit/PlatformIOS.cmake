@@ -596,6 +596,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKScrollGeometryAdapter.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/WKURLSchemeHandlerAdapter.swift
     ${WEBKIT_DIR}/UIProcess/WKMouseDeviceObserver.swift
+    ${WEBKIT_DIR}/WebKitSwift/RealityKit/ModelAssetPolicy.swift
 )
 
 if (WEBKIT_ADDITIONS_SWIFT_SOURCES)
@@ -1576,6 +1577,7 @@ add_library(WebKitSwift SHARED
     ${_wks_dir}/LinearMediaKit/LinearMediaTypes.swift
     ${_wks_dir}/MarketplaceKit/WKMarketplaceKit.swift
     ${_wks_dir}/Preview/WKPreviewWindowController.swift
+    ${_wks_dir}/RealityKit/ModelAssetPolicy.swift
     ${_wks_dir}/RealityKit/WKRKEntity.swift
     ${_wks_dir}/StageMode/WKStageMode.swift
     ${_wks_dir}/TextAnimation/WKTextAnimationManagerIOS.swift

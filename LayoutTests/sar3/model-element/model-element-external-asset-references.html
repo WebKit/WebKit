@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> external asset references</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../model-element/resources/model-element-test-utils.js"></script>
+<script src="../../model-element/resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+internals.disableModelLoadDelaysForTesting();
+
+const sourcesReferencingExternalAssets = [
+    ["a buffer URI naming a sibling file", "resources/external-buffer-uri.gltf"],
+    ["a buffer URI traversing out of the document's directory", "resources/external-buffer-uri-traversal.gltf"],
+    ["a buffer URI with an absolute file system path", "resources/external-buffer-uri-absolute.gltf"],
+    ["an image URI", "resources/external-image-uri.gltf"],
+    ["a buffer URI inside a binary glTF container", "resources/external-buffer-uri.glb"],
+];
+
+for (const [description, src] of sourcesReferencingExternalAssets) {
+    promise_test(async t => {
+        const [model, source] = createModelAndSource(t, src);
+        let loaded = false;
+        model.addEventListener("load", () => loaded = true);
+
+        await promise_rejects_dom(t, "AbortError", model.ready);
+
+        assert_false(loaded, "no load event was dispatched");
+        assert_false(model.complete, "model.complete is false");
+        assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly());
+        assert_points_are_equal(model.boundingBoxExtents, new DOMPointReadOnly());
+    }, `<model> refuses a model document with ${description}.`);
+}
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../../model-element/resources/2x2x2-center.usdz");
+    await model.ready;
+}, `<model> loads a model document that contains all of its assets.`);
+
+</script>
+</body>

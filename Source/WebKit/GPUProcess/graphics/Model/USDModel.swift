@@ -2410,6 +2410,14 @@ final class USDModelLoader {
 
     func loadModel(data: Foundation.Data, mimeType: String) -> Bool {
         resetLoaderState()
+
+        #if !RC_REMOVE_SEC_ACCEL_3
+        if ModelAssetPolicy.referencesExternalAssets(modelData: data) {
+            logError("rejecting model document that references assets outside itself")
+            return false
+        }
+        #endif
+
         do {
             self.stage = try USDStage(data, type: usdStageType(forMIMEType: mimeType))
             guard let stage = self.stage else {
