@@ -140,9 +140,9 @@ def find_diff(args, expectation_file_path, results_file_path):
         diff_baseline_from_new = set(baseline_list) - set(new_file_list)
 
     # FIXME: Ignore DerivedSources until autogenerator scripts are clean
-    filtered_regressions = [file for file in diff_new_from_baseline if not re.match(DERIVED_SOURCES_RE, file)]
-    filtered_fixes = [file for file in diff_baseline_from_new if not re.match(DERIVED_SOURCES_RE, file)]
-    filtered_new_files = [file for file in new_file_list if not re.match(DERIVED_SOURCES_RE, file)]
+    filtered_regressions = diff_new_from_baseline
+    filtered_fixes = diff_baseline_from_new
+    filtered_new_files = new_file_list
 
     return set(filtered_regressions), set(filtered_fixes), filtered_new_files
 
