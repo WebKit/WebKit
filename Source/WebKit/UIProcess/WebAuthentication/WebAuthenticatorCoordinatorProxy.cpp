@@ -103,8 +103,10 @@ void WebAuthenticatorCoordinatorProxy::makeCredential(IPC::Connection& connectio
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(IPC::Connection& connection, FrameIdentifier frameId, FrameInfoData&& frameInfo, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, IPC::Untrusted<std::optional<WebCore::SecurityOriginData>>&& untrustedParentOrigin, RequestCompletionHandler&& handler)
 {
-    auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    // Checked below against the origins this frame's ancestors committed, which the UI process
+    // derives itself, but only where one of them is HTTP-family.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=325604 Add a new validator to strengthen this check
+    auto parentOrigin = WTF::move(untrustedParentOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::ValidatedElsewhere);
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotSupportedError, "This request is not supported at this time."_s });
@@ -266,17 +268,13 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& comple
     completionHandler();
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Connection&, IPC::Untrusted<SecurityOriginData>&&, QueryCompletionHandler&& handler)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     handler(LocalService::isAvailable());
 }
 
-void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Connection&, IPC::Untrusted<SecurityOriginData>&&, QueryCompletionHandler&& handler)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     handler(false);
 }
 #endif // !HAVE(UNIFIED_ASC_AUTH_UI) && !HAVE(WEB_AUTHN_AS_MODERN)

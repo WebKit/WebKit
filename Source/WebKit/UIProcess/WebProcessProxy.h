@@ -244,10 +244,11 @@ public:
 #endif
     void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
 
-    enum class SiteState : uint8_t { NotYetSpecified, MultipleSites, SharedProcess };
+    enum class SiteState : uint8_t { NotYetSpecified, MultipleSites, SharedProcess, NoRegistrableDomain };
     const std::expected<WebCore::Site, SiteState>& site() const LIFETIME_BOUND { return m_site; }
 
     bool isSharedProcess() const { return !m_site && m_site.error() == SiteState::SharedProcess; }
+    bool hasNoRegistrableDomain() const { return !m_site && m_site.error() == SiteState::NoRegistrableDomain; }
     const std::optional<WebCore::Site>& sharedProcessMainFrameSite() const LIFETIME_BOUND { return m_sharedProcessMainFrameSite; }
     void addSharedProcessDomain(const WebCore::RegistrableDomain&);
     const HashSet<WebCore::RegistrableDomain>& sharedProcessDomains() const LIFETIME_BOUND { return m_sharedProcessDomains; }

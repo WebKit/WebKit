@@ -36,6 +36,7 @@
 #import "Logging.h"
 #import "PageClient.h"
 #import "RelatedOriginsValidator.h"
+#import "ValidationProcedures.h"
 #import "WKError.h"
 #import "WKWebView.h"
 #import "WebAuthenticationRequestData.h"
@@ -114,6 +115,10 @@
 @end
 
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
+
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=325600 Compare against the calling frame's committed origin, not the sender's domain authority.
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, completion, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, completion, __VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -1360,9 +1365,9 @@ static inline void getArePasskeysDisallowedForRelyingParty(const WebCore::Securi
     handler(false);
 }
 
-void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
-    auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(data, untrustedOrigin, handler(false), ProcessSpeaksForDomain { connection });
     getCanCurrentProcessAccessPasskeyForRelyingParty(data, [handler = WTF::move(handler)](bool canAccessPasskeyData) mutable {
         handler(canAccessPasskeyData && [getASCWebKitSPISupportClassSingleton() shouldUseAlternateCredentialStore]);
     });
@@ -1383,10 +1388,9 @@ static void setRelatedOriginsCapability(Vector<KeyValuePair<String, bool>>& capa
     capabilities.append({ relatedOriginsCapability, true });
 }
 
-void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CapabilitiesCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, CapabilitiesCompletionHandler&& handler)
 {
-    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(originData, untrustedOrigin, handler({ }), ProcessSpeaksForDomain { connection });
     if (![getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getClientCapabilitiesForRelyingParty:withCompletionHandler:)]) {
         Vector<KeyValuePair<String, bool>> capabilities;
         setRelatedOriginsCapability(capabilities);
@@ -1407,9 +1411,9 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Untrusted<WebC
     }).get()];
 }
 
-void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Connection& connection, IPC::Untrusted<SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
-    auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(data, untrustedOrigin, handler(false), ProcessSpeaksForDomain { connection });
     if (m_webPageProxy->configuration().backgroundTextExtractionEnabled()) {
         handler(false);
         return;
@@ -1472,10 +1476,12 @@ void WebAuthenticatorCoordinatorProxy::cancel(CompletionHandler<void()>&& handle
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::UnknownCredentialOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
-    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }), ProcessSpeaksForDomain { connection });
+    MESSAGE_CHECK_COMPLETION_BASE(WebCore::RegistrableDomain::uncheckedCreateFromHost(options.rpId) == WebCore::RegistrableDomain { origin }, connection,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }));
     auto decodedCredentialId = base64URLDecode(options.credentialId);
     if (!decodedCredentialId) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse credentialId for signalUnknownCredential.");
@@ -1499,10 +1505,12 @@ void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(IPC::Untrusted<We
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::AllAcceptedCredentialsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
-    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }), ProcessSpeaksForDomain { connection });
+    MESSAGE_CHECK_COMPLETION_BASE(WebCore::RegistrableDomain::uncheckedCreateFromHost(options.rpId) == WebCore::RegistrableDomain { origin }, connection,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }));
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");
@@ -1536,10 +1544,12 @@ void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(IPC::Untrust
 #endif
 }
 
-void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
+void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, WebCore::CurrentUserDetailsOptions&& options, CompletionHandler<void(std::optional<ExceptionData>)>&& completionHandler)
 {
-    auto originData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(origin, untrustedOrigin,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }), ProcessSpeaksForDomain { connection });
+    MESSAGE_CHECK_COMPLETION_BASE(WebCore::RegistrableDomain::uncheckedCreateFromHost(options.rpId) == WebCore::RegistrableDomain { origin }, connection,
+        completionHandler(ExceptionData { ExceptionCode::SecurityError, "Not authorized for this relying party"_s }));
     auto userHandle = base64URLDecode(options.userId);
     if (!userHandle) {
         RELEASE_LOG_ERROR(WebAuthn, "Failed to parse userHandle for signalAllAcceptedCredentials.");
@@ -1566,3 +1576,5 @@ void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(IPC::Untrusted<W
 } // namespace WebKit
 
 #endif // HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
+
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION

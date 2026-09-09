@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformXRSystem.h"
 
+#include "ValidationProcedures.h"
+
 #if ENABLE(WEBXR)
 
 #include "GPUProcessProxy.h"
@@ -41,6 +43,8 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+#define EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(name, untrusted, completion, ...) \
+    EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, completion, __VA_ARGS__)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
 
 namespace WebKit {
@@ -162,9 +166,9 @@ static bool checkFeaturesConsent(const std::optional<PlatformXR::Device::Feature
 
 void PlatformXRSystem::requestPermissionOnSessionFeatures(IPC::Connection& connection, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
 {
-    auto securityOriginData = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
     ASSERT(RunLoop::isMain());
+
+    EXTRACT_WITH_MESSAGE_CHECK_COMPLETION(securityOriginData, untrustedOrigin, completionHandler(std::nullopt), ProcessSpeaksForDomain { connection });
 
     RefPtr page = m_page.get();
     if (!page) {
@@ -471,6 +475,7 @@ PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 
 } // namespace WebKit
 
+#undef EXTRACT_WITH_MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
 

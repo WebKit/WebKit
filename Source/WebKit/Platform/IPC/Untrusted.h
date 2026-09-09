@@ -198,16 +198,22 @@ struct IsValidationProcedureFor<Validator, HashSet<T, HashArg, TraitsArg, TableT
 
 } // namespace IPC
 
-/* A translation unit that validates untrusted values defines the following over its own
- * MESSAGE_CHECK, whose argument order varies between receivers. They expand to two
- * declarations around a check, so they are statements that declare names and cannot be
- * brace-less if/else bodies.
+/* Validates an untrusted value and binds the plain one: MESSAGE_CHECKs if the value is
+ * illegitimate; completes and returns if we can't be sure; continues past the macro
+ * if the value is legitimate.
+ *
+ * Which connection a receiver blames, and how it replies when it drops a message, vary too much to
+ * spell at every call, so a translation unit wraps this in its own EXTRACT_WITH_MESSAGE_CHECK over
+ * whichever connection its MESSAGE_CHECK uses:
  *
  *     #define EXTRACT_WITH_MESSAGE_CHECK(name, untrusted, ...) \
- *         auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
- *         MESSAGE_CHECK(name##Validated); \
- *         auto name = WTF::move(*name##Validated)
- *
- * The validator is the trailing variadic argument because it is brace-initialised and the
- * preprocessor splits on the commas inside the braces.
+ *         EXTRACT_WITH_MESSAGE_CHECK_BASE(connection(), name, untrusted, (void)0, __VA_ARGS__)
  */
+#define EXTRACT_WITH_MESSAGE_CHECK_BASE(connection, name, untrusted, completion, ...) \
+    auto name##Validated = WTF::move(untrusted).validate(__VA_ARGS__); \
+    MESSAGE_CHECK_COMPLETION_BASE(IPC::valueMayBeLegitimate(name##Validated), connection, completion); \
+    if (!name##Validated) { \
+        { completion; } \
+        return; \
+    } \
+    auto name = WTF::move(*name##Validated)
