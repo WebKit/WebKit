@@ -36,6 +36,10 @@
         "native-slider": new Set(),
     };
 
+    window.buttonsLog = [];
+    for (const type of ["pointerdown", "pointermove", "pointerup"])
+        document.addEventListener(type, e => window.buttonsLog.push(`${e.type}:${e.buttons}`));
+
     function setValue(value) {
         value = Math.max(0, Math.min(maxValue, value));
         customSlider.setAttribute("aria-valuenow", value);
