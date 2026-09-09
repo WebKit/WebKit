@@ -28,6 +28,8 @@ import re
 import time
 import twisted
 
+from typing import List, Optional, Tuple
+
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
@@ -46,6 +48,41 @@ custom_suffix = get_custom_suffix()
 USE_LOCAL_COMMIT_CLASSES = load_password('USE_LOCAL_COMMIT_CLASSES', default=False)
 COMMIT_CLASSES_PATH = load_password('COMMIT_CLASSES_PATH', default='commit_classes.json')
 DEBUG_EWS_EVENTS = load_password('DEBUG_EWS_EVENTS', default=False)
+
+MAX_FAILING_TESTS_TO_REPORT = 10
+
+# Ordered most-specific-verdict-first: each group names tests EWS attributed to the change,
+# as opposed to pre-existing failures, so the first group with any results wins.
+FAILING_TEST_PROPERTY_GROUPS = (
+    ('layout', ('new_failures_introduced_by_patch',)),
+    ('api', ('new_api_failures_introduced_by_patch',)),
+    ('jsc', ('jsc_stress_test_failures_filtered', 'jsc_binary_failures_filtered')),
+    ('static-analysis', ('test_failures',)),
+)
+
+
+def failing_tests_for_build(properties: Optional[dict]) -> Tuple[List[str], int, str]:
+    """Return (capped sorted failing test names, true total before the cap, category slug) for a build's properties."""
+    if not properties:
+        return [], 0, ''
+
+    for category, group in FAILING_TEST_PROPERTY_GROUPS:
+        names = set()
+        for property_name in group:
+            if property_name not in properties:
+                continue
+            entry = properties[property_name]
+            if not isinstance(entry, (list, tuple)) or not entry:
+                continue
+            value = entry[0]
+            if not isinstance(value, (list, tuple, set)):
+                continue
+            names.update(item for item in value if isinstance(item, str))
+        if names:
+            sorted_names = sorted(names)
+            return sorted_names[:MAX_FAILING_TESTS_TO_REPORT], len(sorted_names), category
+
+    return [], 0, ''
 
 
 class Events(service.BuildbotService):
@@ -212,6 +249,8 @@ class Events(service.BuildbotService):
         if self.extractProperty(build, 'github.number') and (custom_suffix == ''):
             self.buildFinishedGitHub(build)
 
+        failing_tests, failing_tests_count, failing_tests_category = failing_tests_for_build(build['properties'])
+
         data = {
             "type": self.type_prefix + "build",
             "status": "finished",
@@ -229,6 +268,9 @@ class Events(service.BuildbotService):
             "state_string": build.get('state_string'),
             "builder_name": self.getBuilderName(build),
             "builder_display_name": builder.get('description', '') if isinstance(builder, dict) else builder.description,
+            "failing_tests": failing_tests,
+            "failing_tests_count": failing_tests_count,
+            "failing_tests_category": failing_tests_category,
         }
 
         self.sendDataToEWS(data)
