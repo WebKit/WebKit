@@ -200,8 +200,8 @@ pas_try_reallocate_table_bitfit_case(pas_page_base* page_base,
         old_heap, heap, (void*)begin, old_size, new_size, allocation_mode, teleport_rule,
         allocate_callback, allocate_callback_arg);
     if (result.begin || free_mode == pas_reallocate_free_always) {
-        bitfit_config.specialized_page_deallocate_with_page(page, begin);
         pas_msl_free_logging((void*)begin); /* This will not go to TLC, thus, we need to record deallocation here. */
+        bitfit_config.specialized_page_deallocate_with_page(page, begin);
     }
     return result;
 }
@@ -355,13 +355,12 @@ pas_try_reallocate(void* old_ptr,
             allocate_callback, allocate_callback_arg);
         
         if (result.begin || free_mode == pas_reallocate_free_always) {
+            pas_msl_free_logging(old_ptr); /* This will not go to TLC, thus, we need to record deallocation here. */
             // Deallocate old PGM entry if its the one reallocated to other entry
             if (pas_try_deallocate_pgm_large(old_ptr, config.config_ptr)) {
-                pas_msl_free_logging(old_ptr); /* This will not go to TLC, thus, we need to record deallocation here. */
                 return result;
             }
             pas_deallocate_known_large(old_ptr, config.config_ptr);
-            pas_msl_free_logging(old_ptr); /* This will not go to TLC, thus, we need to record deallocation here. */
         }
         
         return result;
