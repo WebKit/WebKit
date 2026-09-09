@@ -812,13 +812,29 @@ auto IntersectionObserver::updateObservations(const Frame& hostFrame) -> NeedNot
 
     auto needNotify = NeedNotify::No;
 
+    // Cache Document::isFullyActive() because it's expensive, and it's likely that observation
+    // targets all belong to a handful of documents.
+    auto isDocumentFullyActive = [cache = WeakHashMap<Document, bool, WeakPtrImplWithEventTargetData> { }] (const Document &document) mutable {
+        auto isFullyActive = cache.ensure(document, [&] () {
+            return document.isFullyActive();
+        }).iterator->value;
+
+        // Invariant: the fully active status of a document can't change when updating observations.
+        ASSERT(isFullyActive == document.isFullyActive());
+        return isFullyActive;
+    };
+
     // Iterate on a copy of m_observationTargets, in case something in the loop mutates it.
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    auto observationTargets = copyToVectorOf<Ref<Element>>(this->observationTargets());
+#else
     auto observationTargets = this->observationTargets();
-    for (Ref target : observationTargets) {
+#endif
+    for (const auto& target : observationTargets) {
         // Per HTML spec, "update the rendering" step (which includes "run the update intersection
-        // observations") should only occur for fully active documents. Hence skip updating the
-        // target if its document is not fully active.
-        if (!root() && !target->document().isFullyActive())
+        // observations") only occurs for fully active documents. Hence skip updating the target if
+        // its document is not fully active.
+        if (!root() && !isDocumentFullyActive(target->document()))
             continue;
 
         auto& targetRegistrations = target->intersectionObserverDataIfExists()->registrations;

@@ -4162,6 +4162,7 @@ ExceptionOr<void> Document::open(Document* entryDocument)
 }
 
 // https://html.spec.whatwg.org/#fully-active
+// FIXME (webkit.org/b/323253): cache the result and invalidate when frame tree changes.
 bool Document::isFullyActive() const
 {
     RefPtr frame = this->frame();
