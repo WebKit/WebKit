@@ -34,6 +34,9 @@
 #include "config.h"
 #include "PingLoader.h"
 
+#include "CachedRawResource.h"
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
 #include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
@@ -63,6 +66,37 @@
 #include "LocalFrameInlines.h"
 
 namespace WebCore {
+
+class DeferredFetchLoader final : public RefCounted<DeferredFetchLoader>, private CachedRawResourceClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(DeferredFetchLoader);
+public:
+    static void create(Ref<CachedRawResource>&& resource)
+    {
+        Ref loader = adoptRef(*new DeferredFetchLoader(resource.copyRef()));
+        loader->m_selfReference = loader.copyRef();
+        resource->addClient(loader);
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+private:
+    explicit DeferredFetchLoader(Ref<CachedRawResource>&& resource)
+        : m_resource(WTF::move(resource))
+    {
+    }
+
+    void notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final
+    {
+        Ref protectedThis { *this };
+        resource.removeClient(*this);
+        m_resource = nullptr;
+        m_selfReference = nullptr;
+    }
+
+    CachedResourceHandle<CachedRawResource> m_resource;
+    RefPtr<DeferredFetchLoader> m_selfReference;
+};
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -266,6 +300,30 @@ void PingLoader::startPingLoad(LocalFrame& frame, ResourceRequest& request, HTTP
 
     CachedResourceRequest cachedResourceRequest { ResourceRequest { request }, options };
     std::ignore = protect(protect(frame.document())->cachedResourceLoader())->requestPingResource(WTF::move(cachedResourceRequest));
+}
+
+void PingLoader::startDeferredFetch(LocalFrame& frame, ResourceRequest& request, ResourceRequest& requestForCachedResourceLoader, const HTTPHeaderMap& originalRequestHeaders, const ResourceLoaderOptions& options)
+{
+    Ref cachedResourceLoader = protect(frame.document())->cachedResourceLoader();
+    auto identifier = ResourceLoaderIdentifier::generate();
+    if (platformStrategies()->loaderStrategy()->usePingLoad() || !cachedResourceLoader->frame() || !frame.page()) {
+        InspectorInstrumentation::willSendRequestOfType(&frame, identifier, protect(frame.loader().activeDocumentLoader()), request, Inspector::UncachedLoadType::Ping);
+        platformStrategies()->loaderStrategy()->startPingLoad(frame, request, originalRequestHeaders, options, options.contentSecurityPolicyImposition, [protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
+            if (!response.isNull())
+                InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protect(protectedFrame->loader().activeDocumentLoader()), response, nullptr);
+            if (!error.isNull()) {
+                InspectorInstrumentation::didFailLoading(protectedFrame.ptr(), protect(protectedFrame->loader().activeDocumentLoader()), identifier, error);
+                return;
+            }
+            InspectorInstrumentation::didFinishLoading(protectedFrame.ptr(), protect(protectedFrame->loader().activeDocumentLoader()), identifier, { }, nullptr);
+        });
+        return;
+    }
+
+    CachedResourceRequest cachedResourceRequest { ResourceRequest { requestForCachedResourceLoader }, options };
+    auto cachedResourceOrError = cachedResourceLoader->requestBeaconResource(WTF::move(cachedResourceRequest));
+    if (cachedResourceOrError)
+        DeferredFetchLoader::create(WTF::move(cachedResourceOrError.value()));
 }
 
 // // https://html.spec.whatwg.org/multipage/origin.html#sanitize-url-report

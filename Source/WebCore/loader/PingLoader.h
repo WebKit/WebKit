@@ -33,6 +33,7 @@
 #pragma once
 
 #include <WebCore/ReferrerPolicy.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -52,6 +53,7 @@ public:
     static void loadImage(LocalFrame&, URL&&);
     static void sendPing(LocalFrame&, URL&& pingURL, const URL& destinationURL);
     WEBCORE_EXPORT static void sendViolationReport(LocalFrame&, URL&& reportURL, Ref<FormData>&& report, ViolationReportType);
+    static void startDeferredFetch(LocalFrame&, ResourceRequest&, ResourceRequest& requestForCachedResourceLoader, const HTTPHeaderMap& originalRequestHeaders, const ResourceLoaderOptions&);
 
     static String sanitizeURLForReport(const URL&);
 

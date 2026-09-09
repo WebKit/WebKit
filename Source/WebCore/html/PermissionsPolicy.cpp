@@ -55,6 +55,10 @@ static ASCIILiteral toFeatureNameForLogging(PermissionsPolicy::Feature feature)
         return "SpeakerSelection"_s;
     case PermissionsPolicy::Feature::DisplayCapture:
         return "DisplayCapture"_s;
+    case PermissionsPolicy::Feature::DeferredFetch:
+        return "DeferredFetch"_s;
+    case PermissionsPolicy::Feature::DeferredFetchMinimal:
+        return "DeferredFetchMinimal"_s;
     case PermissionsPolicy::Feature::Gamepad:
         return "Gamepad"_s;
     case PermissionsPolicy::Feature::Geolocation:
@@ -110,6 +114,8 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     constexpr auto microphoneToken { "microphone"_s };
     constexpr auto speakerSelectionToken { "speaker-selection"_s };
     constexpr auto displayCaptureToken { "display-capture"_s };
+    constexpr auto deferredFetchToken { "deferred-fetch"_s };
+    constexpr auto deferredFetchMinimalToken { "deferred-fetch-minimal"_s };
     constexpr auto gamepadToken { "gamepad"_s };
     constexpr auto geolocationToken { "geolocation"_s };
     constexpr auto paymentToken { "payment"_s };
@@ -144,6 +150,12 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     } else if (value.startsWith(displayCaptureToken)) {
         feature = PermissionsPolicy::Feature::DisplayCapture;
         remainingValue = value.substring(displayCaptureToken.length());
+    } else if (value.startsWith(deferredFetchMinimalToken)) {
+        feature = PermissionsPolicy::Feature::DeferredFetchMinimal;
+        remainingValue = value.substring(deferredFetchMinimalToken.length());
+    } else if (value.startsWith(deferredFetchToken)) {
+        feature = PermissionsPolicy::Feature::DeferredFetch;
+        remainingValue = value.substring(deferredFetchToken.length());
     } else if (value.startsWith(gamepadToken)) {
         feature = PermissionsPolicy::Feature::Gamepad;
         remainingValue = value.substring(gamepadToken.length());
@@ -209,6 +221,7 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
 static ASCIILiteral defaultAllowlistValue(PermissionsPolicy::Feature feature)
 {
     switch (feature) {
+    case PermissionsPolicy::Feature::DeferredFetchMinimal:
     case PermissionsPolicy::Feature::Gamepad:
     case PermissionsPolicy::Feature::SyncXHR:
     case PermissionsPolicy::Feature::StorageAccess:
@@ -217,6 +230,7 @@ static ASCIILiteral defaultAllowlistValue(PermissionsPolicy::Feature feature)
     case PermissionsPolicy::Feature::Microphone:
     case PermissionsPolicy::Feature::SpeakerSelection:
     case PermissionsPolicy::Feature::DisplayCapture:
+    case PermissionsPolicy::Feature::DeferredFetch:
     case PermissionsPolicy::Feature::Geolocation:
     case PermissionsPolicy::Feature::Payment:
     case PermissionsPolicy::Feature::ScreenWakeLock:

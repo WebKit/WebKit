@@ -31,6 +31,8 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PerformSynchronousLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     LoadPing(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters)
+    ReserveDeferredFetchQuota(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::FrameIdentifier controlFrameIdentifier, WebCore::SecurityOriginData reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes) -> (std::optional<uint64_t> reservationIdentifier, uint64_t availableBytes) Synchronous
+    ReleaseDeferredFetchQuota(uint64_t reservationIdentifier)
     RemoveLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
     BrowsingContextRemoved(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID)
