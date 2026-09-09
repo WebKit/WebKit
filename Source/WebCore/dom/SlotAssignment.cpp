@@ -303,7 +303,7 @@ void NamedSlotAssignment::slotFallbackDidChange(HTMLSlotElement& slotElement, Sh
         slotElement.enqueueSlotChangeEvent();
 }
 
-void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot)
+void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& shadowRoot, SlotChangeInvalidation slotChangeInvalidation)
 {
     auto& slotName = slotNameFromAttributeValue(slotAttrValue);
     auto* slot = m_slots.get(slotName);
@@ -312,7 +312,8 @@ void NamedSlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowR
 
     ASSERT(shadowRoot.host());
     Ref shadowRootHost = *shadowRoot.host();
-    RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
+    if (slotChangeInvalidation == SlotChangeInvalidation::TearDownRenderers)
+        RenderTreeUpdater::tearDownRenderersAfterSlotChange(shadowRootHost);
     shadowRootHost->invalidateStyleForSubtree();
 
     auto assignedNodes = std::exchange(slot->assignedNodes, { });
@@ -349,6 +350,11 @@ void NamedSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot& shadowRoot)
 void NamedSlotAssignment::hostChildElementDidChange(const Element& childElement, ShadowRoot& shadowRoot)
 {
     didChangeSlot(childElement.attributeWithoutSynchronization(slotAttr), shadowRoot);
+}
+
+void NamedSlotAssignment::hostChildElementDidMove(const Element& childElement, ShadowRoot& shadowRoot)
+{
+    didChangeSlot(childElement.attributeWithoutSynchronization(slotAttr), shadowRoot, SlotChangeInvalidation::PreserveRenderers);
 }
 
 void NamedSlotAssignment::hostChildElementDidChangeSlotAttribute(Element& element, const AtomString& oldValue, const AtomString& newValue, ShadowRoot& shadowRoot)
@@ -609,6 +615,11 @@ void ManualSlotAssignment::hostChildElementDidChange(const Element&, ShadowRoot&
     ++m_slottableVersion;
 }
 
+void ManualSlotAssignment::hostChildElementDidMove(const Element&, ShadowRoot&)
+{
+    ++m_slottableVersion;
+}
+
 void ManualSlotAssignment::hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&)
 {
 }
@@ -631,5 +642,3 @@ void ManualSlotAssignment::didMutateTextNodesOfShadowHost(ShadowRoot&)
 }
 
 }
-
-

@@ -64,6 +64,7 @@ public:
     virtual void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) = 0;
 
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&) = 0;
+    virtual void hostChildElementDidMove(const Element&, ShadowRoot&) = 0;
     virtual void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) = 0;
 
     virtual void willRemoveAssignedNode(Node&, ShadowRoot&) = 0;
@@ -87,7 +88,8 @@ public:
     static const AtomString& defaultSlotName() { return emptyAtom(); }
 
 protected:
-    void didChangeSlot(const AtomString&, ShadowRoot&);
+    enum class SlotChangeInvalidation { PreserveRenderers, TearDownRenderers };
+    void didChangeSlot(const AtomString&, ShadowRoot&, SlotChangeInvalidation = SlotChangeInvalidation::TearDownRenderers);
 
 private:
     HTMLSlotElement* NODELETE findAssignedSlot(const Node&) final;
@@ -105,6 +107,7 @@ private:
     void didRemoveAllChildrenOfShadowHost(ShadowRoot&) final;
     void didMutateTextNodesOfShadowHost(ShadowRoot&) final;
     void hostChildElementDidChange(const Element&, ShadowRoot&) override;
+    void hostChildElementDidMove(const Element&, ShadowRoot&) override;
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue, ShadowRoot&) final;
 
     struct Slot {
@@ -157,6 +160,7 @@ public:
     void slotFallbackDidChange(HTMLSlotElement&, ShadowRoot&) final;
 
     void hostChildElementDidChange(const Element&, ShadowRoot&) final;
+    void hostChildElementDidMove(const Element&, ShadowRoot&) final;
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString&, const AtomString&, ShadowRoot&) final;
 
     void willRemoveAssignedNode(Node&, ShadowRoot&) final;
@@ -221,6 +225,12 @@ inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)
 {
     if (m_slotAssignment) [[unlikely]]
         m_slotAssignment->hostChildElementDidChange(childElement, *this);
+}
+
+inline void ShadowRoot::hostChildElementDidMove(const Element& childElement)
+{
+    if (m_slotAssignment) [[unlikely]]
+        m_slotAssignment->hostChildElementDidMove(childElement, *this);
 }
 
 inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element, const AtomString& oldValue, const AtomString& newValue)
