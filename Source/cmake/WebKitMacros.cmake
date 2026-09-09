@@ -1034,8 +1034,9 @@ function(_webkit_platform_args_empty_input _outvar)
 endfunction()
 
 # Collect the global definitions used by C++ from COMPILE_DEFINITIONS and the
-# -D flags in CMAKE_CXX_FLAGS / CMAKE_CXX_FLAGS_<CONFIG>. The Swift clang
-# importer must use the same definitions.
+# -D or /D flags in CMAKE_CXX_FLAGS / CMAKE_CXX_FLAGS_<CONFIG>. The Swift clang
+# importer must use the same definitions. Normalize MSVC-style /D flags to -D
+# because these definitions are forwarded to Swift's clang importer.
 # Keep the real compile order so definitions from CMAKE_CXX_FLAGS take precedence
 function(_webkit_cxx_preprocessor_definitions _outvar)
     set(_defs "")
@@ -1063,10 +1064,12 @@ function(_webkit_cxx_preprocessor_definitions _outvar)
             if (_want_value)
                 list(APPEND _defs "-D${_t}")
                 set(_want_value FALSE)
-            elseif (_t STREQUAL "-D")
-                set(_want_value TRUE)  # the `-D FOO` spelling
+            elseif (_t STREQUAL "-D" OR _t STREQUAL "/D")
+                set(_want_value TRUE)  # The `-D FOO` or `/D FOO` spelling.
             elseif (_t MATCHES "^-D.")
                 list(APPEND _defs "${_t}")
+            elseif (_t MATCHES "^/D(.+)")
+                list(APPEND _defs "-D${CMAKE_MATCH_1}")
             endif ()
         endforeach ()
     endforeach ()
