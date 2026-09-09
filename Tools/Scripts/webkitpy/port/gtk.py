@@ -93,7 +93,19 @@ class GtkPort(GLibPort):
                 environment['LIBGL_DRIVERS_PATH'] = dri_libgl_path
             else:
                 _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
+        elif self._gl_rendering_backend == "cpu":
+            environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
 
+        if self._skia_rendering_backend == "cpu":
+            if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
+                _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "1".')
+            environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '1'
+        else:
+            if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
+                _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "0".')
+            environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '0'
+
+        print(str(environment).replace(' ', '\n'))
         return environment
 
     def _path_to_driver(self):
