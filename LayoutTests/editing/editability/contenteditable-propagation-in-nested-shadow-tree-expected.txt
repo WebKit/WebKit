@@ -1,0 +1,21 @@
+rxeslotted
+Verifies that editability propagates correctly when shadow trees are nested.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Nothing is editable to begin with.
+PASS checkEditability(reslotted) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(slottingBox) is "isContentEditable: false, canTypeInto: false"
+
+An editable host reaches its content through both slots, but not into its shadow trees.
+PASS checkEditability(reslotted) is "isContentEditable: true, canTypeInto: true"
+PASS checkEditability(slottingBox) is "isContentEditable: false, canTypeInto: false"
+
+Even if both shadow trees are made fully editable, the reslotted content is still not editable.
+PASS checkEditability(reslotted) is "isContentEditable: false, canTypeInto: false"
+PASS checkEditability(slottingBox) is "isContentEditable: true, canTypeInto: true"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

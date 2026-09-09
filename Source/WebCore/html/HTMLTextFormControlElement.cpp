@@ -963,7 +963,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const Style::ComputedStyle
 
     // The used value of user-select needs adjusting here because the adjuster won't run
     // on this style later (because it was not produced by the cascade).
-    Style::Adjuster adjuster(document(), parentStyle, nullptr, nullptr);
+    Style::Adjuster adjuster(document(), parentStyle, nullptr, nullptr, nullptr);
     adjuster.adjustUsedUserSelect(textBlockStyle);
 
     if (parentStyle.fieldSizing() == FieldSizing::Content)

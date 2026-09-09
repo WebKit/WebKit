@@ -1,0 +1,97 @@
+<!DOCTYPE html><!-- webkit-test-runner [ CSSUserSelectEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- user-select: all is overridden and has no effect on editability, even inside shadow trees. -->
+
+<div id="shadowHost">
+    <template shadowrootmode="open">
+        <slot name="paragraphSlot"></slot>
+        <p contenteditable="true">
+            ---:<slot name="spanSlot"></slot>:---
+        </p>
+        <p id="shadowParagraph" contenteditable="true" style="-webkit-user-select: all; user-select: all">Paragraph in shadow tree.</p>
+        <p contenteditable="true">
+            ---:<span id="shadowSpan" style="-webkit-user-select: all; user-select: all">Span in shadow tree</span>:---
+        </p>
+    </template>
+    <p id="slottedParagraph" slot="paragraphSlot" contenteditable='true' style="-webkit-user-select: all; user-select: all">Slotted in content.</p>
+    <span id="slottedSpan" slot="spanSlot" contenteditable='true' style="-webkit-user-select: all; user-select: all">Slotted span</span>
+</div>
+
+<p id="lightParagraph" contenteditable='true' style="-webkit-user-select: all; user-select: all">Regular content (no shadow trees involved).</p>
+<p contenteditable="true">
+    ---:<span id="lightSpan" style="-webkit-user-select: all; user-select: all">Regular span (no shadow trees involved)</span>:---
+</p>
+
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Verifies that '-webkit-user-select: all' has the same effect on editability inside and outside a shadow tree.");
+
+const shadowParagraph = shadowHost.shadowRoot.querySelector("#shadowParagraph");
+const shadowSpan = shadowHost.shadowRoot.querySelector("#shadowSpan");
+
+function probeUserSelect(target)
+{
+    const text = target.firstChild;
+    const selection = getSelection();
+    selection.removeAllRanges();
+
+    selection.collapse(text, 1);
+    selection.modify("extend", "forward", "character");
+
+    const shadowRoots = [];
+    for (let root = target.getRootNode(); root instanceof ShadowRoot; root = root.host.getRootNode())
+        shadowRoots.push(root);
+    const [range] = selection.getComposedRanges({ shadowRoots });
+
+    // A caret can't live in unselectable content, so the selection slid out of |target| entirely.
+    if (!range || range.startContainer !== text || range.startOffset !== 1)
+        return 'none';
+
+    // Extending by one character selected past it: the whole user-select: all root got selected.
+    if (range.endContainer !== text || range.endOffset !== 2)
+        return 'all';
+
+    return 'text';
+}
+
+function checkEditabilityAndUserSelect(target)
+{
+    const oldContent = target.textContent;
+    shadowHost.focus();
+    const probedUserSelect = probeUserSelect(target);
+    shadowHost.focus();
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.collapse(target.firstChild, 1);
+    document.execCommand("InsertText", false, "x");
+
+    const canTypeInto = target.textContent !== oldContent;
+
+    return `isContentEditable: ${target.isContentEditable}, canTypeInto: ${canTypeInto}, computed user-select: ${getComputedStyle(target).getPropertyValue('user-select')}, probed user-select: ${probedUserSelect}`;
+}
+
+debug("");
+debug("Baseline result: editable content has selectability coerced to text:");
+shouldBeEqualToString('checkEditabilityAndUserSelect(lightParagraph)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+shouldBeEqualToString('checkEditabilityAndUserSelect(lightSpan)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+
+debug("");
+debug("Same should happen in content that was slotted in:");
+shouldBeEqualToString('checkEditabilityAndUserSelect(slottedParagraph)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+shouldBeEqualToString('checkEditabilityAndUserSelect(slottedSpan)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+
+debug("");
+debug("Same should happen for content inside the shadow tree:");
+shouldBeEqualToString('checkEditabilityAndUserSelect(shadowParagraph)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+shouldBeEqualToString('checkEditabilityAndUserSelect(shadowSpan)', 'isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text');
+
+</script>
+</body>
+</html>
