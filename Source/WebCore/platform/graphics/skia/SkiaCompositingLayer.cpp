@@ -1330,6 +1330,27 @@ void SkiaCompositingLayer::paintWithMaskAndBackdrop(SkCanvas& canvas, PaintConte
     paintWithBlendMode(canvas, context);
 }
 
+static sk_sp<SkImageFilter> filterForLayerTransform(const sk_sp<SkImageFilter>& filter, const TransformationMatrix& transform)
+{
+    SkMatrix matrix = SkMatrix::MakeAll(transform.a(), transform.c(), 0, transform.b(), transform.d(), 0, 0, 0, 1);
+    if (auto localFilter = filter->makeWithLocalMatrix(matrix))
+        return localFilter;
+
+    SkSize scale;
+    SkMatrix remaining;
+    if (!matrix.decomposeScale(&scale, &remaining))
+        return filter;
+    auto inverseRemaining = remaining.invert();
+    if (!inverseRemaining)
+        return filter;
+    auto localFilter = filter->makeWithLocalMatrix(SkMatrix::Scale(scale.width(), scale.height()));
+    if (!localFilter)
+        return filter;
+
+    SkSamplingOptions sampling(SkFilterMode::kLinear);
+    return SkImageFilters::MatrixTransform(remaining, sampling, SkImageFilters::Compose(WTF::move(localFilter), SkImageFilters::MatrixTransform(*inverseRemaining, sampling, nullptr)));
+}
+
 void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext& context)
 {
     auto filter = this->filter();
@@ -1369,7 +1390,7 @@ void SkiaCompositingLayer::paintWithFilterAndMask(SkCanvas& canvas, PaintContext
     auto overlapRects = computeConsolidatedOverlapRegionRects(canvas, context, mode);
 
     SkPaint paint;
-    paint.setImageFilter(filter->filter);
+    paint.setImageFilter(filterForLayerTransform(filter->filter, combinedTransform(context)));
 
     for (const auto& rect : overlapRects) {
         if (m_mask) {
