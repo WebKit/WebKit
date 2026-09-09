@@ -241,6 +241,19 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
+RefPtr<Font> FontCache::localFontForFace(const FontDescription& fontDescription, const AtomString& fontFaceName, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
+{
+#if USE(SKIA) && !OS(ANDROID) && !PLATFORM(WIN)
+    if (auto platformData = createFontPlatformDataForFace(fontDescription, fontFaceName, fontCreationContext, options))
+        return fontForPlatformData(*platformData);
+    return nullptr;
+#else
+    // FIXME: Implement font lookup by face name properly for other platforms.
+    return fontForFamily(fontDescription, fontFaceName, fontCreationContext, options);
+#endif
+
+}
+
 RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontCreationContext& fontCreationContext, OptionSet<FontLookupOptions> options)
 {
     if (!m_purgeTimer.isActive())

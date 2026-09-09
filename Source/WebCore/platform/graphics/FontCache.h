@@ -154,6 +154,7 @@ public:
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
     Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts);
 
+    WEBCORE_EXPORT RefPtr<Font> localFontForFace(const FontDescription&, const AtomString&, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
     WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontCreationContext& = { }, OptionSet<FontLookupOptions> = { });
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
@@ -231,6 +232,10 @@ private:
 
     // These functions are implemented by each platform (unclear which functions this comment applies to).
     WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontCreationContext&, OptionSet<FontLookupOptions>);
+
+#if USE(SKIA) && !OS(ANDROID) && !PLATFORM(WIN)
+    std::unique_ptr<FontPlatformData> createFontPlatformDataForFace(const FontDescription&, const AtomString& fontFaceName, const FontCreationContext&, OptionSet<FontLookupOptions>);
+#endif
 
     static ASCIILiteral alternateFamilyName(const String&);
     static ASCIILiteral platformAlternateFamilyName(const String&);
