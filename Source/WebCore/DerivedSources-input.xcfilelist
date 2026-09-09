@@ -475,7 +475,10 @@ $(PROJECT_DIR)/Modules/entriesapi/FileSystemEntryCallback.idl
 $(PROJECT_DIR)/Modules/entriesapi/FileSystemFileEntry.idl
 $(PROJECT_DIR)/Modules/entriesapi/HTMLInputElement+EntriesAPI.idl
 $(PROJECT_DIR)/Modules/fetch/FetchBody.idl
+$(PROJECT_DIR)/Modules/fetch/DOMWindow+FetchLater.idl
+$(PROJECT_DIR)/Modules/fetch/DeferredRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchHeaders.idl
+$(PROJECT_DIR)/Modules/fetch/FetchLaterResult.idl
 $(PROJECT_DIR)/Modules/fetch/FetchReferrerPolicy.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequest.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestCache.idl

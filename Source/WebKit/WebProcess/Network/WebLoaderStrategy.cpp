@@ -1015,6 +1015,27 @@ void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier ping
         completionHandler(WTF::move(error), WTF::move(response));
 }
 
+std::pair<std::optional<uint64_t>, uint64_t> WebLoaderStrategy::reserveDeferredFetchQuota(LocalFrame& frame, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webPage = webFrame ? webFrame->page() : nullptr;
+    if (!webPage)
+        return { std::nullopt, 0 };
+
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    auto sendResult = connection->sendSync(Messages::NetworkConnectionToWebProcess::ReserveDeferredFetchQuota(webPage->webPageProxyIdentifier(), controlFrameIdentifier, reportingOrigin, maximumQuota, requestedBytes), 0);
+    auto [reservationIdentifier, availableBytes] = sendResult.takeReplyOr(std::nullopt, 0);
+    return { reservationIdentifier, availableBytes };
+}
+
+void WebLoaderStrategy::releaseDeferredFetchQuota(uint64_t identifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::ReleaseDeferredFetchQuota(identifier), 0);
+}
+
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, ResourceRequest&& request, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameLoader.frameID());

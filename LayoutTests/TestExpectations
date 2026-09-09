@@ -1451,7 +1451,9 @@ webkit.org/b/247283 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 
 # Fetch features that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
-imported/w3c/web-platform-tests/fetch/fetch-later [ Skip ]
+
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/quota [ Skip ]
+webkit.org/b/284347 imported/w3c/web-platform-tests/fetch/fetch-later/send-on-deactivate.https.window.html [ Pass Failure ]
 
 # This fetch test crashes.
 [ Debug ] imported/w3c/web-platform-tests/fetch/api/crashtests/huge-fetch.any.serviceworker.html [ Skip ]

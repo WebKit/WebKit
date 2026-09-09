@@ -147,17 +147,17 @@ PASS Response interface: new Response() must inherit property "bytes()" with the
 PASS Response interface: new Response() must inherit property "formData()" with the proper type
 PASS Response interface: new Response() must inherit property "json()" with the proper type
 PASS Response interface: new Response() must inherit property "text()" with the proper type
-FAIL FetchLaterResult interface: existence and properties of interface object assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface object length assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface object name assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface: existence and properties of interface prototype object assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL FetchLaterResult interface: attribute activated assert_own_property: self does not have own property "FetchLaterResult" expected property "FetchLaterResult" missing
-FAIL Window interface: operation fetchLater(RequestInfo, optional DeferredRequestInit) assert_own_property: global object missing non-static operation expected property "fetchLater" missing
+PASS FetchLaterResult interface: existence and properties of interface object
+PASS FetchLaterResult interface object length
+PASS FetchLaterResult interface object name
+PASS FetchLaterResult interface: existence and properties of interface prototype object
+PASS FetchLaterResult interface: existence and properties of interface prototype object's "constructor" property
+PASS FetchLaterResult interface: existence and properties of interface prototype object's @@unscopables property
+PASS FetchLaterResult interface: attribute activated
+PASS Window interface: operation fetchLater(RequestInfo, optional DeferredRequestInit)
 PASS Window interface: operation fetch(RequestInfo, optional RequestInit)
-FAIL Window interface: window must inherit property "fetchLater(RequestInfo, optional DeferredRequestInit)" with the proper type assert_own_property: expected property "fetchLater" missing
-FAIL Window interface: calling fetchLater(RequestInfo, optional DeferredRequestInit) on window with too few arguments must throw TypeError assert_own_property: expected property "fetchLater" missing
+PASS Window interface: window must inherit property "fetchLater(RequestInfo, optional DeferredRequestInit)" with the proper type
+PASS Window interface: calling fetchLater(RequestInfo, optional DeferredRequestInit) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "fetch(RequestInfo, optional RequestInit)" with the proper type
 PASS Window interface: calling fetch(RequestInfo, optional RequestInit) on window with too few arguments must throw TypeError
 

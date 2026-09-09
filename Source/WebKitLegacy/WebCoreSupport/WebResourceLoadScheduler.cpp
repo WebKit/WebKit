@@ -34,6 +34,7 @@
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkStateNotifier.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>
@@ -401,6 +402,58 @@ void WebResourceLoadScheduler::startPingLoad(LocalFrame& frame, ResourceRequest&
 {
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
     PingHandle::start(frame.loader().networkingContext(), request, options.credentials != FetchOptions::Credentials::Omit, options.redirect == FetchOptions::Redirect::Follow, WTF::move(completionHandler));
+}
+
+std::pair<std::optional<uint64_t>, uint64_t> WebResourceLoadScheduler::reserveDeferredFetchQuota(LocalFrame& frame, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes)
+{
+    RefPtr page = frame.page();
+    auto pageIdentifier = page ? page->identifier() : std::nullopt;
+    if (!pageIdentifier)
+        return { std::nullopt, 0 };
+
+    auto key = DeferredFetchQuotaKey { *pageIdentifier, controlFrameIdentifier };
+    auto& state = m_deferredFetchQuotas.ensure(key, [] {
+        return DeferredFetchQuotaState { };
+    }).iterator->value;
+    auto originBytesUsed = state.bytesUsedByOrigin.get(reportingOrigin);
+    auto availableForOrigin = originBytesUsed >= 64 * 1024 ? 0 : 64 * 1024 - originBytesUsed;
+    auto availableInReservation = state.totalBytesUsed >= maximumQuota ? 0 : maximumQuota - state.totalBytesUsed;
+    auto availableBytes = std::min(availableForOrigin, availableInReservation);
+    if (requestedBytes > availableBytes)
+        return { std::nullopt, availableBytes };
+
+    auto identifier = m_nextDeferredFetchQuotaIdentifier++;
+    state.bytesUsedByOrigin.add(reportingOrigin, 0).iterator->value += requestedBytes;
+    state.totalBytesUsed += requestedBytes;
+    m_deferredFetchQuotaReservations.add(identifier, DeferredFetchQuotaReservation { key, reportingOrigin, requestedBytes });
+    return { identifier, availableBytes };
+}
+
+void WebResourceLoadScheduler::releaseDeferredFetchQuota(uint64_t identifier)
+{
+    auto reservationIterator = m_deferredFetchQuotaReservations.find(identifier);
+    if (reservationIterator == m_deferredFetchQuotaReservations.end())
+        return;
+    auto reservation = WTF::move(reservationIterator->value);
+    m_deferredFetchQuotaReservations.remove(reservationIterator);
+
+    ASSERT(reservation.key);
+    auto stateIterator = m_deferredFetchQuotas.find(*reservation.key);
+    if (stateIterator == m_deferredFetchQuotas.end())
+        return;
+
+    auto& state = stateIterator->value;
+    auto originIterator = state.bytesUsedByOrigin.find(reservation.reportingOrigin);
+    if (originIterator != state.bytesUsedByOrigin.end()) {
+        ASSERT(originIterator->value >= reservation.bytes);
+        originIterator->value -= reservation.bytes;
+        if (!originIterator->value)
+            state.bytesUsedByOrigin.remove(originIterator);
+    }
+    ASSERT(state.totalBytesUsed >= reservation.bytes);
+    state.totalBytesUsed -= reservation.bytes;
+    if (!state.totalBytesUsed)
+        m_deferredFetchQuotas.remove(stateIterator);
 }
 
 bool WebResourceLoadScheduler::isOnLine() const

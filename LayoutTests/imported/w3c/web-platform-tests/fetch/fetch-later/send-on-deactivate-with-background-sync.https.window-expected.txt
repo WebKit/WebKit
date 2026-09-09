@@ -1,0 +1,5 @@
+
+FAIL fetchLater() does send on page entering BFCache even if BackgroundSync is on. Unsupported permission name "background-sync".
+FAIL fetchLater() with activateAfter=0 sends on page entering BFCache if BackgroundSync is on. Unsupported permission name "background-sync".
+FAIL fetchLater() with activateAfter=1m does send on page entering BFCache even if BackgroundSync is on. Unsupported permission name "background-sync".
+

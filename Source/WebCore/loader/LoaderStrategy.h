@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FetchOptions.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/LoadSchedulingMode.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceLoadPriority.h>
@@ -34,6 +35,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
@@ -56,6 +58,7 @@ class FragmentedSharedBuffer;
 class SubresourceLoader;
 
 struct FetchOptions;
+class SecurityOriginData;
 
 class WEBCORE_EXPORT LoaderStrategy : public CanMakeCheckedPtr<LoaderStrategy> {
     WTF_MAKE_TZONE_ALLOCATED(LoaderStrategy);
@@ -80,6 +83,9 @@ public:
     virtual bool usePingLoad() const { return true; }
     using PingLoadCompletionHandler = Function<void(const ResourceError&, const ResourceResponse&)>;
     virtual void startPingLoad(LocalFrame&, ResourceRequest&, const HTTPHeaderMap& originalRequestHeaders, const FetchOptions&, ContentSecurityPolicyImposition, PingLoadCompletionHandler&& = { }) = 0;
+
+    virtual std::pair<std::optional<uint64_t>, uint64_t> reserveDeferredFetchQuota(LocalFrame&, FrameIdentifier, const SecurityOriginData&, uint64_t, uint64_t);
+    virtual void releaseDeferredFetchQuota(uint64_t);
 
     using PreconnectCompletionHandler = Function<void(const ResourceError&)>;
     enum class ShouldPreconnectAsFirstParty : bool { No, Yes };
