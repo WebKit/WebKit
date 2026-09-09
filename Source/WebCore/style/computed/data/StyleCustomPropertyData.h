@@ -54,6 +54,8 @@ public:
 
     unsigned size() const { return m_size; }
     bool mayHaveAnimatableProperties() const { return m_mayHaveAnimatableProperties; }
+    bool hasAnimatedProperties() const { return m_hasAnimatedProperties; }
+    void setHasAnimatedProperties() { m_hasAnimatedProperties = true; }
 
     void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, Ref<const CustomProperty>>&)>&) const;
     AtomString findKeyAtIndex(unsigned) const;
@@ -69,6 +71,7 @@ private:
     unsigned m_size { 0 };
     unsigned m_ancestorCount { 0 };
     bool m_mayHaveAnimatableProperties { false };
+    bool m_hasAnimatedProperties { false };
 #if ASSERT_ENABLED
     mutable bool m_hasChildren { false };
 #endif

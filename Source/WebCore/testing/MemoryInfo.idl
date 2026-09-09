@@ -34,4 +34,5 @@
 ] interface MemoryInfo {
     readonly attribute unsigned long usedJSHeapSize;
     readonly attribute unsigned long totalJSHeapSize;
+    readonly attribute unsigned long long memoryFootprint;
 };

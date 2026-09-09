@@ -476,6 +476,9 @@ public:
     inline bool useTreeCountingFunctions() const;
     inline void setUsesTreeCountingFunctions();
 
+    inline bool usesCustomPropertyReferences() const;
+    inline void setUsesCustomPropertyReferences();
+
     inline InsideLink insideLink() const;
     inline void setInsideLink(InsideLink);
 
@@ -776,6 +779,7 @@ public:
         PREFERRED_TYPE(bool) unsigned usesViewportUnits : 1;
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
+        PREFERRED_TYPE(bool) unsigned usesCustomPropertyReferences : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
 
@@ -837,6 +841,9 @@ public:
         unsigned char autosizeStatus : 5;
         // Total = 59 bits (fits in 8 bytes)
     };
+
+    inline Style::CustomPropertyData& mutableInheritedCustomProperties();
+    inline Style::CustomPropertyData& mutableNonInheritedCustomProperties();
 
 protected:
     friend class Adjuster;

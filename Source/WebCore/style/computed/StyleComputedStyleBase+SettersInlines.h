@@ -79,6 +79,11 @@ inline void ComputedStyleBase::setColorForHighlight(Color&& colorForHighlight)
         m_inheritedRareData.access().colorForHighlight = WTF::move(colorForHighlight);
 }
 
+inline void ComputedStyleBase::setUsesCustomPropertyReferences()
+{
+    m_nonInheritedFlags.usesCustomPropertyReferences = true;
+}
+
 inline void ComputedStyleBase::setInsideLink(InsideLink insideLink)
 {
     m_inheritedFlags.insideLink = static_cast<unsigned>(insideLink);
