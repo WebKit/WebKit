@@ -980,6 +980,57 @@ No pre-PR checks to run""")
             captured.stderr.getvalue(),
         )
 
+    def test_unreviewed_removal_collapses_blank_lines(self):
+        message = 'Unreviewed, fix the build.\n\n\nReviewed by Sam Sneddon.\n\nSome description.\n'
+        with self._unreviewed_with_reviewed_by_repo(message=message) as (repo, captured), MockTerminal.input('y'):
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertEqual(repo.head.message, 'Unreviewed, fix the build.\n\nSome description.')
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_unreviewed_with_indented_reviewed_by(self):
+        message = 'Unreviewed, fix the build.\n\n    Reviewed by Sam Sneddon.\n'
+        with self._unreviewed_with_reviewed_by_repo(message=message) as (repo, captured), MockTerminal.input('y'):
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertNotIn('Reviewed by', repo.head.message)
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_unreviewed_with_rubber_stamped_by(self):
+        message = 'Unreviewed, fix the build.\n\nRubber-stamped by Sam Sneddon.\n'
+        with self._unreviewed_with_reviewed_by_repo(message=message) as (repo, captured), MockTerminal.input('y'):
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertNotIn('Rubber-stamped by', repo.head.message)
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_unreviewed_below_title(self):
+        message = 'Fix the build\n\nUnreviewed follow-up.\n\nReviewed by Sam Sneddon.\n'
+        with self._unreviewed_with_reviewed_by_repo(message=message) as (repo, captured), MockTerminal.input('y'):
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertNotIn('Reviewed by', repo.head.message)
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_versioning_word_is_not_a_versioning_commit(self):
+        message = 'Fix the build\n\nVersionings happen often.\n\nReviewed by Sam Sneddon.\n'
+        with self._unreviewed_with_reviewed_by_repo(message=message) as (repo, captured), MockTerminal.input('n'):
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+            self.assertIn('Reviewed by Sam Sneddon.', repo.head.message)
+        self.assertNotIn('contains a', captured.stdout.getvalue())
+        self.assertEqual(captured.stderr.getvalue(), '')
+
 
     def test_github_bugzilla(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(

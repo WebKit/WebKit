@@ -11295,19 +11295,19 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
+                                 "git log --format=%B eng/pull-request-branch ^main | grep -q '^[^-]*OO*PP*S!*' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
+                                 "git log --format=%B eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
                         command=['/bin/bash', '--posix', '-o', 'pipefail', '-c',
-                                 "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                                 "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning\\.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -11338,17 +11338,17 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log HEAD ^origin/main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main | grep -q '^[^-]*OO*PP*S!*' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log HEAD ^origin/main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and no valid reviewer found' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B HEAD ^origin/main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning\\.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -11374,6 +11374,15 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
         ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
         self.setUpCommonProperties()
         expected_remote_command_output = '    Reviewed by WebKit Reviewer.\n'
+        self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
+        self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
+        return self.run_step()
+
+    def test_success_rubber_stamped(self):
+        self.setup_step(ValidateCommitMessage())
+        ValidateCommitMessage._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setUpCommonProperties()
+        expected_remote_command_output = 'Rubber-stamped by WebKit Reviewer.\n'
         self.expectCommonRemoteCommandsWithOutput(expected_remote_command_output)
         self.expect_outcome(result=SUCCESS, state_string='Validated commit message')
         return self.run_step()
@@ -11414,17 +11423,17 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and Web Kit is not a reviewer' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep -q '^[^-]*OO*PP*S!*' && echo 'Commit message contains (OOPS!) and Web Kit is not a reviewer' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and Web Kit is not a reviewer' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep -q 'by NOBODY' && echo 'Commit message contains \"by NOBODY\" and Web Kit is not a reviewer' || test $? -eq 1"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main > commit_msg.txt; grep -q '^[[:space:]]*\\(Reviewed by\\|Rubber-stamped by\\|Rubber stamped by\\|Unreviewed\\|Versioning\\.\\)' commit_msg.txt || echo 'No reviewer information in commit message';"])
             .exit(0),
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -11445,7 +11454,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep -q '^[^-]*OO*PP*S!*' && echo 'Commit message contains (OOPS!) and no valid reviewer found' || test $? -eq 1"])
             .exit(1)
             .log('stdio', stdout='Commit message contains (OOPS!) and no valid reviewer found\n'),
         )
@@ -11463,7 +11472,7 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         log_environ=False,
                         timeout=60,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log eng/pull-request-branch ^main | grep -q 'OO*PP*S!' && echo 'Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers' || test $? -eq 1"])
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log --format=%B eng/pull-request-branch ^main | grep -q '^[^-]*OO*PP*S!*' && echo 'Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers' || test $? -eq 1"])
             .exit(1)
             .log('stdio', stdout='Commit message contains (OOPS!) and Web Kit, Kit Web are not reviewers\n'),
         )

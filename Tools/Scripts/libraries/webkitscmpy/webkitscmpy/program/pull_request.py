@@ -35,6 +35,7 @@ from .squash import Squash
 from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, run, string_utils, Terminal, OutputCapture
 from webkitscmpy import local, log, remote
+from webkitscmpy.commit_parser import REVIEWED_BY_LINE_RE, UNREVIEWED_LINE_RE
 
 
 class PullRequest(Command):
@@ -502,9 +503,11 @@ class PullRequest(Command):
             for issue in commit.issues
         ]
 
-        unreviewed = re.compile(r'(Unreviewed|Versioning.)', re.IGNORECASE)
-        reviewed = re.compile(r'^Reviewed by .+', re.IGNORECASE | re.MULTILINE)
-        bad_commits = [c for c in commits if c.message and unreviewed.search(c.message) and reviewed.search(c.message)]
+        bad_commits = [
+            c for c in commits if c.message
+            and UNREVIEWED_LINE_RE.search(c.message)
+            and REVIEWED_BY_LINE_RE.search(c.message)
+        ]
 
         if bad_commits:
             if len(bad_commits) > 1:
@@ -516,7 +519,7 @@ class PullRequest(Command):
                 default='Yes',
             )
             if response == 'Yes':
-                cleaned = re.sub(r'Reviewed by .+\n?', '', bad_commits[0].message)
+                cleaned = REVIEWED_BY_LINE_RE.sub('', bad_commits[0].message)
                 if run([repository.executable(), 'commit', '--amend', '-m', cleaned], cwd=repository.root_path).returncode:
                     sys.stderr.write("Failed to amend commit message\n")
                     return 1
