@@ -257,12 +257,24 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     class FontProxy final : public FontSelectorClient {
+#else
+    class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
+#endif
     public:
+#ifdef RC_REMOVE_SEC_ACCEL_3
         FontProxy() = default;
+#else
+        static Ref<FontProxy> create();
+        Ref<FontProxy> NODELETE clone() const;
+#endif
+
         virtual ~FontProxy();
+#ifdef RC_REMOVE_SEC_ACCEL_3
         FontProxy(const FontProxy&);
         FontProxy& operator=(const FontProxy&);
+#endif
 
         bool realized() const { return m_font.hasFontSelector(); }
         void initialize(FontSelector&, const FontCascade&);
@@ -284,6 +296,14 @@ public:
         void setWordSpacing(float wordSpacing) { m_font.setWordSpacing(wordSpacing); }
 
     private:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        FontProxy() = default;
+
+        // Don't use these to make a copy, use clone() instead,
+        // which ensures the resulting copy is ref-counted.
+        FontProxy(const FontProxy&);
+        FontProxy& operator=(const FontProxy&);
+#endif
         void update(FontSelector&);
         void fontsNeedUpdate(FontSelector&) final;
 
@@ -292,6 +312,15 @@ public:
 
     struct State final {
         State();
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        State clone() const;
+
+        // Explicit copy constructor definition inhibits these,
+        // so we have to explicitly define them.
+        State(State&&) = default;
+        State& operator=(State&&) = default;
+#endif
 
         String unparsedStrokeColor;
         String unparsedFillColor;
@@ -324,7 +353,11 @@ public:
         String wordSpacing;
 
         String unparsedFont;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         FontProxy font;
+#else
+        Ref<FontProxy> font;
+#endif
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
@@ -335,6 +368,12 @@ public:
         String fontString() const;
         String globalCompositeOperationString() const;
         String shadowColorString() const;
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+private:
+        // Use clone() to make a copy.
+        State(const State&) = default;
+#endif
     };
     const Vector<State, 1>& stateStack() LIFETIME_BOUND;
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let face = new FontFace('MyTestFam', 'local(Helvetica)');
+  face.loaded;
+  document.fonts.add(face);
+
+  let context = new OffscreenCanvas(10, 10).getContext('2d');
+
+  context.font = '10px MyTestFam';
+
+  let reentered = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get() {
+      if (reentered)
+        return undefined;
+
+      reentered = true;
+
+      context.save();
+      context.lineWidth = 1;
+
+      context.save();
+      context.lineWidth = 2;
+
+      reentered = false;
+    }
+  });
+
+  context.measureText('a');
+</script>

@@ -97,7 +97,11 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     if (newFont.isEmpty())
         return;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (newFont == state().unparsedFont && state().font.realized())
+#else
+    if (newFont == state().unparsedFont && protect(state().font)->realized())
+#endif
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
@@ -120,7 +124,11 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 
     if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTF::move(fontDescription), context)) {
         ASSERT(context->cssFontSelector());
+#ifdef RC_REMOVE_SEC_ACCEL_3
         modifiableState().font.initialize(protect(*context->cssFontSelector()), *fontCascade);
+#else
+        protect(modifiableState().font)->initialize(protect(*context->cssFontSelector()), *fontCascade);
+#endif
 
         String letterSpacing;
         setLetterSpacing(std::exchange(modifiableState().letterSpacing, letterSpacing));
@@ -164,9 +172,15 @@ CanvasDirection OffscreenCanvasRenderingContext2D::direction() const
 }
 
 auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!state().font.realized())
         setFont(state().unparsedFont);
     return &state().font;
+#else
+    if (!protect(state().font)->realized())
+        setFont(state().unparsedFont);
+    return state().font.ptr();
+#endif
 }
 
 void OffscreenCanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)

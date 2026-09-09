@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  let face = new FontFace('MyTestFam', 'local(Helvetica)');
+  face.loaded;
+  document.fonts.add(face);
+
+  let context = new OffscreenCanvas(10, 10).getContext('2d');
+
+  // After this, m_stateStack will store on the heap instead of the inline storage.
+  context.save();
+  // Set line width to ensure new states are created.
+  context.lineWidth = 0.5;
+
+  context.font = '10px MyTestFam';
+
+  let reentered = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get() {
+      if (reentered)
+        return undefined;
+      reentered = true;
+      for (let i = 0; i < 18; i++) {
+        context.save();
+        context.lineWidth = 1 + i;
+      }
+      reentered = false;
+      return undefined;
+    }
+  });
+
+  // measureText internally keeps a pointer to the `FontCascade` of the `MyTestFam`
+  // font, which is stored on the state stack. It requests font metrics, which
+  // triggers font loading. When the font is loaded, the above getter is called.
+  // It saves enough states on the stack to force the stack's buffer to be
+  // reallocated, which frees the `FontCascade` saved by measureText. After the
+  // getter is called, control is returned to measureText, which continues fetching
+  // metrics from a freed `FontCascade`, causing UAF.
+  context.measureText('a');
+</script>

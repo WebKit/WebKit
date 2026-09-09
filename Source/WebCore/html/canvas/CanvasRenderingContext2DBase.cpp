@@ -380,16 +380,40 @@ CanvasRenderingContext2DBase::State::State()
     , letterSpacing("0px"_s)
     , wordSpacing("0px"_s)
     , unparsedFont(DefaultFont)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    , font(FontProxy::create())
+#endif
 {
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+auto CanvasRenderingContext2DBase::State::clone() const -> State
+{
+    State cloned = *this;
+
+    // FIXME: implement copy-on-write so we only clone when it's changed.
+    cloned.font = protect(this->font)->clone();
+
+    return cloned;
+}
+#endif
+
 String CanvasRenderingContext2DBase::State::fontString() const
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!font.realized())
+#else
+    Ref fontProxy = this->font;
+    if (!fontProxy->realized())
+#endif
         return DefaultFont;
 
     StringBuilder serializedFont;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const auto& font = this->font.fontDescription();
+#else
+    const auto& font = fontProxy->fontDescription();
+#endif
 
     auto italic = font.fontStyleSlope() ? "italic "_s : ""_s;
     auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps "_s : ""_s;
@@ -448,6 +472,18 @@ String CanvasRenderingContext2DBase::State::shadowColorString() const
 {
     return serializationForHTML(shadowColor);
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+Ref<CanvasRenderingContext2DBase::FontProxy> CanvasRenderingContext2DBase::FontProxy::create()
+{
+    return adoptRef(*new CanvasRenderingContext2DBase::FontProxy());
+}
+
+Ref<CanvasRenderingContext2DBase::FontProxy> CanvasRenderingContext2DBase::FontProxy::clone() const
+{
+    return adoptRef(*new CanvasRenderingContext2DBase::FontProxy(*this));
+}
+#endif
 
 CanvasRenderingContext2DBase::FontProxy::~FontProxy()
 {
@@ -546,7 +582,11 @@ void CanvasRenderingContext2DBase::realizeSavesLoop()
     do {
         if (m_stateStack.size() > MaxSaveCount)
             break;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_stateStack.append(state());
+#else
+        m_stateStack.append(state().clone());
+#endif
         if (context)
             context->save();
     } while (--m_unrealizedSaveCount);
@@ -2819,7 +2859,11 @@ void CanvasRenderingContext2DBase::setDirection(Direction direction)
 
 bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, std::optional<double> maxWidth)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!fontProxy()->realized())
+#else
+    if (!protect(fontProxy())->realized())
+#endif
         return false;
 
     auto* c = effectiveDrawingContext();
@@ -2889,18 +2933,29 @@ static bool canUseCachedShapedText(const TextRun& textRun)
 
 void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, double x, double y, bool fill, std::optional<double> maxWidth)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
+#endif
+
     auto* cachedShapedText = [&]() -> TextShapingResultAndDisplayList* {
         if (!canUseCachedShapedText(textRun))
             return nullptr;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         CheckedRef fontCascade = fontProxy()->fontCascade();
+#endif
         RefPtr fonts = fontCascade->fonts();
 
         ASSERT(fonts);
         return fonts->getOrCreateCachedShapedText(textRun, fontCascade, 0, std::nullopt, ForTextEmphasis::No);
     }();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : protect(fontProxy()->fontCascade())->width(textRun);
+#else
+    float fontWidth = cachedShapedText ? cachedShapedText->textShapingResult.width : fontCascade->width(textRun);
+#endif
 
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;
@@ -2909,7 +2964,11 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
     FloatRect textRect = [&] () {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         const auto& fontMetrics = fontProxy()->metricsOfPrimaryFont();
+#else
+        const auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
+#endif
         return FloatRect(
             location.x() - fontMetrics.intHeight() / 2,
             location.y() - fontMetrics.intAscent() - fontMetrics.intLineGap(),
@@ -2927,7 +2986,11 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
     bool cachedDisplayListNeedsStateSave = false;
     // Any shadow could add display list items to draw glyphs a 2nd time with different context attributes.
     if (cachedShapedText && !cachedShapedText->displayList && !cachedShapedText->textShapingResult.glyphBuffer.isEmpty() && !c->dropShadow()) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         cachedShapedText->displayList = protect(fontProxy()->fontCascade())->displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#else
+        cachedShapedText->displayList = fontCascade->displayListForGlyphBuffer(*c, cachedShapedText->textShapingResult.glyphBuffer, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#endif
 
         if (cachedShapedText->displayList) {
             for (auto& item : cachedShapedText->displayList->items()) {
@@ -2956,11 +3019,19 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
                     }
                 } else {
                     FloatPoint startPoint = point + WebCore::size(glyphBuffer.initialAdvance());
+#ifdef RC_REMOVE_SEC_ACCEL_3
                     protect(fontProxy()->fontCascade())->drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#else
+                    fontCascade->drawGlyphBuffer(context, glyphBuffer, startPoint, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#endif
                 }
             }
         } else
+#ifdef RC_REMOVE_SEC_ACCEL_3
             fontProxy()->drawBidiText(context, textRun, point, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#else
+            fontProxy->drawBidiText(context, textRun, point, FontCascade::CustomFontNotReadyAction::UseFallbackIfFontNotReady);
+#endif
     };
 
 #if USE(CG)
@@ -3073,16 +3144,29 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
 {
     Ref<TextMetrics> metrics = TextMetrics::create();
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     auto* fontProxy = this->fontProxy();
+#else
+    RefPtr fontProxy = this->fontProxy();
+#endif
+
     if (!fontProxy->realized())
         return metrics;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     auto& font = *fontProxy;
     auto& fontMetrics = font.metricsOfPrimaryFont();
+#else
+    auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
+#endif
 
     GlyphOverflow glyphOverflow;
     glyphOverflow.computeBounds = true;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     float fontWidth = font.width(textRun, &glyphOverflow);
+#else
+    float fontWidth = fontProxy->width(textRun, &glyphOverflow);
+#endif
     metrics->setWidth(fontWidth);
 
     FloatPoint offset = textOffset(fontWidth, textRun.direction());
@@ -3115,7 +3199,13 @@ void CanvasRenderingContext2DBase::updateStateTransform(const AffineTransform& t
 
 FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection direction)
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     auto& fontMetrics = fontProxy()->metricsOfPrimaryFont();
+#else
+    RefPtr fontProxy = this->fontProxy();
+    auto& fontMetrics = fontProxy->metricsOfPrimaryFont();
+#endif
+
     FloatPoint offset;
 
     switch (state().textBaseline) {
@@ -3289,11 +3379,21 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     CheckedRef fontCascade = fontProxy()->fontCascade();
+#else
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
+#endif
+
     double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, fontCascade.ptr());
 
     modifiableState().letterSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     modifiableState().font.setLetterSpacing(pixels);
+#else
+    protect(modifiableState().font)->setLetterSpacing(pixels);
+#endif
 }
 
 void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
@@ -3317,11 +3417,21 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
     if (!unitAllowedForSpacing(rawLength->unit))
         return;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     CheckedRef fontCascade = fontProxy()->fontCascade();
+#else
+    RefPtr fontProxy = this->fontProxy();
+    CheckedRef fontCascade = fontProxy->fontCascade();
+#endif
+
     double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, fontCascade.ptr());
 
     modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     modifiableState().font.setWordSpacing(pixels);
+#else
+    protect(modifiableState().font)->setWordSpacing(pixels);
+#endif
 }
 
 ImageBuffer* CanvasRenderingContext2DBase::buffer() const
