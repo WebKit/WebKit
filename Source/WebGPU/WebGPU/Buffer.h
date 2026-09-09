@@ -120,6 +120,9 @@ public:
     uint64_t drawIndexedCacheInvalidationCount() const { return m_drawIndexedCacheInvalidationCount; }
     void drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, int32_t baseVertex, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    void skippedBundleIndirectDrawValidation(CommandEncoder&, ReusedIndirectIndexedDraw&&);
+#endif // RC_REMOVE_SEC_ACCEL_3
     void skippedDrawIndirectIndexedValidation(CommandEncoder&, Buffer*, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType);
     void skippedDrawIndirectValidation(CommandEncoder&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
 
@@ -145,6 +148,9 @@ public:
     bool mustTakeSlowIndexValidationPath() const { return m_mustTakeSlowIndexValidationPath; }
     void clearMustTakeSlowIndexValidationPath();
     void takeSlowIndexValidationPath(CommandBuffer&, uint32_t firstIndex, uint32_t indexCount, MTLIndexType, uint32_t primitiveOffset, uint32_t vertexCount);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    void takeSlowBundleIndirectDrawValidationPath(CommandBuffer&, const ReusedIndirectIndexedDraw&);
+#endif // RC_REMOVE_SEC_ACCEL_3
     bool needsIndexValidation(uint32_t, uint16_t);
 
 private:
@@ -159,6 +165,7 @@ private:
     void decrementBufferMapCount();
     void takeSlowIndirectIndexValidationPath(CommandBuffer&, Buffer&, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType);
     void takeSlowIndirectValidationPath(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
+    void clearIndexBufferForCommandBuffer(CommandBuffer&);
 
     id<MTLBuffer> m_buffer { nil };
     id<MTLBuffer> _Nullable m_indirectBuffer { nil };
@@ -211,6 +218,11 @@ private:
     mutable HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_gpuResourceMap;
     HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedValidationCommandEncoders;
     bool m_mustTakeSlowIndexValidationPath { false };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Identity of the command buffer this buffer was last cleared for, so that several failed validations
+    // sharing one command buffer do not each capture a "prior" copy and queue a restore of it.
+    uintptr_t m_clearedForCommandBuffer { 0 }; // NOLINT
+#endif // RC_REMOVE_SEC_ACCEL_3
     uint64_t m_contentsGeneration { 0 }; // NOLINT
     uint64_t m_indexContentsGeneration { 0 }; // NOLINT
     uint32_t m_indexValueUpperBoundUint { 0 }; // NOLINT

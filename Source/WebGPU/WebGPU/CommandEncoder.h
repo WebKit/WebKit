@@ -157,6 +157,9 @@ public:
     bool useResidencySet(id<MTLResidencySet>);
 #endif
     void skippedDrawIndexedValidation(uint64_t bufferIdentifier, DrawIndexCacheContainerIterator);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    void skippedBundleIndirectDrawValidation(uint64_t bufferIdentifier, ReusedIndirectIndexedDraw&&);
+#endif // RC_REMOVE_SEC_ACCEL_3
     void rebindSamplersPreCommit(const BindGroup&);
 
 private:
@@ -195,6 +198,9 @@ private:
     NSMutableSet<id<MTLCounterSampleBuffer>> * _Nullable m_retainedTimestampBuffers { nil };
     Vector<Function<bool(CommandBuffer&, CommandEncoder&)>> m_onCommitHandlers;
     HashMap<uint64_t, Vector<std::pair<DrawIndexCacheContainerValue, uint32_t>>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_skippedDrawIndexedValidationKeys;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    HashMap<uint64_t, Vector<ReusedIndirectIndexedDraw>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_reusedIndirectIndexedDraws;
+#endif // RC_REMOVE_SEC_ACCEL_3
     Vector<Ref<const BindGroup>> m_bindGroups;
     Vector<Ref<const Buffer>> m_trackedBuffers;
     Vector<Ref<const Texture>> m_trackedTextures;

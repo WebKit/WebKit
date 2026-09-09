@@ -159,6 +159,18 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
                 }
             }
         }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        for (auto& [bufferIdentifier, reusedIndirectIndexedDraws] : commandEncoder.m_reusedIndirectIndexedDraws) {
+            RefPtr apiBuffer = commandBuffer.device().lookupBuffer(bufferIdentifier);
+            if (!apiBuffer)
+                continue;
+            for (auto& draw : reusedIndirectIndexedDraws) {
+                if (draw.indexGeneration == apiBuffer->indexContentsGeneration())
+                    continue;
+                apiBuffer->takeSlowBundleIndirectDrawValidationPath(commandBuffer, draw);
+            }
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
         for (Ref group : commandEncoder.m_bindGroups)
             group->rebindSamplersIfNeeded();
 
@@ -2438,6 +2450,15 @@ void CommandEncoder::skippedDrawIndexedValidation(uint64_t bufferIdentifier, Dra
 {
     m_skippedDrawIndexedValidationKeys.add(bufferIdentifier, Vector<std::pair<DrawIndexCacheContainerValue, uint32_t>> { }).iterator->value.append(std::make_pair(DrawIndexCacheContainerValue(it->key.key()), it->value.vertexCount));
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+void CommandEncoder::skippedBundleIndirectDrawValidation(uint64_t bufferIdentifier, ReusedIndirectIndexedDraw&& draw)
+{
+    auto& reusedDraws = m_reusedIndirectIndexedDraws.add(bufferIdentifier, Vector<ReusedIndirectIndexedDraw> { }).iterator->value;
+    if (!reusedDraws.contains(draw))
+        reusedDraws.append(WTF::move(draw));
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 {
