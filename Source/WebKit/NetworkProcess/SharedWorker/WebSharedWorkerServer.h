@@ -92,6 +92,7 @@ private:
     void createContextConnection(const WebCore::Site&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, WebCore::CrossOriginEmbedderPolicyValue);
     void forEachContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&, NOESCAPE const Function<void(WebSharedWorkerServerToContextConnection&)>&);
     bool needsContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
+    bool needsContextConnection(const ContextConnectionKey&) const;
     void contextConnectionCreated(WebSharedWorkerServerToContextConnection&);
     void didFinishFetchingSharedWorkerScript(WebSharedWorker&, WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&);
     void shutDownSharedWorker(const WebCore::SharedWorkerKey&);
