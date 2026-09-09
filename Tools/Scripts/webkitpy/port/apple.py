@@ -130,6 +130,7 @@ class ApplePort(Port):
                 else set()
             )
             | set(self._filesystem.glob(self._webkit_baseline_path("*")))
+            | self._additional_root_platform_baselines()
         )
 
         assert {p for p in paths if self._filesystem.isdir(p)}.issuperset(
