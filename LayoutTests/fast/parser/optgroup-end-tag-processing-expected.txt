@@ -1,0 +1,28 @@
+This test validates the refactored processEndTag() function for optgroup elements in HTMLTreeBuilder.cpp. The parser should directly pop elements from the stack instead of calling processFakeEndTag().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test 1: Optgroup with unclosed option element
+PASS optgroups1.length is 2
+PASS options1.length is 3
+PASS group1Options.length is 2
+PASS group2Options.length is 1
+PASS allOptionsParented is true
+
+Test 2: Multiple optgroups with auto-closed options
+PASS optgroups2.length is 3
+PASS options2.length is 5
+PASS directOptions.length is 0
+
+Test 3: Unclosed optgroups (parser generates implied end tags)
+PASS hasNestedOptgroups is false
+PASS optgroups3.length is 2
+
+Tests exercise processEndTag() for optgroup which calls:
+  m_tree.openElements().pop() when option is inside optgroup
+  Direct stack manipulation instead of processFakeEndTag()
+
