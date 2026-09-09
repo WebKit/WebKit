@@ -2459,6 +2459,19 @@ void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
+
+static bool movedOutOfBounds(const WebCore::IntPoint& origin, const WebCore::IntPoint& position, int maxDistance)
+{
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    // Both WPE and GTK native events compare the double click distance linearly per axis
+    if (!maxDistance)
+        return origin != position;
+    return std::abs(origin.x() - position.x()) >= maxDistance || std::abs(origin.y() - position.y()) >= maxDistance;
+#else
+    return origin.distanceSquaredToPoint(position) > maxDistance;
+#endif
+}
+
 void WebAutomationSession::updateClickCount(MouseButton button, const WebCore::IntPoint& position, Seconds maxTime, int maxDistance)
 {
     if (button != MouseButton::Left) {
@@ -2468,7 +2481,7 @@ void WebAutomationSession::updateClickCount(MouseButton button, const WebCore::I
     }
 
     auto now = MonotonicTime::now();
-    if (!m_lastClickPosition || m_lastClickPosition->distanceSquaredToPoint(position) > maxDistance || now - m_lastClickTime > maxTime) {
+    if (!m_lastClickPosition || movedOutOfBounds(*m_lastClickPosition, position, maxDistance) || now - m_lastClickTime > maxTime) {
         m_lastClickPosition = position;
         m_lastClickTime = now;
         m_clickCount = 1;
@@ -2482,7 +2495,7 @@ void WebAutomationSession::updateClickCount(MouseButton button, const WebCore::I
 void WebAutomationSession::updateLastPosition(const WebCore::IntPoint& position, int maxDistance)
 {
     // Cancel multiple clicks if mouse strays too far:
-    if (m_lastClickPosition && m_lastClickPosition->distanceSquaredToPoint(position) > maxDistance)
+    if (m_lastClickPosition && movedOutOfBounds(*m_lastClickPosition, position, maxDistance))
         m_lastClickPosition.reset();
 
     m_lastPosition = position;
