@@ -1,0 +1,11 @@
+Tests that back navigation is not classified as a redirect and therefore not logged.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Resource load statistics:
+
