@@ -161,7 +161,7 @@ public:
     WEBCORE_EXPORT float frameScaleFactor() const;
 
     // Scale factor of a child frame with respect to this frame.
-    virtual float usedZoomForChild(const Frame&) const = 0;
+    virtual float cssZoomForChild(const Frame&) const = 0;
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 

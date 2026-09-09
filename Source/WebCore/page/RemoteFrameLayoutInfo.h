@@ -60,7 +60,7 @@ public:
     bool ownerHasRenderer() const { return m_ownerHasRenderer; }
     const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
     const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
-    float usedZoom() const { return m_usedZoom; }
+    float cssZoom() const { return m_cssZoom; }
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
@@ -74,7 +74,7 @@ private:
         bool ownerHasRenderer,
         TransformationMatrix childFrameOwnerToRootContentTransform,
         TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
-        float usedZoom,
+        float cssZoom,
         LayoutPoint contentBoxLocation,
         OptionSet<FrameOwnerElementAppearance>
     );
@@ -107,8 +107,7 @@ private:
     // absolute coordinate to the child frame owner's local coordinate.
     TransformationMatrix m_absoluteToChildFrameOwnerLocalTransform;
 
-    // Style::ComputedStyle::usedZoom of the owner renderer of the frame.
-    float m_usedZoom;
+    float m_cssZoom;
 
     // The offset of the content box of the frame's owner element
     // from its border box.

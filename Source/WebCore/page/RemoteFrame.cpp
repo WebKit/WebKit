@@ -255,10 +255,10 @@ ColorSchemePreference RemoteFrame::colorSchemePreference() const
     return m_colorSchemePreference;
 }
 
-float RemoteFrame::usedZoomForChild(const Frame& child) const
+float RemoteFrame::cssZoomForChild(const Frame& child) const
 {
     if (RefPtr info = frameTreeSyncData().frameGeometry.childrenFrameLayoutInfo.get(child.frameID()))
-        return info->usedZoom();
+        return info->cssZoom();
 
     return 1.0;
 }

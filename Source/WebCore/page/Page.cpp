@@ -1811,6 +1811,26 @@ void Page::setViewScaleFactor(float scale)
     BackForwardCache::singleton().markPagesForDeviceOrPageScaleChanged(*this);
 }
 
+void Page::setPageZoomFactor(float pageZoomFactor)
+{
+    if (m_pageZoomFactor == pageZoomFactor)
+        return;
+
+    m_pageZoomFactor = pageZoomFactor;
+    for (WeakRef rootFrame : m_rootFrames)
+        rootFrame->setPageZoomFactor(pageZoomFactor);
+}
+
+void Page::setTextZoomFactor(float textZoomFactor)
+{
+    if (m_textZoomFactor == textZoomFactor)
+        return;
+
+    m_textZoomFactor = textZoomFactor;
+    for (WeakRef rootFrame : m_rootFrames)
+        rootFrame->setTextZoomFactor(textZoomFactor);
+}
+
 void Page::setDeviceScaleFactor(float scaleFactor)
 {
     ASSERT(scaleFactor > 0);
@@ -2355,7 +2375,7 @@ void Page::syncLocalFrameInfoToRemote()
                 !!child->ownerRenderer(),
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
-                frame.usedZoomForChild(*child),
+                frame.cssZoomForChild(*child),
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));

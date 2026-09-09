@@ -1073,6 +1073,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
         updateRemoteMainFrameViewDelegatedScrolling();
     }
+
+    didSetPageZoomFactor(parameters.pageZoomFactor);
+    didSetTextZoomFactor(parameters.textZoomFactor);
+
     if (auto&& provisionalFrameCreationParameters = parameters.provisionalFrameCreationParameters) {
         ASSERT(page->settings().siteIsolationEnabled());
         createProvisionalFrame(WTF::move(*provisionalFrameCreationParameters));
@@ -1081,8 +1085,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     drawingArea->updatePreferences(parameters.store);
 
     setBackgroundExtendsBeyondPage(parameters.backgroundExtendsBeyondPage);
-    didSetPageZoomFactor(parameters.pageZoomFactor);
-    didSetTextZoomFactor(parameters.textZoomFactor);
 
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(page.ptr(), WebGeolocationClient::create(*this));
@@ -1740,6 +1742,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
         if (RefPtr page = m_page; page && is<RemoteFrame>(page->mainFrame()))
             page->updateTopDocumentSyncData(Ref { remotePageParameters->topDocumentSyncData });
     }
+
+    didSetPageZoomFactor(parameters.pageZoomFactor);
+    didSetTextZoomFactor(parameters.textZoomFactor);
 
     if (auto&& provisionalFrameCreationParameters = parameters.provisionalFrameCreationParameters) {
         ASSERT(m_page->settings().siteIsolationEnabled());
@@ -2926,10 +2931,11 @@ double WebPage::textZoomFactor() const
         return pluginView->pageScaleFactor();
 #endif
 
-    RefPtr frame = m_mainFrame->coreLocalFrame();
-    if (!frame)
+    if (RefPtr frame = m_mainFrame->coreLocalFrame())
+        return frame->textZoomFactor();
+    if (!m_page)
         return 1;
-    return frame->textZoomFactor();
+    return m_page->textZoomFactor();
 }
 
 void WebPage::didSetTextZoomFactor(double zoomFactor)
@@ -2942,8 +2948,7 @@ void WebPage::didSetTextZoomFactor(double zoomFactor)
     if (!m_page)
         return;
 
-    for (WeakRef frame : m_page->rootFrames())
-        frame->setTextZoomFactor(static_cast<float>(zoomFactor));
+    protect(m_page)->setTextZoomFactor(static_cast<float>(zoomFactor));
 }
 
 double WebPage::pageZoomFactor() const
@@ -2955,10 +2960,11 @@ double WebPage::pageZoomFactor() const
     }
 #endif
 
-    RefPtr frame = m_mainFrame->coreLocalFrame();
-    if (!frame)
+    if (RefPtr frame = m_mainFrame->coreLocalFrame())
+        return frame->pageZoomFactor();
+    if (!m_page)
         return 1;
-    return frame->pageZoomFactor();
+    return m_page->pageZoomFactor();
 }
 
 void WebPage::didSetPageZoomFactor(double zoomFactor)
@@ -2974,8 +2980,7 @@ void WebPage::didSetPageZoomFactor(double zoomFactor)
     if (!m_page)
         return;
 
-    for (WeakRef frame : m_page->rootFrames())
-        frame->setPageZoomFactor(static_cast<float>(zoomFactor));
+    protect(m_page)->setPageZoomFactor(static_cast<float>(zoomFactor));
 }
 
 static void dumpHistoryItem(HistoryItem& item, size_t indent, bool isCurrentItem, StringBuilder& stringBuilder, const String& directoryName)
