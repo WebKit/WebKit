@@ -99,6 +99,8 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/Cocoa/WKMain.mm
 
+    Shared/CxxMacros.swift
+
     Shared/Cocoa/DefaultWebBrowserChecks.mm
     Shared/Cocoa/XPCEndpoint.mm
     Shared/Cocoa/XPCEndpointClient.mm

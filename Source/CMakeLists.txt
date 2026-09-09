@@ -5,6 +5,12 @@ if (USE_APPLE_INTERNAL_SDK)
     add_subdirectory(../../Internal/WebKit/WebKitAdditions ${CMAKE_BINARY_DIR}/WebKitAdditions)
 endif ()
 
+# Must precede any target that consumes the macro plugin. Not an
+# add_subdirectory(): the plugin is a host tool with its own toolchain.
+if (SWIFT_REQUIRED)
+    include(WebKitSwiftMacroPlugin)
+endif ()
+
 add_subdirectory(bmalloc)
 add_subdirectory(WTF)
 
