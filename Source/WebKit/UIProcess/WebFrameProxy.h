@@ -208,7 +208,7 @@ public:
     void didExplicitOpen(URL&&, String&& mimeType);
     void didReceiveServerRedirectForProvisionalLoad(URL&&);
     void didFailProvisionalLoad();
-    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations);
+    void didCommitLoad(const String& contentType, bool containsPluginDocument, WebCore::DocumentSecurityPolicy&&, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const WebCore::SecurityOriginData& originReportedByWebProcess);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(URL&&); // eg. anchor navigation, session state change.
@@ -361,6 +361,7 @@ private:
 
     enum class ForInitialization : bool { No, Yes };
     void updateDocumentSecurityOrigin(WebFrameProxy*, ForInitialization = ForInitialization::No);
+    WebCore::SecurityOriginData committedDocumentSecurityOriginData() const;
 
     RefPtr<WebFrameProxy> deepLastChild();
     WebFrameProxy* NODELETE firstChild() const;
@@ -404,6 +405,9 @@ private:
     WebCore::ScrollbarMode m_scrollingMode;
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
     RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
+    // Only for recording what this frame claims to have committed; not a substitute for
+    // m_documentSecurityOrigin, which the UI process derives itself and so can trust.
+    std::optional<WebCore::SecurityOriginData> m_committedOriginReportedByWebProcess;
     HashSet<WebCore::SecurityOriginData> m_cspOriginsThatUpgradeInsecureNavigations;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
