@@ -619,6 +619,8 @@ namespace WebCore {
     macro(errorSteps) \
     macro(fatal) \
     macro(fetch) \
+    macro(FetchLaterResult) \
+    macro(fetchLater) \
     macro(fetchRequest) \
     macro(FileReader) \
     macro(FileReaderSync) \

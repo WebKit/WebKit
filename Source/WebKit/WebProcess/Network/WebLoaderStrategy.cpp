@@ -954,6 +954,90 @@ void WebLoaderStrategy::browsingContextRemoved(LocalFrame& frame)
     networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page->webPageProxyIdentifier(), page->identifier(), frame.frameID()), 0);
 }
 
+bool WebLoaderStrategy::addDeferredFetch(LocalFrame& frame, DeferredFetchIdentifier reservationIdentifier, const ResourceRequest& request, const ResourceLoaderOptions& options)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr document = frame.document();
+    if (!document || !webFrame)
+        return false;
+
+    RefPtr webPage = webFrame->page();
+    if (!webPage)
+        return false;
+
+    std::optional<ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    if (options.contentSecurityPolicyImposition == ContentSecurityPolicyImposition::DoPolicyCheck && !document->shouldBypassMainWorldContentSecurityPolicy()) {
+        if (CheckedPtr contentSecurityPolicy = document->contentSecurityPolicy())
+            cspResponseHeaders = contentSecurityPolicy->responseHeaders();
+    }
+
+    NetworkResourceLoadParameters loadParameters {
+        .webPageProxyID = webPage->webPageProxyIdentifier(),
+        .webPageID = webPage->identifier(),
+        .webFrameID = webFrame->frameID(),
+        .request = request,
+        .topOrigin = document->topOrigin(),
+        .sourceOrigin = document->securityOrigin(),
+        .parentPID = legacyPresentingApplicationPID(),
+        .storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use,
+        .shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(&frame),
+#if ENABLE(APP_BOUND_DOMAINS)
+        .isNavigatingToAppBoundDomain = webFrame->isTopFrameNavigatingToAppBoundDomain(),
+#endif
+        .identifier = ResourceLoaderIdentifier::generate(),
+        .options = options,
+        .cspResponseHeaders = WTF::move(cspResponseHeaders),
+        .frameURL = document->url(),
+    };
+    loadParameters.createSandboxExtensionHandlesIfNecessary();
+    addParametersShared(&frame, loadParameters);
+#if ENABLE(CONTENT_EXTENSIONS) || (ENABLE(CONTENT_FILTERING) && HAVE(WEBCONTENTRESTRICTIONS))
+    if (RefPtr page = document->page())
+        loadParameters.mainDocumentURL = page->mainFrameURL();
+#endif
+
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    connection->send(Messages::NetworkConnectionToWebProcess::AddDeferredFetch(reservationIdentifier, WTF::move(loadParameters)), 0);
+    return true;
+}
+
+void WebLoaderStrategy::sendDeferredFetch(DeferredFetchIdentifier reservationIdentifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::SendDeferredFetch(reservationIdentifier), 0);
+}
+
+void WebLoaderStrategy::removeDeferredFetch(DeferredFetchIdentifier reservationIdentifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RemoveDeferredFetch(reservationIdentifier), 0);
+}
+
+std::pair<std::optional<DeferredFetchIdentifier>, uint64_t> WebLoaderStrategy::reserveDeferredFetchQuota(LocalFrame& frame, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes)
+{
+    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
+    RefPtr webPage = webFrame ? webFrame->page() : nullptr;
+    if (!webPage)
+        return { std::nullopt, 0 };
+
+    Ref connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+    auto sendResult = connection->sendSync(Messages::NetworkConnectionToWebProcess::ReserveDeferredFetchQuota(webPage->webPageProxyIdentifier(), controlFrameIdentifier, reportingOrigin, maximumQuota, requestedBytes), 0);
+    auto [reservationIdentifier, availableBytes] = sendResult.takeReplyOr(std::nullopt, 0);
+    return { reservationIdentifier, availableBytes };
+}
+
+void WebLoaderStrategy::releaseDeferredFetchQuota(DeferredFetchIdentifier identifier)
+{
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::ReleaseDeferredFetchQuota(identifier), 0);
+}
+
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, ResourceRequest&& request, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameLoader.frameID());

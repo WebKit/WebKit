@@ -82,6 +82,7 @@
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DebuggerSuspensionController.h"
+#include "DeferredFetchRegistry.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFontLoader.h"
 #include "DocumentFragment.h"
@@ -1252,6 +1253,13 @@ Editor& Document::ensureEditor()
     ASSERT(m_constructionDidFinish);
     lazyInitialize(m_editor, makeUniqueWithoutRefCountedCheck<Editor>(*this));
     return *m_editor;
+}
+
+DeferredFetchRegistry& Document::ensureDeferredFetchRegistry()
+{
+    if (!m_deferredFetchRegistry)
+        m_deferredFetchRegistry = DeferredFetchRegistry::create(*this);
+    return *m_deferredFetchRegistry;
 }
 
 ReportingScope& Document::ensureReportingScope()
@@ -3752,6 +3760,12 @@ void Document::willBeRemovedFromFrame()
 {
     if (m_hasPreparedForDestruction)
         return;
+
+    // Activate any pending fetchLater() requests before the document goes away.
+    // Must happen before we start tearing down subsystems the load path relies on
+    // (e.g. the CachedResourceLoader / DocumentLoader below).
+    if (RefPtr registry = m_deferredFetchRegistry)
+        registry->documentIsBeingDestroyed();
 
 #if ENABLE(WEB_RTC)
     if (RefPtr rtcNetworkManager = m_rtcNetworkManager)
@@ -7975,6 +7989,8 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
             idbConnectionProxy->setContextSuspended(*this, false);
         break;
     case AboutToEnterBackForwardCache:
+        if (RefPtr registry = m_deferredFetchRegistry)
+            registry->documentIsAboutToEnterBackForwardCache();
         break;
     }
 }

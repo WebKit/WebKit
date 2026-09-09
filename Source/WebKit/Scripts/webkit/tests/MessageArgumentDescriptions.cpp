@@ -590,6 +590,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::DebuggerPauseSessionIdentifier"_s,
         "WebCore::DictationContext"_s,
         "WebCore::NodeIdentifier"_s,
+        "WebCore::DeferredFetchIdentifier"_s,
         "WebCore::FetchIdentifier"_s,
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,

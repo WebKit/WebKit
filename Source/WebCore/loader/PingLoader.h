@@ -44,6 +44,8 @@ class HTTPHeaderMap;
 class LocalFrame;
 class ResourceRequest;
 
+struct ResourceLoaderOptions;
+
 enum class ContentSecurityPolicyImposition : uint8_t;
 enum class ViolationReportType : uint8_t;
 
@@ -52,6 +54,7 @@ public:
     static void loadImage(LocalFrame&, URL&&);
     static void sendPing(LocalFrame&, URL&& pingURL, const URL& destinationURL);
     WEBCORE_EXPORT static void sendViolationReport(LocalFrame&, URL&& reportURL, Ref<FormData>&& report, ViolationReportType);
+    static void startDeferredFetch(LocalFrame&, ResourceRequest&, const ResourceLoaderOptions&);
 
     static String sanitizeURLForReport(const URL&);
 
