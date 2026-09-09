@@ -1,0 +1,42 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Element: setHTMLUnsafe with runScripts & no shadowdom. assert_true: expected true got false
+PASS Element: setHTMLUnsafe with runScripts=false & no shadowdom.
+PASS Element: setHTMLUnsafe without runScripts & no shadowdom.
+FAIL Element: setHTMLUnsafe with script inside declarative shadow DOM. assert_true: expected true got false
+TIMEOUT Element: setHTMLUnsafe with external script. Test timed out
+NOTRUN Element: setHTMLUnsafe with external async script.
+NOTRUN Element: setHTMLUnsafe with external defer script.
+NOTRUN Element: setHTMLUnsafe script cannot observe intermediate state.
+NOTRUN Element: setHTMLUnsafe script can remove subsequent scripts and prevent them from running.
+NOTRUN Element: setHTMLUnsafe script cannot observe intermediate style.
+PASS Element: sanitizer can remove scripts, which would override runScripts=true.
+FAIL Element: runScripts is ignored when not "Unsafe" (setHTML). container.setHTML is not a function. (In 'container.setHTML(
+          "<script>window.did_run = true;</" + "script>",
+          {
+            get runScripts() { throw new Error("runScripts should not be accessed"); },
+          }
+        )', 'container.setHTML' is undefined)
+PASS Element: runScripts is ignored for parseHTMLUnsafe.
+FAIL Element: runScripts order of operations with custom element callbacks assert_array_equals: lengths differ, expected array ["run-scripts", "element-1-ctor", "element-1-connected", "element-2-ctor", "element-2-connected"] length 5, got ["element-1-ctor", "element-1-connected", "element-2-ctor", "element-2-connected"] length 4
+FAIL ShadowRoot: setHTMLUnsafe with runScripts & no shadowdom. assert_true: expected true got false
+PASS ShadowRoot: setHTMLUnsafe with runScripts=false & no shadowdom.
+PASS ShadowRoot: setHTMLUnsafe without runScripts & no shadowdom.
+FAIL ShadowRoot: setHTMLUnsafe with script inside declarative shadow DOM. assert_true: expected true got false
+NOTRUN ShadowRoot: setHTMLUnsafe with external script.
+NOTRUN ShadowRoot: setHTMLUnsafe with external async script.
+NOTRUN ShadowRoot: setHTMLUnsafe with external defer script.
+NOTRUN ShadowRoot: setHTMLUnsafe script cannot observe intermediate state.
+NOTRUN ShadowRoot: setHTMLUnsafe script can remove subsequent scripts and prevent them from running.
+NOTRUN ShadowRoot: setHTMLUnsafe script cannot observe intermediate style.
+PASS ShadowRoot: sanitizer can remove scripts, which would override runScripts=true.
+FAIL ShadowRoot: runScripts is ignored when not "Unsafe" (setHTML). container.setHTML is not a function. (In 'container.setHTML(
+          "<script>window.did_run = true;</" + "script>",
+          {
+            get runScripts() { throw new Error("runScripts should not be accessed"); },
+          }
+        )', 'container.setHTML' is undefined)
+PASS ShadowRoot: runScripts is ignored for parseHTMLUnsafe.
+FAIL ShadowRoot: runScripts order of operations with custom element callbacks assert_array_equals: lengths differ, expected array ["run-scripts", "shadowroot-1-ctor", "shadowroot-1-connected", "shadowroot-2-ctor", "shadowroot-2-connected"] length 5, got ["shadowroot-1-ctor", "shadowroot-1-connected", "shadowroot-2-ctor", "shadowroot-2-connected"] length 4
+
