@@ -87,7 +87,13 @@ FUSE_BUILD_SCRIPT_PHASES = YES;
 WK_COMMON_OTHER_LDFLAGS = $(WK_SANITIZER_OTHER_LDFLAGS) $(WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_$(ENABLE_LLVM_PROFILE_GENERATION));
 // Work around rdar://151083138 by moving the section the profiling runtime
 // mmaps to its own segment.
-WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_YES = -Wl,-rename_section,__DATA,__llvm_prf_cnts,__MMAP_DATA,__llvm_prf_cnts;
+// -fprofile-generate here (rather than on OTHER_CFLAGS) exists solely to make
+// clang auto-link the LLVM profiling runtime: targets that reach this file
+// don't necessarily compile any instrumented code of their own, but many
+// -force_load or link against WTF/bmalloc static libraries that do, and
+// those reference __llvm_profile_instrument_* symbols that only the
+// profiling runtime provides.
+WK_COMMON_OTHER_LDFLAGS_INSTRUMENTATION_YES = -Wl,-rename_section,__DATA,__llvm_prf_cnts,__MMAP_DATA,__llvm_prf_cnts -fprofile-generate;
 OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 
 WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS) $(WK_AVAILABILITY_OVERLAY_FLAGS);
