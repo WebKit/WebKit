@@ -148,10 +148,6 @@ public:
     void strokeEllipse(const WebCore::FloatRect&);
     void clearRect(const WebCore::FloatRect&);
     void drawControlPart(Ref<WebCore::ControlPart>&&, const WebCore::FloatRoundedRect& borderRect, float deviceScaleFactor, const WebCore::ControlStyle&);
-#if USE(CG)
-    void applyStrokePattern();
-    void applyFillPattern();
-#endif
     void applyDeviceScaleFactor(float);
     std::optional<WebKit::SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
 

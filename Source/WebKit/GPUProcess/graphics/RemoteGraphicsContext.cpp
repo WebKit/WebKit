@@ -709,20 +709,6 @@ void RemoteGraphicsContext::drawControlPart(Ref<ControlPart>&& part, const Float
     part->setOverrideControlFactory(nullptr);
 }
 
-#if USE(CG)
-
-void RemoteGraphicsContext::applyStrokePattern()
-{
-    context().applyStrokePattern();
-}
-
-void RemoteGraphicsContext::applyFillPattern()
-{
-    context().applyFillPattern();
-}
-
-#endif // USE(CG)
-
 void RemoteGraphicsContext::applyDeviceScaleFactor(float scaleFactor)
 {
     context().applyDeviceScaleFactor(scaleFactor);

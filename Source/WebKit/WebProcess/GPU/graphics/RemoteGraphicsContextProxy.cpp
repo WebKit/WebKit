@@ -693,24 +693,6 @@ void RemoteGraphicsContextProxy::drawControlPart(ControlPart& part, const FloatR
     send(Messages::RemoteGraphicsContext::DrawControlPart(part, borderRect, deviceScaleFactor, style));
 }
 
-#if USE(CG)
-
-void RemoteGraphicsContextProxy::applyStrokePattern()
-{
-    sendPendingDrawsIfNecessary();
-    appendStateChangeItemIfNecessary();
-    send(Messages::RemoteGraphicsContext::ApplyStrokePattern());
-}
-
-void RemoteGraphicsContextProxy::applyFillPattern()
-{
-    sendPendingDrawsIfNecessary();
-    appendStateChangeItemIfNecessary();
-    send(Messages::RemoteGraphicsContext::ApplyFillPattern());
-}
-
-#endif // USE(CG)
-
 void RemoteGraphicsContextProxy::applyDeviceScaleFactor(float scaleFactor)
 {
     sendPendingDrawsIfNecessary();

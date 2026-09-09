@@ -54,10 +54,6 @@ public:
     void drawLine(const FloatPoint&, const FloatPoint&) final;
     void drawEllipse(const FloatRect&) final;
 
-#if USE(CG)
-    void applyStrokePattern() final;
-    void applyFillPattern() final;
-#endif
     void drawPath(const Path&) final;
     void fillPath(const Path&) final;
     void strokePath(const Path&) final;

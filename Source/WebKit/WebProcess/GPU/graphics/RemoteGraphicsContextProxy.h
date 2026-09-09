@@ -151,10 +151,6 @@ private:
     void drawGlyphs(const WebCore::Font&, std::span<const WebCore::GlyphBufferGlyph>, std::span<const WebCore::GlyphBufferAdvance>, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
     void drawGlyphsImmediate(const WebCore::Font&, std::span<const WebCore::GlyphBufferGlyph>, std::span<const WebCore::GlyphBufferAdvance>, const WebCore::FloatPoint& localAnchor, WebCore::FontSmoothingMode) final;
 
-#if USE(CG)
-    void applyStrokePattern() final;
-    void applyFillPattern() final;
-#endif
     void applyDeviceScaleFactor(float) final;
 
     void beginPage(const WebCore::FloatRect&) final;

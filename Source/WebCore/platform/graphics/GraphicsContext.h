@@ -179,10 +179,6 @@ public:
     unsigned stackSize() const { return m_stack.size(); }
 
 #if USE(CG)
-    // FIXME: Should these really be public GraphicsContext methods?
-    virtual void applyStrokePattern() = 0;
-    virtual void applyFillPattern() = 0;
-
     // FIXME: Can we make this a why instead of a what, and then have it exist cross-platform?
     virtual bool isCALayerContext() const = 0;
 #endif

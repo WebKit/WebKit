@@ -122,10 +122,6 @@ messages -> RemoteGraphicsContext Stream {
     StrokeEllipse(WebCore::FloatRect rect) StreamBatched
     ClearRect(WebCore::FloatRect rect) StreamBatched
     DrawControlPart(Ref<WebCore::ControlPart> part, WebCore::FloatRoundedRect borderRect, float deviceScaleFactor, WebCore::ControlStyle style) StreamBatched
-#if USE(CG)
-    ApplyStrokePattern() StreamBatched
-    ApplyFillPattern() StreamBatched
-#endif
     ApplyDeviceScaleFactor(float scaleFactor) StreamBatched
 
     BeginPage(WebCore::FloatRect pageRect)
