@@ -61,10 +61,10 @@ PropertyTable* PropertyTable::clone(VM& vm, unsigned initialCapacity, const Prop
 PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
-    , m_indexMask(m_indexSize - 1)
-    , m_indexVector()
     , m_keyCount(0)
+    , m_indexVector()
     , m_deletedCount(0)
+    , m_deletedListHead(EmptyEntryIndex)
 {
     ASSERT(isPowerOfTwo(m_indexSize));
     bool isCompact = tableCapacity() < UINT8_MAX;
@@ -75,10 +75,10 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
 PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(other.m_indexSize)
-    , m_indexMask(other.m_indexMask)
-    , m_indexVector(allocateIndexVector(other.isCompact(), other.m_indexSize))
     , m_keyCount(other.m_keyCount)
+    , m_indexVector(allocateIndexVector(other.isCompact(), other.m_indexSize))
     , m_deletedCount(other.m_deletedCount)
+    , m_deletedListHead(other.m_deletedListHead)
 {
     ASSERT(isPowerOfTwo(m_indexSize));
     ASSERT(isCompact() == other.isCompact());
@@ -88,20 +88,15 @@ PropertyTable::PropertyTable(VM& vm, const PropertyTable& other)
         entry.key()->ref();
         return IterationStatus::Continue;
     });
-
-    // Copy the m_deletedOffsets vector.
-    Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
-    if (otherDeletedOffsets)
-        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>(*otherDeletedOffsets);
 }
 
 PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTable& other)
     : JSCell(vm, vm.propertyTableStructure.get())
-    , m_indexSize(sizeForCapacity(initialCapacity))
-    , m_indexMask(m_indexSize - 1)
-    , m_indexVector()
+    , m_indexSize(sizeForCapacity(std::max(initialCapacity, other.m_keyCount + other.m_deletedCount)))
     , m_keyCount(0)
+    , m_indexVector()
     , m_deletedCount(0)
+    , m_deletedListHead(EmptyEntryIndex)
 {
     ASSERT(isPowerOfTwo(m_indexSize));
     ASSERT(initialCapacity >= other.m_keyCount);
@@ -109,20 +104,76 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
     m_indexVector = allocateZeroedIndexVector(isCompact, m_indexSize);
     ASSERT(this->isCompact() == isCompact);
 
+    if (isCompact == other.isCompact()) {
+        // compact -> compact transition allows us to just copy entries which preserves deleted entries linked-list.
+        // We only need to rebuild the index vector for the new size.
+        unsigned oldUsedCount = other.usedCount();
+        withIndexVector([&](auto* vector) {
+            auto* table = tableFromIndexVector(vector);
+            other.withIndexVector([&](const auto* oldVector) {
+                const auto* oldTable = tableFromIndexVector(oldVector, other.m_indexSize);
+                if (oldUsedCount)
+                    memcpy(table, oldTable, oldUsedCount * sizeof(*table));
+            });
+
+            unsigned indexMask = m_indexSize - 1;
+            for (unsigned i = 0; i < oldUsedCount; ++i) {
+                auto& entry = table[i];
+                if (isDeletedKey(entry.key()))
+                    continue;
+                unsigned hash = IdentifierRepHash::hash(entry.key());
+                unsigned probeCount = 0;
+                unsigned index = hash & indexMask;
+                while (vector[index] != EmptyEntryIndex) {
+                    ++probeCount;
+                    index = (index + probeCount) & indexMask;
+                }
+                vector[index] = i + 1;
+                entry.key()->ref();
+            }
+        });
+        m_keyCount = other.m_keyCount;
+        m_deletedCount = other.m_deletedCount;
+        m_deletedListHead = other.m_deletedListHead;
+        return;
+    }
+
+    // compact -> non-compact transition. Entry sizes differ, so we can't memcpy.
+    // Reinsert live entries via reinsert() (which compacts them) and rebuild the deleted list
+    // by walking it once with a tail pointer.
     withIndexVector([&](auto* vector) {
         auto* table = tableFromIndexVector(vector);
+
         other.forEachProperty([&](auto& entry) {
             ASSERT(canInsert(entry));
             reinsert(vector, table, entry);
             entry.key()->ref();
             return IterationStatus::Continue;
         });
-    });
 
-    // Copy the m_deletedOffsets vector.
-    Vector<PropertyOffset>* otherDeletedOffsets = other.m_deletedOffsets.get();
-    if (otherDeletedOffsets)
-        m_deletedOffsets = makeUnique<Vector<PropertyOffset>>(*otherDeletedOffsets);
+        other.withIndexVector([&](const auto* oldVector) {
+            const auto* oldTable = tableFromIndexVector(oldVector, other.m_indexSize);
+            unsigned newTail = EmptyEntryIndex;
+            unsigned head = other.m_deletedListHead;
+            while (head != EmptyEntryIndex) {
+                ASSERT(isDeletedKey(oldTable[head - 1].key()));
+                PropertyOffset offset = oldTable[head - 1].offset();
+                unsigned next = decodeNextDeletedIndex(oldTable[head - 1].key());
+
+                unsigned entryIndex = usedCount() + 1;
+                ASSERT(entryIndex - 1 < tableCapacity() + 1);
+                table[entryIndex - 1] = ValueType(encodeDeletedKey(EmptyEntryIndex), offset, /* attributes */ 0);
+                if (newTail == EmptyEntryIndex)
+                    m_deletedListHead = entryIndex;
+                else
+                    table[newTail - 1].setKey(encodeDeletedKey(entryIndex));
+                newTail = entryIndex;
+                ++m_deletedCount;
+
+                head = next;
+            }
+        });
+    });
 }
 
 void PropertyTable::finishCreation(VM& vm)
@@ -213,16 +264,49 @@ bool PropertyTable::isFrozen() const
 PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned inlineCapacity, Vector<JSValue>& values)
 {
     ASSERT(values.size() == size());
-    unsigned i = 0;
     PropertyOffset offset = invalidOffset;
-    forEachPropertyMutable([&](auto& entry) {
-        values[i] = object->getDirect(entry.offset());
-        offset = offsetForPropertyNumber(i, inlineCapacity);
-        entry.setOffset(offset);
-        ++i;
-        return IterationStatus::Continue;
+
+    withIndexVector([&](auto* vector) {
+        auto* table = tableFromIndexVector(vector);
+        unsigned oldUsedCount = usedCount();
+
+        // Rebuild the index vector from scratch as we compact, so we zero it out first.
+        if (m_indexSize)
+            memset(vector, 0, m_indexSize * sizeof(*vector));
+
+        unsigned writeIndex = 0;
+        unsigned indexMask = m_indexSize - 1;
+        for (unsigned readIndex = 0; readIndex < oldUsedCount; ++readIndex) {
+            auto& entry = table[readIndex];
+            if (isDeletedKey(entry.key()))
+                continue;
+
+            // Save the live property's value at its current (old) offset, then assign a new
+            // sequential offset.
+            values[writeIndex] = object->getDirect(entry.offset());
+            offset = offsetForPropertyNumber(writeIndex, inlineCapacity);
+            entry.setOffset(offset);
+
+            // Move the entry to writeIndex. (No-op when writeIndex == readIndex.)
+            if (writeIndex != readIndex)
+                table[writeIndex] = entry;
+
+            // Hash the entry into the freshly-zeroed index vector at its new position.
+            unsigned hash = IdentifierRepHash::hash(table[writeIndex].key());
+            unsigned probeCount = 0;
+            unsigned index = hash & indexMask;
+            while (vector[index] != EmptyEntryIndex) {
+                ++probeCount;
+                index = (index + probeCount) & indexMask;
+            }
+            vector[index] = writeIndex + 1;
+            ++writeIndex;
+        }
     });
-    clearDeletedOffsets();
+
+    // After compaction there are no tombstones and no reusable offsets.
+    m_deletedCount = 0;
+    m_deletedListHead = EmptyEntryIndex;
     return offset;
 }
 
@@ -233,7 +317,7 @@ inline void PropertyTable::forEachPropertyMutable(const Functor& functor)
         auto* cursor = tableFromIndexVector(vector);
         auto* end = tableEndFromIndexVector(vector);
         for (; cursor != end; ++cursor) {
-            if (cursor->key() == PROPERTY_MAP_DELETED_ENTRY_KEY)
+            if (isDeletedKey(cursor->key()))
                 continue;
             if (functor(*cursor) == IterationStatus::Done)
                 return;
