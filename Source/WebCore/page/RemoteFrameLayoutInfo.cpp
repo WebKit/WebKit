@@ -43,7 +43,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     bool ownerHasRenderer,
     TransformationMatrix childFrameOwnerToRootContentTransform,
     TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
-    float usedZoom,
+    float cssZoom,
     LayoutPoint contentBoxLocation,
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance
 )
@@ -55,7 +55,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     , m_ownerHasRenderer(ownerHasRenderer)
     , m_childFrameOwnerToRootContentTransform(WTF::move(childFrameOwnerToRootContentTransform))
     , m_absoluteToChildFrameOwnerLocalTransform(WTF::move(absoluteToChildFrameOwnerLocalTransform))
-    , m_usedZoom(usedZoom)
+    , m_cssZoom(cssZoom)
     , m_contentBoxLocation(contentBoxLocation)
     , m_ownerElementAppearance(ownerElementAppearance)
 {
@@ -86,7 +86,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const RemoteFrameLayoutInfo& in
     ts.dumpProperty("ownerHasRenderer"_s, info.ownerHasRenderer());
     ts.dumpProperty("childFrameOwnerToRootContentTransform"_s, info.childFrameOwnerToRootContentTransform());
     ts.dumpProperty("absoluteToChildFrameOwnerLocalTransform"_s, info.absoluteToChildFrameOwnerLocalTransform());
-    ts.dumpProperty("usedZoom"_s, info.usedZoom());
+    ts.dumpProperty("cssZoom"_s, info.cssZoom());
     ts.dumpProperty("contentBoxLocation"_s, info.contentBoxLocation());
     ts.dumpProperty("ownerElementAppearance"_s, info.ownerElementAppearance());
     return ts;

@@ -1,0 +1,49 @@
+Tests that page zoom changes neither the viewport a cross-origin iframe sees nor the size of fixed-pixel content inside it
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+zoom step 0:
+PASS parentBoxWidth is within 2 of 420
+PASS parentBoxHeight is within 2 of 44
+PASS childViewportWidth is within 2 of 420
+PASS childViewportHeight is within 2 of 44
+PASS childLogoWidth is within 2 of 32
+PASS childLogoHeight is within 2 of 32
+
+zoom step 1:
+PASS parentBoxWidth is within 2 of 420
+PASS parentBoxHeight is within 2 of 44
+PASS childViewportWidth is within 2 of 420
+PASS childViewportHeight is within 2 of 44
+PASS childLogoWidth is within 2 of 32
+PASS childLogoHeight is within 2 of 32
+
+zoom step 2:
+PASS parentBoxWidth is within 2 of 420
+PASS parentBoxHeight is within 2 of 44
+PASS childViewportWidth is within 2 of 420
+PASS childViewportHeight is within 2 of 44
+PASS childLogoWidth is within 2 of 32
+PASS childLogoHeight is within 2 of 32
+
+zoom step 3:
+PASS parentBoxWidth is within 2 of 420
+PASS parentBoxHeight is within 2 of 44
+PASS childViewportWidth is within 2 of 420
+PASS childViewportHeight is within 2 of 44
+PASS childLogoWidth is within 2 of 32
+PASS childLogoHeight is within 2 of 32
+
+zoom step 4:
+PASS parentBoxWidth is within 2 of 420
+PASS parentBoxHeight is within 2 of 44
+PASS childViewportWidth is within 2 of 420
+PASS childViewportHeight is within 2 of 44
+PASS childLogoWidth is within 2 of 32
+PASS childLogoHeight is within 2 of 32
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
