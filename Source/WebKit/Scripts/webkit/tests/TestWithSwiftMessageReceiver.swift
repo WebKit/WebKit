@@ -34,6 +34,106 @@ final class TestWithSwiftWeakRef {
     func getMessageTarget() -> TestWithSwift? {
         target
     }
+
+    @used
+    func dispatchTestAsyncMessage(
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwift.TestAsyncMessageCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(
+            on: connection,
+            onInvalidMessage: { CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler) },
+            body: { () throws(InvalidMessage) in
+                try target.testAsyncMessage(
+                    connection: connection,
+                    param: param,
+                    completionHandler: completionHandler
+                )
+            }
+        )
+    }
+
+    @used
+    func dispatchTestSyncMessage(
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwift.TestSyncMessageCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(
+            on: connection,
+            onInvalidMessage: { CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler) },
+            body: { () throws(InvalidMessage) in
+                try target.testSyncMessage(
+                    connection: connection,
+                    param: param,
+                    completionHandler: completionHandler
+                )
+            }
+        )
+    }
+
+    @used
+    func dispatchTestMessageWithAliasedParameter(
+        connection: IPC.Connection,
+        frameState: WebKit.RefFrameState
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try target.testMessageWithAliasedParameter(
+                connection: connection,
+                frameState: frameState
+            )
+        }
+    }
+
+    @used
+    func dispatchTestThrowingMessageWithReply(
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwift.TestThrowingMessageWithReplyCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(
+            on: connection,
+            onInvalidMessage: { CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler) },
+            body: { () throws(InvalidMessage) in
+                try target.testThrowingMessageWithReply(
+                    connection: connection,
+                    param: param,
+                    completionHandler: completionHandler
+                )
+            }
+        )
+    }
+
+    @used
+    func dispatchTestThrowingMessageWithoutReply(
+        connection: IPC.Connection,
+        frameState: WebKit.RefFrameState,
+        frameID: WebCore.FrameIdentifier
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try target.testThrowingMessageWithoutReply(
+                connection: connection,
+                frameState: frameState,
+                frameID: frameID
+            )
+        }
+    }
 }
 
 extension WebKit.TestWithSwiftMessageForwarder {

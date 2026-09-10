@@ -34,6 +34,44 @@ final class TestWithStreamSwiftWeakRef {
     func getMessageTarget() -> TestWithStreamSwift? {
         target
     }
+
+    @used
+    func dispatchSendString(
+        connection: IPC.Connection,
+        url: WTF.String
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try target.sendString(
+                connection: connection,
+                url: url
+            )
+        }
+    }
+
+    @used
+    func dispatchSendStringSync(
+        connection: IPC.Connection,
+        url: WTF.String,
+        completionHandler: CompletionHandlers.TestWithStreamSwift.SendStringSyncCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(
+            on: connection,
+            onInvalidMessage: { CompletionHandlers.TestWithStreamSwift.completeWithDefaultReply(completionHandler) },
+            body: { () throws(InvalidMessage) in
+                try target.sendStringSync(
+                    connection: connection,
+                    url: url,
+                    completionHandler: completionHandler
+                )
+            }
+        )
+    }
 }
 
 extension WebKit.TestWithStreamSwiftMessageForwarder {

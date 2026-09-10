@@ -44,11 +44,11 @@ void TestWithStreamSwiftMessageForwarder::didReceiveStreamMessage(IPC::StreamSer
         return;
     }
     if (decoder.messageName() == Messages::TestWithStreamSwift::SendString::name()) {
-        IPC::handleMessage<Messages::TestWithStreamSwift::SendString>(connection, decoder, target.get(), &TestWithStreamSwift::sendString);
+        IPC::handleMessage<Messages::TestWithStreamSwift::SendString>(connection, decoder, m_handler.get(), &TestWithStreamSwiftWeakRef::dispatchSendString);
         return;
     }
     if (decoder.messageName() == Messages::TestWithStreamSwift::SendStringSync::name()) {
-        IPC::handleMessageSynchronous<Messages::TestWithStreamSwift::SendStringSync>(connection, decoder, target.get(), &TestWithStreamSwift::sendStringSync);
+        IPC::handleMessageSynchronous<Messages::TestWithStreamSwift::SendStringSync>(connection, decoder, m_handler.get(), &TestWithStreamSwiftWeakRef::dispatchSendStringSync);
         return;
     }
     RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
@@ -80,6 +80,17 @@ TestWithStreamSwiftMessageForwarder::~TestWithStreamSwiftMessageForwarder()
 
 
 } // namespace WebKit
+
+namespace CompletionHandlers {
+namespace TestWithStreamSwift {
+
+void completeWithDefaultReply(SendStringSyncCompletionHandler& completionHandler)
+{
+    IPC::Connection::cancelReply<Messages::TestWithStreamSwift::SendStringSync>(*completionHandler);
+}
+
+} // namespace TestWithStreamSwift
+} // namespace CompletionHandlers
 
 #if ENABLE(IPC_TESTING_API)
 

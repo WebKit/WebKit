@@ -65,7 +65,7 @@ void TestWithSwiftConditionallyAndEnabledBy::didReceiveMessage(IPC::Connection& 
             return;
         }
 #if ENABLE(SWIFT_TEST_CONDITION)
-        IPC::handleMessageAsync<Messages::TestWithSwiftConditionallyAndEnabledBy::TestAsyncMessage>(connection, decoder, target.get(), &TestWithSwiftConditionallyAndEnabledBy::testAsyncMessage);
+        IPC::handleMessageAsync<Messages::TestWithSwiftConditionallyAndEnabledBy::TestAsyncMessage>(connection, decoder, m_handler.get(), &TestWithSwiftConditionallyAndEnabledByWeakRef::dispatchTestAsyncMessage);
 #else // ENABLE(SWIFT_TEST_CONDITION)
         IPC::handleMessageAsync<Messages::TestWithSwiftConditionallyAndEnabledBy::TestAsyncMessage>(connection, decoder, this, &TestWithSwiftConditionallyAndEnabledBy::testAsyncMessage);
 #endif // ENABLE(SWIFT_TEST_CONDITION)
@@ -96,7 +96,7 @@ void TestWithSwiftConditionallyAndEnabledBy::didReceiveSyncMessage(IPC::Connecti
     UNUSED_VARIABLE(sharedPreferences);
     if (decoder.messageName() == Messages::TestWithSwiftConditionallyAndEnabledBy::TestSyncMessage::name() && sharedPreferences && sharedPreferences->someFeature) {
 #if ENABLE(SWIFT_TEST_CONDITION)
-        IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionallyAndEnabledBy::TestSyncMessage>(connection, decoder, replyEncoder, target.get(), &TestWithSwiftConditionallyAndEnabledBy::testSyncMessage);
+        IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionallyAndEnabledBy::TestSyncMessage>(connection, decoder, replyEncoder, m_handler.get(), &TestWithSwiftConditionallyAndEnabledByWeakRef::dispatchTestSyncMessage);
 #else // ENABLE(SWIFT_TEST_CONDITION)
         IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionallyAndEnabledBy::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSwiftConditionallyAndEnabledBy::testSyncMessage);
 #endif // ENABLE(SWIFT_TEST_CONDITION)
@@ -135,6 +135,24 @@ TestWithSwiftConditionallyAndEnabledByMessageForwarder::~TestWithSwiftConditiona
 #endif // ENABLE(SWIFT_TEST_CONDITION)
 
 } // namespace WebKit
+#if ENABLE(SWIFT_TEST_CONDITION)
+
+namespace CompletionHandlers {
+namespace TestWithSwiftConditionallyAndEnabledBy {
+
+void completeWithDefaultReply(TestAsyncMessageCompletionHandler& completionHandler)
+{
+    IPC::Connection::cancelReply<Messages::TestWithSwiftConditionallyAndEnabledBy::TestAsyncMessage>(*completionHandler);
+}
+
+void completeWithDefaultReply(TestSyncMessageCompletionHandler& completionHandler)
+{
+    IPC::Connection::cancelReply<Messages::TestWithSwiftConditionallyAndEnabledBy::TestSyncMessage>(*completionHandler);
+}
+
+} // namespace TestWithSwiftConditionallyAndEnabledBy
+} // namespace CompletionHandlers
+#endif // ENABLE(SWIFT_TEST_CONDITION)
 
 #if ENABLE(IPC_TESTING_API)
 
