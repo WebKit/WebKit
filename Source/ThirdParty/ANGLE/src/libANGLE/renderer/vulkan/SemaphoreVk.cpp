@@ -165,7 +165,8 @@ angle::Result SemaphoreVk::signal(gl::Context *context,
                 imageAccess = image.getCurrentImageAccess();
             }
 
-            ANGLE_TRY(textureVk->ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
+            ANGLE_TRY(textureVk->ensureImageAndReadViewsInitialized(contextVk,
+                                                                    ImageMipLevels::EnabledLevels));
 
             ANGLE_TRY(contextVk->onImageReleaseToExternal(image));
             vk::CommandResources resources;
@@ -207,7 +208,8 @@ angle::Result SemaphoreVk::importOpaqueFd(ContextVk *contextVk, GLint fd)
     importSemaphoreFdInfo.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT;
     importSemaphoreFdInfo.fd         = fd;
 
-    ANGLE_VK_TRY(contextVk, vkImportSemaphoreFdKHR(renderer->getDevice(), &importSemaphoreFdInfo));
+    ANGLE_VK_TRY(contextVk,
+                 VK_CALL(vkImportSemaphoreFdKHR, renderer->getDevice(), &importSemaphoreFdInfo));
 
     return angle::Result::Continue;
 }
@@ -235,10 +237,11 @@ angle::Result SemaphoreVk::importZirconEvent(ContextVk *contextVk, GLuint handle
     // TODO(spang): Add vkImportSemaphoreZirconHandleFUCHSIA to volk.
     static PFN_vkImportSemaphoreZirconHandleFUCHSIA vkImportSemaphoreZirconHandleFUCHSIA =
         reinterpret_cast<PFN_vkImportSemaphoreZirconHandleFUCHSIA>(
-            vkGetInstanceProcAddr(renderer->getInstance(), "vkImportSemaphoreZirconHandleFUCHSIA"));
+            VK_CALL(vkGetInstanceProcAddr, renderer->getInstance(),
+                    "vkImportSemaphoreZirconHandleFUCHSIA"));
 
-    ANGLE_VK_TRY(contextVk, vkImportSemaphoreZirconHandleFUCHSIA(renderer->getDevice(),
-                                                                 &importSemaphoreZirconHandleInfo));
+    ANGLE_VK_TRY(contextVk, VK_CALL(vkImportSemaphoreZirconHandleFUCHSIA, renderer->getDevice(),
+                                    &importSemaphoreZirconHandleInfo));
 
     return angle::Result::Continue;
 }

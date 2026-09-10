@@ -509,6 +509,14 @@ TEST_P(SamplersTest, InvalidOverTextureSamplerMaxAnisotropyExt)
     validateInvalidAnisotropy(sampler, maxValue);
 }
 
+// Verify an error is thrown if we try to set a NaN value for
+// GL_TEXTURE_MAX_ANISOTROPY_EXT
+TEST_P(SamplersTest, InvalidNaNTextureSamplerMaxAnisotropyExt)
+{
+    GLSampler sampler;
+    validateInvalidAnisotropy(sampler, std::numeric_limits<float>::quiet_NaN());
+}
+
 // Test that updating a sampler uniform in a program behaves correctly.
 TEST_P(SamplersTest31, SampleTextureAThenTextureB)
 {

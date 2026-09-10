@@ -264,7 +264,7 @@ impl Generator {
             result.push(' ');
         }
         match precision {
-            Precision::NotApplicable => (),
+            Precision::NotApplicable | Precision::Unassigned => (),
             Precision::Low => result.push_str("lowp "),
             Precision::Medium => result.push_str("mediump "),
             Precision::High => result.push_str("highp "),

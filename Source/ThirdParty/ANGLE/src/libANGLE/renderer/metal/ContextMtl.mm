@@ -1645,8 +1645,8 @@ angle::Result ContextMtl::bindMetalRasterizationRateMap(gl::Context *context,
     if (auto *metalRenderbuffer = static_cast<RenderbufferMtl *>(renderbuffer))
     {
         FramebufferAttachmentRenderTarget *rtOut = nullptr;
-        gl::OwnImageIndex index(gl::ImageIndex::Make2D(0));
-        GLenum binding = 0;
+        gl::ImageIndex index                     = gl::ImageIndex::Make2D(0);
+        GLenum binding                           = 0;
         if (angle::Result::Continue ==
             metalRenderbuffer->getAttachmentRenderTarget(context, binding, index, 1, &rtOut))
         {
@@ -2274,6 +2274,12 @@ angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
     ASSERT(!mOcclusionQueryResultBuffer);  // Frontend guarantees none active at the time.
     const mtl::BufferRef &resultBuffer = query.getVisibilityResultBuffer();
     bool isEnabledInRenderPass;
+
+    if (mRenderEncoder.valid() && !mOcclusionQueryPool.canAllocateQueryOffset(this))
+    {
+        endEncoding(true);
+    }
+
     if (mRenderEncoder.valid())
     {
         size_t resultOffset;
@@ -2559,8 +2565,15 @@ angle::Result ContextMtl::setupDrawImpl(const gl::Context *context,
 
     if (mOcclusionQueryResultBuffer && !mOcclusionQueryIsEnabledInRenderPass)
     {
-        // The occlusion query is still active, and a new render pass has started.
-        // We need to continue the querying process in the new render encoder.
+        // The occlusion query is still active, and a new render pass has started or we have paused
+        // the querying process. We need to continue the querying process.
+        if (!mOcclusionQueryPool.canAllocateQueryOffset(this))
+        {
+            // The render pass visibility query offset limit has been reached. End the current
+            // encoding; the caller will retry with a new render encoder.
+            endEncoding(true);
+            return angle::Result::Continue;
+        }
         ANGLE_TRY(enableOcclusionQueryInRenderPass());
     }
 

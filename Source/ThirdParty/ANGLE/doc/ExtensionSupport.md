@@ -277,6 +277,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_point_size_array](https://khronos.org/registry/OpenGL/extensions/OES/OES_point_size_array.txt) | &#x2714; |
 | [GL_OES_point_sprite](https://khronos.org/registry/OpenGL/extensions/OES/OES_point_sprite.txt) | &#x2714; |
 | [GL_OES_query_matrix](https://khronos.org/registry/OpenGL/extensions/OES/OES_query_matrix.txt) |  |
+| [GL_OES_stencil8](https://khronos.org/registry/OpenGL/extensions/OES/OES_stencil8.txt) |  |
 | [GL_OES_texture_cube_map](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_cube_map.txt) | &#x2714; |
 | [GL_EXT_texture_lod_bias](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_lod_bias.txt) |  |
 | [GL_OES_texture_mirrored_repeat](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_mirrored_repeat.txt) |  |

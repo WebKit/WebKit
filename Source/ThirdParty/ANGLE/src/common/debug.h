@@ -87,11 +87,6 @@ void InitializeDebugMutexIfNeeded();
 angle::SimpleMutex &GetDebugMutex();
 }  // namespace gl
 
-// The state tracked by ANGLE will be validated with the driver state before each call
-#if defined(ANGLE_ENABLE_DEBUG_TRACE)
-#    define ANGLE_STATE_VALIDATION_ENABLED
-#endif
-
 #if defined(__GNUC__)
 #    define ANGLE_CRASH() __builtin_trap()
 #else

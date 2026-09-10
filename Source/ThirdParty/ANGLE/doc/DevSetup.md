@@ -6,11 +6,11 @@ ANGLE provides OpenGL ES 3.1 and EGL 1.5 libraries and tests. You can use these 
 
 ### Version Control
 
-ANGLE uses git for version control. Helpful documentation can be found at [http://git-scm.com/documentation](http://git-scm.com/documentation).
+ANGLE uses git for version control. Helpful documentation can be found at [http://git-scm.com/install](http://git-scm.com/install).
 
 ### Required First Setup (do this first)
 
-Note: If you are building inside a Chromium checkout [see these instructions instead](https://chromium.googlesource.com/angle/angle/+/HEAD/doc/BuildingAngleForChromiumDevelopment.md).
+Note: If you are building inside a Chromium checkout (i.e. to build the Chrome browser) [see these instructions instead](https://chromium.googlesource.com/angle/angle/+/HEAD/doc/BuildingAngleForChromiumDevelopment.md).  Otherwise, continue to build a standalone version of ANGLE (e.g. for a layered driver on Android).
 
 Required on all platforms:
 
@@ -30,7 +30,7 @@ On Windows:
    * The SDK is required for GN-generated Visual Studio projects, the D3D Debug runtime, and the latest HLSL Compiler runtime.
  * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md) for more info.
 
-On Linux:
+On Linux (required for Android development):
 
  * Dependencies will be handled later (see `install-build-deps.sh` below).
 

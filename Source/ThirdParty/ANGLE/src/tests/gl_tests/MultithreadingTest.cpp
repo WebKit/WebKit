@@ -17,6 +17,7 @@
 #include "util/test_utils.h"
 
 #include <atomic>
+#include <functional>
 #include <mutex>
 #include <thread>
 
@@ -4638,6 +4639,179 @@ TEST_P(MultithreadingTest, EGLImageRaceCreateAndDestroy)
     // Restore the fixture's context for teardown.
     EXPECT_EGL_TRUE(
         eglMakeCurrent(dpy, window->getSurface(), window->getSurface(), window->getContext()));
+}
+
+// Test that creating a shared context while the parent context is active and
+// binding buffers does not cause a data race on mSharedContext.
+TEST_P(MultithreadingTest, SharedContextDataRace)
+{
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    EGLConfig config  = window->getConfig();
+
+    EGLSurface surface1 = EGL_NO_SURFACE;
+    EGLContext ctx1     = EGL_NO_CONTEXT;
+
+    EGLint pbufferAttributes[] = {
+        EGL_WIDTH, 256, EGL_HEIGHT, 256, EGL_NONE, EGL_NONE,
+    };
+    surface1 = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
+    EXPECT_EGL_SUCCESS();
+
+    ctx1 = createMultithreadedContext(window, EGL_NO_CONTEXT);
+    EXPECT_NE(EGL_NO_CONTEXT, ctx1);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface1, surface1, ctx1));
+    EXPECT_EGL_SUCCESS();
+
+    std::atomic<bool> exitThread(false);
+
+    {
+        GLBuffer buffer;
+        // WUnbind ctx1 from the main thread so the worker thread can make it current.
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        EXPECT_EGL_SUCCESS();
+
+        // Thread 1: Concurrently bind/unbind buffer to trigger isSharedContext()
+        std::thread thread1([&]() {
+            EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface1, surface1, ctx1));
+
+            while (!exitThread.load(std::memory_order_relaxed))
+            {
+                glBindBuffer(GL_ARRAY_BUFFER, buffer);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+
+            EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        });
+
+        // Thread 2 (Main thread): Trigger setShared() by creating a shared context
+        for (int i = 0; i < 100; ++i)
+        {
+            EGLContext ctx2 = createMultithreadedContext(window, ctx1);
+            if (ctx2 != EGL_NO_CONTEXT)
+            {
+                eglDestroyContext(dpy, ctx2);
+            }
+        }
+
+        exitThread.store(true);
+        thread1.join();
+
+        // Make ctx1 current again on main thread so GLBuffer destructor can run safely
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface1, surface1, ctx1));
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    eglDestroyContext(dpy, ctx1);
+    eglDestroySurface(dpy, surface1);
+
+    // Restore the window's context and surface
+    EXPECT_EGL_TRUE(
+        eglMakeCurrent(dpy, window->getSurface(), window->getSurface(), window->getContext()));
+}
+
+// A set of GL calls plus a client-data upload for the capture contention tests
+void ConcurrentCaptureGLWorkload(int iterationCount, std::vector<uint8_t> &bufferData)
+{
+    for (int i = 0; i < iterationCount; ++i)
+    {
+        glClearColor(0.02f * static_cast<float>(i % 32), 0.3f, 0.6f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, 1 + (i % 8), 1 + (i % 8));
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, 1 + (i % 4), 1 + (i % 4));
+        glDisable(GL_SCISSOR_TEST);
+        bufferData[0] = static_cast<uint8_t>(i);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(bufferData.size()),
+                        bufferData.data());
+    }
+}
+
+// EGL thread work capture contention tests. EGL currency is per-thread so
+// toggling the side context here does not disturb the main thread's binding. The
+// eglMakeCurrent calls are captured and routed to CaptureEGLCallToFrameCapture
+// which shares the GL capture mutex
+void ConcurrentCaptureEGLThread(EGLDisplay dpy,
+                                EGLSurface sidePbuffer,
+                                EGLContext sideContext,
+                                std::atomic<bool> &stop,
+                                std::atomic<bool> &threadGood)
+{
+    if (eglMakeCurrent(dpy, sidePbuffer, sidePbuffer, sideContext) != EGL_TRUE)
+    {
+        threadGood = false;
+        return;
+    }
+    while (!stop.load(std::memory_order_relaxed))
+    {
+        eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglMakeCurrent(dpy, sidePbuffer, sidePbuffer, sideContext);
+    }
+    eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+}
+
+// This test uses TSan to catch regressions when EGL/GL capture activity occurs on
+// multiple threads. A worker thread issues EGL calls while the main thread issues
+// GL calls and both are simultaneously added to FrameCaptureShared::mFrameCalls
+TEST_P(MultithreadingTest, ConcurrentEGLGLCapture)
+{
+    ANGLE_SKIP_TEST_IF(!IsTSan());
+
+    // Native GL backends cannot make contexts current on two threads concurrently: the
+    // underlying window-system call (e.g. glXMakeCurrent) is not thread-safe and aborts.
+    // The capture path this test targets is exercised on Vulkan/D3D11/Metal, which
+    // virtualize contexts; capture_replay is Vulkan-only regardless.
+    ANGLE_SKIP_TEST_IF(IsOpenGL() || IsOpenGLES());
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+
+    EGLWindow *window      = getEGLWindow();
+    EGLDisplay dpy         = window->getDisplay();
+    EGLConfig config       = window->getConfig();
+    EGLSurface surface     = window->getSurface();
+    EGLContext mainContext = window->getContext();
+
+    // Create a second context with its own pbuffer operated on by a worker thread. Both
+    // threads' captured calls go to the same mFrameCalls structure
+    EGLContext sideContext = window->createContext(mainContext, nullptr);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(sideContext, EGL_NO_CONTEXT);
+
+    const EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface sidePbuffer        = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(sidePbuffer, EGL_NO_SURFACE);
+
+    // A bound buffer so GL side can upload client data
+    GLBuffer dataBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, dataBuffer);
+    std::vector<uint8_t> bufferData(256, 0x5au);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferData.size()), bufferData.data(),
+                 GL_DYNAMIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    std::atomic<bool> stop{false};
+    std::atomic<bool> threadGood{true};
+    std::thread eglThread(ConcurrentCaptureEGLThread, dpy, sidePbuffer, sideContext, std::ref(stop),
+                          std::ref(threadGood));
+
+    // The main thread generates GL calls concurrently with the worker thread's captured
+    // EGL calls
+    constexpr int kConcurrentGLCalls = 2000;
+    ConcurrentCaptureGLWorkload(kConcurrentGLCalls, bufferData);
+
+    stop.store(true, std::memory_order_relaxed);
+    eglThread.join();
+    EXPECT_TRUE(threadGood);
+    ASSERT_GL_NO_ERROR();
+
+    // Make sure main context is current for cleanup
+    EXPECT_EGL_TRUE(eglMakeCurrent(dpy, surface, surface, mainContext));
+
+    eglDestroySurface(dpy, sidePbuffer);
+    eglDestroyContext(dpy, sideContext);
 }
 
 ANGLE_INSTANTIATE_TEST(

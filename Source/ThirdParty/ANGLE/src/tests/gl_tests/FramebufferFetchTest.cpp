@@ -1983,7 +1983,7 @@ void main()
         glUseProgram(program);
         glStencilFunc(GL_LESS, 40, 0xFF);
         drawQuad(program, essl31_shaders::PositionAttrib(), 0.4f);
-        EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor(60, 204, 0, 255));
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(60, 204, 0, 255));
 
         // CASE 1: Detach stencil, depth is still attached
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
@@ -1993,9 +1993,7 @@ void main()
         glStencilFunc(GL_LESS, 30, 0xFF);
         drawQuad(program, essl31_shaders::PositionAttrib(), 0.3f);
         ASSERT_GL_NO_ERROR();
-        GLColor actual0;
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &actual0.R);
-        EXPECT_EQ(178, actual0.G);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(40, 178, 0, 255), 1);
 
         // CASE 2: Detach depth and attach old stencil
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
@@ -2007,9 +2005,7 @@ void main()
         glStencilFunc(GL_LESS, 20, 0xFF);
         drawQuad(program, essl31_shaders::PositionAttrib(), 0.2f);
         ASSERT_GL_NO_ERROR();
-        GLColor actual1;
-        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &actual1.R);
-        EXPECT_EQ(40, actual1.R);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(40, 166, 0, 255), 1);
 
         // CASE 3: Attach old depth
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
@@ -2018,7 +2014,7 @@ void main()
         glStencilFunc(GL_LESS, 10, 0xFF);
         drawQuad(program, essl31_shaders::PositionAttrib(), 0.1f);
         ASSERT_GL_NO_ERROR();
-        EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor(20, 166, 0, 255));
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(20, 166, 0, 255), 1);
     }
 
     const char *getFragShaderName(GLenum depthStencilFormat)
@@ -5527,6 +5523,7 @@ void main()
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
     EXPECT_GL_NO_ERROR();
 
+    glDisable(GL_SCISSOR_TEST);
     glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
 
@@ -6000,6 +5997,7 @@ void main()
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
     EXPECT_GL_NO_ERROR();
 
+    glDisable(GL_SCISSOR_TEST);
     glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
 

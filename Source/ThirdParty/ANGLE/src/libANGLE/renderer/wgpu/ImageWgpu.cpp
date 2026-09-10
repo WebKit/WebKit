@@ -127,7 +127,7 @@ egl::Error ImageWgpu::initialize(const egl::Display *display)
 {
     if (egl::IsTextureTarget(mState.target))
     {
-        if (mState.imageIndex.getLevelIndex() != 0)
+        if (mState.imageIndex.getLevelIndex().get() != 0)
         {
             UNIMPLEMENTED();
             return egl::Error(EGL_BAD_ACCESS,

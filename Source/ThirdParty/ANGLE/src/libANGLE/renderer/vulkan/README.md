@@ -82,15 +82,15 @@ viewing a specific level and layer specified by `EGL_GL_TEXTURE_LEVEL_KHR` and
 state does not include these offsets (e.g. the texture is accessed at level 0). It may similarly be
 imported into a renderbuffer that doesn't even have a level and layer state.
 
-The `TextureVk` and `RenderbufferVk` classes use `gl::OwnLevel`, `gl::OwnLayer`, and
-`gl::OwnImageIndex` to refer to the level and layer from the point of view of the
+The `TextureVk` and `RenderbufferVk` classes use `gl::LevelIndex`, `gl::LayerIndex`, and
+`gl::ImageIndex` to refer to the level and layer from the point of view of the
 texture/renderbuffer itself, i.e. these values will be 0 for an EGL image target. When these values
 are needed as integers, e.g. to access an array, they are retrieved via `getUntranslated()`.
 
 However, any references outside these classes to levels and layers, i.e. those that are paired with
 `VkImage` and `VkImageView`, must use the source texture's original level and layer. This is done
-via the `mState.toSource*()` helpers, which return a strongly typed `gl::SourceLevel`,
-`gl::SourceLayer` and `gl::SourceImageIndex`. The level and layer can be retrieved from these types
+via the `mState.toSource*()` helpers, which return a strongly typed `gl::OwnerLevel`,
+`gl::OwnerLayer` and `gl::OwnerImageIndex`. The level and layer can be retrieved from these types
 with a `get()`.
 
 Ideally, _all_ the code in the front-end would use `gl::Own*` types and all the code in the backend

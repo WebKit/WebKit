@@ -22,7 +22,7 @@ class TextureNULL : public TextureImpl
     ~TextureNULL() override;
 
     angle::Result setImage(const gl::Context *context,
-                           const gl::OwnImageIndex &ownIndex,
+                           const gl::ImageIndex &index,
                            GLenum internalFormat,
                            const gl::Extents &size,
                            GLenum format,
@@ -31,7 +31,7 @@ class TextureNULL : public TextureImpl
                            gl::Buffer *unpackBuffer,
                            const uint8_t *pixels) override;
     angle::Result setSubImage(const gl::Context *context,
-                              const gl::OwnImageIndex &ownIndex,
+                              const gl::ImageIndex &index,
                               const gl::Box &area,
                               GLenum format,
                               GLenum type,
@@ -40,14 +40,14 @@ class TextureNULL : public TextureImpl
                               const uint8_t *pixels) override;
 
     angle::Result setCompressedImage(const gl::Context *context,
-                                     const gl::OwnImageIndex &ownIndex,
+                                     const gl::ImageIndex &index,
                                      GLenum internalFormat,
                                      const gl::Extents &size,
                                      const gl::PixelUnpackState &unpack,
                                      size_t imageSize,
                                      const uint8_t *pixels) override;
     angle::Result setCompressedSubImage(const gl::Context *context,
-                                        const gl::OwnImageIndex &ownIndex,
+                                        const gl::ImageIndex &index,
                                         const gl::Box &area,
                                         GLenum format,
                                         const gl::PixelUnpackState &unpack,
@@ -55,29 +55,29 @@ class TextureNULL : public TextureImpl
                                         const uint8_t *pixels) override;
 
     angle::Result copyImage(const gl::Context *context,
-                            const gl::OwnImageIndex &ownIndex,
+                            const gl::ImageIndex &index,
                             const gl::Rectangle &sourceArea,
                             GLenum internalFormat,
                             gl::Framebuffer *source) override;
     angle::Result copySubImage(const gl::Context *context,
-                               const gl::OwnImageIndex &ownIndex,
+                               const gl::ImageIndex &index,
                                const gl::Offset &destOffset,
                                const gl::Rectangle &sourceArea,
                                gl::Framebuffer *source) override;
 
     angle::Result copyTexture(const gl::Context *context,
-                              const gl::OwnImageIndex &ownIndex,
+                              const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              gl::OwnLevel ownSourceLevel,
+                              gl::LevelIndex sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
                               const gl::Texture *source) override;
     angle::Result copySubTexture(const gl::Context *context,
-                                 const gl::OwnImageIndex &ownIndex,
+                                 const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 gl::OwnLevel ownSourceLevel,
+                                 gl::LevelIndex sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -88,23 +88,23 @@ class TextureNULL : public TextureImpl
                                           const gl::Renderbuffer *srcBuffer,
                                           GLint srcX,
                                           GLint srcY,
-                                          gl::OwnLevel ownDstLevel,
+                                          gl::LevelIndex dstLevel,
                                           GLint dstX,
                                           GLint dstY,
-                                          gl::OwnLayer dstZ,
+                                          gl::LayerIndex dstZ,
                                           GLsizei srcWidth,
                                           GLsizei srcHeight) override;
 
     angle::Result copyTextureSubData(const gl::Context *context,
                                      const gl::Texture *srcTexture,
-                                     gl::OwnLevel ownSrcLevel,
+                                     gl::LevelIndex srcLevel,
                                      GLint srcX,
                                      GLint srcY,
-                                     gl::OwnLayer srcZ,
-                                     gl::OwnLevel ownDstLevel,
+                                     gl::LayerIndex srcZ,
+                                     gl::LevelIndex dstLevel,
                                      GLint dstX,
                                      GLint dstY,
-                                     gl::OwnLayer dstZ,
+                                     gl::LayerIndex dstZ,
                                      GLsizei srcWidth,
                                      GLsizei srcHeight,
                                      GLsizei srcDepth) override;
@@ -158,7 +158,7 @@ class TextureNULL : public TextureImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::OwnImageIndex &ownImageIndex) override;
+                                     const gl::ImageIndex &imageIndex) override;
 };
 
 }  // namespace rx

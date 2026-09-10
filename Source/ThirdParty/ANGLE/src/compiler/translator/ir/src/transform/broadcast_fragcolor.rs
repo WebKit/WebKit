@@ -94,7 +94,10 @@ fn broadcast(
         let replacement = TypedId::from_variable_id(&ir.meta, original_id);
         let color = postamble.add_typed_instruction(instruction::load(&mut ir.meta, replacement));
         for index in 0..array_size {
-            let index = ir.meta.get_constant_uint_typed(index);
+            // index should have a precision assigned after propagate_precision pass.
+            // Since array_size is capped at Options.max_draw_buffers or
+            // Option.max_dual_source_draw_buffers, a Precision::Low is sufficient.
+            let index = ir.meta.get_constant_uint_typed(index, Precision::Low);
             let indexed = postamble.add_typed_instruction(instruction::index(
                 &mut ir.meta,
                 arrayed_built_in,

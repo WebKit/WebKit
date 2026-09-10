@@ -534,10 +534,10 @@ void EGLAPIENTRY EGL_{name}({params})
         {packed_gl_enum_conversions}
 
         {{
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
+            {context_lock_statement}
             if (IsEGLValidationEnabled())
             {{
-                ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+                {validation_statement}
             }}
             else
             {{
@@ -567,7 +567,7 @@ void EGLAPIENTRY EGL_{name}({params})
     {{
         if (IsEGLValidationEnabled())
         {{
-            ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+            {validation_statement}
         }}
         else
         {{
@@ -596,10 +596,10 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
         {packed_gl_enum_conversions}
 
         {{
-            ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{comma_if_needed_context_lock}{internal_context_lock_params});
+            {context_lock_statement}
             if (IsEGLValidationEnabled())
             {{
-                ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+                {validation_statement}
             }}
             else
             {{
@@ -630,7 +630,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 
     if (IsEGLValidationEnabled())
     {{
-        ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_params});
+        {validation_statement}
     }}
     else
     {{
@@ -1728,8 +1728,16 @@ EGL_PACKED_TYPES = {
     "EGLSyncKHR": "egl::SyncID",
 }
 
-EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER = ["Thread *", "egl::Display *", "gl::ContextID"]
+EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER = ["Thread *", "gl::ContextID"]
 EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER = ["attribute", "flags"]
+EGL_CONTEXT_LOCK_USES_DPY = [
+    "CreateContext",
+    "QueryContext",
+    "CreateImage",
+    "ReleaseHighPowerGPUANGLE",
+    "ReacquireHighPowerGPUANGLE",
+    "CreateImageKHR",
+]
 
 CAPTURE_BLOCKLIST = ['eglGetProcAddress']
 
@@ -2182,6 +2190,7 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     else:
         has_errcode_ret = False
 
+    name = strip_api_prefix(cmd_name)
     internal_context_lock_params = [
         just_the_name_packed(param, packed_enums)
         for param in params
@@ -2199,20 +2208,29 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     attrib_map_init = []
 
     for param in params:
-        name = just_the_name(param)
+        param_name = just_the_name(param)
 
-        if name in packed_enums:
-            internal_name = name + "Packed"
-            internal_type = packed_enums[name]
+        if param_name in packed_enums:
+            internal_name = param_name + "Packed"
+            internal_type = packed_enums[param_name]
             packed_gl_enum_conversions += [
                 "\n        " + internal_type + " " + internal_name + " = PackParam<" +
-                internal_type + ">(" + name + ");"
+                internal_type + ">(" + param_name + ");"
             ]
 
             if 'AttributeMap' in internal_type:
                 attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
 
-    name = strip_api_prefix(cmd_name)
+    labeled_object = get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params,
+                                                        packed_enums)
+
+    dpy_param = None
+    if api == apis.EGL:
+        for param in params:
+            if just_the_type_packed(param, packed_enums).split(' ')[0] == "egl::Display":
+                dpy_param = just_the_name_packed(param, packed_enums)
+                break
+
     decl_params = params[:]
 
     # When generating the explicit context entry point, update the function named and prepend the explicit context parameter
@@ -2230,6 +2248,34 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     name_no_suffix = strip_suffix(api, cmd_name[2:])
     name_lower_no_suffix = name_no_suffix[0:1].lower() + name_no_suffix[1:]
     entry_point_name = "angle::EntryPoint::GL" + strip_api_prefix(cmd_name)
+
+    extra_lock_params = (
+        ", " + ", ".join(internal_context_lock_params)) if internal_context_lock_params else ""
+    context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{extra_lock_params});"
+    val_prefix = ""
+
+    if api == apis.EGL and name in EGL_CONTEXT_LOCK_USES_DPY:
+        assert dpy_param, f"Expected egl::Display param for {cmd_name}"
+        packed_gl_enum_conversions += [
+            f"\n        const egl::Display *validDisplay = GetDisplayIfValid({dpy_param});"
+        ]
+        context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY({name}, thread, validDisplay{extra_lock_params});"
+        labeled_object = "validDisplay"
+        internal_val_params = ["validDisplay" if p == dpy_param else p for p in internal_params]
+    elif api == apis.EGL and dpy_param and labeled_object == f"GetDisplayIfValid({dpy_param})" and dpy_param in internal_params:
+        labeled_object = "validDisplay"
+        internal_val_params = ["validDisplay" if p == dpy_param else p for p in internal_params]
+        indent = "        " if is_lockless_egl_entry_point(cmd_name) else "            "
+        val_prefix = f"const egl::Display *validDisplay = GetDisplayIfValid({dpy_param});\n{indent}    "
+    else:
+        internal_val_params = internal_params
+
+    internal_val_str = ", ".join(internal_val_params)
+    if return_type == "void":
+        validation_statement = f"{val_prefix}ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_val_str});"
+    else:
+        comma_if_needed = ", " if len(internal_params) > 0 else ""
+        validation_statement = f"{val_prefix}ANGLE_EGL_VALIDATE(thread, {name}, {labeled_object}, {return_type}{comma_if_needed}{internal_val_str});"
 
     format_params = {
         "name":
@@ -2252,8 +2298,10 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             ", ".join(
                 ["context->getMutablePrivateState()", "context->getMutablePrivateStateCache()"] +
                 internal_params),
-        "internal_context_lock_params":
-            ", ".join(internal_context_lock_params),
+        "context_lock_statement":
+            context_lock_statement,
+        "validation_statement":
+            validation_statement,
         "initialization":
             initialization,
         "packed_gl_enum_conversions":
@@ -2262,8 +2310,6 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             ", ".join(pass_params),
         "comma_if_needed":
             ", " if len(params) > 0 else "",
-        "comma_if_needed_context_lock":
-            ", " if len(internal_context_lock_params) > 0 else "",
         "gl_capture_params":
             ", ".join(["context"] + internal_params),
         "egl_capture_params":
@@ -2283,8 +2329,6 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             event_comment,
         "mapbufferrange_return_modification":
             mapbufferrange_return_modification,
-        "labeled_object":
-            get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params, packed_enums),
         "context_lock":
             get_context_lock(api, cmd_name),
         "implicit_pls_disable":
@@ -2487,14 +2531,21 @@ def get_context_private_call_params(api, cmd_name, params, cmd_packed_gl_enums,
 def get_context_lock_params(api, cmd_name, params, cmd_packed_gl_enums, packed_param_types):
     packed_gl_enums = get_packed_enums(api, cmd_packed_gl_enums, cmd_name, packed_param_types,
                                        params)
-    return ", ".join([
-        make_param(
-            just_the_type_packed(param, packed_gl_enums),
-            just_the_name_packed(param, packed_gl_enums))
-        for param in params
-        if just_the_type_packed(param, packed_gl_enums) in EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER or
-        just_the_name_packed(param, packed_gl_enums) in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER
-    ])
+    filter_types = EGL_CONTEXT_LOCK_PARAM_TYPES_FILTER[:]
+    name = strip_api_prefix(cmd_name)
+    is_uses_dpy = api == apis.EGL and name in EGL_CONTEXT_LOCK_USES_DPY
+    if is_uses_dpy:
+        filter_types.append("egl::Display *")
+    result = []
+    for param in params:
+        param_type = just_the_type_packed(param, packed_gl_enums)
+        param_name = just_the_name_packed(param, packed_gl_enums)
+        if param_type in filter_types or param_name in EGL_CONTEXT_LOCK_PARAM_NAMES_FILTER:
+            if is_uses_dpy and param_type == "egl::Display *":
+                param_type = "const egl::Display *"
+                param_name = "validDisplay"
+            result.append(make_param(param_type, param_name))
+    return ", ".join(result)
 
 
 def format_context_decl(api, cmd_name, proto, params, template, cmd_packed_gl_enums,

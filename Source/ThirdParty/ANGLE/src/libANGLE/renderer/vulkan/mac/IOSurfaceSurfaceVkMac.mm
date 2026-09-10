@@ -124,7 +124,8 @@ angle::Result IOSurfaceSurfaceVkMac::initializeImpl(DisplayVk *displayVk)
                                           mState.hasProtectedContent()));
 
     mColorRenderTarget.init(&mColorAttachment.image, &mColorAttachment.imageViews, nullptr, nullptr,
-                            gl::LevelIndex(0), 0, 1, RenderTargetTransience::Default);
+                            gl::OwnerLevel(0), gl::OwnerLayer(0), 1,
+                            RenderTargetTransience::Default);
 
     return angle::Result::Continue;
 }
@@ -197,7 +198,7 @@ egl::Error IOSurfaceSurfaceVkMac::bindTexImage(const gl::Context *context,
 
     bool updateAppliedImmediately = false;
     result                        = mColorAttachment.image.stageSubresourceUpdate(
-        contextVk, gl::SourceImageIndex::Make2D(gl::SourceLevel::Zero()), extents, offset,
+        contextVk, gl::OwnerImageIndex::Make2D(gl::OwnerLevel(0)), extents, offset,
         internalFormatInfo, kIOSurfaceFormats[mFormatIndex].type,
         reinterpret_cast<uint8_t *>(source), format, vk::ImageFormatSupport::Renderable,
         inputRowPitch, inputDepthPitch, inputSkipBytes, vk::ApplyImageUpdate::Defer,
@@ -233,7 +234,7 @@ egl::Error IOSurfaceSurfaceVkMac::releaseTexImage(const gl::Context *context, EG
                             contextVk->isViewportFlipEnabledForDrawFBO(), nullptr, 0);
 
     result = mColorAttachment.image.readPixels(contextVk, bounds, params, VK_IMAGE_ASPECT_COLOR_BIT,
-                                               gl::LevelIndex(0), 0,
+                                               gl::OwnerLevel(0), gl::OwnerLayer(0),
                                                IOSurfaceGetBaseAddressOfPlane(mIOSurface, mPlane));
 
     IOSurfaceUnlock(mIOSurface, 0, nullptr);

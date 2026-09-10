@@ -9,6 +9,9 @@
 42265633 TSAN : InstancingTestES3.LargeDivisor/* = SKIP
 42266467 TSAN : MultithreadingTest.CreateMultiSharedContextAndDraw/* = SKIP
 
+// Skip backward compatible context tests on Windows to reduce resource usage
+522318550 WIN VULKAN : */*_NoEnableCreateContextBackwardsCompatible* = SKIP
+
 // Generic
 // Crashes in setUniformValuesFromBindingQualifiers() because mUniformRealLocationMap is not
 // initialized when the program is loaded from cache.
@@ -34,6 +37,14 @@
 532592076 : ImageTestES3RobustInit.RobustClearInTarget/* = SKIP
 532592076 : ImageTestES3RobustInit.NonZeroLevelAndSliceReadback/* = SKIP
 532592076 : ImageTestES3RobustInit.NonZeroLevelAndSliceReadbackRenderbuffer/* = SKIP
+// Array external samplers are not supported by Vulkan
+158215272 VULKAN : ImageTestES3.SourceYUVTextureTargetExternalRGBSampleArray/* = SKIP
+
+// Generate mipmap or draw on mismatched stale levels fails on some OpenGL/GLES drivers when robust init is enabled
+532617619 OPENGL : Texture2DTestES3RobustInit.MismatchedStaleLevel*/* = SKIP
+532617619 GLES : Texture2DTestES3RobustInit.MismatchedStaleLevel*/* = SKIP
+532617619 OPENGL : MipmapRobustInitTestES3.GenerateMipmapRobustInitOptimization*/* = SKIP
+532617619 GLES : MipmapRobustInitTestES3.GenerateMipmapRobustInitOptimization*/* = SKIP
 
 381742474 : ShaderStorageBufferTest31.ExceedMaxShaderStorageBlockSize/* = SKIP
 
@@ -186,6 +197,7 @@
 40096690 WIN INTEL VULKAN : TransformFeedbackWithDepthBufferTest.RecordAndDrawWithDepthWriteEnabled/* = SKIP
 534082926 WIN INTEL VULKAN : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
 534082926 WIN INTEL VULKAN : TransformFeedbackTest.BufferRebinding/* = SKIP
+40096690 WIN INTEL VULKAN : TextureBufferTestES31.UseAsXFBThenAsTextureBuffer/* = SKIP
 
 // Failures on Intel Comet Lake S UHD Graphics 630 (8086:9bc5-31.0.101.2111)
 40644896 WIN INTEL OPENGL : D3DImageFormatConversionTest.WriteColorFunctionR8G8B8A8/* = SKIP
@@ -260,6 +272,14 @@
 // Intel/windows does not ignore gl_Layer for non-layered framebuffers
 374790899 WIN INTEL OPENGL : GeometryShaderTest.GLLayerIneffectiveWithoutLayeredFramebuffer/* = SKIP
 462344532 WIN INTEL OPENGL : GLSLTest_ES3.SingleStructArrayConstructor/* = SKIP
+
+// NVIDIA GTX 1660 Experimental
+539554093 WIN NVIDIA VULKAN : GLSLTest_ES3.LiteralInfinityOutput/* = SKIP
+539554093 WIN NVIDIA VULKAN : GLSLTest_ES3.LiteralNegativeInfinityOutput/* = SKIP
+539554093 WIN NVIDIA GLES : UniformBufferTest31.MaxUniformBufferBindingsExceeded/* = SKIP
+539554093 WIN NVIDIA GLES : UniformBufferTest31.UniformBufferBindingRangeChangeAfterSubData/* = SKIP
+523371282 WIN NVIDIA GLES : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
+523371282 WIN NVIDIA OPENGL : TransformFeedbackTest.RenderOnceChangeXfbBufferRenderAgain/* = SKIP
 
 // Linux
 42264596 LINUX INTEL VULKAN : SimpleStateChangeTestES31.DrawThenUpdateUBOThenDrawThenDrawIndexed/* = SKIP
@@ -353,6 +373,7 @@
 42265709 NVIDIA VULKAN : GLSLTest_ES31.TessellationControlShaderMatrixCopyBug/* = SKIP
 42265709 NVIDIA VULKAN : GLSLTest_ES31.TessellationControlShaderMatrixMultiplicationBug/* = SKIP
 537235696 NVIDIA OPENGL : ClipDistance*.ThreeClipDistancesRedeclaredAndPassedToFunction/* = SKIP
+540256225 NVIDIA VULKAN : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP
 
 // Intel Vulkan
 
@@ -397,6 +418,7 @@
 536046166 INTEL VULKAN : FramebufferTest_ES31.MultisampleResolveWithBlitIntoMixedTexturesAfterFinish/* = SKIP
 536046166 INTEL VULKAN : FramebufferTest_ES31_MSAA.MultisampleResolveWithBlitIntoMixedTextures/* = SKIP
 536046166 WIN INTEL VULKAN : FramebufferTest_ES31_MSAA.MultisampleStencilSampling/*EmulatedPrerotation* = SKIP
+540256225 INTEL VULKAN : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP
 
 // Robust init of OOB framebuffer reads is not zero'd
 500528706 VULKAN : CopyTexImageTestRobustResourceInit.OOBReadShouldBeZeroInit/* = SKIP
@@ -795,6 +817,7 @@
 40096826 PIXEL6 VULKAN : GLSLTest_ES31.ConsecutiveArraysOfArraysImage/* = SKIP
 40096826 PIXEL6 VULKAN : GeometryShaderTest.GeometryShaderImplementationDependentLimits/* = SKIP
 40096826 PIXEL6 VULKAN : ImageTestES3.RGBXAHBImport* = SKIP
+540256225 PIXEL6 VULKAN : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP
 40096826 PIXEL6 VULKAN : IndexedBufferCopyTest.IndexRangeBug/* = SKIP
 40096826 PIXEL6 VULKAN : IndexedPointsTest* = SKIP
 40096826 PIXEL6 VULKAN : MultisampleTest.Point/* = SKIP
@@ -1156,9 +1179,8 @@
 480069042 PIXEL10 GLES : ReadPixelsTextureNorm16PBOTest.RG16_RG/* = SKIP
 480069042 PIXEL10 GLES : RobustResourceInitTestES3.BindTexImage/* = SKIP
 480069042 PIXEL10 GLES : RobustResourceInitTestES31.ImageTextureInit_R32UI/* = SKIP
-480069042 PIXEL10 GLES : SRGBFramebufferDefaultLinearTest.BlitFromSrgbFbo/* = SKIP
-480069042 PIXEL10 GLES : SRGBFramebufferDefaultSrgbTest.BlitFromLinearFbo/* = SKIP
-480069042 PIXEL10 GLES : SRGBFramebufferDefaultSrgbTest.BlitFromSrgbFbo/* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferDefaultLinearTest.* = SKIP
+480069042 PIXEL10 GLES : SRGBFramebufferDefaultSrgbTest.* = SKIP
 480069042 PIXEL10 GLES : SRGBFramebufferTest.MultipleFramebuffers/* = SKIP
 480069042 PIXEL10 GLES : SRGBFramebufferTest.NegativeLifetimeTracking/* = SKIP
 480069042 PIXEL10 GLES : SRGBTextureTestES3.SRGBFormatCombinationValidation/* = SKIP
@@ -1330,10 +1352,10 @@
 480069042 PIXEL10 VULKAN : StateChangeTestES3.LineWidth/* = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/*_Vulkan = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_EnableParallelCompileAndLink_VaryingsRequireMatchingPrecisionInSpirv = SKIP
-480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoSupportsIndexTypeUint8 = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUseDepthWriteEnableDynamicState = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUsePrimitiveRestartEnableDynamicState = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoUseVertexInputBindingStrideDynamicState = SKIP
+480069042 PIXEL10 VULKAN : StateChangeTestES3.RasterizerDiscard/ES3_Vulkan_NoEnableCreateContextBackwardsCompatible = SKIP
 480069042 PIXEL10 VULKAN : StateChangeTestES3.StencilWriteMaskVsDiscard/ES3_Vulkan_NoUseDepthWriteEnableDynamicState = SKIP
 480069042 PIXEL10 VULKAN : TextureFixedRateCompressionTest.RenderToTexture/* = SKIP
 480069042 PIXEL10 VULKAN : TextureTestES31.LinkedImageUniforms/* = SKIP
@@ -1496,9 +1518,6 @@
 
 42264855 VULKAN : GetImageTest.InconsistentTexture2D/* = SKIP
 
-// Vulkan initializes the backend textures immediately on eglBindTexImage
-498372331 VULKAN : PbufferTestES3.BindRedefinesAllMips/* = SKIP
-
 40050011 D3D11 : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = SKIP
 40050011 SWIFTSHADER : GLSLTest_ES3.UnsuccessfulRelinkWithBindAttribLocation/* = SKIP
 
@@ -1507,6 +1526,7 @@
 
 // Fails on swangle builders
 42266918 SWIFTSHADER : WebGL2GLSLTest.TexelFetchLodOutOfBounds/* = SKIP
+540256225 SWIFTSHADER : ImageTestES3.SourceYUVTextureTargetExternalRGBSample/* = SKIP
 
 // HLSL compiler bug
 42261155 D3D11 : GLSLTest_ES3.ComplexCrossExpression/* = SKIP
@@ -1626,8 +1646,6 @@
 
 42266092 WIN SWIFTSHADER : VulkanPerformanceCounterTest.EndXfbAfterRenderPassClosed/* = SKIP
 466331749 SWIFTSHADER : GLSLTest_ES31.ShortCircuitOutOfBoundsAccess/* = SKIP
-// Flakily reads NaN/-1 instead of zero from the images.
-524800809 SWIFTSHADER : TextureTestES31.FragmentShaderLoadUnboundImageUnits/* = SKIP
 
 // Flat shading bug with lighting
 42264726 VULKAN : LightsTest.FlatLitMesh/* = SKIP
@@ -2899,6 +2917,11 @@
 529867799 METAL : ReadPixelsPBOTest.PackLargeRowLength/* = SKIP
 529867799 VULKAN : ReadPixelsPBOTest.PackLargeRowLength/* = SKIP
 529867799 INTEL OPENGL : ReadPixelsPBOTest.PackLargeRowLength/* = SKIP
+
+// Using many queries will fail on Pixel 4 GLES and Win Intel UHD 770 Vulkan
+537692502 PIXEL4ORXL GLES : OcclusionQueriesTest.ExcessiveNumberOfQueries/* = SKIP
+537692502 WIN INTEL VULKAN : OcclusionQueriesTest.ExcessiveNumberOfQueries/* = SKIP
+537692502 WIN INTEL VULKAN : OcclusionQueriesTest.ManyScissoredClearsInsideQuery/* = SKIP
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Slow tests, should appear last in this file

@@ -107,7 +107,7 @@ angle::Result RenderbufferD3D::getRenderTarget(const gl::Context *context,
 
 angle::Result RenderbufferD3D::getAttachmentRenderTarget(const gl::Context *context,
                                                          GLenum binding,
-                                                         const gl::OwnImageIndex &ownImageIndex,
+                                                         const gl::ImageIndex &imageIndex,
                                                          GLsizei samples,
                                                          FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -116,7 +116,7 @@ angle::Result RenderbufferD3D::getAttachmentRenderTarget(const gl::Context *cont
 
 angle::Result RenderbufferD3D::initializeContents(const gl::Context *context,
                                                   GLenum binding,
-                                                  const gl::OwnImageIndex &ownImageIndex)
+                                                  const gl::ImageIndex &imageIndex)
 {
     RenderTargetD3D *renderTarget = nullptr;
     ANGLE_TRY(getRenderTarget(context, &renderTarget));

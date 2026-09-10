@@ -996,38 +996,27 @@ void AddPalettedFormat(InternalFormatInfoMap *map,
 
 void AddYUVFormat(InternalFormatInfoMap *map,
                   GLenum internalFormat,
-                  bool sized,
                   GLuint cr,
                   GLuint y,
                   GLuint cb,
-                  GLuint alpha,
-                  GLuint shared,
                   GLenum format,
                   GLenum type,
-                  GLenum componentType,
-                  bool srgb,
                   InternalFormat::SupportCheckFunction textureSupport)
 {
-    ASSERT(sized);
-
     InternalFormat formatInfo;
     formatInfo.internalFormat      = internalFormat;
-    formatInfo.sized               = sized;
+    formatInfo.sized               = true;
     formatInfo.sizedInternalFormat = internalFormat;
     formatInfo.redBits             = cr;
     formatInfo.greenBits           = y;
     formatInfo.blueBits            = cb;
-    formatInfo.alphaBits           = alpha;
-    formatInfo.sharedBits          = shared;
-    formatInfo.pixelBytes          = (cr + y + cb + alpha + shared) / 8;
-    formatInfo.componentCount =
-        ((cr > 0) ? 1 : 0) + ((y > 0) ? 1 : 0) + ((cb > 0) ? 1 : 0) + ((alpha > 0) ? 1 : 0);
-    formatInfo.format                   = format;
-    formatInfo.type                     = type;
-    formatInfo.componentType            = componentType;
-    formatInfo.colorEncoding            = (srgb ? GL_SRGB : GL_LINEAR);
-    formatInfo.textureSupport           = textureSupport;
-    formatInfo.filterSupport            = textureSupport;
+    formatInfo.pixelBytes          = (cr + y + cb) / 8;
+    formatInfo.componentCount      = ((cr > 0) ? 1 : 0) + ((y > 0) ? 1 : 0) + ((cb > 0) ? 1 : 0);
+    formatInfo.format              = format;
+    formatInfo.type                = type;
+    formatInfo.componentType       = GL_UNSIGNED_NORMALIZED;
+    formatInfo.textureSupport      = textureSupport;
+    formatInfo.filterSupport       = textureSupport;
 
     // YUV formats are always filterable if texturable and never renderable.
 
@@ -1121,7 +1110,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     // Special format which is not really supported, so always false for all supports.
     AddRGBAFormat(&map, GL_BGR565_ANGLEX,     true,  5,  6,  5,  0, 0, GL_BGRA_EXT,     GL_UNSIGNED_SHORT_5_6_5,           GL_UNSIGNED_NORMALIZED, false, NeverSupported,                                    NeverSupported,  NeverSupported,                                    NeverSupported,                                NeverSupported);
     AddRGBAFormat(&map, GL_BGR10_A2_ANGLEX,   true, 10, 10, 10,  2, 0, GL_BGRA_EXT,     GL_UNSIGNED_INT_2_10_10_10_REV,    GL_UNSIGNED_NORMALIZED, false, NeverSupported,                                    NeverSupported,  NeverSupported,                                    NeverSupported,                                NeverSupported);
-    AddRGBAFormat(&map, GL_R10X6G10X6B10X6A10X6_UNORM_ANGLEX,   true, 10, 10, 10,  10, 0, GL_RGBA,    GL_UNSIGNED_SHORT,   GL_UNSIGNED_NORMALIZED, false, RequireES<3, 0>,                                    NeverSupported,  NeverSupported,                                    NeverSupported,                                NeverSupported);
+
+    // R10X6G10X6B10X6A10X6 has no explicit support on GL. Each component has 10 bits of data and
+    // 6 bits of padding (24 bits of padding in total).
+    AddRGBAXFormat(&map, GL_R10X6G10X6B10X6A10X6_UNORM_ANGLEX,   true, FB< 10,  10,  10,  10, 24, 0>(), GL_RGBA,    GL_UNSIGNED_SHORT,   GL_UNSIGNED_NORMALIZED, false, RequireES<3, 0>,                                    NeverSupported,  NeverSupported,                                    NeverSupported,                                NeverSupported);
 
     // Special format to emulate RGB8 with RGBA8 within ANGLE.
     AddRGBAXFormat(&map, GL_RGBX8_ANGLE,      true,   FB< 8,  8,  8,  0, 8, 0>(), GL_RGB,          GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::rgbxInternalFormatANGLE>,   AlwaysSupported, RequireExt<&Extensions::rgbxInternalFormatANGLE>,   RequireExt<&Extensions::rgbxInternalFormatANGLE>, NeverSupported);
@@ -1301,13 +1293,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddCompressedFormat(&map, GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT,     8,  4,  1,  64,  4, true, RequireExtAndExt<&Extensions::textureCompressionPvrtcIMG, &Extensions::pvrtcSRGBEXT>);
     AddCompressedFormat(&map, GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT,     4,  4,  1,  64,  4, true, RequireExtAndExt<&Extensions::textureCompressionPvrtcIMG, &Extensions::pvrtcSRGBEXT>);
 
-    // For STENCIL_INDEX8 we chose a normalized component type for the following reasons:
-    // - Multisampled buffer are disallowed for non-normalized integer component types and we want to support it for STENCIL_INDEX8
-    // - All other stencil formats (all depth-stencil) are either float or normalized
-    // - It affects only validation of internalformat in RenderbufferStorageMultisample.
-    //                         | Internal format  |sized|D |S |X | Format          | Type            | Component type        | Texture supported                                    | Texture attachment                                   | Renderbuffer
-    AddDepthStencilFormat(&map, GL_STENCIL_INDEX8, true, 0, 8, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireES<1, 0>);
-
     // From GL_EXT_texture_norm16
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                        | Filterable     | Texture attachment                                                          | Renderbuffer                                                                | Blend
     AddRGBAFormat(&map, GL_R16_EXT,          true, 16,  0,  0,  0, 0, GL_RED,  GL_UNSIGNED_SHORT, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureNorm16EXT>, AlwaysSupported, RequireExt<&Extensions::textureNorm16EXT>,                                    RequireExt<&Extensions::textureNorm16EXT>,                                    RequireExt<&Extensions::textureNorm16EXT>);
@@ -1423,12 +1408,17 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddDepthStencilFormat(&map, GL_DEPTH_COMPONENT, false, 24, 8,  0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT_24_8,              GL_UNSIGNED_NORMALIZED, RequireESOrExt<3, 0, &Extensions::packedDepthStencilOES>, RequireExtAndExt<&Extensions::packedDepthStencilOES, &Extensions::depthTextureANGLE>, RequireExtAndExt<&Extensions::packedDepthStencilOES, &Extensions::depthTextureANGLE>);
     AddDepthStencilFormat(&map, GL_DEPTH_STENCIL,   false, 24, 8,  0, GL_DEPTH_STENCIL,   GL_UNSIGNED_INT_24_8,              GL_UNSIGNED_NORMALIZED, RequireESOrExt<3, 0, &Extensions::packedDepthStencilOES>, RequireExtAndExt<&Extensions::packedDepthStencilOES, &Extensions::depthTextureANGLE>, RequireExtAndExt<&Extensions::packedDepthStencilOES, &Extensions::depthTextureANGLE>);
     AddDepthStencilFormat(&map, GL_DEPTH_STENCIL,   false, 32, 8, 24, GL_DEPTH_STENCIL,   GL_FLOAT_32_UNSIGNED_INT_24_8_REV, GL_FLOAT,               RequireESOrExt<3, 0, &Extensions::packedDepthStencilOES>, RequireExt<&Extensions::packedDepthStencilOES>,                                       RequireExt<&Extensions::packedDepthStencilOES>);
-    AddDepthStencilFormat(&map, GL_STENCIL_INDEX,   false,  0, 8,  0, GL_STENCIL_INDEX,   GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, NeverSupported,                                           NeverSupported,                                                                       NeverSupported);
+
+    // Stencil-only format
+    // TODO(anglebug.com/541183328): The unsized stencil format does not exist and is only used for SubImage validation.
+    //                         | Internal format  | sized | D | S | X | Format          | Type            | Component type | Texture supported                                    | Texture attachment                                   | Renderbuffer
+    AddDepthStencilFormat(&map, GL_STENCIL_INDEX8, true,    0,  8,  0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireESOrExt<3, 2, &Extensions::textureStencil8OES>, RequireESOrExt<2, 0, &Extensions::stencil8OES>);
+    AddDepthStencilFormat(&map, GL_STENCIL_INDEX,  false,   0,  8,  0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, GL_UNSIGNED_INT, NeverSupported,                                        NeverSupported,                                        NeverSupported);
 
     // Non-standard YUV formats
-    //                 | Internal format                             | sized | Cr | Y | Cb | A | S | Format                              | Type            | Comp                  | SRGB | Texture supported
-    AddYUVFormat(&map,  GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,            true,   8,   8,  8,   0,  0,  GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,    GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::yuvInternalFormatANGLE>);
-    AddYUVFormat(&map,  GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,           true,   8,   8,  8,   0,  0,  GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,   GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::yuvInternalFormatANGLE>);
+    //                | Internal format                   | Cr | Y | Cb | Format                            | Type            | Texture supported
+    AddYUVFormat(&map, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,   8,   8,  8,  GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,  GL_UNSIGNED_BYTE, RequireExt<&Extensions::yuvInternalFormatANGLE>);
+    AddYUVFormat(&map, GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,  8,   8,  8,  GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE, GL_UNSIGNED_BYTE, RequireExt<&Extensions::yuvInternalFormatANGLE>);
 
     // clang-format on
 
@@ -1507,14 +1497,17 @@ GLenum GetConfigColorBufferFormat(const egl::Config *config)
 
 GLenum GetConfigDepthStencilBufferFormat(const egl::Config *config)
 {
-    GLenum componentType = GL_UNSIGNED_NORMALIZED;
-
     for (GLenum sizedInternalFormat : GetAllSizedInternalFormats())
     {
+        // Make sure this legacy format is not selected if the config has 32-bit depth.
+        if (sizedInternalFormat == GL_DEPTH_COMPONENT32_OES)
+        {
+            continue;
+        }
+
         const gl::InternalFormat &internalFormat = GetSizedInternalFormatInfo(sizedInternalFormat);
 
-        if (internalFormat.componentType == componentType &&
-            static_cast<EGLint>(internalFormat.depthBits) == config->depthSize &&
+        if (static_cast<EGLint>(internalFormat.depthBits) == config->depthSize &&
             static_cast<EGLint>(internalFormat.stencilBits) == config->stencilSize)
         {
             return sizedInternalFormat;

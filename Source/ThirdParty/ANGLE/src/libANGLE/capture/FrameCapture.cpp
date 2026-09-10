@@ -3286,6 +3286,16 @@ void CaptureCustomFenceSync(CallCapture &call, std::vector<CallCapture> &callsOu
     callsOut.emplace_back(std::move(call));
 }
 
+void CaptureCustomClientWaitSync(CallCapture &call, std::vector<CallCapture> &callsOut)
+{
+    ParamBuffer &&params = std::move(call.params);
+    GLenum returnValue   = params.getReturnValue().value.GLenumVal;
+    params.addValueParam("capturedReturnValue", ParamType::TGLenum, returnValue);
+    call.customFunctionName = "ClientWaitSync";
+    call.params             = std::move(params);
+    callsOut.emplace_back(std::move(call));
+}
+
 const egl::Image *GetImageFromParam(const gl::Context *context, const ParamCapture &param)
 {
     const egl::ImageID eglImageID = egl::PackParam<egl::ImageID>(param.value.EGLImageVal);
@@ -6346,87 +6356,7 @@ void CoherentBuffer::removeProtection(PageSharingType sharingType)
 
 bool CoherentBufferTracker::canProtectDirectly(gl::Context *context)
 {
-    gl::BufferID bufferId;
-    if (!context->createBuffer(&bufferId))
-    {
-        ERR() << "Failed to allocate buffer ID.";
-    }
-
-    gl::BufferBinding targetPacked = gl::BufferBinding::Array;
-    context->bindBuffer(targetPacked, bufferId);
-
-    // Allocate 2 pages so we will always have a full aligned page to protect
-    GLsizei size = static_cast<GLsizei>(mPageSize * 2);
-
-    context->bufferStorage(targetPacked, size, nullptr,
-                           GL_DYNAMIC_STORAGE_BIT_EXT | GL_MAP_WRITE_BIT |
-                               GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
-
-    gl::Buffer *buffer = context->getBuffer(bufferId);
-
-    angle::Result result = buffer->mapRange(
-        context, 0, size, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
-    if (result != angle::Result::Continue)
-    {
-        ERR() << "Failed to mapRange of buffer.";
-    }
-
-    void *map = buffer->getMapPointer();
-    if (map == nullptr)
-    {
-        ERR() << "Failed to getMapPointer of buffer.";
-    }
-
-    // Test mprotect
-    auto start = reinterpret_cast<uintptr_t>(map);
-
-    // Only protect a whole page inside the allocated memory
-    uintptr_t protectionStart = rx::roundUpPow2(start, mPageSize);
-    uintptr_t protectionEnd   = protectionStart + mPageSize;
-
-    ASSERT(protectionStart < protectionEnd);
-
-    angle::PageFaultCallback callback = [](uintptr_t address) {
-        return angle::PageFaultHandlerRangeType::InRange;
-    };
-
-    std::unique_ptr<angle::PageFaultHandler> handler(CreatePageFaultHandler(callback));
-
-    if (!handler->enable())
-    {
-        GLboolean unmapResult;
-        if (buffer->unmap(context, &unmapResult) != angle::Result::Continue)
-        {
-            ERR() << "Could not unmap buffer.";
-        }
-        context->bindBuffer(targetPacked, {0});
-
-        // Page fault handler could not be enabled, memory can't be protected directly.
-        return false;
-    }
-
-    size_t protectionSize = protectionEnd - protectionStart;
-
-    ASSERT(protectionSize == mPageSize);
-
-    bool canProtect = angle::ProtectMemory(protectionStart, protectionSize);
-    if (canProtect)
-    {
-        angle::UnprotectMemory(protectionStart, protectionSize);
-    }
-
-    // Clean up
-    handler->disable();
-
-    GLboolean unmapResult;
-    if (buffer->unmap(context, &unmapResult) != angle::Result::Continue)
-    {
-        ERR() << "Could not unmap buffer.";
-    }
-    context->bindBuffer(targetPacked, {0});
-    context->deleteBuffer(buffer->id());
-
-    return canProtect;
+    return context->canProtectCoherentMemoryDirectly();
 }
 
 PageFaultHandlerRangeType CoherentBufferTracker::handleWrite(uintptr_t address)
@@ -7350,7 +7280,6 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
             break;
         }
         case EntryPoint::GLWaitSync:
-        case EntryPoint::GLClientWaitSync:
         case EntryPoint::GLDeleteSync:
         {
             gl::SyncID syncID =
@@ -7359,6 +7288,17 @@ void FrameCaptureShared::maybeOverrideEntryPoint(const gl::Context *context,
                                      inCall, outCalls))
             {
                 outCalls.emplace_back(std::move(inCall));
+            }
+            break;
+        }
+        case EntryPoint::GLClientWaitSync:
+        {
+            gl::SyncID syncID =
+                inCall.params.getParam("syncPacked", ParamType::TSyncID, 0).value.SyncIDVal;
+            if (!FilterImportedSyncs(isCaptureActive(), syncID.value, isGLSyncEmitted(syncID), "GL",
+                                     inCall, outCalls))
+            {
+                CaptureCustomClientWaitSync(inCall, outCalls);
             }
             break;
         }
@@ -7417,6 +7357,18 @@ void FrameCaptureShared::maybeSetSyncPoint(CallCapture &inCall)
         case EntryPoint::GLDeleteShader:
         case EntryPoint::GLDeleteProgram:
         case EntryPoint::GLLinkProgram:
+        case EntryPoint::GLWaitSync:
+        case EntryPoint::GLClientWaitSync:
+        case EntryPoint::GLDeleteSync:
+        case EntryPoint::EGLCreateSync:
+        case EntryPoint::EGLCreateSyncKHR:
+        case EntryPoint::EGLWaitSync:
+        case EntryPoint::EGLWaitSyncKHR:
+        case EntryPoint::EGLClientWaitSync:
+        case EntryPoint::EGLClientWaitSyncKHR:
+        case EntryPoint::EGLDestroySync:
+        case EntryPoint::EGLDestroySyncKHR:
+        case EntryPoint::GLEGLImageTargetTexture2DOES:
         {
             inCall.isSyncPoint = true;
             break;
@@ -9073,6 +9025,9 @@ void FrameCaptureShared::runMidExecutionCapture(gl::Context *mainContext)
 
 void FrameCaptureShared::onEndFrame(gl::Context *context)
 {
+    // Grab the frame-capture mutex to avoid GL/EGL capture races
+    std::lock_guard<angle::SimpleMutex> lock(mFrameCaptureMutex);
+
     if (!enabled() || mFrameIndex > mCaptureEndFrame)
     {
         setCaptureInactive();

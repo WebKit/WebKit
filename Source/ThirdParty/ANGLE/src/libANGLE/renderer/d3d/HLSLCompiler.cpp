@@ -241,7 +241,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
         {
             std::string message = static_cast<const char *>(errorMessage->GetBufferPointer());
             SafeRelease(errorMessage);
-            ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile::Error", "error", errorMessage);
+            ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile::Error", "error", message);
 
             infoLog.appendSanitized(message);
 

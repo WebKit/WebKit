@@ -58,8 +58,8 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
               vk::ImageViewHelper *imageViews,
               vk::ImageHelper *resolveImage,
               vk::ImageViewHelper *resolveImageViews,
-              gl::LevelIndex levelIndexGL,
-              uint32_t layerIndex,
+              gl::OwnerLevel levelIndexGL,
+              gl::OwnerLayer layerIndex,
               uint32_t layerCount,
               RenderTargetTransience transience);
 
@@ -117,13 +117,13 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     gl::Extents getExtents() const;
     gl::Extents getRotatedExtents() const;
-    gl::LevelIndex getLevelIndex() const { return mLevelIndexGL; }
-    gl::LevelIndex getLevelIndexForImage(const vk::ImageHelper &image) const;
-    uint32_t getLayerIndex() const { return mLayerIndex; }
+    gl::OwnerLevel getLevelIndex() const { return mLevelIndexGL; }
+    gl::OwnerLevel getLevelIndexForImage(const vk::ImageHelper &image) const;
+    gl::OwnerLayer getLayerIndex() const { return mLayerIndex; }
     uint32_t getLayerCount() const { return mLayerCount; }
     bool is3DImage() const { return getOwnerOfData()->getType() == VK_IMAGE_TYPE_3D; }
 
-    gl::SourceImageIndex getImageIndexForClear(uint32_t layerCount) const;
+    gl::OwnerImageIndex getImageIndexForClear(uint32_t layerCount) const;
 
     // Special mutator for Surface RenderTargets. Allows the Framebuffer to keep a single
     // RenderTargetVk pointer.
@@ -254,8 +254,8 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     // number of layers in the image (or level depth, if image is 3D).  Note that blit and other
     // functions that read or write to the render target always use layer 0, so this works out for
     // users of |getLayerIndex()|.
-    gl::LevelIndex mLevelIndexGL;
-    uint32_t mLayerIndex;
+    gl::OwnerLevel mLevelIndexGL;
+    gl::OwnerLayer mLayerIndex;
     uint32_t mLayerCount;
 
     // If resolve attachment exists, |mTransience| could be *Transient if the multisampled results

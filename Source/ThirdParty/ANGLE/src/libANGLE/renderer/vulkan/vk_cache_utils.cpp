@@ -7290,6 +7290,9 @@ T *UpdateDescriptorSetsBuilder::DescriptorInfoAllocator<T>::allocate(uint32_t co
 uint32_t UpdateDescriptorSetsBuilder::WriteDescriptorSetAllocator::updateDescriptorSets(
     VkDevice device) const
 {
+    // Track time of all Vulkan calls with a single scope to reduce CPU overhead.
+    vk::ScopedVulkanApiPerfTimer timer(
+        GetPerfCounterGroup(vk::VulkanApiFunction::vkUpdateDescriptorSets));
     for (const std::vector<VkWriteDescriptorSet> &vector : mDescriptorInfos)
     {
         if (!vector.empty())

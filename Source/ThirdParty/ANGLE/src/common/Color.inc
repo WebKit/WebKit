@@ -9,7 +9,6 @@
 #endif
 
 // Color.inc : Inline definitions of some functions from Color.h
-
 namespace angle
 {
 
@@ -26,10 +25,8 @@ constexpr Color<T>::Color(T r, T g, T b, T a) : red(r), green(g), blue(b), alpha
 template <typename T>
 bool operator==(const Color<T> &a, const Color<T> &b)
 {
-    return a.red == b.red &&
-           a.green == b.green &&
-           a.blue == b.blue &&
-           a.alpha == b.alpha;
+    // Use memcmp so that NaN values compare as equal and -0 and +0 are different.
+    return memcmp(&a, &b, sizeof(Color<T>)) == 0;
 }
 
 template <typename T>
@@ -38,6 +35,12 @@ bool operator!=(const Color<T> &a, const Color<T> &b)
     return !(a == b);
 }
 
+template <typename T>
+std::ostream &operator<<(std::ostream &os, const Color<T> &color)
+{
+    os << "r = " << color.red << ", g = " << color.green << ", b = " << color.blue << ", a = " << color.alpha;
+    return os;
+}
 
 ColorGeneric::ColorGeneric() : colorF(), type(Type::Float) {}
 

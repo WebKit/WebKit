@@ -140,10 +140,6 @@ fn initialize_with_zeros<'block>(
                 || (!element_type_info.is_struct() && !element_type_info.is_array() && count <= 3);
             let use_loop = allow_loops && !is_small_array;
             if use_loop {
-                // Note: `uint` would be a better loop index type, but ESSL 100 doesn't support
-                // that.
-                let count_constant = ir_meta.get_constant_int_typed(count as i32);
-
                 // Loop variable, int index = 0:
                 let (loop_index_var_id, loop_index_id) = ir_meta.declare_private_variable(
                     Name::new_temp(""),
@@ -160,6 +156,13 @@ fn initialize_with_zeros<'block>(
                     // loaded_index = Load loop_index_id
                     let loaded_index = condition_block
                         .add_typed_instruction(instruction::load(ir_meta, loop_index_id));
+                    // Note: `uint` would be a better loop index type, but ESSL 100 doesn't support
+                    // that.
+                    // For BinaryOpCode::LessThan, precision of one operand should propagate to the
+                    // other operand. See ir::instruction::propagate().
+                    // Apply the loaded_index precision to count_constant.
+                    let count_constant =
+                        ir_meta.get_constant_int_typed(count as i32, loaded_index.precision);
                     // compare_with_count = LessThan loop_index_id count
                     let compare_with_count = condition_block.add_typed_instruction(
                         instruction::less_than(ir_meta, loaded_index, count_constant),
@@ -212,7 +215,10 @@ fn initialize_with_zeros<'block>(
                 // Note that it is important to have the array init in the right order to
                 // workaround a driver bug per http://crbug.com/40514481.
                 for index in 0..count {
-                    let index_constant = ir_meta.get_constant_int_typed(index as i32);
+                    // Precision for `index` can be lowered based on the value of `count` but
+                    // Precision::High is used for simplicity.
+                    let index_constant =
+                        ir_meta.get_constant_int_typed(index as i32, Precision::High);
                     // selected_element = AccessArrayElement id index
                     let selected_element = block.add_typed_instruction(instruction::index(
                         ir_meta,
@@ -226,7 +232,10 @@ fn initialize_with_zeros<'block>(
         }
         _ => {
             // For scalars, vectors and matrices, use a zero constant which is not very big.
-            let null_value = ir_meta.get_constant_null_typed(type_id);
+            // For OpCode::Store, first operand precision should propagate to second operand.
+            // See propagate_precision::propagate_precision_in_instructions().
+            // Apply id's precision to null_value.
+            let null_value = ir_meta.get_constant_null_typed(type_id, id.precision);
             block.add_void_instruction(OpCode::Store(id, null_value));
         }
     }

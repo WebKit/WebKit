@@ -606,7 +606,7 @@ template("angle_perftests_common") {
       check_includes = false
     }
     sources = [
-      "../common/base/anglebase/trace_event/trace_event.h",
+      "../libANGLE/trace.h",
       "perf_tests/ANGLEComputeTestCL.cpp",
       "perf_tests/ANGLEComputeTestCL.h",
       "perf_tests/ANGLEPerfTest.cpp",
@@ -1681,6 +1681,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
     }
     sources = deqp_framework_platform_sources
     libs = []
+    public_deps = []
     if (is_win) {
       sources += [
         "$deqp_path/framework/platform/win32/tcuWGL.cpp",
@@ -1705,14 +1706,20 @@ if (build_angle_deqp_tests && !is_fuchsia) {
         ]
       } else if (angle_use_wayland) {
         sources += [
+          "$angle_root/src/tests/deqp_support/wayland/xdg-shell.h",
           "$deqp_path/framework/platform/lnx/wayland/tcuLnxWayland.cpp",
           "$deqp_path/framework/platform/lnx/wayland/tcuLnxWayland.hpp",
           "$deqp_path/framework/platform/lnx/wayland/tcuLnxWaylandEglDisplayFactory.cpp",
           "$deqp_path/framework/platform/lnx/wayland/tcuLnxWaylandEglDisplayFactory.hpp",
         ]
+        public_deps += [
+          "$wayland_gn_dir:wayland_client",
+          "$wayland_gn_dir:wayland_egl",
+          "$wayland_protocols_gn_dir:xdg_shell_protocol",
+        ]
       }
     }
-    public_deps = [
+    public_deps += [
       ":angle_deqp_framework_common",
       ":angle_deqp_framework_egl",
     ]
@@ -2173,6 +2180,7 @@ group("angle_tests") {
     deps += [ ":angle_trace_perf_tests" ]
     deps += [ "capture_tests:angle_capture_tests_multi_frame_trace" ]
     deps += [ "capture_tests:angle_capture_tests_active_textures_trace" ]
+    deps += [ "capture_tests:angle_capture_tests_client_wait_sync_trace" ]
     if (angle_enable_cl) {
       deps += [ "capture_tests:angle_capture_tests_multi_frame_cl_trace" ]
     }

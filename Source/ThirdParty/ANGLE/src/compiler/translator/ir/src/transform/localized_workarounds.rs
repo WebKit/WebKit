@@ -100,11 +100,16 @@ fn clamp_indirect_index(
         }
         _ => panic!("Internal error: Invalid type to index"),
     };
-    let max = ir_meta.get_constant_float_typed((max - 1) as f32);
     let index_as_float = traverser::add_typed_instruction(
         &mut transforms,
-        instruction::make!(construct, ir_meta, TYPE_ID_FLOAT, vec![index]),
+        instruction::make!(construct, ir_meta, TYPE_ID_FLOAT, vec![index], None),
     );
+    // For BuiltInOpCode::Clamp, result precision should propagate to operands.
+    // See ir::instruction::propagate().
+    // Since the result precision is the highest of the operands' precisions, we only need to make
+    // sure that TYPED_CONSTANT_ID_FLOAT_ZERO and max both have an assigned precision less than or
+    // equal to index_as_float's precision. Use index_as_float.precision for simplicity.
+    let max = ir_meta.get_constant_float_typed((max - 1) as f32, index_as_float.precision);
     let clamped = traverser::add_typed_instruction(
         &mut transforms,
         instruction::make!(
@@ -116,7 +121,7 @@ fn clamp_indirect_index(
     );
     let clamped = traverser::add_typed_instruction(
         &mut transforms,
-        instruction::make!(construct, ir_meta, index.type_id, vec![clamped]),
+        instruction::make!(construct, ir_meta, index.type_id, vec![clamped], None),
     );
 
     // Replace the original instruction with one using the new index.

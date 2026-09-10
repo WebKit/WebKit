@@ -1592,12 +1592,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo supportsGlobalPriorityQuery = {
-        "supportsGlobalPriorityQuery",
-        FeatureCategory::VulkanFeatures,
-        &members,
-    };
-
     FeatureInfo supportsBufferDeviceAddress = {
         "supportsBufferDeviceAddress",
         FeatureCategory::VulkanFeatures,
@@ -1708,6 +1702,12 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo initializeColorAttachmentWithWhite = {
         "initializeColorAttachmentWithWhite",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
+    FeatureInfo enableAlphaChannelImages = {
+        "enableAlphaChannelImages",
         FeatureCategory::VulkanWorkarounds,
         &members,
     };

@@ -134,7 +134,10 @@ def get_bits(format_id):
     else:
         tokens = get_channel_tokens(format_id)
         for token in tokens:
-            bits[token[0]] = int(token[1:])
+            # Some padding tokens can appear multiple times in a format name
+            # (e.g. R10X6G10X6B10X6A10X6 has four X6 tokens). They should be
+            # accumulated for the correct pixelBytes value.
+            bits[token[0]] = bits.get(token[0], 0) + int(token[1:])
     return bits
 
 

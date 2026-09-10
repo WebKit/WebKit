@@ -268,7 +268,7 @@ angle::Result TextureUpload::onMutableTextureUpload(ContextVk *contextVk, Textur
     // If the mutable texture is consistently specified, we initialize a full mip chain for it.
     if (mPrevUploadedMutableTexture->isMutableTextureConsistentlySpecifiedForFlush())
     {
-        ANGLE_TRY(mPrevUploadedMutableTexture->ensureImageInitialized(
+        ANGLE_TRY(mPrevUploadedMutableTexture->ensureImageAndReadViewsInitialized(
             contextVk, ImageMipLevels::EnabledLevels));
         contextVk->getPerfCounters().mutableTexturesUploaded++;
     }

@@ -2622,6 +2622,104 @@ TEST_P(BufferDataOverflowTest, VertexBufferIntegerOverflow)
     EXPECT_GL_ERROR(GL_NO_ERROR);
 }
 
+// Tests a D3D11 streaming vertex buffer out-of-bounds write vulnerability.
+// It requires a buffer of at least 2GB to allow two sub-allocations
+// to sum to > 4 GB, wrapping a 32-bit unsigned integer addition
+// However, with current ANGLE impl, since we have a hard limit:
+// kMaximumBufferSizeHardLimit = std::numeric_limits<UINT>::max() >> 1
+// The first glDrawArrays will return GL_OUT_OF_MEMORY
+// This test could be useful in case we increase kMaximumBufferSizeHardLimit
+// in the future
+TEST_P(BufferDataOverflowTest, StreamingBufferReservationWrap)
+{
+    ANGLE_SKIP_TEST_IF(!IsD3D11());
+
+    constexpr char kVS[] = R"(#version 300 es
+layout(location = 0) in vec4 attrib0;
+layout(location = 1) in vec4 attrib1;
+out vec4 v;
+void main()
+{
+    v = attrib0 + attrib1;
+    gl_Position = vec4(0, 0, 0, 1);
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+in vec4 v;
+out vec4 color;
+void main()
+{
+    color = v;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    // 4-byte packed input (GL_INT_2_10_10_10_REV) that converts to 16-byte
+    // DXGI_FORMAT_R32G32B32A32_FLOAT on the D3D11 CPU conversion path
+    // angle::FormatID::R10G10B10A2_SSCALED
+    constexpr GLenum kAttribType = GL_INT_2_10_10_10_REV;
+    constexpr GLsizei kSrcStride = 4;
+
+    // Count for Draw 1 to allocate the ~2.235 GB buffer (DstStride = 16)
+    constexpr GLsizei kGrowCount = 150000000;
+    // Count for Draw 2 to set up a ~1.863 GB stale reservation
+    constexpr GLsizei kPoisonCount = 125000000;
+    // Count for Draw 3 (~95.367 MB) to trigger the out-of-bounds write
+    constexpr GLsizei kSmallCount = 6250000;
+
+    // Size of source buffer for 150M vertices (150M * 4 bytes = ~572.205 MB)
+    constexpr GLsizeiptr kBigSrcBytes = static_cast<GLsizeiptr>(kGrowCount) * kSrcStride;
+    // A small 16-byte source buffer
+    constexpr GLsizeiptr kTinySrcBytes = 16;
+
+    GLBuffer bigBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, bigBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kBigSrcBytes, nullptr, GL_DYNAMIC_DRAW);
+    ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+
+    GLBuffer tinyBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, tinyBuffer);
+    glBufferData(GL_ARRAY_BUFFER, kTinySrcBytes, nullptr, GL_DYNAMIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    glBindBuffer(GL_ARRAY_BUFFER, bigBuffer);
+    glVertexAttribPointer(0, 4, kAttribType, GL_FALSE, kSrcStride, nullptr);
+    glEnableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+
+    // Grow the streaming buffer and advance its write position to the end
+    // 150M vertices at 16 bytes allocates a ~2.235 GB backend buffer
+    glDrawArrays(GL_POINTS, 0, kGrowCount);
+    ANGLE_SKIP_TEST_IF(glGetError() == GL_OUT_OF_MEMORY);
+
+    // Request a draw for 125M vertices.
+    // - Attribute 0 requests ~1.863 GB. The addition mWritePosition (~2.235 GB) + size (~1.863 GB)
+    //   wraps 32-bit uint to ~100.16 MB, bypassing buffer discard. mReservedSpace becomes ~1.863 GB
+    // - Attribute 1 points to a tiny buffer, triggering GL_INVALID_OPERATION and aborting
+    //   the draw early, which leaves mReservedSpace stale at ~1.863 GB
+    glBindBuffer(GL_ARRAY_BUFFER, tinyBuffer);
+    glVertexAttribPointer(1, 4, kAttribType, GL_FALSE, kSrcStride, nullptr);
+    glEnableVertexAttribArray(1);
+
+    glDrawArrays(GL_POINTS, 0, kPoisonCount);
+    GLenum poisonError = glGetError();
+    ANGLE_SKIP_TEST_IF(poisonError == GL_OUT_OF_MEMORY);
+    EXPECT_EQ(static_cast<GLenum>(GL_INVALID_OPERATION), poisonError);
+
+    // Issue a valid small draw (~95.367 MB).
+    // The stale ~1.863 GB reservation is added to the ~95.367 MB, requesting ~1.956 GB
+    // The addition mWritePosition (~2.235 GB) + size (~1.956 GB) wraps again to ~195.53 MB,
+    // bypassing discard. The write occurs past the buffer end (offset ~2.235 GB)
+    glDisableVertexAttribArray(1);
+    glDrawArrays(GL_POINTS, 0, kSmallCount);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_POINTS, 0, 3);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Tests a security bug in our CopyBufferSubData validation (integer overflow).
 TEST_P(BufferDataOverflowTest, CopySubDataValidation)
 {

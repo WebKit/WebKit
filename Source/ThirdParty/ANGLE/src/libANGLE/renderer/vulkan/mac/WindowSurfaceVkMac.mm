@@ -52,8 +52,8 @@ angle::Result WindowSurfaceVkMac::createSurfaceVk(vk::ErrorContext *context)
     createInfo.flags                       = 0;
     createInfo.pNext                       = nullptr;
     createInfo.pLayer                      = mMetalLayer;
-    ANGLE_VK_TRY(context, vkCreateMetalSurfaceEXT(context->getRenderer()->getInstance(),
-                                                  &createInfo, nullptr, &mSurface));
+    ANGLE_VK_TRY(context, VK_CALL(vkCreateMetalSurfaceEXT, context->getRenderer()->getInstance(),
+                                  &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }

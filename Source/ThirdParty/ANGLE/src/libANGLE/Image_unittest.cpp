@@ -158,4 +158,67 @@ TEST(ImageTest, RespecificationReleasesReferences)
     EXPECT_CALL(*imageImpl, destructor()).Times(1).RetiresOnSaturation();
     image->release(nullptr);
 }
+
+// Verify that an image is detached from its siblings even if the backend orphan operation fails
+// so that the image does not retain references to siblings that are being destroyed.
+TEST(ImageTest, SiblingOrphaningOnBackendFailure)
+{
+    NiceMock<rx::MockGLFactory> mockGLFactory;
+    NiceMock<rx::MockEGLFactory> mockEGLFactory;
+
+    rx::MockTextureImpl *textureImpl = new rx::MockTextureImpl();
+    EXPECT_CALL(mockGLFactory, createTexture(_)).WillOnce(Return(textureImpl));
+    gl::Texture *texture = new gl::Texture(&mockGLFactory, {1}, gl::TextureType::_2D);
+    texture->addRef();  // texture->mRefCount = 1
+
+    EXPECT_CALL(mockEGLFactory, createImage(_, _, _, _))
+        .WillOnce(CreateMockImageImpl())
+        .RetiresOnSaturation();
+
+    // The image points to the texture as its source (mState.source = texture)
+    // The texture registers that the image is dependent on it (texture->mSourcesOf.insert(image))
+    egl::Image *image = new egl::Image(&mockEGLFactory, {1}, nullptr, EGL_GL_TEXTURE_2D, texture,
+                                       egl::AttributeMap());
+    rx::MockImageImpl *imageImpl = static_cast<rx::MockImageImpl *>(image->getImplementation());
+    image->addRef();  // image->mRefCount = 1
+
+    rx::MockRenderbufferImpl *renderbufferImpl = new rx::MockRenderbufferImpl();
+    EXPECT_CALL(mockGLFactory, createRenderbuffer(_)).WillOnce(Return(renderbufferImpl));
+    gl::Renderbuffer *renderbuffer = new gl::Renderbuffer(&mockGLFactory, {1});
+    renderbuffer->addRef();  // renderbuffer->mRefCount = 1
+
+    EXPECT_CALL(*renderbufferImpl, setStorageEGLImageTarget(_, _))
+        .WillOnce(Return(angle::Result::Continue))
+        .RetiresOnSaturation();
+    EXPECT_EQ(angle::Result::Continue,
+              renderbuffer->setStorageEGLImageTarget(nullptr, image));  // image->mRefCount = 2
+
+    // Simulate a backend failure while orphaning the source and verify that the image is still
+    // detached from the source so that it does not retain a reference to the deleted sibling.
+    EXPECT_CALL(*imageImpl, orphan(_, _))
+        .WillOnce(Return(angle::Result::Stop))
+        .RetiresOnSaturation();
+    EXPECT_CALL(*textureImpl, destructor()).Times(1).RetiresOnSaturation();
+    texture->release(nullptr);       // texture->mRefCount = 0, image->mRefCount = 2
+    EXPECT_TRUE(image->orphaned());  // image->mRefCount = 2
+    EXPECT_EQ(2u, image->getRefCount());
+
+    // Simulate deletion of the image and verify that it still exists because the renderbuffer holds
+    // a ref
+    image->release(nullptr);  // image->mRefCount = 1
+    EXPECT_EQ(1u, image->getRefCount());
+    EXPECT_EQ(1u, renderbuffer->getRefCount());
+
+    // Simulate a backend failure while orphaning the target and verify that the deletion still
+    // cascades to all objects.
+    EXPECT_CALL(*imageImpl, destructor()).Times(1).RetiresOnSaturation();
+    EXPECT_CALL(*imageImpl, orphan(_, _))
+        .WillOnce(Return(angle::Result::Stop))
+        .RetiresOnSaturation();
+    EXPECT_CALL(*renderbufferImpl, destructor()).Times(1).RetiresOnSaturation();
+
+    // This triggers Renderbuffer::onDestroy() -> Renderbuffer::orphanImages() ->
+    // ImageSibling::orphanImages() -> Image::orphanSibling() -> Image::orphanSibling()
+    renderbuffer->release(nullptr);  // renderbuffer->mRefCount = 0
+}
 }  // namespace angle

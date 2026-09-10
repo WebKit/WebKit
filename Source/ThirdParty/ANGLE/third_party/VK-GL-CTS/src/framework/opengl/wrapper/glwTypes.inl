@@ -70,7 +70,7 @@ typedef int32_t				GLsizei;
 typedef int32_t				GLfixed;
 typedef void				GLvoid;
 
-#if (DE_OS == DE_OS_WIN32 && DE_CPU == DE_CPU_X86_64)
+#if (DE_OS == DE_OS_WIN32 && (DE_CPU == DE_CPU_X86_64 || DE_CPU == DE_CPU_ARM_64))
 	typedef signed long long int	GLintptr;
 	typedef signed long long int	GLsizeiptr;
 #else

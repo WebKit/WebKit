@@ -19,7 +19,7 @@ TextureNULL::TextureNULL(const gl::TextureState &state) : TextureImpl(state) {}
 TextureNULL::~TextureNULL() {}
 
 angle::Result TextureNULL::setImage(const gl::Context *context,
-                                    const gl::OwnImageIndex &ownIndex,
+                                    const gl::ImageIndex &index,
                                     GLenum internalFormat,
                                     const gl::Extents &size,
                                     GLenum format,
@@ -34,7 +34,7 @@ angle::Result TextureNULL::setImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::setSubImage(const gl::Context *context,
-                                       const gl::OwnImageIndex &ownIndex,
+                                       const gl::ImageIndex &index,
                                        const gl::Box &area,
                                        GLenum format,
                                        GLenum type,
@@ -46,7 +46,7 @@ angle::Result TextureNULL::setSubImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::setCompressedImage(const gl::Context *context,
-                                              const gl::OwnImageIndex &ownIndex,
+                                              const gl::ImageIndex &index,
                                               GLenum internalFormat,
                                               const gl::Extents &size,
                                               const gl::PixelUnpackState &unpack,
@@ -57,7 +57,7 @@ angle::Result TextureNULL::setCompressedImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::setCompressedSubImage(const gl::Context *context,
-                                                 const gl::OwnImageIndex &ownIndex,
+                                                 const gl::ImageIndex &index,
                                                  const gl::Box &area,
                                                  GLenum format,
                                                  const gl::PixelUnpackState &unpack,
@@ -68,7 +68,7 @@ angle::Result TextureNULL::setCompressedSubImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::copyImage(const gl::Context *context,
-                                     const gl::OwnImageIndex &ownIndex,
+                                     const gl::ImageIndex &index,
                                      const gl::Rectangle &sourceArea,
                                      GLenum internalFormat,
                                      gl::Framebuffer *source)
@@ -77,7 +77,7 @@ angle::Result TextureNULL::copyImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::copySubImage(const gl::Context *context,
-                                        const gl::OwnImageIndex &ownIndex,
+                                        const gl::ImageIndex &index,
                                         const gl::Offset &destOffset,
                                         const gl::Rectangle &sourceArea,
                                         gl::Framebuffer *source)
@@ -86,10 +86,10 @@ angle::Result TextureNULL::copySubImage(const gl::Context *context,
 }
 
 angle::Result TextureNULL::copyTexture(const gl::Context *context,
-                                       const gl::OwnImageIndex &ownIndex,
+                                       const gl::ImageIndex &index,
                                        GLenum internalFormat,
                                        GLenum type,
-                                       gl::OwnLevel ownSourceLevel,
+                                       gl::LevelIndex sourceLevel,
                                        bool unpackFlipY,
                                        bool unpackPremultiplyAlpha,
                                        bool unpackUnmultiplyAlpha,
@@ -99,9 +99,9 @@ angle::Result TextureNULL::copyTexture(const gl::Context *context,
 }
 
 angle::Result TextureNULL::copySubTexture(const gl::Context *context,
-                                          const gl::OwnImageIndex &ownIndex,
+                                          const gl::ImageIndex &index,
                                           const gl::Offset &destOffset,
-                                          gl::OwnLevel ownSourceLevel,
+                                          gl::LevelIndex sourceLevel,
                                           const gl::Box &sourceBox,
                                           bool unpackFlipY,
                                           bool unpackPremultiplyAlpha,
@@ -115,10 +115,10 @@ angle::Result TextureNULL::copyRenderbufferSubData(const gl::Context *context,
                                                    const gl::Renderbuffer *srcBuffer,
                                                    GLint srcX,
                                                    GLint srcY,
-                                                   gl::OwnLevel ownDstLevel,
+                                                   gl::LevelIndex dstLevel,
                                                    GLint dstX,
                                                    GLint dstY,
-                                                   gl::OwnLayer dstZ,
+                                                   gl::LayerIndex dstZ,
                                                    GLsizei srcWidth,
                                                    GLsizei srcHeight)
 {
@@ -127,14 +127,14 @@ angle::Result TextureNULL::copyRenderbufferSubData(const gl::Context *context,
 
 angle::Result TextureNULL::copyTextureSubData(const gl::Context *context,
                                               const gl::Texture *srcTexture,
-                                              gl::OwnLevel ownSrcLevel,
+                                              gl::LevelIndex srcLevel,
                                               GLint srcX,
                                               GLint srcY,
-                                              gl::OwnLayer srcZ,
-                                              gl::OwnLevel ownDstLevel,
+                                              gl::LayerIndex srcZ,
+                                              gl::LevelIndex dstLevel,
                                               GLint dstX,
                                               GLint dstY,
-                                              gl::OwnLayer dstZ,
+                                              gl::LayerIndex dstZ,
                                               GLsizei srcWidth,
                                               GLsizei srcHeight,
                                               GLsizei srcDepth)
@@ -225,7 +225,7 @@ angle::Result TextureNULL::setStorageMultisample(const gl::Context *context,
 
 angle::Result TextureNULL::initializeContents(const gl::Context *context,
                                               GLenum binding,
-                                              const gl::OwnImageIndex &ownImageIndex)
+                                              const gl::ImageIndex &imageIndex)
 {
     return angle::Result::Continue;
 }

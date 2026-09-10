@@ -435,6 +435,14 @@
             "description": [
                 "Clear allocated textures to non-zero values to help detect uninitialized reads."
             ]
+        },
+        {
+            "name": "limit_max_visibility_query_offset",
+            "category": "Features",
+            "description": [
+                "Limit maximum visibility query offset to 65528 bytes."
+            ],
+            "issue": "http://anglebug.com/537661068"
         }
     ]
 }

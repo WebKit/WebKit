@@ -42,6 +42,15 @@ struct TracePerfParams final : public RenderTestParams
 
         trackGpuTime = gTrackGPUTime;
 
+        ASSERT(gTrackVulkanApiWallTime >= 0 && gTrackVulkanApiWallTime <= 2);
+        if (gTrackVulkanApiWallTime > 0)
+        {
+            ASSERT(gTrackFrameWallTime);
+            vulkanApiWallTimeTracking = gTrackVulkanApiWallTime == 1
+                                            ? VulkanApiWallTimeTracking::Summary
+                                            : VulkanApiWallTimeTracking::Detailed;
+        }
+
         driver                   = driverType;
         eglParameters.renderer   = platformType;
         eglParameters.deviceType = deviceType;

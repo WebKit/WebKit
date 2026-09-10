@@ -100,6 +100,21 @@ static void getCompressedTexSubImage2DFormat(const vector<int32_t> &supported, v
     }
 }
 
+static size_t getFirstNonPalettedFormatNdx(const glu::ContextInfo &contextInfo,
+                                           const vector<int32_t> &compressedFormats)
+{
+    size_t ndx = 0;
+    if (contextInfo.isExtensionSupported("GL_OES_compressed_paletted_texture"))
+    {
+        while (ndx < compressedFormats.size() && GL_PALETTE4_RGB8_OES <= compressedFormats[ndx] &&
+               GL_PALETTE8_RGB5_A1_OES >= compressedFormats[ndx])
+        {
+            ++ndx;
+        }
+    }
+    return ndx;
+}
+
 NegativeTextureApiTests::NegativeTextureApiTests(Context &context)
     : TestCaseGroup(context, "texture", "Negative Texture API Cases")
 {
@@ -186,16 +201,9 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            size_t firstNonPalettedFormatNdx = 0;
-            // Negtive values are valid for palette formats
-            if (m_context.getContextInfo().isExtensionSupported("GL_OES_compressed_paletted_texture"))
-            {
-                while (GL_PALETTE4_RGB8_OES <= compressedFormats[firstNonPalettedFormatNdx] &&
-                       GL_PALETTE8_RGB5_A1_OES >= compressedFormats[firstNonPalettedFormatNdx])
-                {
-                    ++firstNonPalettedFormatNdx;
-                }
-            }
+            // Negative values are valid for palette formats
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
             if (firstNonPalettedFormatNdx < compressedFormats.size())
             {
                 m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if level is less than 0.");
@@ -210,16 +218,9 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            size_t firstNonPalettedFormatNdx = 0;
-            // Negtive values are valid for palette formats
-            if (m_context.getContextInfo().isExtensionSupported("GL_OES_compressed_paletted_texture"))
-            {
-                while (GL_PALETTE4_RGB8_OES <= compressedFormats[firstNonPalettedFormatNdx] &&
-                       GL_PALETTE8_RGB5_A1_OES >= compressedFormats[firstNonPalettedFormatNdx])
-                {
-                    ++firstNonPalettedFormatNdx;
-                }
-            }
+            // Negative values are valid for palette formats
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
             if (firstNonPalettedFormatNdx < compressedFormats.size())
             {
                 m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if level is less than 0.");
@@ -263,29 +264,35 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if level is greater than log_2(GL_MAX_TEXTURE_SIZE).");
-            uint32_t log2MaxTextureSize =
-                deLog2Floor32(m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE)) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, log2MaxTextureSize, compressedFormats[0], 0, 0, 0, 0,
-                                   0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "", "GL_INVALID_VALUE is generated if level is greater than log_2(GL_MAX_TEXTURE_SIZE).");
+                uint32_t log2MaxTextureSize =
+                    deLog2Floor32(m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE)) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, log2MaxTextureSize,
+                                       compressedFormats[firstNonPalettedFormatNdx], 0, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_tex2d, "Invalid glCompressedTexImage2D() usage", {
@@ -308,14 +315,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_cube_pos_y, "Invalid glCompressedTexImage2D() usage", {
@@ -323,14 +339,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_cube_pos_z, "Invalid glCompressedTexImage2D() usage", {
@@ -338,14 +363,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_cube_neg_x, "Invalid glCompressedTexImage2D() usage", {
@@ -353,14 +387,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_cube_neg_y, "Invalid glCompressedTexImage2D() usage", {
@@ -368,14 +411,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_neg_width_height_cube_neg_z, "Invalid glCompressedTexImage2D() usage", {
@@ -383,14 +435,23 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], -1, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], 0, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], -1, -1, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if width or height is less than 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       -1, -1, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_tex2d, "Invalid glCompressedTexImage2D() usage", {
@@ -415,17 +476,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_cube_pos_y, "Invalid glCompressedTexImage2D() usage", {
@@ -433,17 +503,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_cube_pos_z, "Invalid glCompressedTexImage2D() usage", {
@@ -451,17 +530,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_cube_neg_x, "Invalid glCompressedTexImage2D() usage", {
@@ -469,17 +557,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_cube_neg_y, "Invalid glCompressedTexImage2D() usage", {
@@ -487,17 +584,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_width_height_max_cube_neg_z, "Invalid glCompressedTexImage2D() usage", {
@@ -505,17 +611,26 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section(
-                "", "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
-            int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], maxTextureSize, 0, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], 0, maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], maxTextureSize,
-                                   maxTextureSize, 0, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section(
+                    "",
+                    "GL_INVALID_VALUE is generated if width or height is greater than GL_MAX_CUBE_MAP_TEXTURE_SIZE.");
+                int maxTextureSize = m_context.getContextInfo().getInt(GL_MAX_CUBE_MAP_TEXTURE_SIZE) + 1;
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, 0, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       maxTextureSize, maxTextureSize, 0, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border, "Invalid glCompressedTexImage2D() usage", {
@@ -537,12 +652,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border_cube_pos_y, "Invalid glCompressedTexImage2D() usage", {
@@ -550,12 +673,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border_cube_pos_z, "Invalid glCompressedTexImage2D() usage", {
@@ -563,12 +694,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border_cube_neg_x, "Invalid glCompressedTexImage2D() usage", {
@@ -576,12 +715,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border_cube_neg_y, "Invalid glCompressedTexImage2D() usage", {
@@ -589,12 +736,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_border_cube_neg_z, "Invalid glCompressedTexImage2D() usage", {
@@ -602,12 +757,20 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], 0, 0, 1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[0], 0, 0, -1, 0, 0);
-            expectError(GL_INVALID_VALUE);
-            m_log << TestLog::EndSection;
+            // paletted formats do not support cubemaps
+            size_t firstNonPalettedFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            if (firstNonPalettedFormatNdx < compressedFormats.size())
+            {
+                m_log << TestLog::Section("", "GL_INVALID_VALUE is generated if border is not 0.");
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, 1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, compressedFormats[firstNonPalettedFormatNdx],
+                                       0, 0, -1, 0, 0);
+                expectError(GL_INVALID_VALUE);
+                m_log << TestLog::EndSection;
+            }
         }
     });
     ES2F_ADD_API_CASE(compressedteximage2d_invalid_size, "Invalid glCompressedTexImage2D() usage", {
@@ -1209,17 +1372,44 @@ void NegativeTextureApiTests::init(void)
         getSupportedExtensions(GL_NUM_COMPRESSED_TEXTURE_FORMATS, GL_COMPRESSED_TEXTURE_FORMATS, compressedFormats);
         if (!compressedFormats.empty())
         {
-            GLuint texture;
-            glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            m_log << TestLog::Section(
-                "",
-                "GL_INVALID_OPERATION is generated if the zero level array is stored in a compressed internal format.");
-            glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormats[0], 0, 0, 0, 0, 0);
-            glGenerateMipmap(GL_TEXTURE_2D);
-            expectError(GL_INVALID_OPERATION);
-            m_log << TestLog::EndSection;
-            glDeleteTextures(1, &texture);
+            // It is invalid to call glCompressedTexImage2D with a paletted format, zero dimensions, and zero image size
+            size_t firstValidZeroLevelArrayFormatNdx =
+                getFirstNonPalettedFormatNdx(m_context.getContextInfo(), compressedFormats);
+            // If the format is any of the PVRTCv1 formats, the data argument of glCompressedTexImage2D must be at least 32 bytes long even for zero dimensions
+            if (m_context.getContextInfo().isExtensionSupported("GL_EXT_pvrtc_sRGB"))
+            {
+                while (firstValidZeroLevelArrayFormatNdx < compressedFormats.size() &&
+                       0x8A54 <= compressedFormats[firstValidZeroLevelArrayFormatNdx] &&
+                       0x8A57 >= compressedFormats[firstValidZeroLevelArrayFormatNdx])
+                {
+                    ++firstValidZeroLevelArrayFormatNdx;
+                }
+            }
+            if (m_context.getContextInfo().isExtensionSupported("GL_IMG_texture_compression_pvrtc"))
+            {
+                while (firstValidZeroLevelArrayFormatNdx < compressedFormats.size() &&
+                       0x8C00 <= compressedFormats[firstValidZeroLevelArrayFormatNdx] &&
+                       0x8C03 >= compressedFormats[firstValidZeroLevelArrayFormatNdx])
+                {
+                    ++firstValidZeroLevelArrayFormatNdx;
+                }
+            }
+
+            if (firstValidZeroLevelArrayFormatNdx < compressedFormats.size())
+            {
+                GLuint texture;
+                glGenTextures(1, &texture);
+                glBindTexture(GL_TEXTURE_2D, texture);
+                m_log << TestLog::Section("", "GL_INVALID_OPERATION is generated if the zero level array is stored in "
+                                              "a compressed internal format.");
+                glCompressedTexImage2D(GL_TEXTURE_2D, 0, compressedFormats[firstValidZeroLevelArrayFormatNdx], 0, 0, 0,
+                                       0, 0);
+                expectError(GL_NO_ERROR);
+                glGenerateMipmap(GL_TEXTURE_2D);
+                expectError(GL_INVALID_OPERATION);
+                m_log << TestLog::EndSection;
+                glDeleteTextures(1, &texture);
+            }
         }
     });
     ES2F_ADD_API_CASE(generatemipmap_incomplete_cube, "Invalid glGenerateMipmap() usage", {

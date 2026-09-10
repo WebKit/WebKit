@@ -17,6 +17,7 @@ namespace sh
 
 class TIntermBlock;
 class TSymbolTable;
+class NameMap;
 
 void CollectVariables(TIntermBlock *root,
                       std::vector<ShaderVariable> *attributes,
@@ -30,6 +31,7 @@ void CollectVariables(TIntermBlock *root,
                       char userVariablePrefix,
                       char userBlockPrefix,
                       ShHashFunction64 hashFunction,
+                      NameMap *nameMap,
                       TSymbolTable *symbolTable,
                       GLenum shaderType,
                       const TExtensionBehavior &extensionBehavior,

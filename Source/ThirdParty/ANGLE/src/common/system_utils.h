@@ -58,6 +58,8 @@ Optional<std::string> CreateTemporaryFileInDirectoryWithExtension(const std::str
 
 // Get absolute time in seconds.  Use this function to get an absolute time with an unknown origin.
 double GetCurrentSystemTime();
+// Get absolute time in nanoseconds.
+uint64_t GetCurrentSystemTimeNs();
 // Get CPU time for current process in seconds.
 double GetCurrentProcessCpuTime();
 

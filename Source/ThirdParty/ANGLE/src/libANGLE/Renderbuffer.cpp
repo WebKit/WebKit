@@ -236,8 +236,8 @@ angle::Result Renderbuffer::copyTextureSubData(Context *context,
                                                GLsizei srcWidth,
                                                GLsizei srcHeight)
 {
-    ANGLE_TRY(mImplementation->copyTextureSubData(context, srcTexture, OwnLevel(srcLevel), srcX,
-                                                  srcY, OwnLayer(srcZ), dstX, dstY, srcWidth,
+    ANGLE_TRY(mImplementation->copyTextureSubData(context, srcTexture, LevelIndex(srcLevel), srcX,
+                                                  srcY, LayerIndex(srcZ), dstX, dstY, srcWidth,
                                                   srcHeight));
 
     return angle::Result::Continue;

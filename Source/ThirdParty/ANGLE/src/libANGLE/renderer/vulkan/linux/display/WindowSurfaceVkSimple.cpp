@@ -29,22 +29,24 @@ angle::Result WindowSurfaceVkSimple::createSurfaceVk(vk::ErrorContext *context)
 
     // Query if there is a valid display
     uint32_t count = 1;
-    ANGLE_VK_TRY(context, vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &count, nullptr));
+    ANGLE_VK_TRY(context,
+                 VK_CALL(vkGetPhysicalDeviceDisplayPropertiesKHR, physicalDevice, &count, nullptr));
 
     // Get display properties
     VkDisplayPropertiesKHR prop = {};
     count                       = 1;
-    ANGLE_VK_TRY(context, vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &count, &prop));
+    ANGLE_VK_TRY(context,
+                 VK_CALL(vkGetPhysicalDeviceDisplayPropertiesKHR, physicalDevice, &count, &prop));
 
     // we should have a valid display now
     ASSERT(prop.display != VK_NULL_HANDLE);
-    ANGLE_VK_TRY(context,
-                 vkGetDisplayModePropertiesKHR(physicalDevice, prop.display, &count, nullptr));
+    ANGLE_VK_TRY(context, VK_CALL(vkGetDisplayModePropertiesKHR, physicalDevice, prop.display,
+                                  &count, nullptr));
 
     ASSERT(count != 0);
     std::vector<VkDisplayModePropertiesKHR> modeProperties(count);
-    ANGLE_VK_TRY(context, vkGetDisplayModePropertiesKHR(physicalDevice, prop.display, &count,
-                                                        modeProperties.data()));
+    ANGLE_VK_TRY(context, VK_CALL(vkGetDisplayModePropertiesKHR, physicalDevice, prop.display,
+                                  &count, modeProperties.data()));
 
     angle::vk::SimpleDisplayWindow *displayWindow =
         reinterpret_cast<angle::vk::SimpleDisplayWindow *>(mNativeWindowType);
@@ -60,7 +62,8 @@ angle::Result WindowSurfaceVkSimple::createSurfaceVk(vk::ErrorContext *context)
     info.imageExtent.width             = displayWindow->width;
     info.imageExtent.height            = displayWindow->height;
 
-    ANGLE_VK_TRY(context, vkCreateDisplayPlaneSurfaceKHR(instance, &info, nullptr, &mSurface));
+    ANGLE_VK_TRY(context,
+                 VK_CALL(vkCreateDisplayPlaneSurfaceKHR, instance, &info, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }
@@ -72,8 +75,8 @@ angle::Result WindowSurfaceVkSimple::getCurrentWindowSize(vk::ErrorContext *cont
     const VkPhysicalDevice &physicalDevice = renderer->getPhysicalDevice();
 
     VkSurfaceCapabilitiesKHR surfaceCaps;
-    ANGLE_VK_TRY(context,
-                 vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, mSurface, &surfaceCaps));
+    ANGLE_VK_TRY(context, VK_CALL(vkGetPhysicalDeviceSurfaceCapabilitiesKHR, physicalDevice,
+                                  mSurface, &surfaceCaps));
 
     *extentsOut = gl::Extents(surfaceCaps.currentExtent.width, surfaceCaps.currentExtent.height, 1);
     return angle::Result::Continue;

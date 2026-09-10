@@ -10,8 +10,6 @@ use crate::*;
 pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
     if let Some(point_size_var_id) = ir.meta.get_built_in_variable(BuiltIn::PointSize) {
         let point_size = TypedId::from_variable_id(&ir.meta, point_size_var_id);
-        let min_size_constant = ir.meta.get_constant_float_typed(min_point_size);
-        let max_size_constant = ir.meta.get_constant_float_typed(max_point_size);
 
         // Generate:
         //
@@ -20,6 +18,14 @@ pub fn run(ir: &mut IR, min_point_size: f32, max_point_size: f32) {
         //               Store point_size clamped
         let mut clamp_block = Block::new();
         let size = clamp_block.add_typed_instruction(instruction::load(&mut ir.meta, point_size));
+        // For OpCode::Clamp, result precision should propagate to operands,
+        // See ir::instruction::propagate().
+        // Since result precision is the highest precision of all operands,
+        // we only need to ensure that min_size_constant and max_size_constant
+        // have an assigned precision less than or equal to size.precision.
+        // Use size.precision for simplicity.
+        let min_size_constant = ir.meta.get_constant_float_typed(min_point_size, size.precision);
+        let max_size_constant = ir.meta.get_constant_float_typed(max_point_size, size.precision);
         let clamped = clamp_block.add_typed_instruction(instruction::built_in(
             &mut ir.meta,
             BuiltInOpCode::Clamp,

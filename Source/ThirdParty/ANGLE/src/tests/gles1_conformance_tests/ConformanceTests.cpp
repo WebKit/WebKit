@@ -572,5 +572,8 @@ TEST_P(GLES1ConformanceTest, MatrixPalette)
     ASSERT_NE(CONFORMANCE_TEST_ERROR, MatrixPaletteExec());
 }
 
-ANGLE_INSTANTIATE_TEST(GLES1ConformanceTest, ES1_OPENGL(), ES1_VULKAN());
+// Always disable OpenGL state validation, it causes these tests to time out.
+ANGLE_INSTANTIATE_TEST(GLES1ConformanceTest,
+                       ES1_OPENGL().disable(Feature::ValidateState),
+                       ES1_VULKAN());
 }  // namespace angle

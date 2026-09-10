@@ -166,4 +166,32 @@ size_t ComputeVertexBindingElementCount(GLuint divisor,
     return angle::CheckedNumeric<size_t>(drawCount).ValueOrDie();
 }
 
+std::ostream &operator<<(std::ostream &os, const VertexAttribCurrentValueData &data)
+{
+    auto printTypedData = [](std::ostream &os, auto data) {
+        os << "x = " << data[0] << ", y = " << data[1] << ", z = " << data[2]
+           << ", w = " << data[3];
+    };
+
+    switch (data.Type)
+    {
+        case gl::VertexAttribType::Float:
+            os << "Type = Float, ";
+            printTypedData(os, data.Values.FloatValues);
+            break;
+        case gl::VertexAttribType::Int:
+            os << "Type = Int, ";
+            printTypedData(os, data.Values.IntValues);
+            break;
+
+        case gl::VertexAttribType::UnsignedInt:
+            os << "Type = UnsignedInt, ";
+            printTypedData(os, data.Values.UnsignedIntValues);
+            break;
+        default:
+            UNREACHABLE();
+    }
+    return os;
+}
+
 }  // namespace gl

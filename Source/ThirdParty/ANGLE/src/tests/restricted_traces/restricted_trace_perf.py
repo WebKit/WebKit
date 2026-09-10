@@ -286,8 +286,19 @@ def run_trace(trace, args, screenshot_device_dir):
         flags.append('--track-gpu-time')
     if args.add_swap_into_gpu_time:
         flags.append('--add-swap-into-gpu-time')
+    if args.frame_wall_time:
+        flags.append('--track-frame-wall-time')
     if args.add_swap_into_frame_wall_time:
-        flags.append('--add-swap-into-frame-wall-time')
+        if args.frame_wall_time:
+            flags.append('--add-swap-into-frame-wall-time')
+        else:
+            print("WARNING: '--add-swap-into-frame-wall-time' requires `--frame-wall-time`. "
+                  "Ignoring...\n")
+    if args.vulkan_api_wall_time:
+        if args.frame_wall_time:
+            flags.append('--track-vulkan-api-wall-time 1')
+        else:
+            print("WARNING: '--vulkan-api-wall-time' requires `--frame-wall-time`. Ignoring...\n")
 
     # Build a command that can be run directly over ADB, for example:
     r'''
@@ -474,6 +485,22 @@ def get_frame_wall_time():
             break
 
     return frame_wall_time
+
+
+def get_vk_api_wall_time():
+    # Pull the results from the device and parse
+    result = run_adb_shell_command_with_run_as('cat ' + _global.storage_dir + '/out.txt')
+    vk_api_wall_time = '0'
+
+    for line in result.splitlines():
+        # Look for "vk_api_wall_time" in the line and grab the second to last entry:
+        logging.debug('Checking line: %s' % line)
+
+        if "vk_api_wall_time" in line:
+            vk_api_wall_time = line.split()[-2]
+            break
+
+    return vk_api_wall_time
 
 
 def get_cpu_time():
@@ -957,6 +984,7 @@ def run_traces(args):
         'wall_time': 15,
         'gpu_time': 15,
         'frame_wall_time': 15,
+        'vk_api_wall_time': 16,
         'cpu_time': 15,
         'gpu_power': 10,
         'cpu_power': 10,
@@ -978,6 +1006,7 @@ def run_traces(args):
         'wall_time': 'wall_time(ms)',
         'gpu_time': 'gpu_time(ms)',
         'frame_wall_time': 'frame_wall_time(ms)',
+        'vk_api_wall_time': 'vk_api_wall_time(ms)',
         'cpu_time': 'cpu_time(ms)',
         'gpu_power': 'gpu_power(W)',
         'cpu_power': 'cpu_power(W)',
@@ -1002,8 +1031,12 @@ def run_traces(args):
         output_columns.append('wall_time')
         if args.gpu_time:
             output_columns.append('gpu_time')
+        if args.frame_wall_time:
+            output_columns.append('frame_wall_time')
+            if args.vulkan_api_wall_time:
+                output_columns.append('vk_api_wall_time')
 
-        output_columns.extend(['frame_wall_time', 'cpu_time'])
+        output_columns.append('cpu_time')
 
         if args.power:
             output_columns.extend(['gpu_power', 'cpu_power', 'infra_power'])
@@ -1018,10 +1051,10 @@ def run_traces(args):
     else:
         # Output all columns when minimal-output is not requested
         output_columns.extend([
-            'wall_time', 'gpu_time', 'frame_wall_time', 'cpu_time', 'gpu_power', 'cpu_power',
-            'infra_power', 'gpu_mem_sustained', 'gpu_mem_peak', 'proc_mem_median', 'proc_mem_peak',
-            'process_cpuinst', 'gfxlib_cpuinst', 'angle_cpuinst', 'vulkan_cpuinst', 'gles_cpuinst',
-            'libc_cpuinst'
+            'wall_time', 'gpu_time', 'frame_wall_time', 'vk_api_wall_time', 'cpu_time',
+            'gpu_power', 'cpu_power', 'infra_power', 'gpu_mem_sustained', 'gpu_mem_peak',
+            'proc_mem_median', 'proc_mem_peak', 'process_cpuinst', 'gfxlib_cpuinst',
+            'angle_cpuinst', 'vulkan_cpuinst', 'gles_cpuinst', 'libc_cpuinst'
         ])
 
     # Format string that easily sizes itself to the dynamically loaded variables
@@ -1050,6 +1083,7 @@ def run_traces(args):
     wall_times = defaultdict(dict)
     gpu_times = defaultdict(dict)
     frame_wall_times = defaultdict(dict)
+    vk_api_wall_times = defaultdict(dict)
     cpu_times = defaultdict(dict)
     gpu_powers = defaultdict(dict)
     cpu_powers = defaultdict(dict)
@@ -1085,6 +1119,7 @@ def run_traces(args):
         wall_times.clear()
         gpu_times.clear()
         frame_wall_times.clear()
+        vk_api_wall_times.clear()
         cpu_times.clear()
         gpu_powers.clear()
         cpu_powers.clear()
@@ -1238,7 +1273,12 @@ def run_traces(args):
 
                 gpu_time = get_gpu_time() if args.gpu_time else '0'
 
-                frame_wall_time = get_frame_wall_time()
+                if args.frame_wall_time:
+                    frame_wall_time = get_frame_wall_time()
+                    vk_api_wall_time = get_vk_api_wall_time() if args.vulkan_api_wall_time else '0'
+                else:
+                    frame_wall_time = '0'
+                    vk_api_wall_time = '0'
 
                 cpu_time = get_cpu_time()
 
@@ -1265,6 +1305,10 @@ def run_traces(args):
                 if len(frame_wall_times[test]) == 0:
                     frame_wall_times[test] = defaultdict(list)
                 frame_wall_times[test][renderer].append(safe_cast_float(frame_wall_time))
+
+                if len(vk_api_wall_times[test]) == 0:
+                    vk_api_wall_times[test] = defaultdict(list)
+                vk_api_wall_times[test][renderer].append(safe_cast_float(vk_api_wall_time))
 
                 if len(cpu_times[test]) == 0:
                     cpu_times[test] = defaultdict(list)
@@ -1328,6 +1372,7 @@ def run_traces(args):
                     'wall_time': wall_time,
                     'gpu_time': gpu_time,
                     'frame_wall_time': frame_wall_time,
+                    'vk_api_wall_time': vk_api_wall_time,
                     'cpu_time': cpu_time,
                     'gpu_power': '%.3f' % gpu_power,
                     'cpu_power': '%.3f' % cpu_power,
@@ -1350,6 +1395,7 @@ def run_traces(args):
                     'wall_time': wall_time,
                     'gpu_time': gpu_time,
                     'frame_wall_time': frame_wall_time,
+                    'vk_api_wall_time': vk_api_wall_time,
                     'cpu_time': cpu_time,
                     'gpu_power': gpu_power,
                     'cpu_power': cpu_power,
@@ -1405,6 +1451,7 @@ def generate_summary(raw_data_filename, summary_filename):
     wall_times = defaultdict(lambda: defaultdict(list))
     gpu_times = defaultdict(lambda: defaultdict(list))
     frame_wall_times = defaultdict(lambda: defaultdict(list))
+    vk_api_wall_times = defaultdict(lambda: defaultdict(list))
     cpu_times = defaultdict(lambda: defaultdict(list))
     gpu_powers = defaultdict(lambda: defaultdict(list))
     cpu_powers = defaultdict(lambda: defaultdict(list))
@@ -1457,6 +1504,8 @@ def generate_summary(raw_data_filename, summary_filename):
                 gpu_times[trace][renderer].append(safe_cast_float(row.get('gpu_time(ms)', '')))
                 frame_wall_times[trace][renderer].append(
                     safe_cast_float(row.get('frame_wall_time(ms)', '')))
+                vk_api_wall_times[trace][renderer].append(
+                    safe_cast_float(row.get('vk_api_wall_time(ms)', '')))
                 cpu_times[trace][renderer].append(safe_cast_float(row.get('cpu_time(ms)', '')))
                 gpu_powers[trace][renderer].append(safe_cast_float(row.get('gpu_power(W)', '')))
                 cpu_powers[trace][renderer].append(safe_cast_float(row.get('cpu_power(W)', '')))
@@ -1631,6 +1680,9 @@ def generate_summary(raw_data_filename, summary_filename):
         populate_summary_row(rows, name, results)
 
     for name, results in frame_wall_times.items():
+        populate_summary_row(rows, name, results)
+
+    for name, results in vk_api_wall_times.items():
         populate_summary_row(rows, name, results)
 
     for name, results in cpu_times.items():
@@ -1986,8 +2038,18 @@ def main():
         action='store_true',
         default=False)
     parser.add_argument(
+        '--frame-wall-time',
+        help='Enables frame_wall_time tracking',
+        action='store_true',
+        default=False)
+    parser.add_argument(
         '--add-swap-into-frame-wall-time',
         help='Adds swap/offscreen blit into the frame_wall_time tracking',
+        action='store_true',
+        default=False)
+    parser.add_argument(
+        '--vulkan-api-wall-time',
+        help='Enables ANGLE vulkan back-end `vk*()` calls wall time tracking',
         action='store_true',
         default=False)
     parser.add_argument(

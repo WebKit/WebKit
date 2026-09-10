@@ -61,7 +61,7 @@ def main():
 
     subprocess.check_call([
         'python3', 'tools/mb/mb.py', 'isolate', gn_dir, 'angle_trace_perf_tests', '-i',
-        'infra/specs/gn_isolate_map.pyl'
+        'infra/config/generated/testing/gn_isolate_map.pyl'
     ])
 
     with open(os.path.join(args.gn_dir, 'angle_trace_perf_tests.isolate')) as f:

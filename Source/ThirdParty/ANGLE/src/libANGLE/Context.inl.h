@@ -195,6 +195,13 @@ ANGLE_INLINE void Context::bindBuffer(BufferBinding target, BufferID buffer)
     // array.
     if (bufferObject != nullptr && isSharedContext())
     {
+        // If isSharedContext returns false, and immediately after that, another thread creates a
+        // new shared context and modifies buffer, this block of code will be skipped. This
+        // context's vertex array may still have the old size. But, GLES spec requires after buffer
+        // change, bindBuffer must be called to catch up the buffer modifications made in other
+        // contexts. So application has to ensure bindBuffer is called after buffer modification.
+        // Otherwise it is expected that this context may still using the buffer's old state.
+        egl::ScopedContextMutexLock shareContextLock(mState.mContextMutex);
         VertexArrayBufferBindingMask bindingMask = bufferObject->getVertexArrayBinding(this);
         if (bindingMask.any())
         {

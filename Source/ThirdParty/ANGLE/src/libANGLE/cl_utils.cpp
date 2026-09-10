@@ -185,12 +185,17 @@ bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensio
     return true;
 }
 
+// TODO: Move this to CLDeviceVk where we can decide which would be right mapping of formats based
+// on device cap. https://anglebug.com/529852962
 angle::FormatID GetImageAngleFormat(cl_image_format format)
 {
     switch (format.image_channel_order)
     {
-        case CL_R:
         case CL_A:
+        {
+            return angle::Format::CLAFormatToID(format.image_channel_data_type);
+        }
+        case CL_R:
         case CL_LUMINANCE:
         case CL_INTENSITY:
             return angle::Format::CLRFormatToID(format.image_channel_data_type);

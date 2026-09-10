@@ -1101,6 +1101,30 @@ TEST_P(EGLContextSharingTest, UnmakeFromCurrentOnThreadExit)
     ASSERT_EGL_SUCCESS();
 }
 
+// Tests that calling MakeCurrent() with EGL_NO_CONTEXT must also specify EGL_NO_SURFACE
+TEST_P(EGLContextSharingTest, MakeCurrentNoContextAndNoSurface)
+{
+    EGLWindow *window = getEGLWindow();
+
+    // There's a valid context and surface current at the test start
+    ASSERT_NE(eglGetCurrentContext(), EGL_NO_CONTEXT);
+    ASSERT_EGL_SUCCESS();
+
+    // Release the current context. The helper must substitute EGL_NO_SURFACE for both the
+    // draw and read surfaces, while using a real window surface would cause EGL_BAD_MATCH
+    // and further downstream errors
+    EXPECT_TRUE(window->makeCurrent(EGL_NO_CONTEXT));
+    EXPECT_EGL_SUCCESS();
+
+    // A failed eglMakeCurrent() will leave the previous context/surface bound
+    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+    EXPECT_EQ(eglGetCurrentSurface(EGL_DRAW), EGL_NO_SURFACE);
+    EXPECT_EQ(eglGetCurrentSurface(EGL_READ), EGL_NO_SURFACE);
+
+    EXPECT_TRUE(window->makeCurrent());
+    EXPECT_EGL_SUCCESS();
+}
+
 // Test that an inactive but alive thread doesn't prevent memory cleanup.
 TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
 {

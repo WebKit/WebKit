@@ -84,6 +84,11 @@ double GetCurrentSystemTime()
     return static_cast<double>(curTime.QuadPart) / frequency.QuadPart;
 }
 
+uint64_t GetCurrentSystemTimeNs()
+{
+    return static_cast<uint64_t>(GetCurrentSystemTime() * 1e9);
+}
+
 double GetCurrentProcessCpuTime()
 {
     FILETIME creationTime = {};

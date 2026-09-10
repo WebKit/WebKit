@@ -542,83 +542,7 @@ void VertexArrayVk::destroy(const gl::Context *context)
     }
 
     mStreamedIndexData.release(contextVk);
-    mTranslatedByteIndexData.release(contextVk);
-    mTranslatedByteIndirectData.release(contextVk);
     mLineLoopHelper.release(contextVk);
-}
-
-angle::Result VertexArrayVk::convertIndexBufferGPU(ContextVk *contextVk,
-                                                   BufferVk *bufferVk,
-                                                   const void *indices)
-{
-    uintptr_t offsetIntoSrcData = reinterpret_cast<uintptr_t>(indices);
-    size_t srcDataSize         = static_cast<size_t>(bufferVk->getSize()) - offsetIntoSrcData;
-
-    // Allocate buffer for results
-    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mTranslatedByteIndexData,
-                                                       sizeof(GLushort) * srcDataSize,
-                                                       vk::MemoryHostVisibility::NonVisible));
-    mCurrentElementArrayBuffer = mTranslatedByteIndexData.getBuffer();
-
-    vk::BufferHelper *dst = mTranslatedByteIndexData.getBuffer();
-    vk::BufferHelper *src = &bufferVk->getBuffer();
-
-    // Copy relevant section of the source into destination at allocated offset.  Note that the
-    // offset returned by allocate() above is in bytes. As is the indices offset pointer.
-    UtilsVk::ConvertIndexParameters params = {};
-    params.srcOffset                       = static_cast<uint32_t>(offsetIntoSrcData);
-    params.dstOffset                       = 0;
-    // Remaining space in buffer was already computed above.
-    params.maxIndex = static_cast<uint32_t>(srcDataSize);
-
-    ANGLE_TRY(contextVk->getUtils().convertIndexBuffer(contextVk, dst, src, params));
-    mTranslatedByteIndexData.clearDirty();
-
-    return angle::Result::Continue;
-}
-
-angle::Result VertexArrayVk::convertIndexBufferIndirectGPU(ContextVk *contextVk,
-                                                           vk::BufferHelper *srcIndirectBuf,
-                                                           VkDeviceSize srcIndirectBufOffset,
-                                                           vk::BufferHelper **indirectBufferVkOut)
-{
-    size_t srcDataSize = static_cast<size_t>(mCurrentElementArrayBuffer->getSize());
-    ASSERT(mCurrentElementArrayBuffer == &vk::GetImpl(getElementArrayBuffer())->getBuffer());
-
-    vk::BufferHelper *srcIndexBuf = mCurrentElementArrayBuffer;
-
-    // Allocate buffer for results
-    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mTranslatedByteIndexData,
-                                                       sizeof(GLushort) * srcDataSize,
-                                                       vk::MemoryHostVisibility::NonVisible));
-    vk::BufferHelper *dstIndexBuf = mTranslatedByteIndexData.getBuffer();
-
-    ANGLE_TRY(contextVk->initBufferForVertexConversion(&mTranslatedByteIndirectData,
-                                                       sizeof(VkDrawIndexedIndirectCommand),
-                                                       vk::MemoryHostVisibility::NonVisible));
-    vk::BufferHelper *dstIndirectBuf = mTranslatedByteIndirectData.getBuffer();
-
-    // Save new element array buffer
-    mCurrentElementArrayBuffer = dstIndexBuf;
-    // Tell caller what new indirect buffer is
-    *indirectBufferVkOut = dstIndirectBuf;
-
-    // Copy relevant section of the source into destination at allocated offset.  Note that the
-    // offset returned by allocate() above is in bytes. As is the indices offset pointer.
-    UtilsVk::ConvertIndexIndirectParameters params = {};
-    params.srcIndirectBufOffset                    = static_cast<uint32_t>(srcIndirectBufOffset);
-    params.srcIndexBufOffset                       = 0;
-    params.dstIndexBufOffset                       = 0;
-    params.maxIndex                                = static_cast<uint32_t>(srcDataSize);
-    params.dstIndirectBufOffset                    = 0;
-
-    ANGLE_TRY(contextVk->getUtils().convertIndexIndirectBuffer(
-        contextVk, srcIndirectBuf, srcIndexBuf, dstIndirectBuf, dstIndexBuf, params));
-
-    mTranslatedByteIndexData.clearDirty();
-    mTranslatedByteIndirectData.clearDirty();
-
-    return angle::Result::Continue;
 }
 
 angle::Result VertexArrayVk::handleLineLoopIndexIndirect(ContextVk *contextVk,
@@ -724,46 +648,9 @@ angle::Result VertexArrayVk::convertIndexBufferCPU(ContextVk *contextVk,
     GLubyte *dst               = mCurrentElementArrayBuffer->getMappedMemory();
     *bindingDirty              = BufferBindingDirty::Yes;
 
-    if (contextVk->shouldConvertUint8VkIndexType(indexType))
-    {
-        // Unsigned bytes don't have direct support in Vulkan so we have to expand the
-        // memory to a GLushort.
-        const GLubyte *in     = static_cast<const GLubyte *>(sourcePointer);
-        GLushort *expandedDst = reinterpret_cast<GLushort *>(dst);
-        bool primitiveRestart = contextVk->getState().isPrimitiveRestartEnabled();
-
-        constexpr GLubyte kUnsignedByteRestartValue   = 0xFF;
-        constexpr GLushort kUnsignedShortRestartValue = 0xFFFF;
-
-        if (primitiveRestart)
-        {
-            for (size_t index = 0; index < indexCount; index++)
-            {
-                GLushort value = static_cast<GLushort>(ANGLE_UNSAFE_TODO(in[index]));
-                if (ANGLE_UNSAFE_TODO(in[index]) == kUnsignedByteRestartValue)
-                {
-                    // Convert from 8-bit restart value to 16-bit restart value
-                    value = kUnsignedShortRestartValue;
-                }
-                ANGLE_UNSAFE_TODO(expandedDst[index]) = value;
-            }
-        }
-        else
-        {
-            // Fast path for common case.
-            for (size_t index = 0; index < indexCount; index++)
-            {
-                ANGLE_UNSAFE_TODO(expandedDst[index]) =
-                    static_cast<GLushort>(ANGLE_UNSAFE_TODO(in[index]));
-            }
-        }
-    }
-    else
-    {
-        // The primitive restart value is the same for OpenGL and Vulkan,
-        // so there's no need to perform any conversion.
-        ANGLE_UNSAFE_TODO(memcpy(dst, sourcePointer, amount));
-    }
+    // The primitive restart value is the same for OpenGL and Vulkan, so there's no need to perform
+    // any conversion.
+    ANGLE_UNSAFE_TODO(memcpy(dst, sourcePointer, amount));
 
     mStreamedIndexData.clearDirty();
 

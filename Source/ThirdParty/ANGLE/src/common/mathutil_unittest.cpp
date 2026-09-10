@@ -207,6 +207,25 @@ TEST(MathUtilTest, isInf)
     EXPECT_FALSE(isInf(bitCast<float>(1u << 31 | 0xfeu << 23 | 0x7fffffu)));
 }
 
+// Test the correctness of gl::isOutsideOfBounds function.
+TEST(MathUtilTest, isOutsideOfBounds)
+{
+    EXPECT_TRUE(isOutsideOfBounds(0.5f, 1.0f, 16.0f));
+    EXPECT_TRUE(isOutsideOfBounds(17.0f, 1.0f, 16.0f));
+    EXPECT_FALSE(isOutsideOfBounds(1.0f, 1.0f, 16.0f));
+    EXPECT_FALSE(isOutsideOfBounds(16.0f, 1.0f, 16.0f));
+    EXPECT_FALSE(isOutsideOfBounds(8.0f, 1.0f, 16.0f));
+
+    EXPECT_TRUE(isOutsideOfBounds(std::numeric_limits<float>::quiet_NaN(), 1.0f, 16.0f));
+    EXPECT_TRUE(isOutsideOfBounds(std::numeric_limits<float>::signaling_NaN(), 1.0f, 16.0f));
+
+    EXPECT_TRUE(isOutsideOfBounds(0, 1, 10));
+    EXPECT_TRUE(isOutsideOfBounds(11, 1, 10));
+    EXPECT_FALSE(isOutsideOfBounds(1, 1, 10));
+    EXPECT_FALSE(isOutsideOfBounds(10, 1, 10));
+    EXPECT_FALSE(isOutsideOfBounds(5, 1, 10));
+}
+
 TEST(MathUtilTest, CountLeadingZeros)
 {
     for (unsigned int i = 0; i < 32u; ++i)

@@ -545,14 +545,23 @@ def main():
     rc = 0
 
     try:
-        # read test set
-        json_name = os.path.join(angle_path_util.ANGLE_ROOT_DIR, 'src', 'tests',
-                                 'restricted_traces', 'restricted_traces.json')
-        with open(json_name) as fp:
-            tests = json.load(fp)
+        # If we have a generated list, use that (typically a subset)
+        gen_trace_list_path = os.path.join(os.getcwd(), 'gen', 'trace_list.json')
+        if os.path.exists(gen_trace_list_path):
+            logging.info('Using generated trace list at %s' % gen_trace_list_path)
+            with open(gen_trace_list_path) as fp:
+                tests = json.load(fp)
+        else:
+            # Read the full list of traces
+            full_trace_list_path = os.path.join(angle_path_util.ANGLE_ROOT_DIR, 'src', 'tests',
+                                                'restricted_traces', 'restricted_traces.json')
+            assert os.path.exists(full_trace_list_path), 'Failed to find full trace list'
+            logging.info('Using full trace list at %s' % full_trace_list_path)
+            with open(full_trace_list_path) as fp:
+                tests = json.load(fp)['traces']
 
         # Split tests according to sharding
-        sharded_tests = _shard_tests(tests['traces'], args.shard_count, args.shard_index)
+        sharded_tests = _shard_tests(tests, args.shard_count, args.shard_index)
 
         if args.render_test_output_dir:
             if not _run_tests(args, sharded_tests, extra_flags, env, args.render_test_output_dir,

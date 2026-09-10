@@ -28,8 +28,8 @@ angle::Result WindowSurfaceVkAndroid::createSurfaceVk(vk::ErrorContext *context)
     createInfo.sType  = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
     createInfo.flags  = 0;
     createInfo.window = mNativeWindowType;
-    ANGLE_VK_TRY(context, vkCreateAndroidSurfaceKHR(context->getRenderer()->getInstance(),
-                                                    &createInfo, nullptr, &mSurface));
+    ANGLE_VK_TRY(context, VK_CALL(vkCreateAndroidSurfaceKHR, context->getRenderer()->getInstance(),
+                                  &createInfo, nullptr, &mSurface));
 
     return angle::Result::Continue;
 }
@@ -40,8 +40,8 @@ angle::Result WindowSurfaceVkAndroid::getCurrentWindowSize(vk::ErrorContext *con
     vk::Renderer *renderer                 = context->getRenderer();
     const VkPhysicalDevice &physicalDevice = renderer->getPhysicalDevice();
     VkSurfaceCapabilitiesKHR surfaceCaps;
-    ANGLE_VK_TRY(context,
-                 vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, mSurface, &surfaceCaps));
+    ANGLE_VK_TRY(context, VK_CALL(vkGetPhysicalDeviceSurfaceCapabilitiesKHR, physicalDevice,
+                                  mSurface, &surfaceCaps));
     *extentsOut = gl::Extents(surfaceCaps.currentExtent.width, surfaceCaps.currentExtent.height, 1);
     return angle::Result::Continue;
 }

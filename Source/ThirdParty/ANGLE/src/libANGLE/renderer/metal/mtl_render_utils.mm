@@ -223,16 +223,12 @@ constexpr angle::FormatID kSupportedPixelUnpackFormats[] = {
     angle::FormatID::R32G32B32A32_UINT,
 };
 
-// Class to automatically disable occlusion query upon entering block and re-able it upon
-// exiting block.
+// Class to automatically disable occlusion query upon entering block. The query will be resumed in
+// the next ContextMtl's draw call.
 struct ScopedDisableOcclusionQuery
 {
-    ScopedDisableOcclusionQuery(ContextMtl *contextMtl,
-                                RenderCommandEncoder *encoder,
-                                angle::Result *resultOut)
-        : mContextMtl(contextMtl),
-          mEncoder(encoder),
-          mResultOut(resultOut),
+    ScopedDisableOcclusionQuery(ContextMtl *contextMtl, RenderCommandEncoder *encoder)
+        : mEncoder(encoder),
           mOcclusionQueryIsEnabled(contextMtl->isOcclusionQueryEnabledInRenderPass())
     {
         if (!mOcclusionQueryIsEnabled)
@@ -246,8 +242,10 @@ struct ScopedDisableOcclusionQuery
     }
     ~ScopedDisableOcclusionQuery()
     {
-        *mResultOut = mOcclusionQueryIsEnabled ? mContextMtl->enableOcclusionQueryInRenderPass()
-                                               : angle::Result::Continue;
+        if (!mOcclusionQueryIsEnabled)
+        {
+            return;
+        }
 #ifndef NDEBUG
         mEncoder->popDebugGroup();
 #else
@@ -256,10 +254,7 @@ struct ScopedDisableOcclusionQuery
     }
 
   private:
-    ContextMtl *mContextMtl;
     RenderCommandEncoder *mEncoder;
-
-    angle::Result *mResultOut;
     const bool mOcclusionQueryIsEnabled;
 };
 
@@ -1191,10 +1186,9 @@ angle::Result ClearUtils::clearWithDraw(const gl::Context *context,
     ContextMtl *contextMtl = GetImpl(context);
     ANGLE_TRY(setupClearWithDraw(context, cmdEncoder, overridedParams));
 
-    angle::Result result;
     {
         // Need to disable occlusion query, otherwise clearing will affect the occlusion counting
-        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
+        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder);
         // Draw the screen aligned triangle
         cmdEncoder->draw(MTLPrimitiveTypeTriangle, 0, 3);
     }
@@ -1202,7 +1196,7 @@ angle::Result ClearUtils::clearWithDraw(const gl::Context *context,
     // Invalidate current context's state
     contextMtl->invalidateState(context);
 
-    return result;
+    return angle::Result::Continue;
 }
 
 // ColorBlitUtils implementation
@@ -1337,10 +1331,9 @@ angle::Result ColorBlitUtils::blitColorWithDraw(const gl::Context *context,
     ContextMtl *contextMtl = GetImpl(context);
     ANGLE_TRY(setupColorBlitWithDraw(context, cmdEncoder, params));
 
-    angle::Result result;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
-        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
+        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder);
         // Draw the screen aligned quad
         cmdEncoder->draw(MTLPrimitiveTypeTriangleStrip, 0, 4);
     }
@@ -1348,7 +1341,7 @@ angle::Result ColorBlitUtils::blitColorWithDraw(const gl::Context *context,
     // Invalidate current context's state
     contextMtl->invalidateState(context);
 
-    return result;
+    return angle::Result::Continue;
 }
 
 angle::Result DepthStencilBlitUtils::ensureShadersInitialized(
@@ -1545,10 +1538,9 @@ angle::Result DepthStencilBlitUtils::blitDepthStencilWithDraw(const gl::Context 
 
     ANGLE_TRY(setupDepthStencilBlitWithDraw(context, cmdEncoder, params));
 
-    angle::Result result;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
-        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
+        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder);
         // Draw the screen aligned quad
         cmdEncoder->draw(MTLPrimitiveTypeTriangleStrip, 0, 4);
     }
@@ -1556,7 +1548,7 @@ angle::Result DepthStencilBlitUtils::blitDepthStencilWithDraw(const gl::Context 
     // Invalidate current context's state
     contextMtl->invalidateState(context);
 
-    return result;
+    return angle::Result::Continue;
 }
 
 angle::Result DepthStencilBlitUtils::blitStencilViaCopyBuffer(
@@ -2519,10 +2511,9 @@ angle::Result CopyPixelsUtils::unpackPixelsWithDraw(const gl::Context *context,
     options.textureOffset[1]  = params.textureArea.y;
     cmdEncoder->setFragmentData(options, 0);
 
-    angle::Result result;
     {
         // Need to disable occlusion query, otherwise blitting will affect the occlusion counting
-        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder, &result);
+        ScopedDisableOcclusionQuery disableOcclusionQuery(contextMtl, cmdEncoder);
         // Draw the screen aligned quad
         cmdEncoder->draw(MTLPrimitiveTypeTriangleStrip, 0, 4);
     }
@@ -2530,7 +2521,7 @@ angle::Result CopyPixelsUtils::unpackPixelsWithDraw(const gl::Context *context,
     // Invalidate current context's state
     contextMtl->invalidateState(context);
 
-    return result;
+    return angle::Result::Continue;
 }
 
 angle::Result CopyPixelsUtils::packPixelsCS(ContextMtl *contextMtl,

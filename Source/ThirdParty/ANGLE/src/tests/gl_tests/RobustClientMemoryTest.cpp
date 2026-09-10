@@ -419,6 +419,8 @@ class RobustClientMemoryNoExtensionsTest : public RobustClientMemoryTest
 // Test with empty result
 TEST_P(RobustClientMemoryNoExtensionsTest, GetEmpty)
 {
+    // GL_NUM_COMPRESSED_TEXTURE_FORMATS is core in ES 3.0.
+    ANGLE_SKIP_TEST_IF(isAtLeastClientVersion(3, 0));
     GLint numFormats = 10;
     glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &numFormats);
     ASSERT_GL_NO_ERROR();

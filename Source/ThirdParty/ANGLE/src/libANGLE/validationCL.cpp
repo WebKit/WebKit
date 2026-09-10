@@ -1447,6 +1447,49 @@ cl_int ValidateGetProgramInfo(cl_program program,
         }
     }
 
+    // CL_INVALID_PROGRAM_EXECUTABLE if param_name is CL_PROGRAM_NUM_KERNELS,
+    // CL_PROGRAM_KERNEL_NAMES, CL_PROGRAM_SCOPE_GLOBAL_CTORS_PRESENT, or
+    // CL_PROGRAM_SCOPE_GLOBAL_DTORS_PRESENT and a successful program executable has not been built
+    // for at least one device in the list of devices associated with program.
+    if (param_name == ProgramInfo::NumKernels || param_name == ProgramInfo::KernelNames ||
+        param_name == ProgramInfo::ScopeGlobalCtorsPresent ||
+        param_name == ProgramInfo::ScopeGlobalDtorsPresent)
+    {
+        std::vector<cl_device_id> associatedDevices;
+        size_t associatedDeviceCount = 0;
+        bool isAnyDeviceProgramBuilt = false;
+        if (ANGLE_UNLIKELY(
+                IsError(prog.getInfo(ProgramInfo::Devices, 0, nullptr, &associatedDeviceCount))))
+        {
+            return CL_INVALID_PROGRAM;
+        }
+        associatedDevices.resize(associatedDeviceCount / sizeof(cl_device_id));
+        if (ANGLE_UNLIKELY(IsError(prog.getInfo(ProgramInfo::Devices, associatedDeviceCount,
+                                                associatedDevices.data(), nullptr))))
+        {
+            return CL_INVALID_PROGRAM;
+        }
+        for (const cl_device_id &device : associatedDevices)
+        {
+            cl_build_status status = CL_BUILD_NONE;
+            if (ANGLE_UNLIKELY(IsError(prog.getBuildInfo(
+                    device, ProgramBuildInfo::Status, sizeof(cl_build_status), &status, nullptr))))
+            {
+                return CL_INVALID_PROGRAM;
+            }
+
+            if (status == CL_BUILD_SUCCESS)
+            {
+                isAnyDeviceProgramBuilt = true;
+                break;
+            }
+        }
+        if (!isAnyDeviceProgramBuilt)
+        {
+            return CL_INVALID_PROGRAM_EXECUTABLE;
+        }
+    }
+
     return CL_SUCCESS;
 }
 

@@ -66,8 +66,9 @@ void FillTextureFormatCaps(vk::Renderer *renderer,
 
         VkImageFormatProperties2 imageFormatProperties2 = {};
         imageFormatProperties2.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
-        VkResult result              = vkGetPhysicalDeviceImageFormatProperties2(
-            renderer->getPhysicalDevice(), &imageFormatInfo, &imageFormatProperties2);
+        VkResult result =
+            VK_CALL(vkGetPhysicalDeviceImageFormatProperties2, renderer->getPhysicalDevice(),
+                    &imageFormatInfo, &imageFormatProperties2);
         if (result == VK_SUCCESS)
         {
             if (hasColorAttachmentFeatureBit)

@@ -541,8 +541,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         mRenderPassCommands->imageRead(this, aspectFlags, imageAccess, image);
     }
 
-    void onImageRenderPassWrite(gl::LevelIndex level,
-                                uint32_t layerStart,
+    void onImageRenderPassWrite(gl::OwnerLevel level,
+                                gl::OwnerLayer layerStart,
                                 uint32_t layerCount,
                                 VkImageAspectFlags aspectFlags,
                                 vk::ImageAccess imageAccess,
@@ -553,8 +553,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
                                         imageAccess, image);
     }
 
-    void onColorDraw(gl::LevelIndex level,
-                     uint32_t layerStart,
+    void onColorDraw(gl::OwnerLevel level,
+                     gl::OwnerLayer layerStart,
                      uint32_t layerCount,
                      vk::ImageHelper *image,
                      vk::ImageHelper *resolveImage,
@@ -564,8 +564,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         mRenderPassCommands->colorImagesDraw(level, layerStart, layerCount, image, resolveImage,
                                              packedAttachmentIndex);
     }
-    void onColorResolve(gl::LevelIndex level,
-                        uint32_t layerStart,
+    void onColorResolve(gl::OwnerLevel level,
+                        gl::OwnerLayer layerStart,
                         uint32_t layerCount,
                         vk::ImageHelper *image,
                         VkImageView view,
@@ -575,8 +575,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         mRenderPassCommands->addColorResolveAttachment(colorIndexGL, image, view, level, layerStart,
                                                        layerCount);
     }
-    void onDepthStencilDraw(gl::LevelIndex level,
-                            uint32_t layerStart,
+    void onDepthStencilDraw(gl::OwnerLevel level,
+                            gl::OwnerLayer layerStart,
                             uint32_t layerCount,
                             vk::ImageHelper *image,
                             vk::ImageHelper *resolveImage)
@@ -594,8 +594,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
             addImageWithTileMemory(resolveImage);
         }
     }
-    void onDepthStencilResolve(gl::LevelIndex level,
-                               uint32_t layerStart,
+    void onDepthStencilResolve(gl::OwnerLevel level,
+                               gl::OwnerLayer layerStart,
                                uint32_t layerCount,
                                VkImageAspectFlags aspects,
                                vk::ImageHelper *image,
@@ -744,7 +744,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     VkIndexType getVkIndexType(gl::DrawElementsType glIndexType) const;
     size_t getVkIndexTypeSize(gl::DrawElementsType glIndexType) const;
-    bool shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const;
 
     bool isRobustResourceInitEnabled() const;
     bool hasRobustAccess() const { return mState.hasRobustAccess(); }

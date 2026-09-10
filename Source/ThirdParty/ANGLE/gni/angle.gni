@@ -132,6 +132,10 @@ if (!defined(checkout_angle_restricted_traces)) {
   checkout_angle_restricted_traces = false
 }
 
+if (!defined(checkout_extra_traces)) {
+  checkout_extra_traces = true
+}
+
 # Subdirectory to place data files (e.g. layer JSON files).
 angle_data_dir = "angledata"
 
@@ -348,7 +352,7 @@ declare_args() {
   angle_enable_trace = false
   angle_enable_trace_android_logcat = false
   angle_enable_trace_events = false
-  angle_enable_platform_trace_events = build_with_chromium
+  angle_enable_perfetto = angle_has_build && (build_with_chromium || is_clang)
   angle_dump_pipeline_cache_graph = false
 
   angle_always_log_info = false

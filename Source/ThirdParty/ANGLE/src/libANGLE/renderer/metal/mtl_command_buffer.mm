@@ -2283,6 +2283,11 @@ RenderCommandEncoder &RenderCommandEncoder::setVisibilityResultMode(MTLVisibilit
     return *this;
 }
 
+MTLVisibilityResultMode RenderCommandEncoder::getVisibilityResultMode() const
+{
+    return mStateCache.visibilityResultMode;
+}
+
 RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resource,
                                                         MTLResourceUsage usage,
                                                         MTLRenderStages stages)

@@ -21,7 +21,7 @@ struct State<'a> {
 pub fn run(ir: &mut IR) {
     let mut state = State {
         ir_meta: &mut ir.meta,
-        current_function_return_precision: Precision::NotApplicable,
+        current_function_return_precision: Precision::Unassigned,
         updated_precisions: HashMap::new(),
         function_arg_precisions: HashMap::new(),
         struct_member_precisions: HashMap::new(),
@@ -59,7 +59,7 @@ pub fn run(ir: &mut IR) {
         &|state, function_id, entry| {
             state.current_function_return_precision =
                 state.ir_meta.get_function(function_id).return_precision;
-            propagate_precision_in_block(state, entry, Precision::NotApplicable);
+            propagate_precision_in_block(state, entry, Precision::Unassigned);
         },
     );
 }
@@ -87,9 +87,9 @@ fn propagate_precision_in_block(
         .merge_block
         .as_ref()
         .map(|merge_block| {
-            merge_block.input.map(|id| id.precision).unwrap_or(Precision::NotApplicable)
+            merge_block.input.map(|id| id.precision).unwrap_or(Precision::Unassigned)
         })
-        .unwrap_or(Precision::NotApplicable);
+        .unwrap_or(Precision::Unassigned);
 
     block.for_each_sub_block_mut(state, &|state, sub_block| {
         propagate_precision_in_block(state, sub_block, this_block_merge_input_precision)
@@ -101,9 +101,9 @@ fn propagate_precision_in_block(
             // See comment above, it's unexpected for this register to have been used
             // multiple times if it didn't have a precision (and so was derived from
             // non-variable constants).
-            debug_assert!(id.precision == Precision::NotApplicable);
+            debug_assert!(id.precision == Precision::Unassigned);
             id.precision = precision;
-        } else if id.precision == Precision::NotApplicable
+        } else if id.precision == Precision::Unassigned
             && util::is_precision_applicable_to_type(state.ir_meta, id.type_id)
         {
             // If precision is applicable but could not be derived above, then it's impossible to
@@ -185,6 +185,13 @@ fn propagate_precision_in_instructions(
                     &mut new_ids_to_update,
                 );
             }
+            BlockInstruction::Void(OpCode::Call(function_id, params)) => {
+                instruction::precision::propagate_by_matching_precision(
+                    &mut params.iter_mut(),
+                    &state.function_arg_precisions[function_id],
+                    &mut new_ids_to_update,
+                );
+            }
             _ => {}
         };
 
@@ -203,7 +210,7 @@ fn propagate_precision_in_instructions(
             // multiple times in different expressions.
             //
             // Post-parse transformations should not leave precision undefined.
-            debug_assert!(instruction.result.precision == Precision::NotApplicable);
+            debug_assert!(instruction.result.precision == Precision::Unassigned);
             instruction.result.precision = precision;
             // Propagate precision to the operands if needed
             instruction::precision::propagate(

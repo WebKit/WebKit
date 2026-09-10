@@ -145,6 +145,7 @@ DE_DECLARE_COMMAND_LINE_OPT(PipelineCompilerArgs, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(PipelineCompilerOutputFile, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(PipelineCompilerLogFile, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(PipelineCompilerFilePrefix, std::string);
+DE_DECLARE_COMMAND_LINE_OPT(IPCPort, int);
 DE_DECLARE_COMMAND_LINE_OPT(VkLibraryPath, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(ApplicationParametersInputFile, std::string);
 DE_DECLARE_COMMAND_LINE_OPT(QuietStdout, bool);
@@ -356,6 +357,10 @@ void registerOptions(de::cmdline::Parser &parser)
         << Option<PipelineCompilerFilePrefix>(
                nullptr, "deqp-pipeline-prefix",
                "Prefix for input pipeline compiler files (Vulkan SC only, do not use manually)", "")
+        << Option<IPCPort>(nullptr, "deqp-ipc-port",
+                           "TCP port used for main process<->subprocess IPC (Vulkan SC only, do not use manually; the "
+                           "main process picks a free port automatically and passes it to the subprocess)",
+                           "0")
         << Option<VkLibraryPath>(nullptr, "deqp-vk-library-path",
                                  "Path to Vulkan library (e.g. loader library vulkan-1.dll)", "")
         << Option<ApplicationParametersInputFile>(nullptr, "deqp-app-params-input-file",
@@ -1550,6 +1555,11 @@ const char *CommandLine::getPipelineCompilerFilePrefix(void) const
         return m_cmdLine.getOption<opt::PipelineCompilerFilePrefix>().c_str();
     else
         return nullptr;
+}
+
+int CommandLine::getIPCPort(void) const
+{
+    return m_cmdLine.getOption<opt::IPCPort>();
 }
 
 bool CommandLine::getVideoLogPrint(void) const

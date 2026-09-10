@@ -59,15 +59,15 @@ std::vector<VkDrmFormatModifierPropertiesEXT> DisplayVkLinux::getDrmModifiers(
     formatProperties.sType               = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     formatProperties.pNext               = &formatModifierPropertiesList;
 
-    vkGetPhysicalDeviceFormatProperties2(renderer->getPhysicalDevice(), vkFormat,
-                                         &formatProperties);
+    VK_CALL(vkGetPhysicalDeviceFormatProperties2, renderer->getPhysicalDevice(), vkFormat,
+            &formatProperties);
 
     std::vector<VkDrmFormatModifierPropertiesEXT> formatModifierProperties(
         formatModifierPropertiesList.drmFormatModifierCount);
     formatModifierPropertiesList.pDrmFormatModifierProperties = formatModifierProperties.data();
 
-    vkGetPhysicalDeviceFormatProperties2(renderer->getPhysicalDevice(), vkFormat,
-                                         &formatProperties);
+    VK_CALL(vkGetPhysicalDeviceFormatProperties2, renderer->getPhysicalDevice(), vkFormat,
+            &formatProperties);
 
     return formatModifierProperties;
 }
@@ -84,7 +84,7 @@ bool DisplayVkLinux::supportsDrmModifiers(VkPhysicalDevice device, VkFormat vkFo
     formatProperties.sType               = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
     formatProperties.pNext               = &formatModifierPropertiesList;
 
-    vkGetPhysicalDeviceFormatProperties2(device, vkFormat, &formatProperties);
+    VK_CALL(vkGetPhysicalDeviceFormatProperties2, device, vkFormat, &formatProperties);
 
     // If there is at least one DRM format modifier, it is supported
     return formatModifierPropertiesList.drmFormatModifierCount > 0;

@@ -752,6 +752,18 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo reattachTextureToFboAfterLayerIncrease = {
+        "reattachTextureToFboAfterLayerIncrease",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo validateState = {
+        "validateState",
+        FeatureCategory::OpenGLFeatures,
+        &members,
+    };
+
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

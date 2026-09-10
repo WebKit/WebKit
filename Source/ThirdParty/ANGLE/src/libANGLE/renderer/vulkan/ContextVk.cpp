@@ -469,17 +469,17 @@ vk::ImageAccess GetImageReadAccess(vk::RenderPassCommandBufferHelper *renderPass
 vk::ImageAccess GetImageWriteAccessAndSubresource(const gl::ImageUnit &imageUnit,
                                                   vk::ImageHelper &image,
                                                   gl::ShaderBitSet shaderStages,
-                                                  gl::LevelIndex *levelOut,
-                                                  uint32_t *layerStartOut,
+                                                  gl::OwnerLevel *levelOut,
+                                                  gl::OwnerLayer *layerStartOut,
                                                   uint32_t *layerCountOut)
 {
-    *levelOut = gl::LevelIndex(static_cast<uint32_t>(imageUnit.level));
+    *levelOut = imageUnit.texture->getState().toOwnerLevel(gl::LevelIndex(imageUnit.level));
 
-    *layerStartOut = 0;
+    *layerStartOut = gl::OwnerLayer(0);
     *layerCountOut = image.getLayerCount();
     if (imageUnit.layered)
     {
-        *layerStartOut = imageUnit.layered;
+        *layerStartOut = *layerStartOut + imageUnit.layered;
         *layerCountOut = 1;
     }
 
@@ -1217,6 +1217,21 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, vk::Rendere
 
 #undef ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP
 
+    if (vk::ScopedVulkanApiPerfTimer::IsEnabled())
+    {
+        for (angle::VulkanApiPerfCounterGroup group :
+             angle::AllEnums<angle::VulkanApiPerfCounterGroup>())
+        {
+            for (angle::VulkanApiPerfCounterType type :
+                 angle::AllEnums<angle::VulkanApiPerfCounterType>())
+            {
+                vulkanGroupInfo.counters.emplace_back(
+                    angle::GetVulkanApiPerfCounterName(group, type));
+                vulkanGroup.counters.emplace_back(0);
+            }
+        }
+    }
+
     mPerfMonitorCountersInfo.emplace_back(std::move(vulkanGroupInfo));
     mPerfMonitorCounters.emplace_back(std::move(vulkanGroup));
 
@@ -1363,22 +1378,22 @@ angle::Result ContextVk::getOrCreateNullStorageImageView(GLenum shaderFormat,
 
     ANGLE_TRY(entry->image.init(this, gl::TextureType::_2D, extent, imageFormat, 1,
                                 VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-                                gl::LevelIndex(0), 1, 1, false, false, vk::TileMemory::Prohibited));
+                                gl::OwnerLevel(0), 1, 1, false, false, vk::TileMemory::Prohibited));
     ANGLE_TRY(entry->image.initMemoryAndNonZeroFillIfNeeded(
         this, mState.hasProtectedContent(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
         vk::MemoryAllocationType::TextureImage));
     ANGLE_TRY(entry->image.initLayerImageViewWithUsage(
         this, gl::TextureType::_2D, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(), &entry->view,
-        vk::LevelIndex(0), 1, 0, 1, VK_IMAGE_USAGE_STORAGE_BIT, GL_NONE));
+        vk::LevelIndex(0), 1, vk::LayerIndex(0), 1, VK_IMAGE_USAGE_STORAGE_BIT, GL_NONE));
 
     const VkClearValue zeroClear = {};
-    entry->image.stageClear(gl::SourceImageIndex::Make2D(gl::SourceLevel::Zero()),
+    entry->image.stageClear(gl::OwnerImageIndex::Make2D(gl::OwnerLevel(0)),
                             VK_IMAGE_ASPECT_COLOR_BIT, zeroClear);
     ANGLE_TRY(entry->image.flushAllStagedUpdates(this));
 
     entry->image.recordWriteBarrier(this, VK_IMAGE_ASPECT_COLOR_BIT,
-                                    vk::ImageAccess::AllGraphicsShadersWrite, gl::LevelIndex(0), 1,
-                                    0, 1, mOutsideRenderPassCommands);
+                                    vk::ImageAccess::AllGraphicsShadersWrite, gl::OwnerLevel(0), 1,
+                                    gl::OwnerLayer(0), 1, mOutsideRenderPassCommands);
     entry->serial = mRenderer->getResourceSerialFactory().generateImageOrBufferViewSerial();
 
     *imageViewOut = entry->view.getHandle();
@@ -1780,50 +1795,14 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
             mLastIndexBufferOffset = indices;
         }
 
-        // When you draw with LineLoop mode or GL_UNSIGNED_BYTE type, we may allocate its own
-        // element buffer and modify mCurrentElementArrayBuffer. When we switch out of that draw
-        // mode, we must reset mCurrentElementArrayBuffer back to the vertexArray's element buffer.
-        // Since in either case we set DIRTY_BIT_INDEX_BUFFER dirty bit, we use this bit to re-sync
+        // When you draw with LineLoop mode, we may allocate its own element buffer and modify
+        // mCurrentElementArrayBuffer. When we switch out of that draw mode, we must reset
+        // mCurrentElementArrayBuffer back to the vertexArray's element buffer.  Since in either
+        // case we set DIRTY_BIT_INDEX_BUFFER dirty bit, we use this bit to re-sync
         // mCurrentElementArrayBuffer.
         if (mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
         {
             vertexArrayVk->updateCurrentElementArrayBuffer();
-        }
-
-        if (shouldConvertUint8VkIndexType(indexType))
-        {
-            if (mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
-            {
-                ANGLE_VK_PERF_WARNING(
-                    this, GL_DEBUG_SEVERITY_LOW,
-                    "Potential inefficiency emulating uint8 vertex attributes due to "
-                    "lack of hardware support");
-
-                BufferVk *bufferVk             = vk::GetImpl(elementArrayBuffer);
-                vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
-
-                if (bufferHelper.isHostVisible() &&
-                    mRenderer->hasResourceUseFinished(bufferHelper.getResourceUse()))
-                {
-                    uint8_t *src = nullptr;
-                    ANGLE_TRY(
-                        bufferVk->mapForReadAccessOnly(this, reinterpret_cast<void **>(&src)));
-                    // Note: bufferOffset is not added here because mapImpl already adds it.
-                    ANGLE_UNSAFE_TODO(src += reinterpret_cast<uintptr_t>(indices));
-                    const size_t byteCount = static_cast<size_t>(elementArrayBuffer->getSize()) -
-                                             reinterpret_cast<uintptr_t>(indices);
-                    BufferBindingDirty bindingDirty;
-                    ANGLE_TRY(vertexArrayVk->convertIndexBufferCPU(this, indexType, byteCount, src,
-                                                                   &bindingDirty));
-                    ANGLE_TRY(bufferVk->unmapReadAccessOnly(this));
-                }
-                else
-                {
-                    ANGLE_TRY(vertexArrayVk->convertIndexBufferGPU(this, bufferVk, indices));
-                }
-            }
-
-            mCurrentIndexBufferOffset = 0;
         }
     }
 
@@ -4279,18 +4258,6 @@ angle::Result ContextVk::multiDrawElementsIndirectHelper(const gl::Context *cont
         return angle::Result::Continue;
     }
 
-    if (shouldConvertUint8VkIndexType(type) && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
-    {
-        ANGLE_VK_PERF_WARNING(
-            this, GL_DEBUG_SEVERITY_LOW,
-            "Potential inefficiency emulating uint8 vertex attributes due to lack "
-            "of hardware support");
-
-        ANGLE_TRY(vertexArrayVk->convertIndexBufferIndirectGPU(
-            this, currentIndirectBuf, currentIndirectBufOffset, &currentIndirectBuf));
-        currentIndirectBufOffset = 0;
-    }
-
     // If the line-loop handling function modifies the element array buffer in the vertex array,
     // there is a possibility that the modified version is used as a source for the next line-loop
     // draw, which can lead to errors. To avoid this, a local index buffer pointer is used to pass
@@ -4409,11 +4376,11 @@ angle::Result ContextVk::optimizeRenderPassForPresent(
         // Add the resolve attachment to the render pass
         const vk::ImageView *resolveImageView = nullptr;
         ANGLE_TRY(colorImageView->getLevelLayerDrawImageView(this, *colorImage, vk::LevelIndex(0),
-                                                             0, &resolveImageView));
+                                                             vk::LayerIndex(0), &resolveImageView));
 
         mRenderPassCommands->addColorResolveAttachment(0, colorImage, resolveImageView->getHandle(),
-                                                       gl::LevelIndex(0), 0, 1);
-        onImageRenderPassWrite(gl::LevelIndex(0), 0, 1, VK_IMAGE_ASPECT_COLOR_BIT,
+                                                       gl::OwnerLevel(0), gl::OwnerLayer(0), 1);
+        onImageRenderPassWrite(gl::OwnerLevel(0), gl::OwnerLayer(0), 1, VK_IMAGE_ASPECT_COLOR_BIT,
                                vk::ImageAccess::ColorWrite, colorImage);
 
         if (ancillaryBehavior == SurfaceAncillaryColorBehavior::InvalidateOnPresent)
@@ -5563,14 +5530,6 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 {
                     mGraphicsPipelineDesc->updatePrimitiveRestartEnabled(
                         &mGraphicsPipelineTransition, glState.isPrimitiveRestartEnabled());
-                }
-                // Additionally set the index buffer dirty if conversion from uint8 might have been
-                // necessary.  Otherwise if primitive restart is enabled and the index buffer is
-                // translated to uint16_t with a value of 0xFFFF, it cannot be reused when primitive
-                // restart is disabled.
-                if (!mRenderer->getFeatures().supportsIndexTypeUint8.enabled)
-                {
-                    mGraphicsDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
                 }
                 break;
             case gl::state::DIRTY_BIT_CLEAR_COLOR:
@@ -6829,7 +6788,8 @@ angle::Result ContextVk::releaseTextures(const gl::Context *context,
     {
         TextureVk *textureVk = vk::GetImpl(textureBarrier.texture);
 
-        ANGLE_TRY(textureVk->ensureImageInitialized(this, ImageMipLevels::EnabledLevels));
+        ANGLE_TRY(
+            textureVk->ensureImageAndReadViewsInitialized(this, ImageMipLevels::EnabledLevels));
 
         vk::ImageHelper &image = textureVk->getImage();
         ANGLE_TRY(onImageReleaseToExternal(image));
@@ -7497,8 +7457,8 @@ angle::Result ContextVk::updateActiveImages(CommandBufferHelperT *commandBufferH
         }
         alreadyProcessed.insert(image);
 
-        gl::LevelIndex level;
-        uint32_t layerStart               = 0;
+        gl::OwnerLevel level;
+        gl::OwnerLayer layerStart;
         uint32_t layerCount               = 0;
         const vk::ImageAccess imageAccess = GetImageWriteAccessAndSubresource(
             imageUnit, *image, shaderStages, &level, &layerStart, &layerCount);
@@ -8213,9 +8173,7 @@ void ContextVk::dumpCommandStreamDiagnostics()
 void ContextVk::initIndexTypeMap()
 {
     // Init gles-vulkan index type map
-    mIndexTypeMap[gl::DrawElementsType::UnsignedByte] =
-        mRenderer->getFeatures().supportsIndexTypeUint8.enabled ? VK_INDEX_TYPE_UINT8_EXT
-                                                                : VK_INDEX_TYPE_UINT16;
+    mIndexTypeMap[gl::DrawElementsType::UnsignedByte]  = VK_INDEX_TYPE_UINT8;
     mIndexTypeMap[gl::DrawElementsType::UnsignedShort] = VK_INDEX_TYPE_UINT16;
     mIndexTypeMap[gl::DrawElementsType::UnsignedInt]   = VK_INDEX_TYPE_UINT32;
 }
@@ -8227,19 +8185,10 @@ VkIndexType ContextVk::getVkIndexType(gl::DrawElementsType glIndexType) const
 
 size_t ContextVk::getVkIndexTypeSize(gl::DrawElementsType glIndexType) const
 {
-    gl::DrawElementsType elementsType = shouldConvertUint8VkIndexType(glIndexType)
-                                            ? gl::DrawElementsType::UnsignedShort
-                                            : glIndexType;
-    ASSERT(elementsType < gl::DrawElementsType::EnumCount);
+    ASSERT(glIndexType < gl::DrawElementsType::EnumCount);
 
     // Use GetDrawElementsTypeSize() to get the size
-    return static_cast<size_t>(gl::GetDrawElementsTypeSize(elementsType));
-}
-
-bool ContextVk::shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const
-{
-    return (glIndexType == gl::DrawElementsType::UnsignedByte &&
-            !mRenderer->getFeatures().supportsIndexTypeUint8.enabled);
+    return static_cast<size_t>(gl::GetDrawElementsTypeSize(glIndexType));
 }
 
 angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands(QueueSubmitReason reason)
@@ -8490,8 +8439,8 @@ angle::Result ContextVk::initializeMultisampleTextureToBlack(const gl::Context *
 {
     const gl::TextureType type = glTexture->getType();
     ASSERT(type == gl::TextureType::_2DMultisample || type == gl::TextureType::_2DMultisampleArray);
-    const gl::SourceImageIndex imageIndex =
-        gl::SourceImageIndex::MakeFromType(type, gl::SourceLevel::Zero());
+    const gl::OwnerImageIndex imageIndex =
+        gl::OwnerImageIndex::MakeFromType(type, gl::OwnerLevel(0));
 
     TextureVk *textureVk = vk::GetImpl(glTexture);
     return textureVk->initializeContentsWithBlack(context, GL_NONE, imageIndex);
@@ -8889,6 +8838,11 @@ const angle::PerfMonitorCounterGroupsInfo &ContextVk::getPerfMonitorCountersInfo
 
 const angle::PerfMonitorCounterGroups &ContextVk::getPerfMonitorCounters()
 {
+    if (!mState.isPerfMonitorActive())
+    {
+        // Skip counter update if performance monitor is not active.
+        return mPerfMonitorCounters;
+    }
     syncObjectPerfCounters(mRenderer->getCommandQueuePerfCounters());
 
     ASSERT(mPerfMonitorCountersInfo.size() == 1);
@@ -8910,6 +8864,25 @@ const angle::PerfMonitorCounterGroups &ContextVk::getPerfMonitorCounters()
     ANGLE_VK_PERF_COUNTERS_X(ANGLE_UPDATE_PERF_MAP)
 
 #undef ANGLE_UPDATE_PERF_MAP
+
+    if (vk::ScopedVulkanApiPerfTimer::IsEnabled())
+    {
+        const vk::VulkanApiPerfCounters &apiPerfCounters =
+            vk::GetCurrentThreadVulkanApiPerfCounters();
+        for (angle::VulkanApiPerfCounterGroup group :
+             angle::AllEnums<angle::VulkanApiPerfCounterGroup>())
+        {
+            const vk::VulkanApiGroupPerfCounters &groupCounters = apiPerfCounters[group];
+            for (angle::VulkanApiPerfCounterType type :
+                 angle::AllEnums<angle::VulkanApiPerfCounterType>())
+            {
+                ASSERT(info.counters.size() > counterIndex);
+                ASSERT(info.counters[counterIndex].name ==
+                       angle::GetVulkanApiPerfCounterName(group, type));
+                counters[counterIndex++].value = groupCounters[type];
+            }
+        }
+    }
 
     return mPerfMonitorCounters;
 }
@@ -9176,7 +9149,7 @@ angle::Result ContextVk::finalizeImageWithTileMemory()
         // clear VkImage to simulate the transient nature of tile memory
         UtilsVk::ClearTextureParameters params = {};
         params.level                           = vk::LevelIndex(0);
-        params.layer                           = 0;
+        params.layer                           = vk::LayerIndex(0);
         params.clearValue                      = {};
         params.clearArea                       = gl::Box(0, 0, 0, 0, 0, 1);
         params.aspectFlags                     = mImageWithTileMemory->getAspectFlags();
@@ -9192,8 +9165,8 @@ angle::Result ContextVk::finalizeImageWithTileMemory()
 
         // clearTextureNoFlush may have set content valid again, remove the bits to keep
         // content as invalid.
-        mImageWithTileMemory->invalidateEntireLevelContent(this, gl::LevelIndex(0));
-        mImageWithTileMemory->invalidateEntireLevelStencilContent(this, gl::LevelIndex(0));
+        mImageWithTileMemory->invalidateEntireLevelContent(this, gl::OwnerLevel(0));
+        mImageWithTileMemory->invalidateEntireLevelStencilContent(this, gl::OwnerLevel(0));
     }
 
     mImageWithTileMemory = nullptr;

@@ -120,7 +120,7 @@ size_t ExternalImageSiblingImpl11::getSamples() const
 angle::Result ExternalImageSiblingImpl11::getAttachmentRenderTarget(
     const gl::Context *context,
     GLenum binding,
-    const gl::OwnImageIndex &ownImageIndex,
+    const gl::ImageIndex &imageIndex,
     GLsizei samples,
     FramebufferAttachmentRenderTarget **rtOut)
 {
@@ -131,7 +131,7 @@ angle::Result ExternalImageSiblingImpl11::getAttachmentRenderTarget(
 
 angle::Result ExternalImageSiblingImpl11::initializeContents(const gl::Context *context,
                                                              GLenum binding,
-                                                             const gl::OwnImageIndex &ownImageIndex)
+                                                             const gl::ImageIndex &imageIndex)
 {
     UNREACHABLE();
     return angle::Result::Stop;

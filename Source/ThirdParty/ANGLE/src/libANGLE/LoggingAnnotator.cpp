@@ -9,6 +9,7 @@
 #include "libANGLE/LoggingAnnotator.h"
 
 #include "libANGLE/trace.h"
+#include "platform/PlatformMethods.h"
 
 namespace angle
 {
@@ -23,17 +24,17 @@ void LoggingAnnotator::beginEvent(gl::Context *context,
                                   const char *eventName,
                                   const char *eventMessage)
 {
-    ANGLE_TRACE_EVENT_BEGIN0("gpu.angle", eventName);
+    ANGLE_TRACE_EVENT_BEGIN("gpu.angle", perfetto::DynamicString(eventName));
 }
 
 void LoggingAnnotator::endEvent(gl::Context *context, const char *eventName, EntryPoint entryPoint)
 {
-    ANGLE_TRACE_EVENT_END0("gpu.angle", eventName);
+    ANGLE_TRACE_EVENT_END("gpu.angle");
 }
 
 void LoggingAnnotator::setMarker(gl::Context *context, const char *markerName)
 {
-    ANGLE_TRACE_EVENT_INSTANT0("gpu.angle", markerName);
+    ANGLE_TRACE_EVENT_INSTANT("gpu.angle", perfetto::DynamicString(markerName));
 }
 
 void LoggingAnnotator::logMessage(const gl::LogMessage &msg) const

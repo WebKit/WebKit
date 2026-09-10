@@ -39,7 +39,7 @@ const char *const glShaderSource_string_3[] = {
 
 void SetupReplayContext1(void)
 {
-    eglMakeCurrent(gEGLDisplay, gSurfaceMap2[0], gSurfaceMap2[0], gContextMap2[1]);
+    eglMakeCurrent(gEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, gContextMap2[1]);
     UpdateCurrentContext(1);
     glUseProgram(gShaderProgramMap[0]);
     UpdateCurrentProgramPerContext(0);

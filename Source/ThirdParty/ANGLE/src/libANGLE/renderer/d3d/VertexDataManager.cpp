@@ -443,6 +443,10 @@ angle::Result VertexDataManager::storeDynamicAttribs(
     // Will trigger unmapping on return.
     StreamingBufferUnmapper localUnmapper(&mStreamingBuffer);
 
+    // Ensure the reservation accumulator starts fresh, discarding any state left
+    // behind by an earlier call that returned before the store loop consumed it.
+    mStreamingBuffer.clearReservedSpace();
+
     // Reserve the required space for the dynamic buffers.
     for (auto attribIndex : dynamicAttribsMask)
     {

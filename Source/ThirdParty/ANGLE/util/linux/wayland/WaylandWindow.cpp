@@ -322,12 +322,19 @@ void WaylandWindow::resetNativeWindow() {}
 
 void WaylandWindow::setNativeDisplay(EGLNativeDisplayType display)
 {
-    if (gDisplay && gDisplay != display)
+    wl_display *newDisplay = reinterpret_cast<wl_display *>(display);
+    if (gDisplay != nullptr && newDisplay != gDisplay)
     {
-        fprintf(stderr, "WaylandWindow::setNativeDisplay: Display already acquired\n");
-        return;
+        if (gLocalDisplay)
+        {
+            // A window opened a local connection we haven't created surfaces
+            // on yet; drop it and use the display provided by the caller.
+            wl_display_disconnect(gDisplay);
+            gLocalDisplay = false;
+        }
+        fprintf(stderr, "WaylandWindow::setNativeDisplay: Display reassignment\n");
     }
-    gDisplay = reinterpret_cast<wl_display *>(display);
+    gDisplay = newDisplay;
 }
 
 EGLNativeWindowType WaylandWindow::getNativeWindow() const
@@ -1235,6 +1242,9 @@ const struct wl_pointer_listener WaylandWindow::pointer_listener = {
     // but the listener struct requires every field.
     .axis_value120           = nullptr,
     .axis_relative_direction = nullptr,
+#ifdef WL_POINTER_WARP_SINCE_VERSION
+    .warp = nullptr,
+#endif
 };
 
 bool IsWaylandWindowAvailable()

@@ -6,6 +6,7 @@
 
 use super::instruction;
 use super::reflection;
+use super::util;
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 
@@ -96,27 +97,36 @@ const MAX_PREDEFINED_CONSTANT_ID: u32 = CONSTANT_ID_YUV_CSC_ITU709.id;
 
 // Typed variant of the above constants.
 pub const TYPED_CONSTANT_ID_FALSE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_FALSE, TYPE_ID_BOOL);
+    TypedId::from_constant_id(CONSTANT_ID_FALSE, TYPE_ID_BOOL, Precision::NotApplicable);
 pub const TYPED_CONSTANT_ID_TRUE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_TRUE, TYPE_ID_BOOL);
+    TypedId::from_constant_id(CONSTANT_ID_TRUE, TYPE_ID_BOOL, Precision::NotApplicable);
 pub const TYPED_CONSTANT_ID_FLOAT_ZERO: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ZERO, TYPE_ID_FLOAT);
+    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ZERO, TYPE_ID_FLOAT, Precision::Low);
 pub const TYPED_CONSTANT_ID_FLOAT_ONE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ONE, TYPE_ID_FLOAT);
+    TypedId::from_constant_id(CONSTANT_ID_FLOAT_ONE, TYPE_ID_FLOAT, Precision::Low);
 pub const TYPED_CONSTANT_ID_INT_ZERO: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_INT_ZERO, TYPE_ID_INT);
+    TypedId::from_constant_id(CONSTANT_ID_INT_ZERO, TYPE_ID_INT, Precision::Low);
 pub const TYPED_CONSTANT_ID_INT_ONE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_INT_ONE, TYPE_ID_INT);
+    TypedId::from_constant_id(CONSTANT_ID_INT_ONE, TYPE_ID_INT, Precision::Low);
 pub const TYPED_CONSTANT_ID_UINT_ZERO: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_UINT_ZERO, TYPE_ID_UINT);
+    TypedId::from_constant_id(CONSTANT_ID_UINT_ZERO, TYPE_ID_UINT, Precision::Low);
 pub const TYPED_CONSTANT_ID_UINT_ONE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_UINT_ONE, TYPE_ID_UINT);
-pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU601, TYPE_ID_YUV_CSC_STANDARD);
-pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE, TYPE_ID_YUV_CSC_STANDARD);
-pub const TYPED_CONSTANT_ID_YUV_CSC_ITU709: TypedId =
-    TypedId::from_constant_id(CONSTANT_ID_YUV_CSC_ITU709, TYPE_ID_YUV_CSC_STANDARD);
+    TypedId::from_constant_id(CONSTANT_ID_UINT_ONE, TYPE_ID_UINT, Precision::Low);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601: TypedId = TypedId::from_constant_id(
+    CONSTANT_ID_YUV_CSC_ITU601,
+    TYPE_ID_YUV_CSC_STANDARD,
+    Precision::NotApplicable,
+);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE: TypedId = TypedId::from_constant_id(
+    CONSTANT_ID_YUV_CSC_ITU601_FULL_RANGE,
+    TYPE_ID_YUV_CSC_STANDARD,
+    Precision::NotApplicable,
+);
+pub const TYPED_CONSTANT_ID_YUV_CSC_ITU709: TypedId = TypedId::from_constant_id(
+    CONSTANT_ID_YUV_CSC_ITU709,
+    TYPE_ID_YUV_CSC_STANDARD,
+    Precision::NotApplicable,
+);
 
 // Prefixes used for symbols.
 pub const USER_SYMBOL_PREFIX: &str = "_"; // followed by CompileOptions::user_variable_name_prefix
@@ -203,8 +213,12 @@ impl TypedId {
         TypedId { id, type_id, precision }
     }
 
-    pub const fn from_constant_id(id: ConstantId, type_id: TypeId) -> TypedId {
-        TypedId { id: Id::new_constant(id), type_id, precision: Precision::NotApplicable }
+    pub const fn from_constant_id(
+        id: ConstantId,
+        type_id: TypeId,
+        precision: Precision,
+    ) -> TypedId {
+        TypedId { id: Id::new_constant(id), type_id, precision }
     }
     pub const fn from_typed_constant_id(constant_id: TypedConstantId) -> TypedId {
         TypedId {
@@ -1726,9 +1740,16 @@ pub enum ShaderType {
 #[cfg_attr(debug_assertions, derive(Debug))]
 pub enum Precision {
     NotApplicable,
+    Unassigned,
     Low,
     Medium,
     High,
+}
+
+impl Precision {
+    pub fn is_assigned(&self) -> bool {
+        *self != Precision::NotApplicable && *self != Precision::Unassigned
+    }
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -2914,8 +2935,10 @@ impl IRMeta {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_float(value))
         })
     }
-    pub fn get_constant_float_typed(&mut self, value: f32) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_float(value), TYPE_ID_FLOAT)
+    pub fn get_constant_float_typed(&mut self, value: f32, precision: Precision) -> TypedId {
+        // `float` needs a precision
+        debug_assert!(precision != Precision::NotApplicable);
+        TypedId::from_constant_id(self.get_constant_float(value), TYPE_ID_FLOAT, precision)
     }
 
     pub fn get_constant_int(&mut self, value: i32) -> ConstantId {
@@ -2924,15 +2947,26 @@ impl IRMeta {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_int(value))
         })
     }
-    pub fn get_constant_int_typed(&mut self, value: i32) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_int(value), TYPE_ID_INT)
+    pub fn get_constant_int_typed(&mut self, value: i32, precision: Precision) -> TypedId {
+        // `int` needs a precision
+        debug_assert!(precision != Precision::NotApplicable);
+        TypedId::from_constant_id(self.get_constant_int(value), TYPE_ID_INT, precision)
     }
-    pub fn get_constant_ivec4_typed(&mut self, r: i32, g: i32, b: i32, a: i32) -> TypedId {
+    pub fn get_constant_ivec4_typed(
+        &mut self,
+        r: i32,
+        g: i32,
+        b: i32,
+        a: i32,
+        precision: Precision,
+    ) -> TypedId {
+        // `ivec4` needs a precision
+        debug_assert!(precision != Precision::NotApplicable);
         let r = self.get_constant_int(r);
         let g = self.get_constant_int(g);
         let b = self.get_constant_int(b);
         let a = self.get_constant_int(a);
-        self.get_constant_composite_typed(TYPE_ID_IVEC4, vec![r, g, b, a])
+        self.get_constant_composite_typed(TYPE_ID_IVEC4, vec![r, g, b, a], precision)
     }
 
     pub fn get_constant_uint(&mut self, value: u32) -> ConstantId {
@@ -2941,15 +2975,26 @@ impl IRMeta {
             Self::add_constant_and_get_id(&mut self.constants, Constant::new_uint(value))
         })
     }
-    pub fn get_constant_uint_typed(&mut self, value: u32) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_uint(value), TYPE_ID_UINT)
+    pub fn get_constant_uint_typed(&mut self, value: u32, precision: Precision) -> TypedId {
+        // `uint` needs a precision
+        debug_assert!(precision != Precision::NotApplicable);
+        TypedId::from_constant_id(self.get_constant_uint(value), TYPE_ID_UINT, precision)
     }
-    pub fn get_constant_uvec4_typed(&mut self, r: u32, g: u32, b: u32, a: u32) -> TypedId {
+    pub fn get_constant_uvec4_typed(
+        &mut self,
+        r: u32,
+        g: u32,
+        b: u32,
+        a: u32,
+        precision: Precision,
+    ) -> TypedId {
+        // `uvec4` needs a precision
+        debug_assert!(precision != Precision::NotApplicable);
         let r = self.get_constant_uint(r);
         let g = self.get_constant_uint(g);
         let b = self.get_constant_uint(b);
         let a = self.get_constant_uint(a);
-        self.get_constant_composite_typed(TYPE_ID_UVEC4, vec![r, g, b, a])
+        self.get_constant_composite_typed(TYPE_ID_UVEC4, vec![r, g, b, a], precision)
     }
 
     pub fn get_constant_yuv_csc_standard(&mut self, value: YuvCscStandard) -> ConstantId {
@@ -2959,10 +3004,17 @@ impl IRMeta {
             YuvCscStandard::Itu709 => CONSTANT_ID_YUV_CSC_ITU709,
         }
     }
-    pub fn get_constant_yuv_csc_standard_typed(&mut self, value: YuvCscStandard) -> TypedId {
+    pub fn get_constant_yuv_csc_standard_typed(
+        &mut self,
+        value: YuvCscStandard,
+        precision: Precision,
+    ) -> TypedId {
+        // `yuv_csc_standard` does not need a precision
+        debug_assert!(precision == Precision::NotApplicable);
         TypedId::from_constant_id(
             self.get_constant_yuv_csc_standard(value),
             TYPE_ID_YUV_CSC_STANDARD,
+            precision,
         )
     }
 
@@ -2970,8 +3022,11 @@ impl IRMeta {
         // Bool constants are predefined
         if value { CONSTANT_ID_TRUE } else { CONSTANT_ID_FALSE }
     }
-    pub fn get_constant_bool_typed(&mut self, value: bool) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_bool(value), TYPE_ID_BOOL)
+    pub fn get_constant_bool_typed(&mut self, value: bool, precision: Precision) -> TypedId {
+        // `bool` does not need a precision
+        debug_assert!(precision == Precision::NotApplicable);
+
+        TypedId::from_constant_id(self.get_constant_bool(value), TYPE_ID_BOOL, precision)
     }
 
     pub fn get_constant_composite(
@@ -2991,8 +3046,19 @@ impl IRMeta {
         &mut self,
         type_id: TypeId,
         components: Vec<ConstantId>,
+        precision: Precision,
     ) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_composite(type_id, components), type_id)
+        if util::is_precision_applicable_to_type(self, type_id) {
+            debug_assert!(precision != Precision::NotApplicable)
+        } else {
+            debug_assert!(precision == Precision::NotApplicable);
+        }
+
+        TypedId::from_constant_id(
+            self.get_constant_composite(type_id, components),
+            type_id,
+            precision,
+        )
     }
 
     pub fn dead_code_eliminate_variable(&mut self, id: VariableId) {
@@ -3114,8 +3180,13 @@ impl IRMeta {
             }
         }
     }
-    pub fn get_constant_null_typed(&mut self, type_id: TypeId) -> TypedId {
-        TypedId::from_constant_id(self.get_constant_null(type_id), type_id)
+    pub fn get_constant_null_typed(&mut self, type_id: TypeId, precision: Precision) -> TypedId {
+        if util::is_precision_applicable_to_type(self, type_id) {
+            debug_assert!(precision != Precision::NotApplicable)
+        } else {
+            debug_assert!(precision == Precision::NotApplicable);
+        }
+        TypedId::from_constant_id(self.get_constant_null(type_id), type_id, precision)
     }
 
     pub fn add_variable(&mut self, variable: Variable) -> VariableId {

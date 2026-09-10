@@ -112,3 +112,5 @@
 353358652 SWIFTSHADER : KHR-GLES3.cull_distance.functional_test_item_*_primitive_mode_points_max_culldist_* = FAIL
 
 355292302 : KHR-GLES3.api.coverage* = FAIL
+
+539554093 WIN VULKAN NVIDIA : KHR-GLES3.number_parsing.float_overflow* = FAIL

@@ -43,7 +43,7 @@ class TextureMtl : public TextureImpl
     void onDestroy(const gl::Context *context) override;
 
     angle::Result setImage(const gl::Context *context,
-                           const gl::OwnImageIndex &ownIndex,
+                           const gl::ImageIndex &index,
                            GLenum internalFormat,
                            const gl::Extents &size,
                            GLenum format,
@@ -52,7 +52,7 @@ class TextureMtl : public TextureImpl
                            gl::Buffer *unpackBuffer,
                            const uint8_t *pixels) override;
     angle::Result setSubImage(const gl::Context *context,
-                              const gl::OwnImageIndex &ownIndex,
+                              const gl::ImageIndex &index,
                               const gl::Box &area,
                               GLenum format,
                               GLenum type,
@@ -61,14 +61,14 @@ class TextureMtl : public TextureImpl
                               const uint8_t *pixels) override;
 
     angle::Result setCompressedImage(const gl::Context *context,
-                                     const gl::OwnImageIndex &ownIndex,
+                                     const gl::ImageIndex &index,
                                      GLenum internalFormat,
                                      const gl::Extents &size,
                                      const gl::PixelUnpackState &unpack,
                                      size_t imageSize,
                                      const uint8_t *pixels) override;
     angle::Result setCompressedSubImage(const gl::Context *context,
-                                        const gl::OwnImageIndex &ownIndex,
+                                        const gl::ImageIndex &index,
                                         const gl::Box &area,
                                         GLenum format,
                                         const gl::PixelUnpackState &unpack,
@@ -76,29 +76,29 @@ class TextureMtl : public TextureImpl
                                         const uint8_t *pixels) override;
 
     angle::Result copyImage(const gl::Context *context,
-                            const gl::OwnImageIndex &ownIndex,
+                            const gl::ImageIndex &index,
                             const gl::Rectangle &sourceArea,
                             GLenum internalFormat,
                             gl::Framebuffer *source) override;
     angle::Result copySubImage(const gl::Context *context,
-                               const gl::OwnImageIndex &ownIndex,
+                               const gl::ImageIndex &index,
                                const gl::Offset &destOffset,
                                const gl::Rectangle &sourceArea,
                                gl::Framebuffer *source) override;
 
     angle::Result copyTexture(const gl::Context *context,
-                              const gl::OwnImageIndex &ownIndex,
+                              const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              gl::OwnLevel ownSourceLevel,
+                              gl::LevelIndex sourceLevel,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
                               const gl::Texture *source) override;
     angle::Result copySubTexture(const gl::Context *context,
-                                 const gl::OwnImageIndex &ownIndex,
+                                 const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 gl::OwnLevel ownSourceLevel,
+                                 gl::LevelIndex sourceLevel,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -150,7 +150,7 @@ class TextureMtl : public TextureImpl
 
     angle::Result getAttachmentRenderTarget(const gl::Context *context,
                                             GLenum binding,
-                                            const gl::OwnImageIndex &ownImageIndex,
+                                            const gl::ImageIndex &imageIndex,
                                             GLsizei samples,
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
@@ -160,7 +160,7 @@ class TextureMtl : public TextureImpl
 
     angle::Result initializeContents(const gl::Context *context,
                                      GLenum binding,
-                                     const gl::OwnImageIndex &ownImageIndex) override;
+                                     const gl::ImageIndex &imageIndex) override;
 
     // The texture's data is initially initialized and stored in an array
     // of images through glTexImage*/glCopyTex* calls. During draw calls, the caller must make sure

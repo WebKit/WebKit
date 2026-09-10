@@ -62,11 +62,11 @@ void GetDeviceQueue(VkDevice device,
         queueInfo2.queueFamilyIndex   = queueFamilyIndex;
         queueInfo2.queueIndex         = queueIndex;
 
-        vkGetDeviceQueue2(device, &queueInfo2, queue);
+        VK_CALL(vkGetDeviceQueue2, device, &queueInfo2, queue);
     }
     else
     {
-        vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, queue);
+        VK_CALL(vkGetDeviceQueue, device, queueFamilyIndex, queueIndex, queue);
     }
 }
 }  // namespace
@@ -993,7 +993,8 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
         {
             VkFence externalFenceHandle = batch.getExternalFence()->getHandle();
             ASSERT(externalFenceHandle != VK_NULL_HANDLE);
-            ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &submitInfo, externalFenceHandle));
+            ANGLE_VK_TRY(context,
+                         VK_CALL(vkQueueSubmit, queue, 1, &submitInfo, externalFenceHandle));
             mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
 
             // If enabled, there will be an extra fence submitted after the primary commands.
@@ -1002,7 +1003,8 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
                 VkFence extraSubmitFence     = batch.getFenceHandle();
                 VkSubmitInfo fenceSubmitInfo = {};
                 fenceSubmitInfo.sType        = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-                ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &fenceSubmitInfo, extraSubmitFence));
+                ANGLE_VK_TRY(context,
+                             VK_CALL(vkQueueSubmit, queue, 1, &fenceSubmitInfo, extraSubmitFence));
                 mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
             }
 
@@ -1021,7 +1023,7 @@ angle::Result CommandQueue::queueSubmitLocked(ErrorContext *context,
         {
             VkFence fence = batch.getFenceHandle();
             ASSERT(fence != VK_NULL_HANDLE);
-            ANGLE_VK_TRY(context, vkQueueSubmit(queue, 1, &submitInfo, fence));
+            ANGLE_VK_TRY(context, VK_CALL(vkQueueSubmit, queue, 1, &submitInfo, fence));
             mPerfCounters.vkQueueSubmitCallsTotal.fetch_add(1, std::memory_order_relaxed);
         }
     }
@@ -1039,7 +1041,7 @@ VkResult CommandQueue::queuePresent(egl::ContextPriority contextPriority,
 {
     std::lock_guard<angle::SimpleMutex> lock(mQueueSubmitMutex);
     VkQueue queue = getQueue(contextPriority);
-    return vkQueuePresentKHR(queue, &presentInfo);
+    return VK_CALL(vkQueuePresentKHR, queue, &presentInfo);
 }
 
 const CommandQueuePerfCounters CommandQueue::getPerfCounters() const
@@ -1230,7 +1232,7 @@ void DeviceQueueMap::waitAllQueuesIdle()
     {
         if (queueAndIndex.queue != VK_NULL_HANDLE)
         {
-            vkQueueWaitIdle(queueAndIndex.queue);
+            VK_CALL(vkQueueWaitIdle, queueAndIndex.queue);
         }
     }
 }

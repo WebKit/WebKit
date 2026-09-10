@@ -12,6 +12,18 @@ mod ffi {
     // TODO(http://anglebug.com/349994211): equivalent enums to the options in ShaderLang.h, eventually all options need to be
     // passed to IR: add them as the translator is converted to IR.
 
+    // Matching ShShaderSpec
+    #[derive(Copy, Clone)]
+    #[repr(u32)]
+    enum ShaderSpec {
+        GLES2,
+        WEBGL,
+        GLES3,
+        WEBGL2,
+        GLES3_1,
+        GLES3_2,
+    }
+
     // Matching ShShaderOutput
     #[derive(Copy, Clone)]
     #[repr(u32)]
@@ -150,6 +162,8 @@ mod ffi {
     struct CompileOptions {
         // Input shader and device properties:
 
+        // The API version in which the shader is being compiled
+        shader_spec: ShaderSpec,
         // The version of the input version
         shader_version: i32,
         // Extensions that were enabled, mostly useful for the GLSL/ESSL output to replicate them.
@@ -391,6 +405,7 @@ pub use ffi::OutputLanguage;
 pub use ffi::PixelLocalStorageImpl;
 pub use ffi::PixelLocalStorageOptions;
 pub use ffi::PixelLocalStorageSync;
+pub use ffi::ShaderSpec;
 pub use ffi::ShaderVariable;
 
 unsafe fn generate_ast(
@@ -555,6 +570,9 @@ fn common_pre_variable_collection_transforms(ir: &mut IR, options: &Options) {
         && options.extensions.EXT_draw_buffers
         && options.limits.max_draw_buffers > 1
     {
+        // In WebGL2, gl_FragData has only one element.  But in WebGL2, EXT_draw_buffers is not a
+        // supported extension.
+        debug_assert!(options.shader_spec != ShaderSpec::WEBGL2);
         let transform_options = transform::broadcast_fragcolor::Options {
             max_draw_buffers: options.limits.max_draw_buffers,
             max_dual_source_draw_buffers: options.limits.max_dual_source_draw_buffers,

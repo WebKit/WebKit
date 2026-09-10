@@ -31,4 +31,4 @@
 
 #define PACKAGE "wayland"
 
-#define PACKAGE_VERSION "1.24.0"
+#define PACKAGE_VERSION "1.26.0"

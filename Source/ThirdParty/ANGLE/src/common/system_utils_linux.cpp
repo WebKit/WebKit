@@ -51,8 +51,15 @@ const char *GetSharedLibraryExtension()
 double GetCurrentSystemTime()
 {
     struct timespec currentTime;
-    clock_gettime(CLOCK_MONOTONIC, &currentTime);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &currentTime);
     return currentTime.tv_sec + currentTime.tv_nsec * 1e-9;
+}
+
+uint64_t GetCurrentSystemTimeNs()
+{
+    struct timespec currentTime;
+    clock_gettime(CLOCK_MONOTONIC_RAW, &currentTime);
+    return static_cast<uint64_t>(currentTime.tv_sec) * 1000'000'000 + currentTime.tv_nsec;
 }
 
 void SetCurrentThreadName(const char *name)

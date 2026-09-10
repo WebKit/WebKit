@@ -29,6 +29,15 @@ void OcclusionQueryPool::destroy(ContextMtl *contextMtl)
     mAllocatedQueries.clear();
 }
 
+bool OcclusionQueryPool::canAllocateQueryOffset(ContextMtl *contextMtl) const
+{
+    size_t nextOffset = mAllocatedQueries.empty()
+                            ? 0
+                            : (mAllocatedQueries.back().lastOffset() + kOcclusionQueryResultSize);
+    return nextOffset + kOcclusionQueryResultSize <=
+           contextMtl->getDisplay()->getMaxVisibilityQueryOffset();
+}
+
 angle::Result OcclusionQueryPool::ensurePoolCapacity(ContextMtl *contextMtl, size_t requiredEnd)
 {
     if (mRenderPassResultsPool == nullptr || requiredEnd > mRenderPassResultsPool->size())

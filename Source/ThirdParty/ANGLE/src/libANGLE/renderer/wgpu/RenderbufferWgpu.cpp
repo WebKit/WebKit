@@ -87,7 +87,7 @@ angle::Result RenderbufferWgpu::setStorageEGLImageTarget(const gl::Context *cont
 
 angle::Result RenderbufferWgpu::initializeContents(const gl::Context *context,
                                                    GLenum binding,
-                                                   const gl::OwnImageIndex &ownImageIndex)
+                                                   const gl::ImageIndex &imageIndex)
 {
     UNIMPLEMENTED();
     return angle::Result::Continue;
@@ -95,7 +95,7 @@ angle::Result RenderbufferWgpu::initializeContents(const gl::Context *context,
 
 angle::Result RenderbufferWgpu::getAttachmentRenderTarget(const gl::Context *context,
                                                           GLenum binding,
-                                                          const gl::OwnImageIndex &ownImageIndex,
+                                                          const gl::ImageIndex &imageIndex,
                                                           GLsizei samples,
                                                           FramebufferAttachmentRenderTarget **rtOut)
 {

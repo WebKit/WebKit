@@ -281,6 +281,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_OES_point_size_array"] = enableableExtension(&Extensions::pointSizeArrayOES);
         map["GL_OES_point_sprite"] = enableableExtension(&Extensions::pointSpriteOES);
         map["GL_OES_query_matrix"] = enableableExtension(&Extensions::queryMatrixOES);
+        map["GL_OES_stencil8"] = enableableExtension(&Extensions::stencil8OES);
         map["GL_OES_texture_cube_map"] = enableableExtension(&Extensions::textureCubeMapOES);
         map["GL_EXT_texture_lod_bias"] = enableableExtension(&Extensions::textureLodBiasEXT);
         map["GL_OES_texture_mirrored_repeat"] = enableableExtension(&Extensions::textureMirroredRepeatOES);

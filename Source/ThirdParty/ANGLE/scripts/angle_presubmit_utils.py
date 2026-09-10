@@ -7,6 +7,9 @@ angle_presubmit_utils: Mock depot_tools class for ANGLE presubmit checks's unitt
 """
 
 
+import os
+import json
+
 class Change_mock():
 
     def __init__(self, description_text):
@@ -18,24 +21,42 @@ class Change_mock():
 
 class AffectedFile_mock():
 
-    def __init__(self, diff):
+    def __init__(self, diff, local_path='', old_contents=None, new_contents=None):
         self.diff = diff
+        self._local_path = local_path
+        self._old_contents = old_contents or []
+        self._new_contents = new_contents or []
+
+    def LocalPath(self):
+        return self._local_path
 
     def GenerateScmDiff(self):
         return self.diff
 
+    def OldContents(self):
+        return self._old_contents
+
+    def NewContents(self):
+        return self._new_contents
+
 
 class InputAPI_mock():
 
-    def __init__(self, description_text, source_files=[]):
+    def __init__(self, description_text, source_files=[], affected_files=[]):
         self.change = Change_mock(description_text)
         self.source_files = source_files
+        self.affected_files = affected_files
+        self.os_path = os.path
+        self.json = json
 
     def PresubmitLocalPath(self):
         return self.cwd
 
     def AffectedSourceFiles(self, source_filter):
         return self.source_files
+
+    def AffectedFiles(self):
+        return self.affected_files
 
 
 class _PresubmitResult(object):

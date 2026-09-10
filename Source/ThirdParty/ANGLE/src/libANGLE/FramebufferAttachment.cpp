@@ -339,8 +339,8 @@ angle::Result FramebufferAttachmentObject::getAttachmentRenderTarget(
     GLsizei samples,
     rx::FramebufferAttachmentRenderTarget **rtOut) const
 {
-    return getAttachmentImpl()->getAttachmentRenderTarget(
-        context, binding, OwnImageIndex(imageIndex), samples, rtOut);
+    return getAttachmentImpl()->getAttachmentRenderTarget(context, binding, imageIndex, samples,
+                                                          rtOut);
 }
 
 angle::Result FramebufferAttachmentObject::initializeContents(const Context *context,
@@ -358,12 +358,11 @@ angle::Result FramebufferAttachmentObject::initializeContents(const Context *con
 
         ImageIndex fullMipIndex = ImageIndex::MakeFromType(
             imageIndex.getType(), imageIndex.getLevelIndex(), ImageIndex::kEntireLevel, size.depth);
-        return getAttachmentImpl()->initializeContents(context, binding,
-                                                       OwnImageIndex(fullMipIndex));
+        return getAttachmentImpl()->initializeContents(context, binding, fullMipIndex);
     }
     else
     {
-        return getAttachmentImpl()->initializeContents(context, binding, OwnImageIndex(imageIndex));
+        return getAttachmentImpl()->initializeContents(context, binding, imageIndex);
     }
 }
 

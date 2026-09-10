@@ -62,7 +62,7 @@ constexpr char kPerfMonitorExtensionName[] = "GL_AMD_performance_monitor";
 struct PerfMonitorCounterInfo
 {
     PerfMonitorCounterInfo() = default;
-    PerfMonitorCounterInfo(const char *name) : name(name) {}
+    PerfMonitorCounterInfo(std::string_view name) : name(name) {}
 
     std::string name;
 };
@@ -163,6 +163,17 @@ struct PerfMonitorTriplet
     FN(pendingSubmissionGarbageObjects)            \
     FN(graphicsDriverUniformsUpdated)
 
+#define ANGLE_VK_API_PERF_COUNTER_GROUPS_X(FN) \
+    FN(Command)                                \
+    FN(Submit)                                 \
+    FN(Surface)                                \
+    FN(Wait)                                   \
+    FN(Other)
+
+#define ANGLE_VK_API_PERF_COUNTER_TYPES_X(FN, ...) \
+    FN(WallTimeNs, ##__VA_ARGS__)                  \
+    FN(Samples, ##__VA_ARGS__)
+
 #define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint64_t COUNTER;
 
 struct VulkanPerfCounters
@@ -172,6 +183,28 @@ struct VulkanPerfCounters
 
 #undef ANGLE_DECLARE_PERF_COUNTER
 
+#define ANGLE_DECLARE_VK_API_PERF_COUNTER_ENUM(NAME) NAME,
+
+enum class VulkanApiPerfCounterGroup
+{
+    ANGLE_VK_API_PERF_COUNTER_GROUPS_X(ANGLE_DECLARE_VK_API_PERF_COUNTER_ENUM)
+    // EnumCount enables PackedEnums support.
+    EnumCount
+};
+
+enum class VulkanApiPerfCounterType
+{
+    ANGLE_VK_API_PERF_COUNTER_TYPES_X(ANGLE_DECLARE_VK_API_PERF_COUNTER_ENUM)
+    // EnumCount enables PackedEnums support.
+    EnumCount
+};
+
+#undef ANGLE_DECLARE_VK_API_PERF_COUNTER_ENUM
+
+std::string_view GetVulkanApiPerfCounterGroupName(VulkanApiPerfCounterGroup group);
+std::string_view GetVulkanApiPerfCounterTypeName(VulkanApiPerfCounterType type);
+std::string_view GetVulkanApiPerfCounterName(VulkanApiPerfCounterGroup group,
+                                             VulkanApiPerfCounterType type);
 }  // namespace angle
 
 template <typename T, size_t N>

@@ -27,21 +27,17 @@ def get_child_script_dirname(script):
     return os.path.dirname(os.path.abspath(os.path.join(root_dir, script)))
 
 
-def get_executable_name(script):
-    with open(script, 'r') as f:
-        # Check shebang
-        binary = os.path.basename(f.readline().strip().replace(' ', '/'))
-        assert binary in ['python3', 'vpython3']
-        if platform.system() == 'Windows':
-            return binary + '.bat'
-        else:
-            return binary
+def get_executable_name():
+    binary = 'vpython3'
+    if platform.system() == 'Windows':
+        return binary + '.bat'
+    else:
+        return binary
 
 
 def paths_from_auto_script(script, param):
     script_dir = get_child_script_dirname(script)
-    # python3 (not vpython3) to get inputs/outputs faster
-    exe = 'python3'
+    exe = get_executable_name()
     try:
         res = subprocess.check_output([exe, os.path.basename(script), param],
                                       cwd=script_dir).decode().strip()
@@ -249,7 +245,7 @@ def main():
             if not args.verify_only:
                 print('Running ' + name + ' code generator')
 
-                exe = get_executable_name(script)
+                exe = get_executable_name()
                 subprocess.check_call([exe, os.path.basename(script)],
                                       cwd=get_child_script_dirname(script))
 
@@ -262,7 +258,7 @@ def main():
     # Handle hashless_generators separately as these don't have hash maps.
     hashless_generators_dirty = False
     for name, script in sorted(hashless_generators.items()):
-        cmd = [get_executable_name(script), os.path.basename(script)]
+        cmd = [get_executable_name(), os.path.basename(script)]
         rc = subprocess.call(cmd + ['--verify-only'], cwd=get_child_script_dirname(script))
         if rc != 0:
             print(name + ' generator dirty')

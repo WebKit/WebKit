@@ -1000,7 +1000,7 @@ void TextureStorage11_2D::onLabelUpdate()
 
 angle::Result TextureStorage11_2D::onDestroy(const gl::Context *context)
 {
-    angle::Result result = angle::Result::Continue;
+    angle::ResultAccumulator result = angle::Result::Continue;
     for (unsigned i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
     {
         if (mAssociatedImages[i] != nullptr)
@@ -1009,10 +1009,7 @@ angle::Result TextureStorage11_2D::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            if (IsError(mAssociatedImages[i]->recoverFromAssociatedStorage(context)))
-            {
-                result = angle::Result::Stop;
-            }
+            result = mAssociatedImages[i]->recoverFromAssociatedStorage(context);
         }
     }
     ANGLE_TRY(result);
@@ -1932,7 +1929,7 @@ TextureStorage11_Cube::TextureStorage11_Cube(Renderer11 *renderer,
 
 angle::Result TextureStorage11_Cube::onDestroy(const gl::Context *context)
 {
-    angle::Result result = angle::Result::Continue;
+    angle::ResultAccumulator result = angle::Result::Continue;
     for (unsigned int level = 0; level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; level++)
     {
         for (unsigned int face = 0; face < gl::kCubeFaceCount; face++)
@@ -1943,10 +1940,7 @@ angle::Result TextureStorage11_Cube::onDestroy(const gl::Context *context)
 
                 // We must let the Images recover their data before we delete it from the
                 // TextureStorage.
-                if (IsError(mAssociatedImages[face][level]->recoverFromAssociatedStorage(context)))
-                {
-                    result = angle::Result::Stop;
-                }
+                result = mAssociatedImages[face][level]->recoverFromAssociatedStorage(context);
             }
         }
     }
@@ -2445,7 +2439,7 @@ TextureStorage11_3D::TextureStorage11_3D(Renderer11 *renderer,
 
 angle::Result TextureStorage11_3D::onDestroy(const gl::Context *context)
 {
-    angle::Result result = angle::Result::Continue;
+    angle::ResultAccumulator result = angle::Result::Continue;
     for (unsigned i = 0; i < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS; i++)
     {
         if (mAssociatedImages[i] != nullptr)
@@ -2454,10 +2448,7 @@ angle::Result TextureStorage11_3D::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            if (IsError(mAssociatedImages[i]->recoverFromAssociatedStorage(context)))
-            {
-                result = angle::Result::Stop;
-            }
+            result = mAssociatedImages[i]->recoverFromAssociatedStorage(context);
         }
     }
 
@@ -2825,7 +2816,7 @@ TextureStorage11_2DArray::TextureStorage11_2DArray(Renderer11 *renderer,
 
 angle::Result TextureStorage11_2DArray::onDestroy(const gl::Context *context)
 {
-    angle::Result result = angle::Result::Continue;
+    angle::ResultAccumulator result = angle::Result::Continue;
     for (auto iter : mAssociatedImages)
     {
         if (iter.second)
@@ -2834,10 +2825,7 @@ angle::Result TextureStorage11_2DArray::onDestroy(const gl::Context *context)
 
             // We must let the Images recover their data before we delete it from the
             // TextureStorage.
-            if (IsError(iter.second->recoverFromAssociatedStorage(context)))
-            {
-                result = angle::Result::Stop;
-            }
+            result = iter.second->recoverFromAssociatedStorage(context);
         }
     }
     mAssociatedImages.clear();

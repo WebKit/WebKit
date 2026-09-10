@@ -31,6 +31,11 @@
 //   - Block inputs are not pointers (not supported by the `astify` pass):
 //     validate_merge_block_input_prerequisites()
 //
+// Decorations:
+//   - Between the Smooth, Flat, NoPerspective, Centroid and Sample decorations, they are all
+//     mutually exclusive, except NoPerspective can be combined with Centroid or Sample. See
+//     ffi::Interpolation in reflection.rs for reference: validate_mutually_exclusive_decorations()
+//
 // Control flow:
 //   - Branches must have the appropriate targets set (merge, trueblock for if, etc); every block
 //     ends in branch: validate_all_branch_instructions_have_valid_target()
@@ -56,6 +61,10 @@
 //     validate_merge_block_input_prerequisites(),
 //     validate_no_merge_input_opcode_in_block_instruction()
 //   - No identity swizzles: validate_no_identity_swizzles()
+//   - Precision is not applied to types that are not applicable.  It _is_ applied to types that are
+//     applicable (including uniforms and samplers for example).  Needs to work to make sure
+//     precision is always assigned: validate_precision(),
+//     validate_glsl_result_precision_and_propagation_rules()
 //
 // Functions:
 //   - Check that function parameter variables don't have an initializer:
@@ -66,9 +75,6 @@
 // TODO(http://anglebug.com/349994211): to validate:
 //   - If there's a cached "has side effect", that it's correct.
 //   - Catch misuse of built-in names.
-//   - Precision is not applied to types that don't are not applicable.  It _is_ applied to types
-//     that are applicable (including uniforms and samplers for example).  Needs to work to make
-//     sure precision is always assigned.
 //   - Loop blocks ends in the appropriate instructions.
 //   - Interface variables with NameSource::Internal are unique.
 //   - NameSource::Internal names don't start with the user and temporary name prefixes (_u, t and f
@@ -84,10 +90,10 @@
 //     is_proj is false for cubemaps.
 //   - Images with the Rect dimension can only have a Float base type and be 2D samplers (not
 //     storage image, array, msaa, etc).
-//   - Between the Smooth, Flat, NoPerspective, Centroid and Sample decorations, they are all
-//     mutually exclusive, except NoPerspective can be combined with Centroid or Sample.  See
-//     ffi::Interpolation in reflection.rs for reference.
-//   - ReadOnly and WriteOnly decorations are mutually exclusive.
+//   - ColumnMajor and RowMajor decorations are mutually exclusive.
+//   - ColumnMajor and RowMajor decorations should only apply to matrix types
+//   - Instruction result / operand types are correct and consistent. For example:
+//     BinaryOpCode::Equal should return a bool type.
 
 use crate::ir::*;
 use crate::*;
@@ -96,6 +102,11 @@ use std::fmt;
 pub fn validate(ir: &IR, previous_operation: &'static str) {
     let validator = Validator::new(ir, previous_operation);
     validator.validate();
+}
+
+pub fn validate_glsl_precision_rules(ir: &IR, previous_operation: &'static str) {
+    let validator = Validator::new(ir, previous_operation);
+    validator.validate_glsl_result_precision_and_propagation_rules();
 }
 
 #[derive(Copy, Clone, PartialEq)]
@@ -222,6 +233,13 @@ impl DeclaredRegisterTracker {
     }
 }
 
+struct PrecisionState<'a> {
+    ir_meta: &'a IRMeta,
+    function_arg_precisions: HashMap<FunctionId, Vec<Precision>>,
+    struct_member_precisions: HashMap<TypeId, Vec<Precision>>,
+    current_function_id: FunctionId,
+}
+
 #[derive(Clone)]
 struct BlockMetaData {
     can_break: bool,
@@ -277,6 +295,7 @@ impl<'a> Validator<'a> {
     fn validate(&self) {
         self.validate_all_ids_are_present();
         self.validate_all_alive_variables_are_pointers();
+        self.validate_mutually_exclusive_decorations();
         self.validate_no_pointer_to_pointer_type();
         self.validate_all_variables_are_declared_in_scope();
         self.validate_all_registers_are_declared_in_scope();
@@ -288,6 +307,7 @@ impl<'a> Validator<'a> {
         self.validate_all_instructions();
         self.validate_function_parameter_variables();
         self.validate_function_return_types();
+        self.validate_precisions();
     }
 
     fn validate_all_ids_are_present(&self) {
@@ -781,8 +801,16 @@ impl<'a> Validator<'a> {
         );
     }
 
-    // Helper function to check OpCode instruction TypedId parameters contain valid id and
-    // type_id members
+    // Helper function to perform various categories of validation for OpCode instruction TypedId
+    // parameters
+    //
+    // TypedIdValidationCategory::IdInBound: check the id is in bound and alive
+    //
+    // TypedIdValidationCategory::VariableDeclared: check the variable is declared in scope. Only
+    // performed if typed_id.id is Id::Variable type.
+    //
+    // TypedIdValidationCategory::RegisterDeclared: check the register is declared in scope. Only
+    // performed if typed_id.id is Id::Register type.
     fn validate_typed_id_params(
         &self,
         op_code: &dyn fmt::Debug,
@@ -887,6 +915,39 @@ impl<'a> Validator<'a> {
                 self.on_error(format_args!(
                     "invalid variable: variable {:?} is not a pointer",
                     alive_variable
+                ));
+            }
+        }
+    }
+
+    fn validate_mutually_exclusive_decorations(&self) {
+        for variable in
+            self.ir.meta.all_variables().iter().filter(|variable| !variable.is_dead_code_eliminated)
+        {
+            let has_smooth = variable.decorations.has(Decoration::Smooth);
+            let has_flat = variable.decorations.has(Decoration::Flat);
+            let has_noperspective = variable.decorations.has(Decoration::NoPerspective);
+
+            let has_centroid = variable.decorations.has(Decoration::Centroid);
+            let has_sample = variable.decorations.has(Decoration::Sample);
+
+            if has_smooth && (has_flat || has_noperspective || has_centroid || has_sample) {
+                self.on_error(format_args!(
+                    "invalid variable: {:?}, Smooth decoration is mutually exclusive with other \
+                     interpolation decorations",
+                    variable
+                ));
+            } else if has_flat && (has_noperspective || has_centroid || has_sample) {
+                self.on_error(format_args!(
+                    "invalid variable: {:?}, Flat decoration is mutually exclusive with other \
+                     interpolation decorations",
+                    variable
+                ));
+            } else if has_centroid && has_sample {
+                self.on_error(format_args!(
+                    "invalid variable: {:?}, Centroid and Sample decorations are mutually \
+                     exclusive",
+                    variable
                 ));
             }
         }
@@ -2154,5 +2215,1229 @@ impl<'a> Validator<'a> {
             "invalid instruction: {:?}, identity swizzles found, components selected: {:?}",
             opcode, components
         ));
+    }
+
+    fn validate_precisions(&self) {
+        let mut precision_state = PrecisionState {
+            ir_meta: &self.ir.meta,
+            function_arg_precisions: HashMap::new(),
+            struct_member_precisions: HashMap::new(),
+            current_function_id: FunctionId { id: 0 },
+        };
+
+        // Prepare a map of structs to the precision of their members.
+        precision_state.ir_meta.all_types().iter().enumerate().for_each(|(index, type_info)| {
+            if let Type::Struct(_, fields, _) = type_info {
+                let member_precision = fields.iter().map(|field| field.precision).collect();
+                precision_state
+                    .struct_member_precisions
+                    .insert(TypeId { id: index as u32 }, member_precision);
+            }
+        });
+
+        traverser::visitor::for_each_function(
+            &mut precision_state,
+            &self.ir.function_entries,
+            // PreVisit: do nothing
+            |_, _| {},
+            // BlockVisit: check the precisions in instructions in entry block
+            // Return VISIT_SUB_BLOCKS so the for loop below is also executed for sub-blocks
+            |precision_state, entry, _block_kind, _usize| {
+                for instruction in &entry.instructions {
+                    let (opcode, result) = instruction.get_op_and_result(&self.ir.meta);
+                    self.validate_instruction_precision(precision_state, opcode, result);
+                }
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            // PostVisit: do nothing
+            |_, _| {},
+        );
+    }
+
+    fn validate_instruction_precision(
+        &self,
+        precision_state: &PrecisionState,
+        opcode: &OpCode,
+        result: Option<TypedRegisterId>,
+    ) {
+        // We can't ensure when the register is used, its' precision is the same as the
+        // precision when it is produced:
+        // In the following example:
+        //   r19  (t10) =   Load v10                           [highp]
+        //   r20  (t32) =   Load v4                            [mediump]
+        //   r10   (t9) =   ImageLoad (r20, r19)               [mediump]
+        //   r21  (t10) =   Load v10                           [highp]
+        //   r22  (t32) =   Load v3                            [lowp]
+        //                  MemoryBarrierImage ()
+        //                  ImageStore (r22, r21, r10)
+        //                  Return
+        // when r10 is produced, it is set with mediump, because r20 and v4 are mediump
+        // when r10 is used in ImageStore instruction, it is used with lowp, because the
+        // first operand r22 is lowp.
+
+        // We can't force variable precision used in instruction to match with the
+        // variable declared precision For Example, given the following shader code:
+        //   layout(binding=0, rgba8) uniform lowp pixelLocalANGLE dst;
+        //   layout(binding=1, rgba8) uniform mediump pixelLocalANGLE src1;
+        //   void store(highp pixelLocalANGLE d, lowp pixelLocalANGLE s) {
+        //       pixelLocalStoreANGLE(d, pixelLocalLoadANGLE(s));
+        //   }
+        //   void main()
+        //   {
+        //       store(dst, src1);
+        //   }
+        // src1 is declared as mediump, but function store() takes src1 as lowp
+
+        // For TypedId operand, verify the Precision::NotApplicable is only used for the types that
+        // are not applicable for precision
+        let validate_typedid_operand_precision_applicability = |typed_id: &TypedId| {
+            let is_precision_applicable =
+                util::is_precision_applicable_to_type(&self.ir.meta, typed_id.type_id);
+            if !is_precision_applicable && typed_id.precision != Precision::NotApplicable {
+                self.on_error(format_args!(
+                    "Invalid instruction {:?}, operand {:?} has a precision, but precision is not \
+                     applicable to this type",
+                    opcode, typed_id
+                ));
+            }
+
+            if is_precision_applicable && typed_id.precision == Precision::NotApplicable {
+                self.on_error(format_args!(
+                    "Invalid instruction {:?}, operand {:?} has a precision applicable base type, \
+                     but precision is NotApplicable",
+                    opcode, typed_id
+                ));
+            }
+        };
+
+        // For result, verify the Precision::NotApplicable is only used for the types that are not
+        // applicable for precision
+        if let Some(result) = result {
+            let is_precision_applicable =
+                util::is_precision_applicable_to_type(&self.ir.meta, result.type_id);
+            if !is_precision_applicable && result.precision != Precision::NotApplicable {
+                self.on_error(format_args!(
+                    "Invalid instruction {:?}, result {:?} has a precision, but precision is not \
+                     applicable to this type",
+                    opcode, result,
+                ));
+            }
+
+            if is_precision_applicable && result.precision == Precision::NotApplicable {
+                self.on_error(format_args!(
+                    "Invalid instruction {:?}, result {:?} has a precision applicable base type, \
+                     but precision is NotApplicable",
+                    opcode, result
+                ));
+            }
+        }
+
+        match opcode {
+            // Not possible. See validate_no_merge_input_opcode_in_block_instruction().
+            OpCode::MergeInput => {}
+            // OpCode does not take any TypedId parameters, nor return any result. No precision
+            // validation is required.
+            OpCode::Discard
+            | OpCode::Break
+            | OpCode::Continue
+            | OpCode::Passthrough
+            | OpCode::NextBlock
+            | OpCode::Loop
+            | OpCode::DoLoop
+            | OpCode::Return(None)
+            | OpCode::Merge(None) => {}
+            // OpCode that takes one TypedId operand but not return any result
+            OpCode::Return(Some(id))
+            | OpCode::Merge(Some(id))
+            | OpCode::If(id)
+            | OpCode::LoopIf(id)
+            | OpCode::Switch(id, _) => {
+                validate_typedid_operand_precision_applicability(id);
+            }
+            // OpCode that takes two TypedId operands but not return any result
+            OpCode::Store(ptr_id, val_id) => {
+                validate_typedid_operand_precision_applicability(ptr_id);
+                validate_typedid_operand_precision_applicability(val_id);
+            }
+            // OpCode that takes a list of TypedId operands but not return any result
+            OpCode::Call(_function_id, args) => {
+                for arg in args {
+                    validate_typedid_operand_precision_applicability(arg);
+                }
+            }
+            // Struct Access and Struct Extract OpCode
+            // Result precision should match with the precision of the struct member being indexed
+            OpCode::AccessStructField(struct_id, field_index)
+            | OpCode::ExtractStructField(struct_id, field_index) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                let mut struct_type_id = struct_id.type_id;
+                if self.ir.meta.get_type(struct_type_id).is_pointer() {
+                    struct_type_id = self.ir.meta.get_pointee_type(struct_type_id);
+                }
+                debug_assert!(self.ir.meta.get_type(struct_type_id).is_struct());
+                debug_assert!(
+                    precision_state.struct_member_precisions.contains_key(&struct_type_id)
+                );
+                debug_assert!(
+                    precision_state.struct_member_precisions[&struct_type_id].len()
+                        > *field_index as usize
+                );
+                if result.precision
+                    != precision_state.struct_member_precisions[&struct_type_id]
+                        [*field_index as usize]
+                {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, result {:?} precision does not match with \
+                         struct field {:?} precision",
+                        opcode, result, field_index
+                    ));
+                }
+            }
+            // OpCode that takes one TypedId operand and returns a result
+            OpCode::Load(id)
+            | OpCode::Alias(id)
+            | OpCode::ConstructScalarFromScalar(id)
+            | OpCode::ConstructVectorFromScalar(id)
+            | OpCode::ConstructMatrixFromScalar(id)
+            | OpCode::ConstructMatrixFromMatrix(id)
+            | OpCode::Unary(UnaryOpCode::Negate, id)
+            | OpCode::Unary(UnaryOpCode::BitwiseNot, id)
+            | OpCode::Unary(UnaryOpCode::PrefixIncrement, id)
+            | OpCode::Unary(UnaryOpCode::PrefixDecrement, id)
+            | OpCode::Unary(UnaryOpCode::PostfixIncrement, id)
+            | OpCode::Unary(UnaryOpCode::PostfixDecrement, id)
+            | OpCode::Unary(UnaryOpCode::Radians, id)
+            | OpCode::Unary(UnaryOpCode::Degrees, id)
+            | OpCode::Unary(UnaryOpCode::Sin, id)
+            | OpCode::Unary(UnaryOpCode::Cos, id)
+            | OpCode::Unary(UnaryOpCode::Tan, id)
+            | OpCode::Unary(UnaryOpCode::Asin, id)
+            | OpCode::Unary(UnaryOpCode::Acos, id)
+            | OpCode::Unary(UnaryOpCode::Atan, id)
+            | OpCode::Unary(UnaryOpCode::Sinh, id)
+            | OpCode::Unary(UnaryOpCode::Cosh, id)
+            | OpCode::Unary(UnaryOpCode::Tanh, id)
+            | OpCode::Unary(UnaryOpCode::Asinh, id)
+            | OpCode::Unary(UnaryOpCode::Acosh, id)
+            | OpCode::Unary(UnaryOpCode::Atanh, id)
+            | OpCode::Unary(UnaryOpCode::Exp, id)
+            | OpCode::Unary(UnaryOpCode::Log, id)
+            | OpCode::Unary(UnaryOpCode::Exp2, id)
+            | OpCode::Unary(UnaryOpCode::Log2, id)
+            | OpCode::Unary(UnaryOpCode::Sqrt, id)
+            | OpCode::Unary(UnaryOpCode::Inversesqrt, id)
+            | OpCode::Unary(UnaryOpCode::Abs, id)
+            | OpCode::Unary(UnaryOpCode::Sign, id)
+            | OpCode::Unary(UnaryOpCode::Floor, id)
+            | OpCode::Unary(UnaryOpCode::Trunc, id)
+            | OpCode::Unary(UnaryOpCode::Round, id)
+            | OpCode::Unary(UnaryOpCode::RoundEven, id)
+            | OpCode::Unary(UnaryOpCode::Ceil, id)
+            | OpCode::Unary(UnaryOpCode::Fract, id)
+            | OpCode::Unary(UnaryOpCode::Length, id)
+            | OpCode::Unary(UnaryOpCode::Normalize, id)
+            | OpCode::Unary(UnaryOpCode::Transpose, id)
+            | OpCode::Unary(UnaryOpCode::Determinant, id)
+            | OpCode::Unary(UnaryOpCode::Inverse, id)
+            | OpCode::Unary(UnaryOpCode::DFdx, id)
+            | OpCode::Unary(UnaryOpCode::DFdy, id)
+            | OpCode::Unary(UnaryOpCode::Fwidth, id)
+            | OpCode::Unary(UnaryOpCode::InterpolateAtCentroid, id)
+            | OpCode::Unary(UnaryOpCode::PixelLocalLoadANGLE, id) => {
+                validate_typedid_operand_precision_applicability(id);
+            }
+            // OpCode that takes two TypedId operands and returns a result
+            OpCode::Binary(BinaryOpCode::Add, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Sub, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Mul, id1, id2)
+            | OpCode::Binary(BinaryOpCode::VectorTimesScalar, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesScalar, id1, id2)
+            | OpCode::Binary(BinaryOpCode::VectorTimesMatrix, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesVector, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesMatrix, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Div, id1, id2)
+            | OpCode::Binary(BinaryOpCode::IMod, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Atan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Pow, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Mod, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Min, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Max, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Step, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Modf, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Distance, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Dot, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Cross, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Reflect, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixCompMult, id1, id2)
+            | OpCode::Binary(BinaryOpCode::OuterProduct, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitwiseOr, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitwiseXor, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitwiseAnd, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitShiftLeft, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitShiftRight, id1, id2)
+            | OpCode::Binary(BinaryOpCode::InterpolateAtSample, id1, id2)
+            | OpCode::Binary(BinaryOpCode::InterpolateAtOffset, id1, id2) => {
+                validate_typedid_operand_precision_applicability(id1);
+                validate_typedid_operand_precision_applicability(id2);
+            }
+            // OpCode that takes a list of TypedId operands and returns a result
+            OpCode::ConstructVectorFromMultiple(args)
+            | OpCode::ConstructMatrixFromMultiple(args)
+            | OpCode::ConstructArray(args)
+            | OpCode::ConstructStruct(args)
+            | OpCode::BuiltIn(BuiltInOpCode::BitfieldExtract, args)
+            | OpCode::BuiltIn(BuiltInOpCode::BitfieldInsert, args)
+            | OpCode::BuiltIn(BuiltInOpCode::InterpolateAtCenter, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TextureQueryLod, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TexelFetch, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TexelFetchOffset, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageLoad, args)
+            | OpCode::BuiltIn(BuiltInOpCode::SubpassLoad, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Clamp, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Mix, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Smoothstep, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Fma, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Faceforward, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Refract, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Rgb2Yuv, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Yuv2Rgb, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Saturate, args)
+            | OpCode::BuiltIn(BuiltInOpCode::PixelLocalStoreANGLE, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageStore, args)
+            | OpCode::BuiltIn(BuiltInOpCode::UmulExtended, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImulExtended, args)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrier, args)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierAtomicCounter, args)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierBuffer, args)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierImage, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Barrier, args)
+            | OpCode::BuiltIn(BuiltInOpCode::MemoryBarrierShared, args)
+            | OpCode::BuiltIn(BuiltInOpCode::GroupMemoryBarrier, args)
+            | OpCode::BuiltIn(BuiltInOpCode::EmitVertex, args)
+            | OpCode::BuiltIn(BuiltInOpCode::EndPrimitive, args)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginInvocationInterlockNV, args)
+            | OpCode::BuiltIn(BuiltInOpCode::EndInvocationInterlockNV, args)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginFragmentShaderOrderingINTEL, args)
+            | OpCode::BuiltIn(BuiltInOpCode::BeginInvocationInterlockARB, args)
+            | OpCode::BuiltIn(BuiltInOpCode::EndInvocationInterlockARB, args)
+            | OpCode::BuiltIn(BuiltInOpCode::LoopForwardProgress, args) => {
+                for arg in args {
+                    validate_typedid_operand_precision_applicability(arg);
+                }
+            }
+            // Extract and Access OpCode that takes one TypedId operand and return a result,
+            // and result precision should match with the first operand
+            OpCode::ExtractVectorComponent(id, _)
+            | OpCode::ExtractVectorComponentMulti(id, _)
+            | OpCode::AccessVectorComponent(id, _)
+            | OpCode::AccessVectorComponentMulti(id, _) => {
+                validate_typedid_operand_precision_applicability(id);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the operand {:?}",
+                        opcode, result, id
+                    ));
+                }
+            }
+            // Extract and Access OpCode that takes two TypedId operands and return a result, and
+            // result precision should match with the first operand
+            OpCode::ExtractVectorComponentDynamic(id1, id2)
+            | OpCode::ExtractMatrixColumn(id1, id2)
+            | OpCode::ExtractArrayElement(id1, id2)
+            | OpCode::AccessVectorComponentDynamic(id1, id2)
+            | OpCode::AccessMatrixColumn(id1, id2)
+            | OpCode::AccessArrayElement(id1, id2) => {
+                validate_typedid_operand_precision_applicability(id1);
+                validate_typedid_operand_precision_applicability(id2);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id1.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the first operand {:?}",
+                        opcode, result, id1
+                    ));
+                }
+            }
+            // Unary OpCode, result precision must be High
+            OpCode::Unary(UnaryOpCode::ArrayLength, id)
+            | OpCode::Unary(UnaryOpCode::PackSnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackHalf2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackUnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackUnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::PackSnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::FloatBitsToInt, id)
+            | OpCode::Unary(UnaryOpCode::FloatBitsToUint, id)
+            | OpCode::Unary(UnaryOpCode::IntBitsToFloat, id)
+            | OpCode::Unary(UnaryOpCode::UintBitsToFloat, id)
+            | OpCode::Unary(UnaryOpCode::UnpackSnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::UnpackUnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::BitfieldReverse, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounter, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterIncrement, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterDecrement, id)
+            | OpCode::Unary(UnaryOpCode::ImageSize, id) => {
+                validate_typedid_operand_precision_applicability(id);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::High {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be High, but the \
+                         actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Unary OpCode, result precision must be Medium
+            OpCode::Unary(UnaryOpCode::UnpackHalf2x16, id)
+            | OpCode::Unary(UnaryOpCode::UnpackUnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::UnpackSnorm4x8, id) => {
+                validate_typedid_operand_precision_applicability(id);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::Medium {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be Medium, but the \
+                         actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Unary OpCode, result precision must be Low
+            OpCode::Unary(UnaryOpCode::BitCount, id)
+            | OpCode::Unary(UnaryOpCode::FindLSB, id)
+            | OpCode::Unary(UnaryOpCode::FindMSB, id) => {
+                validate_typedid_operand_precision_applicability(id);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::Low {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be Low, but the \
+                         actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Unary OpCode, result precision must be NotApplicable
+            OpCode::Unary(UnaryOpCode::Isnan, id)
+            | OpCode::Unary(UnaryOpCode::Isinf, id)
+            | OpCode::Unary(UnaryOpCode::LogicalNot, id)
+            | OpCode::Unary(UnaryOpCode::Any, id)
+            | OpCode::Unary(UnaryOpCode::All, id)
+            | OpCode::Unary(UnaryOpCode::Not, id) => {
+                validate_typedid_operand_precision_applicability(id);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::NotApplicable {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be NotApplicable, \
+                         but the actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Binary OpCode, result precision must be High
+            OpCode::Binary(BinaryOpCode::Frexp, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Ldexp, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicAdd, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicMin, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicMax, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicAnd, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicOr, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicXor, id1, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicExchange, id1, id2) => {
+                validate_typedid_operand_precision_applicability(id1);
+                validate_typedid_operand_precision_applicability(id2);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::High {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be High, but the \
+                         actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Binary OpCode, result precision must be NotApplicable
+            OpCode::Binary(BinaryOpCode::Equal, id1, id2)
+            | OpCode::Binary(BinaryOpCode::NotEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanEqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanEqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::EqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::NotEqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LogicalXor, id1, id2) => {
+                validate_typedid_operand_precision_applicability(id1);
+                validate_typedid_operand_precision_applicability(id2);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::NotApplicable {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision must be NotApplicable, \
+                         but the actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // BuiltIn OpCode, result precision must be High
+            OpCode::BuiltIn(BuiltInOpCode::TextureSize, args)
+            | OpCode::BuiltIn(BuiltInOpCode::UaddCarry, args)
+            | OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, args)
+            | OpCode::BuiltIn(BuiltInOpCode::NumSamples, args)
+            | OpCode::BuiltIn(BuiltInOpCode::AtomicCompSwap, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAdd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMin, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMax, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAnd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicOr, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicXor, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicExchange, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicCompSwap, args)
+            | OpCode::BuiltIn(BuiltInOpCode::SamplePosition, args) => {
+                for arg in args {
+                    validate_typedid_operand_precision_applicability(arg);
+                }
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != Precision::High {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, result {:?} precision must be High, but the \
+                         actual precision is {:?}",
+                        opcode, result, result.precision
+                    ));
+                }
+            }
+            // Texture OpCode
+            OpCode::Texture(texture_opcode, sampler, coord) => {
+                validate_typedid_operand_precision_applicability(sampler);
+                validate_typedid_operand_precision_applicability(coord);
+                match texture_opcode {
+                    TextureOpCode::Implicit { offset, .. } | TextureOpCode::Gather { offset } => {
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                    TextureOpCode::Compare { compare } => {
+                        validate_typedid_operand_precision_applicability(compare);
+                    }
+                    TextureOpCode::Lod { lod, offset, .. } => {
+                        validate_typedid_operand_precision_applicability(lod);
+
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                    TextureOpCode::CompareLod { compare, lod } => {
+                        validate_typedid_operand_precision_applicability(compare);
+                        validate_typedid_operand_precision_applicability(lod);
+                    }
+                    TextureOpCode::Bias { bias, offset, .. } => {
+                        validate_typedid_operand_precision_applicability(bias);
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                    TextureOpCode::CompareBias { compare, bias } => {
+                        validate_typedid_operand_precision_applicability(compare);
+                        validate_typedid_operand_precision_applicability(bias);
+                    }
+                    TextureOpCode::Grad { dx, dy, offset, .. } => {
+                        validate_typedid_operand_precision_applicability(dx);
+                        validate_typedid_operand_precision_applicability(dy);
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                    TextureOpCode::GatherComponent { component, offset } => {
+                        validate_typedid_operand_precision_applicability(component);
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                    TextureOpCode::GatherRef { refz, offset } => {
+                        validate_typedid_operand_precision_applicability(refz);
+                        if let Some(valid_offset) = offset {
+                            validate_typedid_operand_precision_applicability(valid_offset);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // The validate_glsl_result_precision_and_propagation_rules is only called once after GLSL parse
+    // and propagate_precision pass. Transformation passes after propagate_precision can change
+    // precision that violates the rules in this function, but the transformed IR may still be
+    // considered valid.
+    // Do not call validate_glsl_result_precision_and_propagation_rules() after other
+    // transformation passes.
+    fn validate_glsl_result_precision_and_propagation_rules(&self) {
+        let mut precision_state = PrecisionState {
+            ir_meta: &self.ir.meta,
+            function_arg_precisions: HashMap::new(),
+            struct_member_precisions: HashMap::new(),
+            current_function_id: FunctionId { id: 0 },
+        };
+
+        // Prepare a map of functions to the precision of their arguments.
+        traverser::visitor::for_each_function(
+            &mut precision_state,
+            &self.ir.function_entries,
+            |precision_state, function_id| {
+                let argument_precision = precision_state
+                    .ir_meta
+                    .get_function(function_id)
+                    .params
+                    .iter()
+                    .map(|param| precision_state.ir_meta.get_variable(param.variable_id).precision)
+                    .collect();
+                precision_state.function_arg_precisions.insert(function_id, argument_precision);
+            },
+            |_, _, _, _| traverser::visitor::STOP,
+            |_, _| {},
+        );
+
+        // Prepare a map of structs to the precision of their members.
+        precision_state.ir_meta.all_types().iter().enumerate().for_each(|(index, type_info)| {
+            if let Type::Struct(_, fields, _) = type_info {
+                let member_precision = fields.iter().map(|field| field.precision).collect();
+                precision_state
+                    .struct_member_precisions
+                    .insert(TypeId { id: index as u32 }, member_precision);
+            }
+        });
+
+        traverser::visitor::for_each_function(
+            &mut precision_state,
+            &self.ir.function_entries,
+            // PreVisit: cache the current visiting function id
+            |precision_state, function_id| {
+                precision_state.current_function_id = function_id;
+            },
+            // BlockVisit: check the precisions in instructions in entry block
+            // Return VISIT_SUB_BLOCKS so validate_block_instructions_glsl_precision_rules() is
+            // also called on sub-blocks
+            |precision_state, entry, _block_kind, _usize| {
+                self.validate_block_instructions_glsl_precision_rules(precision_state, entry);
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            // PostVisit: do nothing
+            |_, _| {},
+        );
+    }
+
+    // Called once after GLSL parse and propagate_precision pass.
+    // Do not call validate_block_instructions_glsl_precision_rules() after other
+    // transformation passes.
+    fn validate_block_instructions_glsl_precision_rules(
+        &self,
+        precision_state: &mut PrecisionState,
+        block: &Block,
+    ) {
+        // Step 1: validate merge output precisions are assigned, after propagate_precision step
+        if let Some(expected_merge_input_precision) =
+            block.merge_block.as_ref().and_then(|mb| mb.input).map(|input| input.precision)
+        {
+            let block1 = block.block1.as_ref().expect("block1 can't be none");
+            let block1_last_op = block1.get_merge_chain_terminating_op();
+            let block2 = block.block2.as_ref().expect("block2 can't be none");
+            let block2_last_op = block2.get_merge_chain_terminating_op();
+
+            match block1_last_op {
+                OpCode::Merge(Some(merge_output)) => {
+                    if expected_merge_input_precision.is_assigned()
+                        && !merge_output.precision.is_assigned()
+                        && util::is_precision_applicable_to_type(
+                            &self.ir.meta,
+                            merge_output.type_id,
+                        )
+                    {
+                        self.on_error(format_args!(
+                            "invalid instruction {:?}, Merge operand {:?} precision should not be \
+                             NotApplicable after propagate_precision step",
+                            block1_last_op, merge_output
+                        ));
+                    }
+                }
+                _ => {
+                    self.on_error(format_args!(
+                        "merge block with input expects a block1 ending with Merge(id) instruction"
+                    ));
+                }
+            }
+
+            match block2_last_op {
+                OpCode::Merge(Some(merge_output)) => {
+                    if expected_merge_input_precision.is_assigned()
+                        && !merge_output.precision.is_assigned()
+                        && util::is_precision_applicable_to_type(
+                            &self.ir.meta,
+                            merge_output.type_id,
+                        )
+                    {
+                        self.on_error(format_args!(
+                            "invalid instruction {:?}, Merge operand {:?} precision should not be \
+                             NotApplicable after propagate_precision step",
+                            block2_last_op, merge_output
+                        ));
+                    }
+                }
+                _ => {
+                    self.on_error(format_args!(
+                        "merge block with input expects a block2 ending with Merge(id) instruction"
+                    ));
+                }
+            }
+        }
+
+        // Step 2: validate glsl precision rules are applied and propagated properly in all
+        // instructions in current block
+        for instruction in &block.instructions {
+            let (opcode, result) = instruction.get_op_and_result(&self.ir.meta);
+            self.validate_instruction_glsl_precision_rules(precision_state, opcode, result);
+        }
+    }
+
+    // Called once after GLSL parse and propagate_precision pass.
+    // Do not call validate_instruction_glsl_precision_rules() after other
+    // transformation passes.
+    fn validate_instruction_glsl_precision_rules(
+        &self,
+        precision_state: &PrecisionState,
+        opcode: &OpCode,
+        result: Option<TypedRegisterId>,
+    ) {
+        let validate_precision_is_propagated =
+            |op_code: &OpCode, precision_to_propagate: Precision, propagate_target: &TypedId| {
+                if precision_to_propagate.is_assigned()
+                    && !propagate_target.precision.is_assigned()
+                    && util::is_precision_applicable_to_type(
+                        &self.ir.meta,
+                        propagate_target.type_id,
+                    )
+                {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, {:?} precision must not be NotApplicable or \
+                         Unassigned after the propagate_precision pass",
+                        op_code, propagate_target
+                    ));
+                }
+            };
+
+        match opcode {
+            // OpCode::Return:
+            // - The function return value should have precision propagated
+            OpCode::Return(Some(id)) => {
+                let expected_function_return_precision =
+                    self.ir.meta.get_function(precision_state.current_function_id).return_precision;
+                validate_precision_is_propagated(opcode, expected_function_return_precision, id);
+            }
+            // OpCode::Call:
+            // - Function call operands should have precisions propagated
+            OpCode::Call(function_id, args) => {
+                let expected_function_args_precisions =
+                    &precision_state.function_arg_precisions[function_id];
+
+                if args.len() != expected_function_args_precisions.len() {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}. Function call has {} arguments, but the \
+                         function declaration has {} arguments",
+                        opcode,
+                        args.len(),
+                        expected_function_args_precisions.len()
+                    ));
+                }
+
+                for (actual_arg, expected_precision) in
+                    args.iter().zip(expected_function_args_precisions)
+                {
+                    validate_precision_is_propagated(opcode, *expected_precision, actual_arg);
+                }
+            }
+            // OpCode::ConstructStruct:
+            // - Operands should have precisions propagated
+            OpCode::ConstructStruct(args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                debug_assert!(self.ir.meta.get_type(result.type_id).is_struct());
+                debug_assert!(
+                    precision_state.struct_member_precisions.contains_key(&result.type_id)
+                );
+                let expected_struct_member_precisions =
+                    &precision_state.struct_member_precisions[&result.type_id];
+                for (actual_member, expected_precision) in
+                    args.iter().zip(expected_struct_member_precisions)
+                {
+                    validate_precision_is_propagated(opcode, *expected_precision, actual_member);
+                }
+            }
+            // OpCode::Store:
+            // - The precision of the first operand should propagate to the second operand
+            OpCode::Store(ptr_id, val_id) => {
+                validate_precision_is_propagated(opcode, ptr_id.precision, val_id);
+            }
+            // Load OpCode and Alias OpCode:
+            // - Result precision should be the same as the operand precision
+            OpCode::Load(id) | OpCode::Alias(id) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the operand {:?}",
+                        opcode, result, id
+                    ));
+                }
+            }
+            // OpCode::Extract* and OpCode::Access*:
+            // - Precision::High should propagate to second operand
+            OpCode::ExtractVectorComponentDynamic(_, id2)
+            | OpCode::ExtractMatrixColumn(_, id2)
+            | OpCode::ExtractArrayElement(_, id2)
+            | OpCode::AccessVectorComponentDynamic(_, id2)
+            | OpCode::AccessMatrixColumn(_, id2)
+            | OpCode::AccessArrayElement(_, id2) => {
+                validate_precision_is_propagated(opcode, Precision::High, id2);
+            }
+            // OpCode::Construct*:
+            // - Result precision should match with the operand, unless the operand and result
+            // are different in terms of precision applicability.
+            // - Result precision should propagate to operand
+            OpCode::ConstructScalarFromScalar(id)
+            | OpCode::ConstructVectorFromScalar(id)
+            | OpCode::ConstructMatrixFromScalar(id)
+            | OpCode::ConstructMatrixFromMatrix(id) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id.precision {
+                    let precision_applicable_to_result =
+                        util::is_precision_applicable_to_type(&self.ir.meta, result.type_id);
+                    let precision_applicable_to_operand =
+                        util::is_precision_applicable_to_type(&self.ir.meta, id.type_id);
+                    if precision_applicable_to_result != precision_applicable_to_operand {
+                        // Valid case. For example:
+                        // case1: constructing a float from a bool, result has precision, operand
+                        // has no precision.
+                        // case2: constructing a bool from float, result has no precision, operand
+                        // has precision.
+                    } else {
+                        self.on_error(format_args!(
+                            "Invalid instruction {:?}, result {:?} has a different precision than \
+                             operand {:?}",
+                            opcode, result, id,
+                        ));
+                    }
+                }
+                validate_precision_is_propagated(opcode, result.precision, id);
+            }
+            // OpCode::Construct*:
+            // - Result precision should be the highest of all args, unless the operands and result
+            //   are different in terms of precision applicability.
+            // - Result precision should propagate to all args
+            OpCode::ConstructVectorFromMultiple(args)
+            | OpCode::ConstructMatrixFromMultiple(args)
+            | OpCode::ConstructArray(args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                let highest_arg_precision = instruction::precision::highest_precision(
+                    &mut args.iter().map(|arg| arg.precision),
+                );
+                if result.precision != highest_arg_precision {
+                    let precision_applicable_to_result =
+                        util::is_precision_applicable_to_type(&self.ir.meta, result.type_id);
+                    let precision_applicable_to_operands =
+                        highest_arg_precision != Precision::NotApplicable;
+                    if precision_applicable_to_result != precision_applicable_to_operands {
+                        // valid case. For example:
+                        // constructing a float vec4 from 4 bools.
+                    } else {
+                        self.on_error(format_args!(
+                            "Invalid instruction {:?}, result {:?} has a different precision than \
+                             the highest precision {:?} of all operands",
+                            opcode, result, highest_arg_precision
+                        ));
+                    }
+                }
+                for arg in args {
+                    validate_precision_is_propagated(opcode, result.precision, arg);
+                }
+            }
+            // Unary OpCode:
+            // - Result precision must be same as the operand
+            OpCode::Unary(UnaryOpCode::Negate, id)
+            | OpCode::Unary(UnaryOpCode::BitwiseNot, id)
+            | OpCode::Unary(UnaryOpCode::PrefixIncrement, id)
+            | OpCode::Unary(UnaryOpCode::PrefixDecrement, id)
+            | OpCode::Unary(UnaryOpCode::PostfixIncrement, id)
+            | OpCode::Unary(UnaryOpCode::PostfixDecrement, id)
+            | OpCode::Unary(UnaryOpCode::Radians, id)
+            | OpCode::Unary(UnaryOpCode::Degrees, id)
+            | OpCode::Unary(UnaryOpCode::Sin, id)
+            | OpCode::Unary(UnaryOpCode::Cos, id)
+            | OpCode::Unary(UnaryOpCode::Tan, id)
+            | OpCode::Unary(UnaryOpCode::Asin, id)
+            | OpCode::Unary(UnaryOpCode::Acos, id)
+            | OpCode::Unary(UnaryOpCode::Atan, id)
+            | OpCode::Unary(UnaryOpCode::Sinh, id)
+            | OpCode::Unary(UnaryOpCode::Cosh, id)
+            | OpCode::Unary(UnaryOpCode::Tanh, id)
+            | OpCode::Unary(UnaryOpCode::Asinh, id)
+            | OpCode::Unary(UnaryOpCode::Acosh, id)
+            | OpCode::Unary(UnaryOpCode::Atanh, id)
+            | OpCode::Unary(UnaryOpCode::Exp, id)
+            | OpCode::Unary(UnaryOpCode::Log, id)
+            | OpCode::Unary(UnaryOpCode::Exp2, id)
+            | OpCode::Unary(UnaryOpCode::Log2, id)
+            | OpCode::Unary(UnaryOpCode::Sqrt, id)
+            | OpCode::Unary(UnaryOpCode::Inversesqrt, id)
+            | OpCode::Unary(UnaryOpCode::Abs, id)
+            | OpCode::Unary(UnaryOpCode::Sign, id)
+            | OpCode::Unary(UnaryOpCode::Floor, id)
+            | OpCode::Unary(UnaryOpCode::Trunc, id)
+            | OpCode::Unary(UnaryOpCode::Round, id)
+            | OpCode::Unary(UnaryOpCode::RoundEven, id)
+            | OpCode::Unary(UnaryOpCode::Ceil, id)
+            | OpCode::Unary(UnaryOpCode::Fract, id)
+            | OpCode::Unary(UnaryOpCode::Length, id)
+            | OpCode::Unary(UnaryOpCode::Normalize, id)
+            | OpCode::Unary(UnaryOpCode::Transpose, id)
+            | OpCode::Unary(UnaryOpCode::Determinant, id)
+            | OpCode::Unary(UnaryOpCode::Inverse, id)
+            | OpCode::Unary(UnaryOpCode::DFdx, id)
+            | OpCode::Unary(UnaryOpCode::DFdy, id)
+            | OpCode::Unary(UnaryOpCode::Fwidth, id)
+            | OpCode::Unary(UnaryOpCode::InterpolateAtCentroid, id)
+            | OpCode::Unary(UnaryOpCode::PixelLocalLoadANGLE, id) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} precision is different from \
+                         operand {:?}",
+                        opcode, result, id
+                    ));
+                }
+            }
+            // Unary OpCode: Precision::High should propagate to operand
+            OpCode::Unary(UnaryOpCode::PackSnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackHalf2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackUnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::PackUnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::PackSnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::FloatBitsToInt, id)
+            | OpCode::Unary(UnaryOpCode::FloatBitsToUint, id)
+            | OpCode::Unary(UnaryOpCode::IntBitsToFloat, id)
+            | OpCode::Unary(UnaryOpCode::UintBitsToFloat, id)
+            | OpCode::Unary(UnaryOpCode::UnpackSnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::UnpackUnorm2x16, id)
+            | OpCode::Unary(UnaryOpCode::BitfieldReverse, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounter, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterIncrement, id)
+            | OpCode::Unary(UnaryOpCode::AtomicCounterDecrement, id)
+            | OpCode::Unary(UnaryOpCode::ImageSize, id)
+            | OpCode::Unary(UnaryOpCode::UnpackHalf2x16, id)
+            | OpCode::Unary(UnaryOpCode::UnpackUnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::UnpackSnorm4x8, id)
+            | OpCode::Unary(UnaryOpCode::BitCount, id)
+            | OpCode::Unary(UnaryOpCode::FindLSB, id)
+            | OpCode::Unary(UnaryOpCode::FindMSB, id)
+            | OpCode::Unary(UnaryOpCode::Isnan, id)
+            | OpCode::Unary(UnaryOpCode::Isinf, id) => {
+                validate_precision_is_propagated(opcode, Precision::High, id);
+            }
+            // Binary OpCode
+            // - Result precision must be the higher precision of the operands
+            OpCode::Binary(BinaryOpCode::BitwiseOr, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitwiseXor, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitwiseAnd, id1, id2) => {
+                let higher_arg_precision =
+                    instruction::precision::higher_precision(id1.precision, id2.precision);
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != higher_arg_precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the higher precision {:?} of the two operands",
+                        opcode, result, higher_arg_precision
+                    ));
+                }
+            }
+            // Binary OpCode
+            // - Result precision must be the higher precision of the operands
+            // - Result precision should propagate to both operands
+            OpCode::Binary(BinaryOpCode::Add, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Sub, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Mul, id1, id2)
+            | OpCode::Binary(BinaryOpCode::VectorTimesScalar, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesScalar, id1, id2)
+            | OpCode::Binary(BinaryOpCode::VectorTimesMatrix, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesVector, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixTimesMatrix, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Div, id1, id2)
+            | OpCode::Binary(BinaryOpCode::IMod, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Atan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Pow, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Mod, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Min, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Max, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Step, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Modf, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Distance, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Dot, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Cross, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Reflect, id1, id2)
+            | OpCode::Binary(BinaryOpCode::MatrixCompMult, id1, id2)
+            | OpCode::Binary(BinaryOpCode::OuterProduct, id1, id2) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                let higher_arg_precision =
+                    instruction::precision::higher_precision(id1.precision, id2.precision);
+                if result.precision != higher_arg_precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the higher precision {:?} of the two operands",
+                        opcode, result, higher_arg_precision
+                    ));
+                }
+                validate_precision_is_propagated(opcode, result.precision, id1);
+                validate_precision_is_propagated(opcode, result.precision, id2);
+            }
+            // Binary OpCode
+            // - Result precision should propagate to second operand
+            OpCode::Binary(BinaryOpCode::AtomicAdd, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicMin, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicMax, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicAnd, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicOr, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicXor, _, id2)
+            | OpCode::Binary(BinaryOpCode::AtomicExchange, _, id2) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                validate_precision_is_propagated(opcode, result.precision, id2);
+            }
+            // Binary OpCode:
+            // - Precision::High should propagate to both operands
+            OpCode::Binary(BinaryOpCode::Frexp, id1, id2)
+            | OpCode::Binary(BinaryOpCode::Ldexp, id1, id2) => {
+                validate_precision_is_propagated(opcode, Precision::High, id1);
+                validate_precision_is_propagated(opcode, Precision::High, id2);
+            }
+            // Binary OpCode:
+            // - Precision of one operand should propagate to the other operand
+            OpCode::Binary(BinaryOpCode::Equal, id1, id2)
+            | OpCode::Binary(BinaryOpCode::NotEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThan, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanEqual, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::LessThanEqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::GreaterThanEqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::EqualVec, id1, id2)
+            | OpCode::Binary(BinaryOpCode::NotEqualVec, id1, id2) => {
+                validate_precision_is_propagated(opcode, id1.precision, id2);
+                validate_precision_is_propagated(opcode, id2.precision, id1);
+            }
+            // Binary OpCode
+            // - Result precision must be same as the first operand precision
+            // - Result precision should propagate to both operands
+            OpCode::Binary(BinaryOpCode::BitShiftLeft, id1, id2)
+            | OpCode::Binary(BinaryOpCode::BitShiftRight, id1, id2)
+            | OpCode::Binary(BinaryOpCode::InterpolateAtOffset, id1, id2) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id1.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the first operand {:?}",
+                        opcode, result, id1
+                    ));
+                }
+                validate_precision_is_propagated(opcode, result.precision, id1);
+                validate_precision_is_propagated(opcode, result.precision, id2);
+            }
+            // Binary OpCode InterpolateAtSample:
+            // - Result precision must be same as the first operand precision
+            // - Result precision should propagate to first operand
+            // - Precision::High should propagate to second operand
+            OpCode::Binary(BinaryOpCode::InterpolateAtSample, id1, id2) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != id1.precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction: {:?}, result {:?} has a different precision than \
+                         the first operand {:?}",
+                        opcode, result, id1
+                    ));
+                }
+                validate_precision_is_propagated(opcode, result.precision, id1);
+                validate_precision_is_propagated(opcode, Precision::High, id2);
+            }
+            // BuiltIn OpCode
+            // - Result precision must be the same as the first operand precision
+            OpCode::BuiltIn(BuiltInOpCode::SubpassLoad, args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != args.first().unwrap().precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, result {:?} precision must be the same as the \
+                         first operand {:?}",
+                        opcode,
+                        result,
+                        args.first().unwrap(),
+                    ));
+                }
+            }
+            // BuiltIn OpCode
+            // - Result precision must be the same as the first operand precision
+            // - Result precision should propagate to all operands
+            OpCode::BuiltIn(BuiltInOpCode::BitfieldExtract, args)
+            | OpCode::BuiltIn(BuiltInOpCode::BitfieldInsert, args)
+            | OpCode::BuiltIn(BuiltInOpCode::InterpolateAtCenter, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TextureQueryLod, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TexelFetch, args)
+            | OpCode::BuiltIn(BuiltInOpCode::TexelFetchOffset, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageLoad, args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                if result.precision != args.first().unwrap().precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, result {:?} precision must be the same as the \
+                         first operand {:?}",
+                        opcode,
+                        result,
+                        args.first().unwrap(),
+                    ));
+                }
+
+                for arg in args {
+                    validate_precision_is_propagated(opcode, result.precision, arg);
+                }
+            }
+            // BuiltIn OpCode
+            // - Result precision must be the highest precision of all operands
+            // - Result precision should propagate to all operands
+            OpCode::BuiltIn(BuiltInOpCode::Clamp, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Mix, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Smoothstep, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Fma, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Faceforward, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Refract, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Rgb2Yuv, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Yuv2Rgb, args)
+            | OpCode::BuiltIn(BuiltInOpCode::Saturate, args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                let highest_arg_precision = instruction::precision::highest_precision(
+                    &mut args.iter().map(|arg| arg.precision),
+                );
+                if result.precision != highest_arg_precision {
+                    self.on_error(format_args!(
+                        "Invalid instruction {:?}, result {:?} precision must be the highest \
+                         precision {:?} of all operands",
+                        opcode, result, highest_arg_precision
+                    ));
+                }
+                for arg in args {
+                    validate_precision_is_propagated(opcode, result.precision, arg);
+                }
+            }
+            // OpCode::BuiltIn: Precision::High should propagate to last operand
+            OpCode::BuiltIn(BuiltInOpCode::TextureSize, args) => {
+                validate_precision_is_propagated(opcode, Precision::High, args.last().unwrap());
+            }
+            // OpCode::BuiltIn:
+            // Precision::High should propagate to first operand
+            // Precision::High should propagate to second operand
+            // Precision::Low should propagate to third operand
+            OpCode::BuiltIn(BuiltInOpCode::UaddCarry, args)
+            | OpCode::BuiltIn(BuiltInOpCode::UsubBorrow, args) => {
+                validate_precision_is_propagated(opcode, Precision::High, &args[0]);
+                validate_precision_is_propagated(opcode, Precision::High, &args[1]);
+                validate_precision_is_propagated(opcode, Precision::Low, &args[2]);
+            }
+            // OpCode::BuiltIn
+            // - Result precision should propagate to all operands
+            OpCode::BuiltIn(BuiltInOpCode::AtomicCompSwap, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAdd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMin, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicMax, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicAnd, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicOr, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicXor, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicExchange, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImageAtomicCompSwap, args)
+            | OpCode::BuiltIn(BuiltInOpCode::SamplePosition, args) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                for arg in args {
+                    validate_precision_is_propagated(opcode, result.precision, arg);
+                }
+            }
+            // OpCode::BuiltIn:
+            // - operand[0] precision should propagate to operand[1]
+            OpCode::BuiltIn(BuiltInOpCode::PixelLocalStoreANGLE, args) => {
+                validate_precision_is_propagated(opcode, args.first().unwrap().precision, &args[1]);
+            }
+
+            // OpCode::BuiltIn:
+            // - operand[0] precision should propagate to all other operands
+            OpCode::BuiltIn(BuiltInOpCode::ImageStore, args) => {
+                for arg in args {
+                    validate_precision_is_propagated(opcode, args.first().unwrap().precision, arg);
+                }
+            }
+
+            // OpCode::BuiltIn:
+            // - Precision::High should propagate to first two operands
+            OpCode::BuiltIn(BuiltInOpCode::UmulExtended, args)
+            | OpCode::BuiltIn(BuiltInOpCode::ImulExtended, args) => {
+                validate_precision_is_propagated(opcode, Precision::High, &args[0]);
+                validate_precision_is_propagated(opcode, Precision::High, &args[1]);
+            }
+
+            // OpCode::Texture:
+            // - Result precision should propagate to coord
+            OpCode::Texture(texture_opcode, _, coord) => {
+                let result = result.expect("Expect a TypedRegisterId result for the OpCode");
+                validate_precision_is_propagated(opcode, result.precision, coord);
+
+                match texture_opcode {
+                    // Result precision should propagate to offset
+                    TextureOpCode::Implicit { offset, .. }
+                    | TextureOpCode::Gather { offset }
+                    | TextureOpCode::GatherComponent { offset, .. } => {
+                        if let Some(valid_offset) = offset {
+                            validate_precision_is_propagated(
+                                opcode,
+                                result.precision,
+                                valid_offset,
+                            );
+                        }
+                    }
+                    // Result precision should propagate to compare
+                    TextureOpCode::Compare { compare } => {
+                        validate_precision_is_propagated(opcode, result.precision, compare);
+                    }
+
+                    // Result precision should propagate to lod
+                    TextureOpCode::Lod { lod, .. } => {
+                        validate_precision_is_propagated(opcode, result.precision, lod);
+                    }
+                    // Result precision should propagate to compare and lod
+                    TextureOpCode::CompareLod { compare, lod } => {
+                        validate_precision_is_propagated(opcode, result.precision, compare);
+                        validate_precision_is_propagated(opcode, result.precision, lod);
+                    }
+
+                    // Result precision should propagate to bias
+                    TextureOpCode::Bias { bias, .. } => {
+                        validate_precision_is_propagated(opcode, result.precision, bias);
+                    }
+
+                    // Result precision should propagate to compare and bias
+                    TextureOpCode::CompareBias { compare, bias } => {
+                        validate_precision_is_propagated(opcode, result.precision, compare);
+                        validate_precision_is_propagated(opcode, result.precision, bias);
+                    }
+                    // Result precision should propagate to dx and dy
+                    TextureOpCode::Grad { dx, dy, .. } => {
+                        validate_precision_is_propagated(opcode, result.precision, dx);
+                        validate_precision_is_propagated(opcode, result.precision, dy);
+                    }
+                    // Result precision should propagate to refz
+                    TextureOpCode::GatherRef { refz, .. } => {
+                        validate_precision_is_propagated(opcode, result.precision, refz);
+                    }
+                }
+            }
+            _ => {}
+        }
     }
 }

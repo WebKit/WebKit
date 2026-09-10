@@ -985,6 +985,22 @@
                 "object on ARM Mali Valhall/Avalon GPUs to avoid driver crash."
             ],
             "issue": "http://crbug.com/534468209"
+        },
+        {
+            "name": "reattach_texture_to_fbo_after_layer_increase",
+            "category": "Workarounds",
+            "description": [
+                "Reattach texture layer to framebuffer after calling TexImage3D to increase layer count on PowerVR Android."
+            ],
+            "issue": "http://crbug.com/499602793"
+        },
+        {
+            "name": "validate_state",
+            "category": "Features",
+            "description": [
+                "Validate applied driver state frequently."
+            ],
+            "issue": "http://anglebug.com/532176406"
         }
     ]
 }

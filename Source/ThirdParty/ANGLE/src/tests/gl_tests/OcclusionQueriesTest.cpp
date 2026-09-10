@@ -1451,6 +1451,130 @@ TEST_P(OcclusionQueriesTestES3, UnbindFBOWithPendingQuery)
     EXPECT_GL_TRUE(result);
 }
 
+// Test that a very large number of scissored clears while an occlusion query is active still
+// yields a correct query result. On backends that emulate scissored clears with draws, each clear
+// pauses and resumes the query in the same render pass; the render pass must be split before the
+// backend's per-pass visibility offset limit is reached.
+TEST_P(OcclusionQueriesTest, ManyScissoredClearsInsideQuery)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    // Metal allows at most 32768 visibility result slots per render pass.
+    constexpr int kClearCount = 35000;
+
+    glDepthMask(GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    GLQueryEXT query;
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+
+    // this quad should not be occluded
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
+
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 1, 1);
+    for (int i = 0; i < kClearCount; ++i)
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    glDisable(GL_SCISSOR_TEST);
+
+    // this quad should not be occluded
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.8f);
+
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint result = GL_FALSE;
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT,
+                           &result);  // will block waiting for result
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_GL_TRUE(result);
+}
+
+// Test that a very large number of distinct queries and draw calls in a single render pass
+// still works and yields correct query results when exceeding the backend's per-pass
+// visibility offset limit.
+TEST_P(OcclusionQueriesTest, ExcessiveNumberOfQueries)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    constexpr int kQueryCount = 35000;
+
+    glDisable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr char kVS[] =
+        "attribute vec4 a_position;\n"
+        "attribute vec4 a_color;\n"
+        "varying vec4 v_color;\n"
+        "void main() {\n"
+        "    gl_Position  = a_position;\n"
+        "    gl_PointSize = 4.0;\n"
+        "    v_color      = a_color;\n"
+        "}\n";
+
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "varying vec4 v_color;\n"
+        "void main() {\n"
+        "    gl_FragColor = v_color;\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    GLint posLoc   = glGetAttribLocation(program, "a_position");
+    GLint colorLoc = glGetAttribLocation(program, "a_color");
+    ASSERT_NE(-1, posLoc);
+    ASSERT_NE(-1, colorLoc);
+
+    glDisableVertexAttribArray(posLoc);
+    glDisableVertexAttribArray(colorLoc);
+
+    std::vector<GLQueryEXT> queries(kQueryCount);
+
+    for (int i = 0; i < kQueryCount; ++i)
+    {
+        glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, queries[i]);
+        if (i % 2 != 0)
+        {
+            int idx   = i / 2;
+            GLfloat x = (static_cast<GLfloat>(idx % 30) / 30.0f) * 1.8f - 0.9f;
+            GLfloat y = (static_cast<GLfloat>((idx / 30) % 30) / 30.0f) * 1.8f - 0.9f;
+            glVertexAttrib3f(posLoc, x, y, 0.0f);
+
+            GLfloat r = static_cast<GLfloat>(i % 256) / 255.0f;
+            GLfloat g = static_cast<GLfloat>((i * 7) % 256) / 255.0f;
+            GLfloat b = static_cast<GLfloat>((i * 13) % 256) / 255.0f;
+            glVertexAttrib4f(colorLoc, r, g, b, 1.0f);
+            glDrawArrays(GL_POINTS, 0, 1);
+        }
+        glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    }
+    EXPECT_GL_NO_ERROR();
+
+    for (int i = 0; i < kQueryCount; ++i)
+    {
+        GLuint result = GL_FALSE;
+        glGetQueryObjectuivEXT(queries[i], GL_QUERY_RESULT_EXT, &result);
+        EXPECT_GL_NO_ERROR();
+        if (i % 2 != 0)
+        {
+            EXPECT_GL_TRUE(result) << " at query index " << i;
+        }
+        else
+        {
+            EXPECT_GL_FALSE(result) << " at query index " << i;
+        }
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(OcclusionQueriesTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(OcclusionQueriesTestES3);

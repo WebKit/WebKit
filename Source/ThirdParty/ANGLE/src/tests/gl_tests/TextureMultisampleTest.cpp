@@ -765,6 +765,9 @@ TEST_P(TextureMultisampleTest, ResolveToDefaultFramebuffer)
 // ANGLE_texture_multisample not enabled, the feature isn't supported.
 TEST_P(NegativeTextureMultisampleTest, Negative)
 {
+    // Enums such as GL_SAMPLE_MASK are core in ES 3.1.
+    ANGLE_SKIP_TEST_IF(isAtLeastClientVersion(3, 1));
+
     // The extension must have been disabled in test init.
     ASSERT_FALSE(IsGLExtensionEnabled("GL_ANGLE_texture_multisample"));
 

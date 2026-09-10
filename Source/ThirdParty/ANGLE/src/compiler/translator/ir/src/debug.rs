@@ -30,6 +30,7 @@ fn type_id_str(id: TypeId) -> String {
 fn precision_str(precision: Precision) -> &'static str {
     match precision {
         Precision::NotApplicable => "",
+        Precision::Unassigned => "unassigned",
         Precision::Low => "lowp",
         Precision::Medium => "mediump",
         Precision::High => "highp",
@@ -45,7 +46,7 @@ fn id_str(id: TypedId) -> String {
             // precision.  In that case, output the precision too.
             let constant_str = constant_id_str(cid);
             match id.precision {
-                Precision::NotApplicable => constant_str,
+                Precision::NotApplicable | Precision::Unassigned => constant_str,
                 _ => format!("{constant_str}[{}]", precision_str(id.precision)),
             }
         }

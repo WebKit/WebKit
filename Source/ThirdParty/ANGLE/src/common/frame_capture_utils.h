@@ -152,7 +152,7 @@ struct CallCapture
     std::string customFunctionName;
     ParamBuffer params;
     bool isActive = true;
-    gl::ContextID contextID;
+    gl::ContextID contextID{0};
     bool isSyncPoint = false;
 };
 

@@ -5,7 +5,7 @@
 
 void SetupReplayContext3(void)
 {
-    eglMakeCurrent(gEGLDisplay, gSurfaceMap2[0], gSurfaceMap2[0], gContextMap2[3]);
+    eglMakeCurrent(gEGLDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, gContextMap2[3]);
     UpdateCurrentContext(3);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, gTextureMap[2]);

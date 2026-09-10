@@ -817,6 +817,41 @@ TEST_P(CapturedTest, NoBinaryData)
     ASSERT_GL_NO_ERROR();
 }
 
+// Regression test for MEC surface-reference leak causing AR camera-feed trace failures.
+// Camera AR apps keep a side context in the render context's share group. When capture starts,
+// MEC loops through all side contexts making each current on the window surface to serialize
+// it. If we don't then release these afterwards there remains a dangling reference and the app
+// can no longer make it current on any thread, causing EGL_BAD_ACCESS/"Surface can only be
+// current on one thread" errors and invalid 'glBindFramebuffer(0xFFFFFFFF)' calls in the trace.
+// Test capture and replay of glClientWaitSync.
+TEST_P(CapturedTest, ClientWaitSync)
+{
+    // We need GLES 3.0 for fence sync
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Swap before the first captured frame so setup gets its own frame.
+    swapBuffers();
+
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    ASSERT_NE(sync, nullptr);
+
+    // Force a flush and finish to guarantee the sync is signaled
+    glFlush();
+    glFinish();
+
+    GLenum status = glClientWaitSync(sync, 0, 0);
+    EXPECT_EQ(status, static_cast<GLenum>(GL_ALREADY_SIGNALED));
+
+    glDeleteSync(sync);
+
+    // Empty frames to reach capture end
+    for (int i = 0; i < 10; i++)
+    {
+        swapBuffers();
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
 #if defined(CAPTURE_TESTS_AHB_SUPPORT)
 // Test capture and replay of external AHBs on Android platforms. On other platforms
 // not supporting AHBs, the test will be skipped and the outtput will not be
@@ -931,12 +966,6 @@ void main()
 }
 #endif  // defined(CAPTURE_TESTS_AHB_SUPPORT)
 
-// Regression test for MEC surface-reference leak causing AR camera-feed trace failures.
-// Camera AR apps keep a side context in the render context's share group. When capture starts,
-// MEC loops through all side contexts making each current on the window surface to serialize
-// it. If we don't then release these afterwards there remains a dangling reference and the app
-// can no longer make it current on any thread, causing EGL_BAD_ACCESS/"Surface can only be
-// current on one thread" errors and invalid 'glBindFramebuffer(0xFFFFFFFF)' calls in the trace.
 // This test's trace output is intentionally excluded from the output comparison
 TEST_P(CapturedTest, MECSurfaceRelease)
 {

@@ -36,6 +36,15 @@ declare_args() {
 
   # Enable using CRC for pipeline cache data
   angle_enable_crc_for_pipeline_cache = true
+
+  # Enable Vulkan API performance counters to track wall CPU time of the calls
+  # Requires "angle_enable_custom_vulkan_cmd_buffers"
+  # 0 - Disabled (default)
+  # 1 - Enabled at compile time
+  # 2 - Enabled at run time:
+  #     - Environment var:  ANGLE_ENABLE_VULKAN_API_PERF_COUNTERS=1
+  #     - Android property: debug.angle.enable_vulkan_api_perf_counters 1
+  angle_vulkan_api_perf_counters_mode = 0
 }
 
 angle_source_set("angle_vk_mem_alloc_wrapper") {
@@ -113,6 +122,8 @@ template("angle_vulkan_backend_template") {
     if (invoker.enable_custom_render_pass_cmd_buffers) {
       defines += [ "ANGLE_USE_CUSTOM_VULKAN_RENDER_PASS_CMD_BUFFERS=1" ]
     }
+    defines += [ "ANGLE_VULKAN_API_PERF_COUNTERS_MODE=" +
+                 invoker.vulkan_api_perf_counters_mode ]
   }
 
   angle_source_set(target_name) {
@@ -206,9 +217,17 @@ angle_vulkan_backend_template("angle_vulkan_backend") {
       angle_enable_custom_vulkan_outside_render_pass_cmd_buffers
   enable_custom_render_pass_cmd_buffers =
       angle_enable_custom_vulkan_render_pass_cmd_buffers
+  assert(angle_vulkan_api_perf_counters_mode >= 0 &&
+             angle_vulkan_api_perf_counters_mode <= 2,
+         "angle_vulkan_api_perf_counters_mode must be 0, 1, or 2")
+  assert(
+      !is_apple || angle_vulkan_api_perf_counters_mode == 0,
+      "angle_vulkan_api_perf_counters_mode is not supported on apple platforms.")
+  vulkan_api_perf_counters_mode = angle_vulkan_api_perf_counters_mode
 }
 
 angle_vulkan_backend_template("angle_vulkan_secondaries_backend") {
   enable_custom_outside_render_pass_cmd_buffers = false
   enable_custom_render_pass_cmd_buffers = false
+  vulkan_api_perf_counters_mode = 0
 }

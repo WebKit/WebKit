@@ -36,6 +36,7 @@
     /* GL_OES_point_sprite */                                                                      \
     /* GL_OES_query_matrix */                                                                      \
     GLbitfield queryMatrixx(GLfixed *mantissa, GLint *exponent);                                   \
+    /* GL_OES_stencil8 */                                                                          \
     /* GL_OES_texture_cube_map */                                                                  \
     void getTexGenfv(GLenum coord, GLenum pname, GLfloat *params);                                 \
     void getTexGeniv(GLenum coord, GLenum pname, GLint *params);                                   \
