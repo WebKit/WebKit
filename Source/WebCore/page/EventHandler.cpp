@@ -3584,7 +3584,8 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     auto allowsScrollingState = SetForScope(m_currentWheelEventAllowsScrolling, processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling));
     
     setFrameWasScrolledByUser();
-    setLastKnownMousePosition(event.position(), event.globalPosition(), LastKnownMousePositionSource::Wheel);
+    if (event.inputSource() == MouseEventInputSource::UserDriven)
+        setLastKnownMousePosition(event.position(), event.globalPosition(), LastKnownMousePositionSource::Wheel);
 
     if (m_frame->isMainFrame()) {
         RefPtr page = m_frame->page();

@@ -285,11 +285,23 @@ public enum DOMEventType: String, Hashable, Sendable {
     /// The `pointerup` event.
     case pointerup
 
+    /// The `pointerover` event.
+    case pointerover
+
+    /// The `pointerout` event.
+    case pointerout
+
     /// The `mousedown` event.
     case mousedown
 
     /// The `mouseup` event.
     case mouseup
+
+    /// The `mouseover` event.
+    case mouseover
+
+    /// The `mouseout` event.
+    case mouseout
 }
 
 /// A DOM UI event observed on an element.

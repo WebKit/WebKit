@@ -4822,7 +4822,11 @@ void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, c
     LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::continueWheelEventHandling - " << result);
 
     if (!result.needsMainThreadProcessing()) {
-        if (m_mainFrame && wheelEvent.phase() == WebWheelEvent::Phase::Began) {
+        bool setLastKnownMousePosition = m_mainFrame && wheelEvent.phase() == WebWheelEvent::Phase::Began;
+#if PLATFORM(COCOA)
+        setLastKnownMousePosition = setLastKnownMousePosition && wheelEvent.inputSource() == WebEventInputSource::UserDriven;
+#endif
+        if (setLastKnownMousePosition) {
             // When wheel events are handled entirely in the UI process, we still need to tell the web process where the mouse is for cursor updates.
             sendToProcessContainingFrame(m_mainFrame->frameID(), Messages::WebPage::SetLastKnownMousePosition(m_mainFrame->frameID(), wheelEvent.position(), wheelEvent.globalPosition(), WebCore::LastKnownMousePositionSource::Wheel));
         }

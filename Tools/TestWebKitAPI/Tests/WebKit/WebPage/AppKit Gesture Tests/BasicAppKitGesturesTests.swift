@@ -1662,6 +1662,53 @@ extension AppKitGesturesTests.Basic {
         let end = try await settledScrollPosition()
         #expect(end.y - start.y > 20)
     }
+
+    @Test
+    func scrollEndingOnHoverTargetDoesNotActivateIt() async throws {
+        try await loadFixedHoverBar(installWheelListener: true)
+        try await establishElementUnderMouse(byClickingElementWithID: "anchor")
+
+        let barBounds = try await screenBounds(ofElementWithID: "bar")
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.midX, y: 40))
+        let end = barBounds.center
+
+        try await observeBoundaryEvents(onElementWithID: "bar")
+        try await performScroll(from: start, to: end)
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        #expect(actual.isEmpty)
+    }
+
+    @Test
+    func scrollBeginningOnHoverTargetDoesNotActivateIt() async throws {
+        try await loadFixedHoverBar(installWheelListener: false)
+        try await establishElementUnderMouse(byClickingElementWithID: "anchor")
+
+        let barBounds = try await screenBounds(ofElementWithID: "bar")
+        let end = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.midX, y: 560))
+
+        try await observeBoundaryEvents(onElementWithID: "bar")
+        try await performScroll(from: barBounds.center, to: end)
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        #expect(actual.isEmpty)
+    }
+
+    @Test
+    func scrollDoesNotMoveHoverWhileCursorRests() async throws {
+        try await loadFixedHoverBar(installWheelListener: true)
+        try await establishElementUnderMouse(byRestingCursorOnElementWithID: "anchor")
+
+        let barBounds = try await screenBounds(ofElementWithID: "bar")
+        let start = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.midX, y: 40))
+        let end = barBounds.center
+
+        try await observeBoundaryEvents(onElementWithID: "bar")
+        try await performScroll(from: start, to: end)
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        #expect(actual.isEmpty)
+    }
 }
 
 private let coalescedFlickEventFrequency = 20
@@ -1812,6 +1859,107 @@ extension AppKitGesturesTests.Basic {
 
         Issue.record("scroll position never settled; last sample was \(previous)")
         return previous
+    }
+
+    private func loadFixedHoverBar(installWheelListener: Bool) async throws {
+        let wheelListener =
+            installWheelListener
+            ? #"document.addEventListener("wheel", () => {}, { passive: false });"#
+            : ""
+
+        let filler = (0..<80)
+            .map { "<p>Filler paragraph \($0)</p>" }
+            .joined(separator: "\n")
+
+        let html = """
+            <!DOCTYPE html>
+            <style>
+              body { margin: 0; font-size: 40px; }
+              #spacer, #anchor { height: 120px; }
+              #anchor { background: silver; }
+              #bar { position: fixed; top: 260px; left: 0; right: 0; height: 80px; background: gold; }
+            </style>
+            <div id="spacer"></div>
+            <div id="anchor">anchor</div>
+            <div id="bar">bar</div>
+            <div id="filler">\(filler)</div>
+            <script>
+              \(wheelListener)
+
+              let ticks = 0;
+              document.addEventListener("scroll", () => {
+                  ticks++;
+                  document.getElementById("filler").style.paddingBottom = (ticks % 2) + "px";
+              }, { passive: true });
+            </script>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func establishElementUnderMouse(byClickingElementWithID id: String) async throws {
+        let bounds = try await screenBounds(ofElementWithID: id)
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: id, for: [.mouseover]))
+        await recap.play { composer in
+            composer._wk_click(at: bounds.center, for: .seconds(0.05))
+        }
+        try await requireElementUnderMouse(isElementWithID: id)
+    }
+
+    private func establishElementUnderMouse(byRestingCursorOnElementWithID id: String) async throws {
+        // Need window coordinates here since we will call mouseMove(to:),
+        // and not the Recap composer, which expects screen coordinates.
+        let point = try await windowPoint(ofElementWithID: id)
+        page.mouseMove(to: NSPoint(x: point.x - 20, y: point.y))
+        page.mouseMove(to: point)
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+        let hovered = try await innermostHoveredElementID()
+        try #require(hovered == id, "the cursor left hover on \(hovered.isEmpty ? "nothing" : hovered), not #\(id)")
+    }
+
+    private func requireElementUnderMouse(isElementWithID id: String) async throws {
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+        let received = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        try #require(
+            received.contains { $0.type == .mouseover },
+            "#\(id) did not become the element under the mouse"
+        )
+    }
+
+    private func performScroll(from start: CGPoint, to end: CGPoint) async throws {
+        await recap.play { composer in
+            composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.2))
+        }
+        let scrolled = try await settledScrollPosition()
+        try #require(scrolled.y > 0, "the gesture did not scroll the page")
+    }
+
+    private func observeBoundaryEvents(onElementWithID id: String) async throws {
+        try await page.callJavaScript(
+            JavaScriptMessages.InstallEventLog(in: id, for: [.mouseover, .mouseout, .pointerover, .pointerout])
+        )
+    }
+
+    private func innermostHoveredElementID() async throws -> String {
+        try await page.callJavaScript(returning: String.self) {
+            """
+            const hovered = document.querySelectorAll(":hover");
+            return hovered.length ? hovered[hovered.length - 1].id : "";
+            """
+        }
+    }
+
+    private func windowPoint(ofElementWithID id: String) async throws -> NSPoint {
+        let viewportRect = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: id))
+        guard let contentView = window.contentViewController?.view else {
+            preconditionFailure("the test window has no content view")
+        }
+        var rect = CGRect(viewportRect)
+        rect.origin.y += Self.topInset
+        return NSPoint(x: rect.midX, y: contentView.frame.height - rect.midY)
     }
 }
 
