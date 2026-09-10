@@ -112,9 +112,13 @@ void SampleMap::addSample(Ref<MediaSample>&& sample)
 {
     MediaTime presentationTime = sample->presentationTime();
 
-    m_totalSize += sample->sizeInBytes();
+    // Bail if a sample is already occupying this presentation time; accounting
+    // for it would drift m_totalSize and desync the presentation and decode maps.
+    auto insertResult = presentationOrder().m_samples.insert(PresentationOrderSampleMap::MapType::value_type(presentationTime, sample));
+    if (!insertResult.second)
+        return;
 
-    presentationOrder().m_samples.insert(PresentationOrderSampleMap::MapType::value_type(presentationTime, sample));
+    m_totalSize += sample->sizeInBytes();
 
     auto decodeKey = DecodeOrderSampleMap::KeyType(sample->decodeTime(), presentationTime);
     decodeOrder().m_samples.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTF::move(sample)));
