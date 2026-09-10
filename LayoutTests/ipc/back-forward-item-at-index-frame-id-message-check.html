@@ -1,0 +1,163 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<title>BackForwardItemAtIndexForWebContent and BackForwardAllItems reject a frameID that names no frame of the page</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+// backForwardItemAtIndexForWebContent() used to fall through to the entry's main frame state
+// whenever childItemForFrameID() missed, so any frameID a WebContent process made up -- including
+// one naming a frame of a different page -- returned the main frame's full FrameState.
+// backForwardAllItems() was missing the same check.
+//
+// Neither check is fatal. BackForwardController substitutes Page::mainFrame().frameID() when a
+// caller passes none, so a subframe legitimately names a frame it does not host, and a frame can be
+// destroyed while a synchronous request naming it is still in flight.
+
+const MAIN_SENTINEL = "BFLIST-MAIN-SENTINEL";
+const SUBFRAME_SENTINEL = "back-forward-item-at-index-subframe";
+
+function replyBytes(reply)
+{
+    const argument = reply?.arguments?.[0];
+    if (argument instanceof ArrayBuffer)
+        return new Uint8Array(argument);
+    if (argument?.value instanceof ArrayBuffer)
+        return new Uint8Array(argument.value);
+    return null;
+}
+
+function containsString(bytes, needle)
+{
+    for (let i = 0; i + needle.length <= bytes.length; ++i) {
+        let j = 0;
+        while (j < needle.length && bytes[i + j] === needle.charCodeAt(j))
+            ++j;
+        if (j === needle.length)
+            return true;
+    }
+    return false;
+}
+
+function sendSync(messageName, args)
+{
+    const bytes = replyBytes(IPC.sendSyncMessage("UI", IPC.pageID, IPC.messages[messageName].name, 1000, args));
+    return {
+        // A RefPtr<FrameState> reply is encoded as a bool followed by the FrameState when present, and
+        // a Vector<Ref<FrameState>> reply as a little-endian size followed by the elements.
+        nonEmpty: !!bytes && !!bytes[0],
+        hasMainFrameState: !!bytes && containsString(bytes, MAIN_SENTINEL),
+        hasSubframeState: !!bytes && containsString(bytes, SUBFRAME_SENTINEL),
+    };
+}
+
+function itemAtIndex(frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardItemAtIndexForWebContent",
+        [{ type: "int32_t", value: 0 }, { type: "FrameID", value: frameID }]);
+}
+
+function allItems(frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardAllItems", [{ type: "FrameID", value: frameID }]);
+}
+
+// The IPC testing API is only built in debug and ASAN configurations; elsewhere every test below
+// short-circuits, which keeps the output identical.
+const setupPromise = (async () => {
+    if (!window.IPC)
+        return null;
+
+    // Give the current entry a main frame state that is recognizable in the reply bytes.
+    history.pushState(null, "", "#" + MAIN_SENTINEL);
+
+    // A real subframe load, so the current entry has a child frame item to look up.
+    const iframe = document.createElement("iframe");
+    const iframeLoaded = new Promise(resolve => iframe.onload = resolve);
+    iframe.src = "resources/back-forward-item-at-index-subframe.html";
+    document.body.appendChild(iframe);
+    await iframeLoaded;
+
+    // A second page, to stand in for a frame this page's back/forward list must not describe.
+    const otherWindow = window.open("resources/back-forward-item-at-index-subframe.html");
+    let otherPageFrameID = null;
+    for (let i = 0; i < 100 && !otherPageFrameID; ++i) {
+        try {
+            otherPageFrameID = otherWindow.IPC.frameID;
+        } catch (e) {
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
+    }
+
+    add_completion_callback(() => {
+        iframe.remove();
+        otherWindow?.close();
+    });
+
+    return { mainFrameID: IPC.frameID, subframeID: iframe.contentWindow.IPC.frameID, otherPageFrameID };
+})();
+
+function backForwardTest(name, body)
+{
+    promise_test(async () => {
+        const context = await setupPromise;
+        if (context)
+            body(context);
+    }, name);
+}
+
+// BackForwardController::itemAtIndex() sends this shape for a main frame, and substitutes it for
+// any frame that passes no frameID -- including a subframe in another process.
+backForwardTest("BackForwardItemAtIndexForWebContent serves the page's own main frame identifier", context => {
+    assert_true(itemAtIndex(context.mainFrameID).hasMainFrameState, "the entry's main frame state was returned");
+});
+
+backForwardTest("BackForwardAllItems serves the page's own main frame identifier", context => {
+    assert_true(allItems(context.mainFrameID).hasMainFrameState, "the entry's main frame state was returned");
+});
+
+// The shape a subframe sends for itself, and the rootFrame().frameID() NavigationScheduler passes.
+backForwardTest("BackForwardItemAtIndexForWebContent serves a subframe identifier without falling back to main frame state", context => {
+    const result = itemAtIndex(context.subframeID);
+    assert_true(result.nonEmpty, "a FrameState was returned");
+    assert_true(result.hasSubframeState, "it is the subframe's state");
+    assert_false(result.hasMainFrameState, "the main frame state was not substituted");
+});
+
+backForwardTest("BackForwardAllItems serves a subframe identifier without falling back to main frame state", context => {
+    const result = allItems(context.subframeID);
+    assert_true(result.hasSubframeState, "the subframe's state was returned");
+    assert_false(result.hasMainFrameState, "the main frame state was not substituted");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent rejects a frameID naming no frame at all", () => {
+    const result = itemAtIndex([0xdeadbeefdeadbeefn]);
+    assert_false(result.nonEmpty, "no FrameState was returned");
+    assert_false(result.hasMainFrameState, "the main frame state was not returned");
+});
+
+backForwardTest("BackForwardAllItems rejects a frameID naming no frame at all", () => {
+    const result = allItems([0xdeadbeefdeadbeefn]);
+    assert_false(result.hasMainFrameState, "the main frame state was not returned");
+    assert_false(result.hasSubframeState, "no subframe state was returned");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent rejects a frameID near the page's main frame but unused", context => {
+    const result = itemAtIndex([context.mainFrameID[0] + 9999n]);
+    assert_false(result.nonEmpty, "no FrameState was returned");
+    assert_false(result.hasMainFrameState, "the main frame state was not returned");
+});
+
+backForwardTest("BackForwardItemAtIndexForWebContent rejects the main frame identifier of a different page", context => {
+    assert_true(!!context.otherPageFrameID, "a second page was opened");
+    const result = itemAtIndex(context.otherPageFrameID);
+    assert_false(result.nonEmpty, "no FrameState was returned");
+    assert_false(result.hasMainFrameState, "the main frame state was not returned");
+});
+
+backForwardTest("BackForwardAllItems rejects the main frame identifier of a different page", context => {
+    assert_true(!!context.otherPageFrameID, "a second page was opened");
+    const result = allItems(context.otherPageFrameID);
+    assert_false(result.hasMainFrameState, "the main frame state was not returned");
+    assert_false(result.hasSubframeState, "no subframe state was returned");
+});
+</script>

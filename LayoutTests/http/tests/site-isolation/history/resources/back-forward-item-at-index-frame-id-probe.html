@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<body>
+<script>
+// Runs in a cross-site subframe, which under site isolation is not the process hosting the main
+// frame. It sends the main frame's FrameIdentifier -- the value BackForwardController substitutes
+// when a caller passes none -- so the parent can assert that this legitimate cross-process traffic
+// is served and does not terminate this process.
+
+const MAIN_SENTINEL = "SITE-ISOLATION-BFLIST-SENTINEL";
+
+function replyBytes(reply)
+{
+    const argument = reply?.arguments?.[0];
+    if (argument instanceof ArrayBuffer)
+        return new Uint8Array(argument);
+    if (argument?.value instanceof ArrayBuffer)
+        return new Uint8Array(argument.value);
+    return null;
+}
+
+function containsString(bytes, needle)
+{
+    for (let i = 0; i + needle.length <= bytes.length; ++i) {
+        let j = 0;
+        while (j < needle.length && bytes[i + j] === needle.charCodeAt(j))
+            ++j;
+        if (j === needle.length)
+            return true;
+    }
+    return false;
+}
+
+function sendSync(messageName, args)
+{
+    const bytes = replyBytes(IPC.sendSyncMessage("UI", IPC.pageID, IPC.messages[messageName].name, 1000, args));
+    return { hasMainFrameState: !!bytes && containsString(bytes, MAIN_SENTINEL) };
+}
+
+function itemAtIndex(frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardItemAtIndexForWebContent",
+        [{ type: "int32_t", value: 0 }, { type: "FrameID", value: frameID }]);
+}
+
+function allItems(frameID)
+{
+    return sendSync("WebBackForwardList_BackForwardAllItems", [{ type: "FrameID", value: frameID }]);
+}
+
+window.onmessage = event => {
+    if (!window.IPC) {
+        event.source.postMessage({ error: "no IPC testing API in the subframe" }, "*");
+        return;
+    }
+
+    // The parent cannot reach this frame's IPC object across origins, so it sends the main frame's
+    // FrameIdentifier as a decimal string for reconstruction here.
+    const mainFrameID = [BigInt(event.data.mainFrameID)];
+
+    try {
+        event.source.postMessage({
+            mainFrameIDViaItemAtIndex: itemAtIndex(mainFrameID),
+            mainFrameIDViaAllItems: allItems(mainFrameID),
+            ownFrameID: itemAtIndex(IPC.frameID),
+        }, "*");
+    } catch (e) {
+        event.source.postMessage({ error: String(e) }, "*");
+    }
+};
+</script>

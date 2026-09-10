@@ -29,6 +29,7 @@
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListMessages.h"
+#include "WebFrameProxy.h"
 #include "WebProcessProxy.h"
 #include <cstdint>
 #include <wtf/Function.h>
@@ -63,6 +64,12 @@ WebCore::BackForwardFrameItemIdentifier generateBackForwardFrameItemIdentifier()
 inline void setOptionalUInt32Value(std::optional<uint32_t>& optional, uint32_t value)
 {
     optional = value;
+}
+
+// WebFrameProxy::webFrame() takes a std::optional, which Swift cannot construct.
+inline WebKit::WebFrameProxy* webFrameForFrameID(WebCore::FrameIdentifier frameID)
+{
+    return WebKit::WebFrameProxy::webFrame(frameID);
 }
 
 using WebBackForwardListItemFilter = WTF::RefCountable<WTF::Function<bool (WebKit::WebBackForwardListItem&)>>;
