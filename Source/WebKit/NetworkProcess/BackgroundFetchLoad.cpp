@@ -46,11 +46,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackgroundFetchLoad);
 
-BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::SessionID sessionID, BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
+BackgroundFetchLoad::BackgroundFetchLoad(PAL::SessionID sessionID, BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const ClientOrigin& clientOrigin)
     : m_sessionID(WTF::move(sessionID))
     , m_client(client)
     , m_request(request.internalRequest)
-    , m_networkLoadChecker(NetworkLoadChecker::create(networkProcess, nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
+    , m_networkLoadChecker(NetworkLoadChecker::create(nullptr, nullptr, FetchOptions { request.options }, m_sessionID, std::nullopt, HTTPHeaderMap { request.httpHeaders }, URL { m_request.url() }, URL { }, clientOrigin.clientOrigin.securityOrigin(), clientOrigin.topOrigin.securityOrigin(), RefPtr<SecurityOrigin> { }, PreflightPolicy::Consider, String { request.referrer }, true, OptionSet<AdvancedPrivacyProtections> { }))
 {
     if (!m_request.url().protocolIsInHTTPFamily()) {
         didFinish(ResourceError { String { }, 0, m_request.url(), "URL is not HTTP(S)"_s, ResourceError::Type::Cancellation });
@@ -64,7 +64,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
     if (request.cspResponseHeaders)
         m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { *request.cspResponseHeaders });
 
-    m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
+    m_networkLoadChecker->check(ResourceRequest { m_request }, nullptr, [weakThis = WeakPtr { *this }] (auto&& result) {
         RefPtr protectedThis = weakThis;
         if (!protectedThis)
             return;
@@ -74,7 +74,7 @@ BackgroundFetchLoad::BackgroundFetchLoad(NetworkProcess& networkProcess, PAL::Se
             // We should never send a synthetic redirect for BackgroundFetchLoads.
             ASSERT_NOT_REACHED();
         }, [&] (ResourceRequest& request) {
-            protectedThis->loadRequest(networkProcess, WTF::move(request));
+            protectedThis->loadRequest(WTF::move(request));
         });
     });
 }
@@ -101,10 +101,10 @@ void BackgroundFetchLoad::didFinish(const ResourceError& error, const ResourceRe
     protect(m_client)->didFinish(error);
 }
 
-void BackgroundFetchLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& request)
+void BackgroundFetchLoad::loadRequest(ResourceRequest&& request)
 {
     BGLOAD_RELEASE_LOG("startNetworkLoad");
-    CheckedPtr networkSession = networkProcess.networkSession(m_sessionID);
+    CheckedPtr networkSession = NetworkProcess::singleton().networkSession(m_sessionID);
     ASSERT(networkSession);
     if (!networkSession)
         return;
@@ -147,7 +147,7 @@ void BackgroundFetchLoad::didReceiveChallenge(AuthenticationChallenge&& challeng
 {
     BGLOAD_RELEASE_LOG("didReceiveChallenge");
     if (challenge.protectionSpace().authenticationScheme() == ProtectionSpace::AuthenticationScheme::ServerTrustEvaluationRequested) {
-        protect(protect(m_networkLoadChecker->networkProcess())->authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+        protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(m_sessionID, { }, nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
         return;
     }
     WeakPtr weakThis { *this };

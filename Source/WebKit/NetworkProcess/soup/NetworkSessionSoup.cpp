@@ -42,8 +42,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkSessionSoup);
 
-NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    : NetworkSession(networkProcess, parameters)
+NetworkSessionSoup::NetworkSessionSoup(const NetworkSessionCreationParameters& parameters)
+    : NetworkSession(parameters)
     , m_networkSession(makeUnique<SoupNetworkSession>(m_sessionID))
     , m_persistentCredentialStorageEnabled(parameters.persistentCredentialStorageEnabled)
 {

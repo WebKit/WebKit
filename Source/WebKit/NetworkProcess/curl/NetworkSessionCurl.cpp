@@ -39,8 +39,8 @@ namespace WebKit {
 
 using namespace WebCore;
 
-NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
-    : NetworkSession(networkProcess, parameters)
+NetworkSessionCurl::NetworkSessionCurl(const NetworkSessionCreationParameters& parameters)
+    : NetworkSession(parameters)
 {
     if (auto* storageSession = networkStorageSession()) {
         if (!parameters.cookiePersistentStorageFile.isEmpty())

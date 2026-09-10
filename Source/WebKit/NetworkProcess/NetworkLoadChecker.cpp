@@ -58,12 +58,16 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoadChecker);
 
-NetworkLoadChecker::NetworkLoadChecker(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
+NetworkProcess& NetworkLoadChecker::networkProcess()
+{
+    return NetworkProcess::singleton();
+}
+
+NetworkLoadChecker::NetworkLoadChecker(NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry, FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, HTTPHeaderMap&& originalRequestHeaders, URL&& url, DocumentURL&& documentURL, RefPtr<SecurityOrigin>&& sourceOrigin, RefPtr<SecurityOrigin>&& topOrigin, RefPtr<SecurityOrigin>&& parentOrigin, PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType)
     : m_options(WTF::move(options))
     , m_allowPrivacyProxy(allowPrivacyProxy)
     , m_advancedPrivacyProtections(advancedPrivacyProtections)
     , m_sessionID(sessionID)
-    , m_networkProcess(networkProcess)
     , m_webPageProxyID(webPageProxyID)
     , m_originalRequestHeaders(WTF::move(originalRequestHeaders))
     , m_url(WTF::move(url))
@@ -391,7 +395,7 @@ bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& req
     if (!networkResourceLoader->parameters().mayBlockNetworkRequest)
         return false;
 
-    CheckedPtr networkSession = m_networkProcess->networkSession(m_sessionID);
+    CheckedPtr networkSession = NetworkProcess::singleton().networkSession(m_sessionID);
     if (!networkSession || !networkSession->isTrackingPreventionEnabled())
         return false;
 
@@ -572,7 +576,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
         request.hasHTTPHeaderField(HTTPHeaderName::SecFetchSite)
     };
     RefPtr networkResourceLoader = m_networkResourceLoader.get();
-    m_corsPreflightChecker = NetworkCORSPreflightChecker::create(m_networkProcess.get(), networkResourceLoader.get(), WTF::move(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [weakThis = WeakPtr { *this }, request = WTF::move(request), handler = WTF::move(handler), isRedirected = isRedirected()](auto&& error) mutable {
+    m_corsPreflightChecker = NetworkCORSPreflightChecker::create(networkResourceLoader.get(), WTF::move(parameters), m_shouldCaptureExtraNetworkLoadMetrics, [weakThis = WeakPtr { *this }, request = WTF::move(request), handler = WTF::move(handler), isRedirected = isRedirected()](auto&& error) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             handler(WTF::move(request));
@@ -630,7 +634,7 @@ void NetworkLoadChecker::processContentRuleListsForLoad(ResourceRequest&& reques
         return;
     }
 
-    protect(m_networkProcess->networkContentRuleListManager())->contentExtensionsBackend(*m_userContentControllerIdentifier, [weakThis = WeakPtr { *this }, request = WTF::move(request), callback = WTF::move(callback)](auto& backend) mutable {
+    protect(NetworkProcess::singleton().networkContentRuleListManager())->contentExtensionsBackend(*m_userContentControllerIdentifier, [weakThis = WeakPtr { *this }, request = WTF::move(request), callback = WTF::move(callback)](auto& backend) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             callback(makeUnexpected(ResourceError { ResourceError::Type::Cancellation }));

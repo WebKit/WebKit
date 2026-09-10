@@ -48,13 +48,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
-Ref<NetworkNotificationManager> NetworkNotificationManager::create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration, NetworkProcess& networkProcess)
+Ref<NetworkNotificationManager> NetworkNotificationManager::create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
-    return adoptRef(*new NetworkNotificationManager(webPushMachServiceName, WTF::move(configuration), networkProcess));
+    return adoptRef(*new NetworkNotificationManager(webPushMachServiceName, WTF::move(configuration)));
 }
 
-NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration, NetworkProcess& networkProcess)
-    : m_networkProcess(networkProcess)
+NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())
         m_connection = WebPushD::Connection::create(webPushMachServiceName.utf8(), WTF::move(configuration));
@@ -278,7 +277,7 @@ void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginD
 
 std::optional<SharedPreferencesForWebProcess> NetworkNotificationManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
 {
-    auto* webProcessConnection = m_networkProcess->webProcessConnection(connection);
+    auto* webProcessConnection = NetworkProcess::singleton().webProcessConnection(connection);
     if (!webProcessConnection)
         return std::nullopt;
     return webProcessConnection->sharedPreferencesForWebProcess();
