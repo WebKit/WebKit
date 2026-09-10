@@ -44,13 +44,13 @@ namespace LayoutIntegration {
 
 InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
     : m_paintInfo(paintInfo)
-    , m_paintOffset(paintOffset)
+    , m_paintOffset(LayoutPoint(roundPointToDevicePixels(paintOffset, protect(root)->document().deviceScaleFactor())))
     , m_inlineBoxWithLayer(inlineBoxWithLayer)
     , m_inlineContent(inlineContent)
     , m_root(root)
 {
     m_damageRect = m_paintInfo.rect;
-    m_damageRect.moveBy(-m_paintOffset);
+    m_damageRect.moveBy(-paintOffset);
 }
 
 void InlineContentPainter::paintEllipsis(size_t lineIndex)
