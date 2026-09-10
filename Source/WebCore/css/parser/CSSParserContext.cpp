@@ -120,6 +120,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssCalcSizeFunctionEnabled { settings.cssCalcSizeFunctionEnabled() }
     , cssURLModifiersEnabled { settings.cssURLModifiersEnabled() }
     , cssURLIntegrityModifierEnabled { settings.cssURLIntegrityModifierEnabled() }
+    , cssLinkParametersEnabled { settings.cssLinkParametersEnabled() }
     , cssAxisRelativePositionKeywordsEnabled { settings.cssAxisRelativePositionKeywordsEnabled() }
     , cssDynamicRangeLimitMixEnabled { settings.cssDynamicRangeLimitMixEnabled() }
     , cssConstrainedDynamicRangeLimitEnabled { settings.cssConstrainedDynamicRangeLimitEnabled() }
@@ -172,6 +173,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssCalcSizeFunctionEnabled,
         context.cssURLModifiersEnabled,
         context.cssURLIntegrityModifierEnabled,
+        context.cssLinkParametersEnabled,
         context.cssAxisRelativePositionKeywordsEnabled,
         context.cssDynamicRangeLimitMixEnabled,
         context.cssConstrainedDynamicRangeLimitEnabled,

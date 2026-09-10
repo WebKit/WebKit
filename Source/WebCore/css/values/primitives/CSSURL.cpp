@@ -65,6 +65,10 @@ void Serialize<URL>::operator()(StringBuilder& builder, const SerializationConte
         builder.append(' ');
         serializationForCSS(builder, context, *value.modifiers.referrerPolicy);
     }
+    if (!value.modifiers.linkParameters.isEmpty()) {
+        builder.append(' ');
+        serializationForCSS(builder, context, value.modifiers.linkParameters);
+    }
 
     builder.append(')');
 }
