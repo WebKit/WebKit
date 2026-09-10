@@ -215,6 +215,60 @@ NetworkProcess::NetworkProcess()
 
 NetworkProcess::~NetworkProcess() = default;
 
+std::pair<std::optional<uint64_t>, uint64_t> NetworkProcess::reserveDeferredFetchQuota(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier, const SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes)
+{
+    static constexpr uint64_t maximumDeferredFetchQuota = 640 * 1024;
+    static constexpr uint64_t perRequestOriginQuota = 64 * 1024;
+
+    maximumQuota = std::min(maximumQuota, maximumDeferredFetchQuota);
+    auto key = DeferredFetchQuotaKey { pageIdentifier, controlFrameIdentifier };
+    auto& state = m_deferredFetchQuotas.ensure(key, [] {
+        return DeferredFetchQuotaState { };
+    }).iterator->value;
+    auto originBytesUsed = state.bytesUsedByOrigin.get(reportingOrigin);
+    auto availableForOrigin = originBytesUsed >= perRequestOriginQuota ? 0 : perRequestOriginQuota - originBytesUsed;
+    auto availableInReservation = state.totalBytesUsed >= maximumQuota ? 0 : maximumQuota - state.totalBytesUsed;
+    auto availableBytes = std::min(availableForOrigin, availableInReservation);
+    if (requestedBytes > availableBytes) {
+        if (!state.totalBytesUsed)
+            m_deferredFetchQuotas.remove(key);
+        return { std::nullopt, availableBytes };
+    }
+
+    auto identifier = m_nextDeferredFetchQuotaIdentifier++;
+    state.bytesUsedByOrigin.add(reportingOrigin, 0).iterator->value += requestedBytes;
+    state.totalBytesUsed += requestedBytes;
+    m_deferredFetchQuotaReservations.add(identifier, DeferredFetchQuotaReservation { key, reportingOrigin, requestedBytes });
+    return { identifier, availableBytes };
+}
+
+void NetworkProcess::releaseDeferredFetchQuota(uint64_t identifier)
+{
+    auto reservationIterator = m_deferredFetchQuotaReservations.find(identifier);
+    if (reservationIterator == m_deferredFetchQuotaReservations.end())
+        return;
+    auto reservation = WTF::move(reservationIterator->value);
+    m_deferredFetchQuotaReservations.remove(reservationIterator);
+
+    RELEASE_ASSERT(reservation.key);
+    auto stateIterator = m_deferredFetchQuotas.find(*reservation.key);
+    if (stateIterator == m_deferredFetchQuotas.end())
+        return;
+
+    auto& state = stateIterator->value;
+    auto originIterator = state.bytesUsedByOrigin.find(reservation.reportingOrigin);
+    if (originIterator != state.bytesUsedByOrigin.end()) {
+        RELEASE_ASSERT(originIterator->value >= reservation.bytes);
+        originIterator->value -= reservation.bytes;
+        if (!originIterator->value)
+            state.bytesUsedByOrigin.remove(originIterator);
+    }
+    RELEASE_ASSERT(state.totalBytesUsed >= reservation.bytes);
+    state.totalBytesUsed -= reservation.bytes;
+    if (!state.totalBytesUsed)
+        m_deferredFetchQuotas.remove(stateIterator);
+}
+
 AuthenticationManager& NetworkProcess::authenticationManager()
 {
     return *supplement<AuthenticationManager>();

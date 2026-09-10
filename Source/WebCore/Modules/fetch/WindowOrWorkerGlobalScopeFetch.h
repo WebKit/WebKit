@@ -25,18 +25,24 @@
 
 #pragma once
 
+#include "DeferredRequestInit.h"
 #include "FetchRequest.h"
 
 namespace WebCore {
 
 class DOMWindow;
 class DeferredPromise;
+class FetchLaterResult;
+class ScriptExecutionContext;
 class WorkerGlobalScope;
+template<typename> class ExceptionOr;
 
 class WindowOrWorkerGlobalScopeFetch {
 public:
     static void fetch(DOMWindow&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
     static void fetch(WorkerGlobalScope&, FetchRequest::Info&&, FetchRequest::Init&&, Ref<DeferredPromise>&&);
+
+    static ExceptionOr<Ref<FetchLaterResult>> fetchLater(DOMWindow&, FetchRequest::Info&&, DeferredRequestInit&&);
 };
 
 } // namespace WebCore

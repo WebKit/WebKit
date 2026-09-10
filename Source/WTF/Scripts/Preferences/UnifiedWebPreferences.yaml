@@ -2271,6 +2271,14 @@ FasterClicksEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: true
 
+FetchLaterAPIEnabled:
+  type: bool
+  status: preview
+  category: networking
+  humanReadableName: "fetchLater() API"
+  humanReadableDescription: "Enable the fetchLater() deferred fetch API"
+  defaultValue: false
+
 FetchUploadStreamsEnabled:
   type: bool
   status: stable

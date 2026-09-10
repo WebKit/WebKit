@@ -26,6 +26,7 @@
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Timer.h>
 #include <array>
 #include <wtf/CheckedPtr.h>
@@ -63,6 +64,9 @@ public:
     void resumePendingRequests() final;
 
     void startPingLoad(WebCore::LocalFrame&, WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&, const WebCore::FetchOptions&, WebCore::ContentSecurityPolicyImposition, PingLoadCompletionHandler&&) final;
+
+    std::pair<std::optional<uint64_t>, uint64_t> reserveDeferredFetchQuota(WebCore::LocalFrame&, WebCore::FrameIdentifier controlFrameIdentifier, const WebCore::SecurityOriginData& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes) final;
+    void releaseDeferredFetchQuota(uint64_t) final;
 
     void preconnectTo(WebCore::FrameLoader&, WebCore::ResourceRequest&&, WebCore::StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&) final;
 
@@ -149,4 +153,18 @@ private:
 
     unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
+
+    using DeferredFetchQuotaKey = std::pair<WebCore::PageIdentifier, WebCore::FrameIdentifier>;
+    struct DeferredFetchQuotaState {
+        uint64_t totalBytesUsed { 0 };
+        HashMap<WebCore::SecurityOriginData, uint64_t> bytesUsedByOrigin;
+    };
+    struct DeferredFetchQuotaReservation {
+        std::optional<DeferredFetchQuotaKey> key;
+        WebCore::SecurityOriginData reportingOrigin;
+        uint64_t bytes { 0 };
+    };
+    HashMap<DeferredFetchQuotaKey, DeferredFetchQuotaState> m_deferredFetchQuotas;
+    HashMap<uint64_t, DeferredFetchQuotaReservation> m_deferredFetchQuotaReservations;
+    uint64_t m_nextDeferredFetchQuotaIdentifier { 1 };
 };

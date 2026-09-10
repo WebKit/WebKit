@@ -204,6 +204,9 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     // This may call hasUploadStateChanged().
     m_networkResourceLoaders.clear();
 
+    for (auto identifier : m_deferredFetchQuotaReservations)
+        m_networkProcess->releaseDeferredFetchQuota(identifier);
+
     closeAllEntangledMessagePorts();
 
     auto completionHandlers = std::exchange(m_messageBatchDeliveryCompletionHandlers, { });
@@ -676,6 +679,21 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
 
     // PingLoad manages its own lifetime, derefing itself when its purpose has been fulfilled.
     PingLoad::create(*this, WTF::move(loadParameters), WTF::move(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::reserveDeferredFetchQuota(WebPageProxyIdentifier pageIdentifier, FrameIdentifier controlFrameIdentifier, SecurityOriginData&& reportingOrigin, uint64_t maximumQuota, uint64_t requestedBytes, CompletionHandler<void(std::optional<uint64_t>, uint64_t)>&& completionHandler)
+{
+    auto [reservationIdentifier, availableBytes] = m_networkProcess->reserveDeferredFetchQuota(pageIdentifier, controlFrameIdentifier, reportingOrigin, maximumQuota, requestedBytes);
+    if (reservationIdentifier)
+        m_deferredFetchQuotaReservations.add(*reservationIdentifier);
+    completionHandler(reservationIdentifier, availableBytes);
+}
+
+void NetworkConnectionToWebProcess::releaseDeferredFetchQuota(uint64_t identifier)
+{
+    if (!m_deferredFetchQuotaReservations.remove(identifier))
+        return;
+    m_networkProcess->releaseDeferredFetchQuota(identifier);
 }
 
 void NetworkConnectionToWebProcess::setOnLineState(bool isOnLine)

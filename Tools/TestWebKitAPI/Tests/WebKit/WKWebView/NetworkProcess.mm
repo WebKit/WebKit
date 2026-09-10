@@ -42,6 +42,7 @@
 #import <WebKit/_WKDataTask.h>
 #import <WebKit/_WKDataTaskDelegate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
@@ -190,6 +191,80 @@ TEST(NetworkProcess, TerminateWhenNoDefaultWebsiteDataStore)
         TestWebKitAPI::Util::spinRunLoop();
     EXPECT_TRUE(errno == ESRCH);
     EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+}
+
+TEST(NetworkProcess, FetchLaterSurvivesLastEphemeralWebViewClosing)
+{
+    using namespace TestWebKitAPI;
+
+    bool receivedFetchLaterRequest { false };
+    bool receivedRedirectedRequest { false };
+    std::optional<Connection> fetchLaterConnection;
+    Function<void(Connection)> receiveRequest;
+    receiveRequest = [&] (Connection connection) {
+        connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
+            auto path = HTTPServer::parsePath(request);
+            if (path == "/"_s) {
+                connection.send(HTTPResponse("main resource"_s).serialize(), [&, connection] {
+                    receiveRequest(connection);
+                });
+                return;
+            }
+            if (path == "/fetch-later"_s) {
+                EXPECT_TRUE(contains(request.span(), "POST /fetch-later HTTP/1.1\r\n"_span));
+                EXPECT_TRUE(contains(request.span(), "body"_span));
+                fetchLaterConnection = connection;
+                receivedFetchLaterRequest = true;
+                return;
+            }
+            if (path == "/redirected"_s) {
+                receivedRedirectedRequest = true;
+                connection.send(HTTPResponse("done"_s).serialize());
+                return;
+            }
+            ASSERT_NOT_REACHED();
+            return;
+        });
+    };
+    HTTPServer server([&] (Connection connection) {
+        receiveRequest(connection);
+    });
+
+    @autoreleasepool {
+        RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+        processPoolConfiguration.get().usesWebProcessCache = NO;
+        processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+        RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        configuration.get().processPool = processPool.get();
+        configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        bool foundFetchLaterFeature { false };
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"FetchLaterAPIEnabled"]) {
+                [[configuration preferences] _setEnabled:YES forFeature:feature];
+                foundFetchLaterFeature = true;
+                break;
+            }
+        }
+        ASSERT_TRUE(foundFetchLaterFeature);
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        [webView synchronouslyLoadRequest:server.request()];
+        EXPECT_WK_STREQ(@"false", [webView objectByEvaluatingJavaScript:@"fetchLater('/fetch-later', { method: 'POST', body: 'body' }).activated.toString()"]);
+        [webView _close];
+    }
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return receivedFetchLaterRequest;
+    }));
+    ASSERT_TRUE(fetchLaterConnection);
+
+    auto connection = *fetchLaterConnection;
+    connection.send("HTTP/1.1 302 Found\r\nLocation: /redirected\r\nContent-Length: 0\r\n\r\n"_s, [&, connection] {
+        receiveRequest(connection);
+    });
+    EXPECT_TRUE(Util::waitFor([&] {
+        return receivedRedirectedRequest;
+    }));
 }
 
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
