@@ -2655,19 +2655,6 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContai
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
-const RenderElement* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
-{
-    ASSERT(ancestorToStopAt != this);
-
-    bool ancestorSkipped;
-    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
-    if (!container)
-        return nullptr;
-
-    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
-    return ancestorSkipped ? ancestorToStopAt : container;
-}
-
 void RenderBox::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
     bool isFixedPos = isFixedPositioned();
@@ -2726,20 +2713,12 @@ auto RenderBox::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) 
 auto RenderBox::computeVisibleRectsUsingPaintOffset(const RepaintRects& rects) const -> RepaintRects
 {
     auto adjustedRects = rects;
-    auto* layoutState = view().frameView().layoutContext().layoutState();
 
     if (hasLayer() && layer()->transform())
         adjustedRects.transform(*layer()->transform(), protect(document())->deviceScaleFactor());
 
-    // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
-    if (style().hasInFlowPosition() && layer())
-        adjustedRects.move(layer()->offsetForInFlowPosition());
-
     adjustedRects.moveBy(location());
-    adjustedRects.move(layoutState->paintOffset());
-    if (layoutState->isClipped())
-        adjustedRects.clippedOverflowRect.intersect(layoutState->clipRect());
-    return adjustedRects;
+    return RenderBoxModelObject::computeVisibleRectsUsingPaintOffset(adjustedRects);
 }
 
 auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>

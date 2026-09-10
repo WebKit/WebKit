@@ -59,6 +59,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
@@ -1024,6 +1025,34 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
     };
 
     return boundingBoxOfFragments();
+}
+
+const RenderElement* RenderBoxModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+{
+    ASSERT(ancestorToStopAt != this);
+
+    bool ancestorSkipped;
+    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
+    if (!container)
+        return nullptr;
+
+    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
+    return ancestorSkipped ? ancestorToStopAt : container;
+}
+
+auto RenderBoxModelObject::computeVisibleRectsUsingPaintOffset(const RepaintRects& rects) const -> RepaintRects
+{
+    auto adjustedRects = rects;
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+
+    // We can't trust the bits on RenderObject, because this might be called while re-resolving style.
+    if (style().hasInFlowPosition() && layer())
+        adjustedRects.move(layer()->offsetForInFlowPosition());
+
+    adjustedRects.move(layoutState->paintOffset());
+    if (layoutState->isClipped())
+        adjustedRects.clippedOverflowRect.intersect(layoutState->clipRect());
+    return adjustedRects;
 }
 
 } // namespace WebCore

@@ -408,18 +408,6 @@ LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-auto RenderInline::computeVisibleRectsUsingPaintOffset(const RepaintRects& rects) const -> RepaintRects
-{
-    auto adjustedRects = rects;
-    auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (style().hasInFlowPosition() && layer())
-        adjustedRects.move(layer()->offsetForInFlowPosition());
-    adjustedRects.move(layoutState->paintOffset());
-    if (layoutState->isClipped())
-        adjustedRects.clippedOverflowRect.intersect(layoutState->clipRect());
-    return adjustedRects;
-}
-
 auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
 {
     // Repaint offset cache is only valid for root-relative repainting
@@ -519,20 +507,6 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorCon
         return;
 
     container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
-}
-
-const RenderElement* RenderInline::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
-{
-    ASSERT(ancestorToStopAt != this);
-
-    bool ancestorSkipped;
-    RenderElement* container = this->container(ancestorToStopAt, ancestorSkipped);
-    if (!container)
-        return nullptr;
-
-    pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
-
-    return ancestorSkipped ? ancestorToStopAt : container;
 }
 
 void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
