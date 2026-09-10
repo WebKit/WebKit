@@ -33,9 +33,79 @@
 
 G_BEGIN_DECLS
 
+#define WEBKIT_TYPE_WEB_EXTENSION_CONTEXT_PERMISSION                        (webkit_web_extension_context_permission_get_type())
+
+typedef struct _WebKitWebExtensionContextPermission WebKitWebExtensionContextPermission;
+
+WEBKIT_API GType
+webkit_web_extension_context_permission_get_type                            (void);
+
+WEBKIT_API WebKitWebExtensionContextPermission*
+webkit_web_extension_context_permission_new                                 (const char *permission,
+                                                                             GDateTime  *expiration);
+
+WEBKIT_API WebKitWebExtensionContextPermission *
+webkit_web_extension_context_permission_ref                                 (WebKitWebExtensionContextPermission *permission);
+
+WEBKIT_API void
+webkit_web_extension_context_permission_unref                               (WebKitWebExtensionContextPermission *permission);
+
+WEBKIT_API const char *
+webkit_web_extension_context_permission_get_permission_name                 (WebKitWebExtensionContextPermission *permission);
+
+WEBKIT_API GDateTime *
+webkit_web_extension_context_permission_get_expiration_date                 (WebKitWebExtensionContextPermission *permission);
+
+#define WEBKIT_TYPE_WEB_EXTENSION_CONTEXT_MATCH_PATTERN                     (webkit_web_extension_context_match_pattern_get_type())
+
+typedef struct _WebKitWebExtensionContextMatchPattern WebKitWebExtensionContextMatchPattern;
+
+WEBKIT_API GType
+webkit_web_extension_context_match_pattern_get_type                         (void);
+
+WEBKIT_API WebKitWebExtensionContextMatchPattern*
+webkit_web_extension_context_match_pattern_new                              (WebKitWebExtensionMatchPattern *pattern,
+                                                                             GDateTime                      *expiration);
+
+WEBKIT_API WebKitWebExtensionContextMatchPattern *
+webkit_web_extension_context_match_pattern_ref                              (WebKitWebExtensionContextMatchPattern *pattern);
+
+WEBKIT_API void
+webkit_web_extension_context_match_pattern_unref                            (WebKitWebExtensionContextMatchPattern *pattern);
+
+WEBKIT_API WebKitWebExtensionMatchPattern *
+webkit_web_extension_context_match_pattern_get_match_pattern                (WebKitWebExtensionContextMatchPattern *pattern);
+
+WEBKIT_API GDateTime *
+webkit_web_extension_context_match_pattern_get_expiration_date              (WebKitWebExtensionContextMatchPattern *pattern);
+
 #define WEBKIT_TYPE_WEB_EXTENSION_CONTEXT                                   (webkit_web_extension_context_get_type())
 
 WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtensionContext, webkit_web_extension_context, WEBKIT, WEB_EXTENSION_CONTEXT, GObject)
+
+/**
+ * WebKitWebExtensionContextPermissionStatus:
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY: The permission was explicitly denied.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_IMPLICITLY: The permission was implicitly denied because of another explicitly denied permission.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_IMPLICITLY: The permission was implicitly requested because of another explicitly requested permission.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN: An unknown permission status.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY: The permission was explicitly requested.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_IMPLICITLY: The permission was implicitly granted because of another explicitly granted permission.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY: The permission was explicitly granted permission.
+ *
+ * Enum values representing the permission status in a #WebKitWebExtensionContext.
+ *
+ * Since: 2.56
+ */
+typedef enum {
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY = -3,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_IMPLICITLY = -2,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_IMPLICITLY = -1,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN = 0,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY = 1,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_IMPLICITLY = 2,
+    WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY = 3,
+} WebKitWebExtensionContextPermissionStatus;
 
 WEBKIT_API WebKitWebExtensionContext *
 webkit_web_extension_context_new_for_extension                              (WebKitWebExtension  *extension,
@@ -63,6 +133,77 @@ webkit_web_extension_context_has_injected_content_for_uri                   (Web
 
 WEBKIT_API const gchar *
 webkit_web_extension_context_get_override_new_tab_page_uri                  (WebKitWebExtensionContext *context);
+
+WEBKIT_API gboolean
+webkit_web_extension_context_get_has_access_to_all_uris                     (WebKitWebExtensionContext *context);
+
+WEBKIT_API gboolean
+webkit_web_extension_context_get_has_access_to_all_hosts                    (WebKitWebExtensionContext *context);
+
+WEBKIT_API WebKitWebExtensionContextPermission **
+webkit_web_extension_context_get_granted_permissions                        (WebKitWebExtensionContext *context);
+
+WEBKIT_API void
+webkit_web_extension_context_set_granted_permissions                        (WebKitWebExtensionContext            *context,
+                                                                             WebKitWebExtensionContextPermission **granted_permissions);
+
+WEBKIT_API WebKitWebExtensionContextMatchPattern **
+webkit_web_extension_context_get_granted_permission_match_patterns          (WebKitWebExtensionContext *context);
+
+WEBKIT_API void
+webkit_web_extension_context_set_granted_permission_match_patterns          (WebKitWebExtensionContext              *context,
+                                                                             WebKitWebExtensionContextMatchPattern **granted_permission_match_patterns);
+
+WEBKIT_API WebKitWebExtensionContextPermission **
+webkit_web_extension_context_get_denied_permissions                         (WebKitWebExtensionContext *context);
+
+WEBKIT_API void
+webkit_web_extension_context_set_denied_permissions                         (WebKitWebExtensionContext            *context,
+                                                                             WebKitWebExtensionContextPermission **denied_permissions);
+
+WEBKIT_API WebKitWebExtensionContextMatchPattern **
+webkit_web_extension_context_get_denied_permission_match_patterns           (WebKitWebExtensionContext *context);
+
+WEBKIT_API void
+webkit_web_extension_context_set_denied_permission_match_patterns           (WebKitWebExtensionContext              *context,
+                                                                             WebKitWebExtensionContextMatchPattern **denied_permission_match_patterns);
+
+WEBKIT_API gboolean
+webkit_web_extension_context_has_permission                                 (WebKitWebExtensionContext *context,
+                                                                             const gchar               *permission);
+
+WEBKIT_API WebKitWebExtensionContextPermissionStatus
+webkit_web_extension_context_permission_status_for_permission               (WebKitWebExtensionContext *context,
+                                                                             const gchar               *permission);
+
+WEBKIT_API void
+webkit_web_extension_context_set_permission_status_for_permission           (WebKitWebExtensionContext                 *context,
+                                                                             const gchar                               *permission,
+                                                                             WebKitWebExtensionContextPermissionStatus  status,
+                                                                             GDateTime                                 *expiration_date);
+
+WEBKIT_API WebKitWebExtensionContextPermissionStatus
+webkit_web_extension_context_permission_status_for_uri                      (WebKitWebExtensionContext *context,
+                                                                             const gchar               *uri);
+WEBKIT_API void
+webkit_web_extension_context_set_permission_status_for_uri                  (WebKitWebExtensionContext                 *context,
+                                                                             const gchar                               *uri,
+                                                                             WebKitWebExtensionContextPermissionStatus  status,
+                                                                             GDateTime                                 *expiration_date);
+
+WEBKIT_API WebKitWebExtensionContextPermissionStatus
+webkit_web_extension_context_permission_status_for_match_pattern            (WebKitWebExtensionContext      *context,
+                                                                             WebKitWebExtensionMatchPattern *pattern);
+
+WEBKIT_API void
+webkit_web_extension_context_set_permission_status_for_match_pattern        (WebKitWebExtensionContext                 *context,
+                                                                             WebKitWebExtensionMatchPattern            *pattern,
+                                                                             WebKitWebExtensionContextPermissionStatus  status,
+                                                                             GDateTime                                 *expiration_date);
+
+WEBKIT_API gboolean
+webkit_web_extension_context_has_access_to_uri                              (WebKitWebExtensionContext *context,
+                                                                             const gchar               *uri);
 
 WEBKIT_API void
 webkit_web_extension_context_load_background_content                        (WebKitWebExtensionContext *context,

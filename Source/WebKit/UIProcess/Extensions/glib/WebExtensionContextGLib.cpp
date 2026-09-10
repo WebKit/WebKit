@@ -25,6 +25,7 @@
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitWebExtensionContextPrivate.h"
+#include "WebKitWebExtensionMatchPatternPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <glib.h>
@@ -42,6 +43,15 @@ static constexpr auto lastSeenDisplayNameStateKey = "LastSeenDisplayName"_s;
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr auto currentBackgroundContentListenerStateVersion = 4;
+
+static constexpr auto WebExtensionContextGrantedPermissionsWereRemovedSignal = "granted-permissions-were-removed"_s;
+static constexpr auto WebExtensionContextGrantedPermissionMatchPatternsWereRemovedSignal = "granted-permission-match-patterns-were-removed"_s;
+static constexpr auto WebExtensionContextDeniedPermissionsWereRemovedSignal = "denied-permissions-were-removed"_s;
+static constexpr auto WebExtensionContextDeniedPermissionMatchPatternsWereRemovedSignal = "denied-permission-match-patterns-were-removed"_s;
+static constexpr auto WebExtensionContextPermissionsWereDeniedSignal = "permissions-were-denied"_s;
+static constexpr auto WebExtensionContextPermissionsWereGrantedSignal = "permissions-were-granted"_s;
+static constexpr auto WebExtensionContextPermissionMatchPatternsWereDeniedSignal = "permission-match-patterns-were-denied"_s;
+static constexpr auto WebExtensionContextPermissionMatchPatternsWereGrantedSignal = "permission-match-patterns-were-granted"_s;
 
 static gboolean onDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision *decision, WebKitPolicyDecisionType type, WebKit::WebExtensionContext* context)
 {
@@ -194,6 +204,93 @@ void WebExtensionContext::writeStateToStorage() const
         RELEASE_LOG_ERROR(Extensions, "Unable to save extension state: %" PUBLIC_LOG_STRING, error->message);
 }
 
+static String permissionNotification(WebExtensionContext::PermissionNotification notification)
+{
+    switch (notification) {
+    case WebExtensionContext::PermissionNotification::PermissionsWereGranted:
+        return WebExtensionContextPermissionsWereGrantedSignal;
+    case WebExtensionContext::PermissionNotification::PermissionsWereDenied:
+        return WebExtensionContextPermissionsWereDeniedSignal;
+    case WebExtensionContext::PermissionNotification::GrantedPermissionsWereRemoved:
+        return WebExtensionContextGrantedPermissionsWereRemovedSignal;
+    case WebExtensionContext::PermissionNotification::DeniedPermissionsWereRemoved:
+        return WebExtensionContextDeniedPermissionsWereRemovedSignal;
+    case WebExtensionContext::PermissionNotification::PermissionMatchPatternsWereGranted:
+        return WebExtensionContextPermissionMatchPatternsWereGrantedSignal;
+    case WebExtensionContext::PermissionNotification::PermissionMatchPatternsWereDenied:
+        return WebExtensionContextPermissionMatchPatternsWereDeniedSignal;
+    case WebExtensionContext::PermissionNotification::GrantedPermissionMatchPatternsWereRemoved:
+        return WebExtensionContextGrantedPermissionMatchPatternsWereRemovedSignal;
+    case WebExtensionContext::PermissionNotification::DeniedPermissionMatchPatternsWereRemoved:
+        return WebExtensionContextDeniedPermissionMatchPatternsWereRemovedSignal;
+    case WebExtensionContext::PermissionNotification::None:
+        return nullString();
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullString();
+}
+
+void WebExtensionContext::permissionsDidChange(PermissionNotification notification, const PermissionsSet& permissions)
+{
+    if (permissions.isEmpty())
+        return;
+
+    if (isLoaded()) {
+        RefPtr extensionController = this->extensionController();
+        if (!extensionController)
+            return;
+
+        extensionController->sendToAllProcesses(Messages::WebExtensionContextProxy::UpdateGrantedPermissions(m_grantedPermissions), identifier());
+
+        if (permissions.contains(WebExtensionPermission::clipboardWrite())) {
+            bool granted = hasPermission(WebExtensionPermission::clipboardWrite());
+
+            enumerateExtensionPages([&](auto& page, bool&) {
+                page.preferences().setJavaScriptCanAccessClipboard(granted);
+            });
+        }
+
+        if (notification == PermissionNotification::PermissionsWereGranted)
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, permissions, { });
+        else if (notification == PermissionNotification::GrantedPermissionsWereRemoved)
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, permissions, { });
+    }
+
+    GRefPtr<GPtrArray> changedPermissions = adoptGRef(g_ptr_array_sized_new(permissions.size()));
+    for (auto& permission : permissions)
+        g_ptr_array_add(changedPermissions.get(), g_strdup(permission.utf8().data()));
+    g_ptr_array_add(changedPermissions.get(), nullptr);
+    g_signal_emit_by_name(m_delegate.get(), permissionNotification(notification).utf8().data(), reinterpret_cast<gchar**>(changedPermissions.leakRef()->pdata));
+}
+
+void WebExtensionContext::permissionsDidChange(PermissionNotification notification, const MatchPatternSet& matchPatterns)
+{
+    if (matchPatterns.isEmpty())
+        return;
+
+    clearCachedPermissionStates();
+
+    if (isLoaded()) {
+        updateCORSDisablingPatternsOnAllExtensionPages();
+
+        if (notification == PermissionNotification::PermissionMatchPatternsWereGranted) {
+            addInjectedContent(injectedContents(), matchPatterns);
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
+        } else if (notification == PermissionNotification::GrantedPermissionMatchPatternsWereRemoved) {
+            removeInjectedContent(matchPatterns);
+            firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnRemoved, { }, matchPatterns);
+        } else
+            updateInjectedContent();
+    }
+
+    GRefPtr<GPtrArray> changedMatchPatterns = adoptGRef(g_ptr_array_new_full(matchPatterns.size(), g_free));
+    for (auto matchPattern : matchPatterns)
+        g_ptr_array_add(changedMatchPatterns.get(), webkit_web_extension_match_pattern_ref(webkitWebExtensionMatchPatternCreate(matchPattern)));
+    g_ptr_array_add(changedMatchPatterns.get(), nullptr);
+    g_signal_emit_by_name(m_delegate.get(), permissionNotification(notification).utf8().data(), reinterpret_cast<WebKitWebExtensionMatchPattern**>(changedMatchPatterns.leakRef()->pdata));
+}
+
 void WebExtensionContext::enumerateExtensionPages(NOESCAPE Function<void(WebPageProxy&, bool&)>&& action)
 {
     if (!isLoaded())
@@ -237,6 +334,13 @@ WebKitWebView* WebExtensionContext::relatedWebView()
         return nullptr;
 
     return extensionWebView.get();
+}
+
+void WebExtensionContext::updateCORSDisablingPatternsOnAllExtensionPages()
+{
+    enumerateExtensionPages([&](auto& page, bool& stop) {
+        page.setCORSDisablingPatterns(corsDisablingPatterns());
+    });
 }
 
 GRefPtr<WebKitSettings> WebExtensionContext::webViewConfiguration(WebViewPurpose purpose)

@@ -25,6 +25,7 @@
 #include "WebExtensionContext.h"
 #include "WebKitError.h"
 #include "WebKitPrivate.h"
+#include "WebKitWebExtensionMatchPatternPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include <WebCore/platform/LegacySchemeRegistry.h>
 #include <glib/gi18n.h>
@@ -35,6 +36,338 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 constexpr auto WEBKIT_CONTEXT_ERROR_DOMAIN = "WKWebExtensionContextErrorDomain"_s;
 #endif
+
+/**
+ * WebKitWebExtensionContextPermission:
+ *
+ * Represents a Permission with its expiration dates. A permission that doesn't expire will have a distant future date.
+ *
+ * Since: 2.56
+ */
+struct _WebKitWebExtensionContextPermission {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    _WebKitWebExtensionContextPermission(const String& permission, const WallTime& expiration)
+        : permission(permission.utf8())
+        , expiration(adoptGRef(g_date_time_new_from_unix_utc(expiration.secondsSinceEpoch().secondsAs<gint64>())))
+    {
+    }
+
+    CString permission;
+    GRefPtr<GDateTime> expiration;
+    int referenceCount { 1 };
+#else
+    _WebKitWebExtensionContextPermission()
+    {
+    }
+#endif
+};
+
+G_DEFINE_BOXED_TYPE(WebKitWebExtensionContextPermission, webkit_web_extension_context_permission, webkit_web_extension_context_permission_ref, webkit_web_extension_context_permission_unref)
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+static WebKitWebExtensionContextPermission* webKitWebExtensionContextPermissionCreate(const String& permissionName, const WallTime& expiration)
+{
+    auto* permission = static_cast<WebKitWebExtensionContextPermission*>(fastMalloc(sizeof(WebKitWebExtensionContextPermission)));
+    new (permission) WebKitWebExtensionContextPermission(permissionName, expiration);
+    return permission;
+}
+
+/**
+ * webkit_web_extension_context_permission_new:
+ * @permission: The permission to represent
+ * @expiration: (nullable): The expiration date for this permission
+ *
+ * Create a new [struct@WebExtensionContextPermission] for the provided permission and expiration date.
+ *
+ * If no expiration date is provided, or the permission should not expire, a date in the distant future will be used.
+ *
+ * Returns: the newly created [struct@WebExtensionContextPermission]
+ *
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermission* webkit_web_extension_context_permission_new(const char* permission, GDateTime* expiration)
+{
+    g_return_val_if_fail(permission, nullptr);
+    WallTime expirationDate;
+
+    if (expiration)
+        expirationDate = WallTime::fromRawSeconds(g_date_time_to_unix(expiration));
+    else {
+        GRefPtr<GDateTime> dt = adoptGRef(g_date_time_new_utc(9999, 12, 31, 23, 59, 00));
+        expirationDate = WallTime::fromRawSeconds(g_date_time_to_unix(dt.get()));
+    }
+
+    return webKitWebExtensionContextPermissionCreate(String::fromUTF8(permission), expirationDate);
+}
+
+/**
+ * webkit_web_extension_context_permission_ref:
+ * @permission: a [struct@WebExtensionContextPermission]
+ *
+ * Atomically increments the reference count of @permission by one.
+ *
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed [struct@WebExtensionContextPermission]
+ *
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermission* webkit_web_extension_context_permission_ref(WebKitWebExtensionContextPermission* permission)
+{
+    g_return_val_if_fail(permission, nullptr);
+
+    g_atomic_int_inc(&permission->referenceCount);
+    return permission;
+}
+
+/**
+ * webkit_web_extension_context_permission_unref:
+ * @permission: a [struct@WebExtensionContextPermission]
+ *
+ * Atomically decrements the reference count of @permission by one.
+ *
+ * If the reference count drops to 0, all memory allocated by
+ * [struct@WebExtensionContextPermission] is released. This function is MT-safe and may be
+ * called from any thread.
+ *
+ * Since: 2.56
+ */
+void webkit_web_extension_context_permission_unref(WebKitWebExtensionContextPermission* permission)
+{
+    g_return_if_fail(permission);
+
+    if (g_atomic_int_dec_and_test(&permission->referenceCount)) {
+        permission->~WebKitWebExtensionContextPermission();
+        fastFree(permission);
+    }
+}
+
+/**
+ * webkit_web_extension_context_permission_get_permission_name:
+ * @permission: a [struct@WebExtensionContextPermission]
+ *
+ * Get the permission name of @permission.
+ *
+ * Returns: The permission name
+ *
+ * Since: 2.56
+ */
+const char* webkit_web_extension_context_permission_get_permission_name(WebKitWebExtensionContextPermission* permission)
+{
+    g_return_val_if_fail(permission, nullptr);
+
+    return permission->permission.data();
+}
+
+/**
+ * webkit_web_extension_context_permission_get_expiration_date:
+ * @permission: a [struct@WebExtensionContextPermission]
+ *
+ * Get the expiration date of @permission. If the permission does not expire, a distant future date will be returned instead.
+ *
+ * Returns: (transfer none): The expiration date of @permission
+ *
+ * Since: 2.56
+ */
+GDateTime* webkit_web_extension_context_permission_get_expiration_date(WebKitWebExtensionContextPermission* permission)
+{
+    g_return_val_if_fail(permission, nullptr);
+
+    return permission->expiration.get();
+}
+
+#else // ENABLE(WK_WEB_EXTENSIONS)
+
+WebKitWebExtensionContextPermission* webkit_web_extension_context_permission_new(const char* permission, GDateTime* expiration)
+{
+    return nullptr;
+}
+
+WebKitWebExtensionContextPermission* webkit_web_extension_context_permission_ref(WebKitWebExtensionContextPermission* permission)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_permission_unref(WebKitWebExtensionContextPermission* permission)
+{
+    return;
+}
+
+const char* webkit_web_extension_context_permission_get_permission_name(WebKitWebExtensionContextPermission* permission)
+{
+    return "";
+}
+
+GDateTime* webkit_web_extension_context_permission_get_expiration_date(WebKitWebExtensionContextPermission* permission)
+{
+    return nullptr;
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
+
+/**
+ * WebKitWebExtensionContextMatchPattern:
+ * 
+ * Represents a Match Pattern with its expiration dates. A match pattern that doesn't expire will have a distant future date.
+ * 
+ * Since: 2.56
+ */
+struct _WebKitWebExtensionContextMatchPattern {
+#if ENABLE(WK_WEB_EXTENSIONS)
+    _WebKitWebExtensionContextMatchPattern(Ref<WebKit::WebExtensionMatchPattern> pattern, const WallTime& expiration)
+        : pattern(webkitWebExtensionMatchPatternCreate(pattern))
+        , expiration(adoptGRef(g_date_time_new_from_unix_utc(expiration.secondsSinceEpoch().secondsAs<gint64>())))
+    {
+    }
+    WebKitWebExtensionMatchPattern* pattern;
+    GRefPtr<GDateTime> expiration;
+    int referenceCount { 1 };
+#else
+    _WebKitWebExtensionContextMatchPattern()
+    {
+    }
+#endif
+};
+
+G_DEFINE_BOXED_TYPE(WebKitWebExtensionContextMatchPattern, webkit_web_extension_context_match_pattern, webkit_web_extension_context_match_pattern_ref, webkit_web_extension_context_match_pattern_unref)
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+
+static WebKitWebExtensionContextMatchPattern* webKitWebExtensionContextMatchPatternCreate(Ref<WebKit::WebExtensionMatchPattern>& pattern, const WallTime& expiration)
+{
+    auto* matchPattern = static_cast<WebKitWebExtensionContextMatchPattern*>(fastMalloc(sizeof(WebKitWebExtensionContextMatchPattern)));
+    new (matchPattern) WebKitWebExtensionContextMatchPattern(pattern, expiration);
+    return matchPattern;
+}
+
+/**
+ * webkit_web_extension_context_match_pattern_new:
+ * @pattern: The #WebKitWebExtensionMatchPattern to represent
+ * @expiration: (nullable): The expiration date for this permission
+ *
+ * Create a new [struct@WebExtensionContextMatchPattern] for the provided match pattern and expiration date.
+ * 
+ * If no expiration date is provided, or the match pattern should not expire, a date in the distant future will be used.
+ * 
+ * Returns: the newly created [struct@WebExtensionContextMatchPattern]
+ *
+ * Since: 2.56
+ */
+WebKitWebExtensionContextMatchPattern* webkit_web_extension_context_match_pattern_new(WebKitWebExtensionMatchPattern* pattern, GDateTime* expiration)
+{
+    g_return_val_if_fail(pattern, nullptr);
+
+    auto expirationDate = expiration ? WallTime::fromRawSeconds(g_date_time_to_unix(expiration)) : WallTime::fromRawSeconds(g_date_time_to_unix(g_date_time_new_utc(9999, 12, 31, 23, 59, 00)));
+    auto* matchPattern = static_cast<WebKitWebExtensionContextMatchPattern*>(fastMalloc(sizeof(WebKitWebExtensionContextMatchPattern)));
+    new (matchPattern) WebKitWebExtensionContextMatchPattern(webkitWebExtensionMatchPatternToImpl(pattern).releaseNonNull(), expirationDate);
+    return matchPattern;
+}
+
+/**
+ * webkit_web_extension_context_match_pattern_ref:
+ * @pattern: a [struct@WebExtensionContextMatchPattern]
+ *
+ * Atomically increments the reference count of @pattern by one.
+ *
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed [struct@WebExtensionContextMatchPattern]
+ *
+ * Since: 2.56
+ */
+WebKitWebExtensionContextMatchPattern* webkit_web_extension_context_match_pattern_ref(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    g_return_val_if_fail(pattern, nullptr);
+
+    g_atomic_int_inc(&pattern->referenceCount);
+    return pattern;
+}
+
+/**
+ * webkit_web_extension_context_match_pattern_unref:
+ * @pattern: a [struct@WebExtensionContextMatchPattern]
+ *
+ * Atomically decrements the reference count of @pattern by one.
+ *
+ * If the reference count drops to 0, all memory allocated by
+ * [struct@WebExtensionContextMatchPattern] is released. This function is MT-safe and may be
+ * called from any thread.
+ *
+ * Since: 2.56
+ */
+void webkit_web_extension_context_match_pattern_unref(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    g_return_if_fail(pattern);
+
+    if (g_atomic_int_dec_and_test(&pattern->referenceCount)) {
+        pattern->~WebKitWebExtensionContextMatchPattern();
+        fastFree(pattern);
+    }
+}
+
+/**
+ * webkit_web_extension_context_match_pattern_get_match_pattern:
+ * @pattern: a #WebKitWebExtensionMatchPattern
+ *
+ * Get the match pattern of @pattern.
+ *
+ * Returns: (transfer none): The #WebKitWebExtensionMatchPattern.
+ *
+ * Since: 2.56
+ */
+WebKitWebExtensionMatchPattern* webkit_web_extension_context_match_pattern_get_match_pattern(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    g_return_val_if_fail(pattern, nullptr);
+
+    return pattern->pattern;
+}
+
+/**
+ * webkit_web_extension_context_match_pattern_get_expiration_date:
+ * @pattern: (nullable): a [struct@WebExtensionContextMatchPattern]
+ *
+ * Get the expiration date of @pattern. If the match pattern does not expire, a distant future date will be returned instead.
+ *
+ * Returns: (transfer none): The expiration date of @pattern
+ *
+ * Since: 2.56
+ */
+GDateTime* webkit_web_extension_context_match_pattern_get_expiration_date(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    g_return_val_if_fail(pattern, nullptr);
+
+    return pattern->expiration.get();
+}
+
+#else // ENABLE(WK_WEB_EXTENSIONS)
+
+WebKitWebExtensionContextMatchPattern* webkit_web_extension_context_match_pattern_new(WebKitWebExtensionMatchPattern* pattern, GDateTime* expiration)
+{
+    return nullptr;
+}
+
+WebKitWebExtensionContextMatchPattern* webkit_web_extension_context_match_pattern_ref(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_match_pattern_unref(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    return;
+}
+
+WebKitWebExtensionMatchPattern* webkit_web_extension_context_match_pattern_get_match_pattern(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    return nullptr;
+}
+
+GDateTime* webkit_web_extension_context_match_pattern_get_expiration_date(WebKitWebExtensionContextMatchPattern* pattern)
+{
+    return nullptr;
+}
+
+#endif // ENABLE(WK_WEB_EXTENSIONS)
 
 /**
  * WebKitWebExtensionContext:
@@ -72,10 +405,27 @@ enum {
     PROP_OPTIONS_PAGE_URI,
     PROP_HAS_INJECTED_CONTENT,
     PROP_OVERRIDE_NEW_TAB_PAGE_URI,
+    PROP_HAS_ACCESS_TO_ALL_URIS,
+    PROP_HAS_ACCESS_TO_ALL_HOSTS,
     N_PROPERTIES,
 };
 
 static std::array<GParamSpec*, N_PROPERTIES> properties;
+
+enum {
+    GRANTED_PERMISSIONS_WERE_REMOVED,
+    GRANTED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED,
+    DENIED_PERMISSIONS_WERE_REMOVED,
+    DENIED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED,
+    PERMISSIONS_WERE_DENIED,
+    PERMISSIONS_WERE_GRANTED,
+    PERMISSION_MATCH_PATTERNS_WERE_DENIED,
+    PERMISSION_MATCH_PATTERNS_WERE_GRANTED,
+
+    LAST_SIGNAL
+};
+
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 static void webkitWebExtensionContextGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -96,6 +446,12 @@ static void webkitWebExtensionContextGetProperty(GObject* object, guint propId, 
         break;
     case PROP_OVERRIDE_NEW_TAB_PAGE_URI:
         g_value_set_string(value, webkit_web_extension_context_get_override_new_tab_page_uri(context));
+        break;
+    case PROP_HAS_ACCESS_TO_ALL_URIS:
+        g_value_set_boolean(value, webkit_web_extension_context_get_has_access_to_all_uris(context));
+        break;
+    case PROP_HAS_ACCESS_TO_ALL_HOSTS:
+        g_value_set_boolean(value, webkit_web_extension_context_get_has_access_to_all_hosts(context));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -204,7 +560,211 @@ static void webkit_web_extension_context_class_init(WebKitWebExtensionContextCla
             WEBKIT_PARAM_READABLE
         );
 
+    /**
+     * WebKitWebExtensionContext:has-access-to-all-uris:
+     * 
+     * Whether the currently granted permission match patterns set contains the `<all_urls>` pattern.
+     * See [method@WebExtensionContext.get_has_access_to_all_uris] for more details.
+     *
+     * Since: 2.56
+     */
+    properties[PROP_HAS_ACCESS_TO_ALL_URIS] =
+        g_param_spec_boolean(
+            "has-access-to-all-uris",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE
+        );
+
+    /**
+     * WebKitWebExtensionContext:has-access-to-all-hosts:
+     * 
+     * whether the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
+     * See [method@WebExtensionContext.get_has_access_to_all_hosts] for more details.
+     *
+     * Since: 2.56
+     */
+    properties[PROP_HAS_ACCESS_TO_ALL_HOSTS] =
+        g_param_spec_boolean(
+            "has-access-to-all-hosts",
+            nullptr, nullptr,
+            FALSE,
+            WEBKIT_PARAM_READABLE
+        );
+
     g_object_class_install_properties(objectClass, properties.size(), properties.data());
+
+    /**
+     * WebKitWebExtensionContext::granted-permissions-were-removed:
+     * @context: the [class@WebExtensionContext]
+     * @permissions: (array zero-terminated=1): an array of removed permissions
+     *
+     * This signal is emitted whenever previously granted permissions were
+     * removed.
+     *
+     * Since: 2.56
+     */
+    signals[GRANTED_PERMISSIONS_WERE_REMOVED] =
+        g_signal_new("granted-permissions-were-removed",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_STRV);
+    g_signal_set_va_marshaller(signals[GRANTED_PERMISSIONS_WERE_REMOVED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__STRINGv);
+
+    /**
+     * WebKitWebExtensionContext::granted-permission-match-patterns-were-removed:
+     * @context: the [class@WebExtensionContext]
+     * @match_patterns: (array zero-terminated=1) (element-type WebKitWebExtensionMatchPattern): an array of removed match patterns
+     *
+     * This signal is emitted whenever previously granted permission match patterns
+     * were removed.
+     *
+     * Since: 2.56
+     */
+    signals[GRANTED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED] =
+        g_signal_new("granted-permission-match-patterns-were-removed",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_POINTER);
+    g_signal_set_va_marshaller(signals[GRANTED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__POINTERv);
+
+    /**
+     * WebKitWebExtensionContext::denied-permissions-were-removed:
+     * @context: the [class@WebExtensionContext]
+     * @permissions: (array zero-terminated=1): an array of removed permissions
+     *
+     * This signal is emitted whenever previously denied permissions
+     * were removed.
+     *
+     * Since: 2.56
+     */
+    signals[DENIED_PERMISSIONS_WERE_REMOVED] =
+        g_signal_new("denied-permissions-were-removed",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_STRV);
+    g_signal_set_va_marshaller(signals[DENIED_PERMISSIONS_WERE_REMOVED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__STRINGv);
+
+    /**
+     * WebKitWebExtensionContext::denied-permission-match-patterns-were-removed:
+     * @context: the [class@WebExtensionContext]
+     * @match_patterns: (array zero-terminated=1) (element-type WebKitWebExtensionMatchPattern): an array of removed match patterns
+     *
+     * This signal is emitted whenever previously denied permission match patterns
+     * were removed.
+     *
+     * Since: 2.56
+     */
+    signals[DENIED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED] =
+        g_signal_new("denied-permission-match-patterns-were-removed",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_POINTER);
+    g_signal_set_va_marshaller(signals[DENIED_PERMISSION_MATCH_PATTERNS_WERE_REMOVED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__POINTERv);
+
+    /**
+     * WebKitWebExtensionContext::permissions-were-denied:
+     * @context: the [class@WebExtensionContext]
+     * @permissions: (array zero-terminated=1): an array of denied permissions
+     *
+     * This signal is emitted whenever permissions were denied.
+     *
+     * Since: 2.56
+     */
+    signals[PERMISSIONS_WERE_DENIED] =
+        g_signal_new("permissions-were-denied",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_STRV);
+    g_signal_set_va_marshaller(signals[PERMISSIONS_WERE_DENIED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__STRINGv);
+
+    /**
+     * WebKitWebExtensionContext::permissions-were-granted:
+     * @context: the [class@WebExtensionContext]
+     * @permissions: (array zero-terminated=1): an array of granted permissions
+     *
+     * This signal is emitted whenever permissions were granted.
+     *
+     * Since: 2.56
+     */
+    signals[PERMISSIONS_WERE_GRANTED] =
+        g_signal_new("permissions-were-granted",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_STRV);
+    g_signal_set_va_marshaller(signals[PERMISSIONS_WERE_GRANTED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__STRINGv);
+
+    /**
+     * WebKitWebExtensionContext::permission-match-patterns-were-denied:
+     * @context: the [class@WebExtensionContext]
+     * @match_patterns: (array zero-terminated=1) (element-type WebKitWebExtensionMatchPattern): an array of denied match patterns
+     *
+     * This signal is emitted whenever permission match patterns were denied.
+     *
+     * Since: 2.56
+     */
+    signals[PERMISSION_MATCH_PATTERNS_WERE_DENIED] =
+        g_signal_new("permission-match-patterns-were-denied",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_POINTER);
+    g_signal_set_va_marshaller(signals[PERMISSION_MATCH_PATTERNS_WERE_DENIED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__POINTERv);
+
+    /**
+     * WebKitWebExtensionContext::permission-match-patterns-were-granted:
+     * @context: the [class@WebExtensionContext]
+     * @match_patterns: (array zero-terminated=1) (element-type WebKitWebExtensionMatchPattern): an array of granted match patterns
+     *
+     * This signal is emitted whenever permission match patterns were granted.
+     *
+     * Since: 2.56
+     */
+    signals[PERMISSION_MATCH_PATTERNS_WERE_GRANTED] =
+        g_signal_new("permission-match-patterns-were-granted",
+            G_TYPE_FROM_CLASS(objectClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            nullptr,
+            G_TYPE_NONE, 1,
+            G_TYPE_POINTER);
+    g_signal_set_va_marshaller(signals[PERMISSION_MATCH_PATTERNS_WERE_GRANTED],
+        G_TYPE_FROM_CLASS(objectClass),
+        g_cclosure_marshal_VOID__POINTERv);
 }
 
 static gboolean webkitWebExtensionContextInitableInit(GInitable* initable, GCancellable* cancellable, GError** error)
@@ -459,6 +1019,541 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
 }
 
 /**
+ * webkit_web_extension_context_get_has_access_to_all_uris:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get whether the currently granted permission match patterns set contains the `<all_urls>` pattern.
+ * 
+ * This does not check for any `*` host patterns. In most cases you should use the broader
+ * webkit_web_extension_context_get_has_access_to_all_hosts().
+ * 
+ * Returns: %TRUE if the `<all_urls>` pattern is present.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_get_has_access_to_all_uris(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasAccessToAllURLs();
+}
+
+/**
+ * webkit_web_extension_context_get_has_access_to_all_hosts:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get whether the currently granted permission match patterns set contains the `<all_urls>` pattern or any `*` host patterns.
+ * 
+ * Returns: %TRUE if the `<all_urls>` pattern or any `*` host patterns are present.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_get_has_access_to_all_hosts(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasAccessToAllHosts();
+}
+
+/**
+ * webkit_web_extension_context_get_granted_permissions:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get the currently granted permissions and their expiration dates.
+ * 
+ * Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
+ * 
+ * Returns: (nullable) (array zero-terminated=1) (transfer full): A %NULL-terminated list of permissions that have
+ * been granted to the extension and their expiration dates, or %NULL otherwise.
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermission** webkit_web_extension_context_get_granted_permissions(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), nullptr);
+    g_return_val_if_fail(context->priv->extension, nullptr);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    auto permissions = priv->context->grantedPermissions();
+    if (permissions.isEmpty())
+        return nullptr;
+
+    GPtrArray* grantedPermissions = g_ptr_array_new_full(permissions.size(), g_free);
+    for (auto& permission : permissions) {
+        auto [permissionName, expiration] = permission;
+        auto* contextPermission = webKitWebExtensionContextPermissionCreate(permissionName, expiration);
+        g_ptr_array_add(grantedPermissions, contextPermission);
+    }
+    g_ptr_array_add(grantedPermissions, nullptr);
+
+    return reinterpret_cast<WebKitWebExtensionContextPermission**>(g_ptr_array_free(grantedPermissions, FALSE));
+}
+
+/**
+ * webkit_web_extension_context_set_granted_permissions:
+ * @context: a [class@WebExtensionContext]
+ * @granted_permissions: (allow-none) (array zero-terminated=1) (element-type WebKitWebExtensionContextPermission) (transfer none): a %NULL-terminated list of permissions and their expiration dates
+ *
+ * Set the currently granted permissions and their expiration dates.
+ * This will replace all existing granted permissions. Use this for saving and restoring permission status in bulk.
+ * Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
+ * presented for approval again until they expire. This value should be saved and restored as needed by the app.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_granted_permissions(WebKitWebExtensionContext *context, WebKitWebExtensionContextPermission **grantedPermissions)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    HashMap<String, WallTime> grantedPermissionsMap;
+
+    WebKitWebExtensionContextPermission** permission = grantedPermissions;
+    if (permission) {
+        // We are using a null-terminated C array as input here, there is unfortunately not a great way to loop without pointer arithmetic.
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        for (; *permission; permission++)
+            grantedPermissionsMap.add(String::fromUTF8(webkit_web_extension_context_permission_get_permission_name(*permission)), WallTime::fromRawSeconds(g_date_time_to_unix(webkit_web_extension_context_permission_get_expiration_date(*permission))));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+
+    priv->context->setGrantedPermissions(WTF::move(grantedPermissionsMap));
+}
+
+/**
+ * webkit_web_extension_context_get_granted_permission_match_patterns:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get the currently granted permission match patterns and their expiration dates.
+ * 
+ * Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
+ * 
+ * Returns: (nullable) (array zero-terminated=1) (transfer full): A %NULL-terminated list of permission match patterns
+ * that have been granted to the extension and their expiration dates, or %NULL otherwise.
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextMatchPattern** webkit_web_extension_context_get_granted_permission_match_patterns(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), nullptr);
+    g_return_val_if_fail(context->priv->extension, nullptr);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    auto matchPatterns = priv->context->grantedPermissionMatchPatterns();
+    if (matchPatterns.isEmpty())
+        return nullptr;
+
+    GPtrArray* grantedMatchPatterns = g_ptr_array_new_full(matchPatterns.size(), g_free);
+    for (auto& matchPattern : matchPatterns) {
+        Ref internalPattern = matchPattern.key;
+        auto expiration = matchPattern.value;
+        auto pattern = webKitWebExtensionContextMatchPatternCreate(internalPattern, expiration);
+        g_ptr_array_add(grantedMatchPatterns, pattern);
+    }
+    g_ptr_array_add(grantedMatchPatterns, nullptr);
+
+    return reinterpret_cast<WebKitWebExtensionContextMatchPattern**>(g_ptr_array_free(grantedMatchPatterns, FALSE));
+}
+
+/**
+ * webkit_web_extension_context_set_granted_permission_match_patterns:
+ * @context: a [class@WebExtensionContext]
+ * @granted_permission_match_patterns: (allow-none) (array zero-terminated=1) (element-type WebKitWebExtensionContextMatchPattern) (transfer none): a %NULL-terminated list of permission match patterns and their expiration dates
+ *
+ * Set the currently granted permission match patterns and their expiration dates.
+ * This will replace all existing granted permissions. Use this for saving and restoring permission status in bulk.
+ * Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
+ * presented for approval again until they expire. This value should be saved and restored as needed by the app.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_granted_permission_match_patterns(WebKitWebExtensionContext *context, WebKitWebExtensionContextMatchPattern **grantedPermissionMatchPatterns)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    HashMap<Ref<WebKit::WebExtensionMatchPattern>, WallTime> grantedPermissionMatchPatternsMap;
+
+    WebKitWebExtensionContextMatchPattern** pattern = grantedPermissionMatchPatterns;
+    if (pattern) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        for (; *pattern != nullptr; pattern++)
+            grantedPermissionMatchPatternsMap.add(*webkitWebExtensionMatchPatternToImpl(webkit_web_extension_context_match_pattern_get_match_pattern(*pattern)), WallTime::fromRawSeconds(g_date_time_to_unix(webkit_web_extension_context_match_pattern_get_expiration_date(*pattern))));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+
+    priv->context->setGrantedPermissionMatchPatterns(WTF::move(grantedPermissionMatchPatternsMap));
+}
+
+/**
+ * webkit_web_extension_context_get_denied_permissions:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get the currently denied permissions and their expiration dates.
+ * 
+ * Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
+ * 
+ * Returns: (nullable) (array zero-terminated=1) (transfer full): A %NULL-terminated list of permissions that have
+ * been denied from the extension and their expiration dates, or %NULL otherwise.
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermission** webkit_web_extension_context_get_denied_permissions(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), nullptr);
+    g_return_val_if_fail(context->priv->extension, nullptr);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    auto permissions = priv->context->deniedPermissions();
+    if (permissions.isEmpty())
+        return nullptr;
+
+    GPtrArray* deniedPermissions = g_ptr_array_new_full(permissions.size(), g_free);
+    for (auto permission : permissions) {
+        auto [permissionName, expiration] = permission;
+        auto* contextPermission = webKitWebExtensionContextPermissionCreate(permissionName, expiration);
+        g_ptr_array_add(deniedPermissions, contextPermission);
+    }
+    g_ptr_array_add(deniedPermissions, nullptr);
+
+    return reinterpret_cast<WebKitWebExtensionContextPermission**>(g_ptr_array_free(deniedPermissions, FALSE));
+}
+
+/**
+ * webkit_web_extension_context_set_denied_permissions:
+ * @context: a [class@WebExtensionContext]
+ * @denied_permissions: (allow-none) (array zero-terminated=1) (element-type WebKitWebExtensionContextPermission) (transfer none): a %NULL-terminated list of permissions and their expiration dates
+ *
+ * Set the currently granted permissions and their expiration dates.
+ * This will replace all existing denied permissions. Use this for saving and restoring permission status in bulk.
+ * Permissions in this dictionary should be explicitly granted by the user before being added. Any permissions in this collection will not be
+ * presented for approval again until they expire. This value should be saved and restored as needed by the app.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_denied_permissions(WebKitWebExtensionContext *context, WebKitWebExtensionContextPermission **deniedPermissions)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    HashMap<String, WallTime> deniedPermissionsMap;
+
+    WebKitWebExtensionContextPermission** permission = deniedPermissions;
+    if (permission) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        for (; *permission != nullptr; permission++)
+            deniedPermissionsMap.add(String::fromUTF8(webkit_web_extension_context_permission_get_permission_name(*permission)), WallTime::fromRawSeconds(g_date_time_to_unix(webkit_web_extension_context_permission_get_expiration_date(*permission))));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+
+    priv->context->setDeniedPermissions(WTF::move(deniedPermissionsMap));
+}
+
+/**
+ * webkit_web_extension_context_get_denied_permission_match_patterns:
+ * @context: a [class@WebExtensionContext]
+ *
+ * Get the currently denied permission match patterns and their expiration dates.
+ * 
+ * Permissions that don't expire will have a distant future date. This will never include expired entries at time of access.
+ * 
+ * Returns: (nullable) (array zero-terminated=1) (transfer full): A %NULL-terminated list of permission match patterns
+ * that have been denied from the extension and their expiration dates, or %NULL otherwise.
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextMatchPattern** webkit_web_extension_context_get_denied_permission_match_patterns(WebKitWebExtensionContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), nullptr);
+    g_return_val_if_fail(context->priv->extension, nullptr);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    auto matchPatterns = priv->context->deniedPermissionMatchPatterns();
+    if (matchPatterns.isEmpty())
+        return nullptr;
+    GPtrArray* deniedMatchPatterns = g_ptr_array_new_full(matchPatterns.size(), g_free);
+    for (auto matchPattern : matchPatterns) {
+        Ref internalPattern = matchPattern.key;
+        auto expiration = matchPattern.value;
+        auto pattern = webKitWebExtensionContextMatchPatternCreate(internalPattern, expiration);
+        g_ptr_array_add(deniedMatchPatterns, pattern);
+    }
+    g_ptr_array_add(deniedMatchPatterns, nullptr);
+    return reinterpret_cast<WebKitWebExtensionContextMatchPattern**>(g_ptr_array_free(deniedMatchPatterns, FALSE));
+}
+
+/**
+ * webkit_web_extension_context_set_denied_permission_match_patterns:
+ * @context: a [class@WebExtensionContext]
+ * @denied_permission_match_patterns: (allow-none) (array zero-terminated=1) (element-type WebKitWebExtensionContextMatchPattern) (transfer none): a %NULL-terminated list of permission match patterns and their expiration dates
+ *
+ * Set the currently denied permission match patterns and their expiration dates.
+ * This will replace all existing denied permissions. Use this for saving and restoring permission status in bulk.
+ * Permissions in this dictionary should be explicitly denied by the user before being added. Any permissions in this collection will not be
+ * presented for approval again until they expire. This value should be saved and restored as needed by the app.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_denied_permission_match_patterns(WebKitWebExtensionContext *context, WebKitWebExtensionContextMatchPattern **deniedPermissionMatchPatterns)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    HashMap<Ref<WebKit::WebExtensionMatchPattern>, WallTime> deniedPermissionMatchPatternsMap;
+
+    WebKitWebExtensionContextMatchPattern** pattern = deniedPermissionMatchPatterns;
+    if (pattern) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        for (; *pattern != nullptr; pattern++)
+            deniedPermissionMatchPatternsMap.add(*webkitWebExtensionMatchPatternToImpl(webkit_web_extension_context_match_pattern_get_match_pattern(*pattern)), WallTime::fromRawSeconds(g_date_time_to_unix(webkit_web_extension_context_match_pattern_get_expiration_date(*pattern))));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+    priv->context->setDeniedPermissionMatchPatterns(WTF::move(deniedPermissionMatchPatternsMap));
+}
+
+/**
+ * webkit_web_extension_context_has_permission:
+ * @context: a [class@WebExtensionContext]
+ * @permission: The permission for which to return the status
+ *
+ * Checks the specified permission against the currently granted permissions.
+ * 
+ * Returns: %TRUE if the extension has been granted the specified permission.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_has_permission(WebKitWebExtensionContext* context, const gchar* permission)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+    g_return_val_if_fail(permission, FALSE);
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasPermission(String::fromUTF8(permission), nullptr);
+}
+
+/**
+ * webkit_web_extension_context_has_access_to_uri:
+ * @context: a [class@WebExtensionContext]
+ * @uri: The URI for which to return the status
+ *
+ * Checks the specified URI against the currently granted permission match patterns.
+ * 
+ * Returns: %TRUE if the URI is accessible by the extension.
+ * 
+ * Since: 2.56
+ */
+gboolean webkit_web_extension_context_has_access_to_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), FALSE);
+    g_return_val_if_fail(context->priv->extension, FALSE);
+    g_return_val_if_fail(uri, FALSE);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return priv->context->hasPermission(URL { String::fromUTF8(uri) });
+}
+
+static inline WebKitWebExtensionContextPermissionStatus toAPI(WebKit::WebExtensionContext::PermissionState status)
+{
+    switch (status) {
+    case WebKit::WebExtensionContext::PermissionState::DeniedExplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY;
+    case WebKit::WebExtensionContext::PermissionState::DeniedImplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_IMPLICITLY;
+    case WebKit::WebExtensionContext::PermissionState::RequestedImplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_IMPLICITLY;
+    case WebKit::WebExtensionContext::PermissionState::Unknown:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN;
+    case WebKit::WebExtensionContext::PermissionState::RequestedExplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY;
+    case WebKit::WebExtensionContext::PermissionState::GrantedImplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_IMPLICITLY;
+    case WebKit::WebExtensionContext::PermissionState::GrantedExplicitly:
+        return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY;
+    }
+    return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN;
+}
+
+static inline WebKit::WebExtensionContext::PermissionState toImpl(WebKitWebExtensionContextPermissionStatus status)
+{
+    switch (status) {
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::DeniedExplicitly;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_IMPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::DeniedImplicitly;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_IMPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::RequestedImplicitly;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN:
+        return WebKit::WebExtensionContext::PermissionState::Unknown;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_REQUESTED_EXPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::RequestedExplicitly;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_IMPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::GrantedImplicitly;
+    case WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY:
+        return WebKit::WebExtensionContext::PermissionState::GrantedExplicitly;
+    }
+    return WebKit::WebExtensionContext::PermissionState::Unknown;
+}
+
+/**
+ * webkit_web_extension_context_permission_status_for_permission:
+ * @context: a [class@WebExtensionContext]
+ * @permission: The permission for which to return the status.
+ *
+ * Checks the specified permission against the currently denied, granted, and requested permissions.
+ * 
+ * Returns: the status of the requested permission
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_permission(WebKitWebExtensionContext* context, const gchar* permission)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(context->priv->extension, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(permission, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return toAPI(priv->context->permissionState(String::fromUTF8(permission), nullptr));
+}
+
+/**
+ * webkit_web_extension_context_set_permission_status_for_permission:
+ * @context: a [class@WebExtensionContext]
+ * @permission: The permission for which to set the status
+ * @status: The new permission status to set for the given permission.
+ * @expiration_date: (nullable): The expiration date for the new permission status, or %NULL for distant future.
+ *
+ * Sets the status of a permission. Passing a %NULL expiration date will be treated as a distant future date.
+ * 
+ * This method will update [method@WebExtensionContext.get_granted_permissions] and [method@WebExtensionContext.get_denied_permissions]. Use this method for changing a single permission's status.
+ * Only [enum@WebKit.WebExtensionContextPermissionStatus.DENIED_EXPLICITLY], [enum@WebKit.WebExtensionContextPermissionStatus.UNKNOWN],
+ * and [enum@WebKit.WebExtensionContextPermissionStatus.GRANTED_EXPLICITLY] states are allowed to be set using this method.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_permission_status_for_permission(WebKitWebExtensionContext* context, const gchar* permission, WebKitWebExtensionContextPermissionStatus status, GDateTime *expirationDate)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+    g_return_if_fail(permission);
+    g_return_if_fail(status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    if (expirationDate)
+        priv->context->setPermissionState(toImpl(status), String::fromUTF8(permission), WallTime::fromRawSeconds(g_date_time_to_unix(expirationDate)));
+    else
+        priv->context->setPermissionState(toImpl(status), String::fromUTF8(permission));
+}
+
+/**
+ * webkit_web_extension_context_permission_status_for_uri:
+ * @context: a [class@WebExtensionContext]
+ * @uri: The URI for which to return the status.
+ *
+ * Checks the specified URL against the currently denied, granted, and requested permission match patterns.
+ * 
+ * Returns: the permission status of the requested URI
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(context->priv->extension, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(uri, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return toAPI(priv->context->permissionState(URL { String::fromUTF8(uri) }, nullptr));
+}
+
+/**
+ * webkit_web_extension_context_set_permission_status_for_uri:
+ * @context: a [class@WebExtensionContext]
+ * @uri: The URI for which to set the status
+ * @status: The new permission status to set for the given permission.
+ * @expiration_date: (nullable): The expiration date for the new permission status, or %NULL for distant future.
+ *
+ * Sets the permission status of a URL. Passing a %NULL expiration date will be treated as a distant future date.
+ * 
+ * The URL is converted into a match pattern and will update [method@WebExtensionContext.get_granted_permission_match_patterns] and [method@WebExtensionContext.get_denied_permission_match_patterns]..
+ * Use this method for changing a single URL's status.
+ * Only [enum@WebKit.WebExtensionContextPermissionStatus.DENIED_EXPLICITLY], [enum@WebKit.WebExtensionContextPermissionStatus.UNKNOWN],
+ * and [enum@WebKit.WebExtensionContextPermissionStatus.GRANTED_EXPLICITLY] states are allowed to be set using this method.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_permission_status_for_uri(WebKitWebExtensionContext* context, const gchar* uri, WebKitWebExtensionContextPermissionStatus status, GDateTime* expirationDate)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+    g_return_if_fail(uri);
+    g_return_if_fail(status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    if (expirationDate)
+        priv->context->setPermissionState(toImpl(status), URL { String::fromUTF8(uri) }, WallTime::fromRawSeconds(g_date_time_to_unix(expirationDate)));
+    else
+        priv->context->setPermissionState(toImpl(status), URL { String::fromUTF8(uri) });
+}
+
+/**
+ * webkit_web_extension_context_permission_status_for_match_pattern:
+ * @context: a [class@WebExtensionContext]
+ * @pattern: The pattern for which to return the status.
+ *
+ * Checks the specified match pattern against the currently denied, granted, and requested permission match patterns.
+ * 
+ * Returns: the permission status of the requested match pattern
+ * 
+ * Since: 2.56
+ */
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_match_pattern(WebKitWebExtensionContext* context, WebKitWebExtensionMatchPattern* pattern)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context), WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(context->priv->extension, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+    g_return_val_if_fail(pattern, WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    return toAPI(priv->context->permissionState(*webkitWebExtensionMatchPatternToImpl(pattern), nullptr));
+}
+
+/**
+ * webkit_web_extension_context_set_permission_status_for_match_pattern:
+ * @context: a [class@WebExtensionContext]
+ * @pattern: The match pattern for which to set the status
+ * @status: The new permission status to set for the given permission.
+ * @expiration_date: (nullable): The expiration date for the new permission status, or %NULL for distant future.
+ *
+ * Sets the status of a match pattern. Passing a %NULL expiration date will be treated as a distant future date.
+ * 
+ * This method will update [method@WebExtensionContext.get_granted_permission_match_patterns] and [method@WebExtensionContext.get_denied_permission_match_patterns]..
+ * Use this method for changing a single match pattern's status.
+ * Only [enum@WebKit.WebExtensionContextPermissionStatus.DENIED_EXPLICITLY], [enum@WebKit.WebExtensionContextPermissionStatus.UNKNOWN],
+ * and [enum@WebKit.WebExtensionContextPermissionStatus.GRANTED_EXPLICITLY] states are allowed to be set using this method.
+ * 
+ * Since: 2.56
+ */
+void webkit_web_extension_context_set_permission_status_for_match_pattern(WebKitWebExtensionContext* context, WebKitWebExtensionMatchPattern* pattern, WebKitWebExtensionContextPermissionStatus status, GDateTime* expirationDate)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_EXTENSION_CONTEXT(context));
+    g_return_if_fail(context->priv->extension);
+    g_return_if_fail(pattern);
+    g_return_if_fail(status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_DENIED_EXPLICITLY || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN || status == WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_GRANTED_EXPLICITLY);
+
+    WebKitWebExtensionContextPrivate* priv = context->priv;
+    if (expirationDate)
+        priv->context->setPermissionState(toImpl(status), *webkitWebExtensionMatchPatternToImpl(pattern), WallTime::fromSecondsSinceEpoch(Seconds(g_date_time_to_unix(expirationDate))));
+    else
+        priv->context->setPermissionState(toImpl(status), *webkitWebExtensionMatchPatternToImpl(pattern));
+}
+
+/**
  * webkit_web_extension_context_load_background_content:
  * @context: a [class@WebExtensionContext]
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
@@ -566,6 +1661,95 @@ gboolean webkit_web_extension_context_has_injected_content_for_uri(WebKitWebExte
 const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWebExtensionContext* context)
 {
     return "";
+}
+
+gboolean webkit_web_extension_context_get_has_access_to_all_uris(WebKitWebExtensionContext* context)
+{
+    return FALSE;
+}
+
+gboolean webkit_web_extension_context_get_has_access_to_all_hosts(WebKitWebExtensionContext* context)
+{
+    return FALSE;
+}
+WebKitWebExtensionContextPermission** webkit_web_extension_context_get_granted_permissions(WebKitWebExtensionContext* context)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_set_granted_permissions(WebKitWebExtensionContext *context, WebKitWebExtensionContextPermission **grantedPermissions)
+{
+    return;
+}
+
+WebKitWebExtensionContextMatchPattern** webkit_web_extension_context_get_granted_permission_match_patterns(WebKitWebExtensionContext* context)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_set_granted_permission_match_patterns(WebKitWebExtensionContext *context, WebKitWebExtensionContextMatchPattern **grantedPermissionMatchPatterns)
+{
+    return;
+}
+
+WebKitWebExtensionContextPermission** webkit_web_extension_context_get_denied_permissions(WebKitWebExtensionContext* context)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_set_denied_permissions(WebKitWebExtensionContext *context, WebKitWebExtensionContextPermission **deniedPermissions)
+{
+    return;
+}
+
+WebKitWebExtensionContextMatchPattern** webkit_web_extension_context_get_denied_permission_match_patterns(WebKitWebExtensionContext* context)
+{
+    return nullptr;
+}
+
+void webkit_web_extension_context_set_denied_permission_match_patterns(WebKitWebExtensionContext *context, WebKitWebExtensionContextMatchPattern **deniedPermissionMatchPatterns)
+{
+    return;
+}
+
+gboolean webkit_web_extension_context_has_permission(WebKitWebExtensionContext* context, const gchar* permission)
+{
+    return FALSE;
+}
+
+gboolean webkit_web_extension_context_has_access_to_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    return FALSE;
+}
+
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_permission(WebKitWebExtensionContext* context, const gchar* permission)
+{
+    return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN;
+}
+
+void webkit_web_extension_context_set_permission_status_for_permission(WebKitWebExtensionContext* context, const gchar* permission, WebKitWebExtensionContextPermissionStatus permissionStatus, GDateTime* expirationDate)
+{
+    return;
+}
+
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_uri(WebKitWebExtensionContext* context, const gchar* uri)
+{
+    return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN;
+}
+
+void webkit_web_extension_context_set_permission_status_for_uri(WebKitWebExtensionContext* context, const gchar* uri, WebKitWebExtensionContextPermissionStatus permissionStatus, GDateTime* expirationDate)
+{
+    return;
+}
+
+WebKitWebExtensionContextPermissionStatus webkit_web_extension_context_permission_status_for_match_pattern(WebKitWebExtensionContext* context, WebKitWebExtensionMatchPattern* matchPattern)
+{
+    return WEBKIT_WEB_EXTENSION_CONTEXT_PERMISSION_STATUS_UNKNOWN;
+}
+
+void webkit_web_extension_context_set_permission_status_for_match_pattern(WebKitWebExtensionContext* context, WebKitWebExtensionMatchPattern* matchPattern, WebKitWebExtensionContextPermissionStatus permissionStatus, GDateTime* expirationDate)
+{
+    return;
 }
 
 void webkit_web_extension_context_load_background_content(WebKitWebExtensionContext* context, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
