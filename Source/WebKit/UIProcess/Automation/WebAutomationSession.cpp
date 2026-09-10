@@ -49,6 +49,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -1324,7 +1325,7 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
 
     // Ensure the active realm is destroyed even if the WebProcess terminates first.
     if (auto realmID = m_bidiProcessor->scriptAgent().realmIdentifierForBrowsingContext(contextHandle))
-        m_bidiProcessor->scriptAgent().notifyRealmDestroyed(*realmID, contextHandle);
+        m_bidiProcessor->scriptAgent().notifyRealmDestroyedFromBrowsingContext(*realmID, contextHandle);
 
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::ContextDestroyed, { }, [&]() {
         m_bidiProcessor->browsingContextDomainNotifier().contextDestroyed(contextHandle, url, originalOpenerHandle, parentContext, JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create(), clientWindow, userContext);
@@ -2674,7 +2675,23 @@ void WebAutomationSession::getBidiRealmInfo(const Inspector::Protocol::Automatio
     if (frameNotFound)
         return completionHandler(std::nullopt, std::nullopt);
 
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetBidiRealmInfo(page->webPageIDInProcessForFrame(frameID), frameID), WTF::move(completionHandler));
+    auto expectedProcessIdentifier = page->processContainingFrame(frameID)->coreProcessIdentifier();
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetBidiRealmInfo(page->webPageIDInProcessForFrame(frameID), frameID), CompletionHandler<void(std::optional<RealmIdentifier>&&, std::optional<WebCore::SecurityOriginData>&&)> { [protectedThis = Ref { *this }, protectedPage = Ref { *page }, expectedTopLevelBrowsingContext = browsingContextHandle.isolatedCopy(), frameID, expectedProcessIdentifier, completionHandler = WTF::move(completionHandler)](std::optional<RealmIdentifier>&& realmIdentifier, std::optional<WebCore::SecurityOriginData>&& origin) mutable {
+        if (realmIdentifier && realmIdentifier->processIdentifier() != expectedProcessIdentifier)
+            return completionHandler(std::nullopt, std::nullopt);
+
+        if (protectedThis->webPageProxyForHandle(expectedTopLevelBrowsingContext) != protectedPage.ptr())
+            return completionHandler(std::nullopt, std::nullopt);
+
+        if (frameID) {
+            RefPtr frame = WebFrameProxy::webFrame(*frameID);
+            if (!frame || frame->page() != protectedPage.ptr() || frame->process().coreProcessIdentifier() != expectedProcessIdentifier)
+                return completionHandler(std::nullopt, std::nullopt);
+        } else if (protectedPage->processContainingFrame(std::nullopt)->coreProcessIdentifier() != expectedProcessIdentifier)
+            return completionHandler(std::nullopt, std::nullopt);
+
+        completionHandler(WTF::move(realmIdentifier), WTF::move(origin));
+    } });
 }
 #endif
 
@@ -3230,23 +3247,35 @@ void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
-void WebAutomationSession::scriptRealmCreated(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+void WebAutomationSession::scriptRealmCreated(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
+    if (!frame || &frame->process() != process.ptr())
+        return;
+
+    RefPtr page = frame->page();
+    if (!page || !page->isControlledByAutomation())
         return;
 
     auto browsingContext = effectiveHandleForWebFrameProxy(*frame);
     if (browsingContext.isEmpty())
         return;
 
-    m_bidiProcessor->scriptAgent().notifyRealmCreated(realmIdentifier, browsingContext, origin);
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    scriptAgent.notifyRealmCreatedFromBrowsingContext(realmIdentifier, frameID, browsingContext, origin);
 }
 
-void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier)
+void WebAutomationSession::scriptRealmDestroyed(IPC::Connection& connection, WebCore::FrameIdentifier frameID, RealmIdentifier realmIdentifier)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
     // Look up the realm in m_activeRealms to get its browsing context.
     // This avoids a race where the IPC message arrives after WebFrameProxy is destroyed
     // (common for iframe removal and cross-process navigations).
@@ -3255,8 +3284,11 @@ void WebAutomationSession::scriptRealmDestroyed(WebCore::FrameIdentifier frameID
     if (it == scriptAgent.activeRealms().end())
         return; // Realm not found or already destroyed.
 
+    MESSAGE_CHECK_BASE(it->value.type == Inspector::Protocol::BidiScript::RealmType::Window, connection);
+    MESSAGE_CHECK_BASE(it->value.frameIdentifier == frameID, connection);
+
     auto browsingContext = it->value.context;
-    scriptAgent.notifyRealmDestroyed(realmIdentifier, browsingContext);
+    scriptAgent.notifyRealmDestroyedFromBrowsingContext(realmIdentifier, browsingContext);
 }
 #endif
 

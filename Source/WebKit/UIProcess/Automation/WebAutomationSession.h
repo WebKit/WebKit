@@ -379,8 +379,8 @@ private:
     // Called by WebAutomationSession messages.
     void logEntryAdded(const JSC::MessageSource&, const JSC::MessageLevel&, const String& messageText, const JSC::MessageType&, const WallTime&);
 #if ENABLE(WEBDRIVER_BIDI)
-    void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
-    void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
+    void scriptRealmCreated(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptRealmDestroyed(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier);
 #endif
 
     // Platform-dependent implementations.

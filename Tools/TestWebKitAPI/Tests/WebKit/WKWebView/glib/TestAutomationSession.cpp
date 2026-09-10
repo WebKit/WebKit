@@ -21,10 +21,12 @@
 
 #include "TestMain.h"
 #if ENABLE(WEBDRIVER_BIDI)
+#include "IdentifierTypes.h"
 #include "WebKitTestServer.h"
 #endif
 #include <gio/gio.h>
 #if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #endif
 #include <wtf/UUID.h>
@@ -32,21 +34,31 @@
 #include <wtf/Vector.h>
 #endif
 #include <wtf/glib/SocketConnection.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/text/MakeString.h>
+#include <wtf/text/StringToIntegerConversion.h>
+#endif
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
-static std::unique_ptr<WebKitTestServer> s_iframeRealmEnumerationServer;
+static std::unique_ptr<WebKitTestServer> s_iframeRealmTestServer;
 
-static void iframeRealmEnumerationServerCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+static void iframeRealmTestServerCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
 {
-    static constexpr auto parentDocument = "<!doctype html><iframe src='/iframe.html'></iframe>";
-    static constexpr auto iframeDocument = "<!doctype html><p>iframe document</p>";
+    static constexpr auto enumerationParentDocument = "<!doctype html><iframe src='/iframe.html'></iframe>";
+    static constexpr auto lifecycleParentDocument = "<!doctype html><iframe src='/initial-iframe.html'></iframe>";
+    static constexpr auto iframeDocument = "<!doctype html><script>window.realmIsReady = true;</script><p>iframe document</p>";
+    static constexpr auto replacementParentDocument = "<!doctype html><p>replacement parent document</p>";
 
     const char* content;
     if (g_str_equal(path, "/iframe-realm-enumeration.html"))
-        content = parentDocument;
-    else if (g_str_equal(path, "/iframe.html"))
+        content = enumerationParentDocument;
+    else if (g_str_equal(path, "/iframe-realm-lifecycle.html"))
+        content = lifecycleParentDocument;
+    else if (g_str_equal(path, "/iframe.html") || g_str_equal(path, "/initial-iframe.html") || g_str_equal(path, "/replacement-iframe.html"))
         content = iframeDocument;
+    else if (g_str_equal(path, "/replacement-parent.html"))
+        content = replacementParentDocument;
     else {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
         return;
@@ -54,6 +66,15 @@ static void iframeRealmEnumerationServerCallback(SoupServer*, SoupServerMessage*
 
     soup_server_message_set_response(message, "text/html", SOUP_MEMORY_STATIC, content, strlen(content));
     soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+}
+
+static void enableSiteIsolation(WebKitWebView* webView)
+{
+    auto* allFeatures = webkit_settings_get_all_features();
+    auto* siteIsolationFeature = webkit_feature_list_find(allFeatures, "SiteIsolation");
+    g_assert_nonnull(siteIsolationFeature);
+    webkit_settings_set_feature_enabled(webkit_web_view_get_settings(webView), siteIsolationFeature, TRUE);
+    webkit_feature_list_unref(allFeatures);
 }
 #endif
 
@@ -396,13 +417,13 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.m_connection = nullptr;
-        }}
+        } }
     },
     { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.didStartAutomationSession(parameters);
-        }}
+        } }
     },
     { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
@@ -421,7 +442,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
                     break;
                 }
             }
-        }}
+        } }
     },
     { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
@@ -430,7 +451,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
             const char* message;
             g_variant_get(parameters, "(tt&s)", &connectionID, &targetID, &message);
             test.receivedMessage(connectionID, targetID, message);
-        }}
+        } }
     }
 };
 
@@ -439,6 +460,50 @@ struct IframeRealm {
     String identifier;
     String browsingContext;
 };
+
+struct ProtocolRealmIdentifierComponents {
+    uint64_t processIdentifier;
+    uint64_t localIdentifier;
+};
+
+static std::optional<ProtocolRealmIdentifierComponents> parseProtocolRealmIdentifier(const String& realmIdentifier)
+{
+    if (!realmIdentifier.startsWith("realm-"_s))
+        return std::nullopt;
+
+    auto serializedIdentifier = realmIdentifier.substring(6);
+    auto separatorPosition = serializedIdentifier.find('-');
+    if (separatorPosition == notFound || !separatorPosition || separatorPosition == serializedIdentifier.length() - 1
+        || serializedIdentifier.find('-', separatorPosition + 1) != notFound)
+        return std::nullopt;
+
+    auto processIdentifier = parseInteger<uint64_t>(serializedIdentifier.left(separatorPosition));
+    auto localIdentifier = parseInteger<uint64_t>(serializedIdentifier.substring(separatorPosition + 1));
+    if (!processIdentifier || !*processIdentifier || !localIdentifier || !*localIdentifier)
+        return std::nullopt;
+
+    return ProtocolRealmIdentifierComponents { *processIdentifier, *localIdentifier };
+}
+
+static void verifyProcessQualifiedRealmIdentifierIsolation()
+{
+    WebKit::NonProcessQualifiedRealmIdentifier sharedLocalIdentifier { 1 };
+    WebKit::RealmIdentifier oldRealmIdentifier { sharedLocalIdentifier, WebCore::ProcessIdentifier { 1 } };
+    WebKit::RealmIdentifier replacementRealmIdentifier { sharedLocalIdentifier, WebCore::ProcessIdentifier { 2 } };
+
+    g_assert_true(oldRealmIdentifier != replacementRealmIdentifier);
+    g_assert_true(oldRealmIdentifier.loggingString() != replacementRealmIdentifier.loggingString());
+
+    HashMap<WebKit::RealmIdentifier, unsigned> activeRealms;
+    activeRealms.set(oldRealmIdentifier, 1);
+    activeRealms.set(replacementRealmIdentifier, 2);
+    g_assert_cmpuint(activeRealms.size(), ==, 2);
+
+    activeRealms.remove(oldRealmIdentifier);
+    g_assert_false(activeRealms.contains(oldRealmIdentifier));
+    g_assert_true(activeRealms.contains(replacementRealmIdentifier));
+    g_assert_cmpuint(activeRealms.get(replacementRealmIdentifier), ==, 2);
+}
 
 static Ref<JSON::Array> getRealms(AutomationTest& test, int commandIdentifier, Ref<JSON::Object>&& parameters = JSON::Object::create())
 {
@@ -452,7 +517,7 @@ static Ref<JSON::Array> getRealms(AutomationTest& test, int commandIdentifier, R
 
 static void verifyIframeRealmEnumeration(AutomationTest& test, WebKitWebView* webView, const String& topLevelBrowsingContext)
 {
-    test.loadURIAndWait(webView, s_iframeRealmEnumerationServer->getURIForPath("/iframe-realm-enumeration.html").data());
+    test.loadURIAndWait(webView, s_iframeRealmTestServer->getURIForPath("/iframe-realm-enumeration.html").data());
 
     auto realms = getRealms(test, 1);
     g_assert_cmpuint(realms->length(), ==, 2);
@@ -498,6 +563,113 @@ static void verifyIframeRealmEnumeration(AutomationTest& test, WebKitWebView* we
     auto evaluateResult = evaluateResponse->getObject("result"_s);
     g_assert_true(!!evaluateResult);
     g_assert_true(evaluateResult->getString("realm"_s) == iframeRealm->identifier);
+}
+
+static IframeRealm getIframeRealm(AutomationTest& test, int commandIdentifier, const String& topLevelBrowsingContext)
+{
+    auto realms = getRealms(test, commandIdentifier);
+    std::optional<IframeRealm> iframeRealm;
+    for (size_t index = 0; index < realms->length(); ++index) {
+        auto realm = realms->get(index)->asObject();
+        if (!realm || realm->getString("type"_s) != "window"_s)
+            continue;
+        auto browsingContext = realm->getString("context"_s);
+        if (browsingContext == topLevelBrowsingContext)
+            continue;
+        g_assert_false(!!iframeRealm);
+        iframeRealm = IframeRealm { realm->getString("realm"_s), WTF::move(browsingContext) };
+    }
+    g_assert_true(!!iframeRealm);
+    g_assert_false(iframeRealm->identifier.isEmpty());
+    return WTF::move(*iframeRealm);
+}
+
+static bool isRealmEvent(const JSON::Object& message, ASCIILiteral method, const String& realmIdentifier)
+{
+    if (message.getString("method"_s) != method)
+        return false;
+    auto parameters = message.getObject("params"_s);
+    return parameters && parameters->getString("realm"_s) == realmIdentifier;
+}
+
+static void verifyIframeRealmLifecycle(AutomationTest& test, WebKitWebView* webView, const String& topLevelBrowsingContext)
+{
+    verifyProcessQualifiedRealmIdentifierIsolation();
+
+    test.loadURIAndWait(webView, s_iframeRealmTestServer->getURIForPath("/iframe-realm-lifecycle.html").data());
+    auto initialIframeRealm = getIframeRealm(test, 4, topLevelBrowsingContext);
+    auto initialRealmIdentifier = parseProtocolRealmIdentifier(initialIframeRealm.identifier);
+    g_assert_true(!!initialRealmIdentifier);
+
+    auto subscriptionParameters = JSON::Object::create();
+    auto events = JSON::Array::create();
+    events->pushString("script.realmCreated"_s);
+    events->pushString("script.realmDestroyed"_s);
+    subscriptionParameters->setArray("events"_s, WTF::move(events));
+    test.sendBidiCommandAndWait(5, "session.subscribe"_s, WTF::move(subscriptionParameters));
+
+    auto crossSiteIframeURL = makeString("http://localhost:"_s, s_iframeRealmTestServer->port(), "/replacement-iframe.html"_s);
+    auto iframeNavigationScript = makeString("document.querySelector('iframe').src = \""_s, crossSiteIframeURL, "\";"_s);
+    auto iframeNavigationParameters = JSON::Object::create();
+    iframeNavigationParameters->setString("expression"_s, iframeNavigationScript);
+    iframeNavigationParameters->setBoolean("awaitPromise"_s, false);
+    auto iframeNavigationTarget = JSON::Object::create();
+    iframeNavigationTarget->setString("context"_s, topLevelBrowsingContext);
+    iframeNavigationParameters->setObject("target"_s, WTF::move(iframeNavigationTarget));
+    test.sendBidiCommandAndWait(6, "script.evaluate"_s, WTF::move(iframeNavigationParameters));
+
+    auto initialRealmDestroyed = test.waitForBidiMessage([&](const JSON::Object& message) {
+        return isRealmEvent(message, "script.realmDestroyed"_s, initialIframeRealm.identifier);
+    });
+    g_assert_true(!!initialRealmDestroyed);
+    auto initialRealmDestroyedParameters = initialRealmDestroyed->getObject("params"_s);
+    g_assert_true(!!initialRealmDestroyedParameters);
+    g_assert_false(!!initialRealmDestroyedParameters->getValue("context"_s));
+
+    auto replacementRealmCreated = test.waitForBidiMessage([&](const JSON::Object& message) {
+        if (message.getString("method"_s) != "script.realmCreated"_s)
+            return false;
+        auto parameters = message.getObject("params"_s);
+        return parameters && parameters->getString("context"_s) == initialIframeRealm.browsingContext
+            && parameters->getString("realm"_s) != initialIframeRealm.identifier;
+    });
+    g_assert_true(!!replacementRealmCreated);
+    auto replacementIframeRealmIdentifier = replacementRealmCreated->getObject("params"_s)->getString("realm"_s);
+    g_assert_false(replacementIframeRealmIdentifier.isEmpty());
+    auto replacementRealmIdentifier = parseProtocolRealmIdentifier(replacementIframeRealmIdentifier);
+    g_assert_true(!!replacementRealmIdentifier);
+    g_assert_true(replacementRealmIdentifier->processIdentifier != initialRealmIdentifier->processIdentifier);
+
+    auto contextParameters = JSON::Object::create();
+    contextParameters->setString("context"_s, initialIframeRealm.browsingContext);
+    auto currentIframeRealms = getRealms(test, 7, WTF::move(contextParameters));
+    g_assert_cmpuint(currentIframeRealms->length(), ==, 1);
+    auto currentIframeRealm = currentIframeRealms->get(0)->asObject();
+    g_assert_true(!!currentIframeRealm);
+    g_assert_true(currentIframeRealm->getString("realm"_s) == replacementIframeRealmIdentifier);
+
+    test.loadURIAndWait(webView, s_iframeRealmTestServer->getURIForPath("/replacement-parent.html").data());
+    auto replacementRealmDestroyed = test.waitForBidiMessage([&](const JSON::Object& message) {
+        return isRealmEvent(message, "script.realmDestroyed"_s, replacementIframeRealmIdentifier);
+    });
+    g_assert_true(!!replacementRealmDestroyed);
+    auto replacementRealmDestroyedParameters = replacementRealmDestroyed->getObject("params"_s);
+    g_assert_true(!!replacementRealmDestroyedParameters);
+    g_assert_false(!!replacementRealmDestroyedParameters->getValue("context"_s));
+
+    auto activeRealms = getRealms(test, 8);
+    for (size_t index = 0; index < activeRealms->length(); ++index) {
+        auto realm = activeRealms->get(index)->asObject();
+        if (!realm)
+            continue;
+        auto realmIdentifier = realm->getString("realm"_s);
+        g_assert_true(realmIdentifier != initialIframeRealm.identifier);
+        g_assert_true(realmIdentifier != replacementIframeRealmIdentifier);
+    }
+    g_assert_false(!!test.takeBidiMessage([&](const JSON::Object& message) {
+        return isRealmEvent(message, "script.realmDestroyed"_s, initialIframeRealm.identifier)
+            || isRealmEvent(message, "script.realmDestroyed"_s, replacementIframeRealmIdentifier);
+    }));
 }
 #endif
 
@@ -551,6 +723,9 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     webView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
     g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(webView.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
+#if ENABLE(WEBDRIVER_BIDI)
+    enableSiteIsolation(webView.get());
+#endif
 #if ENABLE(2022_GLIB_API)
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
@@ -558,6 +733,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 #if ENABLE(WEBDRIVER_BIDI)
     auto topLevelBrowsingContext = test->browsingContextHandleFromLastResponse();
     verifyIframeRealmEnumeration(*test, webView.get(), topLevelBrowsingContext);
+    verifyIframeRealmLifecycle(*test, webView.get(), topLevelBrowsingContext);
 #endif
 
     auto newWebViewInWindow = test->createWebView(
@@ -612,8 +788,8 @@ void beforeAll()
     g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229", TRUE);
 
 #if ENABLE(WEBDRIVER_BIDI)
-    s_iframeRealmEnumerationServer = makeUnique<WebKitTestServer>();
-    s_iframeRealmEnumerationServer->run(iframeRealmEnumerationServerCallback);
+    s_iframeRealmTestServer = makeUnique<WebKitTestServer>();
+    s_iframeRealmTestServer->run(iframeRealmTestServerCallback);
 #endif
 
     AutomationTest::add("WebKitAutomationSession", "request-session", testAutomationSessionRequestSession);
@@ -623,7 +799,7 @@ void beforeAll()
 void afterAll()
 {
 #if ENABLE(WEBDRIVER_BIDI)
-    s_iframeRealmEnumerationServer = nullptr;
+    s_iframeRealmTestServer = nullptr;
 #endif
     g_unsetenv("WEBKIT_INSPECTOR_SERVER");
 }

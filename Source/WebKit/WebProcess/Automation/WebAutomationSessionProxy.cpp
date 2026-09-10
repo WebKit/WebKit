@@ -1211,15 +1211,16 @@ void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID,
 
     protect(coreLocalFrame->windowProxy())->jsWindowProxy(mainThreadNormalWorldSingleton());
 
-    auto realmIdentifier = m_frameToRealmIdentifier.get(frame->frameID());
-    if (!realmIdentifier) {
+    auto realmIterator = m_frameToRealmIdentifier.find(frame->frameID());
+    if (realmIterator == m_frameToRealmIdentifier.end()) {
         scriptRealmCreated(frame->frameID(), document->securityOrigin().data());
-        realmIdentifier = m_frameToRealmIdentifier.get(frame->frameID());
+        realmIterator = m_frameToRealmIdentifier.find(frame->frameID());
     }
 
-    if (!realmIdentifier)
+    if (realmIterator == m_frameToRealmIdentifier.end())
         return completionHandler(std::nullopt, std::nullopt);
 
+    std::optional<RealmIdentifier> realmIdentifier { realmIterator->value };
     std::optional<WebCore::SecurityOriginData> origin { document->securityOrigin().data() };
     completionHandler(WTF::move(realmIdentifier), WTF::move(origin));
 }
@@ -1243,18 +1244,14 @@ void WebAutomationSessionProxy::scriptRealmCreated(WebCore::FrameIdentifier fram
 
 void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier frameID)
 {
-    WeakPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
+    auto realmIterator = m_frameToRealmIdentifier.find(frameID);
+    if (realmIterator == m_frameToRealmIdentifier.end())
         return;
 
-    auto it = m_frameToRealmIdentifier.find(frameID);
-    if (it == m_frameToRealmIdentifier.end())
-        return;
+    auto destroyedRealmIdentifier = realmIterator->value;
+    m_frameToRealmIdentifier.remove(realmIterator);
 
-    auto realmIdentifier = it->value;
-    m_frameToRealmIdentifier.remove(it);
-
-    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, realmIdentifier), 0);
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, destroyedRealmIdentifier), 0);
 }
 
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)

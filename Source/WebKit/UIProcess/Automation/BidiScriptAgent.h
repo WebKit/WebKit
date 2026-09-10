@@ -66,6 +66,7 @@ public:
         WebCore::SecurityOriginData origin;
         Inspector::Protocol::BidiScript::RealmType type;
         Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+        std::optional<WebCore::FrameIdentifier> frameIdentifier;
     };
 
 
@@ -81,8 +82,8 @@ public:
     void getRealms(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& optionalBrowsingContext , std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&) override;
 
     // Realm lifecycle events.
-    void notifyRealmCreated(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
-    void notifyRealmDestroyed(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyRealmCreatedFromBrowsingContext(RealmIdentifier, WebCore::FrameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
+    void notifyRealmDestroyedFromBrowsingContext(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
 
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
     std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;

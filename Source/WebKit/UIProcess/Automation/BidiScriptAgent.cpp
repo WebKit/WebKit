@@ -63,6 +63,11 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
 
+static String protocolRealmIdentifierString(RealmIdentifier realmIdentifier)
+{
+    return makeString("realm-"_s, realmIdentifier.loggingString());
+}
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
 
 BidiScriptAgent::BidiScriptAgent(WebAutomationSession& session, BackendDispatcher& backendDispatcher)
@@ -793,7 +798,7 @@ RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmI
         return nullptr;
 
     m_browsingContextToRealmId.set(*contextHandle, realmIdentifier);
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    String realmID = protocolRealmIdentifierString(realmIdentifier);
     String origin = originStringFromSecurityOriginData(originData);
 
     auto realmInfo = Inspector::Protocol::BidiScript::RealmInfo::create()
@@ -812,7 +817,7 @@ String BidiScriptAgent::generateRealmIdForBrowsingContext(const String& browsing
     // Look up the actual RealmIdentifier for this browsing context.
     auto it = m_browsingContextToRealmId.find(browsingContext);
     if (it != m_browsingContextToRealmId.end())
-        return makeString("realm-"_s, it->value.loggingString());
+        return protocolRealmIdentifierString(it->value);
 
     // Fallback: if no realm exists yet, this is an error condition.
     // evaluate/callFunction should only be called on existing realms.
@@ -979,37 +984,45 @@ void BidiScriptAgent::sendRealmCreatedEvent(const String& realmID, const WebCore
     });
 }
 
-void BidiScriptAgent::notifyRealmCreated(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, const WebCore::SecurityOriginData& origin)
+void BidiScriptAgent::notifyRealmCreatedFromBrowsingContext(RealmIdentifier realmIdentifier, WebCore::FrameIdentifier frameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext, const WebCore::SecurityOriginData& origin)
 {
     // The WebProcess owns realm identifier creation and passes the identifier across IPC.
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    String realmID = protocolRealmIdentifierString(realmIdentifier);
+
+    auto previousRealmIterator = m_browsingContextToRealmId.find(browsingContext);
+    if (previousRealmIterator != m_browsingContextToRealmId.end() && previousRealmIterator->value != realmIdentifier)
+        notifyRealmDestroyedFromBrowsingContext(previousRealmIterator->value, browsingContext);
 
     // Track the current realm for this browsing context.
     m_browsingContextToRealmId.set(browsingContext, realmIdentifier);
 
-    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext };
+    RealmInfo realmInfo { origin.isolatedCopy(), Inspector::Protocol::BidiScript::RealmType::Window, browsingContext, frameIdentifier };
     m_activeRealms.set(realmIdentifier, WTF::move(realmInfo));
 
     sendRealmCreatedEvent(realmID, origin, Inspector::Protocol::BidiScript::RealmType::Window, browsingContext);
 }
 
-void BidiScriptAgent::notifyRealmDestroyed(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
+void BidiScriptAgent::notifyRealmDestroyedFromBrowsingContext(RealmIdentifier realmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext browsingContext)
 {
     RefPtr session = m_session.get();
     if (!session)
         return;
 
-    // Match the realm identifier that the WebProcess reported for this realm.
-    String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+    auto activeRealmIterator = m_activeRealms.find(realmIdentifier);
+    if (activeRealmIterator == m_activeRealms.end())
+        return;
+    if (activeRealmIterator->value.type != Inspector::Protocol::BidiScript::RealmType::Window
+        || activeRealmIterator->value.context != browsingContext)
+        return;
+    m_activeRealms.remove(activeRealmIterator);
 
-    // Remove the realm from active realms.
-    m_activeRealms.remove(realmIdentifier);
+    auto currentRealmIterator = m_browsingContextToRealmId.find(browsingContext);
+    if (currentRealmIterator != m_browsingContextToRealmId.end() && currentRealmIterator->value == realmIdentifier)
+        m_browsingContextToRealmId.remove(currentRealmIterator);
 
-    // Remove the browsing context mapping (realm will be regenerated on next navigation).
-    m_browsingContextToRealmId.remove(browsingContext);
-
+    String realmID = protocolRealmIdentifierString(realmIdentifier);
     session->bidiProcessor().emitEventIfEnabled(BidiEventNames::Script::RealmDestroyed, { browsingContext }, [&]() {
-        session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID, browsingContext);
+        session->bidiProcessor().scriptDomainNotifier().realmDestroyed(realmID);
     });
 }
 
@@ -1032,7 +1045,7 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
         if (!contextFilter.isEmpty() && !contextFilter.contains(realmInfo.context))
             continue;
 
-        String realmID = makeString("realm-"_s, realmIdentifier.loggingString());
+        String realmID = protocolRealmIdentifierString(realmIdentifier);
         sendRealmCreatedEvent(realmID, realmInfo.origin, realmInfo.type, realmInfo.context);
     }
 }
@@ -1042,11 +1055,19 @@ std::optional<RealmIdentifier> BidiScriptAgent::parseRealmIdentifier(const Strin
     if (!realmID.startsWith("realm-"_s))
         return std::nullopt;
 
-    auto idValue = parseInteger<uint64_t>(realmID.substring(6));
-    if (!idValue || !RealmIdentifier::isValidIdentifier(*idValue))
+    auto serializedIdentifier = realmID.substring(6);
+    auto separatorPosition = serializedIdentifier.find('-');
+    if (separatorPosition == notFound || !separatorPosition || separatorPosition == serializedIdentifier.length() - 1
+        || serializedIdentifier.find('-', separatorPosition + 1) != notFound)
         return std::nullopt;
 
-    return RealmIdentifier(*idValue);
+    auto processIdentifierValue = parseInteger<uint64_t>(serializedIdentifier.left(separatorPosition));
+    auto objectIdentifierValue = parseInteger<uint64_t>(serializedIdentifier.substring(separatorPosition + 1));
+    if (!processIdentifierValue || !WebCore::ProcessIdentifier::isValidIdentifier(*processIdentifierValue)
+        || !objectIdentifierValue || !NonProcessQualifiedRealmIdentifier::isValidIdentifier(*objectIdentifierValue))
+        return std::nullopt;
+
+    return RealmIdentifier { NonProcessQualifiedRealmIdentifier { *objectIdentifierValue }, WebCore::ProcessIdentifier { *processIdentifierValue } };
 }
 
 std::optional<String> BidiScriptAgent::browsingContextForRealm(RealmIdentifier realmIdentifier) const
