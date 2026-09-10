@@ -167,7 +167,11 @@ TestFeatures TestController::platformSpecificFeatureDefaultsForTest(const TestCo
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 {
     sk_sp<SkImage> image(mainWebView()->windowSnapshotImage());
+    if (!image)
+        return nullptr;
+
     auto data = SkPngEncoder::Encode(nullptr, image.get(), { });
+    RELEASE_ASSERT(data);
     auto uri = makeString("data:image/png;base64,"_s, base64Encoded(std::span { static_cast<const uint8_t*>(data->data()), data->size() }));
     return adoptWK(WKStringCreateWithUTF8CString(uri.utf8().legacyCStringPointer()));
 }
