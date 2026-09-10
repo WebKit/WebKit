@@ -61,6 +61,7 @@ private:
     void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void updateRenderingWithForcedRepaint() override;
     void scheduleRenderingUpdate() override;
+    void resume() override;
     bool canUpdateRendering() const override;
     void updateRendering() override;
     void sizeDidChange() override;

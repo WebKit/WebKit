@@ -157,6 +157,13 @@ void NonCompositedFrameRenderer::sizeDidChange()
         scheduleRenderingUpdate();
 }
 
+void NonCompositedFrameRenderer::resume()
+{
+    // The UI process may have discarded the displayed buffer while the view was hidden.
+    addDirtyRect(m_webPage->bounds());
+    FrameRenderer::resume();
+}
+
 void NonCompositedFrameRenderer::scheduleRenderingUpdate()
 {
     WTFEmitSignpost(this, NonCompositedScheduleRenderingUpdate, "canRenderNextFrame %s", canUpdateRendering() ? "yes" : "no");
@@ -192,6 +199,14 @@ void NonCompositedFrameRenderer::updateRendering()
     webPage->updateRendering();
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
+
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_frameDamage && m_frameDamage->isEmpty() && !m_forcedRepaintAsyncCallback) {
+        webPage->didUpdateRendering({ });
+        WTFEndSignpost(this, NonCompositedRenderingUpdate);
+        return;
+    }
+#endif
 
     IntSize scaledSize = webPage->size();
     scaledSize.scale(webPage->deviceScaleFactor());

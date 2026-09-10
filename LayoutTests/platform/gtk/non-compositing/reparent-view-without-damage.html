@@ -1,0 +1,98 @@
+<!DOCTYPE html><!-- webkit-test-runner [ AcceleratedCompositingEnabled=false HardwareAccelerationEnabled=false ] -->
+<html style="background: red; overflow: hidden">
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.dontForceRepaint();
+}
+
+function waitForVisibility(state)
+{
+    if (document.visibilityState === state)
+        return Promise.resolve();
+
+    return new Promise(resolve => {
+        function changed() {
+            if (document.visibilityState !== state)
+                return;
+            document.removeEventListener("visibilitychange", changed);
+            resolve();
+        }
+        document.addEventListener("visibilitychange", changed);
+    });
+}
+
+function changeViewParent(method)
+{
+    // runUIScript waits for a presentation update, which cannot complete while detached.
+    return new Promise(resolve => testRunner.runUIScriptImmediately(`
+        uiController.${method}(function() {
+            uiController.uiScriptComplete();
+        });
+    `, resolve));
+}
+
+async function displayedPixel()
+{
+    const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
+    const image = new Image;
+    image.src = dataURL;
+    await image.decode();
+
+    // Keep the image and canvas detached so measuring the view cannot repaint the page.
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, Math.floor(image.width / 2), Math.floor(image.height / 2), 1, 1, 0, 0, 1, 1);
+    return Array.from(context.getImageData(0, 0, 1, 1).data);
+}
+
+async function waitForRedPixel()
+{
+    const deadline = performance.now() + 2000;
+    let pixel;
+    do {
+        pixel = await displayedPixel();
+        if (pixel.join() === "255,0,0,255")
+            return true;
+        await new Promise(resolve => setTimeout(resolve, 20));
+    } while (performance.now() < deadline);
+    return false;
+}
+
+window.addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    try {
+        const initiallyRed = await waitForRedPixel();
+
+        const hidden = waitForVisibility("hidden");
+        await changeViewParent("removeViewFromWindow");
+        await hidden;
+
+        const visible = waitForVisibility("visible");
+        await changeViewParent("addViewToWindow");
+        await visible;
+
+        // Allow the native widget to be allocated again before taking its snapshot.
+        await new Promise(requestAnimationFrame);
+        await new Promise(requestAnimationFrame);
+
+        const restoredRed = await waitForRedPixel();
+
+        // Write results only after measuring the restored view: output itself needs a repaint.
+        document.body.textContent = `${initiallyRed ? "PASS" : "FAIL"}: The initial view paints red.\n`
+            + `${restoredRed ? "PASS" : "FAIL"}: Red content returns after reparenting an unchanged view.`;
+    } catch (error) {
+        document.body.textContent = `FAIL: ${error}\n`;
+    }
+    testRunner.notifyDone();
+});
+
+</script>
+</head>
+<body style="white-space: pre"></body>
+</html>
