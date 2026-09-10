@@ -510,6 +510,7 @@ Navigation::Result Navigation::navigate(JSC::JSGlobalObject& globalObject, const
     auto request = FrameLoadRequest(*frame(), WTF::move(newURL));
     request.setNavigationHistoryBehavior(options.history);
     request.setIsFromNavigationAPI(true);
+    request.setNeedsSynchronousPolicyDecision(true);
     frame()->loader().loadFrameRequest(WTF::move(request), nullptr, { });
 
     // If the load() call never made it to the point that NavigateEvent was emitted, thus the upcoming-non-traverse slot was never promoted, this returns the tracker so we can reject it.

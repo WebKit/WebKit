@@ -2185,6 +2185,21 @@ void DocumentLoader::startLoadingMainResource()
         return;
     }
 
+    // A navigation started synchronously by its initiating script must not also commit
+    // synchronously, or script that queued a microtask from beforeunload would observe the new
+    // document instead of the one it is unloading. Empty documents are the only ones that commit
+    // inline, so hand this one to a task.
+    if (m_triggeringAction.needsSynchronousPolicyDecision() && !m_hasDeferredEmptyLoad && frame && frame->document()) {
+        m_hasDeferredEmptyLoad = true;
+        protect(frame->document())->eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }]() {
+            if (!m_loadingMainResource)
+                return;
+            m_loadingMainResource = false;
+            startLoadingMainResource();
+        });
+        return;
+    }
+
     if (maybeLoadEmpty()) {
         DOCUMENTLOADER_RELEASE_LOG_FORWARDABLE(DocumentLoaderStartLoadingMainResourceEmptyDocument);
         return;
