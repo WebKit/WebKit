@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-
-# Copyright (C) 2023 Apple Inc. All rights reserved.
+# Copyright (C) 2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,38 +20,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import os
-import sys
-import warnings
-
-scripts = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'Scripts')
-sys.path.insert(0, scripts)
-
-# This is needed to set up all the autoinstall logic.
-import webkitpy  # noqa: F401
-
-from webkitcorepy import StringIO, log, testing
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.WARNING)
-    warnings.filterwarnings(
-        'ignore',
-        message='^You do not have a working installation of the service_identity module',
-    )
-
-    # We import this here after we've set the above warnings filter.
-    from webkitpy.autoinstalled import buildbot  # noqa: F401
-
-    # Disable output to stdout while loading libraries to suppress load_password error
-    try:
-        sys.stdout = StringIO()
-        runner = testing.PythonTestRunner(
-            description='Run Python unit tests for our various build masters.',
-            modules={os.path.join(os.path.dirname(__file__), ): ['build-webkit-org', 'ews-build', 'ews-dashboard', 'Shared']},
-            loggers=[logging.getLogger(), log],
-        )
-    finally:
-        sys.stdout = sys.__stdout__
-
-    sys.exit(runner.main(*sys.argv[1:]))
+"""The Flask app. It reads the database and never writes to it or reaches the network."""
