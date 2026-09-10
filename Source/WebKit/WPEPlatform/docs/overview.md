@@ -154,10 +154,8 @@ deprecated. WPE WebKit can still be built against them while
 applications and platform integrators migrate, but new code should
 target WPEPlatform.
 
-<!-- TODO: uncomment once migration-mapping.md and migrating-from-libwpe.md have landed (restore the two entries below as a bulleted list):
-The migration table at [migration-mapping](migration-mapping.html) lists every libwpe and WPEBackend-fdo public symbol and points at the WPEPlatform equivalent (or marks it as gone).
-[Migrating from libwpe](migrating-from-libwpe.html) is a hands-on guide with before/after code for the common patterns.
--->
+- The [Migration mapping table](migration-mapping.html) lists every libwpe and WPEBackend-fdo public symbol and points at the WPEPlatform equivalent (or marks it as gone).
+- [Migrating from libwpe](migrating-from-libwpe.html) is a hands-on guide with before/after code for the common patterns.
 
 ## What is *not* covered by WPEPlatform
 
