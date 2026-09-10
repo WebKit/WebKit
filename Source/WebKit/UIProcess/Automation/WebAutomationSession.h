@@ -198,6 +198,7 @@ public:
     void emitContextCreatedEvent(const WebPageProxy&);
     void didCreateFrame(const WebFrameProxy&);
     void willDestroyFrame(const WebFrameProxy&);
+    void webProcessDidTerminate(WebCore::ProcessIdentifier);
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
@@ -391,8 +392,8 @@ private:
     void addKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle);
     void isKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle, CompletionHandler<void(bool)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
-    void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
-    void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
+    void scriptRealmCreated(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptRealmDestroyed(IPC::Connection&, WebCore::FrameIdentifier, RealmIdentifier);
 #endif
 
     // Platform-dependent implementations.

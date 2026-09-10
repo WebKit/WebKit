@@ -47,7 +47,7 @@ public:
     void detachFromFrame();
     void replaceFrame(Frame&);
 
-    void destroyJSWindowProxy(DOMWrapperWorld&, Frame* frameForNotification = nullptr);
+    void destroyJSWindowProxy(DOMWrapperWorld&, Frame* frameContainingDestroyedRealm = nullptr);
 
     Vector<JSC::Strong<JSWindowProxy>> jsWindowProxiesAsVector() const;
 
@@ -58,7 +58,7 @@ public:
 
     void clearJSWindowProxiesNotMatchingDOMWindow(DOMWindow*, bool goingIntoBackForwardCache);
 
-    void setDOMWindow(DOMWindow*);
+    void setDOMWindow(DOMWindow*, Frame* frameContainingPreviousRealm = nullptr);
 
     // Debugger can be nullptr to detach any existing Debugger.
     void attachDebugger(JSC::Debugger*); // Attaches/detaches in all worlds/window proxies.
