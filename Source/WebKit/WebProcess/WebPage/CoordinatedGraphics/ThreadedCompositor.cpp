@@ -68,6 +68,19 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <GLES2/gl2.h>
 #endif
 
+#ifdef Always
+#undef Always
+#endif
+#ifdef Below
+#undef Below
+#endif
+#ifdef None
+#undef None
+#endif
+#ifdef True
+#undef True
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 

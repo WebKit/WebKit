@@ -27,8 +27,20 @@
 
 #if PLATFORM(X11)
 #include <X11/Xlib.h>
+#ifdef Above
+#undef Above
+#endif
+#ifdef Always
+#undef Always
+#endif
+#ifdef Below
+#undef Below
+#endif
 #ifdef Success
 #undef Success
+#endif
+#ifdef True
+#undef True
 #endif
 #include <wtf/Vector.h>
 

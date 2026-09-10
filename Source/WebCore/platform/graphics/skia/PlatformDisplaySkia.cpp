@@ -62,6 +62,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <xf86drm.h>
 #endif
 
+#ifdef None
+#undef None
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
