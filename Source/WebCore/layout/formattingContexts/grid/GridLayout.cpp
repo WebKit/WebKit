@@ -32,7 +32,6 @@
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
 #include "GridSizer.h"
-#include "ImplicitGrid.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "PlacedGridItem.h"
@@ -104,20 +103,17 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
-GridLayoutResult GridLayout::layout(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
+GridLayoutResult GridLayout::layout(const GridItemPlacementResult& gridItemPlacementResult, LeadingImplicitTracks leadingImplicitTracks, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
 {
     auto& gridDefinition = gridLayoutState.gridDefinition;
     auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
     auto& gridTemplateRowsTrackSizes = gridDefinition.gridTemplateRows.sizes;
 
     auto& formattingContext = this->formattingContext();
-    // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
-    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes.size(), gridTemplateRowsTrackSizes.size());
-    auto [ gridAreas, columnsCount, rowsCount ] = GridItemPlacer { gridDefinition.autoFlowOptions }.placeItems(unplacedGridItems, implicitGrid);
-    auto placedGridItems = formattingContext.constructPlacedGridItems(gridAreas);
+    auto placedGridItems = formattingContext.constructPlacedGridItems(gridItemPlacementResult.gridAreas);
 
-    auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, leadingImplicitTracks.columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
-    auto rowTrackSizingFunctionsList = trackSizingFunctions(rowsCount, leadingImplicitTracks.rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
+    auto columnTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.columnsCount, leadingImplicitTracks.columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);
+    auto rowTrackSizingFunctionsList = trackSizingFunctions(gridItemPlacementResult.rowsCount, leadingImplicitTracks.rowsCount, gridTemplateRowsTrackSizes, gridDefinition.gridAutoRows, gridDefinition.zoom);
 
     // https://drafts.csswg.org/css-grid-1/#algo-grid-sizing
     // Fast path: the caller only needs the column sizes resolved by step 1 of the grid sizing

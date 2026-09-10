@@ -41,6 +41,7 @@ struct ZoomFactor;
 namespace Layout {
 
 struct GridAreaSizes;
+struct GridItemPlacementResult;
 struct GridLayoutState;
 struct UsedMargins;
 
@@ -53,7 +54,7 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    GridLayoutResult layout(const UnplacedGridItems&, LeadingImplicitTracks, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
+    GridLayoutResult layout(const GridItemPlacementResult&, LeadingImplicitTracks, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
 
 private:
 

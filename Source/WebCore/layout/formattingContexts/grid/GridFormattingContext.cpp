@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GridFormattingContext.h"
 
+#include "GridItemPlacer.h"
 #include "GridItemRect.h"
 #include "GridLayout.h"
 #include "GridLayoutState.h"
@@ -234,7 +235,11 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedGapValue(gridStyle->columnGap(), gridStyle), usedGapValue(gridStyle->rowGap(), gridStyle) };
 
-    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(unplacedGridItems, leadingImplicitTracks, layoutState);
+    // https://drafts.csswg.org/css-grid-1/#layout-algorithm
+    // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
+    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(unplacedGridItems, leadingImplicitTracks, gridTemplateColumns.sizes.size(), gridTemplateRows.sizes.size());
+
+    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(gridItemPlacementResult, leadingImplicitTracks, layoutState);
 
     // Grid layout positions each item within its containing block which is the grid area.
     // Here we translate it to the coordinate space of the grid.
@@ -348,6 +353,11 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     auto leadingImplicitTracks = computeLeadingImplicitTracks(root(), logicalGridItems);
     auto unplacedGridItems = constructUnplacedGridItems(logicalGridItems, leadingImplicitTracks);
 
+    // https://drafts.csswg.org/css-grid-1/#layout-algorithm
+    // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
+    // The placement does not depend on the axis constraints, so it is shared by both intrinsic sizing scenarios.
+    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(unplacedGridItems, leadingImplicitTracks, gridDefinition.gridTemplateColumns.sizes.size(), gridDefinition.gridTemplateRows.sizes.size());
+
     auto columnSizesForConstraint = [&](AxisConstraint intrinsicConstraint) -> TrackSizes {
         GridLayoutConstraints layoutConstraints {
             .inlineAxis = intrinsicConstraint,
@@ -361,7 +371,7 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
             ? GridLayoutScope::ColumnSizingOnly
             : GridLayoutScope::Full;
 
-        return GridLayout { *this }.layout(unplacedGridItems, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
+        return GridLayout { *this }.layout(gridItemPlacementResult, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
     };
 
     TrackSizes minContentColumnSizes = columnSizesForConstraint(AxisConstraint::minContent());
