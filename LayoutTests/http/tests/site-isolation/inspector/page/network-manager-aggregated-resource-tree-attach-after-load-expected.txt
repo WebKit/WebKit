@@ -1,0 +1,33 @@
+Test that a cross-origin frame which finished loading before the frontend attached is described by the aggregated cross-process resource tree.
+
+
+
+== Running test suite: SiteIsolation.NetworkManager.AggregatedResourceTree
+-- Running test case: SiteIsolation.NetworkManager.AggregatedResourceTree.MergedAtAttach
+PASS: There should be a main frame.
+PASS: Cross-origin child frame's url should point at the iframe document, not at its origin.
+PASS: Cross-origin child's parent should be the main frame.
+PASS: Cross-origin child's name attribute should be reported.
+PASS: Cross-origin child should have a non-empty loaderIdentifier.
+PASS: Cross-origin child's loaderIdentifier should differ from the main frame's.
+PASS: Cross-origin child's stylesheet subresource should be in the frame model.
+PASS: There should be exactly one frame for the iframe document.
+PASS: The stylesheet subresource should not be duplicated.
+
+-- Running test case: SiteIsolation.NetworkManager.AggregatedResourceTree.MergeIsIdempotent
+PASS: Cross-origin child frame should be in the frame model.
+PASS: Merging again should not add frames.
+PASS: Merging again should keep the same WI.Frame objects.
+PASS: Merging again should not add resources.
+
+-- Running test case: SiteIsolation.NetworkManager.AggregatedResourceTree.NestedNewFrame
+PASS: Nested parent frame should be in the frame model.
+PASS: Grandchild frame should be in the frame model.
+PASS: Nested parent's parent should be the main frame.
+PASS: Grandchild's parent should be the nested parent frame, not the main frame.
+PASS: Grandchild's name attribute should be reported.
+PASS: Grandchild should have a non-empty loaderIdentifier.
+PASS: Grandchild's loaderIdentifier should differ from its parent's.
+PASS: There should be exactly one nested parent frame.
+PASS: There should be exactly one grandchild frame.
+
