@@ -59,8 +59,8 @@ public:
     MatchResultCache& matchResultCache() LIFETIME_BOUND;
 
     struct LayoutDependencyUpdateContext {
-        HashSet<CheckedRef<const Element>> invalidatedContainers;
-        HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedContainers;
+        WeakHashSet<const Element, WeakPtrImplWithEventTargetData> invalidatedAnchorPositioned;
     };
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
