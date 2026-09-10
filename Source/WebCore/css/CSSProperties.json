@@ -3188,8 +3188,7 @@
             }
         },
         "border-image-source": {
-            "animation-type": "by computed value",
-            "animation-type-comment": "Current spec animation type is 'discrete'",
+            "animation-type": "discrete",
             "initial": "none",
             "values": [
                 "none"
@@ -5534,7 +5533,7 @@
             }
         },
         "list-style-image": {
-            "animation-type": "by computed value",
+            "animation-type": "discrete",
             "inherited": true,
             "initial": "none",
             "values": [
@@ -6124,8 +6123,7 @@
             }
         },
         "mask-border-source": {
-            "animation-type": "by computed value",
-            "animation-type-comment": "Current spec animation type is 'discrete'",
+            "animation-type": "discrete",
             "initial": "none",
             "values": [
                 "none"

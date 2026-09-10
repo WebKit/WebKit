@@ -1609,6 +1609,11 @@ webkit.org/b/52669 animations/dynamic-stylesheet-loading.html [ Pass Failure ]
 
 webkit.org/b/111612 animations/animation-delay-changed.html [ Pass Failure ]
 
+# These image properties now animate discretely, so the removed -webkit-cross-fade() animation these tests assert no longer happens.
+webkit.org/b/322797 animations/cross-fade-border-image-source.html [ Failure ]
+webkit.org/b/322797 animations/cross-fade-list-style-image.html [ Failure ]
+webkit.org/b/322797 animations/cross-fade-webkit-mask-box-image.html [ Failure ]
+
 # media/video-seek-after-end.html is flaky
 webkit.org/b/116293 media/video-seek-after-end.html [ Pass Failure ]
 
