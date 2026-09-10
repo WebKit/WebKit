@@ -56,7 +56,7 @@ int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audi
 
 int32_t LibWebRTCAudioModule::StartPlayout()
 {
-    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StartPlayout %d", m_isPlaying);
+    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StartPlayout %d", m_isPlaying.load());
 
     if (m_isPlaying)
         return 0;
@@ -78,7 +78,7 @@ int32_t LibWebRTCAudioModule::StartPlayout()
 
 int32_t LibWebRTCAudioModule::StopPlayout()
 {
-    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StopPlayout %d", m_isPlaying);
+    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StopPlayout %d", m_isPlaying.load());
 
     m_isPlaying = false;
     callOnMainThread([this, protectedThis = Ref { *this }] {
@@ -130,14 +130,15 @@ void LibWebRTCAudioModule::pollAudioData()
 
 void LibWebRTCAudioModule::pollFromSource()
 {
-    if (!m_audioTransport)
+    auto* audioTransport = m_audioTransport.load();
+    if (!audioTransport)
         return;
 
     for (unsigned i = 0; i < PollSamplesCount; i++) {
         int64_t elapsedTime = -1;
         int64_t ntpTime = -1;
         char data[LibWebRTCAudioFormat::sampleByteSize * channels * LibWebRTCAudioFormat::chunkSampleCount];
-        m_audioTransport->PullRenderData(LibWebRTCAudioFormat::sampleByteSize * 8, LibWebRTCAudioFormat::sampleRate, channels, LibWebRTCAudioFormat::chunkSampleCount, data, &elapsedTime, &ntpTime);
+        audioTransport->PullRenderData(LibWebRTCAudioFormat::sampleByteSize * 8, LibWebRTCAudioFormat::sampleRate, channels, LibWebRTCAudioFormat::chunkSampleCount, data, &elapsedTime, &ntpTime);
 #if PLATFORM(COCOA)
         if (m_isRenderingIncomingAudioCounter)
             m_incomingAudioMediaStreamTrackRendererUnit->newAudioChunkPushed(m_currentAudioSampleCount);
