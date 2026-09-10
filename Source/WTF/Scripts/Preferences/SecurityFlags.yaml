@@ -20,3 +20,6 @@ radar183491061:
 
 radar184485266:
   humanReadableDescription: "No security fix behind this one: it is the radar for the disable switch itself, and exists to validate the mechanism end to end before anything in production depends on it"
+
+radar186713243:
+  humanReadableDescription: "Validate transcoded file names coming from the WebContent process"
