@@ -598,6 +598,11 @@ public:
     std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource);
     RefPtr<CaretPosition> caretPositionFromPoint(double x, double y, CaretPositionFromPointOptions);
 
+    ExceptionOr<Vector<Ref<DOMQuad>>> getBoxQuads(BoxQuadOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertQuadFromNode(DOMQuadInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertRectFromNode(DOMRectReadOnly&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMPoint>> convertPointFromNode(DOMPointInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+
     WEBCORE_EXPORT RefPtr<Element> scrollingElementForAPI();
     WEBCORE_EXPORT RefPtr<Element> scrollingElement();
 

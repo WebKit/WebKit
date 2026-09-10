@@ -29,3 +29,4 @@
 };
 
 Text includes Slotable;
+Text includes GeometryUtils;

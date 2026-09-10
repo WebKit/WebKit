@@ -55,6 +55,9 @@ class CustomStateSet;
 class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
+class DOMPoint;
+class DOMQuad;
+class DOMRectReadOnly;
 class DOMTokenList;
 class DeferredPromise;
 class Document;
@@ -73,6 +76,11 @@ class KeyboardEvent;
 class LayoutUnit;
 class LocalFrame;
 class Locale;
+class Text;
+struct BoxQuadOptions;
+struct ConvertCoordinateOptions;
+struct DOMPointInit;
+struct DOMQuadInit;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -357,6 +365,10 @@ public:
 
     WEBCORE_EXPORT Ref<DOMRectList> getClientRects();
     Ref<DOMRect> getBoundingClientRect();
+    ExceptionOr<Vector<Ref<DOMQuad>>> getBoxQuads(BoxQuadOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertQuadFromNode(DOMQuadInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMQuad>> convertRectFromNode(DOMRectReadOnly&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
+    ExceptionOr<Ref<DOMPoint>> convertPointFromNode(DOMPointInit&&, Variant<Ref<Text>, Ref<Element>, Ref<Document>>&&, ConvertCoordinateOptions&&);
 
     // Returns the absolute bounding box translated into screen coordinates.
     WEBCORE_EXPORT IntRect screenRect() const;

@@ -250,14 +250,14 @@ EXPRESSION: text = document.createTextNode("text content"); text
         "_value": ""
       },
       {
-        "_name": "data",
-        "_type": "string",
-        "_value": "text content"
+        "_name": "getBoxQuads",
+        "_type": "function",
+        "_value": ""
       },
       {
-        "_name": "length",
-        "_type": "number",
-        "_value": "12"
+        "_name": "convertQuadFromNode",
+        "_type": "function",
+        "_value": ""
       }
     ],
     "_entries": null
