@@ -98,14 +98,14 @@ public:
 
     enum class ForceFullLayout : bool { No, Yes };
     std::optional<LayoutRect> layout(RenderBlockFlow::MarginInfo&, ForceFullLayout = ForceFullLayout::No);
-    void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer = nullptr);
-    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderInline* layerRenderer = nullptr);
+    void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderBoxModelObject* layerRenderer = nullptr);
+    bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderBoxModelObject* layerRenderer = nullptr);
     void adjustForPagination();
     void shiftLinesByInBlockDirection(LayoutUnit blockShift);
 
     void collectOverflow();
-    LayoutRect inkOverflowBoundingBoxRectFor(const RenderInline&) const;
-    Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
+    LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
+    Vector<FloatRect> collectInlineBoxRects(const RenderBoxModelObject&) const;
 
     LayoutUnit contentLogicalHeight() const;
     std::optional<LayoutUnit> clampedContentLogicalHeight() const;
@@ -122,12 +122,12 @@ public:
     bool NODELETE hasInkOverflow() const;
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
-    LayoutRect firstInlineBoxRect(const RenderInline&) const;
-    LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
+    LayoutRect firstInlineBoxRect(const RenderBoxModelObject&) const;
+    LayoutRect enclosingBorderBoxRectFor(const RenderBoxModelObject&) const;
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
-    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
+    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderBoxModelObject&) const;
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
     InlineIterator::InlineBoxIterator lastRootInlineBox() const;
     InlineIterator::LineBoxIterator firstLineBox() const;

@@ -53,7 +53,7 @@ class InlineContent;
 
 class InlineContentPainter {
 public:
-    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent&, const RenderBlockFlow& root);
+    InlineContentPainter(PaintInfo&, const LayoutPoint& paintOffset, const RenderBoxModelObject* inlineBoxWithLayer, const InlineContent&, const RenderBlockFlow& root);
 
     void paint();
 
@@ -66,7 +66,7 @@ private:
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;
     LayoutRect m_damageRect;
-    const RenderInline* m_inlineBoxWithLayer { nullptr };
+    const RenderBoxModelObject* m_inlineBoxWithLayer { nullptr };
     const InlineContent& m_inlineContent;
     const RenderBlockFlow& m_root;
     SingleThreadWeakListHashSet<RenderInline> m_outlineObjects;
@@ -74,7 +74,7 @@ private:
 
 class LayerPaintScope {
 public:
-    LayerPaintScope(const RenderInline* inlineBoxWithLayer);
+    LayerPaintScope(const RenderBoxModelObject* inlineBoxWithLayer);
     bool testIsIncludesAndUpdate(const InlineDisplay::Box&);
 
 private:
