@@ -135,7 +135,7 @@ void DocumentScope::setPreferredStylesheetSetName(const WTF::String& name)
 auto DocumentScope::mediaQueryViewportStateForDocument(const Document& document) -> MediaQueryViewportState
 {
     // These things affect evaluation of viewport dependent media queries.
-    return { document.view()->layoutSize(), document.frame()->pageZoomFactor(), document.printing() };
+    return { document.view()->layoutSizeIncludingScrollbars(), document.frame()->pageZoomFactor(), document.printing() };
 }
 
 void DocumentScope::evaluateMediaQueriesForViewportChange()
