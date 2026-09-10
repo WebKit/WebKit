@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/watch-utilities.js"></script>
+<script>
+let Objects = {
+    returnValue: {},
+    warmedMutator: {value: 0},
+    otherObjectsWatchedMutator: {value: 0},
+    flattenAttempt: {value: 0},
+    reentrantUnwatch: {value: 0},
+    ownRead: {value: 0},
+    watchedPrototype: {value: 0},
+};
+Objects.inheritingObject = Object.create(Objects.watchedPrototype);
+
+class SuperPropertyWriterBase { }
+class SuperPropertyWriter extends SuperPropertyWriterBase {
+    write(value)
+    {
+        super.value = value;
+    }
+}
+
+let superPropertyWriteWarmupObject = new SuperPropertyWriter;
+Objects.superPropertyWrite = new SuperPropertyWriter;
+
+class ComputedSuperPropertyWriter extends SuperPropertyWriterBase {
+    write(property, value)
+    {
+        super[property] = value;
+    }
+}
+
+let computedSuperPropertyWriteWarmupObject = new ComputedSuperPropertyWriter;
+Objects.computedSuperPropertyWrite = new ComputedSuperPropertyWriter;
+
+let sloppyComputedSuperPropertyWriter = {
+    write(property, value) {
+        super[property] = value;
+    },
+};
+let sloppyComputedSuperPropertyWriteWarmupObject = Object.create(sloppyComputedSuperPropertyWriter);
+Objects.sloppyComputedSuperPropertyWrite = Object.create(sloppyComputedSuperPropertyWriter);
+
+function warmedNamedWrite(object, value)
+{
+    object.value = value;
+}
+
+function otherObjectsWatchedNamedWrite(object, value)
+{
+    object.value = value;
+}
+
+function warmedNamedRead(object)
+{
+    return object.value;
+}
+
+function warmedInheritedRead(object)
+{
+    return object.value;
+}
+
+function createIdentityTestObject()
+{
+    return {value: 0};
+}
+
+function addNamedProperty(object, value)
+{
+    object.added = value;
+}
+
+let warmupObject = {value: 0};
+let identityWatchedObject = createIdentityTestObject();
+let identitySiblingObject = createIdentityTestObject();
+
+function test()
+{
+    WI.debuggerManager.createWatchedObjectBreakpoint();
+
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.watch");
+    let {ensureDFGCompiled, evaluateWithCommandLineAPI, expectNoPause, expectPause, unwatchObject, watchObject} = InspectorTest.WatchObject;
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.WarmedMutator",
+        async test() {
+            let numberOfDFGCompiles = await ensureDFGCompiled("warmedNamedWrite", "warmedNamedWrite(warmupObject, j)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The mutator should DFG compile before watch.");
+            await watchObject("Objects.warmedMutator");
+            await expectPause({
+                expression: "warmedNamedWrite(Objects.warmedMutator, 1)",
+                beforeExpression: "Objects.warmedMutator.value === 0",
+                afterExpression: "Objects.warmedMutator.value === 1",
+                description: "a property write from a mutator warmed before watch",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.API",
+        async test() {
+            let [remoteObject, wasThrown] = await evaluateWithCommandLineAPI("watch(Objects.returnValue)");
+            InspectorTest.expectTrue(!wasThrown && remoteObject.type === "undefined", "Should return undefined after watching an object.");
+
+            [remoteObject, wasThrown] = await evaluateWithCommandLineAPI("watch()");
+            InspectorTest.expectTrue(!wasThrown && remoteObject.type === "undefined", "Should return undefined without an argument.");
+
+            [remoteObject, wasThrown] = await evaluateWithCommandLineAPI("watch(42)");
+            InspectorTest.expectTrue(wasThrown && remoteObject.description.startsWith("TypeError:"), "Should throw a TypeError for a primitive.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.ObjectTypes",
+        async test() {
+            await InspectorTest.evaluateInPage("Objects.otherRealm = document.body.appendChild(document.createElement('iframe')).contentWindow");
+
+            for (let [description, expression] of [
+                ["a null-prototype object", "Object.create(null)"],
+                ["a class instance with private members", "new (class { #value; #method() {} })"],
+                ["an object from another realm", "new Objects.otherRealm.Object"],
+                ["an object with an Array constructor and toStringTag", "({constructor: Array, [Symbol.toStringTag]: 'Array'})"],
+            ]) {
+                let [remoteObject, wasThrown] = await evaluateWithCommandLineAPI(`(() => { let object = ${expression}; watch(object); unwatch(object); return true; })()`);
+                InspectorTest.expectTrue(!wasThrown && remoteObject.value === true, `Should watch and unwatch ${description}.`);
+            }
+
+            for (let [description, expression] of [
+                ["an array", "[]"],
+                ["an Array subclass instance", "new (class extends Array {})"],
+                ["a regular expression", "/a/"],
+                ["a RegExp subclass instance", "new (class extends RegExp {})('a')"],
+                ["a Map", "new Map"],
+                ["a Set", "new Set"],
+                ["a WeakMap", "new WeakMap"],
+                ["a WeakSet", "new WeakSet"],
+                ["a Promise", "Promise.resolve()"],
+                ["an ArrayBuffer", "new ArrayBuffer(0)"],
+                ["a typed array", "new Uint8Array(0)"],
+                ["a DataView", "new DataView(new ArrayBuffer(0))"],
+                ["a function", "function() {}"],
+                ["a Date", "new Date"],
+                ["an Error", "new Error"],
+                ["a boxed primitive", "new Number(0)"],
+                ["an arguments object", "(function() { return arguments; })()"],
+                ["a Proxy without invoking its traps", "new Proxy({}, {getPrototypeOf() { throw new Error('Should not invoke Proxy traps.'); }})"],
+                ["a revoked Proxy", "(() => { let {proxy, revoke} = Proxy.revocable({}, {}); revoke(); return proxy; })()"],
+                ["a DOM object", "document.body"],
+                ["Object.prototype", "Object.prototype"],
+                ["ArrayBuffer.prototype", "ArrayBuffer.prototype"],
+                ["an array from another realm", "new Objects.otherRealm.Array"],
+            ]) {
+                for (let command of ["watch", "unwatch"]) {
+                    let [remoteObject, wasThrown] = await evaluateWithCommandLineAPI(`${command}(${expression})`);
+                    InspectorTest.expectTrue(wasThrown && remoteObject.description.startsWith(`TypeError: ${command} first argument must be a regular object.`), `${command} should reject ${description}.`);
+                }
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.PropertyAddition",
+        async test() {
+            await InspectorTest.evaluateInPage("Objects.propertyAddition = {}");
+            await watchObject("Objects.propertyAddition");
+            await expectPause({
+                expression: "addNamedProperty(Objects.propertyAddition, 1)",
+                beforeExpression: "!('added' in Objects.propertyAddition)",
+                afterExpression: "Objects.propertyAddition.added === 1",
+                description: "adding an ordinary named property",
+            });
+            await expectPause({
+                expression: "addNamedProperty(Objects.propertyAddition, 2)",
+                beforeExpression: "Objects.propertyAddition.added === 1",
+                afterExpression: "Objects.propertyAddition.added === 2",
+                description: "writing a named property after a Structure transition",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperPropertyWrite",
+        async test() {
+            let numberOfDFGCompiles = await ensureDFGCompiled("SuperPropertyWriter.prototype.write", "SuperPropertyWriter.prototype.write.call(superPropertyWriteWarmupObject, j)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The super-property mutator should DFG compile before watch.");
+            await watchObject("Objects.superPropertyWrite");
+            await expectPause({
+                expression: "Objects.superPropertyWrite.write(1)",
+                beforeExpression: "!('value' in Objects.superPropertyWrite)",
+                afterExpression: "Objects.superPropertyWrite.value === 1",
+                description: "a named super-property write to a watched receiver",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.ComputedSuperPropertyWrite",
+        async test() {
+            await watchObject("Objects.computedSuperPropertyWrite");
+            let numberOfDFGCompiles = await ensureDFGCompiled("ComputedSuperPropertyWriter.prototype.write", "ComputedSuperPropertyWriter.prototype.write.call(computedSuperPropertyWriteWarmupObject, 'value', j)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The computed super-property mutator should DFG compile after watch.");
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => ++pauseCount);
+            try {
+                await expectPause({
+                    expression: "Objects.computedSuperPropertyWrite.write('value', 1)",
+                    beforeExpression: "!('value' in Objects.computedSuperPropertyWrite)",
+                    afterExpression: "Objects.computedSuperPropertyWrite.value === 1",
+                    description: "a computed super-property write from a mutator compiled after watch",
+                });
+            } finally {
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            }
+            InspectorTest.expectEqual(pauseCount, 1, "Should pause exactly once for the compiled computed super-property write.");
+            await unwatchObject("Objects.computedSuperPropertyWrite");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SloppyComputedSuperPropertyWrite",
+        async test() {
+            await watchObject("Objects.sloppyComputedSuperPropertyWrite");
+            let numberOfDFGCompiles = await ensureDFGCompiled("sloppyComputedSuperPropertyWriter.write", "sloppyComputedSuperPropertyWriter.write.call(sloppyComputedSuperPropertyWriteWarmupObject, 'value', j)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The non-strict computed super-property mutator should DFG compile after watch.");
+            let pauseCount = 0;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => ++pauseCount);
+            try {
+                await expectPause({
+                    expression: "Objects.sloppyComputedSuperPropertyWrite.write('value', 1)",
+                    beforeExpression: "!('value' in Objects.sloppyComputedSuperPropertyWrite)",
+                    afterExpression: "Objects.sloppyComputedSuperPropertyWrite.value === 1",
+                    description: "a non-strict computed super-property write from a mutator compiled after watch",
+                });
+            } finally {
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            }
+            InspectorTest.expectEqual(pauseCount, 1, "Should pause exactly once for the compiled non-strict computed super-property write.");
+            await unwatchObject("Objects.sloppyComputedSuperPropertyWrite");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.FlattenAttempt",
+        async test() {
+            await watchObject("Objects.flattenAttempt");
+            await InspectorTest.evaluateInPage("$vm.flattenDictionaryObject(Objects.flattenAttempt)");
+            await expectPause({
+                expression: "warmedNamedWrite(Objects.flattenAttempt, 1)",
+                beforeExpression: "Objects.flattenAttempt.value === 0",
+                afterExpression: "Objects.flattenAttempt.value === 1",
+                description: "a property write after an attempted dictionary flatten",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.ReentrantUnwatch",
+        async test() {
+            await watchObject("Objects.reentrantUnwatch");
+            await expectPause({
+                expression: "warmedNamedWrite(Objects.reentrantUnwatch, 1)",
+                beforeExpression: "Objects.reentrantUnwatch.value === 0",
+                whilePausedExpression: "unwatch(Objects.reentrantUnwatch)",
+                afterExpression: "Objects.reentrantUnwatch.value === 1",
+                description: "a property write whose receiver is unwatched while paused",
+            });
+            await expectNoPause("warmedNamedWrite(Objects.reentrantUnwatch, 2)", "Should not pause for a subsequent write after reentrant unwatch.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.WarmedOwnRead",
+        async test() {
+            let numberOfDFGCompiles = await ensureDFGCompiled("warmedNamedRead", "warmedNamedRead(Objects.ownRead)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The own-property reader should DFG compile before watch.");
+            await watchObject("Objects.ownRead");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("warmedNamedRead(Objects.ownRead)"), 0, "The watched object's property should remain readable after invalidating the warmed read cache.");
+            await expectPause({
+                expression: "warmedNamedWrite(Objects.ownRead, 1)",
+                beforeExpression: "Objects.ownRead.value === 0",
+                afterExpression: "Objects.ownRead.value === 1",
+                description: "a property write after warming an own-property read cache",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.WarmedInheritedRead",
+        async test() {
+            let numberOfDFGCompiles = await ensureDFGCompiled("warmedInheritedRead", "warmedInheritedRead(Objects.inheritingObject)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "The inherited-property reader should DFG compile before watch.");
+            await watchObject("Objects.watchedPrototype");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("warmedInheritedRead(Objects.inheritingObject)"), 0, "The inherited property should remain readable after watching its prototype.");
+            await expectPause({
+                expression: "warmedNamedWrite(Objects.watchedPrototype, 1)",
+                beforeExpression: "Objects.watchedPrototype.value === 0",
+                afterExpression: "Objects.watchedPrototype.value === 1",
+                description: "a direct prototype write after warming an inherited read cache",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.ObjectIdentity",
+        async test() {
+            await watchObject("identityWatchedObject");
+            await expectNoPause("warmedNamedWrite(identitySiblingObject, 1)", "Should not pause for an unwatched object with the same original Structure.");
+            await expectPause({
+                expression: "warmedNamedWrite(identityWatchedObject, 1)",
+                beforeExpression: "identityWatchedObject.value === 0",
+                afterExpression: "identityWatchedObject.value === 1",
+                description: "a property write to the watched object rather than its same-Structure sibling",
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.GarbageCollection",
+        async test() {
+            await InspectorTest.evaluateInPage("Objects.garbageCollection = {}; Objects.weakGarbageCollection = new WeakRef(Objects.garbageCollection)");
+            await watchObject("Objects.garbageCollection");
+            await InspectorTest.evaluateInPage("Objects.garbageCollection = null");
+            await HeapAgent.gc();
+            InspectorTest.expectTrue(await InspectorTest.evaluateInPage("!Objects.weakGarbageCollection.deref()"), "A watched object should be garbage collected.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.OtherObjectsWatchedDFGMutator",
+        async test() {
+            let numberOfDFGCompiles = await ensureDFGCompiled("otherObjectsWatchedNamedWrite", "otherObjectsWatchedNamedWrite(warmupObject, j)");
+            InspectorTest.expectGreaterThan(numberOfDFGCompiles, 0, "A mutator should DFG compile while other watched objects exist.");
+            await watchObject("Objects.otherObjectsWatchedMutator");
+            await expectPause({
+                expression: "otherObjectsWatchedNamedWrite(Objects.otherObjectsWatchedMutator, 1)",
+                beforeExpression: "Objects.otherObjectsWatchedMutator.value === 0",
+                afterExpression: "Objects.otherObjectsWatchedMutator.value === 1",
+                description: "a property write reached from DFG code compiled while other objects were watched",
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for the <code>watch</code> function in the Command Line API.</p>
+</body>
+</html>
+

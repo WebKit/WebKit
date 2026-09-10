@@ -1,0 +1,34 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useDollarVM=true ] -->
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/watch-utilities.js"></script>
+<script>
+let weakObject;
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.watch.GarbageCollection");
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.GarbageCollection.Eden",
+        async test() {
+            await HeapAgent.gc();
+            // watch returns undefined, so the Inspector does not retain the object as an evaluation result.
+            await InspectorTest.WatchObject.watchObject("(() => { let object = {}; weakObject = new WeakRef(object); return object; })()");
+            // Use a separate evaluation so the WeakRef no longer keeps its target alive for the current job.
+            InspectorTest.expectTrue(await InspectorTest.evaluateInPage("$vm.edenGC(); !weakObject.deref()"), "The watched object should be collected by Eden GC.");
+            await DebuggerAgent.disable();
+            InspectorTest.pass("Disabling the Debugger should finish after its only watched object is collected.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests clearing watched objects after Eden garbage collection.</p>
+</body>
+</html>
+

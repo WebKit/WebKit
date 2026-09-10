@@ -29,10 +29,12 @@
 
 #include "BrandedStructure.h"
 #include "BuiltinNames.h"
+#include "Debugger.h"
 #include "DumpContext.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
 #include "PropertyTable.h"
+#include "VMInlines.h"
 #include "WebAssemblyGCStructure.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/NeverDestroyed.h>
@@ -890,6 +892,23 @@ Structure* Structure::toUncacheableDictionaryTransition(VM& vm, Structure* struc
     return toDictionaryTransition(vm, structure, UncachedDictionaryKind, deferred);
 }
 
+Structure* Structure::cloneAsUncacheableDictionary(VM& vm, Structure* structure, HasBeenFlattenedBefore hasBeenFlattenedBefore, DeferredStructureTransitionWatchpointFire* deferred)
+{
+    DeferGC deferGC(vm);
+
+    Structure* clone = Structure::create(vm, structure, deferred);
+
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    clone->pin(Locker { clone->m_lock }, vm, table);
+    clone->setMaxOffset(vm, structure->maxOffset());
+    clone->setDictionaryKind(UncachedDictionaryKind);
+    clone->setHasBeenDictionary(true);
+    clone->setHasBeenFlattenedBefore(hasBeenFlattenedBefore == HasBeenFlattenedBefore::Yes);
+
+    clone->checkOffsetConsistency();
+    return clone;
+}
+
 Structure* Structure::sealTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
     return nonPropertyTransition(vm, structure, TransitionKind::Seal, deferred);
@@ -1028,6 +1047,9 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
     checkOffsetConsistency();
     ASSERT(isDictionary());
     ASSERT(object->structure() == this);
+
+    if (hasBeenFlattenedBefore() && Debugger::isWatchedObject(vm, *object)) [[unlikely]]
+        return this;
 
     Locker<JSCellLock> cellLocker(NoLockingNecessary);
 

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/watch-utilities.js"></script>
+<script>
+let symbol = Symbol("property");
+class SuperPropertyWriterBase { }
+SuperPropertyWriterBase.prototype.value = 10;
+class SuperPropertyWriter extends SuperPropertyWriterBase {
+    constructor()
+    {
+        super();
+        this.value = this[0] = this[symbol] = 0;
+    }
+
+    write(property, value)
+    {
+        super[property] = value;
+    }
+
+    addLiteral(value)
+    {
+        super["value"] += value;
+    }
+}
+
+let Objects = {
+    strict: new SuperPropertyWriter,
+    sloppy: {__proto__: SuperPropertyWriterBase.prototype, value: 0, write(property, value) { super[property] = value; }},
+    proxyBase: {
+        __proto__: new Proxy(SuperPropertyWriterBase.prototype, {}),
+        value: 0,
+        write(property, value) { "use strict"; super[property] = value; },
+    },
+    compound: new SuperPropertyWriter,
+    keyConversion: new SuperPropertyWriter,
+    reentrantUnwatch: new SuperPropertyWriter,
+    inactive: new SuperPropertyWriter,
+};
+let State = {conversions: 0, property: "value", shouldThrow: false, didThrow: false};
+let key = {
+    [Symbol.toPrimitive]() {
+        ++State.conversions;
+        if (State.shouldThrow)
+            throw new Error("key conversion");
+        return State.property;
+    },
+};
+
+function test()
+{
+    WI.debuggerManager.createWatchedObjectBreakpoint();
+    let suite = InspectorTest.createAsyncSuite("CommandLineAPI.watch.SuperProperty");
+    let {expectNoPause, expectPause, unwatchObject, watchObject} = InspectorTest.WatchObject;
+    let expectSinglePause = async (options) => {
+        let pauseCount = 0;
+        let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, () => ++pauseCount);
+        try {
+            await expectPause(options);
+        } finally {
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        }
+        InspectorTest.expectEqual(pauseCount, 1, `Should pause exactly once before ${options.description}.`);
+    };
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.ComputedKeys",
+        async test() {
+            await watchObject("Objects.strict");
+            for (let [property, description] of [["'value'", "string"], ["symbol", "symbol"], ["0", "numeric"]]) {
+                await expectSinglePause({
+                    expression: `Objects.strict.write(${property}, 1)`,
+                    beforeExpression: `Objects.strict[${property}] === 0`,
+                    afterExpression: `Objects.strict[${property}] === 1`,
+                    description: `a strict computed super-property write with a ${description} key`,
+                });
+            }
+            await unwatchObject("Objects.strict");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.SloppyMethod",
+        async test() {
+            await watchObject("Objects.sloppy");
+            await expectSinglePause({
+                expression: "Objects.sloppy.write('value', 1)",
+                beforeExpression: "Objects.sloppy.value === 0",
+                afterExpression: "Objects.sloppy.value === 1",
+                description: "a non-strict computed super-property write",
+            });
+            await unwatchObject("Objects.sloppy");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.ProxyBase",
+        async test() {
+            await watchObject("Objects.proxyBase");
+            await expectSinglePause({
+                expression: "Objects.proxyBase.write('value', 1)",
+                beforeExpression: "Objects.proxyBase.value === 0",
+                afterExpression: "Objects.proxyBase.value === 1 && SuperPropertyWriterBase.prototype.value === 10",
+                description: "a computed super-property write forwarded by a Proxy superclass",
+            });
+            await unwatchObject("Objects.proxyBase");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.LiteralBracketCompound",
+        async test() {
+            await watchObject("Objects.compound");
+            await expectSinglePause({
+                expression: "Objects.compound.addLiteral(2)",
+                beforeExpression: "Objects.compound.value === 0 && SuperPropertyWriterBase.prototype.value === 10",
+                afterExpression: "Objects.compound.value === 12 && SuperPropertyWriterBase.prototype.value === 10",
+                description: "a literal-bracket compound super-property write",
+            });
+            await unwatchObject("Objects.compound");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.KeyConversion",
+        async test() {
+            await watchObject("Objects.keyConversion");
+            await expectSinglePause({
+                expression: "Objects.keyConversion.write(key, 1)",
+                beforeExpression: "State.conversions === 1 && Objects.keyConversion.value === 0",
+                afterExpression: "State.conversions === 1 && Objects.keyConversion.value === 1",
+                description: "a super-property write after converting its key exactly once",
+            });
+            await InspectorTest.evaluateInPage("State.conversions = 0; State.shouldThrow = true");
+            await expectNoPause("try { Objects.keyConversion.write(key, 2); } catch (error) { State.didThrow = error.message === 'key conversion'; }", "Should not pause when converting the key throws.");
+            InspectorTest.expectTrue(await InspectorTest.evaluateInPage("State.didThrow && State.conversions === 1 && Objects.keyConversion.value === 1"), "Throwing key conversion should leave the receiver unchanged.");
+            await unwatchObject("Objects.keyConversion");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.ReentrantUnwatch",
+        async test() {
+            await InspectorTest.evaluateInPage("State.conversions = 0; State.shouldThrow = false");
+            await watchObject("Objects.reentrantUnwatch");
+            await expectSinglePause({
+                expression: "Objects.reentrantUnwatch.write(key, 1)",
+                beforeExpression: "State.conversions === 1 && Objects.reentrantUnwatch.value === 0",
+                whilePausedExpression: "unwatch(Objects.reentrantUnwatch); State.property = 'other'",
+                afterExpression: "State.conversions === 1 && Objects.reentrantUnwatch.value === 1 && !Object.hasOwn(Objects.reentrantUnwatch, 'other')",
+                description: "a super-property write whose receiver is unwatched while paused",
+            });
+            await expectNoPause("Objects.reentrantUnwatch.write('value', 2)", "Should not pause for a subsequent super-property write after reentrant unwatch.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CommandLineAPI.watch.SuperProperty.Inactive",
+        async test() {
+            await watchObject("Objects.inactive");
+            WI.debuggerManager.watchedObjectBreakpoint.disabled = true;
+            await expectNoPause("Objects.inactive.write('value', 1)", "Should not pause for a computed super-property write while disabled.");
+            WI.debuggerManager.watchedObjectBreakpoint.disabled = false;
+            await expectSinglePause({
+                expression: "Objects.inactive.write('value', 2)",
+                beforeExpression: "Objects.inactive.value === 1",
+                afterExpression: "Objects.inactive.value === 2",
+                description: "a computed super-property write after re-enabling the breakpoint",
+            });
+            await unwatchObject("Objects.inactive");
+            await expectNoPause("Objects.inactive.write('value', 3)", "Should not pause for a computed super-property write after unwatch.");
+            InspectorTest.expectEqual(await InspectorTest.evaluateInPage("Objects.inactive.value"), 3, "An unwatched computed super-property write should complete.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests watching computed super-property writes.</p>
+</body>
+</html>
+

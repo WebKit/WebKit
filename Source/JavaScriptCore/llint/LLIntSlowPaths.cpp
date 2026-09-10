@@ -35,6 +35,7 @@
 #include "CheckpointOSRExitSideState.h"
 #include "CodeBlockInlines.h"
 #include "CommonSlowPathsInlines.h"
+#include "Debugger.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "Exception.h"
@@ -1077,11 +1078,23 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
     PutPropertySlot slot(baseValue, bytecode.m_flags.ecmaMode().isStrict(), codeBlock->putByIdContext());
 
+    JSValue value = getOperand(callFrame, bytecode.m_value);
+
+    if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+        if (!bytecode.m_flags.isDirect() && !codeBlock->unlinkedCodeBlock()->isBuiltinFunction()) [[likely]] {
+            if (JSObject* object = baseValue.getObject(); object && object->structure()->isUncacheableDictionary()) [[unlikely]] {
+                debugger->willModifyUncacheableDictionary(*object);
+                LLINT_CHECK_EXCEPTION();
+            }
+        }
+    }
+
     Structure* oldStructure = baseValue.isCell() ? baseValue.asCell()->structure() : nullptr;
+
     if (bytecode.m_flags.isDirect())
-        CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, getOperand(callFrame, bytecode.m_value), slot, &oldStructure);
+        CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, value, slot, &oldStructure);
     else
-        baseValue.putInline(globalObject, ident, getOperand(callFrame, bytecode.m_value), slot);
+        baseValue.putInline(globalObject, ident, value, slot);
     LLINT_CHECK_EXCEPTION();
     
     if (Options::useLLIntICs()

@@ -1101,6 +1101,31 @@ JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrandGaveUp, EncodedJSValue, (Encode
     OPERATION_RETURN(scope, JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, JSValue::decode(encodedBrand)))));
 }
 
+ALWAYS_INLINE static bool willPutByIdToUncacheableDictionary(CallFrame* callFrame, JSGlobalObject* globalObject, JSValue baseValue)
+{
+    auto* debugger = globalObject->debugger();
+    if (!debugger) [[likely]]
+        return false;
+
+    JSObject* object = baseValue.getObject();
+    if (!object) [[unlikely]]
+        return false;
+    if (!object->structure()->isUncacheableDictionary()) [[likely]]
+        return false;
+
+    auto* codeBlock = callFrame->codeBlock();
+    auto codeOrigin = callFrame->codeOrigin();
+    if (JSC::JITCode::isOptimizingJIT(codeBlock->jitType()))
+        codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, codeBlock->baselineAlternative());
+    if (codeBlock->unlinkedCodeBlock()->isBuiltinFunction()) [[unlikely]]
+        return false;
+    if (!codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr()->is<OpPutById>()) [[unlikely]]
+        return false;
+
+    debugger->willModifyUncacheableDictionary(*object);
+    return true;
+}
+
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, PropertyInlineCache* propertyCache))
 {
     SuperSamplerScope superSamplerScope(false);
@@ -1114,9 +1139,12 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictGaveUp, void, (EncodedJSValue enc
     propertyCache->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue value = JSValue::decode(encodedValue);
     CacheableIdentifier identifier = propertyCache->identifier();
     PutPropertySlot slot(baseValue, true, callFrame->codeBlock()->putByIdContext());
-    baseValue.putInline(globalObject, identifier, JSValue::decode(encodedValue), slot);
+    if (willPutByIdToUncacheableDictionary(callFrame, globalObject, baseValue)) [[unlikely]]
+        OPERATION_RETURN_IF_EXCEPTION(scope);
+    baseValue.putInline(globalObject, identifier, value, slot);
     
     LOG_IC((ICEvent::OperationPutByIdStrictGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
@@ -1135,9 +1163,12 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyGaveUp, void, (EncodedJSValue enc
     propertyCache->tookSlowPath = true;
     
     JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue value = JSValue::decode(encodedValue);
     CacheableIdentifier identifier = propertyCache->identifier();
     PutPropertySlot slot(baseValue, false, callFrame->codeBlock()->putByIdContext());
-    baseValue.putInline(globalObject, identifier, JSValue::decode(encodedValue), slot);
+    if (willPutByIdToUncacheableDictionary(callFrame, globalObject, baseValue)) [[unlikely]]
+        OPERATION_RETURN_IF_EXCEPTION(scope);
+    baseValue.putInline(globalObject, identifier, value, slot);
 
     LOG_IC((ICEvent::OperationPutByIdSloppyGaveUp, baseValue.classInfoOrNull(), slot.base() == baseValue));
     OPERATION_RETURN(scope);
@@ -1200,6 +1231,8 @@ ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& v
         return;
     }
 
+    if (willPutByIdToUncacheableDictionary(callFrame, globalObject, baseValue)) [[unlikely]]
+        RETURN_IF_EXCEPTION(scope, void());
     scope.release();
     putMegamorphic(globalObject, vm, callFrame, propertyCache, asObject(baseValue), uid, value, slot, kind);
 }
@@ -1358,7 +1391,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictOptimize, void, (EncodedJSValue e
     JSValue baseValue = JSValue::decode(encodedBase);
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseValue, true, codeBlock->putByIdContext());
-
+    if (willPutByIdToUncacheableDictionary(callFrame, globalObject, baseValue)) [[unlikely]]
+        OPERATION_RETURN_IF_EXCEPTION(scope);
     Structure* structure = CommonSlowPaths::originalStructureBeforePut(baseValue);
     baseValue.putInline(globalObject, identifier, value, slot);
 
@@ -1391,7 +1425,8 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSloppyOptimize, void, (EncodedJSValue e
     JSValue baseValue = JSValue::decode(encodedBase);
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseValue, false, codeBlock->putByIdContext());
-
+    if (willPutByIdToUncacheableDictionary(callFrame, globalObject, baseValue)) [[unlikely]]
+        OPERATION_RETURN_IF_EXCEPTION(scope);
     Structure* structure = CommonSlowPaths::originalStructureBeforePut(baseValue);
     baseValue.putInline(globalObject, identifier, value, slot);
 

@@ -1,0 +1,52 @@
+Tests watching computed super-property writes.
+
+
+== Running test suite: CommandLineAPI.watch.SuperProperty
+-- Running test case: CommandLineAPI.watch.SuperProperty.ComputedKeys
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a strict computed super-property write with a string key.
+PASS: Should pause exactly once before a strict computed super-property write with a string key.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a strict computed super-property write with a symbol key.
+PASS: Should pause exactly once before a strict computed super-property write with a symbol key.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a strict computed super-property write with a numeric key.
+PASS: Should pause exactly once before a strict computed super-property write with a numeric key.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.SloppyMethod
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a non-strict computed super-property write.
+PASS: Should pause exactly once before a non-strict computed super-property write.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.ProxyBase
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a computed super-property write forwarded by a Proxy superclass.
+PASS: Should pause exactly once before a computed super-property write forwarded by a Proxy superclass.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.LiteralBracketCompound
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a literal-bracket compound super-property write.
+PASS: Should pause exactly once before a literal-bracket compound super-property write.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.KeyConversion
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a super-property write after converting its key exactly once.
+PASS: Should pause exactly once before a super-property write after converting its key exactly once.
+PASS: Should not pause when converting the key throws.
+PASS: Throwing key conversion should leave the receiver unchanged.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.ReentrantUnwatch
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a super-property write whose receiver is unwatched while paused.
+PASS: Should run the requested expression while paused.
+PASS: Should pause exactly once before a super-property write whose receiver is unwatched while paused.
+PASS: Should not pause for a subsequent super-property write after reentrant unwatch.
+
+-- Running test case: CommandLineAPI.watch.SuperProperty.Inactive
+PASS: Should not pause for a computed super-property write while disabled.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a computed super-property write after re-enabling the breakpoint.
+PASS: Should pause exactly once before a computed super-property write after re-enabling the breakpoint.
+PASS: Should not pause for a computed super-property write after unwatch.
+PASS: An unwatched computed super-property write should complete.
+

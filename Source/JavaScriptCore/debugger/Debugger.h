@@ -28,6 +28,7 @@
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <JavaScriptCore/Microtask.h>
 #include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakGCSet.h>
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -44,6 +45,7 @@ class Exception;
 class InternalFunction;
 class JSAsyncFunctionGenerator;
 class JSGlobalObject;
+class JSObject;
 class Microtask;
 class NativeExecutable;
 class SourceProvider;
@@ -80,6 +82,11 @@ public:
     bool setBreakpoint(Breakpoint&);
     bool removeBreakpoint(Breakpoint&);
     void clearBreakpoints();
+
+    void watchObject(JSObject&);
+    void unwatchObject(JSObject&);
+    bool isWatchingObject(JSObject&) const;
+    static bool isWatchedObject(VM&, JSObject&);
 
     void activateBreakpoints() { setBreakpointsActivated(true); }
     void deactivateBreakpoints() { setBreakpointsActivated(false); }
@@ -158,6 +165,7 @@ public:
     void exception(JSGlobalObject*, CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
     void atExpression(CallFrame*);
+    void willModifyUncacheableDictionary(JSObject&);
     void willAwait(CallFrame*, JSValue generator);
     void didAwait(CallFrame*, JSValue generator);
     void callEvent(CallFrame*);
@@ -222,6 +230,8 @@ public:
         virtual void willCallInternalFunction(InternalFunction&) { }
 
         virtual void willEnter(CallFrame*) { }
+
+        virtual void willModifyWatchedObject() { }
 
         virtual void didQueueMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
         virtual void willRunMicrotask(JSGlobalObject*, MicrotaskIdentifier) { }
@@ -291,6 +301,9 @@ protected:
 
 private:
     JSValue exceptionOrCaughtValue(JSGlobalObject*);
+
+    void clearWatchedObjects();
+    void unwatchObjectAfterRemoval(JSObject&);
 
     class ClearCodeBlockDebuggerRequestsFunctor;
     class ClearDebuggerRequestsFunctor;
@@ -370,6 +383,10 @@ private:
         Debugger& m_debugger;
     };
     RefPtr<AbandonPauseInAwaitTimer> m_abandonPauseInAwaitTimer;
+
+    WeakGCSet<JSObject> m_watchedObjects;
+    WeakGCSet<JSObject> m_objectsToFlattenOnUnwatch;
+    WeakGCSet<JSObject> m_objectsToResetFlattenedFlagOnUnwatch;
 
     using LineToBreakpointsMap = UncheckedKeyHashMap<unsigned, BreakpointsVector, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>>;
     UncheckedKeyHashMap<SourceID, LineToBreakpointsMap, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_breakpointsForSourceID;

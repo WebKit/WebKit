@@ -51,6 +51,8 @@ static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWeakSetEnt
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionIteratorEntries);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryInstances);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryHolders);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionUnwatch);
+static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWatch);
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension);
 
 static JSC_DECLARE_HOST_FUNCTION(jsInjectedScriptHostPrototypeAttributeEvaluate);
@@ -82,6 +84,8 @@ void JSInjectedScriptHostPrototype::finishCreation(VM& vm, JSGlobalObject* globa
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryInstances"_s, jsInjectedScriptHostPrototypeFunctionQueryInstances, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("queryHolders"_s, jsInjectedScriptHostPrototypeFunctionQueryHolders, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("unwatch"_s, jsInjectedScriptHostPrototypeFunctionUnwatch, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("watch"_s, jsInjectedScriptHostPrototypeFunctionWatch, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
 
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("evaluate"_s, jsInjectedScriptHostPrototypeAttributeEvaluate, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("savedResultAlias"_s, jsInjectedScriptHostPrototypeAttributeSavedResultAlias, PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
@@ -267,6 +271,32 @@ JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionQueryHolders, (JSG
         return throwVMTypeError(globalObject, scope);
 
     return JSValue::encode(castedThis->queryHolders(globalObject, callFrame));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionWatch, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    JSInjectedScriptHost* castedThis = dynamicDowncast<JSInjectedScriptHost>(thisValue);
+    if (!castedThis)
+        return throwVMTypeError(globalObject, scope);
+
+    return JSValue::encode(castedThis->watch(globalObject, callFrame));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionUnwatch, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue thisValue = callFrame->thisValue();
+    JSInjectedScriptHost* castedThis = dynamicDowncast<JSInjectedScriptHost>(thisValue);
+    if (!castedThis)
+        return throwVMTypeError(globalObject, scope);
+
+    return JSValue::encode(castedThis->unwatch(globalObject, callFrame));
 }
 
 JSC_DEFINE_HOST_FUNCTION(jsInjectedScriptHostPrototypeFunctionEvaluateWithScopeExtension, (JSGlobalObject* globalObject, CallFrame* callFrame))

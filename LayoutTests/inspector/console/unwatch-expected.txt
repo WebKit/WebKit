@@ -1,0 +1,22 @@
+Tests for the unwatch function in the Command Line API.
+
+
+== Running test suite: CommandLineAPI.unwatch
+-- Running test case: CommandLineAPI.unwatch.Object
+PASS: Unwatching should flatten the dictionary created for watching.
+PASS: Should not pause after unwatching the object.
+PASS: Rewatching should convert the object to a new uncacheable dictionary Structure.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write to a rewatched object.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write to a separately watched object.
+
+-- Running test case: CommandLineAPI.unwatch.PreexistingUncacheableDictionary
+PASS: Watching should replace a preexisting uncacheable dictionary with a protected Structure.
+PASS: An attempted flatten should preserve a preexisting dictionary while it is watched.
+PASS: Pause reason should be WatchedObject.
+PASS: Should pause before a property write to a watched preexisting dictionary.
+PASS: Unwatching should preserve a preexisting uncacheable dictionary.
+PASS: Replacing the dictionary Structure should preserve its properties.
+PASS: The preexisting dictionary should remain flattenable after unwatching.
+
