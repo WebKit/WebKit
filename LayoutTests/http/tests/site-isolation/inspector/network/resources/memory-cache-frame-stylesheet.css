@@ -1,0 +1,5 @@
+/* Loaded on demand by two same-origin cross-origin frames, so the second load is served from the
+   memory cache they share via their common WebContent process. */
+p {
+    color: rgb(20, 60, 120);
+}
