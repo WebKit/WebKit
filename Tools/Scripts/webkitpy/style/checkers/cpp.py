@@ -883,13 +883,69 @@ def cleanse_comments(line):
     return _RE_PATTERN_CLEANSE_LINE_C_COMMENTS.sub('', line)
 
 
+def cleanse_raw_strings(raw_lines):
+    """Removes the contents of C++ raw string literals.
+
+    A raw string literal, R"delim( ... )delim", holds its contents verbatim, so what
+    is between the delimiters is data and not C++. Checking it against C++ rules
+    produces false positives, and the text often cannot be changed at all without
+    changing the value of the string.
+
+    Each literal is replaced by an empty string. One line of output is produced per
+    line of input, so line numbers still line up with the file.
+
+    Args:
+      raw_lines: A list of all the lines in the file.
+
+    Returns:
+      The lines with the contents of raw string literals removed.
+    """
+    delimiter = None
+    lines_without_raw_strings = []
+    for line in raw_lines:
+        if delimiter:
+            # Inside a literal, look for the end of it.
+            end = line.find(delimiter)
+            if end >= 0:
+                # Found it. Keep this line's indentation so indentation checks still
+                # see something sensible, and keep whatever follows the delimiter.
+                leading_space = match(r'^(\s*)\S', line)
+                line = (leading_space.group(1) if leading_space else '') + '""' + line[end + len(delimiter):]
+                delimiter = None
+            else:
+                line = '""'
+
+        # Look for the start of a literal. This is a loop so that several literals on
+        # one line are all handled.
+        while delimiter is None:
+            matched = match(r'^(.*?)\b(?:R|u8R|uR|UR|LR)"([^\s\\()]*)\((.*)$', line)
+            # Ignore an opener that sits after a // comment. The quoted alternatives in
+            # the pattern keep a // inside a string from counting as a comment.
+            if not matched or match(r'^([^\'"]|\'(\\.|[^\'])*\'|"(\\.|[^"])*")*//', matched.group(1)):
+                break
+            delimiter = ')' + matched.group(2) + '"'
+            end = matched.group(3).find(delimiter)
+            if end >= 0:
+                # Opened and closed on the same line.
+                line = matched.group(1) + '""' + matched.group(3)[end + len(delimiter):]
+                delimiter = None
+            else:
+                line = matched.group(1) + '""'
+
+        lines_without_raw_strings.append(line)
+
+    return lines_without_raw_strings
+
+
 class CleansedLines(object):
-    """Holds 3 copies of all lines with different preprocessing applied to them.
+    """Holds 4 copies of all lines with different preprocessing applied to them.
 
     1) elided member contains lines without strings and comments,
     2) lines member contains lines without comments, and
     3) raw member contains all the lines without processing.
-    All these three members are of <type 'list'>, and of the same length.
+    4) lines_without_raw_strings member contains lines with the contents of raw
+       string literals removed, but comments and ordinary strings left alone.
+    All these four members are of <type 'list'>, and of the same length.
     """
 
     def __init__(self, lines):
@@ -897,9 +953,10 @@ class CleansedLines(object):
         self.lines = []
         self.raw_lines = lines
         self._num_lines = len(lines)
-        for line_number in range(len(lines)):
-            self.lines.append(cleanse_comments(lines[line_number]))
-            elided = self.collapse_strings(lines[line_number])
+        self.lines_without_raw_strings = cleanse_raw_strings(lines)
+        for line_number in range(len(self.lines_without_raw_strings)):
+            self.lines.append(cleanse_comments(self.lines_without_raw_strings[line_number]))
+            elided = self.collapse_strings(self.lines_without_raw_strings[line_number])
             self.elided.append(cleanse_comments(elided))
 
     def num_lines(self):
@@ -2230,7 +2287,10 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
       error: The function to call with any errors found.
     """
 
-    raw = clean_lines.raw_lines
+    # Don't use "elided" lines here, otherwise we can't check commented lines.
+    # Don't use "raw_lines" either, because the contents of a raw string literal
+    # are not C++ and must not be checked as if they were.
+    raw = clean_lines.lines_without_raw_strings
     line = raw[line_number]
 
     # Before nixing comments, check if the line is blank for no good
@@ -3668,7 +3728,9 @@ def check_for_null(clean_lines, line_number, file_state, error):
         error(line_number, 'readability/null', 5, 'Use nullptr instead of NULL.')
         return
 
-    line = clean_lines.raw_lines[line_number]
+    # Comments are still present here, which is the point of this second check, but the
+    # contents of raw string literals are not.
+    line = clean_lines.lines_without_raw_strings[line_number]
     # See if NULL occurs in any comments in the line. If the search for NULL using the raw line
     # matches, then do the check with strings collapsed to avoid giving errors for
     # NULLs occurring in strings.
@@ -4010,7 +4072,10 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
       error: The function to call with any errors found.
     """
 
-    raw_lines = clean_lines.raw_lines
+    # Don't use "elided" lines here, otherwise we can't check commented lines.
+    # Don't use "raw_lines" either, because the contents of a raw string literal
+    # are not C++ and must not be checked as if they were.
+    raw_lines = clean_lines.lines_without_raw_strings
     line = raw_lines[line_number]
 
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
