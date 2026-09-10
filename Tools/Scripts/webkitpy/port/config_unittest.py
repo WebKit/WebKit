@@ -232,3 +232,18 @@ class ConfigTest(unittest.TestCase):
         # An explicit --asan forces asan on even without the marker file.
         config = self.make_config(output='foo\nfoo/cmake-mac/ASan', files={}, asan=True)
         self.assertEqual(config.asan, True)
+
+    def test_asan_marker_is_ignored_for_the_cmake_tree(self):
+        # The ASan marker file `make ASAN=YES` leaves behind is a setting of the
+        # Xcode build; it must not make a CMake run report an ASan build.
+        files = {'foo/Configuration': 'Debug', 'foo/ASan': 'YES'}
+        config = self.make_config(output='foo\nfoo/cmake-mac/Debug', files=files, use_cmake=True)
+        self.assertEqual(config.asan, False)
+
+        # Same when the CMake tree came from webkitdirs.pm's last-built
+        # tiebreaker rather than from an explicit --cmake.
+        config = self.make_config(output='foo\nfoo/cmake-mac/Debug', files=files)
+        self.assertEqual(config.asan, False)
+
+        config = self.make_config(output='foo\nfoo/Debug', files=files, use_xcode=True)
+        self.assertEqual(config.asan, True)

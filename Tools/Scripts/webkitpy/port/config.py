@@ -57,6 +57,9 @@ class Config(object):
     # Shared across all Config instances: webkit-build-directory is a ~110ms
     # perl invocation whose result is invariant for given inputs within a run.
     _build_directories = {}
+    # Keyed like _build_directories: the tree scripts will actually use, which is
+    # how asan tells an Xcode build from a CMake one.
+    _default_product_directories = {}
 
     def __init__(self, executive, filesystem, port_implementation=None, use_cmake=False, use_xcode=False, asan=False):
         self._executive = executive
@@ -71,11 +74,16 @@ class Config(object):
     @classmethod
     def _clear_cache_for_testing(cls):
         cls._build_directories = {}
+        cls._default_product_directories = {}
+
+    def _cache_key(self, configuration, for_host):
+        port_impl = self._port_implementation if not for_host else None
+        return (port_impl, configuration or "", for_host, self._use_cmake, self._use_xcode, self._asan)
 
     def build_directory(self, configuration, for_host=False):
         """Returns the path to the build directory for the configuration."""
         port_impl = self._port_implementation if not for_host else None
-        cache_key = (port_impl, configuration or "", for_host, self._use_cmake, self._use_xcode, self._asan)
+        cache_key = self._cache_key(configuration, for_host)
         if self._build_directories.get(cache_key):
             return self._build_directories[cache_key]
 
@@ -100,12 +108,18 @@ class Config(object):
         # With no --configuration flag, webkit-build-directory also prints the
         # default-configuration dir on a second line; cache it for later hits.
         if len(parts) == 2:
+            self._default_product_directories[cache_key] = parts[1]
             default_configuration = parts[1][len(parts[0]):]
             if default_configuration.startswith("/"):
                 default_configuration = default_configuration[1:]
-            self._build_directories[(port_impl, default_configuration, for_host, self._use_cmake, self._use_xcode, self._asan)] = parts[1]
+            self._build_directories[self._cache_key(default_configuration, for_host)] = parts[1]
 
         return self._build_directories[cache_key]
+
+    def _default_product_directory(self):
+        """Returns the product directory for the default configuration, or None."""
+        self.build_directory(None)  # Populates _default_product_directories.
+        return self._default_product_directories.get(self._cache_key(None, False))
 
     def flag_for_configuration(self, configuration):
         if not configuration:
@@ -151,10 +165,19 @@ class Config(object):
     @property
     @memoized
     def asan(self):
-        # --asan forces asan on; otherwise fall back to the marker file.
         if self._asan:
             return True
         try:
+            # Mirrors webkitdirs.pm: the marker file toggles ASan inside Xcode's
+            # Debug/Release tree, so it says nothing about the CMake tree, which
+            # keeps sanitizer builds in a configuration of their own.
+            product_directory = self._default_product_directory()
+            if product_directory and self._is_cmake_product_directory(product_directory):
+                return self._filesystem.basename(product_directory) == "ASan"
             return self._filesystem.exists(self._filesystem.join(self.build_directory(None), "ASan"))
         except:
             return False
+
+    def _is_cmake_product_directory(self, product_directory):
+        # CMake presets build into WebKitBuild/cmake-<platform>/<Configuration>.
+        return self._filesystem.basename(self._filesystem.dirname(product_directory)).startswith("cmake-")

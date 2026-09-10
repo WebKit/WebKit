@@ -192,6 +192,7 @@ BEGIN {
        &shouldUseVcpkg
        &isWinCrossCompileFromLinux
        &winCrossCompileVcpkgRoot
+       &readSanitizerConfiguration
        &sourceDir
        &splitVersionString
        &tsanIsEnabled
@@ -248,6 +249,7 @@ my $didUserSpecifyArchitecture = 0;
 my %nativeArchitectureMap = ();
 my $asanIsEnabled;
 my $tsanIsEnabled;
+my $requestedSanitizer;
 my $ubsanIsEnabled;
 my $libFuzzerIsEnabled;
 my $coverageIsEnabled;
@@ -690,7 +692,7 @@ sub determineXcodeDestination
 sub readSanitizerConfiguration($)
 {
     my ($fileName) = @_;
-
+    determineBaseProductDir();
     if (open FILE, File::Spec->catfile($baseProductDir, $fileName)) {
         my $value = <FILE>;
         close FILE;
@@ -701,19 +703,50 @@ sub readSanitizerConfiguration($)
     return 0;
 }
 
+# "ASan", "TSan", or "".
+sub requestedSanitizer()
+{
+    return $requestedSanitizer if defined $requestedSanitizer;
+    my $asan = checkForArgumentAndRemoveFromARGV("--asan");
+    my $tsan = checkForArgumentAndRemoveFromARGV("--tsan");
+    die "Cannot enable both --asan and --tsan at the same time\n" if $asan && $tsan;
+    $requestedSanitizer = $asan ? "ASan" : ($tsan ? "TSan" : "");
+    return $requestedSanitizer;
+}
+
+# Sanitizer presets build into a configuration of their own (cmake-mac/ASan), so
+# a sanitizer is chosen per invocation here. The marker files are deliberately
+# not consulted: they toggle the sanitizer inside Xcode's Debug/Release tree, and
+# must not repoint the CMake tree.
+sub cmakeConfiguration()
+{
+    determineConfiguration();
+    return requestedSanitizer() || $configuration;
+}
+
+sub sanitizerIsEnabled($)
+{
+    my ($fileName) = @_;
+    return 1 if requestedSanitizer() eq $fileName;
+    return 0 unless readSanitizerConfiguration($fileName);
+    return 1 unless isAppleCocoaWebKit() && isCMakeBuild();
+    print STDERR "Ignoring the sticky $fileName setting: it applies to Xcode builds. Pass --" . lc($fileName) .
+        " for the CMake $fileName tree.\n";
+    return 0;
+}
+
 sub determineASanIsEnabled
 {
     return if defined $asanIsEnabled;
     determineBaseProductDir();
-    # Honor an explicit --asan (like --cmake) in addition to the marker file.
-    $asanIsEnabled = checkForArgumentAndRemoveFromARGV("--asan") || readSanitizerConfiguration("ASan");
+    $asanIsEnabled = sanitizerIsEnabled("ASan");
 }
 
 sub determineTSanIsEnabled
 {
     return if defined $tsanIsEnabled;
     determineBaseProductDir();
-    $tsanIsEnabled = checkForArgumentAndRemoveFromARGV("--tsan") || readSanitizerConfiguration("TSan");
+    $tsanIsEnabled = sanitizerIsEnabled("TSan");
 }
 
 sub determineUBSanIsEnabled
@@ -856,6 +889,7 @@ sub argumentsForConfiguration()
     push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'maccatalyst');
     push(@args, '--32-bit') if ($architecture eq "x86");
     push(@args, '--cmake') if (isAppleCocoaWebKit() && isCMakeBuild());
+    push(@args, '--' . lc(requestedSanitizer())) if requestedSanitizer();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
@@ -1225,11 +1259,7 @@ sub determineConfigurationProductDir
     } elsif (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
         $configurationProductDir = "$baseProductDir/$portName/$configuration";
     } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
-        # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
-        my $cmakeConfiguration = $configuration;
-        $cmakeConfiguration = "ASan" if asanIsEnabled();
-        $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), $cmakeConfiguration);
+        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), cmakeConfiguration());
     } else {
         $configurationProductDir = xcodeConfigurationProductDir();
     }
@@ -3214,14 +3244,9 @@ sub determineIsCMakeBuild()
         determineBaseProductDir();
         determineConfiguration();
 
-        # CMake sanitizer presets build into cmake-mac/ASan or cmake-mac/TSan, so
-        # resolve the tree the way determineConfigurationProductDir() does. Xcode
-        # toggles ASan within Debug/Release, so its path is unchanged.
-        my $cmakeConfiguration = $configuration;
-        $cmakeConfiguration = "ASan" if asanIsEnabled();
-        $cmakeConfiguration = "TSan" if tsanIsEnabled();
+        # Resolve the CMake tree the way determineConfigurationProductDir() does.
         my $cmakeTreeName = cmakeCocoaTreeName();
-        my $cmakeBuild = File::Spec->catdir($baseProductDir, $cmakeTreeName, $cmakeConfiguration);
+        my $cmakeBuild = File::Spec->catdir($baseProductDir, $cmakeTreeName, cmakeConfiguration());
         my $xcodeBuild = xcodeConfigurationProductDir();
 
         if (-f File::Spec->catfile($cmakeBuild, "CMakeCache.txt") && !-d $xcodeBuild) {
@@ -3241,7 +3266,7 @@ sub determineIsCMakeBuild()
             my $xcodeMtime = -f $xcodeMarker ? stat($xcodeMarker)->mtime : 0;
             if ($cmakeMtime > $xcodeMtime) {
                 $isCMakeBuild = 1;
-                print STDERR "Using last-built tree: $cmakeTreeName/$cmakeConfiguration (CMake)\n";
+                print STDERR "Using last-built tree: $cmakeTreeName/" . cmakeConfiguration() . " (CMake)\n";
             } elsif ($xcodeMtime && $cmakeMtime) {
                 print STDERR "Using last-built tree: " . basename($xcodeBuild) . " (Xcode)\n";
             }

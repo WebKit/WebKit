@@ -39,8 +39,10 @@ use webkitdirs;
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
-  --[no-]asan                        Enable or disable clang address sanitizer
-  --[no-]tsan                        Enable or disable clang thread sanitizer
+  --[no-]asan                        Enable or disable clang address sanitizer for Xcode builds
+                                     (CMake builds select it per invocation, with --asan)
+  --[no-]tsan                        Enable or disable clang thread sanitizer for Xcode builds
+                                     (CMake builds select it per invocation, with --tsan)
   --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
   --[no-]libFuzzer                   Enable or disable clang libFuzzer
   --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
@@ -171,8 +173,9 @@ sub printCurrentSettings()
 {
     my $result = "Current settings:";
     $result .= " Configuration:" . configuration();
-    $result .= " ASan" if asanIsEnabled();
-    $result .= " TSan" if tsanIsEnabled();
+    # The persisted settings: asanIsEnabled() would hide them from CMake builds.
+    $result .= " ASan" if readSanitizerConfiguration("ASan");
+    $result .= " TSan" if readSanitizerConfiguration("TSan");
     $result .= " UBSan" if ubsanIsEnabled();
     $result .= " Fuzzilli" if fuzzilliIsEnabled();
     $result .= " LibFuzzer" if libFuzzerIsEnabled();

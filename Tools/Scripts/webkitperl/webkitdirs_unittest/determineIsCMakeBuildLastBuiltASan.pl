@@ -23,8 +23,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Unit test for webkitdirs::determineIsCMakeBuild last-built tiebreaker with a
-# sanitizer build: a CMake ASan build lands in cmake-mac/ASan, so when ASan is
-# enabled the tiebreaker must inspect that tree. Each scenario lives in its own
+# sanitizer build: a CMake ASan build lands in cmake-mac/ASan, so when --asan is
+# passed the tiebreaker must inspect that tree. Each scenario lives in its own
 # .pl file because determineIsCMakeBuild caches its answer in a script-global.
 use strict;
 use warnings;
@@ -45,13 +45,8 @@ use warnings qw(redefine prototype);
 my $configuration = "Debug";
 my $base = tempdir(CLEANUP => 1);
 
-# Enable ASan via the marker file that readSanitizerConfiguration() reads.
-open(my $asanFh, ">", File::Spec->catfile($base, "ASan")) or die "Could not create ASan marker: $!";
-print $asanFh "YES\n";
-close($asanFh);
-
-# The CMake ASan build lands in cmake-mac/ASan; Xcode toggles ASan within the
-# Debug tree. Both tree dirs must exist for the tiebreaker to run.
+# The CMake ASan build lands in cmake-mac/ASan. Both tree dirs must exist for
+# the tiebreaker to run.
 my $cmakeMarker = File::Spec->catfile($base, "cmake-mac", "ASan", ".ninja_log");
 my $xcodeMarker = File::Spec->catfile($base, "XCBuildData", "build.db");
 make_path(File::Spec->catdir($base, $configuration));
@@ -72,7 +67,7 @@ setBaseProductDir($base);
 setConfiguration($configuration);
 enableLastBuiltTiebreaker();
 
-@ARGV = ();
+@ARGV = ("--asan");
 webkitdirs::determineIsCMakeBuild();
 
-ok(isCMakeBuild(), "last-built tiebreaker inspects cmake-mac/ASan when ASan is enabled");
+ok(isCMakeBuild(), "last-built tiebreaker inspects cmake-mac/ASan when --asan is passed");
