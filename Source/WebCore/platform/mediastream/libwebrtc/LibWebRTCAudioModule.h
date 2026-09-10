@@ -30,6 +30,7 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
 #include <wtf/WorkQueue.h>
@@ -155,7 +156,8 @@ private:
 
     const Ref<WorkQueue> m_queue;
     std::atomic<bool> m_isPlaying { false };
-    std::atomic<webrtc::AudioTransport*> m_audioTransport { nullptr };
+    Lock m_audioTransportLock;
+    webrtc::AudioTransport* m_audioTransport WTF_GUARDED_BY_LOCK(m_audioTransportLock) { nullptr };
     MonotonicTime m_pollingTime;
     Timer m_logTimer;
     int m_timeSpent { 0 };
