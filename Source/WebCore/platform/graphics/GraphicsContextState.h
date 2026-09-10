@@ -87,6 +87,8 @@ public:
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
 
+    void markChanged(ChangeFlags properties) { m_changeFlags.add(properties); }
+
     // The mask travels with save() and restore(), matching what the other context does to its own
     // state: a property established inside a save block is unknown again after the restore.
     ChangeFlags indeterminateProperties() const { return m_indeterminateProperties; }

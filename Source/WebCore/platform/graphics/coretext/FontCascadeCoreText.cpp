@@ -23,6 +23,7 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#include "Color.h"
 #include "ComplexTextController.h"
 #include "DashArray.h"
 #include "Font.h"
@@ -308,20 +309,6 @@ private:
 };
 }
 
-static void setCGFontRenderingMode(GraphicsContext& context)
-{
-    RetainPtr<CGContextRef> cgContext = context.platformContext();
-    CGContextSetShouldAntialiasFonts(cgContext.get(), true);
-
-    CGAffineTransform contextTransform = CGContextGetCTM(cgContext.get());
-    bool isTranslationOrIntegralScale = WTF::isIntegral(contextTransform.a) && WTF::isIntegral(contextTransform.d) && contextTransform.b == 0.f && contextTransform.c == 0.f;
-    bool isRotated = ((contextTransform.b || contextTransform.c) && (contextTransform.a || contextTransform.d));
-    bool doSubpixelQuantization = isTranslationOrIntegralScale || (!isRotated && context.shouldSubpixelQuantizeFonts());
-
-    CGContextSetShouldSubpixelPositionFonts(cgContext.get(), true);
-    CGContextSetShouldSubpixelQuantizeFonts(cgContext.get(), doSubpixelQuantization);
-}
-
 void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& anchorPoint, FontSmoothingMode smoothingMode)
 {
     const auto& platformData = font.platformData();
@@ -333,49 +320,15 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
         return;
     }
 
-    RetainPtr<CGContextRef> cgContext = context.platformContext();
-
     if (!font.allowsAntialiasing())
         smoothingMode = FontSmoothingMode::None;
 
-    bool shouldAntialias = true;
-    bool shouldSmoothFonts = true;
-
-    switch (smoothingMode) {
-    case FontSmoothingMode::Antialiased:
-        shouldSmoothFonts = false;
-        break;
-    case FontSmoothingMode::Auto:
-    case FontSmoothingMode::SubpixelAntialiased:
-        break;
-    case FontSmoothingMode::None:
-        shouldAntialias = false;
-        shouldSmoothFonts = false;
-        break;
-    }
-
-#if PLATFORM(IOS_FAMILY)
-    UNUSED_VARIABLE(shouldSmoothFonts);
-#else
-    bool originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext.get());
-    if (shouldSmoothFonts != originalShouldUseFontSmoothing)
-        CGContextSetShouldSmoothFonts(cgContext.get(), shouldSmoothFonts);
-#endif
-
-    bool originalShouldAntialias = CGContextGetShouldAntialias(cgContext.get());
-    if (shouldAntialias != originalShouldAntialias)
-        CGContextSetShouldAntialias(cgContext.get(), shouldAntialias);
-
-    FloatPoint point = anchorPoint;
-
     auto textMatrix = computeTextMatrix(font);
-    CGContextSetTextMatrix(cgContext.get(), textMatrix);
-    setCGFontRenderingMode(context);
-    CGContextSetFontSize(cgContext.get(), platformData.size());
-
     auto shadow = context.dropShadow();
-
+    bool shouldSubpixelQuantizeFonts = context.shouldSubpixelQuantizeFonts();
+    bool shadowsIgnoreTransforms = context.shadowsIgnoreTransforms();
     AffineTransform contextCTM = context.getCTM();
+
     float syntheticBoldOffset = font.syntheticBoldOffset();
     if (syntheticBoldOffset && !contextCTM.isIdentityOrTranslationOrFlipped()) {
         FloatSize horizontalUnitSizeInDevicePixels = contextCTM.mapSize(FloatSize(1, 0));
@@ -386,40 +339,56 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
         }
     }
 
-    bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadow && shadow->color.isValid() && !shadow->radius && !platformData.isColorBitmapFont() && (!context.shadowsIgnoreTransforms() || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
+    bool hasSimpleShadow = context.textDrawingMode() == TextDrawingMode::Fill && shadow && shadow->color.isValid() && !shadow->radius && !platformData.isColorBitmapFont() && (!shadowsIgnoreTransforms || contextCTM.isIdentityOrTranslationOrFlipped()) && !context.isInTransparencyLayer();
+
+    RetainPtr<CGContextRef> cgContext = context.platformContext();
+
+#if !PLATFORM(IOS_FAMILY)
+    bool shouldSmoothFonts = smoothingMode != FontSmoothingMode::Antialiased && smoothingMode != FontSmoothingMode::None;
+    if (shouldSmoothFonts != context.shouldSmoothFonts()) {
+        context.didInvalidatePlatformState(GraphicsContextState::Change::ShouldSmoothFonts);
+        CGContextSetShouldSmoothFonts(cgContext.get(), shouldSmoothFonts);
+    }
+#endif
+
+    bool shouldAntialias = smoothingMode != FontSmoothingMode::None;
+    if (shouldAntialias != context.shouldAntialias()) {
+        context.didInvalidatePlatformState(GraphicsContextState::Change::ShouldAntialias);
+        CGContextSetShouldAntialias(cgContext.get(), shouldAntialias);
+    }
+
+    CGContextSetTextMatrix(cgContext.get(), textMatrix);
+    CGContextSetFontSize(cgContext.get(), platformData.size());
+    CGContextSetShouldAntialiasFonts(cgContext.get(), true);
+    CGContextSetShouldSubpixelPositionFonts(cgContext.get(), true);
+
+    CGAffineTransform contextTransform = CGContextGetCTM(cgContext.get());
+    bool isTranslationOrIntegralScale = WTF::isIntegral(contextTransform.a) && WTF::isIntegral(contextTransform.d) && contextTransform.b == 0.f && contextTransform.c == 0.f;
+    bool isRotated = ((contextTransform.b || contextTransform.c) && (contextTransform.a || contextTransform.d));
+    CGContextSetShouldSubpixelQuantizeFonts(cgContext.get(), isTranslationOrIntegralScale || (!isRotated && shouldSubpixelQuantizeFonts));
 
     RepeatedDrawGlyphs repeatedDrawGlyphs { font, glyphs, advances, textMatrix };
 
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
-        context.clearDropShadow();
-        Color fillColor = context.fillColor();
-        Color shadowFillColor = shadow->color.colorWithAlphaMultipliedBy(fillColor.alphaAsFloat());
-        context.setFillColor(shadowFillColor);
-        auto shadowTextOffset = point + context.platformShadowOffset(shadow->offset);
+        context.didInvalidatePlatformState(GraphicsContextState::Change::DropShadow);
+        auto shadowTextOffset = anchorPoint + context.platformShadowOffset(shadow->offset);
+        RetainPtr shadowFillCGColor = cachedCGColorInDestinationStandardRange(shadow->color.colorWithAlphaMultipliedBy(context.fillColor().alphaAsFloat()), context.colorSpace());
+        RetainPtr originalFillColor = CGContextGetFillColorAsColor(cgContext.get());
+        CGContextSetStyle(cgContext.get(), nullptr);
+        CGContextSetFillColorWithColor(cgContext.get(), shadowFillCGColor.get());
         repeatedDrawGlyphs.showGlyphsWithAdvances(shadowTextOffset, cgContext.get());
-        if (syntheticBoldOffset) {
-            shadowTextOffset.move(syntheticBoldOffset, 0);
-            repeatedDrawGlyphs.showGlyphsWithAdvances(shadowTextOffset, cgContext.get());
-        }
-        context.setFillColor(fillColor);
+        if (syntheticBoldOffset)
+            repeatedDrawGlyphs.showGlyphsWithAdvances(shadowTextOffset + FloatSize(syntheticBoldOffset, 0), cgContext.get());
+        CGContextSetFillColorWithColor(cgContext.get(), originalFillColor.get());
     }
 
-    repeatedDrawGlyphs.showGlyphsWithAdvances(point, cgContext.get());
+    repeatedDrawGlyphs.showGlyphsWithAdvances(anchorPoint, cgContext.get());
 
     if (syntheticBoldOffset)
-        repeatedDrawGlyphs.showGlyphsWithAdvances(FloatPoint(point.x() + syntheticBoldOffset, point.y()), cgContext.get());
+        repeatedDrawGlyphs.showGlyphsWithAdvances(anchorPoint + FloatSize(syntheticBoldOffset, 0), cgContext.get());
 
-    if (hasSimpleShadow)
-        context.setDropShadow(*shadow);
-
-#if !PLATFORM(IOS_FAMILY)
-    if (shouldSmoothFonts != originalShouldUseFontSmoothing)
-        CGContextSetShouldSmoothFonts(cgContext.get(), originalShouldUseFontSmoothing);
-#endif
-
-    if (shouldAntialias != originalShouldAntialias)
-        CGContextSetShouldAntialias(cgContext.get(), originalShouldAntialias);
+    context.updatePlatformContextState();
 }
 
 bool FontCascade::primaryFontIsSystemFont() const

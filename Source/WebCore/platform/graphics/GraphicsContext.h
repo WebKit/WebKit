@@ -170,6 +170,10 @@ public:
     // to the platform context's state.
     virtual void didUpdateState(GraphicsContextState&) = 0;
 
+    void didInvalidatePlatformState(GraphicsContextState::ChangeFlags properties) { m_state.markChanged(properties); }
+
+    void updatePlatformContextState() { didUpdateState(m_state); }
+
     WEBCORE_EXPORT virtual void save(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
     WEBCORE_EXPORT virtual void restore(GraphicsContextState::Purpose = GraphicsContextState::Purpose::SaveRestore);
 
