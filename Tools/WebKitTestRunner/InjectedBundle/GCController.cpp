@@ -47,11 +47,6 @@ void GCController::collect()
     WKBundleGarbageCollectJavaScriptObjects(InjectedBundle::singleton().bundle());
 }
 
-void GCController::collectOnAlternateThread(bool waitUntilDone)
-{
-    WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(InjectedBundle::singleton().bundle(), waitUntilDone);
-}
-
 size_t GCController::getJSObjectCount()
 {
     return WKBundleGetJavaScriptObjectsCount(InjectedBundle::singleton().bundle());

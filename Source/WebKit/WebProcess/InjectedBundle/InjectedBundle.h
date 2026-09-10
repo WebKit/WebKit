@@ -109,7 +109,6 @@ public:
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
-    void garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone);
     size_t javaScriptObjectsCount();
 
     // Callback hooks

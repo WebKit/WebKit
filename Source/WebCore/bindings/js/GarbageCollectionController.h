@@ -55,7 +55,6 @@ public:
     WEBCORE_EXPORT void garbageCollectNowIfNotDoneRecently();
     void garbageCollectOnNextRunLoop();
 
-    WEBCORE_EXPORT void garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone); // Used for stress testing.
     WEBCORE_EXPORT void setJavaScriptGarbageCollectorTimerEnabled(bool);
     WEBCORE_EXPORT void deleteAllCode(JSC::DeleteAllCodeEffort);
     WEBCORE_EXPORT void deleteAllLinkedCode(JSC::DeleteAllCodeEffort);

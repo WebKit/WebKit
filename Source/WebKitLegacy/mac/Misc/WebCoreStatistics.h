@@ -46,7 +46,6 @@
 + (NSCountedSet *)javaScriptObjectTypeCounts;
 
 + (void)garbageCollectJavaScriptObjects;
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone;
 + (void)setJavaScriptGarbageCollectorTimerEnabled:(BOOL)enabled;
 
 + (size_t)iconPageURLMappingCount;

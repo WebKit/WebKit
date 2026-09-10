@@ -25,7 +25,6 @@
 
 interface GCController {
     undefined collect();
-    undefined collectOnAlternateThread(boolean waitUntilDone);
     unsigned long long getJSObjectCount();
 };
 

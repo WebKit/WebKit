@@ -38,7 +38,6 @@ public:
 
     // Controller Methods - platfrom independant implementations
     void collect() const;
-    void collectOnAlternateThread(bool waitUntilDone) const;
     size_t getJSObjectCount() const;
 
 private:

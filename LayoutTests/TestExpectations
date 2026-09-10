@@ -3693,9 +3693,6 @@ fast/css/css2-system-color.html [ Skip ]
 # Test disabled in r64074 after dropping -khtml prefix support
 fast/css/limited-vendor-prefix-behavior.html [ Skip ]
 
-# Test disabled in r42420 since it hits test-only release assert
-fast/dom/gc-8.html [ Skip ]
-
 # Test disabled in r27657
 fast/dom/Window/window-resize-nan.html [ Skip ]
 

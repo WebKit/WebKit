@@ -40,14 +40,6 @@ static JSValueRef collectCallback(JSContextRef context, JSObjectRef function, JS
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef collectOnAlternateThreadCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    auto& controller = *static_cast<GCController*>(JSObjectGetPrivate(thisObject));
-    bool waitUntilDone = argumentCount > 0 && JSValueToBoolean(context, arguments[0]);
-    controller.collectOnAlternateThread(waitUntilDone);
-    return JSValueMakeUndefined(context);
-}
-
 static JSValueRef getJSObjectCountCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     auto& controller = *static_cast<GCController*>(JSObjectGetPrivate(thisObject));
@@ -65,7 +57,6 @@ JSRetainPtr<JSClassRef> GCController::createJSClass()
 {
     static constexpr JSStaticFunction functions[] = {
         { "collect", collectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "collectOnAlternateThread", collectOnAlternateThreadCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "getJSObjectCount", getJSObjectCountCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };

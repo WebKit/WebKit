@@ -46,12 +46,6 @@
 namespace WebCore {
 using namespace JSC;
 
-static void collect()
-{
-    JSLockHolder lock(commonVM());
-    commonVM().heap.collectNow(Async, CollectionScope::Full);
-}
-
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GarbageCollectionController);
 
 GarbageCollectionController& GarbageCollectionController::singleton()
@@ -85,7 +79,8 @@ void GarbageCollectionController::garbageCollectOnNextRunLoop()
 
 void GarbageCollectionController::gcTimerFired()
 {
-    collect();
+    JSLockHolder lock(commonVM());
+    commonVM().heap.collectNow(Async, CollectionScope::Full);
 }
 
 void GarbageCollectionController::garbageCollectNow()
@@ -102,18 +97,6 @@ void GarbageCollectionController::garbageCollectNowIfNotDoneRecently()
     JSLockHolder lock(commonVM());
     if (!commonVM().heap.currentThreadIsDoingGCWork())
         commonVM().heap.collectNowFullIfNotDoneRecently(Async);
-}
-
-void GarbageCollectionController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
-{
-    auto thread = Thread::create("WebCore: GarbageCollectionController"_s, &collect, ThreadType::GarbageCollection);
-
-    if (waitUntilDone) {
-        thread->waitForCompletion();
-        return;
-    }
-
-    thread->detach();
 }
 
 void GarbageCollectionController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)

@@ -220,11 +220,6 @@ void InjectedBundle::garbageCollectJavaScriptObjects()
     GarbageCollectionController::singleton().garbageCollectNow();
 }
 
-void InjectedBundle::garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone)
-{
-    GarbageCollectionController::singleton().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
-}
-
 size_t InjectedBundle::javaScriptObjectsCount()
 {
     JSC::JSLockHolder lock(commonVM());

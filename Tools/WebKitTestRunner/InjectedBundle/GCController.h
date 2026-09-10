@@ -39,7 +39,6 @@ public:
     void makeWindowObject(JSContextRef);
 
     void collect();
-    void collectOnAlternateThread(bool waitUntilDone);
     size_t getJSObjectCount();
 
 private:

@@ -62,7 +62,6 @@ WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
 
 // Garbage collection API
 WK_EXPORT void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundle);
-WK_EXPORT void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundle, bool waitUntilDone);
 WK_EXPORT size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundle);
 
 WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);

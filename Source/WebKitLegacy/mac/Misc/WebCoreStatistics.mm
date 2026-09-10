@@ -106,11 +106,6 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILite
     WebCore::GarbageCollectionController::singleton().garbageCollectNow();
 }
 
-+ (void)garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging:(BOOL)waitUntilDone
-{
-    WebCore::GarbageCollectionController::singleton().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
-}
-
 + (void)setJavaScriptGarbageCollectorTimerEnabled:(BOOL)enable
 {
     WebCore::GarbageCollectionController::singleton().setJavaScriptGarbageCollectorTimerEnabled(enable);
