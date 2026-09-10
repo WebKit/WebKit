@@ -162,12 +162,12 @@ PAS_NEVER_INLINE size_t pas_page_malloc_alignment_shift_slow(void)
 }
 
 static void*
-pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
+pas_page_malloc_try_map_pages(size_t size, bool is_mte)
 {
 
 #if PAS_OS(WINDOWS)
-    PAS_PROFILE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
-    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
+    PAS_PROFILE(PAGE_ALLOCATION, size, is_mte, PAS_VM_TAG);
+    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, is_mte, PAS_VM_TAG);
 
     /*
      * PAS_STATS is not currently supported on Windows, so we do not currently
@@ -180,8 +180,8 @@ pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
 #else
     void* mmap_result = NULL;
 
-    PAS_PROFILE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
-    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, may_contain_small_or_medium, PAS_VM_TAG);
+    PAS_PROFILE(PAGE_ALLOCATION, size, is_mte, PAS_VM_TAG);
+    PAS_MTE_HANDLE(PAGE_ALLOCATION, size, is_mte, PAS_VM_TAG);
 
     mmap_result = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | PAS_NORESERVE, PAS_VM_TAG, 0);
     if (mmap_result == MAP_FAILED) {
@@ -191,7 +191,7 @@ pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
                       do that explicitly. */
         return NULL;
     } else
-        PAS_RECORD_STAT(page_alloc_counts, size, may_contain_small_or_medium, false);
+        PAS_RECORD_STAT(page_alloc_counts, size, false);
 
 #if PAS_OS(LINUX)
     prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, mmap_result, size, PAS_VM_TAG_NAME);
@@ -203,7 +203,7 @@ pas_page_malloc_try_map_pages(size_t size, bool may_contain_small_or_medium)
 
 pas_aligned_allocation_result
 pas_page_malloc_try_allocate_without_deallocating_padding(
-    size_t size, pas_alignment alignment, bool may_contain_small_or_medium)
+    size_t size, pas_alignment alignment, bool is_mte)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_OTHER);
     
@@ -238,7 +238,7 @@ pas_page_malloc_try_allocate_without_deallocating_padding(
             return result;
     }
 
-    mmap_result = pas_page_malloc_try_map_pages(mapped_size, may_contain_small_or_medium);
+    mmap_result = pas_page_malloc_try_map_pages(mapped_size, is_mte);
     if (!mmap_result)
         return result;
 

@@ -53,14 +53,6 @@ struct pas_large_heap_physical_page_sharing_cache {
     pas_commit_mode provider_commit_mode;
 };
 
-#define PAS_MEGAPAGE_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER \
-    ((pas_large_heap_physical_page_sharing_cache){ \
-         .free_heap = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER, \
-         .provider = pas_small_medium_bootstrap_heap_page_provider, \
-         .provider_arg = NULL, \
-         .provider_commit_mode = pas_committed \
-     })
-
 #define PAS_LARGE_FREE_HEAP_PHYSICAL_PAGE_SHARING_CACHE_INITIALIZER \
     ((pas_large_heap_physical_page_sharing_cache){ \
          .free_heap = PAS_SIMPLE_LARGE_FREE_HEAP_INITIALIZER, \

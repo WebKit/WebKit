@@ -58,11 +58,16 @@ extern pas_basic_heap_runtime_config bmalloc_intrinsic_runtime_config;
 extern pas_basic_heap_runtime_config bmalloc_typed_runtime_config;
 extern pas_basic_heap_runtime_config bmalloc_primitive_runtime_config;
 
-static pas_basic_heap_runtime_config* all_bmalloc_runtime_configs[] = {
-    &bmalloc_flex_runtime_config,
-    &bmalloc_intrinsic_runtime_config,
-    &bmalloc_typed_runtime_config,
-    &bmalloc_primitive_runtime_config,
+extern pas_heap tagged_bmalloc_common_primitive_heap;
+extern const pas_heap_config tagged_bmalloc_heap_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_flex_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_intrinsic_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_typed_runtime_config;
+extern pas_basic_heap_runtime_config tagged_bmalloc_primitive_runtime_config;
+
+static pas_basic_heap_runtime_config* all_tagged_bmalloc_runtime_configs[] = {
+    &tagged_bmalloc_intrinsic_runtime_config,
+    &tagged_bmalloc_primitive_runtime_config,
 };
 #endif // PAS_ENABLE_BMALLOC
 #if PAS_ENABLE_JIT
@@ -211,7 +216,7 @@ static void pas_mte_do_initialization(void)
     PAS_IGNORE_WARNINGS_END;
 }
 
-static bool pas_mte_is_enabled(void)
+static bool pas_mte_is_mte_on_for_process(void)
 {
     const pas_runtime_config* config = PAS_RUNTIME_CONFIG_PTR;
     struct proc_bsdinfo info;
@@ -227,7 +232,7 @@ static PAS_UNUSED void pas_mte_do_initialization(void)
     config->enabled = false;
 }
 
-static PAS_UNUSED bool pas_mte_is_enabled(void)
+static PAS_UNUSED bool pas_mte_is_mte_on_for_process(void)
 {
     return false;
 }
@@ -283,6 +288,10 @@ static void pas_report_config(void)
         "\n\t\t\tIntrinsic: %uB, %uB, %uB, %uB"
         "\n\t\t\tTyped: %uB, %uB, %uB, %uB"
         "\n\t\t\tPrimitive: %uB, %uB, %uB, %uB"
+        LOG_FMT_STR_FOR_HEAP_CONFIG(tagged_bmalloc)
+        "\n\t\tRuntime Heap Config Size-Maximums (Segregated, Bitfit, Baseline Dir, No-View-Cache Dir):"
+        "\n\t\t\tIntrinsic: %uB, %uB, %uB, %uB"
+        "\n\t\t\tPrimitive: %uB, %uB, %uB, %uB"
 #endif
 #if PAS_ENABLE_JIT
         LOG_FMT_STR_FOR_HEAP_CONFIG(jit)
@@ -308,6 +317,9 @@ static void pas_report_config(void)
         LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_intrinsic_runtime_config),
         LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_typed_runtime_config),
         LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(bmalloc_primitive_runtime_config),
+        LOG_FMT_VARS_FOR_HEAP_CONFIG(tagged_bmalloc_heap_config),
+        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(tagged_bmalloc_intrinsic_runtime_config),
+        LOG_FMT_VARS_FOR_BASIC_HEAP_RUNTIME_CONFIG(tagged_bmalloc_primitive_runtime_config),
 #endif
 #if PAS_ENABLE_JIT
         LOG_FMT_VARS_FOR_HEAP_CONFIG(jit_heap_config),
@@ -331,7 +343,8 @@ static void pas_mte_do_and_check_initialization(void* context)
         if (!strcasecmp(crashIfMTENotEnabled, "true")
             || !strcasecmp(crashIfMTENotEnabled, "yes")
             || !strcasecmp(crashIfMTENotEnabled, "1")) {
-            PAS_ASSERT(pas_mte_is_enabled() && "MTE is not enabled, crashing");
+            PAS_ASSERT(pas_mte_is_mte_on_for_process() && "MTE is not enabled for the process, crashing");
+            PAS_ASSERT(pas_mte_is_mte_enabled_unchecked() && "MTE is not enabled, crashing");
         }
     }
     const char* logLibpasConfiguration = getenv("LibpasMallocReportConfig");
@@ -359,10 +372,10 @@ void pas_bmalloc_force_allocations_into_bitfit_heaps_where_available(void)
 {
 #if PAS_ENABLE_BMALLOC
     // Switch to bitfit allocation for anything that isn't isoheaped.
-    bmalloc_intrinsic_runtime_config.base.max_segregated_object_size = 0;
-    bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
-    bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
-    bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+    tagged_bmalloc_intrinsic_runtime_config.base.max_segregated_object_size = 0;
+    tagged_bmalloc_primitive_runtime_config.base.max_segregated_object_size = 0;
+    tagged_bmalloc_intrinsic_runtime_config.base.max_bitfit_object_size = UINT_MAX;
+    tagged_bmalloc_primitive_runtime_config.base.max_bitfit_object_size = UINT_MAX;
 #endif
 
     // If large-object delegation is enabled, we don't want to override that
@@ -395,8 +408,8 @@ bool pas_mte_is_mte_enabled(void)
 void pas_mte_force_nontaggable_user_allocations_into_large_heap(void)
 {
 #if PAS_ENABLE_BMALLOC
-    for (size_t i = 0; i < sizeof(all_bmalloc_runtime_configs) / sizeof(void*); i++) {
-        pas_basic_heap_runtime_config* cfg = all_bmalloc_runtime_configs[i];
+    for (size_t i = 0; i < sizeof(all_tagged_bmalloc_runtime_configs) / sizeof(void*); i++) {
+        pas_basic_heap_runtime_config* cfg = all_tagged_bmalloc_runtime_configs[i];
         cfg->base.max_segregated_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_segregated_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
         cfg->base.max_bitfit_object_size = (unsigned)PAS_MIN((size_t)cfg->base.max_bitfit_object_size, PAS_MAX_MTE_TAGGABLE_OBJECT_SIZE);
     }

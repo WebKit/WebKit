@@ -206,7 +206,6 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     uintptr_t word_index,
     uint64_t fixed_start_bit_index,
     uintptr_t size,
-    pas_allocation_mode allocation_mode,
     pas_bitfit_page_config page_config)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_BITFIT_HEAPS);
@@ -248,8 +247,8 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     
     pas_bitfit_page_testing_verify(page);
 
-    PAS_PROFILE(BITFIT_ALLOCATION, &page_config, begin, size, allocation_mode);
-    PAS_MTE_HANDLE(BITFIT_ALLOCATION, page_config, begin, size, allocation_mode);
+    PAS_PROFILE(BITFIT_ALLOCATION, &page_config, begin, size);
+    PAS_MTE_HANDLE(BITFIT_ALLOCATION, page_config, begin, size);
     PAS_RECORD_STAT_MALLOC(pas_stats_heap_type_bitfit, size);
 
     return pas_bitfit_allocation_result_create_success(begin);
@@ -261,7 +260,6 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
     pas_bitfit_view* owner,
     uintptr_t size,
     uintptr_t alignment,
-    pas_allocation_mode allocation_mode,
     pas_bitfit_page_config page_config,
     pas_lock_hold_mode commit_lock_hold_mode,
     size_t* bytes_committed)
@@ -368,7 +366,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
                 free_words[word_index] =
                     free_word & ~(pas_make_mask64(num_desired_bits) << fixed_start_bit_index);
                 return pas_bitfit_page_finish_allocation(
-                    page, owner, word_index, fixed_start_bit_index, size, allocation_mode, page_config);
+                    page, owner, word_index, fixed_start_bit_index, size, page_config);
             }
 
             if (num_available_bits + fixed_start_bit_index >= PAS_BITVECTOR_BITS_PER_WORD64) {
@@ -497,7 +495,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_allocate(
                                   word_index, fixed_start_bit_index, page_config) + size)
                              >> page_config.base.min_align_shift) - 1));
                     return pas_bitfit_page_finish_allocation(
-                        page, owner, word_index, fixed_start_bit_index, size, allocation_mode, page_config);
+                        page, owner, word_index, fixed_start_bit_index, size, page_config);
                 }
 
                 /* NOTE - it's important that if we get here, we've set word_index, free_word,

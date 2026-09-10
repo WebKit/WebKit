@@ -198,6 +198,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+inline __attribute__((__always_inline__)) bool pas_mte_is_mte_enabled_unchecked(void)
+{
+    return PAS_RUNTIME_CONFIG_PTR->enabled;
+}
+
 bool pas_mte_is_mte_enabled(void);
 void pas_mte_ensure_initialized(void);
 void pas_mte_force_nontaggable_user_allocations_into_large_heap(void);
