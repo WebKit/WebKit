@@ -30,6 +30,7 @@
 #include <WebCore/TrustedFonts.h>
 #include <wtf/BitVector.h>
 #include <wtf/Platform.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
@@ -95,7 +96,7 @@ struct FontInternalAttributes {
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
-class Font : public RefCounted<Font>, public CanMakeSingleThreadWeakPtr<Font> {
+class Font : public ThreadSafeRefCounted<Font>, public CanMakeSingleThreadWeakPtr<Font> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font, Font);
 public:
     using Origin = FontOrigin;

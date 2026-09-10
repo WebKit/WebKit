@@ -411,6 +411,7 @@ void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifie
 {
     RefPtr font = resourceCache().cachedFont(fontIdentifier);
     MESSAGE_CHECK(font);
+    ASSERT(!font->weakCount());
     Vector<GlyphBufferGlyph, 128> glyphs { glyphsAdvances.span<0>() };
     Vector<GlyphBufferAdvance, 128> advances { glyphsAdvances.span<1>() };
     context().drawGlyphs(*font, glyphs.span(), advances.span(), localAnchor, fontSmoothingMode);
