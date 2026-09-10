@@ -56,7 +56,7 @@ enum class MessageType : uint8_t;
 class NetworkNotificationManager : public NotificationManagerMessageHandler, public RefCounted<NetworkNotificationManager> {
     WTF_MAKE_TZONE_ALLOCATED(NetworkNotificationManager);
 public:
-    static Ref<NetworkNotificationManager> create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
+    static Ref<NetworkNotificationManager> create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&);
     ~NetworkNotificationManager();
 
     void ref() const final { RefCounted::ref(); }
@@ -88,7 +88,7 @@ public:
     void setServiceWorkerIsBeingInspected(const URL&, bool isInspected);
 
 private:
-    NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&, NetworkProcess&);
+    NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&&);
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;
@@ -98,7 +98,6 @@ private:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
 
     RefPtr<WebPushD::Connection> m_connection;
-    const Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace WebKit

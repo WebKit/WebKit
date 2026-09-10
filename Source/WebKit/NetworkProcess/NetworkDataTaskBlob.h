@@ -93,7 +93,6 @@ private:
     FileSystem::FileHandle m_downloadFile;
     Vector<Ref<WebCore::BlobDataFileReference>> m_fileReferences;
     RefPtr<SandboxExtension> m_sandboxExtension;
-    const Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace WebKit

@@ -111,7 +111,7 @@ class NetworkSession : public WebCore::SWServerDelegate, public CanMakeCheckedPt
     WTF_MAKE_TZONE_ALLOCATED(NetworkSession);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkSession);
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
+    static std::unique_ptr<NetworkSession> create(const NetworkSessionCreationParameters&);
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
@@ -133,7 +133,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    NetworkProcess& networkProcess() { return m_networkProcess; }
+    NetworkProcess& networkProcess();
     NetworkStorageSession* NODELETE networkStorageSession() const;
 
     void registerNetworkDataTask(NetworkDataTask&);
@@ -316,7 +316,7 @@ public:
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
 
 protected:
-    NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
+    explicit NetworkSession(const NetworkSessionCreationParameters&);
 
     void forwardResourceLoadStatisticsSettings();
     WebSWOriginStore* NODELETE swOriginStore() const LIFETIME_BOUND;
@@ -334,7 +334,6 @@ protected:
     BackgroundFetchStoreImpl& ensureBackgroundFetchStore();
 
     PAL::SessionID m_sessionID;
-    const Ref<NetworkProcess> m_networkProcess;
     ThreadSafeWeakHashSet<NetworkDataTask> m_dataTaskSet;
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;

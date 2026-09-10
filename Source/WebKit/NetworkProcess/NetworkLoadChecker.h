@@ -64,13 +64,13 @@ class NetworkLoadChecker : public RefCountedAndCanMakeWeakPtr<NetworkLoadChecker
 public:
     enum class LoadType : bool { MainFrame, Other };
 
-    static Ref<NetworkLoadChecker> create(NetworkProcess& networkProcess, NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry,
+    static Ref<NetworkLoadChecker> create(NetworkResourceLoader* networkResourceLoader, NetworkSchemeRegistry* schemeRegistry,
         WebCore::FetchOptions&& options, PAL::SessionID sessionID, std::optional<WebPageProxyIdentifier> webPageProxyID, WebCore::HTTPHeaderMap&& originalRequestHeaders,
         URL&& url, DocumentURL&& documentURL, RefPtr<WebCore::SecurityOrigin>&& sourceOrigin, RefPtr<WebCore::SecurityOrigin>&& topOrigin,
         RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy preflightPolicy, String&& referrer, bool allowPrivacyProxy,
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, bool shouldCaptureExtraNetworkLoadMetrics = false, LoadType requestLoadType = LoadType::Other)
     {
-        return adoptRef(*new NetworkLoadChecker(networkProcess, networkResourceLoader, schemeRegistry,
+        return adoptRef(*new NetworkLoadChecker(networkResourceLoader, schemeRegistry,
             WTF::move(options), sessionID, webPageProxyID, WTF::move(originalRequestHeaders),
             WTF::move(url), WTF::move(documentURL), WTF::move(sourceOrigin), WTF::move(topOrigin),
             WTF::move(parentOrigin), preflightPolicy, WTF::move(referrer), allowPrivacyProxy,
@@ -107,7 +107,7 @@ public:
     }
 #endif
 
-    NetworkProcess& networkProcess() { return m_networkProcess; }
+    NetworkProcess& networkProcess();
 
     const URL& url() const LIFETIME_BOUND { return m_url; }
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const { return m_storedCredentialsPolicy; }
@@ -126,7 +126,7 @@ public:
     bool navigationTAOCheckPassed() const { return m_navigationTAOCheckPassed; }
 
 private:
-    NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
+    NetworkLoadChecker(NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);
 
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     const WebCore::OriginAccessPatterns& NODELETE originAccessPatterns() const;
@@ -170,7 +170,6 @@ private:
     bool m_allowPrivacyProxy;
     OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     PAL::SessionID m_sessionID;
-    const Ref<NetworkProcess> m_networkProcess;
     Markable<WebPageProxyIdentifier> m_webPageProxyID;
     WebCore::HTTPHeaderMap m_originalRequestHeaders; // Needed for CORS checks.
     WebCore::HTTPHeaderMap m_firstRequestHeaders; // Needed for CORS checks.

@@ -40,7 +40,7 @@ namespace PCM {
 class ClientImpl : public Client {
     WTF_MAKE_TZONE_ALLOCATED(ClientImpl);
 public:
-    ClientImpl(NetworkSession&, NetworkProcess&);
+    explicit ClientImpl(NetworkSession&);
 
 private:
     void broadcastConsoleMessage(JSC::MessageLevel, const String&) final;
@@ -50,7 +50,6 @@ private:
     bool runningInDaemon() const final { return false; }
 
     WeakPtr<NetworkSession> m_networkSession;
-    const Ref<NetworkProcess> m_networkProcess;
 };
 
 } // namespace PCM

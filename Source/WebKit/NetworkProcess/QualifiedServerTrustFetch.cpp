@@ -77,8 +77,7 @@ static NetworkLoadParameters qualifiedServerTrustParameters(URL&& url, const Net
 }
 
 QualifiedServerTrustFetch::QualifiedServerTrustFetch(NetworkSession& session, const URL& url, const NetworkResourceLoadParameters& parameters, const WebCore::CertificateInfo& serverTrust)
-    : m_networkProcess(session.networkProcess())
-    , m_networkLoad(NetworkLoad::create(*this, qualifiedServerTrustParameters(URL(url), parameters), session))
+    : m_networkLoad(NetworkLoad::create(*this, qualifiedServerTrustParameters(URL(url), parameters), session))
     , m_timeoutTimer(makeUnique<WebCore::Timer>(*this, &QualifiedServerTrustFetch::cancel))
     , m_webPageID(parameters.webPageProxyID)
     , m_debugEnabledForTesting(session.qualifiedServerTrustDebugEnabledForTesting())
@@ -130,7 +129,7 @@ void QualifiedServerTrustFetch::didFinishLoading(const NetworkLoadMetrics&)
     }
 #endif
 
-    if (RefPtr connection = m_networkProcess->parentProcessConnection())
+    if (RefPtr connection = NetworkProcess::singleton().parentProcessConnection())
         connection->send(Messages::NetworkProcessProxy::ReceivedQualifiedServerTrust(m_webPageID, m_serverTrust, qualifiedServerTrust), 0);
     didReachCompletion(*this);
 }

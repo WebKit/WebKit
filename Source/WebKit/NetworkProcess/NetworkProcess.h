@@ -145,7 +145,7 @@ class Cache;
 enum class CacheOption : uint8_t;
 }
 
-class NetworkProcess final : public AuxiliaryProcess, private DownloadManager::Client, public ThreadSafeRefCounted<NetworkProcess>
+class NetworkProcess final : public AuxiliaryProcess, private DownloadManager::Client
 {
     WTF_MAKE_NONCOPYABLE(NetworkProcess);
     WTF_MAKE_TZONE_ALLOCATED(NetworkProcess);
@@ -381,8 +381,9 @@ public:
 
     const String& uiProcessBundleIdentifier() const LIFETIME_BOUND;
 
-    void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
-    void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
+    // ref() & deref() do nothing since NetworkProcess is a singleton object.
+    void ref() const final { }
+    void deref() const final { }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void simulatePrivateClickMeasurementConversion(PAL::SessionID, int priority, int triggerData, const URL& sourceURL, const URL& destinationURL);

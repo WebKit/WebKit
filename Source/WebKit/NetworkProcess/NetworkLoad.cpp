@@ -52,7 +52,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkLoad);
 
 NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& parameters, NetworkSession& networkSession)
     : m_client(client)
-    , m_networkProcess(networkSession.networkProcess())
     , m_parameters(WTF::move(parameters))
     , m_currentRequest(m_parameters.request)
 {
@@ -76,9 +75,9 @@ std::optional<WebCore::PageIdentifier> NetworkLoad::webPageID() const
     return std::nullopt;
 }
 
-Ref<NetworkProcess> NetworkLoad::networkProcess()
+NetworkProcess& NetworkLoad::networkProcess()
 {
-    return m_networkProcess;
+    return NetworkProcess::singleton();
 }
 
 void NetworkLoad::start()
@@ -157,7 +156,7 @@ void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const 
     m_currentRequest = updatedRequest;
     task->setPendingDownload(pendingDownload);
     
-    m_networkProcess->findPendingDownloadLocation(*task, WTF::move(completionHandler), response);
+    NetworkProcess::singleton().findPendingDownloadLocation(*task, WTF::move(completionHandler), response);
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -195,7 +194,7 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
             completionHandler({ });
     };
 
-    if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
+    if (!NetworkProcess::singleton().ftpEnabled() && request.url().protocolIsInFTPFamily()) {
         errorCallback({ errorDomainWebKitInternal, 0, url(), "FTP URLs are disabled"_s, ResourceError::Type::AccessControl });
         return;
     }
@@ -252,9 +251,9 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
     }
     
     if (RefPtr pendingDownload = m_task->pendingDownload())
-        protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTF::move(completionHandler));
+        protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(*pendingDownload, challenge, WTF::move(completionHandler));
     else
-        protect(m_networkProcess->authenticationManager())->didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
+        protect(NetworkProcess::singleton().authenticationManager())->didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTF::move(completionHandler));
 }
 
 void NetworkLoad::didReceiveInformationalResponse(ResourceResponse&& response)
@@ -268,12 +267,12 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLega
     ASSERT(RunLoop::isMain());
 
     if (RefPtr task = m_task; task && task->isDownload()) {
-        m_networkProcess->findPendingDownloadLocation(*task, WTF::move(completionHandler), response);
+        NetworkProcess::singleton().findPendingDownloadLocation(*task, WTF::move(completionHandler), response);
         return;
     }
 
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
-        protect(m_networkProcess->authenticationManager())->negotiatedLegacyTLS(*m_parameters.webPageProxyID);
+        protect(NetworkProcess::singleton().authenticationManager())->negotiatedLegacyTLS(*m_parameters.webPageProxyID);
     
     notifyDidReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, WTF::move(completionHandler));
 }
@@ -291,7 +290,7 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Negotiat
         std::span<const std::byte> auditToken;
 
 #if PLATFORM(COCOA)
-        auto token = m_networkProcess->sourceApplicationAuditToken();
+        auto token = NetworkProcess::singleton().sourceApplicationAuditToken();
         if (token)
             auditToken = std::as_bytes(std::span<unsigned> { token->val });
 #endif
@@ -356,7 +355,7 @@ void NetworkLoad::wasBlockedByDisabledFTP()
 void NetworkLoad::didNegotiateModernTLS(const URL& url)
 {
     if (m_parameters.webPageProxyID)
-        m_networkProcess->send(Messages::NetworkProcessProxy::DidNegotiateModernTLS(*m_parameters.webPageProxyID, url));
+        NetworkProcess::singleton().send(Messages::NetworkProcessProxy::DidNegotiateModernTLS(*m_parameters.webPageProxyID, url));
 }
 
 String NetworkLoad::description() const

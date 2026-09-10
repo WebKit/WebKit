@@ -167,7 +167,7 @@ public:
 
     using RegistrableDomain = WebCore::RegistrableDomain;
 
-    static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
+    static Ref<NetworkConnectionToWebProcess> create(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
     virtual ~NetworkConnectionToWebProcess();
 
     void ref() const final { RefCounted::ref(); }
@@ -181,7 +181,7 @@ public:
     NetworkSession* networkSession();
 
     IPC::Connection& connection() { return m_connection.get(); }
-    NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+    NetworkProcess& NODELETE networkProcess();
 
     bool usesSingleWebProcess() const { return m_sharedPreferencesForWebProcess.usesSingleWebProcess; }
     bool blobFileAccessEnforcementEnabled() const { return m_sharedPreferencesForWebProcess.blobFileAccessEnforcementEnabled; }
@@ -286,7 +286,7 @@ public:
     std::optional<NetworkActivityTracker::CompletionCode> NODELETE lastRootActivityCompletionCodeForTesting(WebCore::PageIdentifier) const;
 
 private:
-    NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
+    NetworkConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier&&);
 
     void didFinishPreconnection(WebCore::ResourceLoaderIdentifier preconnectionIdentifier, const WebCore::ResourceError&);
     NetworkStorageSession* NODELETE storageSession();
@@ -518,7 +518,6 @@ private:
 #endif
 
     const Ref<IPC::Connection> m_connection;
-    const Ref<NetworkProcess> m_networkProcess;
     PAL::SessionID m_sessionID;
 
     HashMap<WebCore::WebSocketIdentifier, Ref<NetworkSocketChannel>> m_networkSocketChannels;

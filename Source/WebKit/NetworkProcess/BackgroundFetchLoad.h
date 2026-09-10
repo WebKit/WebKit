@@ -45,7 +45,6 @@ struct FetchOptions;
 namespace WebKit {
 
 class NetworkLoadChecker;
-class NetworkProcess;
 
 class BackgroundFetchLoad final : public RefCounted<BackgroundFetchLoad>, public WebCore::BackgroundFetchRecordLoader, public NetworkDataTaskClient {
     WTF_MAKE_TZONE_ALLOCATED(BackgroundFetchLoad);
@@ -53,18 +52,18 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    static Ref<BackgroundFetchLoad> create(NetworkProcess& networkProcess, PAL::SessionID sessionID,
+    static Ref<BackgroundFetchLoad> create(PAL::SessionID sessionID,
         WebCore::BackgroundFetchRecordLoaderClient& backgroundFetchRecordLoaderClient,
         const WebCore::BackgroundFetchRequest& backgroundFetchRequest, size_t responseDataSize,
         const WebCore::ClientOrigin& clientOrigin)
     {
-        return adoptRef(*new BackgroundFetchLoad(networkProcess, sessionID, backgroundFetchRecordLoaderClient, backgroundFetchRequest, responseDataSize, clientOrigin));
+        return adoptRef(*new BackgroundFetchLoad(sessionID, backgroundFetchRecordLoaderClient, backgroundFetchRequest, responseDataSize, clientOrigin));
     }
 
     ~BackgroundFetchLoad();
 
 private:
-    BackgroundFetchLoad(NetworkProcess&, PAL::SessionID, WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
+    BackgroundFetchLoad(PAL::SessionID, WebCore::BackgroundFetchRecordLoaderClient&, const WebCore::BackgroundFetchRequest&, size_t responseDataSize, const WebCore::ClientOrigin&);
 
     const URL& NODELETE currentURL() const;
 
@@ -83,7 +82,7 @@ private:
     // WebCore::BackgroundFetchRecordLoader
     void abort() final;
 
-    void loadRequest(NetworkProcess&, WebCore::ResourceRequest&&);
+    void loadRequest(WebCore::ResourceRequest&&);
 
     void didFinish(const WebCore::ResourceError& = { }, const WebCore::ResourceResponse& response = { });
 

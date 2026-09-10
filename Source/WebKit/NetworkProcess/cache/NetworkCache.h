@@ -165,7 +165,7 @@ const AtomString& recordTypeName(RecordType);
 class Cache : public RefCountedAndCanMakeWeakPtr<Cache> {
 public:
     ~Cache();
-    static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
+    static RefPtr<Cache> open(const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
     size_t NODELETE capacity() const;
     void updateCapacity();
@@ -242,7 +242,7 @@ public:
 
     void browsingContextRemoved(WebPageProxyIdentifier, WebCore::PageIdentifier, WebCore::FrameIdentifier);
 
-    NetworkProcess& networkProcess() { return m_networkProcess.get(); }
+    NetworkProcess& networkProcess();
     PAL::SessionID sessionID() const { return m_sessionID; }
     const String& storageDirectory() const LIFETIME_BOUND { return m_storageDirectory; }
     void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
@@ -251,7 +251,7 @@ public:
     void deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
 private:
-    Cache(NetworkProcess&, const String& storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
+    Cache(const String& storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);
 
     Key makeCacheKey(RecordType, const WebCore::ResourceRequest&);
 
@@ -265,7 +265,6 @@ private:
     std::optional<Seconds> maxAgeCap(Entry&, const WebCore::ResourceRequest&, PAL::SessionID);
 
     const Ref<Storage> m_storage;
-    const Ref<NetworkProcess> m_networkProcess;
 
     bool shouldUseSpeculativeLoadManager() const;
     void updateSpeculativeLoadManagerEnabledState();

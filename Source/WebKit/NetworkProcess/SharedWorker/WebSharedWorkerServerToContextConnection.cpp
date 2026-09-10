@@ -166,8 +166,7 @@ void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedW
     // SharedWorkers follow a different flow than normal MessagePort events
     // We pre-record the destination so impending message checks pass.
     if (RefPtr connection = m_connection.get()) {
-        Ref networkProcess = connection->networkProcess();
-        CheckedRef registry = networkProcess->messagePortChannelRegistry();
+        CheckedRef registry = NetworkProcess::singleton().messagePortChannelRegistry();
         registry->recordPendingTransferDestination(port.first, connection->webProcessIdentifier());
     }
     sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin }, WTF::move(completionHandler));

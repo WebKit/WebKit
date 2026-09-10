@@ -117,9 +117,9 @@ class NetworkSessionCocoa final : public NetworkSession {
     WTF_MAKE_TZONE_ALLOCATED(NetworkSessionCocoa);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(NetworkSessionCocoa);
 public:
-    static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
+    static std::unique_ptr<NetworkSession> create(const NetworkSessionCreationParameters&);
 
-    NetworkSessionCocoa(NetworkProcess&, const NetworkSessionCreationParameters&);
+    explicit NetworkSessionCocoa(const NetworkSessionCreationParameters&);
     ~NetworkSessionCocoa();
 
     SessionWrapper& initializeEphemeralStatelessSessionIfNeeded(std::optional<WebPageProxyIdentifier>, NavigatingToAppBoundDomain);

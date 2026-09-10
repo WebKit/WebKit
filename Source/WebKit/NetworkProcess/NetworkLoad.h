@@ -89,7 +89,7 @@ public:
     void setTimingAllowFailedFlag();
     std::optional<WebCore::FrameIdentifier> NODELETE webFrameID() const;
     std::optional<WebCore::PageIdentifier> NODELETE webPageID() const;
-    Ref<NetworkProcess> NODELETE networkProcess();
+    NetworkProcess& NODELETE networkProcess();
 
     size_t NODELETE bytesTransferredOverNetwork() const;
 
@@ -100,7 +100,6 @@ private:
 
     template<typename CreateTaskCallback> NetworkLoad(NetworkLoadClient& client, NetworkSession& networkSession, NOESCAPE const CreateTaskCallback& createTask)
         : m_client(client)
-        , m_networkProcess(networkSession.networkProcess())
         , m_task(createTask(*this))
     {
     }
@@ -122,7 +121,6 @@ private:
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 
     WeakPtr<NetworkLoadClient> m_client;
-    const Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;
     WeakPtr<NetworkLoadScheduler> m_scheduler;

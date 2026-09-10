@@ -424,9 +424,9 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
         auto preloadedEntry = checkedThis->m_preloadedEntries.take(key);
         ASSERT(preloadedEntry);
         if (preloadedEntry->wasRevalidated())
-            logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey());
+            logSpeculativeLoadingDiagnosticMessage(NetworkProcess::singleton(), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithRevalidationKey());
         else
-            logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
+            logSpeculativeLoadingDiagnosticMessage(NetworkProcess::singleton(), frameID, DiagnosticLoggingKeys::wastedSpeculativeWarmupWithoutRevalidationKey());
     }));
 }
 
@@ -544,7 +544,7 @@ void SpeculativeLoadManager::revalidateSubresource(const SubresourceInfo& subres
 
         if (checkedThis->satisfyPendingRequests(key, revalidatedEntry.get())) {
             if (revalidatedEntry)
-                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
+                logSpeculativeLoadingDiagnosticMessage(NetworkProcess::singleton(), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithRevalidationKey());
             return;
         }
 
@@ -607,7 +607,7 @@ void SpeculativeLoadManager::preloadEntry(const Key& key, const SubresourceInfo&
 
         if (checkedThis->satisfyPendingRequests(key, entry.get())) {
             if (entry)
-                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
+                logSpeculativeLoadingDiagnosticMessage(NetworkProcess::singleton(), frameID, DiagnosticLoggingKeys::successfulSpeculativeWarmupWithoutRevalidationKey());
             return;
         }
         
@@ -634,7 +634,7 @@ void SpeculativeLoadManager::startSpeculativeRevalidation(const GlobalFrameID& f
                 CheckedPtr checkedThis = weakThis.get();
                 if (!checkedThis)
                     return;
-                logSpeculativeLoadingDiagnosticMessage(protect(checkedThis->m_cache->networkProcess()), frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
+                logSpeculativeLoadingDiagnosticMessage(NetworkProcess::singleton(), frameID, DiagnosticLoggingKeys::entryRightlyNotWarmedUpKey());
                 checkedThis->m_notPreloadedEntries.remove(key);
             }));
         }
