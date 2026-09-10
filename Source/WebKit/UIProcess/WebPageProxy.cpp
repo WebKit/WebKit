@@ -2336,10 +2336,16 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
             loadParameters.sandboxExtensionHandle = WTF::move(*sandboxExtensionHandle);
         protectedThis->prepareToLoadWebPage(*weakProcess, loadParameters);
 
-        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No) {
-            auto advancedPrivacyProtections = loadParameters.advancedPrivacyProtections.value_or(protect(protectedThis->m_configuration->defaultWebsitePolicies())->advancedPrivacyProtections());
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        // Avoid accidentally directly preconnecting to hosts that are unreachable via private relay (see rdar://186500446).
+        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No && !loadParameters.request.useAdvancedPrivacyProtections()) {
+            auto advancedPrivacyProtections = protect(protectedThis->m_configuration->defaultWebsitePolicies())->advancedPrivacyProtections();
             protectedThis->preconnectTo(ResourceRequest { loadParameters.request }, advancedPrivacyProtections);
         }
+#else
+        if (shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No)
+            protectedThis->preconnectTo(ResourceRequest { loadParameters.request }, { });
+#endif
 
         navigation->setIsLoadedWithNavigationShared(true);
         protectedProcess->markProcessAsRecentlyUsed();

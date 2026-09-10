@@ -1005,32 +1005,45 @@ TEST(AdvancedPrivacyProtections, LinkPreconnectUsesEnhancedPrivacy)
 
 #ifndef RC_REMOVE_SEC_ACCEL_3
 
-// The preconnect the network process issues on a navigation's behalf must carry that navigation's
-// advanced privacy protections. NetworkProcess::preconnectTo used to default-construct its
-// NetworkLoadParameters, so the preconnect reached the wire with an empty protection set and none of
-// the per-request privacy SPI applied to it.
-//
-// Unlike LinkPreconnectUsesEnhancedPrivacy above, this deliberately does not set
-// _useEnhancedPrivacyMode on the navigation's NSURLRequest: that flag survives from the request into
-// the preconnect on its own, which would mask the bug. Here the only thing that can mark the
-// preconnect is the protection set propagated through NetworkLoadParameters.
-TEST(AdvancedPrivacyProtections, NavigationPreconnectUsesEnhancedPrivacy)
+static size_t connectionCountForCancelledNavigationPreconnect(bool useEnhancedPrivacyMode)
 {
-    HTTPServer server { { { "/index.html"_s, { "<!DOCTYPE html><body>Hello world</body>"_s } } } };
+    size_t connectionCount = 0;
+    HTTPServer server([&](Connection connection) {
+        ++connectionCount;
+        connection.receiveHTTPRequest([](Vector<char>&&) { });
+    });
 
-    auto webView = createWebViewWithAdvancedPrivacyProtections(YES, nil, WKWebsiteDataStore.defaultDataStore);
-    [webView synchronouslyLoadRequest:server.request("/index.html"_s)];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
 
-    do {
-        Util::runFor(10_ms);
-    } while (!server.totalConnections());
+    // Cancel the navigation so that only the preconnect is sent, not the actual HTTP request.
+    bool didCallDecisionHandler = false;
+    [navigationDelegate setDecidePolicyForNavigationAction:[&](WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        didCallDecisionHandler = true;
+        decisionHandler(WKNavigationActionPolicyCancel);
+    }];
 
-#if PLATFORM(MAC)
-    auto logMessages = [webView collectLogsForNewConnections];
-    EXPECT_GT([logMessages count], 0U);
-    for (NSString *message : logMessages)
-        EXPECT_TRUE([message containsString:@"enhanced privacy"]);
-#endif
+    RetainPtr request = adoptNS([server.request() mutableCopy]);
+    if (useEnhancedPrivacyMode)
+        [request _setUseEnhancedPrivacyMode:YES];
+    [webView loadRequest:request.get()];
+    Util::run(&didCallDecisionHandler);
+
+    // Give the preconnect some additional time to reach the server before checking.
+    Util::spinRunLoop(10);
+    return connectionCount;
+}
+
+TEST(AdvancedPrivacyProtections, NavigationPreconnectSkippedForEnhancedPrivacy)
+{
+    EXPECT_EQ(connectionCountForCancelledNavigationPreconnect(true), 0U);
+}
+
+TEST(AdvancedPrivacyProtections, NavigationPreconnectHappensWithoutEnhancedPrivacy)
+{
+    // EXPECT_GE rather than EXPECT_EQ due to heuristics like ENABLE_ADDITIONAL_PRECONNECT_ON_HTTP_1X.
+    EXPECT_GE(connectionCountForCancelledNavigationPreconnect(false), 1U);
 }
 
 // Same requirement for the -[WKWebView _preconnectToServer:] entry point into
