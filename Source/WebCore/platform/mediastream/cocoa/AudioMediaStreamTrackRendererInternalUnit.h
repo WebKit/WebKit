@@ -62,6 +62,9 @@ public:
     virtual void deleteUnitForTesting() { }
 };
 
+constexpr double maxAudioRendererSampleRate = 48000;
+WEBCORE_EXPORT double clampedAudioRendererSampleRate(double deviceSampleRate);
+
 }
 
 #endif // ENABLE(MEDIA_STREAM)
