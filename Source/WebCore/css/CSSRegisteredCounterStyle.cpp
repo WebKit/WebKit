@@ -243,9 +243,18 @@ static String counterForSystemCJK(int number, const std::array<char16_t, 17>& ta
 
 String CSSRegisteredCounterStyle::counterForSystemDisclosureClosed(WritingMode writingMode)
 {
-    if (writingMode.isVerticalTypographic())
-        return span(writingMode.isInlineTopToBottom() ? blackDownPointingTriangle : blackUpPointingTriangle);
-    return span(writingMode.isBidiLTR() ? blackRightPointingTriangle : blackLeftPointingTriangle);
+    switch (writingMode.inlineDirection()) {
+    case FlowDirection::TopToBottom:
+        return span(blackDownPointingTriangle);
+    case FlowDirection::BottomToTop:
+        return span(blackUpPointingTriangle);
+    case FlowDirection::LeftToRight:
+        return span(blackRightPointingTriangle);
+    case FlowDirection::RightToLeft:
+        return span(blackLeftPointingTriangle);
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 String CSSRegisteredCounterStyle::counterForSystemDisclosureOpen(WritingMode writingMode)
