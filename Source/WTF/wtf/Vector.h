@@ -424,10 +424,23 @@ protected:
         m_size = std::exchange(other.m_size, 0);
     }
 
+    template<typename OtherMalloc>
+    void adopt(VectorBuffer<T, 0, OtherMalloc>&& other)
+    {
+        crashIfBorrowed();
+        other.crashIfBorrowed();
+        deallocateBuffer(buffer());
+        m_buffer = std::exchange(other.m_buffer, nullptr);
+        m_capacity = other.exchangeCapacity(0);
+        m_size = std::exchange(other.m_size, 0);
+    }
+
 private:
+    template<typename U, size_t otherInlineCapacity, typename OtherMalloc> friend class VectorBuffer;
     friend class JSC::LLIntOffsetsExtractor;
     using Base::m_buffer;
     using Base::m_capacity;
+    using Base::exchangeCapacity;
 };
 
 template<typename T, size_t inlineCapacity, typename Malloc>
@@ -629,6 +642,15 @@ struct UnsafeVectorOverflow {
     }
 };
 
+template<typename FromMalloc, typename ToMalloc>
+constexpr bool vectorMallocsCanAdoptBuffer()
+{
+    if constexpr (std::same_as<FromMalloc, ToMalloc>)
+        return true;
+    else
+        return &FromMalloc::free == &ToMalloc::free;
+}
+
 // Template default values are in Forward.h.
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 class Vector : private VectorBuffer<T, inlineCapacity, Malloc> {
@@ -775,6 +797,13 @@ public:
 
     Vector(Vector&&);
     Vector& operator=(Vector&&);
+
+    template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity, typename OtherMalloc>
+        requires (!inlineCapacity && !otherCapacity && vectorMallocsCanAdoptBuffer<OtherMalloc, Malloc>())
+    Vector(Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity, OtherMalloc>&&);
+    template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity, typename OtherMalloc>
+        requires (!inlineCapacity && !otherCapacity && vectorMallocsCanAdoptBuffer<OtherMalloc, Malloc>())
+    Vector& operator=(Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity, OtherMalloc>&&);
 
     [[nodiscard]] size_t size() const { return m_size; }
     [[nodiscard]] size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
@@ -1121,6 +1150,35 @@ inline Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T
     asanSetInitialBufferSizeTo(m_size);
     other.asanSetInitialBufferSizeTo(other.m_size);
 
+    return *this;
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity, typename OtherMalloc>
+    requires (!inlineCapacity && !otherCapacity && vectorMallocsCanAdoptBuffer<OtherMalloc, Malloc>())
+inline Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity, OtherMalloc>&& other)
+{
+    asanSetBufferSizeToFullCapacity();
+    other.asanSetBufferSizeToFullCapacity();
+    Base::adopt(static_cast<VectorBuffer<T, 0, OtherMalloc>&&>(other));
+    asanSetInitialBufferSizeTo(m_size);
+    other.asanSetInitialBufferSizeTo(other.m_size);
+}
+
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
+template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity, typename OtherMalloc>
+    requires (!inlineCapacity && !otherCapacity && vectorMallocsCanAdoptBuffer<OtherMalloc, Malloc>())
+inline Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::operator=(Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity, OtherMalloc>&& other)
+{
+    ASSERT(!typelessPointersAreEqual(&other, this));
+
+    if (m_size)
+        TypeOperations::destruct(begin(), end());
+    asanSetBufferSizeToFullCapacity();
+    other.asanSetBufferSizeToFullCapacity();
+    Base::adopt(static_cast<VectorBuffer<T, 0, OtherMalloc>&&>(other));
+    asanSetInitialBufferSizeTo(m_size);
+    other.asanSetInitialBufferSizeTo(other.m_size);
     return *this;
 }
 

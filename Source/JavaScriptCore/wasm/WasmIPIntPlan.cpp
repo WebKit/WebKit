@@ -74,10 +74,6 @@ IPIntPlan::IPIntPlan(VM& vm, Ref<ModuleInformation> info, CompilerMode compilerM
 bool IPIntPlan::prepareImpl()
 {
     const auto& functions = m_moduleInformation->functions;
-    if (!tryReserveCapacity(m_wasmInternalFunctions, functions.size(), "WebAssembly functions"_s))
-        return false;
-    m_wasmInternalFunctions.resize(functions.size());
-
     if (!m_ipintCallees)
         m_ipintCallees = IPIntCallees::create(functions.size());
     return true;
@@ -101,40 +97,37 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
         return;
     }
 
-    m_wasmInternalFunctions[functionIndex] = WTF::move(*parseAndCompileResult);
+    auto generator = WTF::move(*parseAndCompileResult);
+    auto callee = IPIntCallee::create(*generator, functionIndexSpace, signature, { });
+    ASSERT(!callee->entrypoint());
+    bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
+    // Immediately tier up to BBQ for SIMD, if necesary.
+    if (usesSIMD && !Options::useWasmIPIntSIMD())
+        callee->tierUpCounter().setNewThreshold(0);
 
-    {
-        auto callee = IPIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, signature, { });
-        ASSERT(!callee->entrypoint());
-        bool usesSIMD = m_moduleInformation->usesSIMD(functionIndex);
-        // Immediately tier up to BBQ for SIMD, if necesary.
-        if (usesSIMD && !Options::useWasmIPIntSIMD())
-            callee->tierUpCounter().setNewThreshold(0);
-
-        if (usesSIMD && !Options::useBBQJIT() && !Options::useWasmIPIntSIMD()) {
-            Locker locker { m_lock };
-            failFunctionCompilation(functionIndex, makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
-            return;
-        }
-
-        CodePtr<WasmEntryPtrTag> entrypoint { };
-#if ENABLE(JIT)
-        if (Options::useJIT())
-            entrypoint = LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>();
-#endif
-        if (!entrypoint)
-            entrypoint = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline);
-
-        callee->setEntrypointWithoutRegistration(entrypoint);
-        m_ipintCallees->at(functionIndex) = WTF::move(callee);
+    if (usesSIMD && !Options::useBBQJIT() && !Options::useWasmIPIntSIMD()) {
+        Locker locker { m_lock };
+        failFunctionCompilation(functionIndex, makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
+        return;
     }
+
+    CodePtr<WasmEntryPtrTag> entrypoint { };
+#if ENABLE(JIT)
+    if (Options::useJIT())
+        entrypoint = LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>();
+#endif
+    if (!entrypoint)
+        entrypoint = LLInt::getCodeFunctionPtr<CFunctionPtrTag>(ipint_trampoline);
+
+    callee->setEntrypointWithoutRegistration(entrypoint);
+    m_ipintCallees->at(functionIndex) = WTF::move(callee);
 }
 
 void IPIntPlan::didCompleteCompilation()
 {
     generateStubsIfNecessary();
 
-    unsigned functionCount = m_wasmInternalFunctions.size();
+    unsigned functionCount = m_ipintCallees->size();
     if (!m_calleesAlreadyRegistered && functionCount) {
         // Set names here rather than at IPIntCallee creation: during streaming the name section
         // (which follows the code section) has not been parsed yet when a function is compiled.
