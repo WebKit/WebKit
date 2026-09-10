@@ -39,6 +39,16 @@ auto GridTrackSizeDefaulter::operator()() const -> const GridTrackSize&
     return staticValue.get();
 }
 
+// MARK: - Utilities
+
+GridTrackSizes reversedTrackSizes(const GridTrackSizes& trackSizes)
+{
+    auto trackSizesCount = trackSizes.size();
+    return GridTrackSizes { GridTrackSizeList::createWithSizeFromGenerator(trackSizesCount, [&](size_t index) {
+        return trackSizes[trackSizesCount - 1 - index];
+    }) };
+}
+
 // MARK: - Conversion
 
 auto ToCSS<GridTrackSizes>::operator()(const GridTrackSizes& value, const Style::ComputedStyle& style) -> CSS::GridTrackSizes

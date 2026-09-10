@@ -254,12 +254,6 @@ TrackSizingFunctions GridLayout::convertGridTrackSizeToTrackSizingFunctions(cons
 
 // Generates track sizing functions for implicitTracksCount implicit tracks using
 // grid-auto-{columns,rows}, cycling forwards through the provided sizes starting from the first.
-// FIXME: This produces the correct sizes for trailing implicit tracks (after the explicit grid) and
-// for any single-value grid-auto-{columns,rows}, but not for leading implicit tracks (before the
-// explicit grid) when grid-auto-{columns,rows} lists multiple track sizes. Per spec the leading
-// tracks cycle backwards -- "the last implicit grid track before the explicit grid receives the
-// last specified size, and so on backwards" -- whereas this always cycles forwards from the first
-// size. https://drafts.csswg.org/css-grid-1/#auto-tracks
 TrackSizingFunctionsList GridLayout::generateImplicitTrackSizingFunctions(size_t implicitTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor& zoom)
 {
     TrackSizingFunctionsList trackSizingFunctionsForImplicitGrid;
@@ -283,16 +277,19 @@ TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t totalTracksCoun
     trackSizingFunctions.reserveInitialCapacity(totalTracksCount);
 
     // https://drafts.csswg.org/css-grid-1/#auto-tracks
-    // Leading implicit tracks are generated before the start of the explicit grid (for items placed
-    // with a negative line that resolves before line 1) and are sized by grid-auto-{columns,rows}.
-    trackSizingFunctions.appendVector(generateImplicitTrackSizingFunctions(leadingImplicitTracksCount, gridAutoTrackSizes, zoom));
+    // "The last implicit grid track before the explicit grid receives the last specified size, and so on backwards"
+    // Check for leading tracks before reversing: Style::reversedTrackSizes copies
+    // grid-auto-{columns,rows}, and most grids have nothing before the explicit grid to spend it on.
+    if (leadingImplicitTracksCount) {
+        auto leadingTrackSizingFunctions = generateImplicitTrackSizingFunctions(leadingImplicitTracksCount, Style::reversedTrackSizes(gridAutoTrackSizes), zoom);
+        trackSizingFunctions.appendRange(leadingTrackSizingFunctions.rbegin(), leadingTrackSizingFunctions.rend());
+    }
 
     // https://drafts.csswg.org/css-grid-1/#algo-terms
     // Map explicit tracks from grid-template-{columns,rows}
     for (auto& gridTrackSize : gridTemplateTrackSizes)
         trackSizingFunctions.append(convertGridTrackSizeToTrackSizingFunctions(gridTrackSize, zoom));
 
-    // Generate trailing implicit tracks using grid-auto-{columns,rows}
     // https://drafts.csswg.org/css-grid-1/#auto-tracks
     // "The first track after the last explicitly-sized track receives the first specified size, and so on forwards"
     auto trailingImplicitTracksCount = totalTracksCount - leadingImplicitTracksCount - explicitTracksCount;
