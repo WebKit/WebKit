@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,8 @@ class WebIOSEventFactory {
 public:
     static WebKit::WebKeyboardEventInit createWebKeyboardEvent(::WebEvent *, bool handledByInputMethod);
     static WebKit::WebMouseEventInit createWebMouseEvent(::WebEvent *);
+
+    static void setAutomationKeyIdentity(::WebEvent *, const String& key, const String& code, bool isKeypad);
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
     static WebKit::WebWheelEventInit createWebWheelEvent(WKBEScrollViewScrollUpdate *, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);

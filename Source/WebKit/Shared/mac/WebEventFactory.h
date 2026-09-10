@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@ public:
     static WebWheelEventInit createWebWheelEvent(NSEvent *, NSView *windowView);
     static WebKeyboardEventInit createWebKeyboardEvent(NSEvent *, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>&);
     static bool NODELETE shouldBeHandledAsContextClick(const WebCore::PlatformMouseEvent&);
+
+    static void setAutomationKeyIdentity(NSEvent *, const String& key, const String& code, bool isKeypad);
 
 #if defined(__OBJC__)
     static NSEventModifierFlags NODELETE toNSEventModifierFlags(OptionSet<WebKit::WebEventModifier>);
