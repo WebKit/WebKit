@@ -40,6 +40,13 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._waitingForMainFrameResourceTreePayload = true;
         this._transitioningPageTarget = false;
 
+        // Whether the web page target's UIProcess proxying agents serve the Network and Page domains,
+        // rather than the in-process agents on the page target. The backend answers this in
+        // initializeTarget; until then, assume the page target owns both domains.
+        this._didInitializeWebPageTargetNetwork = false;
+        this._enabledNetworkForSiteIsolation = false;
+        this._enabledPageForSiteIsolation = false;
+
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
         this._failedSourceMapURLs = new Set;
@@ -220,22 +227,25 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             target.ServiceWorkerAgent.getInitializationInfo(this._processServiceWorkerConfiguration.bind(this));
 
         if (target.hasDomain("Network")) {
-            target.NetworkAgent.enable();
-            target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+            if (target.type === WI.TargetType.WebPage) {
+                // Which target serves Page and Network -- the UIProcess ProxyingPageAgent and
+                // ProxyingNetworkAgent on this web page target, or the in-process agents on the page
+                // target -- is a backend decision the frontend can't read off the static protocol,
+                // since both domains are declared for the web page target either way. Ask by enabling
+                // Network: while the page target still owns these domains the command fails, and this
+                // target then stays out of the way. A frame target existing is not the signal, since
+                // frame targets are surfaced whether or not Site Isolation is enabled.
+                target.NetworkAgent.enable((error) => {
+                    if (error)
+                        return;
 
-            // COMPATIBILITY (macOS 26.4, iOS 26.4): Network.setClearResourceDataOnNavigate did not exist yet.
-            if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
-                target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
-
-            // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
-            if (target.hasCommand("Network.setInterceptionEnabled")) {
-                if (this._interceptionEnabled)
-                    target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
-
-                for (let localResourceOverride of this._localResourceOverrides) {
-                    if (!localResourceOverride.disabled)
-                        this._addInterception(localResourceOverride, target);
-                }
+                    this._enabledNetworkForSiteIsolation = true;
+                    this._enabledPageForSiteIsolation = true;
+                    this._configureNetworkAgentForTarget(target);
+                });
+            } else {
+                target.NetworkAgent.enable();
+                this._configureNetworkAgentForTarget(target);
             }
         }
 
@@ -244,16 +254,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         if (target.type === WI.TargetType.Worker)
             this.adoptOrphanedResourcesForTarget(target);
 
-        // Under Site Isolation, the first FrameTarget signals that ProxyingNetworkAgent and
-        // ProxyingPageAgent are active on the multiplexing target (both are only constructed
-        // when SI is active; see WebPageInspectorController::createLazyAgents). Enable Network
-        // on the multiplexing target now (deferred from MultiplexingBackendTarget.initialize
-        // since it doesn't exist until this point), and record that the multiplexing target's
-        // PageAgent is likewise live, for callers like Resource.js that can't tell from
-        // hasCommand() alone since Page.getResourceContent is always in the static protocol.
-        if (target.type === WI.TargetType.Frame && !this._enabledNetworkForSiteIsolation) {
-            this._enabledNetworkForSiteIsolation = true;
-            this._enabledPageForSiteIsolation = true;
+        // Initialize the web page target's Network domain now (deferred from
+        // MultiplexingBackendTarget.initialize, which runs before any frame target exists), so the
+        // question above is asked once the frontend has a frame target to serve.
+        if (target.type === WI.TargetType.Frame && !this._didInitializeWebPageTargetNetwork) {
+            this._didInitializeWebPageTargetNetwork = true;
             if (WI.backendTarget && WI.backendTarget.hasDomain("Network"))
                 this.initializeTarget(WI.backendTarget);
         }
@@ -1559,6 +1564,26 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 continue;
 
             target.NetworkAgent.removeInterception.invoke(this._commandArgumentsForInterception(localResourceOverride));
+        }
+    }
+
+    _configureNetworkAgentForTarget(target)
+    {
+        target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
+
+        // COMPATIBILITY (macOS 26.4, iOS 26.4): Network.setClearResourceDataOnNavigate did not exist yet.
+        if (target.hasCommand("Network.setClearResourceDataOnNavigate"))
+            target.NetworkAgent.setClearResourceDataOnNavigate(WI.settings.clearNetworkOnNavigate.value);
+
+        // COMPATIBILITY (iOS 13.0): Network.setInterceptionEnabled did not exist.
+        if (target.hasCommand("Network.setInterceptionEnabled")) {
+            if (this._interceptionEnabled)
+                target.NetworkAgent.setInterceptionEnabled(this._interceptionEnabled);
+
+            for (let localResourceOverride of this._localResourceOverrides) {
+                if (!localResourceOverride.disabled)
+                    this._addInterception(localResourceOverride, target);
+            }
         }
     }
 

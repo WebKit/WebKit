@@ -26,7 +26,10 @@
 #include "config.h"
 #include "PageDOMDebuggerAgent.h"
 
+#include "Document.h"
 #include "Element.h"
+#include "FrameDebuggerAgent.h"
+#include "FrameInspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
@@ -170,9 +173,6 @@ static std::optional<size_t> calculateDistance(Node& child, Node& ancestor)
 
 void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 {
-    if (!m_debuggerAgent->breakpointsActive())
-        return;
-
     if (m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
@@ -197,18 +197,22 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 
     ASSERT(closestBreakpointOwner);
 
+    // Resolve and gate on the frame that owns the breakpoint, not the one that mutated:
+    // innerParentNode crosses iframe boundaries, so an ancestor breakpoint can match a mutation in a
+    // descendant frame, and the two frames' debuggers can disagree about breakpointsActive().
+    auto* debuggerAgent = pausingDebuggerAgentForFrame(closestBreakpointOwner->document().frame());
+    if (!debuggerAgent->breakpointsActive())
+        return;
+
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
     pauseData->setBoolean("insertion"_s, true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     // Include the new child node ID so the frontend can show the node that's about to be inserted.
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
+    debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
 }
 
 void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 {
-    if (!m_debuggerAgent->breakpointsActive())
-        return;
-
     if (m_domNodeRemovedBreakpoints.isEmpty() && m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
@@ -251,6 +255,11 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     ASSERT(closestBreakpointType);
     ASSERT(closestBreakpointOwner);
 
+    // See willInsertDOMNode: resolve and gate on the breakpoint owner's frame, not the mutated node's.
+    auto* debuggerAgent = pausingDebuggerAgentForFrame(closestBreakpointOwner->document().frame());
+    if (!debuggerAgent->breakpointsActive())
+        return;
+
     auto pauseData = buildPauseDataForDOMBreakpoint(*closestBreakpointType, *closestBreakpointOwner);
     if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
@@ -258,7 +267,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
                 pauseData->setInteger("targetNodeId"_s, targetNodeId);
         }
     }
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
+    debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), WTF::move(closestBreakpoint));
 }
 
 void PageDOMDebuggerAgent::didRemoveDOMNode(Node& node)
@@ -280,7 +289,8 @@ void PageDOMDebuggerAgent::willDestroyDOMNode(Node& node)
 
 void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgentForFrame(element.document().frame());
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     auto it = m_domAttributeModifiedBreakpoints.find(&element);
@@ -288,12 +298,13 @@ void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
         return;
 
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
+    debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
 }
 
 void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
 {
-    if (!m_debuggerAgent->breakpointsActive())
+    auto* debuggerAgent = pausingDebuggerAgentForFrame(element.document().frame());
+    if (!debuggerAgent->breakpointsActive())
         return;
 
     auto it = m_domAttributeModifiedBreakpoints.find(&element);
@@ -301,12 +312,12 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
         return;
 
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::AttributeModified, element);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
+    debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTF::move(pauseData), it->value.copyRef());
 }
 
 Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
 {
-    ASSERT(m_debuggerAgent->breakpointsActive());
+    ASSERT(pausingDebuggerAgentForFrame(breakpointOwner.document().frame())->breakpointsActive());
     ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();

@@ -1,0 +1,8 @@
+<script>
+function triggerCrossFrameTrace() {
+    // Call back into this frame, so the console message is emitted by this frame's
+    // console while the parent's script is still on the stack.
+    parent.parentEvalFunction(function inSameOriginFrame() { console.trace("cross-frame"); });
+}
+</script>
+<p>Same-origin frame, sharing a process with the main frame but having its own frame target.</p>

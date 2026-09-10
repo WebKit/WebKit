@@ -54,22 +54,34 @@ function test()
         InspectorProtocol.sendCommand("Debugger.resume", {}, runNextStep);
     }
 
-    function runNextStep() {
+    async function runNextStep() {
         step = steps.shift();
         if (!step) {
             ProtocolTest.completeTest();
             return;
         }
 
+        ProtocolTest.log(step.message);
+
         // Evalute the command inside a setTimeout so that we can hit exceptions and break.
         // Otherwise, evaluating through RuntimeAgent will not trigger a pause.
-        // Likewise, if no pause is expected wait for a bit before continuing.
-        ProtocolTest.log(step.message);
-        InspectorProtocol.sendCommand("Runtime.evaluate", {expression: "setTimeout(function(){" + step.evaluate + "}, 0)"}, function(responseObject) {
-            InspectorProtocol.checkForError(responseObject);
-            if (!step.pause)
-                setTimeout(runNextStep, 20);
-        });
+        //
+        // That setTimeout also means Runtime.evaluate returns before the step has run, so a step
+        // that does not pause has to signal its own completion; otherwise the next step's message
+        // can be logged before this step's output arrives.
+        let expression = `setTimeout(function(){ ${step.evaluate}; `;
+        if (!step.pause)
+            expression += `TestPage.dispatchEventToFrontend("StepComplete"); `;
+        expression += `}, 0)`;
+
+        let didStepComplete = step.pause ? null : ProtocolTest.awaitEvent("StepComplete");
+
+        InspectorProtocol.sendCommand("Runtime.evaluate", {expression}, InspectorProtocol.checkForError);
+
+        if (didStepComplete) {
+            await didStepComplete;
+            await runNextStep();
+        }
     }
 
     runNextStep();

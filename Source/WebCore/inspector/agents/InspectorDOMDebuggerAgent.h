@@ -51,6 +51,7 @@ class InjectedScriptManager;
 namespace WebCore {
 
 class Event;
+class LocalFrame;
 class RegisteredEventListener;
 class ResourceRequest;
 class ScriptExecutionContext;
@@ -79,16 +80,16 @@ public:
 
     // InspectorInstrumentation
     virtual void mainFrameNavigated();
-    void willSendXMLHttpRequest(const String& url);
-    void willFetch(const String& url);
+    void willSendXMLHttpRequest(ScriptExecutionContext&, const String& url);
+    void willFetch(ScriptExecutionContext&, const String& url);
     void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
-    void willFireTimer(bool oneShot);
-    void didFireTimer(bool oneShot);
-    void willFireAnimationFrame();
-    void didFireAnimationFrame();
-    void willSendRequest(ResourceRequest&);
-    void willSendRequestOfType(ResourceRequest&);
+    void willFireTimer(ScriptExecutionContext&, bool oneShot);
+    void didFireTimer(ScriptExecutionContext&, bool oneShot);
+    void willFireAnimationFrame(ScriptExecutionContext&);
+    void didFireAnimationFrame(ScriptExecutionContext&);
+    void willSendRequest(LocalFrame*, ResourceRequest&);
+    void willSendRequestOfType(LocalFrame*, ResourceRequest&);
 
 protected:
     InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
@@ -97,8 +98,17 @@ protected:
 
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
+    // The debugger agent whose JSC::Debugger is actually attached to the frame the hook is running in,
+    // which under frame targets is not `m_debuggerAgent`. See PageDebugger::attachDebugger.
+    Inspector::InspectorDebuggerAgent* pausingDebuggerAgent(ScriptExecutionContext&) const;
+    Inspector::InspectorDebuggerAgent* pausingDebuggerAgentForFrame(LocalFrame*) const;
+
+    // The manager `evaluateOnCallFrame` reads when paused; `$event` must be written here, not to this
+    // agent's own manager.
+    Inspector::InjectedScriptManager& injectedScriptManagerForContext(ScriptExecutionContext&) const;
+
 private:
-    void breakOnURLIfNeeded(const String&);
+    void breakOnURLIfNeeded(LocalFrame*, const String&);
 
     const Ref<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;

@@ -35,6 +35,7 @@
 #include "CommandLineAPIHost.h"
 #include "CommonVM.h"
 #include "DOMWrapperWorld.h"
+#include "FrameInspectorController.h"
 #include "GraphicsContext.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorBackendClient.h"
@@ -199,6 +200,16 @@ void PageInspectorController::createLazyAgents()
 void PageInspectorController::siteIsolationFirstEnabled()
 {
     m_identifierRegistry = Inspector::BackendIdentifierRegistry::create();
+}
+
+bool usesInspectorFrameTargets(const Settings& settings)
+{
+#if ENABLE(INSPECTOR_FRAME_TARGETS)
+    UNUSED_PARAM(settings);
+    return true;
+#else
+    return settings.siteIsolationEnabled();
+#endif
 }
 
 void PageInspectorController::inspectedPageDestroyed()
@@ -527,6 +538,17 @@ JSC::Debugger* PageInspectorController::debugger()
 {
     ASSERT_IMPLIES(m_didCreateLazyAgents, m_debugger);
     return m_debugger.get();
+}
+
+void PageInspectorController::forEachDebugger(NOESCAPE const Function<void(JSC::Debugger&)>& functor)
+{
+    if (m_debugger)
+        functor(*m_debugger);
+
+    m_page->forEachLocalFrame([&](LocalFrame& frame) {
+        if (auto* frameDebugger = protect(frame.inspectorController())->debugger())
+            functor(*frameDebugger);
+    });
 }
 
 JSC::VM& PageInspectorController::vm()

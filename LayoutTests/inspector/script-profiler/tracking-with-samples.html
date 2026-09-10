@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function triggerBusyTimer() {
+    setTimeout(() => {
+        // Spin for a fixed amount of wall-clock time rather than a fixed iteration count, so
+        // the sampling profiler (which samples about once per millisecond) reliably catches
+        // samples regardless of how fast the loop runs once the JIT tiers it up. Matches
+        // runFor() in inspector/sampling-profiler/*.html. The work happens inside a timer so
+        // that it is covered by a ScriptProfiler.Event, which an inspector-driven
+        // Runtime.evaluate would not be.
+        let start = Date.now();
+        let accumulator = 0;
+        do {
+            for (let i = 0; i < 10000; ++i)
+                accumulator += Math.sqrt(i);
+        } while (Date.now() - start < 100);
+        console.log("busy timer done " + (accumulator > 0));
+        TestPage.dispatchEventToFrontend("TestPageBusyWorkDone");
+    }, 0);
+}
+
+function test()
+{
+    let suite = ProtocolTest.createAsyncSuite("ScriptProfiler.Samples");
+
+    suite.addTestCase({
+        name: "StartTrackingWithIncludeSamples",
+        description: "A tracking session with includeSamples should report stack traces covering the events.",
+        test(resolve, reject) {
+            let events = [];
+
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingStart"}).then(() => {
+                ProtocolTest.log("ScriptProfiler.trackingStart");
+            });
+
+            InspectorProtocol.addEventListener("ScriptProfiler.trackingUpdate", (messageObject) => {
+                events.push(messageObject.params.event);
+            });
+
+            InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
+                ProtocolTest.log("ScriptProfiler.trackingComplete");
+
+                // Execution events and sampled stack traces come from two independent
+                // mechanisms. trackingUpdate is dispatched by the debugger's profiling
+                // client, while stack traces come from the VM-wide sampling profiler, so
+                // one can keep working while the other reports nothing at all. Assert on
+                // both, and on the overlap between them, because it is that overlap that
+                // lets the frontend turn samples into real durations.
+                ProtocolTest.expectThat(events.length > 0, "Should have received at least one ScriptProfiler.Event.");
+
+                let samples = messageObject.params.samples;
+                ProtocolTest.expectThat(samples, "Should have received samples.");
+
+                let stackTraces = (samples && samples.stackTraces) || [];
+                ProtocolTest.expectThat(stackTraces.length > 0, "Should have collected at least one stack trace.");
+
+                let sampledDuringAnEvent = stackTraces.some((stackTrace) => {
+                    return events.some((event) => stackTrace.timestamp >= event.startTime && stackTrace.timestamp <= event.endTime);
+                });
+                ProtocolTest.expectThat(sampledDuringAnEvent, "At least one stack trace should fall within a ScriptProfiler.Event.");
+
+                resolve();
+            });
+
+            ProtocolTest.awaitEvent("TestPageBusyWorkDone").then(() => {
+                InspectorProtocol.sendCommand("ScriptProfiler.stopTracking", {});
+            });
+
+            InspectorProtocol.sendCommand("ScriptProfiler.startTracking", {includeSamples: true});
+            ProtocolTest.evaluateInPage("triggerBusyTimer()");
+        }
+    });
+
+    // FIXME: <https://webkit.org/b/155851> Web Inspector: We should separate out attaching the debugger from the Debugger.enable event
+    // Debugger should not need to be enabled for profiling to work.
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that a ScriptProfiler tracking session started with includeSamples reports both execution events and sampled stack traces covering them.</p>
+</body>
+</html>
