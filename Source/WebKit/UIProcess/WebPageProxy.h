@@ -3221,7 +3221,7 @@ private:
     void requestUserMediaPermissionForFrame(IPC::Connection&, WebCore::UserMediaRequestIdentifier, FrameInfoData&&, const WebCore::SecurityOriginData& userMediaDocumentOriginIdentifier, const WebCore::SecurityOriginData& topLevelDocumentOriginIdentifier, WebCore::MediaStreamRequest&&);
     void enumerateMediaDevicesForFrame(IPC::Connection&, WebCore::FrameIdentifier, const WebCore::SecurityOriginData& userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, CompletionHandler<void(const Vector<WebCore::CaptureDeviceWithCapabilities>&, WebCore::MediaDeviceHashSalts&&)>&&);
     void beginMonitoringCaptureDevices();
-    void validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier, WebCore::ClientOrigin&&, FrameInfoData&&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    void validateCaptureStateUpdate(IPC::Connection&, WebCore::UserMediaRequestIdentifier, WebCore::ClientOrigin&&, FrameInfoData&&, bool isActive, WebCore::MediaProducerMediaCaptureKind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void setShouldListenToVoiceActivity(bool);
 #endif
 
@@ -3323,7 +3323,7 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    void showContextMenuFromFrame(FrameInfoData&&, ContextMenuContextData&&, UserData&&);
+    void showContextMenuFromFrame(IPC::Connection&, FrameInfoData&&, ContextMenuContextData&&, UserData&&);
     void showContextMenu(FrameInfoData&&, ContextMenuContextData&&, const UserData&);
 #endif
 

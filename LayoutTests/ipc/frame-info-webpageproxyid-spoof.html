@@ -1,0 +1,95 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<body>
+<p>Tests that a WebContent process cannot make -[WKFrameInfo webView] resolve to a WebPageProxy it does not host by forging FrameInfoData.webPageProxyID over IPC. With the fix, the forged RunJavaScriptAlert is rejected before reaching the UI delegate, so only the legitimate ALERT line appears below.</p>
+<pre id="log"></pre>
+<script>
+const log = msg => document.getElementById('log').textContent += msg + '\n';
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+(async () => {
+    if (!window.IPC) {
+        const pre = document.createElement('pre');
+        pre.textContent = 'ALERT: LEGITIMATE';
+        document.body.insertBefore(pre, document.body.firstChild);
+        log('PASS if there is no "ALERT: FORGED-ID!" line above.');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    // Capture a wire-encoded (FrameIdentifier, FrameInfoData, String) tuple by sending it
+    // as the body of a throwaway async message and recording the encoder bytes.
+    let captured = null;
+    const dummyName = IPC.messages.WebPageProxy_PageDidScroll.name;
+    IPC.addOutgoingMessageListener('UI', msg => {
+        if (msg && msg.name === dummyName && captured === null)
+            captured = new Uint8Array(msg.buffer);
+    });
+    IPC.sendMessage('UI', 0, dummyName, [
+        { type: 'uint64_t', value: IPC.frameID[0] },
+        { type: 'FrameInfoData', value: IPC },
+        { type: 'String', value: 'LEGITIMATE' },
+    ]);
+    await new Promise(r => setTimeout(r, 0));
+    if (!captured) {
+        log('FAIL: could not capture encoded FrameInfoData');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    // Strip the 16-byte async header to get the argument bytes.
+    const argBytes = captured.slice(16);
+    const view = new DataView(argBytes.buffer, argBytes.byteOffset, argBytes.byteLength);
+
+    // FrameInfoData.webPageProxyID is encoded immediately after FrameInfoData.frameID; the
+    // outer FrameIdentifier argument is at offset 0, so locate the second occurrence.
+    const findU64 = (val, start) => {
+        for (let i = start; i + 8 <= argBytes.length; i++) {
+            if (view.getBigUint64(i, true) === val)
+                return i;
+        }
+        return -1;
+    };
+    const frameID = IPC.frameID[0];
+    const outer = findU64(frameID, 0);
+    const inner = findU64(frameID, outer + 8);
+    if (inner < 0) {
+        log('FAIL: could not locate FrameInfoData.frameID in encoded bytes');
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    const proxyOffset = inner + 16;
+    const realProxyID = view.getBigUint64(proxyOffset, true);
+
+    const setMessage = (bytes, str) => {
+        const stringOffset = bytes.length - (4 + 1 + 10);
+        for (let i = 0; i < 10; i++)
+            bytes[stringOffset + 5 + i] = str.charCodeAt(i);
+    };
+
+    const alertName = IPC.messages.WebPageProxy_RunJavaScriptAlert.name;
+
+    // Legitimate: real webPageProxyID; the UI process should dispatch this and emit "ALERT: LEGITIMATE".
+    IPC.sendSyncMessage('UI', IPC.webPageProxyID, alertName, 1, argBytes);
+
+    // Forged: webPageProxyID for a page this WebContent process does not host. The UI process
+    // must reject this without ever calling its runJavaScriptAlert delegate; if "ALERT: FORGED-ID!"
+    // appears in the output the validation is missing.
+    const forged = argBytes.slice(0);
+    new DataView(forged.buffer, forged.byteOffset, forged.byteLength).setBigUint64(proxyOffset, realProxyID + 1000n, true);
+    setMessage(forged, 'FORGED-ID!');
+    IPC.sendSyncMessage('UI', IPC.webPageProxyID, alertName, 1, forged);
+
+    log('PASS if there is no "ALERT: FORGED-ID!" line above.');
+    if (window.testRunner)
+        testRunner.notifyDone();
+})();
+</script>
+</body>
+</html>

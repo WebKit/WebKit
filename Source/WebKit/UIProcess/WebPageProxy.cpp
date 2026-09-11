@@ -8023,7 +8023,9 @@ void WebPageProxy::didDestroyNavigationShared(Ref<WebProcessProxy>&& process, We
 
 void WebPageProxy::didStartProvisionalLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url, URL&& unreachableURL, const UserData& userData, WallTime timestamp)
 {
-    didStartProvisionalLoadForFrameShared(WebProcessProxy::fromConnection(connection), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
+    didStartProvisionalLoadForFrameShared(WTF::move(process), frameID, WTF::move(frameInfo), WTF::move(request), navigationID, WTF::move(url), WTF::move(unreachableURL), userData, timestamp);
 }
 
 static bool shouldPrewarmWebProcessOnProvisionalLoad()
@@ -8306,6 +8308,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(IPC::Connection& connection, F
     }
 
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
     if (protect(preferences())->siteIsolationEnabled() && process != frame->process()) {
         auto* provisionalFrame = frame->provisionalFrame();
         if (!provisionalFrame || provisionalFrame->process() != process)
@@ -8499,6 +8502,9 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     RefPtr protectedPageClient { pageClient() };
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
@@ -8553,7 +8559,6 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     m_hasCommittedAnyProvisionalLoads = true;
 
-    Ref process = WebProcessProxy::fromConnection(connection);
     process->didCommitProvisionalLoad();
     if (!request.url().protocolIsAbout())
         process->didCommitMeaningfulProvisionalLoad();
@@ -8956,6 +8961,9 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
 
     RefPtr protectedPageClient { pageClient() };
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
+
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return;
@@ -8994,7 +9002,6 @@ void WebPageProxy::didFinishLoadForFrame(IPC::Connection& connection, FrameIdent
     if (protect(preferences())->siteIsolationEnabled())
         frame->broadcastFrameTreeSyncData(frame->calculateFrameTreeSyncData());
 
-    Ref process = WebProcessProxy::fromConnection(connection);
     if (m_loaderClient)
         m_loaderClient->didFinishLoadForFrame(*this, *frame, navigation.get(), process->transformHandlesToObjects(protect(userData.object()).get()).get());
     else {
@@ -9045,6 +9052,7 @@ void WebPageProxy::didFailLoadForFrame(IPC::Connection& connection, FrameIdentif
 
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Loading, "didFailLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d, domain=%s, code=%d", frameID.toUInt64(), frame->isMainFrame(), error.domain().utf8().data(), error.errorCode());
 
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
     MESSAGE_CHECK_URL(process, error.failingURL());
 
     // FIXME: We should message check that navigationID is not zero here, but it's currently zero for some navigations through the back/forward cache.
@@ -9978,6 +9986,9 @@ void WebPageProxy::decidePolicyForNavigationActionSync(IPC::Connection& connecti
 {
     auto frameID = data.frameInfo.frameID;
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!data.frameInfo.webPageProxyID || process->isAssociatedWithPage(*data.frameInfo.webPageProxyID)), reply({ }));
+    MESSAGE_CHECK_COMPLETION(process, (!data.originatingFrameInfoData.webPageProxyID || process->isAssociatedWithPage(*data.originatingFrameInfoData.webPageProxyID)), reply({ }));
+    MESSAGE_CHECK_COMPLETION(process, (!data.originatingPageID || process->isAssociatedWithPage(*data.originatingPageID)), reply({ }));
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame) {
         // This message should always be queued at this point, so we can pull it out with a 0 timeout.
@@ -10061,7 +10072,9 @@ void WebPageProxy::decidePolicyForResponse(IPC::Connection& connection, FrameInf
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
         return completionHandler({ });
-    decidePolicyForResponseShared(WebProcessProxy::fromConnection(connection), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), isShowingInitialAboutBlank, activeDocumentCOOPValue, WTF::move(completionHandler));
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), completionHandler({ }));
+    decidePolicyForResponseShared(WTF::move(process), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), isShowingInitialAboutBlank, activeDocumentCOOPValue, WTF::move(completionHandler));
 }
 
 void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process, PageIdentifier webPageID, FrameInfoData&& frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, const ResourceResponse& response, const ResourceRequest& request, bool canShowMIMEType, String&& downloadAttribute, bool isShowingInitialAboutBlank, WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -10897,10 +10910,13 @@ void WebPageProxy::runJavaScriptAlert(IPC::Connection& connection, FrameIdentifi
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply());
     MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply());
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), reply());
+
     exitFullscreenImmediately();
 
     // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
-    WebProcessProxy::fromConnection(connection)->stopResponsivenessTimer();
+    process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = configuration().processPool().automationSession())
@@ -10935,10 +10951,13 @@ void WebPageProxy::runJavaScriptConfirm(IPC::Connection& connection, FrameIdenti
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply(false));
     MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply(false));
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), reply(false));
+
     exitFullscreenImmediately();
 
     // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
-    WebProcessProxy::fromConnection(connection)->stopResponsivenessTimer();
+    process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = configuration().processPool().automationSession())
@@ -10973,10 +10992,13 @@ void WebPageProxy::runJavaScriptPrompt(IPC::Connection& connection, FrameIdentif
     MESSAGE_CHECK_COMPLETION_BASE(frame->page() == this, connection, reply({ }));
     MESSAGE_CHECK_COMPLETION_BASE(!frameInfo.webPageProxyID || *frameInfo.webPageProxyID == m_identifier, connection, reply({ }));
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), reply({ }));
+
     exitFullscreenImmediately();
 
     // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
-    WebProcessProxy::fromConnection(connection)->stopResponsivenessTimer();
+    process->stopResponsivenessTimer();
 
     if (m_controlledByAutomation) {
         if (RefPtr automationSession = configuration().processPool().automationSession())
@@ -11199,6 +11221,7 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(IPC::Connection& connection, Fram
         reply(true);
         return;
     }
+    MESSAGE_CHECK_COMPLETION(webProcess, (!frameInfo.webPageProxyID || webProcess->isAssociatedWithPage(*frameInfo.webPageProxyID)), reply(false));
 
     // Per §18 User Prompts in the WebDriver spec, "User prompts that are spawned from beforeunload
     // event handlers, are dismissed implicitly upon navigation or close window, regardless of the
@@ -11275,6 +11298,9 @@ void WebPageProxy::setHasModelElement(bool hasModelElement)
 
 void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier frameID, FrameInfoData&& frameInfo, const FileChooserSettings& settings)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
+
     if (RefPtr openPanelResultListener = std::exchange(m_openPanelResultListener, nullptr))
         openPanelResultListener->invalidate();
 
@@ -11297,7 +11323,7 @@ void WebPageProxy::runOpenPanel(IPC::Connection& connection, FrameIdentifier fra
     }
 
     // Since runOpenPanel() can spin a nested run loop we need to turn off the responsiveness timer.
-    WebProcessProxy::fromConnection(connection)->stopResponsivenessTimer();
+    process->stopResponsivenessTimer();
 
     const auto frameInfoForPageClient = frameInfo;
 
@@ -12421,8 +12447,11 @@ void WebPageProxy::hidePopupMenu()
 
 #if ENABLE(CONTEXT_MENUS)
 
-void WebPageProxy::showContextMenuFromFrame(FrameInfoData&& frameInfo, ContextMenuContextData&& contextMenuContextData, UserData&& userData)
+void WebPageProxy::showContextMenuFromFrame(IPC::Connection& connection, FrameInfoData&& frameInfo, ContextMenuContextData&& contextMenuContextData, UserData&& userData)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
+
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!frame)
         return;
@@ -14627,6 +14656,7 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
 void WebPageProxy::requestGeolocationPermissionForFrame(IPC::Connection& connection, GeolocationIdentifier geolocationID, FrameInfoData&& frameInfo)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)));
 
     RefPtr frame = WebFrameProxy::webFrame(frameInfo.frameID);
     MESSAGE_CHECK(process, frame);
@@ -14958,8 +14988,11 @@ private:
     Callback m_callback;
 };
 
-void WebPageProxy::validateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier requestIdentifier, WebCore::ClientOrigin&& clientOrigin, FrameInfoData&& frameInfo, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+void WebPageProxy::validateCaptureStateUpdate(IPC::Connection& connection, WebCore::UserMediaRequestIdentifier requestIdentifier, WebCore::ClientOrigin&& clientOrigin, FrameInfoData&& frameInfo, bool isActive, WebCore::MediaProducerMediaCaptureKind kind, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), completionHandler(WebCore::Exception { ExceptionCode::InvalidStateError }));
+
     WEBPAGEPROXY_RELEASE_LOG(WebRTC, "validateCaptureStateUpdate: isActive=%d kind=%hhu", isActive, static_cast<unsigned char>(kind));
     RefPtr webFrame = WebFrameProxy::webFrame(frameInfo.frameID);
     if (!webFrame) {
@@ -15145,6 +15178,9 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(IPC::Connection& 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     if (!frame)
         return completionHandler(DeviceOrientationOrMotionPermissionState::Denied);
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_COMPLETION(process, (!frameInfo.webPageProxyID || process->isAssociatedWithPage(*frameInfo.webPageProxyID)), completionHandler(DeviceOrientationOrMotionPermissionState::Denied));
 
     protect(protect(websiteDataStore())->deviceOrientationAndMotionAccessController())->shouldAllowAccess(*this, *frame, WTF::move(frameInfo), mayPrompt, WTF::move(completionHandler));
 }

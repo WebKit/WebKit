@@ -1,0 +1,5 @@
+ALERT: LEGITIMATE
+Tests that a WebContent process cannot make -[WKFrameInfo webView] resolve to a WebPageProxy it does not host by forging FrameInfoData.webPageProxyID over IPC. With the fix, the forged RunJavaScriptAlert is rejected before reaching the UI delegate, so only the legitimate ALERT line appears below.
+
+PASS if there is no "ALERT: FORGED-ID!" line above.
+

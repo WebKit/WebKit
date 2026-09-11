@@ -73,6 +73,7 @@
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process().connection())
+#define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, process().connection(), completion)
 
 namespace WebKit {
 
@@ -434,6 +435,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
 {
     if (!validateInput(frameID, navigationID))
         return;
+    MESSAGE_CHECK((!frameInfo.webPageProxyID || process().isAssociatedWithPage(*frameInfo.webPageProxyID)));
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didStartProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(m_provisionalLoadURL.isNull());
@@ -458,6 +460,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameInfoData&& frameI
 {
     if (!validateInput(frameInfo.frameID, navigationID))
         return;
+    MESSAGE_CHECK((!frameInfo.webPageProxyID || process().isAssociatedWithPage(*frameInfo.webPageProxyID)));
 
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didFailProvisionalLoadForFrame: frameID=%" PRIu64, frameInfo.frameID.toUInt64());
     ASSERT(!m_provisionalLoadURL.isNull());
@@ -489,6 +492,7 @@ void ProvisionalPageProxy::didCommitLoadForFrame(IPC::Connection& connection, Fr
 {
     if (!validateInput(frameID, navigationID))
         return;
+    MESSAGE_CHECK((!frameInfo.webPageProxyID || process().isAssociatedWithPage(*frameInfo.webPageProxyID)));
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     RefPtr page = m_page.get();
@@ -547,6 +551,7 @@ void ProvisionalPageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, st
 {
     if (!validateInput(frameInfo.frameID, navigationID))
         return completionHandler({ });
+    MESSAGE_CHECK_COMPLETION((!frameInfo.webPageProxyID || process().isAssociatedWithPage(*frameInfo.webPageProxyID)), completionHandler({ }));
 
     if (RefPtr page = m_page.get())
         page->decidePolicyForResponseShared(protect(process()), m_webPageID, WTF::move(frameInfo), navigationID, response, request, canShowMIMEType, WTF::move(downloadAttribute), isShowingInitialAboutBlank, activeDocumentCOOPValue, WTF::move(completionHandler));
@@ -928,3 +933,4 @@ void ProvisionalPageProxy::updateFrameProcess()
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
+#undef MESSAGE_CHECK_COMPLETION
