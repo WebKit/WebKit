@@ -14770,6 +14770,8 @@
         "web-platform-tests/svg/struct/reftests/reference/inner-svg-rotate-transform-ref.svg",
         "web-platform-tests/svg/struct/reftests/reference/inner-svg-transform-and-viewbox-ref.svg",
         "web-platform-tests/svg/struct/reftests/reference/inner-svg-transform-ref.svg",
+        "web-platform-tests/svg/struct/reftests/reference/outer-svg-transform-in-html-ref.html",
+        "web-platform-tests/svg/struct/reftests/reference/outer-svg-transform-in-html-scale-ref.html",
         "web-platform-tests/svg/struct/reftests/reference/outer-svg-transform-ref.svg",
         "web-platform-tests/svg/struct/reftests/reference/symbol-not-rendered.svg",
         "web-platform-tests/svg/struct/reftests/reference/use-external-use-ref.svg",

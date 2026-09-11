@@ -222,6 +222,7 @@ imported/w3c/web-platform-tests/svg/shapes/reftests/pathlength-003.svg          
 imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-css-transform.svg                                   [ Pass ]
 imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-rotate-transform.svg                                [ Pass ]
 imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-transform.svg                                       [ Pass ]
+imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-in-html.html                              [ Pass ]
 imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform.svg                                       [ Pass ]
 svg/W3C-SVG-1.1/paths-data-03-f.svg                                                                               [ Pass ]
 svg/W3C-SVG-1.1/text-altglyph-01-b.svg                                                                            [ Pass ]
