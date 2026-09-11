@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertUnion.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
@@ -136,8 +137,13 @@ FileSystemWritableFileStreamSink::~FileSystemWritableFileStreamSink()
 
 static ExceptionOr<FileSystemWritableFileStream::ChunkType> convertFileSystemWritableChunk(ScriptExecutionContext& context, JSC::JSValue value)
 {
-    auto scope = DECLARE_THROW_SCOPE(context.vm());
-    auto chunkResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer, IDLInterface<Blob>, IDLUSVString, IDLDictionary<FileSystemWritableFileStream::WriteParams>>>(*context.globalObject(), value);
+    // ScriptExecutionContext::globalObject() is null once a document has been detached from its frame.
+    auto* globalObject = downcast<JSDOMGlobalObject>(context.globalObject());
+    if (!globalObject) [[unlikely]]
+        return Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_s };
+
+    auto scope = DECLARE_THROW_SCOPE(globalObject->vm());
+    auto chunkResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer, IDLInterface<Blob>, IDLUSVString, IDLDictionary<FileSystemWritableFileStream::WriteParams>>>(*globalObject, value);
     if (chunkResult.hasException(scope)) [[unlikely]]
         return Exception { ExceptionCode::ExistingExceptionError };
 
