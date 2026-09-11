@@ -50,6 +50,16 @@ public:
     static CheckedUint32 NODELETE computePixelComponentCount(PixelFormat, const IntSize&);
     WEBCORE_EXPORT static CheckedUint32 NODELETE computeBufferSize(PixelFormat, const IntSize&);
 
+    // Bytes occupied by one row of `width` pixels with no padding.
+    WEBCORE_EXPORT static CheckedUint32 NODELETE tightlyPackedBytesPerRow(PixelFormat, int width);
+
+    // Bytes needed to hold `size` rows at `bytesPerRow`: every row but the last fully
+    // strided, the last row tightly packed. This is how CoreGraphics sizes an image's
+    // data provider, so a buffer of exactly this size is valid even though it does not
+    // include the final row's padding.
+    // Overflows if `bytesPerRow` is smaller than tightlyPackedBytesPerRow().
+    WEBCORE_EXPORT static CheckedUint32 NODELETE minimumBufferSize(PixelFormat, const IntSize&, unsigned bytesPerRow);
+
     WEBCORE_EXPORT static bool NODELETE supportedPixelFormat(PixelFormat);
 
     virtual ~PixelBuffer() = default;
