@@ -73,6 +73,7 @@ private:
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutRect borderBoundingBox() const final { return LayoutRect(LayoutPoint(), linesBoundingBox().size()); }
     LayoutRect borderBoxRectInContainer() const final { return linesBoundingBox(); }
+    LayoutRect visualOverflowRect() const final { return linesBoundingBox(); }
     LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return { }; }
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final { return { }; }
 

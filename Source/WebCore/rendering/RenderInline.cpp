@@ -37,7 +37,6 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyInlineFlowBox.h"
 #include "LegacyInlineTextBox.h"
-#include "LegacyRootInlineBox.h"
 #include "OutlinePainter.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
@@ -355,43 +354,6 @@ LayoutUnit RenderInline::innerPaddingBoxHeight() const
     return innerPaddingBoxLogicalHeight;
 }
 
-LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
-{
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers. 
-            ASSERT(needsLayout());
-            return { };
-        }
-        return layout->inkOverflowBoundingBoxRectFor(*this);
-    }
-
-    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
-    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
-    if (!firstInlineBox || !lastInlineBox)
-        return { };
-
-    // Return the width of the minimal left side and the maximal right side.
-    LayoutUnit logicalLeftSide = LayoutUnit::max();
-    LayoutUnit logicalRightSide = LayoutUnit::min();
-    for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
-        logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
-        logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
-    }
-
-    const LegacyRootInlineBox& firstRootBox = firstInlineBox->root();
-    const LegacyRootInlineBox& lastRootBox = lastInlineBox->root();
-
-    LayoutUnit logicalTop = firstInlineBox->logicalTopVisualOverflow(firstRootBox.lineTop());
-    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
-    LayoutUnit logicalHeight = lastInlineBox->logicalBottomVisualOverflow(lastRootBox.lineBottom()) - logicalTop;
-
-    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
-    if (!writingMode().isHorizontal())
-        rect = rect.transposedRect();
-    return rect;
-}
-
 auto RenderInline::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRects
 {
     // RepaintOutlineBounds is unused for inlines.
@@ -414,7 +376,7 @@ auto RenderInline::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRe
     if (!firstLegacyInlineBoxFor(*this) && !LayoutIntegration::LineLayout::containing(*this))
         return { };
 
-    auto repaintRect = linesVisualOverflowBoundingBox();
+    auto repaintRect = visualOverflowRect();
     repaintRect.inflate(LayoutUnit { style().usedOutlineSize(style().usedZoomForLength(), style().deviceScaleFactor()) });
     return { repaintRect };
 }

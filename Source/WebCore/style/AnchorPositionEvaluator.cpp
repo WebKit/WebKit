@@ -42,7 +42,6 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
-#include "RenderLineBreak.h"
 #include "RenderObjectInlines.h"
 #include "RenderView.h"
 #include "StyleBuilderState.h"
@@ -1684,16 +1683,7 @@ bool AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxe
     // "An anchor box anchor is clipped by intervening boxes relative to a positioned box abspos relying on it if anchor’s ink overflow
     // rectangle is fully clipped by a box which is an ancestor of anchor but a descendant of abspos’s containing block."
 
-    auto localAnchorRect = [&] {
-        if (anchorBox)
-            return anchorBox->visualOverflowRect();
-        if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(*defaultAnchor))
-            return inlineBox->linesVisualOverflowBoundingBox();
-        if (CheckedPtr lineBreak = dynamicDowncast<RenderLineBreak>(*defaultAnchor))
-            return LayoutRect { lineBreak->linesBoundingBox() };
-        ASSERT_NOT_REACHED();
-        return LayoutRect { };
-    }();
+    auto localAnchorRect = defaultAnchor->visualOverflowRect();
     auto* anchoredContainingBlock = anchoredBox.container();
 
     auto anchorRect = defaultAnchor->localToAbsoluteQuad(FloatQuad { localAnchorRect }).boundingBox();

@@ -104,7 +104,7 @@ public:
     void shiftLinesByInBlockDirection(LayoutUnit blockShift);
 
     void collectOverflow();
-    LayoutRect inkOverflowBoundingBoxRectFor(const RenderInline&) const;
+    LayoutRect inkOverflowBoundingBoxRectFor(const RenderBoxModelObject&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     LayoutUnit contentLogicalHeight() const;
