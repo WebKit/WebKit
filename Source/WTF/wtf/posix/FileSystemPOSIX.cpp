@@ -31,16 +31,20 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
 #include <wtf/FileHandle.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
+
+#if !HAVE(MKOSTEMPS)
+#include <wtf/UniStdExtras.h>
+#endif
 
 #if USE(GLIB)
 #include <glib.h>
@@ -150,49 +154,66 @@ CString fileSystemRepresentation(const String& path)
 #endif
 
 #if !PLATFORM(COCOA)
-static const char* temporaryFileDirectory()
+static const String& defaultTemporaryDirectory()
 {
+    const auto getDefaultTemporaryDirectory = []() static -> const String {
+        String directoryPath;
+
 #if USE(GLIB)
-    return g_get_tmp_dir();
+        directoryPath = String::fromUTF8(g_get_tmp_dir());
 #elif OS(HAIKU)
-    static char buffer[B_PATH_NAME_LENGTH];
-    static std::once_flag once;
-    std::call_once(once, [] {
         BPath path;
         if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &path) == B_OK)
-            strlcpy(buffer, path.Path(), sizeof(buffer));
-        else
-            strlcpy(buffer, "/tmp", sizeof(buffer));
-    });
-    return buffer;
+            directoryPath = String::fromUTF8(path.Path());
 #else
-    if (auto* tmpDir = getenv("TMPDIR"))
-        return tmpDir;
-
-    return "/tmp";
+        if (const char* tmpDir = getenv("TMPDIR"))
+            directoryPath = String::fromUTF8(tmpDir);
 #endif
+
+        if (!directoryPath.isNull())
+            return directoryPath;
+
+        return "/tmp"_s;
+    };
+
+    static const NeverDestroyed temporaryDirectory { getDefaultTemporaryDirectory() };
+    return temporaryDirectory;
 }
 
 std::pair<String, FileHandle> openTemporaryFile(StringView prefix, StringView suffix, const String& temporaryDirectory)
 {
-    // Suffix is not supported because that's incompatible with mkostemp, mkostemps would be needed for that.
-    // This is OK for now since the code using it is built on macOS only.
+#if PLATFORM(PLAYSTATION)
+    // Suffix is not supported because there is no mkostemps() nor mkstemps() in the PlayStation libc.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
+#endif // PLATFORM(PLAYSTATION)
 
-    const auto temporaryDirectoryUtf8 = temporaryDirectory.utf8();
-    IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
-    const char* directory = !temporaryDirectory.isEmpty() ? temporaryDirectoryUtf8.data() : temporaryFileDirectory();
-    CString prefixUTF8 = prefix.utf8();
-    size_t length = strlen(directory) + 1 + prefixUTF8.length() + 1 + 6 + 1;
-    auto buffer = MallocSpan<char>::malloc(length);
-    snprintf(buffer.mutableSpan().data(), length, "%s/%s-XXXXXX", directory, prefixUTF8.data());
-    IGNORE_CLANG_WARNINGS_END
+    auto templatePath = makeString(temporaryDirectory.isEmpty() ? defaultTemporaryDirectory() : temporaryDirectory, "/"_s, prefix, "-XXXXXX"_s, suffix);
+    CString templatePathUTF8 = templatePath.utf8();
+    CString suffixUTF8 = suffix.utf8();
 
-    auto handle = FileHandle::adopt(mkostemp(buffer.mutableSpan().data(), O_CLOEXEC));
+#if HAVE(MKOSTEMPS)
+    auto handle = FileHandle::adopt(mkostemps(templatePathUTF8.mutableSpanIncludingNullTerminator().data(), suffixUTF8.length(), O_CLOEXEC));
+#else
+    static const auto openTemporaryFileWithSuffixTemplate = [](char* templatePathBuffer, int suffixLength) -> int {
+        if (!suffixLength)
+            return mkostemp(templatePathBuffer, O_CLOEXEC);
+
+#if !PLATFORM(PLAYSTATION)
+        int fd = mkstemps(templatePathBuffer, suffixLength);
+        if (fd >= 0 && setCloseOnExec(fd))
+            return fd;
+
+        closeWithRetry(fd);
+#endif // !PLATFORM(PLAYSTATION)
+
+        return -1;
+    };
+    auto handle = FileHandle::adopt(openTemporaryFileWithSuffixTemplate(templatePathUTF8.mutableSpanIncludingNullTerminator().data(), suffixUTF8.length()));
+#endif // HAVE(MKOSTEMPS)
     if (!handle)
         return { String(), FileHandle() };
 
-    return { String::fromUTF8(buffer.span().data()), WTF::move(handle) };
+    return { String::fromUTF8(templatePathUTF8.span()), WTF::move(handle) };
 }
 #endif // !PLATFORM(COCOA)
 
