@@ -224,6 +224,8 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:)];
     m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserRelatedOriginsCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:relatedOrigins:completionHandler:)];
+    m_delegateMethods.webViewWillPerformPublicKeyCredentialRequestForRelyingPartyCompletionHandler = [delegate respondsToSelector:@selector(_webView:willPerformPublicKeyCredentialRequestForRelyingParty:completionHandler:)];
+    m_delegateMethods.webViewDidFinishPublicKeyCredentialRequestForRelyingPartySucceeded = [delegate respondsToSelector:@selector(_webView:didFinishPublicKeyCredentialRequestForRelyingParty:succeeded:)];
 #endif
     
 #if ENABLE(APPLE_PAY)
@@ -1885,6 +1887,44 @@ void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistrati
         checker->didCallCompletionHandler();
         completionHandler(result);
     }).get()];
+}
+
+void UIDelegate::UIClient::willPerformPublicKeyCredentialRequest(const WTF::String& relyingParty, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate)
+        return completionHandler(true);
+
+    if (!uiDelegate->m_delegateMethods.webViewWillPerformPublicKeyCredentialRequestForRelyingPartyCompletionHandler)
+        return completionHandler(true);
+
+    RetainPtr delegate = uiDelegatePrivate();
+    if (!delegate)
+        return completionHandler(true);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:willPerformPublicKeyCredentialRequestForRelyingParty:completionHandler:));
+    [delegate _webView:uiDelegate->m_webView.get().get() willPerformPublicKeyCredentialRequestForRelyingParty:relyingParty.createNSString().get() completionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (BOOL allow) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(allow);
+    }).get()];
+}
+
+void UIDelegate::UIClient::didFinishPublicKeyCredentialRequest(const WTF::String& relyingParty, bool succeeded)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate)
+        return;
+
+    if (!uiDelegate->m_delegateMethods.webViewDidFinishPublicKeyCredentialRequestForRelyingPartySucceeded)
+        return;
+
+    RetainPtr delegate = uiDelegatePrivate();
+    if (!delegate)
+        return;
+
+    [delegate _webView:uiDelegate->m_webView.get().get() didFinishPublicKeyCredentialRequestForRelyingParty:relyingParty.createNSString().get() succeeded:succeeded];
 }
 #endif // ENABLE(WEB_AUTHN)
 
