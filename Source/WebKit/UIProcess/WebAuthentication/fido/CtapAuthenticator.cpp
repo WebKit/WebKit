@@ -253,22 +253,28 @@ void CtapAuthenticator::continueMakeCredentialAfterCheckExcludedCredentials(bool
     bool needsPRF = options.extensions && options.extensions->prf;
     CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF check - extensions=%d, prf=%d", !!options.extensions, needsPRF);
     bool supportsHmacSecret = authenticatorSupportedExtensions.contains(kExtensionHmacSecret);
-    std::optional<HmacSecretParameters> hmacSecretParams;
-    if (needsPRF && supportsHmacSecret && options.extensions->prf->eval) {
-        CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF extension found with eval, preparing hmac-secret");
-        bool supportsHmacSecretMc = authenticatorSupportedExtensions.contains(kExtensionHmacSecretMc);
-        if (supportsHmacSecretMc) {
-            hmacSecretParams = prepareHmacSecretParameters(*options.extensions->prf, std::nullopt);
-            if (hmacSecretParams)
-                CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF hmac-secret-mc parameters prepared");
-            else
-                CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF hmac-secret-mc parameters failed to prepare");
-        } else
-            CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: Authenticator doesn't support hmac-secret-mc");
-    } else if (needsPRF) {
-        CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF requested but conditions not met - supportsHmacSecret=%d, hasEval=%d",
-            supportsHmacSecret, options.extensions->prf->eval.has_value());
+    bool supportsHmacSecretMc = authenticatorSupportedExtensions.contains(kExtensionHmacSecretMc);
+    bool shouldPrepareHmacSecret = needsPRF && supportsHmacSecret && options.extensions->prf->eval && supportsHmacSecretMc;
+
+    // hmac-secret needs the authenticator's key-agreement key. A request verified
+    // without PIN entry (e.g. built-in biometrics) never cached it, so fetch it once
+    // and re-enter.
+    if (shouldPrepareHmacSecret && !m_cachedPeerKey) {
+        fetchKeyAgreement(includeCurrentBatch);
+        return;
     }
+
+    std::optional<HmacSecretParameters> hmacSecretParams;
+    if (shouldPrepareHmacSecret) {
+        CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF extension found with eval, preparing hmac-secret");
+        hmacSecretParams = prepareHmacSecretParameters(*options.extensions->prf, std::nullopt);
+        if (hmacSecretParams)
+            CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF hmac-secret-mc parameters prepared");
+        else
+            CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF hmac-secret-mc parameters failed to prepare");
+    } else if (needsPRF)
+        CTAP_RELEASE_LOG("continueMakeCredentialAfterCheckExcludedCredentials: PRF requested but conditions not met - supportsHmacSecret=%d, hasEval=%d, supportsHmacSecretMc=%d",
+            supportsHmacSecret, options.extensions->prf->eval.has_value(), supportsHmacSecretMc);
 
     UserVerificationRequirement effectiveUVRequirement = (needsPRF && supportsHmacSecret)
         ? UserVerificationRequirement::Required
@@ -419,8 +425,17 @@ void CtapAuthenticator::continueGetAssertionAfterCheckAllowCredentials()
         overrideAllowCredentials = m_batches[m_currentBatch];
 
     bool needsPRF = options.extensions && options.extensions->prf;
-    CTAP_RELEASE_LOG("continueGetAssertionAfterCheckAllowCredentials: PRF check - extensions=%d, prf=%d", !!options.extensions, needsPRF);
+    bool hasPrfEval = needsPRF && (options.extensions->prf->eval || options.extensions->prf->evalByCredential);
+    CTAP_RELEASE_LOG("continueGetAssertionAfterCheckAllowCredentials: PRF check - extensions=%d, prf=%d, hasPrfEval=%d", !!options.extensions, needsPRF, hasPrfEval);
     bool supportsHmacSecret = authenticatorSupportedExtensions.contains(kExtensionHmacSecret);
+
+    // hmac-secret needs the authenticator's key-agreement key. A request verified
+    // without PIN entry (e.g. built-in biometrics) never cached it, so fetch it once
+    // and re-enter.
+    if (needsPRF && supportsHmacSecret && hasPrfEval && !m_cachedPeerKey) {
+        fetchKeyAgreement();
+        return;
+    }
 
     std::optional<HmacSecretParameters> hmacSecretParams;
     if (needsPRF && supportsHmacSecret) {
@@ -887,10 +902,39 @@ void CtapAuthenticator::performAuthenticatorSelectionForSetupPin()
     }
 }
 
+void CtapAuthenticator::fetchKeyAgreement(bool includeCurrentBatch)
+{
+    auto cborCmd = encodeAsCBOR(pin::KeyAgreementRequest { selectPinProtocol() });
+    protect(driver())->transact(WTF::move(cborCmd), [weakThis = WeakPtr { *this }, includeCurrentBatch](Vector<uint8_t>&& data) {
+        ASSERT(RunLoop::isMain());
+        if (RefPtr protectedThis = weakThis)
+            protectedThis->continueAfterFetchKeyAgreement(WTF::move(data), includeCurrentBatch);
+    });
+}
+
+void CtapAuthenticator::continueAfterFetchKeyAgreement(Vector<uint8_t>&& data, bool includeCurrentBatch)
+{
+    auto keyAgreement = pin::KeyAgreementResponse::parse(data);
+    if (!keyAgreement) {
+        auto error = getResponseCode(data);
+        CTAP_RELEASE_LOG("continueAfterFetchKeyAgreement: Failed to get key agreement. Error code: %hhu", std::to_underlying(error));
+        receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Could not obtain authenticator key agreement for PRF."_s });
+        return;
+    }
+
+    m_cachedPeerKey = keyAgreement->peerKey.ptr();
+    CTAP_RELEASE_LOG("continueAfterFetchKeyAgreement: Key agreement cached");
+    WTF::switchOn(requestData().options, [&](const PublicKeyCredentialCreationOptions&) {
+        continueMakeCredentialAfterCheckExcludedCredentials(includeCurrentBatch);
+    }, [&](const PublicKeyCredentialRequestOptions&) {
+        continueGetAssertionAfterCheckAllowCredentials();
+    });
+}
+
 std::optional<HmacSecretParameters> CtapAuthenticator::prepareHmacSecretParameters(const AuthenticationExtensionsClientInputs::PRFInputs& prfInputs, const std::optional<Vector<uint8_t>>& credentialId)
 {
     if (!m_cachedPeerKey) {
-        CTAP_RELEASE_LOG("prepareHmacSecretParameters: No cached peer key available (likely first attempt before PIN)");
+        CTAP_RELEASE_LOG("prepareHmacSecretParameters: No cached peer key available");
         return std::nullopt;
     }
 
