@@ -123,11 +123,11 @@ public:
     std::optional<LayoutUnit> firstLineBaseline() const;
     std::optional<LayoutUnit> lastLineBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
-    LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
+    LayoutRect enclosingBorderBoxRectFor(const RenderBoxModelObject&) const;
 
     InlineIterator::TextBoxIterator textBoxesFor(const RenderText&) const;
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
-    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
+    InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderBoxModelObject&) const;
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
     InlineIterator::InlineBoxIterator lastRootInlineBox() const;
     InlineIterator::LineBoxIterator firstLineBox() const;

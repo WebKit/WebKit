@@ -2099,7 +2099,7 @@ bool RenderLayer::computeHasVisibleContent() const
 static LayoutRect computeLayerPositionAndIntegralSize(const RenderLayerModelObject& renderer)
 {
     if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer); inlineRenderer && inlineRenderer->isInline())
-        return { LayoutPoint(), inlineRenderer->linesBoundingBox().size() };
+        return { LayoutPoint(), inlineRenderer->borderBoxRectInContainer().size() };
 
     if (auto* boxRenderer = dynamicDowncast<RenderBox>(renderer)) {
         const auto& borderBox = boxRenderer->borderBoxRectInContainer();
