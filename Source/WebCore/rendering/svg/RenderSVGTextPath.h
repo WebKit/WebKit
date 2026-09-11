@@ -42,6 +42,8 @@ public:
     Path layoutPath() const;
     const SVGLengthValue& NODELETE startOffset() const LIFETIME_BOUND;
 
+    bool isLayoutPathReversed() const;
+
 private:
     void graphicsElement() const = delete;
 
