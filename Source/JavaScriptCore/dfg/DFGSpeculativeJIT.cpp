@@ -8598,6 +8598,66 @@ void SpeculativeJIT::compileLoadVarargs(Node* node)
 
 }
 
+// Arguments elimination only runs in the FTL, so every operand here has a value: a spread butterfly
+// where bitVector() is set and a plain argument elsewhere.
+EncodedJSValue* SpeculativeJIT::fillSpreadArgumentsBuffer(Node* node, unsigned base, unsigned numArgs)
+{
+    BitVector* bitVector = node->bitVector();
+    ScratchBuffer* scratchBuffer = vm().scratchBufferForSize(sizeof(EncodedJSValue) * numArgs);
+    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+
+    for (unsigned e = 0; e < numArgs; ++e) {
+        Edge use = m_graph.varArgChild(node, base + e);
+        ASSERT(!use.node()->isPhantomAllocation());
+        if (bitVector->get(e)) {
+            SpeculateCellOperand spread(this, use);
+            storeValue(spread.gpr(), &buffer[e]);
+        } else {
+            JSValueOperand literal(this, use);
+            storeValue(literal.gpr(), &buffer[e]);
+        }
+    }
+
+    return buffer;
+}
+
+void SpeculativeJIT::compileVarargsLengthWithSpread(Node* node)
+{
+    unsigned numArgs = node->numChildren();
+    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 0, numArgs);
+
+    flushRegisters();
+
+    callOperation(operationSizeOfVarargsWithSpread, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numArgs));
+
+    lock(GPRInfo::returnValueGPR);
+    GPRTemporary argCountIncludingThis(this);
+    GPRReg argCountIncludingThisGPR = argCountIncludingThis.gpr();
+    unlock(GPRInfo::returnValueGPR);
+
+    add32(TrustedImm32(1), GPRInfo::returnValueGPR, argCountIncludingThisGPR);
+    strictInt32Result(argCountIncludingThisGPR, node);
+}
+
+void SpeculativeJIT::compileLoadVarargsWithSpread(Node* node)
+{
+    LoadVarargsData* data = node->loadVarargsData();
+
+    SpeculateStrictInt32Operand argumentCount(this, m_graph.varArgChild(node, 0));
+    GPRReg argumentCountIncludingThis = argumentCount.gpr();
+
+    unsigned numArgs = node->numChildren() - 1;
+    EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 1, numArgs);
+
+    speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branchTest32(Zero, argumentCountIncludingThis));
+    speculationCheck(VarargsOverflow, JSValueSource(), Edge(), branch32(Above, argumentCountIncludingThis, TrustedImm32(data->limit)));
+
+    flushRegisters();
+    store32(argumentCountIncludingThis, lowWordFor(data->machineCount));
+    callOperation(operationLoadVarargsWithSpread, LinkableConstant::globalObject(*this, node), data->machineStart.offset(), TrustedImmPtr(buffer), TrustedImm32(numArgs), argumentCountIncludingThis, TrustedImm32(data->mandatoryMinimum));
+    noResult(node);
+}
+
 void SpeculativeJIT::compileForwardVarargs(Node* node)
 {
     LoadVarargsData* data = node->loadVarargsData();

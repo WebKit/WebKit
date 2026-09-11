@@ -60,6 +60,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
         return Call;
 
     case op_call_varargs:
+    case op_call_varargs_with_spread:
         return CallVarargs;
 
     case op_construct:
