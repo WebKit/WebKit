@@ -4002,6 +4002,9 @@ void Document::collectHighlightRangesFromRegister(Vector<WeakPtr<HighlightRange>
 
     // One range can belong to multiple highlights so resetting a range's flag cannot be done in the loops above.
     for (auto& highlight : highlightRegistry.map()) {
+        // A StaticRange has no equivalent of Range::didChangeForHighlight(), so the set of nodes each range
+        // intersects has to be collected again from scratch on every rendering update.
+        highlight.value->invalidateHighlightRangesForNode();
         for (auto& highlightRange : highlight.value->highlightRanges()) {
             if (auto* liveRange = dynamicDowncast<Range>(highlightRange->range()); liveRange && liveRange->didChangeForHighlight())
                 liveRange->resetDidChangeForHighlight();
