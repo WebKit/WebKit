@@ -1,0 +1,12 @@
+Tests that WebKit's Set-Cookie Expires repair keeps a third party's partitioned cookie in its partition when only partitioned third-party cookies are allowed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS partitioned cookie is visible to the third party under the first party
+PASS partitioned cookie was repaired to a persistent cookie
+PASS internals.getCookies().find(cookie => cookie.name === "partitioned_date") is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

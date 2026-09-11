@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Test that expires attribute day and month names are matched case-insensitively</title>
+    <meta name=help href="https://tools.ietf.org/html/rfc6265#section-5.1.1">
+    <meta name="timeout" content="long">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="/resources/testdriver.js"></script>
+    <script src="/resources/testdriver-vendor.js"></script>
+    <script src="/cookies/resources/cookie-test.js"></script>
+  </head>
+  <body>
+    <div id=log></div>
+    <script>
+      // RFC 6265 section 5.1.1 matches the month case-insensitively and ignores the day-of-week,
+      // so the casing of either name cannot change how a date parses.
+      //
+      // The cases use a past expiration, because an implementation that rejects the date stores a
+      // session cookie, which is still present; a future expiration looks identical either way.
+      // Cookie names continue the numbering used by expires.html.
+      const caseTests = [
+        // Positive control: an unparseable date must not drop the whole cookie, so an
+        // implementation that did would fail here rather than pass every case below.
+        {
+          cookie: "test=20; Expires=FRI, 01 JAN 2038 00:00:00 GMT",
+          expected: "test=20",
+          name: "Set cookie with uppercase names in an expires in the future",
+        },
+        // The month and the day-of-week are asserted separately, and in both directions, because
+        // an implementation can easily match one case-insensitively and the other not.
+        {
+          cookie: "test=13; Expires=Thu, 10 APR 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with an uppercase month in an expires in the past",
+        },
+        {
+          cookie: "test=14; Expires=Thu, 10 apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with a lowercase month in an expires in the past",
+        },
+        {
+          cookie: "test=15; Expires=THU, 10 Apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with an uppercase day name in an expires in the past",
+        },
+        {
+          cookie: "test=16; Expires=thu, 10 Apr 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with a lowercase day name in an expires in the past",
+        },
+        // Section 5.1.1 matches a month on its first three characters, so the full name has to be
+        // accepted as well, and its casing must not matter either.
+        {
+          cookie: "test=17; Expires=THURSDAY, 10 APRIL 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase full day and month names in an expires in the past",
+        },
+        // The dd-Mon-yyyy form writes the month between dashes rather than spaces, so an
+        // implementation that finds the month by splitting on whitespace can miss it here.
+        {
+          cookie: "test=18; Expires=THU, 10-APR-1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase names and a dash separated date in an expires in the past",
+        },
+        // No comma and month-first, which is the shape an implementation reaches after reordering
+        // a Date.prototype.toString() value. Combines the casing question with the ordering one.
+        {
+          cookie: "test=19; Expires=THU APR 10 1980 16:33:12 GMT",
+          expected: "",
+          name: "Don't set cookie with uppercase names and no comma in an expires in the past",
+        },
+      ];
+
+      // These tests evaluate setting cookies with expiration via HTTP headers.
+      for (const test of caseTests) {
+        httpCookieTest(test.cookie, test.expected, test.name + " via HTTP headers");
+      }
+
+      // These tests evaluate setting cookies with expiration via document.cookie.
+      for (const test of caseTests) {
+        domCookieTest(test.cookie, test.expected, test.name + " via document.cookie");
+      }
+    </script>
+  </body>
+</html>

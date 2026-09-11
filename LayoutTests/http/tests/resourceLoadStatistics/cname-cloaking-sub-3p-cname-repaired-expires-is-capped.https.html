@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Test for CNAME Cloaking: a cookie whose Expires WebKit had to repair is capped like any other.");
+    jsTestIsAsync = true;
+
+    const oneWeekInSeconds = 7 * 24 * 60 * 60;
+    const cookieName = "capped";
+
+    function finishTest() {
+        resetCookiesForCurrentOrigin();
+        setEnableFeature(false, function() {
+            testRunner.removeAllCookies(finishJSTest);
+        });
+    }
+
+    function runTest() {
+        setEnableFeature(true, function() {
+            testRunner.statisticsSetThirdPartyCNAMEDomain("http://3rdpartytestwebkit.org", function() {
+                // The resource writes the month before the day, which CFNetwork rejects and WebKit repairs.
+                fetch("/cookies/resources/set-cookies-needing-repair.py?case=capped&dummy=" + Math.random()).then(function() {
+                    const cookie = internals.getCookies().find(cookie => cookie.name === cookieName);
+                    if (!cookie)
+                        testFailed("No cookie named " + cookieName + " found.");
+                    else if (cookie.isSession)
+                        testFailed("Cookie named " + cookieName + " is session scoped, so its Expires was not repaired.");
+                    else if (cookie.expires > Date.now() + (oneWeekInSeconds + 600) * 1000)
+                        testFailed("Cookie named " + cookieName + " was not capped.");
+                    else
+                        testPassed("Cookie named " + cookieName + " was repaired and capped.");
+                    finishTest();
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>

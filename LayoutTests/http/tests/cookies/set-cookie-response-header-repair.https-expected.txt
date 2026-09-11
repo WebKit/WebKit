@@ -1,0 +1,25 @@
+Tests the Set-Cookie response header Expires repair: repeated headers, attribute preservation, UTF-8 names and values, and that the repair never stores a cookie CFNetwork did not.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repeated Set-Cookie: cookie "a" was repaired to a persistent cookie
+PASS repeated Set-Cookie: cookie "b" was repaired to a persistent cookie
+PASS attribute preservation: cookie was repaired to a persistent cookie
+PASS attribute preservation: HttpOnly survived the repair
+PASS attribute preservation: Secure survived the repair
+PASS attribute preservation: SameSite=Strict survived the repair
+PASS attribute preservation with a UTF-8 value: cookie was repaired to a persistent cookie
+PASS attribute preservation with a UTF-8 value: HttpOnly survived the repair
+PASS attribute preservation with a UTF-8 value: Secure survived the repair
+PASS attribute preservation with a UTF-8 value: SameSite=Strict survived the repair
+PASS cookieNamed(storedForm("名")).isSession is false
+PASS cookieNamed("synthesized") is null
+PASS cookieNamed("a").value is "1,synthesized=2"
+PASS same name and value on two paths: only the cookie the header set was repaired
+PASS cookieNamed("older").isSession is true
+PASS cookieNamed("omitted") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

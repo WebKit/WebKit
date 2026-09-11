@@ -2036,3 +2036,8 @@
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 270000))
 #define HAVE_AVPLAYER_DISCONNECTEDFROMSYSTEMAUDIO 1
 #endif
+
+// FIXME: Turn this off on platforms that have the CFNetwork fix (rdar://185837942, rdar://186224951).
+#if !defined(HAVE_BROKEN_COOKIE_DATE_PARSER) && PLATFORM(COCOA)
+#define HAVE_BROKEN_COOKIE_DATE_PARSER 1
+#endif

@@ -27,6 +27,7 @@
 #pragma once
 
 #include <optional>
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
@@ -128,7 +129,19 @@ namespace CookieUtil {
 
 WEBCORE_EXPORT String defaultPathForURL(const URL&);
 
-std::optional<String> cookieStringWithDayFirstExpires(StringView);
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || USE(SOUP)
+WEBCORE_EXPORT std::optional<String> cookieStringWithDayFirstExpires(StringView);
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+WEBCORE_EXPORT std::optional<String> cookieStringWithTitleCasedExpiresNames(StringView);
+WEBCORE_EXPORT std::optional<String> cookieStringWithRepairedExpires(StringView);
+
+WEBCORE_EXPORT bool cookieHeaderNeedsRepair(StringView);
+// Inline capacity keeps the common response, which carries a dated cookie and so a comma, off the heap.
+WEBCORE_EXPORT Vector<StringView, 4> splitCoalescedSetCookieHeader(StringView);
+WEBCORE_EXPORT std::optional<std::pair<StringView, StringView>> cookieNameAndValue(StringView);
+#endif
 
 // These functions can reinterpret a cookie string heading from DOM to storage
 // or from storage to DOM. Some platforms choose to handle DOM strings differently

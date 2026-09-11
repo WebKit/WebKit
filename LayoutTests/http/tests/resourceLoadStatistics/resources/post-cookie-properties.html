@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+    // Reports a cookie as this frame sees it, which is the only document that can see a third party's partitioned cookie.
+    const name = new URLSearchParams(location.search).get("name");
+    const cookie = internals.getCookies().find(cookie => cookie.name === name);
+    parent.postMessage({ found: !!cookie, isSession: cookie ? cookie.isSession : null }, "*");
+</script>
+</body>
+</html>

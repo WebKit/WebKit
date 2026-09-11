@@ -30,7 +30,9 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DateMath.h>
 #include <wtf/NotFound.h>
+#include <wtf/Vector.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 
@@ -68,6 +70,7 @@ String defaultPathForURL(const URL& url)
     return path.left(lastSlashPosition);
 }
 
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || USE(SOUP)
 static bool isMonthNameToken(StringView token)
 {
     // RFC 6265 section 5.1.1 matches a month by its first three characters, case-insensitively.
@@ -79,14 +82,16 @@ static bool isMonthNameToken(StringView token)
     });
 }
 
-std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
+using ExpiresValueRange = std::pair<size_t, size_t>;
+
+// Returns the range of the last Expires attribute's value, or nullopt when there is none.
+// RFC 6265 section 5.3: when an attribute repeats, the last occurrence wins.
+static std::optional<ExpiresValueRange> findLastExpiresValue(StringView cookieString)
 {
     auto firstSemicolon = cookieString.find(';');
     if (firstSemicolon == notFound)
         return std::nullopt;
 
-    // Locate the Expires value within the original string. The last one wins, per RFC 6265
-    // section 5.3.
     size_t valueStart = notFound;
     size_t valueEnd = notFound;
     for (size_t position = firstSemicolon + 1; position <= cookieString.length();) {
@@ -106,6 +111,12 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
 
     if (valueStart == notFound)
         return std::nullopt;
+    return std::make_pair(valueStart, valueEnd);
+}
+
+static std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString, ExpiresValueRange expiresValue)
+{
+    auto [valueStart, valueEnd] = expiresValue;
 
     // Find a month name immediately followed by a one or two digit day of the month. In a day-first
     // value the token after the month is the four digit year, so this does not match and nothing is
@@ -158,6 +169,184 @@ std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
     return makeString(cookieString.left(monthStart), day, cookieString.substring(monthEnd, dayStart - monthEnd),
         cookieString.substring(monthStart, monthEnd - monthStart), cookieString.substring(dayEnd));
 }
+
+std::optional<String> cookieStringWithDayFirstExpires(StringView cookieString)
+{
+    auto expiresValue = findLastExpiresValue(cookieString);
+    if (!expiresValue)
+        return std::nullopt;
+    return cookieStringWithDayFirstExpires(cookieString, *expiresValue);
+}
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+static bool isDayNameToken(StringView token)
+{
+    // The first three characters match both the abbreviation and the full name.
+    if (token.length() < 3)
+        return false;
+    auto prefix = token.left(3);
+    return std::ranges::any_of(WTF::weekdayName, [&](auto day) {
+        return equalIgnoringASCIICase(prefix, day);
+    });
+}
+
+// FIXME: <rdar://186224951> Remove this once CFNetwork's cookie-date parser matches the day
+// and month names case-insensitively, as RFC 6265 section 5.1.1 requires.
+static std::optional<String> cookieStringWithTitleCasedExpiresNames(StringView cookieString, ExpiresValueRange expiresValue)
+{
+    auto [valueStart, valueEnd] = expiresValue;
+
+    // '-' is a separator so the dd-Mon-yyyy form is covered too.
+    auto isSeparator = [](char16_t character) {
+        return character == ' ' || character == '\t' || character == ',' || character == '-';
+    };
+
+    // Only the leading day-of-week and the first month name are rewritten, which keeps the time zone
+    // and the localized trailing comment out of it.
+    std::optional<std::pair<size_t, size_t>> dayNameRange;
+    std::optional<std::pair<size_t, size_t>> monthNameRange;
+    bool isFirstWord = true;
+    for (size_t position = valueStart; position < valueEnd;) {
+        while (position < valueEnd && isSeparator(cookieString[position]))
+            ++position;
+        size_t wordStart = position;
+        while (position < valueEnd && !isSeparator(cookieString[position]))
+            ++position;
+        if (wordStart == position)
+            break;
+        auto word = cookieString.substring(wordStart, position - wordStart);
+        if (isFirstWord) {
+            isFirstWord = false;
+            if (isDayNameToken(word)) {
+                dayNameRange = std::make_pair(wordStart, position);
+                continue;
+            }
+        }
+        if (isMonthNameToken(word)) {
+            monthNameRange = std::make_pair(wordStart, position);
+            break;
+        }
+    }
+
+    auto needsTitleCasing = [&](std::pair<size_t, size_t> range) {
+        if (isASCIILower(cookieString[range.first]))
+            return true;
+        for (size_t i = range.first + 1; i < range.second; ++i) {
+            if (isASCIIUpper(cookieString[i]))
+                return true;
+        }
+        return false;
+    };
+    if (dayNameRange && !needsTitleCasing(*dayNameRange))
+        dayNameRange = std::nullopt;
+    if (monthNameRange && !needsTitleCasing(*monthNameRange))
+        monthNameRange = std::nullopt;
+    if (!dayNameRange && !monthNameRange)
+        return std::nullopt;
+
+    StringBuilder builder;
+    size_t copiedThrough = 0;
+    for (auto range : { dayNameRange, monthNameRange }) {
+        if (!range)
+            continue;
+        builder.append(cookieString.substring(copiedThrough, range->first - copiedThrough));
+        builder.append(toASCIIUpper(cookieString[range->first]));
+        for (size_t i = range->first + 1; i < range->second; ++i)
+            builder.append(toASCIILower(cookieString[i]));
+        copiedThrough = range->second;
+    }
+    builder.append(cookieString.substring(copiedThrough));
+    return builder.toString();
+}
+
+std::optional<String> cookieStringWithTitleCasedExpiresNames(StringView cookieString)
+{
+    auto expiresValue = findLastExpiresValue(cookieString);
+    if (!expiresValue)
+        return std::nullopt;
+    return cookieStringWithTitleCasedExpiresNames(cookieString, *expiresValue);
+}
+
+// Runs the two Expires workarounds in the order that lets them compose.
+std::optional<String> cookieStringWithRepairedExpires(StringView cookieString)
+{
+    auto expiresValue = findLastExpiresValue(cookieString);
+    if (!expiresValue)
+        return std::nullopt;
+    // The swap exchanges two tokens inside the value, so the value's range is unchanged.
+    auto swapped = cookieStringWithDayFirstExpires(cookieString, *expiresValue);
+    ASSERT(!swapped || swapped->length() == cookieString.length());
+    if (auto cased = cookieStringWithTitleCasedExpiresNames(swapped ? StringView { *swapped } : cookieString, *expiresValue))
+        return cased;
+    return swapped;
+}
+
+// Answers from the header alone, so a response that needs nothing costs no cookie policy work.
+bool cookieHeaderNeedsRepair(StringView header)
+{
+    if (!header.containsIgnoringASCIICase("expires"_s))
+        return false;
+    for (auto cookieString : splitCoalescedSetCookieHeader(header)) {
+        if (cookieStringWithRepairedExpires(cookieString))
+            return true;
+    }
+    return false;
+}
+
+Vector<StringView, 4> splitCoalescedSetCookieHeader(StringView header)
+{
+    // Repeated Set-Cookie headers arrive comma-joined, and a cookie-date has a comma of its own, so
+    // split only at a comma followed by a "token=". A comma inside a value splits too; callers
+    // must check any segment against what CFNetwork actually stored.
+    if (header.isEmpty())
+        return { };
+
+    Vector<StringView, 4> cookies;
+    auto comma = header.find(',');
+    if (comma == notFound)
+        return { header };
+
+    size_t segmentStart = 0;
+    for (; comma != notFound; comma = header.find(',', comma + 1)) {
+        size_t candidate = comma + 1;
+        while (candidate < header.length() && isTabOrSpace(header[candidate]))
+            ++candidate;
+        size_t tokenStart = candidate;
+        while (candidate < header.length()) {
+            auto character = header[candidate];
+            if (character == '=' || character == ';' || character == ',' || isTabOrSpace(character) || character == '\n' || character == '\r')
+                break;
+            ++candidate;
+        }
+        if (candidate == tokenStart || candidate >= header.length())
+            continue;
+        while (candidate < header.length() && isTabOrSpace(header[candidate]))
+            ++candidate;
+        if (candidate >= header.length() || header[candidate] != '=')
+            continue;
+
+        cookies.append(header.substring(segmentStart, comma - segmentStart));
+        segmentStart = comma + 1;
+    }
+    if (segmentStart < header.length())
+        cookies.append(header.substring(segmentStart));
+    return cookies;
+}
+
+std::optional<std::pair<StringView, StringView>> cookieNameAndValue(StringView cookieString)
+{
+    // RFC 6265 section 5.2. Quotes are part of the value and are not stripped.
+    auto semicolon = cookieString.find(';');
+    auto pair = semicolon == notFound ? cookieString : cookieString.left(semicolon);
+    auto equals = pair.find('=');
+    if (equals == notFound)
+        return std::nullopt;
+    auto name = pair.left(equals).trim(isTabOrSpace<char16_t>);
+    auto value = pair.substring(equals + 1).trim(isTabOrSpace<char16_t>);
+    return std::make_pair(name, value);
+}
+#endif
 
 // The `cookieStringFor...` functions can reinterpret a cookie string heading from DOM to storage
 // or from storage to DOM. Cocoa is the only platform that needs to do this at the moment.
