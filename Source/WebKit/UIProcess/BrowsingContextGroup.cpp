@@ -322,7 +322,7 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
         newRemotePage->injectPageIntoNewProcess();
     };
 
-    if (RefPtr sharedProcess = m_sharedProcess.get(); sharedProcess && m_pagesInSharedProcess.add(page).isNewEntry)
+    if (RefPtr sharedProcess = liveSharedProcess(); sharedProcess && m_pagesInSharedProcess.add(page).isNewEntry)
         createRemotePageIfNeeded(sharedProcess->process(), *m_sharedProcessSites.begin());
 
     m_processMap.removeIf([&] (auto& pair) {
