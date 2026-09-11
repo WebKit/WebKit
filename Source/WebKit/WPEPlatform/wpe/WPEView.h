@@ -76,8 +76,11 @@ struct _WPEViewClass
                                                   guint               n_rects);
     gboolean           (* can_be_mapped)         (WPEView            *view);
     WPEViewAccessible *(* get_accessible)        (WPEView            *view);
+    void               (* set_tooltip)           (WPEView            *view,
+                                                  const char         *text,
+                                                  const WPERectangle *area);
 
-    gpointer padding[32];
+    gpointer padding[31];
 };
 
 #define WPE_VIEW_ERROR (wpe_view_error_quark())
@@ -123,6 +126,9 @@ WPE_API void                  wpe_view_set_cursor_from_bytes        (WPEView    
                                                                      guint               stride,
                                                                      guint               hotspot_x,
                                                                      guint               hotspot_y);
+WPE_API void                  wpe_view_set_tooltip                  (WPEView            *view,
+                                                                     const char         *text,
+                                                                     const WPERectangle *area);
 WPE_API WPEToplevelState      wpe_view_get_toplevel_state           (WPEView            *view);
 WPE_API WPEScreen            *wpe_view_get_screen                   (WPEView            *view);
 WPE_API void                  wpe_view_buffers_changed              (WPEView            *view,

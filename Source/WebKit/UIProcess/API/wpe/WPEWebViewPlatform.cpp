@@ -659,6 +659,21 @@ void ViewPlatform::setCursor(const WebCore::Cursor& cursor)
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), pixmap.width(), pixmap.height(), pixmap.rowBytes(), hotspot.x(), hotspot.y());
 }
 
+void ViewPlatform::setToolTip(const String& toolTip, const WebCore::IntRect& area)
+{
+    auto toolTipArea = toolTip.isEmpty() ? WebCore::IntRect() : area;
+    if (m_toolTip == toolTip && m_toolTipArea == toolTipArea)
+        return;
+
+    m_toolTip = toolTip;
+    m_toolTipArea = toolTipArea;
+    if (!m_wpeView)
+        return;
+
+    WPERectangle rectangle = { m_toolTipArea.x(), m_toolTipArea.y(), m_toolTipArea.width(), m_toolTipArea.height() };
+    wpe_view_set_tooltip(m_wpeView.get(), m_toolTip.utf8().legacyCStringPointer(), &rectangle);
+}
+
 #if ENABLE(POINTER_LOCK)
 void ViewPlatform::requestPointerLock()
 {

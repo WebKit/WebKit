@@ -132,7 +132,16 @@ static unsigned testMouseButtonToWPE(WebViewTest::MouseButton button)
 
 void WebViewTest::mouseMoveTo(int x, int y, OptionSet<Modifiers> mouseModifiers)
 {
-    // FIXME: implement.
+#if ENABLE(WPE_PLATFORM)
+    if (m_display) {
+        auto* view = webkit_web_view_get_wpe_view(m_webView.get());
+        auto* event = wpe_event_pointer_move_new(WPE_EVENT_POINTER_MOVE, view, WPE_INPUT_SOURCE_MOUSE, 0, testModifiersToWPE(mouseModifiers), x, y, 0, 0);
+        wpe_view_event(view, event);
+        wpe_event_unref(event);
+        return;
+    }
+#endif
+    // FIXME: implement for the legacy API.
 }
 
 void WebViewTest::clickMouseButton(int x, int y, MouseButton button, OptionSet<Modifiers> mouseModifiers)
