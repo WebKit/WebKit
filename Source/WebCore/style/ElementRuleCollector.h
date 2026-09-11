@@ -73,6 +73,7 @@ public:
     void clearMatchedRules();
 
     EnumSet<PseudoElementType> matchedPseudoElements() const { return m_matchedPseudoElements; }
+    EnumSet<PseudoElementType> matchedPseudoElementsRequiringStyle() const { return m_matchedPseudoElementsRequiringStyle; }
     const Relations& styleRelations() const LIFETIME_BOUND { return m_styleRelations; }
 
     void addAuthorKeyframeRules(const StyleRuleKeyframe&);
@@ -139,6 +140,7 @@ private:
     Ref<MatchResult> m_result;
     Relations m_styleRelations;
     EnumSet<PseudoElementType> m_matchedPseudoElements;
+    EnumSet<PseudoElementType> m_matchedPseudoElementsRequiringStyle;
 };
 
 ALWAYS_INLINE void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVector* rules, const MatchRequest& matchRequest)

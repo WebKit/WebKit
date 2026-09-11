@@ -529,6 +529,9 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (!elementUpdate.style->hasPseudoStyle(pseudoElementIdentifier.type))
         return resolveAncestorPseudoElement(element, pseudoElementIdentifier, elementUpdate);
 
+    if (elementUpdate.style->canOmitPseudoElementStyle(pseudoElementIdentifier.type) && !element.mayHaveKeyframeEffects())
+        return { };
+
     if ((pseudoElementIdentifier.type == PseudoElementType::FirstLine || pseudoElementIdentifier.type == PseudoElementType::FirstLetter) && !supportsFirstLineAndLetterPseudoElement(*elementUpdate.style))
         return { };
 
