@@ -124,6 +124,9 @@ private:
 
     bool NODELETE isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    std::pair<id<MTLBuffer>, uint64_t> reserveTemporaryBuffer(size_t);
+#endif // RC_REMOVE_SEC_ACCEL_3
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 

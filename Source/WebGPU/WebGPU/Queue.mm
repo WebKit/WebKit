@@ -628,6 +628,7 @@ static std::span<uint8_t> span(id<MTLBuffer> buffer)
     return unsafeMakeSpan(static_cast<uint8_t*>(buffer.contents), buffer.length);
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<uint8_t> dataSpan, bool noCopy)
 {
     auto device = m_device.get();
@@ -649,6 +650,43 @@ std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<
     memcpySpan(span(m_temporaryBuffer).subspan(priorOffset), dataSpan);
     return std::make_pair(m_temporaryBuffer, priorOffset);
 }
+#else
+std::pair<id<MTLBuffer>, uint64_t> Queue::reserveTemporaryBuffer(size_t size)
+{
+    auto device = m_device.get();
+    if (!device)
+        return std::make_pair(nil, 0ull);
+
+    if (size >= largeBufferSize)
+        return std::make_pair(device->safeCreateBuffer(size, skipMemoryAttribution), 0ull);
+
+    if (!m_temporaryBuffer || m_temporaryBufferOffset + size > m_temporaryBuffer.length) {
+        m_temporaryBuffer = device->safeCreateBuffer(std::max(size, 64 * KB), skipMemoryAttribution);
+        m_temporaryBufferOffset = 0;
+    }
+
+    auto priorOffset = m_temporaryBufferOffset;
+    m_temporaryBufferOffset += WTF::roundUpToMultipleOf(64, size);
+    return std::make_pair(m_temporaryBuffer, priorOffset);
+}
+
+std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<uint8_t> dataSpan, bool noCopy)
+{
+    if (noCopy) {
+        auto device = m_device.get();
+        if (!device)
+            return std::make_pair(nil, 0ull);
+        return std::make_pair(device->newBufferWithBytesNoCopy(dataSpan.data(), dataSpan.size(), MTLResourceStorageModeShared, skipMemoryAttribution), 0ull);
+    }
+
+    auto reservation = reserveTemporaryBuffer(dataSpan.size());
+    if (!reservation.first)
+        return reservation;
+
+    memcpySpan(span(reservation.first).subspan(reservation.second), dataSpan);
+    return reservation;
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
@@ -977,7 +1015,6 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         return;
     }
 
-    Vector<uint8_t> newData;
     auto checkedNewBytesPerRow = checkedProduct<uint32_t>(blockSize, ((widthForMetal / blockWidth) + ((widthForMetal % blockWidth) ? 1 : 0)));
     if (checkedNewBytesPerRow.hasOverflowed())
         return;
@@ -985,6 +1022,12 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     auto dataLayoutOffset = dataLayout.offset;
     const bool widthMismatch = newBytesPerRow != bytesPerRow && widthForMetal == logicalSize.width && heightForMetal == logicalSize.height;
     const bool multipleOfBlockSize = bytesPerRow % blockSize;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    Vector<uint8_t> newData;
+#else
+    id<MTLBuffer> repackedBuffer = nil;
+    uint64_t repackedBufferOffset = 0;
+#endif // RC_REMOVE_SEC_ACCEL_3
     if (isCompressed && (widthMismatch || multipleOfBlockSize)) {
 
         const auto maxY = std::max<size_t>(blockHeight, heightForMetal) / blockHeight;
@@ -996,8 +1039,10 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         auto checkedNewBytesPerImageTimesMaxZ = checkedProduct<uint32_t>(newBytesPerImage, maxZ);
         if (checkedNewBytesPerImageTimesMaxZ.hasOverflowed())
             return;
-        newData = Vector<uint8_t>(FillWith { }, checkedNewBytesPerImageTimesMaxZ.value(), 0);
-        dataLayoutOffset = 0;
+        const auto newDataSize = checkedNewBytesPerImageTimesMaxZ.value();
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        newData = Vector<uint8_t>(FillWith { }, newDataSize, 0);
+#endif // RC_REMOVE_SEC_ACCEL_3
 
         auto verticalOffset = checkedProduct<uint64_t>(maxY ? (maxY - 1) : 0, bytesPerRow);
         ASSERT(maxZ);
@@ -1019,14 +1064,24 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
             auto checkedBytesSum = checkedSum<uint32_t>(maxYMinus1TimesBytesPerRow.value(), maxZMinus1TimesBytesPerImage.value(), dataLayout.offset, newBytesPerRow);
             if (checkedNewBytesSum.hasOverflowed() || checkedBytesSum.hasOverflowed())
                 return;
+#ifdef RC_REMOVE_SEC_ACCEL_3
             if (checkedNewBytesSum.value() > newData.size() || checkedBytesSum.value() > data.size()) {
                 auto y = (maxY - 1);
                 auto z = (maxZ - 1);
                 device->generateAValidationError([NSString stringWithFormat:@"y(%zu) * newBytesPerRow(%u) + z(%zu) * newBytesPerImage(%u) + newBytesPerRow(%u) > newData.size()(%zu) || y(%zu) * bytesPerRow(%lu) + z(%zu) * bytesPerImage(%lu) + newBytesPerRow(%u) > dataSize(%zu), copySize %u, %u, %u, textureSize %u, %u, %u, offset %llu", y, newBytesPerRow, z, newBytesPerImage, newBytesPerRow, newData.size(), y, static_cast<unsigned long>(bytesPerRow), z, static_cast<unsigned long>(bytesPerImage), newBytesPerRow, data.size(), widthForMetal, heightForMetal, depthForMetal, logicalSize.width, logicalSize.height, logicalSize.depthOrArrayLayers, dataLayout.offset]);
                 return;
             }
+#else
+            if (checkedNewBytesSum.value() > newDataSize || checkedBytesSum.value() > data.size()) {
+                auto y = (maxY - 1);
+                auto z = (maxZ - 1);
+                device->generateAValidationError([NSString stringWithFormat:@"y(%zu) * newBytesPerRow(%u) + z(%zu) * newBytesPerImage(%u) + newBytesPerRow(%u) > newDataSize(%zu) || y(%zu) * bytesPerRow(%lu) + z(%zu) * bytesPerImage(%lu) + newBytesPerRow(%u) > dataSize(%zu), copySize %u, %u, %u, textureSize %u, %u, %u, offset %llu", y, newBytesPerRow, z, newBytesPerImage, newBytesPerRow, static_cast<size_t>(newDataSize), y, static_cast<unsigned long>(bytesPerRow), z, static_cast<unsigned long>(bytesPerImage), newBytesPerRow, data.size(), widthForMetal, heightForMetal, depthForMetal, logicalSize.width, logicalSize.height, logicalSize.depthOrArrayLayers, dataLayout.offset]);
+                return;
+            }
+#endif // RC_REMOVE_SEC_ACCEL_3
         }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         auto newDataSpan = newData.mutableSpan();
         for (size_t z = 0; z < maxZ; ++z) {
             for (size_t y = 0; y < maxY; ++y) {
@@ -1045,11 +1100,48 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
                 memcpySpan(destBytesSpan, sourceBytesSpan);
             }
         }
+#else
+        auto checkedCopiedBytesPerImage = checkedProduct<uint32_t>(maxY, newBytesPerRow);
+        if (checkedCopiedBytesPerImage.hasOverflowed() || checkedCopiedBytesPerImage.value() > newBytesPerImage)
+            return;
+        const auto copiedBytesPerImage = checkedCopiedBytesPerImage.value();
+        auto reservation = reserveTemporaryBuffer(newDataSize);
+        if (!reservation.first)
+            return;
+        repackedBuffer = reservation.first;
+        repackedBufferOffset = reservation.second;
+
+        auto newDataSpan = span(repackedBuffer).subspan(repackedBufferOffset, newDataSize);
+        for (size_t z = 0; z < maxZ; ++z) {
+            auto zTimesBytesPerImage = checkedProduct<uint32_t>(z, bytesPerImage);
+            auto zTimesNewBytesPerImage = checkedProduct<uint32_t>(z, newBytesPerImage);
+            if (zTimesBytesPerImage.hasOverflowed() || zTimesNewBytesPerImage.hasOverflowed())
+                return;
+            for (size_t y = 0; y < maxY; ++y) {
+                auto yTimesBytesPerRow = checkedProduct<uint32_t>(y, bytesPerRow);
+                auto yTimesNewBytesPerRow = checkedProduct<uint32_t>(y, newBytesPerRow);
+                if (yTimesBytesPerRow.hasOverflowed() || yTimesNewBytesPerRow.hasOverflowed())
+                    return;
+                auto checkedYPlusZPlusOffset = checkedSum<uint32_t>(yTimesBytesPerRow.value(), zTimesBytesPerImage.value(), dataLayout.offset);
+                auto checkedNewYPlusNewZ = checkedSum<uint32_t>(yTimesNewBytesPerRow.value(), zTimesNewBytesPerImage.value());
+                if (checkedYPlusZPlusOffset.hasOverflowed() || checkedNewYPlusNewZ.hasOverflowed())
+                    return;
+                auto sourceBytesSpan = data.subspan(checkedYPlusZPlusOffset.value(), newBytesPerRow);
+                auto destBytesSpan = newDataSpan.subspan(checkedNewYPlusNewZ.value(), newBytesPerRow);
+                memcpySpan(destBytesSpan, sourceBytesSpan);
+            }
+            auto checkedPaddingOffset = checkedSum<uint32_t>(zTimesNewBytesPerImage.value(), copiedBytesPerImage);
+            if (checkedPaddingOffset.hasOverflowed())
+                return;
+            memsetSpan(newDataSpan.subspan(checkedPaddingOffset.value(), newBytesPerImage - copiedBytesPerImage), 0);
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
         bytesPerRow = newBytesPerRow;
-        dataByteSize = newData.size();
+        dataByteSize = newDataSize;
         bytesPerImage = newBytesPerImage;
-        data = newData.mutableSpan();
+        data = newDataSpan;
+        dataLayoutOffset = 0;
     }
 
     // FIXME(PERFORMANCE): Instead of checking whether or not the whole queue is idle,
@@ -1159,10 +1251,21 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     // FIXME(PERFORMANCE): Suballocate, so the common case doesn't need to hit the kernel.
     // FIXME(PERFORMANCE): Should this temporary buffer really be shared?
     NSUInteger newBufferSize = dataByteSize - dataLayoutOffset;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     bool noCopy = newBufferSize >= largeBufferSize;
     auto temporaryBufferWithOffset = newTemporaryBufferWithBytes(data.subspan(dataLayoutOffset), noCopy);
     id<MTLBuffer> temporaryBuffer = temporaryBufferWithOffset.first;
     auto temporaryBufferOffset = temporaryBufferWithOffset.second;
+#else
+    bool noCopy = !repackedBuffer && newBufferSize >= largeBufferSize;
+    id<MTLBuffer> temporaryBuffer = repackedBuffer;
+    uint64_t temporaryBufferOffset = repackedBufferOffset;
+    if (!temporaryBuffer) {
+        auto temporaryBufferWithOffset = newTemporaryBufferWithBytes(data.subspan(dataLayoutOffset), noCopy);
+        temporaryBuffer = temporaryBufferWithOffset.first;
+        temporaryBufferOffset = temporaryBufferWithOffset.second;
+    }
+#endif // RC_REMOVE_SEC_ACCEL_3
     if (!temporaryBuffer)
         return;
     ASSERT(temporaryBuffer.length >= newBufferSize);
@@ -1268,6 +1371,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         return;
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (noCopy) {
         if (!newData.isEmpty()) {
             // The MTLBuffer above was created with newBufferWithBytesNoCopy and aliases newData's storage; keep that storage alive until the GPU has consumed it.
@@ -1278,6 +1382,10 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         }
         finalizeBlitCommandEncoder();
     }
+#else
+    if (noCopy)
+        finalizeBlitCommandEncoder();
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void Queue::setLabel(String&& label)
