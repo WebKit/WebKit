@@ -847,7 +847,7 @@ void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<Strin
 {
     Ref registry = m_schemeRegistry;
     for (auto&& scheme : WTF::move(schemes))
-        registry->registerURLSchemeAsCORSEnabled(WTF::move(scheme));
+        registry->registerURLSchemeAsCORSEnabled(connection(), WTF::move(scheme));
 }
 
 static bool shouldTreatAsSameSite(const URL& firstParty, const URL& url)

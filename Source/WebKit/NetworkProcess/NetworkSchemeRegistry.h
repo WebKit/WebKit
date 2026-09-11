@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Connection.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringHash.h>
@@ -37,7 +38,7 @@ public:
     static Ref<NetworkSchemeRegistry> create() { return adoptRef(*new NetworkSchemeRegistry); }
 
     // Allow non-HTTP schemes to be registered to allow CORS requests.
-    void registerURLSchemeAsCORSEnabled(String&& scheme);
+    void registerURLSchemeAsCORSEnabled(IPC::Connection&, String&& scheme);
     bool shouldTreatURLSchemeAsCORSEnabled(StringView scheme);
 
 private:
