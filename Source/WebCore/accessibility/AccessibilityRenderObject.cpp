@@ -922,9 +922,6 @@ void AccessibilityRenderObject::labelText(Vector<AccessibilityText>& textOrder) 
 
 AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
 {
-    if (m_renderer && isFieldset())
-        return axObjectCache()->getOrCreate(dynamicDowncast<RenderBlock>(*m_renderer)->findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow));
-
     if (is<RenderTableCell>(m_renderer.get())) {
         // Try to find if the first cell in this row is a <th>. If it is,
         // then it can act as the title ui element. (This is only in the

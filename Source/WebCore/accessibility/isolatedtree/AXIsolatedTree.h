@@ -212,7 +212,6 @@ enum class AXProperty : uint16_t {
     IsColumnHeader,
     IsExpanded,
     IsExposableTable,
-    IsFieldset,
     IsIndeterminate,
     IsInsideNativeTextControl,
     IsInUserAgentShadowTree,

@@ -944,9 +944,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::IsExposedTableCell:
         stream << "IsExposedTableCell";
         break;
-    case AXProperty::IsFieldset:
-        stream << "IsFieldset";
-        break;
     case AXProperty::IsIgnored:
         stream << "IsIgnored";
         break;
