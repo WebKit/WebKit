@@ -1,0 +1,15 @@
+Tests that WebKit's Set-Cookie repair stores nothing for a response whose cookies are blocked, including after a redirect out of a blocked third party.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unblocked control: the date was repaired
+PASS unblocked control: the UTF-8 value was repaired
+PASS redirect out of a blocked third party: no dated cookie stored
+PASS redirect out of a blocked third party: no UTF-8 cookie stored
+PASS cookieNamed("blocked_date") is null
+PASS cookieNamed("blocked_utf8") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

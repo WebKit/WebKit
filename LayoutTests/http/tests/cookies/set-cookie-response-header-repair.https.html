@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('Tests the Set-Cookie response header repair path: repeated headers, attribute preservation, the bytes sent back to the server, and that the repair never stores a cookie CFNetwork did not.');
+jsTestIsAsync = true;
+
+function cookieNamed(name)
+{
+    return internals.getCookies().find(cookie => cookie.name === name) || null;
+}
+
+function load(url)
+{
+    return new Promise(resolve => {
+        const frame = document.createElement('iframe');
+        frame.onload = () => { frame.remove(); resolve(); };
+        frame.src = url;
+        document.body.appendChild(frame);
+    });
+}
+
+function utf8Hex(string)
+{
+    return Array.from(new TextEncoder().encode(string), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+const resource = 'resources/set-cookies-needing-repair.py';
+
+function checkPersistentWithFlags(label, name, value)
+{
+    const cookie = cookieNamed(name);
+    if (!cookie) {
+        testFailed(label + ': cookie is missing entirely');
+        return;
+    }
+    if (cookie.value !== value)
+        testFailed(label + ': cookie has value "' + cookie.value + '", expected "' + value + '"');
+    else if (cookie.isSession)
+        testFailed(label + ': cookie is session scoped, so its Expires was not repaired');
+    else
+        testPassed(label + ': cookie was repaired to a persistent cookie');
+
+    for (const [flag, flagLabel] of [['isHttpOnly', 'HttpOnly'], ['isSecure', 'Secure'], ['isSameSiteStrict', 'SameSite=Strict']]) {
+        if (cookie[flag])
+            testPassed(label + ': ' + flagLabel + ' survived the repair');
+        else
+            testFailed(label + ': ' + flagLabel + ' was lost by the repair');
+    }
+}
+
+onload = async () => {
+    // A rejected date leaves a session cookie rather than dropping it, so isSession is what
+    // distinguishes a repaired cookie from an unrepaired one.
+    await load(resource + '?case=repeated');
+    for (const [name, value] of [['a', '1'], ['b', '2']]) {
+        const cookie = cookieNamed(name);
+        if (!cookie)
+            testFailed('repeated Set-Cookie: cookie "' + name + '" is missing entirely');
+        else if (cookie.value !== value)
+            testFailed('repeated Set-Cookie: cookie "' + name + '" has value "' + cookie.value + '", expected "' + value + '"');
+        else if (cookie.isSession)
+            testFailed('repeated Set-Cookie: cookie "' + name + '" is session scoped, so its Expires was not repaired');
+        else
+            testPassed('repeated Set-Cookie: cookie "' + name + '" was repaired to a persistent cookie');
+    }
+
+    // Losing HttpOnly or Secure would make a cookie readable from script that was not before. The
+    // non-ASCII variant also takes the charset repair.
+    await load(resource + '?case=attributes');
+    checkPersistentWithFlags('attribute preservation', 'secure_flags', '1');
+    await load(resource + '?case=attributes-utf8');
+    checkPersistentWithFlags('attribute preservation with a UTF-8 value', 'secure_flags_utf8', '北京');
+
+    // A value containing ", name=" splits into two segments, and the second must not become a cookie.
+    await load(resource + '?case=commavalue');
+    shouldBeNull('cookieNamed("synthesized")');
+    shouldBeEqualToString('cookieNamed("a").value', '1,synthesized=2');
+
+    await load(resource + '?case=commavalue-utf8');
+    shouldBeNull('cookieNamed("admin")');
+
+    // The server must get back the UTF-8 bytes it sent, with the mangled name gone.
+    await load(resource + '?case=wire');
+    shouldBeEqualToString('cookieNamed("名").value', 'v');
+    const wire = await (await fetch('resources/echo-cookie-header-bytes.py')).text();
+    for (const [label, expected] of [['value', 'wire_value=北京x'], ['name', '名=v']]) {
+        if (wire.includes(utf8Hex(expected)))
+            testPassed('Cookie request header carries the UTF-8 ' + label + ' as sent');
+        else
+            testFailed('Cookie request header does not carry the UTF-8 ' + label + ': ' + wire);
+    }
+    if (wire.includes(utf8Hex('å\u0090\u008d')))
+        testFailed('Cookie request header still carries the mangled name: ' + wire);
+    else
+        testPassed('Cookie request header does not carry the mangled name');
+
+    // Only the cookie this header actually set may be repaired, not another with the same name and
+    // value, and not an older one when CFNetwork rejected this header outright.
+    await load(resource + '?case=identity-root');
+    await load(resource + '?case=identity-repair');
+    const consents = internals.getCookies().filter(cookie => cookie.name === 'consent');
+    const consentAt = path => consents.find(cookie => cookie.path === path);
+    if (consents.length !== 2)
+        testFailed('same name and value on two paths: expected two cookies, got ' + consents.length);
+    else if (consentAt('/').isSession && !consentAt('/cookies').isSession)
+        testPassed('same name and value on two paths: only the cookie the header set was repaired');
+    else
+        testFailed('same name and value on two paths: repaired the wrong cookie');
+    shouldBeTrue('cookieNamed("older").isSession');
+
+    // A request that may not store cookies must not have any stored by the repair either.
+    await fetch(resource + '?case=omit', { credentials: 'omit' });
+    shouldBeNull('cookieNamed("omitted")');
+    shouldBeNull('cookieNamed("omitted_utf8")');
+
+    testRunner.removeAllCookies(finishJSTest);
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

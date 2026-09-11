@@ -257,3 +257,6 @@ imported/w3c/web-platform-tests/svg/painting/reftests/non-scaling-stroke-with-no
 webkit.org/b/318763 http/wpt/user-activation/bless.html [ Skip ]
 webkit.org/b/318763 http/wpt/user-activation/bless-nested.sub.html [ Skip ]
 webkit.org/b/318763 http/wpt/user-activation/bless-edge-cases.sub.html [ Skip ]
+
+# rdar://188416564
+http/tests/resourceLoadStatistics/blocked-cookies-are-not-repaired.https.html [ Failure ]

@@ -149,7 +149,7 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
         return;
 
     ASSERT_UNUSED(isRedirect, !task()._cookieTransformCallback || isRedirect == IsRedirect::Yes);
-    protect(task()).get()._cookieTransformCallback = nil;
+    setCookieTransformCallback(nil);
 
     if (!Quirks::needsPartitionedCookies(request))
         return;
@@ -163,7 +163,7 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
 
     String cookiePartition = networkStorageSession->cookiePartitionIdentifier(request);
 
-    protect(task()).get()._cookieTransformCallback = makeBlockPtr([
+    setCookieTransformCallback(makeBlockPtr([
         requestURL = crossThreadCopy(request.url())
         , weakTask = WeakObjCPtr<NSURLSessionTask>(task())
         , cookiePartition = crossThreadCopy(cookiePartition)]
@@ -178,7 +178,7 @@ void NetworkTaskCocoa::setCookieTransformForThirdPartyRequest(const WebCore::Res
             cookiesSetInResponse = protect(cookiesBySettingPartition(protect(cookiesSetInResponse), cookiePartition.createNSString().get()).autorelease()).get();
 
         return cookiesSetInResponse;
-    }).get();
+    }).get());
 }
 #endif
 
@@ -189,12 +189,12 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
 
     ASSERT(!request.isThirdParty());
     if (request.isThirdParty()) {
-        protect(task()).get()._cookieTransformCallback = nil;
+        setCookieTransformCallback(nil);
         return;
     }
 
     if (request.isTopSite()) {
-        protect(task()).get()._cookieTransformCallback = nil;
+        setCookieTransformCallback(nil);
         return;
     }
 
@@ -205,7 +205,7 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
     auto firstPartyHostName = firstPartyURL.host().toString();
     CheckedPtr networkSession = m_networkSession.get();
 
-    protect(task()).get()._cookieTransformCallback = makeBlockPtr([
+    setCookieTransformCallback(makeBlockPtr([
         requestURL = crossThreadCopy(request.url())
         , firstPartyURL = crossThreadCopy(firstPartyURL)
         , firstPartyHostCNAME = crossThreadCopy(networkSession->firstPartyHostCNAMEDomain(firstPartyHostName))
@@ -276,7 +276,13 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
         }
 
         return cookiesSetInResponse;
-    }).get();
+    }).get());
+}
+
+void NetworkTaskCocoa::setCookieTransformCallback(NSArray *(^transform)(NSArray *))
+{
+    m_cookieTransform = transform ? makeBlockPtr(transform) : BlockPtr<NSArray *(NSArray *)> { };
+    protect(task()).get()._cookieTransformCallback = transform;
 }
 
 void NetworkTaskCocoa::setCookieTransform(const WebCore::ResourceRequest& request, IsRedirect isRedirect)

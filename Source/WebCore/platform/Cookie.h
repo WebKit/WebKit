@@ -27,6 +27,7 @@
 #pragma once
 
 #include <optional>
+#include <utility>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
@@ -128,7 +129,25 @@ namespace CookieUtil {
 
 WEBCORE_EXPORT String defaultPathForURL(const URL&);
 
-std::optional<String> cookieStringWithDayFirstExpires(StringView);
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || USE(SOUP)
+WEBCORE_EXPORT std::optional<String> cookieStringWithDayFirstExpires(StringView);
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+WEBCORE_EXPORT std::optional<String> cookieStringWithTitleCasedExpiresNames(StringView);
+WEBCORE_EXPORT std::optional<String> cookieStringWithRepairedExpires(StringView);
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+WEBCORE_EXPORT bool cookieHeaderMayNeedRepair(StringView);
+WEBCORE_EXPORT bool cookieHeaderNeedsRepair(StringView);
+WEBCORE_EXPORT Vector<StringView> splitCoalescedSetCookieHeader(StringView);
+
+WEBCORE_EXPORT std::optional<String> cookieStringWithRecoveredUTF8(StringView);
+WEBCORE_EXPORT String cookieStringWithNonASCIIReplaced(StringView);
+WEBCORE_EXPORT std::optional<std::pair<StringView, StringView>> cookieNameAndValue(StringView);
+WEBCORE_EXPORT bool cookieAttributesContainNonASCII(StringView);
+#endif
 
 } // namespace CookieUtil
 
