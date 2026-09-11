@@ -144,14 +144,24 @@ void IOValidator::visit(AST::Function& function)
 
 void IOValidator::visit(AST::VariableStatement& statement)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    AST::Visitor::visit(statement);
+    introduceVariable(statement.variable().name(), nullptr);
+#else
     introduceVariable(statement.variable().name(), nullptr);
     AST::Visitor::visit(statement);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void IOValidator::visit(AST::Parameter& parameter)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    AST::Visitor::visit(parameter);
+    introduceVariable(parameter.name(), nullptr);
+#else
     introduceVariable(parameter.name(), nullptr);
     AST::Visitor::visit(parameter);
+#endif // RC_REMOVE_SEC_ACCEL_3
 }
 
 void IOValidator::visit(AST::IdentifierExpression& identifier)

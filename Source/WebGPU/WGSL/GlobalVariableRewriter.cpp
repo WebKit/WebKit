@@ -1478,7 +1478,12 @@ auto RewriteGlobalVariables::determineUsedGlobals(const CallGraph::EntryPoint& e
         auto binding = global.resource->binding;
         auto groupResult = usedGlobals.resources.add(group, IndexMap<const Global*>());
         auto bindingResult = groupResult.iterator->value.add(binding, &global);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        if (!bindingResult.isNewEntry) [[unlikely]]
+            return makeUnexpected(Error(makeString("entry point '"_s, entryPoint.originalName, "' uses two variables with the same resource binding: @group("_s, group, ") @binding("_s, binding, ')'), function.span()));
+#else
         ASSERT_UNUSED(bindingResult, bindingResult.isNewEntry);
+#endif // RC_REMOVE_SEC_ACCEL_3
     }
 
     m_shaderModule.addOverrideValidation([span = function.span(), variables = WTF::move(workgroupVariables), maximumCombinedWorkgroupVariablesSize](auto&) -> std::optional<Error> {
