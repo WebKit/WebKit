@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/CSSLinkParameter.h>
 #include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
 #include <WebCore/LoadedFromOpaqueSource.h>
@@ -61,12 +62,17 @@ using URLReferrerPolicyParameters = Variant<
 >;
 using URLReferrerPolicyFunction = FunctionNotation<CSSValueReferrerPolicy, URLReferrerPolicyParameters>;
 
-// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier
+using URLLinkParameterList = SpaceSeparatedFixedVector<ParamFunction>;
+
+// <url-modifier> = <request-url-modifier> | <param()>
+//
 // <request-url-modifier> = <cross-origin-modifier> | <integrity-modifier> | <referrer-policy-modifier>
+// https://drafts.csswg.org/css-values-5/#typedef-request-url-modifier
 struct URLModifiers {
     std::optional<URLCrossOriginFunction> crossOrigin { };
     std::optional<URLIntegrityFunction> integrity { };
     std::optional<URLReferrerPolicyFunction> referrerPolicy { };
+    URLLinkParameterList linkParameters { };
 
     // This is not a parsed value, but is implicit from context the modifiers were parsed with.
     LoadedFromOpaqueSource loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
@@ -82,6 +88,8 @@ template<size_t I> const auto& get(const URLModifiers& value)
         return value.integrity;
     else if constexpr (I == 2)
         return value.referrerPolicy;
+    else if constexpr (I == 3)
+        return value.linkParameters;
 }
 
 // Applies `URLModifiers` to `ResourceLoaderOptions`.
@@ -90,4 +98,4 @@ void applyModifiersToLoaderOptions(const URLModifiers&, ResourceLoaderOptions&);
 } // namespace CSS
 } // namespace WebCore
 
-DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::URLModifiers, 3)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::URLModifiers, 4)

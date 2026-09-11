@@ -43,6 +43,7 @@ enum class AllowedURLModifiers : uint8_t {
     CrossOrigin     = 1 << 0,
     Integrity       = 1 << 1,
     ReferrerPolicy  = 1 << 2,
+    Param           = 1 << 3,
 };
 
 // MARK: <url>

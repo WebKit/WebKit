@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/CSSURLModifiers.h>
 #include <WebCore/StyleCustomIdent.h>
 #include <WebCore/StyleDeclarationValue.h>
 #include <WebCore/StyleValueTypes.h>
@@ -61,6 +62,11 @@ using LinkParameterList = CommaSeparatedFixedVector<ParamFunction>;
 struct LinkParameters : ListOrNone<LinkParameterList> {
     using ListOrNone<LinkParameterList>::ListOrNone;
 };
+
+// Appends the param() modifiers from a resource's url() to the parameters set by the
+// link-parameters property on the element referencing it.
+// https://drafts.csswg.org/css-link-params/#setting
+LinkParameters linkParametersForResource(const LinkParameters& fromProperty, const CSS::URLLinkParameterList& fromURL);
 
 // MARK: - Conversion
 

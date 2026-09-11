@@ -36,6 +36,22 @@
 namespace WebCore {
 namespace Style {
 
+LinkParameters linkParametersForResource(const LinkParameters& fromProperty, const CSS::URLLinkParameterList& fromURL)
+{
+    if (fromURL.isEmpty())
+        return fromProperty;
+
+    auto countFromProperty = fromProperty.size();
+
+    return LinkParameterList::createWithSizeFromGenerator(countFromProperty + fromURL.size(), [&](size_t i) -> ParamFunction {
+        if (i < countFromProperty)
+            return fromProperty[i];
+
+        auto& parameter = fromURL[i - countFromProperty];
+        return ParamFunction { LinkParameter { CustomIdent { parameter->name.value }, DeclarationValue { parameter->value.value.copyRef() } } };
+    });
+}
+
 auto CSSValueConversion<LinkParameter>::operator()(BuilderState& state, const CSSValue& value) -> LinkParameter
 {
     RefPtr parameter = requiredDowncast<CSSParamValue>(state, value);

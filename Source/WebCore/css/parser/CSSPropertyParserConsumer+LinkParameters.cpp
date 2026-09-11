@@ -41,29 +41,36 @@ namespace CSSPropertyParserHelpers {
 
 // <param()> = param( <dashed-ident> , <declaration-value>? )
 // https://drafts.csswg.org/css-link-params/#funcdef-param
-RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+std::optional<CSS::ParamFunction> consumeParamFunctionRaw(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (range.peek().functionId() != CSSValueParam)
-        return nullptr;
+        return { };
 
     auto arguments = consumeFunction(range);
 
     auto name = consumeUnresolvedDashedIdent(arguments, state);
     if (!name)
-        return nullptr;
+        return { };
 
     // The value may be empty but the comma is required.
     // https://github.com/w3c/csswg-drafts/issues/13767
     if (!consumeCommaIncludingWhitespace(arguments))
-        return nullptr;
+        return { };
 
     // A value containing substitutions cannot be resolved until computed-value time, so
     // fail here and let the declaration be stored unresolved instead. The longhand parser
     // runs before the substitution path, so succeeding would swallow the substitution.
     if (CSSSubstitutionParser::containsSubstitutionFunctions(arguments, state.context))
-        return nullptr;
+        return { };
 
-    return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { WTF::move(*name), CSS::DeclarationValue { CSSVariableData::create(arguments) } } });
+    return CSS::ParamFunction { CSS::LinkParameter { WTF::move(*name), CSS::DeclarationValue { CSSVariableData::create(arguments) } } };
+}
+
+RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    if (auto parameter = consumeParamFunctionRaw(range, state))
+        return CSSParamValue::create(WTF::move(*parameter));
+    return nullptr;
 }
 
 } // namespace CSSPropertyParserHelpers

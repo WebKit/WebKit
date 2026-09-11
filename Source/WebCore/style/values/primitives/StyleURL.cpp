@@ -147,6 +147,8 @@ TextStream& operator<<(TextStream& ts, const URL& value)
         });
         ts << ")"_s;
     }
+    for (auto& parameter : value.modifiers.linkParameters)
+        ts << " param("_s << parameter->name.value << ", "_s << parameter->value << ")"_s;
 
     ts << ")";
 

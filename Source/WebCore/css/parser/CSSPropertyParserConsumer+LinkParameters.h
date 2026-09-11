@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/CSSLinkParameter.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ namespace CSSPropertyParserHelpers {
 
 // <param()> = param( <dashed-ident> , <declaration-value>? )
 // https://drafts.csswg.org/css-link-params/#funcdef-param
+std::optional<CSS::ParamFunction> consumeParamFunctionRaw(CSSParserTokenRange&, CSS::PropertyParserState&);
 RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange&, CSS::PropertyParserState&);
 
 } // namespace CSSPropertyParserHelpers

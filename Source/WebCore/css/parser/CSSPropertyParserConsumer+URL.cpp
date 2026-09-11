@@ -30,6 +30,7 @@
 #include "CSSParserTokenRangeGuard.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+KeywordDefinitions.h"
+#include "CSSPropertyParserConsumer+LinkParameters.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+String.h"
@@ -49,11 +50,12 @@ namespace CSSPropertyParserHelpers {
 // <url()> = url( <string> <url-modifier>* ) | <url-token>
 // <src()> = src( <string> <url-modifier>* )
 
-// <url-modifier> = <cross-origin-modifier> | <integrity-modifier> | <referrer-policy-modifier>
+// <url-modifier> = <cross-origin-modifier> | <integrity-modifier> | <referrer-policy-modifier> | <param()>
 //
 // <cross-origin-modifier> = cross-origin( anonymous | use-credentials )
 // <integrity-modifier> = integrity( <string> )
 // <referrer-policy-modifier> = referrer-policy( no-referrer | no-referrer-when-downgrade | same-origin | origin | strict-origin | origin-when-cross-origin | strict-origin-when-cross-origin | unsafe-url)
+// <param()> = param( <dashed-ident> , <declaration-value>? )
 
 std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<AllowedURLModifiers> allowedURLModifiers)
 {
@@ -83,6 +85,8 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
             if (!args.atEnd())
                 return { };
         } else {
+            Vector<CSS::ParamFunction> linkParameters;
+
             while (!args.atEnd()) {
                 switch (args.peek().functionId()) {
                 case CSSValueCrossOrigin: {
@@ -135,10 +139,26 @@ std::optional<CSS::URL> consumeURLRaw(CSSParserTokenRange& range, CSS::PropertyP
                     result->modifiers.referrerPolicy = CSS::URLReferrerPolicyFunction { .parameters = { *referrerPolicyValue } };
                     break;
                 }
+                case CSSValueParam: {
+                    if (!state.context.cssLinkParametersEnabled)
+                        return { };
+                    if (!allowedURLModifiers.contains(AllowedURLModifiers::Param))
+                        return { };
+                    // Unlike the request modifiers, param() may be repeated. Duplicate names are
+                    // resolved last-wins when the parameters are applied, not here.
+                    auto parameter = consumeParamFunctionRaw(args, state);
+                    if (!parameter)
+                        return { };
+                    linkParameters.append(WTF::move(*parameter));
+                    break;
+                }
                 default:
                     return { };
                 }
             }
+
+            if (!linkParameters.isEmpty())
+                result->modifiers.linkParameters = CSS::URLLinkParameterList::Container { WTF::move(linkParameters) };
         }
 
         guard.commit();
