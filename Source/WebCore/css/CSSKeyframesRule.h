@@ -37,19 +37,40 @@ class CSSKeyframeRule;
 class CSSRuleList;
 class StyleRuleKeyframe;
 
+class StyleRuleKeyframesName {
+public:
+    // Whether the name was originally specified as an ident (@keyframes foo)
+    // or string (@keyframes "foo")
+    enum class Type { Ident, String };
+
+    static StyleRuleKeyframesName fromIdent(AtomString);
+    static StyleRuleKeyframesName fromString(AtomString);
+
+    const AtomString& name() const LIFETIME_BOUND { return m_name; }
+    Type type() const { return m_type; }
+
+    void serialize(StringBuilder&) const;
+
+private:
+    StyleRuleKeyframesName(AtomString, Type);
+
+    AtomString m_name;
+    Type m_type;
+};
+
 class StyleRuleKeyframes final : public StyleRuleBase {
 public:
-    static Ref<StyleRuleKeyframes> NODELETE create(const AtomString& name);
+    static Ref<StyleRuleKeyframes> NODELETE create(StyleRuleKeyframesName);
     ~StyleRuleKeyframes();
-    
+
     const Vector<Ref<StyleRuleKeyframe>>& NODELETE keyframes() const;
 
     void parserAppendKeyframe(RefPtr<StyleRuleKeyframe>&&);
     void wrapperAppendKeyframe(Ref<StyleRuleKeyframe>&&);
     void wrapperRemoveKeyframe(unsigned);
 
-    const AtomString& name() const LIFETIME_BOUND { return m_name; }
-    void setName(const AtomString& name) { m_name = name; }
+    const StyleRuleKeyframesName& name() const LIFETIME_BOUND { return m_name; }
+    void setName(StyleRuleKeyframesName name) { m_name = WTF::move(name); }
 
     std::optional<size_t> findKeyframeIndex(const String& key) const;
 
@@ -58,11 +79,11 @@ public:
     void shrinkToFit();
 
 private:
-    explicit StyleRuleKeyframes(const AtomString&);
+    explicit StyleRuleKeyframes(StyleRuleKeyframesName);
     StyleRuleKeyframes(const StyleRuleKeyframes&);
-    
+
     mutable Vector<Ref<StyleRuleKeyframe>> m_keyframes;
-    AtomString m_name;
+    StyleRuleKeyframesName m_name;
 };
 
 class CSSKeyframesRule final : public CSSRule {
@@ -75,8 +96,11 @@ public:
     String cssText() const final;
     void NODELETE reattach(StyleRuleBase&) final;
 
-    const AtomString& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
-    void setName(const AtomString&);
+    const StyleRuleKeyframesName& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
+    void setName(StyleRuleKeyframesName);
+
+    const AtomString& nameString() const LIFETIME_BOUND { return m_keyframesRule->name().name(); }
+    void setNameString(AtomString);
 
     CSSRuleList& cssRules();
 

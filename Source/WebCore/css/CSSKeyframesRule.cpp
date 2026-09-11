@@ -29,6 +29,8 @@
 #include "CSSKeyframeRule.h"
 #include "CSSMarkup.h"
 #include "CSSParser.h"
+#include "CSSParserIdioms.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Animations.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
@@ -37,9 +39,37 @@
 
 namespace WebCore {
 
-StyleRuleKeyframes::StyleRuleKeyframes(const AtomString& name)
+StyleRuleKeyframesName StyleRuleKeyframesName::fromIdent(AtomString name)
+{
+    return StyleRuleKeyframesName(WTF::move(name), Type::Ident);
+}
+
+StyleRuleKeyframesName StyleRuleKeyframesName::fromString(AtomString name)
+{
+    return StyleRuleKeyframesName(WTF::move(name), Type::String);
+}
+
+StyleRuleKeyframesName::StyleRuleKeyframesName(AtomString name, Type type)
+    : m_name(WTF::move(name))
+    , m_type(type)
+{
+}
+
+void StyleRuleKeyframesName::serialize(StringBuilder& builder) const
+{
+    switch (type()) {
+    case StyleRuleKeyframesName::Type::Ident:
+        serializeIdentifier(builder, name());
+        break;
+    case WebCore::StyleRuleKeyframesName::Type::String:
+        serializeString(builder, name());
+        break;
+    }
+}
+
+StyleRuleKeyframes::StyleRuleKeyframes(StyleRuleKeyframesName name)
     : StyleRuleBase(StyleRuleType::Keyframes)
-    , m_name(name)
+    , m_name(WTF::move(name))
 {
 }
 
@@ -50,9 +80,9 @@ StyleRuleKeyframes::StyleRuleKeyframes(const StyleRuleKeyframes& o)
 {
 }
 
-Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(const AtomString& name)
+Ref<StyleRuleKeyframes> StyleRuleKeyframes::create(StyleRuleKeyframesName name)
 {
-    return adoptRef(*new StyleRuleKeyframes(name));
+    return adoptRef(*new StyleRuleKeyframes(WTF::move(name)));
 }
 
 StyleRuleKeyframes::~StyleRuleKeyframes() = default;
@@ -118,11 +148,11 @@ CSSKeyframesRule::~CSSKeyframesRule()
     }
 }
 
-void CSSKeyframesRule::setName(const AtomString& name)
+void CSSKeyframesRule::setName(StyleRuleKeyframesName name)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    protect(m_keyframesRule)->setName(name);
+    protect(m_keyframesRule)->setName(WTF::move(name));
 }
 
 void CSSKeyframesRule::appendRule(const String& ruleText)
@@ -168,7 +198,7 @@ String CSSKeyframesRule::cssText() const
     StringBuilder result;
 
     result.append("@keyframes "_s);
-    serializeIdentifier(result, name());
+    name().serialize(result);
     result.append(" { \n"_s);
 
     for (unsigned i = 0, size = length(); i < size; ++i)
@@ -191,6 +221,20 @@ CSSKeyframeRule* CSSKeyframesRule::item(unsigned index) const
     if (!rule)
         rule = adoptRef(*new CSSKeyframeRule(m_keyframesRule->keyframes()[index], const_cast<CSSKeyframesRule*>(this)));
     return rule.get(); 
+}
+
+void CSSKeyframesRule::setNameString(AtomString name)
+{
+    auto valueID = cssValueKeywordID(name);
+
+    // Try to interpret the string as an identifier first. Keyframes name must
+    // be a valid customer identifier and can't be 'none'.
+    if (isValidCustomIdentifier(valueID) && valueID != CSSValueNone)
+        setName(StyleRuleKeyframesName::fromIdent(WTF::move(name)));
+    else
+        // FIXME: probably should throw if the name is empty. Discussion ongoing at
+        // https://github.com/w3c/csswg-drafts/issues/14475
+        setName(StyleRuleKeyframesName::fromString(WTF::move(name)));
 }
 
 CSSRuleList& CSSKeyframesRule::cssRules()

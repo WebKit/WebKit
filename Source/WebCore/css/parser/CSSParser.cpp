@@ -1012,19 +1012,30 @@ RefPtr<StyleRuleKeyframes> CSSParser::consumeKeyframesRule(CSSParserTokenRange p
     if (!prelude.atEnd())
         return nullptr; // Parse error; expected single non-whitespace token in @keyframes header
 
-    if (nameToken.type() == IdentToken) {
-        // According to the CSS Values specification, identifier-based keyframe names
-        // are not allowed to be CSS wide keywords or "default". And CSS Animations
-        // additionally excludes the "none" keyword.
-        if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueNone)
-            return nullptr;
-    } else if (nameToken.type() != StringToken)
-        return nullptr; // Parse error; expected ident token or string in @keyframes header
+    auto name = [&] () -> std::optional<StyleRuleKeyframesName> {
+        switch (nameToken.type()) {
+        case IdentToken:
+            // According to the CSS Values specification, identifier-based keyframe names
+            // are not allowed to be CSS wide keywords or "default". And CSS Animations
+            // additionally excludes the "none" keyword.
+            if (!isValidCustomIdentifier(nameToken.id()) || nameToken.id() == CSSValueNone)
+                return { };
 
-    auto name = nameToken.value().toAtomString();
+            return StyleRuleKeyframesName::fromIdent(nameToken.value().toAtomString());
 
-    if (name.isEmpty())
-        return nullptr; // Parse error: empty string consider invalid.
+        case StringToken:
+            if (nameToken.value().isEmpty()) // Parse error, empty string consider invalid.
+                return { };
+
+            return StyleRuleKeyframesName::fromString(nameToken.value().toAtomString());
+
+        default:
+            return { };
+        }
+    } ();
+
+    if (!name)
+        return nullptr;
 
     if (RefPtr observerWrapper = m_observerWrapper.get()) {
         observerWrapper->observer().startRuleHeader(StyleRuleType::Keyframes, observerWrapper->startOffset(rangeCopy));
@@ -1033,7 +1044,7 @@ RefPtr<StyleRuleKeyframes> CSSParser::consumeKeyframesRule(CSSParserTokenRange p
         observerWrapper->observer().endRuleBody(observerWrapper->endOffset(block));
     }
 
-    auto keyframeRule = StyleRuleKeyframes::create(name);
+    auto keyframeRule = StyleRuleKeyframes::create(WTF::move(*name));
     consumeRuleList(block, RuleList::Keyframes, [keyframeRule](Ref<StyleRuleBase> keyframe) {
         keyframeRule->parserAppendKeyframe(downcast<const StyleRuleKeyframe>(keyframe.ptr()));
     });

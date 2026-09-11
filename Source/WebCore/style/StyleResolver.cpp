@@ -239,15 +239,15 @@ KeyframesRuleMap& Resolver::userAgentKeyframes()
 void Resolver::addUserAgentKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
     const auto& animationName = rule->name();
-    userAgentKeyframes().set(animationName, WTF::move(rule));
+    userAgentKeyframes().set(animationName.name(), WTF::move(rule));
 }
 
 // This is a simplified style setting function for keyframe styles
 void Resolver::addKeyframeStyle(Ref<StyleRuleKeyframes>&& rule)
 {
     const auto& animationName = rule->name();
-    m_keyframesRuleMap.set(animationName, WTF::move(rule));
-    protect(document())->keyframesRuleDidChange(animationName);
+    m_keyframesRuleMap.set(animationName.name(), WTF::move(rule));
+    protect(document())->keyframesRuleDidChange(animationName.name());
 }
 
 auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionContext& context, std::unique_ptr<Style::ComputedStyle>&& initialStyle) -> State

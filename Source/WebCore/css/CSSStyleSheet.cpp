@@ -645,7 +645,7 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
     , m_insertedKeyframesRule(nullptr)
     , m_modifiedKeyframesRuleName([rule] {
         auto* cssKeyframeRule = dynamicDowncast<CSSKeyframesRule>(rule);
-        return cssKeyframeRule ? cssKeyframeRule->name() : emptyAtom();
+        return cssKeyframeRule ? cssKeyframeRule->name().name() : emptyAtom();
     }())
 {
     if (RefPtr styleSheet = m_styleSheet.get())
