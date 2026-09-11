@@ -32,8 +32,11 @@
 
 namespace JSC { namespace DFG {
 
-void OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
+void OSRExitBase::considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock, ExitingJITType jitType)
 {
+    if (!exitKindMayJettison(m_kind))
+        return;
+
     CodeBlock* sourceProfiledCodeBlock =
         baselineCodeBlockForOriginAndBaselineCodeBlock(
             m_codeOriginForExitProfile, profiledCodeBlock);

@@ -492,7 +492,7 @@ JSC_DECLARE_JIT_OPERATION(operationUInt64ToBigInt, EncodedJSValue, (JSGlobalObje
 
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));
 
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, InlineCallFrame* exitInlineCallFrame));
 
 #if ENABLE(FTL_JIT)
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationTriggerTierUpNow, void, (VM*));

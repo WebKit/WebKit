@@ -29,16 +29,15 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "DFGThunks.h"
 #include "FTLForOSREntryJITCode.h"
 #include "JumpTable.h"
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode& jitCode, ExitVector&& exits)
+JITData::JITData(unsigned propertyCacheSize, unsigned poolSize, const JITCode& jitCode, ExitJumpTable&& exitJumpTable)
     : Base(propertyCacheSize, poolSize)
     , m_callLinkInfos(jitCode.m_unlinkedCallLinkInfos.size())
-    , m_exits(WTF::move(exits))
+    , m_exitJumpTable(WTF::move(exitJumpTable))
 {
     unsigned numberOfWatchpoints = 0;
     for (unsigned i = 0; i < jitCode.m_linkerIR.size(); ++i) {
@@ -295,8 +294,9 @@ void JITCode::reconstruct(CallFrame* callFrame, CodeBlock* codeBlock, CodeOrigin
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
 {
-    for (OSRExit& exit : m_osrExit) {
-        if (exit.isExceptionHandler() && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
+    for (const OSRExitStream::ExceptionHandlerExit& handler : m_osrExits.exceptionHandlerExits()) {
+        if (handler.callSiteIndex.bits() == callSiteIndex.bits()) {
+            OSRExit exit = m_osrExits.at(handler.exitIndex);
             Operands<ValueRecovery> valueRecoveries;
             reconstruct(codeBlock, exit.m_codeOrigin, exit.m_streamIndex, valueRecoveries);
             RegisterSet liveAtOSRExit;
@@ -432,18 +432,10 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 
 std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
 {
-    const auto* jitData = codeBlock->dfgJITData();
-    auto osrExitThunk = codeBlock->vm().getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
-    for (unsigned exitIndex = 0; exitIndex < m_osrExit.size(); ++exitIndex) {
-        const auto& codeRef = jitData->exitCode(exitIndex);
-        if (ExecutableMemoryHandle* handle = codeRef.executableMemory()) {
-            if (handle != osrExitThunk.executableMemory()) {
-                if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr()) {
-                    OSRExit& exit = m_osrExit[exitIndex];
-                    return std::optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
-                }
-            }
-        }
+    for (const OSRExitStub& stub : codeBlock->dfgJITData()->exitStubs()) {
+        RefPtr<ExecutableMemoryHandle> handle = stub.code.executableMemory();
+        if (handle && handle->contains(pc))
+            return std::optional<CodeOrigin>(m_osrExits.at(stub.exitIndex).m_codeOriginForExitProfile);
     }
 
     return std::nullopt;

@@ -42,7 +42,11 @@
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 #include "VMInlines.h"
+#include <wtf/LEBDecoder.h>
+#include <wtf/LEBEncoder.h>
+#include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UnalignedAccess.h>
 
 #include <wtf/Scope.h>
 
@@ -65,6 +69,184 @@ OSRExit::OSRExit(ExitKind kind, JSValueSource jsValueSource, MethodOfGettingAVal
         canExit = exitMode == ExitMode::Exits || exitMode == ExitMode::ExitsForExceptions;
     }
     DFG_ASSERT(jit->m_graph, jit->m_currentNode, canExit);
+}
+
+static constexpr unsigned codeOriginTagShift = 0;
+static constexpr unsigned profileOriginTagShift = 2;
+static constexpr unsigned wasHoistedBit = 1 << 4;
+static constexpr unsigned hasJSValueSourceBit = 1 << 5;
+static constexpr unsigned jsValueSourceIsAddressBit = 1 << 6;
+static constexpr unsigned hasValueProfileBit = 1 << 7;
+static constexpr unsigned valueProfileOriginTagShift = 8;
+static constexpr unsigned hasRecoveryIndexBit = 1 << 10;
+static constexpr unsigned codeOriginTagMask = 3;
+
+enum class CodeOriginTag : unsigned {
+    SameAsPrevious,
+    SameInlineCallFrame,
+    NewInlineCallFrame,
+};
+
+static CodeOriginTag codeOriginTag(const CodeOrigin& codeOrigin, const CodeOrigin& previous)
+{
+    if (codeOrigin == previous)
+        return CodeOriginTag::SameAsPrevious;
+    if (codeOrigin.inlineCallFrame() == previous.inlineCallFrame())
+        return CodeOriginTag::SameInlineCallFrame;
+    return CodeOriginTag::NewInlineCallFrame;
+}
+
+static CodeOriginTag codeOriginTagFromFlags(unsigned flags, unsigned shift)
+{
+    return static_cast<CodeOriginTag>((flags >> shift) & codeOriginTagMask);
+}
+
+static void encodeCodeOrigin(Vector<uint8_t>& bytes, CodeOriginTag tag, const CodeOrigin& codeOrigin, const CodeOrigin& previous)
+{
+    switch (tag) {
+    case CodeOriginTag::SameAsPrevious:
+        return;
+    case CodeOriginTag::NewInlineCallFrame: {
+        InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame();
+        bytes.append(asByteSpan(inlineCallFrame));
+        [[fallthrough]];
+    }
+    case CodeOriginTag::SameInlineCallFrame:
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(codeOrigin.bytecodeIndex().asBits() - previous.bytecodeIndex().asBits()));
+        return;
+    }
+}
+
+static CodeOrigin decodeCodeOrigin(std::span<const uint8_t> bytes, size_t& offset, CodeOriginTag tag, const CodeOrigin& previous)
+{
+    InlineCallFrame* inlineCallFrame = previous.inlineCallFrame();
+    switch (tag) {
+    case CodeOriginTag::SameAsPrevious:
+        return previous;
+    case CodeOriginTag::NewInlineCallFrame:
+        inlineCallFrame = WTF::unalignedLoad<InlineCallFrame*>(bytes.subspan(offset, sizeof(InlineCallFrame*)).data());
+        offset += sizeof(InlineCallFrame*);
+        [[fallthrough]];
+    case CodeOriginTag::SameInlineCallFrame:
+        return CodeOrigin(BytecodeIndex::fromBits(previous.bytecodeIndex().asBits() + WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)), inlineCallFrame);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits, CodeLocationLabel<JSInternalPtrTag> codeStart)
+    : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))
+    , m_codeStart(codeStart)
+    , m_size(exits.size())
+{
+    Vector<uint8_t> bytes;
+    Vector<ExceptionHandlerExit> exceptionHandlerExits;
+    PreviousExit previous;
+    for (unsigned index = 0; index < exits.size(); ++index) {
+        if (!(index % exitsPerChunk)) {
+            m_chunkOffsets[index / exitsPerChunk] = bytes.size();
+            previous = { };
+        }
+
+        const OSRExit& exit = exits[index];
+        CodeOriginTag originTag = codeOriginTag(exit.m_codeOrigin, previous.codeOrigin);
+        CodeOriginTag profileOriginTag = codeOriginTag(exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        CodeOriginTag valueProfileOriginTag = CodeOriginTag::SameAsPrevious;
+        unsigned flags = (static_cast<unsigned>(originTag) << codeOriginTagShift) | (static_cast<unsigned>(profileOriginTag) << profileOriginTagShift);
+        if (exit.m_wasHoisted)
+            flags |= wasHoistedBit;
+        if (!!exit.m_jsValueSource) {
+            flags |= hasJSValueSourceBit;
+            if (exit.m_jsValueSource.isAddress())
+                flags |= jsValueSourceIsAddressBit;
+        }
+        if (!!exit.m_valueProfile) {
+            valueProfileOriginTag = codeOriginTag(exit.m_valueProfile.m_codeOrigin, exit.m_codeOriginForExitProfile);
+            flags |= hasValueProfileBit | (static_cast<unsigned>(valueProfileOriginTag) << valueProfileOriginTagShift);
+        }
+        if (exit.m_recoveryIndex != UINT_MAX)
+            flags |= hasRecoveryIndexBit;
+
+        bytes.append(static_cast<uint8_t>(exit.m_kind));
+        WTF::LEBEncoder::encodeUInt32(bytes, flags);
+        encodeCodeOrigin(bytes, originTag, exit.m_codeOrigin, previous.codeOrigin);
+        previous.codeOrigin = exit.m_codeOrigin;
+        encodeCodeOrigin(bytes, profileOriginTag, exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_streamIndex - previous.streamIndex));
+        previous.streamIndex = exit.m_streamIndex;
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_dfgNodeIndex - previous.dfgNodeIndex));
+        previous.dfgNodeIndex = exit.m_dfgNodeIndex;
+        if (codeStart) {
+            unsigned patchableJumpOffset = exit.m_patchableJumpLocation.dataLocation<char*>() - codeStart.dataLocation<char*>();
+            WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(patchableJumpOffset - previous.patchableJumpOffset));
+            previous.patchableJumpOffset = patchableJumpOffset;
+        }
+        if (flags & hasJSValueSourceBit) {
+            if (flags & jsValueSourceIsAddressBit) {
+                bytes.append(static_cast<uint8_t>(exit.m_jsValueSource.base()));
+                WTF::LEBEncoder::encodeInt32(bytes, exit.m_jsValueSource.offset());
+            } else
+                bytes.append(static_cast<uint8_t>(exit.m_jsValueSource.gpr()));
+        }
+        if (flags & hasValueProfileBit) {
+            bytes.append(static_cast<uint8_t>(exit.m_valueProfile.m_kind));
+            encodeCodeOrigin(bytes, valueProfileOriginTag, exit.m_valueProfile.m_codeOrigin, exit.m_codeOriginForExitProfile);
+            WTF::LEBEncoder::encodeUInt64(bytes, exit.m_valueProfile.m_rawOperand);
+        }
+        if (flags & hasRecoveryIndexBit)
+            WTF::LEBEncoder::encodeUInt32(bytes, exit.m_recoveryIndex);
+        if (exit.isExceptionHandler())
+            exceptionHandlerExits.append({ exit.m_exceptionHandlerCallSiteIndex, index });
+        if (exit.m_kind == WillThrowOutOfMemoryError)
+            WTF::LEBEncoder::encodeUInt32(bytes, exit.m_exitCallSiteIndex.bits());
+    }
+    m_bytes = WTF::move(bytes);
+    m_exceptionHandlerExits = WTF::move(exceptionHandlerExits);
+}
+
+OSRExit OSRExitStream::decode(size_t& offset, PreviousExit& previous) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    ExitKind kind = static_cast<ExitKind>(bytes[offset++]);
+    unsigned flags = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset);
+    previous.codeOrigin = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, codeOriginTagShift), previous.codeOrigin);
+    CodeOrigin codeOriginForExitProfile = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, profileOriginTagShift), previous.codeOrigin);
+    previous.streamIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.dfgNodeIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+
+    OSRExit exit(kind, previous.codeOrigin, codeOriginForExitProfile, !!(flags & wasHoistedBit), previous.dfgNodeIndex);
+    exit.m_streamIndex = previous.streamIndex;
+    if (m_codeStart) {
+        previous.patchableJumpOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+        CodeLocationLabel<JSInternalPtrTag> codeStart = m_codeStart;
+        exit.m_patchableJumpLocation = codeStart.labelAtOffset(previous.patchableJumpOffset);
+    }
+    if (flags & hasJSValueSourceBit) {
+        GPRReg gpr = static_cast<GPRReg>(bytes[offset++]);
+        if (flags & jsValueSourceIsAddressBit)
+            exit.m_jsValueSource = JSValueSource(MacroAssembler::Address(gpr, WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset)));
+        else
+            exit.m_jsValueSource = JSValueSource(gpr);
+    }
+    if (flags & hasValueProfileBit) {
+        exit.m_valueProfile.m_kind = static_cast<MethodOfGettingAValueProfile::Kind>(bytes[offset++]);
+        exit.m_valueProfile.m_codeOrigin = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, valueProfileOriginTagShift), codeOriginForExitProfile);
+        exit.m_valueProfile.m_rawOperand = WTF::LEBDecoder::decodeUInt64OrCrash(bytes, offset);
+    }
+    if (flags & hasRecoveryIndexBit)
+        exit.m_recoveryIndex = WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset);
+    if (kind == WillThrowOutOfMemoryError)
+        exit.m_exitCallSiteIndex = CallSiteIndex(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+    return exit;
+}
+
+OSRExit OSRExitStream::at(unsigned index) const
+{
+    RELEASE_ASSERT(index < m_size);
+    size_t offset = m_chunkOffsets[index / exitsPerChunk];
+    PreviousExit previous;
+    for (unsigned i = index % exitsPerChunk; i--;)
+        decode(offset, previous);
+    return decode(offset, previous);
 }
 
 void OSRExit::emitRestoreArguments(CCallHelpers& jit, VM& vm, const Operands<ValueRecovery>& operands)
@@ -165,18 +347,19 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
     DeferGCForAWhile deferGC(vm);
 
     uint32_t exitIndex = vm.osrExitIndex;
-    OSRExit& exit = codeBlock->jitCode()->dfg()->m_osrExit[exitIndex];
+    JITCode* jitCode = codeBlock->jitCode()->dfg();
+    OSRExit exit = jitCode->m_osrExits.at(exitIndex);
 
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
     EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isOSRExitDueToException());
     
     // Compute the value recoveries.
     Operands<ValueRecovery> operands;
-    codeBlock->jitCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->jitCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);
+    jitCode->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, jitCode->minifiedDFG, exit.m_streamIndex, operands);
 
     SpeculationRecovery* recovery = nullptr;
     if (exit.m_recoveryIndex != UINT_MAX)
-        recovery = &codeBlock->jitCode()->dfg()->m_speculationRecovery[exit.m_recoveryIndex];
+        recovery = &jitCode->m_speculationRecovery[exit.m_recoveryIndex];
 
     MacroAssemblerCodeRef<OSRExitPtrTag> exitCode;
     {
@@ -214,10 +397,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
                 exitIndex, exit.m_dfgNodeIndex, toCString(exit.m_codeOrigin).data(),
                 toCString(exit.m_kind).data(), toCString(*codeBlock).data(),
                 toCString(ignoringContext<DumpContext>(operands)).data());
-        codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
+        codeBlock->dfgJITData()->appendExitStub(exitIndex, exitCode);
     }
 
-    if (exit.codeLocationForRepatch())
+    if (jitCode->isUnlinked())
+        codeBlock->dfgJITData()->setExitJumpTableEntry(exitIndex, exitCode.code());
+    else
         MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
 
     vm.osrExitJumpDestination = exitCode.code().taggedPtr();
@@ -225,14 +410,14 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, const OSRExitBase* exitPointer, EncodedJSValue* tmpScratch))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (VM* vmPointer, InlineCallFrame* exitInlineCallFrame, uint32_t exitBytecodeIndexBits, EncodedJSValue* tmpScratch))
 {
-    const OSRExitBase& exit = *exitPointer;
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    CodeOrigin exitCodeOrigin(BytecodeIndex::fromBits(exitBytecodeIndexBits), exitInlineCallFrame);
 
     Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
-    sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
+    sideStates.reserveInitialCapacity(exitCodeOrigin.inlineDepth());
     auto sideStateCommitter = makeScopeExit([&] {
         for (size_t i = sideStates.size(); i--;)
             vm.pushCheckpointOSRSideState(WTF::move(sideStates[i]));
@@ -249,7 +434,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (V
     };
 
     const CodeOrigin* codeOrigin;
-    for (codeOrigin = &exit.m_codeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
+    for (codeOrigin = &exitCodeOrigin; codeOrigin && codeOrigin->inlineCallFrame(); codeOrigin = codeOrigin->inlineCallFrame()->getCallerSkippingTailCalls()) {
         BytecodeIndex callBytecodeIndex = codeOrigin->bytecodeIndex();
         if (!callBytecodeIndex.checkpoint())
             continue;
@@ -618,7 +803,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
     if (inlineStackContainsActiveCheckpoint) {
         EncodedJSValue* tmpScratch = scratch + operands.tmpIndex(0);
-        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(CCallHelpers::TrustedImmPtr(&vm), CCallHelpers::TrustedImmPtr(&exit), CCallHelpers::TrustedImmPtr(tmpScratch));
+        jit.setupArguments<decltype(operationMaterializeOSRExitSideState)>(CCallHelpers::TrustedImmPtr(&vm), CCallHelpers::TrustedImmPtr(exit.m_codeOrigin.inlineCallFrame()), CCallHelpers::TrustedImm32(exit.m_codeOrigin.bytecodeIndex().asBits()), CCallHelpers::TrustedImmPtr(tmpScratch));
         jit.prepareCallOperation(vm);
         jit.move(AssemblyHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeOSRExitSideState)), GPRInfo::nonArgGPR0);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);

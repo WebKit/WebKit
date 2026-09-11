@@ -47,6 +47,10 @@ class CCallHelpers;
 class CodeBlock;
 struct ValueProfile;
 
+namespace DFG {
+class OSRExitStream;
+}
+
 class MethodOfGettingAValueProfile {
 public:
     MethodOfGettingAValueProfile()
@@ -102,6 +106,8 @@ public:
     void emitReportValue(CCallHelpers&, CodeBlock* optimizedCodeBlock, GPRReg, GPRReg tempGPR, TagRegistersMode = HaveTagRegisters) const;
 
 private:
+    friend class DFG::OSRExitStream;
+
     enum class Kind : uint8_t {
         None,
         UnaryArithProfile,
