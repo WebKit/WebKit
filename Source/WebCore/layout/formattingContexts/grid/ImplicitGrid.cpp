@@ -32,7 +32,6 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "UnplacedGridItem.h"
 #include <wtf/Assertions.h>
-#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -107,25 +106,8 @@ void ImplicitGrid::insertUnplacedGridItem(const UnplacedGridItem& unplacedGridIt
     auto [columnStart, columnEnd] = unplacedGridItem.definiteColumnStartEnd();
     auto [rowStart, rowEnd] = unplacedGridItem.definiteRowStartEnd();
 
-    // Multi-cell items (spanning multiple columns) are not yet supported.
-    if (columnEnd - columnStart > 1) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return;
-    }
-
-    // Multi-cell items (spanning multiple rows) are not yet supported.
-    if (rowEnd - rowStart > 1) {
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return;
-    }
-
-    auto columnsRange = WTF::Range(columnStart, columnEnd);
-    auto rowsRange = WTF::Range(rowStart, rowEnd);
-    for (auto rowIndex = rowsRange.begin(); rowIndex < rowsRange.end(); ++rowIndex) {
-        for (auto columnIndex = columnsRange.begin(); columnIndex < columnsRange.end(); ++columnIndex)
-            m_gridMatrix[rowIndex][columnIndex].append(unplacedGridItem);
-    }
-
+    // The initial grid bounds already cover every definitely placed item, spans included.
+    insertItemInArea(unplacedGridItem, columnStart, columnEnd, rowStart, rowEnd);
 }
 
 GridAreas ImplicitGrid::gridAreas() const
@@ -138,9 +120,14 @@ GridAreas ImplicitGrid::gridAreas() const
 
             const auto& gridCell = m_gridMatrix[rowIndex][columnIndex];
             for (const auto& unplacedGridItem : gridCell) {
-                gridAreas.ensure(unplacedGridItem, [&]() {
+                // A grid area is always rectangular, so this row-major sweep reaches an item's
+                // start lines first and every later cell it occupies extends its end lines.
+                auto addResult = gridAreas.ensure(unplacedGridItem, [&]() {
                     return GridAreaLines { columnIndex, columnIndex + 1, rowIndex, rowIndex + 1 };
                 });
+                auto& gridAreaLines = addResult.iterator->value;
+                gridAreaLines.columnEndLine = std::max(gridAreaLines.columnEndLine, columnIndex + 1);
+                gridAreaLines.rowEndLine = std::max(gridAreaLines.rowEndLine, rowIndex + 1);
             }
         }
     }
@@ -153,19 +140,14 @@ void ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplacedGridIte
     // Process items locked to a given row (definite row position, auto column position)
     // See: https://www.w3.org/TR/css-grid-1/#auto-placement-algo
 
-    auto columnSpan = unplacedGridItem.columnSpanSize();
-    // FIXME: Support multi-column spans
-    ASSERT(columnSpan == 1);
-
     ASSERT(unplacedGridItem.hasDefiniteRowPosition() && !unplacedGridItem.hasDefiniteColumnPosition());
     auto [rowStart, rowEnd] = unplacedGridItem.definiteRowStartEnd();
-    // FIXME: Support multi-row spans
-    ASSERT(rowEnd - rowStart == 1);
 
+    auto columnSpan = unplacedGridItem.columnSpanSize();
     std::optional<size_t> columnPosition = findColumnPositionForDefiniteRowItem(rowStart, rowEnd, columnSpan, autoFlowOptions);
 
     if (!columnPosition) {
-        growGridColumnsToFit(columnSpan, rowStart, rowEnd);
+        growColumnsForDefiniteRowItem(columnSpan, rowStart, rowEnd);
 
         // Retry finding position in the grown grid
         columnPosition = findColumnPositionForDefiniteRowItem(rowStart, rowEnd, columnSpan, autoFlowOptions);
@@ -221,9 +203,6 @@ void ImplicitGrid::insertAutoPositionedItems(const Vector<UnplacedGridItem>& aut
 
     // Process each auto-positioned item with the appropriate search strategy
     for (const auto& item : autoPositionedItems) {
-        // Multi-span items should be blocked by coverage check in LayoutIntegrationGridCoverage.cpp
-        ASSERT(item.rowSpanSize() == 1 && item.columnSpanSize() == 1);
-
         if (item.hasDefiniteColumnPosition())
             placeAutoPositionedItemWithDefiniteColumn(item, autoFlowOptions);
         else
@@ -262,24 +241,27 @@ std::optional<size_t> ImplicitGrid::findColumnPositionForDefiniteRowItem(size_t 
     return findFirstAvailableColumnPosition(rowStart, rowEnd, columnSpan, startSearchColumn);
 }
 
-void ImplicitGrid::growGridColumnsToFit(size_t columnSpan, size_t rowStart, size_t rowEnd)
+void ImplicitGrid::growColumnsForDefiniteRowItem(size_t columnSpan, size_t rowStart, size_t rowEnd)
 {
-    auto currentColumnsCount = columnsCount();
-
-    // Find the last occupied column in the spanned rows
-    size_t lastOccupiedColumn = 0;
+    // Only reached when the item does not fit in any of the existing columns, so it has to go
+    // past everything already in the rows it spans. An earlier gap is no use: the item needs the
+    // same columns free in every spanned row, and the caller already searched for such a run.
+    // The column is optional so that rows which are still empty stay distinguishable from rows
+    // whose very first column is occupied.
+    std::optional<size_t> lastOccupiedColumn;
     for (size_t row = rowStart; row < rowEnd; ++row) {
-        for (size_t column = currentColumnsCount; column > 0; --column) {
+        for (size_t column = columnsCount(); column > 0; --column) {
             if (!m_gridMatrix[row][column - 1].isEmpty()) {
-                lastOccupiedColumn = std::max(lastOccupiedColumn, column - 1);
+                lastOccupiedColumn = std::max(lastOccupiedColumn.value_or(0), column - 1);
                 break;
             }
         }
     }
 
-    size_t minimumColumnsNeeded = lastOccupiedColumn + 1 + columnSpan;
-    for (auto& row : m_gridMatrix)
-        row.resize(minimumColumnsNeeded);
+    // The item starts right after the last occupied cell, or at the very first column when none
+    // of the spanned rows hold anything yet.
+    auto columnStart = lastOccupiedColumn ? *lastOccupiedColumn + 1 : 0;
+    growColumnsToFit(columnStart + columnSpan);
 }
 
 bool ImplicitGrid::isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd) const
@@ -295,6 +277,9 @@ bool ImplicitGrid::isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t
 
 void ImplicitGrid::insertItemInArea(const UnplacedGridItem& unplacedGridItem, size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd)
 {
+    // Every caller is responsible for growing the implicit grid to cover the area first.
+    ASSERT(columnEnd <= columnsCount() && rowEnd <= rowsCount());
+
     for (size_t row = rowStart; row < rowEnd; ++row) {
         for (size_t column = columnStart; column < columnEnd; ++column)
             m_gridMatrix[row][column].append(unplacedGridItem);
@@ -325,6 +310,10 @@ void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridI
     // Search vertically down the specified column.
     auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
     auto rowSpan = item.rowSpanSize();
+
+    // Step 3 grew the implicit grid to cover the column-end line of every item in this step that
+    // has a definite column position, so the cells this searches are always in bounds.
+    ASSERT(columnEnd <= columnsCount());
 
     if (autoFlowOptions.strategy == PackingStrategy::Dense) {
         // Set the row position of the cursor to the start-most row line in the implicit grid.
@@ -364,6 +353,11 @@ void ImplicitGrid::placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGri
 
     auto rowSpan = item.rowSpanSize();
     auto columnSpan = item.columnSpanSize();
+
+    // Step 3 widened the implicit grid to the largest column span among the items in this step
+    // without a definite column position, so a row always has room for this item and the search
+    // below terminates.
+    ASSERT(columnSpan <= columnsCount());
 
     // Position items with automatic grid position in both axes.
     // Search left-to-right, top-to-bottom.
