@@ -652,6 +652,12 @@ Failed 1/40 test programs. 10/630 subtests failed.''')
         self.expect_outcome(result=FAILURE, state_string='Failed webkitperl tests')
         return self.run_step()
 
+    def test_flunks_build_on_failure(self):
+        # A webkitperl-tests failure must flunk the whole build so the PR
+        # goes red. Prior refactors silently flipped these off; keep them pinned.
+        self.assertTrue(RunWebKitPerlTests.flunkOnFailure)
+        self.assertTrue(RunWebKitPerlTests.haltOnFailure)
+
 
 class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

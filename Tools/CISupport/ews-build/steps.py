@@ -2961,8 +2961,8 @@ class RunWebKitPerlTests(shell.ShellCommand):
     name = 'webkitperl-tests'
     description = ['webkitperl-tests running']
     descriptionDone = ['webkitperl-tests']
-    flunkOnFailure = False
-    haltOnFailure = False
+    flunkOnFailure = True
+    haltOnFailure = True
     command = ['perl', 'Tools/Scripts/test-webkitperl']
 
     def __init__(self, **kwargs):
@@ -2974,21 +2974,6 @@ class RunWebKitPerlTests(shell.ShellCommand):
             self.build.buildFinished([message], SUCCESS)
             return {'step': message}
         return {'step': 'Failed webkitperl tests'}
-
-    def evaluateCommand(self, cmd):
-        rc = super().evaluateCommand(self, cmd)
-        if rc == FAILURE:
-            self.build.addStepsAfterCurrentStep([KillOldProcesses(), ReRunWebKitPerlTests()])
-        return rc
-
-
-class ReRunWebKitPerlTests(RunWebKitPerlTests):
-    name = 're-run-webkitperl-tests'
-    flunkOnFailure = True
-    haltOnFailure = True
-
-    def evaluateCommand(self, cmd):
-        return shell.ShellCommand.evaluateCommand(self, cmd)
 
 
 class RunBuildWebKitOrgUnitTests(shell.ShellCommand):

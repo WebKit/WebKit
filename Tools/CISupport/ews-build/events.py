@@ -67,7 +67,7 @@ class Events(service.BuildbotService):
         'ews-unit-tests', 'resultsdbpy-unit-tests',
         'upload-built-product', 'upload-test-results',
         'bindings-tests', 'check-webkit-style',
-        'webkitperl-tests', 're-run-webkitperl-tests', 'webkitpy-tests'
+        'webkitperl-tests', 'webkitpy-tests'
     ]
     QUEUES_TO_SKIP_REPORTING = load_password('QUEUES_TO_SKIP_REPORTING', default=['__Janitor', 'Safe-Merge-Queue'])
 
