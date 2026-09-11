@@ -221,6 +221,10 @@ function(GI_DOCGEN namespace toml)
         --add-include-path "${CMAKE_BINARY_DIR}"
     )
 
+    if (CMAKE_COMPILE_WARNING_AS_ERROR)
+        list(APPEND common_flags --fatal-warnings)
+    endif ()
+
     set(content_dir_flags
         --content-dir "${contentdir}"
         --content-dir "${toml_dir}"
