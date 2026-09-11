@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+async function runTest()
+{
+    switch (document.location.hash) {
+        case "":
+            document.location.href = "http://localhost:8000/resources/redirect.py"
+                + "?cookie=" + encodeURIComponent("none=1; SameSite=None; Path=/")
+                + "&url=" + encodeURIComponent(
+                    "http://127.0.0.1:8000/websocket/tests/hybi/websocket-samesite-none-sent-cross-site.html#runTest"
+                );
+            break;
+
+        case "#runTest":
+            var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo-cookie");
+            debug("Created a socket to '" + ws.url + "'; readyState " + ws.readyState + ".");
+
+            ws.onopen = (e) => {
+                debug(`Connection opened`);
+            };
+
+            ws.onmessage = function(event) {
+                var cookieHeader = event.data;
+                if (cookieHeader.indexOf("none") === -1)
+                    testFailed("SameSite=None cookie was not sent on cross-site WebSocket upgrade request.");
+                else
+                    testPassed("SameSite=None cookie was sent. Cookie header: " + cookieHeader);
+                ws.close();
+                finishJSTest();
+            };
+            ws.onerror = function() {
+                testFailed("WebSocket connection failed.");
+                finishJSTest();
+            };
+            break;
+    }
+}
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("SameSite=None cookies MUST be sent on cross-site WebSocket upgrade requests.");
+runTest();
+</script>
+</body>
+</html>
