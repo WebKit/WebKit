@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2026 Squarespace, Inc. www.squarespace.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +27,31 @@
 #pragma once
 
 #include "IntersectionObserver.h"
+#include <wtf/CheckedRef.h>
+#include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Document;
 class Element;
-class HTMLIFrameElement;
 
-class LazyLoadFrameObserver {
-    WTF_MAKE_TZONE_ALLOCATED(LazyLoadFrameObserver);
+class LazyLoadElementObserver final : public CanMakeCheckedPtr<LazyLoadElementObserver> {
+    WTF_MAKE_TZONE_ALLOCATED(LazyLoadElementObserver);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LazyLoadElementObserver);
 public:
-    LazyLoadFrameObserver(HTMLIFrameElement&);
+    LazyLoadElementObserver();
+    ~LazyLoadElementObserver();
 
-    void observe(const AtomString& frameURL, const ReferrerPolicy&);
-    void unobserve();
+    static void observe(Element&);
+    static void unobserve(Element&, Document&);
 
-    AtomString frameURL() const { return m_frameURL; }
-    ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
-
-    void update(const AtomString& frameURL, const ReferrerPolicy&);
+    bool isObserved(Element&) const;
 
 private:
     IntersectionObserver* intersectionObserver(Document&);
-    bool isObserved(Element&) const;
 
-    WeakRef<HTMLIFrameElement, WeakPtrImplWithEventTargetData> m_element;
-    AtomString m_frameURL;
-    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
-    RefPtr<IntersectionObserver> m_observer;
+    const RefPtr<IntersectionObserver> m_observer;
 };
 
-} // namespace
+} // namespace WebCore

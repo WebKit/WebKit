@@ -183,7 +183,7 @@
 #include "LargestContentfulPaint.h"
 #include "LargestContentfulPaintData.h"
 #include "LayoutDisallowedScope.h"
-#include "LazyLoadImageObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "LinkLoader.h"
 #include "LoadableSpeculationRules.h"
@@ -440,10 +440,6 @@
 #include "MediaStreamTrack.h"
 #endif
 
-#if ENABLE(MODEL_ELEMENT)
-#include "LazyLoadModelObserver.h"
-#endif
-
 #if ENABLE(PICTURE_IN_PICTURE_API)
 #include "HTMLVideoElementPictureInPicture.h"
 #endif
@@ -459,7 +455,6 @@
 #if ENABLE(VIDEO)
 #include "CaptionUserPreferences.h"
 #include "CueMatch.h"
-#include "LazyLoadVideoObserver.h"
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1065,9 +1060,7 @@ void Document::commonTeardown()
         rtcNetworkManager->close();
 #endif
 
-#if ENABLE(VIDEO)
-    m_lazyLoadVideoObserver = nullptr;
-#endif
+    m_lazyLoadElementObserver = nullptr;
 }
 
 Quirks& Document::ensureQuirks()
@@ -11901,30 +11894,12 @@ TextManipulationController& Document::textManipulationController()
     return *m_textManipulationController;
 }
 
-LazyLoadImageObserver& Document::lazyLoadImageObserver()
+LazyLoadElementObserver& Document::lazyLoadElementObserver()
 {
-    if (!m_lazyLoadImageObserver)
-        m_lazyLoadImageObserver = makeUnique<LazyLoadImageObserver>();
-    return *m_lazyLoadImageObserver;
+    if (!m_lazyLoadElementObserver)
+        m_lazyLoadElementObserver = makeUnique<LazyLoadElementObserver>();
+    return *m_lazyLoadElementObserver;
 }
-
-#if ENABLE(MODEL_ELEMENT)
-LazyLoadModelObserver& Document::lazyLoadModelObserver()
-{
-    if (!m_lazyLoadModelObserver)
-        m_lazyLoadModelObserver = makeUnique<LazyLoadModelObserver>();
-    return *m_lazyLoadModelObserver;
-}
-#endif
-
-#if ENABLE(VIDEO)
-LazyLoadVideoObserver& Document::lazyLoadVideoObserver()
-{
-    if (!m_lazyLoadVideoObserver)
-        m_lazyLoadVideoObserver = makeUnique<LazyLoadVideoObserver>();
-    return *m_lazyLoadVideoObserver;
-}
-#endif
 
 CrossOriginOpenerPolicy Document::crossOriginOpenerPolicy() const
 {
