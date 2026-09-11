@@ -166,6 +166,7 @@ private:
     void takeSlowIndirectIndexValidationPath(CommandBuffer&, Buffer&, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType);
     void takeSlowIndirectValidationPath(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
     void clearIndexBufferForCommandBuffer(CommandBuffer&);
+    void invalidateDrawIndexedCache(CommandEncoder* = nullptr);
 
     id<MTLBuffer> m_buffer { nil };
     id<MTLBuffer> _Nullable m_indirectBuffer { nil };

@@ -521,9 +521,10 @@ void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t
 
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_drawIndexedCache.clear();
-#ifndef RC_REMOVE_SEC_ACCEL_3
-        m_minValidatedVertexCount = UINT32_MAX;
+#else
+        invalidateDrawIndexedCache();
 #endif // RC_REMOVE_SEC_ACCEL_3
     }
 
@@ -917,18 +918,14 @@ bool Buffer::needsIndexValidation(uint32_t maxUnsignedIndex, uint16_t maxUshortI
 #endif // RC_REMOVE_SEC_ACCEL_3
 }
 
-void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+void Buffer::invalidateDrawIndexedCache(CommandEncoder* commandEncoder)
 {
-    if (!(m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index)))
-        return;
-
     if (auto currentSize = computeSize(m_skippedValidationCommandEncoders, m_device.get())) {
         bool validationNotNeeded = currentSize == 1 && commandEncoder && commandEncoder == m_device->commandEncoderFromIdentifier(*m_skippedValidationCommandEncoders.begin().get());
         if (!validationNotNeeded)
             m_mustTakeSlowIndexValidationPath = true;
     }
 
-    m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     ++m_drawIndexedCacheInvalidationCount;
 #ifdef RC_REMOVE_SEC_ACCEL_3
@@ -937,6 +934,16 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 #else
     m_minValidatedVertexCount = UINT32_MAX;
 #endif // RC_REMOVE_SEC_ACCEL_3
+}
+
+void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
+{
+    if (!(m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index)))
+        return;
+
+    invalidateDrawIndexedCache(commandEncoder);
+
+    m_gpuResourceMap.clear();
     ++m_contentsGeneration;
     ++m_indexContentsGeneration;
     m_indexValueUpperBoundUint = UINT32_MAX;
