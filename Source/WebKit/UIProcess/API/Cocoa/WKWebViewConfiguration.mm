@@ -1605,6 +1605,22 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     return _pageConfiguration->backgroundTextExtractionEnabled();
 }
 
+- (void)_setHeadlessBrowsingContext:(NSDictionary<NSString *, id> *)context
+{
+#if PLATFORM(IOS_FAMILY)
+    if (context && !WebKit::isFullWebBrowserOrRunningTest()) {
+        [NSException raise:NSInvalidArgumentException format:@"%s is only available for web browsers", __PRETTY_FUNCTION__];
+        return;
+    }
+#endif
+    protect(*_pageConfiguration)->setHeadlessBrowsingContext(adoptNS([context copy]));
+}
+
+- (NSDictionary<NSString *, id> *)_headlessBrowsingContext
+{
+    return _pageConfiguration->headlessBrowsingContext();
+}
+
 #if PLATFORM(VISION)
 - (BOOL)_gamepadAccessRequiresExplicitConsent
 {
