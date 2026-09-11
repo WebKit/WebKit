@@ -1107,12 +1107,10 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
             m_platformLayer->setContentsBuffer(nullptr);
     }
 
-    bool contentsBufferNeedsDisplay = false;
     if (m_pendingChanges.contains(Change::ContentsBufferNeedsDisplay)) {
-        if (m_contentsDisplayDelegate) {
-            if (!m_contentsDisplayDelegate->display(m_platformLayer.get(), std::exchange(m_contentsDirtyRegion, std::nullopt)))
-                contentsBufferNeedsDisplay = true;
-        } else if (m_contentsBufferProxy)
+        if (m_contentsDisplayDelegate)
+            m_contentsDisplayDelegate->display(m_platformLayer.get(), std::exchange(m_contentsDirtyRegion, std::nullopt));
+        else if (m_contentsBufferProxy)
             m_contentsBufferProxy->consumePendingBufferIfNeeded();
     }
 
@@ -1240,9 +1238,6 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
     m_platformLayer->updateContents(affectedByTransformAnimation);
 
     m_pendingChanges = { };
-
-    if (contentsBufferNeedsDisplay)
-        m_pendingChanges.add(Change::ContentsBufferNeedsDisplay);
 }
 
 bool GraphicsLayerCoordinated::needsCommit(CommitState& commitState) const

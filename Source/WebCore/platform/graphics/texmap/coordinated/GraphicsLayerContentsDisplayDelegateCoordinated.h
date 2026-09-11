@@ -41,7 +41,7 @@ public:
 
 private:
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) final;
-    bool display(CoordinatedPlatformLayer&, std::optional<Damage>&&) final;
+    void display(CoordinatedPlatformLayer&, std::optional<Damage>&&) final;
 
 protected:
     GraphicsLayerContentsDisplayDelegateCoordinated();
