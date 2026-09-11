@@ -1,0 +1,7 @@
+
+
+Verifies that when CSP form-action blocks a cross-origin redirect, the violation event's blockedURI is the same-origin pre-redirect URL, not the cross-origin redirect destination.
+
+
+PASS Block after cross-origin redirect: blockedURI is the pre-redirect URL
+

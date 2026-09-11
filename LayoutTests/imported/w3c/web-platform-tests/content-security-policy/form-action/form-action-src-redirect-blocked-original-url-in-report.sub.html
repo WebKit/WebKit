@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Security-Policy" content="form-action 'self'">
+<title>form-action-src-redirect-blocked-original-url-in-report</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+
+<body>
+  <iframe name="cross_origin_target" id="cross_origin_iframe"></iframe>
+
+  <form id="form_cross_origin"
+        action="/common/redirect.py?location=http://{{domains[www1]}}:{{ports[http][0]}}/content-security-policy/support/postmessage-fail.html"
+        method="post"
+        target="cross_origin_target">
+    <input type="submit" id="submit_cross_origin">
+  </form>
+
+  <p>Verifies that when CSP form-action blocks a cross-origin redirect, the
+  violation event's blockedURI is the same-origin pre-redirect URL, not the
+  cross-origin redirect destination.</p>
+</body>
+
+<script>
+async_test(function(t) {
+    var expectedURL = location.protocol + "//" + location.host + "/common/redirect.py?location=http://{{domains[www1]}}:{{ports[http][0]}}/content-security-policy/support/postmessage-fail.html";
+    var listener = t.step_func(function(e) {
+        if (e.violatedDirective !== 'form-action')
+            return;
+        assert_equals(e.blockedURI, expectedURL, "blockedURI should be the same-origin pre-redirect URL");
+        document.removeEventListener('securitypolicyviolation', listener);
+        t.done();
+    });
+    document.addEventListener('securitypolicyviolation', listener);
+    document.getElementById("form_cross_origin").submit();
+}, "Block after cross-origin redirect: blockedURI is the pre-redirect URL");
+</script>
+
+</html>
