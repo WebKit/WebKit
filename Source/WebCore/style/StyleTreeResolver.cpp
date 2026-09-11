@@ -263,7 +263,7 @@ void TreeResolver::resetStyleForNonRenderedDescendants(Element& subtreeRoot)
 
     m_positionOptions.removeIf([&subtreeRoot] (const auto& kv) {
         auto styleable = kv.key.styleable();
-        return !styleable || styleable->element.isComposedTreeDescendantOf(subtreeRoot);
+        return !styleable || protect(styleable->element)->isComposedTreeDescendantOf(subtreeRoot);
     });
 
     subtreeRoot.clearChildNeedsStyleRecalc();
@@ -923,7 +923,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             styleable.setHasPropertiesOverridenAfterAnimation(!overriddenAnimatedProperties.isEmpty());
         }
 
-        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+        Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element.get() : nullptr);
         adjuster.adjustAnimatedStyle(*animatedStyle, animationImpact);
 
         return { WTF::move(animatedStyle), animationImpact };
@@ -1052,7 +1052,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
         .parentStyle = &parentStyle,
         .parentHighlightStyle = resolutionContext.parentHighlightStyle,
         .rootElementStyle = resolutionContext.documentElementStyle,
-        .element = &styleable.element,
+        .element = styleable.element.ptr(),
         .treeResolutionState = &m_treeResolutionState,
         .positionTryFallback = WTF::move(positionTryFallback)
     };
@@ -1069,7 +1069,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
     if (newStyle->display() == DisplayType::None)
         return nullptr;
 
-    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? &styleable.element : nullptr);
+    Adjuster adjuster(m_document, parentStyle, resolutionContext.parentBoxStyle, !styleable.pseudoElementIdentifier ? styleable.element.ptr() : nullptr);
     adjuster.adjust(*newStyle);
 
     return newStyle;
@@ -1077,7 +1077,7 @@ std::unique_ptr<Style::ComputedStyle> TreeResolver::resolveAgainInDifferentConte
 
 const Style::ComputedStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleable, const ResolutionContext& resolutionContext) const
 {
-    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : &styleable.element) {
+    if (auto* parentElement = !styleable.pseudoElementIdentifier ? parent().element : styleable.element.ptr()) {
         if (auto* afterChangeStyle = parentElement->lastStyleChangeEventStyle({ }))
             return *afterChangeStyle;
     }
