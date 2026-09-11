@@ -733,6 +733,10 @@ namespace JSC {
         ArgumentListNode* NODELETE toArgumentList(ParserArena&, int, int) const;
 
         ElementNode* elements() const { return m_element; }
+
+        // True if any array slot is a hole, either between elements or trailing. Spread-based
+        // emission (op_new_array_with_spread, op_call_varargs_with_spread) cannot express holes.
+        bool hasElision() const;
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 

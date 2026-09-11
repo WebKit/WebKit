@@ -2200,6 +2200,23 @@ LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs)
     LLINT_RETURN_CALLEE_FRAME(calleeFrame);
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_size_frame_for_varargs_with_spread)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpCallVarargsWithSpread>();
+    unsigned numUsedStackSlots = -bytecode.m_firstFree.offset();
+    const BitVector& bitVector = codeBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
+    JSValue* values = std::bit_cast<JSValue*>(&callFrame->r(bytecode.m_argv));
+    unsigned length = sizeFrameForVarargsWithSpread(globalObject, callFrame, vm, values, bytecode.m_argc, bitVector, numUsedStackSlots);
+    LLINT_CALL_CHECK_EXCEPTION(globalObject);
+
+    CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
+    vm.varargsLength = length;
+    vm.newCallFrameReturnValue = calleeFrame;
+
+    LLINT_RETURN_CALLEE_FRAME(calleeFrame);
+}
+
 enum class SetArgumentsWith {
     Object,
     CurrentArguments
@@ -2254,6 +2271,30 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
 LLINT_SLOW_PATH_DECL(slow_path_super_construct_varargs)
 {
     return varargsSetup<OpSuperConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeSpecializationKind::CodeForConstruct);
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_call_varargs_with_spread)
+{
+    LLINT_BEGIN_NO_SET_PC();
+    auto bytecode = pc->as<OpCallVarargsWithSpread>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSValue calleeAsValue = getOperand(callFrame, bytecode.m_callee);
+
+    CallFrame* calleeFrame = vm.newCallFrameReturnValue;
+    unsigned argumentCountIncludingThis = vm.varargsLength + 1;
+    const BitVector& bitVector = codeBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
+    JSValue* values = std::bit_cast<JSValue*>(&callFrame->r(bytecode.m_argv));
+    setupVarargsFrameWithSpreadAndSetThis(globalObject, callFrame, calleeFrame, getOperand(callFrame, bytecode.m_thisValue), values, bytecode.m_argc, bitVector, vm.varargsLength);
+    LLINT_CALL_CHECK_EXCEPTION(globalObject);
+
+    calleeFrame->setCallerFrame(callFrame);
+    calleeFrame->uncheckedR(VirtualRegister(CallFrameSlot::callee)) = calleeAsValue;
+    callFrame->setCurrentVPC(pc);
+
+    metadata.m_callLinkInfo.updateMaxArgumentCountIncludingThisForVarargs(argumentCountIncludingThis);
+
+    auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
+    LLINT_RETURN_TWO(pc, callerSP);
 }
 
 static inline UGPRPair commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
@@ -2569,6 +2610,41 @@ static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject
     callFrame->uncheckedR(bytecode.m_dst) = result;
 }
 
+static void handleVarargsWithSpreadCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, CodeBlock* codeBlock, const OpCallVarargsWithSpread& bytecode, CheckpointOSRExitSideState& sideState)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    unsigned argumentCountIncludingThis = sideState.tmps[OpCallVarargsWithSpread::argCountIncludingThis].asUInt32();
+    const BitVector& bitVector = codeBlock->unlinkedCodeBlock()->bitVector(bytecode.m_bitVector);
+    JSValue* values = std::bit_cast<JSValue*>(&callFrame->r(bytecode.m_argv));
+    unsigned argc = bytecode.m_argc;
+
+    MarkedArgumentBuffer args;
+    args.fill(vm, argumentCountIncludingThis - 1, [&](JSValue* buffer) {
+        JSValue* dest = buffer;
+        for (unsigned i = 0; i < argc; ++i) {
+            JSValue value = values[-static_cast<int>(i)];
+            if (bitVector.get(i)) {
+                JSCellButterfly* array = uncheckedDowncast<JSCellButterfly>(value);
+                unsigned n = array->publicLength();
+                array->copyToArguments(globalObject, dest, 0, n);
+                dest += n;
+            } else
+                *dest++ = value;
+        }
+    });
+    if (args.hasOverflowed()) [[unlikely]] {
+        throwStackOverflowError(globalObject, scope);
+        return;
+    }
+
+    RETURN_IF_EXCEPTION(scope, void());
+
+    JSValue result = call(globalObject, getOperand(callFrame, bytecode.m_callee), getOperand(callFrame, bytecode.m_thisValue), args, ""_s);
+
+    RETURN_IF_EXCEPTION(scope, void());
+    callFrame->uncheckedR(bytecode.m_dst) = result;
+}
+
 static void handleIteratorOpenCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject* globalObject, const OpIteratorOpen& bytecode)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -2717,6 +2793,10 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit_from_inlined_ca
         callFrame->uncheckedR(pc->as<OpCallVarargs>().m_dst) = JSValue::decode(result);
         break;
     }
+    case op_call_varargs_with_spread: {
+        callFrame->uncheckedR(pc->as<OpCallVarargsWithSpread>().m_dst) = JSValue::decode(result);
+        break;
+    }
     case op_construct_varargs: {
         callFrame->uncheckedR(pc->as<OpConstructVarargs>().m_dst) = JSValue::decode(result);
         break;
@@ -2803,6 +2883,9 @@ extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame* call
     switch (opcode) {
     case op_call_varargs:
         handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpCallVarargs>(), *sideState.get());
+        break;
+    case op_call_varargs_with_spread:
+        handleVarargsWithSpreadCheckpoint(vm, callFrame, globalObject, codeBlock, pc->as<OpCallVarargsWithSpread>(), *sideState.get());
         break;
     case op_construct_varargs:
         handleVarargsCheckpoint(vm, callFrame, globalObject, pc->as<OpConstructVarargs>(), *sideState.get());
