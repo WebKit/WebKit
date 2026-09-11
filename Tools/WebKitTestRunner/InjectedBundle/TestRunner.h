@@ -253,6 +253,7 @@ public:
 
     void showWebInspector();
     void closeWebInspector();
+    void disconnectFrameInspectorTarget(JSContextRef);
     void evaluateInWebInspector(JSStringRef script);
     JSRetainPtr<JSStringRef> inspectorTestStubURL();
 
