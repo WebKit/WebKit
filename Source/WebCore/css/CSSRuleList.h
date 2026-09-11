@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <WebCore/WebCoreOpaqueRoot.h>
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -43,6 +44,15 @@ public:
     
     virtual CSSStyleSheet* styleSheet() const = 0;
     
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Computes the opaque root of the list for the JS garbage collector. Called from the parallel
+    // GC marker threads, so implementations must not allocate, refcount or lazily create any CSSOM
+    // object. item() and styleSheet() are both unusable here: every live item() implementation
+    // lazily creates the child CSSOM wrapper, and styleSheet() walks the CSSRule parent links
+    // without taking CSSRule::opaqueRootLockForGC().
+    virtual WebCoreOpaqueRoot opaqueRootForGCThread() const = 0;
+#endif
+
 protected:
     CSSRuleList();
 };
@@ -65,6 +75,10 @@ private:
     unsigned length() const final { return m_rules.size(); }
     CSSRule* item(unsigned index) const final { return index < m_rules.size() ? m_rules[index].get() : nullptr; }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    WebCoreOpaqueRoot opaqueRootForGCThread() const final;
+#endif
+
     Vector<RefPtr<CSSRule>> m_rules;
 };
 
@@ -86,6 +100,12 @@ private:
     CSSRule* item(unsigned index) const final { return m_rule.item(index); }
     CSSStyleSheet* styleSheet() const final { return m_rule.parentStyleSheet(); }
     
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // The owning rule is what keeps this list alive, so its opaque root is the list's opaque root,
+    // and it can be computed without materializing any child wrapper.
+    WebCoreOpaqueRoot opaqueRootForGCThread() const final { return m_rule.opaqueRootForGCThread(); }
+#endif
+
     Rule& m_rule;
 };
 

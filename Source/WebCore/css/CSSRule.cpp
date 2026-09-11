@@ -27,6 +27,7 @@
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include "WebCoreOpaqueRoot.h"
 #include "css/parser/CSSParserEnum.h"
 
 namespace WebCore {
@@ -57,6 +58,22 @@ ExceptionOr<void> CSSRule::setCssText(const String&)
 {
     return { };
 }
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+WebCoreOpaqueRoot CSSRule::opaqueRootForGCThread()
+{
+    // Runs on the parallel GC marker threads concurrently with each other and with the
+    // conducting mutator, so this is deliberately limited to reading the parent links under
+    // opaqueRootLockForGC(). Note that parentStyleSheet() is not used for the parent-rule hop:
+    // it walks the same links without taking any of the locks.
+    Locker locker { opaqueRootLockForGC() };
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* parentRule = this->parentRule())
+        return parentRule->opaqueRootForGCThread();
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* parentStyleSheet = this->parentStyleSheet())
+        return parentStyleSheet->opaqueRootForGCThread();
+    return WebCoreOpaqueRoot { this };
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 const CSSParserContext& CSSRule::parserContext() const
 {
