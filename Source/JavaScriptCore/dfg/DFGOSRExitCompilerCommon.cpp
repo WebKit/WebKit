@@ -189,7 +189,11 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
                 jumpTarget = LLINT_RETURN_LOCATION(op_super_construct);
             break;
         case InlineCallFrame::CallVarargs:
-            jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs);
+            // op_call_varargs and op_call_varargs_with_spread both map to InlineCallFrame::CallVarargs.
+            if (callInstruction.opcodeID() == op_call_varargs_with_spread)
+                jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs_with_spread);
+            else
+                jumpTarget = LLINT_RETURN_LOCATION(op_call_varargs);
             break;
         case InlineCallFrame::ConstructVarargs:
             if (callInstruction.opcodeID() == op_construct_varargs)

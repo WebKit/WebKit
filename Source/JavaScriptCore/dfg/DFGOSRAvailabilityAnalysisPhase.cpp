@@ -356,6 +356,22 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
 
+    case VarargsLengthWithSpread: {
+        break;
+    }
+
+    case LoadVarargsWithSpread: {
+        LoadVarargsData* data = node->loadVarargsData();
+        killHeaps(data->count);
+        m_availability.m_locals.operand(data->count) = Availability(m_graph.varArgChild(node, 0).node(), FlushedAt(FlushedInt32, data->machineCount));
+        for (unsigned i = data->limit; i--;) {
+            killHeaps(data->start + i);
+            m_availability.m_locals.operand(data->start + i) =
+                Availability(FlushedAt(FlushedJSValue, data->machineStart.isValid() ? (data->machineStart + i) : VirtualRegister()));
+        }
+        break;
+    }
+
     case LoadVarargs:
     case ForwardVarargs: {
         LoadVarargsData* data = node->loadVarargsData();

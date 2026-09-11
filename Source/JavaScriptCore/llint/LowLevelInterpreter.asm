@@ -2560,6 +2560,10 @@ llintOpWithMetadata(op_call_varargs, OpCallVarargs, macro (size, get, dispatch, 
     doCallVarargs(op_call_varargs, size, get, OpCallVarargs, m_valueProfile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs, _llint_slow_path_call_varargs, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, dispatchAfterRegularCall)
 end)
 
+llintOpWithMetadata(op_call_varargs_with_spread, OpCallVarargsWithSpread, macro (size, get, dispatch, metadata, return)
+    doCallVarargs(op_call_varargs_with_spread, size, get, OpCallVarargsWithSpread, m_valueProfile, m_dst, dispatch, metadata, _llint_slow_path_size_frame_for_varargs_with_spread, _llint_slow_path_call_varargs_with_spread, prepareForRegularCall, invokeForRegularCall, prepareForSlowRegularCall, dispatchAfterRegularCall)
+end)
+
 llintOpWithMetadata(op_tail_call_varargs, OpTailCallVarargs, macro (size, get, dispatch, metadata, return)
     checkSwitchToJITForEpilogue()
     # We lie and perform the tail call instead of preparing it since we can't

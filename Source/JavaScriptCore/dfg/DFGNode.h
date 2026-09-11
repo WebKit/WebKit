@@ -272,6 +272,9 @@ struct EntrySwitchData {
 
 struct CallVarargsData {
     int firstVarArgOffset;
+    // Only for CallVarargsWithSpread, whose children are [callee, thisValue, elem0, ...]: bitVector
+    // marks which of the interleaved arguments (elem i is child 2 + i) are spreads.
+    BitVector* bitVector { nullptr };
 };
 
 struct LoadVarargsData {
@@ -282,6 +285,8 @@ struct LoadVarargsData {
     unsigned offset; // Which array element to start with. Usually this is 0.
     unsigned mandatoryMinimum; // The number of elements on the stack that must be initialized; if the array is too short then the missing elements must get undefined. Does not include "this".
     unsigned limit; // Maximum number of elements to load. Includes "this".
+    // Only for VarargsLengthWithSpread / LoadVarargsWithSpread: marks which operands are spreads.
+    BitVector* bitVector { nullptr };
 };
 
 struct StackAccessData {
@@ -1552,7 +1557,12 @@ public:
 
     BitVector* bitVector()
     {
-        ASSERT(op() == NewArrayWithSpread || op() == PhantomNewArrayWithSpread);
+        ASSERT(op() == NewArrayWithSpread || op() == PhantomNewArrayWithSpread || op() == CallVarargsWithSpread || op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread);
+        // The spread nodes carry their BitVector inside CallVarargsData / LoadVarargsData.
+        if (op() == CallVarargsWithSpread)
+            return m_opInfo.as<CallVarargsData*>()->bitVector;
+        if (op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread)
+            return m_opInfo.as<LoadVarargsData*>()->bitVector;
         return m_opInfo.as<BitVector*>();
     }
 
@@ -1672,6 +1682,7 @@ public:
     {
         switch (op()) {
         case CallVarargs:
+        case CallVarargsWithSpread:
         case CallForwardVarargs:
         case TailCallVarargs:
         case TailCallForwardVarargs:
@@ -1684,16 +1695,16 @@ public:
             return false;
         }
     }
-    
+
     CallVarargsData* callVarargsData()
     {
         ASSERT(hasCallVarargsData());
         return m_opInfo.as<CallVarargsData*>();
     }
-    
+
     bool hasLoadVarargsData()
     {
-        return op() == LoadVarargs || op() == ForwardVarargs || op() == VarargsLength;
+        return op() == LoadVarargs || op() == ForwardVarargs || op() == VarargsLength || op() == VarargsLengthWithSpread || op() == LoadVarargsWithSpread;
     }
     
     LoadVarargsData* loadVarargsData()
@@ -2153,6 +2164,7 @@ public:
         case Construct:
         case DirectConstruct:
         case CallVarargs:
+        case CallVarargsWithSpread:
         case CallDirectEval:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
@@ -4133,6 +4145,37 @@ private:
 public:
     BasicBlock* owner;
 };
+
+// The spread operands of CallVarargsWithSpread / VarargsLengthWithSpread / LoadVarargsWithSpread (the ones
+// bitVector() marks) reach the FTL in one of three shapes. An eliminated spread survived arguments
+// elimination as a PhantomSpread over either a PhantomCreateRest (a forwarded segment: it has no value of
+// its own, so it is passed to the frame-setup operations as an empty-JSValue sentinel plus a
+// VarargsSpreadForwardDescriptor) or a PhantomNewArrayBuffer (a constant butterfly cell). Any other operand
+// has a value: a materialized spread butterfly cell, or, at a position bitVector() does not mark, a plain
+// argument. Only the FTL sees the phantom shapes, since arguments elimination requires SSA form; in the DFG
+// every operand has a value.
+
+// Returns the PhantomCreateRest of an eliminated forwarded rest, or nullptr.
+inline Node* eliminatedSpreadForwardedRest(Node* spreadOperand)
+{
+    if (spreadOperand->op() != PhantomSpread)
+        return nullptr;
+    Node* inner = spreadOperand->child1().node();
+    if (inner->op() != PhantomCreateRest)
+        return nullptr;
+    return inner;
+}
+
+// Returns the PhantomNewArrayBuffer of an eliminated constant-buffer spread, or nullptr.
+inline Node* eliminatedSpreadConstantButterfly(Node* spreadOperand)
+{
+    if (spreadOperand->op() != PhantomSpread)
+        return nullptr;
+    Node* inner = spreadOperand->child1().node();
+    if (inner->op() != PhantomNewArrayBuffer)
+        return nullptr;
+    return inner;
+}
 
 // Uncomment this to log NodeSet operations.
 // typedef LoggingHashSet<Node::HashSetTemplateInstantiationString, Node*> NodeSet;

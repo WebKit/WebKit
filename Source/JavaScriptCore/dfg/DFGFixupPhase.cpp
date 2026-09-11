@@ -2154,7 +2154,7 @@ private:
 
         case NewArrayWithSpread: {
             watchHavingABadTime(node);
-            
+
             BitVector* bitVector = node->bitVector();
             for (unsigned i = node->numChildren(); i--;) {
                 if (bitVector->get(i))
@@ -2163,6 +2163,18 @@ private:
                     fixEdge<UntypedUse>(m_graph.m_varArgChildren[node->firstChild() + i]);
             }
 
+            break;
+        }
+
+        case CallVarargsWithSpread: {
+            BitVector* bitVector = node->bitVector();
+            unsigned numArgs = node->numChildren() - 2;
+            for (unsigned e = 0; e < numArgs; ++e) {
+                if (bitVector->get(e))
+                    fixEdge<KnownCellUse>(m_graph.m_varArgChildren[node->firstChild() + 2 + e]);
+                else
+                    fixEdge<UntypedUse>(m_graph.m_varArgChildren[node->firstChild() + 2 + e]);
+            }
             break;
         }
 
@@ -3739,6 +3751,31 @@ private:
             // Actually this is common that we are passing undefined / null.
             if (node->child2()->shouldSpeculateOther())
                 fixEdge<OtherUse>(node->child2());
+            break;
+        }
+
+        case VarargsLengthWithSpread: {
+            BitVector* bitVector = node->bitVector();
+            unsigned numArgs = node->numChildren();
+            for (unsigned e = 0; e < numArgs; ++e) {
+                if (bitVector->get(e))
+                    fixEdge<KnownCellUse>(m_graph.m_varArgChildren[node->firstChild() + e]);
+                else
+                    fixEdge<UntypedUse>(m_graph.m_varArgChildren[node->firstChild() + e]);
+            }
+            break;
+        }
+
+        case LoadVarargsWithSpread: {
+            fixEdge<KnownInt32Use>(m_graph.m_varArgChildren[node->firstChild()]);
+            BitVector* bitVector = node->bitVector();
+            unsigned numArgs = node->numChildren() - 1;
+            for (unsigned e = 0; e < numArgs; ++e) {
+                if (bitVector->get(e))
+                    fixEdge<KnownCellUse>(m_graph.m_varArgChildren[node->firstChild() + 1 + e]);
+                else
+                    fixEdge<UntypedUse>(m_graph.m_varArgChildren[node->firstChild() + 1 + e]);
+            }
             break;
         }
 
