@@ -64,6 +64,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "SecurityOriginData.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerMessagingProxy);
@@ -186,7 +190,13 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
     }
 
     workerThreadCreated(thread.get());
+#if ENABLE(WEBDRIVER_BIDI)
+    thread->WorkerOrWorkletThread::start({ }, [protectedThis = Ref { *this }](SecurityOriginData&& origin) {
+        protectedThis->workerGlobalScopeCreated(WTF::move(origin));
+    });
+#else
     thread->start();
+#endif
 
     m_inspectorProxy->workerStarted(*scriptExecutionContext, thread.ptr(), scriptURL, name);
 }
@@ -461,6 +471,18 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
         workerGlobalScopeDestroyedInternal();
     });
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WorkerMessagingProxy::workerGlobalScopeCreated(SecurityOriginData&& origin)
+{
+    if (!m_scriptExecutionContextIdentifier)
+        return;
+
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, origin = WTF::move(origin).isolatedCopy()](auto&) {
+        m_inspectorProxy->workerBecameExecutionReady(origin);
+    });
+}
+#endif
 
 void WorkerMessagingProxy::workerGlobalScopeClosed()
 {

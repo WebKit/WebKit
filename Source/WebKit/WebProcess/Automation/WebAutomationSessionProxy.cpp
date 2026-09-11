@@ -1231,6 +1231,16 @@ void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier fr
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, realmIdentifier), 0);
 }
 
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::SecurityOriginData& origin)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier), 0);
+}
+
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

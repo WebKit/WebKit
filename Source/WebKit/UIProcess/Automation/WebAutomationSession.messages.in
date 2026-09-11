@@ -30,5 +30,7 @@ messages -> WebAutomationSession {
 #if ENABLE(WEBDRIVER_BIDI)
     ScriptRealmCreated(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
     ScriptRealmDestroyed(WebCore::FrameIdentifier frameID, WebKit::RealmIdentifier realmIdentifier)
+    ScriptDedicatedWorkerRealmCreated(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
+    ScriptDedicatedWorkerRealmDestroyed(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier)
 #endif
 }

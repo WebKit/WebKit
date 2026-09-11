@@ -37,12 +37,19 @@
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEBDRIVER_BIDI)
+#include "FrameIdentifier.h"
+#endif
+
 // All of these methods should be called on the Main Thread.
 // Used to send messages to the WorkerInspector on the WorkerThread.
 
 namespace WebCore {
 
 class ScriptExecutionContext;
+#if ENABLE(WEBDRIVER_BIDI)
+class SecurityOriginData;
+#endif
 class WorkerThread;
 
 enum class WorkerThreadStartMode;
@@ -81,6 +88,10 @@ public:
 
     WorkerThreadStartMode workerStartMode(ScriptExecutionContext&);
     void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, const String& name);
+#if ENABLE(WEBDRIVER_BIDI)
+    void workerBecameExecutionReady(const SecurityOriginData&);
+    bool isExecutionReady() const { return m_isExecutionReady; }
+#endif
     void workerTerminated();
 
     void resumeWorkerIfPaused();
@@ -105,6 +116,11 @@ private:
     URL m_url;
     String m_name;
     CheckedPtr<PageChannel> m_pageChannel;
+#if ENABLE(WEBDRIVER_BIDI)
+    bool m_isExecutionReady { false };
+    bool m_wasTerminatedBeforeExecutionReady { false };
+    std::optional<FrameIdentifier> m_automationOwnerFrameIdentifier;
+#endif
 };
 
 } // namespace WebCore
