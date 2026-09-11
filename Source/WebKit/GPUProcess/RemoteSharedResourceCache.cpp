@@ -29,6 +29,10 @@
 #include "RemoteSharedResourceCache.h"
 
 #include "GPUConnectionToWebProcess.h"
+#include <WebCore/ImageDecoder.h>
+#include <WebCore/SharedBuffer.h>
+#include <wtf/RunLoop.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(IOSURFACE)
@@ -110,6 +114,81 @@ void RemoteSharedResourceCache::lowMemoryHandler()
 #if HAVE(IOSURFACE)
     Ref { m_ioSurfacePool }->discardAllSurfaces();
 #endif
+    releaseUnusedThumbnailStrips();
+}
+
+void RemoteSharedResourceCache::cacheEncodedThumbnailStrip(RenderingResourceIdentifier identifier, IntSize tileSize, uint32_t tileCount, Vector<uint8_t>&& encodedData)
+{
+    // The strip arrives as one encoded image with the tiles laid out in a row,
+    // which is how the media element already has it on the WebContent side.
+    size_t stripBytes = tileSize.width() * tileSize.height() * 4 * tileCount;
+
+    Vector<uint8_t> stripStorage(stripBytes);
+    memcpySpan(stripStorage.mutableSpan(), encodedData.span());
+
+    Ref buffer = SharedBuffer::create(WTF::move(stripStorage));
+    RefPtr decoder = ImageDecoder::create(buffer, "image/png"_s, AlphaOption::Premultiplied, GammaAndColorProfileOption::Ignored);
+    if (!decoder)
+        return;
+
+    auto* strip = new CachedThumbnailStrip { tileSize, tileCount, { }, stripBytes };
+    strip->tiles.reserveInitialCapacity(tileCount);
+    for (uint32_t index = 0; index < tileCount; ++index) {
+        auto platformImage = decoder->createFrameImageAtIndex(index);
+        if (!platformImage)
+            continue;
+        if (RefPtr tile = NativeImage::create(WTF::move(platformImage)))
+            strip->tiles.append(tile.releaseNonNull());
+    }
+
+    if (auto* previous = m_thumbnailStrips.take(identifier)) {
+        m_thumbnailStripBytes -= previous->byteCount;
+        delete previous;
+    }
+
+    m_thumbnailStrips.set(identifier, strip);
+    m_thumbnailStripBytes += stripBytes;
+
+    if (m_thumbnailStripBytes > thumbnailStripCacheLimit) {
+        RunLoop::mainSingleton().dispatch([this] {
+            releaseUnusedThumbnailStrips();
+        });
+    }
+}
+
+void RemoteSharedResourceCache::takeThumbnailTile(RenderingResourceIdentifier identifier, uint32_t tileIndex, CompletionHandler<void(std::optional<ShareableBitmap::Handle>)>&& completionHandler)
+{
+    auto* strip = m_thumbnailStrips.get(identifier);
+    if (!strip)
+        return completionHandler(std::nullopt);
+
+    // Make room before we allocate the bitmap we are about to hand back.
+    releaseUnusedThumbnailStrips();
+
+    Ref tile = strip->tiles[tileIndex];
+    RefPtr bitmap = ShareableBitmap::createFromImagePixels(tile);
+    if (!bitmap)
+        bitmap = ShareableBitmap::createFromImageDraw(tile, ColorSpace { tile->colorSpace() });
+    if (!bitmap)
+        return completionHandler(std::nullopt);
+
+    auto handle = bitmap->createHandle();
+    if (!handle)
+        return completionHandler(std::nullopt);
+    if (resourceOwner())
+        handle->setOwnershipOfMemory(resourceOwner(), MemoryLedger::Graphics);
+    completionHandler(WTF::move(handle));
+}
+
+void RemoteSharedResourceCache::releaseUnusedThumbnailStrips()
+{
+    for (auto& entry : m_thumbnailStrips) {
+        if (entry.value->tiles.isEmpty()) {
+            m_thumbnailStripBytes -= entry.value->byteCount;
+            delete entry.value;
+            m_thumbnailStrips.remove(entry.key);
+        }
+    }
 }
 
 void RemoteSharedResourceCache::didCreateImageBuffer(RenderingPurpose purpose, RenderingMode renderingMode)
