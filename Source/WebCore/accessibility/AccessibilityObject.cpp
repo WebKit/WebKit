@@ -2499,7 +2499,7 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
     // top document.
     do {
         savedVisiblePos = currentVisiblePos;
-        currentVisiblePos = previousLinePosition(currentVisiblePos, 0, HasEditableAXRole);
+        currentVisiblePos = previousLinePosition(currentVisiblePos, 0, EditableType::AXRole);
         ++lineCount;
     } while (currentVisiblePos.isNotNull() && !(inSameLine(currentVisiblePos, savedVisiblePos)));
 

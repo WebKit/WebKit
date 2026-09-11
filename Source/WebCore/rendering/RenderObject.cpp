@@ -1953,10 +1953,10 @@ PositionWithAffinity RenderObject::createPositionWithAffinity(int offset, Affini
         if (!node->hasEditableStyle()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position = makeDeprecatedLegacyPosition(node.get(), convertOffsetInTextFragmentToNodeOffset(*this, offset));
-            Position candidate = position.downstream(CanCrossEditingBoundary);
+            Position candidate = position.downstream(EditingBoundaryCrossingRule::CanCross);
             if (protect(candidate.deprecatedNode())->hasEditableStyle())
                 return PositionWithAffinity(candidate, affinity);
-            candidate = position.upstream(CanCrossEditingBoundary);
+            candidate = position.upstream(EditingBoundaryCrossingRule::CanCross);
             if (protect(candidate.deprecatedNode())->hasEditableStyle())
                 return PositionWithAffinity(candidate, affinity);
         }
