@@ -882,13 +882,19 @@ void ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IP
         return;
     }
 
-    RefPtr page = m_page.get();
-    if (page) {
-        if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName())
-            page->backForwardListMessageReceiver().didReceiveSyncMessage(connection, decoder, replyEncoder);
-        else
+    if (decoder.messageName() == Messages::WebPageProxy::ShouldGoToBackForwardListItemSync::name()) {
+        if (RefPtr page = m_page.get())
             page->didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return;
     }
+
+    if (decoder.messageReceiverName() == Messages::WebBackForwardList::messageReceiverName()) {
+        if (RefPtr page = m_page.get())
+            page->backForwardListMessageReceiver().didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return;
+    }
+
+    LOG(ProcessSwapping, "Unhandled sync message %s from provisional process", description(decoder.messageName()).characters());
 }
 
 IPC::Connection* ProvisionalPageProxy::messageSenderConnection() const
