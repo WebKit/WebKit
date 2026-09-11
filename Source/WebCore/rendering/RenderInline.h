@@ -59,13 +59,12 @@ public:
 
     LayoutRect borderBoundingBox() const final
     {
-        return LayoutRect(LayoutPoint(), linesBoundingBox().size());
+        return LayoutRect(LayoutPoint(), borderBoxRectInContainer().size());
     }
 
     LayoutUnit innerPaddingBoxWidth() const;
     LayoutUnit innerPaddingBoxHeight() const;
 
-    WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
 
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
@@ -99,8 +98,8 @@ private:
 
     LayoutUnit offsetLeft() const final;
     LayoutUnit offsetTop() const final;
-    LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
-    LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
+    LayoutUnit offsetWidth() const final { return borderBoxRectInContainer().width(); }
+    LayoutUnit offsetHeight() const final { return borderBoxRectInContainer().height(); }
 
 protected:
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
@@ -115,7 +114,7 @@ protected:
 private:
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) final;
 
-    LayoutRect frameRectForStickyPositioning() const final { return linesBoundingBox(); }
+    LayoutRect frameRectForStickyPositioning() const final { return borderBoxRectInContainer(); }
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
 };

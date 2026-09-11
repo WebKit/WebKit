@@ -70,7 +70,7 @@ public:
     LayoutUnit borderBoxWidth() const { return m_borderBoxRectInContainer.width(); }
     LayoutUnit borderBoxHeight() const { return m_borderBoxRectInContainer.height(); }
     LayoutSize borderBoxSize() const { return m_borderBoxRectInContainer.size(); }
-    LayoutRect borderBoxRectInContainer() const { return m_borderBoxRectInContainer; }
+    LayoutRect borderBoxRectInContainer() const final { return m_borderBoxRectInContainer; }
 
     template<typename T> void setX(T x) { m_borderBoxRectInContainer.setX(x); }
     template<typename T> void setY(T y) { m_borderBoxRectInContainer.setY(y); }
