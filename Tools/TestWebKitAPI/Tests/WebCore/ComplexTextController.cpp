@@ -538,7 +538,7 @@ TEST_F(ComplexTextControllerTest, TabWidthDoesNotSlideAFollowingMark)
     ComplexTextController controller(font, textRun, runs);
 
     // The tab starts where the leading glyph ended, so that is the position the next tab stop is measured from.
-    auto tabWidth = font.tabWidth(font.primaryFont(), textRun.tabSize(), leadingGlyphAdvance, Font::SyntheticBoldInclusion::Exclude);
+    auto tabWidth = font.tabWidth(font.primaryFont(), textRun.tabSize(), leadingGlyphAdvance);
     EXPECT_GT(tabWidth, 0);
     // Otherwise the substitution would be a no-op and the test could not tell compensated from uncompensated.
     EXPECT_NE(tabWidth, clusterAdvance);
@@ -646,7 +646,7 @@ TEST_F(ComplexTextControllerTest, TabWidthDoesNotSlideAMarkInRTL)
     ComplexTextController controller(font, textRun, runs);
 
     // The tab is the first glyph with an advance, so the next tab stop is measured from zero.
-    auto tabWidth = font.tabWidth(font.primaryFont(), textRun.tabSize(), 0, Font::SyntheticBoldInclusion::Exclude);
+    auto tabWidth = font.tabWidth(font.primaryFont(), textRun.tabSize(), 0);
     EXPECT_GT(tabWidth, 0);
     // Otherwise the substitution would be a no-op and the test could not tell compensated from uncompensated.
     EXPECT_NE(tabWidth, clusterAdvance);
