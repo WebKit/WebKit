@@ -628,7 +628,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 let focusElement = selection.focusNode;
                 if (!(focusElement instanceof Element))
                     focusElement = focusElement.parentElement;
-                wrapper = focusElement.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
+                wrapper = focusElement?.closest("." + WI.LogContentView.ItemWrapperStyleClassName);
             }
 
             if (!wrapper) {
