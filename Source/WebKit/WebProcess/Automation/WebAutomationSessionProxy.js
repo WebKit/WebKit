@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier) {
+(function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier, shadowRootForElement, specialBidiRemoteValueType) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -47,9 +47,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
-    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
+        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
             .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
@@ -131,7 +131,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    _executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
+    _executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
     {
         let timeoutPromise;
         let timeoutIdentifier = 0;
@@ -143,7 +143,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
         }
 
-        let promise = new Promise((resolve, reject) => {
+        let promise = new Promise(resolve => {
             try {
                 // Execute expression using globalThis.eval pattern (like original implementation).
                 let result = globalThis.eval(expression);
@@ -152,20 +152,22 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     // Handle promises for awaitPromise: true.
                     result.then(
                         value => {
-                            let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
+                            let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth, maxDomDepth, includeShadowTree);
                             resolve({ success: true, result: serializedValue });
                         },
                         error => {
-                            reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+                            let errorProperties = error === null || error === undefined ? {} : error;
+                            resolve({ success: false, error: { exception: this.serializeBidiRemoteValue(error), name: errorProperties.name, message: errorProperties.message, stack: errorProperties.stack } });
                         }
                     );
                 } else {
                     // Handle synchronous results or non-promises.
-                    let serializedValue = this.serializeBidiRemoteValue(result, maxObjectDepth);
+                    let serializedValue = this.serializeBidiRemoteValue(result, maxObjectDepth, maxDomDepth, includeShadowTree);
                     resolve({ success: true, result: serializedValue });
                 }
             } catch (error) {
-                reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+                let errorProperties = error === null || error === undefined ? {} : error;
+                resolve({ success: false, error: { exception: this.serializeBidiRemoteValue(error), name: errorProperties.name, message: errorProperties.message, stack: errorProperties.stack } });
             }
         });
 
@@ -325,7 +327,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _clearStaleNodes()
     {
-        for (var [node, identifier] of this._nodeToIdMap) {
+        for (let [node, identifier] of this._nodeToIdMap) {
             const rootNode = node.getRootNode({ composed: true });
             if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
@@ -336,7 +338,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
-    serializeBidiRemoteValue(value, maxObjectDepth = 1, depth = 0, visitedObjects = new Set())
+    serializeBidiRemoteValue(value, maxObjectDepth = null, maxDomDepth = 0, includeShadowTree = "none", visitedObjects = new Set())
     {
         // Handle primitives.
         if (value === null) return { type: "null" };
@@ -352,86 +354,167 @@ let AutomationSessionProxy = class AutomationSessionProxy
         }
         if (typeof value === "bigint") return { type: "bigint", value: value.toString() };
         if (typeof value === "symbol") return { type: "symbol" };
+
+        let specialType = specialBidiRemoteValueType(value);
+        if (specialType !== null)
+            return { type: specialType };
+
         if (typeof value === "function") return { type: "function" };
 
-        // Handle non-primitive types.
-        if (typeof value === "object" || typeof value === "function") {
-            // Special handling for window object.
-            if (value === window)
-                return { type: "window", value: { context: "context-id-placeholder" } };
+        if (typeof value !== "object")
+            return { type: "undefined" };
 
-            // Handle Date, RegExp, Error, Promise.
-            if (value instanceof Date)
-                return { type: "date", value: value.toISOString() };
-            if (value instanceof RegExp)
-                return { type: "regexp", value: { pattern: value.source, flags: value.flags } };
-            if (value instanceof Error)
-                return { type: "error" };
-            if (value instanceof Promise)
-                return { type: "promise" };
+        if (value === window)
+            return { type: "window", value: { context: "context-id-placeholder" } };
 
-            // Handle collection types with serialization.
-            if (value instanceof Map) {
-                let entries = [];
-                for (let [k, v] of value.entries()) {
-                    entries.push({
-                        key: this.serializeBidiRemoteValue(k, maxObjectDepth, depth + 1, visitedObjects),
-                        value: this.serializeBidiRemoteValue(v, maxObjectDepth, depth + 1, visitedObjects)
-                    });
-                }
-                return { type: "map", value: entries };
-            }
-            if (value instanceof Set) {
-                let items = [];
-                for (let v of value.values())
-                    items.push(this.serializeBidiRemoteValue(v, maxObjectDepth, depth + 1, visitedObjects));
-                return { type: "set", value: items };
-            }
+        if (value instanceof Node)
+            return this._serializeBidiNode(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof Date)
+            return { type: "date", value: value.toISOString() };
+        if (value instanceof RegExp)
+            return { type: "regexp", value: { pattern: value.source, flags: value.flags } };
+        if (value instanceof Error)
+            return { type: "error" };
+        if (value instanceof Promise)
+            return { type: "promise" };
+        if (Array.isArray(value))
+            return this._serializeBidiList(value, "array", maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof Map)
+            return this._serializeBidiMap(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof Set)
+            return this._serializeBidiList(value, "set", maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof NodeList)
+            return this._serializeBidiList(value, "nodelist", maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof HTMLCollection)
+            return this._serializeBidiList(value, "htmlcollection", maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+        if (value instanceof WeakMap)
+            return { type: "weakmap" };
+        if (value instanceof WeakSet)
+            return { type: "weakset" };
+        if (value instanceof ArrayBuffer)
+            return { type: "arraybuffer" };
+        if (ArrayBuffer.isView(value))
+            return { type: "typedarray" };
 
-            // Handle weak collections and ArrayBuffer types.
-            if (value instanceof WeakMap)
-                return { type: "weakmap" };
-            if (value instanceof WeakSet)
-                return { type: "weakset" };
-            if (value instanceof ArrayBuffer)
-                return { type: "arraybuffer" };
-            if (ArrayBuffer.isView(value))
-                return { type: "typedarray" };
+        return this._serializeBidiMapping(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+    }
 
-            // Check for cyclic references.
-            if (visitedObjects.has(value))
-                return { type: "object", value: {} };
+    _serializeBidiList(value, type, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects)
+    {
+        let remoteValue = { type };
+        if (maxObjectDepth === 0 || visitedObjects.has(value))
+            return remoteValue;
 
-            // Check depth limit.
-            if (depth >= maxObjectDepth)
-                return { type: "object", value: {} };
-
-            visitedObjects.add(value);
-
-            try {
-                if (Array.isArray(value)) {
-                    let serializedArray = [];
-                    for (let i = 0; i < value.length; i++) {
-                        serializedArray[i] = this.serializeBidiRemoteValue(value[i], maxObjectDepth, depth + 1, visitedObjects);
-                    }
-                    return { type: "array", value: serializedArray };
-                } else {
-                    // Deterministic key ordering for plain objects.
-                    let serializedObject = {};
-                    let keys = Object.keys(value).sort();
-                    for (let i = 0; i < keys.length; ++i) {
-                        let key = keys[i];
-                        serializedObject[key] = this.serializeBidiRemoteValue(value[key], maxObjectDepth, depth + 1, visitedObjects);
-                    }
-                    return { type: "object", value: serializedObject };
-                }
-            } finally {
-                visitedObjects.delete(value);
-            }
+        let childObjectDepth = maxObjectDepth === null ? null : maxObjectDepth - 1;
+        visitedObjects.add(value);
+        try {
+            remoteValue.value = [];
+            for (let childValue of value)
+                remoteValue.value.push(this.serializeBidiRemoteValue(childValue, childObjectDepth, maxDomDepth, includeShadowTree, visitedObjects));
+        } finally {
+            visitedObjects.delete(value);
         }
+        return remoteValue;
+    }
 
-        // Fallback for unknown types.
-        return { type: "undefined" };
+    _serializeBidiMap(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects)
+    {
+        let remoteValue = { type: "map" };
+        if (maxObjectDepth === 0 || visitedObjects.has(value))
+            return remoteValue;
+
+        let childObjectDepth = maxObjectDepth === null ? null : maxObjectDepth - 1;
+        visitedObjects.add(value);
+        try {
+            remoteValue.value = [];
+            for (let [key, childValue] of value) {
+                let serializedKey = typeof key === "string" ? key : this.serializeBidiRemoteValue(key, childObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+                let serializedValue = this.serializeBidiRemoteValue(childValue, childObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+                remoteValue.value.push([serializedKey, serializedValue]);
+            }
+        } finally {
+            visitedObjects.delete(value);
+        }
+        return remoteValue;
+    }
+
+    _serializeBidiMapping(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects)
+    {
+        let remoteValue = { type: "object" };
+        if (maxObjectDepth === 0 || visitedObjects.has(value))
+            return remoteValue;
+
+        let childObjectDepth = maxObjectDepth === null ? null : maxObjectDepth - 1;
+        visitedObjects.add(value);
+        try {
+            remoteValue.value = [];
+            for (let key of Object.keys(value)) {
+                let serializedValue = this.serializeBidiRemoteValue(value[key], childObjectDepth, maxDomDepth, includeShadowTree, visitedObjects);
+                remoteValue.value.push([key, serializedValue]);
+            }
+        } finally {
+            visitedObjects.delete(value);
+        }
+        return remoteValue;
+    }
+
+    _serializeBidiNode(value, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects)
+    {
+        let remoteValue = { type: "node" };
+        let nodeDocument = value.nodeType === Node.DOCUMENT_NODE ? value : value.ownerDocument;
+        if (nodeDocument === document)
+            remoteValue.sharedId = this._identifierForNode(value);
+
+        if (visitedObjects.has(value))
+            return remoteValue;
+
+        visitedObjects.add(value);
+        try {
+            let serialized = {
+                nodeType: value.nodeType,
+                childNodeCount: value.childNodes.length
+            };
+
+            if (value.nodeValue !== null)
+                serialized.nodeValue = value.nodeValue;
+
+            if (value instanceof Element || value instanceof Attr) {
+                serialized.localName = value.localName;
+                serialized.namespaceURI = value.namespaceURI;
+            }
+
+            let shouldSerializeChildren = maxDomDepth !== 0;
+            if (value instanceof ShadowRoot) {
+                if (includeShadowTree === "none" || (includeShadowTree === "open" && value.mode === "closed"))
+                    shouldSerializeChildren = false;
+            }
+
+            if (shouldSerializeChildren) {
+                let childDomDepth = maxDomDepth === null ? null : maxDomDepth - 1;
+                serialized.children = [];
+                for (let child of value.childNodes)
+                    serialized.children.push(this.serializeBidiRemoteValue(child, maxObjectDepth, childDomDepth, includeShadowTree, visitedObjects));
+            }
+
+            if (value instanceof Element) {
+                serialized.attributes = {};
+                for (let i = 0; i < value.attributes.length; ++i) {
+                    let attribute = value.attributes[i];
+                    serialized.attributes[attribute.name] = attribute.value;
+                }
+
+                let shadowRoot = shadowRootForElement(value);
+                serialized.shadowRoot = shadowRoot ? this.serializeBidiRemoteValue(shadowRoot, maxObjectDepth, maxDomDepth, includeShadowTree, visitedObjects) : null;
+            }
+
+            if (value instanceof ShadowRoot)
+                serialized.mode = value.mode;
+
+            remoteValue.value = serialized;
+            return remoteValue;
+        } finally {
+            visitedObjects.delete(value);
+        }
     }
 };
 
