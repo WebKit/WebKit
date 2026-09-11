@@ -1862,6 +1862,7 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
 void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageProxyIdentifier pageID, const WebExtensionContentRuleListBlockedLoadInfo& info)
 {
     RefPtr tab = getTab(pageID);
+    RefPtr parentFrame = WebFrameProxy::webFrame(info.parentFrameID);
 
     ResourceLoadInfo loadInfo {
         NetworkResourceLoadIdentifier::generate(),
@@ -1872,7 +1873,8 @@ void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageP
         info.httpMethod,
         WallTime::now(),
         false,
-        info.type
+        info.type,
+        parentFrame && parentFrame->isMainFrame()
     };
 
     if (!hasPermissionToSendWebRequestEvent(tab.get(), info.url, loadInfo))

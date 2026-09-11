@@ -48,4 +48,5 @@ struct WebKit::ResourceLoadInfo {
     WallTime eventTimestamp;
     bool loadedFromCache;
     WebKit::ResourceLoadInfo::Type type;
+    bool parentFrameIsMainFrame;
 };
