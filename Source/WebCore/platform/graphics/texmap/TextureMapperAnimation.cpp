@@ -144,19 +144,11 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const GraphicsLayerAnimationValue& animationValue, const TextureMapperAnimation& animation)
-{
-    if (auto* function = animationValue.timingFunction())
-        return *function;
-    if (auto* function = animation.timingFunction())
-        return *function;
-    return CubicBezierTimingFunction::defaultTimingFunction();
-}
-
 TextureMapperAnimation::TextureMapperAnimation(const String& name, const GraphicsLayerKeyframeValueList& keyframes, const GraphicsLayerAnimation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(keyframes)
-    , m_timingFunction(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : animation.timingFunction()->clone())
+    , m_timingFunction(animation.timingFunction()->clone())
+    , m_defaultTimingFunctionForKeyframes(animation.defaultTimingFunctionForKeyframes() ? animation.defaultTimingFunctionForKeyframes()->clone() : RefPtr<TimingFunction> { })
     , m_iterationCount(animation.iterationCount())
     , m_duration(animation.duration().value_or(0))
     , m_direction(animation.direction())
@@ -173,6 +165,7 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
     , m_keyframes(other.m_keyframes)
     , m_timingFunction(other.m_timingFunction->clone())
+    , m_defaultTimingFunctionForKeyframes(other.m_defaultTimingFunctionForKeyframes ? other.m_defaultTimingFunctionForKeyframes->clone() : RefPtr<TimingFunction> { })
     , m_iterationCount(other.m_iterationCount)
     , m_duration(other.m_duration)
     , m_direction(other.m_direction)
@@ -190,6 +183,7 @@ TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAni
     m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
     m_keyframes = other.m_keyframes;
     m_timingFunction = other.m_timingFunction->clone();
+    m_defaultTimingFunctionForKeyframes = other.m_defaultTimingFunctionForKeyframes ? other.m_defaultTimingFunctionForKeyframes->clone() : RefPtr<TimingFunction> { };
     m_iterationCount = other.m_iterationCount;
     m_duration = other.m_duration;
     m_direction = other.m_direction;
@@ -238,12 +232,18 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
         applyInternal(applicationResults, m_keyframes.at(m_keyframes.size() - 2), m_keyframes.at(m_keyframes.size() - 1), 1);
         return;
     }
+
     if (m_keyframes.size() == 2) {
-        auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *this);
-        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
+        if (!m_defaultTimingFunctionForKeyframes)
+            normalizedValue = timingFunction()->transformProgress(normalizedValue, m_duration);
+
+        normalizedValue = timingFunctionForKeyframe(m_keyframes.at(0)).transformProgress(normalizedValue, m_duration);
         applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), normalizedValue);
         return;
     }
+
+    if (!m_defaultTimingFunctionForKeyframes)
+        normalizedValue = timingFunction()->transformProgress(normalizedValue, m_duration);
 
     for (size_t i = 0; i < m_keyframes.size() - 1; ++i) {
         const auto& from = m_keyframes.at(i);
@@ -252,8 +252,7 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
             continue;
 
         normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
-        auto& timingFunction = timingFunctionForAnimationValue(from, *this);
-        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
+        normalizedValue = timingFunctionForKeyframe(from).transformProgress(normalizedValue, m_duration);
         applyInternal(applicationResults, from, to, normalizedValue);
         break;
     }
@@ -284,6 +283,17 @@ Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
     m_lastRefreshedTime = time;
     m_totalRunningTime += m_lastRefreshedTime - oldLastRefreshedTime;
     return m_totalRunningTime;
+}
+
+const TimingFunction& TextureMapperAnimation::timingFunctionForKeyframe(const GraphicsLayerAnimationValue& from) const
+{
+    if (auto* keyframeTimingFunction = from.timingFunction())
+        return *keyframeTimingFunction;
+
+    if (m_defaultTimingFunctionForKeyframes)
+        return *m_defaultTimingFunctionForKeyframes;
+
+    return LinearTimingFunction::identity();
 }
 
 void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const GraphicsLayerAnimationValue& from, const GraphicsLayerAnimationValue& to, float progress)
