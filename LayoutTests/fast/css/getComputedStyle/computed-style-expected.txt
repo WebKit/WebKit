@@ -227,7 +227,6 @@ zoom: 1;
 -webkit-hyphenate-limit-lines: no-limit;
 -webkit-line-align: none;
 -webkit-line-box-contain: block inline replaced;
--webkit-line-clamp: none;
 -webkit-line-grid: none;
 -webkit-line-snap: none;
 -webkit-locale: auto;

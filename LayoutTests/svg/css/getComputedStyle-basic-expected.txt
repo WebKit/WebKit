@@ -225,7 +225,6 @@ rect: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 rect: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
 rect: style.getPropertyValue(-webkit-line-align) : none
 rect: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
-rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyValue(-webkit-line-grid) : none
 rect: style.getPropertyValue(-webkit-line-snap) : none
 rect: style.getPropertyValue(-webkit-locale) : auto
@@ -465,7 +464,6 @@ g: style.getPropertyValue(-webkit-hyphenate-limit-before) : auto
 g: style.getPropertyValue(-webkit-hyphenate-limit-lines) : no-limit
 g: style.getPropertyValue(-webkit-line-align) : none
 g: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
-g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyValue(-webkit-line-grid) : none
 g: style.getPropertyValue(-webkit-line-snap) : none
 g: style.getPropertyValue(-webkit-locale) : auto
