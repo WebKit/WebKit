@@ -480,6 +480,12 @@ bool MacApplication::isAdobeInstaller()
     return isAdobeInstaller;
 }
 
+bool MacApplication::isCaptiveNetworkAssistant()
+{
+    static bool isCaptiveNetworkAssistant = applicationBundleIsEqualTo("com.apple.CaptiveNetworkAssistant"_s);
+    return isCaptiveNetworkAssistant;
+}
+
 bool MacApplication::isMiniBrowser()
 {
     static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s);

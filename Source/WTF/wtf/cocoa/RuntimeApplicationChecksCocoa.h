@@ -191,6 +191,7 @@ namespace MacApplication {
 
 WTF_EXPORT_PRIVATE bool isAdobeInstaller();
 WTF_EXPORT_PRIVATE bool isAppleMail();
+WTF_EXPORT_PRIVATE bool isCaptiveNetworkAssistant();
 WTF_EXPORT_PRIVATE bool isMiniBrowser();
 WTF_EXPORT_PRIVATE bool isQuickenEssentials();
 WTF_EXPORT_PRIVATE bool isSafari();

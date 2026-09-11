@@ -1185,7 +1185,7 @@ static bool isLockdownModeEnabledBySystemIgnoringCaching()
 #endif
     
 #if PLATFORM(MAC)
-    if (!WTF::MacApplication::isSafari() && !WTF::MacApplication::isMiniBrowser())
+    if (!WTF::MacApplication::isSafari() && !WTF::MacApplication::isMiniBrowser() && !WTF::MacApplication::isCaptiveNetworkAssistant())
         return false;
 #endif
     

@@ -941,26 +941,6 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenLockdownOpts
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-#ifdef RC_REMOVE_SEC_ACCEL_3
-TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenSecurityRestrictionModeNone)
-{
-    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
-
-    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeNone;
-
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
-    [webView _test_waitForDidFinishNavigation];
-
-    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
-    EXPECT_EQ(false, isJITEnabled(webView.get()));
-    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-
-    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-}
-#else
 TEST(EnhancedSecurity, SystemLockdownModeWithSecurityRestrictionModeNone)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -979,7 +959,6 @@ TEST(EnhancedSecurity, SystemLockdownModeWithSecurityRestrictionModeNone)
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
-#endif // RC_REMOVE_SEC_ACCEL_3
 
 TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsOut)
 {
@@ -1001,26 +980,6 @@ TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenBothAPIOptsO
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
 
-#ifdef RC_REMOVE_SEC_ACCEL_3
-TEST(EnhancedSecurity, SystemLockdownModeEnablesEnhancedSecurityWhenMaximizeCompatibilitySet)
-{
-    [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
-
-    RetainPtr webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
-    webViewConfiguration.get().defaultWebpagePreferences.securityRestrictionMode = WKSecurityRestrictionModeMaximizeCompatibility;
-
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    NSURL *url = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
-    [webView _test_waitForDidFinishNavigation];
-
-    EXPECT_EQ(true, isEnhancedSecurityEnabled(webView.get()));
-    EXPECT_EQ(false, isJITEnabled(webView.get()));
-    EXPECT_STREQ("security", [webView _webContentProcessVariantForFrame:nil].UTF8String);
-
-    [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
-}
-#else
 TEST(EnhancedSecurity, SystemLockdownModeWithMaximizeCompatibilitySet)
 {
     [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
@@ -1039,7 +998,6 @@ TEST(EnhancedSecurity, SystemLockdownModeWithMaximizeCompatibilitySet)
 
     [WKProcessPool _clearCaptivePortalModeEnabledGloballyForTesting];
 }
-#endif // RC_REMOVE_SEC_ACCEL_3
 
 TEST(EnhancedSecurity, ForceDisabledOverridesSecurityRestrictionMode)
 {

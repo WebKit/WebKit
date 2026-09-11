@@ -879,6 +879,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)setSecurityRestrictionMode:(WKSecurityRestrictionMode)mode
 {
+    if (WebKit::lockdownModeEnabledBySystem())
+        return;
+
     switch (mode) {
 #ifdef RC_REMOVE_SEC_ACCEL_3
     case WKSecurityRestrictionModeNone:
