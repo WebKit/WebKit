@@ -2036,3 +2036,26 @@
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 270000))
 #define HAVE_AVPLAYER_DISCONNECTEDFROMSYSTEMAUDIO 1
 #endif
+
+// CFNetwork's cookie-date parser rejects a date that writes the month before the day of the month,
+// and requires the day and month names in title case. RFC 6265 section 5.1.1 accepts either
+// ordering and matches the names case-insensitively. A rejected date silently downgrades the
+// cookie to session scope.
+// FIXME: Turn this off on platforms that have the CFNetwork fix (rdar://185837942, rdar://186224951).
+#if !defined(HAVE_BROKEN_COOKIE_DATE_PARSER) && PLATFORM(COCOA)
+#define HAVE_BROKEN_COOKIE_DATE_PARSER 1
+#endif
+
+// CFNetwork cannot carry a UTF-8 cookie name or value: an unquoted value is truncated at the first
+// character it cannot hold in one byte, and damage to the name drops the cookie entirely.
+// FIXME: Turn this off on platforms that have the CFNetwork fix (rdar://186123874).
+#if !defined(HAVE_BROKEN_NON_ASCII_COOKIE_PARSER) && PLATFORM(COCOA)
+#define HAVE_BROKEN_NON_ASCII_COOKIE_PARSER 1
+#endif
+
+// Every NSHTTPCookie property dictionary discards exactly one leading U+FEFF from the name and
+// from the value.
+// FIXME: Turn this off on platforms that have the CFNetwork fix (rdar://186225250).
+#if !defined(HAVE_BROKEN_LEADING_BOM_COOKIE_PARSER) && PLATFORM(COCOA)
+#define HAVE_BROKEN_LEADING_BOM_COOKIE_PARSER 1
+#endif

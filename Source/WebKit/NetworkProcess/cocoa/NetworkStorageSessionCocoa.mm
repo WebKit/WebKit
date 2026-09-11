@@ -275,6 +275,18 @@ void NetworkStorageSession::deleteCookie(const URL& firstParty, const URL& url, 
     CookieStorageSession::deleteCookie(firstParty, url, cookieName, cookiePartitionIdentifierIfEnabled(firstParty), WTF::move(completionHandler));
 }
 
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+void NetworkStorageSession::repairCookiesFromHTTPResponse(const URL& firstParty, const URL& url, const WebCore::SameSiteInfo& sameSiteInfo, const String& setCookieHeaderValue, WebCore::ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision) const
+{
+    // CFNetwork already stored whatever it made of this header; a blocked response must not have a
+    // repaired copy written over the top of that decision.
+    if (shouldBlockCookies(thirdPartyCookieBlockingDecision))
+        return;
+
+    CookieStorageSession::repairCookiesFromHTTPResponse(firstParty, url, sameSiteInfo, setCookieHeaderValue, thirdPartyCookieBlockingDecision, cookiePartitionIdentifierIfEnabled(firstParty));
+}
+#endif
+
 void NetworkStorageSession::getHostnamesWithCookies(HashSet<String>& hostnames)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
