@@ -5110,6 +5110,14 @@ SVGExternalResourcesEnabled:
   humanReadableDescription: "Enable referencing SVG resources (paint servers, etc.) via external or data: URLs"
   defaultValue: true
 
+SVGImageDisplayListCacheEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "SVG image display list cache"
+  humanReadableDescription: "Cache a display list per SVG image container instead of re-rendering the resource document for every draw"
+  defaultValue: false
+
 SWVPDecodersAlwaysEnabled:
   type: bool
   status: internal

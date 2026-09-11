@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AffineTransform.h>
+#include <WebCore/DisplayList.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
@@ -69,6 +70,8 @@ private:
 
     WeakPtr<SVGImage> m_image;
     const SVGImage::ContainerContext m_containerContext;
+
+    RefPtr<const DisplayList::DisplayList> m_displayList;
 };
 
 } // namespace WebCore

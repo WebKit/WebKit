@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/DisplayList.h>
 #include <WebCore/Image.h>
 #include <WebCore/StyleLinkParameters.h>
 #include <WebCore/Timer.h>
@@ -50,6 +51,11 @@ public:
         float containerZoom { 1 };
         URL initialFragmentURL { };
         Style::LinkParameters linkParameters { CSS::Keyword::None { } };
+
+        // containerSize is stored unzoomed, since that is the size the document lays out at.
+        FloatSize roundedContainerSize() const { return FloatSize(roundedIntSize(containerSize)); }
+        FloatSize zoomedContainerSize() const { return FloatSize(roundedIntSize(containerSize * zoom())); }
+        FloatSize zoom() const { return { containerZoom, containerZoom }; }
     };
 
     static Ref<SVGImage> create(ImageObserver* observer) { return adoptRef(*new SVGImage(observer)); }
@@ -120,6 +126,16 @@ private:
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }) final;
     ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+    ImageDrawResult drawInternal(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions, const DisplayList::DisplayList*);
+
+    RefPtr<const DisplayList::DisplayList> recordContentForContainer(const ContainerContext&, const ColorSpace&);
+    ImageDrawResult drawRecordedContentForContainer(GraphicsContext&, const ContainerContext&, const DisplayList::DisplayList&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+
+    static FloatRect adjustedSourceRectForContainer(const ContainerContext&, const FloatRect& srcRect);
+    void prepareForContainer(const ContainerContext&);
+    void paintFrameView(GraphicsContext&, const FloatRect& srcRect);
+
+    bool displayListCacheEnabled() const;
     void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { });
 
     void applyLinkParameters(const Style::LinkParameters&);
