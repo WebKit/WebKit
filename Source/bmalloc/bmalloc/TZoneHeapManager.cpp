@@ -123,6 +123,11 @@ void determineTZoneMallocFallback()
         return;
     }
 
+    if (isMTEEnabled()) {
+        tzoneMallocFallback = TZoneMallocFallback::ForceFastMalloc;
+        return;
+    }
+
     const char* env = getenv("bmalloc_TZoneHeap");
     if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
         tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
