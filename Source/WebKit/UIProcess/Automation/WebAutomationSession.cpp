@@ -2674,6 +2674,22 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
     } });
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, CompletionHandler<void(std::optional<RealmIdentifier>&&, std::optional<WebCore::SecurityOriginData>&&)>&& completionHandler)
+{
+    RefPtr page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        return completionHandler(std::nullopt, std::nullopt);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    if (frameNotFound)
+        return completionHandler(std::nullopt, std::nullopt);
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetBidiRealmInfo(page->webPageIDInProcessForFrame(frameID), frameID), WTF::move(completionHandler));
+}
+#endif
+
 void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton mouseButton, Inspector::Protocol::Automation::MouseInteraction mouseInteraction, Ref<JSON::Array>&& keyModifierStrings, CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&& callback)
 {
 #if !ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
