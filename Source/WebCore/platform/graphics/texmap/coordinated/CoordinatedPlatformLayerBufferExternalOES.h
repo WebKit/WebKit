@@ -25,13 +25,8 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBuffer.h"
-
-#if USE(GSTREAMER) && USE(GBM)
-#include "CoordinatedPlatformLayerBufferYUV.h"
-#include "GRefPtrGStreamer.h"
-#endif
 
 namespace WebCore {
 
@@ -41,37 +36,20 @@ class CoordinatedPlatformLayerBufferExternalOES final : public CoordinatedPlatfo
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> create(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferExternalOES(unsigned textureID, const IntSize&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
-#if USE(GSTREAMER) && USE(GBM)
-    enum class SampleRange : bool { Narrow, Full };
-    static std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> create(GRefPtr<GstBuffer>&&, uint32_t fourcc, CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, SampleRange, const IntSize&, OptionSet<TextureMapperFlags>);
-    CoordinatedPlatformLayerBufferExternalOES(GRefPtr<GstBuffer>&&, uint32_t fourcc, CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, SampleRange, const IntSize&, OptionSet<TextureMapperFlags>);
-#endif
+    static std::unique_ptr<CoordinatedPlatformLayerBufferExternalOES> create(Ref<BitmapTexture>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
+    CoordinatedPlatformLayerBufferExternalOES(Ref<BitmapTexture>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
 
     virtual ~CoordinatedPlatformLayerBufferExternalOES();
 
 private:
-#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-#else
-    sk_sp<SkImage> skiaImage() override;
-#endif
-
-#if USE(GSTREAMER) && USE(GBM)
-    RefPtr<BitmapTexture> createExternalOESTexture();
-#endif
 
     unsigned m_textureID { 0 };
-#if USE(GSTREAMER) && USE(GBM)
-    uint32_t m_fourcc { 0 };
-    CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace m_yuvColorSpace { CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601 };
-    SampleRange m_sampleRange { SampleRange::Narrow };
-    GRefPtr<GstBuffer> m_buffer;
-    RefPtr<BitmapTexture> m_externalOESTexture;
-#endif
+    RefPtr<BitmapTexture> m_texture;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_COORDINATED_PLATFORM_LAYER_BUFFER_TYPE(CoordinatedPlatformLayerBufferExternalOES, Type::ExternalOES)
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
