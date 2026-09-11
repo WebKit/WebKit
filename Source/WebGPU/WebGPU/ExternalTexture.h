@@ -68,6 +68,7 @@ public:
     void update(CVPixelBufferRef);
     size_t openCommandEncoderCount() const;
     void updateExternalTextures(id<MTLTexture>, id<MTLTexture>);
+    Device& device() const { return m_device; }
 
 private:
     ExternalTexture(CVPixelBufferRef, WGPUColorSpace, Device&);
