@@ -25,6 +25,10 @@ import CoreGraphics
 import CoreText
 import Foundation
 private import TestWebKitAPILibrary.Helpers.cocoa.PDFTestHelpers
+private import TestWebKitAPILibrary.Helpers.cocoa.WKWebViewConfigurationExtras
+import WebKit
+private import WebKit_Private
+private import WebKit_Private.WKPreferencesPrivate
 
 import struct Foundation.URL
 import struct Swift.String
@@ -32,6 +36,16 @@ import struct Swift.String
 @objc
 @implementation
 extension TestPDFBuilder {
+    class func pdfData() -> Data {
+        guard let url = Bundle.testResources.url(forResource: "test", withExtension: "pdf"),
+            let data = try? Data(contentsOf: url)
+        else {
+            fatalError("Unable to load test.pdf from the test resources bundle")
+        }
+
+        return data
+    }
+
     class func pdfDataWithLink() -> Data {
         let pdfData = NSMutableData()
 
@@ -76,5 +90,27 @@ extension TestPDFBuilder {
         context.closePDF()
 
         return pdfData as Data
+    }
+
+    @MainActor
+    class func configurationForUnifiedPDF(withHUDEnabled hudEnabled: Bool) -> WKWebViewConfiguration {
+        // swift-format-ignore: NeverForceUnwrap
+        let configuration = WKWebViewConfiguration._test_configurationWithTestPlugInClassName(
+            "WebProcessPlugInWithInternals",
+            configureJSCForTesting: true
+        )!
+
+        for feature in WKPreferences._features() {
+            switch feature.key {
+            case "UnifiedPDFEnabled":
+                configuration.preferences._setEnabled(true, for: feature)
+            case "PDFPluginHUDEnabled":
+                configuration.preferences._setEnabled(hudEnabled, for: feature)
+            default:
+                break
+            }
+        }
+
+        return configuration
     }
 }

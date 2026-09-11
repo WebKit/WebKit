@@ -320,7 +320,6 @@ Tests/WebKit/WKWebView/TabOutOfWebView.mm @nonARC
 Tests/WebKit/WKWebView/TestAwakener.mm @nonARC
 Tests/WebKit/WKWebView/SOAuthorizationTests.mm @nonARC
 Tests/WebKit/WKWebView/TestURLSchemeHandler.mm @nonARC
-Tests/WebKit/WKWebView/TextExtractionTests.mm @nonARC
 Tests/WebKit/WKWebView/TextManipulation.mm @nonARC
 Tests/WebKit/WKWebView/TextSize.mm @nonARC
 Tests/WebKit/WKWebView/TextWidth.mm @nonARC

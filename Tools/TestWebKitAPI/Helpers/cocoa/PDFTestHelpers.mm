@@ -26,14 +26,10 @@
 #import "config.h"
 #import "Helpers/cocoa/PDFTestHelpers.h"
 
-#import "Helpers/cocoa/TestNSBundleExtras.h"
 #import "Helpers/Utilities.h"
-#import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
 #import <Foundation/Foundation.h>
-#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKWebViewConfiguration.h>
-#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameHandle.h>
 #import <wtf/RetainPtr.h>
 
@@ -70,21 +66,12 @@ namespace TestWebKitAPI {
 
 RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF(bool hudEnabled)
 {
-    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-
-    for (_WKFeature *feature in [WKPreferences _features]) {
-        if ([feature.key isEqualToString:@"UnifiedPDFEnabled"])
-            [[configuration preferences] _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"PDFPluginHUDEnabled"])
-            [[configuration preferences] _setEnabled:static_cast<BOOL>(hudEnabled) forFeature:feature];
-    }
-
-    return configuration;
+    return [TestPDFBuilder configurationForUnifiedPDFWithHUDEnabled:hudEnabled];
 }
 
 RetainPtr<NSData> testPDFData()
 {
-    return [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    return [TestPDFBuilder pdfData];
 }
 
 RetainPtr<NSData> testPDFDataWithLink()

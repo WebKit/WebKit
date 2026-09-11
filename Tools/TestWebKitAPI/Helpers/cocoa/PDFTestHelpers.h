@@ -37,8 +37,11 @@
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
+NS_SWIFT_UI_ACTOR
 @interface TestPDFBuilder : NSObject
++ (NSData *)pdfData;
 + (NSData *)pdfDataWithLink;
++ (WKWebViewConfiguration *)configurationForUnifiedPDFWithHUDEnabled:(BOOL)hudEnabled;
 @end
 
 @interface PDFPrintUIDelegate : NSObject <WKUIDelegate>
