@@ -378,6 +378,8 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
+    void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier);
 #endif
 
     // Platform-dependent implementations.
