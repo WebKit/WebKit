@@ -1,0 +1,56 @@
+<!doctype html>
+<title>CSS Font Loading test: FontFace unicodeRange serializes hex digits as uppercase</title>
+<link rel="help" href="https://drafts.csswg.org/css-fonts/#unicode-range-desc">
+<link rel="help" href="https://drafts.csswg.org/css-font-loading/#fontface-interface">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+test(() => {
+  const face = new FontFace('test', 'url(x)');
+  assert_equals(face.unicodeRange, "U+0-10FFFF");
+}, "Default unicodeRange should use uppercase hex");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+FF'});
+  assert_equals(face.unicodeRange, "U+FF");
+}, "Single codepoint with hex letters should be uppercase");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+0-7F'});
+  assert_equals(face.unicodeRange, "U+0-7F");
+}, "Range with hex letters should be uppercase");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+aa-ff'});
+  assert_equals(face.unicodeRange, "U+AA-FF");
+}, "Lowercase hex input should serialize as uppercase");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+100-1ff'});
+  assert_equals(face.unicodeRange, "U+100-1FF");
+}, "Mixed numeric and hex letters should uppercase the letters");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+abc-def'});
+  assert_equals(face.unicodeRange, "U+ABC-DEF");
+}, "All hex letter digits should be uppercase");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)', {unicodeRange: 'U+4??'});
+  assert_equals(face.unicodeRange, "U+400-4FF");
+}, "Wildcard range should serialize as interval with uppercase hex");
+
+test(() => {
+  const face = new FontFace('test', 'url(x)');
+  face.unicodeRange = 'U+20-7f';
+  assert_equals(face.unicodeRange, "U+20-7F");
+}, "Setting unicodeRange after construction should serialize as uppercase");
+
+test(() => {
+  const lower = new FontFace('test', 'url(x)', {unicodeRange: 'U+aa-ff'});
+  const upper = new FontFace('test', 'url(x)', {unicodeRange: 'U+AA-FF'});
+  const mixed = new FontFace('test', 'url(x)', {unicodeRange: 'U+aA-Ff'});
+  assert_equals(lower.unicodeRange, upper.unicodeRange);
+  assert_equals(lower.unicodeRange, mixed.unicodeRange);
+}, "Codepoint hex digits are ASCII case-insensitive");
+</script>
