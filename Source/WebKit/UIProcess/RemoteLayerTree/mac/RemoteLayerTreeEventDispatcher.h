@@ -194,7 +194,6 @@ private:
 
     std::atomic<bool> m_fingerDownIntervalIsActive = false;
     std::atomic<bool> m_momentumIntervalIsActive = false;
-    std::atomic<bool> m_momentumIntervalHasSeenNonZeroDeltaEvent = false;
 
     enum class SynchronizationState : uint8_t {
         Idle,
