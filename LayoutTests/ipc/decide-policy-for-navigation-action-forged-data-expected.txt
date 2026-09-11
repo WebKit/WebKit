@@ -1,0 +1,5 @@
+ - decidePolicyForNavigationAction
+<NSURLRequest URL data:text/html,sub, main document URL data:text/html,sub, http method GET> is main frame - yes should open URLs externally - yes has unconsumed user gesture - no
+variant A reply received = true
+PASS: file:// invalidURLString rejected by MESSAGE_CHECK
+
