@@ -185,12 +185,47 @@ static void testViewToplevelState(WPEMockViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->view(), viewResizedID);
 }
 
+static void testViewTooltip(WPEMockViewTest* test, gconstpointer)
+{
+    auto* view = WPE_VIEW_MOCK(test->view());
+    g_assert_null(wpeViewMockGetTooltipText(view));
+    g_assert_null(wpeViewMockGetTooltipArea(view));
+
+    WPERectangle area = { 10, 20, 100, 30 };
+    g_autoptr(WPETooltip) tooltip = wpe_tooltip_new("Tooltip", &area);
+    g_assert_cmpstr(wpe_tooltip_get_text(tooltip), ==, "Tooltip");
+    g_assert_nonnull(wpe_tooltip_get_area(tooltip));
+    wpe_view_set_tooltip(test->view(), tooltip);
+    g_assert_cmpstr(wpeViewMockGetTooltipText(view), ==, "Tooltip");
+    const auto* tooltipArea = wpeViewMockGetTooltipArea(view);
+    g_assert_nonnull(tooltipArea);
+    g_assert_cmpint(tooltipArea->x, ==, 10);
+    g_assert_cmpint(tooltipArea->y, ==, 20);
+    g_assert_cmpint(tooltipArea->width, ==, 100);
+    g_assert_cmpint(tooltipArea->height, ==, 30);
+
+    g_autoptr(WPETooltip) tooltipWithoutArea = wpe_tooltip_new("Tooltip without area", nullptr);
+    g_assert_null(wpe_tooltip_get_area(tooltipWithoutArea));
+    wpe_view_set_tooltip(test->view(), tooltipWithoutArea);
+    g_assert_cmpstr(wpeViewMockGetTooltipText(view), ==, "Tooltip without area");
+    g_assert_null(wpeViewMockGetTooltipArea(view));
+
+    WPERectangle emptyArea = { 10, 20, 0, 30 };
+    g_autoptr(WPETooltip) tooltipWithEmptyArea = wpe_tooltip_new("Tooltip with empty area", &emptyArea);
+    g_assert_null(wpe_tooltip_get_area(tooltipWithEmptyArea));
+
+    wpe_view_set_tooltip(test->view(), nullptr);
+    g_assert_null(wpeViewMockGetTooltipText(view));
+    g_assert_null(wpeViewMockGetTooltipArea(view));
+}
+
 void beforeAll()
 {
     WPEMockViewTest::add("View", "toplevel", testViewToplevel);
     WPEMockViewTest::add("View", "size", testViewSize);
     WPEMockViewTest::add("View", "scale", testViewScale);
     WPEMockViewTest::add("View", "toplevel-state", testViewToplevelState);
+    WPEMockViewTest::add("View", "tooltip", testViewTooltip);
 }
 
 void afterAll()
