@@ -33,9 +33,13 @@
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferResourceLimits.h>
+#include <WebCore/NativeImage.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
@@ -49,6 +53,45 @@ namespace WebKit {
 
 // Timeout for waiting on a resource to be published in the shared cache from another work queue.
 constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
+
+// Per Web Content process budget for decoded thumbnail strips.
+constexpr size_t thumbnailStripCacheLimit = 32 * MB;
+
+// A decoded thumbnail strip, kept so that repeated scrubbing over the same
+// media element does not re-decode the same image once per tile.
+struct CachedThumbnailStrip {
+    WebCore::IntSize tileSize;
+    uint32_t tileCount { 0 };
+    Vector<Ref<WebCore::NativeImage>> tiles;
+    size_t byteCount { 0 };
+
+    template<typename Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << tileSize;
+        encoder << tileCount;
+        encoder << byteCount;
+    }
+
+    template<typename Decoder> static std::optional<CachedThumbnailStrip> decode(Decoder& decoder)
+    {
+        std::optional<WebCore::IntSize> tileSize;
+        decoder >> tileSize;
+        if (!tileSize)
+            return std::nullopt;
+
+        std::optional<uint32_t> tileCount;
+        decoder >> tileCount;
+        if (!tileCount)
+            return std::nullopt;
+
+        std::optional<size_t> byteCount;
+        decoder >> byteCount;
+        if (!byteCount)
+            return std::nullopt;
+
+        return CachedThumbnailStrip { *tileSize, *tileCount, { }, *byteCount };
+    }
+};
 
 class GPUConnectionToWebProcess;
 // Class holding GPU process resources per Web Content process.
@@ -90,9 +133,15 @@ private:
     // Messages
     void releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier);
     void releaseNativeImage(RemoteNativeImageWriteReference&&);
+    void cacheEncodedThumbnailStrip(WebCore::RenderingResourceIdentifier, WebCore::IntSize tileSize, uint32_t tileCount, Vector<uint8_t>&& encodedData);
+    void takeThumbnailTile(WebCore::RenderingResourceIdentifier, uint32_t tileIndex, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>)>&&);
+
+    void releaseUnusedThumbnailStrips();
 
     IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<WebCore::ImageBuffer>> m_serializedImageBuffers;
     IPC::ThreadSafeObjectHeap<WebCore::RenderingResourceIdentifier, RefPtr<WebCore::NativeImage>> m_nativeImages;
+    HashMap<WebCore::RenderingResourceIdentifier, CachedThumbnailStrip*> m_thumbnailStrips;
+    size_t m_thumbnailStripBytes { 0 };
 
     WebCore::ProcessIdentity m_resourceOwner;
 #if HAVE(IOSURFACE)
