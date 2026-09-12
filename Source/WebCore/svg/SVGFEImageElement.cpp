@@ -109,7 +109,9 @@ void SVGFEImageElement::buildPendingResource()
 
     auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
-        if (target.identifier.isEmpty())
+        Ref document = this->document();
+        auto url = document->encodingParseURL(href());
+        if (url.protocolIsData() || isExternalURIReference(href(), document))
             requestImageResource();
         else {
             treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
