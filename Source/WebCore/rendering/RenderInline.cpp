@@ -144,37 +144,11 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         lineLayout->paint(paintInfo, paintOffset, this);
 }
 
-Vector<FloatRect> RenderInline::lineBoxRects() const
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-        auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
-        if (inlineBoxRects.isEmpty())
-            return { FloatRect { } };
-        return inlineBoxRects;
-    }
-
-    Vector<FloatRect> rects;
-    for (auto* box = firstLegacyInlineBoxFor(*this); box; box = box->nextLineBox())
-        rects.append(FloatRect { box->topLeft(), box->size() });
-    if (rects.isEmpty())
-        rects.append({ });
-    return rects;
-}
-
-void RenderInline::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
-{
-    for (auto rect : lineBoxRects()) {
-        auto adjustedRect = LayoutRect { rect };
-        adjustedRect.moveBy(accumulatedOffset);
-        rects.append(adjustedRect);
-    }
-}
-
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
 {
     RenderGeometryMap geometryMap;
     geometryMap.pushMappingsToAncestor(this, nullptr);
-    for (auto rect : lineBoxRects())
+    for (auto rect : localBorderBoxRects())
         quads.append(geometryMap.absoluteRect(rect));
 }
 
@@ -584,17 +558,6 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
 
     // FIXME: We can do better.
     repaint();
-}
-
-void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset) const
-{
-    for (auto rect : lineBoxRects()) {
-        if (rect.isEmpty())
-            continue;
-        auto adjustedRect = LayoutRect { rect };
-        adjustedRect.moveBy(additionalOffset);
-        rects.append(adjustedRect);
-    }
 }
 
 static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)

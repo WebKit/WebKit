@@ -398,7 +398,13 @@ bool OutlinePainter::collectFocusRingRectsForListBox(const RenderListBox& render
 
 void OutlinePainter::collectFocusRingRectsForInline(const RenderBoxModelObject& renderer, Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
-    downcast<RenderInline>(renderer).collectLineBoxRects(rects, additionalOffset);
+    for (auto rect : renderer.localBorderBoxRects()) {
+        if (rect.isEmpty())
+            continue;
+        auto adjustedRect = LayoutRect { rect };
+        adjustedRect.moveBy(additionalOffset);
+        rects.append(adjustedRect);
+    }
 
     for (CheckedRef child : childrenOfType<RenderBoxModelObject>(renderer)) {
         if (child->isRenderListOutsideMarker())

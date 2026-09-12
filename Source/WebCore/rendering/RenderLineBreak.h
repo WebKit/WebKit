@@ -41,7 +41,7 @@ public:
 
     IntRect linesBoundingBox() const;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
+    Vector<FloatRect> localBorderBoxRects() const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const final;
 
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;

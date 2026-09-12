@@ -52,7 +52,6 @@ public:
     LayoutUnit marginStart() const { return marginStart(writingMode()); }
     LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
@@ -69,8 +68,6 @@ public:
 
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
 
-    void collectLineBoxRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset) const;
-
     bool mayAffectLayout() const;
     bool requiresLayer() const override;
 
@@ -86,8 +83,6 @@ private:
     ASCIILiteral renderName() const override;
 
     bool canHaveChildren() const final { return true; }
-
-    Vector<FloatRect> lineBoxRects() const;
 
     void layout() final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 

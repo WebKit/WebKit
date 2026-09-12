@@ -499,7 +499,7 @@ public:
     bool hitTestBorderRadius(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
+    Vector<FloatRect> localBorderBoxRects() const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     LayoutUnit offsetLeft() const override;

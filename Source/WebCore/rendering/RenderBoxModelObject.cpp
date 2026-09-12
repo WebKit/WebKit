@@ -1020,4 +1020,30 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
     return boundingBoxOfFragments();
 }
 
+Vector<FloatRect> RenderBoxModelObject::localBorderBoxRects() const
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+        auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
+        if (inlineBoxRects.isEmpty())
+            return { FloatRect { } };
+        return inlineBoxRects;
+    }
+
+    Vector<FloatRect> rects;
+    for (auto* box = firstLegacyInlineBoxFor(*this); box; box = box->nextLineBox())
+        rects.append(FloatRect { box->topLeft(), box->size() });
+    if (rects.isEmpty())
+        rects.append({ });
+    return rects;
+}
+
+void RenderBoxModelObject::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+{
+    for (auto rect : localBorderBoxRects()) {
+        auto adjustedRect = LayoutRect { rect };
+        adjustedRect.moveBy(accumulatedOffset);
+        rects.append(adjustedRect);
+    }
+}
+
 } // namespace WebCore
