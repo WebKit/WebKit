@@ -1050,7 +1050,7 @@ webkit.org/b/306469 [ Release ] imported/w3c/web-platform-tests/encrypted-media/
 [ Release ] imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https.html [ Failure Pass ]
 webkit.org/b/316718 [ Release ] imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass Failure ]
 
-webkit.org/b/306758 media/event-attributes.html [ Pass Failure Crash ]
+webkit.org/b/306758 media/event-attributes.html [ Pass Failure ]
 
 webkit.org/b/307989 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
 
