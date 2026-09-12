@@ -171,6 +171,52 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventForSubresource)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventForSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/subframe.html'></iframe>"_s } },
+        { "/subframe.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (!details?.url?.includes('/subframe.html'))",
+        @"    return",
+
+        @"  browser.test.assertEq(typeof details?.requestId, 'string', 'details.requestId should be')",
+        @"  browser.test.assertEq(typeof details?.tabId, 'number', 'details.tabId should be')",
+        @"  browser.test.assertEq(typeof details?.frameId, 'number', 'details.frameId should be')",
+        @"  browser.test.assertTrue(details?.frameId !== 0, 'details.frameId should not be the main frame')",
+        @"  browser.test.assertEq(typeof details?.parentFrameId, 'number', 'details.parentFrameId should be')",
+        @"  browser.test.assertTrue(details?.parentFrameId !== -1, 'details.parentFrameId should not be -1')",
+
+        @"  browser.test.assertEq(typeof details?.documentId, 'string', 'details.documentId should be')",
+        @"  browser.test.assertEq(details?.documentId?.length, 36, 'details.documentId.length should be')",
+
+        @"  browser.test.assertTrue(details?.url?.includes('/subframe.html'), 'details.url should include /subframe.html')",
+        @"  browser.test.assertEq(details?.method, 'GET', 'details.method should be')",
+        @"  browser.test.assertEq(details?.type, 'sub_frame', 'details.type should be')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto manager = Util::loadExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndFormData)
 {
     auto *pageScript = Util::constructScript(@[
