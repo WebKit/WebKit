@@ -46,6 +46,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Path.h"
+#include "PositionedLayoutConstraints.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -455,9 +456,9 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
                 auto isHorizontalWritingMode = !containingBlock() || containingBlock()->writingMode().isHorizontal();
-                if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
+                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Inline, isHorizontalWritingMode))
                     topLeft.setX(LayoutUnit { });
-                if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))
+                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Block, isHorizontalWritingMode))
                     topLeft.setY(LayoutUnit { });
             }
             referencePoint.move(-topLeft.x(), -topLeft.y());

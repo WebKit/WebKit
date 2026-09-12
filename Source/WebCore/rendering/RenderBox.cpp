@@ -2697,8 +2697,8 @@ LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const 
     if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
         offset -= toLayoutSize(boxContainer->scrollPosition());
 
-    if (auto* inlineContainer = dynamicDowncast<RenderInline>(container); isAbsolutelyPositioned() && inlineContainer && inlineContainer->canContainAbsolutelyPositionedObjects())
-        offset += inlineContainer->offsetForInFlowPositionedInline(this);
+    if (isAbsolutelyPositioned() && container.isInlineBox() && container.canContainAbsolutelyPositionedObjects())
+        offset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(container), style());
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);
@@ -2816,10 +2816,9 @@ auto RenderBox::computeVisibleRectsInContainer(const RepaintRects& rects, const 
 
     adjustedRects.move(locationOffset);
 
-    if (auto* inlineContainer = dynamicDowncast<RenderInline>(*localContainer); position == PositionType::Absolute && inlineContainer && inlineContainer->canContainAbsolutelyPositionedObjects()) {
-        auto offsetForInFlowPosition = inlineContainer->offsetForInFlowPositionedInline(this);
-        adjustedRects.move(offsetForInFlowPosition);
-    } else if (styleToUse.hasInFlowPosition() && layer()) {
+    if (position == PositionType::Absolute && localContainer->isInlineBox() && localContainer->canContainAbsolutelyPositionedObjects())
+        adjustedRects.move(PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(*localContainer), styleToUse));
+    else if (styleToUse.hasInFlowPosition() && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position

@@ -67,8 +67,6 @@ public:
 
     LayoutRect linesVisualOverflowBoundingBox() const;
 
-    LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;
-
     void collectLineBoxRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset) const;
 
     bool mayAffectLayout() const;

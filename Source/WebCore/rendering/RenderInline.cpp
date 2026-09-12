@@ -535,61 +535,6 @@ const RenderElement* RenderInline::pushMappingToContainer(const RenderLayerModel
     return ancestorSkipped ? ancestorToStopAt : container;
 }
 
-LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child) const
-{
-    // FIXME: This function isn't right with mixed writing modes.
-    // An inline box is the containing block for an out-of-flow child when it is in-flow positioned, and also when
-    // something else about it makes it one, e.g. a filter. Either way the child's static position is relative to the
-    // inline's own content, so it needs the offset of the line the inline starts on.
-    if (!canContainAbsolutelyPositionedObjects()) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    if (!hasLayer()) {
-        // It looks like we are a containing block but no layer created yet. It essentially means we don't have a position offset yet.
-        return { };
-    }
-
-    // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
-    // box from the rest of the content, but only in the cases where we know we're positioned
-    // relative to the inline itself.
-    auto inlinePosition = layer()->staticInlinePosition();
-    auto blockPosition = layer()->staticBlockPosition();
-    if (auto* inlineBox = firstLegacyInlineBoxFor(*this)) {
-        inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeft());
-        blockPosition = inlineBox->logicalTop();
-    } else if (LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
-            ASSERT(needsLayout());
-            return { };
-        }
-        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
-            inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeftIgnoringInlineDirection());
-            blockPosition = inlineBox->logicalTop();
-        } else if (auto* blockContainer = containingBlock()) {
-            // This must be a block with no in-flow content e.g. <div><span><abs pos box></span></div> where we don't construct any display box at all.
-            auto contentBoxLocation = blockContainer->contentBoxLocation();
-            inlinePosition = contentBoxLocation.x();
-            blockPosition = contentBoxLocation.y();
-        }
-    }
-
-    // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
-    // should locate itself as though it is a normal flow box in relation to its containing block.
-    LayoutSize logicalOffset;
-    if (!child->style().hasStaticInlinePosition(writingMode().isHorizontal())
-        || !child->style().positionArea().isNone() || child->style().justifySelf().isAnchorCenter())
-        logicalOffset.setWidth(inlinePosition);
-
-    if (!child->style().hasStaticBlockPosition(writingMode().isHorizontal())
-        || !child->style().positionArea().isNone() || child->style().alignSelf().isAnchorCenter())
-        logicalOffset.setHeight(blockPosition);
-
-    return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
-}
-
 void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     if (!parent())
