@@ -97,6 +97,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 #include "JSWebAssemblyInstance.h"
+#include "WasmCallee.h"
 #include "WasmContext.h"
 #include "WebAssemblyFunction.h"
 #endif
@@ -656,7 +657,17 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
                 auto* nativeCallee = visitor->callee().asNativeCallee();
                 switch (nativeCallee->category()) {
                 case NativeCallee::Category::Wasm: {
-                    results.append(StackFrame(visitor->wasmFunctionIndexOrName(), visitor->wasmFunctionIndex()));
+                    std::optional<uint32_t> bytecodeOffset;
+#if ENABLE(WEBASSEMBLY)
+                    if (Options::enableWasmDebugger()) {
+                        auto* wasmCallee = uncheckedDowncast<Wasm::Callee>(nativeCallee);
+                        if (wasmCallee->compilationMode() == Wasm::CompilationMode::IPIntMode) {
+                            auto& ipintCallee = uncheckedDowncast<Wasm::IPIntCallee>(*wasmCallee);
+                            bytecodeOffset = ipintCallee.moduleBytecodeOffsetBase() + visitor->wasmCallSiteIndex().bits();
+                        }
+                    }
+#endif
+                    results.append(StackFrame(visitor->wasmFunctionIndexOrName(), visitor->wasmFunctionIndex(), bytecodeOffset));
                     break;
                 }
                 case NativeCallee::Category::InlineCache: {
