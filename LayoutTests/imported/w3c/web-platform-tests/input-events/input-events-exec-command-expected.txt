@@ -75,53 +75,53 @@ PASS Calling execCommand("subscript", false, null) (data value)
 PASS Calling execCommand("subscript", false, null) (dataTransfer value)
 PASS execCommand("subscript") should wrap selected text with <sub> element
 PASS Calling execCommand("backColor", false, #FF0000) (calling execCommand)
-FAIL Calling execCommand("backColor", false, #FF0000) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, #FF0000) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, #FF0000) (data value) assert_equals: expected (string) "rgb(255, 0, 0)" but got (object) null
+FAIL Calling execCommand("backColor", false, #FF0000) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, #FF0000) (inputType value)
+PASS Calling execCommand("backColor", false, #FF0000) (data value)
 PASS Calling execCommand("backColor", false, #FF0000) (dataTransfer value)
 PASS Calling execCommand("backColor", false, #00FF00FF) (calling execCommand)
-FAIL Calling execCommand("backColor", false, #00FF00FF) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, #00FF00FF) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, #00FF00FF) (data value) assert_equals: expected (string) "rgb(0, 255, 0)" but got (object) null
+FAIL Calling execCommand("backColor", false, #00FF00FF) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, #00FF00FF) (inputType value)
+PASS Calling execCommand("backColor", false, #00FF00FF) (data value)
 PASS Calling execCommand("backColor", false, #00FF00FF) (dataTransfer value)
 PASS Calling execCommand("backColor", false, #0000FF88) (calling execCommand)
-FAIL Calling execCommand("backColor", false, #0000FF88) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, #0000FF88) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, #0000FF88) (data value) assert_equals: expected (string) "rgba(0, 0, 255, 0.533)" but got (object) null
+FAIL Calling execCommand("backColor", false, #0000FF88) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, #0000FF88) (inputType value)
+PASS Calling execCommand("backColor", false, #0000FF88) (data value)
 PASS Calling execCommand("backColor", false, #0000FF88) (dataTransfer value)
 PASS Calling execCommand("backColor", false, orange) (calling execCommand)
-FAIL Calling execCommand("backColor", false, orange) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, orange) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, orange) (data value) assert_equals: expected (string) "rgb(255, 165, 0)" but got (object) null
+FAIL Calling execCommand("backColor", false, orange) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, orange) (inputType value)
+FAIL Calling execCommand("backColor", false, orange) (data value) assert_equals: expected "rgb(255, 165, 0)" but got "orange"
 PASS Calling execCommand("backColor", false, orange) (dataTransfer value)
 PASS Calling execCommand("backColor", false, Inherit) (calling execCommand)
-FAIL Calling execCommand("backColor", false, Inherit) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, Inherit) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, Inherit) (data value) assert_equals: expected (string) "inherit" but got (object) null
+FAIL Calling execCommand("backColor", false, Inherit) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, Inherit) (inputType value)
+PASS Calling execCommand("backColor", false, Inherit) (data value)
 PASS Calling execCommand("backColor", false, Inherit) (dataTransfer value)
 PASS Calling execCommand("backColor", false, Initial) (calling execCommand)
-FAIL Calling execCommand("backColor", false, Initial) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, Initial) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, Initial) (data value) assert_equals: expected (string) "initial" but got (object) null
+FAIL Calling execCommand("backColor", false, Initial) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, Initial) (inputType value)
+PASS Calling execCommand("backColor", false, Initial) (data value)
 PASS Calling execCommand("backColor", false, Initial) (dataTransfer value)
 PASS Calling execCommand("backColor", false, Reset) (calling execCommand)
-FAIL Calling execCommand("backColor", false, Reset) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, Reset) (inputType value) assert_equals: expected "formatBackColor" but got ""
+FAIL Calling execCommand("backColor", false, Reset) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, Reset) (inputType value)
 FAIL Calling execCommand("backColor", false, Reset) (data value) assert_equals: expected (string) "reset" but got (object) null
 PASS Calling execCommand("backColor", false, Reset) (dataTransfer value)
 PASS Calling execCommand("backColor", false, transparent) (calling execCommand)
-FAIL Calling execCommand("backColor", false, transparent) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, transparent) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, transparent) (data value) assert_equals: expected (string) "rgba(0, 0, 0, 0)" but got (object) null
+FAIL Calling execCommand("backColor", false, transparent) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, transparent) (inputType value)
+FAIL Calling execCommand("backColor", false, transparent) (data value) assert_equals: expected "rgba(0, 0, 0, 0)" but got "transparent"
 PASS Calling execCommand("backColor", false, transparent) (dataTransfer value)
 PASS Calling execCommand("backColor", false, CurrentColor) (calling execCommand)
-FAIL Calling execCommand("backColor", false, CurrentColor) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, CurrentColor) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("backColor", false, CurrentColor) (data value) assert_equals: expected (string) "currentcolor" but got (object) null
+FAIL Calling execCommand("backColor", false, CurrentColor) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, CurrentColor) (inputType value)
+PASS Calling execCommand("backColor", false, CurrentColor) (data value)
 PASS Calling execCommand("backColor", false, CurrentColor) (dataTransfer value)
 PASS Calling execCommand("backColor", false, Invalid-Value) (calling execCommand)
-FAIL Calling execCommand("backColor", false, Invalid-Value) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("backColor", false, Invalid-Value) (inputType value) assert_equals: expected "formatBackColor" but got ""
+FAIL Calling execCommand("backColor", false, Invalid-Value) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("backColor", false, Invalid-Value) (inputType value)
 FAIL Calling execCommand("backColor", false, Invalid-Value) (data value) assert_equals: expected (string) "Invalid-Value" but got (object) null
 PASS Calling execCommand("backColor", false, Invalid-Value) (dataTransfer value)
 PASS Calling execCommand("foreColor", false, #FF0000) (calling execCommand)
@@ -175,91 +175,91 @@ PASS Calling execCommand("foreColor", false, Invalid-Value) (inputType value)
 FAIL Calling execCommand("foreColor", false, Invalid-Value) (data value) assert_equals: expected (string) "Invalid-Value" but got (object) null
 PASS Calling execCommand("foreColor", false, Invalid-Value) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, #FF0000) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, #FF0000) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, #FF0000) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, #FF0000) (data value) assert_equals: expected (string) "rgb(255, 0, 0)" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, #FF0000) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, #FF0000) (inputType value)
+PASS Calling execCommand("hiliteColor", false, #FF0000) (data value)
 PASS Calling execCommand("hiliteColor", false, #FF0000) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, #00FF00FF) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, #00FF00FF) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, #00FF00FF) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, #00FF00FF) (data value) assert_equals: expected (string) "rgb(0, 255, 0)" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, #00FF00FF) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, #00FF00FF) (inputType value)
+PASS Calling execCommand("hiliteColor", false, #00FF00FF) (data value)
 PASS Calling execCommand("hiliteColor", false, #00FF00FF) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, #0000FF88) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, #0000FF88) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, #0000FF88) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, #0000FF88) (data value) assert_equals: expected (string) "rgba(0, 0, 255, 0.533)" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, #0000FF88) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, #0000FF88) (inputType value)
+PASS Calling execCommand("hiliteColor", false, #0000FF88) (data value)
 PASS Calling execCommand("hiliteColor", false, #0000FF88) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, orange) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, orange) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, orange) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, orange) (data value) assert_equals: expected (string) "rgb(255, 165, 0)" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, orange) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, orange) (inputType value)
+FAIL Calling execCommand("hiliteColor", false, orange) (data value) assert_equals: expected "rgb(255, 165, 0)" but got "orange"
 PASS Calling execCommand("hiliteColor", false, orange) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, Inherit) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, Inherit) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, Inherit) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, Inherit) (data value) assert_equals: expected (string) "inherit" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, Inherit) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, Inherit) (inputType value)
+PASS Calling execCommand("hiliteColor", false, Inherit) (data value)
 PASS Calling execCommand("hiliteColor", false, Inherit) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, Initial) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, Initial) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, Initial) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, Initial) (data value) assert_equals: expected (string) "initial" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, Initial) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, Initial) (inputType value)
+PASS Calling execCommand("hiliteColor", false, Initial) (data value)
 PASS Calling execCommand("hiliteColor", false, Initial) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, Reset) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, Reset) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, Reset) (inputType value) assert_equals: expected "formatBackColor" but got ""
+FAIL Calling execCommand("hiliteColor", false, Reset) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, Reset) (inputType value)
 FAIL Calling execCommand("hiliteColor", false, Reset) (data value) assert_equals: expected (string) "reset" but got (object) null
 PASS Calling execCommand("hiliteColor", false, Reset) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, transparent) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, transparent) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, transparent) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, transparent) (data value) assert_equals: expected (string) "rgba(0, 0, 0, 0)" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, transparent) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, transparent) (inputType value)
+FAIL Calling execCommand("hiliteColor", false, transparent) (data value) assert_equals: expected "rgba(0, 0, 0, 0)" but got "transparent"
 PASS Calling execCommand("hiliteColor", false, transparent) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, CurrentColor) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, CurrentColor) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, CurrentColor) (inputType value) assert_equals: expected "formatBackColor" but got ""
-FAIL Calling execCommand("hiliteColor", false, CurrentColor) (data value) assert_equals: expected (string) "currentcolor" but got (object) null
+FAIL Calling execCommand("hiliteColor", false, CurrentColor) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, CurrentColor) (inputType value)
+PASS Calling execCommand("hiliteColor", false, CurrentColor) (data value)
 PASS Calling execCommand("hiliteColor", false, CurrentColor) (dataTransfer value)
 PASS Calling execCommand("hiliteColor", false, Invalid-Value) (calling execCommand)
-FAIL Calling execCommand("hiliteColor", false, Invalid-Value) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("hiliteColor", false, Invalid-Value) (inputType value) assert_equals: expected "formatBackColor" but got ""
+FAIL Calling execCommand("hiliteColor", false, Invalid-Value) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatBackColor"
+PASS Calling execCommand("hiliteColor", false, Invalid-Value) (inputType value)
 FAIL Calling execCommand("hiliteColor", false, Invalid-Value) (data value) assert_equals: expected (string) "Invalid-Value" but got (object) null
 PASS Calling execCommand("hiliteColor", false, Invalid-Value) (dataTransfer value)
 PASS Calling execCommand("fontName", false, monospace) (calling execCommand)
-FAIL Calling execCommand("fontName", false, monospace) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("fontName", false, monospace) (inputType value) assert_equals: expected "formatFontName" but got ""
+FAIL Calling execCommand("fontName", false, monospace) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatFontName"
+PASS Calling execCommand("fontName", false, monospace) (inputType value)
 FAIL Calling execCommand("fontName", false, monospace) (data value) assert_equals: expected (string) "monospace" but got (object) null
 PASS Calling execCommand("fontName", false, monospace) (dataTransfer value)
 PASS Calling execCommand("fontName", false,  monospace ) (calling execCommand)
-FAIL Calling execCommand("fontName", false,  monospace ) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("fontName", false,  monospace ) (inputType value) assert_equals: expected "formatFontName" but got ""
+FAIL Calling execCommand("fontName", false,  monospace ) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatFontName"
+PASS Calling execCommand("fontName", false,  monospace ) (inputType value)
 FAIL Calling execCommand("fontName", false,  monospace ) (data value) assert_equals: expected (string) " monospace " but got (object) null
 PASS Calling execCommand("fontName", false,  monospace ) (dataTransfer value)
 PASS Calling execCommand("fontName", false,   monospace  ) (calling execCommand)
-FAIL Calling execCommand("fontName", false,   monospace  ) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("fontName", false,   monospace  ) (inputType value) assert_equals: expected "formatFontName" but got ""
+FAIL Calling execCommand("fontName", false,   monospace  ) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatFontName"
+PASS Calling execCommand("fontName", false,   monospace  ) (inputType value)
 FAIL Calling execCommand("fontName", false,   monospace  ) (data value) assert_equals: expected (string) "  monospace  " but got (object) null
 PASS Calling execCommand("fontName", false,   monospace  ) (dataTransfer value)
 PASS Calling execCommand("justifyCenter", false, null) (calling execCommand)
-FAIL Calling execCommand("justifyCenter", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("justifyCenter", false, null) (inputType value) assert_equals: expected "formatJustifyCenter" but got ""
+FAIL Calling execCommand("justifyCenter", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatJustifyCenter"
+PASS Calling execCommand("justifyCenter", false, null) (inputType value)
 PASS Calling execCommand("justifyCenter", false, null) (data value)
 PASS Calling execCommand("justifyCenter", false, null) (dataTransfer value)
 PASS execCommand("justifyCenter") should wrap the text with <div> element whose text-align is center
 PASS Calling execCommand("justifyFull", false, null) (calling execCommand)
-FAIL Calling execCommand("justifyFull", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("justifyFull", false, null) (inputType value) assert_equals: expected "formatJustifyFull" but got ""
+FAIL Calling execCommand("justifyFull", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatJustifyFull"
+PASS Calling execCommand("justifyFull", false, null) (inputType value)
 PASS Calling execCommand("justifyFull", false, null) (data value)
 PASS Calling execCommand("justifyFull", false, null) (dataTransfer value)
 PASS execCommand("justifyFull") should wrap the text with <div> element whose text-align is justify
 PASS Calling execCommand("justifyRight", false, null) (calling execCommand)
-FAIL Calling execCommand("justifyRight", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("justifyRight", false, null) (inputType value) assert_equals: expected "formatJustifyRight" but got ""
+FAIL Calling execCommand("justifyRight", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatJustifyRight"
+PASS Calling execCommand("justifyRight", false, null) (inputType value)
 PASS Calling execCommand("justifyRight", false, null) (data value)
 PASS Calling execCommand("justifyRight", false, null) (dataTransfer value)
 PASS execCommand("justifyRight") should wrap the text with <div> element whose text-align is right
 PASS Calling execCommand("justifyLeft", false, null) (calling execCommand)
-FAIL Calling execCommand("justifyLeft", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got ""
-FAIL Calling execCommand("justifyLeft", false, null) (inputType value) assert_equals: expected "formatJustifyLeft" but got ""
+FAIL Calling execCommand("justifyLeft", false, null) (shouldn't fire beforeinput) assert_equals: expected "NO_INPUT_EVENT_FIRED" but got "formatJustifyLeft"
+PASS Calling execCommand("justifyLeft", false, null) (inputType value)
 PASS Calling execCommand("justifyLeft", false, null) (data value)
 PASS Calling execCommand("justifyLeft", false, null) (dataTransfer value)
 PASS execCommand("justifyLeft") should wrap the text with <div> element whose text-align is left

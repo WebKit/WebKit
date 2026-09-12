@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
@@ -202,6 +202,8 @@ static String inputEventDataForEditingStyleAndAction(const StyleProperties* styl
     switch (action) {
     case EditAction::SetColor:
         return style->getPropertyValue(CSSPropertyColor);
+    case EditAction::SetBackgroundColor:
+        return style->getPropertyValue(CSSPropertyBackgroundColor);
     case EditAction::SetInlineWritingDirection:
     case EditAction::SetBlockWritingDirection:
         return style->getPropertyValue(CSSPropertyDirection);

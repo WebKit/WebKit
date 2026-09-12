@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Google Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Igalia S.L.
@@ -161,7 +161,7 @@ static bool executeApplyParagraphStyle(LocalFrame& frame, EditorCommandSource so
         return true;
     case EditorCommandSource::DOM:
     case EditorCommandSource::DOMWithUserInterface:
-        protect(frame.editor())->applyParagraphStyle(style.ptr());
+        protect(frame.editor())->applyParagraphStyle(style.ptr(), action);
         return true;
     }
     ASSERT_NOT_REACHED();
