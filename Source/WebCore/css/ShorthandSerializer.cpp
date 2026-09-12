@@ -1523,18 +1523,19 @@ String ShorthandSerializer::serializeLineClamp() const
 {
     auto isMaxLinesInitial = isLonghandInitialValue(0);
     auto isBlockEllipsisInitial = isLonghandInitialValue(1);
-    if (isMaxLinesInitial && isBlockEllipsisInitial)
+    auto isContinueInitial = isLonghandInitialValue(2);
+    if (isMaxLinesInitial && isBlockEllipsisInitial && isContinueInitial)
         return nameString(CSSValueNone);
 
-    if (isMaxLinesInitial != isBlockEllipsisInitial)
-        return { };
-
+    StringBuilder result;
+    auto prefix = ""_s;
+    result.append(std::exchange(prefix, " "_s), serializeLonghandValue(0));
     auto blockEllipsis = longhandValueID(1);
-    if (isBlockEllipsisInitial || (!isMaxLinesInitial && blockEllipsis == CSSValueAuto))
-        return serializeLonghands(1);
-
-    // FIXME: Add check for correct order.
-    return serializeLonghands(2);
+    if (blockEllipsis != CSSValueEllipsis)
+        result.append(std::exchange(prefix, " "_s), serializeLonghandValue(1));
+    if (longhandValueID(2) == CSSValueWebkitLegacy)
+        result.append(std::exchange(prefix, " "_s), serializeLonghandValue(2));
+    return result.toString();
 }
 
 String ShorthandSerializer::serializeTextBox() const

@@ -1,5 +1,5 @@
 
-FAIL e.style['max-lines'] = "none" should not set the property value assert_equals: expected "" but got "none"
+PASS e.style['max-lines'] = "none" should not set the property value
 PASS e.style['max-lines'] = "0" should not set the property value
 PASS e.style['max-lines'] = "-5" should not set the property value
 PASS e.style['max-lines'] = "none none" should not set the property value

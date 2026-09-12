@@ -40,8 +40,8 @@ struct BlockEllipsis {
     {
     }
 
-    BlockEllipsis(CSS::Keyword::Auto)
-        : m_type { Type::Auto }
+    BlockEllipsis(CSS::Keyword::Ellipsis)
+        : m_type { Type::Ellipsis }
     {
     }
 
@@ -52,7 +52,7 @@ struct BlockEllipsis {
     }
 
     bool isNone() const { return m_type == Type::NoEllipsis; }
-    bool isAuto() const { return m_type == Type::Auto; }
+    bool isEllipsis() const { return m_type == Type::Ellipsis; }
     bool isString() const { return m_type == Type::String; }
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
@@ -62,8 +62,8 @@ struct BlockEllipsis {
         switch (m_type) {
         case Type::NoEllipsis:
             return visitor(CSS::Keyword::NoEllipsis { });
-        case Type::Auto:
-            return visitor(CSS::Keyword::Auto { });
+        case Type::Ellipsis:
+            return visitor(CSS::Keyword::Ellipsis { });
         case Type::String:
             return visitor(String { m_string });
         }
@@ -73,7 +73,7 @@ struct BlockEllipsis {
     bool operator==(const BlockEllipsis&) const = default;
 
 private:
-    enum class Type : uint8_t { NoEllipsis, Auto, String };
+    enum class Type : uint8_t { NoEllipsis, Ellipsis, String };
 
     Type m_type { Type::NoEllipsis };
     AtomString m_string { nullAtom() };
