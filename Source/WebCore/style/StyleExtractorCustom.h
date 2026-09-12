@@ -381,16 +381,20 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
             auto paddingBoxWidth = [&]() -> LayoutUnit {
                 if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(container))
                     return renderBlock->paddingBoxWidth();
-                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container))
-                    return inlineBox->innerPaddingBoxWidth();
+                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container)) {
+                    return inlineBox->writingMode().isHorizontal()
+                        ? inlineBox->innerPaddingBoxWidth() : inlineBox->innerPaddingBoxHeight();
+                }
                 ASSERT_NOT_REACHED();
                 return { };
             };
             auto paddingBoxHeight = [&]() -> LayoutUnit {
                 if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(container))
                     return renderBlock->paddingBoxHeight();
-                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container))
-                    return inlineBox->innerPaddingBoxHeight();
+                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container)) {
+                    return inlineBox->writingMode().isHorizontal()
+                        ? inlineBox->innerPaddingBoxHeight() : inlineBox->innerPaddingBoxWidth();
+                }
                 ASSERT_NOT_REACHED();
                 return { };
             };
