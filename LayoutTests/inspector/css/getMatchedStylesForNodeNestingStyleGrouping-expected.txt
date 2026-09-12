@@ -14,7 +14,7 @@ PASS: Grouping 0 should have a text of "(min-width: 0px)".
 PASS: Grouping 1 should have a type of "style-rule".
 PASS: Grouping 1 should have a text of "#outerA".
 - Testing rule #1
-PASS: Selector text should be "&".
+PASS: Selector text should be "".
 PASS: Rule should be an implicitly nested rule.
 PASS: "color" property value should be "purple".
 PASS: Rule should have 2 grouping(s).
@@ -49,7 +49,7 @@ PASS: Grouping 0 should have a text of "(min-width: 0px)".
 PASS: Grouping 1 should have a type of "style-rule".
 PASS: Grouping 1 should have a text of "#outerA".
 - Testing rule #2
-PASS: Selector text should be "&".
+PASS: Selector text should be "".
 PASS: Rule should be an implicitly nested rule.
 PASS: "color" property value should be "purple".
 PASS: Rule should have 2 grouping(s).
