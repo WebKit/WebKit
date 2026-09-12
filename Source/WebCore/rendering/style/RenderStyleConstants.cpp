@@ -1381,11 +1381,11 @@ TextStream& operator<<(TextStream& ts, AlignmentBaseline value)
     switch (value) {
     case AlignmentBaseline::Baseline: ts << "baseline"_s; break;
     case AlignmentBaseline::BeforeEdge: ts << "before-edge"_s; break;
-    case AlignmentBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    case AlignmentBaseline::TextTop: ts << "text-top"_s; break;
     case AlignmentBaseline::Middle: ts << "middle"_s; break;
     case AlignmentBaseline::Central: ts << "central"_s; break;
     case AlignmentBaseline::AfterEdge: ts << "after-edge"_s; break;
-    case AlignmentBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
+    case AlignmentBaseline::TextBottom: ts << "text-bottom"_s; break;
     case AlignmentBaseline::Ideographic: ts << "ideographic"_s; break;
     case AlignmentBaseline::Alphabetic: ts << "alphabetic"_s; break;
     case AlignmentBaseline::Hanging: ts << "hanging"_s; break;
@@ -1424,8 +1424,8 @@ TextStream& operator<<(TextStream& ts, DominantBaseline value)
     case DominantBaseline::Mathematical: ts << "mathematical"_s; break;
     case DominantBaseline::Central: ts << "central"_s; break;
     case DominantBaseline::Middle: ts << "middle"_s; break;
-    case DominantBaseline::TextAfterEdge: ts << "text-after-edge"_s; break;
-    case DominantBaseline::TextBeforeEdge: ts << "text-before-edge"_s; break;
+    case DominantBaseline::TextBottom: ts << "text-bottom"_s; break;
+    case DominantBaseline::TextTop: ts << "text-top"_s; break;
     }
     return ts;
 }

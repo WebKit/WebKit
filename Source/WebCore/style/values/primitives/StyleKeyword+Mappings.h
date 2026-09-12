@@ -1673,13 +1673,74 @@ template<> constexpr WindRule fromCSSValueID(CSSValueID valueID)
     return WindRule::NonZero;
 }
 
-#define TYPE AlignmentBaseline
-#define FOR_EACH(CASE) CASE(AfterEdge) CASE(Alphabetic) CASE(Baseline) \
-    CASE(BeforeEdge) CASE(Central) CASE(Hanging) CASE(Ideographic) CASE(Mathematical) \
-    CASE(Middle) CASE(TextAfterEdge) CASE(TextBeforeEdge)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
+// Hand-written, rather than using DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS, because the legacy SVG 1.1
+// keywords "text-before-edge" and "text-after-edge" are aliases of the css-inline-3 keywords
+// "text-top" and "text-bottom", and so two keywords map to one enumerator. The unprefixed
+// "before-edge" and "after-edge" have no modern equivalent and are kept as their own values.
+// https://drafts.csswg.org/css-inline-3/#alignment-baseline-svg-legacy
+constexpr CSSValueID toCSSValueID(AlignmentBaseline e)
+{
+    switch (e) {
+    case AlignmentBaseline::Baseline:
+        return CSSValueBaseline;
+    case AlignmentBaseline::BeforeEdge:
+        return CSSValueBeforeEdge;
+    case AlignmentBaseline::TextTop:
+        return CSSValueTextTop;
+    case AlignmentBaseline::Middle:
+        return CSSValueMiddle;
+    case AlignmentBaseline::Central:
+        return CSSValueCentral;
+    case AlignmentBaseline::AfterEdge:
+        return CSSValueAfterEdge;
+    case AlignmentBaseline::TextBottom:
+        return CSSValueTextBottom;
+    case AlignmentBaseline::Ideographic:
+        return CSSValueIdeographic;
+    case AlignmentBaseline::Alphabetic:
+        return CSSValueAlphabetic;
+    case AlignmentBaseline::Hanging:
+        return CSSValueHanging;
+    case AlignmentBaseline::Mathematical:
+        return CSSValueMathematical;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueInvalid;
+}
+
+template<> constexpr AlignmentBaseline fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueBaseline:
+        return AlignmentBaseline::Baseline;
+    case CSSValueBeforeEdge:
+        return AlignmentBaseline::BeforeEdge;
+    case CSSValueTextTop:
+    case CSSValueTextBeforeEdge: // Legacy alias for "text-top".
+        return AlignmentBaseline::TextTop;
+    case CSSValueMiddle:
+        return AlignmentBaseline::Middle;
+    case CSSValueCentral:
+        return AlignmentBaseline::Central;
+    case CSSValueAfterEdge:
+        return AlignmentBaseline::AfterEdge;
+    case CSSValueTextBottom:
+    case CSSValueTextAfterEdge: // Legacy alias for "text-bottom".
+        return AlignmentBaseline::TextBottom;
+    case CSSValueIdeographic:
+        return AlignmentBaseline::Ideographic;
+    case CSSValueAlphabetic:
+        return AlignmentBaseline::Alphabetic;
+    case CSSValueHanging:
+        return AlignmentBaseline::Hanging;
+    case CSSValueMathematical:
+        return AlignmentBaseline::Mathematical;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return AlignmentBaseline::Baseline;
+}
 
 #define TYPE BorderCollapse
 #define FOR_EACH(CASE) CASE(Separate) CASE(Collapse)
@@ -1899,12 +1960,65 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#define TYPE DominantBaseline
-#define FOR_EACH(CASE) CASE(Auto) CASE(Central) CASE(Middle) CASE(TextBeforeEdge) \
-    CASE(TextAfterEdge) CASE(Ideographic) CASE(Alphabetic) CASE(Hanging) CASE(Mathematical)
-DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
-#undef TYPE
-#undef FOR_EACH
+// Hand-written, rather than using DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS, because the legacy
+// SVG 1.1 keywords "text-before-edge" and "text-after-edge" still parse as aliases of the
+// css-inline-3 keywords "text-top" and "text-bottom", and so two keywords map to one enumerator.
+// https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline
+constexpr CSSValueID toCSSValueID(DominantBaseline e)
+{
+    switch (e) {
+    case DominantBaseline::Auto:
+        return CSSValueAuto;
+    case DominantBaseline::Ideographic:
+        return CSSValueIdeographic;
+    case DominantBaseline::Alphabetic:
+        return CSSValueAlphabetic;
+    case DominantBaseline::Hanging:
+        return CSSValueHanging;
+    case DominantBaseline::Mathematical:
+        return CSSValueMathematical;
+    case DominantBaseline::Central:
+        return CSSValueCentral;
+    case DominantBaseline::Middle:
+        return CSSValueMiddle;
+    case DominantBaseline::TextBottom:
+        return CSSValueTextBottom;
+    case DominantBaseline::TextTop:
+        return CSSValueTextTop;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueInvalid;
+}
+
+template<> constexpr DominantBaseline fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueAuto:
+        return DominantBaseline::Auto;
+    case CSSValueIdeographic:
+        return DominantBaseline::Ideographic;
+    case CSSValueAlphabetic:
+        return DominantBaseline::Alphabetic;
+    case CSSValueHanging:
+        return DominantBaseline::Hanging;
+    case CSSValueMathematical:
+        return DominantBaseline::Mathematical;
+    case CSSValueCentral:
+        return DominantBaseline::Central;
+    case CSSValueMiddle:
+        return DominantBaseline::Middle;
+    case CSSValueTextBottom:
+    case CSSValueTextAfterEdge: // Legacy alias for "text-bottom".
+        return DominantBaseline::TextBottom;
+    case CSSValueTextTop:
+    case CSSValueTextBeforeEdge: // Legacy alias for "text-top".
+        return DominantBaseline::TextTop;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return DominantBaseline::Auto;
+}
 
 constexpr CSSValueID toCSSValueID(ShapeRendering e)
 {
