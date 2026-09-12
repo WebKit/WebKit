@@ -408,15 +408,20 @@ void RenderTable::layoutCaption(RenderTableCaption& caption)
 {
     LayoutRect captionRect(caption.borderBoxRectInContainer());
 
+    auto setCaptionLocation = [&] {
+        auto logicalLocation = LayoutPoint { caption.marginStart(writingMode()), caption.marginBefore(writingMode()) + logicalHeight() };
+        caption.setLocation(writingMode().isHorizontal() ? logicalLocation : logicalLocation.transposedPoint());
+    };
+
     if (caption.needsLayout()) {
         // The margins may not be available but ensure the caption is at least located beneath any previous sibling caption
         // so that it does not mistakenly think any floats in the previous caption intrude into it.
-        caption.setLogicalLocation(LayoutPoint(caption.marginStart(), caption.marginBefore() + logicalHeight()));
+        setCaptionLocation();
         // If RenderTableCaption ever gets a layout() function, use it here.
         caption.layoutIfNeeded();
     }
     // Apply the margins to the location now that they are definitely available from layout
-    caption.setLogicalLocation(LayoutPoint(caption.marginStart(), caption.marginBefore() + logicalHeight()));
+    setCaptionLocation();
 
     if (!selfNeedsLayout() && caption.checkForRepaintDuringLayout())
         caption.repaintDuringLayoutIfMoved(captionRect);
