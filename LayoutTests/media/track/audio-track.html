@@ -40,8 +40,13 @@
             {
                 findMediaElement();
                 video.audioTracks.addEventListener("addtrack", trackAdded);
+                let addtrackFired = waitFor(video.audioTracks, "addtrack", true);
+                let canplaythroughFired = waitFor(video, "canplaythrough", true);
                 video.src = findMediaFile('audio', '../content/silence');
-                waitForEvent('canplaythrough', canplaythrough);
+                Promise.all([addtrackFired, canplaythroughFired]).then(() => {
+                    consoleWrite("EVENT(canplaythrough)");
+                    canplaythrough();
+                });
             }
 
         </script>
