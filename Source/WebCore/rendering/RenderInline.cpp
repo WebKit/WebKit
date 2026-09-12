@@ -215,25 +215,6 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
     generateLineBoxRects(context);
 }
 
-LayoutUnit RenderInline::offsetLeft() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();
-}
-
-LayoutUnit RenderInline::offsetTop() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).y();
-}
-
-LayoutPoint RenderInline::firstInlineBoxTopLeft() const
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        return lineLayout->firstInlineBoxRect(*this).location();
-    if (auto* inlineBox = firstLegacyInlineBoxFor(*this))
-        return flooredLayoutPoint(inlineBox->locationIncludingFlipping());
-    return { };
-}
-
 static LayoutUnit computeMargin(const RenderBoxModelObject* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
 {
     return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
