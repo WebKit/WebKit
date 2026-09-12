@@ -91,16 +91,6 @@ Vector<FloatRect> RenderLineBreak::localBorderBoxRects() const
     return { box->visualRectIgnoringBlockDirection() };
 }
 
-void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
-{
-    auto box = InlineIterator::boxFor(*this);
-    if (!box)
-        return;
-
-    auto rect = box->visualRectIgnoringBlockDirection();
-    quads.append(localToAbsoluteQuad(FloatRect(rect.location(), rect.size()), MapCoordinatesMode::UseTransforms, wasFixed));
-}
-
 void RenderLineBreak::updateFromStyle()
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isInline());
