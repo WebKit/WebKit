@@ -133,7 +133,36 @@ AutoInstall.register(Package('pylsqpack', Version(0, 3, 22), wheel=True))
 AutoInstall.register(Package('pyasn1', Version(0, 6, 4)))
 AutoInstall.register(Package('pyasn1_modules', Version(0, 4, 2), pypi_name='pyasn1-modules', implicit_deps=['pyasn1']))
 AutoInstall.register(Package('service_identity', Version(24, 2, 0), pypi_name='service-identity', implicit_deps=['attr', 'cryptography', 'OpenSSL', 'pyasn1', 'pyasn1_modules']))
-AutoInstall.register(Package('aioquic', Version(1, 2, 0), wheel=True, implicit_deps=['cryptography', 'certifi', 'pylsqpack', 'service_identity']))
+
+
+class AioquicPackage(Package):
+    # aioquic never populates the max_udp_payload_size transport parameter, so the peer is free to
+    # send UDP payloads up to the 65527-byte default. Clamp it to 1500 for the WPT WebTransport
+    # server. Appending to the module rebinds the global that _serialize_transport_parameters
+    # resolves at call time, so the patch doesn't depend on matching upstream's source text.
+    MARKER = '# WebKit: advertise max_udp_payload_size'
+    PATCH = '''
+
+{marker}
+_webkit_push_quic_transport_parameters = push_quic_transport_parameters
+
+
+def push_quic_transport_parameters(buf, params):
+    if params.max_udp_payload_size is None:
+        params.max_udp_payload_size = 1500
+    _webkit_push_quic_transport_parameters(buf, params)
+'''
+
+    def do_post_install(self, archive_path):
+        connection_py = os.path.join(self.location, 'quic', 'connection.py')
+        with open(connection_py, 'r') as file:
+            if self.MARKER in file.read():
+                return
+        with open(connection_py, 'a') as file:
+            file.write(self.PATCH.format(marker=self.MARKER))
+
+
+AutoInstall.register(AioquicPackage('aioquic', Version(1, 2, 0), wheel=True, implicit_deps=['cryptography', 'certifi', 'pylsqpack', 'service_identity']))
 
 if sys.platform == 'linux':
     # Keep websocket toplevel for WebDriverTests' imported selenium

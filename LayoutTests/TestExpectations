@@ -6865,35 +6865,15 @@ webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-co
 # Only Sonoma+/iOS 17+ have support for auto word breaking. Skipped globally and re-enabled for each platform.
 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase [ Skip ]
 
-# WebTransport: the webtransport-h3 server now runs (webkit.org/b/319008); the rest stay skipped. https://bugs.webkit.org/show_bug.cgi?id=318998
-
-# Internal timeout (streams hang).
-imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/echo-large-bidirectional-streams.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-echo.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Skip ]
-
-# Backend gaps (getStats, close, historical).
-imported/w3c/web-platform-tests/webtransport/stats.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/stats.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/stats.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/stats.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/close.https.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.sharedworker.html [ Skip ]
-imported/w3c/web-platform-tests/webtransport/historical.https.sub.any.worker.html [ Skip ]
+# These only pass on some platforms with a fix for rdar://167644997
+imported/w3c/web-platform-tests/webtransport/close.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.serviceworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.sharedworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/close.https.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.serviceworker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webtransport/streams-close.https.any.sharedworker.html [ Pass Failure ]
 
 # Some of Canvas Layer API features are not supported yet.
 imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.anisotropic-blur.isotropic.html [ ImageOnlyFailure ]
