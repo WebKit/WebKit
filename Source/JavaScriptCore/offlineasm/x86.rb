@@ -1690,6 +1690,8 @@ class Instruction
             $asm.puts "jz #{operands[0].asmLabel}"
         when "bnz"
             $asm.puts "jnz #{operands[0].asmLabel}"
+        when "bc"
+            $asm.puts "jc #{operands[0].asmLabel}"
         when "leai"
             $asm.puts "lea#{x86Suffix(:int)} #{orderOperands(operands[0].x86AddressOperand(:int), operands[1].x86Operand(:int))}"
         when "leap"

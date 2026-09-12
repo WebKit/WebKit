@@ -306,6 +306,7 @@ MACRO_INSTRUCTIONS =
      "bs",
      "bz",
      "bnz",
+     "bc",      # Branch if the carry flag is set, i.e. the preceding add wrapped around.
      "leai",
      "leap",
      "memfence",
@@ -396,6 +397,8 @@ ARM64_INSTRUCTIONS =
      "globaladdr",
      "notq",
      "loadqinc",
+     "loadbinc", # Post-indexed byte load: <address> <dest reg> <increment>. Loads from the base register, then adds the increment to it.
+     "loadbpreinc", # Pre-indexed byte load: <address with immediate offset> <dest reg>. Adds the offset into the base register, then loads from it.
      "loadlinkacqb",
      "loadlinkacqh",
      "loadlinkacqi",
@@ -445,6 +448,7 @@ ARM64_INSTRUCTIONS =
      "loadpairv",
      "storepairv",
      "addlshiftp",
+     "orlshifti", # Or with a left-shifted operand: <src1> <src2> <shift immediate> <dest reg>.
      "addqs",
      "subqs",
      "adcq",
