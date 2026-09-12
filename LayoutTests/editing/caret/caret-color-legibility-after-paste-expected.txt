@@ -4,10 +4,24 @@ Text long enough that it has to wrap onto more than one line inside a narrow edi
 Authored caret color
 Authored caret color
 Text long enough that it has to wrap onto more than one line inside a narrow editor
-1 right after paste, against the editor surface: legible
-2 after inserting a paragraph, against the editor surface: legible
-3 after typing a character, against the editor surface: legible
-4 mid-run, against the pasted surface: legible
-5 end of a wrapped run, against the editor surface: legible
-6 source with no declared background, against the editor surface: legible
-7 authored caret-color survives the paste: rgb(255, 0, 0)
+This is the first paragraph of test content. It is long enough that it has to wrap onto several lines inside the editor below, which is what this test needs in order to reach the end of a wrapped run.
+
+This is the second paragraph of test content. It also wraps onto more than one line, so that a caret placed at the end of it lands past the last glyph of its final line.
+ab
+enough words here that this run has to wrap onto a second line
+One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen
+1 right after paste, against the editor surface: rgb(253, 253, 253) legible
+2 after inserting a paragraph, against the editor surface: rgb(253, 253, 253) legible
+3 after typing a character, against the editor surface: rgb(253, 253, 253) legible
+4 mid-run, against the pasted surface: rgb(68, 68, 68) legible
+5 end of a wrapped run, against the editor surface: rgb(253, 253, 253) legible
+6 source with no declared background, against the editor surface: rgb(253, 253, 253) legible
+7 end of run 1 in wrapped pasted run, against the editor surface: rgb(253, 253, 253) legible
+8 mid-run 1 in wrapped pasted run, against the pasted surface: rgb(18, 18, 18) legible
+9 end of run 2 in wrapped pasted run, against the editor surface: rgb(253, 253, 253) legible
+10 mid-run 2 in wrapped pasted run, against the pasted surface: rgb(18, 18, 18) legible
+11 end of text before an atomic inline, against the run background: rgb(18, 18, 18) legible
+12 mid-run on a later line of a tall-line-height run, against the run background: rgb(18, 18, 18) legible
+13 mid-run in a scrolled editor, against the run background: rgb(18, 18, 18) legible
+14 end of run in a scrolled editor, against the editor surface: rgb(253, 253, 253) legible
+15 authored caret-color survives the paste: rgb(255, 0, 0)
