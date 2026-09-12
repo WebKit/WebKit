@@ -1,0 +1,7 @@
+
+PASS environment-map initial value is auto
+PASS environment-map accepts auto, none and a single name
+PASS environment-map treats names as case-sensitive strings
+PASS environment-map parses from a stylesheet
+PASS environment-map is not inherited
+

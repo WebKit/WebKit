@@ -91,6 +91,10 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+#if ENABLE(SPATIAL_PORTAL)
+#include <WebCore/StyleEnvironmentMap.h>
+#endif
+
 namespace WebCore {
 namespace Style {
 
@@ -168,6 +172,9 @@ public:
     Perspective perspective;
     PerspectiveOrigin perspectiveOrigin;
     PortalTransform portalTransform;
+#if ENABLE(SPATIAL_PORTAL)
+    EnvironmentMap environmentMap;
+#endif
 
     Style::ContainerType containerType;
     ContainerNames containerNames;

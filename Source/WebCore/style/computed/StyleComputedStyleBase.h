@@ -252,6 +252,9 @@ struct CounterSet;
 struct Cursor;
 struct Display;
 struct DynamicRangeLimit;
+#if ENABLE(SPATIAL_PORTAL)
+struct EnvironmentMap;
+#endif
 struct Filter;
 struct FitTolerance;
 struct FlexBasis;

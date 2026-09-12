@@ -3687,6 +3687,7 @@
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
 		8B3C8739E3CFAB0D42937C95 /* SharedTimebase.h in Headers */ = {isa = PBXBuildFile; fileRef = C994659FB046BBF6205518AD /* SharedTimebase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8B5216F72DEE4E75003BC21B /* LazyLoadModelObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B5216F42DEE4E75003BC21B /* LazyLoadModelObserver.h */; };
+		8B7F1B773054C8620004EC48 /* StyleEnvironmentMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B7F1B743054C8620004EC48 /* StyleEnvironmentMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8B9F3EDF304A236B00548F75 /* StylePinnedAnchorName.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9F3EDD304A236B00548F75 /* StylePinnedAnchorName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8BA2130930478BF300322EDE /* CSSPinnedAnchorNameValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8BA2130730478BF300322EDE /* CSSPinnedAnchorNameValue.h */; };
 		8D8AB55246EA6D3E46D7E2EF /* UnifiedSource38-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFF63713748594F7E1BE330 /* UnifiedSource38-header-RenderStyleGetters.cpp */; };
@@ -16194,6 +16195,8 @@
 		8B4936F9C7F6D9A2071F9A39 /* UnifiedSource9-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource9-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		8B5216F42DEE4E75003BC21B /* LazyLoadModelObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LazyLoadModelObserver.h; sourceTree = "<group>"; };
 		8B5216F52DEE4E75003BC21B /* LazyLoadModelObserver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LazyLoadModelObserver.cpp; sourceTree = "<group>"; };
+		8B7F1B743054C8620004EC48 /* StyleEnvironmentMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleEnvironmentMap.h; sourceTree = "<group>"; };
+		8B7F1B753054C8620004EC48 /* StyleEnvironmentMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleEnvironmentMap.cpp; sourceTree = "<group>"; };
 		8B9F3EDD304A236B00548F75 /* StylePinnedAnchorName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StylePinnedAnchorName.h; sourceTree = "<group>"; };
 		8B9F3EDE304A236B00548F75 /* StylePinnedAnchorName.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StylePinnedAnchorName.cpp; sourceTree = "<group>"; };
 		8BA2130730478BF300322EDE /* CSSPinnedAnchorNameValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSPinnedAnchorNameValue.h; sourceTree = "<group>"; };
@@ -33032,6 +33035,15 @@
 			name = FileAPI;
 			sourceTree = "<group>";
 		};
+		8B7F1B763054C8620004EC48 /* spatial */ = {
+			isa = PBXGroup;
+			children = (
+				8B7F1B753054C8620004EC48 /* StyleEnvironmentMap.cpp */,
+				8B7F1B743054C8620004EC48 /* StyleEnvironmentMap.h */,
+			);
+			path = spatial;
+			sourceTree = "<group>";
+		};
 		900C20832CAF8225002C79C5 /* url-pattern */ = {
 			isa = PBXGroup;
 			children = (
@@ -38983,6 +38995,7 @@
 				BCB271C62CBD7D6B00265123 /* shapes */,
 				BC09297D2E29CE12002ACB2C /* size-adjust */,
 				BC675B662DEE883300AD4D79 /* sizing */,
+				8B7F1B763054C8620004EC48 /* spatial */,
 				BC4529E82ECBAD6400FD066C /* speech */,
 				BC2A0CE02E0314ED003CBA0E /* svg */,
 				BCD9EFE62E18E56700D1C3DF /* text */,
@@ -49321,6 +49334,7 @@
 				BC5C89C02D567E31000F45B7 /* StyleDynamicRangeLimitMix.h in Headers */,
 				BC7320362E73558D00A6584F /* StyleEasingFunction.h in Headers */,
 				BCB2720B2CC1F1DB00265123 /* StyleEllipseFunction.h in Headers */,
+				8B7F1B773054C8620004EC48 /* StyleEnvironmentMap.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* StyleEnvironmentVariables.h in Headers */,
 				BCFEE3312DC6B2C300EC3901 /* StyleExtractor.h in Headers */,
 				BCFEE32F2DC6AFEC00EC3901 /* StyleExtractorCustom.h in Headers */,
