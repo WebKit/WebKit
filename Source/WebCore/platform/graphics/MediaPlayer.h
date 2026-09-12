@@ -369,8 +369,15 @@ public:
     virtual bool canShowWhileLocked() const { return false; }
 #endif
 
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual MediaPlaybackTargetType playbackTargetType() const { return MediaPlaybackTargetType::None; }
+#endif
+
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    virtual String requestAudioSinkSocket() { return emptyString(); }
+    virtual void audioSinkStarted(const String &) { }
+    virtual void audioSinkStopped(const String &) { }
 #endif
 };
 
@@ -692,6 +699,12 @@ public:
     void setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&&);
     RefPtr<CoordinatedPlatformLayerBufferProxy> platformLayerBufferProxy() const;
 #endif
+#endif
+
+#if USE(GSTREAMER) && ENABLE(WPE_PLATFORM)
+    String requestAudioSinkSocket();
+    void audioSinkStarted(const String&);
+    void audioSinkStopped(const String &);
 #endif
 
     String languageOfPrimaryAudioTrack() const;
