@@ -69,17 +69,17 @@ private:
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
+    FloatSize imageSize(const RenderElement*, float multiplier, ImageSizeType = ImageSizeType::Used) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
     void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL());
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
     bool hasClient(RenderElement&) const final;
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&);
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool currentFrameIsComplete(const RenderElement*) const final;
+    bool currentFrameIsComplete(const RenderElement&) const final;
     float imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     const Image* selectedImage() const final { return m_selectedImage.get(); }

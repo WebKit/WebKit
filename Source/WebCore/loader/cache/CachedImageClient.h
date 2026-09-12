@@ -24,6 +24,7 @@
 
 #include <WebCore/CachedResourceClient.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/VisibleInViewportState.h>
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -31,8 +32,6 @@ namespace WebCore {
 class CachedImage;
 class Document;
 class IntRect;
-
-enum class VisibleInViewportState { Unknown, Yes, No };
 
 class CachedImageClient : public CachedResourceClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CachedImageClient);

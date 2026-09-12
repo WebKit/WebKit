@@ -270,7 +270,7 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
 
             Ref styleImage = shapeImage.image.value;
             auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.ptr(), boxSize, RenderImage::ScaleByUsedZoom::Yes);
-            styleImage->setContainerContextForRenderer(renderer, logicalImageSize, style.usedZoom());
+            styleImage->registerContainerContext(renderer.imageContainerContextKey(), renderer.imageContainerContext(logicalImageSize, style.usedZoom()));
 
             auto logicalMarginRect = shapeImageMarginRect(renderer, boxSize);
             auto* renderImage = dynamicDowncast<RenderImage>(renderer);

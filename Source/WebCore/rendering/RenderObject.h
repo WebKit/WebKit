@@ -32,6 +32,7 @@
 #include <WebCore/RenderObjectEnums.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/RepaintRectCalculation.h>
+#include <WebCore/StyleImageContainerContextKey.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/EnumSet.h>
 #include <wtf/Platform.h>
@@ -85,6 +86,7 @@ class TreeScope;
 class VisiblePosition;
 class WeakPtrImplWithEventTargetData;
 
+struct ImageContainerContext;
 struct InlineBoxAndOffset;
 struct PaintInfo;
 struct ScrollRectToVisibleOptions;
@@ -1068,6 +1070,7 @@ public:
     virtual void imageContentChanged(CachedImage&) { }
     virtual void scheduleRenderingUpdateForImage(CachedImage&) { }
     CachedImageClient& cachedImageClient() const;
+    ImageContainerContextKey& imageContainerContextKey() const;
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
@@ -1135,12 +1138,11 @@ protected:
 
 private:
     // This class is to avoid making RenderObject refcounted.
-    class CachedImageListener final : public CachedImageClient, public RefCounted<CachedImageListener> {
+    class CachedImageListener final : public CachedImageClient, public ImageContainerContextKey, public RefCounted<CachedImageListener> {
         WTF_MAKE_TZONE_ALLOCATED(CachedImageListener);
     public:
         static Ref<CachedImageListener> create(RenderObject&);
 
-        // CachedImageClient.
         void ref() const final { RefCounted::ref(); }
         void deref() const final { RefCounted::deref(); }
 
@@ -1164,6 +1166,7 @@ private:
 
         SingleThreadWeakPtr<RenderObject> m_renderer;
     };
+    CachedImageListener& cachedImageListener() const;
 
     virtual RepaintRects localRectsForRepaint(RepaintOutlineBounds) const;
 
@@ -1475,11 +1478,21 @@ inline bool RenderObject::usesBoundaryCaching() const
         || (m_typeSpecificFlags.kind() == TypeSpecificFlags::Kind::SVGModelObject && m_typeSpecificFlags.svgFlags().contains(SVGModelObjectFlag::UsesBoundaryCaching));
 }
 
-inline CachedImageClient& RenderObject::cachedImageClient() const
+inline RenderObject::CachedImageListener& RenderObject::cachedImageListener() const
 {
     if (!m_cachedImageClient)
         lazyInitialize(m_cachedImageClient, CachedImageListener::create(*const_cast<RenderObject*>(this)));
     return *m_cachedImageClient.get();
+}
+
+inline CachedImageClient& RenderObject::cachedImageClient() const
+{
+    return cachedImageListener();
+}
+
+inline ImageContainerContextKey& RenderObject::imageContainerContextKey() const
+{
+    return cachedImageListener();
 }
 
 std::partial_ordering renderTreeOrder(const RenderObject&, const RenderObject&);

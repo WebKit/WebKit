@@ -105,7 +105,7 @@ void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
     m_images.remove(size);
 }
 
-FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
+FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, ImageSizeType) const
 {
     if (!m_fixedSize)
         return m_containerSize;
@@ -128,6 +128,11 @@ FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multipl
         height = std::max<float>(1 / deviceScaleFactor, height);
 
     return { width, height };
+}
+
+void GeneratedImage::registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&& context)
+{
+    m_containerSize = context.containerSize;
 }
 
 void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)

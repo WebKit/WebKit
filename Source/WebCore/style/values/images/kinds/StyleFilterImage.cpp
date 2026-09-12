@@ -181,6 +181,14 @@ FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
     return { };
 }
 
+void FilterImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
+{
+    m_containerSize = context.containerSize;
+
+    if (m_image)
+        protect(m_image)->registerContainerContext(key, WTF::move(context));
+}
+
 void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
 {
     if (!m_inputImageIsReady)

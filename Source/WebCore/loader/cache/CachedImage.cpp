@@ -141,11 +141,7 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
 {
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
 
-    m_pendingContainerContextRequests.remove(&downcast<CachedImageClient>(client));
     m_clientsWaitingForAsyncDecoding.remove(downcast<CachedImageClient>(client));
-
-    if (m_svgImageCache)
-        m_svgImageCache->removeClientFromCache(&downcast<CachedImageClient>(client));
 
     CachedResource::didRemoveClient(client);
 
@@ -206,14 +202,15 @@ void CachedImage::switchClientsToRevalidatedResource()
     ASSERT(is<CachedImage>(resourceToRevalidate()));
     // Pending container size requests need to be transferred to the revalidated resource.
     if (!m_pendingContainerContextRequests.isEmpty()) {
-        // A copy of pending size requests is needed as they are deleted during CachedResource::switchClientsToRevalidateResouce().
+        // A copy of pending size requests is needed as they are deleted during CachedResource::switchClientsToRevalidateResource().
         ContainerContextRequests switchContainerContextRequests;
         for (auto& request : m_pendingContainerContextRequests)
             switchContainerContextRequests.set(request.key, request.value);
+
         CachedResource::switchClientsToRevalidatedResource();
         RefPtr revalidatedCachedImage = downcast<CachedImage>(*resourceToRevalidate());
         for (auto& request : switchContainerContextRequests)
-            revalidatedCachedImage->setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
+            revalidatedCachedImage->registerContainerContext(*request.key, WTF::move(request.value));
         return;
     }
 
@@ -264,7 +261,7 @@ Image* CachedImage::image() const
     return &Image::nullImage();
 }
 
-Image* CachedImage::imageForRenderer(const RenderObject* renderer)
+Image* CachedImage::imageForKey(const ImageContainerContextKey* key)
 {
     if (errorOccurred() && m_shouldPaintBrokenImage) {
         // Returning the 1x broken image is non-ideal, but we cannot reliably access the appropriate
@@ -277,32 +274,45 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
         return &Image::nullImage();
 
     if (m_image->drawsSVGImage()) {
-        SUPPRESS_UNCOUNTED_LOCAL if (auto* image = m_svgImageCache->imageForRenderer(renderer); image != &Image::nullImage())
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* image = m_svgImageCache->imageForKey(key); image != &Image::nullImage())
             return image;
     }
     return m_image.get();
 }
 
-void CachedImage::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL, const Style::LinkParameters& linkParameters)
+Image* CachedImage::imageForRenderer(const RenderObject* renderer)
 {
-    if (containerSize.isEmpty())
+    return imageForKey(renderer ? &renderer->imageContainerContextKey() : nullptr);
+}
+
+void CachedImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
+{
+    if (context.containerSize.isEmpty())
         return;
-    ASSERT(containerZoom);
+
+    ASSERT(context.containerZoom);
+
     RefPtr image = m_image;
     if (!image) {
-        m_pendingContainerContextRequests.set(client, ContainerContext { containerSize, containerZoom, imageURL, linkParameters });
+        m_pendingContainerContextRequests.set(key, WTF::move(context));
         return;
     }
 
     if (!image->drawsSVGImage()) {
-        image->setContainerSize(containerSize);
+        image->setContainerSize(context.containerSize);
         return;
     }
 
-    m_svgImageCache->setContainerContextForClient(client, containerSize, containerZoom, imageURL, linkParameters);
+    m_svgImageCache->registerContainerContext(key, WTF::move(context));
 }
 
-FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+void CachedImage::unregisterContainerContext(const ImageContainerContextKey& key)
+{
+    m_pendingContainerContextRequests.remove(key);
+    m_svgImageCache->unregisterContainerContext(key);
+}
+
+FloatSize CachedImage::internalImageSize(const ImageContainerContextKey* key, const ImageSizeOptions& options) const
 {
     RefPtr image = m_image;
     if (!image)
@@ -310,26 +320,24 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
 
     if (RefPtr svgImage = dynamicDowncast<SVGImage>(*image)) {
         FloatSize size;
-        if (sizeType == UsedSize) {
+        if (options.type == ImageSizeType::Used) {
             // The SVG cache size is already in CSS pixels (set by the layout
-            // system via setContainerContextForClient), so density does not apply.
-            size = m_svgImageCache->imageSizeForRenderer(renderer);
+            // system via registerContainerContext), so density does not apply.
+            size = m_svgImageCache->imageSizeForKey(key);
         } else
-            size = svgImage->resolvedIntrinsicSize(density);
-        if (multiplier != 1.0f)
-            size.scale(multiplier);
+            size = svgImage->resolvedIntrinsicSize(options.density);
+        if (options.multiplier != 1.0f)
+            size.scale(options.multiplier);
         return size;
     }
 
     FloatSize imageSize;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC())
-        imageSize = renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size();
+    if (options.overrideImageSize)
+        imageSize = *options.overrideImageSize;
     else
-#endif
-        imageSize = image->size(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+        imageSize = image->size(options.orientation);
 
-    float scaleFactor = multiplier * density;
+    float scaleFactor = options.multiplier * options.density;
     float widthScale = image->hasRelativeWidth() ? 1.0f : scaleFactor;
     float heightScale = image->hasRelativeHeight() ? 1.0f : scaleFactor;
     if (widthScale != 1.0f || heightScale != 1.0f)
@@ -337,28 +345,73 @@ FloatSize CachedImage::internalImageSizeForRenderer(const RenderElement* rendere
     return imageSize;
 }
 
-FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer) const
+FloatSize CachedImage::imageFloatSize(const ImageSizeOptions& options) const
 {
-    return internalImageSizeForRenderer(renderer, 1.0f, UsedSize, 1.0f);
+    return internalImageSize(nullptr, options);
 }
 
-LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+FloatSize CachedImage::imageFloatSizeForKey(const ImageContainerContextKey& key, const ImageSizeOptions& options) const
 {
-    return LayoutSize(internalImageSizeForRenderer(renderer, multiplier, sizeType, density));
+    return internalImageSize(&key, options);
 }
 
-LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType sizeType, float density) const
+LayoutSize CachedImage::unclampedImageSize(const ImageSizeOptions& options) const
 {
-    auto imageSize = unclampedImageSizeForRenderer(renderer, multiplier, sizeType, density);
-    if (imageSize.isEmpty() || multiplier == 1.0f)
+    return LayoutSize(internalImageSize(nullptr, options));
+}
+
+LayoutSize CachedImage::unclampedImageSizeForKey(const ImageContainerContextKey& key, const ImageSizeOptions& options) const
+{
+    return LayoutSize(internalImageSize(&key, options));
+}
+
+LayoutSize CachedImage::imageSize(const ImageSizeOptions& options) const
+{
+    auto imageSize = unclampedImageSize(options);
+    if (imageSize.isEmpty() || options.multiplier == 1.0f)
         return imageSize;
 
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
     LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
     imageSize.clampToMinimumSize(minimumSize);
 
-    ASSERT(multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
+    ASSERT(options.multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
     return imageSize;
+}
+
+LayoutSize CachedImage::imageSizeForKey(const ImageContainerContextKey& key, const ImageSizeOptions& options) const
+{
+    auto imageSize = unclampedImageSizeForKey(key, options);
+    if (imageSize.isEmpty() || options.multiplier == 1.0f)
+        return imageSize;
+
+    // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
+    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
+    imageSize.clampToMinimumSize(minimumSize);
+
+    ASSERT(options.multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
+    return imageSize;
+}
+
+FloatSize CachedImage::imageFloatSizeForRenderer(const RenderElement* renderer, float multiplier, ImageSizeType type, float density) const
+{
+    if (renderer)
+        return imageFloatSizeForKey(renderer->imageContainerContextKey(), renderer->imageSizeOptions(multiplier, type, density));
+    return imageFloatSize(ImageSizeOptions { .multiplier = multiplier, .type = type, .density = density });
+}
+
+LayoutSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, float multiplier, ImageSizeType type, float density) const
+{
+    if (renderer)
+        return imageSizeForKey(renderer->imageContainerContextKey(), renderer->imageSizeOptions(multiplier, type, density));
+    return imageSize(ImageSizeOptions { .multiplier = multiplier, .type = type, .density = density });
+}
+
+LayoutSize CachedImage::unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, ImageSizeType type, float density) const
+{
+    if (renderer)
+        return unclampedImageSizeForKey(renderer->imageContainerContextKey(), renderer->imageSizeOptions(multiplier, type, density));
+    return unclampedImageSize(ImageSizeOptions { .multiplier = multiplier, .type = type, .density = density });
 }
 
 void CachedImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
@@ -413,7 +466,7 @@ inline void CachedImage::createImage()
         // Send queued container size requests.
         if (image->usesContainerSize()) {
             for (auto& request : m_pendingContainerContextRequests)
-                setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
+                registerContainerContext(*request.key, WTF::move(request.value));
         }
         m_pendingContainerContextRequests.clear();
         m_clientsWaitingForAsyncDecoding.clear();
@@ -800,16 +853,26 @@ bool CachedImage::allowsAnimation(const Image& image) const
     return true;
 }
 
-bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
+bool CachedImage::currentFrameKnownToBeOpaqueForKey(const ImageContainerContextKey& key)
 {
-    RefPtr image = imageForRenderer(renderer);
+    RefPtr image = imageForKey(&key);
     return image->currentFrameKnownToBeOpaque();
 }
 
-bool CachedImage::currentFrameIsComplete(const RenderElement* renderer)
+bool CachedImage::currentFrameKnownToBeOpaqueForRenderer(const RenderObject& renderer)
 {
-    RefPtr image = imageForRenderer(renderer);
+    return currentFrameKnownToBeOpaqueForKey(renderer.imageContainerContextKey());
+}
+
+bool CachedImage::currentFrameIsCompleteForKey(const ImageContainerContextKey& key)
+{
+    RefPtr image = imageForKey(&key);
     return image->currentFrameIsComplete();
+}
+
+bool CachedImage::currentFrameIsCompleteForRenderer(const RenderObject& renderer)
+{
+    return currentFrameIsCompleteForKey(renderer.imageContainerContextKey());
 }
 
 bool CachedImage::isOriginClean(SecurityOrigin* origin)

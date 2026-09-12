@@ -106,6 +106,7 @@
 #include "ShadowRoot.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleDifference.h"
+#include "StyleImageContainerContext.h"
 #include "StylePendingResources.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
@@ -2902,4 +2903,33 @@ void RenderElement::layoutIfNeeded()
         Style::AnchorPositionEvaluator::captureScrollSnapshots(downcast<RenderBox>(*this));
 }
 
+ImageContainerContext RenderElement::imageContainerContext(const FloatSize& containerSize, float containerZoom, const WTF::URL& imageURL) const
+{
+    return ImageContainerContext {
+        .containerSize = containerSize,
+        .containerZoom = containerZoom,
+        .imageURL = imageURL,
+        .linkParameters = style().linkParameters(),
+    };
 }
+
+ImageSizeOptions RenderElement::imageSizeOptions(float multiplier, ImageSizeType type, float density) const
+{
+    auto computedOverrideImageSize = [&] -> std::optional<FloatSize> {
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*this); renderImage && renderImage->isMultiRepresentationHEIC())
+            return renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size();
+#endif
+        return std::nullopt;
+    };
+
+    return ImageSizeOptions {
+        .multiplier = multiplier,
+        .type = type,
+        .density = density,
+        .orientation = imageOrientation(),
+        .overrideImageSize = computedOverrideImageSize(),
+    };
+}
+
+} // namespace WebCore

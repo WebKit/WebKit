@@ -536,7 +536,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto geometry = calculateFillLayerImageGeometry(m_renderer, m_paintInfo.paintContainer, layer.layer, layer.zoom, paintOffset, imageRect, m_overrideOrigin);
 
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
-        bgImage->setContainerContextForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom());
+
+        bgImage->registerContainerContext(clientForBackgroundImage.imageContainerContextKey(), clientForBackgroundImage.imageContainerContext(geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom()));
 
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
@@ -583,7 +584,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 if (m_renderer.element())
                     protect(m_renderer)->element()->setHasEverPaintedImages(true);
 
-                if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
+                if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsCompleteForRenderer(m_renderer)) {
                     if (auto styleable = Styleable::fromRenderer(m_renderer))
                         document().didPaintImage(protect(styleable->element), image, geometry.destinationRect);
                 }

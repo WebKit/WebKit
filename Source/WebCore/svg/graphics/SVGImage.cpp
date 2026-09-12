@@ -66,7 +66,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleDocumentScope.h"
 #include "StyleEnvironmentVariables.h"
-#include "StyleLinkParameters.h"
+#include "StyleImageContainerContext.h"
 #include "StyleScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCInlines.h>
@@ -226,7 +226,7 @@ IntSize SVGImage::containerSize() const
     return IntSize(currentSize);
 }
 
-ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const ImageContainerContext& containerContext, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     if (!m_page)
         return ImageDrawResult::DidNothing;
@@ -247,7 +247,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Conta
     scaledSrc.setSize(adjustedSrcSize);
 
     applyLinkParameters(containerContext.linkParameters);
-    protect(frameView())->scrollToFragment(containerContext.initialFragmentURL);
+    protect(frameView())->scrollToFragment(containerContext.imageURL);
 
     return draw(context, dstRect, scaledSrc, options);
 }
@@ -307,7 +307,7 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const ColorSpac
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 
-void SVGImage::drawPatternForContainer(GraphicsContext& context, const ContainerContext& containerContext, const FloatRect& srcRect,
+void SVGImage::drawPatternForContainer(GraphicsContext& context, const ImageContainerContext& containerContext, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions options)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerContext.containerSize);

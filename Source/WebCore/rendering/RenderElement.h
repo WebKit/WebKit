@@ -28,12 +28,15 @@
 #include <WebCore/RenderPtr.h>
 #include <WebCore/StyleComputedStyle.h>
 #include <WebCore/StyleDifference.h>
+#include <WebCore/StyleImageSizeOptions.h>
+#include <WebCore/VisibleInViewportState.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Packed.h>
 
 namespace WebCore {
 
+class CachedImage;
 class ContainerNode;
 class BlendingKeyframes;
 class GraphicsLayerAnimation;
@@ -41,6 +44,7 @@ class ReferencedSVGResources;
 class RenderBlock;
 class RenderTreeBuilder;
 class SVGElement;
+struct ImageContainerContext;
 struct ImageOrientation;
 
 struct MarginRect {
@@ -356,6 +360,9 @@ public:
     WritingMode writingMode() const { return style().writingMode(); }
 
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
+
+    ImageContainerContext imageContainerContext(const FloatSize& containerSize, float containerZoom, const WTF::URL& = WTF::URL()) const;
+    ImageSizeOptions imageSizeOptions(float multiplier = 1.0f, ImageSizeType = ImageSizeType::Used, float density = 1.0f) const;
 
 protected:
     RenderElement(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);

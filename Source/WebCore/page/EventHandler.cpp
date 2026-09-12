@@ -1752,7 +1752,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
                     float deviceScale = page ? page->deviceScaleFactor() : 1.0f;
 
                     FloatSize scaledSize = image->size() * deviceScale;
-                    styleImage->setContainerContextForRenderer(*renderElement, scaledSize, deviceScale);
+                    styleImage->registerContainerContext(renderElement->imageContainerContextKey(), renderElement->imageContainerContext(scaledSize, deviceScale));
 
                     renderer = renderElement;
                     scale *= deviceScale;

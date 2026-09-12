@@ -1545,23 +1545,24 @@ bool CanvasRenderingContext2DBase::shouldDrawShadows() const
     return state().shadowColor.isVisible() && (state().shadowBlur || !state().shadowOffset.isZero());
 }
 
-enum class ImageSizeType { AfterDevicePixelRatio, BeforeDevicePixelRatio };
-static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+enum class CanvasImageSizeType { AfterDevicePixelRatio, BeforeDevicePixelRatio };
+
+static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, CanvasImageSizeType sizeType = CanvasImageSizeType::BeforeDevicePixelRatio)
 {
     if (!cachedImage)
         return { };
     LayoutSize size = cachedImage->imageSizeForRenderer(renderer, 1.0f); // FIXME: Not sure about this.
-    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !protect(cachedImage->image())->hasRelativeWidth())
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == CanvasImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !protect(cachedImage->image())->hasRelativeWidth())
         size.scale(renderImage->imageDevicePixelRatio());
     return size;
 }
 
-static LayoutSize size(HTMLImageElement& element, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+static LayoutSize size(HTMLImageElement& element, CanvasImageSizeType sizeType = CanvasImageSizeType::BeforeDevicePixelRatio)
 {
     return size(protect(element.cachedImage()), protect(element.renderer()).get(), sizeType);
 }
 
-static LayoutSize size(SVGImageElement& element, ImageSizeType sizeType = ImageSizeType::BeforeDevicePixelRatio)
+static LayoutSize size(SVGImageElement& element, CanvasImageSizeType sizeType = CanvasImageSizeType::BeforeDevicePixelRatio)
 {
     return size(protect(element.cachedImage()), protect(element.renderer()).get(), sizeType);
 }
@@ -1608,13 +1609,13 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasImageSource&& im
 {
     return WTF::switchOn(image,
         [&](Ref<HTMLImageElement>& imageElement) -> ExceptionOr<void> {
-            LayoutSize destRectSize = size(imageElement, ImageSizeType::AfterDevicePixelRatio);
-            LayoutSize sourceRectSize = size(imageElement, ImageSizeType::BeforeDevicePixelRatio);
+            LayoutSize destRectSize = size(imageElement, CanvasImageSizeType::AfterDevicePixelRatio);
+            LayoutSize sourceRectSize = size(imageElement, CanvasImageSizeType::BeforeDevicePixelRatio);
             return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
         },
         [&](Ref<SVGImageElement>& imageElement) -> ExceptionOr<void> {
-            LayoutSize destRectSize = size(imageElement, ImageSizeType::AfterDevicePixelRatio);
-            LayoutSize sourceRectSize = size(imageElement, ImageSizeType::BeforeDevicePixelRatio);
+            LayoutSize destRectSize = size(imageElement, CanvasImageSizeType::AfterDevicePixelRatio);
+            LayoutSize sourceRectSize = size(imageElement, CanvasImageSizeType::BeforeDevicePixelRatio);
             return this->drawImage(imageElement, FloatRect { 0, 0, sourceRectSize.width(), sourceRectSize.height() }, FloatRect { dx, dy, destRectSize.width(), destRectSize.height() });
         },
         [&](auto& element) -> ExceptionOr<void> {
@@ -1660,7 +1661,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLImageElement& imag
     if (cachedImage->status() == CachedImage::Status::DecodeError)
         return Exception { ExceptionCode::InvalidStateError, "The HTMLImageElement provided is in the 'broken' state."_s };
 
-    auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
+    auto imageRect = FloatRect(FloatPoint(), size(imageElement, CanvasImageSizeType::BeforeDevicePixelRatio));
 
     auto orientation = ImageOrientation::Orientation::FromImage;
     if (imageElement.allowsOrientationOverride()) {
@@ -1691,7 +1692,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(SVGImageElement& image
     if (cachedImage->status() == CachedImage::Status::DecodeError)
         return Exception { ExceptionCode::InvalidStateError, "The SVGImageElement provided is in the 'broken' state."_s };
 
-    auto imageRect = FloatRect(FloatPoint(), size(imageElement, ImageSizeType::BeforeDevicePixelRatio));
+    auto imageRect = FloatRect(FloatPoint(), size(imageElement, CanvasImageSizeType::BeforeDevicePixelRatio));
 
     auto result = drawImage(protect(imageElement.document()).get(), *cachedImage, protect(imageElement.renderer()).get(), imageRect, srcRect, dstRect, op, blendMode);
 
