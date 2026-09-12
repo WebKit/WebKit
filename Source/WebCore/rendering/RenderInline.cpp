@@ -144,14 +144,6 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         lineLayout->paint(paintInfo, paintOffset, this);
 }
 
-void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
-{
-    RenderGeometryMap geometryMap;
-    geometryMap.pushMappingsToAncestor(this, nullptr);
-    for (auto rect : localBorderBoxRects())
-        quads.append(geometryMap.absoluteRect(rect));
-}
-
 LayoutUnit RenderInline::offsetLeft() const
 {
     return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();

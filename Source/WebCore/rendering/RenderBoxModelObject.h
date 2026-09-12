@@ -98,6 +98,7 @@ public:
     virtual LayoutRect borderBoxRectInContainer() const;
     virtual Vector<FloatRect> localBorderBoxRects() const;
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const override;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;

@@ -52,8 +52,6 @@ public:
     LayoutUnit marginStart() const { return marginStart(writingMode()); }
     LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
 
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
-
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
     LayoutRect borderBoundingBox() const final
