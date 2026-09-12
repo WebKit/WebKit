@@ -29,4 +29,7 @@
 messages -> TestWithSwift {
     TestAsyncMessage(uint32_t param) -> (uint8_t reply)
     TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
+    TestMessageWithAliasedParameter(Ref<WebKit::FrameState> frameState)
+    TestThrowingMessageWithReply(uint32_t param) -> (uint8_t reply) Synchronous
+    TestThrowingMessageWithoutReply(Ref<WebKit::FrameState> frameState, WebCore::FrameIdentifier frameID)
 }

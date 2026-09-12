@@ -133,6 +133,8 @@ private:
 namespace CompletionHandlers {
 namespace TestWithStreamSwift {
 using SendStringSyncCompletionHandler = WTF::RefCountable<Messages::TestWithStreamSwift::SendStringSync::Reply>;
+
+void completeWithDefaultReply(SendStringSyncCompletionHandler&);
 } // namespace TestWithStreamSwift
 } // namespace CompletionHandlers
 

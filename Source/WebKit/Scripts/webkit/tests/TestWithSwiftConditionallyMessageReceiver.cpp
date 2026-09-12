@@ -55,7 +55,7 @@ void TestWithSwiftConditionally::didReceiveMessage(IPC::Connection& connection, 
 #endif // ENABLE(SWIFT_TEST_CONDITION)
     if (decoder.messageName() == Messages::TestWithSwiftConditionally::TestAsyncMessage::name()) {
 #if ENABLE(SWIFT_TEST_CONDITION)
-        IPC::handleMessageAsync<Messages::TestWithSwiftConditionally::TestAsyncMessage>(connection, decoder, target.get(), &TestWithSwiftConditionally::testAsyncMessage);
+        IPC::handleMessageAsync<Messages::TestWithSwiftConditionally::TestAsyncMessage>(connection, decoder, m_handler.get(), &TestWithSwiftConditionallyWeakRef::dispatchTestAsyncMessage);
 #else // ENABLE(SWIFT_TEST_CONDITION)
         IPC::handleMessageAsync<Messages::TestWithSwiftConditionally::TestAsyncMessage>(connection, decoder, this, &TestWithSwiftConditionally::testAsyncMessage);
 #endif // ENABLE(SWIFT_TEST_CONDITION)
@@ -82,7 +82,7 @@ void TestWithSwiftConditionally::didReceiveSyncMessage(IPC::Connection& connecti
 #endif // ENABLE(SWIFT_TEST_CONDITION)
     if (decoder.messageName() == Messages::TestWithSwiftConditionally::TestSyncMessage::name()) {
 #if ENABLE(SWIFT_TEST_CONDITION)
-        IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionally::TestSyncMessage>(connection, decoder, replyEncoder, target.get(), &TestWithSwiftConditionally::testSyncMessage);
+        IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionally::TestSyncMessage>(connection, decoder, replyEncoder, m_handler.get(), &TestWithSwiftConditionallyWeakRef::dispatchTestSyncMessage);
 #else // ENABLE(SWIFT_TEST_CONDITION)
         IPC::handleMessageSynchronous<Messages::TestWithSwiftConditionally::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSwiftConditionally::testSyncMessage);
 #endif // ENABLE(SWIFT_TEST_CONDITION)
@@ -121,6 +121,24 @@ TestWithSwiftConditionallyMessageForwarder::~TestWithSwiftConditionallyMessageFo
 #endif // ENABLE(SWIFT_TEST_CONDITION)
 
 } // namespace WebKit
+#if ENABLE(SWIFT_TEST_CONDITION)
+
+namespace CompletionHandlers {
+namespace TestWithSwiftConditionally {
+
+void completeWithDefaultReply(TestAsyncMessageCompletionHandler& completionHandler)
+{
+    IPC::Connection::cancelReply<Messages::TestWithSwiftConditionally::TestAsyncMessage>(*completionHandler);
+}
+
+void completeWithDefaultReply(TestSyncMessageCompletionHandler& completionHandler)
+{
+    IPC::Connection::cancelReply<Messages::TestWithSwiftConditionally::TestSyncMessage>(*completionHandler);
+}
+
+} // namespace TestWithSwiftConditionally
+} // namespace CompletionHandlers
+#endif // ENABLE(SWIFT_TEST_CONDITION)
 
 #if ENABLE(IPC_TESTING_API)
 

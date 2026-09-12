@@ -52,7 +52,7 @@ void TestWithStreamSwiftEnabledByMessageForwarder::didReceiveStreamMessage(IPC::
         return;
     }
     if (decoder.messageName() == Messages::TestWithStreamSwiftEnabledBy::SendString::name()) {
-        IPC::handleMessage<Messages::TestWithStreamSwiftEnabledBy::SendString>(connection, decoder, target.get(), &TestWithStreamSwiftEnabledBy::sendString);
+        IPC::handleMessage<Messages::TestWithStreamSwiftEnabledBy::SendString>(connection, decoder, m_handler.get(), &TestWithStreamSwiftEnabledByWeakRef::dispatchSendString);
         return;
     }
     RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
