@@ -114,17 +114,19 @@ static inline JSValue NODELETE getOperand(CallFrame* callFrame, VirtualRegister 
 
 #define LLINT_END_IMPL() LLINT_RETURN_TWO(pc, nullptr)
 
-#define LLINT_THROW(exceptionToThrow) do {                        \
-        throwException(globalObject, throwScope, exceptionToThrow);       \
-        pc = returnToThrow(vm);                                 \
-        LLINT_END_IMPL();                                         \
+#define LLINT_THROW_IMPL() LLINT_RETURN_TWO(pc, exceptionSignal())
+
+#define LLINT_THROW(exceptionToThrow) do {                          \
+        throwException(globalObject, throwScope, exceptionToThrow); \
+        pc = returnToThrow(vm);                                     \
+        LLINT_THROW_IMPL();                                         \
     } while (false)
 
 #define LLINT_CHECK_EXCEPTION() do {                    \
         doExceptionFuzzingIfEnabled(globalObject, throwScope, "LLIntSlowPaths", pc);    \
         if (throwScope.exception()) [[unlikely]] {      \
             pc = returnToThrow(vm);                     \
-            LLINT_END_IMPL();                           \
+            LLINT_THROW_IMPL();                         \
         }                                               \
     } while (false)
 
@@ -2338,6 +2340,10 @@ LLINT_SLOW_PATH_DECL(slow_path_handle_exception)
     VM& vm = callFrame->deprecatedVM();
     SlowPathFrameTracer tracer(vm, callFrame);
     genericUnwind(vm, callFrame);
+    // We use LLINT_END_IMPL here instead of LLINT_THROW_IMPL because the throw
+    // trampoline (which is what LLINT_THROW_IMPL eventually triggers) comes
+    // here via callSlowPath(). If we used LLINT_THROW_IMPL, then the throw
+    // trampoline would keep calling itself forever.
     LLINT_END_IMPL();
 }
 

@@ -415,7 +415,19 @@ macro prepareStateForCCall()
     addp PB, PC
 end
 
+macro restoreStateAfterCCallWithoutExceptionCheck()
+    move r0, PC
+    subp PB, PC
+end
+
 macro restoreStateAfterCCall()
+    # Slow paths report pending exceptions by returning LLInt::exceptionSignal
+    # (all ones) in r1. In such cases, r0 contains a sentinel bytecode pointer
+    # that lives in a different allocation from this CodeBlock's instruction
+    # buffer. Therefore, PB and PC have different MTE tags that don't cancel
+    # when subtracted and we need to check for exceptionSignal here to jump
+    # straight to the throw trampoline.
+    bpeq r1, -1, _llint_throw_from_slow_path_trampoline
     move r0, PC
     subp PB, PC
 end

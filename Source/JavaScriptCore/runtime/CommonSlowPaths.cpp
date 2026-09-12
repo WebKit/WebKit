@@ -102,17 +102,19 @@ namespace JSC {
 
 #define END_IMPL() RETURN_TWO(pc, callFrame)
 
+#define THROW_IMPL() RETURN_TWO(pc, LLInt::exceptionSignal())
+
 #define THROW(exceptionToThrow) do {                        \
         throwException(globalObject, throwScope, exceptionToThrow); \
         RETURN_TO_THROW(pc);                          \
-        END_IMPL();                                         \
+        THROW_IMPL();                                       \
     } while (false)
 
 #define CHECK_EXCEPTION() do {                    \
         doExceptionFuzzingIfEnabled(globalObject, throwScope, "CommonSlowPaths", pc);   \
         if (throwScope.exception()) [[unlikely]] {   \
             RETURN_TO_THROW(pc);                     \
-            END_IMPL();                              \
+            THROW_IMPL();                            \
         }                                            \
     } while (false)
 

@@ -1712,16 +1712,23 @@ end
     move cfr, a0
     move PC, a1
     cCall3(_llint_check_stack_and_vm_traps)
+
+    # Normally we'd use the exceptionSignal convention that restoreStateAfterCCall()
+    # checks for, but this slow path reports a throw by putting a CallFrame pointer
+    # in r1. Therefore, we need to test it here before PC is rebuilt, because r0 has
+    # a differently tagged sentinel value that must not have PB subtracted from it.
+    bpneq r1, 0, .stackCheckThrewException
     restoreStateAfterCCall()
+    jmp .stackHeightOKGetCodeBlock
 
-    bpeq r1, 0, .stackHeightOKGetCodeBlock
-
+.stackCheckThrewException:
     # We're throwing before the frame is fully set up. This frame will be
     # ignored by the unwinder. So, let's restore the callee saves before we
     # start unwinding. We need to do this before we change the cfr.
     restoreCalleeSavesUsedByLLInt()
 
     move r1, cfr
+    move 0, PC
     jmp _llint_throw_from_slow_path_trampoline
 
 .stackHeightOKGetCodeBlock:
@@ -3053,8 +3060,11 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
         end
 
         setupReturnToBaselineAfterCheckpointExitIfNeeded()
-        restoreStateAfterCCall()
+        # At this point, a throw would've been reported via VM::m_exception, not via the
+        # exceptionSignal convention that's checked in restoreStateAfterCCall(). Therefore,
+        # we need to check for exceptions accordingly here first, not through restoreStateAfterCCall().
         branchIfException(_llint_throw_from_slow_path_trampoline)
+        restoreStateAfterCCallWithoutExceptionCheck() # Exceptions have already been checked above.
 
         if ARM64E
             move r1, a0
@@ -3078,8 +3088,12 @@ op(checkpoint_osr_exit_trampoline, macro ()
         # We don't call saveStateForCCall() because we are going to use the bytecodeIndex from our side state.
         cCall2(_llint_slow_path_checkpoint_osr_exit)
         setupReturnToBaselineAfterCheckpointExitIfNeeded()
-        restoreStateAfterCCall()
+        # At this point, a throw would've been reported via VM::m_exception, not via the
+        # exceptionSignal convention that's checked in restoreStateAfterCCall(). Therefore,
+        # we need to check for exceptions accordingly here first, not through restoreStateAfterCCall().
         branchIfException(_llint_throw_from_slow_path_trampoline)
+        restoreStateAfterCCallWithoutExceptionCheck() # Exceptions have already been checked above.
+
         if ARM64E
             move r1, a0
             leap _g_config, a2
@@ -3109,8 +3123,12 @@ op(array_sort_comparator_return_trampoline, macro ()
         end
 
         setupReturnToBaselineAfterCheckpointExitIfNeeded()
-        restoreStateAfterCCall()
+        # At this point, a throw would've been reported via VM::m_exception, not via the
+        # exceptionSignal convention that's checked in restoreStateAfterCCall(). Therefore,
+        # we need to check for exceptions accordingly here first, not through restoreStateAfterCCall().
         branchIfException(_llint_throw_from_slow_path_trampoline)
+        restoreStateAfterCCallWithoutExceptionCheck() # Exceptions have already been checked above.
+
         if ARM64E
             move r1, a0
             leap _g_config, a2
