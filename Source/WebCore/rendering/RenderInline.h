@@ -62,9 +62,6 @@ public:
         return LayoutRect(LayoutPoint(), borderBoxRectInContainer().size());
     }
 
-    LayoutUnit innerPaddingBoxWidth() const;
-    LayoutUnit innerPaddingBoxHeight() const;
-
     LayoutRect linesVisualOverflowBoundingBox() const;
 
     LayoutSize offsetForInFlowPositionedInline(const RenderBox* child) const;

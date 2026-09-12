@@ -113,8 +113,8 @@ public:
 
     inline LayoutUnit paddingBoxWidth() const;
     inline LayoutUnit paddingBoxHeight() const;
-    inline LayoutUnit paddingBoxLogicalWidth() const;
-    inline LayoutUnit paddingBoxLogicalHeight() const;
+    LayoutUnit paddingBoxLogicalWidth() const final;
+    LayoutUnit paddingBoxLogicalHeight() const final;
     inline LayoutUnit paddingBoxLogicalBottom() const;
 
     // The content area of the box (excludes padding - and intrinsic padding for table cells, etc... - and border).

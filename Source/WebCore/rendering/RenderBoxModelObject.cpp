@@ -40,6 +40,7 @@
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyInlineFlowBox.h"
@@ -965,6 +966,51 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
             containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
     }
+}
+
+LayoutUnit RenderBoxModelObject::paddingBoxLogicalWidth() const
+{
+    auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
+    auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
+
+    if (LayoutIntegration::LineLayout::containing(*this)) {
+        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
+            if (writingMode().isBidiLTR()) {
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
+                ASSERT(inlineBox);
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            } else {
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
+                ASSERT(inlineBox);
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
+            }
+            return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+        }
+        return { };
+    }
+
+    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+    if (!firstInlineBox || !lastInlineBox)
+        return { };
+
+    if (writingMode().isBidiLTR()) {
+        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft();
+        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight();
+    } else {
+        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRight();
+        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeft();
+    }
+    return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+}
+
+LayoutUnit RenderBoxModelObject::paddingBoxLogicalHeight() const
+{
+    auto logicalHeight = LayoutUnit { isHorizontalWritingMode() ? borderBoxRectInContainer().height() : borderBoxRectInContainer().width() };
+    logicalHeight -= (borderBefore() + borderAfter());
+    return logicalHeight;
 }
 
 LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const

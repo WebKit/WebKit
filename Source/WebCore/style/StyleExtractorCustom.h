@@ -55,7 +55,6 @@
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
-#include "RenderInline.h"
 #include "RenderSVGModelObject.h"
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
@@ -379,24 +378,10 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
                 return LayoutUnit { };
 
             auto paddingBoxWidth = [&]() -> LayoutUnit {
-                if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(container))
-                    return renderBlock->paddingBoxWidth();
-                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container)) {
-                    return inlineBox->writingMode().isHorizontal()
-                        ? inlineBox->innerPaddingBoxWidth() : inlineBox->innerPaddingBoxHeight();
-                }
-                ASSERT_NOT_REACHED();
-                return { };
+                return container.writingMode().isHorizontal() ? container.paddingBoxLogicalWidth() : container.paddingBoxLogicalHeight();
             };
             auto paddingBoxHeight = [&]() -> LayoutUnit {
-                if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(container))
-                    return renderBlock->paddingBoxHeight();
-                if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(container)) {
-                    return inlineBox->writingMode().isHorizontal()
-                        ? inlineBox->innerPaddingBoxHeight() : inlineBox->innerPaddingBoxWidth();
-                }
-                ASSERT_NOT_REACHED();
-                return { };
+                return container.writingMode().isHorizontal() ? container.paddingBoxLogicalHeight() : container.paddingBoxLogicalWidth();
             };
             if constexpr (propertyID == CSSPropertyTop)
                 return box.offsetTop() - box.marginTop();

@@ -67,8 +67,6 @@ inline LayoutUnit RenderBox::logicalTop() const { return writingMode().isHorizon
 inline LayoutUnit RenderBox::logicalWidth() const { return writingMode().isHorizontal() ? borderBoxWidth() : borderBoxHeight(); }
 inline LayoutUnit RenderBox::paddingBoxHeight() const { return std::max(0_lu, borderBoxHeight() - borderTop() - borderBottom() - horizontalScrollbarHeight()); }
 inline LayoutUnit RenderBox::paddingBoxLogicalBottom() const { return borderBefore() + paddingBoxLogicalHeight(); }
-inline LayoutUnit RenderBox::paddingBoxLogicalHeight() const { return writingMode().isHorizontal() ? paddingBoxHeight() : paddingBoxWidth(); }
-inline LayoutUnit RenderBox::paddingBoxLogicalWidth() const { return writingMode().isHorizontal() ? paddingBoxWidth() : paddingBoxHeight(); }
 inline LayoutUnit RenderBox::paddingBoxWidth() const { return std::max(0_lu, borderBoxWidth() - borderLeft() - borderRight() - verticalScrollbarWidth()); }
 inline int RenderBox::scrollbarLogicalHeight() const { return writingMode().isHorizontal() ? horizontalScrollbarHeight() : verticalScrollbarWidth(); }
 inline int RenderBox::scrollbarLogicalWidth() const { return writingMode().isHorizontal() ? verticalScrollbarWidth() : horizontalScrollbarHeight(); }
