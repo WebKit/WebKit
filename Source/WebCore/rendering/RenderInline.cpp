@@ -159,75 +159,38 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         lineLayout->paint(paintInfo, paintOffset, this);
 }
 
-template<typename GeneratorContext>
-void RenderInline::generateLineBoxRects(GeneratorContext& context) const
+Vector<FloatRect> RenderInline::lineBoxRects() const
 {
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
         auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
-        if (inlineBoxRects.isEmpty()) {
-            context.addRect({ });
-            return;
-        }
-        for (auto inlineRect : inlineBoxRects)
-            context.addRect(inlineRect);
-        return;
+        if (inlineBoxRects.isEmpty())
+            return { FloatRect { } };
+        return inlineBoxRects;
     }
-    if (auto* curr = firstLegacyInlineBoxFor(*this)) {
-        for (; curr; curr = curr->nextLineBox())
-            context.addRect(FloatRect(curr->topLeft(), curr->size()));
-    } else
-        context.addRect(FloatRect());
+
+    Vector<FloatRect> rects;
+    for (auto* box = firstLegacyInlineBoxFor(*this); box; box = box->nextLineBox())
+        rects.append(FloatRect { box->topLeft(), box->size() });
+    if (rects.isEmpty())
+        rects.append({ });
+    return rects;
 }
-
-class AbsoluteRectsGeneratorContext {
-public:
-    AbsoluteRectsGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
-        : m_rects(rects)
-        , m_accumulatedOffset(accumulatedOffset) { }
-
-    void addRect(const FloatRect& rect)
-    {
-        LayoutRect adjustedRect = LayoutRect(rect);
-        adjustedRect.moveBy(m_accumulatedOffset);
-        m_rects.append(adjustedRect);
-    }
-private:
-    Vector<LayoutRect>& m_rects;
-    const LayoutPoint& m_accumulatedOffset;
-};
 
 void RenderInline::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
 {
-    AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
-    generateLineBoxRects(context);
+    for (auto rect : lineBoxRects()) {
+        auto adjustedRect = LayoutRect { rect };
+        adjustedRect.moveBy(accumulatedOffset);
+        rects.append(adjustedRect);
+    }
 }
-
-namespace {
-
-class AbsoluteQuadsGeneratorContext {
-public:
-    AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads)
-        : m_quads(quads)
-        , m_geometryMap()
-    {
-        m_geometryMap.pushMappingsToAncestor(renderer, nullptr);
-    }
-
-    void addRect(const FloatRect& rect)
-    {
-        m_quads.append(m_geometryMap.absoluteRect(rect));
-    }
-private:
-    Vector<FloatQuad>& m_quads;
-    RenderGeometryMap m_geometryMap;
-};
-
-} // unnamed namespace
 
 void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
 {
-    AbsoluteQuadsGeneratorContext context(this, quads);
-    generateLineBoxRects(context);
+    RenderGeometryMap geometryMap;
+    geometryMap.pushMappingsToAncestor(this, nullptr);
+    for (auto rect : lineBoxRects())
+        quads.append(geometryMap.absoluteRect(rect));
 }
 
 LayoutUnit RenderInline::offsetLeft() const
@@ -303,9 +266,7 @@ ASCIILiteral RenderInline::renderName() const
     if (isStickilyPositioned())
         return "RenderInline (sticky positioned)"_s;
     // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement())
-        return "RenderInline (generated)"_s;
-    if (isAnonymous())
+    if (isPseudoElement() || isAnonymous())
         return "RenderInline (generated)"_s;
     return "RenderInline"_s;
 }
@@ -693,24 +654,15 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     repaint();
 }
 
-namespace {
-    class AbsoluteRectsIgnoringEmptyGeneratorContext : public AbsoluteRectsGeneratorContext {
-        public:
-            AbsoluteRectsIgnoringEmptyGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
-                : AbsoluteRectsGeneratorContext(rects, accumulatedOffset) { }
-
-                void addRect(const FloatRect& rect)
-                {
-                    if (!rect.isEmpty())
-                        AbsoluteRectsGeneratorContext::addRect(rect);
-                }
-    };
-} // unnamed namespace
-
 void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset) const
 {
-    AbsoluteRectsIgnoringEmptyGeneratorContext context(rects, additionalOffset);
-    generateLineBoxRects(context);
+    for (auto rect : lineBoxRects()) {
+        if (rect.isEmpty())
+            continue;
+        auto adjustedRect = LayoutRect { rect };
+        adjustedRect.moveBy(additionalOffset);
+        rects.append(adjustedRect);
+    }
 }
 
 static RenderObject* firstContentfulChild(const RenderInline& renderer)
