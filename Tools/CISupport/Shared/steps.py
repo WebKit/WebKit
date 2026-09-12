@@ -56,6 +56,9 @@ class ShellMixin(object):
         return self.getProperty('platform', '*') in self.WINDOWS_SHELL_PLATFORMS
 
     def shell_command(self, command, pipefail=True):
+        # Give filter-test-logs time to report its buffered output before forcing termination.
+        if 'filter-test-logs' in command and self.sigtermTime is None:
+            self.sigtermTime = 10
         if pipefail:
             # -o pipefail is new in POSIX 2024, and on systems using `dash` to provide
             # `sh` (e.g., Debian and Ubuntu) this is unsupported, as it is currently

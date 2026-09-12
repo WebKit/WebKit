@@ -24,9 +24,12 @@
 
 import os
 import argparse
+import atexit
+import collections
 import datetime
 import sys
 import re
+import signal
 import time
 
 # This prints the progress every interval_seconds to avoid that the step gets killed
@@ -104,20 +107,49 @@ def filter_logs(filter_type, log_file_name):
     always_print = config.get('always_print', lambda line: False)
     log_file = os.path.abspath(f'{log_file_name}')
     keep_alive_stdout = KeepAliveStdoutProgress()
+    # keep the last 50 lines printed to report those if something unexpected happens.
+    tail = collections.deque(maxlen=50)
+    printed_anything = False
+    reached_end_of_stdin = False
+    ready_to_read = False
+
+    @atexit.register
+    def maybe_report_tail_log_or_output_issues():
+        if not ready_to_read:
+            print('filter-test-logs: exited before it could start reading the piped command output.')
+            return
+        if not reached_end_of_stdin:
+            print('\nfilter-test-logs: killed or crashed before the piped command finished printing.')
+        if printed_anything:
+            return
+        if not tail:
+            print('filter-test-logs: the piped command produced no output at all.')
+            return
+        print(f'filter-test-logs: no {filter_type} results found in the piped command output, so the command '
+              f'likely failed before finishing. Last {len(tail)} line{"s" if len(tail) > 1 else ""} received:')
+        for line in tail:
+            print(line, end='')
+    # Ensure running the atexit handler also on SIGTERM
+    signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(128 + signum))
 
     with open(log_file, 'w', buffering=1, errors='backslashreplace') as f:
+        ready_to_read = True
         print_all_lines = False
         for line in sys.stdin:
+            tail.append(line)
             f.write(line)
             if print_all_lines:
                 print(line, end='')
             elif start_printing(line):
                 print_all_lines = True
+                printed_anything = True
                 print(line, end='')
             elif always_print(line):
+                printed_anything = True
                 print(line, end='')
             else:
                 keep_alive_stdout.maybe_update_progress()
+        reached_end_of_stdin = True
 
 
 def main():
