@@ -1,0 +1,91 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<pre id="out"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<script type="module">
+const out = document.getElementById('out');
+const log = s => { out.textContent += s + '\n'; };
+
+if (!window.IPC) {
+    log('Network process survived null blob URLs: PASS');
+    testRunner?.notifyDone();
+} else {
+
+const { CoreIPC } = await import("./coreipc.js");
+const blobs = CoreIPC.Networking.NetworkConnectionToWebProcess;
+
+// A null String decodes into a URL whose StringImpl is null. Hashing it dereferences that null
+// pointer, so every message below used to take down the network process.
+const nullURL = { string: null };
+
+// PairHashTraits::isEmptyValue() only reports the empty value when *both* halves are empty, so an
+// engaged top origin gets a { null URL, engaged } key past HashTable's key validation and into the
+// hash function.
+const engagedTopOrigin = { optionalValue: { data: { variantType: 'WebCore::OpaqueOriginIdentifierProcessQualified', variant: { object: 262144, processIdentifier: 262145 } } } };
+const noTopOrigin = {};
+
+const policyContainer = {
+    contentSecurityPolicyResponseHeaders: { headers: [], httpStatusCode: 0 },
+    crossOriginEmbedderPolicy: { value: 0, reportOnlyValue: 0, reportingEndpoint: '', reportOnlyReportingEndpoint: '' },
+    crossOriginOpenerPolicy: { value: 0, reportOnlyValue: 0, reportingEndpoint: '', reportOnlyReportingEndpoint: '' },
+    referrerPolicy: 0,
+};
+
+// BlobSize is synchronous, so a dead network process means the reply handler never runs rather than
+// running with an error. Resolve with -1 on timeout so the failure is reported instead of hanging.
+function blobSize(u) {
+    return new Promise(res => {
+        const timer = setTimeout(() => res(-1), 3000);
+        blobs.BlobSize(0, { url: { string: u } }, parsed => {
+            clearTimeout(timer);
+            res(parsed && parsed.resultSize !== undefined ? Number(parsed.resultSize) : -1);
+        });
+    });
+}
+
+(async () => {
+
+// Register a real blob first: HashTable::lookup() returns early on a null table, so the registry
+// has to be non-empty for the null keys below to reach the hash function at all.
+const liveURL = URL.createObjectURL(new Blob([new Uint8Array([1, 2, 3])]));
+if (await blobSize(liveURL) !== 3) {
+    log('FAIL: could not register a blob to test against');
+    testRunner?.notifyDone();
+    return;
+}
+
+const internalURL = { string: `blob:webkit-internal://${crypto.randomUUID()}` };
+
+for (const topOrigin of [noTopOrigin, engagedTopOrigin]) {
+    blobs.RegisterBlobURL(0, { url: nullURL, srcURL: internalURL, policyContainer, topOrigin });
+    blobs.RegisterBlobURL(0, { url: internalURL, srcURL: nullURL, policyContainer, topOrigin });
+    blobs.UnregisterBlobURL(0, { url: nullURL, topOrigin });
+    blobs.RegisterBlobURLHandle(0, { url: nullURL, topOrigin });
+    blobs.UnregisterBlobURLHandle(0, { url: nullURL, topOrigin });
+}
+
+blobs.RegisterInternalBlobURL(0, { url: nullURL, blobParts: [], contentType: 'application/octet-stream' });
+blobs.RegisterInternalFileBlobURL(0, { url: nullURL, path: '', replacementPath: '', extensionHandle: { takeImpl: {} }, contentType: '' });
+blobs.RegisterInternalBlobURLOptionallyFileBacked(0, { url: nullURL, srcURL: internalURL, fileBackedPath: '', contentType: '' });
+blobs.RegisterInternalBlobURLForSlice(0, { url: nullURL, srcURL: internalURL, start: 0, end: 1, contentType: '' });
+blobs.RegisterInternalBlobURLForSlice(0, { url: internalURL, srcURL: nullURL, start: 0, end: 1, contentType: '' });
+
+// The read paths reach the same hash lookup through BlobRegistryImpl::blobDataFromURL().
+blobs.BlobType(0, { url: nullURL }, () => { });
+blobs.BlobSize(0, { url: nullURL }, () => { });
+blobs.WriteBlobsToTemporaryFilesForIndexedDB(0, { blobURLs: [null] }, () => { });
+
+// If any of the above crashed the network process this round trip fails, and the blob registry must
+// still hold the entry we started with.
+const size = await blobSize(liveURL);
+log('Network process survived null blob URLs: ' + (size === 3 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
+
+testRunner?.notifyDone();
+})().catch(e => { log('FAIL: ' + e); testRunner?.notifyDone(); });
+
+}
+</script>

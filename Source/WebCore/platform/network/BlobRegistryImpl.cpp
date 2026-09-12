@@ -298,6 +298,9 @@ BlobData* BlobRegistryImpl::blobDataFromURL(const URL& url, const std::optional<
 {
     ASSERT(isMainThread());
     auto urlKey = url.stringWithoutFragmentIdentifier();
+    // A null key is the empty value of the tables below, so it can never name a registered blob and must not be hashed.
+    if (urlKey.isNull())
+        return nullptr;
     if (topOrigin && topOrigin != m_allowedBlobURLTopOrigins.get(urlKey)) {
         RELEASE_LOG_ERROR(Network, "BlobRegistryImpl::blobDataFromURL: (%p) Requested blob URL with incorrect top origin.", this);
         return nullptr;
