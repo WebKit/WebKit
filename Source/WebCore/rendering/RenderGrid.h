@@ -172,6 +172,8 @@ public:
     // grid is determined by the lines/grid areas which come from track sizing.
     bool isExtrinsicallySized() const;
 
+    LayoutRect gridAreaRectForOutOfFlow(const RenderBox&) const;
+
 private:
     friend class GridTrackSizingAlgorithm;
     friend class GridTrackSizingAlgorithmStrategy;
