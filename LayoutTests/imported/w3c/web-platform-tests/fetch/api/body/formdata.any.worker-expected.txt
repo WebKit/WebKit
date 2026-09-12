@@ -2,4 +2,43 @@
 PASS Consume empty response.formData() as FormData
 PASS Consume empty request.formData() as FormData
 PASS Consume multipart/form-data headers case-insensitively
+PASS multipart/form-data boundary is well-formed
+PASS multipart/form-data boundary is randomly generated
+PASS Serialize an empty FormData object
+PASS Serialize string entries in order, keeping duplicates
+PASS Serialize a File entry
+PASS Serialize a File entry without a type
+PASS Serialize an empty File entry
+PASS Serialize a Blob entry
+PASS Serialize a Blob entry without a type
+PASS Serialize a Blob entry with a filename argument
+PASS Serialize a File entry with a filename argument
+PASS Serialize name "a\nb"
+PASS Serialize name "a\rb"
+PASS Serialize name "a\r\nb"
+PASS Serialize name "a\n\rb"
+PASS Serialize name "a\"b"
+PASS Serialize name "a'b"
+PASS Serialize name "a\\b"
+PASS Serialize name "a%0Ab"
+PASS Serialize name "áb"
+PASS Serialize filename "b\nc"
+PASS Serialize filename "b\rc"
+PASS Serialize filename "b\r\nc"
+PASS Serialize filename "b\n\rc"
+PASS Serialize filename "b\"c"
+PASS Serialize filename "b'c"
+PASS Serialize filename "b\\c"
+PASS Serialize filename "ə.txt"
+PASS Serialize value "b\nc"
+PASS Serialize value "b\rc"
+PASS Serialize value "b\r\nc"
+PASS Serialize value "b\n\rc"
+PASS Serialize value "b\"c"
+PASS Serialize value "ç"
+PASS Serializing a FormData object takes a snapshot of its entry list
+PASS Round trip string entries
+PASS Round trip File and Blob entries
+PASS A double quote in a name and a filename stays escaped when parsed back
+PASS A newline in a name stays escaped when parsed back, a newline in a value is normalized
 
