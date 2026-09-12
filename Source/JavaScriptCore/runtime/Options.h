@@ -32,6 +32,7 @@
 #include <stdint.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/NumberOfCores.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/StdLibExtras.h>
 
@@ -178,27 +179,21 @@ private:
     static constexpr bool ipintEnabledByDefault() { return isARM64() || isARM64E() || isX86_64(); }
     static double defaultQuickDFGTierUpThresholdFactor()
     {
-#if PLATFORM(MAC)
-        return 0.15;
-#else
+        if (WTF::numberOfProcessorCores() > 6)
+            return 0.15;
         return 0.2;
-#endif
     }
     static double defaultRelaxedProfileCoverageFactorForQuickDFGTierUp()
     {
-#if PLATFORM(MAC)
-        return 0.85;
-#else
+        if (WTF::numberOfProcessorCores() > 6)
+            return 0.85;
         return 1.0;
-#endif
     }
     static double defaultQuickFTLTierUpThresholdFactor()
     {
-#if PLATFORM(MAC)
-        return 0.15;
-#else
+        if (WTF::numberOfProcessorCores() > 6)
+            return 0.15;
         return 1.0;
-#endif
     }
 };
 

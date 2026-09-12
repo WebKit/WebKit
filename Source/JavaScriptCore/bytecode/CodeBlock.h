@@ -737,7 +737,7 @@ public:
     bool NODELETE shouldReoptimizeNow();
     bool NODELETE shouldReoptimizeFromLoopNow();
 
-    void NODELETE didInstallDFGCode();
+    void didInstallDFGCode();
     void NODELETE didDFGJettison(Profiler::JettisonReason);
     void NODELETE didFailDFGCompilation();
 
