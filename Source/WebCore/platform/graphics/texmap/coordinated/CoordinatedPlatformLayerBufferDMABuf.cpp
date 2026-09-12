@@ -41,6 +41,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferExternalOES.h"
 #include "TextureMapper.h"
 #endif
 
@@ -101,10 +102,10 @@ CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<D
 CoordinatedPlatformLayerBufferDMABuf::~CoordinatedPlatformLayerBufferDMABuf() = default;
 
 #if USE(TEXTURE_MAPPER)
-static RefPtr<BitmapTexture> importToTexture(const IntSize& textureSize, const DMABufBuffer::Attributes& dmaBufAttributes, OptionSet<BitmapTexture::Flags> textureFlags)
+static RefPtr<BitmapTexture> importToTexture(const IntSize& textureSize, const DMABufBuffer::Attributes& dmaBufAttributes, OptionSet<BitmapTexture::Flags> textureFlags, std::optional<DMABufBuffer::ColorSpace> colorSpace = std::nullopt, std::optional<DMABufBuffer::SampleRange> sampleRange = std::nullopt)
 {
     auto& display = PlatformDisplay::sharedDisplay();
-    auto image = DMABufBuffer::createEGLImage(display.glDisplay(), dmaBufAttributes);
+    auto image = DMABufBuffer::createEGLImage(display.glDisplay(), dmaBufAttributes, colorSpace, sampleRange);
     if (!image)
         return nullptr;
 
@@ -284,15 +285,21 @@ static std::unique_ptr<CoordinatedPlatformLayerBuffer> importYUV(const Ref<DMABu
 
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferDMABuf::importDMABuf() const
 {
+    bool importWithHints = m_dmabuf->colorSpace() && m_dmabuf->sampleRange();
     const auto& attributes = m_dmabuf->attributes();
-    if (formatIsYUV(attributes.fourcc.value))
+    if (!importWithHints && formatIsYUV(attributes.fourcc.value))
         return importYUV(m_dmabuf, m_flags);
 
     OptionSet<BitmapTexture::Flags> textureFlags;
     if (m_flags.contains(TextureMapperFlags::ShouldBlend))
         textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-    auto texture = importToTexture(attributes.size, attributes, textureFlags);
-    return texture ? CoordinatedPlatformLayerBufferRGB::create(texture.releaseNonNull(), m_flags, nullptr) : nullptr;
+    auto texture = importToTexture(attributes.size, attributes, textureFlags, m_dmabuf->colorSpace(), m_dmabuf->sampleRange());
+    if (!texture)
+        return nullptr;
+
+    if (importWithHints)
+        return CoordinatedPlatformLayerBufferExternalOES::create(texture.releaseNonNull(), m_flags, nullptr);
+    return CoordinatedPlatformLayerBufferRGB::create(texture.releaseNonNull(), m_flags, nullptr);
 }
 
 void CoordinatedPlatformLayerBufferDMABuf::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)

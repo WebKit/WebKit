@@ -113,21 +113,23 @@ EGLImage DMABufBuffer::createEGLImage(GLDisplay& display) const
     return createEGLImage(display, m_attributes);
 }
 
-static std::optional<Vector<EGLAttrib>> buildEGLAttributesForDMABuf(const DMABufBuffer::Attributes& dmaBufAttributes, DMABufBuffer::Attributes::EnableModifiers enableModifiers)
+static std::optional<Vector<EGLAttrib>> buildEGLAttributesForDMABuf(const DMABufBuffer::Attributes& dmaBufAttributes, DMABufBuffer::Attributes::EnableModifiers enableModifiers, std::optional<DMABufBuffer::ColorSpace> colorSpace = std::nullopt, std::optional<DMABufBuffer::SampleRange> sampleRange = std::nullopt)
 {
     auto planeCount = dmaBufAttributes.fds.size();
     if (!planeCount || planeCount > DMABufBuffer::Attributes::maxPlaneCountForEGLImage)
         return std::nullopt;
 
     bool hasModifiers = dmaBufAttributes.modifier != DRM_FORMAT_MOD_INVALID && enableModifiers == DMABufBuffer::Attributes::EnableModifiers::Yes;
+    bool hasColorSpaceHint = colorSpace && sampleRange;
 
-    // 6 base attributes + per-plane (6 + optional 4 modifier) + EGL_NONE terminator.
+    // 6 base attributes + per-plane (6 + optional 4 modifier) + 4 optional color space and sample range + EGL_NONE terminator.
     static constexpr unsigned baseAttributeCount = 6;
     static constexpr unsigned planeAttributeCount = 6;
     static constexpr unsigned modifierAttributeCount = 4;
+    static constexpr unsigned colorSpaceAttributeCount = 4;
 
     Vector<EGLAttrib> eglAttributes;
-    eglAttributes.reserveInitialCapacity(baseAttributeCount + planeCount * (planeAttributeCount + (hasModifiers ? modifierAttributeCount : 0)) + 1);
+    eglAttributes.reserveInitialCapacity(baseAttributeCount + planeCount * (planeAttributeCount + (hasModifiers ? modifierAttributeCount : 0)) + (hasColorSpaceHint ? colorSpaceAttributeCount : 0) + 1);
 
     eglAttributes.appendList<EGLAttrib>({
         EGL_WIDTH, static_cast<EGLAttrib>(dmaBufAttributes.size.width()),
@@ -158,18 +160,45 @@ static std::optional<Vector<EGLAttrib>> buildEGLAttributesForDMABuf(const DMABuf
         }
     }
 
+    if (hasColorSpaceHint) {
+        auto colorSpaceHint = [&]() -> EGLAttrib {
+            switch (*colorSpace) {
+            case DMABufBuffer::ColorSpace::Bt601:
+                return EGL_ITU_REC601_EXT;
+            case DMABufBuffer::ColorSpace::Bt709:
+                return EGL_ITU_REC709_EXT;
+            case DMABufBuffer::ColorSpace::Bt2020:
+                return EGL_ITU_REC2020_EXT;
+            case DMABufBuffer::ColorSpace::Smpte240M:
+                // EGL has no token for it.
+                break;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }();
+
+        eglAttributes.appendList<EGLAttrib>({
+            EGL_YUV_COLOR_SPACE_HINT_EXT, colorSpaceHint,
+            EGL_SAMPLE_RANGE_HINT_EXT, *sampleRange == DMABufBuffer::SampleRange::Full ? EGL_YUV_FULL_RANGE_EXT : EGL_YUV_NARROW_RANGE_EXT,
+        });
+    }
+
     eglAttributes.append(EGL_NONE);
     return eglAttributes;
 }
 
-EGLImage DMABufBuffer::createEGLImage(GLDisplay& display, const Attributes& dmaBufAttributes)
+EGLImage DMABufBuffer::createEGLImage(GLDisplay& display, const Attributes& dmaBufAttributes, std::optional<ColorSpace> colorSpace, std::optional<SampleRange> sampleRange)
 {
     auto enableModifiers = display.extensions().EXT_image_dma_buf_import_modifiers
         ? DMABufBuffer::Attributes::EnableModifiers::Yes : DMABufBuffer::Attributes::EnableModifiers::No;
-    auto eglAttributes = buildEGLAttributesForDMABuf(dmaBufAttributes, enableModifiers);
+    auto eglAttributes = buildEGLAttributesForDMABuf(dmaBufAttributes, enableModifiers, colorSpace, sampleRange);
     if (!eglAttributes)
         return EGL_NO_IMAGE;
-    return display.createImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, *eglAttributes);
+    auto eglImage = display.createImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, *eglAttributes);
+    if (!eglImage && colorSpace && sampleRange) [[unlikely]] {
+        auto eglAttributes = buildEGLAttributesForDMABuf(dmaBufAttributes, enableModifiers);
+        eglImage = display.createImage(EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, *eglAttributes);
+    }
+    return eglImage;
 }
 
 std::optional<Vector<EGLint>> DMABufBuffer::buildEGLImageAttributes(const Attributes& dmaBufAttributes, Attributes::EnableModifiers enableModifiers)
@@ -273,9 +302,13 @@ bool DMABufBuffer::importIfNeeded()
     if (!m_importedTextures.isEmpty())
         return true;
 
+    // Color space hint is used for Qualcomm video decoder, that exposes
+    // a single fd for two planes using external EOS texture.
+    bool isSinglePlaneExternalTexture = m_colorSpace && m_sampleRange;
+
     auto& display = PlatformDisplay::sharedDisplay();
     auto importPlane = [&](const Attributes& planeAttributes, unsigned glFormat) {
-        auto eglImage = createEGLImage(display.glDisplay(), planeAttributes);
+        auto eglImage = createEGLImage(display.glDisplay(), planeAttributes, isSinglePlaneExternalTexture ? m_colorSpace : std::nullopt, isSinglePlaneExternalTexture ? m_sampleRange : std::nullopt);
         if (!eglImage)
             return false;
 
@@ -284,14 +317,14 @@ bool DMABufBuffer::importIfNeeded()
         display.destroyEGLImage(eglImage);
 
         GrGLTextureInfo externalTexture;
-        externalTexture.fTarget = GL_TEXTURE_2D;
+        externalTexture.fTarget = isSinglePlaneExternalTexture ? GL_TEXTURE_EXTERNAL_OES : GL_TEXTURE_2D;
         externalTexture.fID = texture->id();
         externalTexture.fFormat = glFormat;
         m_importedBackendTextures.append(GrBackendTextures::MakeGL(texture->size().width(), texture->size().height(), skgpu::Mipmapped::kNo, externalTexture));
         return true;
     };
 
-    if (formatIsYUV(m_attributes.fourcc.value)) {
+    if (!isSinglePlaneExternalTexture && formatIsYUV(m_attributes.fourcc.value)) {
         const auto& iter = yuvFormatPlaneInfo().find(m_attributes.fourcc.value);
         if (iter == yuvFormatPlaneInfo().end())
             return false;
@@ -516,7 +549,6 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImage(const sk_sp<GrContextThreadSafeP
     for (unsigned i = 0; i < planeInfo.size(); ++i)
         backendFormats[i] = GrBackendFormats::MakeGL(planeInfo[i].glFormat, GL_TEXTURE_2D);
 
-
     SkYUVAInfo info = yuvaInfo();
     GrYUVABackendTextureInfo yuvaBackendTexturesInfo(info, backendFormats.data(), skgpu::Mipmapped::kNo, origin);
     if (!yuvaBackendTexturesInfo.isValid()) {
@@ -537,6 +569,27 @@ sk_sp<SkImage> DMABufBuffer::createPromiseImage(const sk_sp<GrContextThreadSafeP
             std::unique_ptr<PromiseDMABufYUVPlaneContext> planeContext(static_cast<PromiseDMABufYUVPlaneContext*>(userData));
         }, reinterpret_cast<void**>(planeContexts.data()));
 }
+
+#if USE(GSTREAMER)
+sk_sp<SkImage> DMABufBuffer::createPromiseImageForQualcommVideoFrame(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, SkColorType colorType, SkAlphaType alphaType, GrSurfaceOrigin origin)
+{
+    ASSERT(threadSafeGrContext);
+
+    Ref context = PromiseDMABufImageContext::create(Ref { *this }, nullptr, { });
+    auto backendFormat = GrBackendFormats::MakeGLExternal();
+    ASSERT(backendFormat.isValid());
+
+    return SkImages::PromiseTextureFrom(threadSafeGrContext, backendFormat, SkISize::Make(m_attributes.size.width(), m_attributes.size.height()), skgpu::Mipmapped::kNo,
+        origin, colorType, alphaType, SkColorSpace::MakeSRGB(),
+        +[](void* userData) -> sk_sp<GrPromiseImageTexture> {
+            auto& context = *static_cast<PromiseDMABufImageContext*>(userData);
+            return context.promiseImageTexture(0);
+        },
+        +[](void* userData) {
+            Ref context = adoptRef(*static_cast<PromiseDMABufImageContext*>(userData));
+        }, &context.leakRef());
+}
+#endif
 #endif
 
 } // namespace WebCore
