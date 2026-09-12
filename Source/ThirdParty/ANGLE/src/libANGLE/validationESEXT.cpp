@@ -501,7 +501,8 @@ bool ValidateDrawElementsBaseVertexEXT(const Context *context,
                                        const void *indices,
                                        GLint basevertex)
 {
-    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1);
+    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1,
+                                      basevertex);
 }
 
 bool ValidateDrawElementsInstancedBaseVertexEXT(const Context *context,
@@ -522,7 +523,7 @@ bool ValidateDrawElementsInstancedBaseVertexEXT(const Context *context,
     }
 
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instancecount, 0);
+                                             instancecount, basevertex, 0);
 }
 
 bool ValidateDrawRangeElementsBaseVertexEXT(const Context *context,
@@ -547,7 +548,7 @@ bool ValidateDrawRangeElementsBaseVertexEXT(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1, basevertex))
     {
         return false;
     }
@@ -693,7 +694,7 @@ bool ValidateDrawElementsInstancedBaseInstanceEXT(const Context *context,
                                                   GLuint baseinstance)
 {
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instancecount, baseinstance);
+                                             instancecount, 0, baseinstance);
 }
 
 bool ValidateDrawElementsInstancedBaseVertexBaseInstanceEXT(const Context *context,
@@ -707,7 +708,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceEXT(const Context *conte
                                                             GLuint baseinstance)
 {
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, typePacked, indices,
-                                             instancecount, baseinstance);
+                                             instancecount, basevertex, baseinstance);
 }
 
 bool ValidateDrawElementsBaseVertexOES(const Context *context,
@@ -718,7 +719,8 @@ bool ValidateDrawElementsBaseVertexOES(const Context *context,
                                        const void *indices,
                                        GLint basevertex)
 {
-    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1);
+    return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1,
+                                      basevertex);
 }
 
 bool ValidateDrawElementsInstancedBaseVertexOES(const Context *context,
@@ -739,7 +741,7 @@ bool ValidateDrawElementsInstancedBaseVertexOES(const Context *context,
     }
 
     return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                             instancecount, 0);
+                                             instancecount, basevertex, 0);
 }
 
 bool ValidateDrawRangeElementsBaseVertexOES(const Context *context,
@@ -764,7 +766,7 @@ bool ValidateDrawRangeElementsBaseVertexOES(const Context *context,
         return false;
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, 1, basevertex))
     {
         return false;
     }
