@@ -162,6 +162,11 @@ class TestRunner(object):
         test_env.pop("WPE_DISPLAY", None)
         return test_env
 
+    def _setup_testing_environment(self):
+        # Hook for subclasses that need to start extra services once
+        # self._test_env (and the display server) is ready.
+        pass
+
     def _tear_down_testing_environment(self):
         if self._driver:
             self._driver.stop()
@@ -432,6 +437,7 @@ class TestRunner(object):
         start_time = time.time()
 
         self._test_env = self._setup_testing_environment_for_driver(self._driver)
+        self._setup_testing_environment()
 
         configuration_for_upload = self._port.configuration_for_upload(self._port.target_host(0))
 
