@@ -154,6 +154,8 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, Structure* las
     if (isTypedArrayTypeIncludingDataView(lastSeenStructure->typeInfo().type())) {
         if (isResizableOrGrowableSharedTypedArrayIncludingDataView(lastSeenStructure->classInfoForCells()))
             m_arrayProfileFlags.add(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray);
+        if (isImmutableTypedArrayIncludingDataView(lastSeenStructure->classInfoForCells()))
+            m_arrayProfileFlags.add(ArrayProfileFlag::MayBeImmutableTypedArray);
     }
 }
 

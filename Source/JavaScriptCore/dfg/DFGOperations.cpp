@@ -2936,9 +2936,12 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Struc
         auto scope = DECLARE_THROW_SCOPE(vm); \
         JSValue firstValue = JSValue::decode(encodedValue); \
         bool isResizableOrGrowableShared = false; \
-        if (auto* arrayBuffer = dynamicDowncast<JSArrayBuffer>(firstValue)) \
+        bool isImmutable = false; \
+        if (auto* arrayBuffer = dynamicDowncast<JSArrayBuffer>(firstValue)) { \
             isResizableOrGrowableShared = arrayBuffer->isResizableOrGrowableShared(); \
-        Structure* structure = globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared); \
+            isImmutable = arrayBuffer->isImmutable(); \
+        } \
+        Structure* structure = globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared, isImmutable); \
         OPERATION_RETURN(scope, reinterpret_cast<char*>(operationConstructGenericTypedArrayViewWithOneArgumentImpl<JS##type##Array>(globalObject, structure, firstValue))); \
     } \
 

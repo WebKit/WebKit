@@ -85,6 +85,10 @@ enum TypedArrayMode : uint8_t {
     ResizableNonSharedWastefulTypedArray = 0b0101'1100,
     ResizableNonSharedAutoLengthWastefulTypedArray = 0b0101'1101,
 
+    // A typed array viewing an immutable ArrayBuffer. Like WastefulTypedArray,
+    // but the underlying buffer can never be written to, resized, or detached.
+    ImmutableWastefulTypedArray = 0b0111'1000,
+
     // A data view. B is unused, V points to a vector allocated using who-
     // knows-what, and M = DataViewMode. The view does not own the vector.
     // There is an extra field (in JSDataView) that points to the
@@ -94,6 +98,9 @@ enum TypedArrayMode : uint8_t {
     GrowableSharedAutoLengthDataViewMode = 0b1000'1011,
     ResizableNonSharedDataViewMode = 0b1000'1100,
     ResizableNonSharedAutoLengthDataViewMode = 0b1000'1101,
+
+    // A data view over an immutable ArrayBuffer.
+    ImmutableDataViewMode = 0b1010'1000,
 };
 
 constexpr uint8_t isAutoLengthMode          = 0b0000'0001;
@@ -101,11 +108,16 @@ constexpr uint8_t isGrowableSharedMode      = 0b0000'0010;
 constexpr uint8_t isResizableNonSharedMode  = 0b0000'0100;
 constexpr uint8_t isHavingArrayBufferMode   = 0b0000'1000;
 constexpr uint8_t isTypedArrayMode          = 0b0001'0000;
+constexpr uint8_t isImmutableMode           = 0b0010'0000;
 constexpr uint8_t isWastefulTypedArrayMode  = 0b0100'0000;
 constexpr uint8_t isDataViewMode            = 0b1000'0000;
 
 constexpr uint8_t isResizableOrGrowableSharedMode = isResizableNonSharedMode | isGrowableSharedMode;
 constexpr uint8_t resizabilityAndAutoLengthMask = isAutoLengthMode | isGrowableSharedMode | isResizableNonSharedMode;
+
+// OversizeTypedArray also sets the isImmutableMode bit, but it never has an ArrayBuffer, while
+// views on immutable ArrayBuffers always do (they are always Wasteful/DataView-mode).
+constexpr uint8_t immutableModeMask = isImmutableMode | isHavingArrayBufferMode;
 
 inline bool hasArrayBuffer(TypedArrayMode mode)
 {
@@ -137,6 +149,11 @@ inline bool isWastefulTypedArray(TypedArrayMode mode)
     return static_cast<uint8_t>(mode) & isWastefulTypedArrayMode;
 }
 
+inline bool isImmutable(TypedArrayMode mode)
+{
+    return (static_cast<uint8_t>(mode) & immutableModeMask) == immutableModeMask;
+}
+
 inline bool canUseArrayBufferViewRawFieldsDirectly(TypedArrayMode mode)
 {
     // Non-resizable, or growable-shared but not auto-length (since it is growing only).
@@ -165,6 +182,7 @@ template<typename Getter> size_t integerIndexedObjectByteLength(JSArrayBufferVie
 template<typename Getter> bool isIntegerIndexedObjectOutOfBounds(JSArrayBufferView*, Getter&);
 
 extern JS_EXPORT_PRIVATE const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage;
+extern JS_EXPORT_PRIVATE const ASCIILiteral typedArrayBufferIsImmutableErrorMessage;
 
 enum class CopyType {
     LeftToRight,
@@ -270,6 +288,7 @@ public:
     bool isGrowableShared() const { return JSC::isGrowableShared(m_mode); };
     bool isResizableNonShared() const { return JSC::isResizableNonShared(m_mode); };
     bool isAutoLength() const { return JSC::isAutoLength(m_mode); }
+    bool isImmutable() const { return JSC::isImmutable(m_mode); }
 
     ALWAYS_INLINE bool canUseRawFieldsDirectly() const
     {

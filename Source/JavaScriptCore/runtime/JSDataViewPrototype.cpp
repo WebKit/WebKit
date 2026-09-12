@@ -186,7 +186,12 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     JSDataView* dataView = dynamicDowncast<JSDataView>(callFrame->thisValue());
     if (!dataView)
         return throwVMTypeError(globalObject, scope, "Receiver of DataView method must be a DataView"_s);
-    
+
+    // https://tc39.es/proposal-immutable-arraybuffer/#sec-setviewvalue: the immutable check
+    // happens before coercing byteOffset and value.
+    if (dataView->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     uint64_t byteOffset = callFrame->argument(0).toIndex(globalObject, "byteOffset"_s);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 

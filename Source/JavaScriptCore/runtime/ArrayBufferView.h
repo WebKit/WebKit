@@ -72,6 +72,13 @@ public:
         return m_buffer->isShared();
     }
 
+    bool isImmutable() const
+    {
+        if (isDetached())
+            return false;
+        return m_buffer->isImmutable();
+    }
+
     void* baseAddress() const LIFETIME_BOUND
     {
         if (isDetached())

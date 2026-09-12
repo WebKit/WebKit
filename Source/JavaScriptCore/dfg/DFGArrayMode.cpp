@@ -240,7 +240,13 @@ ArrayMode ArrayMode::refine(
         }
         if (graph.hasExitSite(node->origin.semantic, UnexpectedResizableArrayBufferView)) {
             constexpr bool mayBeResizableOrGrowableSharedTypedArray = true;
-            return result.withArrayClassAndSpeculation(result.arrayClass(), result.speculation(), result.mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray);
+            result = result.withArrayClassAndSpeculation(result.arrayClass(), result.speculation(), result.mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray);
+        }
+        if (graph.hasExitSite(node->origin.semantic, UnexpectedImmutableArrayBufferView))
+            result = result.withMayBeImmutableTypedArray(true);
+        if (result.mayBeImmutableTypedArray() && action() == Array::Write) {
+            // Stores to immutable-backed typed arrays always fail; the generic path implements that.
+            return ArrayMode(Array::Generic, action());
         }
         return result;
     };
@@ -816,6 +822,8 @@ void ArrayMode::dump(PrintStream& out) const
         out.print("+LargeTypedArray");
     if (mayBeResizableOrGrowableSharedTypedArray())
         out.print("+ResizableOrGrowableSharedTypedArray");
+    if (mayBeImmutableTypedArray())
+        out.print("+ImmutableTypedArray");
 }
 
 } } // namespace JSC::DFG

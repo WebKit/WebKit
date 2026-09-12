@@ -2161,6 +2161,24 @@ bool Graph::isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const Ab
     return allAreNonResizable;
 }
 
+bool Graph::isNeverImmutableTypedArrayIncludingDataView(const AbstractValue& value)
+{
+    auto& structureSet = value.m_structure;
+    if (!structureSet.isFinite())
+        return false;
+
+    if (structureSet.isClear())
+        return false;
+
+    bool allAreNonImmutable = true;
+    structureSet.forEach(
+        [&](RegisteredStructure structure) {
+            if (isImmutableTypedArrayIncludingDataView(structure->classInfoForCells()))
+                allAreNonImmutable = false;
+        });
+    return allAreNonImmutable;
+}
+
 void Graph::clearCPSCFGData()
 {
     m_cpsNaturalLoops = nullptr;

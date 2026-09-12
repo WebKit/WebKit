@@ -613,7 +613,7 @@ sub AddToIncludesForIDLType
         return;
     }
 
-    if ($codeGenerator->IsBufferSourceType($type) || $type->extendedAttributes->{AllowShared}) {
+    if ($codeGenerator->IsBufferSourceType($type) || $type->extendedAttributes->{AllowShared} || $type->extendedAttributes->{AllowImmutable}) {
         AddToIncludes("JSDOMConvertBufferSource.h", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertUnion.h", $includesRef, $conditional);
         return;
@@ -7922,6 +7922,7 @@ sub IsAnnotatedType
     return 1 if $type->extendedAttributes->{AtomString};
     return 1 if $type->extendedAttributes->{RequiresExistingAtomString};
     return 1 if $type->extendedAttributes->{AllowShared};
+    return 1 if $type->extendedAttributes->{AllowImmutable};
 }
 
 sub GetAnnotatedIDLType
@@ -7936,7 +7937,11 @@ sub GetAnnotatedIDLType
     }
     return "IDLAtomStringAdaptor" if $type->extendedAttributes->{AtomString};
     return "IDLRequiresExistingAtomStringAdaptor" if $type->extendedAttributes->{RequiresExistingAtomString};
-    return "IDLAllowSharedAdaptor" if $type->extendedAttributes->{AllowShared};
+    if ($type->extendedAttributes->{AllowShared}) {
+        return "IDLAllowSharedAndImmutableAdaptor" if $type->extendedAttributes->{AllowImmutable};
+        return "IDLAllowSharedAdaptor";
+    }
+    return "IDLAllowImmutableAdaptor" if $type->extendedAttributes->{AllowImmutable};
 }
 
 sub GetBaseIDLType

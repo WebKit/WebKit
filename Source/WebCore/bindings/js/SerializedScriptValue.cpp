@@ -213,6 +213,7 @@ static bool NODELETE isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObje
     case WasmMemoryTag:
 #endif
     case ResizableArrayBufferTag:
+    case ImmutableArrayBufferTag:
     case ErrorInstanceTag:
     case ErrorTag:
     case MessagePortReferenceTag:
@@ -1301,6 +1302,15 @@ public:
                 appendObjectPoolTag(ResizableArrayBufferTag);
                 write(ResizableArrayBufferTag);
                 writeResizableArrayBuffer(arrayBuffer->span(), arrayBuffer->maxByteLength().value_or(0));
+                return true;
+            }
+
+            if (arrayBuffer->isImmutable()) {
+                appendObjectPoolTag(ImmutableArrayBufferTag);
+                write(ImmutableArrayBufferTag);
+                uint64_t byteLength = arrayBuffer->byteLength();
+                write(byteLength);
+                write(arrayBuffer->span());
                 return true;
             }
 
@@ -3814,6 +3824,29 @@ public:
             addToObjectPool<ResizableArrayBufferTag>(result);
             return result;
         }
+        case ImmutableArrayBufferTag: {
+            RefPtr<ArrayBuffer> arrayBuffer;
+            if (!readArrayBuffer(arrayBuffer)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            if (!arrayBuffer) [[unlikely]] {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            arrayBuffer->makeImmutable();
+            Structure* structure = m_globalObject->arrayBufferStructure(arrayBuffer->sharingMode());
+            if (!structure) [[unlikely]] {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            JSValue result = JSArrayBuffer::create(m_lexicalGlobalObject->vm(), structure, WTF::move(arrayBuffer));
+            addToObjectPool<ImmutableArrayBufferTag>(result);
+            return result;
+        }
         case ArrayBufferTransferTag: {
             uint32_t index;
             bool indexSuccessfullyRead = read(index);
@@ -4674,7 +4707,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
     // Per spec, detached/validity checks happen after serialization of the message value,
     // because serialization may run getters that throw or modify transferables.
     for (auto& arrayBuffer : arrayBuffers) {
-        if (arrayBuffer->isDetached() || arrayBuffer->isShared())
+        if (arrayBuffer->isDetached() || arrayBuffer->isShared() || arrayBuffer->isImmutable())
             return Exception { ExceptionCode::DataCloneError };
         if (!arrayBuffer->isDetachable()) {
             throwVMTypeError(&lexicalGlobalObject, scope, errorMessageForTransfer(arrayBuffer.ptr()));

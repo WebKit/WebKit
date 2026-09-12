@@ -32,7 +32,8 @@ namespace JSC {
 
 #define JSC_DECLARE_CLASS_INFO_FUNCTION(type) \
     JS_EXPORT_PRIVATE const ClassInfo* get##type##ArrayClassInfo(); \
-    JS_EXPORT_PRIVATE const ClassInfo* getResizableOrGrowableShared##type##ArrayClassInfo();
+    JS_EXPORT_PRIVATE const ClassInfo* getResizableOrGrowableShared##type##ArrayClassInfo(); \
+    JS_EXPORT_PRIVATE const ClassInfo* getImmutable##type##ArrayClassInfo();
 FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_DECLARE_CLASS_INFO_FUNCTION)
 #undef JSC_DECLARE_CLASS_INFO_FUNCTION
 
@@ -251,6 +252,22 @@ public:
     static inline Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
     static bool preventExtensions(JSObject*, JSGlobalObject*);
+};
+
+// Views on immutable ArrayBuffers get their own class so that the JIT can prove from a
+// structure set that a view's buffer is never immutable (ClassInfo::isImmutableTypedArray).
+template<typename PassedAdaptor>
+class JSGenericImmutableTypedArrayView final : public JSGenericTypedArrayView<PassedAdaptor> {
+public:
+    using Base = JSGenericTypedArrayView<PassedAdaptor>;
+    using Base::StructureFlags;
+
+    static constexpr bool isImmutableTypedArray = true;
+
+    static const ClassInfo s_info; // This is never accessed directly, since that would break linkage on some compilers.
+
+    static inline const ClassInfo* info();
+    static inline Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
 template<typename Adaptor> inline RefPtr<typename Adaptor::ViewType> toPossiblySharedNativeTypedView(VM&, JSValue);

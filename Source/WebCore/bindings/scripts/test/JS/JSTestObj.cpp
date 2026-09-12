@@ -2534,6 +2534,10 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigUint64);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64AllowShared);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigUint64AllowShared);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64AllowImmutable);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64AllowSharedAndImmutable);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceAllowImmutableParameter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceAllowSharedAndImmutableParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_toString);
 
 // Attributes
@@ -3014,7 +3018,7 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
 
 /* Hash table for prototype */
 
-static const std::array<HashTableValue, 302> JSTestObjPrototypeTableValues {
+static const std::array<HashTableValue, 306> JSTestObjPrototypeTableValues {
     HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObjConstructor, 0 } },
     HashTableValue { "readOnlyLongAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyLongAttr, 0 } },
     HashTableValue { "readOnlyStringAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyStringAttr, 0 } },
@@ -3363,6 +3367,10 @@ static const std::array<HashTableValue, 302> JSTestObjPrototypeTableValues {
     HashTableValue { "bigUint64"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bigUint64, 1 } },
     HashTableValue { "bigInt64AllowShared"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bigInt64AllowShared, 1 } },
     HashTableValue { "bigUint64AllowShared"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bigUint64AllowShared, 1 } },
+    HashTableValue { "bigInt64AllowImmutable"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bigInt64AllowImmutable, 1 } },
+    HashTableValue { "bigInt64AllowSharedAndImmutable"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bigInt64AllowSharedAndImmutable, 1 } },
+    HashTableValue { "bufferSourceAllowImmutableParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bufferSourceAllowImmutableParameter, 1 } },
+    HashTableValue { "bufferSourceAllowSharedAndImmutableParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bufferSourceAllowSharedAndImmutableParameter, 1 } },
     HashTableValue { "toString"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_toString, 0 } },
 #if ENABLE(Condition1)
     HashTableValue { "CONDITIONAL_CONST"_s, PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::ConstantInteger, NoIntrinsic, { HashTableValue::ConstantType, 0 } },
@@ -11788,6 +11796,90 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bigUint64AllowShare
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigUint64AllowShared, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bigUint64AllowSharedBody>(*lexicalGlobalObject, *callFrame, "bigUint64AllowShared");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bigInt64AllowImmutableBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sourceConversionResult = convert<IDLAllowImmutableAdaptor<IDLBigInt64Array>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "source"_s, "TestObject"_s, "bigInt64AllowImmutable"_s, "BigInt64Array"_s); });
+    if (sourceConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, impl.bigInt64AllowImmutable(sourceConversionResult.releaseReturnValue()))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64AllowImmutable, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bigInt64AllowImmutableBody>(*lexicalGlobalObject, *callFrame, "bigInt64AllowImmutable");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bigInt64AllowSharedAndImmutableBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto sourceConversionResult = convert<IDLAllowSharedAndImmutableAdaptor<IDLBigInt64Array>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "source"_s, "TestObject"_s, "bigInt64AllowSharedAndImmutable"_s, "BigInt64Array"_s); });
+    if (sourceConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLBoolean>(*lexicalGlobalObject, throwScope, impl.bigInt64AllowSharedAndImmutable(sourceConversionResult.releaseReturnValue()))));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bigInt64AllowSharedAndImmutable, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bigInt64AllowSharedAndImmutableBody>(*lexicalGlobalObject, *callFrame, "bigInt64AllowSharedAndImmutable");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bufferSourceAllowImmutableParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLAllowImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.bufferSourceAllowImmutableParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceAllowImmutableParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bufferSourceAllowImmutableParameterBody>(*lexicalGlobalObject, *callFrame, "bufferSourceAllowImmutableParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bufferSourceAllowSharedAndImmutableParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLAllowSharedAndImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.bufferSourceAllowSharedAndImmutableParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceAllowSharedAndImmutableParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bufferSourceAllowSharedAndImmutableParameterBody>(*lexicalGlobalObject, *callFrame, "bufferSourceAllowSharedAndImmutableParameter");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_toStringBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)

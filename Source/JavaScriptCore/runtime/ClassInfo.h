@@ -157,6 +157,7 @@ struct MethodTable {
     }, \
     sizeof(ClassName), \
     ClassName::isResizableOrGrowableSharedTypedArray, \
+    ClassName::isImmutableTypedArray, \
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
     WTF_ALLOW_STRUCT_COMPACT_POINTERS;
@@ -174,6 +175,7 @@ struct CLASS_INFO_ALIGNMENT ClassInfo {
     MethodTable methodTable;
     const unsigned staticClassSize;
     const bool isResizableOrGrowableSharedTypedArray;
+    const bool isImmutableTypedArray;
 
     static constexpr ptrdiff_t offsetOfParentClass()
     {

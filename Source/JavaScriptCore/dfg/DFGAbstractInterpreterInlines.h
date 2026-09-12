@@ -3944,6 +3944,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             RegisteredStructureSet structureSet;
             structureSet.add(m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), true)));
             structureSet.add(m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), false)));
+            // An immutable ArrayBuffer argument yields the immutable flavour of the structure.
+            structureSet.add(m_graph.registerStructure(m_graph.globalObjectFor(node->origin.semantic)->typedArrayStructureConcurrently(node->typedArrayType(), false, true)));
             setForNode(node, structureSet);
             break;
         }

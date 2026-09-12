@@ -1799,6 +1799,13 @@ void AssemblyHelpers::getArityPadding(VM& vm, unsigned numberOfParameters, GPRRe
     stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(vm.addressOfSoftStackLimit()), scratchGPR1));
 }
 
+AssemblyHelpers::Jump AssemblyHelpers::branchIfImmutableArrayBufferView(GPRReg baseGPR, GPRReg scratchGPR)
+{
+    load8(Address(baseGPR, JSArrayBufferView::offsetOfMode()), scratchGPR);
+    and32(TrustedImm32(immutableModeMask), scratchGPR);
+    return branch32(Equal, scratchGPR, TrustedImm32(immutableModeMask));
+}
+
 AssemblyHelpers::JumpList AssemblyHelpers::branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType> typedArrayType)
 {
     ASSERT(scratchGPR != scratch2GPR);

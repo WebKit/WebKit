@@ -209,6 +209,7 @@ enum class ArrayProfileFlag : uint32_t {
     MayBeResizableOrGrowableSharedTypedArray = 1 << 5,
     DidPerformFirstRunPruning = 1 << 6,
     MayBeRegExpMatchesArray = 1 << 7,
+    MayBeImmutableTypedArray = 1 << 8,
 };
 
 class ArrayProfile {
@@ -230,6 +231,8 @@ public:
     bool mayBeLargeTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeLargeTypedArray); }
 
     bool mayBeResizableOrGrowableSharedTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeResizableOrGrowableSharedTypedArray); }
+
+    bool mayBeImmutableTypedArray() const { return m_arrayProfileFlags.contains(ArrayProfileFlag::MayBeImmutableTypedArray); }
 
     StructureID* addressOfSpeculationFailureStructureID() LIFETIME_BOUND { return &m_speculationFailureStructureID; }
     ArrayModes* addressOfArrayModes() LIFETIME_BOUND { return &m_observedArrayModes; }

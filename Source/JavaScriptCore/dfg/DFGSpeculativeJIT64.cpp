@@ -4111,6 +4111,11 @@ void SpeculativeJIT::compile(Node* node)
             scratch2GPR = scratch2->gpr();
         }
 
+        // A mutating atomic on a view over an immutable ArrayBuffer must throw; exit so the site
+        // falls back to the generic call, which reports it.
+        if (node->arrayMode().action() == Array::Write && !m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge)))
+            speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseGPR), node, branchIfImmutableArrayBufferView(baseGPR, scratchGPR));
+
         Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseGPR, indexGPR, scratchGPR, scratch2GPR);
         if (outOfBounds.isSet())
             speculationCheck(OutOfBounds, JSValueSource(), nullptr, outOfBounds);
@@ -6665,6 +6670,10 @@ void SpeculativeJIT::compile(Node* node)
         if (m_graph.varArgChild(node, 3))
             isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
+
+        // Stores to DataViews on immutable ArrayBuffers always fail; exit so the site falls back to the generic call.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(node, 0))))
+            speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(dataViewGPR), node, branchIfImmutableArrayBufferView(dataViewGPR, t1));
 
         if (data.isResizable)
             loadTypedArrayLength(dataViewGPR, t1, t2, t1, TypeDataView);
@@ -9896,6 +9905,10 @@ void SpeculativeJIT::compileMultiPutByVal(Node* node)
             Jump notMatching = branch8(NotEqual, Address(baseGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(jsType));
             bailoutCases.append(notMatching);
         }
+
+        // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge)))
+            speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseGPR), node, branchIfImmutableArrayBufferView(baseGPR, scratch1GPR));
 
         if (!arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {
             if (!m_graph.isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(m_state.forNode(baseEdge)))

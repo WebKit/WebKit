@@ -3495,6 +3495,13 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(Node* node, TypedArrayType 
     ASSERT_UNUSED(valueGPR, valueGPR != propertyReg);
     ASSERT(valueGPR != baseReg);
     ASSERT(valueGPR != storageReg);
+
+    // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+    // This has to precede the bounds check: an out-of-bounds store still fails, and the out-of-bounds
+    // path below can join past the store without exiting.
+    if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(child1)))
+        speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseReg), node, branchIfImmutableArrayBufferView(baseReg, scratchGPR));
+
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
 
     switch (elementSize(type)) {
@@ -3630,7 +3637,14 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(Node* node, TypedArrayTyp
     GPRReg scratchGPR = gpScratch.gpr();
     GPRReg storageReg = storage.gpr();
 
+    // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+    // This has to precede the bounds check: an out-of-bounds store still fails, and the out-of-bounds
+    // path below can join past the store without exiting.
+    if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(node, 0))))
+        speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseReg), node, branchIfImmutableArrayBufferView(baseReg, scratchGPR));
+
     Jump outOfBounds = jumpForTypedArrayOutOfBounds(node, baseReg, propertyReg, scratchGPR, scratch2GPR);
+
     switch (elementSize(type)) {
     case 2: {
         convertDoubleToFloat16(valueFPR, scratchFPR);

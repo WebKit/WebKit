@@ -2861,6 +2861,18 @@ ImageControlsEnabled:
   condition: ENABLE(SERVICE_CONTROLS)
   defaultValue: false
 
+ImmutableArrayBufferEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Immutable ArrayBuffer"
+  humanReadableDescription: "Enable immutable ArrayBuffer methods."
+  webcoreBinding: none
+  jscOptionName: useImmutableArrayBuffer
+  sharedPreferenceForWebProcess: true
+  excludeFrom: [ WebKitLegacy, WebCore ]
+  defaultValue: true
+
 ImportDeferEnabled:
   type: bool
   status: stable

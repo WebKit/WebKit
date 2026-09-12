@@ -513,6 +513,10 @@ enum TestConfidence { "high", "kinda-low" };
     boolean bigUint64(BigUint64Array destination);
     boolean bigInt64AllowShared([AllowShared] BigInt64Array destination);
     boolean bigUint64AllowShared([AllowShared] BigUint64Array destination);
+    boolean bigInt64AllowImmutable([AllowImmutable] BigInt64Array source);
+    boolean bigInt64AllowSharedAndImmutable([AllowShared, AllowImmutable] BigInt64Array source);
+    undefined bufferSourceAllowImmutableParameter([AllowImmutable] (ArrayBufferView or ArrayBuffer) data);
+    undefined bufferSourceAllowSharedAndImmutableParameter([AllowShared, AllowImmutable] (ArrayBufferView or ArrayBuffer) data);
 
     [SetterCallWith=LegacyActiveWindowForAccessor&FirstWindow] attribute USVString search;
 };

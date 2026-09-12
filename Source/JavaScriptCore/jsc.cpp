@@ -2865,7 +2865,11 @@ JSC_DEFINE_HOST_FUNCTION(functionTransferArrayBuffer, (JSGlobalObject* globalObj
     JSArrayBuffer* buffer = dynamicDowncast<JSArrayBuffer>(callFrame->argument(0));
     if (!buffer)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Expected an array buffer"_s)));
-    
+
+    // https://tc39.es/proposal-immutable-arraybuffer/#sec-detacharraybuffer
+    if (buffer->impl()->isImmutable())
+        return JSValue::encode(throwTypeError(globalObject, scope, "Cannot detach an immutable ArrayBuffer"_s));
+
     ArrayBufferContents dummyContents;
     buffer->impl()->transferTo(vm, dummyContents);
     

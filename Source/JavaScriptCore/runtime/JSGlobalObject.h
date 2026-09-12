@@ -490,7 +490,8 @@ public:
     
 #define DECLARE_TYPED_ARRAY_TYPE_STRUCTURE(name) \
     LazyClassStructure m_typedArray ## name; \
-    LazyProperty<JSGlobalObject, Structure> m_resizableOrGrowableSharedTypedArray ## name ## Structure;
+    LazyProperty<JSGlobalObject, Structure> m_resizableOrGrowableSharedTypedArray ## name ## Structure; \
+    LazyProperty<JSGlobalObject, Structure> m_immutableTypedArray ## name ## Structure;
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_STRUCTURE)
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
@@ -1152,11 +1153,14 @@ public:
     inline const LazyClassStructure& lazyTypedArrayStructure(TypedArrayType) const;
     inline LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType);
     inline const LazyProperty<JSGlobalObject, Structure>& lazyResizableOrGrowableSharedTypedArrayStructure(TypedArrayType) const;
-    inline Structure* typedArrayStructure(TypedArrayType, bool isResizableOrGrowableShared) const;
-    inline Structure* typedArrayStructureConcurrently(TypedArrayType, bool isResizableOrGrowableShared) const;
+    inline LazyProperty<JSGlobalObject, Structure>& lazyImmutableTypedArrayStructure(TypedArrayType);
+    inline const LazyProperty<JSGlobalObject, Structure>& lazyImmutableTypedArrayStructure(TypedArrayType) const;
+    inline Structure* typedArrayStructure(TypedArrayType, bool isResizableOrGrowableShared, bool isImmutable = false) const;
+    inline Structure* typedArrayStructureConcurrently(TypedArrayType, bool isResizableOrGrowableShared, bool isImmutable = false) const;
     inline bool isOriginalTypedArrayStructure(Structure*, bool isResizableOrGrowableShared);
     template<TypedArrayType type> Structure* typedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ false); }
     template<TypedArrayType type> Structure* resizableOrGrowableSharedTypedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ true); }
+    template<TypedArrayType type> Structure* immutableTypedArrayStructureWithTypedArrayType() const { return typedArrayStructure(type, /* isResizableOrGrowableShared */ false, /* isImmutable */ true); }
 
     inline JSObject* typedArrayConstructor(TypedArrayType) const;
     inline JSObject* typedArrayConstructorConcurrently(TypedArrayType) const;

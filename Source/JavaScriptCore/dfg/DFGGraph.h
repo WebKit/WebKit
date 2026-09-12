@@ -1343,6 +1343,7 @@ public:
     void freeDFGIRAfterLowering();
 
     bool isNeverResizableOrGrowableSharedTypedArrayIncludingDataView(const AbstractValue&);
+    bool isNeverImmutableTypedArrayIncludingDataView(const AbstractValue&);
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String&);
     const ConcatKeyAtomStringCache* tryAddConcatKeyAtomStringCache(const String&, const String&, ConcatKeyAtomStringCache::Mode);

@@ -823,6 +823,10 @@ public:
         return branchIfInlineWatchpointSetIsStillValid(scratchGPR);
     }
 
+    // OversizeTypedArray reuses the isImmutableMode bit, so a view is only immutable when the
+    // buffer-having bit is set too. Clobbers scratchGPR.
+    Jump branchIfImmutableArrayBufferView(GPRReg baseGPR, GPRReg scratchGPR);
+
     JumpList branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>);
     void loadTypedArrayByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
     std::tuple<Jump, JumpList> loadDataViewByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);

@@ -5446,6 +5446,13 @@ private:
             args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
         LValue storage = lowStorage(storageEdge);
 
+        // A mutating atomic on a view over an immutable ArrayBuffer must throw; exit so the site
+        // falls back to the generic call, which reports it.
+        if (m_node->arrayMode().action() == Array::Write && !m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge))) {
+            LValue base = lowCell(baseEdge);
+            speculate(UnexpectedImmutableArrayBufferView, jsValueValue(base), m_node, isImmutableArrayBufferView(base));
+        }
+
         TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
         Width width = widthForBytes(elementSize(type));
 
@@ -7610,6 +7617,10 @@ IGNORE_CLANG_WARNINGS_END
 
             ASSERT(isTypedView(type));
             {
+                // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+                if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(child1)))
+                    speculate(UnexpectedImmutableArrayBufferView, jsValueValue(base), m_node, isImmutableArrayBufferView(base));
+
                 TypedPointer pointer = TypedPointer(
                     m_heaps.TypedArrayProperties,
                     m_out.add(
@@ -7810,6 +7821,15 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         if (arrayModes & arrayModesForTypedArrays) {
+            // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes
+            // generic. This can only be emitted once `base` is known to be a typed array, since it
+            // reads a field that does not exist on the JSArray shapes handled above.
+            bool needsImmutableCheck = !m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge));
+            auto speculateNotImmutable = [&] {
+                if (needsImmutableCheck)
+                    speculate(UnexpectedImmutableArrayBufferView, jsValueValue(base), m_node, isImmutableArrayBufferView(base));
+            };
+
             auto arrayModeToTypedArrayType = [&](ArrayModes oneArrayMode) {
                 switch (oneArrayMode) {
                 case Int8ArrayMode:
@@ -7881,6 +7901,7 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.branch(m_out.equal(m_out.load8ZeroExt32(base, m_heaps.JSCell_typeInfoType), m_out.constInt32(typeForTypedArrayType(typedArrayType))), unsure(handled), unsure(next));
 
                 m_out.appendTo(handled);
+                speculateNotImmutable();
                 LValue length = typedArrayLength(base, arrayMode.mayBeResizableOrGrowableSharedTypedArray(), arrayModeToTypedArrayType(arrayModes & arrayModesForTypedArrays), baseEdge);
 
 #if USE(LARGE_TYPED_ARRAYS)
@@ -7904,6 +7925,7 @@ IGNORE_CLANG_WARNINGS_END
                 m_out.branch(isTypedArrayView(base), unsure(checkLength), rarely(bailout));
 
                 m_out.appendTo(checkLength);
+                speculateNotImmutable();
                 LValue length = typedArrayLength(base, arrayMode.mayBeResizableOrGrowableSharedTypedArray(), std::nullopt, baseEdge);
 
 #if USE(LARGE_TYPED_ARRAYS)
@@ -20897,6 +20919,14 @@ IGNORE_CLANG_WARNINGS_END
             m_out.constInt32(FastTypedArray));
     }
 
+    // OversizeTypedArray reuses the isImmutableMode bit, so a view is only immutable when the
+    // buffer-having bit is set too.
+    LValue isImmutableArrayBufferView(LValue object)
+    {
+        LValue mode = m_out.load8ZeroExt32(object, m_heaps.JSArrayBufferView_mode);
+        return m_out.equal(m_out.bitAnd(mode, m_out.constInt32(immutableModeMask)), m_out.constInt32(immutableModeMask));
+    }
+
     TypedPointer baseIndexWithProvenValue(IndexedAbstractHeap& heap, LValue storage, LValue index, Edge edge, ptrdiff_t offset = 0)
     {
         return m_out.baseIndex(heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset);
@@ -22026,6 +22056,10 @@ IGNORE_CLANG_WARNINGS_END
             isLittleEndian = lowBoolean(m_graph.varArgChild(m_node, 3));
 
         DataViewData data = m_node->dataViewData();
+
+        // Stores to DataViews on immutable ArrayBuffers always fail; exit so the site falls back to the generic call.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(m_node, 0))))
+            speculate(UnexpectedImmutableArrayBufferView, jsValueValue(dataView), m_node, isImmutableArrayBufferView(dataView));
 
         LValue length = typedArrayLength(dataView, data.isResizable, TypeDataView, m_graph.varArgChild(m_node, 0));
 

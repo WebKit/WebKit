@@ -626,15 +626,42 @@ inline const LazyProperty<JSGlobalObject, Structure>& JSGlobalObject::lazyResiza
     return const_cast<const LazyProperty<JSGlobalObject, Structure>&>(const_cast<JSGlobalObject*>(this)->lazyResizableOrGrowableSharedTypedArrayStructure(type));
 }
 
-inline Structure* JSGlobalObject::typedArrayStructure(TypedArrayType type, bool isResizableOrGrowableShared) const
+inline LazyProperty<JSGlobalObject, Structure>& JSGlobalObject::lazyImmutableTypedArrayStructure(TypedArrayType type)
 {
+    switch (type) {
+    case NotTypedArray:
+        RELEASE_ASSERT_NOT_REACHED();
+        return m_immutableTypedArrayInt8Structure;
+#define TYPED_ARRAY_TYPE_CASE(name) case Type ## name: return m_immutableTypedArray ## name ## Structure;
+        FOR_EACH_TYPED_ARRAY_TYPE(TYPED_ARRAY_TYPE_CASE)
+#undef TYPED_ARRAY_TYPE_CASE
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return m_immutableTypedArrayInt8Structure;
+}
+
+inline const LazyProperty<JSGlobalObject, Structure>& JSGlobalObject::lazyImmutableTypedArrayStructure(TypedArrayType type) const
+{
+    return const_cast<const LazyProperty<JSGlobalObject, Structure>&>(const_cast<JSGlobalObject*>(this)->lazyImmutableTypedArrayStructure(type));
+}
+
+inline Structure* JSGlobalObject::typedArrayStructure(TypedArrayType type, bool isResizableOrGrowableShared, bool isImmutable) const
+{
+    if (isImmutable) {
+        ASSERT(!isResizableOrGrowableShared); // Immutable ArrayBuffers are never resizable or growable-shared.
+        return lazyImmutableTypedArrayStructure(type).get(this);
+    }
     if (isResizableOrGrowableShared)
         return lazyResizableOrGrowableSharedTypedArrayStructure(type).get(this);
     return lazyTypedArrayStructure(type).get(this);
 }
 
-inline Structure* JSGlobalObject::typedArrayStructureConcurrently(TypedArrayType type, bool isResizableOrGrowableShared) const
+inline Structure* JSGlobalObject::typedArrayStructureConcurrently(TypedArrayType type, bool isResizableOrGrowableShared, bool isImmutable) const
 {
+    if (isImmutable) {
+        ASSERT(!isResizableOrGrowableShared);
+        return lazyImmutableTypedArrayStructure(type).getConcurrently();
+    }
     if (isResizableOrGrowableShared)
         return lazyResizableOrGrowableSharedTypedArrayStructure(type).getConcurrently();
     return lazyTypedArrayStructure(type).getConcurrently();

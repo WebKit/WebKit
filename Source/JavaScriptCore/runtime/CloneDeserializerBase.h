@@ -181,7 +181,11 @@ protected:
     {
         if (m_majorVersion > CurrentMajorVersion)
             return false;
+        // Persisted data outlives the current version, so each major version that ever shipped a
+        // non-zero minor version has to keep claiming it after CurrentMajorVersion moves on.
         if (m_majorVersion == 12)
+            return m_minorVersion <= 1;
+        if (m_majorVersion == 16)
             return m_minorVersion <= 1;
         return !m_minorVersion;
     }

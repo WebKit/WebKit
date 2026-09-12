@@ -21,6 +21,9 @@
         "ActiveDOMObject": {
             "contextsAllowed": ["interface"]
         },
+        "AllowImmutable": {
+            "contextsAllowed": ["type"]
+        },
         "AllowShared": {
             "contextsAllowed": ["type"],
             "standard": {

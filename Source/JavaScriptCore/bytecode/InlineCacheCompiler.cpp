@@ -2697,6 +2697,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         fallThrough.append(jit.branch8(CCallHelpers::NotEqual, CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), CCallHelpers::TrustedImm32(typeForTypedArrayType(type))));
         if (!isResizableOrGrowableShared)
             fallThrough.append(jit.branchTest8(CCallHelpers::NonZero, CCallHelpers::Address(baseGPR, JSArrayBufferView::offsetOfMode()), CCallHelpers::TrustedImm32(isResizableOrGrowableSharedMode)));
+        // The resizable stub also services non-resizable views, so both flavours need this: a view on
+        // an immutable ArrayBuffer cannot be stored to, and the slow path is what reports that.
+        fallThrough.append(jit.branchIfImmutableArrayBufferView(baseGPR, scratchGPR));
 
         if (isInt(type))
             m_failAndRepatch.append(jit.branchIfNotInt32(valueGPR));

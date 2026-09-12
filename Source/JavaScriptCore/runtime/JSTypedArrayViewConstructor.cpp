@@ -123,6 +123,8 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayConstructorOf, (JSGlobalObject* globalObject,
 
     JSArrayBufferView* view = validateTypedArray(globalObject, constructed);
     RETURN_IF_EXCEPTION(scope, { });
+    if (view->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
     if (view->length() < length) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "TypedArray.of constructed typed array of insufficient length"_s);
 

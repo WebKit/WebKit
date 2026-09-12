@@ -206,7 +206,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             constexpr auto arrayBufferAllowSharedMode = (brigand::any<TypeList, IsIDLArrayBufferAllowShared<brigand::_1>>::value)
                 ? Detail::BufferSourceConverterAllowSharedMode::Allow
                 : Detail::BufferSourceConverterAllowSharedMode::Disallow;
-            auto result = Detail::BufferSourceConverter<IDLArrayBuffer, arrayBufferAllowSharedMode>::tryConvert(lexicalGlobalObject, value);
+            constexpr auto arrayBufferAllowImmutableMode = (brigand::any<TypeList, IsIDLArrayBufferAllowImmutable<brigand::_1>>::value)
+                ? Detail::BufferSourceConverterAllowImmutableMode::Allow
+                : Detail::BufferSourceConverterAllowImmutableMode::Disallow;
+            auto result = Detail::BufferSourceConverter<IDLArrayBuffer, arrayBufferAllowSharedMode, arrayBufferAllowImmutableMode>::tryConvert(lexicalGlobalObject, value);
             if (result)
                 return functor(WTF::move(*result));
         }
@@ -222,7 +225,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             constexpr auto arrayBufferViewAllowSharedMode = (brigand::any<TypeList, IsIDLArrayBufferViewAllowShared<brigand::_1>>::value)
                 ? Detail::BufferSourceConverterAllowSharedMode::Allow
                 : Detail::BufferSourceConverterAllowSharedMode::Disallow;
-            auto result = Detail::BufferSourceConverter<IDLArrayBufferView, arrayBufferViewAllowSharedMode>::tryConvert(lexicalGlobalObject, value);
+            constexpr auto arrayBufferViewAllowImmutableMode = (brigand::any<TypeList, IsIDLArrayBufferViewAllowImmutable<brigand::_1>>::value)
+                ? Detail::BufferSourceConverterAllowImmutableMode::Allow
+                : Detail::BufferSourceConverterAllowImmutableMode::Disallow;
+            auto result = Detail::BufferSourceConverter<IDLArrayBufferView, arrayBufferViewAllowSharedMode, arrayBufferViewAllowImmutableMode>::tryConvert(lexicalGlobalObject, value);
             if (result)
                 return functor(WTF::move(*result));
         }
@@ -244,7 +250,10 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         constexpr bool hasDataViewType = brigand::any<TypeList, std::is_same<IDLDataView, brigand::_1>>::value;
         if constexpr (hasDataViewType) {
-            auto result = Detail::BufferSourceConverter<IDLDataView, Detail::BufferSourceConverterAllowSharedMode::Disallow>::tryConvert(lexicalGlobalObject, value);
+            constexpr auto dataViewAllowImmutableMode = (brigand::any<TypeList, IsIDLDataViewAllowImmutable<brigand::_1>>::value)
+                ? Detail::BufferSourceConverterAllowImmutableMode::Allow
+                : Detail::BufferSourceConverterAllowImmutableMode::Disallow;
+            auto result = Detail::BufferSourceConverter<IDLDataView, Detail::BufferSourceConverterAllowSharedMode::Disallow, dataViewAllowImmutableMode>::tryConvert(lexicalGlobalObject, value);
             if (result)
                 return functor(WTF::move(*result));
         }
@@ -264,12 +273,15 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             constexpr auto typedArrayAllowSharedMode = (brigand::any<TypeList, IsIDLTypedArrayAllowShared<brigand::_1>>::value)
                 ? Detail::BufferSourceConverterAllowSharedMode::Allow
                 : Detail::BufferSourceConverterAllowSharedMode::Disallow;
+            constexpr auto typedArrayAllowImmutableMode = (brigand::any<TypeList, IsIDLTypedArrayAllowImmutable<brigand::_1>>::value)
+                ? Detail::BufferSourceConverterAllowImmutableMode::Allow
+                : Detail::BufferSourceConverterAllowImmutableMode::Disallow;
             std::optional<FunctorResultType> returnValue;
             forEach<TypedArrayTypeList>([&]<typename Type>() {
                 if (returnValue)
                     return;
 
-                auto result = Detail::BufferSourceConverter<Type, typedArrayAllowSharedMode>::tryConvert(lexicalGlobalObject, value);
+                auto result = Detail::BufferSourceConverter<Type, typedArrayAllowSharedMode, typedArrayAllowImmutableMode>::tryConvert(lexicalGlobalObject, value);
                 if (result)
                     returnValue = functor(WTF::move(*result));
             });
@@ -450,6 +462,44 @@ template<> struct Converter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, I
 
 template<>
 struct JSConverter<IDLAllowSharedAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template<typename U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, value);
+    }
+};
+
+template<> struct Converter<IDLAllowImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> : DefaultConverter<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>> {
+    static decltype(auto) convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return WebCore::convert<IDLUnion<IDLAllowImmutableAdaptor<IDLArrayBufferView>, IDLAllowImmutableAdaptor<IDLArrayBuffer>>>(lexicalGlobalObject, value);
+    }
+};
+
+template<>
+struct JSConverter<IDLAllowImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template<typename U>
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, value);
+    }
+};
+
+template<> struct Converter<IDLAllowSharedAndImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> : DefaultConverter<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>> {
+    static decltype(auto) convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+    {
+        return WebCore::convert<IDLUnion<IDLAllowSharedAndImmutableAdaptor<IDLArrayBufferView>, IDLAllowSharedAndImmutableAdaptor<IDLArrayBuffer>>>(lexicalGlobalObject, value);
+    }
+};
+
+template<>
+struct JSConverter<IDLAllowSharedAndImmutableAdaptor<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;
 

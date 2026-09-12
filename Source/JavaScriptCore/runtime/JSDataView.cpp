@@ -34,6 +34,7 @@ namespace JSC {
 
 const ClassInfo JSDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDataView) };
 const ClassInfo JSResizableOrGrowableSharedDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSResizableOrGrowableSharedDataView) };
+const ClassInfo JSImmutableArrayBufferDataView::s_info = { "DataView"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableArrayBufferDataView) };
 
 JSDataView::JSDataView(VM& vm, ConstructionContext& context, ArrayBuffer* buffer)
     : Base(vm, context)
@@ -159,6 +160,11 @@ Structure* JSDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSV
 }
 
 Structure* JSResizableOrGrowableSharedDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(DataViewType, StructureFlags), info(), NonArray);
+}
+
+Structure* JSImmutableArrayBufferDataView::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(DataViewType, StructureFlags), info(), NonArray);
 }

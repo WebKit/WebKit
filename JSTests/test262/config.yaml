@@ -11,6 +11,7 @@ flags:
   import-defer: useImportDefer
   import-text: useImportText
   joint-iteration: useJointIteration
+  immutable-arraybuffer: useImmutableArrayBuffer
 skip:
   features:
     - callable-boundary-realms
@@ -19,7 +20,6 @@ skip:
     - source-phase-imports
     - await-dictionary
     - import-bytes
-    - immutable-arraybuffer
     - error-stack-accessor
   paths:
     # Depends on the nonextensible-applies-to-private proposal which JSC has not implemented yet.

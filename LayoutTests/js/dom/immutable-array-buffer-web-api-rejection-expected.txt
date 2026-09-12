@@ -1,0 +1,19 @@
+A buffer source argument rejects an immutable ArrayBuffer unless it is annotated [AllowImmutable]
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.getRandomValues(immutableView) threw exception TypeError: Immutable ArrayBuffer is not allowed.
+PASS crypto.getRandomValues(mutableView) did not throw exception.
+PASS new TextEncoder().encodeInto("a", immutableView) threw exception TypeError: Immutable ArrayBuffer is not allowed.
+PASS new TextEncoder().encodeInto("a", mutableView).written is 1
+PASS audioBuffer.copyFromChannel(new Float32Array(immutableBuffer), 0) threw exception TypeError: Immutable ArrayBuffer is not allowed.
+PASS audioBuffer.copyFromChannel(new Float32Array(4), 0) did not throw exception.
+PASS new Blob([immutableView]) threw exception TypeError: Immutable ArrayBuffer is not allowed.
+PASS new Blob([immutableBuffer]) threw exception TypeError: Immutable ArrayBuffer is not allowed.
+PASS new Blob([mutableView]) did not throw exception.
+PASS immutableView.every((byte, i) => byte === i + 1) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

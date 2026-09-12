@@ -182,6 +182,16 @@ template<typename T> struct IDLAllowSharedAdaptor : T {
     using InnerType = T;
 };
 
+template<typename T> struct IDLAllowImmutableAdaptor : T {
+    using InnerType = T;
+};
+
+// Deriving through both single-attribute adaptors is what lets the IsIDL*AllowShared and
+// IsIDL*AllowImmutable traits below recognize this type without either having to name it.
+template<typename T> struct IDLAllowSharedAndImmutableAdaptor : IDLAllowSharedAdaptor<IDLAllowImmutableAdaptor<T>> {
+    using InnerType = T;
+};
+
 struct IDLObject : IDLType<JSC::Strong<JSC::JSObject>> {
     using NullableType = JSC::Strong<JSC::JSObject>;
 
@@ -454,16 +464,28 @@ template<typename T>
 struct IsIDLTypedArrayAllowShared : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLTypedArray, T>::value && WTF::IsBaseOfTemplate<IDLAllowSharedAdaptor, T>::value> { };
 
 template<typename T>
+struct IsIDLTypedArrayAllowImmutable : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLTypedArray, T>::value && WTF::IsBaseOfTemplate<IDLAllowImmutableAdaptor, T>::value> { };
+
+template<typename T>
 struct IsIDLArrayBuffer : public std::integral_constant<bool, std::is_base_of<IDLArrayBuffer, T>::value> { };
 
 template<typename T>
 struct IsIDLArrayBufferView : public std::integral_constant<bool, std::is_base_of<IDLArrayBufferView, T>::value> { };
 
 template<typename T>
-struct IsIDLArrayBufferAllowShared : public std::integral_constant<bool, std::is_base_of<IDLAllowSharedAdaptor<IDLArrayBuffer>, T>::value> { };
+struct IsIDLArrayBufferAllowShared : public std::integral_constant<bool, std::is_base_of<IDLArrayBuffer, T>::value && WTF::IsBaseOfTemplate<IDLAllowSharedAdaptor, T>::value> { };
 
 template<typename T>
-struct IsIDLArrayBufferViewAllowShared : public std::integral_constant<bool, std::is_base_of<IDLAllowSharedAdaptor<IDLArrayBufferView>, T>::value> { };
+struct IsIDLArrayBufferAllowImmutable : public std::integral_constant<bool, std::is_base_of<IDLArrayBuffer, T>::value && WTF::IsBaseOfTemplate<IDLAllowImmutableAdaptor, T>::value> { };
+
+template<typename T>
+struct IsIDLArrayBufferViewAllowShared : public std::integral_constant<bool, std::is_base_of<IDLArrayBufferView, T>::value && WTF::IsBaseOfTemplate<IDLAllowSharedAdaptor, T>::value> { };
+
+template<typename T>
+struct IsIDLArrayBufferViewAllowImmutable : public std::integral_constant<bool, std::is_base_of<IDLArrayBufferView, T>::value && WTF::IsBaseOfTemplate<IDLAllowImmutableAdaptor, T>::value> { };
+
+template<typename T>
+struct IsIDLDataViewAllowImmutable : public std::integral_constant<bool, std::is_base_of<IDLDataView, T>::value && WTF::IsBaseOfTemplate<IDLAllowImmutableAdaptor, T>::value> { };
 
 
 } // namespace WebCore

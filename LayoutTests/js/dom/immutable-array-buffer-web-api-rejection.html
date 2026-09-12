@@ -1,0 +1,39 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ ImmutableArrayBufferEnabled=true ] -->
+<html>
+<head>
+<title>Immutable ArrayBuffer rejection by Web IDL buffer source arguments</title>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("A buffer source argument rejects an immutable ArrayBuffer unless it is annotated [AllowImmutable]");
+
+var source = new Uint8Array(16);
+for (var i = 0; i < source.length; ++i)
+    source[i] = i + 1;
+var immutableBuffer = source.buffer.transferToImmutable();
+var immutableView = new Uint8Array(immutableBuffer);
+var mutableView = new Uint8Array(16);
+
+// ArrayBufferView argument.
+shouldThrowErrorName(`crypto.getRandomValues(immutableView)`, "TypeError");
+shouldNotThrow(`crypto.getRandomValues(mutableView)`);
+
+// [AllowShared] typed array argument.
+shouldThrowErrorName(`new TextEncoder().encodeInto("a", immutableView)`, "TypeError");
+shouldBe(`new TextEncoder().encodeInto("a", mutableView).written`, `1`);
+
+// Unannotated typed array argument.
+var audioBuffer = new AudioBuffer({ length: 16, sampleRate: 44100 });
+shouldThrowErrorName(`audioBuffer.copyFromChannel(new Float32Array(immutableBuffer), 0)`, "TypeError");
+shouldNotThrow(`audioBuffer.copyFromChannel(new Float32Array(4), 0)`);
+
+// BufferSource union argument, reached through both of its members.
+shouldThrowErrorName(`new Blob([immutableView])`, "TypeError");
+shouldThrowErrorName(`new Blob([immutableBuffer])`, "TypeError");
+shouldNotThrow(`new Blob([mutableView])`);
+
+shouldBeTrue(`immutableView.every((byte, i) => byte === i + 1)`);
+</script>
+</body>
+</html>

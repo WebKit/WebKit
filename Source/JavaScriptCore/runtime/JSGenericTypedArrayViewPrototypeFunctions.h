@@ -279,6 +279,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
     if (!callFrame->argumentCount()) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Expected at least one argument"_s);
 
+    // https://tc39.es/proposal-immutable-arraybuffer/#sec-%typedarray%.prototype.set
+    // The immutable check happens before coercing offset or reading the source.
+    if (thisObject->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     size_t offset;
     if (callFrame->argumentCount() >= 2) {
         double offsetNumber = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
@@ -322,6 +327,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncCopyWithin(VM& vm, JS
     ViewClass* thisObject = uncheckedDowncast<ViewClass>(callFrame->thisValue());
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
+
+    // https://tc39.es/proposal-immutable-arraybuffer/: writes to immutable-backed typed arrays throw before reading arguments.
+    if (thisObject->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
 
     size_t length = thisObject->length();
     size_t to = argumentClampedIndexFromStartOrEnd(globalObject, callFrame->argument(0), length);
@@ -668,6 +677,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFill(VM& vm, JSGlobal
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-immutable-arraybuffer/: writes to immutable-backed typed arrays throw before reading arguments.
+    if (thisObject->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     size_t length = thisObject->length();
     typename ViewClass::ElementType nativeValue = ViewClass::toAdaptorNativeFromValue(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
@@ -893,6 +906,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncMap(VM& vm, JSGlobalO
     }, length);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-immutable-arraybuffer/: TypedArraySpeciesCreate with ~write~ access
+    // throws when the constructed destination is backed by an immutable ArrayBuffer.
+    if (result->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     if (callData.type == CallData::Type::JS) [[likely]] {
         CachedCall cachedCall(globalObject, uncheckedDowncast<JSFunction>(functorValue), 3);
         RETURN_IF_EXCEPTION(scope, { });
@@ -1036,6 +1054,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFilter(VM& vm, JSGlob
         return 1;
     }, length);
     RETURN_IF_EXCEPTION(scope, { });
+
+    // https://tc39.es/proposal-immutable-arraybuffer/: TypedArraySpeciesCreate with ~write~ access
+    // throws when the constructed destination is backed by an immutable ArrayBuffer.
+    if (result->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
 
     auto from = kept.span();
     ASSERT(from.size() == length);
@@ -1603,6 +1626,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncReverse(VM& vm, JSGlo
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-immutable-arraybuffer/: writes to immutable-backed typed arrays throw.
+    if (thisObject->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     typename ViewClass::ElementType* array = thisObject->typedVector();
     std::reverse(array, array + thisObject->length());
 
@@ -1742,6 +1769,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSort(VM& vm, JSGlobal
     ViewClass* thisObject = uncheckedDowncast<ViewClass>(callFrame->thisValue());
     validateTypedArray(globalObject, thisObject);
     RETURN_IF_EXCEPTION(scope, { });
+
+    // https://tc39.es/proposal-immutable-arraybuffer/: writes to immutable-backed typed arrays throw, even for empty ones.
+    if (thisObject->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
 
     RELEASE_AND_RETURN(scope, genericTypedArrayViewProtoFuncSortImpl(vm, globalObject, thisObject, comparatorValue));
 }
@@ -1889,6 +1920,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSlice(VM& vm, JSGloba
     }, length);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-immutable-arraybuffer/: TypedArraySpeciesCreate with ~write~ access
+    // throws when the constructed destination is backed by an immutable ArrayBuffer.
+    if (result->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
     if (!length)
         return JSValue::encode(result);
@@ -2017,7 +2053,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSubarray(VM& vm, JSGl
 
     scope.release();
     return JSValue::encode(speciesConstruct(globalObject, thisObject, [&]() {
-        Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, arrayBuffer->isResizableOrGrowableShared());
+        Structure* structure = globalObject->typedArrayStructure(ViewClass::TypedArrayStorageType, arrayBuffer->isResizableOrGrowableShared(), arrayBuffer->isImmutable());
         return ViewClass::create(globalObject, structure, WTF::move(arrayBuffer), newByteOffset, count);
     }, [&](auto& args) {
         args[0] = JSValue::encode(vm.m_typedArrayController->toJS(globalObject, thisObject->realm(), *arrayBuffer));

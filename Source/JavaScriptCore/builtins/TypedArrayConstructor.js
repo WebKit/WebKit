@@ -70,6 +70,8 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
         }
 
         var result = new this(count);
+        if (@isImmutableTypedArrayView(result))
+            @throwTypeError("TypedArray.from constructed typed array backed by an immutable ArrayBuffer");
         if (@typedArrayLength(result) < count)
             @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 
@@ -87,6 +89,8 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
     var arrayLikeLength = @toLength(arrayLike.length);
 
     var result = new this(arrayLikeLength);
+    if (@isImmutableTypedArrayView(result))
+        @throwTypeError("TypedArray.from constructed typed array backed by an immutable ArrayBuffer");
     if (@typedArrayLength(result) < arrayLikeLength)
         @throwTypeError("TypedArray.from constructed typed array of insufficient length");
 

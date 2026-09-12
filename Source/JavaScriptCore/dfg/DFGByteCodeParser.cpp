@@ -5279,6 +5279,12 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
 
+            // DataViewSet on an immutable-backed DataView always throws; leave it to the runtime call.
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, UnexpectedImmutableArrayBufferView))
+                return CallOptimizationResult::DidNothing;
+            if (getArrayMode(Array::Read).mayBeImmutableTypedArray())
+                return CallOptimizationResult::DidNothing;
+
             if (intrinsic == DataViewSetFloat16 && !CCallHelpers::supportsFloat16())
                 return CallOptimizationResult::DidNothing;
 
@@ -6548,7 +6554,8 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     if (argumentCountIncludingThis != 2)
         return false;
 
-    // Check both structures are already initialized.
+    // Check every structure the operation can return is already initialized, so that the abstract
+    // interpreter can name all of them.
     {
         constexpr bool isResizableOrGrowableShared = false;
         if (!function->realm()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
@@ -6557,6 +6564,12 @@ bool ByteCodeParser::handleTypedArrayConstructor(
     {
         constexpr bool isResizableOrGrowableShared = true;
         if (!function->realm()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared))
+            return false;
+    }
+    {
+        constexpr bool isResizableOrGrowableShared = false;
+        constexpr bool isImmutable = true;
+        if (!function->realm()->typedArrayStructureConcurrently(type, isResizableOrGrowableShared, isImmutable))
             return false;
     }
 

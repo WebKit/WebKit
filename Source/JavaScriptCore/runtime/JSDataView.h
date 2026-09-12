@@ -120,4 +120,16 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 };
 
+class JSImmutableArrayBufferDataView final : public JSDataView {
+public:
+    using Base = JSDataView;
+    using Base::StructureFlags;
+
+    static constexpr bool isImmutableTypedArray = true;
+
+    DECLARE_EXPORT_INFO;
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+};
+
 } // namespace JSC

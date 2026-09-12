@@ -119,8 +119,9 @@ inline RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::VM& vm, JSC::
 namespace Detail {
 
 enum class BufferSourceConverterAllowSharedMode { Allow, Disallow };
+enum class BufferSourceConverterAllowImmutableMode { Allow, Disallow };
 
-template<typename BufferSourceType, BufferSourceConverterAllowSharedMode mode>
+template<typename BufferSourceType, BufferSourceConverterAllowSharedMode sharedMode, BufferSourceConverterAllowImmutableMode immutableMode>
 struct BufferSourceConverter {
     using WrapperType = typename Converter<BufferSourceType>::WrapperType;
     using Result = ConversionResult<BufferSourceType>;
@@ -130,21 +131,23 @@ struct BufferSourceConverter {
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        if constexpr (mode == BufferSourceConverterAllowSharedMode::Allow) {
-            RefPtr object = WrapperType::toWrappedAllowShared(vm, value);
-            if (!object) [[unlikely]] {
-                exceptionThrower(lexicalGlobalObject, scope);
-                return Result::exception();
-            }
-            return Result { object.releaseNonNull() };
-        } else {
-            RefPtr object = WrapperType::toWrapped(vm, value);
-            if (!object) [[unlikely]] {
-                exceptionThrower(lexicalGlobalObject, scope);
-                return Result::exception();
-            }
-            return Result { object.releaseNonNull() };
+        RefPtr object = [&] {
+            if constexpr (sharedMode == BufferSourceConverterAllowSharedMode::Allow)
+                return WrapperType::toWrappedAllowShared(vm, value);
+            else
+                return WrapperType::toWrapped(vm, value);
+        }();
+        if (!object) [[unlikely]] {
+            exceptionThrower(lexicalGlobalObject, scope);
+            return Result::exception();
         }
+        if constexpr (immutableMode == BufferSourceConverterAllowImmutableMode::Disallow) {
+            if (object->isImmutable()) [[unlikely]] {
+                throwTypeError(&lexicalGlobalObject, scope, "Immutable ArrayBuffer is not allowed"_s);
+                return Result::exception();
+            }
+        }
+        return Result { object.releaseNonNull() };
     }
 
     static std::optional<Result> tryConvert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
@@ -156,9 +159,15 @@ struct BufferSourceConverter {
             return std::nullopt;
 
         auto scope = DECLARE_THROW_SCOPE(vm);
-        if constexpr (mode == BufferSourceConverterAllowSharedMode::Disallow) {
+        if constexpr (sharedMode == BufferSourceConverterAllowSharedMode::Disallow) {
             if (object->isShared()) {
                 throwTypeError(&lexicalGlobalObject, scope, "SharedArrayBuffer is not allowed"_s);
+                return Result::exception();
+            }
+        }
+        if constexpr (immutableMode == BufferSourceConverterAllowImmutableMode::Disallow) {
+            if (object->isImmutable()) {
+                throwTypeError(&lexicalGlobalObject, scope, "Immutable ArrayBuffer is not allowed"_s);
                 return Result::exception();
             }
         }
@@ -171,6 +180,19 @@ struct BufferSourceConverter {
     }
 };
 
+template<typename IDL, BufferSourceConverterAllowSharedMode sharedMode, BufferSourceConverterAllowImmutableMode immutableMode>
+struct BufferSourceAdaptorConverter : DefaultConverter<IDL> {
+    using ConverterType = Converter<IDL>;
+    using WrapperType = typename ConverterType::WrapperType;
+    using ReturnType = typename ConverterType::ReturnType;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return BufferSourceConverter<IDL, sharedMode, immutableMode>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
 template<typename IDL, typename Wrapper>
 struct TypedArrayConverter : DefaultConverter<IDL> {
     using WrapperType = Wrapper;
@@ -178,7 +200,7 @@ struct TypedArrayConverter : DefaultConverter<IDL> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
     static ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
-        return Detail::BufferSourceConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
+        return Detail::BufferSourceConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Disallow, Detail::BufferSourceConverterAllowImmutableMode::Disallow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
     }
 };
 
@@ -297,16 +319,12 @@ template<> struct JSConverter<IDLBigUint64Array> : Detail::JSTypedArrayConverter
 template<> struct JSConverter<IDLArrayBufferView> : Detail::JSTypedArrayConverter<IDLArrayBufferView> { };
 
 template<typename IDL>
-struct Converter<IDLAllowSharedAdaptor<IDL>> : DefaultConverter<IDL> {
-    using ConverterType = Converter<IDL>;
-    using WrapperType = typename ConverterType::WrapperType;
-    using ReturnType = typename ConverterType::ReturnType;
+struct Converter<IDLAllowSharedAdaptor<IDL>> : Detail::BufferSourceAdaptorConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Allow, Detail::BufferSourceConverterAllowImmutableMode::Disallow> { };
 
-    template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ConversionResult<IDL> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
-    {
-        return Detail::BufferSourceConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Allow>::convert(lexicalGlobalObject, value, std::forward<ExceptionThrower>(exceptionThrower));
-    }
-};
+template<typename IDL>
+struct Converter<IDLAllowImmutableAdaptor<IDL>> : Detail::BufferSourceAdaptorConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Disallow, Detail::BufferSourceConverterAllowImmutableMode::Allow> { };
+
+template<typename IDL>
+struct Converter<IDLAllowSharedAndImmutableAdaptor<IDL>> : Detail::BufferSourceAdaptorConverter<IDL, Detail::BufferSourceConverterAllowSharedMode::Allow, Detail::BufferSourceConverterAllowImmutableMode::Allow> { };
 
 } // namespace WebCore
