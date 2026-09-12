@@ -125,7 +125,7 @@ TextStream& operator<<(TextStream& stream, const BoundaryPoint& boundaryPoint)
 
 String BoundaryPoint::debugDescription() const
 {
-    return makeString('{', protect(container)->debugDescription().utf8(), ", offset: "_s, offset, '}');
+    return makeString('{', protect(container)->debugDescription(), ", offset: "_s, offset, '}');
 }
 
 }

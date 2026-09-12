@@ -184,6 +184,13 @@ public:
     }
 };
 
+// CString does not know its encoding, so its bytes cannot be concatenated correctly. Pass the String it was
+// made from, or a CStringView for UTF-8 bytes.
+template<> class StringTypeAdapter<CString> {
+public:
+    StringTypeAdapter(const CString&) = delete;
+};
+
 template<> class StringTypeAdapter<StringImpl*> {
 public:
     StringTypeAdapter(StringImpl* string)

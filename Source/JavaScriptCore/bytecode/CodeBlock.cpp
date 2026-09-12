@@ -128,7 +128,7 @@ CString CodeBlock::inferredName() const
 
 String CodeBlock::inferredNameWithHash() const
 {
-    return makeString(inferredName(), "#"_s, hash());
+    return makeString(byteCast<char8_t>(inferredName().span()), "#"_s, hash());
 }
 
 bool CodeBlock::hasHash() const

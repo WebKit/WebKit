@@ -307,7 +307,7 @@ void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType 
             for (auto& target : m_targets.get(connectionID)) {
                 html.append("<tbody><tr>"_s,
                     "<td class=\"data\"><div class=\"targetname\">"_s, String::fromUTF8(target.name.span()), "</div><div class=\"targeturl\">"_s,
-                    target.url, "</div></td>"_s,
+                    String::fromUTF8(target.url.span()), "</div></td>"_s,
                     "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick="_s);
 
                 switch (inspectorType) {
@@ -317,7 +317,7 @@ void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType 
                         html.append("\\'"_s);
                     else
                         html.append('\'');
-                    html.append(connectionID, ':', target.id, ':', target.type);
+                    html.append(connectionID, ':', target.id, ':', String::fromUTF8(target.type.span()));
                     if (escapeSingleQuote == ShouldEscapeSingleQuote::Yes)
                         html.append("\\')\""_s);
                     else
@@ -325,7 +325,7 @@ void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType 
                     break;
                 case InspectorType::HTTP:
                     html.append("\"window.open('Main.html?ws=' + window.location.host + '/socket/"_s, connectionID, '/', target.id, '/',
-                        target.type, "', '_blank', 'location=no,menubar=no,status=no,toolbar=no');\""_s);
+                        String::fromUTF8(target.type.span()), "', '_blank', 'location=no,menubar=no,status=no,toolbar=no');\""_s);
                     break;
                 }
 
