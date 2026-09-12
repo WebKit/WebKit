@@ -57,11 +57,6 @@ public:
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
-    LayoutRect borderBoundingBox() const final
-    {
-        return LayoutRect(LayoutPoint(), borderBoxRectInContainer().size());
-    }
-
     LayoutUnit innerPaddingBoxWidth() const;
     LayoutUnit innerPaddingBoxHeight() const;
 
