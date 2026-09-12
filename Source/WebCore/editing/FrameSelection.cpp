@@ -65,6 +65,7 @@
 #include "ImageOverlay.h"
 #include "InlineIteratorBox.h"
 #include "InlineIteratorInlineBox.h"
+#include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
 #include "LocalDOMWindow.h"
@@ -2009,48 +2010,43 @@ static LayoutSize inFlowPositionOffsetToCaretPainter(const RenderInline& inlineR
     return offset;
 }
 
-static bool backgroundPaintsUnderCaret(const RenderInline& inlineRenderer, const RenderBlock& caretPainter, const LayoutRect& caretRect)
+static bool inlineBackgroundCoversCaret(const RenderInline& inlineRenderer, const RenderBlock& caretPainter, const LayoutRect& caretRect)
 {
     if (inlineRenderer.containingBlock() != &caretPainter)
         return true;
 
+    auto offsetToCaretPainter = inFlowPositionOffsetToCaretPainter(inlineRenderer, caretPainter);
+    offsetToCaretPainter -= toLayoutSize(caretPainter.scrollPosition());
+
     auto isHorizontal = caretPainter.isHorizontalWritingMode();
-    auto caretMiddleAlongInlineAxis = isHorizontal ? caretRect.x() + caretRect.width() / 2 : caretRect.y() + caretRect.height() / 2;
-    auto inFlowOffset = inFlowPositionOffsetToCaretPainter(inlineRenderer, caretPainter);
+    auto caretStart = isHorizontal ? caretRect.x() : caretRect.y();
+    auto caretEnd = isHorizontal ? caretRect.maxX() : caretRect.maxY();
+    auto caretMiddleAlongBlockAxis = isHorizontal ? caretRect.y() + caretRect.height() / 2 : caretRect.x() + caretRect.width() / 2;
 
-    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(inlineRenderer); box; box.traverseInlineBoxLineRightward()) {
-        auto boxRect = LayoutRect { box->visualRectIgnoringBlockDirection() };
-        boxRect.move(inFlowOffset);
-        if (!boxRect.intersects(caretRect))
+    std::optional<LayoutUnit> runsStart;
+    std::optional<LayoutUnit> runsEnd;
+    for (CheckedPtr descendant = inlineRenderer.firstChild(); descendant; descendant = descendant->nextInPreOrder(&inlineRenderer)) {
+        CheckedPtr textRenderer = dynamicDowncast<RenderText>(descendant.get());
+        if (!textRenderer)
             continue;
-        auto start = isHorizontal ? boxRect.x() : boxRect.y();
-        auto end = isHorizontal ? boxRect.maxX() : boxRect.maxY();
-        if (caretMiddleAlongInlineAxis >= start && caretMiddleAlongInlineAxis < end)
-            return true;
+        for (auto textBox : InlineIterator::textBoxesFor(*textRenderer)) {
+            auto boxRect = LayoutRect { textBox.visualRectIgnoringBlockDirection() };
+            boxRect.move(offsetToCaretPainter);
+            auto blockAxisStart = isHorizontal ? boxRect.y() : boxRect.x();
+            auto blockAxisEnd = isHorizontal ? boxRect.maxY() : boxRect.maxX();
+            if (caretMiddleAlongBlockAxis < blockAxisStart || caretMiddleAlongBlockAxis >= blockAxisEnd)
+                continue;
+            auto start = isHorizontal ? boxRect.x() : boxRect.y();
+            auto end = isHorizontal ? boxRect.maxX() : boxRect.maxY();
+            runsStart = runsStart ? std::min(*runsStart, start) : start;
+            runsEnd = runsEnd ? std::max(*runsEnd, end) : end;
+        }
     }
 
-    return false;
-}
+    if (!runsStart || !runsEnd)
+        return false;
 
-static CheckedPtr<const RenderElement> rendererSkippingInlinesNotPaintingUnderCaret(const Node& node, const LayoutRect& caretRect)
-{
-    CheckedPtr caretPainter = rendererForCaretPainting(&node);
-    if (!caretPainter)
-        return { };
-
-    CheckedPtr<const RenderElement> outermostSkipped;
-    for (CheckedPtr renderer = node.renderer(); renderer && renderer != caretPainter; renderer = renderer->parent()) {
-        CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get());
-        if (!inlineRenderer)
-            continue;
-        if (!inlineRenderer->style().visitedDependentBackgroundColorApplyingColorFilter().isOpaque())
-            continue;
-        if (backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, caretRect))
-            return { };
-        outermostSkipped = inlineRenderer->parent();
-    }
-
-    return outermostSkipped;
+    return caretStart >= *runsStart && caretEnd <= *runsEnd;
 }
 #endif
 
@@ -2090,39 +2086,65 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     if (!elementStyle.caretColor().isAuto() || !node || !caretColor.isVisible())
         return caretColor;
 
-    if (caretRectInPainterSpace) {
-        if (CheckedPtr rendererToUse = rendererSkippingInlinesNotPaintingUnderCaret(*node, *caretRectInPainterSpace))
-            return rendererToUse->style().visitedDependentCaretColorApplyingColorFilter();
-    }
-
-    Color surface;
     CheckedPtr caretPainter = rendererForCaretPainting(node);
     CheckedPtr firstRenderer = node->renderer();
     if (is<RenderText>(firstRenderer.get()))
         firstRenderer = firstRenderer->parent();
-    for (CheckedPtr renderer = firstRenderer; renderer && !surface.isOpaque(); renderer = renderer->parent()) {
-        if (CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get())) {
-            if (!caretPainter || !caretRectInPainterSpace || !backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, *caretRectInPainterSpace))
-                continue;
-        }
-        surface = blendSourceOver(renderer->style().visitedDependentBackgroundColorApplyingColorFilter(), surface);
-    }
 
-    static constexpr auto minimumContrastRatio = 3.0;
-    if (!surface.isOpaque() || contrastRatio(caretColor, surface) >= minimumContrastRatio)
+    Vector<Color, 2> surfaces;
+    Color surfaceBehindInlines;
+    for (CheckedPtr renderer = firstRenderer; renderer && !surfaceBehindInlines.isOpaque(); renderer = renderer->parent()) {
+        auto background = renderer->style().visitedDependentBackgroundColorApplyingColorFilter();
+        if (CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get())) {
+            if (!background.isOpaque() || !caretPainter || !caretRectInPainterSpace)
+                continue;
+            if (!inlineBackgroundCoversCaret(*inlineRenderer, *caretPainter, *caretRectInPainterSpace))
+                continue;
+            surfaces.append(background);
+            break;
+        }
+        surfaceBehindInlines = blendSourceOver(background, surfaceBehindInlines);
+    }
+    if (surfaceBehindInlines.isOpaque())
+        surfaces.append(surfaceBehindInlines);
+
+    if (surfaces.isEmpty())
         return caretColor;
 
+    auto contrastAgainstEverySurface = [&](const Color& color) {
+        auto lowest = contrastRatio(color, surfaces[0]);
+        for (size_t index = 1; index < surfaces.size(); ++index)
+            lowest = std::min(lowest, contrastRatio(color, surfaces[index]));
+        return lowest;
+    };
+
+    static constexpr auto minimumContrastRatio = 3.0;
+    auto bestColor = caretColor;
+    auto bestContrast = contrastAgainstEverySurface(caretColor);
+    if (bestContrast >= minimumContrastRatio)
+        return caretColor;
+
+    Vector<Color, 4> fallbacks;
     if (caretPainter) {
         auto painterCaretColor = caretPainter->style().visitedDependentCaretColorApplyingColorFilter();
-        if (painterCaretColor.isVisible() && contrastRatio(painterCaretColor, surface) >= minimumContrastRatio)
-            return painterCaretColor;
+        if (painterCaretColor.isVisible())
+            fallbacks.append(painterCaretColor);
+    }
+    fallbacks.append(systemAccentCaretColor());
+    fallbacks.append(Color::black);
+    fallbacks.append(Color::white);
+
+    for (auto& fallback : fallbacks) {
+        auto contrast = contrastAgainstEverySurface(fallback);
+        if (contrast >= minimumContrastRatio)
+            return fallback;
+        if (contrast > bestContrast) {
+            bestColor = fallback;
+            bestContrast = contrast;
+        }
     }
 
-    auto accentColor = systemAccentCaretColor();
-    if (contrastRatio(accentColor, surface) >= minimumContrastRatio)
-        return accentColor;
-
-    return surface.luminance() > 0.5 ? Color::black : Color::white;
+    return bestColor;
 #else
     UNUSED_PARAM(caretRectInPainterSpace);
     RefPtr parentElement = node ? node->parentElement() : nullptr;
