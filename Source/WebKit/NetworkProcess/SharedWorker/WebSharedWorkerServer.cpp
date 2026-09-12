@@ -57,7 +57,7 @@ PAL::SessionID WebSharedWorkerServer::sessionID()
     return m_session->sessionID();
 }
 
-void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
+void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::TransferredMessagePort&& port, WebCore::WorkerOptions&& workerOptions)
 {
     Ref sharedWorker = m_sharedWorkers.ensure(sharedWorkerKey, [&] {
         return WebSharedWorker::create(*this, sharedWorkerKey, workerOptions);
@@ -71,7 +71,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
         return;
     }
 
-    sharedWorker->addSharedWorkerObject(sharedWorkerObjectIdentifier, port);
+    sharedWorker->addSharedWorkerObject(sharedWorkerObjectIdentifier, ownerFrameIdentifier, port);
 
     if (sharedWorker->sharedWorkerObjectsCount() > 1) {
         RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: A shared worker with this URL already exists (now shared by %u shared worker objects)", sharedWorker->sharedWorkerObjectsCount());
@@ -83,7 +83,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
             RefPtr contextConnection = sharedWorker->contextConnection();
             ASSERT(contextConnection);
             if (contextConnection) {
-                contextConnection->postConnectEvent(sharedWorker.get(), port, [weakThis = WeakPtr { *this }, sharedWorkerKey, sharedWorkerObjectIdentifier, sharedWorkerIdentifier = sharedWorker->identifier(), port, workerOptions](bool success) mutable {
+                contextConnection->postConnectEvent(sharedWorker.get(), port, [weakThis = WeakPtr { *this }, sharedWorkerKey, sharedWorkerObjectIdentifier, ownerFrameIdentifier, sharedWorkerIdentifier = sharedWorker->identifier(), port, workerOptions](bool success) mutable {
                     if (success)
                         return;
                     CheckedPtr checkedThis = weakThis.get();
@@ -93,7 +93,7 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
                     RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: Failed to connect to existing shared worker %" PRIu64 ", will create a new one instead.", sharedWorkerIdentifier.toUInt64());
                     if (auto it = checkedThis->m_sharedWorkers.find(sharedWorkerKey); it != checkedThis->m_sharedWorkers.end() && it->value->identifier() == sharedWorkerIdentifier)
                         checkedThis->m_sharedWorkers.remove(it);
-                    checkedThis->requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, WTF::move(port), WTF::move(workerOptions));
+                    checkedThis->requestSharedWorker(WTF::move(sharedWorkerKey), sharedWorkerObjectIdentifier, ownerFrameIdentifier, WTF::move(port), WTF::move(workerOptions));
                 });
             }
         }

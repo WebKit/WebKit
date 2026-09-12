@@ -33,6 +33,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
+#include <tuple>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -41,6 +42,7 @@
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <WebCore/SecurityOriginData.h>
 #endif
 
 namespace WebCore {
@@ -117,7 +119,16 @@ private:
     void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
     void scriptRealmCreated(WebCore::FrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptRealmDestroyed(WebCore::FrameIdentifier) override;
+    void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::SecurityOriginData&) override;
+    void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier) override;
+    void scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier, const Vector<WebCore::FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<WebCore::FrameIdentifier>& attachedOwnerFrameIdentifiers, const WebCore::SecurityOriginData&) override;
+    void scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+
+    using DedicatedWorkerRealmData = std::tuple<String, WebCore::FrameIdentifier, WebCore::SecurityOriginData>;
+    void getDedicatedWorkerRealms(WebCore::PageIdentifier, CompletionHandler<void(Vector<DedicatedWorkerRealmData>&&)>&&);
+    using SharedWorkerRealmData = std::tuple<WebCore::SharedWorkerIdentifier, Vector<WebCore::FrameIdentifier>, Vector<WebCore::FrameIdentifier>, WebCore::SecurityOriginData>;
+    void getSharedWorkerRealms(CompletionHandler<void(Vector<SharedWorkerRealmData>&&)>&&);
 #endif
 
     String m_sessionIdentifier;

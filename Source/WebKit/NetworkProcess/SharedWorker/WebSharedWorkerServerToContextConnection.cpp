@@ -143,7 +143,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
             }
         }
     }
-    send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult(), initializationData });
+    send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult(), initializationData, sharedWorker.activeOwnerFrameIdentifiers(), sharedWorker.attachedOwnerFrameIdentifiers() });
     sharedWorker.forEachSharedWorkerObject([protectedThis = Ref { *this }, sharedWorker = Ref { sharedWorker }](auto, auto& port) {
         protectedThis->postConnectEvent(sharedWorker, port, [](bool) { });
     });
@@ -171,6 +171,11 @@ void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedW
         registry->recordPendingTransferDestination(port.first, connection->webProcessIdentifier());
     }
     sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin }, WTF::move(completionHandler));
+}
+
+void WebSharedWorkerServerToContextConnection::updateSharedWorkerOwnerFrameIdentifiers(const WebSharedWorker& sharedWorker)
+{
+    send(Messages::WebSharedWorkerContextManagerConnection::SetSharedWorkerOwnerFrameIdentifiers { sharedWorker.identifier(), sharedWorker.activeOwnerFrameIdentifiers(), sharedWorker.attachedOwnerFrameIdentifiers() });
 }
 
 void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSharedWorker& sharedWorker)
