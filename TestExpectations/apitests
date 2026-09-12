@@ -304,7 +304,6 @@ webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPin
 webkit.org/b/317891 [ ios ] TestWebKitAPI.WebAuthenticationPanel.GetAssertionPinProtocol2 [ Skip ]
 rdar://145102423 [ mac debug ] TestWebKitAPI.WebAuthenticationPanel.LAGetAssertionNoMockNoUserGesture [ Skip ]
 rdar://145102423 [ ios debug ] TestWebKitAPI.WebAuthenticationPanel.LAGetAssertionNoMockNoUserGesture [ Skip ]
-webkit.org/b/323143 [ ios ] TestWebKitAPI.WebAuthenticationPanel.LAMakeCredentialAllowLocalAuthenticator [ Pass Timeout ]
 rdar://145102423 [ mac debug ] TestWebKitAPI.WebAuthenticationPanel.MakeCredentialSPITimeout [ Skip ]
 rdar://145102423 [ ios debug ] TestWebKitAPI.WebAuthenticationPanel.MakeCredentialSPITimeout [ Skip ]
 webkit.org/b/318267 [ ios ] TestWebKitAPI.WebAuthenticationPanel.MultipleAccounts [ Skip ]
