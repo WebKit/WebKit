@@ -1126,12 +1126,11 @@ select selectedcontent {
 }
 
 select::picker-icon {
-    content: "\2335" / "";
+    content: picker-down / "";
     font: 100% system-ui;
     text-orientation: sideways;
     padding-inline: 0.15em;
     margin-inline-start: auto;
-    margin-block-start: -0.25em;
 }
 
 :-internal-select-popover {

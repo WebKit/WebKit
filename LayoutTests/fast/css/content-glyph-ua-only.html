@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<style>
+#target::before {
+    content: "fallback";
+    content: picker-down;
+}
+#targetWithAltText::before {
+    content: "fallback";
+    content: picker-up / "";
+}
+</style>
+<div id="target"></div>
+<div id="targetWithAltText"></div>
+<ul><li id="listItem" style="list-style-type: picker-down">item</li></ul>
+
+<script>
+  test(function() {
+    assert_false(CSS.supports('content', 'picker-up'));
+    assert_false(CSS.supports('content', 'picker-down'));
+  }, '"content" property does not support the glyph keywords.');
+
+  test(function() {
+    assert_false(CSS.supports('content', 'picker-down / ""'));
+    assert_false(CSS.supports('content', '"text" picker-down'));
+  }, '"content" property does not support the glyph keywords with alt text or in a list.');
+
+  test(function() {
+    assert_equals(getComputedStyle(target, '::before').content, '"fallback"');
+  }, '"content" property cannot be set to a glyph keyword by the author stylesheet.');
+
+  test(function() {
+    assert_equals(getComputedStyle(targetWithAltText, '::before').content, '"fallback"');
+  }, '"content" property cannot be set to a glyph keyword with alt text by the author stylesheet.');
+
+  test(function() {
+    // The glyph keywords belong to `content`, not to `list-style-type`. There, `picker-down` is an
+    // ordinary <custom-ident> naming a counter style nobody registered, just like any other unknown
+    // name: it is accepted, and draws no glyph.
+    assert_true(CSS.supports('list-style-type', 'picker-down'));
+    assert_equals(getComputedStyle(listItem).listStyleType, 'picker-down');
+  }, '"list-style-type" treats a glyph keyword as an unregistered counter style name.');
+</script>
