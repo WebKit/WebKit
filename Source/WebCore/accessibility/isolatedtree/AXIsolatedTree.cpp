@@ -2304,6 +2304,7 @@ static bool NODELETE shouldCacheElementName(ElementName name)
     case ElementName::HTML_acronym:
     case ElementName::HTML_body:
     case ElementName::HTML_del:
+    case ElementName::HTML_fieldset:
     case ElementName::HTML_h1:
     case ElementName::HTML_h2:
     case ElementName::HTML_h3:
@@ -2762,7 +2763,6 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::IsVisible, object.isVisible());
 
         setProperty(AXProperty::ActionVerb, object.actionVerb().isolatedCopy());
-        setProperty(AXProperty::IsFieldset, object.isFieldset());
         setProperty(AXProperty::IsPressed, object.isPressed());
         setProperty(AXProperty::IsSelectedOptionActive, object.isSelectedOptionActive());
         setProperty(AXProperty::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
