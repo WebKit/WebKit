@@ -303,6 +303,7 @@ bool doesGC(Graph& graph, Node* node)
     case CallForwardVarargs:
     case CallObjectConstructor:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case CheckTierUpAndOSREnter:
     case CheckTierUpAtReturn:
     case CheckTierUpInLoop:
@@ -351,6 +352,8 @@ bool doesGC(Graph& graph, Node* node)
     case InstanceOfCustom:
     case VarargsLength:
     case LoadVarargs:
+    case VarargsLengthWithSpread:
+    case LoadVarargsWithSpread:
     case NumberToStringWithRadix:
     case NumberToStringWithValidRadixConstant:
     case ProfileType:
