@@ -132,7 +132,6 @@
 #include "SandboxExtension.h"
 #include "SessionHistoryTraversalQueue.h"
 #include "SharedBufferReference.h"
-#include "ShouldFreezeLayerTree.h"
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
@@ -2947,7 +2946,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
                         continue;
                     }
                     RELEASE_LOG(ProcessSwapping, "WebPageProxy::goToBackForwardItem: dispatching RestoreWithFrameItem to pid %i", iframeProcess->processID());
-                    iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(mainFrameItemID, std::nullopt, ShouldFreezeLayerTree::No), aggregator->chain(), webPageIDInProcess(iframeProcess));
+                    iframeProcess->sendWithAsyncReply(Messages::WebPage::RestoreWithFrameItem(mainFrameItemID, std::nullopt), aggregator->chain(), webPageIDInProcess(iframeProcess));
                 }
             }
         }
