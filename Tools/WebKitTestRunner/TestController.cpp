@@ -1156,6 +1156,16 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     m_userContentController = adoptWK(WKUserContentControllerCreate());
     WKPageConfigurationSetUserContentController(pageConfiguration.get(), userContentController());
     WKPageConfigurationSetPortsForUpgradingInsecureSchemeForTesting(pageConfiguration.get(), options.insecureUpgradePort(), options.secureUpgradePort());
+
+#if ENABLE(APPLICATION_MANIFEST) && !PLATFORM(COCOA)
+    // Cocoa sets the application manifest in platformCreateWebView() via _WKApplicationManifest SPI instead.
+    auto applicationManifestPath = options.applicationManifest();
+    if (!applicationManifestPath.empty()) {
+        if (auto fileContents = FileSystem::readEntireFile(String::fromUTF8(applicationManifestPath.c_str())))
+            WKPageConfigurationSetApplicationManifest(pageConfiguration.get(), toWK(String::fromUTF8(fileContents->span())).get(), nullptr, nullptr);
+    }
+#endif
+
     return pageConfiguration;
 }
 
