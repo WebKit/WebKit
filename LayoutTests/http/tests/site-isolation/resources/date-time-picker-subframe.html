@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<style>
+  body {
+    padding: 0;
+    margin: 0
+  }
+</style>
+
+<div class="padding"></div>
+<input type="date">
+<div class="padding"></div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const padding = parseInt(params.get("padding"), 10);
+
+  const style = new CSSStyleSheet();
+  style.replaceSync(`.padding { height: ${padding}px; }`);
+
+  document.adoptedStyleSheets = [style];
+
+  window.scrollTo(0, padding);
+</script>

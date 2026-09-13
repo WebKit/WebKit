@@ -12448,20 +12448,9 @@ void WebPageProxy::showDateTimePicker(WebCore::DateTimeChooserParameters&& param
         if (RefPtr pageClient = this->pageClient())
             m_dateTimePicker = pageClient->createDateTimePicker(*this);
     }
-    if (!m_dateTimePicker)
-        return;
 
-    convertRectToMainFrameCoordinates(params.anchorRectInRootView, params.rootFrameID, [weakThis = WeakPtr { *this }, params = WTF::move(params)](std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-
-        if (!protectedThis->m_dateTimePicker)
-            return;
-
-        params.anchorRectInRootView = IntRect(*convertedRect);
-        protect(*protectedThis->m_dateTimePicker)->showDateTimePicker(WTF::move(params));
-    });
+    if (m_dateTimePicker)
+        m_dateTimePicker->showDateTimePicker(WTF::move(params));
 }
 
 void WebPageProxy::endDateTimePicker()
