@@ -9132,6 +9132,9 @@ void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, Co
         return completionHandler(false);
     }
 
+    if (RefPtr frame = m_mainFrame->coreLocalFrame())
+        frame->detachFromAllOpenedFrames();
+
     if (!page->localMainFrame()) {
         // Detach the current root frames instead of freezing the whole page, so a same-site navigation
         // later reusing this WebPage for a new root frame doesn't get frozen too.
