@@ -81,4 +81,30 @@ TEST(WTF_NeverDestroyed, Basic)
     ASSERT_EQ(&list(), &list());
 }
 
+class SideEffectfulDestruction {
+public:
+    constexpr SideEffectfulDestruction(int value)
+        : m_value(value)
+    {
+    }
+
+    ~SideEffectfulDestruction()
+    {
+        std::abort();
+    }
+
+    int value() const { return m_value; }
+
+private:
+    int m_value { 0 };
+};
+
+
+static constinit NeverDestroyed<SideEffectfulDestruction> canBeCompiled(42);
+
+TEST(WTF_NeverDestroyed, ConstexprConstructor)
+{
+    ASSERT_EQ(canBeCompiled->value(), 42);
+}
+
 } // namespace TestWebKitAPI
