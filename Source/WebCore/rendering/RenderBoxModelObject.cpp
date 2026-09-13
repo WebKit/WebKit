@@ -900,6 +900,12 @@ void RenderBoxModelObject::clearFirstLetterRemainingText()
     firstLetterRemainingTextMap().remove(*this);
 }
 
+PositionWithAffinity RenderBoxModelObject::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
+{
+    CheckedPtr containingBlock = this->containingBlock();
+    return containingBlock->positionForPoint(point, source, fragment);
+}
+
 void RenderBoxModelObject::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, TransformState& transformState) const
 {
     RenderElement* container = this->container();

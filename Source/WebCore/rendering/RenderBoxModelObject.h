@@ -184,6 +184,8 @@ public:
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
 
+    PositionWithAffinity positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
+
     void setSelectionState(HighlightState) override;
 
     bool hasRunningAcceleratedAnimations() const;
