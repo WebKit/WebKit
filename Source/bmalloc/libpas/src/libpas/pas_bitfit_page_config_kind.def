@@ -127,3 +127,12 @@ PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(jit_medium_bitfit,
                                    JIT_HEAP_CONFIG.medium_bitfit_config)
 #endif
 
+#if PAS_ENABLE_JS_MARKED_BLOCK
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(js_marked_block_small_bitfit,
+                                   JS_MARKED_BLOCK_HEAP_CONFIG.small_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(js_marked_block_medium_bitfit,
+                                   JS_MARKED_BLOCK_HEAP_CONFIG.medium_bitfit_config)
+PAS_DEFINE_BITFIT_PAGE_CONFIG_KIND(js_marked_block_marge_bitfit,
+                                   JS_MARKED_BLOCK_HEAP_CONFIG.marge_bitfit_config)
+#endif
+

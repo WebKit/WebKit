@@ -24,7 +24,6 @@ set_source_files_properties(
     src/libpas/bmalloc_heap_flex.c
     src/libpas/bmalloc_heap_iso.c
     src/libpas/bmalloc_heap_utils.c
-    src/libpas/bmalloc_prefault_supply.c
     src/libpas/hotbit_heap.c
     src/libpas/hotbit_heap_config.c
     src/libpas/iso_heap.c
@@ -32,6 +31,9 @@ set_source_files_properties(
     src/libpas/iso_test_heap.c
     src/libpas/iso_test_heap_config.c
     src/libpas/jit_heap.c
+    src/libpas/js_marked_block_heap.c
+    src/libpas/js_marked_block_heap_config.c
+    src/libpas/js_marked_block_heap_prefault_supply.c
     src/libpas/minalign32_heap.c
     src/libpas/minalign32_heap_config.c
     src/libpas/pagesize64k_heap.c
