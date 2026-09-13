@@ -56,6 +56,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/text/AtomString.h>
 
+#if PLATFORM(MAC)
+#include "FontCacheCoreText.h"
+#endif
+
 namespace WebCore {
 
 using namespace WebKitFontFamilyNames;
@@ -443,6 +447,42 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
 
     const auto& familyName = fontFamily.name;
+
+    if (fontFamily.isGeneric() && (familyName == m_fontFamilyNames.at(FamilyNamesIndex::KaiFamily) || familyName == m_fontFamilyNames.at(FamilyNamesIndex::FangsongFamily))) {
+        bool isKai = familyName == m_fontFamilyNames.at(FamilyNamesIndex::KaiFamily);
+        bool isTraditional = fontDescription.script() == USCRIPT_TRADITIONAL_HAN;
+        auto families = isKai
+            ? std::initializer_list<ASCIILiteral> { isTraditional ? "Kaiti TC"_s : "Kaiti SC"_s, isTraditional ? "Kaiti SC"_s : "Kaiti TC"_s, "KaiTi"_s, "DFKai-SB"_s, "STKaiti"_s, "BiauKaiTC"_s, "BiauKaiHK"_s }
+            : std::initializer_list<ASCIILiteral> { "STFangsong"_s, "FangSong"_s };
+        for (auto family : families) {
+#if PLATFORM(MAC)
+            RefPtr font = fontDescription.shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No
+                ? fontForSystemFontFamily(fontDescription, AtomString { family })
+                : protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, AtomString { family });
+#else
+            RefPtr font = protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, AtomString { family });
+#endif
+            if (!font)
+                continue;
+            // These generics apply to Chinese text, leaving other scripts to the remaining families.
+            return { FontRanges { WTF::move(font), {
+                { 0x2E80, 0x303F }, // CJK radicals, ideographic description characters and punctuation.
+                { 0x3100, 0x312F }, // Bopomofo.
+                { 0x31A0, 0x31BF }, // Bopomofo Extended.
+                { 0x31C0, 0x31EF }, // CJK strokes.
+                { 0x3400, 0x4DBF }, // CJK Unified Ideographs Extension A.
+                { 0x4E00, 0x9FFF }, // CJK Unified Ideographs.
+                { 0xF900, 0xFAFF }, // CJK Compatibility Ideographs.
+                { 0xFE10, 0xFE1F }, // Vertical forms.
+                { 0xFE30, 0xFE4F }, // CJK Compatibility Forms.
+                { 0xFF01, 0xFF60 }, // Fullwidth forms.
+                { 0xFFE0, 0xFFE6 }, // Fullwidth symbol variants.
+                { 0x20000, 0x2FFFF }, // Supplementary Ideographic Plane.
+                { 0x30000, 0x3FFFF }, // Tertiary Ideographic Plane.
+            } }, IsGenericFontFamily::Yes };
+        }
+        return { };
+    }
 
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == m_fontFamilyNames.at(FamilyNamesIndex::StandardFamily);

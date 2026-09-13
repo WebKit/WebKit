@@ -1,0 +1,27 @@
+
+PASS generic(kai) parses and serializes in specified and computed style
+PASS generic(kai) works in the font shorthand
+PASS kai remains a family name and generic(kai) is not a font-face family
+PASS generic(kai) works in Canvas and falls back for Latin
+PASS generic(kai) works in OffscreenCanvas and falls back for Latin
+PASS generic(kai) works in the Font Loading API without matching a named web font
+PASS generic(kai) does not share cached fonts with the quoted family name
+PASS generic(kai) renders with an installed font of the requested style
+PASS generic(fangsong) parses and serializes in specified and computed style
+PASS generic(fangsong) works in the font shorthand
+PASS fangsong remains a family name and generic(fangsong) is not a font-face family
+PASS generic(fangsong) works in Canvas and falls back for Latin
+PASS generic(fangsong) works in OffscreenCanvas and falls back for Latin
+PASS generic(fangsong) works in the Font Loading API without matching a named web font
+PASS generic(fangsong) does not share cached fonts with the quoted family name
+PASS generic(fangsong) renders with an installed font of the requested style
+PASS generic() is invalid
+PASS generic(serif) is invalid
+PASS generic("kai") is invalid
+PASS generic(kai fangsong) is invalid
+PASS generic(kai, fangsong) is invalid
+PASS generic(kai) serif is invalid
+PASS generic(kai), is invalid
+PASS generic(unknown) is invalid
+PASS generic(kai 1) is invalid
+
