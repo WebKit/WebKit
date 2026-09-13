@@ -252,6 +252,7 @@ if (ENABLE_WEBCORE)
         Helpers/Utilities.cpp
         Helpers/WebCoreTestUtilities.cpp
 
+        Tests/WebCore/AV1UtilitiesTests.cpp
         Tests/WebCore/AffineTransform.cpp
         Tests/WebCore/AnimationFrameRate.cpp
         Tests/WebCore/ApduTest.cpp
