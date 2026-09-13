@@ -408,52 +408,6 @@ LayoutRect RenderInline::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
-{
-    // Repaint offset cache is only valid for root-relative repainting
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && !context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
-        return computeVisibleRectsUsingPaintOffset(rects);
-
-    if (container == this)
-        return rects;
-
-    bool containerSkipped;
-    RenderElement* localContainer = this->container(container, containerSkipped);
-    if (!localContainer)
-        return rects;
-
-    auto adjustedRects = rects;
-    if (style().hasInFlowPosition() && layer()) {
-        // Apply the in-flow position offset when invalidating a rectangle. The layer
-        // is translated, but the render box isn't, so we need to do this to get the
-        // right dirty rect. Since this is called from RenderObject::setStyle, the relative or sticky position
-        // flag on the RenderObject has been cleared, so use the one on the style().
-        auto offsetForInFlowPosition = layer()->offsetForInFlowPosition();
-        adjustedRects.move(offsetForInFlowPosition);
-    }
-
-    if (localContainer->hasNonVisibleOverflow()) {
-        // FIXME: Respect the value of context.options.
-        auto containerContext = context;
-        containerContext.options.add(VisibleRectContext::Option::ApplyCompositedContainerScrolls);
-        bool isEmpty = !downcast<RenderLayerModelObject>(*localContainer).applyCachedClipAndScrollPosition(adjustedRects, container, containerContext);
-        if (isEmpty) {
-            if (context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
-                return std::nullopt;
-            return adjustedRects;
-        }
-    }
-
-    if (containerSkipped) {
-        // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
-        auto containerOffset = container->offsetFromAncestorContainer(*localContainer);
-        adjustedRects.move(-containerOffset);
-        return adjustedRects;
-    }
-
-    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
-}
-
 LayoutSize RenderInline::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     ASSERT(&container == this->container());

@@ -187,6 +187,8 @@ public:
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
 
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
+
     void setSelectionState(HighlightState) override;
 
     bool hasRunningAcceleratedAnimations() const;
@@ -232,7 +234,7 @@ protected:
 
 protected:
     const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
-    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
+    virtual RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
 
 private:
     virtual LayoutRect frameRectForStickyPositioning() const = 0;

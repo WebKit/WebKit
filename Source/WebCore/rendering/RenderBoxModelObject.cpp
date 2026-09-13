@@ -58,16 +58,19 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
+#include "RenderLayerInlines.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderReplaced.h"
 #include "RenderSVGInline.h"
 #include "RenderTable.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "StyleImage.h"
@@ -1053,6 +1056,116 @@ auto RenderBoxModelObject::computeVisibleRectsUsingPaintOffset(const RepaintRect
     if (layoutState->isClipped())
         adjustedRects.clippedOverflowRect.intersect(layoutState->clipRect());
     return adjustedRects;
+}
+
+auto RenderBoxModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, const VisibleRectContext& context, VisibleRectState state) const -> std::optional<RepaintRects>
+{
+    // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
+    // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate
+    // offset corner for the enclosing container). This allows for a fully RL or BT document to repaint
+    // properly even during layout, since the rect remains flipped all the way until the end.
+    //
+    // RenderView::computeVisibleRectInContainer then converts the rect to physical coordinates. We also convert to
+    // physical when we hit a repaint container boundary. Therefore the final rect returned is always in the
+    // physical coordinate space of the container.
+    CheckedPtr box = dynamicDowncast<RenderBox>(*this);
+    auto& styleToUse = style();
+
+    // Paint offset cache is only valid for root-relative, non-fixed position repainting
+    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !container && styleToUse.position() != PositionType::Fixed && !context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
+        return computeVisibleRectsUsingPaintOffset(rects);
+
+    auto adjustedRects = rects;
+    if (box && hasReflection())
+        adjustedRects.unite(RepaintRects { box->reflectedRect(adjustedRects.clippedOverflowRect) });
+
+    if (container == this) {
+        if (box) {
+            if (container->writingMode().isBlockFlipped())
+                box->flipForWritingMode(adjustedRects);
+            if (state.descendantNeedsEnclosingIntRect)
+                adjustedRects.encloseToIntRects();
+        }
+        return adjustedRects;
+    }
+
+    bool containerIsSkipped;
+    auto* localContainer = this->container(container, containerIsSkipped);
+    if (!localContainer)
+        return adjustedRects;
+
+    auto locationOffset = LayoutSize { };
+    if (box) {
+        if (isWritingModeRoot()) {
+            if (!isOutOfFlowPositioned() || !state.dirtyRectIsFlipped) {
+                box->flipForWritingMode(adjustedRects);
+                state.dirtyRectIsFlipped = true;
+            }
+        }
+
+        locationOffset = box->locationOffset();
+
+        // FIXME: This is needed as long as RenderWidget snaps to integral size/position.
+        // is<RenderReplaced>() is a fast bit check, is<RenderWidget>() is a virtual function call.
+        if (is<RenderReplaced>(*this) && is<RenderWidget>(*this)) {
+            auto flooredLocationOffset = LayoutSize { flooredIntSize(locationOffset) };
+            adjustedRects.expand(locationOffset - flooredLocationOffset);
+            locationOffset = flooredLocationOffset;
+            state.descendantNeedsEnclosingIntRect = true;
+        } else if (auto* columnFlow = dynamicDowncast<RenderMultiColumnFlow>(*this)) {
+            // We won't normally run this code. Only when the container is null (i.e., we're trying
+            // to get the rect in view coordinates) will we come in here, since normally container
+            // will be set and we'll stop at the flow thread. This case is mainly hit by the check for whether
+            // or not images should animate.
+            // FIXME: Just as with offsetFromContainer, we aren't really handling objects that span multiple columns properly.
+            LayoutPoint physicalPoint(box->flipForWritingMode(adjustedRects.clippedOverflowRect.location()));
+            if (auto* fragment = columnFlow->physicalTranslationFromFlowToFragment((physicalPoint))) {
+                adjustedRects.clippedOverflowRect.setLocation(fragment->flipForWritingMode(physicalPoint));
+                return fragment->computeVisibleRectsInContainer(adjustedRects, container, context, state);
+            }
+        }
+
+        // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
+        // in the parent's coordinate space that encloses us.
+        if (hasLayer() && layer()->isTransformed()) {
+            state.hasPositionFixedDescendant = styleToUse.position() == PositionType::Fixed;
+            adjustedRects.transform(protect(layer())->currentTransform(), protect(document())->deviceScaleFactor());
+        } else if (styleToUse.position() == PositionType::Fixed)
+            state.hasPositionFixedDescendant = true;
+    }
+
+    adjustedRects.move(locationOffset);
+
+    if (styleToUse.position() == PositionType::Absolute && localContainer->isInlineBox() && localContainer->canContainAbsolutelyPositionedObjects())
+        adjustedRects.move(PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(*localContainer), styleToUse));
+    else if (styleToUse.hasInFlowPosition() && layer()) {
+        // Apply the in-flow position offset when invalidating a rectangle. The layer
+        // is translated, but the renderer isn't, so we need to do this to get the
+        // right dirty rect. Since this is called from RenderObject::setStyle, the in-flow position
+        // flag on the RenderObject has been cleared, so use the one on the style().
+        adjustedRects.move(layer()->offsetForInFlowPosition());
+    }
+
+    if (localContainer->hasNonVisibleOverflow()) {
+        auto containerContext = context;
+        if (!box) {
+            // FIXME: Respect the value of context.options.
+            containerContext.options.add(VisibleRectContext::Option::ApplyCompositedContainerScrolls);
+        }
+        bool isEmpty = !downcast<RenderLayerModelObject>(*localContainer).applyCachedClipAndScrollPosition(adjustedRects, container, containerContext);
+        if (isEmpty) {
+            if (context.options.contains(VisibleRectContext::Option::UseEdgeInclusiveIntersection))
+                return std::nullopt;
+            return adjustedRects;
+        }
+    }
+
+    if (containerIsSkipped) {
+        // If the container is below localContainer, then we need to map the rect into container's coordinates.
+        adjustedRects.move(-container->offsetFromAncestorContainer(*localContainer));
+        return adjustedRects;
+    }
+    return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
 } // namespace WebCore
