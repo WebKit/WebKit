@@ -60,8 +60,7 @@ using namespace WebCore;
  * load the images found into a memory cache if possible. That cache
  * is frozen to an on-disk database for persistence.
  *
- * If [property@WebView:is-ephemeral] or
- * [property@WebsiteDataManager:is-ephemeral] is %TRUE, new icons
+ * If [property@WebsiteDataManager:is-ephemeral] is %TRUE, new icons
  * won't be added to the on-disk database and no existing icons will
  * be deleted from it. Nevertheless, WebKit will still store them in
  * the in-memory cache during the current execution.
