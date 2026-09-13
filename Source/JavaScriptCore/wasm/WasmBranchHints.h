@@ -76,5 +76,10 @@ inline constexpr bool isValidBranchHint(BranchHint hint)
     return false;
 }
 
+inline constexpr bool branchHintMarksTakenRare(BranchHint hint)
+{
+    return hint == BranchHint::Unlikely;
+}
+
 }
 } // namespace JSC::Wasm
