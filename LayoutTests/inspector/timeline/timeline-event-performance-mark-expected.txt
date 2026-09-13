@@ -6,9 +6,11 @@ Tests 'performance.mark' Timeline event records.
 Starting Capture...
 Evaluating...
 Stopping Capture...
-PASS: expectEqual(2, 2)
+PASS: expectEqual(3, 3)
 PASS: expectEqual("timestamp", "timestamp")
 PASS: expectEqual("foo", "foo")
-PASS: expectEqual("timestamp", "timestamp")
+PASS: expectEqual("performance-mark", "performance-mark")
 PASS: expectEqual("bar", "bar")
+PASS: expectEqual("performance-mark", "performance-mark")
+PASS: expectEqual("baz", "baz")
 
