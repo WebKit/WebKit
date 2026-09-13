@@ -1061,7 +1061,8 @@ select:-internal-uses-menulist {
     font: -internal-auto-base(-webkit-small-control, inherit);
 #endif /* defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY */
     padding-block: -internal-auto-base(0, 0.4lh);
-    align-items: center;
+    align-items: unsafe center;
+    align-content: unsafe center;
     white-space: -internal-auto-base(pre, nowrap);
     cursor: default;
     gap: -internal-auto-base(initial, 0.65em);
@@ -1117,12 +1118,15 @@ select:not(:-internal-uses-menulist):enabled {
 select:not([multiple]):-internal-uses-menulist > button:first-child {
     all: unset;
     display: contents;
+    text-overflow: inherit;
 }
 
-select selectedcontent {
+select selectedcontent,
+select::field-content {
     overflow: clip;
-    text-overflow: ellipsis;
+    text-overflow: inherit;
     min-inline-size: 0;
+    flex: 1;
 }
 
 select::picker-icon {
@@ -1130,7 +1134,6 @@ select::picker-icon {
     font: 100% system-ui;
     text-orientation: sideways;
     padding-inline: 0.15em;
-    margin-inline-start: auto;
     margin-block-start: -0.25em;
 }
 
