@@ -97,6 +97,7 @@ public:
 
     virtual LayoutRect borderBoxRectInContainer() const;
     virtual LayoutRect firstFragmentBorderBoxRect() const;
+    LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;

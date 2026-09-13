@@ -466,23 +466,6 @@ auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, con
     return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
-LayoutSize RenderInline::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
-{
-    ASSERT(&container == this->container());
-    
-    LayoutSize offset;    
-    if (isInFlowPositioned())
-        offset += offsetForInFlowPosition();
-
-    if (auto* box = dynamicDowncast<RenderBox>(container))
-        offset -= toLayoutSize(box->scrollPosition());
-
-    if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
-
-    return offset;
-}
-
 void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
 {
     if (ancestorContainer == this)

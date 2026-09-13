@@ -2682,26 +2682,15 @@ void RenderBox::mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode> mode, Tran
     RenderBoxModelObject::mapAbsoluteToLocalPoint(mode, transformState);
 }
 
-LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
+LayoutSize RenderBox::offsetFromContainer(const RenderElement& container, const LayoutPoint& point, bool* offsetDependsOnPoint) const
 {
-    // A fragment "has" boxes inside it without being their container. 
-    ASSERT(&container == this->container() || is<RenderFragmentContainer>(container));
-
-    LayoutSize offset;    
-    if (isInFlowPositioned())
-        offset += offsetForInFlowPosition();
+    auto offset = RenderBoxModelObject::offsetFromContainer(container, point, offsetDependsOnPoint);
 
     if (!isInline() || isBlockLevelReplacedOrAtomicInline())
         offset += topLeftLocationOffset();
 
-    if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
-        offset -= toLayoutSize(boxContainer->scrollPosition());
-
     if (isAbsolutelyPositioned() && container.isInlineBox() && container.canContainAbsolutelyPositionedObjects())
         offset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(container), style());
-
-    if (offsetDependsOnPoint)
-        *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);
 
     return offset;
 }

@@ -973,6 +973,23 @@ LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
     return { };
 }
 
+LayoutSize RenderBoxModelObject::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
+{
+    ASSERT(&container == this->container() || is<RenderFragmentContainer>(container));
+
+    LayoutSize offset;
+    if (isInFlowPositioned())
+        offset += offsetForInFlowPosition();
+
+    if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
+        offset -= toLayoutSize(boxContainer->scrollPosition());
+
+    if (offsetDependsOnPoint)
+        *offsetDependsOnPoint |= (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
+
+    return offset;
+}
+
 LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
 {
     auto boundingBoxOfFragments = [&]() -> IntRect {
