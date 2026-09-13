@@ -636,7 +636,7 @@ WI.initializeTarget = function(target)
         if (target.hasCommand("Page.setShowRulers") && WI.settings.showRulers.value)
             target.PageAgent.setShowRulers(true).catch((error) => {
                 // FIXME <rdar://105244623> iOS platforms without a matching legacy protocol definition will fall back to the local macOS protocol definition.
-                console.error(error);
+                WI.reportInternalError(error);
             });
     }
 };
@@ -680,7 +680,7 @@ WI._createTabContentViewForType = function(tabType)
 {
     let tabClass = WI._knownTabClassesByType.get(tabType);
     if (!tabClass) {
-        console.error("Unknown tab type", tabType);
+        console.assert(false, tabType);
         return null;
     }
 
@@ -1397,7 +1397,7 @@ WI.tabContentViewForRepresentedObject = function(representedObject, options = {}
 
     var tabContentViewClass = WI.tabContentViewClassForRepresentedObject(representedObject);
     if (!tabContentViewClass) {
-        console.error("Unknown representedObject, couldn't create TabContentView.", representedObject);
+        console.assert(false, representedObject);
         return null;
     }
 
@@ -3171,15 +3171,14 @@ WI.reportInternalError = function(errorOrString, details = {})
     let error = errorOrString instanceof Error ? errorOrString : new Error(errorOrString);
     error.details = details;
 
+    // This assert allows us to stop the debugger at an internal exception. It doesn't re-throw
+    // exceptions because the original exception would be lost through window.onerror.
+    // This workaround can be removed once <https://webkit.org/b/158192> is fixed.
+    console.assert(false, error);
+
     // The error will be displayed in the Uncaught Exception Reporter sheet if DebugUI is enabled.
-    if (WI.isDebugUIEnabled()) {
-        // This assert allows us to stop the debugger at an internal exception. It doesn't re-throw
-        // exceptions because the original exception would be lost through window.onerror.
-        // This workaround can be removed once <https://webkit.org/b/158192> is fixed.
-        console.assert(false, "An internal exception was thrown.", error);
+    if (WI.isDebugUIEnabled())
         handleInternalException(error);
-    } else
-        console.error(error);
 };
 
 // Many places assume the "main" target has resources.

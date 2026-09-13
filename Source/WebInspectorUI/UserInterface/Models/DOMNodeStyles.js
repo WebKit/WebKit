@@ -185,7 +185,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 try {
                     func.apply(this, args);
                 } catch (e) {
-                    console.error(e);
+                    WI.reportInternalError(e);
                     promise.resolve();
                 }
             };

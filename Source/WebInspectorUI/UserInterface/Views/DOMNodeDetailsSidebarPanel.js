@@ -273,7 +273,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             if (this.domNode !== domNode)
                 return;
 
-            console.assert(false, "Cannot resolve node.", error, domNode);
+            console.assert(false, error, domNode);
         });
 
         function nodePrototypesReady(error, object, wasThrown)
@@ -886,7 +886,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         case Node.PROCESSING_INSTRUCTION_NODE:
             return WI.UIString("Processing Instruction");
         default:
-            console.error("Unknown DOM node type: ", this.domNode.nodeType());
+            console.assert(false, this.domNode.nodeType());
             return this.domNode.nodeType();
         }
     }
@@ -904,7 +904,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         case WI.DOMNode.CustomElementState.Failed:
             return WI.UIString("Failed to upgrade");
         }
-        console.error("Unknown DOM custom element state: ", state);
+        console.assert(false, state);
         return null;
     }
 };

@@ -211,7 +211,6 @@ PASS: cookie.httpOnly should be 'true'.
 PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; Unknown; path=/one/two
-WARN: Unknown Cookie attribute: Unknown
 PASS: Value should be a WI.Cookie.
 PASS: cookie.header should be the original header text.
 PASS: cookie.type should be WI.Cookie.Type.Response.
@@ -226,7 +225,6 @@ PASS: cookie.httpOnly should be 'false'.
 PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; Unknown=Ignored; path=/one/two
-WARN: Unknown Cookie attribute: Unknown=Ignored
 PASS: Value should be a WI.Cookie.
 PASS: cookie.header should be the original header text.
 PASS: cookie.type should be WI.Cookie.Type.Response.

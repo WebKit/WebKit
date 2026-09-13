@@ -1294,7 +1294,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             break;
 
         default:
-            console.assert("Unexpected sort column", sortColumnIdentifier);
+            console.assert(false, sortColumnIdentifier);
             return;
         }
 

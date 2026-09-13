@@ -402,7 +402,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     recordWasFiltered(timeline, record, filtered)
     {
         let overviewGraph = this._overviewGraphsByTypeMap.get(timeline.type);
-        console.assert(overviewGraph, "Missing overview graph for timeline type " + timeline.type);
+        console.assert(overviewGraph, timeline);
         if (!overviewGraph)
             return;
 
@@ -414,7 +414,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
     selectRecord(timeline, record)
     {
         let overviewGraph = this._overviewGraphsByTypeMap.get(timeline.type);
-        console.assert(overviewGraph, "Missing overview graph for timeline type " + timeline.type);
+        console.assert(overviewGraph, timeline);
         if (!overviewGraph)
             return;
 
@@ -963,7 +963,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             let treeElement = this._treeElementsByTypeMap.get(type);
             if (!treeElement) {
                 let timeline = this._recording.timelines.get(type);
-                console.assert(timeline, "Missing timeline for type " + type);
+                console.assert(timeline, type);
 
                 const placeholder = true;
                 treeElement = new WI.TimelineTreeElement(timeline, placeholder);

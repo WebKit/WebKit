@@ -80,7 +80,7 @@ WI.Animation = class Animation extends WI.Object
             return plural ? WI.UIString("CSS Transitions") : WI.UIString("CSS Transition");
         }
 
-        console.assert(false, "Unknown animation type", animationType);
+        console.assert(false, animationType);
         return null;
     }
 
@@ -97,7 +97,7 @@ WI.Animation = class Animation extends WI.Object
             return WI.UIString("Alternate Reverse", "Web Animation Playback Direction Alternate Reverse", "Indicates that the playback direction of this web animation alternates between reversed and normal on each iteration");
         }
 
-        console.assert(false, "Unknown playback direction", playbackDirection);
+        console.assert(false, playbackDirection);
         return null;
     }
 
@@ -116,7 +116,7 @@ WI.Animation = class Animation extends WI.Object
             return WI.UIString("Auto", "Web Animation Fill Mode Auto", "Indicates that this web animation either does not apply any styles before it begins and after it ends or that it applies to both, depending on it's configuration");
         }
 
-        console.assert(false, "Unknown fill mode", fillMode);
+        console.assert(false, fillMode);
         return null;
     }
 

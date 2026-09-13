@@ -232,7 +232,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, textField);
     }
 
     spreadsheetRuleHeaderFieldWillNavigate(textField, direction)
@@ -249,7 +249,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, textField, direction);
     }
 
     spreadsheetRuleHeaderFieldDidDiscard(textField)
@@ -264,7 +264,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             return;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, textField);
     }
 
     // SpreadsheetCSSStyleDeclarationEditor delegate

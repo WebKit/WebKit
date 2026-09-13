@@ -29,7 +29,7 @@ WI.IssueMessage = class IssueMessage extends WI.Object
     {
         super();
 
-        console.assert(consoleMessage instanceof WI.ConsoleMessage);
+        console.assert(consoleMessage instanceof WI.ConsoleMessage, consoleMessage);
 
         this._consoleMessage = consoleMessage;
 
@@ -77,8 +77,9 @@ WI.IssueMessage = class IssueMessage extends WI.Object
             break;
 
         default:
-            console.error("Unknown issue source:", this._consoleMessage.source);
+            console.assert(false, this._consoleMessage);
             this._type = WI.IssueMessage.Type.OtherIssue;
+            break;
         }
 
         this._sourceCodeLocation = consoleMessage.sourceCodeLocation;
@@ -108,7 +109,7 @@ WI.IssueMessage = class IssueMessage extends WI.Object
         case WI.IssueMessage.Type.OtherIssue:
             return WI.UIString("Other Issue");
         default:
-            console.error("Unknown issue message type:", type);
+            console.assert(false, type);
             return WI.UIString("Other Issue");
         }
     }
