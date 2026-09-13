@@ -2900,8 +2900,8 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
 {
     computedValues.extent = logicalWidth();
     computedValues.position = logicalLeft();
-    computedValues.margins.start = marginStart();
-    computedValues.margins.end = marginEnd();
+    computedValues.margins.start = marginStart(writingMode());
+    computedValues.margins.end = marginEnd(writingMode());
 
     if (isOutOfFlowPositioned()) {
         ASSERT(!overridingBorderBoxLogicalWidth());
@@ -3545,7 +3545,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
             // Block children of horizontal flexible boxes fill the height of the box.
             if (style().logicalHeight().isAuto() && flexBoxStyle.boxOrient() == BoxOrient::Horizontal && deprecatedFlexBox->isStretchingChildren())
-                return deprecatedFlexBox->contentBoxLogicalHeight() - marginBefore() - marginAfter();
+                return deprecatedFlexBox->contentBoxLogicalHeight() - marginBefore(writingMode()) - marginAfter(writingMode());
 
             return { };
         }
@@ -3633,7 +3633,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
         if (isDocumentElementRenderer())
             computedValues.extent = std::max(computedValues.extent, visibleHeight - margins);
         else if (CheckedPtr parentBox = dynamicDowncast<RenderBox>(parent)) {
-            auto marginsBordersPadding = margins + parentBox->marginBefore() + parentBox->marginAfter() + parentBox->borderAndPaddingLogicalHeight();
+            auto marginsBordersPadding = margins + parentBox->marginBefore(parentBox->writingMode()) + parentBox->marginAfter(parentBox->writingMode()) + parentBox->borderAndPaddingLogicalHeight();
             computedValues.extent = std::max(computedValues.extent, visibleHeight - marginsBordersPadding);
         }
     }
@@ -4017,7 +4017,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
     bool isHorizontal = isHorizontalWritingMode();
     while (containingBlock && !is<RenderView>(*containingBlock) && skipContainingBlockForPercentHeightCalculation(*containingBlock, isHorizontal != containingBlock->isHorizontalWritingMode())) {
         if (containingBlock->isBody() || containingBlock->isDocumentElementRenderer())
-            rootMarginBorderPaddingHeight += containingBlock->marginBefore() + containingBlock->marginAfter() + containingBlock->borderAndPaddingLogicalHeight();
+            rootMarginBorderPaddingHeight += containingBlock->marginBefore(containingBlock->writingMode()) + containingBlock->marginAfter(containingBlock->writingMode()) + containingBlock->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
         containingBlockChild = containingBlock;
         containingBlock = containingBlock->containingBlock();
@@ -4252,7 +4252,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
     LayoutUnit availableHeight = isOrthogonal(*this, *containingBlock()) ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(heightType);
     if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding) {
         // FIXME: Margin collapsing hasn't happened yet, so this incorrectly removes collapsed margins.
-        availableHeight -= marginBefore() + marginAfter() + borderAndPaddingLogicalHeight();
+        availableHeight -= marginBefore(writingMode()) + marginAfter(writingMode()) + borderAndPaddingLogicalHeight();
     }
     return availableHeight;
 }
@@ -5086,7 +5086,7 @@ LayoutUnit RenderBox::lineHeight() const
         return LayoutUnit::fromFloatCeil(firstLineStyle().usedLineHeight());
 
     if (isBlockLevelReplacedOrAtomicInline())
-        return marginBefore() + logicalHeight() + marginAfter();
+        return marginBefore(writingMode()) + logicalHeight() + marginAfter(writingMode());
 
     return { };
 }

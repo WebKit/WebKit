@@ -673,7 +673,7 @@ void RenderBlockFlow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit 
         auto& logicalMinHeight = style().logicalMinHeight();
         if (logicalMinHeight.isAuto() || logicalMinHeight.isPossiblyZero())
             return;
-        setMaxMarginAfterValues(std::max(0_lu, marginAfter()), std::max(0_lu, -marginAfter()));
+        setMaxMarginAfterValues(std::max(0_lu, marginAfter(writingMode())), std::max(0_lu, -marginAfter(writingMode())));
     };
     undoBottomMarginCollapsingIfMinHeightApplied();
 
@@ -1486,8 +1486,8 @@ MarginValues RenderBlockFlow::marginValuesForChild(RenderBox& child) const
             childAfterPositive = childRenderBlock->maxPositiveMarginAfter();
             childAfterNegative = childRenderBlock->maxNegativeMarginAfter();
         } else {
-            beforeMargin = child.marginBefore();
-            afterMargin = child.marginAfter();
+            beforeMargin = child.marginBefore(child.writingMode());
+            afterMargin = child.marginAfter(child.writingMode());
         }
     } else if (child.isHorizontalWritingMode() == isHorizontalWritingMode()) {
         // The child has a different directionality. If the child is parallel, then it's just
@@ -1498,8 +1498,8 @@ MarginValues RenderBlockFlow::marginValuesForChild(RenderBox& child) const
             childAfterPositive = childRenderBlock->maxPositiveMarginBefore();
             childAfterNegative = childRenderBlock->maxNegativeMarginBefore();
         } else {
-            beforeMargin = child.marginAfter();
-            afterMargin = child.marginBefore();
+            beforeMargin = child.marginAfter(child.writingMode());
+            afterMargin = child.marginBefore(child.writingMode());
         }
     } else {
         // The child is perpendicular to us, which means its margins don't collapse but are on the
@@ -1657,7 +1657,7 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Margi
             marginInfo.setDeterminedMarginBeforeQuirk(true);
         }
 
-        if (!marginInfo.determinedMarginBeforeQuirk() && beforeQuirk && !marginBefore()) {
+        if (!marginInfo.determinedMarginBeforeQuirk() && beforeQuirk && !marginBefore(writingMode())) {
             // We have no top margin and our top child has a quirky margin.
             // We will pick up this quirky margin and pass it through.
             // This deals with the <td><div><p> case.
@@ -1920,11 +1920,12 @@ void RenderBlockFlow::setCollapsedBottomMargin(const MarginInfo& marginInfo)
         if (!marginInfo.hasMarginAfterQuirk())
             setHasMarginAfterQuirk(false);
 
-        if (marginInfo.hasMarginAfterQuirk() && !marginAfter())
+        if (marginInfo.hasMarginAfterQuirk() && !marginAfter(writingMode())) {
             // We have no bottom margin and our last child has a quirky margin.
             // We will pick up this quirky margin and pass it through.
             // This deals with the <td><div><p> case.
             setHasMarginAfterQuirk(true);
+        }
     }
 }
 
@@ -2927,7 +2928,7 @@ void RenderBlockFlow::adjustInitialLetterPosition(RenderBox& childBox, LayoutUni
         return;
 
     LayoutUnit heightOfLine = lineHeight();
-    LayoutUnit beforeMarginBorderPadding = childBox.borderAndPaddingBefore() + childBox.marginBefore();
+    LayoutUnit beforeMarginBorderPadding = childBox.borderAndPaddingBefore() + childBox.marginBefore(childBox.writingMode());
     
     // Make an adjustment to align with the cap height of a theoretical block line.
     LayoutUnit adjustment = fontMetrics.intAscent() + (heightOfLine - fontMetrics.intHeight()) / 2 - fontMetrics.intCapHeight() - beforeMarginBorderPadding;
@@ -4933,11 +4934,11 @@ static LayoutUnit getBorderPaddingMargin(const RenderBoxModelObject& child, bool
     const auto& childZoomFactor = childStyle.usedZoomForLength();
 
     if (endOfInline) {
-        return borderMarginOrPaddingWidth(child.marginEnd(), childStyle.marginEnd(), childZoomFactor) +
+        return borderMarginOrPaddingWidth(child.marginEnd(child.writingMode()), childStyle.marginEnd(childStyle.writingMode()), childZoomFactor) +
             borderMarginOrPaddingWidth(child.paddingEnd(), childStyle.paddingEnd(), childZoomFactor) +
             child.borderEnd();
     }
-    return borderMarginOrPaddingWidth(child.marginStart(), childStyle.marginStart(), childZoomFactor) +
+    return borderMarginOrPaddingWidth(child.marginStart(child.writingMode()), childStyle.marginStart(childStyle.writingMode()), childZoomFactor) +
         borderMarginOrPaddingWidth(child.paddingStart(), childStyle.paddingStart(), childZoomFactor) +
         child.borderStart();
 }

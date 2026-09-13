@@ -342,38 +342,38 @@ void RenderMathMLUnderOver::layoutBlock(RelayoutChildren relayoutChildren, Layou
     LayoutUnit verticalOffset = 0;
     if (scriptType() == MathMLScriptsElement::ScriptType::Over || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         verticalOffset += parameters.overExtraAscender;
-        verticalOffset += over().marginBefore();
+        verticalOffset += over().marginBefore(over().writingMode());
         over().setLocation(LayoutPoint(horizontalOffset(over()), verticalOffset));
         if (parameters.useUnderOverBarFallBack) {
             verticalOffset += over().logicalHeight();
-            verticalOffset += over().marginAfter();
+            verticalOffset += over().marginAfter(over().writingMode());
             if (hasAccent()) {
-                LayoutUnit baseAscent = ascentForChild(base()) + base().marginBefore();
+                LayoutUnit baseAscent = ascentForChild(base()) + base().marginBefore(base().writingMode());
                 if (baseAscent < parameters.accentBaseHeight)
                     verticalOffset += parameters.accentBaseHeight - baseAscent;
             } else
                 verticalOffset += parameters.overGapMin;
         } else {
-            LayoutUnit overAscent = ascentForChild(over()) + over().marginBefore();
-            verticalOffset += std::max(over().logicalHeight() + over().marginAfter() + parameters.overGapMin, overAscent + parameters.overShiftMin);
+            LayoutUnit overAscent = ascentForChild(over()) + over().marginBefore(over().writingMode());
+            verticalOffset += std::max(over().logicalHeight() + over().marginAfter(over().writingMode()) + parameters.overGapMin, overAscent + parameters.overShiftMin);
         }
     }
-    verticalOffset += base().marginBefore();
+    verticalOffset += base().marginBefore(base().writingMode());
     base().setLocation(LayoutPoint(horizontalOffset(base()), verticalOffset));
     verticalOffset += base().logicalHeight();
-    verticalOffset += base().marginAfter();
+    verticalOffset += base().marginAfter(base().writingMode());
     if (scriptType() == MathMLScriptsElement::ScriptType::Under || scriptType() == MathMLScriptsElement::ScriptType::UnderOver) {
         if (parameters.useUnderOverBarFallBack) {
             if (!hasAccentUnder())
                 verticalOffset += parameters.underGapMin;
         } else {
-            LayoutUnit underAscent = ascentForChild(under()) + under().marginBefore();
+            LayoutUnit underAscent = ascentForChild(under()) + under().marginBefore(under().writingMode());
             verticalOffset += std::max(parameters.underGapMin, parameters.underShiftMin - underAscent);
         }
-        verticalOffset += under().marginBefore();
+        verticalOffset += under().marginBefore(under().writingMode());
         under().setLocation(LayoutPoint(horizontalOffset(under()), verticalOffset));
         verticalOffset += under().logicalHeight();
-        verticalOffset += under().marginAfter();
+        verticalOffset += under().marginAfter(under().writingMode());
         verticalOffset += parameters.underExtraDescender;
     }
 

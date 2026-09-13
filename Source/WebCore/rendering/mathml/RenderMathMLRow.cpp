@@ -79,7 +79,7 @@ std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
     if (!baselineChild)
         return { };
 
-    auto baseline = baselineChild->marginBefore() + baselineChild->logicalTop() + ascentForChild(*baselineChild);
+    auto baseline = baselineChild->marginBefore(baselineChild->writingMode()) + baselineChild->logicalTop() + ascentForChild(*baselineChild);
     return { baseline };
 }
 
@@ -111,7 +111,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
         if (toVerticalStretchyOperator(child))
             continue;
         child->layoutIfNeeded();
-        LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore();
+        LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore(child->writingMode());
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
         stretchAscent = std::max(stretchAscent, childAscent);
         stretchDescent = std::max(stretchDescent, childDescent);
@@ -138,8 +138,8 @@ void RenderMathMLRow::getContentBoundingBox(LayoutUnit& width, LayoutUnit& ascen
     descent = 0;
     width = 0;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        width += child->marginStart() + child->logicalWidth() + child->marginEnd();
-        LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore();
+        width += child->marginStart(child->writingMode()) + child->logicalWidth() + child->marginEnd(child->writingMode());
+        LayoutUnit childAscent = ascentForChild(*child) + child->marginBefore(child->writingMode());
         LayoutUnit childDescent = child->logicalHeight() + child->marginLogicalHeight() - childAscent;
         ascent = std::max(ascent, childAscent);
         descent = std::max(descent, childDescent);
@@ -174,7 +174,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
 {
     LayoutUnit horizontalOffset = 0;
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
-        horizontalOffset += child->marginStart();
+        horizontalOffset += child->marginStart(child->writingMode());
         LayoutUnit childVerticalOffset = ascent - ascentForChild(*child);
         LayoutUnit childWidth = child->logicalWidth();
         LayoutUnit childHorizontalOffset = writingMode().isBidiLTR() ? horizontalOffset : width - horizontalOffset - childWidth;
@@ -184,7 +184,7 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
             repaintRect->uniteEvenIfEmpty(child->borderBoxRectInContainer());
             repaintRectangle(*repaintRect);
         }
-        horizontalOffset += childWidth + child->marginEnd();
+        horizontalOffset += childWidth + child->marginEnd(child->writingMode());
     }
 }
 

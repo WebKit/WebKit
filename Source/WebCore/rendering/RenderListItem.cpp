@@ -118,7 +118,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
         if (is<RenderListItem>(*ancestor))
             break;
 
-        toEnclosingListItem -= ancestor->marginStart();
+        toEnclosingListItem -= ancestor->marginStart(ancestor->writingMode());
         if (ancestor->isFlexItem()) {
             toEnclosingListItem -= ancestor->logicalLeft();
             hasAccountedForBorderAndPadding = true;
@@ -130,7 +130,7 @@ static LayoutUnit excludedMarkerLogicalLeftOffsetFor(const RenderBlockFlow& firs
     auto toAssociatedListItem = LayoutUnit { };
     if (ancestor && ancestor.get() != &listItem) {
         for (CheckedPtr<const RenderBlock> box = ancestor->containingBlock(); box; box = box->containingBlock()) {
-            toAssociatedListItem -= (box->marginStart() + box->borderAndPaddingStart());
+            toAssociatedListItem -= (box->marginStart(box->writingMode()) + box->borderAndPaddingStart());
             if (box.get() == &listItem)
                 break;
         }

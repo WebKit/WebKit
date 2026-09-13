@@ -219,12 +219,12 @@ inline void BreakingContext::increment()
 
 inline LayoutUnit borderPaddingMarginStart(const RenderInline& child)
 {
-    return child.marginStart() + child.paddingStart() + child.borderStart();
+    return child.marginStart(child.writingMode()) + child.paddingStart() + child.borderStart();
 }
 
 inline LayoutUnit borderPaddingMarginEnd(const RenderInline& child)
 {
-    return child.marginEnd() + child.paddingEnd() + child.borderEnd();
+    return child.marginEnd(child.writingMode()) + child.paddingEnd() + child.borderEnd();
 }
 
 inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkStartEdge = true, bool checkEndEdge = true)

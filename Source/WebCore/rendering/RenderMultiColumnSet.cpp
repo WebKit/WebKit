@@ -354,7 +354,7 @@ void RenderMultiColumnSet::prepareForLayout(bool initial)
 {
     // Guess box logical top. This might eliminate the need for another layout pass.
     if (RenderBox* previous = RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(this))
-        setLogicalTop(previous->logicalBottom() + previous->marginAfter());
+        setLogicalTop(previous->logicalBottom() + previous->marginAfter(previous->writingMode()));
     else
         setLogicalTop(multiColumnBlockFlow()->borderAndPaddingBefore());
 

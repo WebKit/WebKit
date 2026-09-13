@@ -179,14 +179,14 @@ void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
 
         setLogicalHeight(std::max(logicalHeight(), verticalOffset + borderAndPaddingAfter() + childVerticalMarginBoxExtent + horizontalScrollbarHeight()));
 
-        horizontalOffset += child->marginStart();
+        horizontalOffset += child->marginStart(child->writingMode());
 
         LayoutUnit childHorizontalExtent = child->borderBoxWidth();
         LayoutPoint childLocation(writingMode().isBidiLTR() ? horizontalOffset : borderBoxWidth() - horizontalOffset - childHorizontalExtent,
-            verticalOffset + child->marginBefore());
+            verticalOffset + child->marginBefore(child->writingMode()));
 
         child->setLocation(childLocation);
-        horizontalOffset += childHorizontalExtent + child->marginEnd();
+        horizontalOffset += childHorizontalExtent + child->marginEnd(child->writingMode());
         if (!everHadLayout && child->checkForRepaintDuringLayout())
             child->repaint();
     }

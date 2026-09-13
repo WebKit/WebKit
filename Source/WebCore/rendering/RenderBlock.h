@@ -180,7 +180,6 @@ public:
     LayoutUnit borderBefore() const override;
 
     LayoutUnit marginBefore(WritingMode) const override;
-    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
 
     LayoutUnit adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const override;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const override;
