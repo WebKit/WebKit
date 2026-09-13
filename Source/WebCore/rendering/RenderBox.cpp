@@ -197,6 +197,8 @@ void RenderBox::willBeDestroyed()
             view().unregisterBoxWithScrollSnapPositions(*this);
         if (style().containerType().hasSizeContainment())
             view().unregisterContainerQueryBox(*this);
+        if (style().containerType().hasScrollState())
+            view().unregisterScrollStateQueryBox(*this);
         if (!style().anchorNames().isNone())
             view().unregisterAnchor(*this);
         if (!style().positionTryFallbacks().isNone())
@@ -338,6 +340,11 @@ void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedSty
         view().registerContainerQueryBox(*this);
     else if (oldStyle && oldStyle->containerType().hasSizeContainment())
         view().unregisterContainerQueryBox(*this);
+
+    if (newStyle.containerType().hasScrollState())
+        view().registerScrollStateQueryBox(*this);
+    else if (oldStyle && oldStyle->containerType().hasScrollState())
+        view().unregisterScrollStateQueryBox(*this);
 
     if (!newStyle.positionTryFallbacks().isNone() && newStyle.hasOutOfFlowPosition())
         view().registerPositionTryBox(*this);
