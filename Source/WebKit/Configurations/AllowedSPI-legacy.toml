@@ -366,7 +366,6 @@ selectors = [
     { name = "firstCharCenter", class = "?" },
     { name = "formattedAddress", class = "?" },
     { name = "gestureRecognizer", class = "?" },
-    { name = "getArePasskeysDisallowedForRelyingParty:withCompletionHandler:", class = "?" },
     { name = "getAuthorizationHintsWithURL:responseCode:completion:", class = "?" },
     { name = "getCanCurrentProcessAccessPasskeysForRelyingParty:withCompletionHandler:", class = "?" },
     { name = "getSystemContentDatabaseObject4WebKit:", class = "?" },
