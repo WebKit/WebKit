@@ -903,20 +903,22 @@ WI.Recording = class Recording extends WI.Object
 
                     points = await Promise.all(points.map((item) => this.swizzle(item, WI.Recording.Swizzle.Number)));
 
-                    WI.ImageUtilities.scratchCanvasContext2D((context) => {
+                    {
+                        using context = WI.ImageUtilities.scratchCanvasContext2D();
                         switch (gradientType) {
                         case "radial-gradient":
                             this._swizzle[index][type] = context.createRadialGradient(...points);
-                            return;
+                            break;
                         case "linear-gradient":
                             this._swizzle[index][type] = context.createLinearGradient(...points);
-                            return;
+                            break;
                         case "conic-gradient":
                             this._swizzle[index][type] = context.createConicGradient(...points);
-                            return;
+                            break;
+                        default:
+                            console.assert(false, gradientType);
                         }
-                        console.assert(false, gradientType);
-                    });
+                    }
 
                     let stops = [];
                     for (let stop of data[2]) {
@@ -939,10 +941,9 @@ WI.Recording = class Recording extends WI.Object
                         this.swizzle(data[1], WI.Recording.Swizzle.String),
                     ]);
 
-                    WI.ImageUtilities.scratchCanvasContext2D((context) => {
-                        this._swizzle[index][type] = context.createPattern(image, repeat);
-                        this._swizzle[index][type].__image = image;
-                    });
+                    using context = WI.ImageUtilities.scratchCanvasContext2D();
+                    this._swizzle[index][type] = context.createPattern(image, repeat);
+                    this._swizzle[index][type].__image = image;
 
                     this._swizzle[index][type].__data = {image: image.__data, repeat};
                     break;

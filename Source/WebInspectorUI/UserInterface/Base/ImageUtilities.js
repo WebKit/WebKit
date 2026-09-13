@@ -65,32 +65,38 @@ WI.ImageUtilities = class ImageUtilities {
         });
     }
 
-    static scratchCanvasContext2D(callback)
+    static scratchCanvasContext2D()
     {
-        if (!WI.ImageUtilities._scratchContext2D)
-            WI.ImageUtilities._scratchContext2D = document.createElement("canvas").getContext("2d");
-
-        let context = WI.ImageUtilities._scratchContext2D;
+        let context = WI.ImageUtilities._scratchContext2D?.deref();
+        if (!context || context[Symbol.dispose]) {
+            context = document.createElement("canvas").getContext("2d");
+            WI.ImageUtilities._scratchContext2D = new WeakRef(context);
+        }
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         context.save();
-        callback(context);
-        context.restore();
+
+        function dispose() {
+            context.restore();
+            delete context[Symbol.dispose];
+        }
+        console.assert(!context[Symbol.dispose], context);
+        context[Symbol.dispose] = dispose;
+
+        return context;
     }
 
     static imageFromImageBitmap(data)
     {
         console.assert(data instanceof ImageBitmap);
 
-        let image = null;
-        WI.ImageUtilities.scratchCanvasContext2D((context) => {
-            context.canvas.width = data.width;
-            context.canvas.height = data.height;
-            context.drawImage(data, 0, 0);
+        using context = WI.ImageUtilities.scratchCanvasContext2D();
+        context.canvas.width = data.width;
+        context.canvas.height = data.height;
+        context.drawImage(data, 0, 0);
 
-            image = new Image;
-            image.src = context.canvas.toDataURL();
-        });
+        let image = new Image;
+        image.src = context.canvas.toDataURL();
         return image;
     }
 
@@ -98,15 +104,13 @@ WI.ImageUtilities = class ImageUtilities {
     {
         console.assert(data instanceof ImageData);
 
-        let image = null;
-        WI.ImageUtilities.scratchCanvasContext2D((context) => {
-            context.canvas.width = data.width;
-            context.canvas.height = data.height;
-            context.putImageData(data, 0, 0);
+        using context = WI.ImageUtilities.scratchCanvasContext2D();
+        context.canvas.width = data.width;
+        context.canvas.height = data.height;
+        context.putImageData(data, 0, 0);
 
-            image = new Image;
-            image.src = context.canvas.toDataURL();
-        });
+        let image = new Image;
+        image.src = context.canvas.toDataURL();
         return image;
     }
 
@@ -114,16 +118,14 @@ WI.ImageUtilities = class ImageUtilities {
     {
         console.assert(gradient instanceof CanvasGradient);
 
-        let image = null;
-        WI.ImageUtilities.scratchCanvasContext2D((context) => {
-            context.canvas.width = width;
-            context.canvas.height = height;
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, width, height);
+        using context = WI.ImageUtilities.scratchCanvasContext2D();
+        context.canvas.width = width;
+        context.canvas.height = height;
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, width, height);
 
-            image = new Image;
-            image.src = context.canvas.toDataURL();
-        });
+        let image = new Image;
+        image.src = context.canvas.toDataURL();
         return image;
     }
 };
