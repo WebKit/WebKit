@@ -31,6 +31,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
 #include "LocalFrameViewInlines.h"
+#include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
@@ -138,6 +139,32 @@ bool PositionedLayoutConstraints::isParentOpposingContainingBlock() const
     bool physicalAxisIsCBBlock = m_containingWritingMode.isHorizontal() != (m_physicalAxis == BoxAxis::Horizontal);
     bool containingBlockFlipped = physicalAxisIsCBBlock && m_containingWritingMode.isBlockFlipped();
     return parentFlipped != containingBlockFlipped;
+}
+
+bool PositionedLayoutConstraints::usesStaticPosition(const Style::ComputedStyle& style, LogicalBoxAxis axis, bool isHorizontalWritingMode)
+{
+    if (!style.positionArea().isNone())
+        return false;
+    if (axis == LogicalBoxAxis::Inline)
+        return style.hasStaticInlinePosition(isHorizontalWritingMode) && !style.justifySelf().isAnchorCenter();
+    return style.hasStaticBlockPosition(isHorizontalWritingMode) && !style.alignSelf().isAnchorCenter();
+}
+
+LayoutSize PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(const RenderBoxModelObject& container, const Style::ComputedStyle& outOfFlowBoxStyle)
+{
+    auto isHorizontal = container.writingMode().isHorizontal();
+    auto firstFragmentBorderBoxRect = container.firstFragmentBorderBoxRect();
+    if (container.writingMode().isBlockFlipped()) {
+        // firstFragmentBorderBoxRect() is flipped for painting while this offset is added to unflipped locations.
+        if (CheckedPtr containingBlock = container.containingBlock())
+            containingBlock->flipForWritingMode(firstFragmentBorderBoxRect);
+    }
+    auto offset = toLayoutSize(firstFragmentBorderBoxRect.location());
+    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Inline, isHorizontal))
+        isHorizontal ? offset.setWidth(0_lu) : offset.setHeight(0_lu);
+    if (usesStaticPosition(outOfFlowBoxStyle, LogicalBoxAxis::Block, isHorizontal))
+        isHorizontal ? offset.setHeight(0_lu) : offset.setWidth(0_lu);
+    return offset;
 }
 
 void PositionedLayoutConstraints::captureInsets()

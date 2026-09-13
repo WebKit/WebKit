@@ -95,6 +95,10 @@ public:
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual LayoutRect borderBoundingBox() const = 0;
 
+    virtual LayoutRect borderBoxRectInContainer() const;
+    virtual LayoutRect firstFragmentBorderBoxRect() const;
+    LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
     inline LayoutUnit computedCSSPaddingBottom() const;

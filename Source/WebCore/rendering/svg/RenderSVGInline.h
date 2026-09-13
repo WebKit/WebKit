@@ -101,6 +101,9 @@ private:
     RenderLineBoxList m_legacyLineBoxes;
 };
 
+LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderBoxModelObject&);
+LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderBoxModelObject&);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGInline, isRenderSVGInline())

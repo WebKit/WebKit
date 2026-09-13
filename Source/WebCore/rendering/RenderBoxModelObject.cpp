@@ -41,9 +41,12 @@
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "LegacyInlineFlowBox.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Path.h"
+#include "PositionedLayoutConstraints.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
@@ -58,6 +61,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInline.h"
 #include "RenderTable.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
@@ -445,16 +449,16 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
-        else if (auto* renderInline = dynamicDowncast<RenderInline>(*offsetParent)) {
+        else if (offsetParent->isInlineBox()) {
             // Inside inline formatting context both inflow and statically positioned out-of-flow boxes are positioned relative to the root block container.
-            auto topLeft = renderInline->firstInlineBoxTopLeft();
+            auto topLeft = offsetParent->firstFragmentBorderBoxRect().location();
             if (isOutOfFlowPositioned()) {
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
                 auto isHorizontalWritingMode = !containingBlock() || containingBlock()->writingMode().isHorizontal();
-                if (!outOfFlowStyle.hasStaticInlinePosition(isHorizontalWritingMode))
+                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Inline, isHorizontalWritingMode))
                     topLeft.setX(LayoutUnit { });
-                if (!outOfFlowStyle.hasStaticBlockPosition(isHorizontalWritingMode))
+                if (!PositionedLayoutConstraints::usesStaticPosition(outOfFlowStyle, LogicalBoxAxis::Block, isHorizontalWritingMode))
                     topLeft.setY(LayoutUnit { });
             }
             referencePoint.move(-topLeft.x(), -topLeft.y());
@@ -684,16 +688,12 @@ LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 
 LayoutUnit RenderBoxModelObject::offsetLeft() const
 {
-    // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to adjustedPositionRelativeToOffsetParent.
-    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).x();
+    return adjustedPositionRelativeToOffsetParent(firstFragmentBorderBoxRect().location()).x();
 }
 
 LayoutUnit RenderBoxModelObject::offsetTop() const
 {
-    // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to adjustedPositionRelativeToOffsetParent.
-    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).y();
+    return adjustedPositionRelativeToOffsetParent(firstFragmentBorderBoxRect().location()).y();
 }
 
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size) const
@@ -962,6 +962,85 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
             containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
     }
+}
+
+LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->firstInlineBoxRect(*this);
+    if (auto* inlineBox = firstLegacyInlineBoxFor(*this))
+        return { flooredLayoutPoint(inlineBox->locationIncludingFlipping()), LayoutSize { inlineBox->size() } };
+    return { };
+}
+
+LayoutSize RenderBoxModelObject::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
+{
+    ASSERT(&container == this->container() || is<RenderFragmentContainer>(container));
+
+    LayoutSize offset;
+    if (isInFlowPositioned())
+        offset += offsetForInFlowPosition();
+
+    if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
+        offset -= toLayoutSize(boxContainer->scrollPosition());
+
+    if (offsetDependsOnPoint)
+        *offsetDependsOnPoint |= (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
+
+    return offset;
+}
+
+LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
+{
+    auto boundingBoxOfFragments = [&]() -> IntRect {
+        if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+            if (!layoutBox() || !layout->contains(*this)) {
+                // Repaint may be issued on subtrees during content mutation with newly inserted renderers
+                // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
+                ASSERT(needsLayout());
+                return { };
+            }
+            if (isRenderSVGInline()) {
+                // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
+                // any post-layout box adjustments.
+                FloatRect result;
+                for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward())
+                    result.unite(box->visualRectIgnoringBlockDirection());
+                return enclosingIntRect(result);
+            }
+            return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+        }
+
+        auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+        auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+
+        // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero. We have been
+        // unable to reproduce this at all (and consequently unable to figure ot why this is happening). The assert will hopefully catch the problem in debug
+        // builds and help us someday figure out why. We also put in a redundant check of lastLineBox() to avoid the crash for now.
+        ASSERT(!firstInlineBox == !lastInlineBox); // Either both are null or both exist.
+        if (!firstInlineBox || !lastInlineBox)
+            return { };
+
+        // Return the width of the minimal left side and the maximal right side.
+        float logicalLeftSide = 0;
+        float logicalRightSide = 0;
+        for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
+            if (curr == firstInlineBox || curr->logicalLeft() < logicalLeftSide)
+                logicalLeftSide = curr->logicalLeft();
+            if (curr == firstInlineBox || curr->logicalRight() > logicalRightSide)
+                logicalRightSide = curr->logicalRight();
+        }
+
+        bool isHorizontal = writingMode().isHorizontal();
+
+        float x = isHorizontal ? logicalLeftSide : firstInlineBox->x();
+        float y = isHorizontal ? firstInlineBox->y() : logicalLeftSide;
+        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastInlineBox->logicalBottom() - x;
+        float height = isHorizontal ? lastInlineBox->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        return enclosingIntRect(FloatRect { x, y, width, height });
+    };
+
+    return boundingBoxOfFragments();
 }
 
 } // namespace WebCore
