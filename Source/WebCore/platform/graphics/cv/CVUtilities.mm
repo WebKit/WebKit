@@ -197,10 +197,12 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     ASSERT(status == noErr);
 
+    // Full-range black is Y=0; video-range black is the luma floor Y=16.
+    uint8_t blackLuma = format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ? 16 : 0;
     auto yPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 0);
     size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
     for (unsigned i = 0; i < height; ++i)
-        zeroSpan(yPlane.subspan(i * yStride, width));
+        memsetSpan(yPlane.subspan(i * yStride, width), blackLuma);
 
     auto uvPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 1);
     size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
