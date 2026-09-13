@@ -35,9 +35,9 @@
 #include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)
-#include <wtf/text/WTFString.h>
 #elif USE(CORE_TEXT)
 #include <CoreFoundation/CFBase.h>
 #include <wtf/RetainPtr.h>
@@ -96,6 +96,13 @@ public:
     WEBCORE_EXPORT FontCustomPlatformSerializedData NODELETE serializedData() const;
     WEBCORE_EXPORT static std::optional<Ref<FontCustomPlatformData>> tryMakeFromSerializationData(FontCustomPlatformSerializedData&&, bool);
 
+    const String& sourceURL() const { return m_sourceURL; }
+    void setSourceURL(String sourceURL)
+    {
+        ASSERT(m_sourceURL.isEmpty());
+        m_sourceURL = WTF::move(sourceURL);
+    }
+
 #if USE(SKIA)
     sk_sp<SkTypeface> retrieveOrAddCachedTypeface(const Vector<SkFontArguments::VariationPosition::Coordinate>&);
     void clearVariationTypefacesCache() const;
@@ -118,6 +125,8 @@ public:
     FontPlatformData::CreationData creationData;
 
     RenderingResourceIdentifier m_renderingResourceIdentifier;
+
+    String m_sourceURL;
 };
 
 inline bool computeSyntheticBold(bool hasWeightVariationAxis, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext)
