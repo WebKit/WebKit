@@ -32,7 +32,7 @@ PASS XPathEvaluator includes XPathEvaluatorBase: member names are unique
 PASS Document includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes GlobalEventHandlers: member names are unique
 PASS HTMLElement includes ElementContentEditable: member names are unique
-PASS HTMLElement includes HTMLOrSVGElement: member names are unique
+PASS HTMLElement includes HTMLOrSVGOrMathMLElement: member names are unique
 PASS Window includes GlobalEventHandlers: member names are unique
 PASS Window includes WindowEventHandlers: member names are unique
 PASS Window includes WindowOrWorkerGlobalScope: member names are unique
@@ -915,9 +915,9 @@ PASS ShadowRoot interface: existence and properties of interface prototype objec
 PASS ShadowRoot interface: existence and properties of interface prototype object's @@unscopables property
 PASS ShadowRoot interface: attribute mode
 PASS ShadowRoot interface: attribute delegatesFocus
+PASS ShadowRoot interface: attribute serializable
 PASS ShadowRoot interface: attribute slotAssignment
 PASS ShadowRoot interface: attribute clonable
-PASS ShadowRoot interface: attribute serializable
 PASS ShadowRoot interface: attribute host
 PASS ShadowRoot interface: attribute onslotchange
 PASS ShadowRoot interface: attribute customElementRegistry
@@ -941,8 +941,8 @@ PASS Element interface: attribute attributes
 PASS Element interface: operation getAttributeNames()
 PASS Element interface: operation getAttribute(DOMString)
 PASS Element interface: operation getAttributeNS(DOMString?, DOMString)
-PASS Element interface: operation setAttribute(DOMString, DOMString)
-PASS Element interface: operation setAttributeNS(DOMString?, DOMString, DOMString)
+PASS Element interface: operation setAttribute(DOMString, (TrustedType or DOMString))
+PASS Element interface: operation setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString))
 PASS Element interface: operation removeAttribute(DOMString)
 PASS Element interface: operation removeAttributeNS(DOMString?, DOMString)
 PASS Element interface: operation toggleAttribute(DOMString, optional boolean)
@@ -1001,10 +1001,10 @@ PASS Element interface: element must inherit property "getAttribute(DOMString)" 
 PASS Element interface: calling getAttribute(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "getAttributeNS(DOMString?, DOMString)" with the proper type
 PASS Element interface: calling getAttributeNS(DOMString?, DOMString) on element with too few arguments must throw TypeError
-PASS Element interface: element must inherit property "setAttribute(DOMString, DOMString)" with the proper type
-PASS Element interface: calling setAttribute(DOMString, DOMString) on element with too few arguments must throw TypeError
-PASS Element interface: element must inherit property "setAttributeNS(DOMString?, DOMString, DOMString)" with the proper type
-PASS Element interface: calling setAttributeNS(DOMString?, DOMString, DOMString) on element with too few arguments must throw TypeError
+PASS Element interface: element must inherit property "setAttribute(DOMString, (TrustedType or DOMString))" with the proper type
+PASS Element interface: calling setAttribute(DOMString, (TrustedType or DOMString)) on element with too few arguments must throw TypeError
+PASS Element interface: element must inherit property "setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString))" with the proper type
+PASS Element interface: calling setAttributeNS(DOMString?, DOMString, (TrustedType or DOMString)) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "removeAttribute(DOMString)" with the proper type
 PASS Element interface: calling removeAttribute(DOMString) on element with too few arguments must throw TypeError
 PASS Element interface: element must inherit property "removeAttributeNS(DOMString?, DOMString)" with the proper type
@@ -1371,15 +1371,34 @@ PASS CDATASection interface: existence and properties of interface prototype obj
 PASS CDATASection interface: existence and properties of interface prototype object's "constructor" property
 PASS CDATASection interface: existence and properties of interface prototype object's @@unscopables property
 PASS ProcessingInstruction interface: existence and properties of interface object
-PASS ProcessingInstruction interface object length
+FAIL ProcessingInstruction interface object length assert_equals: wrong value for ProcessingInstruction.length expected 1 but got 0
 PASS ProcessingInstruction interface object name
 PASS ProcessingInstruction interface: existence and properties of interface prototype object
 PASS ProcessingInstruction interface: existence and properties of interface prototype object's "constructor" property
 PASS ProcessingInstruction interface: existence and properties of interface prototype object's @@unscopables property
 PASS ProcessingInstruction interface: attribute target
+FAIL ProcessingInstruction interface: operation hasAttributes() assert_own_property: interface prototype object missing non-static operation expected property "hasAttributes" missing
+FAIL ProcessingInstruction interface: operation getAttributeNames() assert_own_property: interface prototype object missing non-static operation expected property "getAttributeNames" missing
+FAIL ProcessingInstruction interface: operation getAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "getAttribute" missing
+FAIL ProcessingInstruction interface: operation setAttribute(DOMString, DOMString) assert_own_property: interface prototype object missing non-static operation expected property "setAttribute" missing
+FAIL ProcessingInstruction interface: operation removeAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "removeAttribute" missing
+FAIL ProcessingInstruction interface: operation toggleAttribute(DOMString, optional boolean) assert_own_property: interface prototype object missing non-static operation expected property "toggleAttribute" missing
+FAIL ProcessingInstruction interface: operation hasAttribute(DOMString) assert_own_property: interface prototype object missing non-static operation expected property "hasAttribute" missing
 PASS ProcessingInstruction must be primary interface of xmlDoc.createProcessingInstruction("abc", "def")
 PASS Stringification of xmlDoc.createProcessingInstruction("abc", "def")
 PASS ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "target" with the proper type
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttributes()" with the proper type assert_inherits: property "hasAttributes" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttributeNames()" with the proper type assert_inherits: property "getAttributeNames" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "getAttribute(DOMString)" with the proper type assert_inherits: property "getAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: calling getAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "getAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "setAttribute(DOMString, DOMString)" with the proper type assert_inherits: property "setAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: calling setAttribute(DOMString, DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "setAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "removeAttribute(DOMString)" with the proper type assert_inherits: property "removeAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: calling removeAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "removeAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "toggleAttribute(DOMString, optional boolean)" with the proper type assert_inherits: property "toggleAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: calling toggleAttribute(DOMString, optional boolean) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "toggleAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "hasAttribute(DOMString)" with the proper type assert_inherits: property "hasAttribute" not found in prototype chain
+FAIL ProcessingInstruction interface: calling hasAttribute(DOMString) on xmlDoc.createProcessingInstruction("abc", "def") with too few arguments must throw TypeError assert_inherits: property "hasAttribute" not found in prototype chain
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "data" with the proper type
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "length" with the proper type
 PASS CharacterData interface: xmlDoc.createProcessingInstruction("abc", "def") must inherit property "substringData(unsigned long, unsigned long)" with the proper type

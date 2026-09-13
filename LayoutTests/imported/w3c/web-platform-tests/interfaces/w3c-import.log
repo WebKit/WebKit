@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/ANGLE_instanced_arrays.idl
@@ -67,9 +65,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/ambient-light.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/anchors.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/anonymous-iframe.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/attribution-reporting-api.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/attribution.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/audio-output.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/audio-session.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/autofill-event.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/autoplay-detection.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/background-fetch.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/background-sync.idl
@@ -77,6 +76,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/battery-status.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/beacon.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/body-tracking.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/camera-element.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/capture-handle-identity.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/captured-mouse-events.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/captured-mouse-events.tentative.idl
@@ -84,12 +84,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/compat.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/compression.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/compute-pressure.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/connection-allowlists.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/console.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/contact-picker.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/container-timing.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/content-index.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/cookiestore.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/cpu-performance.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/crash-reporting.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/credential-management.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/cross-origin-storage.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/csp-embedded-enforcement.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/csp-next.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-anchor-position.idl
@@ -119,7 +123,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-pseudo.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-regions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-scroll-snap-2.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/css-shadow-parts.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/css-shadow.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/css-sizing-4.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-transitions-2.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-transitions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/css-typed-om.idl
@@ -147,7 +152,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/fedcm.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/fenced-frame.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/fetch.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/fido.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/fido-client-to-authenticator-protocol.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/file-system-access.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/filter-effects.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/font-metrics-api.idl
@@ -156,7 +161,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/gamepad-extensions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/gamepad.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/generic-sensor.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/geolocation-sensor.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/geolocation-element.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/geolocation-element.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/geolocation.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/geometry.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/get-installed-related-apps.idl
@@ -165,6 +171,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/handwriting-recognition.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/hr-time.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/html-media-capture.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/html-menu-elements.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/html.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/idle-detection.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/image-capture.idl
@@ -194,6 +201,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/media-playback-quality.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/media-source.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediacapture-automation.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/mediacapture-extensions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediacapture-fromelement.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediacapture-handle-actions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediacapture-region.idl
@@ -204,6 +212,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediaqueries-5.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediasession.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mediastream-recording.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/microphone-element.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/model-element.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/mst-content-hint.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/navigation-timing.idl
@@ -213,11 +222,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/observable.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/orientation-event.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/orientation-sensor.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/origin.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/page-lifecycle.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/paint-timing.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/parakeet.tentative.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/payment-handler.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/payment-request.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/performance-measure-memory.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/performance-timeline.idl
@@ -234,9 +241,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/prefer-current-tab.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/prerendering-revamped.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/presentation-api.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/privacy-preserving-attribution.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/private-aggregation-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/private-click-measurement.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/prompt-api.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/proofreader-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/proximity.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/push-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/raw-camera-access.idl
@@ -244,12 +251,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/referrer-policy.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/remote-playback.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/reporting.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/requestStorageAccessFor.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/requestidlecallback.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/resize-observer.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/resource-timing.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/saa-non-cookie-storage.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/sanitizer-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/savedata.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/scheduling-apis.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/screen-capture.idl
@@ -263,13 +268,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/server-timing.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/service-workers.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/shape-detection-api.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/shared-storage.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/soft-navigations.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/speech-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/sri.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/storage-access.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/storage-buckets.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/storage.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/streams.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/sub-apps.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/svg-animations.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/svg-paths.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/testutils.idl
@@ -278,12 +284,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/translation-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/trust-token-api.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/trusted-types.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/turtledove.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/ua-client-hints.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/uievents.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/url.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/urlpattern.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/user-timing.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/usermedia-element.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/vibration.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/video-rvfc.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/virtual-keyboard.idl
@@ -294,6 +300,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-animations-2.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-animations.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-app-launch.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/web-based-payment-handler.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-bluetooth-scanning.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-bluetooth.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/web-locks.idl
@@ -314,11 +321,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webcrypto-secure-curves.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webcrypto.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webdriver.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/webextensions.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webgl1.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webgl2.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webgpu.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webhid.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webidl.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/webmcp.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webmidi.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webnn.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webrtc-encoded-transform.idl
@@ -331,7 +340,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/websockets.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webtransport.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webusb.idl
-/LayoutTests/imported/w3c/web-platform-tests/interfaces/webvr.tentative.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webvtt.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-ar-module.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-depth-sensing.idl
@@ -341,6 +349,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-hit-test.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-lighting-estimation.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-plane-detection.idl
+/LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr-webgpu-binding.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxr.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/webxrlayers.idl
 /LayoutTests/imported/w3c/web-platform-tests/interfaces/window-controls-overlay.idl
