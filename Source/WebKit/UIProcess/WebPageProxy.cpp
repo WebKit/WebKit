@@ -8005,10 +8005,13 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
-    if (RefPtr automationSession = m_configuration->processPool().automationSession())
-        automationSession->didDestroyFrame(frameID);
+    // Disconnecting the frame reports it to the automation session first (WebFrameProxy::disconnect ->
+    // WebAutomationSession::willDestroyFrame), which needs the frame's handle and navigation state; only
+    // then may the session release them.
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
+    if (RefPtr automationSession = m_configuration->processPool().automationSession())
+        automationSession->didDestroyFrame(frameID);
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
 #if PLATFORM(COCOA)
@@ -8557,13 +8560,40 @@ void WebPageProxy::didCancelClientRedirectForFrame(IPC::Connection& connection, 
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCancelClientRedirectForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
 
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->navigationAbortedForFrame(*frame, std::nullopt);
-#endif
+    // This is not reported to automation as a navigation abort: FrameLoader::clientRedirectCancelledOrFinished
+    // sends it whenever a client redirect's status changes, including when the redirect succeeds. A
+    // navigation interrupted by a redirect is reported when the redirect's own navigation starts.
 
     if (frame->isMainFrame())
         m_navigationClient->didCancelClientRedirect(*this);
+}
+
+void WebPageProxy::didBlockNavigationByContentPolicyForFrame(IPC::Connection& connection, FrameIdentifier frameID, URL&& blockedURL)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_URL(process, blockedURL);
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didBlockNavigationByContentPolicyForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // A child-frame navigation blocked by the embedding content security policy never starts a
+    // provisional load, so WebCore reports neither a start nor a failure. Synthesize both for
+    // automation so the blocked navigable emits navigationStarted then navigationFailed, each with
+    // the blocked URL, matching the frame's browsing-context handle in browsingContext.getTree. The
+    // load never started, so it has no WebCore navigation identifier; allocate one so the start and
+    // failure share a single, unique id (the same allocator API::Navigation uses).
+    if (RefPtr automationSession = activeAutomationSession()) {
+        auto navigationID = WebCore::NavigationIdentifier::generate();
+        automationSession->navigationStartedForFrame(*frame, navigationID, blockedURL.string());
+        automationSession->navigationFailedForFrame(*frame, navigationID, blockedURL.string());
+    }
+#else
+    UNUSED_PARAM(blockedURL);
+#endif
 }
 
 void WebPageProxy::didChangeProvisionalURLForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url)
@@ -8669,7 +8699,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 #if ENABLE(WEBDRIVER_BIDI)
     if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (RefPtr automationSession = activeAutomationSession())
-            automationSession->navigationFailedForFrame(frame, navigationID);
+            automationSession->navigationFailedForFrame(frame, navigationID, provisionalURL);
     }
 #endif
 
