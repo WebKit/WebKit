@@ -1438,7 +1438,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
 
         if (requestPriority != metricPriority) {
             // Priority changed, so update metric to latest value
-            WTFLogAlways("Priority changed from %d to %d for %s", metricPriority, requestPriority, m_parameters.request.url().string().utf8().data());
+            LOADER_RELEASE_LOG_DEBUG("Priority changed from %d to %d for %s", metricPriority, requestPriority, m_parameters.request.url().string().utf8().data());
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
         }
     }
