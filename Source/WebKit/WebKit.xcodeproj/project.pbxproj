@@ -6983,6 +6983,8 @@
 		5E55104100000000000A0002 /* SessionHistoryTraversalQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionHistoryTraversalQueue.h; sourceTree = "<group>"; };
 		5E55104200000000000B0001 /* SecurityFlagsController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityFlagsController.cpp; sourceTree = "<group>"; };
 		5E55104200000000000B0002 /* SecurityFlagsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsController.h; sourceTree = "<group>"; };
+		5E55104200000000000C0001 /* MemoryFootprintMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintMonitor.cpp; sourceTree = "<group>"; };
+		5E55104200000000000C0002 /* MemoryFootprintMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemoryFootprintMonitor.h; sourceTree = "<group>"; };
 		5E55104200000000000B0003 /* SecurityFlagsControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SecurityFlagsControllerCocoa.mm; sourceTree = "<group>"; };
 		5EB592AB2DC2049A0058664B /* BidiStorage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiStorage.json; sourceTree = "<group>"; };
 		5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiStorageAgent.cpp; sourceTree = "<group>"; };
@@ -16304,6 +16306,8 @@
 				0F9FA7DB26CEFADA00872684 /* MediaKeySystemPermissionRequestProxy.cpp */,
 				9ACC07B425C8160B00DC6386 /* MediaKeySystemPermissionRequestProxy.h */,
 				93425898255B534B0059EEDD /* MediaPermissionUtilities.h */,
+				5E55104200000000000C0001 /* MemoryFootprintMonitor.cpp */,
+				5E55104200000000000C0002 /* MemoryFootprintMonitor.h */,
 				1C5A104E287BB1E90034FDA4 /* OverrideLanguages.cpp */,
 				1C5A104F287BB1E90034FDA4 /* OverrideLanguages.h */,
 				D2FB53952E13020F00AF9D5C /* PageClient.cpp */,

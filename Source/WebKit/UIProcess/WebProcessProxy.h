@@ -63,6 +63,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -269,6 +270,7 @@ public:
 
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static Ref<WebProcessProxy> fromConnection(const IPC::Connection&);
+    static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxy* NODELETE webPage(WebPageProxyIdentifier);
     static WebPageProxy* NODELETE webPage(WebCore::PageIdentifier);
     static WebPageProxy* NODELETE audioCapturingWebPage();
@@ -427,6 +429,9 @@ public:
     static const Vector<String>& mediaMIMETypes();
     void cacheMediaMIMETypes(const Vector<String>&);
     void cacheMediaSourceTypeSupported(const String& type, bool isSupported);
+
+    void setTaskNamePort(MachSendRight&&);
+    const MachSendRight& taskNamePort() const { return m_taskNamePort; }
 #endif
 
 #if HAVE(DISPLAY_LINK)
@@ -708,7 +713,6 @@ private:
 
     using WebProcessProxyMap = HashMap<WebCore::ProcessIdentifier, CheckedRef<WebProcessProxy>>;
     static WebProcessProxyMap& NODELETE allProcessMap();
-    static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& NODELETE globalPageMap();
     static Vector<Ref<WebPageProxy>> globalPages();
 
@@ -916,6 +920,7 @@ private:
 
 #if PLATFORM(COCOA)
     MediaCaptureSandboxExtensions m_mediaCaptureSandboxExtensions { SandboxExtensionType::None };
+    MachSendRight m_taskNamePort;
 #endif
     RefPtr<Logger> m_logger;
 

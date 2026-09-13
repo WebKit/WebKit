@@ -262,6 +262,7 @@ WebProcess/GPU/webrtc/SharedVideoFrame.cpp
 
 UIProcess/_WKWebViewPrintFormatter.mm @nonARC
 UIProcess/ApplicationStateTracker.mm @nonARC
+UIProcess/MemoryFootprintMonitor.cpp
 UIProcess/PerActivityStateCPUUsageSampler.cpp
 UIProcess/ViewGestureController.cpp
 UIProcess/ViewSnapshotStore.cpp

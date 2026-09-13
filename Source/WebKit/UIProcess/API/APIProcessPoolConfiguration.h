@@ -157,6 +157,9 @@ public:
     void setMemoryFootprintPollIntervalForTesting(Seconds interval) { m_memoryFootprintPollIntervalForTesting = interval; }
     Seconds memoryFootprintPollIntervalForTesting() const { return m_memoryFootprintPollIntervalForTesting; }
 
+    void setMemoryLimitForTesting(size_t limit) { m_memoryLimitForTesting = limit; }
+    size_t memoryLimitForTesting() const { return m_memoryLimitForTesting; }
+
     void setMemoryFootprintNotificationThresholds(Vector<uint64_t>&& thresholds) { m_memoryFootprintNotificationThresholds = WTF::move(thresholds); }
     const Vector<uint64_t>& memoryFootprintNotificationThresholds() const LIFETIME_BOUND { return m_memoryFootprintNotificationThresholds; }
 
@@ -206,6 +209,7 @@ private:
 #endif
     WTF::String m_timeZoneOverride;
     Seconds m_memoryFootprintPollIntervalForTesting;
+    size_t m_memoryLimitForTesting { 0 };
     Vector<uint64_t> m_memoryFootprintNotificationThresholds;
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     bool m_suspendsWebProcessesAggressivelyOnMemoryPressure { false };

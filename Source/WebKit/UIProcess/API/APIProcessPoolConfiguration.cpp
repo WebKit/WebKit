@@ -84,6 +84,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #endif
     copy->m_timeZoneOverride = this->m_timeZoneOverride;
     copy->m_memoryFootprintPollIntervalForTesting = this->m_memoryFootprintPollIntervalForTesting;
+    copy->m_memoryLimitForTesting = this->m_memoryLimitForTesting;
     copy->m_memoryFootprintNotificationThresholds = this->m_memoryFootprintNotificationThresholds;
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     copy->m_suspendsWebProcessesAggressivelyOnMemoryPressure = this->m_suspendsWebProcessesAggressivelyOnMemoryPressure;

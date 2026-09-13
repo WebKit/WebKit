@@ -208,6 +208,11 @@ void WKContextConfigurationSetShouldConfigureJSCForTesting(WKContextConfiguratio
     toImpl(configuration)->setShouldConfigureJSCForTesting(value);
 }
 
+void WKContextConfigurationSetMemoryLimitForTesting(WKContextConfigurationRef configuration, uint64_t limit)
+{
+    toImpl(configuration)->setMemoryLimitForTesting(static_cast<size_t>(limit));
+}
+
 WKStringRef WKContextConfigurationCopyTimeZoneOverride(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->timeZoneOverride());

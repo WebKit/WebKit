@@ -28,11 +28,18 @@
 #include <cstdint>
 #include <wtf/ExportMacros.h>
 
+#if PLATFORM(COCOA)
+#include <mach/port.h>
+#endif
+
 namespace WTF {
 
 WTF_EXPORT_PRIVATE size_t memoryFootprint();
 
+#if PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE size_t memoryFootprint(mach_port_t);
+#endif
+
 }
 
 using WTF::memoryFootprint;
-

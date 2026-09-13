@@ -390,6 +390,16 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _processPoolConfiguration->memoryFootprintPollIntervalForTesting().seconds();
 }
 
+- (void)setMemoryLimitForTesting:(size_t)limit
+{
+    _processPoolConfiguration->setMemoryLimitForTesting(limit);
+}
+
+- (size_t)memoryLimitForTesting
+{
+    return _processPoolConfiguration->memoryLimitForTesting();
+}
+
 - (NSArray<NSNumber *> *)memoryFootprintNotificationThresholds
 {
     const auto& thresholds = _processPoolConfiguration->memoryFootprintNotificationThresholds();
