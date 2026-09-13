@@ -27,11 +27,10 @@ function test()
 
             await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.reloadPage({ignoreCache: true}),
             ]);
 
-            window.location = window.location.href; // Manually reload
-
-            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+            await new Promise(resolve => setTimeout(resolve, 300)); // Microtask yield
 
             let resources = [];
             for (let target of WI.targetManager.targets) {
