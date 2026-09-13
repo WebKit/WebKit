@@ -227,6 +227,10 @@ protected:
 
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, const Style::ZoomFactor&) const;
 
+protected:
+    const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
+
 private:
     virtual LayoutRect frameRectForStickyPositioning() const = 0;
 
