@@ -25,7 +25,7 @@
 
 WI.CallFrameView = class CallFrameView extends WI.Object
 {
-    constructor(callFrame, {showFunctionName, indicateIfBlackboxed, isAsyncBoundaryCallFrame, isTruncatedBoundaryCallFrame} = {})
+    constructor(callFrame, {showFunctionName, indicateIfBlackboxed, isAsyncBoundaryCallFrame, isTruncatedBoundaryCallFrame, stackTrace} = {})
     {
         console.assert(callFrame instanceof WI.CallFrame);
 
@@ -47,6 +47,7 @@ WI.CallFrameView = class CallFrameView extends WI.Object
             WI.linkifyElement(callFrameElement, sourceCodeLocation, {
                 ignoreNetworkTab: true,
                 ignoreSearchTab: true,
+                stackTrace,
             });
 
             var linkElement = document.createElement("a");
