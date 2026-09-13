@@ -9491,7 +9491,13 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     if (!frame)
         return;
 
-    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (process->coreProcessIdentifier() != frame->process().coreProcessIdentifier()) {
+        ASSERT(preferences().siteIsolationEnabled());
+        return;
+    }
+
+    MESSAGE_CHECK_URL(process, url);
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didSameDocumentNavigationForFrame: frameID=%" PRIu64 ", isMainFrame=%d, type=%u", frameID.toUInt64(), frame->isMainFrame(), std::to_underlying(navigationType));
 
@@ -9525,10 +9531,8 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
         automationSession->fragmentNavigatedForFrame(*frame, navigationID);
 #endif
 
-    if (isMainFrame) {
-        Ref process = WebProcessProxy::fromConnection(connection);
+    if (isMainFrame)
         m_navigationClient->didSameDocumentNavigation(*this, navigation.get(), navigationType, process->transformHandlesToObjects(protect(userData.object()).get()).get());
-    }
 
     if (isMainFrame)
         protectedPageClient->didSameDocumentNavigationForMainFrame(navigationType);
@@ -10975,8 +10979,14 @@ void WebPageProxy::didUpdateHistoryTitle(IPC::Connection& connection, String&& t
     if (!frame)
         return;
 
+    Ref process = WebProcessProxy::fromConnection(connection);
+    if (process->coreProcessIdentifier() != frame->process().coreProcessIdentifier()) {
+        ASSERT(preferences().siteIsolationEnabled());
+        return;
+    }
+
     MESSAGE_CHECK_BASE(frame->page() == this, connection);
-    MESSAGE_CHECK_URL(protect(m_legacyMainFrameProcess), url);
+    MESSAGE_CHECK_URL(process, url);
 
     if (frame->isMainFrame())
         m_historyClient->didUpdateHistoryTitle(*this, title, url);
