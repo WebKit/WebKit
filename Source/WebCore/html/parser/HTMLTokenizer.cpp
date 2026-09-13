@@ -136,6 +136,14 @@ inline bool HTMLTokenizer::emitAndResumeInDataState(SegmentedString& source)
     return true;
 }
 
+inline bool HTMLTokenizer::emitProcessingInstruction(SegmentedString& source)
+{
+    m_temporaryBuffer.clear();
+    m_state = DataState;
+    source.advancePastNonNewline();
+    return true;
+}
+
 inline bool HTMLTokenizer::emitAndReconsumeInDataState()
 {
     saveEndTagNameIfNeeded();
@@ -337,6 +345,8 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
             ADVANCE_PAST_NON_NEWLINE_TO(TagNameState);
         }
         if (character == '?') {
+            if (m_options.templateForEnabled)
+                ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionOpenState);
             parseError();
             // The spec consumes the current character before switching
             // to the bogus comment state, but it's easier to implement
@@ -984,6 +994,98 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
         }
         parseError();
         RECONSUME_IN(BeforeAttributeNameState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionOpenState)
+        ASSERT(m_options.templateForEnabled);
+        if (character == '_' || isASCIIAlpha(character)) {
+            m_token.beginProcessingInstruction();
+            RECONSUME_IN(ProcessingInstructionTargetState);
+        }
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        parseError();
+        m_token.beginComment();
+        m_token.appendToComment("?"_s);
+        RECONSUME_IN(ContinueBogusCommentState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionTargetState)
+        ASSERT(m_options.templateForEnabled);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        if (character == '-' || character == '_' || isASCIIAlphanumeric(character)) {
+            m_token.appendToProcessingInstructionTarget(character);
+            appendToTemporaryBuffer(character);
+            ADVANCE_TO(ProcessingInstructionTargetState);
+        }
+        if (!(isTokenizerWhitespace(character) || character == '>' || character == '?')) {
+            parseError();
+            m_token.clear();
+            m_token.beginComment();
+            m_token.appendToComment("?"_s);
+            for (auto targetCharacter : m_temporaryBuffer)
+                m_token.appendToComment(static_cast<char>(targetCharacter));
+            m_temporaryBuffer.clear();
+            RECONSUME_IN(ContinueBogusCommentState);
+        }
+        auto target = StringImpl::create8BitIfPossible(m_token.processingInstructionTarget());
+        if (equalLettersIgnoringASCIICase(target, "xml"_s) || equalLettersIgnoringASCIICase(target, "xml-stylesheet"_s)) {
+            parseError();
+            m_token.clear();
+            m_token.beginComment();
+            m_token.appendToComment("?"_s);
+            for (auto targetCharacter : m_temporaryBuffer)
+                m_token.appendToComment(static_cast<char>(targetCharacter));
+            m_temporaryBuffer.clear();
+            RECONSUME_IN(ContinueBogusCommentState);
+        }
+        RECONSUME_IN(AfterProcessingInstructionTargetState);
+    END_STATE()
+
+    BEGIN_STATE(AfterProcessingInstructionTargetState)
+        ASSERT(m_options.templateForEnabled);
+        if (isTokenizerWhitespace(character))
+            ADVANCE_TO(AfterProcessingInstructionTargetState);
+        if (character == '?')
+            ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionQuestionMarkState);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        RECONSUME_IN(ProcessingInstructionDataState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionDataState)
+        ASSERT(m_options.templateForEnabled);
+        if (character == '?')
+            ADVANCE_PAST_NON_NEWLINE_TO(ProcessingInstructionQuestionMarkState);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        m_token.appendToProcessingInstructionData(character);
+        ADVANCE_TO(ProcessingInstructionDataState);
+    END_STATE()
+
+    BEGIN_STATE(ProcessingInstructionQuestionMarkState)
+        ASSERT(m_options.templateForEnabled);
+        if (character == '>')
+            return emitProcessingInstruction(source);
+        if (character == kEndOfFileMarker) {
+            parseError();
+            return emitEndOfFile(source);
+        }
+        m_token.appendToProcessingInstructionData('?');
+        RECONSUME_IN(ProcessingInstructionDataState);
     END_STATE()
 
     BEGIN_STATE(BogusCommentState)

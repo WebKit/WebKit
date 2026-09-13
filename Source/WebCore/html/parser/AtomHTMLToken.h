@@ -79,13 +79,18 @@ public:
     const String& comment() const LIFETIME_BOUND;
     String& comment() LIFETIME_BOUND;
 
+    // Processing instruction
+
+    const AtomString& processingInstructionTarget() const LIFETIME_BOUND;
+    const String& processingInstructionData() const LIFETIME_BOUND;
+
     bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; }
 
 private:
     void initializeAttributes(const HTMLToken::AttributeList& attributes);
 
-    AtomString m_name; // StartTag, EndTag, DOCTYPE.
-    String m_data; // Comment
+    AtomString m_name; // StartTag, EndTag, DOCTYPE, ProcessingInstruction.
+    String m_data; // Comment, ProcessingInstruction.
     std::unique_ptr<DoctypeData> m_doctypeData; // DOCTYPE.
     Vector<Attribute> m_attributes; // StartTag, EndTag.
 
@@ -183,6 +188,18 @@ inline String& AtomHTMLToken::comment()
     return m_data;
 }
 
+inline const AtomString& AtomHTMLToken::processingInstructionTarget() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_name;
+}
+
+inline const String& AtomHTMLToken::processingInstructionData() const
+{
+    ASSERT(m_type == Type::ProcessingInstruction);
+    return m_data;
+}
+
 inline bool AtomHTMLToken::forceQuirks() const
 {
     ASSERT(m_type == Type::DOCTYPE);
@@ -276,6 +293,10 @@ inline AtomHTMLToken::AtomHTMLToken(HTMLToken& token)
             m_data = token.comment().span();
         return;
     }
+    case Type::ProcessingInstruction:
+        m_name = AtomString(token.processingInstructionTarget().span());
+        m_data = StringImpl::create8BitIfPossible(token.processingInstructionData());
+        return;
     case Type::Character:
         m_externalCharacters = token.characters().span();
         m_externalCharactersIsAll8BitData = token.charactersIsAll8BitData();
