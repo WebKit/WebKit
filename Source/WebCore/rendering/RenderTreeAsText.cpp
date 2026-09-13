@@ -223,7 +223,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     else if (auto* br = dynamicDowncast<RenderLineBreak>(o); br && br->isBR())
         r = br->linesBoundingBox();
     else if (auto* inlineFlow = dynamicDowncast<RenderInline>(o))
-        r = inlineFlow->linesBoundingBox();
+        r = inlineFlow->borderBoxRectInContainer();
     else if (auto* cell = dynamicDowncast<RenderTableCell>(o)) {
         // FIXME: Deliberately dump the "inner" box of table cells, since that is what current results reflect.  We'd like
         // to clean up the results to dump both the outer box and the intrinsic padding so that both bits of information are

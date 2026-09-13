@@ -1242,12 +1242,12 @@ InlineIterator::LeafBoxIterator LineLayout::boxFor(const RenderElement& renderEl
     return InlineIterator::boxFor(*m_inlineContent, *firstIndex);
 }
 
-InlineIterator::InlineBoxIterator LineLayout::firstInlineBoxFor(const RenderInline& renderInline) const
+InlineIterator::InlineBoxIterator LineLayout::firstInlineBoxFor(const RenderBoxModelObject& inlineBox) const
 {
     if (!m_inlineContent)
         return { };
 
-    CheckedRef layoutBox = *renderInline.layoutBox();
+    CheckedRef layoutBox = *inlineBox.layoutBox();
     auto* box = m_inlineContent->firstBoxForLayoutBox(layoutBox);
     if (!box)
         return { };
@@ -1314,7 +1314,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
     }
 }
 
-LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInline) const
+LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderBoxModelObject& inlineBox) const
 {
     if (!m_inlineContent)
         return { };
@@ -1323,16 +1323,16 @@ LayoutRect LineLayout::enclosingBorderBoxRectFor(const RenderInline& renderInlin
     if (!m_inlineContent->hasContentfulInFlowBox())
         return { };
 
-    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(*renderInline.layoutBox())) };
+    auto borderBoxLogicalRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(layoutState().geometryForBox(*inlineBox.layoutBox())) };
     return flow().writingMode().isHorizontal() ? borderBoxLogicalRect : borderBoxLogicalRect.transposedRect();
 }
 
-LayoutRect LineLayout::inkOverflowBoundingBoxRectFor(const RenderInline& renderInline) const
+LayoutRect LineLayout::inkOverflowBoundingBoxRectFor(const RenderBoxModelObject& inlineBox) const
 {
     if (!m_inlineContent)
         return { };
 
-    CheckedRef layoutBox = *renderInline.layoutBox();
+    CheckedRef layoutBox = *inlineBox.layoutBox();
 
     LayoutRect result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {

@@ -72,7 +72,7 @@ private:
     const InlineBox& get() const LIFETIME_BOUND { return downcast<InlineBox>(m_box); }
 };
 
-InlineBoxIterator lineLeftmostInlineBoxFor(const RenderInline&);
+InlineBoxIterator lineLeftmostInlineBoxFor(const RenderBoxModelObject&);
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow&);
 
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox&);

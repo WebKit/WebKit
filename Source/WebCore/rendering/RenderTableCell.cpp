@@ -1486,7 +1486,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
 
 static LayoutRect NODELETE backgroundRectForRow(const RenderBox& tableRow, const RenderTable& table)
 {
-    LayoutRect rect = tableRow.borderBoxRectInContainer();
+    LayoutRect rect = { tableRow.location(), tableRow.borderBoxSize() };
     if (!table.collapseBorders()) {
         // Row border boxes include unwanted hSpacing on both inline ends.
         auto hSpacing = table.hBorderSpacing();
