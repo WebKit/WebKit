@@ -67,10 +67,15 @@ void WebGamepad::updateValues(const GamepadData& gamepadData)
     ASSERT(gamepadData.index() == index());
     ASSERT(m_axisValues.size() == gamepadData.axisValues().size());
     ASSERT(m_buttonValues.size() == gamepadData.buttonValues().size());
+    ASSERT(gamepadData.buttonTypes().size() == gamepadData.buttonValues().size());
 
-
-    m_axisValues = WTF::map(gamepadData.axisValues(), [](auto value) { return SharedGamepadValue(value); });
-    m_buttonValues = WTF::map(gamepadData.buttonValues(), [](auto value) { return SharedGamepadValue(value); });
+    m_axisValues = WTF::map(gamepadData.axisValues(), [](auto value) {
+        return SharedGamepadValue(value);
+    });
+    m_buttonValues = WTF::map(gamepadData.buttonValues(), [](auto value) {
+        return SharedGamepadValue(value);
+    });
+    m_buttonTypes = gamepadData.buttonTypes();
     m_lastUpdateTime = gamepadData.lastUpdateTime();
 }
 
