@@ -944,20 +944,21 @@ static void webkitMediaStreamSrcConstructed(GObject* object)
 static void webkitMediaStreamSrcDispose(GObject* object)
 {
     auto self = WEBKIT_MEDIA_STREAM_SRC_CAST(object);
-    auto priv = self->priv;
 
     GST_DEBUG_OBJECT(self, "Disposing");
-    while (!priv->sources.isEmpty()) {
-        auto source = priv->sources.takeFirst();
-        callOnMainThreadAndWait([self, source = WTF::move(source)] {
-            webkitMediaStreamSrcCleanup(self, source);
-        });
-    }
+    callOnMainThreadAndWait([self] {
+        auto priv = self->priv;
 
-    if (priv->stream) {
+        while (!priv->sources.isEmpty())
+            webkitMediaStreamSrcCleanup(self, priv->sources.takeFirst());
+
+        if (!priv->stream)
+            return;
+
         priv->stream->removeObserver(*priv->mediaStreamObserver);
+        priv->mediaStreamObserver = nullptr;
         priv->stream = nullptr;
-    }
+    });
 
     G_OBJECT_CLASS(webkit_media_stream_src_parent_class)->dispose(object);
 }
