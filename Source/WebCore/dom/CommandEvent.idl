@@ -25,7 +25,6 @@
 
 // https://html.spec.whatwg.org/multipage/interaction.html#commandevent
 [
-    EnabledBySetting=CommandAttributesEnabled,
     Exposed=Window
 ] interface CommandEvent : Event {
     constructor([AtomString] DOMString type, optional CommandEventInit eventInitDict = {});
