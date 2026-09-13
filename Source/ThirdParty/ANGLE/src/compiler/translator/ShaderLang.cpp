@@ -36,9 +36,6 @@ namespace sh
 
 namespace
 {
-const char kUserVariableNamePrefix = 'u';
-const char kUserBlockNamePrefix    = 'b';
-
 bool isInitialized = false;
 
 //
@@ -146,6 +143,9 @@ GLenum GetTessellationShaderTypeEnum(sh::TLayoutTessEvaluationType type)
 }
 
 }  // anonymous namespace
+
+const char kUserVariableNamePrefix = 'u';
+const char kUserBlockNamePrefix    = 'b';
 
 //
 // Driver must call this first, once, before doing any other compiler operations.
@@ -273,9 +273,6 @@ void InitBuiltInResources(ShBuiltInResources *resources)
 
     // Disable name hashing by default.
     resources->HashFunction = nullptr;
-
-    resources->UserVariableNamePrefix = kUserVariableNamePrefix;
-    resources->UserBlockNamePrefix    = kUserBlockNamePrefix;
 
     resources->MaxExpressionComplexity = 256;
     resources->MaxStatementDepth       = 256;

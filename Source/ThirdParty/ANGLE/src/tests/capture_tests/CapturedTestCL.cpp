@@ -4,9 +4,10 @@
 // found in the LICENSE file.
 //
 
+#include <angle_cl.h>
+
 #include "test_utils/ANGLETestCL.h"
 
-#include <angle_cl.h>
 #include "util/test_utils.h"
 
 using namespace angle;

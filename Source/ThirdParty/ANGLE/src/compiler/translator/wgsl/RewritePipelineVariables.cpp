@@ -381,14 +381,14 @@ class RewritePipelineVarOutputBuilder
             const TVariable *astVar      = &ViewDeclaration(*declNode).symbol.variable();
 
             TStringStream userVarNameStream;
-            WriteNameOf(userVarNameStream, *astVar, compiler.getUserVariableNamePrefix());
+            WriteNameOf(userVarNameStream, *astVar, kUserVariableNamePrefix);
             TString userVarNameStr = userVarNameStream.str();
 
             varsToReplace->insert(astVar->uniqueId().get());
 
             // E.g. `_uuserVar : i32,`.
             TStringStream typeStream;
-            WriteWgslType(typeStream, compiler.getResources(), astVar->getType(), {});
+            WriteWgslType(typeStream, astVar->getType(), {});
             TString type = typeStream.str();
             ImmutableString globalStructVar =
                 BuildConcatenatedImmutableString(userVarNameStr.c_str(), " : ", type.c_str(), ",");
@@ -419,7 +419,7 @@ class RewritePipelineVarOutputBuilder
                     TStringStream rowVecTypeStream;
                     TType rowVecAstType = astVar->getType();
                     rowVecAstType.toMatrixColumnType();
-                    WriteWgslType(rowVecTypeStream, compiler.getResources(), rowVecAstType, {});
+                    WriteWgslType(rowVecTypeStream, rowVecAstType, {});
                     TString rowVecType = rowVecTypeStream.str();
 
                     ImmutableString colVarName =
@@ -611,7 +611,7 @@ bool RewritePipelineVarOutput::OutputStructs(TInfoSinkBase &output)
 }
 
 // Could split OutputMainFunction() into the different parts of the main function.
-bool RewritePipelineVarOutput::OutputMainFunction(TInfoSinkBase &output, char userSymbolPrefix)
+bool RewritePipelineVarOutput::OutputMainFunction(TInfoSinkBase &output)
 {
     if (mShaderType == GL_VERTEX_SHADER)
     {
@@ -637,7 +637,7 @@ bool RewritePipelineVarOutput::OutputMainFunction(TInfoSinkBase &output, char us
     {
         output << "  " << conversionFunc << "\n";
     }
-    output << "  " << '_' << userSymbolPrefix << "main()" << ";\n";
+    output << "  " << '_' << kUserVariableNamePrefix << "main()" << ";\n";
 
     if (!mOutputBlock.angleGlobalMembers.empty())
     {

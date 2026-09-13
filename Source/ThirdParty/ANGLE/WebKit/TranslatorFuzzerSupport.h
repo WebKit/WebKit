@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 420
+#if ANGLE_SH_VERSION != 422
 #    error Check if there are added options and update this check.
 #endif
 
@@ -111,7 +111,7 @@
     MACRO(removeInactiveVariables, 75, any, spirvVk || msl)                   \
     MACRO(retainInactiveFragmentOutputs, 76, any, msl)                        \
     MACRO(ensureLoopForwardProgress, 77, none, msl)                           \
-    MACRO(skipAllValidationAndTransforms, 78, none, none)                     \
+    MACRO(unused2, 78, none, none)                                            \
     MACRO(transformFloatUniformTo16Bits, 79, none, spirvVk)                   \
     MACRO(useIR, 80, none, none)                                              \
     MACRO(expandFragmentOutputsToVec4, 81, any, glsl)

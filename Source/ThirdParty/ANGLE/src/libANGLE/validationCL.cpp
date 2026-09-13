@@ -227,15 +227,14 @@ cl_int ValidateMemoryProperties(cl_context context,
             case CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR:
             case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR:
             {
-                // just validate the basics for dma_buf and posix fd for now
-                uint32_t fdDmaBuf = *reinterpret_cast<uint32_t *>(pMemoryHandle->value);
                 if (host_ptr != nullptr)
                 {
                     // CL_INVALID_HOST_PTR if properties includes a supported external memory handle
                     // and host_ptr is not NULL
                     return CL_INVALID_HOST_PTR;
                 }
-                if (fdDmaBuf < 0)
+                // Ensure cl_properties is signed or cast to a signed type before comparison
+                if (static_cast<std::intptr_t>(pMemoryHandle->value) < 0)
                 {
                     return CL_INVALID_PROPERTY;
                 }
@@ -243,7 +242,6 @@ cl_int ValidateMemoryProperties(cl_context context,
             }
             default:
             {
-                ASSERT(false);  // should not reach here
                 return CL_INVALID_PROPERTY;
             }
         }
@@ -1747,6 +1745,22 @@ cl_int ValidateSetKernelArg(cl_kernel kernel,
                 // CL_INVALID_MEM_OBJECT for an argument declared to be a memory object
                 // when the specified arg_value is not a valid memory object.
                 return CL_INVALID_MEM_OBJECT;
+            }
+
+            if ((image->cast<Image>().getFlags().intersects(CL_MEM_READ_ONLY)) &&
+                (krnl.getInfo().args[arg_index].accessQualifier == CL_KERNEL_ARG_ACCESS_WRITE_ONLY))
+            {
+                // CL_INVALID_ARG_VALUE when an image is created with CL_MEM_READ_ONLY is passed to
+                // a write_only kernel argument
+                return CL_INVALID_ARG_VALUE;
+            }
+
+            if ((image->cast<Image>().getFlags().intersects(CL_MEM_WRITE_ONLY)) &&
+                (krnl.getInfo().args[arg_index].accessQualifier == CL_KERNEL_ARG_ACCESS_READ_ONLY))
+            {
+                // CL_INVALID_ARG_VALUE when an image is created with CL_MEM_WRITE_ONLY is passed to
+                // a read_only kernel argument
+                return CL_INVALID_ARG_VALUE;
             }
 
             if (arg_size != sizeof(cl_mem))
@@ -4490,6 +4504,18 @@ cl_int ValidateSetContextDestructorCallback(cl_context context,
                                                                           void *user_data),
                                             const void *user_data)
 {
+    if (!Context::IsValid(context))
+    {
+        // CL_INVALID_CONTEXT if context is not a valid context.
+        return CL_INVALID_CONTEXT;
+    }
+
+    if (pfn_notify == nullptr)
+    {
+        // CL_INVALID_VALUE if pfn_notify is NULL.
+        return CL_INVALID_VALUE;
+    }
+
     return CL_SUCCESS;
 }
 

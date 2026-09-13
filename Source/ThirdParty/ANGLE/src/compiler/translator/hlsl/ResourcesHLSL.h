@@ -17,20 +17,19 @@ namespace sh
 {
 class ImmutableString;
 class StructureHLSL;
-class TSymbolTable;
 
 class ResourcesHLSL : angle::NonCopyable
 {
   public:
     ResourcesHLSL(StructureHLSL *structureHLSL,
                   const std::vector<ShaderVariable> &uniforms,
+                  const ExtractedSamplerNameMap &extractedSamplerNames,
                   unsigned int firstUniformRegister);
 
     void reserveUniformBlockRegisters(unsigned int registerCount);
     void uniformsHeader(TInfoSinkBase &out,
                         ShShaderOutput outputType,
-                        const ReferencedVariables &referencedUniforms,
-                        TSymbolTable *symbolTable);
+                        const ReferencedVariables &referencedUniforms);
 
     // Must be called after uniformsHeader
     void samplerMetadataUniforms(TInfoSinkBase &out, unsigned int regIndex);
@@ -86,15 +85,14 @@ class ResourcesHLSL : angle::NonCopyable
     unsigned int assignUniformRegister(const TType &type,
                                        const ImmutableString &name,
                                        unsigned int *outRegisterCount);
-    unsigned int assignSamplerInStructUniformRegister(const TType &type,
-                                                      const TString &name,
-                                                      unsigned int *outRegisterCount);
+    unsigned int assignExtractedSamplerUniformRegister(const TType &type,
+                                                       const std::string &originalName,
+                                                       unsigned int *outRegisterCount);
 
     void outputHLSLSamplerUniformGroup(
         TInfoSinkBase &out,
         const HLSLTextureGroup textureGroup,
         const TVector<const TVariable *> &group,
-        const TMap<const TVariable *, TString> &samplerInStructSymbolsToAPINames,
         unsigned int *groupTextureRegisterIndex);
 
     void outputHLSLImageUniformIndices(TInfoSinkBase &out,
@@ -120,6 +118,7 @@ class ResourcesHLSL : angle::NonCopyable
     StructureHLSL *mStructureHLSL;
 
     const std::vector<ShaderVariable> &mUniforms;
+    const ExtractedSamplerNameMap &mExtractedSamplerNames;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;

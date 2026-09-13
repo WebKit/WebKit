@@ -852,6 +852,44 @@ TEST_P(CapturedTest, ClientWaitSync)
     ASSERT_GL_NO_ERROR();
 }
 
+// Regression test for non-frame boundary swaps. Some side-contexts call SwapBuffers on
+// Pbuffer surfaces in addition to the swaps done on the main EGL_WINDOW, and these side-swaps
+// must not be treated as capture frame boundaries. This test interleaves 1x1-pbuffer swaps
+// with window swaps
+TEST_P(CapturedTest, NonFrameBoundarySwaps)
+{
+    EGLWindow *window      = getEGLWindow();
+    EGLDisplay dpy         = window->getDisplay();
+    EGLConfig config       = window->getConfig();
+    EGLSurface mainSurface = window->getSurface();
+    EGLContext mainContext = window->getContext();
+
+    // Small aux pbuffer acting like a side-context's surface
+    EGLint pbufferAttribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface sideSurface  = eglCreatePbufferSurface(dpy, config, pbufferAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Frame 1, before capture starts
+    swapBuffers();
+
+    // Captured starts. Before each real window swap, swap the 1x1 pbuffer on the same context
+    for (int i = 0; i < 10; i++)
+    {
+        ASSERT_EGL_TRUE(eglMakeCurrent(dpy, sideSurface, sideSurface, mainContext));
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(dpy, sideSurface));
+
+        ASSERT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        swapBuffers();
+    }
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(dpy, mainSurface, mainSurface, mainContext));
+    eglDestroySurface(dpy, sideSurface);
+    ASSERT_GL_NO_ERROR();
+}
+
 #if defined(CAPTURE_TESTS_AHB_SUPPORT)
 // Test capture and replay of external AHBs on Android platforms. On other platforms
 // not supporting AHBs, the test will be skipped and the outtput will not be

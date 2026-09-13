@@ -5,7 +5,15 @@
 //
 // CLBuffer.cpp: Implements the cl::Buffer class.
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLBuffer.h"
+#include "libANGLE/CLMemory.h"
+#include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
+
+#include <cstddef>
 
 namespace cl
 {

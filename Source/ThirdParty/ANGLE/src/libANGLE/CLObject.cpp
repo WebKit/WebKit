@@ -5,6 +5,8 @@
 //
 // CLObject.cpp: Implements the cl::Object class.
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLObject.h"
 
 namespace cl

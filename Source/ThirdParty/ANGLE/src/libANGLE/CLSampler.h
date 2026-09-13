@@ -8,8 +8,13 @@
 #ifndef LIBANGLE_CLSAMPLER_H_
 #define LIBANGLE_CLSAMPLER_H_
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLSamplerImpl.h"
+
+#include <cstddef>
 
 namespace cl
 {

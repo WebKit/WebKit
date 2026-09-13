@@ -45,14 +45,10 @@ struct EmitTypeConfig
 
 template <typename StringStreamType>
 void WriteWgslBareTypeName(StringStreamType &output,
-                           const ShBuiltInResources &resources,
                            const TType &type,
                            const EmitTypeConfig &config);
 template <typename StringStreamType>
-void WriteWgslType(StringStreamType &output,
-                   const ShBuiltInResources &resources,
-                   const TType &type,
-                   const EmitTypeConfig &config);
+void WriteWgslType(StringStreamType &output, const TType &type, const EmitTypeConfig &config);
 
 // GLSL's samplers are split into a separate sampler and texture in WGSL, so two different types
 // will be emitted for a single sampler type.

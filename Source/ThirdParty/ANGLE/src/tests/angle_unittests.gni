@@ -147,3 +147,7 @@ angle_unittests_sources += [ "compiler_tests/ImmutableString_test_autogen.cpp" ]
 if (!is_android && !is_fuchsia && !is_ios) {
   angle_unittests_sources += [ "test_utils/runner/TestSuite_unittest.cpp" ]
 }
+
+if (is_linux || is_chromeos) {
+  angle_unittests_sources += [ "../common/linux/window_system_unittest.cpp" ]
+}

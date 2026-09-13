@@ -2841,9 +2841,9 @@ void TextureStorage11_2DArray::associateImage(Image11 *image, const gl::ImageInd
     const GLint layerTarget = index.getLayerIndex();
     const GLint numLayers   = index.getLayerCount();
 
-    ASSERT(0 <= level && level < getLevelCount());
+    ASSERT(0 <= level && level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS);
 
-    if (0 <= level && level < getLevelCount())
+    if (0 <= level && level < gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS)
     {
         LevelLayerRangeKey key(level, layerTarget, numLayers);
         mAssociatedImages[key] = image;

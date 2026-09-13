@@ -19,7 +19,9 @@
 #include "libGLESv2/entry_points_gles_3_1_autogen.h"
 #include "libGLESv2/entry_points_gles_3_2_autogen.h"
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
-#include "libGLESv2/entry_points_gles_ext_explicit_context_autogen.h"
+#if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
+#    include "libGLESv2/entry_points_gles_ext_explicit_context_autogen.h"
+#endif  // defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
 #include "platform/PlatformMethods.h"
 
 #include <iterator>

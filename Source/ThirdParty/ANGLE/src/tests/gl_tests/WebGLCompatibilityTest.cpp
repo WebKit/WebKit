@@ -8033,7 +8033,9 @@ TEST_P(WebGL2CompatibilityTest, UnpackStateValidation)
             }
 
             const void *dataPtr =
-                usePixelUnpackBuffer ? nullptr : reinterpret_cast<const void *>(data.data());
+                usePixelUnpackBuffer
+                    ? nullptr
+                    : ANGLE_UNSAFE_BUFFERS(reinterpret_cast<const void *>(data.data()));
 
             glBindBuffer(GL_PIXEL_UNPACK_BUFFER, usePixelUnpackBuffer ? buf.get() : 0);
             ASSERT_GL_NO_ERROR();

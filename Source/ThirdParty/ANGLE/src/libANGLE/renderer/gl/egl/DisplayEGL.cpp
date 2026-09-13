@@ -14,6 +14,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/Surface.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/egl/ContextEGL.h"
@@ -196,7 +197,11 @@ egl::Error DisplayEGL::initializeContext(EGLContext shareContext,
 
             attribsWithRobustness.insert(EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY,
                                          EGL_LOSE_CONTEXT_ON_RESET);
-            attribsWithRobustness.insert(EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT, EGL_TRUE);
+            // crbug.com/547065826 - flickering on Xclipse GPUs with robust buffer access enabled.
+            if (!mIsSamsungXclipse)
+            {
+                attribsWithRobustness.insert(EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT, EGL_TRUE);
+            }
             if (mHasNVRobustnessVideoMemoryPurge)
             {
                 attribsWithRobustness.insert(EGL_GENERATE_RESET_ON_VIDEO_MEMORY_PURGE_NV, GL_TRUE);
@@ -341,6 +346,7 @@ egl::Error DisplayEGL::initialize(egl::Display *display)
 
     mHasEXTCreateContextRobustness   = mEGL->hasExtension("EGL_EXT_create_context_robustness");
     mHasNVRobustnessVideoMemoryPurge = mEGL->hasExtension("EGL_NV_robustness_video_memory_purge");
+    mIsSamsungXclipse                = IsSamsungXclipse();
     mSupportsNoConfigContexts        = mEGL->hasExtension("EGL_KHR_no_config_context") ||
                                 mEGL->hasExtension("EGL_KHR_no_config_context");
     mSupportsSurfaceless = mEGL->hasExtension("EGL_KHR_surfaceless_context");

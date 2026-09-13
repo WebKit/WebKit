@@ -9,6 +9,12 @@ config("opencl_icd_loader_config") {
   include_dirs += [ "src/include" ]
 }
 
+config("opencl_icd_loader_warnings") {
+  if (is_clang) {
+    cflags = [ "-Wno-#pragma-messages" ]
+  }
+}
+
 source_set("opencl_icd_loader") {
   sources = [
     "src/loader/icd.c",
@@ -47,15 +53,16 @@ source_set("opencl_icd_loader") {
     ]
     include_dirs = [ "." ]
 
-    if (is_android) {
-      cflags = [ "-Wno-#pragma-messages" ]
-    } else {
+    if (!is_android) {
       defines += [ "HAVE_SECURE_GETENV" ]
     }
   }
 
   configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [ "//build/config/compiler:no_chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":opencl_icd_loader_warnings",
+  ]
 
   public_configs = [ ":opencl_icd_loader_config" ]
   public_deps = [ "$angle_root:cl_includes" ]

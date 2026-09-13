@@ -33,6 +33,8 @@ class WindowSurfaceVkWayland : public WindowSurfaceVk
                            EGLNativeWindowType window,
                            wl_display *waylandDisplay);
 
+    ~WindowSurfaceVkWayland() override;
+
   private:
     angle::Result createSurfaceVk(vk::ErrorContext *context) override;
     angle::Result getCurrentWindowSize(vk::ErrorContext *context,

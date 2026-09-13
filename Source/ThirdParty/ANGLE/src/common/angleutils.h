@@ -170,9 +170,13 @@ struct PerfMonitorTriplet
     FN(Wait)                                   \
     FN(Other)
 
-#define ANGLE_VK_API_PERF_COUNTER_TYPES_X(FN, ...) \
-    FN(WallTimeNs, ##__VA_ARGS__)                  \
-    FN(Samples, ##__VA_ARGS__)
+#define ANGLE_VK_API_PERF_COUNTER_TYPES_X(FN) \
+    FN(WallTimeNs)                            \
+    FN(Samples)
+
+#define ANGLE_VK_API_PERF_COUNTER_TYPES_WITH_PARAM_X(FN, PARAM) \
+    FN(WallTimeNs, PARAM)                                       \
+    FN(Samples, PARAM)
 
 #define ANGLE_DECLARE_PERF_COUNTER(COUNTER) uint64_t COUNTER;
 

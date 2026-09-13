@@ -6,13 +6,16 @@
 // CLSampler.cpp: Implements the cl::Sampler class.
 //
 
-#include "libANGLE/CLSampler.h"
 #include "common/unsafe_buffers.h"
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLSampler.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>
+#include <type_traits>
 
 namespace cl
 {

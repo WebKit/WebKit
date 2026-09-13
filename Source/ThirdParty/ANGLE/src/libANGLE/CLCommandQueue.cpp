@@ -6,19 +6,19 @@
 // CLCommandQueue.cpp: Implements the cl::CommandQueue class.
 //
 
-#include "libANGLE/CLCommandQueue.h"
 #include "common/unsafe_buffers.h"
 
-#include "CL/cl.h"
-#include "common/angleutils.h"
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLBuffer.h"
+#include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLDevice.h"
 #include "libANGLE/CLEvent.h"
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLMemory.h"
-#include "libANGLE/Error.h"
 #include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 

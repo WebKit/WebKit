@@ -18,8 +18,6 @@ pub struct Options {
     // Some built-ins have a different name in ES100.
     pub is_es1: bool,
     pub transform_float_uniform_to_fp16: bool,
-    pub user_variable_name_prefix: char,
-    pub user_block_name_prefix: char,
 }
 
 // All reflection info bundled together
@@ -341,12 +339,7 @@ fn collect_user_variable(
     }
 }
 
-enum MappedNamePrefix {
-    Block,
-    Other,
-}
-
-fn mapped_name(options: &Options, name: &Name, prefix_type: MappedNamePrefix) -> String {
+fn mapped_name(name: &Name, user_prefix: &'static str) -> String {
     // GLSL ES 3.00.6 section 3.9: the maximum length of an identifier is 1024 characters.
     const MAX_ESSL_IDENTIFIER_LENGTH: usize = 1024;
 
@@ -357,19 +350,15 @@ fn mapped_name(options: &Options, name: &Name, prefix_type: MappedNamePrefix) ->
         // have as long names and could conflict.
         NameSource::ShaderInterface
             if !name.name.is_empty()
-                && name.name.len() + USER_SYMBOL_PREFIX.len() <= MAX_ESSL_IDENTIFIER_LENGTH =>
+                && name.name.len() + user_prefix.len() <= MAX_ESSL_IDENTIFIER_LENGTH =>
         {
-            let prefix = match prefix_type {
-                MappedNamePrefix::Block => options.user_block_name_prefix,
-                MappedNamePrefix::Other => options.user_variable_name_prefix,
-            };
-            format!("{}{}", USER_SYMBOL_PREFIX, prefix)
+            user_prefix
         }
         NameSource::Temporary => panic!(
             "Internal error: Should not collect reflection info for shader-private variables and \
              types"
         ),
-        _ => "".to_string(),
+        _ => "",
     };
     format!("{}{}", prefix, name.name)
 }
@@ -743,7 +732,7 @@ fn new_common_shader_variable(
         gl_type,
         gl_precision,
         name: name.name.to_string(),
-        mapped_name: mapped_name(options, name, MappedNamePrefix::Other),
+        mapped_name: mapped_name(name, USER_VARIABLE_PREFIX),
         struct_or_block_name: "".to_string(),
         mapped_struct_or_block_name: "".to_string(),
         fields: vec![],
@@ -782,8 +771,7 @@ fn new_common_shader_variable(
         var.struct_or_block_name = struct_name.name.to_string();
         // Mapped name is only used for interface blocks
         if *specialization == StructSpecialization::InterfaceBlock {
-            var.mapped_struct_or_block_name =
-                mapped_name(options, struct_name, MappedNamePrefix::Block);
+            var.mapped_struct_or_block_name = mapped_name(struct_name, USER_BLOCK_PREFIX);
         }
         let field_inherit = inherit.accumulate_is_patch(decorations.has(Decoration::Patch));
         var.fields =
@@ -994,7 +982,7 @@ fn new_interface_block(
 
     let mut var = InterfaceBlock {
         name: block_name.name.to_string(),
-        mapped_name: mapped_name(options, block_name, MappedNamePrefix::Block),
+        mapped_name: mapped_name(block_name, USER_BLOCK_PREFIX),
         instance_name: variable.name.name.to_string(),
         fields: vec![],
         static_use: variable.is_static_use,
@@ -1005,6 +993,7 @@ fn new_interface_block(
         binding: get_decoration_value!(variable.decorations, Decoration::Binding)
             .map(|binding| binding as i32)
             .unwrap_or(-1),
+        is_row_major: variable.decorations.has(Decoration::MatrixPacking(MatrixPacking::RowMajor)),
         readonly: true,
         id: 0,
     };

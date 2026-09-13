@@ -9,14 +9,18 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLSPV_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_CLSPV_UTILS_H_
 
-#include <string>
-#include <vector>
-
 #include <libANGLE/renderer/vulkan/CLDeviceVk.h>
+#include <libANGLE/renderer/vulkan/CLKernelVk.h>
 
 #include "clspv/Compiler.h"
 #include "clspv/Sampler.h"
+
 #include "spirv-tools/libspirv.h"
+
+#include <vulkan/vulkan_core.h>
+
+#include <string>
+#include <vector>
 
 namespace rx
 {
@@ -57,6 +61,35 @@ struct ClspvWorkgroupVariableSize
     uint32_t size = 0;
 };
 
+// TODO: Look into moving this information in CLKernelArgument
+// https://anglebug.com/378514267
+struct ClspvImagePushConstant
+{
+    VkPushConstantRange pcRange;
+    uint32_t ordinal;
+};
+struct ClspvReflectionData
+{
+    angle::HashMap<uint32_t, uint32_t> spvIntLookup;
+    angle::HashMap<uint32_t, std::string> spvStrLookup;
+    angle::HashMap<uint32_t, CLKernelVk::ArgInfo> kernelArgInfos;
+    angle::HashMap<std::string, uint32_t> kernelFlags;
+    angle::HashMap<std::string, std::string> kernelAttributes;
+    angle::HashMap<std::string, std::array<uint32_t, 3>> kernelCompileWorkgroupSize;
+    angle::HashMap<uint32_t, VkPushConstantRange> pushConstants;
+    angle::PackedEnumMap<SpecConstantType, uint32_t> specConstantIDs;
+    angle::PackedEnumBitSet<SpecConstantType, uint32_t> specConstantsUsed;
+    angle::HashMap<uint32_t, std::vector<ClspvImagePushConstant>> imagePushConstants;
+    CLKernelArgsMap kernelArgsMap;
+    angle::HashMap<std::string, CLKernelArgument> kernelArgMap;
+    angle::HashSet<uint32_t> kernelIDs;
+    ClspvPrintfBufferStorage printfBufferStorage;
+    angle::HashMap<uint32_t, ClspvPrintfInfo> printfInfoMap;
+    std::vector<ClspvLiteralSampler> literalSamplers;
+    ClspvConstantDataBufferInfo constantDataBufferInfo;
+    ClspvWorkgroupVariableSize workgroupVariableSize;
+};
+
 namespace clspv_cl
 {
 
@@ -90,6 +123,14 @@ ClspvError ClspvCompileSource(const size_t programCount,
 spv_target_env ClspvGetSpirvVersion(const vk::Renderer *renderer);
 
 bool ClspvValidate(vk::Renderer *rendererVk, const angle::spirv::Blob &blob);
+
+bool ClspvParseReflection(vk::Renderer *rendererVk,
+                          const angle::spirv::Blob &blob,
+                          ClspvReflectionData &reflectionDataOut);
+
+bool ClspvStripReflection(vk::Renderer *rendererVk,
+                          const angle::spirv::Blob &inBlob,
+                          angle::spirv::Blob &outBlob);
 
 }  // namespace rx
 

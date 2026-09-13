@@ -2361,13 +2361,17 @@ angle::Result Renderer::enableInstanceExtensions(vk::ErrorContext *context,
                                            instanceExtensionNames) &&
                                 useVulkanSwapchain == UseVulkanSwapchain::Yes);
 
+    const bool isSamsungDeviceWithSurfacelessQueryBug = IsXclipse() && GetAndroidSDKVersion() < 36;
+
     // TODO: Validation layer has a bug when vkGetPhysicalDeviceSurfaceFormats2KHR is called
     // on Mock ICD with surface handle set as VK_NULL_HANDLE. http://anglebug.com/42266098
-    // b/267953710: VK_GOOGLE_surfaceless_query isn't working on some Samsung Xclipse builds
+    // b/267953710: VK_GOOGLE_surfaceless_query isn't working on some Samsung Xclipse builds with
+    // Android API level below 36.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSurfacelessQueryExtension,
         ExtensionFound(VK_GOOGLE_SURFACELESS_QUERY_EXTENSION_NAME, instanceExtensionNames) &&
-            useVulkanSwapchain == UseVulkanSwapchain::Yes && !isMockICDEnabled() && !IsXclipse());
+            useVulkanSwapchain == UseVulkanSwapchain::Yes && !isMockICDEnabled() &&
+            !isSamsungDeviceWithSurfacelessQueryBug);
 
     // VK_KHR_external_fence_capabilities and VK_KHR_extenral_semaphore_capabilities are promoted to
     // core in Vulkan 1.1
@@ -5317,17 +5321,6 @@ gl::Version Renderer::getMaxSupportedESVersion() const
         maxVersion = LimitVersionTo(maxVersion, {2, 0});
     }
 
-    // Verify minimum requirements of ANGLE:
-    //
-    // - VK_KHR_index_type_uint8 or VK_EXT_index_type_uint8
-    //
-    if (!mFeatures.supportsIndexTypeUint8.enabled)
-    {
-        WARN() << "Vulkan device does not meet ANGLE's minimum requirements";
-        WARN() << "  Missing VK_EXT_index_type_uint8 or VK_KHR_index_type_uint8";
-        maxVersion = LimitVersionTo(maxVersion, {0, 0});
-    }
-
     return maxVersion;
 }
 
@@ -6205,9 +6198,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // ANI crashes on NVIDIA/Wayland on a swapchain with deferred memory allocation.
     // http://anglebug.com/499347835
+    // Keyed on the window system this display resolved to, so it covers the
+    // Wayland WSI exactly and leaves XWayland's xcb swapchains alone.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, swapchainDeferredMemoryAllocation,
-        mFeatures.supportsSwapchainMaintenance1.enabled && !(IsWayland() && isNvidia));
+        mFeatures.supportsSwapchainMaintenance1.enabled &&
+            !(nativeWindowSystem == angle::NativeWindowSystem::Wayland && isNvidia));
 
     // The VK_EXT_legacy_dithering extension enables dithering support without emulation
     // Disable the usage of VK_EXT_legacy_dithering on ARM until the driver bug

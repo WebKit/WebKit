@@ -336,12 +336,17 @@ impl Generator {
         .to_string()
     }
 
-    fn name_str(name: &Name, temp_prefix: &'static str, id: u32) -> String {
+    fn name_str(
+        name: &Name,
+        temp_prefix: &'static str,
+        user_prefix: &'static str,
+        id: u32,
+    ) -> String {
         format!(
             "{}{}{}",
             match name.source {
                 // Make sure unnamed interface blocks remain unnamed.
-                NameSource::ShaderInterface if !name.name.is_empty() => "_u",
+                NameSource::ShaderInterface if !name.name.is_empty() => user_prefix,
                 NameSource::Temporary => temp_prefix,
                 _ => "",
             },
@@ -367,7 +372,7 @@ impl Generator {
         let var_name = if let Some(built_in) = built_in {
             Self::built_in_str(built_in, ir_meta.get_shader_type())
         } else {
-            Self::name_str(name, temp_prefix, id)
+            Self::name_str(name, temp_prefix, USER_VARIABLE_PREFIX, id)
         };
 
         let mut declaration_text =
@@ -649,7 +654,11 @@ impl ast::Target for Generator {
                     (Self::image_type_str(basic_type, image_type), "".to_string(), None, None)
                 }
                 Type::Struct(name, fields, specialization) => {
-                    let name = Self::name_str(name, TEMP_STRUCT_PREFIX, id.id);
+                    let user_prefix = match *specialization {
+                        StructSpecialization::Struct => USER_VARIABLE_PREFIX,
+                        StructSpecialization::InterfaceBlock => USER_BLOCK_PREFIX,
+                    };
+                    let name = Self::name_str(name, TEMP_STRUCT_PREFIX, user_prefix, id.id);
                     let declaration_text = format!(
                         "{} {{\n{}}}",
                         name,
@@ -780,7 +789,8 @@ impl ast::Target for Generator {
         let qualifiers =
             Self::qualifiers_str(function.return_precision, &function.return_decorations);
         let return_type = &self.types[&function.return_type_id];
-        let name = Self::name_str(&function.name, TEMP_FUNCTION_PREFIX, id.id);
+        let name =
+            Self::name_str(&function.name, TEMP_FUNCTION_PREFIX, USER_VARIABLE_PREFIX, id.id);
 
         let declaration_text = format!(
             "{qualifiers}{}{} {}({})",
@@ -915,7 +925,8 @@ impl ast::Target for Generator {
         field: &Field,
     ) {
         let lhs = self.get_expression(id);
-        let field_name = Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index);
+        let field_name =
+            Self::name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, USER_VARIABLE_PREFIX, index);
         // Note: if selecting the field of a nameless interface block, just use the field.
         let expr = if lhs.is_empty() { field_name } else { format!("{}.{}", lhs, field_name) };
         self.expressions.insert(result, expr);

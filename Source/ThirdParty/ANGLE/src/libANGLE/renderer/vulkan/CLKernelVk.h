@@ -134,7 +134,7 @@ class CLKernelVk : public CLKernelImpl
 
     std::vector<uint8_t> &getPodArgumentPushConstantsData() { return mPodArgumentPushConstants; }
 
-    cl::MemoryPtr getPodBuffer() { return mPodBuffer; }
+    cl::BufferPtr getPodBuffer() { return mPodBuffer; }
 
     bool usesPrintf() const;
     bool usesPrintfBufferPointerPushConstant() const;
@@ -159,7 +159,7 @@ class CLKernelVk : public CLKernelImpl
     CLKernelArguments mArgs;
 
     std::vector<uint8_t> mPodArgumentPushConstants;
-    cl::MemoryPtr mPodBuffer;
+    cl::BufferPtr mPodBuffer;
 
     vk::ShaderProgramHelper mShaderProgramHelper;
     ComputePipelineCache mComputePipelineCache;

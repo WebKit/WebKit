@@ -257,6 +257,9 @@ target_blockist = [
     '//build/rust/std:std',
     '//build/rust/gni_impl:rustc_print_cfg',
     '//third_party/rust/cxxbridge_cmd/v1:cxxbridge(//build/toolchain/linux:clang_x64_for_rust_host_build_tools)',
+
+    # Do not add chromium perfetto dependencies, use Android perfetto library instead
+    '//third_party/perfetto/src/tracing:client_api',
 ]
 
 third_party_target_allowlist = [
@@ -286,7 +289,12 @@ include_blocklist = [
     # rust ffi gen directory
     '//out/Android/gen/',
     '//out/Android/gen/src/',
-    '//out/Android/gen/third_party/angle/src/'
+    '//out/Android/gen/third_party/angle/src/',
+    # Do not add chromium perfetto dependencies. The include will be resolved by Android libperfetto_client_experimental
+    '//third_party/perfetto/include/',
+    '//out/Android/gen/third_party/perfetto/',
+    '//out/Android/gen/third_party/perfetto/build_config/',
+    '//third_party/protobuf/*',
 ]
 
 targets_using_jni = [
@@ -384,6 +392,10 @@ def gn_deps_to_blueprint_deps(abi, target, build_info):
             static_libs.append('libgtest_ndk_c++')
         elif dep == '//testing/gmock:gmock':
             static_libs.append('libgmock_ndk')
+        elif dep == '//third_party/perfetto/src/tracing:client_api':
+            # Replace perfetto dependency with Android's prebuilt perfetto library
+            static_libs.append('libperfetto_client_experimental')
+
 
     return static_libs, shared_libs, defaults, whole_static_libs, generated_headers, header_libs
 
@@ -403,11 +415,23 @@ def gn_libs_to_blueprint_shared_libraries(target_info):
     return result
 
 
+def is_include_dir_blocklisted(include_dir):
+    norm_dir = include_dir.rstrip('/') + '/'
+    for entry in include_blocklist:
+        if entry.endswith('*'):
+            prefix = entry[:-1].rstrip('/') + '/'
+            if norm_dir.startswith(prefix):
+                return True
+        elif norm_dir == entry.rstrip('/') + '/':
+            return True
+    return False
+
+
 def gn_include_dirs_to_blueprint_include_dirs(target_info):
     result = []
     if 'include_dirs' in target_info:
         for include_dir in target_info['include_dirs']:
-            if len(include_dir) > 0 and include_dir not in include_blocklist:
+            if len(include_dir) > 0 and not is_include_dir_blocklisted(include_dir):
                 result.append(gn_path_to_blueprint_path(include_dir))
     return result
 

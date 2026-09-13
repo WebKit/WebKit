@@ -8,13 +8,13 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLEVENTVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLEVENTVK_H_
 
-#include <condition_variable>
-#include <mutex>
-
 #include "libANGLE/renderer/CLEventImpl.h"
 #include "libANGLE/renderer/serial_utils.h"
 
 #include "libANGLE/CLEvent.h"
+
+#include <condition_variable>
+#include <mutex>
 
 namespace rx
 {

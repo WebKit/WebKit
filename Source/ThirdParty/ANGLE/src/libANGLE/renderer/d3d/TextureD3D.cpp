@@ -209,7 +209,7 @@ GLint TextureD3D::getLevelZeroHeight() const
 
 GLint TextureD3D::getLevelZeroDepth() const
 {
-    return getBaseLevelDepth();
+    return 1;
 }
 
 GLint TextureD3D::getBaseLevelWidth() const
@@ -281,8 +281,13 @@ angle::Result TextureD3D::setStorageExternalMemory(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-bool TextureD3D::shouldUseSetData(const ImageD3D *image) const
+bool TextureD3D::shouldUseSetData(const gl::ImageIndex &index, const ImageD3D *image) const
 {
+    if (!isValidIndex(index) || !isImageComplete(index))
+    {
+        return false;
+    }
+
     if (!mRenderer->getFeatures().setDataFasterThanImageUpload.enabled)
     {
         return false;
@@ -338,7 +343,7 @@ angle::Result TextureD3D::setImageImpl(const gl::Context *context,
 
     if (pixelData != nullptr)
     {
-        if (shouldUseSetData(image))
+        if (shouldUseSetData(index, image))
         {
             ANGLE_TRY(
                 mTexStorage->setData(context, index, image, nullptr, type, unpack, pixelData));
@@ -376,7 +381,7 @@ angle::Result TextureD3D::subImage(const gl::Context *context,
         ImageD3D *image = getImage(index);
         ASSERT(image);
 
-        if (shouldUseSetData(image) && !mTexStorage->isMultiplanar(context))
+        if (shouldUseSetData(index, image) && !mTexStorage->isMultiplanar(context))
         {
             return mTexStorage->setData(context, index, image, &area, type, unpack, pixelData);
         }
@@ -501,6 +506,45 @@ GLint TextureD3D::creationLevels(GLsizei width, GLsizei height, GLsizei depth) c
         // OpenGL ES 2.0 without GL_OES_texture_npot does not permit NPOT mipmaps.
         return 1;
     }
+}
+
+bool TextureD3D::isValidLevel(int level) const
+{
+    return mTexStorage && level >= 0 && level < mTexStorage->getLevelCount();
+}
+
+bool TextureD3D::isLevelComplete(int level) const
+{
+    if (isImmutable())
+    {
+        return isValidLevel(level);
+    }
+
+    GLsizei width  = getLevelZeroWidth();
+    GLsizei height = getLevelZeroHeight();
+    GLsizei depth  = getLevelZeroDepth();
+
+    if (width <= 0 || height <= 0 || depth <= 0)
+    {
+        return false;
+    }
+
+    if (level >= creationLevels(width, height, depth))
+    {
+        return false;
+    }
+
+    if (level == static_cast<int>(getBaseLevel()))
+    {
+        return true;
+    }
+
+    return isNonBaseLevelComplete(level);
+}
+
+bool TextureD3D::isNonBaseLevelComplete(int level) const
+{
+    return false;
 }
 
 TextureStorage *TextureD3D::getStorage()
@@ -725,9 +769,8 @@ angle::Result TextureD3D::commitRegion(const gl::Context *context,
                                        const gl::ImageIndex &index,
                                        const gl::Box &region)
 {
-    if (mTexStorage)
+    if (isValidIndex(index) && isImageComplete(index))
     {
-        ASSERT(isValidIndex(index));
         ImageD3D *image = getImage(index);
         ANGLE_TRY(image->copyToStorage(context, mTexStorage, index, region));
         image->markClean();
@@ -882,8 +925,7 @@ angle::Result TextureD3D::initializeContents(const gl::Context *context,
                                              GLenum binding,
                                              const gl::ImageIndex &imageIndex)
 {
-    ContextD3D *contextD3D = GetImplAs<ContextD3D>(context);
-    gl::ImageIndex index   = imageIndex;
+    gl::ImageIndex index = imageIndex;
 
     // Special case for D3D11 3D textures. We can't create render targets for individual layers of a
     // 3D texture, so force the clear to the entire mip. There shouldn't ever be a case where we
@@ -951,55 +993,18 @@ angle::Result TextureD3D::initializeContents(const gl::Context *context,
 
     ASSERT(image != nullptr);
 
-    // Slow path: non-renderable texture or the texture levels aren't set up.
-    const auto &formatInfo = gl::GetSizedInternalFormatInfo(image->getInternalFormat());
+    // Slow path: non-renderable texture, incomplete level, or texture storage doesn't exist.
+    ANGLE_TRY(image->initializeContents(context));
 
-    GLuint imageBytes = 0;
-    if (formatInfo.compressed)
-    {
-        ANGLE_CHECK_GL_MATH(
-            contextD3D, formatInfo.computeCompressedImageSize(
-                            gl::Extents(image->getWidth(), image->getHeight(), image->getDepth()),
-                            &imageBytes));
-    }
-    else
-    {
-        ANGLE_CHECK_GL_MATH(contextD3D, formatInfo.computeRowPitch(
-                                            formatInfo.type, image->getWidth(), 1, 0, &imageBytes));
-
-        angle::CheckedNumeric<GLuint> checkedImageBytes(imageBytes);
-        checkedImageBytes *= image->getHeight();
-        checkedImageBytes *= image->getDepth();
-        ANGLE_CHECK_GL_MATH(contextD3D, checkedImageBytes.AssignIfValid(&imageBytes));
-    }
-
-    gl::PixelUnpackState zeroDataUnpackState;
-    zeroDataUnpackState.alignment = 1;
-
-    const angle::MemoryBuffer *zeroBuffer = nullptr;
-    ANGLE_CHECK_GL_ALLOC(contextD3D, context->getZeroFilledBuffer(imageBytes, &zeroBuffer));
-
-    if (shouldUseSetData(image))
-    {
-        ANGLE_TRY(mTexStorage->setData(context, index, image, nullptr, formatInfo.type,
-                                       zeroDataUnpackState, zeroBuffer->data()));
-    }
-    else
+    if (isValidIndex(index) && isImageComplete(index))
     {
         gl::Box fullImageArea(0, 0, 0, image->getWidth(), image->getHeight(), image->getDepth());
-        ANGLE_TRY(image->loadData(context, fullImageArea, zeroDataUnpackState, formatInfo.type,
-                                  zeroBuffer->data(), false));
-
-        // Force an update to the tex storage so we avoid problems with subImage and dirty regions.
-        if (mTexStorage)
-        {
-            ANGLE_TRY(commitRegion(context, index, fullImageArea));
-            image->markClean();
-        }
-        else
-        {
-            mDirtyImages = true;
-        }
+        ANGLE_TRY(commitRegion(context, index, fullImageArea));
+        image->markClean();
+    }
+    else
+    {
+        mDirtyImages = true;
     }
     return angle::Result::Continue;
 }
@@ -1592,32 +1597,8 @@ angle::Result TextureD3D_2D::getRenderTarget(const gl::Context *context,
     return mTexStorage->getRenderTarget(context, index, outRT);
 }
 
-bool TextureD3D_2D::isValidLevel(int level) const
+bool TextureD3D_2D::isNonBaseLevelComplete(int level) const
 {
-    return (mTexStorage ? (level >= 0 && level < mTexStorage->getLevelCount()) : false);
-}
-
-bool TextureD3D_2D::isLevelComplete(int level) const
-{
-    if (isImmutable())
-    {
-        return true;
-    }
-
-    GLsizei width  = getLevelZeroWidth();
-    GLsizei height = getLevelZeroHeight();
-
-    if (width <= 0 || height <= 0)
-    {
-        return false;
-    }
-
-    // The base image level is complete if the width and height are positive
-    if (level == static_cast<int>(getBaseLevel()))
-    {
-        return true;
-    }
-
     ASSERT(level >= 0 && level <= static_cast<int>(mImageArray.size()) &&
            mImageArray[level] != nullptr);
     ImageD3D *image = mImageArray[level].get();
@@ -1627,12 +1608,12 @@ bool TextureD3D_2D::isLevelComplete(int level) const
         return false;
     }
 
-    if (image->getWidth() != std::max(1, width >> level))
+    if (image->getWidth() != std::max(1, getLevelZeroWidth() >> level))
     {
         return false;
     }
 
-    if (image->getHeight() != std::max(1, height >> level))
+    if (image->getHeight() != std::max(1, getLevelZeroHeight() >> level))
     {
         return false;
     }
@@ -2038,7 +2019,7 @@ angle::Result TextureD3D_Cube::copyImage(const gl::Context *context,
 
         ASSERT(size.width == size.height);
 
-        if (size.width > 0 && isValidFaceLevel(faceIndex, index.getLevelIndex()))
+        if (size.width > 0 && isValidLevel(index.getLevelIndex()))
         {
             ANGLE_TRY(updateStorageFaceLevel(context, faceIndex, index.getLevelIndex()));
             ANGLE_TRY(mRenderer->copyImageCube(context, source, clippedArea, internalFormat,
@@ -2077,7 +2058,7 @@ angle::Result TextureD3D_Cube::copySubImage(const gl::Context *context,
     else
     {
         ANGLE_TRY(ensureRenderTarget(context));
-        if (isValidFaceLevel(faceIndex, index.getLevelIndex()))
+        if (isValidLevel(index.getLevelIndex()))
         {
             ANGLE_TRY(updateStorageFaceLevel(context, faceIndex, index.getLevelIndex()));
             ANGLE_TRY(mRenderer->copyImageCube(
@@ -2118,7 +2099,7 @@ angle::Result TextureD3D_Cube::copyTexture(const gl::Context *context,
     {
 
         ANGLE_TRY(ensureRenderTarget(context));
-        ASSERT(isValidFaceLevel(faceIndex, index.getLevelIndex()));
+        ASSERT(isValidLevel(index.getLevelIndex()));
         ANGLE_TRY(updateStorageFaceLevel(context, faceIndex, index.getLevelIndex()));
 
         ANGLE_TRY(mRenderer->copyTexture(context, source, sourceLevel.get(), gl::TextureTarget::_2D,
@@ -2166,7 +2147,7 @@ angle::Result TextureD3D_Cube::copySubTexture(const gl::Context *context,
     if (!isSRGB(index.getLevelIndex(), faceIndex) && canCreateRenderTargetForImage(index))
     {
         ANGLE_TRY(ensureRenderTarget(context));
-        ASSERT(isValidFaceLevel(faceIndex, index.getLevelIndex()));
+        ASSERT(isValidLevel(index.getLevelIndex()));
         ANGLE_TRY(updateStorageFaceLevel(context, faceIndex, index.getLevelIndex()));
 
         const gl::InternalFormat &internalFormatInfo =
@@ -2421,11 +2402,6 @@ angle::Result TextureD3D_Cube::updateStorage(const gl::Context *context)
     return angle::Result::Continue;
 }
 
-bool TextureD3D_Cube::isValidFaceLevel(int faceIndex, int level) const
-{
-    return (mTexStorage ? (level >= 0 && level < mTexStorage->getLevelCount()) : 0);
-}
-
 bool TextureD3D_Cube::isFaceLevelComplete(int faceIndex, int level) const
 {
     if (getBaseLevel() >= gl::IMPLEMENTATION_MAX_TEXTURE_LEVELS)
@@ -2438,12 +2414,11 @@ bool TextureD3D_Cube::isFaceLevelComplete(int faceIndex, int level) const
 
     if (isImmutable())
     {
-        return true;
+        return isValidLevel(level);
     }
 
     int levelZeroSize = getLevelZeroWidth();
-
-    if (levelZeroSize <= 0)
+    if (levelZeroSize <= 0 || level >= creationLevels(levelZeroSize, levelZeroSize, 1))
     {
         return false;
     }
@@ -3101,34 +3076,10 @@ angle::Result TextureD3D_3D::updateStorage(const gl::Context *context)
     return angle::Result::Continue;
 }
 
-bool TextureD3D_3D::isValidLevel(int level) const
-{
-    return (mTexStorage ? (level >= 0 && level < mTexStorage->getLevelCount()) : 0);
-}
-
-bool TextureD3D_3D::isLevelComplete(int level) const
+bool TextureD3D_3D::isNonBaseLevelComplete(int level) const
 {
     ASSERT(level >= 0 && level < static_cast<int>(mImageArray.size()) &&
            mImageArray[level] != nullptr);
-
-    if (isImmutable())
-    {
-        return true;
-    }
-
-    GLsizei width  = getLevelZeroWidth();
-    GLsizei height = getLevelZeroHeight();
-    GLsizei depth  = getLevelZeroDepth();
-
-    if (width <= 0 || height <= 0 || depth <= 0)
-    {
-        return false;
-    }
-
-    if (level == static_cast<int>(getBaseLevel()))
-    {
-        return true;
-    }
 
     ImageD3D *levelImage = mImageArray[level].get();
 
@@ -3137,17 +3088,17 @@ bool TextureD3D_3D::isLevelComplete(int level) const
         return false;
     }
 
-    if (levelImage->getWidth() != std::max(1, width >> level))
+    if (levelImage->getWidth() != std::max(1, getLevelZeroWidth() >> level))
     {
         return false;
     }
 
-    if (levelImage->getHeight() != std::max(1, height >> level))
+    if (levelImage->getHeight() != std::max(1, getLevelZeroHeight() >> level))
     {
         return false;
     }
 
-    if (levelImage->getDepth() != std::max(1, depth >> level))
+    if (levelImage->getDepth() != std::max(1, getLevelZeroDepth() >> level))
     {
         return false;
     }
@@ -3853,30 +3804,12 @@ angle::Result TextureD3D_2DArray::updateStorage(const gl::Context *context)
     return angle::Result::Continue;
 }
 
-bool TextureD3D_2DArray::isValidLevel(int level) const
-{
-    return (mTexStorage ? (level >= 0 && level < mTexStorage->getLevelCount()) : 0);
-}
-
-bool TextureD3D_2DArray::isLevelComplete(int level) const
+bool TextureD3D_2DArray::isNonBaseLevelComplete(int level) const
 {
     ASSERT(level >= 0 && level < (int)ArraySize(mImageArray));
 
-    if (isImmutable())
-    {
-        return true;
-    }
-
-    GLsizei width  = getLevelZeroWidth();
-    GLsizei height = getLevelZeroHeight();
-
-    if (width <= 0 || height <= 0)
-    {
-        return false;
-    }
-
-    // Layers check needs to happen after the above checks, otherwise out-of-range base level may be
-    // queried.
+    // Layers check needs to happen after the base checks in TextureD3D::isLevelComplete, otherwise
+    // an out-of-range base level may be queried.
     GLsizei layers = getLayerCount(getBaseLevel());
 
     if (layers <= 0)
@@ -3884,22 +3817,17 @@ bool TextureD3D_2DArray::isLevelComplete(int level) const
         return false;
     }
 
-    if (level == static_cast<int>(getBaseLevel()))
-    {
-        return true;
-    }
-
     if (getInternalFormat(level) != getInternalFormat(getBaseLevel()))
     {
         return false;
     }
 
-    if (getWidth(level) != std::max(1, width >> level))
+    if (getWidth(level) != std::max(1, getLevelZeroWidth() >> level))
     {
         return false;
     }
 
-    if (getHeight(level) != std::max(1, height >> level))
+    if (getHeight(level) != std::max(1, getLevelZeroHeight() >> level))
     {
         return false;
     }

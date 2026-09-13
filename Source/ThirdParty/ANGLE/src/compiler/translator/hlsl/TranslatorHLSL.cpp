@@ -8,8 +8,11 @@
 
 #include "compiler/translator/hlsl/OutputHLSL.h"
 #include "compiler/translator/tree_ops/AddDefaultReturnStatements.h"
+#include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
+#include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
+#include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/hlsl/ArrayReturnValueToOutParameter.h"
@@ -27,6 +30,86 @@
 
 namespace sh
 {
+namespace
+{
+bool CollectStructSamplerPaths(const ShaderVariable &variable,
+                               const std::string &path,
+                               std::vector<std::string> *pathsOut)
+{
+    if (gl::IsSamplerType(variable.type))
+    {
+        if (pathsOut)
+        {
+            pathsOut->push_back(path);
+        }
+        return true;
+    }
+
+    bool containsSampler = false;
+    for (const ShaderVariable &field : variable.fields)
+    {
+        const std::string fieldPath = pathsOut ? path + "." + field.name : std::string();
+        if (CollectStructSamplerPaths(field, fieldPath, pathsOut))
+        {
+            containsSampler = true;
+        }
+    }
+    return containsSampler;
+}
+
+bool BuildExtractedSamplerNameMap(TIntermBlock *root,
+                                  const std::vector<std::string> &paths,
+                                  ExtractedSamplerNameMap *namesOut)
+{
+    // RewriteStructSamplers declares extracted samplers in the same DFS order as the reflected
+    // sampler fields.
+    std::map<std::string, const TVariable *> variables;
+    for (TIntermNode *node : *root->getSequence())
+    {
+        TIntermDeclaration *declaration = node->getAsDeclarationNode();
+        if (!declaration)
+        {
+            continue;
+        }
+
+        for (TIntermNode *declarator : *declaration->getSequence())
+        {
+            TIntermSymbol *symbol = declarator->getAsSymbolNode();
+            if (symbol && symbol->variable().symbolType() == SymbolType::AngleInternal &&
+                symbol->getQualifier() == EvqUniform && symbol->getType().isSampler() &&
+                symbol->getName().beginsWith(kExtractedSamplerNamePrefix))
+            {
+                const ImmutableString &name = symbol->getName();
+                if (!variables.emplace(std::string(name.data(), name.length()), &symbol->variable())
+                         .second)
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    if (variables.size() != paths.size())
+    {
+        return false;
+    }
+
+    for (size_t index = 0; index < variables.size(); ++index)
+    {
+        const std::string name = std::string(kExtractedSamplerNamePrefix) + std::to_string(index);
+        auto variable          = variables.find(name);
+        if (variable == variables.end())
+        {
+            return false;
+        }
+        if (!namesOut->emplace(variable->second, paths[index]).second)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+}  // anonymous namespace
 
 TranslatorHLSL::TranslatorHLSL(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
     : TCompiler(type, spec, output)
@@ -169,6 +252,45 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
+    ExtractedSamplerNameMap extractedSamplerNames;
+    std::vector<std::string> extractedSamplerPaths;
+    bool hasStructSamplers = false;
+    for (const ShaderVariable &uniform : getUniforms())
+    {
+        std::vector<std::string> *pathsOut = uniform.active ? &extractedSamplerPaths : nullptr;
+        if (uniform.isStruct() && CollectStructSamplerPaths(uniform, uniform.name, pathsOut))
+        {
+            hasStructSamplers = true;
+        }
+    }
+
+    if (hasStructSamplers)
+    {
+        if (!compileOptions.useIR)
+        {
+            UnsupportedFunctionArgsBitSet args{UnsupportedFunctionArgs::StructContainingSamplers};
+            if (!MonomorphizeUnsupportedFunctions(this, root, &getSymbolTable(), args))
+            {
+                return false;
+            }
+        }
+
+        if (!SeparateStructFromUniformDeclarations(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+
+        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
+        {
+            return false;
+        }
+
+        if (!BuildExtractedSamplerNameMap(root, extractedSamplerPaths, &extractedSamplerNames))
+        {
+            return false;
+        }
+    }
+
     mUniformBlockOptimizedMap.clear();
     mSlowCompilingUniformBlockSet.clear();
     // In order to get the exact maximum of slots are available for shader resources, which would
@@ -186,8 +308,9 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
     sh::OutputHLSL outputHLSL(
         getShaderType(), getShaderSpec(), getShaderVersion(), getExtensionBehavior(),
         getSourcePath(), getOutputType(), numRenderTargets, maxDualSourceDrawBuffers, getUniforms(),
-        compileOptions, &getSymbolTable(), perfDiagnostics, mUniformBlockOptimizedMap,
-        getClipDistanceArraySize(), getCullDistanceArraySize(), isEarlyFragmentTestsSpecified());
+        extractedSamplerNames, compileOptions, &getSymbolTable(), perfDiagnostics,
+        mUniformBlockOptimizedMap, getClipDistanceArraySize(), getCullDistanceArraySize(),
+        isEarlyFragmentTestsSpecified());
 
     outputHLSL.output(root, getInfoSink().obj);
 

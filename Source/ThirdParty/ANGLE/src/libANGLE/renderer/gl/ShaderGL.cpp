@@ -128,7 +128,7 @@ std::shared_ptr<ShaderTranslateTask> ShaderGL::compile(const gl::Context *contex
 
     options->initGLPosition = true;
 
-    const bool isHardened = context->isWebGL() || context->isHardenedContext();
+    const bool isHardened = context->isHardenedContext();
     if (isHardened || (features.initFragmentOutputVariables.enabled &&
                        mState.getShaderType() == gl::ShaderType::Fragment))
     {

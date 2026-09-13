@@ -271,6 +271,7 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
                        int numRenderTargets,
                        int maxDualSourceDrawBuffers,
                        const std::vector<ShaderVariable> &uniforms,
+                       const ExtractedSamplerNameMap &extractedSamplerNames,
                        const ShCompileOptions &compileOptions,
                        TSymbolTable *symbolTable,
                        PerformanceDiagnostics *perfDiagnostics,
@@ -337,7 +338,16 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mImageFunctionHLSL   = new ImageFunctionHLSL;
 
     unsigned int firstUniformRegister = compileOptions.skipD3DConstantRegisterZero ? 1u : 0u;
-    mResourcesHLSL = new ResourcesHLSL(mStructureHLSL, uniforms, firstUniformRegister);
+    mResourcesHLSL =
+        new ResourcesHLSL(mStructureHLSL, uniforms, extractedSamplerNames, firstUniformRegister);
+
+    // D3D links every sampler field of an active struct uniform, including fields unused in the
+    // AST.
+    for (const auto &extractedSampler : extractedSamplerNames)
+    {
+        const TVariable *variable = extractedSampler.first;
+        mReferencedUniforms.emplace(variable->uniqueId().get(), variable);
+    }
 
     // Reserve registers for the default uniform block and driver constants
     mResourcesHLSL->reserveUniformBlockRegisters(2);
@@ -605,7 +615,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
 
     out << mStructureHLSL->structsHeader();
 
-    mResourcesHLSL->uniformsHeader(out, mOutputType, mReferencedUniforms, mSymbolTable);
+    mResourcesHLSL->uniformsHeader(out, mOutputType, mReferencedUniforms);
     out << mResourcesHLSL->uniformBlocksHeader(mReferencedUniformBlocks, mUniformBlockOptimizedMap);
 
     if (!mEqualityFunctions.empty())
@@ -1320,40 +1330,6 @@ void OutputHLSL::outputAssign(Visit visit, const TType &type, TInfoSinkBase &out
     }
 }
 
-bool OutputHLSL::ancestorEvaluatesToSamplerInStruct()
-{
-    for (unsigned int n = 0u; getAncestorNode(n) != nullptr; ++n)
-    {
-        TIntermNode *ancestor               = getAncestorNode(n);
-        const TIntermBinary *ancestorBinary = ancestor->getAsBinaryNode();
-        if (ancestorBinary == nullptr)
-        {
-            return false;
-        }
-        switch (ancestorBinary->getOp())
-        {
-            case EOpIndexDirectStruct:
-            {
-                const TStructure *structure = ancestorBinary->getLeft()->getType().getStruct();
-                const TIntermConstantUnion *index =
-                    ancestorBinary->getRight()->getAsConstantUnion();
-                const TField *field = structure->fields()[index->getIConst(0)];
-                if (IsSampler(field->type()->getBasicType()))
-                {
-                    return true;
-                }
-                break;
-            }
-            case EOpIndexDirect:
-                break;
-            default:
-                // Returning a sampler from indirect indexing is not supported.
-                return false;
-        }
-    }
-    return false;
-}
-
 bool OutputHLSL::visitSwizzle(Visit visit, TIntermSwizzle *node)
 {
     TInfoSinkBase &out = getInfoSink();
@@ -1519,12 +1495,6 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
                     return false;
                 }
             }
-            else if (ancestorEvaluatesToSamplerInStruct())
-            {
-                // All parts of an expression that access a sampler in a struct need to use _ as
-                // separator to access the sampler variable that has been moved out of the struct.
-                outputTriplet(out, visit, "", "_", "");
-            }
             else
             {
                 outputTriplet(out, visit, "", "[", "]");
@@ -1585,32 +1555,9 @@ bool OutputHLSL::visitBinary(Visit visit, TIntermBinary *node)
             const TIntermConstantUnion *index = node->getRight()->getAsConstantUnion();
             const TField *field               = structure->fields()[index->getIConst(0)];
 
-            // In cases where indexing returns a sampler, we need to access the sampler variable
-            // that has been moved out of the struct.
-            bool indexingReturnsSampler = IsSampler(field->type()->getBasicType());
-            if (visit == PreVisit && indexingReturnsSampler)
-            {
-                // Samplers extracted from structs have "angle" prefix to avoid name conflicts.
-                // This prefix is only output at the beginning of the indexing expression, which
-                // may have multiple parts.
-                out << "angle";
-            }
-            if (!indexingReturnsSampler)
-            {
-                // All parts of an expression that access a sampler in a struct need to use _ as
-                // separator to access the sampler variable that has been moved out of the struct.
-                indexingReturnsSampler = ancestorEvaluatesToSamplerInStruct();
-            }
             if (visit == InVisit)
             {
-                if (indexingReturnsSampler)
-                {
-                    out << "_" << field->name();
-                }
-                else
-                {
-                    out << "." << DecorateField(field->name(), *structure);
-                }
+                out << "." << DecorateField(field->name(), *structure);
 
                 return false;
             }
@@ -1929,41 +1876,6 @@ bool OutputHLSL::visitUnary(Visit visit, TIntermUnary *node)
     return true;
 }
 
-TString OutputHLSL::samplerNamePrefixFromStruct(TIntermTyped *node)
-{
-    if (node->getAsSymbolNode())
-    {
-        ASSERT(node->getAsSymbolNode()->variable().symbolType() != SymbolType::Empty);
-        return DecorateVariableIfNeeded(node->getAsSymbolNode()->variable());
-    }
-    TIntermBinary *nodeBinary = node->getAsBinaryNode();
-    switch (nodeBinary->getOp())
-    {
-        case EOpIndexDirect:
-        {
-            int index = nodeBinary->getRight()->getAsConstantUnion()->getIConst(0);
-
-            TStringStream prefixSink = sh::InitializeStream<TStringStream>();
-            prefixSink << samplerNamePrefixFromStruct(nodeBinary->getLeft()) << "_" << index;
-            return prefixSink.str();
-        }
-        case EOpIndexDirectStruct:
-        {
-            const TStructure *s = nodeBinary->getLeft()->getAsTyped()->getType().getStruct();
-            int index           = nodeBinary->getRight()->getAsConstantUnion()->getIConst(0);
-            const TField *field = s->fields()[index];
-
-            TStringStream prefixSink = sh::InitializeStream<TStringStream>();
-            prefixSink << samplerNamePrefixFromStruct(nodeBinary->getLeft()) << "_"
-                       << field->name();
-            return prefixSink.str();
-        }
-        default:
-            UNREACHABLE();
-            return "";
-    }
-}
-
 bool OutputHLSL::visitBlock(Visit visit, TIntermBlock *node)
 {
     TInfoSinkBase &out = getInfoSink();
@@ -2275,25 +2187,7 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
 
             for (TIntermSequence::iterator arg = arguments->begin(); arg != arguments->end(); arg++)
             {
-                TIntermTyped *typedArg = (*arg)->getAsTyped();
-
                 (*arg)->traverse(this);
-
-                if (typedArg->getType().isStructureContainingSamplers())
-                {
-                    const TType &argType = typedArg->getType();
-                    TVector<const TVariable *> samplerSymbols;
-                    TString structName     = samplerNamePrefixFromStruct(typedArg);
-                    std::string namePrefix = "angle";
-                    namePrefix += structName.data();
-                    argType.createSamplerSymbols(ImmutableString(namePrefix), "", &samplerSymbols,
-                                                 nullptr, mSymbolTable);
-                    for (const TVariable *sampler : samplerSymbols)
-                    {
-                        // This symbol is the sampler index.
-                        out << ", " << sampler->name();
-                    }
-                }
 
                 if (arg < arguments->end() - 1)
                 {
@@ -2778,22 +2672,6 @@ void OutputHLSL::writeParameter(const TVariable *param, TInfoSinkBase &out)
     out << QualifierString(qualifier) << " " << TypeString(type) << " " << nameStr
         << ArrayString(type);
 
-    // If the structure parameter contains samplers, they need to be passed into the function as
-    // separate parameters. HLSL doesn't natively support samplers in structs.
-    if (type.isStructureContainingSamplers())
-    {
-        ASSERT(qualifier != EvqParamOut && qualifier != EvqParamInOut);
-        TVector<const TVariable *> samplerSymbols;
-        std::string namePrefix = "angle";
-        namePrefix += nameStr.c_str();
-        type.createSamplerSymbols(ImmutableString(namePrefix), "", &samplerSymbols, nullptr,
-                                  mSymbolTable);
-        for (const TVariable *sampler : samplerSymbols)
-        {
-            const TType &samplerType = sampler->getType();
-            out << ", const uint " << sampler->name() << ArrayString(samplerType);
-        }
-    }
 }
 
 TString OutputHLSL::zeroInitializer(const TType &type) const

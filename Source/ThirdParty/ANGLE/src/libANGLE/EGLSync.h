@@ -77,4 +77,4 @@ class Sync final : public LabeledObject
 
 }  // namespace egl
 
-#endif  // LIBANGLE_FENCE_H_
+#endif  // LIBANGLE_EGLSYNC_H_

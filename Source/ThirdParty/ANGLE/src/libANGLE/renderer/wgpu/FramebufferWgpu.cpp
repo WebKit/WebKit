@@ -547,8 +547,9 @@ angle::Result FramebufferWgpu::syncState(const gl::Context *context,
                         dirtyBit - gl::Framebuffer::DIRTY_BIT_COLOR_BUFFER_CONTENTS_0);
                 }
 
-                ANGLE_TRY(
-                    mRenderTargetCache.updateColorRenderTarget(context, mState, colorIndexGL));
+                bool readColorTargetUpdated = false;
+                ANGLE_TRY(mRenderTargetCache.updateColorRenderTarget(context, mState, colorIndexGL,
+                                                                     &readColorTargetUpdated));
 
                 // Window system framebuffer only have one color attachment and its property should
                 // never change unless via DIRTY_BIT_DRAW_BUFFERS bit.

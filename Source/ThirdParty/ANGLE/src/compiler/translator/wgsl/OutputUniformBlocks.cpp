@@ -124,14 +124,13 @@ bool OutputUniformBoolOrBvecConversion(TInfoSinkBase &output, const TType &type)
 
 bool OutputUniformWrapperStructsAndConversions(
     TInfoSinkBase &output,
-    const ShBuiltInResources &resources,
     const WGSLGenerationMetadataForUniforms &wgslGenerationMetadataForUniforms)
 {
 
-    auto generate16AlignedWrapperStruct = [&output, &resources](const TType &type) {
+    auto generate16AlignedWrapperStruct = [&output](const TType &type) {
         output << "struct " << MakeUniformWrapperStructName(&type) << "\n{\n";
         output << "  @align(16) " << kWrappedStructFieldName << " : ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::Uniform});
+        WriteWgslType(output, type, {WgslAddressSpace::Uniform});
         output << "\n};\n";
     };
 
@@ -171,12 +170,12 @@ bool OutputUniformWrapperStructsAndConversions(
         // This could take ptr<uniform, typeName>, with the unrestricted_pointer_parameters
         // extension. This is probably fine.
         output << "fn " << MakeUnwrappingArrayConversionFunctionName(&type) << "(wrappedArr : ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::Uniform});
+        WriteWgslType(output, type, {WgslAddressSpace::Uniform});
         output << ") -> ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::NonUniform});
+        WriteWgslType(output, type, {WgslAddressSpace::NonUniform});
         output << "\n{\n";
         output << "  var retVal : ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::NonUniform});
+        WriteWgslType(output, type, {WgslAddressSpace::NonUniform});
         output << ";\n";
         output << "  for (var i : u32 = 0; i < " << type.getOutermostArraySize() << "; i++) {;\n";
         output << "    retVal[i] = ";
@@ -200,12 +199,12 @@ bool OutputUniformWrapperStructsAndConversions(
         ASSERT(type.isMatrix() && type.getRows() == 2);
         output << "fn " << MakeMatCx2ConversionFunctionName(&type) << "(mangledMatrix : ";
 
-        WriteWgslType(output, resources, type, {WgslAddressSpace::Uniform});
+        WriteWgslType(output, type, {WgslAddressSpace::Uniform});
         output << ") -> ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::NonUniform});
+        WriteWgslType(output, type, {WgslAddressSpace::NonUniform});
         output << "\n{\n";
         output << "  var retVal : ";
-        WriteWgslType(output, resources, type, {WgslAddressSpace::NonUniform});
+        WriteWgslType(output, type, {WgslAddressSpace::NonUniform});
         output << ";\n";
 
         if (type.isArray())
@@ -221,7 +220,7 @@ bool OutputUniformWrapperStructsAndConversions(
 
         TType baseType = type;
         baseType.toArrayBaseType();
-        WriteWgslType(output, resources, baseType, {WgslAddressSpace::NonUniform});
+        WriteWgslType(output, baseType, {WgslAddressSpace::NonUniform});
         output << "(";
         for (uint8_t i = 0; i < type.getCols(); i++)
         {

@@ -128,28 +128,6 @@ TStructure::TStructure(TSymbolTable *symbolTable,
       mImplementingInterfaceBlock(false)
 {}
 
-void TStructure::createSamplerSymbols(const char *namePrefix,
-                                      const TString &apiNamePrefix,
-                                      TVector<const TVariable *> *outputSymbols,
-                                      TMap<const TVariable *, TString> *outputSymbolsToAPINames,
-                                      TSymbolTable *symbolTable) const
-{
-    ASSERT(containsSamplers());
-    for (const auto *field : *mFields)
-    {
-        const TType *fieldType = field->type();
-        if (IsSampler(fieldType->getBasicType()) || fieldType->isStructureContainingSamplers())
-        {
-            std::stringstream fieldName = sh::InitializeStream<std::stringstream>();
-            fieldName << namePrefix << "_" << field->name();
-            TString fieldApiName = apiNamePrefix + ".";
-            fieldApiName += field->name().data();
-            fieldType->createSamplerSymbols(ImmutableString(fieldName.str()), fieldApiName,
-                                            outputSymbols, outputSymbolsToAPINames, symbolTable);
-        }
-    }
-}
-
 void TStructure::setName(const ImmutableString &name)
 {
     ImmutableString *mutableName = const_cast<ImmutableString *>(&mName);

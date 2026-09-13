@@ -1348,6 +1348,64 @@ void main()
     }
 }
 
+// Test declaring nameless structs with variables with identical names in different scopes.
+TEST_P(GLSLTest_ES3, NamelessStructsIdenticalVariableNames)
+{
+    constexpr char kVS[] = R"(#version 300 es
+precision mediump float;
+in vec2 position;
+out struct {
+   float f;
+} v;
+
+void main()
+{
+    gl_Position = vec4(position, 0, 1);
+    v.f = 0.5;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in struct {
+   float f;
+} v;
+
+struct {
+    int i;
+} name;
+
+uniform int zero;
+out vec4 color;
+
+void main()
+{
+    name.i = zero + 1;
+    color = vec4(0, 0, 0, name.i);
+
+    struct {
+        vec2 g;
+    } name;
+    name.g = vec2(v.f);
+
+    if (zero == 0)
+    {
+        struct {
+            int i;
+        } name;
+        name.i = zero;
+
+        color.b = float(name.i);
+    }
+
+    color.rg = name.g;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program, "position", 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 127, 0, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that defining a UBO with an "id" suffix does not collide with a struct declaration without
 // such a suffix.
 TEST_P(GLSLTest_ES3, UBOVsStructsNameCollision)
@@ -1577,6 +1635,29 @@ void main()
 })";
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
+// Test constant folding of a small struct variable.
+TEST_P(GLSLTest, SmallStructConstantFolding)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+const struct S1 {
+   float f;
+} s1 = S1(0.5);
+
+void main()
+{
+    const struct S2 {
+       vec2 v;
+    } s2 = S2(vec2(0.25, 0.75));
+    S1 s = s1;
+    gl_FragColor = vec4(s.f, s2.v, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(127, 63, 191, 255), 1);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Regression test based on WebGL's conformance/ogles/GL/build/build_001_to_008.html
@@ -7378,6 +7459,37 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that nameless structs with samplers work
+TEST_P(GLSLTest_ES3, NamelessStructWithSamplers)
+{
+    const char kFS[] = R"(#version 300 es
+precision mediump float;
+
+uniform struct
+{
+    sampler2D s;
+    float b;
+} u;
+
+out vec4 color;
+
+void main()
+{
+    color = texture(u.s, vec2(0)) + vec4(0, u.b, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint uniLocB = glGetUniformLocation(program, "u.b");
+    ASSERT_NE(-1, uniLocB);
+    glUniform1f(uniLocB, 0.75f);
+
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(0, 191, 0, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests that extracting samplers from structs that are members of other structs
 // will not cause a error when accessing any fields (e.g., uni.b)
 // (This is a modification of the above test "SamplerInStructMemberIndexing").
@@ -10477,11 +10589,94 @@ out vec4 my_FragColor;
 flat in struct
 {
     int field;
-} v_s0, v_s1, v_s2, v_s3;
+} v_s2, v_s0, v_s3, v_s1;
 void main()
 {
     bool success = v_s0 != v_s1 && v_s0 != v_s2 && v_s0 != v_s3 && v_s1 != v_s2 && v_s1 != v_s3 && v_s2 != v_s3;
     success = success && v_s0.field == 1 && v_s1.field == 2 && v_s2.field == 3 && v_s3.field == 4;
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (success)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program.get(), "inputAttribute", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that a varying anonymous structs can be assigned to another with the same type.
+TEST_P(GLSLTest_ES3, VaryingAnonymousStructAssignment)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 inputAttribute;
+flat out struct
+{
+    int field;
+} unused, v_s0, v_s1;
+
+void main()
+{
+    v_s0.field = 1;
+    v_s1 = v_s0;
+    unused.field = 2;
+    gl_Position = inputAttribute;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+flat in struct
+{
+    int field;
+} v_s1, v_s0;
+void main()
+{
+    bool success = v_s0 == v_s1;
+    success = success && v_s0.field == 1 && v_s1.field == 1;
+    my_FragColor = vec4(1, 0, 0, 1);
+    if (success)
+    {
+        my_FragColor = vec4(0, 1, 0, 1);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program.get(), "inputAttribute", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that a varying anonymous structs can be used in ternary.
+TEST_P(GLSLTest_ES3, VaryingAnonymousStructTernary)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 inputAttribute;
+flat out struct
+{
+    int field;
+} unused, v_s0, v_s1;
+
+void main()
+{
+    v_s0.field = 1;
+    v_s1 = v_s0;
+    unused.field = 2;
+    gl_Position = inputAttribute;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+out vec4 my_FragColor;
+uniform int zero;
+flat in struct
+{
+    int field;
+} v_s1, v_s0;
+void main()
+{
+    bool success = (zero == 0 ? v_s0 : v_s1).field == 1;
+    success = success && v_s0.field == 1 && v_s1.field == 1;
     my_FragColor = vec4(1, 0, 0, 1);
     if (success)
     {
@@ -23815,7 +24010,7 @@ void main() {
     o.r = r.x == 0 ? 1.0 : 0.0;
     o.g = r.y == -1 ? 1.0 : 0.0;
     o.b = r.z == -2147483648 ? 1.0 : 0.0;
-    o.a = r.w ==  2147483647 ? 1.0 : 0.0;
+    o.a = r.w ==  2147483520 ? 1.0 : 0.0;
 }
 )";
     ANGLE_GL_PROGRAM(testProgram, essl3_shaders::vs::Simple(), kFS);
@@ -23847,7 +24042,7 @@ void main() {
     o.r = rx == 0 ? 1.0 : 0.0;
     o.g = ry == -1 ? 1.0 : 0.0;
     o.b = rz == -2147483648 ? 1.0 : 0.0;
-    o.a = rw ==  2147483647 ? 1.0 : 0.0;
+    o.a = rw ==  2147483520 ? 1.0 : 0.0;
 }
 )";
     ANGLE_GL_PROGRAM(testProgram, essl3_shaders::vs::Simple(), kFS);

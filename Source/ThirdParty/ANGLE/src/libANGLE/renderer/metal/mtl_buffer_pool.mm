@@ -26,7 +26,7 @@ void UpdateBufferPoolMetrics(int64_t totalMemoryDelta,
                              int64_t freeMemoryDelta,
                              int64_t totalBuffersDelta)
 {
-#if defined(ANGLE_ENABLE_PLATFORM_TRACE_EVENTS)
+#if defined(ANGLE_USE_PERFETTO)
     static std::atomic<int64_t> s_BufferPoolTotalMemory(0);
     static std::atomic<int64_t> s_BufferPoolFreeMemory(0);
     static std::atomic<int64_t> s_BufferPoolTotalBuffers(0);
@@ -34,17 +34,17 @@ void UpdateBufferPoolMetrics(int64_t totalMemoryDelta,
     int64_t newTotalMemory =
         s_BufferPoolTotalMemory.fetch_add(totalMemoryDelta, std::memory_order_relaxed) +
         totalMemoryDelta;
-    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolTotalMemoryKb", newTotalMemory / 1024);
+    ANGLE_TRACE_COUNTER("gpu.angle", "ANGLEMetalBufferPoolTotalMemoryKb", newTotalMemory / 1024);
 
     int64_t newFreeMemory =
         s_BufferPoolFreeMemory.fetch_add(freeMemoryDelta, std::memory_order_relaxed) +
         freeMemoryDelta;
-    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolFreeMemoryKb", newFreeMemory / 1024);
+    ANGLE_TRACE_COUNTER("gpu.angle", "ANGLEMetalBufferPoolFreeMemoryKb", newFreeMemory / 1024);
 
     int64_t newTotalBuffers =
         s_BufferPoolTotalBuffers.fetch_add(totalBuffersDelta, std::memory_order_relaxed) +
         totalBuffersDelta;
-    ANGLE_TRACE_COUNTER1("gpu.angle", "ANGLEMetalBufferPoolTotalBuffers", newTotalBuffers);
+    ANGLE_TRACE_COUNTER("gpu.angle", "ANGLEMetalBufferPoolTotalBuffers", newTotalBuffers);
 #endif
 }
 }  // namespace

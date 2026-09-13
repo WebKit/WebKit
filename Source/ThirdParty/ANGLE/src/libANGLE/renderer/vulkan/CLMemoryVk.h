@@ -8,20 +8,17 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLMEMORYVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLMEMORYVK_H_
 
-#include "common/PackedCLEnums_autogen.h"
-#include "common/SimpleMutex.h"
-
-#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/renderer/CLMemoryImpl.h"
 
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLMemory.h"
+#include "libANGLE/cl_types.h"
 
-#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 #include "vulkan/vulkan_core.h"
 
 namespace rx
@@ -228,7 +225,7 @@ class CLImageVk : public CLMemoryVk
     cl::Extents mExtent;
     angle::FormatID mAngleFormat;
 
-    cl::Buffer *mStagingBuffer;
+    cl::BufferPtr mStagingBuffer;
     vk::ImageView mImageView;
     VkImageViewType mImageViewType;
     bool mIsImage2DFromBuffer;

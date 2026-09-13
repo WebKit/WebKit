@@ -151,18 +151,6 @@ inline void SetVertexAttribArrayEnabled(const FunctionsGL *functions, GLuint ind
         functions->getter(index, name, value)
 #endif
 
-// Non-indexed GLboolean -> glGetBooleanv
-void GetHelper(const FunctionsGL *functions, GLenum name, GLboolean *value)
-{
-    ANGLE_GL_CHECK_GET_HELPER(functions, getBooleanv, name, value);
-}
-
-// Indexed GLboolean -> glGetBooleani_v
-void GetHelper(const FunctionsGL *functions, GLenum name, GLuint index, GLboolean *value)
-{
-    ANGLE_GL_CHECK_GET_INDEXED_HELPER(functions, getBooleani_v, name, index, value);
-}
-
 // Non-indexed GLboolean -> glIsEnabled
 void GetEnabledHelper(const FunctionsGL *functions, GLenum name, GLboolean *value)
 {
@@ -174,15 +162,6 @@ void GetEnabledHelper(const FunctionsGL *functions, GLenum name, GLuint index, G
 {
     ANGLE_GL_CHECK_GET_INDEXED_ENABLED_HELPER(functions, isEnabledi, name, index, value);
 }
-
-// Non-indexed bool -> Non-index GLboolean
-void GetHelper(const FunctionsGL *functions, GLenum name, bool *value)
-{
-    GLboolean v = gl::ConvertToGLBoolean(*value);
-    GetHelper(functions, name, &v);
-    *value = gl::ConvertToBool(v);
-}
-
 // Non-indexed bool -> Non-indexed GLboolean (for enabled checks)
 void GetEnabledHelper(const FunctionsGL *functions, GLenum name, bool *value)
 {
@@ -197,38 +176,6 @@ void GetEnabledHelper(const FunctionsGL *functions, GLenum name, GLuint index, b
     GLboolean v = gl::ConvertToGLBoolean(*value);
     GetEnabledHelper(functions, name, index, &v);
     *value = gl::ConvertToBool(v);
-}
-
-// Non-indexed std::array<bool, N> -> Non-indexed GLboolean
-template <size_t N>
-void GetHelper(const FunctionsGL *functions, GLenum name, std::array<bool, N> *values)
-{
-    std::array<GLboolean, N> v;
-    for (size_t i = 0; i < N; i++)
-    {
-        v[i] = gl::ConvertToGLBoolean(values->at(i));
-    }
-    GetHelper(functions, name, v.data());
-    for (size_t i = 0; i < N; i++)
-    {
-        (*values)[i] = gl::ConvertToBool(v[i]);
-    }
-}
-
-// Indexed std::array<bool, N> -> Indexed GLboolean
-template <size_t N>
-void GetHelper(const FunctionsGL *functions, GLenum name, GLuint index, std::array<bool, N> *values)
-{
-    std::array<GLboolean, N> v;
-    for (size_t i = 0; i < N; i++)
-    {
-        v[i] = gl::ConvertToGLBoolean(values->at(i));
-    }
-    GetHelper(functions, name, index, v.data());
-    for (size_t i = 0; i < N; i++)
-    {
-        (*values)[i] = gl::ConvertToBool(v[i]);
-    }
 }
 
 // Non-indexed GLint -> glGetIntegerv
@@ -257,6 +204,54 @@ void GetHelper(const FunctionsGL *functions, GLenum name, GLuint index, GLenum *
     GLint v = *value;
     GetHelper(functions, name, index, &v);
     *value = static_cast<GLenum>(v);
+}
+
+// Non-indexed bool -> Non-indexed GLint
+void GetHelper(const FunctionsGL *functions, GLenum name, bool *value)
+{
+    GLint v = gl::ConvertToGLBoolean(*value);
+    GetHelper(functions, name, &v);
+    *value = gl::ConvertToBool(v);
+}
+
+// Indexed GLboolean -> Indexed GLint
+void GetHelper(const FunctionsGL *functions, GLenum name, GLuint index, GLboolean *value)
+{
+    GLint v = gl::ConvertToGLBoolean(*value);
+    GetHelper(functions, name, index, &v);
+    *value = gl::ConvertToBool(v);
+}
+
+// Non-indexed std::array<bool, N> -> Non-indexed GLboolean
+template <size_t N>
+void GetHelper(const FunctionsGL *functions, GLenum name, std::array<bool, N> *values)
+{
+    std::array<GLint, N> v;
+    for (size_t i = 0; i < N; i++)
+    {
+        v[i] = gl::ConvertToGLBoolean(values->at(i));
+    }
+    GetHelper(functions, name, v.data());
+    for (size_t i = 0; i < N; i++)
+    {
+        (*values)[i] = gl::ConvertToBool(v[i]);
+    }
+}
+
+// Indexed std::array<bool, N> -> Indexed GLboolean
+template <size_t N>
+void GetHelper(const FunctionsGL *functions, GLenum name, GLuint index, std::array<bool, N> *values)
+{
+    std::array<GLint, N> v;
+    for (size_t i = 0; i < N; i++)
+    {
+        v[i] = gl::ConvertToGLBoolean(values->at(i));
+    }
+    GetHelper(functions, name, index, v.data());
+    for (size_t i = 0; i < N; i++)
+    {
+        (*values)[i] = gl::ConvertToBool(v[i]);
+    }
 }
 
 // Non-indexed gl::Rectangle -> Non-indexed GLint
@@ -725,17 +720,14 @@ void QueryContextStateGL(const FunctionsGL *functions,
     GetHelper(functions, GL_FRONT_FACE, &state->frontFace);
     if (nativegl::SupportsPolygonMode(functions))
     {
-        // Some drivers return two values for polygon mode.
+        // GL Core and ES contexts return one value. GL Compatibility contexts return two values.
         std::array<gl::PolygonMode, 2> polygonMode = {state->polygonMode, state->polygonMode};
         GetHelper(functions, GL_POLYGON_MODE, &polygonMode);
         // Check that either the two values are equal or the second one is unwritten.
         ASSERT(polygonMode[0] == polygonMode[1] || polygonMode[1] == state->polygonMode);
         state->polygonMode = polygonMode[0];
 
-        if (nativegl::SupportsPolygonModeNV(functions))
-        {
-            GetEnabledHelper(functions, GL_POLYGON_OFFSET_POINT, &state->polygonOffsetPointEnabled);
-        }
+        GetEnabledHelper(functions, GL_POLYGON_OFFSET_POINT, &state->polygonOffsetPointEnabled);
         GetEnabledHelper(functions, GL_POLYGON_OFFSET_LINE, &state->polygonOffsetLineEnabled);
     }
     GetEnabledHelper(functions, GL_POLYGON_OFFSET_FILL, &state->polygonOffsetFillEnabled);
@@ -1333,11 +1325,14 @@ void QueryVertexArrayStateGL(const FunctionsGL *functions, VertexArrayStateGL *s
         }
         else
         {
+            const VertexAttributeGL &attrib = state->attributes[i];
+
             GetVertexHelper(functions, i, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &binding.stride);
             if (supportsInstancing)
             {
                 GetVertexHelper(functions, i, GL_VERTEX_ATTRIB_ARRAY_DIVISOR, &binding.divisor);
             }
+            binding.offset = reinterpret_cast<GLintptr>(attrib.pointer);
             GetVertexHelper(functions, i, GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING, &binding.buffer);
         }
 
@@ -1886,6 +1881,15 @@ void StateManagerGL::bindBuffer(gl::BufferBinding target, GLuint buffer)
         mState.buffers[target] = buffer;
         mFunctions->bindBuffer(gl::ToGLenum(target), buffer);
         setBufferBindingDirty(target);
+
+        if (target == gl::BufferBinding::ElementArray)
+        {
+            VertexArrayStateGL *vaoState = getCurrentVAOState();
+            if (vaoState)
+            {
+                vaoState->elementArrayBuffer = buffer;
+            }
+        }
     }
 }
 
@@ -2946,7 +2950,7 @@ void StateManagerGL::setBlendEquations(const gl::BlendStateExt &blendState)
     mState.blendState.setEquationColorBits(blendState.getEquationColorBits(),
                                            blendState.getUsesAdvancedBlendEquationMask());
     mState.blendState.setEquationAlphaBits(blendState.getEquationAlphaBits());
-    mLocalDirtyBits.set(gl::state::DIRTY_BIT_COLOR_MASK);
+    mLocalDirtyBits.set(gl::state::DIRTY_BIT_BLEND_EQUATIONS);
 }
 
 void StateManagerGL::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -4228,8 +4232,9 @@ void StateManagerGL::setDefaultVAOState(const VertexArrayStateGL &state)
                 curBinding.stride = newBinding.stride;
             }
 
-            if (supportsInstancing && curBinding.divisor != newBinding.divisor)
+            if (curBinding.divisor != newBinding.divisor)
             {
+                ASSERT(supportsInstancing);
                 mFunctions->vertexAttribDivisor(i, newBinding.divisor);
                 curBinding.divisor = newBinding.divisor;
             }
@@ -4261,7 +4266,19 @@ void StateManagerGL::setDefaultVAOState(const VertexArrayStateGL &state)
         }
     }
 
-    ASSERT(mState.defaultVAOState == state);
+#if defined(ANGLE_EANBLE_ASSERTS)
+    if (mState.defaultVAOState != state)
+    {
+        std::ostringstream msg;
+        msg << "VAO state note equal after applying!" << std::endl;
+        msg << "mState.defaultVAOState:" << std::endl
+            << mState.defaultVAOState << std::endl
+            << std::endl;
+        msg << "state:" << std::endl << state << std::endl;
+        FATAL() << msg.str();
+    }
+#endif
+
     mLocalDirtyBits.set(gl::state::DIRTY_BIT_VERTEX_ARRAY_BINDING);
 }
 

@@ -231,6 +231,11 @@ class TextureGL : public TextureImpl
     angle::Result recreateNativeStoragePreservingLevels(const gl::Context *context);
     angle::Result useTempForNonZeroBaseLevelGenmipmap(const gl::Context *context);
 
+    angle::Result recreateTextureOnTexImage3DDepthIncreaseWorkaround(const gl::Context *context,
+                                                                     gl::TextureTarget target,
+                                                                     size_t level,
+                                                                     const gl::Extents &size);
+
     angle::Result setImageHelper(const gl::Context *context,
                                  gl::TextureTarget target,
                                  size_t level,

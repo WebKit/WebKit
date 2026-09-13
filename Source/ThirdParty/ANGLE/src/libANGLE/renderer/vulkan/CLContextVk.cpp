@@ -6,9 +6,11 @@
 // CLContextVk.cpp: Implements the class methods for CLContextVk.
 //
 
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_libc_calls
+#endif
+
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
-#include "common/PackedEnums.h"
-#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
@@ -24,6 +26,7 @@
 #include "libANGLE/CLEvent.h"
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLProgram.h"
+#include "libANGLE/CLSampler.h"
 #include "libANGLE/cl_utils.h"
 
 namespace rx

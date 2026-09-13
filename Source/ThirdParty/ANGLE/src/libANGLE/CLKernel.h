@@ -8,8 +8,14 @@
 #ifndef LIBANGLE_CLKERNEL_H_
 #define LIBANGLE_CLKERNEL_H_
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLKernelImpl.h"
+
+#include <cstddef>
+#include <string>
 
 namespace cl
 {

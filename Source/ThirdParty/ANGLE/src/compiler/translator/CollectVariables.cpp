@@ -122,8 +122,6 @@ class CollectVariablesTraverser : public TIntermTraverser
                               std::vector<ShaderVariable> *sharedVariables,
                               std::vector<InterfaceBlock> *uniformBlocks,
                               std::vector<InterfaceBlock> *shaderStorageBlocks,
-                              char userVariablePrefix,
-                              char userBlockPrefix,
                               ShHashFunction64 hashFunction,
                               NameMap *nameMap,
                               TSymbolTable *symbolTable,
@@ -256,8 +254,6 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool mTessCoordAdded;
     bool mTransformFloatUniformToFP16;
 
-    char mUserVariablePrefix;
-    char mUserBlockPrefix;
     ShHashFunction64 mHashFunction;
     NameMap *mNameMap;
 
@@ -274,8 +270,6 @@ CollectVariablesTraverser::CollectVariablesTraverser(
     std::vector<sh::ShaderVariable> *sharedVariables,
     std::vector<sh::InterfaceBlock> *uniformBlocks,
     std::vector<sh::InterfaceBlock> *shaderStorageBlocks,
-    char userVariablePrefix,
-    char userBlockPrefix,
     ShHashFunction64 hashFunction,
     NameMap *nameMap,
     TSymbolTable *symbolTable,
@@ -335,8 +329,6 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mBoundingBoxAdded(false),
       mTessCoordAdded(false),
       mTransformFloatUniformToFP16(transformFloatUniformToFP16),
-      mUserVariablePrefix(userVariablePrefix),
-      mUserBlockPrefix(userBlockPrefix),
       mHashFunction(hashFunction),
       mNameMap(nameMap),
       mShaderType(shaderType),
@@ -345,12 +337,12 @@ CollectVariablesTraverser::CollectVariablesTraverser(
 
 std::string CollectVariablesTraverser::getMappedName(const TSymbol *symbol) const
 {
-    return HashName(symbol, mUserVariablePrefix, mHashFunction, mNameMap).data();
+    return HashName(symbol, kUserVariableNamePrefix, mHashFunction, mNameMap).data();
 }
 
 std::string CollectVariablesTraverser::getMappedBlockName(const TSymbol *symbol) const
 {
-    return HashName(symbol, mUserBlockPrefix, mHashFunction, mNameMap).data();
+    return HashName(symbol, kUserBlockNamePrefix, mHashFunction, mNameMap).data();
 }
 
 void CollectVariablesTraverser::setBuiltInInfoFromSymbol(const TVariable &variable,
@@ -800,10 +792,10 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
         {
             variableOut->structOrBlockName = interfaceBlock->name().data();
             variableOut->mappedStructOrBlockName =
-                isPerVertex
-                    ? interfaceBlock->name().data()
-                    : HashName(interfaceBlock->name(), mUserBlockPrefix, mHashFunction, mNameMap)
-                          .data();
+                isPerVertex ? interfaceBlock->name().data()
+                            : HashName(interfaceBlock->name(), kUserBlockNamePrefix, mHashFunction,
+                                       mNameMap)
+                                  .data();
         }
         const TFieldList &fields = interfaceBlock->fields();
         for (const TField *field : fields)
@@ -859,7 +851,7 @@ void CollectVariablesTraverser::setFieldProperties(const TType &type,
     variableOut->mappedName =
         (symbolType == SymbolType::BuiltIn)
             ? name.data()
-            : HashName(name, mUserVariablePrefix, mHashFunction, mNameMap).data();
+            : HashName(name, kUserVariableNamePrefix, mHashFunction, mNameMap).data();
 }
 
 void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
@@ -912,7 +904,7 @@ void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
         variableOut->structOrBlockName.assign(interfaceBlock->name().data(),
                                               interfaceBlock->name().length());
         variableOut->mappedStructOrBlockName =
-            HashName(interfaceBlock->name(), mUserBlockPrefix, mHashFunction, mNameMap).data();
+            HashName(interfaceBlock->name(), kUserBlockNamePrefix, mHashFunction, mNameMap).data();
         variableOut->isShaderIOBlock = true;
     }
 }
@@ -1067,6 +1059,8 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
     if (interfaceBlock->blockType == BlockType::kBlockUniform ||
         interfaceBlock->blockType == BlockType::kBlockBuffer)
     {
+        interfaceBlock->isRowMajorLayout =
+            interfaceBlockType.getLayoutQualifier().matrixPacking == EmpRowMajor;
         interfaceBlock->binding          = blockType->blockBinding();
         interfaceBlock->layout           = GetBlockLayoutType(blockType->blockStorage());
     }
@@ -1103,7 +1097,7 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         setFieldProperties(fieldType, field->name(), staticUse, false, false, false,
                            field->symbolType(), &fieldVariable);
         fieldVariable.isRowMajorLayout =
-            (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
+            fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor;
         interfaceBlock->fields.push_back(fieldVariable);
 
         // The SSBO is not readonly if any field is not readonly.
@@ -1356,8 +1350,6 @@ void CollectVariables(TIntermBlock *root,
                       std::vector<ShaderVariable> *sharedVariables,
                       std::vector<InterfaceBlock> *uniformBlocks,
                       std::vector<InterfaceBlock> *shaderStorageBlocks,
-                      char userVariablePrefix,
-                      char userBlockPrefix,
                       ShHashFunction64 hashFunction,
                       NameMap *nameMap,
                       TSymbolTable *symbolTable,
@@ -1365,10 +1357,10 @@ void CollectVariables(TIntermBlock *root,
                       const TExtensionBehavior &extensionBehavior,
                       const bool transformFloatUniformToFP16)
 {
-    CollectVariablesTraverser collect(
-        attributes, outputVariables, uniforms, inputVaryings, outputVaryings, sharedVariables,
-        uniformBlocks, shaderStorageBlocks, userVariablePrefix, userBlockPrefix, hashFunction,
-        nameMap, symbolTable, shaderType, extensionBehavior, transformFloatUniformToFP16);
+    CollectVariablesTraverser collect(attributes, outputVariables, uniforms, inputVaryings,
+                                      outputVaryings, sharedVariables, uniformBlocks,
+                                      shaderStorageBlocks, hashFunction, nameMap, symbolTable,
+                                      shaderType, extensionBehavior, transformFloatUniformToFP16);
     root->traverse(&collect);
 
     // Attributes are simply vertex shader inputs (and compute shader attributes),

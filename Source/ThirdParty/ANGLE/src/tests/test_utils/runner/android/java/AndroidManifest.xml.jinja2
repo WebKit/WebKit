@@ -35,6 +35,7 @@ found in the LICENSE file.
     <application android:label="NativeTests"
       android:requestLegacyExternalStorage="true"
       android:allowNativeHeapPointerTagging="false">
+        <profileable android:shell="true"/>
         <uses-library android:name="android.test.runner"/>
         <activity android:name=".AngleUnitTestActivity"
                 android:label="NativeTest"

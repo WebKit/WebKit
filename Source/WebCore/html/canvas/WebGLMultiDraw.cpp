@@ -51,8 +51,7 @@ WebGLMultiDraw::~WebGLMultiDraw() = default;
 
 bool WebGLMultiDraw::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension(GCGLExtension::ANGLE_multi_draw)
-        && context.supportsExtension(GCGLExtension::ANGLE_instanced_arrays);
+    return context.supportsExtension(GCGLExtension::ANGLE_multi_draw);
 }
 
 void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List&& firstsList, GCGLuint firstsOffset, Int32List&& countsList, GCGLuint countsOffset, GCGLsizei drawcount)

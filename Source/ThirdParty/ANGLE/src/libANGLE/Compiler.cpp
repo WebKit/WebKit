@@ -24,22 +24,12 @@ namespace
 // To know when to call sh::Initialize and sh::Finalize.
 size_t gActiveCompilers = 0;
 
-ShShaderOutput GetShaderOutputType(const State &state, const rx::CompilerImpl *impl)
-{
-    if (state.usesPassthroughShaders())
-    {
-        return SH_NULL_OUTPUT;
-    }
-
-    return impl->getTranslatorOutputType();
-}
-
 }  // anonymous namespace
 
 Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Display *display)
     : mImplementation(implFactory->createCompiler()),
       mSpec(SelectShaderSpec(state)),
-      mOutputType(GetShaderOutputType(state, mImplementation.get())),
+      mOutputType(mImplementation->getTranslatorOutputType()),
       mResources()
 {
     ASSERT(state.getClientVersion() >= ES_1_0 && state.getClientVersion() <= ES_3_2);
@@ -101,13 +91,6 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
 
     // Hashing and prefixing
     mResources.HashFunction = nullptr;
-    if (mOutputType == SH_NULL_OUTPUT)
-    {
-        // Disable user variable prefixing if using the null output type. The untranslated source
-        // shader is used so make sure the mapped names match the input names.
-        mResources.UserVariableNamePrefix = '\0';
-        mResources.UserBlockNamePrefix    = '\0';
-    }
 
     // EXT_multisampled_render_to_texture and EXT_multisampled_render_to_texture2
     mResources.EXT_multisampled_render_to_texture  = extensions.multisampledRenderToTextureEXT;

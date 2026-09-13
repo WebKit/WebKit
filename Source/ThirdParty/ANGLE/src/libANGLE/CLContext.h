@@ -9,12 +9,19 @@
 #ifndef LIBANGLE_CLCONTEXT_H_
 #define LIBANGLE_CLCONTEXT_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLDevice.h"
 #include "libANGLE/CLMemory.h"
+#include "libANGLE/CLObject.h"
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/renderer/CLContextImpl.h"
 
+#include <cstddef>
 #include <stack>
+#include <string>
+#include <utility>
 
 namespace cl
 {

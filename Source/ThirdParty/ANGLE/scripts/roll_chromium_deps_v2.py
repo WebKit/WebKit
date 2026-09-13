@@ -66,6 +66,7 @@ SYNCED_VARIABLES = {
     # directly once `gclient setdeps` works properly with the specified
     # version.
     'android_ndk_version': None,
+    'cpython3_version': None,
 }
 
 # DEPS entries which have dep_type = cipd. In the Chromium DEPS file, these

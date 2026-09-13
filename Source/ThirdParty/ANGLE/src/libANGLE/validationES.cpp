@@ -615,8 +615,7 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         }
     }
 
-    if (ANGLE_UNLIKELY(context->isWebGL() || context->isBufferAccessValidationEnabled() ||
-                       context->isHardenedContext()))
+    if (ANGLE_UNLIKELY(context->isHardenedContext() || context->isBufferAccessValidationEnabled()))
     {
         // Uniform buffer validation
         for (size_t uniformBlockIndex = 0; uniformBlockIndex < executable.getUniformBlocks().size();
@@ -628,8 +627,7 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
             const OffsetBindingPointer<Buffer> &uniformBuffer =
                 state.getIndexedUniformBuffer(blockBinding);
 
-            if (uniformBuffer.get() == nullptr &&
-                (context->isWebGL() || context->isHardenedContext()))
+            if (uniformBuffer.get() == nullptr && context->isHardenedContext())
             {
                 // undefined behaviour
                 return gl::err::kUniformBufferUnbound;
@@ -1756,8 +1754,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                         return false;
                     }
 
-                    if ((context->isWebGL() || context->isHardenedContext()) &&
-                        *readColorBuffer == *attachment)
+                    if (context->isHardenedContext() && *readColorBuffer == *attachment)
                     {
                         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitSameImageColor);
                         return false;
@@ -1811,8 +1808,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                     return false;
                 }
 
-                if ((context->isWebGL() || context->isHardenedContext()) &&
-                    *readBuffer == *drawBuffer)
+                if (context->isHardenedContext() && *readBuffer == *drawBuffer)
                 {
                     ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitSameImageDepthOrStencil);
                     return false;
@@ -3813,7 +3809,7 @@ bool ValidateCopyTexImageParametersBase(const Context *context,
     }
 
     // Detect texture copying feedback loops for WebGL or hardedend contexts.
-    if (context->isWebGL() || context->isHardenedContext())
+    if (context->isHardenedContext())
     {
         // zoffset cannot be non-zero for a cube map destination
         ASSERT(!(texType == TextureType::CubeMap && zoffset != 0));
@@ -4162,7 +4158,7 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
         }
 
         // Do some additional WebGL/hardened-specific validation
-        if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
+        if (ANGLE_UNLIKELY(context->isHardenedContext()))
         {
             const TransformFeedback *transformFeedbackObject = state.getCurrentTransformFeedback();
             if (state.isTransformFeedbackActive() &&
@@ -4206,7 +4202,7 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
             }
         }
 
-        if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
+        if (ANGLE_UNLIKELY(context->isHardenedContext()))
         {
             // UB: Detect rendering feedback loops for WebGL or hardened context.
             if (framebuffer->formsRenderingFeedbackLoopWith(
@@ -4415,7 +4411,7 @@ const char *ValidateDrawElementsStates(const Context *context)
 
     if (elementArrayBuffer)
     {
-        if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()) &&
+        if (ANGLE_UNLIKELY(context->isHardenedContext()) &&
             elementArrayBuffer->hasTFBBindingConflict())
         {
             return kElementArrayBufferBoundForTransformFeedback;
@@ -6862,7 +6858,7 @@ bool ValidatePixelPack(const Context *context,
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferMapped);
         return false;
     }
-    if (pixelPackBuffer != nullptr && (context->isWebGL() || context->isHardenedContext()) &&
+    if (pixelPackBuffer != nullptr && context->isHardenedContext() &&
         pixelPackBuffer->hasTFBBindingConflict())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kPixelPackBufferBoundForTransformFeedback);
@@ -6915,7 +6911,7 @@ bool ValidatePixelPack(const Context *context,
         }
     }
 
-    if (context->isWebGL() || context->isHardenedContext())
+    if (context->isHardenedContext())
     {
         // WebGL 2.0 disallows the scenario:
         //   GL_PACK_SKIP_PIXELS + width > DataStoreWidth
@@ -7579,6 +7575,12 @@ bool ValidateSamplerParameterBase(const Context *context,
     if (ANGLE_UNLIKELY(!context->isSampler(samplerPacked)))
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidSampler);
+        return false;
+    }
+
+    if (ANGLE_UNLIKELY(params == nullptr))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kParamsNULL);
         return false;
     }
 

@@ -130,6 +130,13 @@ if(is_linux OR is_chromeos OR is_android OR is_fuchsia)
     )
 endif()
 
+if(is_linux OR is_chromeos)
+    list(APPEND libangle_common_sources
+        "src/common/linux/window_system.cpp"
+        "src/common/linux/window_system.h"
+    )
+endif()
+
 if(is_apple)
     list(APPEND libangle_common_sources
         "src/common/apple/ObjCPtr.h"

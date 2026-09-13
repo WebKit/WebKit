@@ -8,14 +8,18 @@
 #ifndef LIBANGLE_CLPROGRAM_H_
 #define LIBANGLE_CLPROGRAM_H_
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLDevice.h"
-#include "libANGLE/CLKernel.h"
+#include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 #include "libANGLE/renderer/CLProgramImpl.h"
 
-#include "common/SynchronizedValue.h"
-
 #include <atomic>
+#include <cstddef>
+#include <string>
+#include <utility>
 
 namespace cl
 {

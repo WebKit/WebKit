@@ -236,7 +236,7 @@ class ConvertStructState : angle::NonCopyable
             {
                 TInfoSinkBase aliasedName;
                 aliasedName << "ANGLE_ALIASED_";
-                info.modifiedFieldName.emit(aliasedName, mCompiler.getUserVariableNamePrefix());
+                info.modifiedFieldName.emit(aliasedName, kUserVariableNamePrefix);
 
                 TType *placeholderType = new TType(modified->getType());
                 placeholderType->setQualifier(EvqSpecConst);

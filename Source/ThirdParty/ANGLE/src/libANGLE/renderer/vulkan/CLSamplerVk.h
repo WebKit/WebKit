@@ -8,10 +8,11 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLSAMPLERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLSAMPLERVK_H_
 
-#include "clspv/Sampler.h"
-#include "libANGLE/renderer/CLSamplerImpl.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+
+#include "libANGLE/renderer/CLSamplerImpl.h"
+
 #include "vulkan/vulkan_core.h"
 
 namespace rx

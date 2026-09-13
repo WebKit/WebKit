@@ -9,12 +9,14 @@
 #ifndef LIBANGLE_CLEVENT_H_
 #define LIBANGLE_CLEVENT_H_
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLEventImpl.h"
 
-#include "common/SynchronizedValue.h"
-
-#include <array>
+#include <cstddef>
+#include <utility>
 
 namespace cl
 {

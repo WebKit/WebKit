@@ -9184,9 +9184,11 @@ void FrameCaptureShared::onMakeCurrent(const gl::Context *context,
         return;
     }
 
-    // Track the width, height and color space of the draw surface as provided to makeCurrent
+    // Track the width, height, type and color space of the draw surface as provided to
+    // makeCurrent.
     SurfaceParams &params = mDrawSurfaceParams[context->id()];
     params.extents        = gl::Extents(surfaceWidth, surfaceHeight, 1);
+    params.type           = drawSurface->getType();
     params.colorSpace     = egl::FromEGLenum<egl::ColorSpace>(drawSurface->getGLColorspace());
 }
 

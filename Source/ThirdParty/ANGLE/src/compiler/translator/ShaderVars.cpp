@@ -487,6 +487,7 @@ bool ShaderVariable::isSameNameAtLinkTime(const ShaderVariable &other) const
 InterfaceBlock::InterfaceBlock()
     : arraySize(0),
       layout(BLOCKLAYOUT_PACKED),
+      isRowMajorLayout(false),
       binding(-1),
       staticUse(false),
       active(false),
@@ -503,6 +504,7 @@ InterfaceBlock::InterfaceBlock(const InterfaceBlock &other)
       instanceName(other.instanceName),
       arraySize(other.arraySize),
       layout(other.layout),
+      isRowMajorLayout(other.isRowMajorLayout),
       binding(other.binding),
       staticUse(other.staticUse),
       active(other.active),
@@ -519,6 +521,7 @@ InterfaceBlock &InterfaceBlock::operator=(const InterfaceBlock &other)
     instanceName     = other.instanceName;
     arraySize        = other.arraySize;
     layout           = other.layout;
+    isRowMajorLayout = other.isRowMajorLayout;
     binding          = other.binding;
     staticUse        = other.staticUse;
     active           = other.active;
@@ -542,7 +545,8 @@ std::string InterfaceBlock::fieldMappedPrefix() const
 bool InterfaceBlock::isSameInterfaceBlockAtLinkTime(const InterfaceBlock &other) const
 {
     if (name != other.name || mappedName != other.mappedName || arraySize != other.arraySize ||
-        layout != other.layout || binding != other.binding || blockType != other.blockType ||
+        layout != other.layout || isRowMajorLayout != other.isRowMajorLayout ||
+        binding != other.binding || blockType != other.blockType ||
         fields.size() != other.fields.size())
     {
         return false;

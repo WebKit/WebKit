@@ -8,7 +8,10 @@
 #ifndef LIBANGLE_CLREFPOINTER_H_
 #define LIBANGLE_CLREFPOINTER_H_
 
+#include "libANGLE/CLObject.h"
+
 #include <algorithm>
+#include <cstddef>
 
 namespace cl
 {
@@ -91,6 +94,15 @@ class RefPointer
             T *const object = release();
             object->release();
         }
+    }
+
+    // helper factory to create CL object and return as RefPointer
+    template <class... Args>
+    static RefPointer Create(Args &&...args)
+    {
+        RefPointer<T> refPointer;
+        refPointer.mCLObject = Object::Create<T>(std::forward<Args>(args)...);
+        return refPointer;
     }
 
   private:

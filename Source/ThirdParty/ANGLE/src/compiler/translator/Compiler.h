@@ -127,8 +127,6 @@ class TCompiler : public TShHandleBase
     }
 
     ShHashFunction64 getHashFunction() const { return mResources.HashFunction; }
-    char getUserVariableNamePrefix() const { return mResources.UserVariableNamePrefix; }
-    char getUserBlockNamePrefix() const { return mResources.UserBlockNamePrefix; }
     NameMap &getNameMap() { return mNameMap; }
     TSymbolTable &getSymbolTable() { return mSymbolTable; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }

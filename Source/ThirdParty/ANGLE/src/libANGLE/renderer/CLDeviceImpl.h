@@ -34,12 +34,12 @@ class CLDeviceImpl : angle::NonCopyable
         Info(Info &&);
         Info &operator=(Info &&);
 
-        bool isValid() const { return version != 0u; }
+        bool isValid() const;
 
         // In the order as they appear in the OpenCL specification V3.0.7, table 5
         cl::DeviceType type;
         std::vector<size_t> maxWorkItemSizes;
-        cl_ulong maxMemAllocSize = 0u;
+        cl_ulong maxMemAllocSize = cl::kMaxAllocSentinel;
         cl_bool imageSupport     = CL_FALSE;
         std::string IL_Version;
         NameVersionVector ILsWithVersion;
@@ -82,6 +82,11 @@ class CLDeviceImpl : angle::NonCopyable
   protected:
     const cl::Device &mDevice;
 };
+
+inline bool CLDeviceImpl::Info::isValid() const
+{
+    return version != 0u && maxMemAllocSize != cl::kMaxAllocSentinel;
+}
 
 }  // namespace rx
 

@@ -724,7 +724,7 @@ Context::Context(egl::Display *display,
       mCurrentReadSurface(static_cast<egl::Surface *>(EGL_NO_SURFACE)),
       mDisplay(display),
       mWebGLContext(GetWebGLContext(attribs)),
-      mHardenedContext(GetHardenedContext(attribs)),
+      mHardenedContext(mWebGLContext || GetHardenedContext(attribs)),
       mBufferAccessValidationEnabled(false),
       mRequiresRobustBehavior(false),
       mExtensionsEnabled(GetExtensionsEnabled(attribs, mWebGLContext)),
@@ -3325,6 +3325,11 @@ void Context::handleError(GLenum errorCode,
                           unsigned int line)
 {
     mErrors.handleError(errorCode, message, file, function, line);
+
+    if (isHardenedContext() && getFrontendFeatures().loseHardenedContextOnBackendError.enabled)
+    {
+        markContextLost(GraphicsResetStatus::UnknownContextReset);
+    }
 }
 
 // Get one of the recorded errors and clear its flag, if any.
@@ -4121,6 +4126,29 @@ Extensions Context::generateSupportedExtensions() const
         // non-conformant in ES 3.0 and superseded by EXT_color_buffer_float.
         supportedExtensions.colorBufferFloatRgbCHROMIUM  = false;
         supportedExtensions.colorBufferFloatRgbaCHROMIUM = false;
+
+        // In WebGL2, WebGL1 extensions whose functionality is present in core are not exposed.
+        // This information can be found by comparing
+        // WebGLRenderingContext::RegisterContextExtensions() and
+        // WebGL2RenderingContext::RegisterContextExtensions() in Blink code.
+        if (mWebGLContext)
+        {
+            supportedExtensions.instancedArraysANGLE         = false;
+            supportedExtensions.blendMinmaxEXT               = false;
+            supportedExtensions.fragDepthEXT                 = false;
+            supportedExtensions.shaderTextureLodEXT          = false;
+            supportedExtensions.sRGBEXT                      = false;
+            supportedExtensions.elementIndexUintOES          = false;
+            supportedExtensions.fboRenderMipmapOES           = false;
+            supportedExtensions.standardDerivativesOES       = false;
+            supportedExtensions.textureFloatOES              = false;
+            supportedExtensions.textureHalfFloatLinearOES    = false;
+            supportedExtensions.vertexArrayObjectOES         = false;
+            supportedExtensions.colorBufferFloatRgbCHROMIUM  = false;
+            supportedExtensions.colorBufferFloatRgbaCHROMIUM = false;
+            supportedExtensions.depthTextureANGLE            = false;
+            supportedExtensions.drawBuffersEXT               = false;
+        }
     }
 
     if (getClientVersion() >= ES_3_0)
@@ -4750,13 +4778,6 @@ void Context::updateCaps()
     caps->compressedTextureFormats.clear();
     textureCaps->clear();
 
-    // Workaround for dEQP bug
-    // https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/6138
-    // . Put paletted formats at the end of the compressed texture
-    // format list. If these tests are fixed, remove this vector and
-    // simplify the code below.
-    std::vector<GLenum> palettedFormats;
-
     for (GLenum sizedInternalFormat : GetAllSizedInternalFormats())
     {
         TextureCaps formatCaps = mImplementation->getNativeTextureCaps().get(sizedInternalFormat);
@@ -4837,23 +4858,13 @@ void Context::updateCaps()
             }
         }
 
-        if (formatCaps.texturable)
+        if (formatCaps.texturable && (formatInfo.compressed || formatInfo.paletted))
         {
-            if (formatInfo.compressed)
-            {
-                caps->compressedTextureFormats.push_back(sizedInternalFormat);
-            }
-            else if (formatInfo.paletted)
-            {
-                palettedFormats.push_back(sizedInternalFormat);
-            }
+            caps->compressedTextureFormats.push_back(sizedInternalFormat);
         }
 
         textureCaps->insert(sizedInternalFormat, formatCaps);
     }
-
-    caps->compressedTextureFormats.insert(caps->compressedTextureFormats.end(),
-                                          palettedFormats.begin(), palettedFormats.end());
 
     // If program binary is disabled, blank out the memory cache pointer.
     if (!mSupportedExtensions.getProgramBinaryOES)
@@ -9759,6 +9770,13 @@ egl::Error Context::unsetDefaultFramebuffer()
 
 void Context::onPreSwap()
 {
+    // Ignore non-window (side-context / aux-pbuffer) swaps for frame boundaries
+    const egl::Surface *drawSurface = getCurrentDrawSurface();
+    if (drawSurface && drawSurface->getType() != EGL_WINDOW_BIT)
+    {
+        return;
+    }
+
     // Dump frame capture if enabled.
     getShareGroup()->getFrameCaptureShared()->onEndFrame(this);
 }

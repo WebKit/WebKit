@@ -11,29 +11,17 @@
 #endif
 
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
-#include "libANGLE/CLBuffer.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
-#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
-#include "libANGLE/renderer/vulkan/vk_helpers.h"
 
+#include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
-#include "common/log_utils.h"
-#include "common/string_utils.h"
-#include "common/system_utils.h"
-
 #include "clspv/Compiler.h"
-
-#include "spirv/unified1/NonSemanticClspvReflection.h"
-#include "spirv/unified1/spirv.hpp"
-
-#include "spirv-tools/libspirv.hpp"
-#include "spirv-tools/optimizer.hpp"
 
 namespace rx
 {
@@ -45,340 +33,6 @@ constexpr bool kAngleDebug = true;
 #else
 constexpr bool kAngleDebug = false;
 #endif
-
-// Used by SPIRV-Tools to parse reflection info
-spv_result_t ParseReflection(CLProgramVk::SpvReflectionData &reflectionData,
-                             const spv_parsed_instruction_t &spvInstr)
-{
-    // Parse spir-v opcodes
-    switch (spvInstr.opcode)
-    {
-        // --- Clspv specific parsing for below cases ---
-        case spv::OpExtInst:
-        {
-            if (spvInstr.ext_inst_type != SPV_EXT_INST_TYPE_NONSEMANTIC_CLSPVREFLECTION)
-            {
-                break;
-            }
-            switch (spvInstr.words[4])
-            {
-                case NonSemanticClspvReflectionKernel:
-                {
-                    // Extract kernel name and args - add to kernel args map
-                    std::string functionName = reflectionData.spvStrLookup[spvInstr.words[6]];
-                    uint32_t numArgs         = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    reflectionData.kernelArgsMap[functionName] = CLKernelArguments();
-                    reflectionData.kernelArgsMap[functionName].resize(numArgs);
-
-                    // Store kernel flags and attributes
-                    reflectionData.kernelFlags[functionName] =
-                        reflectionData.spvIntLookup[spvInstr.words[8]];
-                    reflectionData.kernelAttributes[functionName] =
-                        reflectionData.spvStrLookup[spvInstr.words[9]];
-
-                    // Save kernel name to reflection table for later use/lookup in parser routine
-                    reflectionData.kernelIDs.insert(spvInstr.words[2]);
-                    reflectionData.spvStrLookup[spvInstr.words[2]] = std::string(functionName);
-
-                    // If we already parsed some args ahead of time, populate them now
-                    if (reflectionData.kernelArgMap.contains(functionName))
-                    {
-                        for (const auto &arg : reflectionData.kernelArgMap)
-                        {
-                            uint32_t ordinal = arg.second.ordinal;
-                            reflectionData.kernelArgsMap[functionName].at(ordinal) =
-                                std::move(arg.second);
-                        }
-                    }
-                    break;
-                }
-                case NonSemanticClspvReflectionArgumentInfo:
-                {
-                    CLKernelVk::ArgInfo kernelArgInfo;
-                    kernelArgInfo.name = reflectionData.spvStrLookup[spvInstr.words[5]];
-                    // If instruction has more than 5 instruction operands (minus instruction
-                    // name/opcode), that means we have arg qualifiers. ArgumentInfo also counts as
-                    // an operand for OpExtInst. In below example, [ %e %f %g %h ] are the arg
-                    // qualifier operands.
-                    //
-                    // %a = OpExtInst %b %c ArgumentInfo %d [ %e %f %g %h ]
-                    if (spvInstr.num_operands > 5)
-                    {
-                        kernelArgInfo.typeName = reflectionData.spvStrLookup[spvInstr.words[6]];
-                        kernelArgInfo.addressQualifier =
-                            reflectionData.spvIntLookup[spvInstr.words[7]];
-                        kernelArgInfo.accessQualifier =
-                            reflectionData.spvIntLookup[spvInstr.words[8]];
-                        kernelArgInfo.typeQualifier =
-                            reflectionData.spvIntLookup[spvInstr.words[9]];
-                    }
-                    // Store kern arg for later lookup
-                    reflectionData.kernelArgInfos[spvInstr.words[2]] = std::move(kernelArgInfo);
-                    break;
-                }
-                case NonSemanticClspvReflectionArgumentPodUniform:
-                case NonSemanticClspvReflectionArgumentPointerUniform:
-                case NonSemanticClspvReflectionArgumentPodStorageBuffer:
-                {
-                    CLKernelArgument kernelArg;
-                    if (spvInstr.num_operands == 11)
-                    {
-                        const CLKernelVk::ArgInfo &kernelArgInfo =
-                            reflectionData.kernelArgInfos[spvInstr.words[11]];
-                        kernelArg.info.name             = kernelArgInfo.name;
-                        kernelArg.info.typeName         = kernelArgInfo.typeName;
-                        kernelArg.info.addressQualifier = kernelArgInfo.addressQualifier;
-                        kernelArg.info.accessQualifier  = kernelArgInfo.accessQualifier;
-                        kernelArg.info.typeQualifier    = kernelArgInfo.typeQualifier;
-                    }
-                    kernelArg.type    = spvInstr.words[4];
-                    kernelArg.used    = true;
-                    kernelArg.ordinal = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    kernelArg.op3     = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    kernelArg.op4     = reflectionData.spvIntLookup[spvInstr.words[8]];
-                    kernelArg.op5     = reflectionData.spvIntLookup[spvInstr.words[9]];
-                    kernelArg.op6     = reflectionData.spvIntLookup[spvInstr.words[10]];
-
-                    if (reflectionData.kernelIDs.contains(spvInstr.words[5]))
-                    {
-                        CLKernelArguments &kernelArgs =
-                            reflectionData
-                                .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
-                        kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
-                    }
-                    else
-                    {
-                        // Reflection kernel not yet parsed, place in temp storage for now
-                        reflectionData
-                            .kernelArgMap[reflectionData.spvStrLookup[spvInstr.words[5]]] =
-                            std::move(kernelArg);
-                    }
-
-                    break;
-                }
-                case NonSemanticClspvReflectionArgumentUniform:
-                case NonSemanticClspvReflectionArgumentWorkgroup:
-                case NonSemanticClspvReflectionArgumentSampler:
-                case NonSemanticClspvReflectionArgumentStorageImage:
-                case NonSemanticClspvReflectionArgumentSampledImage:
-                case NonSemanticClspvReflectionArgumentStorageBuffer:
-                case NonSemanticClspvReflectionArgumentStorageTexelBuffer:
-                case NonSemanticClspvReflectionArgumentUniformTexelBuffer:
-                case NonSemanticClspvReflectionArgumentPodPushConstant:
-                case NonSemanticClspvReflectionArgumentPointerPushConstant:
-                {
-                    CLKernelArgument kernelArg;
-                    if (spvInstr.num_operands == 9)
-                    {
-                        const CLKernelVk::ArgInfo &kernelArgInfo =
-                            reflectionData.kernelArgInfos[spvInstr.words[9]];
-                        kernelArg.info.name             = kernelArgInfo.name;
-                        kernelArg.info.typeName         = kernelArgInfo.typeName;
-                        kernelArg.info.addressQualifier = kernelArgInfo.addressQualifier;
-                        kernelArg.info.accessQualifier  = kernelArgInfo.accessQualifier;
-                        kernelArg.info.typeQualifier    = kernelArgInfo.typeQualifier;
-                    }
-
-                    kernelArg.type    = spvInstr.words[4];
-                    kernelArg.used    = true;
-                    kernelArg.ordinal = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    kernelArg.op3     = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    kernelArg.op4     = reflectionData.spvIntLookup[spvInstr.words[8]];
-
-                    if (reflectionData.kernelIDs.contains(spvInstr.words[5]))
-                    {
-                        CLKernelArguments &kernelArgs =
-                            reflectionData
-                                .kernelArgsMap[reflectionData.spvStrLookup[spvInstr.words[5]]];
-                        kernelArgs.at(kernelArg.ordinal) = std::move(kernelArg);
-                    }
-                    else
-                    {
-                        // Reflection kernel not yet parsed, place in temp storage for now
-                        reflectionData
-                            .kernelArgMap[reflectionData.spvStrLookup[spvInstr.words[5]]] =
-                            std::move(kernelArg);
-                    }
-                    break;
-                }
-                case NonSemanticClspvReflectionPushConstantGlobalSize:
-                case NonSemanticClspvReflectionPushConstantGlobalOffset:
-                case NonSemanticClspvReflectionPushConstantRegionOffset:
-                case NonSemanticClspvReflectionPushConstantNumWorkgroups:
-                case NonSemanticClspvReflectionPushConstantRegionGroupOffset:
-                case NonSemanticClspvReflectionPushConstantEnqueuedLocalSize:
-                {
-                    uint32_t offset = reflectionData.spvIntLookup[spvInstr.words[5]];
-                    uint32_t size   = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    reflectionData.pushConstants[spvInstr.words[4]] = {
-                        .stageFlags = 0, .offset = offset, .size = size};
-                    break;
-                }
-                case NonSemanticClspvReflectionSpecConstantWorkgroupSize:
-                {
-                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeX] =
-                        reflectionData.spvIntLookup[spvInstr.words[5]];
-                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeY] =
-                        reflectionData.spvIntLookup[spvInstr.words[6]];
-                    reflectionData.specConstantIDs[SpecConstantType::WorkgroupSizeZ] =
-                        reflectionData.spvIntLookup[spvInstr.words[7]];
-                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeX] = true;
-                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeY] = true;
-                    reflectionData.specConstantsUsed[SpecConstantType::WorkgroupSizeZ] = true;
-                    break;
-                }
-                case NonSemanticClspvReflectionPropertyRequiredWorkgroupSize:
-                {
-                    reflectionData.kernelCompileWorkgroupSize
-                        [reflectionData.spvStrLookup[spvInstr.words[5]]] = {
-                        reflectionData.spvIntLookup[spvInstr.words[6]],
-                        reflectionData.spvIntLookup[spvInstr.words[7]],
-                        reflectionData.spvIntLookup[spvInstr.words[8]]};
-                    break;
-                }
-                case NonSemanticClspvReflectionSpecConstantWorkDim:
-                {
-                    reflectionData.specConstantIDs[SpecConstantType::WorkDimension] =
-                        reflectionData.spvIntLookup[spvInstr.words[5]];
-                    reflectionData.specConstantsUsed[SpecConstantType::WorkDimension] = true;
-                    break;
-                }
-                case NonSemanticClspvReflectionSpecConstantSubgroupMaxSize:
-                {
-                    reflectionData.specConstantIDs[SpecConstantType::SubgroupMaxSize] =
-                        reflectionData.spvIntLookup[spvInstr.words[5]];
-                    reflectionData.specConstantsUsed[SpecConstantType::SubgroupMaxSize] = true;
-                    break;
-                }
-                case NonSemanticClspvReflectionSpecConstantGlobalOffset:
-                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetX] =
-                        reflectionData.spvIntLookup[spvInstr.words[5]];
-                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetY] =
-                        reflectionData.spvIntLookup[spvInstr.words[6]];
-                    reflectionData.specConstantIDs[SpecConstantType::GlobalOffsetZ] =
-                        reflectionData.spvIntLookup[spvInstr.words[7]];
-                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetX] = true;
-                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetY] = true;
-                    reflectionData.specConstantsUsed[SpecConstantType::GlobalOffsetZ] = true;
-                    break;
-                case NonSemanticClspvReflectionConstantDataPointerPushConstant:
-                {
-                    std::string data = reflectionData.spvStrLookup[spvInstr.words[7]];
-
-                    // Data must be an OpString that encodes the hexbytes of the constant data.
-                    // https://github.khronos.org/SPIRV-Registry/nonsemantic/NonSemantic.ClspvReflection.html
-                    // Each byte of binary data is represented by two hexadecimal digits, so the
-                    // number of digits must be even
-                    ASSERT(data.size() % 2 == 0);
-
-                    reflectionData.constantDataBufferInfo.bufferData =
-                        angle::HexStringToUintVector(data);
-
-                    uint32_t set      = 0;
-                    uint32_t binding  = 0;
-                    uint32_t pcOffset = 0;
-                    pcOffset          = reflectionData.spvIntLookup[spvInstr.words[5]];
-
-                    // Add push constant
-                    reflectionData.pushConstants[spvInstr.words[4]] = {
-                        .stageFlags = 0, .offset = pcOffset, .size = CHAR_BIT};
-
-                    // Set constant data buffer
-                    reflectionData.constantDataBufferInfo.set      = set;
-                    reflectionData.constantDataBufferInfo.binding  = binding;
-                    reflectionData.constantDataBufferInfo.pcOffset = pcOffset;
-
-                    break;
-                }
-                case NonSemanticClspvReflectionPrintfInfo:
-                {
-                    // Info on the format string used in the builtin printf call in kernel
-                    uint32_t printfID        = reflectionData.spvIntLookup[spvInstr.words[5]];
-                    std::string formatString = reflectionData.spvStrLookup[spvInstr.words[6]];
-                    reflectionData.printfInfoMap[printfID].id              = printfID;
-                    reflectionData.printfInfoMap[printfID].formatSpecifier = formatString;
-                    for (int i = 6; i < spvInstr.num_operands; i++)
-                    {
-                        uint16_t offset = spvInstr.operands[i].offset;
-                        size_t size     = reflectionData.spvIntLookup[spvInstr.words[offset]];
-                        reflectionData.printfInfoMap[printfID].argSizes.push_back(
-                            static_cast<uint32_t>(size));
-                    }
-
-                    break;
-                }
-                case NonSemanticClspvReflectionPrintfBufferStorageBuffer:
-                {
-                    // Info about the printf storage buffer that contains the formatted content
-                    uint32_t set     = reflectionData.spvIntLookup[spvInstr.words[5]];
-                    uint32_t binding = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    uint32_t size    = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    reflectionData.printfBufferStorage = {set, binding, 0, size};
-                    break;
-                }
-                case NonSemanticClspvReflectionPrintfBufferPointerPushConstant:
-                {
-                    uint32_t pcOffset = reflectionData.spvIntLookup[spvInstr.words[5]];
-                    reflectionData.pushConstants[spvInstr.words[4]] = {
-                        .stageFlags = 0, .offset = pcOffset, .size = CHAR_BIT};
-                    break;
-                }
-                case NonSemanticClspvReflectionNormalizedSamplerMaskPushConstant:
-                case NonSemanticClspvReflectionImageArgumentInfoChannelOrderPushConstant:
-                case NonSemanticClspvReflectionImageArgumentInfoChannelDataTypePushConstant:
-                {
-                    uint32_t ordinal            = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    uint32_t offset             = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    uint32_t size               = reflectionData.spvIntLookup[spvInstr.words[8]];
-                    VkPushConstantRange pcRange = {.stageFlags = 0, .offset = offset, .size = size};
-                    reflectionData.imagePushConstants[spvInstr.words[4]].push_back(
-                        {.pcRange = pcRange, .ordinal = ordinal});
-                    break;
-                }
-                case NonSemanticClspvReflectionLiteralSampler:
-                {
-                    uint32_t descriptorSet = reflectionData.spvIntLookup[spvInstr.words[5]];
-                    ASSERT(descriptorSet < static_cast<uint32_t>(DescriptorSetIndex::EnumCount));
-                    uint32_t binding         = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    uint32_t mask            = reflectionData.spvIntLookup[spvInstr.words[7]];
-                    cl_bool normalizedCoords = clspv_cl::IsNormalizedCoords(mask);
-                    cl::AddressingMode addressingMode = clspv_cl::GetAddressingMode(mask);
-                    cl::FilterMode filterMode         = clspv_cl::GetFilterMode(mask);
-                    reflectionData.literalSamplers.push_back({.descriptorSet    = descriptorSet,
-                                                              .binding          = binding,
-                                                              .normalizedCoords = normalizedCoords,
-                                                              .addressingMode   = addressingMode,
-                                                              .filterMode       = filterMode});
-                    break;
-                }
-                case NonSemanticClspvReflectionWorkgroupVariableSize:
-                {
-                    uint32_t size = reflectionData.spvIntLookup[spvInstr.words[6]];
-                    reflectionData.workgroupVariableSize.size += size;
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        // --- Regular SPIR-V opcode parsing for below cases ---
-        case spv::OpString:
-        {
-            reflectionData.spvStrLookup[spvInstr.words[1]] =
-                reinterpret_cast<const char *>(&spvInstr.words[2]);
-            break;
-        }
-        case spv::OpConstant:
-        {
-            reflectionData.spvIntLookup[spvInstr.words[2]] = spvInstr.words[3];
-            break;
-        }
-        default:
-            break;
-    }
-    return SPV_SUCCESS;
-}
 
 std::string ProcessBuildOptions(const std::vector<std::string> &optionTokens,
                                 CLProgramVk::BuildType buildType)
@@ -550,13 +204,7 @@ angle::Result CLProgramVk::init(const size_t *lengths,
     return angle::Result::Continue;
 }
 
-CLProgramVk::~CLProgramVk()
-{
-    if (mModuleConstantDataBuffer)
-    {
-        mModuleConstantDataBuffer.release();
-    }
-}
+CLProgramVk::~CLProgramVk() {}
 
 angle::Result CLProgramVk::build(const cl::DevicePtrs &devices,
                                  const char *options,
@@ -892,7 +540,7 @@ const CLProgramVk::DeviceProgramData *CLProgramVk::getDeviceProgramData(
     return nullptr;
 }
 
-cl::MemoryPtr CLProgramVk::getOrCreateModuleConstantDataBuffer(const std::string &kernelName)
+cl::BufferPtr CLProgramVk::getOrCreateModuleConstantDataBuffer(const std::string &kernelName)
 {
     const DeviceProgramData *devProgram = getDeviceProgramData(kernelName.c_str());
     ASSERT(devProgram);
@@ -902,17 +550,16 @@ cl::MemoryPtr CLProgramVk::getOrCreateModuleConstantDataBuffer(const std::string
 
     if (!mModuleConstantDataBuffer)
     {
-        mModuleConstantDataBuffer =
-            cl::MemoryPtr(cl::Buffer::Cast(this->mContext->getFrontendObject().createBuffer(
-                nullptr, cl::MemFlags(CL_MEM_USE_HOST_PTR), initData.size(), initDataPtr)));
-        // Release initialization reference, lifetime controlled by RefPointer.
-        mModuleConstantDataBuffer->release();
+        mModuleConstantDataBuffer = cl::BufferPtr::Create(
+            const_cast<cl::Context &>(mProgram.getContext()), cl::Memory::PropArray{},
+            cl::MemFlags(CL_MEM_USE_HOST_PTR), initData.size(), initDataPtr);
     }
     else
     {
         // reading that this buffer is already present and is sufficient to hold initData
         ASSERT(mModuleConstantDataBuffer->getSize() == initData.size());
     }
+
     return mModuleConstantDataBuffer;
 }
 
@@ -1049,35 +696,33 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
                 deviceProgramData.buildStatus = CL_BUILD_ERROR;
                 return false;
             }
-
-            spvtools::SpirvTools spvTool(deviceProgramData.spirvVersion);
-            bool parseRet = spvTool.Parse(
-                deviceProgramData.binary,
-                [](const spv_endianness_t endianess, const spv_parsed_header_t &instruction) {
-                    return SPV_SUCCESS;
-                },
-                [&deviceProgramData](const spv_parsed_instruction_t &instruction) {
-                    return ParseReflection(deviceProgramData.reflectionData, instruction);
-                });
-            if (!parseRet)
+            if (!ClspvParseReflection(mContext->getRenderer(), deviceProgramData.binary,
+                                      deviceProgramData.reflectionData))
             {
                 ERR() << "Failed to parse reflection info from SPIR-V!";
                 deviceProgramData.buildStatus = CL_BUILD_ERROR;
                 return false;
             }
 
+            angle::spirv::Blob strippedSpvBlob;
+            angle::spirv::Blob *spvBlobPtr = &deviceProgramData.binary;
+            if (!mContext->getFeatures().supportsShaderNonSemanticInfo.enabled)
+            {
+                // If VK driver does not support non-semantic instructions, attempt to use a
+                // "stripped" version of the spir-v.
+                if (ClspvStripReflection(mContext->getRenderer(), deviceProgramData.binary,
+                                         strippedSpvBlob))
+                {
+                    spvBlobPtr = &strippedSpvBlob;
+                }
+            }
             if (mShader)
             {
+                // Reset shader module if we built program prior to this current build
                 mShader.reset();
             }
-            // Strip SPIR-V binary if Vk implementation does not support non-semantic info
-            angle::spirv::Blob spvBlob =
-                !mContext->getFeatures().supportsShaderNonSemanticInfo.enabled
-                    ? stripReflection(&deviceProgramData)
-                    : deviceProgramData.binary;
-            ASSERT(!spvBlob.empty());
-            if (IsError(vk::InitShaderModule(mContext, &mShader, spvBlob.data(),
-                                             spvBlob.size() * sizeof(uint32_t))))
+            if (IsError(vk::InitShaderModule(mContext, &mShader, spvBlobPtr->data(),
+                                             spvBlobPtr->size() * sizeof(uint32_t))))
             {
                 ERR() << "Failed to init Vulkan Shader Module!";
                 deviceProgramData.buildStatus = CL_BUILD_ERROR;
@@ -1128,21 +773,6 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
         deviceProgramData.buildStatus = CL_BUILD_SUCCESS;
     }
     return true;
-}
-
-angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceProgramData)
-{
-    angle::spirv::Blob binaryStripped;
-    spvtools::Optimizer opt(deviceProgramData->spirvVersion);
-    opt.RegisterPass(spvtools::CreateStripReflectInfoPass());
-    spvtools::OptimizerOptions optOptions;
-    optOptions.set_run_validator(false);
-    if (!opt.Run(deviceProgramData->binary.data(), deviceProgramData->binary.size(),
-                 &binaryStripped, optOptions))
-    {
-        ERR() << "Could not strip reflection data from binary!";
-    }
-    return binaryStripped;
 }
 
 void CLProgramVk::setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status)

@@ -662,11 +662,12 @@ bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
 
 bool GraphicsContextGLCocoa::enableRequiredWebXRExtensionsImpl()
 {
+    if (!m_isForWebGL2 && !enableExtensionsImpl({ "GL_EXT_sRGB"_s }))
+        return false;
     return enableExtensionsImpl({
         "GL_ANGLE_framebuffer_multisample"_s,
         "GL_ANGLE_framebuffer_blit"_s,
         "GL_EXT_discard_framebuffer"_s,
-        "GL_EXT_sRGB"_s,
         "GL_OES_EGL_image"_s,
         "GL_OES_rgb8_rgba8"_s,
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)

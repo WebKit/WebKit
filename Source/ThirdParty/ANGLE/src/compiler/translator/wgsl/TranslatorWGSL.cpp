@@ -146,7 +146,6 @@ class OutputWGSLTraverser : public TIntermTraverser
 {
   public:
     OutputWGSLTraverser(TInfoSinkBase *sink,
-                        const ShBuiltInResources &resources,
                         RewritePipelineVarOutput *rewritePipelineVarOutput,
                         UniformBlockMetadata *uniformBlockMetadata,
                         WGSLGenerationMetadataForUniforms *arrayElementTypesInUniforms,
@@ -181,7 +180,6 @@ class OutputWGSLTraverser : public TIntermTraverser
         EmitTypeConfig typeConfig;
         bool isParameter                                     = false;
         std::optional<WgslPointerAddressSpace> emitAsPointer = std::nullopt;
-        bool disableStructSpecifier                          = false;
         bool isDeclaration                                   = false;
         bool isGlobalScope                                   = false;
     };
@@ -224,7 +222,6 @@ class OutputWGSLTraverser : public TIntermTraverser
     bool emulateDoWhileLoop(TIntermLoop *);
 
     TInfoSinkBase &mSink;
-    const ShBuiltInResources &mResources;
     const RewritePipelineVarOutput *mRewritePipelineVarOutput;
     const UniformBlockMetadata *mUniformBlockMetadata;
     WGSLGenerationMetadataForUniforms *mWGSLGenerationMetadataForUniforms;
@@ -239,7 +236,6 @@ class OutputWGSLTraverser : public TIntermTraverser
 
 OutputWGSLTraverser::OutputWGSLTraverser(
     TInfoSinkBase *sink,
-    const ShBuiltInResources &resources,
     RewritePipelineVarOutput *rewritePipelineVarOutput,
     UniformBlockMetadata *uniformBlockMetadata,
     WGSLGenerationMetadataForUniforms *wgslGenerationMetadataForUniforms,
@@ -247,7 +243,6 @@ OutputWGSLTraverser::OutputWGSLTraverser(
     WGSLProgramPrelude *prelude)
     : TIntermTraverser(true, false, false),
       mSink(*sink),
-      mResources(resources),
       mRewritePipelineVarOutput(rewritePipelineVarOutput),
       mUniformBlockMetadata(uniformBlockMetadata),
       mWGSLGenerationMetadataForUniforms(wgslGenerationMetadataForUniforms),
@@ -278,7 +273,7 @@ void OutputWGSLTraverser::groupedTraverse(TIntermNode &node)
 
 void OutputWGSLTraverser::emitNameOf(const VarDecl &decl)
 {
-    WriteNameOf(mSink, decl.symbolType, decl.symbolName, mResources.UserVariableNamePrefix);
+    WriteNameOf(mSink, decl.symbolType, decl.symbolName, kUserVariableNamePrefix);
 }
 
 void OutputWGSLTraverser::emitIndentation()
@@ -338,12 +333,12 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
         if (mRewritePipelineVarOutput->IsInputVar(var.uniqueId()))
         {
             mSink << kBuiltinInputStructName << ".";
-            WriteNameOf(mSink, var, mResources.UserVariableNamePrefix);
+            WriteNameOf(mSink, var, kUserVariableNamePrefix);
         }
         else if (mRewritePipelineVarOutput->IsOutputVar(var.uniqueId()))
         {
             mSink << kBuiltinOutputStructName << ".";
-            WriteNameOf(mSink, var, mResources.UserVariableNamePrefix);
+            WriteNameOf(mSink, var, kUserVariableNamePrefix);
         }
         else
         {
@@ -359,7 +354,7 @@ void OutputWGSLTraverser::visitSymbol(TIntermSymbol *symbolNode)
             {
                 mSink << "(*";
             }
-            WriteNameOf(mSink, var, mResources.UserVariableNamePrefix);
+            WriteNameOf(mSink, var, kUserVariableNamePrefix);
             if (needsDereference)
             {
                 mSink << ")";
@@ -1267,7 +1262,7 @@ void OutputWGSLTraverser::emitStructIndexNoUnwrapping(TIntermBinary *binaryNode)
 
     groupedTraverse(leftNode);
     mSink << ".";
-    WriteNameOf(mSink, getDirectField(leftNode, rightNode), mResources.UserVariableNamePrefix);
+    WriteNameOf(mSink, getDirectField(leftNode, rightNode), kUserVariableNamePrefix);
 }
 
 bool OutputWGSLTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
@@ -1544,7 +1539,7 @@ void OutputWGSLTraverser::emitFunctionName(const TFunction &func)
     {
         mSink << "ANGLEfunc" << func.uniqueId().get();
     }
-    WriteNameOf(mSink, func, mResources.UserVariableNamePrefix);
+    WriteNameOf(mSink, func, kUserVariableNamePrefix);
 }
 
 void OutputWGSLTraverser::emitFunctionSignature(const TFunction &func)
@@ -2272,7 +2267,6 @@ void OutputWGSLTraverser::emitStructDeclaration(const TType &type)
         EmitVariableDeclarationConfig evdConfig;
         evdConfig.typeConfig.addressSpace =
             isInUniformAddressSpace ? WgslAddressSpace::Uniform : WgslAddressSpace::NonUniform;
-        evdConfig.disableStructSpecifier = true;
         emitVariableDeclaration({field->symbolType(), field->name(), *fieldType}, evdConfig);
         mSink << ",\n";
     }
@@ -2293,8 +2287,7 @@ void OutputWGSLTraverser::emitVariableDeclaration(const VarDecl &decl,
         return;
     }
 
-    if (basicType == TBasicType::EbtStruct && decl.type.isStructSpecifier() &&
-        !evdConfig.disableStructSpecifier)
+    if (basicType == TBasicType::EbtStruct && decl.type.isStructSpecifier())
     {
         // TODO(anglebug.com/42267100): in WGSL structs probably can't be declared in
         // function parameters or in uniform declarations or in variable declarations, or
@@ -2366,7 +2359,7 @@ void OutputWGSLTraverser::emitVariableDeclaration(const VarDecl &decl,
               << ", ";
     }
 
-    WriteWgslType(mSink, mResources, decl.type, evdConfig.typeConfig);
+    WriteWgslType(mSink, decl.type, evdConfig.typeConfig);
 
     if (isOutParam || evdConfig.emitAsPointer)
     {
@@ -2620,12 +2613,12 @@ void OutputWGSLTraverser::visitPreprocessorDirective(TIntermPreprocessorDirectiv
 
 void OutputWGSLTraverser::emitBareTypeName(const TType &type)
 {
-    WriteWgslBareTypeName(mSink, mResources, type, {});
+    WriteWgslBareTypeName(mSink, type, {});
 }
 
 void OutputWGSLTraverser::emitType(const TType &type)
 {
-    WriteWgslType(mSink, mResources, type, {});
+    WriteWgslType(mSink, type, {});
 }
 
 // Unlike Vulkan having auto viewport flipping extension, in WGPU we have to flip gl_Position.y
@@ -2819,10 +2812,8 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
             return false;
         }
 
-        int removedUniformsCount;
-
         // Requires MonomorphizeUnsupportedFunctions() to have been run already.
-        if (!RewriteStructSamplers(this, root, &getSymbolTable(), &removedUniformsCount))
+        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
         {
             return false;
         }
@@ -2935,14 +2926,14 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
 
     // Generate the body of the WGSL including the GLSL main() function.
     TInfoSinkBase traverserOutput;
-    OutputWGSLTraverser traverser(&traverserOutput, getResources(), &rewritePipelineVarOutput,
+    OutputWGSLTraverser traverser(&traverserOutput, &rewritePipelineVarOutput,
                                   &uniformBlockMetadata, &wgslGenerationMetadataForUniforms,
                                   &overloadedFunctions, &prelude);
     root->traverse(&traverser);
 
     // The makeup of the prelude is determined by the traverser, and then must be outputted near the
     // top of the program.
-    prelude.outputPrelude(sink, getResources());
+    prelude.outputPrelude(sink);
 
     // Start writing the output structs that will be referred to by the `traverser`'s output.'
     if (!rewritePipelineVarOutput.OutputStructs(sink))
@@ -2958,15 +2949,14 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
     }
 
     sink << "\n";
-    OutputUniformWrapperStructsAndConversions(sink, getResources(),
-                                              wgslGenerationMetadataForUniforms);
+    OutputUniformWrapperStructsAndConversions(sink, wgslGenerationMetadataForUniforms);
 
     // The traverser output needs to be in the code after uniform wrapper structs are emitted above,
     // since the traverser code references the wrapper struct types.
     sink << traverserOutput.str();
 
     // Write the actual WGSL main function, wgslMain(), which calls the GLSL main function.
-    if (!rewritePipelineVarOutput.OutputMainFunction(sink, getUserVariableNamePrefix()))
+    if (!rewritePipelineVarOutput.OutputMainFunction(sink))
     {
         ANGLE_LOG(ERR) << "Failed to output WGSL main function";
         return false;

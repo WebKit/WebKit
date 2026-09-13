@@ -34,7 +34,12 @@
 // Decorations:
 //   - Between the Smooth, Flat, NoPerspective, Centroid and Sample decorations, they are all
 //     mutually exclusive, except NoPerspective can be combined with Centroid or Sample. See
-//     ffi::Interpolation in reflection.rs for reference: validate_mutually_exclusive_decorations()
+//     ffi::Interpolation in reflection.rs for reference:
+//     validate_variable_interpolation_decorations()
+//   - ColumnMajor and RowMajor decorations are mutually exclusive;
+//   - ColumnMajor and RowMajor decorations should only apply to matrix types or types containing
+//     matrices in interface block uniforms and shader storage buffers:
+//     validate_variable_matrix_packing_decorations()
 //
 // Control flow:
 //   - Branches must have the appropriate targets set (merge, trueblock for if, etc); every block
@@ -90,8 +95,6 @@
 //     is_proj is false for cubemaps.
 //   - Images with the Rect dimension can only have a Float base type and be 2D samplers (not
 //     storage image, array, msaa, etc).
-//   - ColumnMajor and RowMajor decorations are mutually exclusive.
-//   - ColumnMajor and RowMajor decorations should only apply to matrix types
 //   - Instruction result / operand types are correct and consistent. For example:
 //     BinaryOpCode::Equal should return a bool type.
 
@@ -295,7 +298,7 @@ impl<'a> Validator<'a> {
     fn validate(&self) {
         self.validate_all_ids_are_present();
         self.validate_all_alive_variables_are_pointers();
-        self.validate_mutually_exclusive_decorations();
+        self.validate_decorations();
         self.validate_no_pointer_to_pointer_type();
         self.validate_all_variables_are_declared_in_scope();
         self.validate_all_registers_are_declared_in_scope();
@@ -898,7 +901,7 @@ impl<'a> Validator<'a> {
     }
 
     // Helper Function to print the invalid IR and then panic!
-    fn on_error(&self, validation_error_msg: fmt::Arguments) {
+    fn on_error(&self, validation_error_msg: fmt::Arguments) -> ! {
         println!(
             "Internal error: Invalid ANGLE IR after '{}'! {}",
             self.operation_before_validate, validation_error_msg
@@ -920,36 +923,120 @@ impl<'a> Validator<'a> {
         }
     }
 
-    fn validate_mutually_exclusive_decorations(&self) {
+    fn validate_variable_interpolation_decorations(&self, variable: &Variable) {
+        let has_smooth = variable.decorations.has(Decoration::Smooth);
+        let has_flat = variable.decorations.has(Decoration::Flat);
+        let has_noperspective = variable.decorations.has(Decoration::NoPerspective);
+
+        let has_centroid = variable.decorations.has(Decoration::Centroid);
+        let has_sample = variable.decorations.has(Decoration::Sample);
+
+        if has_smooth && (has_flat || has_noperspective || has_centroid || has_sample) {
+            self.on_error(format_args!(
+                "invalid variable: {:?}, Smooth decoration is mutually exclusive with other \
+                 interpolation decorations",
+                variable
+            ));
+        } else if has_flat && (has_noperspective || has_centroid || has_sample) {
+            self.on_error(format_args!(
+                "invalid variable: {:?}, Flat decoration is mutually exclusive with other \
+                 interpolation decorations",
+                variable
+            ));
+        } else if has_centroid && has_sample {
+            self.on_error(format_args!(
+                "invalid variable: {:?}, Centroid and Sample decorations are mutually exclusive",
+                variable
+            ));
+        }
+    }
+
+    fn validate_variable_matrix_packing_decorations(&self, variable: &Variable) {
+        let has_column_major =
+            variable.decorations.has(Decoration::MatrixPacking(MatrixPacking::ColumnMajor));
+        let has_row_major =
+            variable.decorations.has(Decoration::MatrixPacking(MatrixPacking::RowMajor));
+
+        if !has_column_major && !has_row_major {
+            return;
+        }
+
+        if has_column_major && has_row_major {
+            self.on_error(format_args!(
+                "invalid variable: {:?}, ColumnMajor and RowMajor decorations are mutually \
+                 exclusive",
+                variable
+            ));
+        }
+
+        let has_uniform = variable.decorations.has(Decoration::Uniform);
+        let has_buffer = variable.decorations.has(Decoration::Buffer);
+        if !has_uniform && !has_buffer {
+            self.on_error(format_args!(
+                "invalid variable: {:?}, matrix packing decorations should only apply to uniform \
+                 interface block or shader storage buffer block",
+                variable
+            ));
+        }
+
+        let pointee_type = self.ir.meta.get_type(self.ir.meta.get_pointee_type(variable.type_id));
+
+        let fields = match *pointee_type {
+            Type::Struct(_, ref fields, StructSpecialization::InterfaceBlock) => fields,
+            // Array of interface blocks also carries matrix packing decoration.
+            Type::Array(element_type_id, _) => {
+                let Type::Struct(_, ref fields, StructSpecialization::InterfaceBlock) =
+                    *self.ir.meta.get_type(element_type_id)
+                else {
+                    self.on_error(format_args!(
+                        "invalid variable: {:?}, matrix packing decorations should only apply to \
+                         interface block or array of interface blocks",
+                        variable
+                    ))
+                };
+                fields
+            }
+            _ => self.on_error(format_args!(
+                "invalid variable: {:?}, matrix packing decorations should only apply to \
+                 interface block or array of interface blocks",
+                variable
+            )),
+        };
+
+        for field in fields {
+            self.validate_interface_block_field_matrix_packing_decorations(field);
+        }
+    }
+
+    fn validate_interface_block_field_matrix_packing_decorations(&self, field: &Field) {
+        let has_column_major =
+            field.decorations.has(Decoration::MatrixPacking(MatrixPacking::ColumnMajor));
+        let has_row_major =
+            field.decorations.has(Decoration::MatrixPacking(MatrixPacking::RowMajor));
+        if has_column_major && has_row_major {
+            self.on_error(format_args!(
+                "invalid field: {:?}, ColumnMajor and RowMajor decorations are mutually exclusive",
+                field
+            ));
+        }
+        if (has_column_major || has_row_major)
+            && !self.ir.meta.get_type(field.type_id).is_matrix_packing_applicable(&self.ir.meta)
+        {
+            self.on_error(format_args!(
+                "invalid field: {:?}, matrix packing decorations should only apply to matrix \
+                 types or types containing matrices",
+                field
+            ));
+        }
+    }
+
+    fn validate_decorations(&self) {
+        // Validate decorations on each variable.
         for variable in
             self.ir.meta.all_variables().iter().filter(|variable| !variable.is_dead_code_eliminated)
         {
-            let has_smooth = variable.decorations.has(Decoration::Smooth);
-            let has_flat = variable.decorations.has(Decoration::Flat);
-            let has_noperspective = variable.decorations.has(Decoration::NoPerspective);
-
-            let has_centroid = variable.decorations.has(Decoration::Centroid);
-            let has_sample = variable.decorations.has(Decoration::Sample);
-
-            if has_smooth && (has_flat || has_noperspective || has_centroid || has_sample) {
-                self.on_error(format_args!(
-                    "invalid variable: {:?}, Smooth decoration is mutually exclusive with other \
-                     interpolation decorations",
-                    variable
-                ));
-            } else if has_flat && (has_noperspective || has_centroid || has_sample) {
-                self.on_error(format_args!(
-                    "invalid variable: {:?}, Flat decoration is mutually exclusive with other \
-                     interpolation decorations",
-                    variable
-                ));
-            } else if has_centroid && has_sample {
-                self.on_error(format_args!(
-                    "invalid variable: {:?}, Centroid and Sample decorations are mutually \
-                     exclusive",
-                    variable
-                ));
-            }
+            self.validate_variable_interpolation_decorations(variable);
+            self.validate_variable_matrix_packing_decorations(variable);
         }
     }
 

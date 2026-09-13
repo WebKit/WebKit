@@ -1611,7 +1611,10 @@ angle::Result Program::getBinary(Context *context,
         // TODO: This should be moved to the validation layer but computing the size of the binary
         // before saving it causes the save to happen twice.  It may be possible to write the binary
         // to a separate buffer, validate sizes and then copy it.
-        ANGLE_CHECK(context, false, err::kInsufficientBufferSize, GL_INVALID_OPERATION);
+        context->getMutableErrorSetForValidation()->validationError(
+            angle::EntryPoint::GLGetProgramBinary, GL_INVALID_OPERATION,
+            err::kInsufficientBufferSize);
+        return angle::Result::Stop;
     }
 
     if (binary)

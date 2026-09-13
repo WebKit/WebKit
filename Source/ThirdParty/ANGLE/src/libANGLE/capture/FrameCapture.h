@@ -498,6 +498,7 @@ using TextureLevelDataMap = std::map<gl::TextureID, TextureLevels>;
 struct SurfaceParams
 {
     gl::Extents extents;
+    EGLint type = EGL_NONE;
     egl::ColorSpace colorSpace;
 };
 

@@ -34,9 +34,12 @@ class RenderTargetCache final : angle::NonCopyable
     // Update individual RenderTargets.
     angle::Result updateReadColorRenderTarget(const gl::Context *context,
                                               const gl::FramebufferState &state);
+    // |readColorTargetUpdatedOut| must be initialized to false before a sequence of updates. It is
+    // set to true when the read color target is also updated.
     angle::Result updateColorRenderTarget(const gl::Context *context,
                                           const gl::FramebufferState &state,
-                                          size_t colorIndex);
+                                          size_t colorIndex,
+                                          bool *readColorTargetUpdatedOut);
     angle::Result updateDepthStencilRenderTarget(const gl::Context *context,
                                                  const gl::FramebufferState &state);
 
@@ -94,7 +97,9 @@ angle::Result RenderTargetCache<RenderTargetT>::update(const gl::Context *contex
                 {
                     size_t colorIndex = static_cast<size_t>(
                         dirtyBit - gl::Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0);
-                    ANGLE_TRY(updateColorRenderTarget(context, state, colorIndex));
+                    bool readColorTargetUpdated = false;
+                    ANGLE_TRY(updateColorRenderTarget(context, state, colorIndex,
+                                                      &readColorTargetUpdated));
                 }
                 break;
             }
@@ -128,8 +133,11 @@ template <typename RenderTargetT>
 angle::Result RenderTargetCache<RenderTargetT>::updateColorRenderTarget(
     const gl::Context *context,
     const gl::FramebufferState &state,
-    size_t colorIndex)
+    size_t colorIndex,
+    bool *readColorTargetUpdatedOut)
 {
+    ASSERT(readColorTargetUpdatedOut != nullptr);
+
     const gl::FramebufferAttachment *colorAttachment = state.getColorAttachment(colorIndex);
     ANGLE_TRY(updateCachedRenderTarget(context, colorAttachment, &mColorRenderTargets[colorIndex]));
 
@@ -145,6 +153,8 @@ angle::Result RenderTargetCache<RenderTargetT>::updateColorRenderTarget(
         {
             ANGLE_TRY(updateReadColorRenderTarget(context, state));
         }
+
+        *readColorTargetUpdatedOut = true;
     }
 
     return angle::Result::Continue;

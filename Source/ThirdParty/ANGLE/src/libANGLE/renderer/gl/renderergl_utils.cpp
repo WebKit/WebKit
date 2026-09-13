@@ -1579,25 +1579,7 @@ void GenerateCaps(const FunctionsGL *functions,
     extensions->depthClampEXT         = nativegl::SupportsDepthClamp(functions);
     extensions->polygonOffsetClampEXT = nativegl::SupportsPolygonOffsetClamp(functions);
 
-    if (functions->standard == STANDARD_GL_DESKTOP)
-    {
-        extensions->polygonModeNV = true;
-    }
-    else if (functions->hasGLESExtension("GL_NV_polygon_mode"))
-    {
-        // Some drivers expose the extension string without supporting its caps.
-        ANGLE_GL_CLEAR_ERRORS(functions);
-        functions->isEnabled(GL_POLYGON_OFFSET_LINE_NV);
-        if (functions->getError() != GL_NO_ERROR)
-        {
-            WARN() << "Not enabling GL_NV_polygon_mode because "
-                      "its native driver support is incomplete.";
-        }
-        else
-        {
-            extensions->polygonModeNV = true;
-        }
-    }
+    extensions->polygonModeNV    = nativegl::SupportsPolygonMode(functions);
     extensions->polygonModeANGLE = extensions->polygonModeNV;
 
     // This functionality is provided by Shader Model 5 and should be available in GLSL 4.00
@@ -2420,6 +2402,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, resetBaseLevelForASTCSubImage, IsPowerVR(vendor));
     ANGLE_FEATURE_CONDITION(features, recreateImmutableTextureOnBaseLevelIncrease,
                             IsPowerVR(vendor));
+    ANGLE_FEATURE_CONDITION(features, recreateTextureOnTexImage3dDepthIncrease,
+                            isQualcomm && IsAndroid());
 
     ANGLE_FEATURE_CONDITION(features, useTempForNonZeroBaseLevelGenMipmapUsingCopyImageSubData,
                             IsPowerVR(vendor));
@@ -2530,7 +2514,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     // XWayland defaults to a 1hz refresh rate when the "surface is not visible", which sometimes
     // causes issues in Chrome. To get around this, default to a 30Hz refresh rate if we see bogus
     // from the driver.
-    ANGLE_FEATURE_CONDITION(features, clampMscRate, IsLinux() && IsWayland());
+    ANGLE_FEATURE_CONDITION(features, clampMscRate, IsLinux() && IsXWayland());
 
     ANGLE_FEATURE_CONDITION(features, bindTransformFeedbackBufferBeforeBindBufferRange, IsApple());
 
@@ -3062,13 +3046,26 @@ bool SupportsBlendEquationAdvancedCoherent(const FunctionsGL *functions)
 
 bool SupportsPolygonMode(const FunctionsGL *functions)
 {
-    return functions->standard == STANDARD_GL_DESKTOP ||
-           functions->hasGLESExtension("GL_NV_polygon_mode");
-}
+    if (functions->standard == STANDARD_GL_DESKTOP)
+    {
+        return true;
+    }
 
-bool SupportsPolygonModeNV(const FunctionsGL *functions)
-{
-    return functions->hasGLESExtension("GL_NV_polygon_mode");
+    if (functions->hasGLESExtension("GL_NV_polygon_mode"))
+    {
+        // Some GLES drivers expose the extension string without supporting its caps.
+        // Try the extension-specific state query to check support.
+        ANGLE_GL_CLEAR_ERRORS(functions);
+        functions->isEnabled(GL_POLYGON_OFFSET_LINE_NV);
+        if (functions->getError() == GL_NO_ERROR)
+        {
+            return true;
+        }
+        WARN() << "Not enabling GL_NV_polygon_mode because "
+                  "its native driver support is incomplete.";
+    }
+
+    return false;
 }
 
 bool SupportsPolygonOffsetClamp(const FunctionsGL *functions)

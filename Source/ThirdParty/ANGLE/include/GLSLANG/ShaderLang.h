@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 420
+#define ANGLE_SH_VERSION 422
 
 enum ShShaderSpec
 {
@@ -464,9 +464,7 @@ struct ShCompileOptions
     // Ensure all loops execute side-effects or terminate.
     uint64_t ensureLoopForwardProgress : 1;
 
-    // Do not preform any shader validation or perform any shader transformations. Shader state can
-    // still be reflected.
-    uint64_t skipAllValidationAndTransforms : 1;
+    uint64_t unused2 : 1;
 
     uint64_t transformFloatUniformTo16Bits : 1;
 
@@ -603,22 +601,6 @@ struct ShBuiltInResources
     // Set a 64 bit hash function to enable user-defined name hashing.
     // Default is NULL.
     ShHashFunction64 HashFunction;
-
-    // User defined variables are prefixed with '_' and UserVariableNamePrefix. If UserVariableName
-    // is the null character, no prefixing is done and collisions between user variables and
-    // variables introduced during translation is possible.
-    //
-    // Can't prefix with just _ because then we might introduce a double underscore, which is not
-    // safe in GLSL (ESSL 3.00.6 section 3.8: All identifiers containing a double underscore are
-    // reserved for use by the underlying implementation).
-    //
-    // Defaults to 'u' for user-defined.
-    char UserVariableNamePrefix;
-    // To avoid collision with structs of the same name, block names are prefixed instead with '_'
-    // and UserBlockNamePrefix.
-    //
-    // Default to 'b' for block.
-    char UserBlockNamePrefix;
 
     // The maximum complexity an expression can be when limitExpressionComplexity is turned on.
     int MaxExpressionComplexity;
@@ -975,6 +957,9 @@ inline bool IsWebGLBasedSpec(ShShaderSpec spec)
 {
     return (spec == SH_WEBGL_SPEC || spec == SH_WEBGL2_SPEC);
 }
+
+extern const char kUserVariableNamePrefix;
+extern const char kUserBlockNamePrefix;
 
 enum class MetadataFlags
 {

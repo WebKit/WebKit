@@ -89,6 +89,11 @@ bool HasScalarBasicType(const TType &type);
 // Matches bool, int, uint32_t, float.
 bool HasScalarBasicType(TBasicType type);
 
+// Matches a scalar or vector constructor that converts a floating point value to an integer, e.g.
+// int(f) or ivec3(v). Such conversions have undefined behavior in Metal when the value is out of
+// the range of the destination type, so they are emitted as a call to ANGLE_ftoi.
+bool IsFloatToIntegerConstructor(const TIntermAggregate &node);
+
 // Clones a type.
 TType &CloneType(const TType &type);
 

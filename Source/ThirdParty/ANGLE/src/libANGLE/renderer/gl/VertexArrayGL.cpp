@@ -128,7 +128,7 @@ angle::Result VertexArrayGL::updateElementArrayBufferBinding(const gl::Context *
         StateManagerGL *stateManager = GetStateManagerGL(context);
         stateManager->bindBuffer(gl::BufferBinding::ElementArray, elementArrayBufferId);
         mElementArrayBuffer.set(context, elementArrayBuffer);
-        mNativeState->elementArrayBuffer = elementArrayBufferId;
+        ASSERT(mNativeState->elementArrayBuffer == elementArrayBufferId);
     }
 
     return angle::Result::Continue;
@@ -275,7 +275,7 @@ angle::Result VertexArrayGL::syncIndexData(const gl::Context *context,
 
         stateManager->bindBuffer(gl::BufferBinding::ElementArray, mStreamingElementArrayBuffer);
         mElementArrayBuffer.set(context, nullptr);
-        mNativeState->elementArrayBuffer = mStreamingElementArrayBuffer;
+        ASSERT(mNativeState->elementArrayBuffer == mStreamingElementArrayBuffer);
 
         // Make sure the element array buffer is large enough
         const GLuint indexTypeBytes        = gl::GetDrawElementsTypeSize(type);

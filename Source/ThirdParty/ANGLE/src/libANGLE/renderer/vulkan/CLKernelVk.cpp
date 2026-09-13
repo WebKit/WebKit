@@ -6,12 +6,9 @@
 // CLKernelVk.cpp: Implements the class methods for CLKernelVk.
 //
 
-#include "common/PackedEnums.h"
-#include "common/unsafe_buffers.h"
-
+#include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
-#include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
@@ -98,13 +95,6 @@ CLKernelVk::~CLKernelVk()
 {
     mComputePipelineCache.destroy(mContext);
     mShaderProgramHelper.destroy(mContext->getRenderer());
-
-    if (mPodBuffer)
-    {
-        // mPodBuffer assignment will make newly created buffer
-        // return refcount of 2, so need to release by 1
-        mPodBuffer->release();
-    }
 }
 
 angle::Result CLKernelVk::init()
@@ -189,9 +179,9 @@ angle::Result CLKernelVk::init()
 
     if (podBufferSize > 0)
     {
-        mPodBuffer =
-            cl::MemoryPtr(cl::Buffer::Cast(this->mContext->getFrontendObject().createBuffer(
-                nullptr, cl::MemFlags(CL_MEM_READ_ONLY), podBufferSize, nullptr)));
+        mPodBuffer = cl::BufferPtr::Create(
+            const_cast<cl::Context &>(mKernel.getProgram().getContext()), cl::Memory::PropArray{},
+            cl::MemFlags(CL_MEM_READ_ONLY), podBufferSize, nullptr);
     }
 
     if (usesPrintf() && !usesPrintfBufferPointerPushConstant())

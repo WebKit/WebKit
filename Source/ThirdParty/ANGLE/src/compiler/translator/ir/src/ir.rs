@@ -129,7 +129,8 @@ pub const TYPED_CONSTANT_ID_YUV_CSC_ITU709: TypedId = TypedId::from_constant_id(
 );
 
 // Prefixes used for symbols.
-pub const USER_SYMBOL_PREFIX: &str = "_"; // followed by CompileOptions::user_variable_name_prefix
+pub const USER_VARIABLE_PREFIX: &str = "_u";
+pub const USER_BLOCK_PREFIX: &str = "_b";
 pub const TEMP_VARIABLE_PREFIX: &str = "t";
 pub const TEMP_FUNCTION_PREFIX: &str = "f";
 pub const TEMP_STRUCT_PREFIX: &str = "s";
@@ -2271,6 +2272,20 @@ impl Type {
     }
     pub fn is_struct_containing_samplers(&self, ir_meta: &IRMeta) -> bool {
         self.is_struct() && self.is_struct_containing_samplers_helper(ir_meta)
+    }
+
+    pub fn is_matrix_packing_applicable(&self, ir_meta: &IRMeta) -> bool {
+        // Matrix can be nested within structs or arrays.
+        match self {
+            &Type::Array(element_type_id, _) | &Type::UnsizedArray(element_type_id) => {
+                ir_meta.get_type(element_type_id).is_matrix_packing_applicable(ir_meta)
+            }
+            &Type::Struct(_, ref fields, StructSpecialization::Struct) => fields
+                .iter()
+                .any(|field| ir_meta.get_type(field.type_id).is_matrix_packing_applicable(ir_meta)),
+            &Type::Matrix(..) => true,
+            _ => false,
+        }
     }
 
     pub fn is_pointer(&self) -> bool {

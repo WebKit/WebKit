@@ -1795,14 +1795,50 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
             mLastIndexBufferOffset = indices;
         }
 
-        // When you draw with LineLoop mode, we may allocate its own element buffer and modify
-        // mCurrentElementArrayBuffer. When we switch out of that draw mode, we must reset
-        // mCurrentElementArrayBuffer back to the vertexArray's element buffer.  Since in either
-        // case we set DIRTY_BIT_INDEX_BUFFER dirty bit, we use this bit to re-sync
+        // When you draw with LineLoop mode or GL_UNSIGNED_BYTE type, we may allocate its own
+        // element buffer and modify mCurrentElementArrayBuffer. When we switch out of that draw
+        // mode, we must reset mCurrentElementArrayBuffer back to the vertexArray's element buffer.
+        // Since in either case we set DIRTY_BIT_INDEX_BUFFER dirty bit, we use this bit to re-sync
         // mCurrentElementArrayBuffer.
         if (mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
         {
             vertexArrayVk->updateCurrentElementArrayBuffer();
+        }
+
+        if (shouldConvertUint8VkIndexType(indexType))
+        {
+            if (mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
+            {
+                ANGLE_VK_PERF_WARNING(
+                    this, GL_DEBUG_SEVERITY_LOW,
+                    "Potential inefficiency emulating uint8 vertex attributes due to "
+                    "lack of hardware support");
+
+                BufferVk *bufferVk             = vk::GetImpl(elementArrayBuffer);
+                vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
+
+                if (bufferHelper.isHostVisible() &&
+                    mRenderer->hasResourceUseFinished(bufferHelper.getResourceUse()))
+                {
+                    uint8_t *src = nullptr;
+                    ANGLE_TRY(
+                        bufferVk->mapForReadAccessOnly(this, reinterpret_cast<void **>(&src)));
+                    // Note: bufferOffset is not added here because mapImpl already adds it.
+                    ANGLE_UNSAFE_TODO(src += reinterpret_cast<uintptr_t>(indices));
+                    const size_t byteCount = static_cast<size_t>(elementArrayBuffer->getSize()) -
+                                             reinterpret_cast<uintptr_t>(indices);
+                    BufferBindingDirty bindingDirty;
+                    ANGLE_TRY(vertexArrayVk->convertIndexBufferCPU(this, indexType, byteCount, src,
+                                                                   &bindingDirty));
+                    ANGLE_TRY(bufferVk->unmapReadAccessOnly(this));
+                }
+                else
+                {
+                    ANGLE_TRY(vertexArrayVk->convertIndexBufferGPU(this, bufferVk, indices));
+                }
+            }
+
+            mCurrentIndexBufferOffset = 0;
         }
     }
 
@@ -4258,6 +4294,18 @@ angle::Result ContextVk::multiDrawElementsIndirectHelper(const gl::Context *cont
         return angle::Result::Continue;
     }
 
+    if (shouldConvertUint8VkIndexType(type) && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
+    {
+        ANGLE_VK_PERF_WARNING(
+            this, GL_DEBUG_SEVERITY_LOW,
+            "Potential inefficiency emulating uint8 vertex attributes due to lack "
+            "of hardware support");
+
+        ANGLE_TRY(vertexArrayVk->convertIndexBufferIndirectGPU(
+            this, currentIndirectBuf, currentIndirectBufOffset, &currentIndirectBuf));
+        currentIndirectBufOffset = 0;
+    }
+
     // If the line-loop handling function modifies the element array buffer in the vertex array,
     // there is a possibility that the modified version is used as a source for the next line-loop
     // draw, which can lead to errors. To avoid this, a local index buffer pointer is used to pass
@@ -5530,6 +5578,14 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 {
                     mGraphicsPipelineDesc->updatePrimitiveRestartEnabled(
                         &mGraphicsPipelineTransition, glState.isPrimitiveRestartEnabled());
+                }
+                // Additionally set the index buffer dirty if conversion from uint8 might have been
+                // necessary.  Otherwise if primitive restart is enabled and the index buffer is
+                // translated to uint16_t with a value of 0xFFFF, it cannot be reused when primitive
+                // restart is disabled.
+                if (!mRenderer->getFeatures().supportsIndexTypeUint8.enabled)
+                {
+                    mGraphicsDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
                 }
                 break;
             case gl::state::DIRTY_BIT_CLEAR_COLOR:
@@ -8173,7 +8229,9 @@ void ContextVk::dumpCommandStreamDiagnostics()
 void ContextVk::initIndexTypeMap()
 {
     // Init gles-vulkan index type map
-    mIndexTypeMap[gl::DrawElementsType::UnsignedByte]  = VK_INDEX_TYPE_UINT8;
+    mIndexTypeMap[gl::DrawElementsType::UnsignedByte] =
+        mRenderer->getFeatures().supportsIndexTypeUint8.enabled ? VK_INDEX_TYPE_UINT8_EXT
+                                                                : VK_INDEX_TYPE_UINT16;
     mIndexTypeMap[gl::DrawElementsType::UnsignedShort] = VK_INDEX_TYPE_UINT16;
     mIndexTypeMap[gl::DrawElementsType::UnsignedInt]   = VK_INDEX_TYPE_UINT32;
 }
@@ -8185,10 +8243,19 @@ VkIndexType ContextVk::getVkIndexType(gl::DrawElementsType glIndexType) const
 
 size_t ContextVk::getVkIndexTypeSize(gl::DrawElementsType glIndexType) const
 {
-    ASSERT(glIndexType < gl::DrawElementsType::EnumCount);
+    gl::DrawElementsType elementsType = shouldConvertUint8VkIndexType(glIndexType)
+                                            ? gl::DrawElementsType::UnsignedShort
+                                            : glIndexType;
+    ASSERT(elementsType < gl::DrawElementsType::EnumCount);
 
     // Use GetDrawElementsTypeSize() to get the size
-    return static_cast<size_t>(gl::GetDrawElementsTypeSize(glIndexType));
+    return static_cast<size_t>(gl::GetDrawElementsTypeSize(elementsType));
+}
+
+bool ContextVk::shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) const
+{
+    return (glIndexType == gl::DrawElementsType::UnsignedByte &&
+            !mRenderer->getFeatures().supportsIndexTypeUint8.enabled);
 }
 
 angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands(QueueSubmitReason reason)

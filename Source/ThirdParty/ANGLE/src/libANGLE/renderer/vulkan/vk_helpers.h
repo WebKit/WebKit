@@ -3006,13 +3006,10 @@ class ImageHelper final : public Resource, public angle::Subject
     void restoreSubresourceStencilContent(gl::OwnerLevel level,
                                           gl::OwnerLayer layerIndex,
                                           uint32_t layerCount);
-    angle::Result reformatStagedBufferUpdates(ContextVk *contextVk,
-                                              angle::FormatID srcFormatID,
-                                              angle::FormatID dstFormatID,
-                                              gl::TextureType dstTextureType);
-    bool hasStagedImageUpdatesWithMismatchedFormat(gl::OwnerLevel levelStart,
-                                                   gl::OwnerLevel levelEnd,
-                                                   angle::FormatID formatID) const;
+    angle::Result reformatStagedUpdates(ContextVk *contextVk,
+                                        angle::FormatID srcFormatID,
+                                        angle::FormatID dstFormatID,
+                                        gl::TextureType dstTextureType);
 
     void setAcquireNextImageSemaphore(VkSemaphore semaphore)
     {
@@ -3106,7 +3103,7 @@ class ImageHelper final : public Resource, public angle::Subject
     };
     struct ImageUpdate
     {
-        // Note: copyRegion.src/dstSubresource.mipLevel are GL levels (gl::OwnerLevel)
+        // Source mip is vk::LevelIndex; destination mip is gl::OwnerLevel until flush.
         VkImageCopy copyRegion;
         angle::FormatID formatID;
     };
@@ -3178,6 +3175,38 @@ class ImageHelper final : public Resource, public angle::Subject
         } refCounted;
     };
     using SubresourceUpdates = std::deque<SubresourceUpdate>;
+
+    struct ImageUpdateReadback : angle::NonCopyable
+    {
+        ImageUpdateReadback(Renderer *rendererIn, SubresourceUpdate *updateIn);
+        ImageUpdateReadback(ImageUpdateReadback &&other) noexcept;
+        ~ImageUpdateReadback();
+
+        Renderer *renderer;
+        std::unique_ptr<RefCounted<BufferHelper>> buffer;
+        SubresourceUpdate *update;
+        uint8_t *srcData;
+    };
+
+    angle::Result createReformattedStagedBufferUpdate(ContextVk *contextVk,
+                                                      const angle::Format &srcFormat,
+                                                      const angle::Format &dstFormat,
+                                                      gl::TextureType dstTextureType,
+                                                      const SubresourceUpdate &sourceUpdate,
+                                                      SubresourceUpdate *reformattedUpdateOut);
+    angle::Result reformatStagedBufferUpdates(ContextVk *contextVk,
+                                              const angle::Format &srcFormat,
+                                              const angle::Format &dstFormat,
+                                              gl::TextureType dstTextureType);
+    angle::Result reformatStagedImageUpdates(ContextVk *contextVk,
+                                             const angle::Format &srcFormat,
+                                             const angle::Format &dstFormat,
+                                             gl::TextureType dstTextureType);
+    angle::Result reformatStagedImageUpdateBatch(ContextVk *contextVk,
+                                                 const angle::Format &srcFormat,
+                                                 const angle::Format &dstFormat,
+                                                 gl::TextureType dstTextureType,
+                                                 std::vector<ImageUpdateReadback> *readbacks);
 
     // Up to 8 layers are tracked per level for whether contents are defined, above which the
     // contents are considered unconditionally defined.  This handles the more likely scenarios of:

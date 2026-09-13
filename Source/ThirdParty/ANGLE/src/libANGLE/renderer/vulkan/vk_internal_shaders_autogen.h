@@ -58,6 +58,16 @@ enum flags
 constexpr size_t kArrayLen = 0x00000002;
 }  // namespace BlitResolveStencilNoExport_comp
 
+namespace ConvertIndex_comp
+{
+enum flags
+{
+    kIsPrimitiveRestartEnabled = 0x00000001,
+    kIsIndirect                = 0x00000002,
+};
+constexpr size_t kArrayLen = 0x00000004;
+}  // namespace ConvertIndex_comp
+
 namespace ConvertIndexIndirectLineLoop_comp
 {
 enum IndicesBitsWidth
@@ -225,6 +235,9 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getBlitResolveStencilNoExport_comp(ErrorContext *context,
                                                      uint32_t shaderFlags,
                                                      ShaderModulePtr *shaderOut);
+    angle::Result getConvertIndex_comp(ErrorContext *context,
+                                       uint32_t shaderFlags,
+                                       ShaderModulePtr *shaderOut);
     angle::Result getConvertIndexIndirectLineLoop_comp(ErrorContext *context,
                                                        uint32_t shaderFlags,
                                                        ShaderModulePtr *shaderOut);
@@ -267,6 +280,7 @@ class ShaderLibrary final : angle::NonCopyable
     ShaderModulePtr mBlitResolve_frag_shaders[InternalShader::BlitResolve_frag::kArrayLen];
     ShaderModulePtr mBlitResolveStencilNoExport_comp_shaders
         [InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];
+    ShaderModulePtr mConvertIndex_comp_shaders[InternalShader::ConvertIndex_comp::kArrayLen];
     ShaderModulePtr mConvertIndexIndirectLineLoop_comp_shaders
         [InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen];
     ShaderModulePtr mConvertIndirectLineLoop_comp_shaders

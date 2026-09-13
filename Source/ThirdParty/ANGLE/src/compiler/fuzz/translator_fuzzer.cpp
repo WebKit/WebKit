@@ -113,10 +113,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         hasUnsupportedOptions = hasUnsupportedOptions || hasMacGLSLOptions;
 #endif
     }
-    if (!IsOutputESSL(shaderOutput))
-    {
-        hasUnsupportedOptions = hasUnsupportedOptions || options.skipAllValidationAndTransforms;
-    }
     if (!IsOutputSPIRV(shaderOutput))
     {
         hasUnsupportedOptions = hasUnsupportedOptions || options.addVulkanXfbEmulationSupportCode ||
@@ -220,9 +216,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.ARB_texture_rectangle           = 1;
         resources.EXT_blend_func_extended         = 1;
         resources.EXT_conservative_depth          = 1;
-        resources.EXT_draw_buffers                = 1;
-        resources.EXT_frag_depth                  = 1;
-        resources.EXT_shader_texture_lod          = 1;
         resources.EXT_shader_framebuffer_fetch    = 1;
         resources.ARM_shader_framebuffer_fetch    = 1;
         resources.ARM_shader_framebuffer_fetch_depth_stencil = 1;
@@ -236,6 +229,20 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.ANGLE_clip_cull_distance        = 1;
         resources.EXT_primitive_bounding_box      = 1;
         resources.OES_primitive_bounding_box      = 1;
+
+        // Some extensions are not allowed in WebGL2
+        if (spec == SH_WEBGL2_SPEC)
+        {
+            resources.EXT_frag_depth         = 0;
+            resources.EXT_shader_texture_lod = 0;
+            resources.EXT_draw_buffers       = 0;
+        }
+        else
+        {
+            resources.EXT_frag_depth         = 1;
+            resources.EXT_shader_texture_lod = 1;
+            resources.EXT_draw_buffers       = 1;
+        }
 
         if (!translator->Init(resources))
         {

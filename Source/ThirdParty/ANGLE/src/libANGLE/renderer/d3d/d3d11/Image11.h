@@ -76,6 +76,7 @@ class Image11 : public ImageD3D
     angle::Result loadCompressedData(const gl::Context *context,
                                      const gl::Box &area,
                                      const void *input) override;
+    angle::Result initializeContents(const gl::Context *context) override;
 
     angle::Result copyFromTexStorage(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex,

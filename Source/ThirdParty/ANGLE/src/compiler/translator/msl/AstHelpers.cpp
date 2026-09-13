@@ -248,6 +248,21 @@ bool sh::HasScalarBasicType(const TType &type)
     return HasScalarBasicType(type.getBasicType());
 }
 
+bool sh::IsFloatToIntegerConstructor(const TIntermAggregate &node)
+{
+    if (!node.isConstructor() || node.getChildCount() != 1)
+    {
+        return false;
+    }
+    const TType &retType = node.getType();
+    if (!IsInteger(retType.getBasicType()) || (!retType.isScalar() && !retType.isVector()))
+    {
+        return false;
+    }
+    const TType &argType = node.getChildNode(0)->getAsTyped()->getType();
+    return argType.getBasicType() == EbtFloat && (argType.isScalar() || argType.isVector());
+}
+
 TType &sh::CloneType(const TType &type)
 {
     TType &clone = *new TType(type);

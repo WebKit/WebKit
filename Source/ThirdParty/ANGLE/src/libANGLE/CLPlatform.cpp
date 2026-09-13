@@ -7,17 +7,21 @@
 //
 
 #include "common/unsafe_buffers.h"
+
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
+#include "libANGLE/CLContext.h"
+#include "libANGLE/CLObject.h"
+#include "libANGLE/CLPlatform.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/capture/FrameCapture.h"
-
-#include "libANGLE/CLPlatform.h"
-
-#include "entry_points_utils.h"
-#include "libANGLE/CLContext.h"
-#include "libANGLE/CLDevice.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 
+#include <cstdlib>
 #include <cstring>
+#include <mutex>
 
 namespace cl
 {
@@ -71,10 +75,7 @@ void Platform::Initialize(const cl_icd_dispatch &dispatch,
     platforms.reserve(createFuncs.size());
     while (!createFuncs.empty())
     {
-        platforms.emplace_back(new Platform(createFuncs.front()));
-
-        // Release initialization reference, lifetime controlled by RefPointer.
-        platforms.back()->release();
+        platforms.emplace_back(PlatformPtr::Create(createFuncs.front()));
 
         // Remove platform on any errors
         if (!platforms.back()->mInfo.isValid() || platforms.back()->mDevices.empty())
@@ -144,7 +145,7 @@ angle::Result Platform::getInfo(PlatformInfo name,
         case PlatformInfo::ExtensionsWithVersion:
             copyValue = mInfo.extensionsWithVersion.data();
             copySize  = mInfo.extensionsWithVersion.size() *
-                       sizeof(decltype(mInfo.extensionsWithVersion)::value_type);
+                        sizeof(decltype(mInfo.extensionsWithVersion)::value_type);
             break;
         case PlatformInfo::HostTimerResolution:
             copyValue = &mInfo.hostTimerRes;
@@ -157,7 +158,7 @@ angle::Result Platform::getInfo(PlatformInfo name,
         case PlatformInfo::ExternalMemory:
             copyValue = mInfo.externalMemoryHandleSupportList.data();
             copySize  = mInfo.externalMemoryHandleSupportList.size() *
-                       sizeof(*mInfo.externalMemoryHandleSupportList.data());
+                        sizeof(*mInfo.externalMemoryHandleSupportList.data());
             break;
         default:
             ASSERT(false);
@@ -317,10 +318,9 @@ DevicePtrs Platform::createDevices(rx::CLDeviceImpl::CreateDatas &&createDatas)
     devices.reserve(createDatas.size());
     while (!createDatas.empty())
     {
-        devices.emplace_back(
-            new Device(*this, nullptr, createDatas.front().first, createDatas.front().second));
-        // Release initialization reference, lifetime controlled by RefPointer.
-        devices.back()->release();
+        devices.emplace_back(RefPointer<Device>::Create(*this, nullptr, createDatas.front().first,
+                                                        createDatas.front().second));
+
         if (!devices.back()->mInfo.isValid())
         {
             devices.pop_back();

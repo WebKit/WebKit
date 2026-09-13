@@ -549,7 +549,9 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         gl::OwnerLevel previousFirstAllocateLevel,
                                         vk::ImageHelper *srcImage,
                                         vk::ImageHelper *dstImage);
-    angle::Result reinitImageAsRenderable(ContextVk *contextVk, const vk::Format &format);
+    angle::Result reinitImageAsRenderable(ContextVk *contextVk,
+                                          const vk::Format &format,
+                                          bool reformatWithDraw);
     angle::Result initReadImageViews(ContextVk *contextVk, uint32_t levelCount);
     void initSingleLayerRenderTargets(ContextVk *contextVk,
                                       GLuint layerCount,

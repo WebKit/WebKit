@@ -140,6 +140,15 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBuffers;
     }
 
+    angle::Result convertIndexBufferGPU(ContextVk *contextVk,
+                                        BufferVk *bufferVk,
+                                        const void *indices);
+
+    angle::Result convertIndexBufferIndirectGPU(ContextVk *contextVk,
+                                                vk::BufferHelper *srcIndirectBuf,
+                                                VkDeviceSize srcIndirectBufOffset,
+                                                vk::BufferHelper **indirectBufferVkOut);
+
     angle::Result convertIndexBufferCPU(ContextVk *contextVk,
                                         gl::DrawElementsType indexType,
                                         size_t indexCount,
@@ -217,6 +226,8 @@ class VertexArrayVk : public VertexArrayImpl
     vk::BufferHelperQueue mCachedStreamIndexBuffers;
 
     ConversionBuffer mStreamedIndexData;
+    ConversionBuffer mTranslatedByteIndexData;
+    ConversionBuffer mTranslatedByteIndirectData;
 
     LineLoopHelper mLineLoopHelper;
     Optional<GLint> mLineLoopBufferFirstIndex;

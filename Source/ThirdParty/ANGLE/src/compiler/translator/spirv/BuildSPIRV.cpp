@@ -627,7 +627,7 @@ void SpirvTypeSpec::onBlockFieldSelection(const TType &fieldType)
         // Apply row-major only to structs that contain matrices.
         isRowMajorQualifiedBlock =
             IsBlockFieldRowMajorQualified(fieldType, isRowMajorQualifiedBlock) &&
-            fieldType.isStructureContainingMatrices();
+            fieldType.isMatrixPackingApplicable();
 
         // Structs without bools aren't affected by |isOrHasBoolInInterfaceBlock|.
         if (isOrHasBoolInInterfaceBlock)

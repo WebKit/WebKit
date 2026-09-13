@@ -1,9 +1,12 @@
 #pragma once
 
 #define CL_NO_EXTENSION_PROTOTYPES
+
 #include <angle_cl.h>
-#include <stdint.h>
+
 #include "trace_fixture_cl.h"
+
+#include <stdint.h>
 
 // Public functions are declared in trace_fixture_cl.h.
 

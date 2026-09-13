@@ -16,6 +16,7 @@
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/renderer/d3d/FramebufferD3D.h"
 #include "libANGLE/renderer/d3d/ShaderExecutableD3D.h"
+#include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/trace.h"
 
 namespace rx
@@ -1852,13 +1853,21 @@ void ProgramExecutableD3D::assignSamplerRegisters(
 {
     D3DUniform *d3dUniform = mD3DUniforms[uniformIndex];
     ASSERT(d3dUniform->isSampler());
-    // If the uniform is an array of arrays, then we have separate entries for each inner array in
-    // mD3DUniforms. However, the sampler register info is stored in the shader only for the
-    // outermost array.
-    std::vector<unsigned int> subscripts;
-    const std::string baseName  = gl::ParseResourceName(d3dUniform->name, &subscripts);
-    unsigned int registerOffset = mExecutable->getUniforms()[uniformIndex].pod.parentArrayIndex *
-                                  d3dUniform->getArraySizeProduct();
+    std::string translatedName             = gl::ParseResourceName(d3dUniform->name, nullptr);
+    const gl::LinkedUniform &linkedUniform = mExecutable->getUniforms()[uniformIndex];
+    const bool isSamplerInStruct           = translatedName.find('.') != std::string::npos;
+
+    // Arrays of arrays have one D3DUniform per inner array, while the shader stores register
+    // information for the outermost array.
+    unsigned int registerOffset =
+        linkedUniform.pod.parentArrayIndex * d3dUniform->getArraySizeProduct();
+    // Extracted sampler arrays combine the elements of arrays of structs.
+    if (isSamplerInStruct)
+    {
+        registerOffset += linkedUniform.getOuterArrayOffset();
+        // Extracted samplers use the original uniform path without array indices.
+        translatedName = RemoveArraySubscripts(translatedName);
+    }
 
     bool hasUniform = false;
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
@@ -1869,10 +1878,10 @@ void ProgramExecutableD3D::assignSamplerRegisters(
         }
 
         const SharedCompiledShaderStateD3D &shaderD3D = mAttachedShaders[shaderType];
-        if (shaderD3D->hasUniform(baseName))
+        if (shaderD3D->hasUniform(translatedName))
         {
             d3dUniform->mShaderRegisterIndexes[shaderType] =
-                shaderD3D->getUniformRegister(baseName) + registerOffset;
+                shaderD3D->getUniformRegister(translatedName) + registerOffset;
             ASSERT(d3dUniform->mShaderRegisterIndexes[shaderType] != GL_INVALID_VALUE);
 
             AssignSamplers(d3dUniform->mShaderRegisterIndexes[shaderType], d3dUniform->typeInfo,

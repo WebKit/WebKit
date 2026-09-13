@@ -1466,6 +1466,11 @@ void UtilsVk::destroy(ContextVk *contextVk)
         mImageCopyWithSamplerDescriptorPools[samplerDesc].destroy(device);
     }
 
+    for (ComputeShaderProgramAndPipelines &programAndPipelines : mConvertIndex)
+    {
+        programAndPipelines.program.destroy(renderer);
+        programAndPipelines.pipelines.destroy(contextVk);
+    }
     for (ComputeShaderProgramAndPipelines &programAndPipelines : mConvertIndirectLineLoop)
     {
         programAndPipelines.program.destroy(renderer);
@@ -1611,6 +1616,41 @@ angle::Result UtilsVk::ensureResourcesInitialized(ContextVk *contextVk,
                                                                     &mPipelineLayouts[function]));
 
     return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::ensureConvertIndexResourcesInitialized(ContextVk *contextVk)
+{
+    if (mPipelineLayouts[Function::ConvertIndexBuffer])
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[2] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::ConvertIndexBuffer, setSizes,
+                                      ArraySize(setSizes), sizeof(ConvertIndexShaderParams));
+}
+
+angle::Result UtilsVk::ensureConvertIndexIndirectResourcesInitialized(ContextVk *contextVk)
+{
+    if (mPipelineLayouts[Function::ConvertIndexIndirectBuffer])
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[4] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // dst index buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // source index buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // src indirect buffer
+        {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1},  // dst indirect buffer
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::ConvertIndexIndirectBuffer, setSizes,
+                                      ArraySize(setSizes),
+                                      sizeof(ConvertIndexIndirectShaderParams));
 }
 
 angle::Result UtilsVk::ensureConvertIndexIndirectLineLoopResourcesInitialized(ContextVk *contextVk)
@@ -2045,6 +2085,138 @@ angle::Result UtilsVk::setupGraphicsProgram(ContextVk *contextVk,
     return setupGraphicsProgramWithLayout(
         contextVk, *mPipelineLayouts[function], vsShader, fsShader, programAndPipelines,
         pipelineDesc, descriptorSet, pushConstants, pushConstantsSize, commandBuffer);
+}
+
+angle::Result UtilsVk::convertIndexBuffer(ContextVk *contextVk,
+                                          vk::BufferHelper *dst,
+                                          vk::BufferHelper *src,
+                                          const ConvertIndexParameters &params)
+{
+    ANGLE_TRY(ensureConvertIndexResourcesInitialized(contextVk));
+
+    vk::CommandResources resources;
+    resources.onBufferComputeShaderRead(src);
+    resources.onBufferComputeShaderWrite(dst);
+
+    vk::OutsideRenderPassCommandBufferHelper *commandBufferHelper;
+    vk::OutsideRenderPassCommandBuffer *commandBuffer;
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBufferHelper(resources, &commandBufferHelper));
+    commandBuffer = &commandBufferHelper->getCommandBuffer();
+
+    VkDescriptorSet descriptorSet;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, commandBufferHelper, Function::ConvertIndexBuffer,
+                                    &descriptorSet));
+
+    std::array<VkDescriptorBufferInfo, 2> buffers = {{
+        {dst->getBuffer().getHandle(), dst->getOffset(), dst->getSize()},
+        {src->getBuffer().getHandle(), src->getOffset(), src->getSize()},
+    }};
+
+    VkWriteDescriptorSet writeInfo = {};
+    writeInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfo.dstSet               = descriptorSet;
+    writeInfo.dstBinding           = kConvertIndexDestinationBinding;
+    writeInfo.descriptorCount      = 2;
+    writeInfo.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    writeInfo.pBufferInfo          = buffers.data();
+
+    VK_CALL(vkUpdateDescriptorSets, contextVk->getDevice(), 1, &writeInfo, 0, nullptr);
+
+    ConvertIndexShaderParams shaderParams = {params.srcOffset, params.dstOffset >> 2,
+                                             params.maxIndex, 0};
+
+    uint32_t flags = 0;
+    if (contextVk->getState().isPrimitiveRestartEnabled())
+    {
+        flags |= vk::InternalShader::ConvertIndex_comp::kIsPrimitiveRestartEnabled;
+    }
+
+    vk::ShaderModulePtr shader;
+    ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndex_comp(contextVk, flags, &shader));
+
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(setupComputeProgram(
+        contextVk, Function::ConvertIndexBuffer, shader, &mConvertIndex[flags], descriptorSet,
+        &shaderParams, sizeof(ConvertIndexShaderParams), commandBufferHelper)));
+
+    constexpr uint32_t kInvocationsPerGroup = 64;
+    constexpr uint32_t kInvocationsPerIndex = 2;
+    const uint32_t kIndexCount              = params.maxIndex;
+    const uint32_t kGroupCount =
+        UnsignedCeilDivide(kIndexCount * kInvocationsPerIndex, kInvocationsPerGroup);
+    commandBuffer->dispatch(kGroupCount, 1, 1);
+
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::convertIndexIndirectBuffer(ContextVk *contextVk,
+                                                  vk::BufferHelper *srcIndirectBuf,
+                                                  vk::BufferHelper *srcIndexBuf,
+                                                  vk::BufferHelper *dstIndirectBuf,
+                                                  vk::BufferHelper *dstIndexBuf,
+                                                  const ConvertIndexIndirectParameters &params)
+{
+    ANGLE_TRY(ensureConvertIndexIndirectResourcesInitialized(contextVk));
+
+    vk::CommandResources resources;
+    resources.onBufferComputeShaderRead(srcIndirectBuf);
+    resources.onBufferComputeShaderRead(srcIndexBuf);
+    resources.onBufferComputeShaderWrite(dstIndirectBuf);
+    resources.onBufferComputeShaderWrite(dstIndexBuf);
+
+    vk::OutsideRenderPassCommandBufferHelper *commandBufferHelper;
+    vk::OutsideRenderPassCommandBuffer *commandBuffer;
+    ANGLE_TRY(contextVk->getOutsideRenderPassCommandBufferHelper(resources, &commandBufferHelper));
+    commandBuffer = &commandBufferHelper->getCommandBuffer();
+
+    VkDescriptorSet descriptorSet;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, commandBufferHelper,
+                                    Function::ConvertIndexIndirectBuffer, &descriptorSet));
+
+    std::array<VkDescriptorBufferInfo, 4> buffers = {{
+        {dstIndexBuf->getBuffer().getHandle(), dstIndexBuf->getOffset(), dstIndexBuf->getSize()},
+        {srcIndexBuf->getBuffer().getHandle(), srcIndexBuf->getOffset(), srcIndexBuf->getSize()},
+        {srcIndirectBuf->getBuffer().getHandle(), srcIndirectBuf->getOffset(),
+         srcIndirectBuf->getSize()},
+        {dstIndirectBuf->getBuffer().getHandle(), dstIndirectBuf->getOffset(),
+         dstIndirectBuf->getSize()},
+    }};
+
+    VkWriteDescriptorSet writeInfo = {};
+    writeInfo.sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfo.dstSet               = descriptorSet;
+    writeInfo.dstBinding           = kConvertIndexDestinationBinding;
+    writeInfo.descriptorCount      = 4;
+    writeInfo.descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    writeInfo.pBufferInfo          = buffers.data();
+
+    VK_CALL(vkUpdateDescriptorSets, contextVk->getDevice(), 1, &writeInfo, 0, nullptr);
+
+    ConvertIndexIndirectShaderParams shaderParams = {
+        params.srcIndirectBufOffset >> 2, params.srcIndexBufOffset, params.dstIndexBufOffset >> 2,
+        params.maxIndex, params.dstIndirectBufOffset >> 2};
+
+    uint32_t flags = vk::InternalShader::ConvertIndex_comp::kIsIndirect;
+    if (contextVk->getState().isPrimitiveRestartEnabled())
+    {
+        flags |= vk::InternalShader::ConvertIndex_comp::kIsPrimitiveRestartEnabled;
+    }
+
+    vk::ShaderModulePtr shader;
+    ANGLE_TRY(contextVk->getShaderLibrary().getConvertIndex_comp(contextVk, flags, &shader));
+
+    ANGLE_UNSAFE_TODO(ANGLE_TRY(
+        setupComputeProgram(contextVk, Function::ConvertIndexIndirectBuffer, shader,
+                            &mConvertIndex[flags], descriptorSet, &shaderParams,
+                            sizeof(ConvertIndexIndirectShaderParams), commandBufferHelper)));
+
+    constexpr uint32_t kInvocationsPerGroup = 64;
+    constexpr uint32_t kInvocationsPerIndex = 2;
+    const uint32_t kIndexCount              = params.maxIndex;
+    const uint32_t kGroupCount =
+        UnsignedCeilDivide(kIndexCount * kInvocationsPerIndex, kInvocationsPerGroup);
+    commandBuffer->dispatch(kGroupCount, 1, 1);
+
+    return angle::Result::Continue;
 }
 
 angle::Result UtilsVk::convertLineLoopIndexIndirectBuffer(
@@ -5195,8 +5367,24 @@ angle::Result LineLoopHelper::streamIndices(ContextVk *contextVk,
     }
     else
     {
-        ANGLE_UNSAFE_TODO(memcpy(indices, srcPtr, unitSize * indexCount));
-        ANGLE_UNSAFE_TODO(memcpy(indices + unitSize * indexCount, srcPtr, unitSize));
+        if (contextVk->shouldConvertUint8VkIndexType(glIndexType))
+        {
+            // If vulkan doesn't support uint8 index types, we need to emulate it.
+            VkIndexType indexType = contextVk->getVkIndexType(glIndexType);
+            ASSERT(indexType == VK_INDEX_TYPE_UINT16);
+            uint16_t *indicesDst = reinterpret_cast<uint16_t *>(indices);
+            for (int i = 0; i < indexCount; i++)
+            {
+                ANGLE_UNSAFE_TODO(indicesDst[i] = srcPtr[i]);
+            }
+
+            ANGLE_UNSAFE_TODO(indicesDst[indexCount]) = srcPtr[0];
+        }
+        else
+        {
+            ANGLE_UNSAFE_TODO(memcpy(indices, srcPtr, unitSize * indexCount));
+            ANGLE_UNSAFE_TODO(memcpy(indices + unitSize * indexCount, srcPtr, unitSize));
+        }
     }
 
     ANGLE_TRY(indexBuffer->flush(contextVk->getRenderer()));

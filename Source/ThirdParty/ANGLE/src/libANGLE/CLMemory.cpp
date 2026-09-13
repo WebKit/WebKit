@@ -6,15 +6,18 @@
 // CLMemory.cpp: Implements the cl::Memory class.
 //
 
-#include "libANGLE/CLMemory.h"
 #include "common/unsafe_buffers.h"
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
-#include "libANGLE/CLImage.h"
+#include "libANGLE/CLMemory.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>
+#include <type_traits>
 
 namespace cl
 {

@@ -9,12 +9,15 @@
 #ifndef LIBANGLE_CLDEVICE_H_
 #define LIBANGLE_CLDEVICE_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLDeviceImpl.h"
 
-#include "common/SynchronizedValue.h"
-
-#include <functional>
+#include <cstddef>
+#include <string>
 
 namespace cl
 {
@@ -70,6 +73,7 @@ class Device final : public _cl_device_id, public Object
 
     friend class CommandQueue;
     friend class Platform;
+    friend class Object;
 };
 
 inline Platform &Device::getPlatform() noexcept
@@ -110,7 +114,7 @@ inline T &Device::getImpl() const
 
 inline bool Device::IsValidType(DeviceType type)
 {
-    return type.get() <= CL_DEVICE_TYPE_CUSTOM || type == CL_DEVICE_TYPE_ALL;
+    return (0 < type.get() && type.get() <= CL_DEVICE_TYPE_CUSTOM) || type == CL_DEVICE_TYPE_ALL;
 }
 
 }  // namespace cl

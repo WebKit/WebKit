@@ -9,12 +9,14 @@
 #ifndef LIBANGLE_CLCOMMANDQUEUE_H_
 #define LIBANGLE_CLCOMMANDQUEUE_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLObject.h"
-#include "libANGLE/cl_utils.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLCommandQueueImpl.h"
 
-#include "common/SynchronizedValue.h"
-
+#include <cstddef>
 #include <limits>
 
 namespace cl

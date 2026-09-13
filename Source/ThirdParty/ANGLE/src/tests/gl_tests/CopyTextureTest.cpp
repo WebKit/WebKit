@@ -1376,6 +1376,110 @@ TEST_P(CopyTextureTest, IncompleteCubeMap)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test copying to a cube map mip level beyond the current storage mip chain, then redefining base
+// level to promote the staged image.
+TEST_P(CopyTextureTest, CubeMapDestLevelPastStorageMips)
+{
+    if (!checkExtensions())
+    {
+        return;
+    }
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_OES_fbo_render_mipmap"));
+
+    GLTexture src;
+    glBindTexture(GL_TEXTURE_2D, src);
+    GLColor srcPix = GLColor::red;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &srcPix);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture cube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cube);
+    std::vector<GLubyte> base(1 * 1 * 4, 0x11);
+    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         ++face)
+    {
+        glTexImage2D(face, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, base.data());
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // Copy into level 1 of NEGATIVE_Z face (1x1), which lies beyond the 1-level mip chain of 1x1
+    // base.
+    glCopyTextureCHROMIUM(src, 0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, cube,
+                          /*destLevel=*/1, GL_RGBA, GL_UNSIGNED_BYTE,
+                          /*unpackFlipY=*/GL_FALSE, /*premultiply=*/GL_FALSE,
+                          /*unmultiply=*/GL_FALSE);
+    EXPECT_GL_NO_ERROR();
+
+    // Also define level 1 for the remaining 5 faces so the cube map is mipmap complete.
+    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face < GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         ++face)
+    {
+        glTexImage2D(face, 1, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, base.data());
+    }
+    EXPECT_GL_NO_ERROR();
+
+    // Redefine base level to 2x2 so level 1 (1x1) becomes part of the complete mip chain.
+    std::vector<GLubyte> bigBase(2 * 2 * 4, 0x22);
+    for (GLenum face = GL_TEXTURE_CUBE_MAP_POSITIVE_X; face <= GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+         ++face)
+    {
+        glTexImage2D(face, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, bigBase.data());
+    }
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+                           cube, 1);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test copying to a 2D texture mip level beyond the current storage mip chain, then redefining base
+// level to promote the staged image.
+TEST_P(CopyTextureTest, Texture2DDestLevelPastStorageMips)
+{
+    if (!checkExtensions())
+    {
+        return;
+    }
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_OES_fbo_render_mipmap"));
+
+    GLTexture src;
+    glBindTexture(GL_TEXTURE_2D, src);
+    GLColor srcPix = GLColor::blue;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &srcPix);
+    ASSERT_GL_NO_ERROR();
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    std::vector<GLubyte> base(1 * 1 * 4, 0x11);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, base.data());
+    ASSERT_GL_NO_ERROR();
+
+    // Copy into level 1 (1x1), which lies beyond the 1-level mip chain of 1x1 base.
+    glCopyTextureCHROMIUM(src, 0, GL_TEXTURE_2D, tex,
+                          /*destLevel=*/1, GL_RGBA, GL_UNSIGNED_BYTE,
+                          /*unpackFlipY=*/GL_FALSE, /*premultiply=*/GL_FALSE,
+                          /*unmultiply=*/GL_FALSE);
+    EXPECT_GL_NO_ERROR();
+
+    // Redefine base level to 2x2 so level 1 (1x1) becomes part of the complete mip chain.
+    std::vector<GLubyte> bigBase(2 * 2 * 4, 0x22);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, bigBase.data());
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 1);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
 // Test BGRA to RGBA cube map copy
 TEST_P(CopyTextureTest, CubeMapTargetBGRA)
 {
@@ -1580,9 +1684,6 @@ TEST_P(CopyTextureTest, CopyOutsideMipmap)
     {
         return;
     }
-
-    // http://anglebug.com/42263316
-    ANGLE_SKIP_TEST_IF(IsD3D());
 
     // http://anglebug.com/42263799
     ANGLE_SKIP_TEST_IF(IsWindows() && IsNVIDIA() && IsOpenGL());

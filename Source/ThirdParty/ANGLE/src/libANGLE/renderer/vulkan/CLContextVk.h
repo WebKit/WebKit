@@ -8,18 +8,14 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 
-#include "common/PackedEnums.h"
-#include "common/SimpleMutex.h"
+#include "libANGLE/renderer/CLContextImpl.h"
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
-#include "libANGLE/renderer/vulkan/vk_utils.h"
 
-#include "libANGLE/renderer/CLContextImpl.h"
-
-#include <libANGLE/CLContext.h>
-#include "libANGLE/CLDevice.h"
+#include "libANGLE/CLContext.h"
+#include "libANGLE/CLSampler.h"
 
 namespace rx
 {

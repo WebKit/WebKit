@@ -48,6 +48,10 @@ namespace
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolve.frag.00000017.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/BlitResolveStencilNoExport.comp.00000001.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000000.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000001.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000002.inc"
+#include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndex.comp.00000003.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndexIndirectLineLoop.comp.00000000.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndexIndirectLineLoop.comp.00000001.inc"
 #include "libANGLE/renderer/vulkan/shaders/gen/ConvertIndexIndirectLineLoop.comp.00000002.inc"
@@ -196,6 +200,12 @@ constexpr CompressedShaderBlob kBlitResolve_frag_shaders[] = {
 constexpr CompressedShaderBlob kBlitResolveStencilNoExport_comp_shaders[] = {
     {kBlitResolveStencilNoExport_comp_00000000, sizeof(kBlitResolveStencilNoExport_comp_00000000)},
     {kBlitResolveStencilNoExport_comp_00000001, sizeof(kBlitResolveStencilNoExport_comp_00000001)},
+};
+constexpr CompressedShaderBlob kConvertIndex_comp_shaders[] = {
+    {kConvertIndex_comp_00000000, sizeof(kConvertIndex_comp_00000000)},
+    {kConvertIndex_comp_00000001, sizeof(kConvertIndex_comp_00000001)},
+    {kConvertIndex_comp_00000002, sizeof(kConvertIndex_comp_00000002)},
+    {kConvertIndex_comp_00000003, sizeof(kConvertIndex_comp_00000003)},
 };
 constexpr CompressedShaderBlob kConvertIndexIndirectLineLoop_comp_shaders[] = {
     {kConvertIndexIndirectLineLoop_comp_00000000,
@@ -422,6 +432,14 @@ angle::Result ShaderLibrary::getBlitResolveStencilNoExport_comp(ErrorContext *co
     return GetShader(context, mBlitResolveStencilNoExport_comp_shaders,
                      kBlitResolveStencilNoExport_comp_shaders,
                      ArraySize(kBlitResolveStencilNoExport_comp_shaders), shaderFlags, shaderOut);
+}
+
+angle::Result ShaderLibrary::getConvertIndex_comp(ErrorContext *context,
+                                                  uint32_t shaderFlags,
+                                                  ShaderModulePtr *shaderOut)
+{
+    return GetShader(context, mConvertIndex_comp_shaders, kConvertIndex_comp_shaders,
+                     ArraySize(kConvertIndex_comp_shaders), shaderFlags, shaderOut);
 }
 
 angle::Result ShaderLibrary::getConvertIndexIndirectLineLoop_comp(ErrorContext *context,

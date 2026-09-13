@@ -1714,10 +1714,10 @@ FramebufferStatus Framebuffer::checkStatusWithGLFrontEnd(const Context *context)
             err::kFramebufferIncompleteMultisampleNonFixedSamplesWithRenderbuffers);
     }
 
-    // The WebGL conformance tests implicitly define that all framebuffer
-    // attachments must be unique. For example, the same level of a texture can
-    // not be attached to two different color attachments.
-    if (context->isWebGL() || context->isHardenedContext())
+    // The WebGL conformance tests implicitly define that all framebuffer attachments must be
+    // unique. For example, the same level of a texture can not be attached to two different color
+    // attachments. The same restriction is applied to hardened contexts.
+    if (context->isHardenedContext())
     {
         if (!mState.colorAttachmentsAreUniqueImages())
         {

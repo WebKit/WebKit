@@ -1992,6 +1992,9 @@ class ImageTestES31 : public ImageTest
 class ImageTestRGB565ES3 : public ImageTestES3
 {};
 
+class ImageTestSampleOnlyES3 : public ImageTestES3
+{};
+
 // Tests that the extension is exposed on the platforms we think it should be. Please modify this as
 // you change extension availability.
 TEST_P(ImageTest, ANGLEExtensionAvailability)
@@ -3184,6 +3187,35 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadByteData)
     EXPECT_PIXEL_RECT_EQ(0, 0, kWidth / 2, kHeight / 2, GLColor::yellow);
     EXPECT_PIXEL_RECT_EQ(0, kHeight / 2, kWidth / 2, kHeight / 2, GLColor::blue);
     EXPECT_PIXEL_RECT_EQ(kWidth / 2, 0, kWidth / 2, kHeight, GLColor::blue);
+
+    // Clean up.
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+}
+
+// Test that importing a sample-only (non-renderable) AHB works.
+TEST_P(ImageTestSampleOnlyES3, SourceAHBTarget2DSampleOnly)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                              kAHBUsageGPUSampledImage, kDefaultAttribs,
+                                              {{kLinearColor, 4}}, &source, &image);
+    EXPECT_NE(image, EGL_NO_IMAGE_KHR);
+
+    // Create a texture target to bind the egl image.
+    GLTexture target;
+    createEGLImageTargetTexture2D(image, target);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify results.
+    verifyResults2D(target, kLinearColor);
+    EXPECT_GL_NO_ERROR();
 
     // Clean up.
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -15475,4 +15507,10 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageTestRGB565ES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(ImageTestRGB565ES3,
                                ES3_VULKAN().enable(Feature::AllocateNonZeroMemory),
                                ES3_VULKAN().enable(Feature::PreferBGR565ToRGB565));
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ImageTestSampleOnlyES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(ImageTestSampleOnlyES3,
+                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory),
+                               ES3_VULKAN().enable(Feature::PreferBGR565ToRGB565),
+                               ES3_VULKAN().enable(Feature::ForceRenderableFallbackFormat));
 }  // namespace angle

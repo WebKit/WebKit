@@ -6,11 +6,15 @@
 // CLProgram.cpp: Implements the cl::Program class.
 //
 
-#include "libANGLE/CLProgram.h"
 #include "common/unsafe_buffers.h"
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLContext.h"
-#include "libANGLE/CLPlatform.h"
+#include "libANGLE/CLDevice.h"
+#include "libANGLE/CLKernel.h"
+#include "libANGLE/CLObject.h"
+#include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>
@@ -181,7 +185,8 @@ angle::Result Program::createKernels(cl_uint numKernels, cl_kernel *kernels, cl_
     krnls.reserve(createFuncs.size());
     while (!createFuncs.empty())
     {
-        krnls.emplace_back(new Kernel(*this, createFuncs.front()));
+        krnls.emplace_back(KernelPtr::Create(*this, createFuncs.front()));
+
         if (krnls.back()->mImpl == nullptr)
         {
             return angle::Result::Stop;

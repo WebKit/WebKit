@@ -1604,7 +1604,7 @@ TEST_P(FramebufferTest_ES3, ClearViaSecondaryFramebuffer)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 
-    // draw green quad with 0.5 depth into primary framebuffer
+    // draw green quad with 0.0 (NDC) depth into primary framebuffer
     glUseProgram(greenProgram);
     drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
     ASSERT_GL_NO_ERROR();
@@ -1626,6 +1626,291 @@ TEST_P(FramebufferTest_ES3, ClearViaSecondaryFramebuffer)
     ASSERT_GL_NO_ERROR();
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test that the depth attachment is properly being cleared by glClearTexImageEXT
+TEST_P(FramebufferTest_ES3, ClearTextureActiveRenderAttachmentDepth)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLFramebuffer primaryFramebuffer;
+    GLTexture mainColorTexture;
+    GLTexture mainDepthTexture;
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    // setup primary framebuffer
+    glBindTexture(GL_TEXTURE_2D, mainColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           0);
+
+    glBindTexture(GL_TEXTURE_2D, mainDepthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, getWindowWidth() / 2,
+                 getWindowHeight() / 2, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, mainDepthTexture, 0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    float depthValue = 0.9;
+    glClearDepthf(depthValue);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
+    // draw green quad with 0.0 (NDC) depth into primary framebuffer
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
+    ASSERT_GL_NO_ERROR();
+
+    // clear depth texture
+    glClearTexImageEXT(mainDepthTexture, 0, GL_DEPTH_COMPONENT, GL_FLOAT, &depthValue);
+
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.1F);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test that the stencil attachment is properly being cleared by glClearTexImageEXT
+TEST_P(FramebufferTest_ES3, ClearTextureActiveRenderAttachmentStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLFramebuffer primaryFramebuffer;
+    GLTexture mainColorTexture;
+    GLTexture mainDepthTexture;
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    // setup primary framebuffer
+    glBindTexture(GL_TEXTURE_2D, mainColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           0);
+
+    glBindTexture(GL_TEXTURE_2D, mainDepthTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, getWindowWidth() / 2, getWindowHeight() / 2,
+                 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
+                           mainDepthTexture, 0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // populate the stencil buffer with 1
+    glStencilMask(255u);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilFunc(GL_ALWAYS, 1, 255u);
+    glEnable(GL_STENCIL_TEST);
+
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
+    ASSERT_GL_NO_ERROR();
+
+    // clear stencil
+    GLuint depthStencilValue = 0;
+    glClearTexImageEXT(mainDepthTexture, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8,
+                       &depthStencilValue);
+
+    // if the clear operates as expected the stencil test will succeed as the stencil buffer would
+    // be populated with zeroes which is equal to the new reference value
+    glStencilFunc(GL_GEQUAL, 0, 255u);
+    glStencilMask(0u);
+
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.1F);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// Test that the color attachment is properly being cleared by glClearTexImageEXT
+TEST_P(FramebufferTest_ES3, ClearTextureActiveRenderAttachmentColor)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLFramebuffer primaryFramebuffer;
+    GLTexture mainColorTexture;
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    glBindTexture(GL_TEXTURE_2D, mainColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // just add components
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
+
+    // draw green quad
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
+    ASSERT_GL_NO_ERROR();
+
+    // clear color attachment to red
+    const GLubyte clearColor[4] = {255, 0, 0, 0};
+    glClearTexImageEXT(mainColorTexture, 0, GL_RGBA, GL_UNSIGNED_BYTE, clearColor);
+
+    // draw blue quad
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.1F);
+    ASSERT_GL_NO_ERROR();
+
+    // expect pixels to be red and blue combined
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255u, 0u, 255u, 255u));
+}
+
+// Test that the color attachment levels are properly being cleared by glClearTexImageEXT
+TEST_P(FramebufferTest_ES3, ClearTextureActiveRenderAttachmentColorOtherLevel)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLFramebuffer primaryFramebuffer;
+    GLTexture mainColorTexture;
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    glBindTexture(GL_TEXTURE_2D, mainColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    // second level
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, getWindowWidth() / 4, getWindowHeight() / 4, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // just add components
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
+
+    // draw green quad
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
+    ASSERT_GL_NO_ERROR();
+
+    // clear second level this should not have an impact on the contents of the primary level
+    const GLubyte clearColor[4] = {255, 0, 0, 255};
+    glClearTexImageEXT(mainColorTexture, 1, GL_RGBA, GL_UNSIGNED_BYTE, clearColor);
+
+    // draw blue quad
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.1F);
+    ASSERT_GL_NO_ERROR();
+
+    // should combine the blue and green
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(0u, 255u, 255u, 255u));
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           1);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that glClearTexImageEXT is working properly on a restarted framebuffer
+TEST_P(FramebufferTest_ES3, ClearTextureActiveRenderAttachmentColorRevive)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    GLFramebuffer primaryFramebuffer;
+    GLTexture mainColorTexture;
+    GLFramebuffer secondaryFramebuffer;
+    GLTexture secondaryColorTexture;
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(blueProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    glBindTexture(GL_TEXTURE_2D, mainColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mainColorTexture,
+                           0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, secondaryFramebuffer);
+
+    glBindTexture(GL_TEXTURE_2D, secondaryColorTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth() / 2, getWindowHeight() / 2, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                           secondaryColorTexture, 0);
+
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // just add components
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    // draw green quad
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram, std::string(essl1_shaders::PositionAttrib()), 0.0F);
+    ASSERT_GL_NO_ERROR();
+
+    // operate on second framebuffer to suspend the first framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, secondaryFramebuffer);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, primaryFramebuffer);
+
+    // clear color attachment to red
+    const GLubyte clearColor[4] = {255, 0, 0, 0};
+    glClearTexImageEXT(mainColorTexture, 0, GL_RGBA, GL_UNSIGNED_BYTE, clearColor);
+
+    // draw blue quad
+    glUseProgram(blueProgram);
+    drawQuad(blueProgram, std::string(essl1_shaders::PositionAttrib()), 0.1F);
+    ASSERT_GL_NO_ERROR();
+
+    // expect pixels to be red and blue combined
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(255u, 0u, 255u, 255u));
 }
 
 // Test that resizing the color attachment is handled correctly.
@@ -2826,7 +3111,7 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImageRedefinedFaceZero
     const GLColor kColors[6]         = {GLColor::red,  GLColor::green,  GLColor::blue,
                                         GLColor::cyan, GLColor::yellow, GLColor::magenta};
 
-    // Create a two-level cube map and upload distinct colors to every face.
+    // Create a three-level cube map and upload distinct colors to every face.
     GLTexture cube;
     glBindTexture(GL_TEXTURE_CUBE_MAP, cube);
     for (GLenum face = 0; face < 6; ++face)
@@ -2838,10 +3123,12 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImageRedefinedFaceZero
                      pixels.data());
         glTexImage2D(target, 1, kInternalFormat, kTexWidth / 2, kTexHeight / 2, 0, GL_RGBA, kType,
                      pixels.data());
+        glTexImage2D(target, 2, kInternalFormat, kTexWidth / 4, kTexHeight / 4, 0, GL_RGBA, kType,
+                     pixels.data());
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 2);
     ASSERT_GL_NO_ERROR();
 
     // Sample from the cube map so the backing image is allocated and committed.
@@ -2862,6 +3149,14 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImageRedefinedFaceZero
         std::vector<GLushort> pixels(kTexWidth * kTexHeight, u16Color);
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 1, kInternalFormat, kTexWidth, kTexHeight, 0,
                      GL_RGBA, kType, pixels.data());
+    }
+
+    // Exercise fallback with both buffer- and image-sourced updates.
+    {
+        const GLushort u16Color = convertGLColorToUShort(kInternalFormat, GLColor::white);
+        std::vector<GLushort> pixels((kTexWidth / 4) * (kTexHeight / 4), u16Color);
+        glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 2, 0, 0, kTexWidth / 4, kTexHeight / 4,
+                        GL_RGBA, kType, pixels.data());
     }
 
     // Attach a face of level 0 to a framebuffer and read it back.  This is the point at which the
@@ -2889,6 +3184,17 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_CubeTexImageRedefinedFaceZero
         const GLColor expected =
             target == GL_TEXTURE_CUBE_MAP_POSITIVE_X ? GLColor::white : kColors[face];
         EXPECT_PIXEL_COLOR_EQ(kTexWidth / 4, kTexHeight / 4, expected) << "face " << face;
+    }
+
+    // Verify updates outside the temporarily enabled mip range are preserved.
+    for (GLenum face = 0; face < 6; ++face)
+    {
+        const GLenum target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + face;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, cube, 2);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        const GLColor expected =
+            target == GL_TEXTURE_CUBE_MAP_POSITIVE_Y ? GLColor::white : kColors[face];
+        EXPECT_PIXEL_COLOR_EQ(kTexWidth / 8, kTexHeight / 8, expected) << "face " << face;
     }
 
     // Verify level 0 is also intact.
@@ -3040,6 +3346,123 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_OutOfRangeStagedUpdateReforma
     glUniform1f(lodLocation, 1);
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_EQ(getWindowWidth() / 2, getWindowHeight() / 2, 0, 0, 255, 255);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests that base-level respecification preserves staged image mips.
+TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_BaseRespecifyPreservesStagedMips)
+{
+    constexpr GLenum kInternalFormat = GL_RGBA4;
+    constexpr GLenum kType           = GL_UNSIGNED_SHORT_4_4_4_4;
+    constexpr GLsizei kSize          = 8;
+    const GLColor kColors[]          = {GLColor::red, GLColor::green, GLColor::blue};
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    for (GLint level = 0; level < 3; ++level)
+    {
+        const GLsizei levelSize = kSize >> level;
+        const GLushort color    = convertGLColorToUShort(kInternalFormat, kColors[level]);
+        const std::vector<GLushort> pixels(levelSize * levelSize, color);
+        glTexImage2D(GL_TEXTURE_2D, level, kInternalFormat, levelSize, levelSize, 0, GL_RGBA, kType,
+                     pixels.data());
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
+
+    // Allocate the sample-only image.
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(program);
+    const GLint textureLocation = glGetUniformLocation(program, essl3_shaders::Texture2DUniform());
+    const GLint lodLocation     = glGetUniformLocation(program, essl3_shaders::LodUniform());
+    ASSERT_NE(-1, textureLocation);
+    ASSERT_NE(-1, lodLocation);
+    glUniform1i(textureLocation, 0);
+    glUniform1f(lodLocation, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Shrink level 0, then trigger fallback while levels 1 and 2 are staged.
+    const GLushort white = convertGLColorToUShort(kInternalFormat, GLColor::white);
+    const std::vector<GLushort> whitePixels((kSize / 2) * (kSize / 2), white);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, kInternalFormat, kSize / 2, kSize / 2, 0, GL_RGBA, kType,
+                 whitePixels.data());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+
+    // Restore level 0 and verify the staged mips.
+    const GLushort red = convertGLColorToUShort(kInternalFormat, GLColor::red);
+    const std::vector<GLushort> redPixels(kSize * kSize, red);
+    glTexImage2D(GL_TEXTURE_2D, 0, kInternalFormat, kSize, kSize, 0, GL_RGBA, kType,
+                 redPixels.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    for (GLint level = 1; level < 3; ++level)
+    {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, level);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, kColors[level]) << "level " << level;
+    }
+    ASSERT_GL_NO_ERROR();
+}
+
+// Tests image-update readback with a non-zero texture base level.
+TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_NonZeroBaseLevelStagedImageReformat)
+{
+    constexpr GLenum kInternalFormat = GL_RGBA4;
+    constexpr GLenum kType           = GL_UNSIGNED_SHORT_4_4_4_4;
+    constexpr GLsizei kSize          = 8;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    const GLushort red = convertGLColorToUShort(kInternalFormat, GLColor::red);
+    const std::vector<GLushort> redPixels(kSize * kSize, red);
+    glTexImage2D(GL_TEXTURE_2D, 1, kInternalFormat, kSize, kSize, 0, GL_RGBA, kType,
+                 redPixels.data());
+    const GLushort green = convertGLColorToUShort(kInternalFormat, GLColor::green);
+    const std::vector<GLushort> greenPixels((kSize / 2) * (kSize / 2), green);
+    glTexImage2D(GL_TEXTURE_2D, 2, kInternalFormat, kSize / 2, kSize / 2, 0, GL_RGBA, kType,
+                 greenPixels.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Vulkan mip 0 corresponds to GL level 1.
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Texture2DLod(), essl3_shaders::fs::Texture2DLod());
+    glUseProgram(program);
+    const GLint textureLocation = glGetUniformLocation(program, essl3_shaders::Texture2DUniform());
+    const GLint lodLocation     = glGetUniformLocation(program, essl3_shaders::LodUniform());
+    ASSERT_NE(-1, textureLocation);
+    ASSERT_NE(-1, lodLocation);
+    glUniform1i(textureLocation, 0);
+    glUniform1f(lodLocation, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Redefine level 2 and trigger fallback through level 1.
+    const GLushort white = convertGLColorToUShort(kInternalFormat, GLColor::white);
+    const std::vector<GLushort> whitePixels(kSize * kSize, white);
+    glTexImage2D(GL_TEXTURE_2D, 2, kInternalFormat, kSize, kSize, 0, GL_RGBA, kType,
+                 whitePixels.data());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 2);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 2);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
     ASSERT_GL_NO_ERROR();
 }
 

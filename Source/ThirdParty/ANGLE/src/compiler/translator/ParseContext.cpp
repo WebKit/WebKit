@@ -1448,8 +1448,7 @@ bool TParseContext::checkIsNotReserved(const TSourceLoc &line, const ImmutableSt
     // Validate that identifier names won't conflict with the name hashing done later.
     // See https://crbug.com/499176133
     if (identifier.length() >= kMaxAvailableIdentifierLength && identifier[0] == '_' &&
-        (identifier[1] == mResources.UserVariableNamePrefix ||
-         identifier[1] == mResources.UserBlockNamePrefix))
+        (identifier[1] == kUserVariableNamePrefix || identifier[1] == kUserBlockNamePrefix))
     {
         std::string err = "identifiers beginning with `_` must be < " +
                           std::to_string(kMaxAvailableIdentifierLength) + " characters";
@@ -6996,15 +6995,20 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
                   getBlockStorageString(fieldLayoutQualifier.blockStorage));
         }
 
+        const bool isMatrixPackingApplicable = fieldType->isMatrixPackingApplicable();
         if (fieldLayoutQualifier.matrixPacking == EmpUnspecified)
         {
-            fieldLayoutQualifier.matrixPacking = blockLayoutQualifier.matrixPacking;
+            if (isMatrixPackingApplicable)
+            {
+                fieldLayoutQualifier.matrixPacking = blockLayoutQualifier.matrixPacking;
+            }
         }
-        else if (!fieldType->isMatrix() && fieldType->getBasicType() != EbtStruct)
+        else if (!isMatrixPackingApplicable)
         {
             warning(field->line(),
                     "extraneous layout qualifier: only has an effect on matrix types",
                     getMatrixPackingString(fieldLayoutQualifier.matrixPacking));
+            fieldLayoutQualifier.matrixPacking = EmpUnspecified;
         }
 
         fieldType->setLayoutQualifier(fieldLayoutQualifier);
@@ -8619,6 +8623,12 @@ TFieldList *TParseContext::addStructDeclaratorList(const TPublicType &typeSpecif
         else
         {
             checkIsNotReserved(typeSpecifier.getLine(), declarator->name());
+        }
+        // Nested struct declarations are invalid and an error would be already generated in that
+        // case.  Mark the type as not a struct specifier to avoid an ASSERT in TField.
+        if (type->isStructSpecifier())
+        {
+            type = new TType(type->getStruct(), false);
         }
         TField *field = new TField(type, declarator->name(), declarator->line(), symbolType);
         checkIsBelowStructNestingLimit(typeSpecifier.getLine(), *field);

@@ -27,6 +27,12 @@ struct FrontendFeatures : FeatureSetBase
         &members,
     };
 
+    FeatureInfo loseHardenedContextOnBackendError = {
+        "loseHardenedContextOnBackendError",
+        FeatureCategory::FrontendWorkarounds,
+        &members,
+    };
+
     FeatureInfo disableProgramCachingForTransformFeedback = {
         "disableProgramCachingForTransformFeedback",
         FeatureCategory::FrontendWorkarounds,

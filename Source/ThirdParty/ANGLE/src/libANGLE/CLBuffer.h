@@ -8,9 +8,15 @@
 #ifndef LIBANGLE_CLBUFFER_H_
 #define LIBANGLE_CLBUFFER_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLMemory.h"
+#include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 
+#include <cstddef>
 namespace cl
 {
 

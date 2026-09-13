@@ -9,13 +9,17 @@
 #ifndef LIBANGLE_CLMEMORY_H_
 #define LIBANGLE_CLMEMORY_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/CLMemoryImpl.h"
 
-#include "common/SynchronizedValue.h"
-
 #include <atomic>
+#include <cstddef>
 #include <stack>
+#include <utility>
 
 namespace cl
 {

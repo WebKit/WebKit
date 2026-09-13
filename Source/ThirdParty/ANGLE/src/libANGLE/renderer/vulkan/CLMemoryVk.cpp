@@ -6,31 +6,40 @@
 // CLMemoryVk.cpp: Implements the class methods for CLMemoryVk.
 //
 
-#include "common/log_utils.h"
-#include "common/unsafe_buffers.h"
+#ifdef UNSAFE_BUFFERS_BUILD
+#    pragma allow_unsafe_buffers
+#endif
 
-#include <cstddef>
-#include <cstdint>
-#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
+#include "libANGLE/CLBuffer.h"
+#include "libANGLE/CLContext.h"
+#include "libANGLE/CLImage.h"
+#include "libANGLE/CLMemory.h"
+#include "libANGLE/cl_types.h"
+#include "libANGLE/cl_utils.h"
+#include "libANGLE/renderer/CLMemoryImpl.h"
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/vk_cl_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 #include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
-#include "libANGLE/renderer/CLMemoryImpl.h"
-#include "libANGLE/renderer/Format.h"
-#include "libANGLE/renderer/FormatID_autogen.h"
+#include <cstddef>
+#include <limits>
 
-#include "libANGLE/CLBuffer.h"
-#include "libANGLE/CLContext.h"
-#include "libANGLE/CLImage.h"
-#include "libANGLE/CLMemory.h"
-#include "libANGLE/Error.h"
-#include "libANGLE/cl_types.h"
-#include "libANGLE/cl_utils.h"
-
-#include "CL/cl_half.h"
+namespace
+{
+bool ExtractFdHandle(const cl_properties handleProperty, int32_t *fdOut)
+{
+    intptr_t handleValue = static_cast<intptr_t>(handleProperty);
+    if (handleValue < 0 || static_cast<int64_t>(handleValue) > std::numeric_limits<int32_t>::max())
+    {
+        return false;
+    }
+    *fdOut = static_cast<int32_t>(handleValue);
+    return true;
+}
+}  // namespace
 
 namespace rx
 {
@@ -40,43 +49,26 @@ bool GetExternalMemoryHandleInfo(const cl_mem_properties *properties,
                                  VkExternalMemoryHandleTypeFlagBits *vkExtMemoryHandleType,
                                  int32_t *fd)
 {
-    bool propertyStatus = true;
     const cl::NameValueProperty *propertyIterator =
         reinterpret_cast<const cl::NameValueProperty *>(properties);
+    ASSERT(propertyIterator);
+
     while (propertyIterator->name != 0)
     {
         switch (propertyIterator->name)
         {
             case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_FD_KHR:
                 *vkExtMemoryHandleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
-                break;
+                return ExtractFdHandle(propertyIterator->value, fd);
             case CL_EXTERNAL_MEMORY_HANDLE_DMA_BUF_KHR:
                 *vkExtMemoryHandleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
-                break;
-            case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KHR:
-                *vkExtMemoryHandleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT;
-                break;
-            case CL_EXTERNAL_MEMORY_HANDLE_OPAQUE_WIN32_KMT_KHR:
-                *vkExtMemoryHandleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT;
-                break;
+                return ExtractFdHandle(propertyIterator->value, fd);
             default:
-                propertyStatus = false;
-                break;
+                propertyIterator++;
+                continue;
         }
-
-        if (propertyStatus)
-        {
-            *fd = *(reinterpret_cast<int32_t *>(propertyIterator->value));
-            if (*fd < 0)
-            {
-                propertyStatus = false;
-            }
-            break;
-        }
-        ANGLE_UNSAFE_TODO(propertyIterator++);
     }
-
-    return propertyStatus;
+    return false;
 }
 
 }  // namespace
@@ -341,6 +333,7 @@ angle::Result CLBufferVk::createWithProperties()
     {
         // Don't expect to be here, as validation layer should have caught unsupported uses.
         UNREACHABLE();
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
     }
 
     return angle::Result::Continue;
@@ -589,11 +582,12 @@ angle::Result CLImageVk::getOrCreateStagingBuffer(CLBufferVk **clBufferOut)
 
     std::lock_guard<angle::SimpleMutex> lock(mMutex);
 
-    if (!cl::Buffer::IsValid(mStagingBuffer))
+    if (!mStagingBuffer)
     {
-        mStagingBuffer = cl::Buffer::Cast(mContext->getFrontendObject().createBuffer(
-            nullptr, cl::MemFlags(CL_MEM_READ_WRITE), getSize(), nullptr));
-        if (!cl::Buffer::IsValid(mStagingBuffer))
+        mStagingBuffer = cl::BufferPtr::Create(const_cast<cl::Context &>(mMemory.getContext()),
+                                               cl::Memory::PropArray{},
+                                               cl::MemFlags(CL_MEM_READ_WRITE), getSize(), nullptr);
+        if (!mStagingBuffer)
         {
             ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
         }
@@ -698,10 +692,6 @@ CLImageVk::~CLImageVk()
 
     mImage.destroy(mRenderer);
     mImageView.destroy(mContext->getDevice());
-    if (cl::Memory::IsValid(mStagingBuffer) && mStagingBuffer->release())
-    {
-        SafeDelete(mStagingBuffer);
-    }
 }
 
 angle::Result CLImageVk::createFromBuffer()
@@ -998,7 +988,14 @@ void CLImageVk::unmapBufferHelper()
 {
     if (mParent)
     {
-        getParent<CLImageVk>()->unmapBufferHelper();
+        if (cl::IsBufferType(mParent->getType()))
+        {
+            getParent<CLBufferVk>()->unmapBufferHelper();
+        }
+        else
+        {
+            getParent<CLImageVk>()->unmapBufferHelper();
+        }
         return;
     }
     ASSERT(mStagingBuffer);

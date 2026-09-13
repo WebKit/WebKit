@@ -6,11 +6,14 @@
 // CLEvent.cpp: Implements the cl::Event class.
 //
 
-#include "libANGLE/CLEvent.h"
 #include "common/unsafe_buffers.h"
+
+#include <angle_cl.h>
 
 #include "libANGLE/CLCommandQueue.h"
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLEvent.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>

@@ -285,6 +285,7 @@ if (is_win || is_linux || is_chromeos || is_android || is_fuchsia || is_apple) {
     sources = angle_end2end_tests_sources + [ "angle_end2end_tests_main.cpp" ]
     if (angle_enable_cl) {
       sources += [ "capture_tests/CapturedTestCL.cpp" ]
+      configs += [ "$angle_root:opencl_no_pragma_messages" ]
     }
     libs = []
     defines = []

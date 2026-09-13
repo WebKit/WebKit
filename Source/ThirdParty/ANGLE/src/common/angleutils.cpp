@@ -65,7 +65,7 @@ std::string_view GetVulkanApiPerfCounterName(VulkanApiPerfCounterGroup group,
     case VulkanApiPerfCounterGroup::GROUP:                                      \
         switch (type)                                                           \
         {                                                                       \
-            ANGLE_VK_API_PERF_COUNTER_TYPES_X(                                  \
+            ANGLE_VK_API_PERF_COUNTER_TYPES_WITH_PARAM_X(                       \
                 ANGLE_VK_API_PERF_COUNTER_CASE_TYPE_RETURN_COUNTER_NAME, GROUP) \
             default:                                                            \
                 UNREACHABLE();                                                  \

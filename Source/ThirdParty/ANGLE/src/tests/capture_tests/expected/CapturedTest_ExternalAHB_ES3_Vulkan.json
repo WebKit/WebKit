@@ -2,7 +2,7 @@
     "TraceMetadata": {
         "AreClientArraysEnabled": true,
         "AreExtensionsEnabled": true,
-        "CaptureRevision": 28525,
+        "CaptureRevision": 28569,
         "ConfigAlphaBits": 8,
         "ConfigBlueBits": 8,
         "ConfigDepthBits": 24,
@@ -38,5 +38,5 @@
         "CapturedTest_ExternalAHB_ES3_Vulkan_0001.cpp",
         "CapturedTest_ExternalAHB_ES3_Vulkan_shared.cpp"
     ],
-    "WindowSurfaceContextID": 12
+    "WindowSurfaceContextID": 14
 }

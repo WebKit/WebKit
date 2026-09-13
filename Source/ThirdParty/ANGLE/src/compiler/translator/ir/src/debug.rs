@@ -254,13 +254,13 @@ fn image_type_str(basic_type: ImageBasicType, image_type: ImageType) -> String {
     format!("{prefix}{base_name}{suffix}{multisample_suffix}{array_suffix}{shadow_suffix}")
 }
 
-fn name_str(name: &Name, temp_prefix: &'static str, id: u32) -> String {
+fn name_str(name: &Name, temp_prefix: &'static str, user_prefix: &'static str, id: u32) -> String {
     // Some names are expected to be output exactly, and are known to be unique.  Others will
     // be disambiguated with an `_N` suffix if they clash with any other name in text outputs.
     format!(
         "'{}{}{}'",
         match name.source {
-            NameSource::ShaderInterface => USER_SYMBOL_PREFIX,
+            NameSource::ShaderInterface => user_prefix,
             NameSource::Temporary => temp_prefix,
             _ => "",
         },
@@ -390,7 +390,7 @@ fn append_decorations(result: &mut String, precision: Precision, decorations: &D
 fn field_str(field: &Field, index: usize) -> String {
     let mut result = format!(
         "{}: {}",
-        name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, index as u32),
+        name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, USER_VARIABLE_PREFIX, index as u32),
         type_id_str(field.type_id)
     );
     append_decorations(&mut result, field.precision, &field.decorations);
@@ -472,7 +472,7 @@ fn function_param_direction_str(direction: FunctionParamDirection) -> String {
 }
 
 fn function_prototype_str(id: FunctionId, function: &Function) -> String {
-    let name = name_str(&function.name, TEMP_FUNCTION_PREFIX, id.id);
+    let name = name_str(&function.name, TEMP_FUNCTION_PREFIX, USER_VARIABLE_PREFIX, id.id);
 
     let mut return_type = type_id_str(function.return_type_id);
     append_decorations(&mut return_type, function.return_precision, &function.return_decorations);
@@ -947,14 +947,19 @@ fn dump_types(ir_meta: &IRMeta, result: &mut String) {
                 &Type::UnsizedArray(type_id) =>
                     format!("Unsized Array of {}", type_id_str(type_id)),
                 &Type::Image(basic_type, image_type) => image_type_str(basic_type, image_type),
-                Type::Struct(name, _, specialization) => format!(
-                    "{} {}:",
-                    match specialization {
-                        StructSpecialization::Struct => "Struct",
-                        StructSpecialization::InterfaceBlock => "Interface Block",
-                    },
-                    name_str(name, TEMP_STRUCT_PREFIX, id as u32)
-                ),
+                Type::Struct(name, _, specialization) => {
+                    let (typename, prefix) = match specialization {
+                        StructSpecialization::Struct => ("Struct", USER_VARIABLE_PREFIX),
+                        StructSpecialization::InterfaceBlock => {
+                            ("Interface Block", USER_BLOCK_PREFIX)
+                        }
+                    };
+                    format!(
+                        "{} {}:",
+                        typename,
+                        name_str(name, TEMP_STRUCT_PREFIX, prefix, id as u32)
+                    )
+                }
                 &Type::Pointer(type_id) => format!("Pointer to {}", type_id_str(type_id)),
                 Type::DeadCodeEliminated => {
                     return;
@@ -1006,7 +1011,7 @@ fn dump_variables(ir_meta: &IRMeta, result: &mut String) {
         if v.is_dead_code_eliminated {
             return;
         }
-        let name = name_str(&v.name, TEMP_VARIABLE_PREFIX, id as u32);
+        let name = name_str(&v.name, TEMP_VARIABLE_PREFIX, USER_VARIABLE_PREFIX, id as u32);
         let initializer = v
             .initializer
             .map(|constant_id| format!("={}", constant_id_str(constant_id)))

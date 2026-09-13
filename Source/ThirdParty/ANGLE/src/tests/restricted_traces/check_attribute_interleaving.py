@@ -236,6 +236,11 @@ def find_merged_indices_and_offsets(gzdata, ucap_info):
             # We should make a merge index list and an offset list, so we know what the range of the merged memory space would be.
             start_offset_1, size_1 = attr_data_1['start_offset'], attr_data_1['size']
             start_offset_2, size_2 = attr_data_2['start_offset'], attr_data_2['size']
+
+            # If either range size is 0, there is nothing to merge.
+            if size_1 == 0 or size_2 == 0:
+                continue
+
             data_range_1 = gzdata[start_offset_1:start_offset_1 + size_1]
             data_range_2 = gzdata[start_offset_2:start_offset_2 + size_2]
             offset = find_offset(data_range_1, data_range_2)
@@ -290,7 +295,7 @@ def normalize_offsets_and_update_merged_indices_if_needed(merged_lists, merge_in
     for merged_index, new_merged_index in merged_index_to_switch:
         merged_lists[new_merged_index] = merged_lists[merged_index]
         del merged_lists[merged_index]
-        for i in merged_list:
+        for i in merged_lists[new_merged_index]:
             merge_indices[i] = new_merged_index
 
 
@@ -417,6 +422,9 @@ def analyze_trace_for_interleaved_attributes(trace_dir,
     max_client_attrib_size = 0
     client_attrib_size_change = dict()
 
+    # UpdateClientArrayPointer() calls before a draw call are grouped and processed together.
+    ucap_group = list()
+
     # Decompress trace compressed binary for the analysis
     gzdata = decompress_trace_binary(trace_dir, is_verbose)
     if len(gzdata) == 0:
@@ -450,10 +458,7 @@ def analyze_trace_for_interleaved_attributes(trace_dir,
             filedata = f.readlines()
         change_list[trace_file] = list()
 
-        # UpdateClientArrayPointer() calls before a draw call are grouped and processed together.
-        ucap_group = list()
         trace_file_basename = os.path.basename(trace_file)
-
         for line_num, line in enumerate(filedata):
             if is_verbose:
                 progress_log = 'Processing file {} ({}/{}) | Line {}/{}'.format(
@@ -533,8 +538,11 @@ def analyze_trace_for_interleaved_attributes(trace_dir,
                                 merge_indices[attr_index],
                                 ' + {}'.format(merged_offsets[attr_index])
                                 if merged_offsets[attr_index] != 0 else ''))
-                        change_list[trace_file].append({
-                            'filename': trace_file,
+
+                        last_client_attr_trace_file = trace_files[
+                            last_client_attr_calls[attr_index]['file_num']]
+                        change_list[last_client_attr_trace_file].append({
+                            'filename': last_client_attr_trace_file,
                             'file_num': last_client_attr_calls[attr_index]['file_num'],
                             'line_num': last_client_attr_calls[attr_index]['line_num'],
                             'new_line': new_line

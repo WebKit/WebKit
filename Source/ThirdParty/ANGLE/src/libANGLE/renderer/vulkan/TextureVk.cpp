@@ -1044,6 +1044,16 @@ angle::Result TextureVk::clearSubImageImpl(const gl::Context *context,
         }
     }
 
+    // If the texture getting cleared is a render attachment of the current render pass we must
+    // flush the current render pass. Ideally one would perform checks upstream and convert
+    // the texture clear into a regular glClear, due to it being more optimized, although this
+    // may not be trivial when considering potential corner cases.
+    if (contextVk->isRenderPassStartedAndUsesImage(*mImage))
+    {
+        ANGLE_TRY(contextVk->flushCommandsAndEndRenderPass(
+            RenderPassClosureReason::ImageUseThenOutOfRPWrite));
+    }
+
     // Flush the staged updates if needed.
     return ensureImageInitializedIfUpdatesNeedStageOrFlush(
         contextVk, mState.toOwnerLevel(level), outputVkFormat, vk::ApplyImageUpdate::Defer,
@@ -3073,7 +3083,9 @@ angle::Result TextureVk::copyAndStageImageData(ContextVk *contextVk,
     return angle::Result::Continue;
 }
 
-angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk::Format &format)
+angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk,
+                                                 const vk::Format &format,
+                                                 bool reformatWithDraw)
 {
     // Reiniting the image is only possible if this is the owner of the image.  Consequently, the
     // rest of this function can use gl::OwnerImageIndex to reference front-end state.
@@ -3095,19 +3107,17 @@ angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk:
     // with draw path is that in the multiple level/layer case, we have to do copy in a loop.
     // Currently copySubImageImplWithDraw() calls ensureImageInitalized which forces flush out
     // staged updates that we just staged inside the loop which is wrong.
-    if (levelCount == 1 && layerCount == 1 &&
-        !IsTextureLevelRedefined(mRedefinedLevels, mState.getType(),
-                                 mImage->getFirstAllocatedLevel()))
+    if (reformatWithDraw)
     {
+        ASSERT(levelCount == 1 && layerCount == 1);
+        ASSERT(!IsTextureLevelRedefined(mRedefinedLevels, mState.getType(),
+                                        mImage->getFirstAllocatedLevel()));
         ANGLE_VK_PERF_WARNING(contextVk, GL_DEBUG_SEVERITY_LOW,
                               "Copying image data due to texture format fallback");
 
         const uint32_t readViewLevelCount = getMipLevelCount(ImageMipLevels::EnabledLevels);
         ANGLE_TRY(initReadImageViews(contextVk, readViewLevelCount));
 
-        ASSERT(CanCopyWithDraw(renderer, mImage->getUsage(),
-                               format.getActualImageFormatID(getRequiredFormatSupport()),
-                               getTilingMode()));
         vk::LevelIndex levelVk(0);
         gl::OwnerLevel sourceLevelGL = mImage->toGLLevel(levelVk);
         gl::Box sourceBox(gl::kOffsetZero, mImage->getLevelExtents(levelVk));
@@ -3127,6 +3137,10 @@ angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk:
 
     const bool isCubeMap = mState.getType() == gl::TextureType::CubeMap;
 
+    // The CPU conversion path requires both format conversion callbacks.
+    ASSERT(srcFormat.pixelReadFunction != nullptr);
+    ASSERT(dstFormat.pixelWriteFunction != nullptr);
+
     for (vk::LevelIndex levelVk(0); levelVk < vk::LevelIndex(levelCount); ++levelVk)
     {
         gl::OwnerLevel levelGL = mImage->toGLLevel(levelVk);
@@ -3138,7 +3152,7 @@ angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk:
         for (gl::OwnerLayer copyBatch = gl::OwnerLayer(0); copyBatch < copyBatchCount; ++copyBatch)
         {
             const gl::OwnerLayer copyBaseLayer = isCubeMap ? copyBatch : gl::OwnerLayer(0);
-            const uint32_t copyLayerCount = isCubeMap ? 1 : layerCount;
+            const uint32_t copyLayerCount      = isCubeMap ? 1 : layerCount;
 
             if (mRedefinedLevels[copyBaseLayer.get()].test(levelGL.get()))
             {
@@ -3166,25 +3180,21 @@ angle::Result TextureVk::reinitImageAsRenderable(ContextVk *contextVk, const vk:
             // invalidate must be called after wait for finish.
             ANGLE_TRY(srcBuffer->invalidate(renderer));
 
-            size_t dstBufferSize =
-                static_cast<size_t>(sourceBox.width) * static_cast<size_t>(sourceBox.height) *
-                static_cast<size_t>(sourceBox.depth) * dstFormat.pixelBytes * copyLayerCount;
+            const size_t srcDataRowPitch =
+                static_cast<size_t>(sourceBox.width) * srcFormat.pixelBytes;
+            const size_t dstDataRowPitch =
+                static_cast<size_t>(sourceBox.width) * dstFormat.pixelBytes;
+            const size_t srcDataDepthPitch = srcDataRowPitch * sourceBox.height;
+            const size_t dstDataDepthPitch = dstDataRowPitch * sourceBox.height;
+            const size_t srcDataLayerPitch = srcDataDepthPitch * sourceBox.depth;
+            const size_t dstDataLayerPitch = dstDataDepthPitch * sourceBox.depth;
+            const size_t dstBufferSize     = dstDataLayerPitch * copyLayerCount;
 
             // Allocate memory in the destination texture for the copy/conversion.
             uint8_t *dstData = nullptr;
             ANGLE_TRY(mImage->stageSubresourceUpdateAndGetData(
                 contextVk, dstBufferSize, index, mImage->getLevelExtents(levelVk), gl::kOffsetZero,
                 &dstData, dstFormat.id));
-
-            // Source and destination data is tightly packed
-            GLuint srcDataRowPitch = sourceBox.width * srcFormat.pixelBytes;
-            GLuint dstDataRowPitch = sourceBox.width * dstFormat.pixelBytes;
-
-            GLuint srcDataDepthPitch = srcDataRowPitch * sourceBox.height;
-            GLuint dstDataDepthPitch = dstDataRowPitch * sourceBox.height;
-
-            GLuint srcDataLayerPitch = srcDataDepthPitch * sourceBox.depth;
-            GLuint dstDataLayerPitch = dstDataDepthPitch * sourceBox.depth;
 
             rx::PixelReadFunction pixelReadFunction   = srcFormat.pixelReadFunction;
             rx::PixelWriteFunction pixelWriteFunction = dstFormat.pixelWriteFunction;
@@ -3256,12 +3266,22 @@ angle::Result TextureVk::respecifyImageStorage(ContextVk *contextVk)
     }
     else
     {
-        const vk::Format &format = getBaseLevelFormat(contextVk->getRenderer());
-        if (mImage->getActualFormatID() !=
-                format.getActualImageFormatID(getRequiredFormatSupport()) &&
-            mImage->getLevelCount() == getMipLevelCount(ImageMipLevels::EnabledLevels))
+        const vk::Format &format         = getBaseLevelFormat(contextVk->getRenderer());
+        const uint32_t enabledLevelCount = getMipLevelCount(ImageMipLevels::EnabledLevels);
+        const angle::Format &dstFormat   = format.getActualImageFormat(getRequiredFormatSupport());
+        const bool canReformatImage      = mImage->getActualFormatID() != dstFormat.id &&
+                                           mImage->getLevelCount() == enabledLevelCount;
+
+        if (canReformatImage)
         {
-            ANGLE_TRY(reinitImageAsRenderable(contextVk, format));
+            const bool reformatWithDraw =
+                mImage->getLevelCount() == 1 && mImage->getLayerCount() == 1 &&
+                !IsTextureLevelRedefined(mRedefinedLevels, mState.getType(),
+                                         mImage->getFirstAllocatedLevel()) &&
+                CanCopyWithDraw(contextVk->getRenderer(), mImage->getUsage(), dstFormat.id,
+                                getTilingMode());
+
+            ANGLE_TRY(reinitImageAsRenderable(contextVk, format, reformatWithDraw));
         }
         else
         {
@@ -5003,51 +5023,18 @@ angle::Result TextureVk::ensureRenderableWithFormat(ContextVk *contextVk,
     angle::FormatID actualFormatID =
         format.getActualImageFormatID(vk::ImageFormatSupport::Renderable);
 
-    if (!mImage->valid())
-    {
-        // Immutable texture must already have a valid image
-        ASSERT(!mState.getImmutableFormat());
-        // If we have staged updates and they were encoded with different format, we need to flush
-        // out these staged updates. The respecifyImageStorage should handle reading back the
-        // flushed data and re-stage it with the new format.
-        angle::FormatID intendedFormatID = format.getIntendedFormatID();
-
-        gl::OwnerLevel levelGLStart(0);
-        gl::OwnerLevel levelGLEnd(0);
-        ImageMipLevels mipLevels;
-        if (mState.getImmutableFormat())
-        {
-            levelGLEnd   = levelGLStart + mState.getImmutableLevels();
-            mipLevels    = ImageMipLevels::FullMipChainForGenerateMipmap;
-        }
-        else
-        {
-            levelGLStart = mState.toOwnerLevel(gl::LevelIndex(mState.getEffectiveBaseLevel()));
-            levelGLEnd   = levelGLStart + getMipLevelCount(ImageMipLevels::EnabledLevels);
-            mipLevels = ImageMipLevels::EnabledLevels;
-        }
-
-        if (mImage->hasStagedImageUpdatesWithMismatchedFormat(levelGLStart, levelGLEnd,
-                                                              actualFormatID))
-        {
-            angle::FormatID sampleOnlyFormatID =
-                format.getActualImageFormatID(vk::ImageFormatSupport::SampleOnly);
-
-            ANGLE_TRY(initImage(contextVk, intendedFormatID, sampleOnlyFormatID, mipLevels));
-        }
-        else
-        {
-            // First try to convert any staged buffer updates from old format to new format using
-            // CPU.
-            ANGLE_TRY(mImage->reformatStagedBufferUpdates(contextVk, previousActualFormatID,
-                                                          actualFormatID, mState.getType()));
-        }
-    }
-
     // Make sure we update mImageUsage bits
     const bool imageWasInitialized = mImage->valid();
     ANGLE_TRY(ensureImageAllocated(contextVk, format));
     ANGLE_TRY(respecifyImageStorage(contextVk));
+
+    if (!mImage->valid())
+    {
+        // Reformat staged buffer and image updates, including levels outside the enabled range.
+        ANGLE_TRY(mImage->reformatStagedUpdates(contextVk, previousActualFormatID, actualFormatID,
+                                                mState.getType()));
+    }
+
     if (imageWasInitialized)
     {
         ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));

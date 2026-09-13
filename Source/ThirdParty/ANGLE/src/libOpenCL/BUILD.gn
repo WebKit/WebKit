@@ -29,6 +29,7 @@ angle_shared_library("OpenCL_ANGLE") {
   configs += [
     "$angle_root:debug_annotations_config",
     "$angle_root:library_name_config",
+    "$angle_root:opencl_no_pragma_messages",
   ]
 
   deps = [

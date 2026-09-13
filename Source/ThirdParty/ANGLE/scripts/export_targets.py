@@ -195,6 +195,7 @@ IGNORED_INCLUDES = {
     b'compiler/translator/null/TranslatorNULL.h',
     b'compiler/translator/spirv/TranslatorSPIRV.h',
     b'compiler/translator/wgsl/TranslatorWGSL.h',
+    b'common/linux/window_system.h',
     b'contrib/optimizations/slide_hash_neon.h',
     b'dirent_on_windows.h',
     b'dlopen_fuchsia.h',
@@ -225,6 +226,9 @@ IGNORED_INCLUDES = {
     b'loader_linux.h',
     b'loader_windows.h',
     b'optick.h',
+    b'perfetto/tracing/string_helpers.h',
+    b'perfetto/tracing/track_event.h',
+    b'perfetto/tracing/track_event_legacy.h',
     b'spirv-tools/libspirv.h',
     b'third_party/volk/volk.h',
     b'vk_loader_extensions.c',
@@ -267,6 +271,9 @@ IGNORED_INCLUDES = {
     b'profiling/profiling.h',
     # Behind #ifdef HAVE_S390X_VX in third_party/zlib/crc32.c
     b'contrib/crc32vx/crc32_vx_hooks.h',
+    # Behind #if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT) in
+    # src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp
+    b'libGLESv2/entry_points_gles_ext_explicit_context_autogen.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

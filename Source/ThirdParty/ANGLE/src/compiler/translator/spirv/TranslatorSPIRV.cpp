@@ -589,6 +589,18 @@ void SetSpirvIdInFields(uint32_t id, std::vector<ShaderVariable> *fields)
         SetSpirvIdInFields(id, &field.fields);
     }
 }
+
+bool IsOnlyOpaqueType(const ShaderVariable &uniform)
+{
+    if (uniform.fields.empty())
+    {
+        return gl::IsOpaqueType(uniform.type);
+    }
+
+    // The parser places sampler types in the end of the struct, so if there are any non-opaque
+    // fields in the uniform, at least the first field must be non-opaque.
+    return IsOnlyOpaqueType(uniform.fields[0]);
+}
 }  // anonymous namespace
 
 TranslatorSPIRV::TranslatorSPIRV(sh::GLenum type, ShShaderSpec spec)
@@ -605,9 +617,9 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
     int aggregateTypesUsedForUniforms = 0;
     int r32fImageCount                = 0;
     int atomicCounterCount            = 0;
-    for (const auto &uniform : getUniforms())
+    for (const ShaderVariable &uniform : getUniforms())
     {
-        if (!uniform.isBuiltIn() && uniform.active && !gl::IsOpaqueType(uniform.type))
+        if (!uniform.isBuiltIn() && uniform.active && !IsOnlyOpaqueType(uniform))
         {
             ++defaultUniformCount;
         }
@@ -657,13 +669,10 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
             return false;
         }
 
-        int removedUniformsCount;
-
-        if (!RewriteStructSamplers(this, root, &getSymbolTable(), &removedUniformsCount))
+        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
         {
             return false;
         }
-        defaultUniformCount -= removedUniformsCount;
     }
 
     // Replace array of array of opaque uniforms with a flattened array.  This is run after

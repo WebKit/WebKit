@@ -245,6 +245,7 @@ if (angle_enable_cl) {
   angle_source_set("angle_trace_fixture_cl") {
     testonly = true
     defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
+    configs += [ "$angle_root:opencl_no_pragma_messages" ]
     suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
     sources = [
       "capture/trace_fixture_cl.cpp",

@@ -117,6 +117,7 @@ class ProgramPrelude : public TIntermTraverser
     void degrees();
     void radians();
     void mod();
+    void safeDivisor();
     void div();
     void imod();
     void imul();
@@ -124,6 +125,13 @@ class ProgramPrelude : public TIntermTraverser
     void ulshift();
     void rshift();
     void ftoi();
+    void addInt();
+    void subInt();
+    void negInt();
+    void postIncrementInt();
+    void preIncrementInt();
+    void postDecrementInt();
+    void preDecrementInt();
     void postIncrementMatrix();
     void preIncrementMatrix();
     void postDecrementMatrix();
@@ -287,15 +295,6 @@ class ProgramPrelude : public TIntermTraverser
     void interpolateAtCentroid();
     void interpolateAtSample();
     void interpolateAtOffset();
-    void postIncrementInt();
-    void preIncrementInt();
-    void postDecrementInt();
-    void preDecrementInt();
-    void addInt();
-    void addAssignInt();
-    void subInt();
-    void subAssignInt();
-    void negateInt();
     void loopForwardProgress();
 
   private:
@@ -451,120 +450,191 @@ ANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)
 }
 )")
 
-// Avoid undefined behavior when:
-// - the divisor is 0
-// - the dividend is INT_MIN and the divisor is -1 (integer overflow)
-// When the behavior would be undefined the result is `x`.
+// Integer division and remainder are undefined behavior in Metal when the divisor is 0 and when
+// the division overflows, i.e. when dividing the smallest negative value by -1. Substitute a
+// divisor of 1 in those cases: it keeps the divisor non-zero, and dividing the smallest negative
+// value by 1 yields that same value, which GLSL ES 3.00 section 4.1.3 permits as one of the two
+// allowed results for the overflow case. Dividing by 1 or -1 also leaves a remainder of 0, which is
+// the mathematically correct remainder for the overflow case.
+PROGRAM_PRELUDE_DECLARE(safeDivisor,
+                        R"(
+template <typename Z>
+ANGLE_ALWAYS_INLINE Z ANGLE_safeDivisor(Z x, Z y)
+{
+    return metal::select(y, Z(1), (y == Z(0)) | ((x == metal::numeric_limits<Z>::min()) & (y == Z(-1))));
+}
+)")
+
+// GLSL ES 3.00 section 5.9 makes division by zero produce an unspecified value rather than
+// undefined behavior, and section 4.1.3 requires the smallest negative value divided by -1 to
+// return either the smallest or the largest representable value. This returns the dividend for a
+// zero divisor and the smallest representable value for the overflow case, which satisfies both.
 PROGRAM_PRELUDE_DECLARE(div,
                         R"(
-template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
+template <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
 ANGLE_ALWAYS_INLINE Z ANGLE_div(X x, Y y)
 {
     Z zx = Z(x);
     Z zy = Z(y);
-    if constexpr (metal::is_signed_v<Z>) {
-        using U = metal::make_unsigned_t<Z>;
-        Z safeY = metal::select(zy, Z(1), zy == Z(0));
-        auto isNegOne = safeY == Z(-1);
-        safeY = metal::select(safeY, Z(1), isNegOne);
-        Z q = zx / safeY;
-        return metal::select(q, as_type<Z>(U(0) - U(zx)), isNegOne);
-    } else {
-        return zx / metal::select(zy, Z(1), zy == Z(0));
-    }
+    return zx / ANGLE_safeDivisor(zx, zy);
 }
-)")
+)",
+                        safeDivisor())
 
-// Avoid undefined behavior when:
-// - the divisor is 0
-// - the dividend is INT_MIN and the divisor is -1 (integer overflow)
-// - either of the operands is negative (undefined behavior in Metal)
-// When the behavior would be undefined the result is 0.
+// In addition to the divisor restrictions, Metal's remainder operator is undefined behavior when
+// either operand is negative. Compute the remainder with wraparound unsigned arithmetic instead,
+// which matches C++ semantics. GLSL ES 3.00 section 5.9 does leave the result undefined both for a
+// zero divisor, per component, and when either operand is negative, so any value will do as long as
+// it is produced without undefined behavior.
 PROGRAM_PRELUDE_DECLARE(imod,
                         R"(
-template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
+template <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
 ANGLE_ALWAYS_INLINE Z ANGLE_imod(X x, Y y)
 {
-    if constexpr (metal::is_signed_v<Z>) {
-        Z y_or_one = metal::select(Z(y), Z(1), Z(y) == Z(0));
-        y_or_one = metal::select(y_or_one, Z(1), y_or_one == Z(-1));
-        if (metal::any(((Z(x) | y_or_one) & Z(2147483648u)) != Z(0u)))
-        {
-            return as_type<Z>(
-                metal::make_unsigned_t<Z>(x) - metal::make_unsigned_t<Z>(x / y_or_one) * metal::make_unsigned_t<Z>(y_or_one)
-            );
-        }
-        else
-        {
-            return x % y_or_one;
-        }
-    }
-    else
-    {
-        return x % metal::select(Z(y), Z(1u), Z(y) == Z(0u));
-    }
+    using U = metal::make_unsigned_t<Z>;
+    Z zx = Z(x);
+    Z zy = Z(y);
+    Z safe = ANGLE_safeDivisor(zx, zy);
+    return as_type<Z>(U(zx) - U(zx / safe) * U(safe));
 }
-)")
+)",
+                        safeDivisor())
 
-// Avoid undefined behavior when the operand is outside the range of values that can be represented.
-// When the behavior would be undefined the value is clamped to fit the target type.
-PROGRAM_PRELUDE_DECLARE(ftoi,
+// Signed integer overflow is undefined in Metal, while GLSL ES requires the result to wrap
+// around. Do the arithmetic on unsigned values, where wraparound is well defined.
+PROGRAM_PRELUDE_DECLARE(addInt,
                         R"(
-template <typename X, typename Y>
-ANGLE_ALWAYS_INLINE X ANGLE_ftoi(Y y)
+template <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
+ANGLE_ALWAYS_INLINE Z ANGLE_addInt(X x, Y y)
 {
-    auto min = metal::numeric_limits<X>::min();
-    auto max = metal::numeric_limits<X>::max();
-    return X(metal::clamp(y, Y(min), Y(max)));
+    using U = metal::make_unsigned_t<Z>;
+    return as_type<Z>(U(Z(x)) + U(Z(y)));
 }
 )")
 
-// Avoid undefined behavior due to integer overflow
+PROGRAM_PRELUDE_DECLARE(subInt,
+                        R"(
+template <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
+ANGLE_ALWAYS_INLINE Z ANGLE_subInt(X x, Y y)
+{
+    using U = metal::make_unsigned_t<Z>;
+    return as_type<Z>(U(Z(x)) - U(Z(y)));
+}
+)")
+
+// Negating the smallest negative value overflows, which is undefined in Metal, while GLSL ES
+// requires the result to wrap around, i.e. the value is unchanged.
+PROGRAM_PRELUDE_DECLARE(negInt,
+                        R"(
+template <typename X>
+ANGLE_ALWAYS_INLINE X ANGLE_negInt(X x)
+{
+    return ANGLE_subInt(X(0), x);
+}
+)",
+                        subInt())
+
 PROGRAM_PRELUDE_DECLARE(imul,
                         R"(
-template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
+template <typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
 ANGLE_ALWAYS_INLINE Z ANGLE_imul(X x, Y y)
 {
-    return as_type<Z>(metal::make_unsigned_t<Z>(x) * metal::make_unsigned_t<Z>(y));
+    using U = metal::make_unsigned_t<Z>;
+    return as_type<Z>(U(Z(x)) * U(Z(y)));
 }
 )")
 
-// Avoid undefined behavior in e1 << e2 when:
-// 1) e2 is larger than the bit width of the type
-// 2) e2 is a negative value.
-// 3) e1 is a negative value
-PROGRAM_PRELUDE_DECLARE(ilshift,
-                        R"(
-template <typename X, typename Y>
-ANGLE_ALWAYS_INLINE X ANGLE_ilshift(X x, Y y)
-{
-    return as_type<X>(metal::select(metal::make_unsigned_t<X>(0), metal::make_unsigned_t<X>(x) << (y & Y(31)), metal::make_unsigned_t<Y>(y) < metal::make_unsigned_t<Y>(32)));
-}
-)")
-
-// Avoid undefined behavior in e1 << e2 when:
-// 1) e2 is larger than the bit width of the type
-// 2) e2 is a negative value.
-PROGRAM_PRELUDE_DECLARE(ulshift,
-                        R"(
-template <typename X, typename Y>
-ANGLE_ALWAYS_INLINE X ANGLE_ulshift(X x, Y y)
-{
-    return metal::select(X(0), x << (y & Y(31)), metal::make_unsigned_t<Y>(y) < metal::make_unsigned_t<Y>(32));
-}
-)")
-
-// Avoid undefined behavior in e1 >> e2 when:
-// 1) e2 is larger than the bit width of the type
-// 2) e2 is a negative value.
+// Shifting by a negative amount or by more than the bit width of the type is undefined in Metal,
+// and GLSL ES leaves the result undefined as well. Mask the shift amount so that it is always in
+// range, which matches what GPUs do natively and what the other ANGLE backends end up with. Note
+// that masking also handles negative amounts, e.g. -1 becomes 31.
 PROGRAM_PRELUDE_DECLARE(rshift,
                         R"(
 template <typename X, typename Y>
 ANGLE_ALWAYS_INLINE X ANGLE_rshift(X x, Y y)
 {
-    return metal::select(X(0), x >> (y & Y(31)), metal::make_unsigned_t<Y>(y) < metal::make_unsigned_t<Y>(32));
+    return x >> (y & Y(31));
 }
 )")
+
+PROGRAM_PRELUDE_DECLARE(ulshift,
+                        R"(
+template <typename X, typename Y>
+ANGLE_ALWAYS_INLINE X ANGLE_ulshift(X x, Y y)
+{
+    return x << (y & Y(31));
+}
+)")
+
+// GLSL ES defines a left shift of a negative value as shifting the sign bit out, whereas in Metal
+// it is undefined. Do the shift on an unsigned value.
+PROGRAM_PRELUDE_DECLARE(ilshift,
+                        R"(
+template <typename X, typename Y>
+ANGLE_ALWAYS_INLINE X ANGLE_ilshift(X x, Y y)
+{
+    using UX = metal::make_unsigned_t<X>;
+    return as_type<X>(UX(x) << (y & Y(31)));
+}
+)")
+
+// Converting a floating point value that is out of the range of the destination integer type is
+// undefined behavior in Metal. GLSL ES 3.00 section 5.4.1 only specifies that the fractional part
+// is dropped, which presumes the value is representable, and separately makes conversion of a
+// negative value to uint undefined, so no particular result is required here. Clamp to the range
+// that is always convertible.
+// Note that numeric_limits<X>::max() is not representable as a float: it rounds up to a value that
+// is out of range. Scaling it by (1 - 2^-24) gives the largest float that is in range, without
+// losing any value that a float can represent exactly.
+PROGRAM_PRELUDE_DECLARE(ftoi,
+                        R"(
+template <typename X, typename Y>
+ANGLE_ALWAYS_INLINE X ANGLE_ftoi(Y y)
+{
+    Y min = Y(metal::numeric_limits<X>::min());
+    Y max = Y(metal::numeric_limits<X>::max()) * Y(1.0f - 0x1.0p-24f);
+    return X(metal::clamp(y, min, max));
+}
+)")
+
+// Note: these are deliberately overloads instead of a template. The operand can be an
+// ANGLE_VectorElemRef or an ANGLE_SwizzleRef proxy that converts to a reference, and template
+// argument deduction does not consider user defined conversions.
+PROGRAM_PRELUDE_DECLARE(preIncrementInt,
+                        R"(
+ANGLE_ALWAYS_INLINE int ANGLE_preIncrementInt(thread int &x) { x = ANGLE_addInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int2 ANGLE_preIncrementInt(thread metal::int2 &x) { x = ANGLE_addInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int3 ANGLE_preIncrementInt(thread metal::int3 &x) { x = ANGLE_addInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int4 ANGLE_preIncrementInt(thread metal::int4 &x) { x = ANGLE_addInt(x, 1); return x; }
+)",
+                        addInt())
+
+PROGRAM_PRELUDE_DECLARE(postIncrementInt,
+                        R"(
+ANGLE_ALWAYS_INLINE int ANGLE_postIncrementInt(thread int &x) { int r = x; x = ANGLE_addInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int2 ANGLE_postIncrementInt(thread metal::int2 &x) { metal::int2 r = x; x = ANGLE_addInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int3 ANGLE_postIncrementInt(thread metal::int3 &x) { metal::int3 r = x; x = ANGLE_addInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int4 ANGLE_postIncrementInt(thread metal::int4 &x) { metal::int4 r = x; x = ANGLE_addInt(x, 1); return r; }
+)",
+                        addInt())
+
+PROGRAM_PRELUDE_DECLARE(preDecrementInt,
+                        R"(
+ANGLE_ALWAYS_INLINE int ANGLE_preDecrementInt(thread int &x) { x = ANGLE_subInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int2 ANGLE_preDecrementInt(thread metal::int2 &x) { x = ANGLE_subInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int3 ANGLE_preDecrementInt(thread metal::int3 &x) { x = ANGLE_subInt(x, 1); return x; }
+ANGLE_ALWAYS_INLINE metal::int4 ANGLE_preDecrementInt(thread metal::int4 &x) { x = ANGLE_subInt(x, 1); return x; }
+)",
+                        subInt())
+
+PROGRAM_PRELUDE_DECLARE(postDecrementInt,
+                        R"(
+ANGLE_ALWAYS_INLINE int ANGLE_postDecrementInt(thread int &x) { int r = x; x = ANGLE_subInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int2 ANGLE_postDecrementInt(thread metal::int2 &x) { metal::int2 r = x; x = ANGLE_subInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int3 ANGLE_postDecrementInt(thread metal::int3 &x) { metal::int3 r = x; x = ANGLE_subInt(x, 1); return r; }
+ANGLE_ALWAYS_INLINE metal::int4 ANGLE_postDecrementInt(thread metal::int4 &x) { metal::int4 r = x; x = ANGLE_subInt(x, 1); return r; }
+)",
+                        subInt())
 
 PROGRAM_PRELUDE_DECLARE(pack_half_2x16,
                         R"(
@@ -2894,174 +2964,6 @@ template <typename T>
 ANGLE_ALWAYS_INLINE T ANGLE_interpolateAtOffset(T value, float2) { return value; }
 )")
 
-PROGRAM_PRELUDE_DECLARE(preIncrementInt,
-                        R"(
-ANGLE_ALWAYS_INLINE int ANGLE_preIncrementInt(thread int &a)
-{
-    a = as_type<int>(as_type<metal::uint>(a) + 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int2 ANGLE_preIncrementInt(thread metal::int2 &a)
-{
-    a = as_type<metal::int2>(as_type<metal::uint2>(a) + 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int3 ANGLE_preIncrementInt(thread metal::int3 &a)
-{
-    a = as_type<metal::int3>(as_type<metal::uint3>(a) + 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int4 ANGLE_preIncrementInt(thread metal::int4 &a)
-{
-    a = as_type<metal::int4>(as_type<metal::uint4>(a) + 1u);
-    return a;
-}
-)")
-
-PROGRAM_PRELUDE_DECLARE(postIncrementInt,
-                        R"(
-ANGLE_ALWAYS_INLINE int ANGLE_postIncrementInt(thread int &a)
-{
-    int r = a;
-    a = as_type<int>(as_type<metal::uint>(a) + 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int2 ANGLE_postIncrementInt(thread metal::int2 &a)
-{
-    metal::int2 r = a;
-    a = as_type<metal::int2>(as_type<metal::uint2>(a) + 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int3 ANGLE_postIncrementInt(thread metal::int3 &a)
-{
-    metal::int3 r = a;
-    a = as_type<metal::int3>(as_type<metal::uint3>(a) + 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int4 ANGLE_postIncrementInt(thread metal::int4 &a)
-{
-    metal::int4 r = a;
-    a = as_type<metal::int4>(as_type<metal::uint4>(a) + 1u);
-    return r;
-}
-)")
-
-PROGRAM_PRELUDE_DECLARE(preDecrementInt,
-                        R"(
-ANGLE_ALWAYS_INLINE int ANGLE_preDecrementInt(thread int &a)
-{
-    a = as_type<int>(as_type<metal::uint>(a) - 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int2 ANGLE_preDecrementInt(thread metal::int2 &a)
-{
-    a = as_type<metal::int2>(as_type<metal::uint2>(a) - 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int3 ANGLE_preDecrementInt(thread metal::int3 &a)
-{
-    a = as_type<metal::int3>(as_type<metal::uint3>(a) - 1u);
-    return a;
-}
-
-ANGLE_ALWAYS_INLINE metal::int4 ANGLE_preDecrementInt(thread metal::int4 &a)
-{
-    a = as_type<metal::int4>(as_type<metal::uint4>(a) - 1u);
-    return a;
-}
-)")
-
-PROGRAM_PRELUDE_DECLARE(postDecrementInt,
-                        R"(
-ANGLE_ALWAYS_INLINE int ANGLE_postDecrementInt(thread int &a)
-{
-    int r = a;
-    a = as_type<int>(as_type<metal::uint>(a) - 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int2 ANGLE_postDecrementInt(thread metal::int2 &a)
-{
-    metal::int2 r = a;
-    a = as_type<metal::int2>(as_type<metal::uint2>(a) - 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int3 ANGLE_postDecrementInt(thread metal::int3 &a)
-{
-    metal::int3 r = a;
-    a = as_type<metal::int3>(as_type<metal::uint3>(a) - 1u);
-    return r;
-}
-
-ANGLE_ALWAYS_INLINE metal::int4 ANGLE_postDecrementInt(thread metal::int4 &a)
-{
-    metal::int4 r = a;
-    a = as_type<metal::int4>(as_type<metal::uint4>(a) - 1u);
-    return r;
-}
-)")
-
-// Avoid undefined behavior due to integer overflow.
-PROGRAM_PRELUDE_DECLARE(addInt,
-                        R"(
-template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
-ANGLE_ALWAYS_INLINE Z ANGLE_addInt(X x, Y y)
-{
-    return as_type<Z>(metal::make_unsigned_t<Z>(x) + metal::make_unsigned_t<Z>(y));
-}
-)")
-
-// Avoid undefined behavior due to integer overflow.
-PROGRAM_PRELUDE_DECLARE(addAssignInt,
-                        R"(
-template<typename X, typename Y>
-ANGLE_ALWAYS_INLINE thread X &ANGLE_addAssignInt(thread X &x, Y y)
-{
-    x = as_type<X>(metal::make_unsigned_t<X>(x) + metal::make_unsigned_t<Y>(y));
-    return x;
-}
-)")
-
-// Avoid undefined behavior due to integer underflow.
-PROGRAM_PRELUDE_DECLARE(subInt,
-                        R"(
-template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
-ANGLE_ALWAYS_INLINE Z ANGLE_subInt(X x, Y y)
-{
-    return as_type<Z>(metal::make_unsigned_t<Z>(x) - metal::make_unsigned_t<Z>(y));
-}
-)")
-
-// Avoid undefined behavior due to integer underflow.
-PROGRAM_PRELUDE_DECLARE(subAssignInt,
-                        R"(
-template<typename X, typename Y>
-ANGLE_ALWAYS_INLINE thread X &ANGLE_subAssignInt(thread X &x, Y y)
-{
-    x = as_type<X>(metal::make_unsigned_t<X>(x) - metal::make_unsigned_t<Y>(y));
-    return x;
-}
-)")
-
-// Avoid undefined behavior due to integer overflow.
-PROGRAM_PRELUDE_DECLARE(negateInt,
-                        R"(
-template <typename T>
-ANGLE_ALWAYS_INLINE T ANGLE_negateInt(T x)
-{
-    return as_type<T>(metal::make_unsigned_t<T>(0) - metal::make_unsigned_t<T>(x));
-}
-)")
-
 PROGRAM_PRELUDE_DECLARE(loopForwardProgress,
                         R"(
 ANGLE_ALWAYS_INLINE void ANGLE_loopForwardProgress()
@@ -3581,10 +3483,6 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpMod:
             mod();
             break;
-        case TOperator::EOpIModAssign:
-        case TOperator::EOpIMod:
-            imod();
-            break;
         case TOperator::EOpRefract:
             if (argType0->isScalar())
             {
@@ -3742,7 +3640,7 @@ void ProgramPrelude::visitOperator(TOperator op,
             }
             if (argType0->isSignedInt())
             {
-                addAssignInt();
+                addInt();
             }
             break;
 
@@ -3768,7 +3666,7 @@ void ProgramPrelude::visitOperator(TOperator op,
             }
             if (argType0->isSignedInt())
             {
-                subAssignInt();
+                subInt();
             }
             break;
 
@@ -3780,14 +3678,9 @@ void ProgramPrelude::visitOperator(TOperator op,
             {
                 imul();
             }
-            if (argType0->isSignedInt())
-            {
-                subAssignInt();
-            }
             break;
 
         case TOperator::EOpDiv:
-        case TOperator::EOpDivAssign:
             if (argType1->isMatrix())
             {
                 if (argType0->isMatrix())
@@ -3799,10 +3692,43 @@ void ProgramPrelude::visitOperator(TOperator op,
                     divScalarMatrix();
                 }
             }
-            else
+            else if (IsInteger(argType0->getBasicType()))
             {
                 div();
             }
+            break;
+
+        case TOperator::EOpDivAssign:
+            if (argType0->isMatrix() && argType1->isMatrix())
+            {
+                componentWiseDivideAssign();
+            }
+            else if (IsInteger(argType0->getBasicType()))
+            {
+                div();
+            }
+            break;
+
+        case TOperator::EOpIMod:
+        case TOperator::EOpIModAssign:
+            imod();
+            break;
+
+        case TOperator::EOpBitShiftLeft:
+        case TOperator::EOpBitShiftLeftAssign:
+            if (argType0->isSignedInt())
+            {
+                ilshift();
+            }
+            else
+            {
+                ulshift();
+            }
+            break;
+
+        case TOperator::EOpBitShiftRight:
+        case TOperator::EOpBitShiftRightAssign:
+            rshift();
             break;
 
         case TOperator::EOpMatrixCompMult:
@@ -3888,27 +3814,8 @@ void ProgramPrelude::visitOperator(TOperator op,
             }
             if (argType0->isSignedInt())
             {
-                negateInt();
+                negInt();
             }
-            break;
-
-        case TOperator::EOpBitShiftLeft:
-        case TOperator::EOpBitShiftLeftAssign:
-        {
-            if (argType0->isSignedInt())
-            {
-                ilshift();
-            }
-            else
-            {
-                ulshift();
-            }
-            break;
-        }
-
-        case TOperator::EOpBitShiftRight:
-        case TOperator::EOpBitShiftRightAssign:
-            rshift();
             break;
 
         case TOperator::EOpComma:
@@ -4108,15 +4015,9 @@ bool ProgramPrelude::visitAggregate(Visit visit, TIntermAggregate *node)
 
     const TFunction *func = node->getFunction();
 
-    if (node->isConstructor() && argCount == 1)
+    if (IsFloatToIntegerConstructor(*node))
     {
-        const TType &retType = node->getType();
-        const TType &argType = getArgType(0);
-        if (((retType.isScalar() || retType.isVector()) && IsInteger(retType.getBasicType())) &&
-            ((argType.isScalar() || argType.isVector()) && argType.getBasicType() == EbtFloat))
-        {
-            ftoi();
-        }
+        ftoi();
     }
 
     switch (node->getChildCount())

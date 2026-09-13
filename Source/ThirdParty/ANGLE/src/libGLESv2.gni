@@ -126,6 +126,13 @@ if (is_linux || is_chromeos || is_android || is_fuchsia) {
   ]
 }
 
+if (is_linux || is_chromeos) {
+  libangle_common_sources += [
+    "src/common/linux/window_system.cpp",
+    "src/common/linux/window_system.h",
+  ]
+}
+
 if (is_apple) {
   libangle_common_sources += [
     "src/common/apple/ObjCPtr.h",

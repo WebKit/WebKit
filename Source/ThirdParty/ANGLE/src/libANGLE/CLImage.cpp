@@ -6,11 +6,13 @@
 // CLImage.cpp: Implements the cl::Image class.
 //
 
-#include "CL/cl_half.h"
-#include "common/unsafe_buffers.h"
+#include <angle_cl.h>
 
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLImage.h"
+#include "libANGLE/CLMemory.h"
+#include "libANGLE/cl_types.h"
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>

@@ -336,6 +336,15 @@
             "issue": "https://crbug.com/534923522"
         },
         {
+            "name": "recreate_texture_on_tex_image_3d_depth_increase",
+            "category": "Workarounds",
+            "description": [
+                "Recreate texture and copy existing levels when glTexImage3D is called on a mutable ",
+                "TEXTURE_3D texture with an increased depth to work around Qualcomm driver bug."
+            ],
+            "issue": "http://anglebug.com/530045332"
+        },
+        {
             "name": "limit_max_3d_array_texture_size_to_1024",
             "category": "Workarounds",
             "description": [

@@ -1966,7 +1966,7 @@ bool ValidateCompressedTexImage(const Context *context,
             return false;
         }
 
-        if (context->isWebGL() || context->isHardenedContext())
+        if (context->isHardenedContext())
         {
             if (ANGLE_UNLIKELY(pixelUnpackBuffer->hasTFBBindingConflict()))
             {
@@ -2222,7 +2222,7 @@ bool ValidateCompressedTexSubImage(const Context *context,
             return false;
         }
 
-        if (context->isWebGL() || context->isHardenedContext())
+        if (context->isHardenedContext())
         {
             if (ANGLE_UNLIKELY(pixelUnpackBuffer->hasTFBBindingConflict()))
             {
@@ -3444,7 +3444,7 @@ bool ValidateMapBufferBase(const Context *context,
         }
     }
 
-    if (context->isWebGL() || context->isHardenedContext())
+    if (context->isHardenedContext())
     {
         if (buffer->hasTFBBindingConflict())
         {
@@ -3969,7 +3969,7 @@ bool ValidateBufferData(const Context *context,
     }
 
     // Do some additional WebGL-specific validation
-    if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
+    if (ANGLE_UNLIKELY(context->isHardenedContext()))
     {
         if (buffer->hasTFBBindingConflict())
         {
@@ -4041,7 +4041,7 @@ bool ValidateBufferSubData(const Context *context,
     }
 
     // Do some additional WebGL-specific validation
-    if (ANGLE_UNLIKELY(context->isWebGL() || context->isHardenedContext()))
+    if (ANGLE_UNLIKELY(context->isHardenedContext()))
     {
         if (buffer->hasTFBBindingConflict())
         {

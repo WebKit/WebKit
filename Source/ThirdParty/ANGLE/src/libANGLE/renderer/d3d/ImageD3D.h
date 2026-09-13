@@ -63,6 +63,8 @@ class ImageD3D : angle::NonCopyable
                                              const gl::Box &area,
                                              const void *input) = 0;
 
+    virtual angle::Result initializeContents(const gl::Context *context) = 0;
+
     virtual angle::Result setManagedSurface2D(const gl::Context *context,
                                               TextureStorage *storage,
                                               int level);

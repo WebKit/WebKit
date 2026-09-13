@@ -9,14 +9,17 @@
 #ifndef LIBANGLE_CLPLATFORM_H_
 #define LIBANGLE_CLPLATFORM_H_
 
+#include <angle_cl.h>
+
+#include "libANGLE/CLBitField.h"
 #include "libANGLE/CLObject.h"
 #include "libANGLE/Context.h"
-
-#include "common/WorkerThread.h"
-
 #include "libANGLE/renderer/CLPlatformImpl.h"
 
 #include "anglebase/no_destructor.h"
+
+#include <cstddef>
+#include <memory>
 
 namespace cl
 {
@@ -98,6 +101,8 @@ class Platform final : public _cl_platform_id, public Object
     static constexpr char kIcdSuffix[] = "ANGLE";
 
     static angle::FrameCaptureShared *mFrameCaptureShared;
+
+    friend class Object;
 };
 
 inline Platform *Platform::GetDefault()

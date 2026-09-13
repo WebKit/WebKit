@@ -938,8 +938,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
 
     if (aggregateTypesUsedForUniforms > 0)
     {
-        int removedUniformsCount;
-        if (!RewriteStructSamplers(this, root, &getSymbolTable(), &removedUniformsCount))
+        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
         {
             return false;
         }

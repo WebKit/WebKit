@@ -311,6 +311,13 @@ angle::Result TextureGL::setImageHelper(const gl::Context *context,
 
     stateManager->bindTexture(getType(), mTextureID);
 
+    if (features.recreateTextureOnTexImage3dDepthIncrease.enabled &&
+        getType() == gl::TextureType::_3D && !mState.getImmutableFormat() &&
+        functions->copyImageSubData)
+    {
+        ANGLE_TRY(recreateTextureOnTexImage3DDepthIncreaseWorkaround(context, target, level, size));
+    }
+
     if (features.resetTexImage2DBaseLevel.enabled)
     {
         // setBaseLevel doesn't ever generate errors.
@@ -1298,6 +1305,20 @@ angle::Result TextureGL::setStorage(const gl::Context *context,
     if (features.reattachFboDepthStencilOnReallocation.enabled)
     {
         onStateChange(angle::SubjectMessage::ObjectReallocated);
+    }
+
+    if (features.reattachTextureToFboAfterLayerIncrease.enabled &&
+        getType() == gl::TextureType::_2DArray)
+    {
+        for (size_t level = 0; level < levels; level++)
+        {
+            const gl::ImageDesc &desc = mState.getImageDesc(gl::TextureTarget::_2DArray, level);
+            if (size.depth > desc.size.depth)
+            {
+                onStateChange(angle::SubjectMessage::TextureLayerCountIncreased);
+                break;
+            }
+        }
     }
 
     const gl::InternalFormat &originalInternalFormatInfo =
@@ -2939,6 +2960,88 @@ GLint TextureGL::getRequiredExternalTextureImageUnits(const gl::Context *context
     functions->getTexParameteriv(ToGLenum(gl::NonCubeTextureTypeToTarget(getType())),
                                  GL_REQUIRED_TEXTURE_IMAGE_UNITS_OES, &result);
     return result;
+}
+
+angle::Result TextureGL::recreateTextureOnTexImage3DDepthIncreaseWorkaround(
+    const gl::Context *context,
+    gl::TextureTarget target,
+    size_t level,
+    const gl::Extents &size)
+{
+    const FunctionsGL *functions      = GetFunctionsGL(context);
+    const angle::FeaturesGL &features = GetFeaturesGL(context);
+    StateManagerGL *stateManager      = GetStateManagerGL(context);
+
+    const gl::ImageDesc &currentDesc = mState.getImageDesc(target, level);
+    if (currentDesc.size.empty() || size.depth <= currentDesc.size.depth)
+    {
+        return angle::Result::Continue;
+    }
+
+    GLuint oldTextureID = mTextureID;
+
+    stateManager->bindTexture(getType(), oldTextureID);
+    functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    functions->genTextures(1, &mTextureID);
+    stateManager->bindTexture(getType(), mTextureID);
+    functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    mAppliedSwizzle = gl::SwizzleState();
+    mAppliedSampler = gl::SamplerState::CreateDefaultForTarget(getType());
+    mAppliedSampler.setMinFilter(GL_NEAREST);
+    mAppliedSampler.setMagFilter(GL_NEAREST);
+    mAppliedBaseLevel = 0;
+    mAppliedMaxLevel  = gl::kInitialMaxLevel;
+
+    for (size_t l = 0; l < mState.getImageDescs().size(); ++l)
+    {
+        if (l == level)
+        {
+            continue;
+        }
+
+        const gl::ImageDesc &desc = mState.getImageDesc(target, l);
+        if (desc.size.empty())
+        {
+            continue;
+        }
+
+        nativegl::TexImageFormat levelTexImageFormat =
+            nativegl::GetTexImageFormat(functions, features, desc.format.info->sizedInternalFormat,
+                                        desc.format.info->format, desc.format.info->type);
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context,
+            functions->texImage3D(ToGLenum(target), static_cast<GLint>(l),
+                                  levelTexImageFormat.internalFormat, desc.size.width,
+                                  desc.size.height, desc.size.depth, 0, levelTexImageFormat.format,
+                                  levelTexImageFormat.type, nullptr));
+
+        stateManager->bindTexture(getType(), oldTextureID);
+        functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(l));
+        functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(l));
+
+        stateManager->bindTexture(getType(), mTextureID);
+        functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(l));
+        functions->texParameteri(ToGLenum(getType()), GL_TEXTURE_BASE_LEVEL, static_cast<GLint>(l));
+        mAppliedMaxLevel  = static_cast<GLuint>(l);
+        mAppliedBaseLevel = static_cast<GLuint>(l);
+
+        ANGLE_GL_TRY_ALWAYS_CHECK(
+            context,
+            functions->copyImageSubData(oldTextureID, ToGLenum(target), static_cast<GLint>(l), 0, 0,
+                                        0, mTextureID, ToGLenum(target), static_cast<GLint>(l), 0,
+                                        0, 0, desc.size.width, desc.size.height, desc.size.depth));
+    }
+
+    stateManager->deleteTexture(oldTextureID);
+
+    mLocalDirtyBits = mAllModifiedDirtyBits;
+    onStateChange(angle::SubjectMessage::SubjectChanged);
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

@@ -135,10 +135,12 @@ bool ReturnsReference(TOperator op)
         case TOperator::EOpBitwiseAndAssign:
         case TOperator::EOpBitwiseXorAssign:
         case TOperator::EOpBitwiseOrAssign:
+
         case TOperator::EOpIndexDirect:
         case TOperator::EOpIndexIndirect:
         case TOperator::EOpIndexDirectStruct:
         case TOperator::EOpIndexDirectInterfaceBlock:
+
             return true;
 
         default:
@@ -146,26 +148,22 @@ bool ReturnsReference(TOperator op)
     }
 }
 
+// Matches the unary operators that write to their operand.
 bool IsLValueUnaryOp(TOperator op)
 {
     switch (op)
     {
-        case EOpPostIncrement:
-        case EOpPostDecrement:
-        case EOpPreIncrement:
-        case EOpPreDecrement:
+        case TOperator::EOpPostIncrement:
+        case TOperator::EOpPostDecrement:
+        case TOperator::EOpPreIncrement:
+        case TOperator::EOpPreDecrement:
             return true;
-        case EOpNegative:
-        case EOpPositive:
-        case EOpLogicalNot:
-        case EOpBitwiseNot:
-        case EOpArrayLength:
-            return false;
+
         default:
-            break;
+            // Note: this is not UNREACHABLE() for the unhandled operators because built-in function
+            // calls can be unary ops as well.
+            return false;
     }
-    // At the time, we cannot use UNREACHABLE(); because builtin function calls might be unary ops.
-    return false;
 }
 
 TIntermTyped &DecomposeCompoundAssignment(TIntermBinary &node)
@@ -373,17 +371,17 @@ class Rewriter2 : public TIntermRebuild
 
     PreResult visitUnaryPre(TIntermUnary &node) override
     {
-        // Unary ++, -- operators for signed ints are implemented as functions. These take in a
-        // reference. Addressing is needed to support swizzles. This can be removed when a pass is
-        // added to replace the operators with builtin function calls.
-        bool childRequiresAddressing =
-            IsLValueUnaryOp(node.getOp()) && node.getType().isSignedInt();
-        mRequiresAddressingStack.push_back(childRequiresAddressing);
+        // The signed integer ++ and -- operators are emulated with functions that take the operand
+        // by reference, so the operand needs to be addressable. This can be removed if a pass is
+        // added that replaces the operators with function calls in the AST.
+        mRequiresAddressingStack.push_back(IsLValueUnaryOp(node.getOp()) &&
+                                           node.getType().isSignedInt());
         return {node, VisitBits::Both};
     }
 
     PostResult visitUnaryPost(TIntermUnary &node) override
     {
+        ASSERT(!mRequiresAddressingStack.empty());
         mRequiresAddressingStack.pop_back();
         return {node};
     }

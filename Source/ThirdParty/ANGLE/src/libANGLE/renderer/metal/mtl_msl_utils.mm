@@ -24,7 +24,7 @@ namespace
 {
 constexpr char kXfbBindingsMarker[]     = "@@XFB-Bindings@@";
 constexpr char kXfbOutMarker[]          = "ANGLE_@@XFB-OUT@@";
-constexpr char kUserDefinedNamePrefix[] = "_u";  // Default for UserVariableNamePrefix
+constexpr char kUserDefinedNamePrefix[] = "_u";  // Defined in GLSLANG/ShaderLang.h
 constexpr char kAttribBindingsMarker[]  = "@@Attrib-Bindings@@\n";
 
 std::string GetXfbBufferNameMtl(const uint32_t bufferIndex)

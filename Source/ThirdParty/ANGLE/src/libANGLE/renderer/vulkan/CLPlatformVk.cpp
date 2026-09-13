@@ -5,19 +5,19 @@
 //
 // CLPlatformVk.cpp: Implements the class methods for CLPlatformVk.
 
-#include "libANGLE/renderer/vulkan/CLPlatformVk.h"
+#include "anglebase/no_destructor.h"
+#include "common/angle_version_info.h"
 #include "common/vulkan/vulkan_icd.h"
-#include "libANGLE/angletypes.h"
+
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
+#include "libANGLE/renderer/vulkan/CLPlatformVk.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
+#include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/CLPlatform.h"
 #include "libANGLE/cl_utils.h"
 
-#include "anglebase/no_destructor.h"
-#include "common/angle_version_info.h"
-#include "libANGLE/renderer/vulkan/vk_utils.h"
 #include "vulkan/vulkan_core.h"
 
 namespace rx

@@ -7,7 +7,6 @@
 //
 
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
-#include "common/unsafe_buffers.h"
 
 #include "libANGLE/CLCommandQueue.h"
 

@@ -6,12 +6,19 @@
 // CLKernel.cpp: Implements the cl::Kernel class.
 //
 
-#include "libANGLE/CLKernel.h"
 #include "common/unsafe_buffers.h"
 
+#include <angle_cl.h>
+
 #include "libANGLE/CLContext.h"
+#include "libANGLE/CLKernel.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
+#include "libANGLE/renderer/CLKernelImpl.h"
+
+#include <array>
+#include <cstddef>
+#include <cstring>
 
 namespace cl
 {
