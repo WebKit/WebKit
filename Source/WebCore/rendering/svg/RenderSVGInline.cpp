@@ -251,4 +251,16 @@ void RenderSVGInline::updateFromStyle()
     setInline(true);
 }
 
+LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
+{
+    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
+    return svgInline ? svgInline->firstLegacyInlineBox() : nullptr;
+}
+
+LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
+{
+    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
+    return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
+}
+
 }

@@ -95,6 +95,9 @@ public:
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual LayoutRect borderBoundingBox() const = 0;
 
+    virtual LayoutRect borderBoxRectInContainer() const;
+    virtual LayoutRect firstFragmentBorderBoxRect() const;
+
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
     inline LayoutUnit computedCSSPaddingBottom() const;
@@ -184,6 +187,8 @@ public:
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
 
+    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
+
     void setSelectionState(HighlightState) override;
 
     bool hasRunningAcceleratedAnimations() const;
@@ -226,6 +231,10 @@ protected:
     bool borderObscuresBackground() const;
 
     LayoutUnit resolveLengthPercentageUsingContainerLogicalWidth(const auto&, const Style::ZoomFactor&) const;
+
+protected:
+    const RenderElement* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
+    virtual RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
 
 private:
     virtual LayoutRect frameRectForStickyPositioning() const = 0;

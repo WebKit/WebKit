@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderLayoutState.h"
 
+#include "PositionedLayoutConstraints.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
@@ -90,10 +91,8 @@ void RenderLayoutState::computeOffsets(const RenderLayoutState& ancestor, Render
         m_paintOffset = ancestor.paintOffset() + offset;
 
     if (renderer.isOutOfFlowPositioned() && !fixed) {
-        if (CheckedPtr container = dynamicDowncast<RenderInline>(renderer.container())) {
-            if (container->canContainAbsolutelyPositionedObjects())
-                m_paintOffset += container->offsetForInFlowPositionedInline(&renderer);
-        }
+        if (CheckedPtr container = renderer.container(); container && container->isInlineBox() && container->canContainAbsolutelyPositionedObjects())
+            m_paintOffset += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(*container), renderer.style());
     }
 
     m_layoutOffset = m_paintOffset;

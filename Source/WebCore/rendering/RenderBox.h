@@ -70,7 +70,7 @@ public:
     LayoutUnit borderBoxWidth() const { return m_borderBoxRectInContainer.width(); }
     LayoutUnit borderBoxHeight() const { return m_borderBoxRectInContainer.height(); }
     LayoutSize borderBoxSize() const { return m_borderBoxRectInContainer.size(); }
-    LayoutRect borderBoxRectInContainer() const { return m_borderBoxRectInContainer; }
+    LayoutRect borderBoxRectInContainer() const final { return m_borderBoxRectInContainer; }
 
     template<typename T> void setX(T x) { m_borderBoxRectInContainer.setX(x); }
     template<typename T> void setY(T y) { m_borderBoxRectInContainer.setY(y); }
@@ -502,8 +502,7 @@ public:
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
-    LayoutUnit offsetLeft() const override;
-    LayoutUnit offsetTop() const override;
+    LayoutRect firstFragmentBorderBoxRect() const override { return { topLeftLocation(), borderBoxSize() }; }
 
     LayoutPoint NODELETE flipForWritingModeForChild(const RenderBox& child, const LayoutPoint&) const;
     LayoutUnit NODELETE flipForWritingMode(LayoutUnit position) const; // The offset is in the block direction (y for horizontal writing modes, x for vertical writing modes).
@@ -530,7 +529,6 @@ public:
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
-    std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
@@ -638,7 +636,6 @@ protected:
     LayoutRect localOutlineBoundsRepaintRect() const;
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
-    const RenderElement* pushMappingToContainer(const RenderLayerModelObject*, RenderGeometryMap&) const override;
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
 
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
@@ -718,7 +715,7 @@ private:
 
     LayoutRect frameRectForStickyPositioning() const override { return borderBoxRectInContainer(); }
 
-    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const;
+    RepaintRects computeVisibleRectsUsingPaintOffset(const RepaintRects&) const final;
     
     LayoutPoint topLeftLocationWithFlipping() const;
 
