@@ -28,17 +28,17 @@
 
 #include "WPEQtView.h"
 
-#include <epoxy/egl.h>
+#include <epoxy/egl.h> // NOLINT(build/include_order) -- epoxy must precede Qt OpenGL headers.
 #include <wtf/SortedArrayMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 
-#include <QOpenGLFunctions>
-#include <QQuickWindow>
-#include <QSGTexture>
+#include <QOpenGLContext>
 #include <QCursor>
+#include <QQuickWindow>
+#include <QSGRendererInterface>
 
 #include <string_view>
 
@@ -49,9 +49,8 @@
 struct _WPEViewQtQuickPrivate {
     GRefPtr<WPEBuffer> pendingBuffer;
     GRefPtr<WPEBuffer> committedBuffer;
-    bool bufferUpdateRequested;
-    GLuint textureId;
-    QOpenGLContext* context;
+    GRefPtr<WPEBuffer> previousCommittedBuffer;
+    GRefPtr<WPEBuffer> bufferAwaitingAck;
     WPEQtView* wpeQtView;
 
     // Event handling
@@ -60,7 +59,15 @@ struct _WPEViewQtQuickPrivate {
 };
 WEBKIT_DEFINE_FINAL_TYPE(WPEViewQtQuick, wpe_view_qtquick, WPE_TYPE_VIEW, WPEView)
 
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
+static void wpeViewQtQuickScheduleUpdate(WPEViewQtQuickPrivate* priv)
+{
+    if (!priv->wpeQtView)
+        return;
+
+    priv->wpeQtView->update();
+    if (auto* window = priv->wpeQtView->window())
+        window->update();
+}
 
 static void wpeViewQtQuickDispose(GObject* object)
 {
@@ -72,10 +79,16 @@ static gboolean wpeViewQtQuickRenderBuffer(WPEView* view, WPEBuffer* buffer, con
 {
     // TODO: Add support for damage rects.
     auto* priv = WPE_VIEW_QTQUICK(view)->priv;
-    priv->pendingBuffer = buffer;
-    priv->bufferUpdateRequested = true;
 
-    priv->wpeQtView->triggerUpdateScene();
+    GRefPtr<WPEBuffer> replacedBuffer = WTF::move(priv->pendingBuffer);
+    priv->pendingBuffer = buffer;
+
+    if (replacedBuffer) {
+        wpe_view_buffer_rendered(view, replacedBuffer.get());
+        wpe_view_buffer_released(view, replacedBuffer.get());
+    }
+
+    wpeViewQtQuickScheduleUpdate(priv);
     return TRUE;
 }
 
@@ -164,88 +177,104 @@ gboolean wpe_view_qtquick_initialize_rendering(WPEViewQtQuick* view, WPEQtView* 
     }
 
     auto* priv = WPE_VIEW_QTQUICK(view)->priv;
-    priv->context = context;
     priv->wpeQtView = wpeQtView;
 
-    if (!imageTargetTexture2DOES)
-        imageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-
     return TRUE;
+}
+
+WPEBuffer* wpe_view_qtquick_acquire_frame(WPEViewQtQuick* view, EGLImage* outImage, gboolean* didPromote, GError** error)
+{
+    auto* priv = view->priv;
+
+    if (didPromote)
+        *didPromote = FALSE;
+
+    // Reuse the committed buffer while its previous frame is awaiting acknowledgement.
+    auto frameBuffer = priv->pendingBuffer && !priv->bufferAwaitingAck ? priv->pendingBuffer : priv->committedBuffer;
+    if (!frameBuffer)
+        return nullptr;
+
+    GUniqueOutPtr<GError> bufferError;
+    auto eglImage = static_cast<EGLImage>(wpe_buffer_import_to_egl_image(frameBuffer.get(), &bufferError.outPtr()));
+    if (!eglImage) {
+        if (error && bufferError)
+            g_propagate_error(error, bufferError.release());
+        else if (error)
+            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to import WPE buffer");
+        return nullptr;
+    }
+
+    if (frameBuffer == priv->pendingBuffer) {
+        priv->previousCommittedBuffer = WTF::move(priv->committedBuffer);
+        priv->committedBuffer = WTF::move(priv->pendingBuffer);
+        priv->bufferAwaitingAck = priv->committedBuffer;
+        if (didPromote)
+            *didPromote = TRUE;
+    }
+
+    *outImage = eglImage;
+
+    return frameBuffer.leakRef();
+}
+
+void wpe_view_qtquick_rollback_frame(WPEViewQtQuick* view)
+{
+    auto* priv = view->priv;
+    if (!priv->bufferAwaitingAck)
+        return;
+
+    GRefPtr<WPEBuffer> failedBuffer = WTF::move(priv->committedBuffer);
+    ASSERT(!priv->pendingBuffer);
+
+    priv->pendingBuffer = WTF::move(failedBuffer);
+    priv->committedBuffer = WTF::move(priv->previousCommittedBuffer);
+    priv->bufferAwaitingAck = nullptr;
+
+    if (priv->wpeQtView)
+        priv->wpeQtView->triggerUpdateScene();
 }
 
 void wpe_view_qtquick_invalidate_rendering(WPEViewQtQuick* view)
 {
     auto* priv = view->priv;
-    if (priv->textureId && priv->context) {
-        if (auto* glFunctions = priv->context->functions())
-            glFunctions->glDeleteTextures(1, &priv->textureId);
-        priv->textureId = 0;
+
+    GRefPtr<WPEBuffer> committedBuffer = WTF::move(priv->bufferAwaitingAck);
+    GRefPtr<WPEBuffer> previousCommittedBuffer = WTF::move(priv->previousCommittedBuffer);
+    GRefPtr<WPEBuffer> pendingBuffer = WTF::move(priv->pendingBuffer);
+    priv->committedBuffer = nullptr;
+
+    if (previousCommittedBuffer)
+        wpe_view_buffer_released(WPE_VIEW(view), previousCommittedBuffer.get());
+    if (committedBuffer)
+        wpe_view_buffer_rendered(WPE_VIEW(view), committedBuffer.get());
+    if (pendingBuffer) {
+        wpe_view_buffer_rendered(WPE_VIEW(view), pendingBuffer.get());
+        wpe_view_buffer_released(WPE_VIEW(view), pendingBuffer.get());
     }
-    priv->context = nullptr;
+
+    priv->wpeQtView = nullptr;
 }
 
-QSGTexture* wpe_view_qtquick_render_buffer_to_texture(WPEViewQtQuick* view, QSize size, GError** error)
+void wpe_view_qtquick_set_frame_release_fence(WPEViewQtQuick* view, int fd)
 {
-    auto* priv = WPE_VIEW_QTQUICK(view)->priv;
-
-    auto wrapNativeTexture = [&]() -> QSGTexture* {
-        RELEASE_ASSERT(priv->wpeQtView->window());
-
-        auto texture = QNativeInterface::QSGOpenGLTexture::fromNative(priv->textureId, priv->wpeQtView->window(), size, QQuickWindow::TextureHasAlphaChannel);
-        if (!texture) [[unlikely]] {
-            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to import QSOpenGLTexture from native OpenGL texture");
-            return nullptr;
-        }
-
-        return texture;
-    };
-
-    if (!priv->pendingBuffer) [[unlikely]] {
-        if (!priv->committedBuffer) {
-            g_set_error_literal(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render, no pending buffer available to render into, and no commitedBuffer.");
-            return nullptr;
-        }
-
-        RELEASE_ASSERT(priv->textureId);
-        return wrapNativeTexture();
-    }
-
-    GUniqueOutPtr<GError> bufferError;
-    auto eglImage = wpe_buffer_import_to_egl_image(priv->pendingBuffer.get(), &bufferError.outPtr());
-    if (!eglImage) [[unlikely]] {
-        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render: %s", bufferError->message);
-        return nullptr;
-    }
-
-    auto* glFunctions = priv->context->functions();
-    if (!priv->textureId) [[unlikely]] {
-        glFunctions->glGenTextures(1, &priv->textureId);
-        glFunctions->glBindTexture(GL_TEXTURE_2D, priv->textureId);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glFunctions->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glFunctions->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr); // Passed size doesn't matter.
-        glFunctions->glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    glFunctions->glBindTexture(GL_TEXTURE_2D, priv->textureId);
-    imageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
-
-    return wrapNativeTexture();
+    if (view->priv->committedBuffer)
+        wpe_buffer_set_release_fence(view->priv->committedBuffer.get(), fd);
 }
 
 void wpe_view_qtquick_did_update_scene(WPEViewQtQuick* view)
 {
     auto* priv = view->priv;
-    if (!priv->bufferUpdateRequested)
+    if (!priv->bufferAwaitingAck)
         return;
 
-    priv->bufferUpdateRequested = false;
-    if (priv->committedBuffer)
-        wpe_view_buffer_released(WPE_VIEW(view), priv->committedBuffer.get());
-    priv->committedBuffer = WTF::move(priv->pendingBuffer);
-    wpe_view_buffer_rendered(WPE_VIEW(view), priv->committedBuffer.get());
+    auto committedBuffer = WTF::move(priv->bufferAwaitingAck);
+    auto previousCommittedBuffer = WTF::move(priv->previousCommittedBuffer);
+    if (previousCommittedBuffer)
+        wpe_view_buffer_released(WPE_VIEW(view), previousCommittedBuffer.get());
+    if (committedBuffer)
+        wpe_view_buffer_rendered(WPE_VIEW(view), committedBuffer.get());
+    if (priv->pendingBuffer)
+        wpeViewQtQuickScheduleUpdate(priv);
 }
 
 // Event handling
