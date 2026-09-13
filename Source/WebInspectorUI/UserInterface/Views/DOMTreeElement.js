@@ -2126,6 +2126,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let contextMenu = WI.ContextMenu.createFromEvent(event);
 
         WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, this.representedObject, {
+            popoverDelegate: this,
             popoverTargetElement: event.target,
             revealDescendantBreakpointsMenuItemHandler: this.bindRevealDescendantBreakpointsMenuItemHandler(),
         });
@@ -2416,8 +2417,31 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     // Popover delegate
 
+    willDismissPopover(popover)
+    {
+        if (!(popover instanceof WI.DOMBreakpointPopover))
+            return;
+
+        let existingBreakpoint = WI.domDebuggerManager.domBreakpointsForNode(this.representedObject)[0];
+        let breakpoint = popover.breakpoint;
+        if (!existingBreakpoint || !breakpoint || breakpoint === existingBreakpoint)
+            return;
+
+        let matches = (existing) => existing !== existingBreakpoint && existing.equals(breakpoint);
+        if (WI.domDebuggerManager.domBreakpointsForNode(this.representedObject).some(matches) || WI.domDebuggerManager.domBreakpointsForURL(breakpoint.url).some(matches)) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        existingBreakpoint.remove();
+        WI.domDebuggerManager.addDOMBreakpoint(breakpoint);
+    }
+
     didDismissPopover(popover)
     {
+        if (popover instanceof WI.DOMBreakpointPopover)
+            return;
+
         switch (popover) {
         case this._eventBadgePopover:
             this._eventBadgePopover = null;
