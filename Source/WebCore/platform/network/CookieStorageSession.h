@@ -102,6 +102,12 @@ public:
     WEBCORE_EXPORT void setCookie(const Cookie&);
     WEBCORE_EXPORT void deleteCookie(const URL& firstParty, const URL&, const String& cookieName, const String& partition, CompletionHandler<void()>&&) const;
     WEBCORE_EXPORT void deleteAllCookies(CompletionHandler<void()>&&);
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    // FIXME: Remove after rdar://185837942 (month before day), rdar://186224951 (name casing) and
+    // rdar://186225250 (leading byte order mark) are resolved.
+    WEBCORE_EXPORT void repairCookiesFromHTTPResponse(const URL& firstParty, const URL&, const SameSiteInfo&, const String& setCookieHeaderValue, ThirdPartyCookieBlockingDecision, const String& partition) const;
+#endif
 #endif // PLATFORM(COCOA)
 
 protected:
