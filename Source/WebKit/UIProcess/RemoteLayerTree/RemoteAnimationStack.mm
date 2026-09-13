@@ -32,6 +32,7 @@
 #import "RemoteProgressBasedTimeline.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -50,19 +51,21 @@ RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCor
     bool affectsFilter = false;
     bool affectsOpacity = false;
     bool affectsTransform = false;
+    bool affectsClipPath = false;
 
     for (auto& animation : m_animations) {
         auto& properties = animation->animatedProperties();
         affectsFilter = affectsFilter || properties.containsAny({ WebCore::AcceleratedEffectProperty::Filter, WebCore::AcceleratedEffectProperty::BackdropFilter });
         affectsOpacity = affectsOpacity || properties.contains(WebCore::AcceleratedEffectProperty::Opacity);
         affectsTransform = affectsTransform || properties.containsAny(WebCore::transformRelatedAcceleratedProperties);
+        affectsClipPath = affectsClipPath || properties.contains(WebCore::AcceleratedEffectProperty::ClipPath);
         m_hasProgressBasedAnimations = m_hasProgressBasedAnimations || animation->timeline().isProgressBased();
         m_hasTimeBasedAnimations = m_hasTimeBasedAnimations || animation->timeline().isMonotonic();
-        if (affectsFilter && affectsOpacity && affectsTransform && m_hasProgressBasedAnimations && m_hasTimeBasedAnimations)
+        if (affectsFilter && affectsOpacity && affectsTransform && affectsClipPath && m_hasProgressBasedAnimations && m_hasTimeBasedAnimations)
             break;
     }
 
-    ASSERT(affectsFilter || affectsOpacity || affectsTransform);
+    ASSERT(affectsFilter || affectsOpacity || affectsTransform || affectsClipPath);
 
     if (affectsFilter)
         m_affectedLayerProperties.add(LayerProperty::Filter);
@@ -70,6 +73,8 @@ RemoteAnimationStack::RemoteAnimationStack(RemoteAnimations&& animations, WebCor
         m_affectedLayerProperties.add(LayerProperty::Opacity);
     if (affectsTransform)
         m_affectedLayerProperties.add(LayerProperty::Transform);
+    if (affectsClipPath)
+        m_affectedLayerProperties.add(LayerProperty::ClipPath);
 }
 
 #if PLATFORM(MAC)
@@ -211,6 +216,13 @@ void RemoteAnimationStack::applyEffectsFromMainThread(PlatformLayer *layer, bool
     if (m_affectedLayerProperties.contains(LayerProperty::Transform)) {
         auto computedTransform = computedValues.computedTransformationMatrix(m_bounds);
         [layer setTransform:computedTransform];
+    }
+
+    if (computedValues.transformOperationData) {
+        if (auto path = tryPath(computedValues.clipPath, *computedValues.transformOperationData)) {
+            if (auto mask = dynamic_objc_cast<CAShapeLayer>(layer.mask))
+                mask.path = protect(path->platformPath()).get();
+        }
     }
 }
 

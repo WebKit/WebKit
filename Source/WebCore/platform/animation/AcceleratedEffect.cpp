@@ -138,6 +138,8 @@ static OptionSet<AcceleratedEffectProperty> acceleratedPropertyFromCSSProperty(A
         return AcceleratedEffectProperty::OffsetAnchor;
     case CSSPropertyOffsetRotate:
         return AcceleratedEffectProperty::OffsetRotate;
+    case CSSPropertyClipPath:
+        return AcceleratedEffectProperty::ClipPath;
     case CSSPropertyFilter:
         return AcceleratedEffectProperty::Filter;
     case CSSPropertyBackdropFilter:
@@ -172,6 +174,8 @@ static CSSPropertyID NODELETE cssPropertyFromAcceleratedProperty(AcceleratedEffe
         return CSSPropertyOffsetAnchor;
     case AcceleratedEffectProperty::OffsetRotate:
         return CSSPropertyOffsetRotate;
+    case AcceleratedEffectProperty::ClipPath:
+        return CSSPropertyClipPath;
     case AcceleratedEffectProperty::Filter:
         return CSSPropertyFilter;
     case AcceleratedEffectProperty::BackdropFilter:
@@ -406,6 +410,13 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
             blendingContext.normalizeProgress();
         }
         output.offsetRotate = blend(from.offsetRotate, to.offsetRotate, blendingContext);
+        break;
+    case AcceleratedEffectProperty::ClipPath:
+        if (!canBlend(from.clipPath, to.clipPath)) {
+            blendingContext.isDiscrete = true;
+            blendingContext.normalizeProgress();
+        }
+        output.clipPath = blend(from.clipPath, to.clipPath, blendingContext);
         break;
     case AcceleratedEffectProperty::Filter:
         output.filter = from.filter.blend(to.filter, blendingContext);
