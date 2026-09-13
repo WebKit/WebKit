@@ -64,6 +64,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
         this._responseSource = metrics.responseSource || WI.Resource.ResponseSource.Unknown;
         this._protocol = metrics.protocol || null;
+        this._initialPriority = metrics.initialPriority || WI.Resource.NetworkPriority.Unknown;
         this._priority = metrics.priority || WI.Resource.NetworkPriority.Unknown;
         this._remoteAddress = metrics.remoteAddress || null;
         this._connectionIdentifier = metrics.connectionIdentifier || null;
@@ -202,6 +203,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
             metrics: {
                 responseSource: WI.HARBuilder.responseSourceFromHARFetchType(entry._fetchType),
                 protocol: WI.HARBuilder.protocolFromHARProtocol(response.httpVersion),
+                initialPriority: WI.HARBuilder.networkPriorityFromHARPriority(entry._initialPriority),
                 priority: WI.HARBuilder.networkPriorityFromHARPriority(entry._priority),
                 remoteAddress: serverAddress,
                 connectionIdentifier: entry.connection ? parseInt(entry.connection) : null,
