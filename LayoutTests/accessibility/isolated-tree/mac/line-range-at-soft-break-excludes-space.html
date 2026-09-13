@@ -1,0 +1,52 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+p { width: 4ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="collapsedSpace">aaa bbb</p>
+<p id="collapsedSpaces">ccc   ddd</p>
+<p id="preservedSpace" style="white-space: pre-wrap;">eee fff</p>
+
+<script>
+var output = "This test ensures a line ended by soft wrapping excludes the space at the wrap point.\n\n";
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    function lineRange(oneBasedLine)
+    {
+        return webArea.textMarkerRangeForLine(oneBasedLine);
+    }
+
+    function lineText(oneBasedLine)
+    {
+        return webArea.stringForTextMarkerRange(lineRange(oneBasedLine));
+    }
+
+    output += expect("lineText(1)", "'aaa'");
+    output += expect("lineText(2)", "'bbb'");
+    // The range ends before the space, so its length matches the text it yields.
+    output += expect("webArea.textMarkerRangeLength(lineRange(1))", "3");
+
+    // Collapsed spaces render as one, and the line ends before that one too.
+    output += expect("lineText(3)", "'ccc'");
+    output += expect("lineText(4)", "'ddd'");
+
+    // This space is preserved rather than collapsed, but still renders on neither line.
+    output += expect("lineText(5)", "'eee'");
+    output += expect("lineText(6)", "'fff'");
+
+    for (var paragraph of document.querySelectorAll("p"))
+        paragraph.style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

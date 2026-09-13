@@ -1,0 +1,14 @@
+This test ensures we don't expose invalid role='listbox' elements as platform-role listboxes, as that can cause bad behavior for ATs.
+
+PASS: accessibilityController.accessibleElementById('listbox').role === 'AXRole: AXGroup'
+PASS: accessibilityController.accessibleElementById('listbox').role === 'AXRole: AXList'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Explore products
+Category A
+Category B
+Category C
+Foo
+

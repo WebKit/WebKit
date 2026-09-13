@@ -1,0 +1,14 @@
+This test ensures that non-WebArea elements advertise and support AXIndexForTextMarker, AXTextMarkerForIndex, and AXTextMarkerIsValid parameterized attributes.
+
+PASS: pParamAttrs.includes('AXIndexForTextMarker') === true
+PASS: pParamAttrs.includes('AXTextMarkerForIndex') === true
+PASS: pParamAttrs.includes('AXTextMarkerIsValid') === true
+PASS: webAreaParamAttrs.includes('AXIndexForTextMarker') === true
+PASS: webAreaParamAttrs.includes('AXTextMarkerForIndex') === true
+PASS: webAreaParamAttrs.includes('AXTextMarkerIsValid') === true
+PASS: pElement.indexForTextMarker(startMarker) >= 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello

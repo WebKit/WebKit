@@ -1,0 +1,9 @@
+This tests that if you access an element that has been removed, it return the correct value for isIgnored (true, that is, it is ignored).
+
+PASS: element1.isIgnored === false
+PASS: element1.isIgnored === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+test test

@@ -1,0 +1,9 @@
+Validates the absolute (screen) position of text inside an iframe.
+
+PASS: textX === 120
+PASS: textY === 80
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

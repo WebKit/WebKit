@@ -13,6 +13,7 @@ accessibility/mac/attributed-string/attributed-string-for-range.html [ Pass ]
 accessibility/mac/attributed-string/attributed-string-text-styling.html [ Pass ]
 accessibility/isolated-tree/mac/attributed-string/attributed-string-text-styling.html [ Pass ]
 accessibility/mac/dynamic-style.html [ Pass ]
+accessibility/isolated-tree/mac/dynamic-style.html [ Pass ]
 
 # rdar://154889639 (REGRESSION(Liquid Glass): [ OS 26 ] fast/forms/datalist/datalist-fallback-content.html is a constant ImageOnlyFailure)
 fast/forms/datalist/datalist-fallback-content.html [ Pass ]

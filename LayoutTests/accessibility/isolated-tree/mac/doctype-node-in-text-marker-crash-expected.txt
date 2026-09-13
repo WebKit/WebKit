@@ -1,0 +1,5 @@
+This tests that creating a text marker range with a text marker that is associated to a doctype node won't lead to crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+text

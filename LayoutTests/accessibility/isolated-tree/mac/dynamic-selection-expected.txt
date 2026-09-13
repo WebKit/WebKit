@@ -1,0 +1,9 @@
+This test ensures we update the accessibility tree when selected text changes dynamically.
+
+PASS: webArea.stringForTextMarkerRange(selectedRange) === 'bar baz'
+PASS: webArea.stringForTextMarkerRange(selectedRange) === 'two three'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo bar baz One two three

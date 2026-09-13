@@ -1,0 +1,15 @@
+This test verifies that when initial rough frame caching is enabled, frames are eventually correct.
+
+heading1 has relative frame NSRect: {{8, 278}, {754, 37}}.
+image has relative frame NSRect: {{8, 336}, {100, 101}}.
+list has relative frame NSRect: {{8, 456}, {754, 37}}.
+listitem has relative frame NSRect: {{48, 456}, {714, 19}}.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello, world.
+
+
+List item 1
+List item 2

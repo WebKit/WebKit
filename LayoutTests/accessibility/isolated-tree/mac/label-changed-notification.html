@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+
+<label id="label" for="control">Original label</label>
+<input id="control" type="text">
+
+<script>
+var output = "This tests that changing a label's text posts AXTitleChanged, and that the labeled control already resolves to the new label text when the notification arrives.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var titleChangedCount = 0;
+    var titleChangedListener = null;
+    var labelTextAtDelivery = null;
+
+    function labelTextForControl() {
+        var control = accessibilityController.accessibleElementById("control");
+        var label = control ? control.titleUIElement() : null;
+        var staticText = label ? traverseChildrenToFirstStaticText(label) : null;
+        return staticText ? stripAXPrefix(staticText.stringValue) : "";
+    }
+
+    // AXObjectCache::handleLabelChanged re-resolves the label-for relation before posting, so
+    // the new label text must already be reachable from the control by delivery time.
+    function titleChangedDeliveries() {
+        if (!titleChangedListener) {
+            titleChangedListener = function(element, notification, userInfo) {
+                if (notification != "AXTitleChanged")
+                    return;
+                titleChangedCount++;
+                labelTextAtDelivery = labelTextForControl();
+            };
+            accessibilityController.addNotificationListener(titleChangedListener);
+        }
+        return titleChangedCount;
+    }
+
+    // Installs the listener, which must happen before the label is mutated.
+    titleChangedDeliveries();
+    output += expect("labelTextForControl()", "'Original label'");
+
+    setTimeout(async function() {
+        // Adding the label posts AXTitleChanged too, so wait that out and start counting from
+        // zero. Otherwise the initial notification alone would satisfy the assertions below.
+        output += await expectAsync("titleChangedDeliveries() >= 1", "true");
+        titleChangedCount = 0;
+        labelTextAtDelivery = null;
+
+        output += evalAndReturn("document.getElementById('label').textContent = 'Updated label';");
+        output += await expectAsync("titleChangedDeliveries()", "1");
+        output += expect("labelTextAtDelivery", "'Updated label'");
+
+        document.getElementById("label").style.display = "none";
+        accessibilityController.removeNotificationListener(titleChangedListener);
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
