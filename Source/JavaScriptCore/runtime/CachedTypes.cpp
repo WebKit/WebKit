@@ -1891,6 +1891,7 @@ public:
         m_generatorOrAsyncWrapperFunctionParameterNames.encode(encoder, rareData.m_generatorOrAsyncWrapperFunctionParameterNames);
         m_classElementDefinitions.encode(encoder, rareData.m_classElementDefinitions);
         m_parentPrivateNameEnvironment.encode(encoder, rareData.m_parentPrivateNameEnvironment);
+        m_inferredName.encode(encoder, rareData.m_inferredName);
     }
 
     UnlinkedFunctionExecutable::RareData* decode(Decoder& decoder) const
@@ -1900,6 +1901,7 @@ public:
         m_generatorOrAsyncWrapperFunctionParameterNames.decode(decoder, rareData->m_generatorOrAsyncWrapperFunctionParameterNames);
         m_classElementDefinitions.decode(decoder, rareData->m_classElementDefinitions);
         m_parentPrivateNameEnvironment.decode(decoder, rareData->m_parentPrivateNameEnvironment);
+        rareData->m_inferredName = m_inferredName.decode(decoder);
         return rareData;
     }
 
@@ -1908,6 +1910,7 @@ private:
     CachedVector<CachedIdentifier> m_generatorOrAsyncWrapperFunctionParameterNames;
     CachedVector<CachedClassElementDefinition> m_classElementDefinitions;
     CachedPrivateNameEnvironment m_parentPrivateNameEnvironment;
+    CachedIdentifier m_inferredName;
 };
 
 class CachedFunctionExecutable : public CachedObject<UnlinkedFunctionExecutable> {
