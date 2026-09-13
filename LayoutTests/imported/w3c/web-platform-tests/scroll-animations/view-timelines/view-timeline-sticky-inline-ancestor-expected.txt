@@ -1,0 +1,5 @@
+
+PASS A sticky inline ancestor adjusts the timeline like a sticky block ancestor at scrollTop 280
+PASS A sticky inline ancestor adjusts the timeline like a sticky block ancestor at scrollTop 300
+PASS A sticky inline ancestor adjusts the timeline like a sticky block ancestor at scrollTop 320
+
