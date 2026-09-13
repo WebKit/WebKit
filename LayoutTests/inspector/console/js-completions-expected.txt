@@ -16,6 +16,10 @@ PASS: Completions should not contain myVariable after it's deleted by code run i
 -- Running test case: console.jsCompletions.revokedProxy
 PASS: Completions for a revoked proxy should return an empty array and should not crash.
 
+-- Running test case: console.jsCompletions.bigInt
+PASS: Completions for a BigInt value should include toString.
+PASS: Completions for a BigInt value should include valueOf.
+
 -- Running test case: console.jsCompletions.completionOrdering
 Completions with options={"baseString":"objectWithMixedPropertyKinds.","prefix":""}:
 [
