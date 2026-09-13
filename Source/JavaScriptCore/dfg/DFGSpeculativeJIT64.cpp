@@ -5438,17 +5438,23 @@ void SpeculativeJIT::compile(Node* node)
     case TypeOfIsUndefined: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this);
-        GPRTemporary localGlobalObject(this);
-        GPRTemporary remoteGlobalObject(this);
+        std::optional<GPRTemporary> localGlobalObject;
+        std::optional<GPRTemporary> remoteGlobalObject;
+
+        bool watchpointValid = masqueradesAsUndefinedWatchpointSetIsStillValid();
+        if (!watchpointValid) {
+            localGlobalObject.emplace(this);
+            remoteGlobalObject.emplace(this);
+        }
 
         Jump isCell = branchIfCell(value.gpr());
 
         compare64(Equal, value.gpr(), TrustedImm32(JSValue::ValueUndefined), result.gpr());
         Jump done = jump();
-        
+
         isCell.link(this);
         Jump notMasqueradesAsUndefined;
-        if (masqueradesAsUndefinedWatchpointSetIsStillValid()) {
+        if (watchpointValid) {
             move(TrustedImm32(0), result.gpr());
             notMasqueradesAsUndefined = jump();
         } else {
@@ -5460,8 +5466,8 @@ void SpeculativeJIT::compile(Node* node)
             notMasqueradesAsUndefined = jump();
 
             isMasqueradesAsUndefined.link(this);
-            GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
-            GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
+            GPRReg localGlobalObjectGPR = localGlobalObject->gpr();
+            GPRReg remoteGlobalObjectGPR = remoteGlobalObject->gpr();
             loadLinkableConstant(LinkableConstant::globalObject(*this, node), localGlobalObjectGPR);
             emitLoadStructure(vm(), value.gpr(), result.gpr());
             loadPtr(Address(result.gpr(), Structure::realmOffset()), remoteGlobalObjectGPR);
