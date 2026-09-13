@@ -1,0 +1,45 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true BlobFileAccessEnforcementEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+description("Posting a File that was read back from IndexedDB to an out-of-process cross-origin iframe should let that iframe read the File instead of terminating its web process.");
+jsTestIsAsync = true;
+
+const fileContents = "contents stored in IndexedDB";
+let result;
+
+function requestPromise(request)
+{
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function fileFromIndexedDB()
+{
+    const openRequest = indexedDB.open("posted-file-db", 1);
+    openRequest.onupgradeneeded = () => openRequest.result.createObjectStore("files");
+    const database = await requestPromise(openRequest);
+
+    const writeTransaction = database.transaction("files", "readwrite");
+    writeTransaction.objectStore("files").put(new File([fileContents], "stored.txt", { type: "text/plain" }), "key");
+    await new Promise((resolve) => writeTransaction.oncomplete = resolve);
+
+    return requestPromise(database.transaction("files").objectStore("files").get("key"));
+}
+
+addEventListener("message", async (event) => {
+    if (event.data === "ready") {
+        event.source.postMessage(await fileFromIndexedDB(), "*");
+        return;
+    }
+
+    result = event.data;
+    shouldBeEqualToString("result", "read '" + fileContents + "' from the posted File");
+    finishJSTest();
+});
+</script>
+<iframe src="http://localhost:8000/site-isolation/resources/read-posted-file.html"></iframe>
+</body>

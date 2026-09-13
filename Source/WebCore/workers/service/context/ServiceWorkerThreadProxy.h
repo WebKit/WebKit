@@ -39,6 +39,7 @@
 #include <WebCore/WorkerDebuggerProxy.h>
 #include <WebCore/WorkerLoaderProxy.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakRef.h>
@@ -84,7 +85,7 @@ public:
     WEBCORE_EXPORT void navigationPreloadIsReady(SWServerConnectionIdentifier, FetchIdentifier, ResourceResponse&&);
     WEBCORE_EXPORT void navigationPreloadFailed(SWServerConnectionIdentifier, FetchIdentifier, ResourceError&&);
 
-    WEBCORE_EXPORT void fireMessageEvent(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
+    WEBCORE_EXPORT void fireMessageEvent(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&, CompletionHandlerCallingScope&& messageDispatched);
 
     WEBCORE_EXPORT void fireInstallEvent();
     WEBCORE_EXPORT void fireActivateEvent();
