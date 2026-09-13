@@ -522,15 +522,7 @@ void BidiBrowsingContextAgent::navigate(const BrowsingContext& browsingContext, 
 
     auto readinessState = waitCondition.value_or(defaultReadinessState);
     auto pageLoadStrategy = pageLoadStrategyFromReadinessState(readinessState);
-    session->navigateBrowsingContext(browsingContext, urlRecord.string(), pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [urlRecord, callback = WTF::move(callback)](CommandResult<void>&& result) {
-        if (!result) {
-            callback(makeUnexpected(result.error()));
-            return;
-        }
-
-        // FIXME: keep track of navigation IDs that we hand out.
-        callback({ { urlRecord.string(), "placeholder_navigation"_s } });
-    });
+    session->navigateBrowsingContextForBidi(browsingContext, urlRecord.string(), pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, std::optional<bool>&& optionalIgnoreCache, std::optional<ReadinessState>&& optionalReadinessState, CommandCallbackOf<String, Inspector::Protocol::BidiBrowsingContext::NavigationID>&& callback)
@@ -541,20 +533,7 @@ void BidiBrowsingContextAgent::reload(const BrowsingContext& browsingContext, st
     // FIXME: implement `ignoreCache` option.
 
     auto pageLoadStrategy = pageLoadStrategyFromReadinessState(optionalReadinessState.value_or(defaultReadinessState));
-    session->reloadBrowsingContext(browsingContext, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), [session = WTF::move(session), browsingContext, callback = WTF::move(callback)](CommandResult<void>&& result) {
-        if (!result) {
-            callback(makeUnexpected(result.error()));
-            return;
-        }
-
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
-
-        RefPtr webPageProxy = session->webPageProxyForHandle(browsingContext);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!webPageProxy, WindowNotFound);
-
-        // FIXME: keep track of navigation IDs that we hand out.
-        callback({ { webPageProxy->currentURL(), "placeholder_navigation"_s } });
-    });
+    session->reloadBrowsingContextForBidi(browsingContext, pageLoadStrategy, defaultPageLoadTimeout.milliseconds(), WTF::move(callback));
 }
 
 void BidiBrowsingContextAgent::traverseHistory(const BrowsingContext& browsingContext, int delta, CommandCallback<void>&& callback)
