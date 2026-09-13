@@ -25,8 +25,6 @@ Frame: '<!--frame1-->'
 PASS
 
 ============== Back Forward List ==============
-        (file test):contentfiltering/block-after-finished-adding-data-then-deny-unblock.html
-            about:blank (in frame "<!--frame1-->")
 curr->  (file test):contentfiltering/block-after-finished-adding-data-then-deny-unblock.html
             (file test):contentfiltering/resources/fail.html (in frame "<!--frame1-->")
 ===============================================

@@ -682,16 +682,21 @@ void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double 
 
 LockBackForwardList NavigationScheduler::mustLockBackForwardList(Frame& targetFrame)
 {
+    RefPtr localTargetFrame = dynamicDowncast<LocalFrame>(targetFrame);
+    if (!localTargetFrame)
+        return LockBackForwardList::No;
+
+    RefPtr documentLoader = localTargetFrame->loader().documentLoader();
+    if (localTargetFrame->tree().parent() && documentLoader && documentLoader->isInitialAboutBlank() == IsInitialAboutBlank::Yes)
+        return LockBackForwardList::Yes;
+
     // Non-user navigation before the page has finished firing onload should not create a new back/forward item.
     // See https://webkit.org/b/42861 for the original motivation for this.
-
-    RefPtr localTargetFrame = dynamicDowncast<LocalFrame>(targetFrame);
     if (!UserGestureIndicator::processingUserGesture()
-        && localTargetFrame
-        && localTargetFrame->loader().documentLoader()
-        && !localTargetFrame->loader().documentLoader()->wasOnloadDispatched())
+        && documentLoader
+        && !documentLoader->wasOnloadDispatched())
         return LockBackForwardList::Yes;
-    
+
     return LockBackForwardList::No;
 }
 
