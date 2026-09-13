@@ -1840,14 +1840,6 @@ DetachableMediaSourceEnabled:
   condition: ENABLE(MEDIA_SOURCE)
   defaultValue: false
 
-DetailsAutoExpandEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML auto-expanding <details>"
-  humanReadableDescription: "Enable HTML auto-expanding <details>"
-  defaultValue: true
-
 DeveloperExtrasEnabled:
   type: bool
   status: embedder
