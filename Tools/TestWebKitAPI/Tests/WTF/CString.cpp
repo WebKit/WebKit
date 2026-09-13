@@ -318,14 +318,16 @@ static_assert(std::same_as<decltype(std::declval<const ASCIICString&>().span()):
 // Erasing the encoding gives back the untyped CString span.
 static_assert(std::same_as<decltype(std::declval<const CString&>().span())::element_type, const char>);
 static_assert(std::same_as<decltype(std::declval<const CString&>().legacyCStringPointer()), const char*>);
-// Latin-1 bytes are not a C string, so the constrained override has to keep hiding CString::legacyCStringPointer().
+// Only UTF-8 needs the escape hatch, so the constrained override has to keep hiding
+// CString::legacyCStringPointer() for the other encodings: Latin-1 bytes are not a C string, and
+// ASCIICString::data() is already a const char*.
 template<typename StringType> concept HasLegacyCStringPointer = requires(const StringType& string)
 {
     string.legacyCStringPointer();
 };
 static_assert(HasLegacyCStringPointer<CString>);
 static_assert(HasLegacyCStringPointer<UTF8CString>);
-static_assert(HasLegacyCStringPointer<ASCIICString>);
+static_assert(!HasLegacyCStringPointer<ASCIICString>);
 static_assert(!HasLegacyCStringPointer<Latin1CString>);
 // Slicing to CString is allowed, but nothing implicitly converts the other way or between encodings.
 static_assert(std::is_convertible_v<UTF8CString, CString>);

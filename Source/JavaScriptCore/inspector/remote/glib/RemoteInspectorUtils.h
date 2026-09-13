@@ -35,7 +35,7 @@ typedef struct _GBytes GBytes;
 namespace Inspector {
 
 GRefPtr<GBytes> backendCommands();
-JS_EXPORT_PRIVATE const CString& backendCommandsHash();
+JS_EXPORT_PRIVATE const ASCIICString& backendCommandsHash();
 
 } // namespace Inspector
 
