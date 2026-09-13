@@ -90,6 +90,15 @@ auto ToCSS<Content::Data>::operator()(const Content::Data& value, const Style::C
                         return CSS::Content::Quote { CSS::Keyword::NoCloseQuote { } };
                     }
                     RELEASE_ASSERT_NOT_REACHED();
+                },
+                [&](const Content::Glyph& glyphItem) -> CSS::Content::VisibleContentListItem {
+                    switch (glyphItem.glyph) {
+                    case SynthesizedGlyph::PickerUp:
+                        return CSS::Content::Glyph { CSS::Keyword::PickerUp { } };
+                    case SynthesizedGlyph::PickerDown:
+                        return CSS::Content::Glyph { CSS::Keyword::PickerDown { } };
+                    }
+                    RELEASE_ASSERT_NOT_REACHED();
                 }
             );
         });
@@ -166,6 +175,12 @@ auto ToStyle<CSS::Content::Data>::operator()(const CSS::Content::Data& value, co
                         [](CSS::Keyword::CloseQuote) -> Content::Quote { return { QuoteType::CloseQuote }; },
                         [](CSS::Keyword::NoOpenQuote) -> Content::Quote { return { QuoteType::NoOpenQuote }; },
                         [](CSS::Keyword::NoCloseQuote) -> Content::Quote { return { QuoteType::NoCloseQuote }; }
+                    );
+                },
+                [&](const CSS::Content::Glyph& glyphItem) -> Content::VisibleContentListItem {
+                    return WTF::switchOn(glyphItem,
+                        [](CSS::Keyword::PickerUp) -> Content::Glyph { return { SynthesizedGlyph::PickerUp }; },
+                        [](CSS::Keyword::PickerDown) -> Content::Glyph { return { SynthesizedGlyph::PickerDown }; }
                     );
                 }
             );

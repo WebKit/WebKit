@@ -2296,6 +2296,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE SynthesizedGlyph
+#define FOR_EACH(CASE) CASE(PickerUp) CASE(PickerDown)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE OverflowContinue
 #define FOR_EACH(CASE) CASE(Auto) CASE(Discard) CASE(WebkitLegacy)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
