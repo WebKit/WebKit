@@ -266,6 +266,7 @@ interface UIScriptController {
     readonly attribute double timePickerValueMinute;
 
     readonly attribute boolean isShowingDateTimePicker;
+    readonly attribute object dateTimePickerRect;
     readonly attribute double dateTimePickerValue;
     undefined chooseDateTimePickerValue();
 

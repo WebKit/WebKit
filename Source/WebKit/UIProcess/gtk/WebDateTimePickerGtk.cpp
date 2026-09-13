@@ -140,8 +140,8 @@ void WebDateTimePickerGtk::platformShowDateTimePicker(WebCore::DateTimeChooserPa
     m_popover = gtk_popover_new(webView);
 #endif
     gtk_popover_set_position(GTK_POPOVER(m_popover), GTK_POS_BOTTOM);
-    GdkRectangle rectInRootView = params.anchorRectInRootView;
-    gtk_popover_set_pointing_to(GTK_POPOVER(m_popover), &rectInRootView);
+    GdkRectangle rectInMainFrameView = params.anchorRectInMainFrameView;
+    gtk_popover_set_pointing_to(GTK_POPOVER(m_popover), &rectInMainFrameView);
     g_signal_connect_swapped(m_popover, "closed", G_CALLBACK(+[](WebDateTimePickerGtk* picker) {
         picker->endPicker();
     }), this);
