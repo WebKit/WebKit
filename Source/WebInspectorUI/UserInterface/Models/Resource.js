@@ -77,6 +77,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._security = null;
         this._timingData = new WI.ResourceTimingData(this);
         this._protocol = null;
+        this._initialPriority = WI.Resource.NetworkPriority.Unknown;
         this._priority = WI.Resource.NetworkPriority.Unknown;
         this._remoteAddress = null;
         this._connectionIdentifier = null;
@@ -242,9 +243,11 @@ WI.Resource = class Resource extends WI.SourceCode
 
         const map = {
             [WI.Resource.NetworkPriority.Unknown]: 0,
-            [WI.Resource.NetworkPriority.Low]: 1,
-            [WI.Resource.NetworkPriority.Medium]: 2,
-            [WI.Resource.NetworkPriority.High]: 3,
+            [WI.Resource.NetworkPriority.Verylow]: 1,
+            [WI.Resource.NetworkPriority.Low]: 2,
+            [WI.Resource.NetworkPriority.Medium]: 3,
+            [WI.Resource.NetworkPriority.High]: 4,
+            [WI.Resource.NetworkPriority.Veryhigh]: 5,
         };
 
         let aNum = map[a] || 0;
@@ -255,12 +258,16 @@ WI.Resource = class Resource extends WI.SourceCode
     static displayNameForPriority(priority)
     {
         switch (priority) {
+        case WI.Resource.NetworkPriority.Verylow:
+            return WI.UIString("Very Low", "Very low @ Network Priority", "Very Low network request priority");
         case WI.Resource.NetworkPriority.Low:
             return WI.UIString("Low", "Low @ Network Priority", "Low network request priority");
         case WI.Resource.NetworkPriority.Medium:
             return WI.UIString("Medium", "Medium @ Network Priority", "Medium network request priority");
         case WI.Resource.NetworkPriority.High:
             return WI.UIString("High", "High @ Network Priority", "High network request priority");
+        case WI.Resource.NetworkPriority.Veryhigh:
+            return WI.UIString("Very High", "Very high @ Network Priority", "Very High network request priority");
         default:
             return null;
         }
@@ -293,12 +300,16 @@ WI.Resource = class Resource extends WI.SourceCode
     static networkPriorityFromPayload(priority)
     {
         switch (priority) {
-        case InspectorBackend.Enum.Network.MetricsPriority.Low:
+        case InspectorBackend.Enum.Network.LoadPriority.Verylow:
+            return WI.Resource.NetworkPriority.Verylow;
+        case InspectorBackend.Enum.Network.LoadPriority.Low:
             return WI.Resource.NetworkPriority.Low;
-        case InspectorBackend.Enum.Network.MetricsPriority.Medium:
+        case InspectorBackend.Enum.Network.LoadPriority.Medium:
             return WI.Resource.NetworkPriority.Medium;
-        case InspectorBackend.Enum.Network.MetricsPriority.High:
+        case InspectorBackend.Enum.Network.LoadPriority.High:
             return WI.Resource.NetworkPriority.High;
+        case InspectorBackend.Enum.Network.LoadPriority.Veryhigh:
+            return WI.Resource.NetworkPriority.Veryhigh;
         default:
             console.error("Unknown metrics priority", priority);
             return WI.Resource.NetworkPriority.Unknown;
@@ -341,6 +352,7 @@ WI.Resource = class Resource extends WI.SourceCode
     get security() { return this._security; }
     get timingData() { return this._timingData; }
     get protocol() { return this._protocol; }
+    get initialPriority() { return this._initialPriority; }
     get priority() { return this._priority; }
     get remoteAddress() { return this._remoteAddress; }
     get connectionIdentifier() { return this._connectionIdentifier; }
@@ -821,6 +833,8 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (metrics.protocol)
             this._protocol = metrics.protocol;
+        if (metrics.initialPriority)
+            this._initialPriority = WI.Resource.networkPriorityFromPayload(metrics.initialPriority);
         if (metrics.priority)
             this._priority = WI.Resource.networkPriorityFromPayload(metrics.priority);
         if (metrics.remoteAddress)
@@ -1264,9 +1278,11 @@ WI.Resource.ResponseSource = {
 
 WI.Resource.NetworkPriority = {
     Unknown: Symbol("unknown"),
+    Verylow: Symbol("verylow"),
     Low: Symbol("low"),
     Medium: Symbol("medium"),
     High: Symbol("high"),
+    Veryhigh: Symbol("veryhigh"),
 };
 
 WI.Resource.GroupingMode = {

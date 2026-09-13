@@ -167,6 +167,54 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "HAR.Import.Chromium",
+        description: "Should be able to import a HAR from a Chromium based software.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/chromium.webkit.org.har.gz";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectThat(localResources, "Should be able to import a HAR from Chromium.");
+
+            const siteEntry = localResources[0];
+            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority), "Very High", "Priority of HTML of the website should be 'Very High'");
+            InspectorTest.expectEqual(siteEntry.protocol, "h2", "HTTP Version http/2.0 should be shown as 'h2'");
+            localResources.forEach((entry) => {
+                if ((/chevron\.svg$/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "Low", "Chevron image has 'Low' priority");
+                } else if ((/\.svg$/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Image has 'High' priority");
+                }
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Import.Gecko",
+        description: "Should be able to import a HAR from a Gecko based software.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/gecko.webkit.org.har.gz";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectThat(localResources, "Should be able to import a HAR from Gecko.");
+
+            const siteEntry = localResources[0];
+            InspectorTest.expectEqual(WI.Resource.displayNameForPriority(siteEntry.priority), "Very High", "Priority 'Highest' for HTML of the website should be shown as 'Very High'");
+            InspectorTest.expectEqual(siteEntry.protocol, "h2", "HTTP Version HTTP/2 should be shown as 'h2'");
+            localResources.forEach((entry) => {
+                if ((/\.svg$/).test(entry.url)) {
+                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Image has 'High' priority");
+                } else if ((/\/fonts/).test(entry.url)) {
+                    if ((/woff2/).test(entry.url)) {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "High", "Font has 'High' priority");
+                    } else {
+                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority), "Medium", "Font CSS as 'Normal' should be shown as 'Medium' priority");
+                    }
+                }
+            });
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

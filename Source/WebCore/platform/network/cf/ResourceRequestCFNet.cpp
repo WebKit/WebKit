@@ -51,6 +51,7 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
 {
     // These are things we don't want willSendRequest delegate to mutate or reset.
     ResourceLoadPriority oldPriority = priority();
+    std::optional<ResourceLoadPriority> oldInitialPriority = initialPriority();
     RefPtr<FormData> oldHTTPBody = httpBody();
     bool isHiddenFromInspector = hiddenFromInspector();
     auto oldRequester = requester();
@@ -63,6 +64,8 @@ void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRe
     *this = delegateProvidedRequest;
 
     setPriority(oldPriority);
+    if (oldInitialPriority.has_value())
+        setInitialPriority(*oldInitialPriority);
     setHTTPBody(WTF::move(oldHTTPBody));
     setHiddenFromInspector(isHiddenFromInspector);
     setRequester(oldRequester);
