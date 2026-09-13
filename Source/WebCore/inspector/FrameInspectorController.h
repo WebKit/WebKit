@@ -52,6 +52,7 @@ class FrontendRouter;
 
 namespace WebCore {
 
+class FrameDebugger;
 class InspectorBackendClient;
 class InspectorController;
 class InspectorFrontendClient;
@@ -89,6 +90,10 @@ public:
 
     InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
 
+    // Unlike debugger(), this is null while the frame's debugger exists but nothing is debugging
+    // the frame yet. Callers that hand the debugger to a global object need this narrower answer.
+    JSC::Debugger* attachedDebugger() const;
+
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
@@ -112,7 +117,7 @@ private:
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     const Ref<WTF::Stopwatch> m_executionStopwatch;
-    std::unique_ptr<JSC::Debugger> m_debugger;
+    std::unique_ptr<FrameDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
 
     bool m_didCreateConsoleAgent { false };

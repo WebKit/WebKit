@@ -346,7 +346,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     }
 
     if (RefPtr page = m_frame->page()) {
-        windowProxy.attachDebugger(page->debugger());
+        windowProxy.attachDebugger(m_frame->debugger());
         windowProxy.window()->setProfileGroup(page->group().identifier());
     }
 
