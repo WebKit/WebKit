@@ -2023,11 +2023,16 @@ private:
                 && m_value->child(1)->hasInt()
                 && m_value->child(1)->asInt() >= 0) {
                 uint64_t shiftAmount = m_value->child(1)->asInt();
+                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
                 uint64_t maskShift = m_value->child(0)->child(1)->asInt();
+                if (datasize == 32) {
+                    // asInt() sign-extends an Int32 constant, which would make a mask with bit 31 set,
+                    // such as 0xff000000, look 40 bits wide.
+                    maskShift = static_cast<uint32_t>(maskShift);
+                }
                 uint64_t maskShiftAmount = WTF::ctz(maskShift);
                 uint64_t mask = maskShift >> maskShiftAmount;
                 uint64_t width = std::popcount(mask);
-                uint64_t datasize = m_value->child(0)->child(0)->type() == Int64 ? 64 : 32;
                 bool isValidShiftAmount = maskShiftAmount == shiftAmount && shiftAmount < datasize;
                 bool isValidMask = mask && !(mask & (mask + 1)) && width < datasize;
                 if (isValidShiftAmount && isValidMask && shiftAmount + width <= datasize) {

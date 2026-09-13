@@ -4087,8 +4087,8 @@ void BBQJIT::prepareForExceptions()
     if (minCasesForTable <= runCount) {
         auto* jumpTable = m_callee.addJumpTable(targets.size() + 1);
         m_jit.moveConditionally32(RelationalCondition::AboveOrEqual, wasmScratchGPR, TrustedImm32(targets.size()), TrustedImm32(targets.size()), wasmScratchGPR, wasmScratchGPR);
-        m_jit.zeroExtend32ToWord(wasmScratchGPR, wasmScratchGPR);
-        m_jit.lshiftPtr(TrustedImm32(3), wasmScratchGPR);
+        // Scale the zero-extended case index to a table slot: one UBFIZ on arm64.
+        m_jit.insertUnsignedBitfieldInZero64(wasmScratchGPR, TrustedImm32(3), TrustedImm32(32), wasmScratchGPR);
         m_jit.addPtr(TrustedImmPtr(jumpTable->span().data()), wasmScratchGPR);
         m_jit.farJump(Address(wasmScratchGPR), JSSwitchPtrTag);
 

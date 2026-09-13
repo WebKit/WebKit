@@ -956,6 +956,81 @@ void testExtractSignedBitfieldNonCanonical64()
     }
 }
 
+void testExtractSignedBitfieldEqualShifts32()
+{
+    // (src << amount) >> amount sign-extends the low 32 - amount bits: SBFX with lsb 0.
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    Vector<int32_t> srcs = {
+        0x12345678,
+        static_cast<int32_t>(0xffffffff),
+        static_cast<int32_t>(0x80000000),
+        0x00abcdef,
+        0x0000007f,
+        0x00000080,
+    };
+    // 16 and 24 become SExt16 and SExt8 before instruction selection, so they are deliberately absent.
+    Vector<int32_t> amounts = { 1, 5, 25, 31 };
+
+    for (int32_t src : srcs) {
+        for (int32_t amount : amounts) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+            Value* srcValue = arguments[0];
+            Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), srcValue,
+                root->appendNew<Const32Value>(proc, Origin(), amount));
+            root->appendNewControlValue(proc, Return, Origin(),
+                root->appendNew<Value>(proc, SShr, Origin(), leftShiftValue,
+                    root->appendNew<Const32Value>(proc, Origin(), amount)));
+
+            auto code = compileProc(proc);
+            if (isARM64())
+                checkUsesInstruction(*code, "sbfx");
+            CHECK_EQ(invoke<int32_t>(*code, src), static_cast<int32_t>(static_cast<uint32_t>(src) << amount) >> amount);
+        }
+    }
+}
+
+void testExtractSignedBitfieldEqualShifts64()
+{
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+
+    Vector<int64_t> srcs = {
+        0x123456789abcdef0ll,
+        -1ll,
+        static_cast<int64_t>(0x8000000000000000ull),
+        0x0000000000abcdefll,
+        0x000000000000007fll,
+        0x0000000000000080ll,
+    };
+    // 32, 48 and 56 become SExt32, SExt16To64 and SExt8To64 before instruction selection.
+    Vector<int32_t> amounts = { 1, 3, 57, 63 };
+
+    for (int64_t src : srcs) {
+        for (int32_t amount : amounts) {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<int64_t>(proc, root);
+
+            Value* srcValue = arguments[0];
+            Value* leftShiftValue = root->appendNew<Value>(proc, Shl, Origin(), srcValue,
+                root->appendNew<Const32Value>(proc, Origin(), amount));
+            root->appendNewControlValue(proc, Return, Origin(),
+                root->appendNew<Value>(proc, SShr, Origin(), leftShiftValue,
+                    root->appendNew<Const32Value>(proc, Origin(), amount)));
+
+            auto code = compileProc(proc);
+            if (isARM64())
+                checkUsesInstruction(*code, "sbfx");
+            CHECK_EQ(invoke<int64_t>(*code, src), static_cast<int64_t>(static_cast<uint64_t>(src) << amount) >> amount);
+        }
+    }
+}
+
 void testBitOrBitOrArgImmImm32(int32_t a, int32_t b, int32_t c)
 {
     Procedure proc;
