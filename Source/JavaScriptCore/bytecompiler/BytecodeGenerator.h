@@ -1054,6 +1054,9 @@ namespace JSC {
         void emitDebugHook(DebugHookType, const JSTextPosition&, RegisterID* data = nullptr);
         void emitDebugHook(StatementNode*, RegisterID* data = nullptr);
         void emitDebugHook(ExpressionNode*, RegisterID* data = nullptr);
+        RegisterID* preparePropertyForWillWritePropertyDebugHook(RegisterID*, RefPtr<RegisterID>& protectedProperty);
+        void emitWillWritePropertyDebugHook(RegisterID* property);
+        void emitWillWritePropertyDebugHook(const Identifier& property);
         void emitWillLeaveCallFrameDebugHook();
 
         RegisterID* emitLoad(RegisterID* dst, CompletionType type) { return emitLoad(dst, jsNumber(static_cast<int32_t>(type))); }
