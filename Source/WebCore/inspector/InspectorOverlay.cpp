@@ -185,7 +185,7 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
             auto& renderInline = downcast<RenderInline>(*renderer);
 
             // RenderInline's bounding box includes padding and borders, excludes margins.
-            borderBox = renderInline.linesBoundingBox();
+            borderBox = renderInline.borderBoxRectInContainer();
             paddingBox = LayoutRect(borderBox.x() + renderInline.borderLeft(), borderBox.y() + renderInline.borderTop(),
                 borderBox.width() - renderInline.borderLeft() - renderInline.borderRight(), borderBox.height() - renderInline.borderTop() - renderInline.borderBottom());
             contentBox = LayoutRect(paddingBox.x() + renderInline.paddingLeft(), paddingBox.y() + renderInline.paddingTop(),

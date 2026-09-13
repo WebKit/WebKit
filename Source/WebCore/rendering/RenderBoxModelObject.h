@@ -92,8 +92,8 @@ public:
 
     bool requiresLayer() const override;
 
-    // This will work on inlines to return the bounding box of all of the lines' border boxes.
-    virtual LayoutRect borderBoundingBox() const = 0;
+    virtual LayoutRect borderBoxRectInContainer() const;
+    LayoutRect borderBoundingBox() const { return { { }, borderBoxRectInContainer().size() }; }
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
