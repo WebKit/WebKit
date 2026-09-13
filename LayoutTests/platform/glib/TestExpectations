@@ -5327,6 +5327,10 @@ webkit.org/b/323776 http/wpt/webcodecs/configure-encoder-big-frame-size.html [ F
 
 webkit.org/b/324046 imported/w3c/web-platform-tests/css/selectors/old-tests/css3-modsel-20.xml [ Failure ]
 
+webkit.org/b/324109 compositing/filters/filter-outsets-clipped-by-document-edge.html [ ImageOnlyFailure ]
+webkit.org/b/324109 imported/w3c/web-platform-tests/css/filter-effects/fixed-pos-filter-clip-002.html [ ImageOnlyFailure ]
+webkit.org/b/324109 imported/w3c/web-platform-tests/css/filter-effects/will-change-blur-filter-under-clip.html [ ImageOnlyFailure ]
+
 # These now pass on the GLib ports; the generic expectations in LayoutTests/TestExpectations still apply elsewhere.
 webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html [ Pass ]

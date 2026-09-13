@@ -1081,14 +1081,21 @@ bool RenderLayerBacking::updateCompositedBounds()
         auto& view = renderer().view();
         CheckedPtr rootLayer = view.layer();
 
+        // Filters between this layer and the nearest clipping ancestor can sample content that the clips cut away.
+        auto outsetsForFilters = toLayoutBoxExtent(m_owningLayer.outsetsForFiltersSamplingThisLayer());
+
         LayoutRect clippingBounds;
         if (renderer().isFixedPositioned() && renderer().container() == &view)
             clippingBounds = view.frameView().rectForFixedPositionLayout();
         else
             clippingBounds = view.unscaledDocumentRect();
+        clippingBounds.expand(outsetsForFilters);
 
-        if (&m_owningLayer != rootLayer)
-            clippingBounds.intersect(m_owningLayer.backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, AbsoluteClipRects)).rect()); // FIXME: Incorrect for CSS regions.
+        if (&m_owningLayer != rootLayer) {
+            auto backgroundClipRect = m_owningLayer.backgroundClipRect(RenderLayer::ClipRectsContext(rootLayer, AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
+            backgroundClipRect.expand(outsetsForFilters);
+            clippingBounds.intersect(backgroundClipRect);
+        }
 
         LayoutPoint delta = m_owningLayer.convertToLayerCoords(rootLayer, LayoutPoint(), RenderLayer::AdjustForColumns);
         clippingBounds.move(-delta.x(), -delta.y());

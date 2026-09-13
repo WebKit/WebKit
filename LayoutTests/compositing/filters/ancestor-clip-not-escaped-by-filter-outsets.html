@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Filter outsets must not let composited content paint outside an ancestor clip</title>
+<style>
+.clip {
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.composited { will-change: transform; }
+.shadowed {
+    width: 200px;
+    height: 200px;
+    margin: -50px 0 0 -50px;
+    background: green;
+    filter: drop-shadow(60px 0 0 green);
+    will-change: filter;
+}
+</style>
+</head>
+<body>
+<div class="clip">
+    <div class="composited">
+        <div class="shadowed"></div>
+    </div>
+</div>
+</body>
+</html>
