@@ -40,7 +40,10 @@
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
+#include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "LegacyInlineFlowBox.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Path.h"
@@ -58,6 +61,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInline.h"
 #include "RenderTable.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
@@ -962,6 +966,104 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
             containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
     }
+}
+
+LayoutUnit RenderBoxModelObject::paddingBoxLogicalWidth() const
+{
+    auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
+    auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
+
+    if (LayoutIntegration::LineLayout::containing(*this)) {
+        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
+            if (writingMode().isBidiLTR()) {
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
+                ASSERT(inlineBox);
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
+            } else {
+                lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
+                ASSERT(inlineBox);
+                firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
+            }
+            return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+        }
+        return { };
+    }
+
+    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+    if (!firstInlineBox || !lastInlineBox)
+        return { };
+
+    if (writingMode().isBidiLTR()) {
+        firstInlineBoxPaddingBoxLeft = firstInlineBox->logicalLeft();
+        lastInlineBoxPaddingBoxRight = lastInlineBox->logicalRight();
+    } else {
+        lastInlineBoxPaddingBoxRight = firstInlineBox->logicalRight();
+        firstInlineBoxPaddingBoxLeft = lastInlineBox->logicalLeft();
+    }
+    return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
+}
+
+LayoutUnit RenderBoxModelObject::paddingBoxLogicalHeight() const
+{
+    auto logicalHeight = LayoutUnit { isHorizontalWritingMode() ? borderBoxRectInContainer().height() : borderBoxRectInContainer().width() };
+    logicalHeight -= (borderBefore() + borderAfter());
+    return logicalHeight;
+}
+
+LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
+{
+    auto boundingBoxOfFragments = [&]() -> IntRect {
+        if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+            if (!layoutBox() || !layout->contains(*this)) {
+                // Repaint may be issued on subtrees during content mutation with newly inserted renderers
+                // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
+                ASSERT(needsLayout());
+                return { };
+            }
+            if (isRenderSVGInline()) {
+                // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
+                // any post-layout box adjustments.
+                FloatRect result;
+                for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward())
+                    result.unite(box->visualRectIgnoringBlockDirection());
+                return enclosingIntRect(result);
+            }
+            return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+        }
+
+        auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+        auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+
+        // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero. We have been
+        // unable to reproduce this at all (and consequently unable to figure ot why this is happening). The assert will hopefully catch the problem in debug
+        // builds and help us someday figure out why. We also put in a redundant check of lastLineBox() to avoid the crash for now.
+        ASSERT(!firstInlineBox == !lastInlineBox); // Either both are null or both exist.
+        if (!firstInlineBox || !lastInlineBox)
+            return { };
+
+        // Return the width of the minimal left side and the maximal right side.
+        float logicalLeftSide = 0;
+        float logicalRightSide = 0;
+        for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
+            if (curr == firstInlineBox || curr->logicalLeft() < logicalLeftSide)
+                logicalLeftSide = curr->logicalLeft();
+            if (curr == firstInlineBox || curr->logicalRight() > logicalRightSide)
+                logicalRightSide = curr->logicalRight();
+        }
+
+        bool isHorizontal = writingMode().isHorizontal();
+
+        float x = isHorizontal ? logicalLeftSide : firstInlineBox->x();
+        float y = isHorizontal ? firstInlineBox->y() : logicalLeftSide;
+        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastInlineBox->logicalBottom() - x;
+        float height = isHorizontal ? lastInlineBox->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        return enclosingIntRect(FloatRect { x, y, width, height });
+    };
+
+    return boundingBoxOfFragments();
 }
 
 } // namespace WebCore
