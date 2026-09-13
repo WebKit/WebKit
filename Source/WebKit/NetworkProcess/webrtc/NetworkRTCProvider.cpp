@@ -194,6 +194,14 @@ void NetworkRTCProvider::dispatch(Function<void()>&& callback)
 
 void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, String&& address)
 {
+    // A well behaved WebContent process never sends a null address, so drop the message instead of
+    // replying with a resolution error. NetworkMDNSRegister::hasRegisteredName() and resolveDNS()
+    // both handle a null address, so this is diagnostics, not a safety check.
+    if (address.isNull()) {
+        RTC_RELEASE_LOG_ERROR("createResolver with a null address");
+        return;
+    }
+
     if (!isMainRunLoop()) {
         callOnMainRunLoop([this, protectedThis = Ref { *this }, identifier, address = WTF::move(address).isolatedCopy()]() mutable {
             if (!m_connection)

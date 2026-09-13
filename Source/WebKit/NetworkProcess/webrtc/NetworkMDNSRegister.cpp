@@ -74,6 +74,8 @@ void NetworkMDNSRegister::deref() const
 
 bool NetworkMDNSRegister::hasRegisteredName(const String& name) const
 {
+    if (name.isNull())
+        return false;
     return m_registeredNames.contains(name);
 }
 
