@@ -123,7 +123,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
         return;
 
     int frameRateNumerator, frameRateDenominator;
-    gst_util_double_to_fraction(settings().frameRate(), &frameRateNumerator, &frameRateDenominator);
+    gst_util_double_to_fraction(frameRate(), &frameRateNumerator, &frameRateDenominator);
 
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
