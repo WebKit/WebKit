@@ -65,6 +65,11 @@ private:
     bool m_isColorBitmapFont { false };
 };
 
+// Returns the script of the first script/language system in which featureTag is listed as a feature
+// of tableTag (HB_OT_TAG_GSUB or HB_OT_TAG_GPOS), or HB_SCRIPT_INVALID if none supports it.
+hb_script_t scriptSupportingOpenTypeFeature(hb_face_t*, hb_tag_t tableTag, hb_tag_t featureTag);
+bool supportsOpenTypeFeature(hb_face_t*, hb_tag_t tableTag, hb_tag_t featureTag);
+
 } // namespace WebCore
 
 #endif // USE(SKIA)
