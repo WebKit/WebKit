@@ -7,6 +7,7 @@
 <div id="authored" style="background-color: rgb(255, 255, 255);"><span style="color: rgb(68, 68, 68); caret-color: rgb(255, 0, 0);">Authored caret color</span></div>
 <div id="editor" contenteditable="true" style="background-color: rgb(50, 50, 50); color: rgb(253, 253, 253);"><br></div>
 <div id="narrow" contenteditable="true" style="width: 200px; background-color: rgb(50, 50, 50); color: rgb(253, 253, 253);"><br></div>
+<div style="background-color: rgb(50, 50, 50);"><div id="articleShape" contenteditable="true" style="width: 520px; color: rgb(253, 253, 253);"><div dir="ltr"><div><span class="run" style="color: rgb(18, 18, 18); font-family: sans-serif, droid-sans, arial, Tahoma; font-size: 16px; background-color: rgb(255, 255, 255);">This is the first paragraph of test content. It is long enough that it has to wrap onto several lines inside the editor below, which is what this test needs in order to reach the end of a wrapped run.</span><br style="color: rgb(18, 18, 18); font-family: sans-serif, droid-sans, arial, Tahoma; font-size: 16px; background-color: rgb(255, 255, 255);"><br style="color: rgb(18, 18, 18); font-family: sans-serif, droid-sans, arial, Tahoma; font-size: 16px; background-color: rgb(255, 255, 255);"><span class="run" style="color: rgb(18, 18, 18); font-family: sans-serif, droid-sans, arial, Tahoma; font-size: 16px; background-color: rgb(255, 255, 255);">This is the second paragraph of test content. It also wraps onto more than one line, so that a caret placed at the end of it lands past the last glyph of its final line.</span><br style="color: rgb(18, 18, 18); font-family: sans-serif, droid-sans, arial, Tahoma; font-size: 16px; background-color: rgb(255, 255, 255);"></div></div></div></div>
 <pre id="log"></pre>
 <script>
 if (window.testRunner)
@@ -17,6 +18,7 @@ const editorSurface = [50, 50, 50];
 const pastedSurface = [255, 255, 255];
 const editor = document.getElementById("editor");
 const narrow = document.getElementById("narrow");
+const articleShape = document.getElementById("articleShape");
 const out = [];
 
 function parseColor(text)
@@ -29,7 +31,7 @@ function relativeLuminance([r, g, b])
 {
     const channel = value => {
         const v = value / 255;
-        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
     };
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
@@ -61,7 +63,7 @@ function pasteInto(target)
 function collapseInto(span, offset)
 {
     if (!span || !span.firstChild) {
-        out.push("FAIL: expected a pasted span to collapse into");
+        out.push("FAIL: expected a span to collapse into");
         return false;
     }
     const range = document.createRange();
@@ -109,10 +111,19 @@ copyFrom("nobg");
 pasteInto(editor);
 reportLegibility("6 source with no declared background, against the editor surface", editorSurface);
 
+articleShape.focus();
+const articleRuns = articleShape.querySelectorAll("span.run");
+for (let index = 0; index < articleRuns.length; ++index) {
+    if (collapseInto(articleRuns[index], "end"))
+        reportLegibility("7 end of run " + (index + 1) + " in wrapped pasted run, against the editor surface", editorSurface);
+    if (collapseInto(articleRuns[index], 30))
+        reportLegibility("8 mid-run " + (index + 1) + " in wrapped pasted run, against the pasted surface", pastedSurface);
+}
+
 copyFrom("authored");
 pasteInto(editor);
 const authoredSpan = editor.querySelector("span[style*='caret-color']");
-out.push("7 authored caret-color survives the paste: " + (authoredSpan ? getComputedStyle(authoredSpan).caretColor : "FAIL, no span carrying caret-color"));
+out.push("9 authored caret-color survives the paste: " + (authoredSpan ? getComputedStyle(authoredSpan).caretColor : "FAIL, no span carrying caret-color"));
 
 document.getElementById("log").textContent = out.join("\n");
 </script>
