@@ -420,6 +420,7 @@ public:
     const Color& rootExtendedBackgroundColor() const LIFETIME_BOUND { return m_rootExtendedBackgroundColor; }
 
     void updateRootContentLayerClipping();
+    void updateRootContentsLayerAppliesPageScale();
 
     void setRootElementCapturedInViewTransition(bool);
 

@@ -130,6 +130,14 @@ public:
     virtual void didRefreshDisplay();
     virtual bool displayLinkWantsHighFrameRateForTesting() const { return false; };
 
+    // True while this layer's transform is the page scale owned by the UI process (unified macOS zoom).
+    // RemoteLayerTreePropertyApplier has to leave the committed transform alone in that case.
+    virtual bool ownsTransformOfLayer(WebCore::PlatformLayerIdentifier) const { return false; }
+
+    // Likewise for the position, which the scrolling thread writes scaled by the page scale while the web
+    // process commits it unscaled. See RenderLayerCompositor::updateScrollLayerPosition().
+    virtual bool ownsPositionOfLayer(WebCore::PlatformLayerIdentifier) const { return false; }
+
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
     RetainPtr<CALayer> layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;

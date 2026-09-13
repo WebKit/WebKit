@@ -6291,6 +6291,17 @@ UndoManagerAPIEnabled:
   humanReadableDescription: "Enable the UndoManager DOM API"
   defaultValue: false
 
+UnifiedMacZoomEnabled:
+  type: bool
+  status: internal
+  category: none
+  humanReadableName: "Unified Dynamic Zoom"
+  humanReadableDescription: "Use the iOS dynamic zoom mechanism on macOS, delegating page scale to the UI process"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    default: true
+    WebKitLegacy: false
+
 UnifiedPDFEnabled:
   type: bool
   status: mature

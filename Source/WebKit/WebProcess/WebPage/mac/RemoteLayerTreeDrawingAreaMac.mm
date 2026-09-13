@@ -34,7 +34,9 @@
 #import "WebPageCreationParameters.h"
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/LocalFrameView.h>
+#import <WebCore/Page.h>
 #import <WebCore/RenderLayerBacking.h>
+#import <WebCore/Settings.h>
 #import <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -53,6 +55,14 @@ RemoteLayerTreeDrawingAreaMac::~RemoteLayerTreeDrawingAreaMac() = default;
 DelegatedScrollingMode RemoteLayerTreeDrawingAreaMac::delegatedScrollingMode() const
 {
     return DelegatedScrollingMode::DelegatedToWebKit;
+}
+
+bool RemoteLayerTreeDrawingAreaMac::usesDelegatedPageScaling() const
+{
+    // Like UIScrollView's zoomScale on iOS, the UI process owns the page scale and applies it above the render
+    // tree. Scrolling stays delegated to the web process though, so the scale goes below the scrolling layers.
+    RefPtr page = protect(m_webPage)->corePage();
+    return page && page->settings().unifiedMacZoomEnabled();
 }
 
 void RemoteLayerTreeDrawingAreaMac::setColorSpace(std::optional<WebCore::ColorSpace> colorSpace)
@@ -91,7 +101,9 @@ void RemoteLayerTreeDrawingAreaMac::willCommitMainFrameData(MainFrameData& data)
     if (!frameView)
         return;
 
-    if (RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForPageScale())
+    // The RenderView backing layer carries the page scale transform, and rootContentsLayer carries the tile
+    // resolution. They can't be the same layer, since rootContentsLayer has a non-zero position.
+    if (RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForRenderViewBacking())
         data.pageScalingLayerID = renderViewGraphicsLayer->primaryLayerID();
 
     if (RefPtr scrolledContentsLayer = frameView->graphicsLayerForScrolledContents())

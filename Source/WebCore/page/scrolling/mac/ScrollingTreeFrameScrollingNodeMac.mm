@@ -159,7 +159,10 @@ WheelEventHandlingResult ScrollingTreeFrameScrollingNodeMac::handleWheelEvent(co
         return WheelEventHandlingResult::handled();
 #endif
 
-    bool handled = delegate().handleWheelEvent(wheelEvent);
+    // The event deltas are in view pixels but this tree scrolls in unscaled content coordinates, so without
+    // this a tick would cover scale times too much content.
+    auto scale = delegatedPageScaleFactor();
+    bool handled = delegate().handleWheelEvent(scale == 1 ? wheelEvent : wheelEvent.copyScalingDeltas(scale));
     delegate().updateSnapScrollState();
     return WheelEventHandlingResult::result(handled);
 }
@@ -204,7 +207,11 @@ void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
     }
 
     // We use scroll position here because the root content layer is offset to account for scrollOrigin (see LocalFrameView::positionForRootContentLayer).
-    layer.position = -currentScrollPosition();
+    // A layer's own transform doesn't affect its position, so when the UI process puts the page scale on this
+    // layer we have to scale both the scroll position and the content root's offset. No-ops at scale 1.
+    auto rootContentsLayerPosition = LocalFrameView::positionForRootContentLayer(currentScrollPosition(), scrollOrigin(), obscuredContentInsets(), headerHeight());
+    layer.position = LocalFrameView::scrolledContentsLayerPositionForDelegatedPageScale(currentScrollPosition(), delegatedPageScaleFactor(), rootContentsLayerPosition);
+
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

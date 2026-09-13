@@ -128,6 +128,19 @@ public:
         return copy;
     }
 
+    // Converts the deltas from view pixels to content pixels, including the unaccelerated ones rubber-banding uses.
+    PlatformWheelEvent copyScalingDeltas(float scale) const
+    {
+        PlatformWheelEvent copy = *this;
+        copy.m_deltaX /= scale;
+        copy.m_deltaY /= scale;
+#if PLATFORM(COCOA)
+        copy.m_unacceleratedScrollingDeltaX /= scale;
+        copy.m_unacceleratedScrollingDeltaY /= scale;
+#endif
+        return copy;
+    }
+
     const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
     const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
 

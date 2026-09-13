@@ -1629,6 +1629,8 @@ public:
 #if ENABLE(UI_SIDE_COMPOSITING)
     std::optional<float> scaleFromUIProcess(const VisibleContentRectUpdateInfo&) const;
     void updateVisibleContentRects(const VisibleContentRectUpdateInfo&, MonotonicTime oldestTimestamp);
+    double minimumPageScaleFactorForUIProcessScale() const;
+    double maximumPageScaleFactorForUIProcessScale() const;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -3181,6 +3183,17 @@ private:
     std::optional<WebCore::SimpleRange> m_initialSelection;
 #endif
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+    // Visible content rect update state, shared by the iOS UIScrollView zoom and the macOS unified zoom. See
+    // WebPage::updateVisibleContentRects() in WebPageCocoa.mm.
+    bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
+    bool m_scaleWasSetByUIProcess { false };
+    bool m_hasStablePageScaleFactor { true };
+    bool m_isInStableState { true };
+    MonotonicTime m_oldestNonStableUpdateVisibleContentRectsTimestamp;
+    double m_lastTransactionPageScaleFactor { 0 };
+#endif
+
 #if ENABLE(TWO_PHASE_CLICKS)
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;
@@ -3213,16 +3226,11 @@ private:
     };
     BidiSelectionFlippingState m_bidiSelectionFlippingState { BidiSelectionFlippingState::NotFlipping };
 
-    bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };
-    bool m_scaleWasSetByUIProcess { false };
     bool m_userHasChangedPageScaleFactor { false };
-    bool m_hasStablePageScaleFactor { true };
-    bool m_isInStableState { true };
     bool m_shouldRevealCurrentSelectionAfterInsertion { true };
     bool m_screenIsBeingCaptured { false };
     std::optional<double> m_previousViewportConfigurationMinimumScale;
-    MonotonicTime m_oldestNonStableUpdateVisibleContentRectsTimestamp;
     Seconds m_estimatedLatency { 0 };
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
@@ -3235,7 +3243,6 @@ private:
     bool m_inDynamicSizeUpdate { false };
     WebCore::FloatRect m_previousExposedContentRect;
     std::optional<DynamicViewportSizeUpdateID> m_pendingDynamicViewportSizeUpdateID;
-    double m_lastTransactionPageScaleFactor { 0 };
 
     WebCore::DeferrableOneShotTimer m_updateFocusedElementInformationTimer;
 
@@ -3456,10 +3463,6 @@ inline bool WebPage::shouldAvoidComputingPostLayoutDataForEditorState() const { 
 
 #if !PLATFORM(COCOA)
 inline URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) { return url; }
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-bool scalesAreEssentiallyEqual(float, float);
 #endif
 
 } // namespace WebKit

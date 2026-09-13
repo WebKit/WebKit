@@ -290,6 +290,9 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
     if (webPageProxy->scrollingUpdatesDisabledForTesting())
         return;
 
+    bool mainFrameScrollPositionChanged = false;
+    auto rootNodeID = rootScrollingNodeID();
+
     auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
     for (unsigned i = 0; i < scrollUpdates.size(); ++i) {
         const auto& update = scrollUpdates[i];
@@ -299,6 +302,8 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
             const auto& updateData = std::get<ScrollUpdateData>(update.data);
             if (updateData.updateType == ScrollUpdateType::PositionUpdate) {
                 webPageProxy->scrollingNodeScrollViewDidScroll(update.nodeID);
+                if (rootNodeID && update.nodeID == *rootNodeID)
+                    mainFrameScrollPositionChanged = true;
                 auto* scrollPerfData = webPageProxy->scrollingPerformanceData();
 
                 if (scrollPerfData && updateData.layoutViewportOriginOrOverrideRect) {
@@ -320,6 +325,9 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeUpdate()
         webPageProxy->sendScrollUpdateForNode(m_scrollingTree->frameIDForScrollingNodeID(update.nodeID), update, isLastUpdate);
         m_waitingForDidScrollReply = true;
     }
+
+    if (mainFrameScrollPositionChanged)
+        mainFrameScrollPositionDidChange();
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
     if (!scrollUpdates.isEmpty())
@@ -422,6 +430,11 @@ WebCore::FloatBoxExtent RemoteScrollingCoordinatorProxy::obscuredContentInsets()
     return m_scrollingTree->mainFrameObscuredContentInsets();
 }
 
+bool RemoteScrollingCoordinatorProxy::isCommittingScrollingTreeState() const
+{
+    return m_scrollingTree->inCommitTreeState();
+}
+
 #if HAVE(NSREFRESHCONTROLLER)
 
 void RemoteScrollingCoordinatorProxy::setTopScrollStretchForRefreshController(float offset)
@@ -472,9 +485,19 @@ float RemoteScrollingCoordinatorProxy::mainFrameScaleFactor() const
     return m_scrollingTree->mainFrameScaleFactor();
 }
 
+void RemoteScrollingCoordinatorProxy::setDelegatedPageScaleFactor(float scale)
+{
+    m_scrollingTree->setMainFrameDelegatedPageScaleFactor(scale);
+}
+
 FloatSize RemoteScrollingCoordinatorProxy::totalContentsSize() const
 {
     return m_scrollingTree->totalContentsSize();
+}
+
+FloatSize RemoteScrollingCoordinatorProxy::sizeForVisibleContent() const
+{
+    return m_scrollingTree->mainFrameSizeForVisibleContent();
 }
 
 void RemoteScrollingCoordinatorProxy::displayDidRefresh(PlatformDisplayID displayID)

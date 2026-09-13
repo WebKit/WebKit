@@ -1,0 +1,118 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Regression test for rdar://186003912: RenderPassEncoder::executeBundles() reuses the " +
+           "drawIndexedIndirect slot it already GPU-encoded into a render bundle's persistent " +
+           "MTLIndirectCommandBuffer when the source buffers' generations are unchanged, instead of re-running " +
+           "the clamp phases. The slot's baked drawIndexedPrimitives reaches the index buffer by GPU address, " +
+           "so a queue.writeBuffer() landing after the reusing command buffer is encoded but before it is " +
+           "submitted leaves those new index values unvalidated. frame1 rewrites the index buffer with far " +
+           "out-of-range indices in exactly that window; without the commit-time revalidation the slot fetches " +
+           "vertices 0x100000 * 8 bytes past a 24-byte vertex buffer.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // A real @location(0) vertex-step-mode buffer gives the pipeline a minimum vertex count, so
+    // IndirectEncodeWork::clamps is true and the batched clamp phases run for this draw.
+    let module = device.createShaderModule({ code: `
+        @vertex fn vs(@location(0) p: vec2f) -> @builtin(position) vec4f {
+            return vec4f(p, 0, 1);
+        }
+        @fragment fn fs() -> @location(0) vec4f { return vec4f(0, 1, 0, 1); }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{ arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x2' }] }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    // 3 vertices => a minimum vertex count of 3, so index 0x100000 is far out of range.
+    let vertexData = new Float32Array([-1, -3, -1, 1, 3, 1]);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    let indexBuffer = device.createBuffer({ size: 12, usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0, 1, 2]));
+
+    // MTLDrawIndexedPrimitivesIndirectArguments layout: indexCount, instanceCount, firstIndex, baseVertex, firstInstance.
+    let argsBuffer = device.createBuffer({ size: 20, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(argsBuffer, 0, new Uint32Array([3, 1, 0, 0, 0]));
+
+    let enc = device.createRenderBundleEncoder({ colorFormats: [format] });
+    enc.setPipeline(pipeline);
+    enc.setVertexBuffer(0, vertexBuffer);
+    enc.setIndexBuffer(indexBuffer, 'uint32');
+    enc.drawIndexedIndirect(argsBuffer, 0);
+    let bundle = enc.finish();
+
+    let texture = device.createTexture({ size: [1, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    // Encoding and submitting are kept separate so a queue.writeBuffer() can land between them.
+    function encodeFrame() {
+        let commandEncoder = device.createCommandEncoder();
+        let pass = commandEncoder.beginRenderPass({
+            colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+        });
+        pass.executeBundles([bundle]);
+        pass.end();
+        commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [1, 1]);
+        return commandEncoder.finish();
+    }
+
+    async function submitAndReadPixel(commandBuffer) {
+        device.queue.submit([commandBuffer]);
+        await device.queue.onSubmittedWorkDone();
+        await readback.mapAsync(GPUMapMode.READ);
+        let pixel = [...new Uint8Array(readback.getMappedRange(0, 4))];
+        readback.unmap();
+        return pixel;
+    }
+
+    // frame0: first execution encodes the ICB slot and draws the triangle.
+    let frame0 = await submitAndReadPixel(encodeFrame());
+
+    // frame1: nothing has changed, so the slot encoded by frame0's command buffer is reused. Rewriting the
+    // index buffer after this encode but before its submit is the vulnerable window: the reuse must have
+    // registered this command encoder with the index buffer so that the write arms the slow path, which
+    // zeroes the index buffer for the duration of this command buffer and restores it afterwards. Every
+    // index then reads vertex 0, so the triangle is degenerate and the clear shows through.
+    let reusingCommandBuffer = encodeFrame();
+    device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0x100000, 0x100001, 0x100002]));
+    let frame1 = await submitAndReadPixel(reusingCommandBuffer);
+
+    // frame2: restoring in-range indices bumps the index buffer's generation, so the slot is re-encoded from
+    // scratch and the triangle is drawn again.
+    device.queue.writeBuffer(indexBuffer, 0, new Uint32Array([0, 1, 2]));
+    let frame2 = await submitAndReadPixel(encodeFrame());
+
+    window.frame0 = frame0;
+    window.frame1 = frame1;
+    window.frame2 = frame2;
+    shouldBeEqualToString('frame0.join()', '0,255,0,255');
+    shouldBeEqualToString('frame1.join()', '255,0,0,255');
+    shouldBeEqualToString('frame2.join()', '0,255,0,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>
