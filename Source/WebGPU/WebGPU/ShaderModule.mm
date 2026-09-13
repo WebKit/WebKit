@@ -37,6 +37,7 @@
 #import "WGSLShaderModule.h"
 
 #import <WebGPU/WebGPU.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/DataLog.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -59,7 +60,7 @@ static std::optional<ShaderModuleParameters> NODELETE findShaderModuleParameters
     return { { wgslCode, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error, WGSL::DeviceState&& deviceState)
+static MTLCompileOptions *compileOptions(const WGSL::DeviceState& deviceState)
 {
     static bool requireSafeMath = false;
     auto options = [MTLCompileOptions new];
@@ -84,16 +85,44 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (deviceState.usesInvariant)
         options.preserveInvariance = true;
 
-    // FIXME(PERFORMANCE): Run the asynchronous version of this
-    id<MTLLibrary> library = [device newLibraryWithSource:msl.createNSString().get() options:options error:error];
-    if (error && *error) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", [*error localizedDescription]);
-        *error = [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: adoptNS([[NSString alloc] initWithFormat:@"Failed to compile the shader source, generated metal:\n%@ - error %@", msl.createNSString().get(), [*error localizedDescription]]).get() }];
+    return options;
+}
+
+static NSError *libraryCompilationError(NSString *msl, NSError *compilationError)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
+    WTFLogAlways("MSL compilation error: %@", [compilationError localizedDescription]); // NOLINT
+    return [NSError errorWithDomain:@"WebGPU" code:1 userInfo:@{ NSLocalizedDescriptionKey: adoptNS([[NSString alloc] initWithFormat:@"Failed to compile the shader source, generated metal:\n%@ - error %@", msl, [compilationError localizedDescription]]).get() }];
+}
+
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label, NSError** error, WGSL::DeviceState&& deviceState)
+{
+    return createLibrary(device, msl.createNSString().get(), label.createNSString().get(), error, deviceState);
+}
+
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, NSString *msl, NSString *label, NSError** error, const WGSL::DeviceState& deviceState)
+{
+    NSError *compilationError = nil;
+    id<MTLLibrary> library = [device newLibraryWithSource:msl options:compileOptions(deviceState) error:&compilationError];
+    if (!library || compilationError) {
+        if (error)
+            *error = libraryCompilationError(msl, compilationError);
         return nil;
     }
-    library.label = label.createNSString().get();
+    library.label = label;
     return library;
+}
+
+void ShaderModule::createLibraryAsync(id<MTLDevice> device, NSString *msl, NSString *label, const WGSL::DeviceState& deviceState, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
+{
+    [device newLibraryWithSource:msl options:compileOptions(deviceState) completionHandler:makeBlockPtr([msl, label, callback = WTF::move(callback)](id<MTLLibrary> library, NSError *compilationError) mutable {
+        if (!library || compilationError) {
+            callback(nil, libraryCompilationError(msl, compilationError));
+            return;
+        }
+        library.label = label;
+        callback(library, nil);
+    }).get()];
 }
 
 static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, Variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)

@@ -26,8 +26,13 @@
 #import "Pipeline.h"
 
 #import "APIConversions.h"
+#import "Device.h"
+#import "Instance.h"
 #import "ShaderModule.h"
 #import "WGSLShaderModule.h"
+#import <memory>
+#import <wtf/BlockPtr.h>
+#import <wtf/Scope.h>
 
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
 #include <csignal>
@@ -40,7 +45,11 @@
 
 namespace WebGPU {
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error, String& metalShaderSource)
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+static bool enablePsoLogging();
+#endif
+
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule& shaderModule, PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline& mininumBufferSizes, NSError **error)
 {
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 
@@ -51,7 +60,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         if (const RefPtr pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
             if (*pipelineLayoutHint == *pipelineLayout) {
                 if (const auto* entryPointInformation = shaderModule.entryPointInformation(entryPoint))
-                    return { { shaderModule.library(), *entryPointInformation,  wgslConstantValues } };
+                    return { { shaderModule.library(), { }, label, { }, *entryPointInformation, wgslConstantValues } };
             }
         }
     }
@@ -158,20 +167,132 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
     }
     auto& msl = std::get<String>(generationResult);
 
-    auto library = ShaderModule::createLibrary(device, msl, label, error, WGSL::DeviceState {
+    return { { nil, msl, label, WGSL::DeviceState {
         .appleGPUFamily = shaderModule.device().appleGPUFamily(),
         .shaderValidationEnabled = shaderModule.device().isShaderValidationEnabled(),
         .usesInvariant = entryPointInformation.usesInvariant
-    });
-    if (error && *error)
-        return { };
+    }, entryPointInformation, wgslConstantValues } };
+}
 
+LibraryCompileRequest libraryCompileRequest(const PreparedLibrary& preparedLibrary)
+{
+    return {
+        preparedLibrary.library,
+        preparedLibrary.msl.createNSString().get(),
+        preparedLibrary.label.createNSString().get(),
+        preparedLibrary.deviceState
+    };
+}
+
+id<MTLLibrary> compileLibrary(id<MTLDevice> device, const LibraryCompileRequest& request, NSError **error)
+{
+    if (request.cachedLibrary)
+        return request.cachedLibrary;
+
+    return ShaderModule::createLibrary(device, request.msl, request.label, error, request.deviceState);
+}
+
+template<typename Result>
+static CompletionHandler<void(Result, NSError *)> callOnWebGPUThread(Instance& instance, CompletionHandler<void(Result, NSError *)>&& callback)
+{
+    using Callback = CompletionHandler<void(Result, NSError *)>;
+
+    auto* callbackToHopBack = new Callback(WTF::move(callback));
+    // Metal runs its completion handlers on its own queues, so the returned handler is called on an
+    // arbitrary thread. It is the hop below which returns to the thread `callback` was created on.
+    return Callback { [protectedInstance = Ref { instance }, callbackToHopBack](Result result, NSError *error) mutable {
+        protectedInstance->scheduleWork([callbackToHopBack, result, error]() mutable {
+            std::unique_ptr<Callback> callback(callbackToHopBack);
+            (*callback)(result, error);
+        });
+    }, CompletionHandlerCallThread::AnyThread };
+}
+
+void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const LibraryCompileRequest& request, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
+{
+    // A library which was already compiled needs no hop: this is still running on the WebGPU thread.
+    if (request.cachedLibrary) {
+        callback(request.cachedLibrary, nil);
+        return;
+    }
+
+    ShaderModule::createLibraryAsync(device, request.msl, request.label, request.deviceState, callOnWebGPUThread<id<MTLLibrary>>(instance, WTF::move(callback)));
+}
+
+void createComputePipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLComputePipelineDescriptor *descriptor, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&& callback)
+{
+    [device newComputePipelineStateWithDescriptor:descriptor options:MTLPipelineOptionNone completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLComputePipelineState>>(instance, WTF::move(callback))](id<MTLComputePipelineState> computePipelineState, MTLComputePipelineReflection *, NSError *error) mutable {
+        hopBack(computePipelineState, error);
+    }).get()];
+}
+
+void createRenderPipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLRenderPipelineDescriptor *descriptor, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&& callback)
+{
+    [device newRenderPipelineStateWithDescriptor:descriptor completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLRenderPipelineState>>(instance, WTF::move(callback))](id<MTLRenderPipelineState> renderPipelineState, NSError *error) mutable {
+        hopBack(renderPipelineState, error);
+    }).get()];
+}
+
+ScopeExit<Function<void()>> scopedErrorReporting(Device& device, bool suppressErrors)
+{
+    bool wasErrorReportingPaused = device.pauseErrorReporting(suppressErrors);
+    return makeScopeExit(Function<void()> { [protectedDevice = protect(device), wasErrorReportingPaused] {
+        protectedDevice->pauseErrorReporting(wasErrorReportingPaused);
+    } });
+}
+
+Device::LibraryCompilation Device::asynchronousIfPossible()
+{
 #if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-    metalShaderSource = msl;
-#else
-    UNUSED_PARAM(metalShaderSource);
+    if (enablePsoLogging())
+        return LibraryCompilation::Synchronous;
 #endif
-    return { { library, entryPointInformation, wgslConstantValues } };
+    return LibraryCompilation::Asynchronous;
+}
+
+void Device::compileLibrary(const LibraryCompileRequest& request, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLLibrary>, NSError *)>&& callback)
+{
+    if (libraryCompilation == LibraryCompilation::Asynchronous) {
+        if (RefPtr protectedInstance = instance()) {
+            compileLibraryAsync(m_device, *protectedInstance, request, WTF::move(callback));
+            return;
+        }
+    }
+
+    NSError *error = nil;
+    id<MTLLibrary> library = WebGPU::compileLibrary(m_device, request, &error);
+    callback(library, error);
+}
+
+void Device::createComputePipelineState(MTLComputePipelineDescriptor *descriptor, String&& shaderSource, LibraryCompilation libraryCompilation, CompletionHandler<void(id<MTLComputePipelineState>)>&& callback)
+{
+    auto reportError = [](NSError *error) {
+        if (error)
+            WTFLogAlways("Pipeline state creation error: %@", error); // NOLINT
+    };
+
+    if (libraryCompilation == LibraryCompilation::Asynchronous) {
+        if (RefPtr protectedInstance = instance()) {
+            createComputePipelineStateAsync(m_device, *protectedInstance, descriptor, [reportError, callback = WTF::move(callback)](id<MTLComputePipelineState> computePipelineState, NSError *error) mutable {
+                reportError(error);
+                callback(computePipelineState);
+            });
+            return;
+        }
+    }
+
+    NSError *error = nil;
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+    dumpMetalReproCaseComputePSO(WTF::move(shaderSource), descriptor.computeFunction.name);
+#else
+    UNUSED_PARAM(shaderSource);
+#endif
+    id<MTLComputePipelineState> computePipelineState = [m_device newComputePipelineStateWithDescriptor:descriptor options:MTLPipelineOptionNone reflection:nil error:&error];
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+    clearMetalPSORepro();
+#endif
+    reportError(error);
+    callback(computePipelineState);
 }
 
 id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, NSString *label)

@@ -29,12 +29,14 @@
 #import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
+#import "Instance.h"
 #import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "RenderBundleEncoder.h"
 #import "TextureOrTextureView.h"
 #import "WGSLShaderModule.h"
 #import <wtf/IndexedRange.h>
+#import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
 
 // FIXME: remove after radar://104903411 or after we place the mask into the last buffer
@@ -1507,8 +1509,19 @@ static NSString* errorValidatingVertexStageIn(const ShaderModule::VertexStageIn*
 
 std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync, const RenderPipeline* pipelineToReplace)
 {
+    std::optional<std::pair<Ref<RenderPipeline>, NSString*>> result;
+    createRenderPipeline(descriptor, isAsync, pipelineToReplace, LibraryCompilation::Synchronous, [&](std::pair<Ref<RenderPipeline>, NSString*>&& pipelineAndError) {
+        result = WTF::move(pipelineAndError);
+    });
+    // LibraryCompilation::Synchronous never defers the completion handler.
+    RELEASE_ASSERT(result);
+    return WTF::move(*result);
+}
+
+void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync, const RenderPipeline* pipelineToReplace, LibraryCompilation libraryCompilation, CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)>&& callback)
+{
     if (!validateRenderPipeline(descriptor) || !isValid())
-        return returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "device or descriptor is not valid"_s));
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
@@ -1523,11 +1536,11 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     if (pipelineToReplace) {
         pipelineLayout = &pipelineToReplace->pipelineLayout();
         if (!isValidToUseWithDevice(*pipelineLayout, *this))
-            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
     } else if (descriptor.layout) {
         Ref layout = WebGPU::fromAPI(descriptor.layout);
         if (!isValidToUseWithDevice(layout.get(), *this))
-            return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid or created from different device"_s));
 
         if (!layout->isAutoLayout())
             pipelineLayout = layout.ptr();
@@ -1538,34 +1551,33 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     uint32_t vertexClipDistancesCount = 0;
     BufferBindingSizesForPipeline minimumBufferSizes;
     uint32_t vertexShaderBindingCount = 0;
-    String vertexShaderSource, fragmentShaderSource;
+    std::optional<PreparedLibrary> preparedVertexLibrary;
+    std::optional<PreparedLibrary> preparedFragmentLibrary;
     ShaderModule::VertexStageIn shaderLocations;
     {
         Ref vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
         if (!vertexModule->isValid() || !vertexModule->ast())
-            return returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s));
         if (&vertexModule->device() != this)
-            return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s));
 
         const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule->defaultVertexEntryPoint();
         vertexStageIn = vertexModule->stageInTypesForEntryPoint(vertexEntryPoint);
         if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
-            return returnInvalidRenderPipeline(*this, isAsync, error);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, error));
         NSError *error = nil;
-        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout.get(), vertexEntryPoint, label.get(), descriptor.vertex.constantsSpan(), minimumBufferSizes, &error, vertexShaderSource);
-        if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation");
+        preparedVertexLibrary = prepareLibrary(vertexModule, pipelineLayout.get(), vertexEntryPoint, label.get(), descriptor.vertex.constantsSpan(), minimumBufferSizes, &error);
+        if (!preparedVertexLibrary)
+            return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Vertex library failed creation"));
 
-        vertexShaderBindingCount = std::min<uint32_t>(libraryCreationResult->entryPointInformation.bindingCount, std::numeric_limits<uint32_t>::max());
-        const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+        const auto& entryPointInformation = preparedVertexLibrary->entryPointInformation;
+        vertexShaderBindingCount = std::min<uint32_t>(entryPointInformation.bindingCount, std::numeric_limits<uint32_t>::max());
         if (!pipelineLayout) {
             if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
-                return returnInvalidRenderPipeline(*this, isAsync, error);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, error));
         }
-        auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, label.get());
-        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
-            return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
-        mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
+        if (entryPointInformation.specializationConstants.size() != preparedVertexLibrary->wgslConstantValues.size())
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s));
         vertexOutputs = vertexModule->vertexReturnTypeForEntryPoint(vertexEntryPoint);
         vertexClipDistancesCount = vertexModule->clipDistancesCount(vertexEntryPoint);
     }
@@ -1582,10 +1594,10 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
 
         fragmentModule = protect(WebGPU::fromAPI(fragmentDescriptor.module)).ptr();
         if (!fragmentModule->isValid() || !fragmentModule->ast())
-            return returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s));
 
         if (&fragmentModule->device() != this)
-            return returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment module was created with a different device"_s));
 
         auto fragmentShaderModule = fragmentModule->ast();
         RELEASE_ASSERT(fragmentShaderModule);
@@ -1599,7 +1611,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     }
 
     if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, vertexClipDistancesCount, fragmentInputs, fragmentReturnTypes, fragmentModule.get(), descriptor.fragment))
-        return returnInvalidRenderPipeline(*this, isAsync, error);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, error));
 
     if (descriptor.fragment) {
         uint32_t bytesPerSample = 0;
@@ -1616,7 +1628,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
             const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
 
             if (Texture::isDepthOrStencilFormat(targetDescriptor.format) || !Texture::isRenderableFormat(targetDescriptor.format, *this))
-                return returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_s);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "Depth / stencil format passed to color format"_s));
 
             bytesPerSample = roundUpToMultipleOfNonPowerOfTwo(Texture::renderTargetPixelByteAlignment(targetDescriptor.format), bytesPerSample);
             bytesPerSample += Texture::renderTargetPixelByteCost(targetDescriptor.format);
@@ -1624,13 +1636,13 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
 
             hasAtLeastOneColorTarget = true;
             if (targetDescriptor.writeMask > WGPUColorWriteMask_All || (fragmentFunctionReturnType == MTLDataTypeNone && targetDescriptor.writeMask))
-                return returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "writeMask is invalid"_s));
             mtlColorAttachment.writeMask = colorWriteMask(targetDescriptor.writeMask);
 
             bool readsAlpha = false;
             if (targetDescriptor.blend) {
                 if (!Texture::supportsBlending(targetDescriptor.format, *this))
-                    return returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_s);
+                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Color target attempted to use blending on non-blendable format"_s));
                 mtlColorAttachment.blendingEnabled = YES;
 
                 const auto& alphaBlend = targetDescriptor.blend->alpha;
@@ -1641,7 +1653,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
                     return true;
                 };
                 if (!validateBlend(alphaBlend) || !validateBlend(colorBlend))
-                    return returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_s);
+                    return callback(returnInvalidRenderPipeline(*this, isAsync, "Blend states are not valid"_s));
                 mtlColorAttachment.alphaBlendOperation = blendOperation(alphaBlend.operation);
                 mtlColorAttachment.sourceAlphaBlendFactor = blendFactor(alphaBlend.srcFactor);
                 mtlColorAttachment.destinationAlphaBlendFactor = blendFactor(alphaBlend.dstFactor);
@@ -1654,35 +1666,33 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
                 mtlColorAttachment.blendingEnabled = NO;
 
             if (!textureFormatAllowedForRetunType(targetDescriptor.format, fragmentFunctionReturnType, readsAlpha))
-                return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"pipeline creation - color target pixel format(%lu) for location(%zu) is incompatible with shader output data type of %zu", i, mtlColorAttachment.pixelFormat, fragmentFunctionReturnType]);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"pipeline creation - color target pixel format(%lu) for location(%zu) is incompatible with shader output data type of %zu", i, mtlColorAttachment.pixelFormat, fragmentFunctionReturnType]));
         }
 
         if (bytesPerSample > deviceLimits.maxColorAttachmentBytesPerSample)
-            return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Bytes per sample(%u) exceeded maximum allowed limit(%u)", bytesPerSample, deviceLimits.maxColorAttachmentBytesPerSample]);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Bytes per sample(%u) exceeded maximum allowed limit(%u)", bytesPerSample, deviceLimits.maxColorAttachmentBytesPerSample]));
 
         NSError *error = nil;
         const auto& fragmentEntryPoint = fragmentDescriptor.entryPoint ? fromAPI(fragmentDescriptor.entryPoint) : fragmentModule->defaultFragmentEntryPoint();
-        auto libraryCreationResult = createLibrary(m_device, *fragmentModule, pipelineLayout.get(), fragmentEntryPoint, label.get(), fragmentDescriptor.constantsSpan(), minimumBufferSizes, &error, fragmentShaderSource);
-        if (!libraryCreationResult)
-            return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created");
+        preparedFragmentLibrary = prepareLibrary(*fragmentModule, pipelineLayout.get(), fragmentEntryPoint, label.get(), fragmentDescriptor.constantsSpan(), minimumBufferSizes, &error);
+        if (!preparedFragmentLibrary)
+            return callback(returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription ?: @"Fragment library could not be created"));
 
-        const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
+        const auto& entryPointInformation = preparedFragmentLibrary->entryPointInformation;
         if (!pipelineLayout) {
             if (NSString* error = addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout))
-                return returnInvalidRenderPipeline(*this, isAsync, error);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, error));
         }
 
-        auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, label.get());
-        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
-            return returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s);
-        mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
+        if (entryPointInformation.specializationConstants.size() != preparedFragmentLibrary->wgslConstantValues.size())
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Fragment function failed creation"_s));
     }
 
     MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
     float depthBias = 0.f, depthBiasSlopeScale = 0.f, depthBiasClamp = 0.f;
     if (auto depthStencil = descriptor.depthStencil) {
         if (NSString *error = errorValidatingDepthStencilState(*depthStencil))
-            return returnInvalidRenderPipeline(*this, isAsync, error);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, error));
 
         MTLPixelFormat depthStencilFormat = Texture::pixelFormat(depthStencil->format);
         bool isStencilOnlyFormat = Device::isStencilOnlyFormat(depthStencilFormat);
@@ -1704,30 +1714,30 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         auto topology = descriptor.primitive.topology;
         if (topology != WGPUPrimitiveTopology_TriangleList && topology != WGPUPrimitiveTopology_TriangleStrip) {
             if (depthBias || depthBiasSlopeScale || depthBiasClamp)
-                return returnInvalidRenderPipeline(*this, isAsync, "depthBias, depthBiasSlopeScale, and depthBiasClamp must be 0 unless primitive.topology is a triangle topology"_s);
+                return callback(returnInvalidRenderPipeline(*this, isAsync, "depthBias, depthBiasSlopeScale, and depthBiasClamp must be 0 unless primitive.topology is a triangle topology"_s));
         }
     }
 
     // A render pipeline needs somewhere to render to. hasAtLeastOneColorTarget can only be set from
     // the fragment state's targets, so a vertex-only pipeline has to bring its own depth-stencil.
     if (!hasAtLeastOneColorTarget && !descriptor.depthStencil)
-        return returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "No color targets or depth stencil were specified in the descriptor"_s));
     if (usesFragDepth && mtlRenderPipelineDescriptor.depthAttachmentPixelFormat == MTLPixelFormatInvalid)
-        return returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "Shader writes to frag depth but no depth texture set"_s));
 
     if (descriptor.multisample.count != 1 && descriptor.multisample.count != 4)
-        return returnInvalidRenderPipeline(*this, isAsync, "multisample count must be either 1 or 4"_s);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "multisample count must be either 1 or 4"_s));
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
     if (descriptor.multisample.alphaToCoverageEnabled) {
         if (usesSampleMask)
-            return returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Can not use sampleMask with alphaToCoverage"_s));
         if (!descriptor.fragment)
-            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s));
         if (!descriptor.fragment->targetCount || !hasAlphaChannel(descriptor.fragment->targets[0].format) || !Texture::supportsBlending(descriptor.fragment->targets[0].format, *this))
-            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires a fragment state"_s));
         if (descriptor.multisample.count == 1)
-            return returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "Using alphaToCoverage requires multisampling"_s));
     }
 
     RELEASE_ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
@@ -1741,23 +1751,23 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     RenderPipeline::RequiredBufferIndicesContainer requiredBufferIndices;
     if (descriptor.vertex.bufferCount) {
         if (!vertexStageIn)
-            return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Vertex shader has no stageIn parameters but buffer count was %zu and attribute count was %zu", descriptor.vertex.bufferCount, descriptor.vertex.buffers[0].attributeCount]);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Vertex shader has no stageIn parameters but buffer count was %zu and attribute count was %zu", descriptor.vertex.bufferCount, descriptor.vertex.buffers[0].attributeCount]));
         NSString *error = nil;
         MTLVertexDescriptor *vertexDecriptor = createVertexDescriptor(descriptor.vertex, deviceLimits, *vertexStageIn, requiredBufferIndices, &error, shaderLocations);
         if (error)
-            return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"vertex descriptor creation failed %@", error]);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"vertex descriptor creation failed %@", error]));
 
         ASSERT(vertexDecriptor);
         mtlRenderPipelineDescriptor.vertexDescriptor = vertexDecriptor;
     }
 
     if (vertexStageIn && vertexStageIn->size() && !descriptor.vertex.bufferCount)
-        return returnInvalidRenderPipeline(*this, isAsync, @"Vertex descriptor passed zero buffers for stage_in but shader requires buffers for stage_in");
+        return callback(returnInvalidRenderPipeline(*this, isAsync, @"Vertex descriptor passed zero buffers for stage_in but shader requires buffers for stage_in"));
 
     MTLDepthClipMode mtlDepthClipMode = MTLDepthClipModeClip;
     if (descriptor.primitive.unclippedDepth) {
         if (!hasFeature(WGPUFeatureName_DepthClipControl))
-            return returnInvalidRenderPipeline(*this, isAsync, "unclippedDepth used without enabling depth-clip-control feature"_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "unclippedDepth used without enabling depth-clip-control feature"_s));
 
         mtlDepthClipMode = MTLDepthClipModeClamp;
     }
@@ -1770,7 +1780,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     auto primitiveTopology = descriptor.primitive.topology;
     if (primitiveTopology != WGPUPrimitiveTopology_LineStrip && primitiveTopology != WGPUPrimitiveTopology_TriangleStrip) {
         if (descriptor.primitive.stripIndexFormat != WGPUIndexFormat_Undefined)
-            return returnInvalidRenderPipeline(*this, isAsync, "If primitive.topology is not line-strip or triangle-strip, primitive.stripIndexFormat must be undefined."_s);
+            return callback(returnInvalidRenderPipeline(*this, isAsync, "If primitive.topology is not line-strip or triangle-strip, primitive.stripIndexFormat must be undefined."_s));
     }
 
     auto mtlPrimitiveType = primitiveType(primitiveTopology);
@@ -1778,55 +1788,115 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     auto mtlFrontFace = frontFace(descriptor.primitive.frontFace);
     auto mtlCullMode = cullMode(descriptor.primitive.cullMode);
 
-    NSError *error = nil;
-#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
-    if (dumpMetalReproCaseRenderPSO(WTF::move(vertexShaderSource), mtlRenderPipelineDescriptor.vertexFunction.name, WTF::move(fragmentShaderSource), mtlRenderPipelineDescriptor.fragmentFunction.name, mtlRenderPipelineDescriptor, shaderLocations, *this)) {
-        mtlRenderPipelineDescriptor.supportIndirectCommandBuffers = YES;
-        id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
-        UNUSED_PARAM(renderPipelineState);
-        clearMetalPSORepro();
-    }
-#endif
-    if (error)
-        return returnInvalidRenderPipeline(*this, isAsync, error.localizedDescription);
-
     if (m_pipelineId == Device::maxPipelines) {
         loseTheDevice(WGPUDeviceLostReason_Undefined);
-        return returnInvalidRenderPipeline(*this, isAsync, @"too many render pipelines");
-    }
-    if (!pipelineLayout) {
-        auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
-        if (!generatedPipelineLayout->isValid())
-            return returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_s);
-
-        return std::make_pair(RenderPipeline::create(mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, WTF::move(generatedPipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), ++m_pipelineId, vertexShaderBindingCount, *this), nil);
+        return callback(returnInvalidRenderPipeline(*this, isAsync, @"too many render pipelines"));
     }
 
-    return std::make_pair(RenderPipeline::create(mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, const_cast<PipelineLayout&>(*pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), ++m_pipelineId, vertexShaderBindingCount, *this), nil);
+    Ref<PipelineLayout> finalPipelineLayout = pipelineLayout ? Ref { const_cast<PipelineLayout&>(*pipelineLayout) } : generatePipelineLayout(bindGroupEntries);
+    if (!pipelineLayout && !finalPipelineLayout->isValid())
+        return callback(returnInvalidRenderPipeline(*this, isAsync, "Generated pipeline layout is not valid"_s));
+
+    // The pipeline is created before its shaders have been compiled: it only holds on to
+    // mtlRenderPipelineDescriptor, and its MTLRenderPipelineState is installed (or, for the
+    // synchronous path, left to be compiled on demand) once Metal is done with the MSL. Everything
+    // which reads `descriptor` has to happen here, before that.
+    Ref pipeline = RenderPipeline::create(mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, WTF::move(finalPipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, mtlRenderPipelineDescriptor, colorAttachmentCount, descriptor, WTF::move(requiredBufferIndices), WTF::move(minimumBufferSizes), ++m_pipelineId, vertexShaderBindingCount, *this);
+
+    auto vertexCompileRequest = libraryCompileRequest(*preparedVertexLibrary);
+    std::optional<LibraryCompileRequest> fragmentCompileRequest;
+    if (preparedFragmentLibrary)
+        fragmentCompileRequest = libraryCompileRequest(*preparedFragmentLibrary);
+
+    CompletionHandler<void(id<MTLLibrary>, id<MTLLibrary>, NSError *)> finishCreation = [protectedThis = protect(*this), isAsync, suppressErrors = m_supressAllErrors, libraryCompilation, label = WTF::move(label), renderPipelineDescriptor = RetainPtr { mtlRenderPipelineDescriptor }, pipeline = WTF::move(pipeline), vertexLibraryInfo = WTF::move(*preparedVertexLibrary), fragmentLibraryInfo = WTF::move(preparedFragmentLibrary), shaderLocations = WTF::move(shaderLocations), callback = WTF::move(callback)](id<MTLLibrary> vertexLibrary, id<MTLLibrary> fragmentLibrary, NSError *libraryError) mutable {
+        auto errorReporting = scopedErrorReporting(protectedThis, suppressErrors);
+
+        if (!vertexLibrary)
+            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, libraryError.localizedDescription ?: @"Vertex library failed creation"));
+
+        auto vertexFunction = createFunction(vertexLibrary, vertexLibraryInfo.entryPointInformation, label.get());
+        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex)
+            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Vertex function could not be created"_s));
+        renderPipelineDescriptor.get().vertexFunction = vertexFunction;
+
+        if (fragmentLibraryInfo) {
+            if (!fragmentLibrary)
+                return callback(returnInvalidRenderPipeline(protectedThis, isAsync, libraryError.localizedDescription ?: @"Fragment library could not be created"));
+
+            auto fragmentFunction = createFunction(fragmentLibrary, fragmentLibraryInfo->entryPointInformation, label.get());
+            if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment)
+                return callback(returnInvalidRenderPipeline(protectedThis, isAsync, "Fragment function failed creation"_s));
+            renderPipelineDescriptor.get().fragmentFunction = fragmentFunction;
+        }
+
+        NSError *error = nil;
+#if !defined(NDEBUG) || (defined(ENABLE_LIBFUZZER) && ENABLE_LIBFUZZER && defined(ASAN_ENABLED) && ASAN_ENABLED)
+        if (dumpMetalReproCaseRenderPSO(WTF::move(vertexLibraryInfo.msl), renderPipelineDescriptor.get().vertexFunction.name, fragmentLibraryInfo ? WTF::move(fragmentLibraryInfo->msl) : String { }, renderPipelineDescriptor.get().fragmentFunction.name, renderPipelineDescriptor.get(), shaderLocations, protectedThis)) {
+            renderPipelineDescriptor.get().supportIndirectCommandBuffers = YES;
+            id<MTLRenderPipelineState> renderPipelineState = [protectedThis->m_device newRenderPipelineStateWithDescriptor:renderPipelineDescriptor.get() error:&error];
+            UNUSED_PARAM(renderPipelineState);
+            clearMetalPSORepro();
+        }
+#else
+        UNUSED_PARAM(shaderLocations);
+#endif
+        if (error)
+            return callback(returnInvalidRenderPipeline(protectedThis, isAsync, error.localizedDescription));
+
+        RefPtr protectedInstance = protectedThis->instance();
+        if (libraryCompilation == LibraryCompilation::Synchronous || !protectedInstance)
+            return callback(std::make_pair(WTF::move(pipeline), nil));
+
+        // Compile the pipeline state now rather than leaving it to the first draw. This is only an
+        // optimization: nothing here can invalidate the pipeline, and if the compile fails the lazy
+        // renderPipelineState() path still runs, and reports the failure, at first use.
+        createRenderPipelineStateAsync(protectedThis->m_device, *protectedInstance, renderPipelineDescriptor.get(), [pipeline = WTF::move(pipeline), callback = WTF::move(callback)](id<MTLRenderPipelineState> renderPipelineState, NSError *) mutable {
+            if (renderPipelineState)
+                pipeline->setPrecompiledRenderPipelineState(renderPipelineState);
+            callback(std::make_pair(WTF::move(pipeline), nil));
+        });
+    };
+
+    // Compile the fragment MSL once the vertex MSL is done. The two stages of one pipeline are
+    // serialized, but independent pipelines still compile concurrently, which is the point.
+    compileLibrary(vertexCompileRequest, libraryCompilation, [protectedThis = protect(*this), libraryCompilation, fragmentCompileRequest = WTF::move(fragmentCompileRequest), finishCreation = WTF::move(finishCreation)](id<MTLLibrary> vertexLibrary, NSError *vertexError) mutable {
+        if (!vertexLibrary || !fragmentCompileRequest) {
+            finishCreation(vertexLibrary, nil, vertexError);
+            return;
+        }
+
+        protectedThis->compileLibrary(*fragmentCompileRequest, libraryCompilation, [vertexLibrary, finishCreation = WTF::move(finishCreation)](id<MTLLibrary> fragmentLibrary, NSError *fragmentError) mutable {
+            finishCreation(vertexLibrary, fragmentLibrary, fragmentError);
+        });
+    });
+}
+
+static CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)> asyncRenderPipelineCompletion(Device& device, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
+{
+    return [protectedDevice = protect(device), callback = WTF::move(callback)](std::pair<Ref<RenderPipeline>, NSString*>&& pipelineAndError) mutable {
+        auto reportResult = [protectedDevice, callback = WTF::move(callback), pipeline = WTF::move(pipelineAndError.first), message = String { pipelineAndError.second }]() mutable {
+            callback((protectedDevice->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(message));
+        };
+
+        // Resolve on a later turn of the WebGPU thread, never re-entrantly from the caller.
+        if (RefPtr protectedInstance = protectedDevice->instance()) {
+            protectedInstance->scheduleWork(WTF::move(reportResult));
+            return;
+        }
+        reportResult();
+    };
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
-    auto pipelineAndError = createRenderPipeline(descriptor, true);
-    if (auto inst = instance(); inst.get()) {
-        inst->scheduleWork([protectedThis = protect(*this), pipeline = WTF::move(pipelineAndError.first), callback = WTF::move(callback), error = WTF::move(pipelineAndError.second)]() mutable {
-            callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(error));
-        });
-    } else
-        callback(WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipelineAndError.first), WTF::move(pipelineAndError.second));
+    createRenderPipeline(descriptor, true, nullptr, asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
 }
 
 void Device::createRenderPipelineWithPipelineLayoutFromPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, const RenderPipeline& pipelineToReplace, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
     bool wasErrorReportingPaused = pauseErrorReporting(true);
-    auto pipelineAndError = createRenderPipeline(descriptor, true, &pipelineToReplace);
+    createRenderPipeline(descriptor, true, &pipelineToReplace, asynchronousIfPossible(), asyncRenderPipelineCompletion(*this, WTF::move(callback)));
     pauseErrorReporting(wasErrorReportingPaused);
-    if (auto inst = instance(); inst.get()) {
-        inst->scheduleWork([protectedThis = protect(*this), pipeline = WTF::move(pipelineAndError.first), callback = WTF::move(callback), error = WTF::move(pipelineAndError.second)]() mutable {
-            callback((protectedThis->isDestroyed() || pipeline->isValid()) ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipeline), WTF::move(error));
-        });
-    } else
-        callback(WGPUCreatePipelineAsyncStatus_ValidationError, WTF::move(pipelineAndError.first), WTF::move(pipelineAndError.second));
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderPipeline);
@@ -2050,6 +2120,12 @@ id<MTLRenderPipelineState> RenderPipeline::renderPipelineState() const
         m_device->generateAnOutOfMemoryError("Render pipeline failed compilation likely due to being too complex, please reduce its size"_s);
 
     return m_renderPipelineState;
+}
+
+void RenderPipeline::setPrecompiledRenderPipelineState(id<MTLRenderPipelineState> renderPipelineState)
+{
+    ASSERT(!m_renderPipelineState);
+    m_renderPipelineState = renderPipelineState;
 }
 
 id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
