@@ -27,6 +27,7 @@
 #include "LayerOverlapMap.h"
 #include "Logging.h"
 #include "RenderLayer.h"
+#include <ranges>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -35,19 +36,39 @@ namespace WebCore {
 struct RectList {
     Vector<LayoutRect> rects;
     LayoutRect boundingRect;
-    
+
+    static constexpr size_t recentRectsToTestForContainment = 4;
+
+    bool isAlreadyCovered(const LayoutRect& rect) const
+    {
+        size_t recentCount = std::min(recentRectsToTestForContainment, rects.size());
+        auto recentRects = rects | std::views::reverse | std::views::take(recentCount);
+        return std::ranges::any_of(recentRects, [&](auto& existingRect) { return existingRect.contains(rect); });
+    }
+
+    void removeRecentRectsCoveredBy(const LayoutRect& rect)
+    {
+        size_t recentCount = std::min(recentRectsToTestForContainment, rects.size());
+        rects.removeAllMatching([&](auto& existingRect) { return rect.contains(existingRect); }, rects.size() - recentCount);
+    }
+
     void append(const LayoutRect& rect)
     {
+        if (isAlreadyCovered(rect))
+            return;
+
+        removeRecentRectsCoveredBy(rect);
+
         rects.append(rect);
         boundingRect.unite(rect);
     }
 
     void append(const RectList& rectList)
     {
-        rects.appendVector(rectList.rects);
-        boundingRect.unite(rectList.boundingRect);
+        for (auto& rect : rectList.rects)
+            append(rect);
     }
-    
+
     bool intersects(const LayoutRect& rect) const
     {
         if (!rects.size() || !rect.intersects(boundingRect))
