@@ -12327,7 +12327,7 @@ void WebPageProxy::showColorPicker(IPC::Connection& connection, const WebCore::C
     if (!pageClient)
         return;
 
-    RefPtr colorPicker = pageClient->createColorPicker(*this, initialColor, elementRect, supportsAlpha, WTF::move(suggestions), rootFrameID);
+    RefPtr colorPicker = pageClient->createColorPicker(*this, initialColor, supportsAlpha, WTF::move(suggestions), rootFrameID);
     internals().colorPicker = colorPicker;
 
     // FIXME: Remove this conditional once all ports have a functional PageClientImpl::createColorPicker.
