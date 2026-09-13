@@ -27,7 +27,6 @@
 
 #include "Chrome.h"
 #include "FloatQuad.h"
-#include "FontCascadeInlines.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -126,31 +125,6 @@ void RenderInline::styleDidChange(Style::Difference diff, const Style::ComputedS
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
-}
-
-bool RenderInline::mayAffectLayout() const
-{
-    auto* parentStyle = &parent()->style();
-    auto* parentRenderInline = dynamicDowncast<RenderInline>(*parent());
-    auto hasHardLineBreakChildOnly = firstChild() && firstChild() == lastChild() && firstChild()->isBR();
-    bool checkFonts = document().inNoQuirksMode();
-    auto mayAffectLayout = (parentRenderInline && parentRenderInline->mayAffectLayout())
-        || (parentRenderInline && !WTF::holdsAlternative<CSS::Keyword::Baseline>(parentStyle->verticalAlign()))
-        || !WTF::holdsAlternative<CSS::Keyword::Baseline>(style().verticalAlign())
-        || !style().textEmphasisStyle().isNone()
-        || (checkFonts && (!parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(style().fontCascade().metricsOfPrimaryFont())
-        || parentStyle->textAutosizingAdjustedLineHeight() != style().textAutosizingAdjustedLineHeight()))
-        || hasHardLineBreakChildOnly;
-
-    if (!mayAffectLayout && checkFonts) {
-        // Have to check the first line style as well.
-        parentStyle = &parent()->firstLineStyle();
-        auto& childStyle = firstLineStyle();
-        mayAffectLayout = !parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle.fontCascade().metricsOfPrimaryFont())
-            || !WTF::holdsAlternative<CSS::Keyword::Baseline>(childStyle.verticalAlign())
-            || parentStyle->textAutosizingAdjustedLineHeight() != childStyle.textAutosizingAdjustedLineHeight();
-    }
-    return mayAffectLayout;
 }
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

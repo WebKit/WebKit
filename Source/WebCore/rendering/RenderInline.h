@@ -72,7 +72,6 @@ public:
 
     void collectLineBoxRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset) const;
 
-    bool mayAffectLayout() const;
     bool requiresLayer() const override;
 
     LayoutPoint firstInlineBoxTopLeft() const;
