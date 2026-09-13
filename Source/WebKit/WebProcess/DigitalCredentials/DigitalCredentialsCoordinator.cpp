@@ -87,9 +87,9 @@ void DigitalCredentialsCoordinator::showDigitalCredentialsChooser(std::optional<
     }
 }
 
-ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& topOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
+ExceptionOr<Vector<WebCore::ValidatedDigitalCredentialRequest>> DigitalCredentialsCoordinator::validateAndParseDigitalCredentialRequests(const SecurityOrigin& documentOrigin, const Document& document, const Vector<UnvalidatedDigitalCredentialRequest>& unvalidatedRequests)
 {
-    auto results = DigitalCredentials::validateRequests(topOrigin, document, unvalidatedRequests);
+    auto results = DigitalCredentials::validateRequests(documentOrigin, document, unvalidatedRequests);
     return WTF::move(results);
 }
 
