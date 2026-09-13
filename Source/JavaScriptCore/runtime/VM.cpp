@@ -1774,6 +1774,54 @@ NativeExecutable* VM::promiseAnySlowRejectFunctionExecutableSlow()
     return executable;
 }
 
+NativeExecutable* VM::promiseAllKeyedFulfillFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllKeyedFulfillFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllKeyedFulfillFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllKeyedFulfillFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseAllKeyedSlowFulfillFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllKeyedSlowFulfillFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllKeyedSlowFulfillFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllKeyedSlowFulfillFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseAllSettledKeyedFulfillFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllSettledKeyedFulfillFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllSettledKeyedFulfillFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllSettledKeyedFulfillFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseAllSettledKeyedRejectFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllSettledKeyedRejectFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllSettledKeyedRejectFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllSettledKeyedRejectFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseAllSettledKeyedSlowFulfillFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllSettledKeyedSlowFulfillFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllSettledKeyedSlowFulfillFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllSettledKeyedSlowFulfillFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
+NativeExecutable* VM::promiseAllSettledKeyedSlowRejectFunctionExecutableSlow()
+{
+    ASSERT(!m_promiseAllSettledKeyedSlowRejectFunctionExecutable);
+    auto* executable = getHostFunction(promiseAllSettledKeyedSlowRejectFunction, ImplementationVisibility::Public, callHostFunctionAsConstructor, 1, emptyString());
+    m_promiseAllSettledKeyedSlowRejectFunctionExecutable.setWithoutWriteBarrier(executable);
+    return executable;
+}
+
 bool VM::hasLanguageChange()
 {
     return m_intlCache->hasLanguageChange();
@@ -2020,6 +2068,12 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_promiseAllSettledSlowRejectFunctionExecutable);
     visitor.append(m_promiseAnyRejectFunctionExecutable);
     visitor.append(m_promiseAnySlowRejectFunctionExecutable);
+    visitor.append(m_promiseAllKeyedFulfillFunctionExecutable);
+    visitor.append(m_promiseAllKeyedSlowFulfillFunctionExecutable);
+    visitor.append(m_promiseAllSettledKeyedFulfillFunctionExecutable);
+    visitor.append(m_promiseAllSettledKeyedRejectFunctionExecutable);
+    visitor.append(m_promiseAllSettledKeyedSlowFulfillFunctionExecutable);
+    visitor.append(m_promiseAllSettledKeyedSlowRejectFunctionExecutable);
 }
 DEFINE_VISIT_AGGREGATE(VM);
 
