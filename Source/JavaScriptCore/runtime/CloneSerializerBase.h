@@ -25,12 +25,15 @@
 
 #pragma once
 
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/BigIntObject.h>
 #include <JavaScriptCore/BooleanObject.h>
 #include <JavaScriptCore/CloneBase.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSBigInt.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSMapInlines.h>
@@ -43,17 +46,29 @@
 #include <JavaScriptCore/PropertyNameArray.h>
 #include <JavaScriptCore/RegExpObject.h>
 #include <JavaScriptCore/StringObject.h>
+#include <JavaScriptCore/TypedArrayController.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
+#if ENABLE(WEBASSEMBLY)
+#include <JavaScriptCore/JSWebAssemblyMemory.h>
+#include <JavaScriptCore/JSWebAssemblyModule.h>
+#include <JavaScriptCore/WasmModule.h>
+#endif
+
 namespace JSC {
 
 template<typename Derived>
-concept StructuredCloneSerializerHandler = requires(Derived& d, JSObject* obj, SerializationReturnCode& code) {
+concept StructuredCloneSerializerHandler = requires(Derived& d, JSObject* obj, SerializationReturnCode& code, ArrayBuffer& buffer) {
     { d.dumpDerivedTerminal(obj, code) } -> std::same_as<bool>;
+    // Optional hooks with defaults:
+    { d.agentClusterID() } -> std::same_as<String>;
+    { d.allowsSharedMemorySerialization() } -> std::same_as<bool>;
+    { d.allowsWasmModuleSerialization() } -> std::same_as<bool>;
+    { d.toJSArrayBuffer(buffer) } -> std::same_as<JSValue>;
 };
 
 namespace StructuredCloneInternal {
@@ -85,8 +100,11 @@ template<> inline bool writeLittleEndian<uint8_t>(Vector<uint8_t>& buffer, std::
 
 } // namespace StructuredCloneInternal
 
-template<typename Derived>
+template<typename Derived, std::derived_from<CloneSerializationSideChannels> SideChannelsType = CloneSerializationSideChannels>
 class CloneSerializerBase : public CloneBase {
+public:
+    using SideChannels = SideChannelsType;
+
 protected:
     using ObjectPoolMap = HashMap<JSObject*, uint32_t>;
     using StringConstantPool = HashMap<RefPtr<AtomStringImpl>, uint32_t, IdentifierRepHash>;
@@ -97,6 +115,25 @@ protected:
     {
     }
 
+    // Valid once serialize() has run; the serializer must not be used again afterwards.
+    SideChannels takeSideChannels() { return WTF::move(m_sideChannels); }
+
+    // BEGIN: hooks for embedders.
+    // Derived can override any of these; the defaults below are used when Derived doesn't provide its own.
+
+public:
+    String agentClusterID() { return emptyString(); }
+    bool allowsSharedMemorySerialization() { return true; }
+    bool allowsWasmModuleSerialization() { return true; }
+    JSValue toJSArrayBuffer(ArrayBuffer& arrayBuffer)
+    {
+        VM& vm = m_lexicalGlobalObject->vm();
+        return vm.m_typedArrayController->toJS(m_lexicalGlobalObject, m_lexicalGlobalObject, arrayBuffer);
+    }
+
+    // END: hooks for embedders.
+
+protected:
     template<typename T> requires std::is_enum_v<T>
     void write(T tag)
     {
@@ -115,6 +152,18 @@ protected:
     void write(double d)
     {
         StructuredCloneInternal::writeLittleEndian(m_buffer, std::bit_cast<int64_t>(d));
+    }
+
+    void write(std::span<const uint8_t> data)
+    {
+        m_buffer.append(data);
+    }
+
+    void writeResizableArrayBuffer(std::span<const uint8_t> data, size_t maxByteLength)
+    {
+        write(static_cast<uint64_t>(data.size()));
+        write(static_cast<uint64_t>(maxByteLength));
+        write(data);
     }
 
     template<class T>
@@ -317,6 +366,54 @@ protected:
         }
     }
 
+    bool dumpArrayBufferView(JSObject* obj, SerializationReturnCode& code)
+    {
+        write(ArrayBufferViewTag);
+        switch (obj->type()) {
+#define JSC_WRITE_ARRAY_BUFFER_VIEW_SUBTAG(name) \
+        case name##ArrayType: \
+            write(name##ArrayTag); \
+            break;
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_WRITE_ARRAY_BUFFER_VIEW_SUBTAG)
+#undef JSC_WRITE_ARRAY_BUFFER_VIEW_SUBTAG
+        case DataViewType:
+            write(DataViewTag);
+            break;
+        default:
+            // We need to return true here because the client only checks for the error condition if
+            // the return value is true (same as all the error cases below).
+            code = SerializationReturnCode::DataCloneError;
+            return true;
+        }
+
+        if (uncheckedDowncast<JSArrayBufferView>(obj)->isOutOfBounds()) [[unlikely]] {
+            code = SerializationReturnCode::DataCloneError;
+            return true;
+        }
+
+        RefPtr<ArrayBufferView> arrayBufferView = uncheckedDowncast<JSArrayBufferView>(obj)->possiblySharedImpl();
+        if (arrayBufferView->isResizableOrGrowableShared()) {
+            uint64_t byteOffset = arrayBufferView->byteOffsetRaw();
+            write(byteOffset);
+            uint64_t byteLength = arrayBufferView->byteLengthRaw();
+            if (arrayBufferView->isAutoLength())
+                byteLength = autoLengthMarker;
+            write(byteLength);
+        } else {
+            uint64_t byteOffset = arrayBufferView->byteOffset();
+            write(byteOffset);
+            uint64_t byteLength = arrayBufferView->byteLength();
+            write(byteLength);
+        }
+        RefPtr<ArrayBuffer> arrayBuffer = arrayBufferView->possiblySharedBuffer();
+        if (!arrayBuffer) {
+            code = SerializationReturnCode::ValidationError;
+            return true;
+        }
+
+        return dumpIfTerminal(static_cast<Derived*>(this)->toJSArrayBuffer(*arrayBuffer), code);
+    }
+
     ALWAYS_INLINE bool dumpIfTerminal(JSValue value, SerializationReturnCode& code)
     {
         // Note: This can't be a requirement on the template as, in the common usage,
@@ -411,6 +508,95 @@ protected:
             dumpBigIntData(bigIntValue);
             return true;
         }
+        if (RefPtr arrayBuffer = toPossiblySharedArrayBuffer(m_lexicalGlobalObject->vm(), obj)) {
+            if (arrayBuffer->isDetached()) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+            auto index = m_transferredArrayBuffers.find(obj);
+            if (index != m_transferredArrayBuffers.end()) {
+                write(ArrayBufferTransferTag);
+                write(index->value);
+                return true;
+            }
+            if (!addToObjectPoolIfNotDupe<ArrayBufferTag, ResizableArrayBufferTag, SharedArrayBufferTag>(obj))
+                return true;
+
+            if (arrayBuffer->isShared()) {
+                // https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeinternal
+                if (static_cast<Derived*>(this)->allowsSharedMemorySerialization()) {
+                    ArrayBufferContents contents;
+                    if (arrayBuffer->shareWith(contents)) {
+                        uint32_t sharedBufferIndex = m_sideChannels.sharedBuffers.size();
+                        appendObjectPoolTag(SharedArrayBufferTag);
+                        write(SharedArrayBufferTag);
+                        write(static_cast<Derived*>(this)->agentClusterID());
+                        m_sideChannels.sharedBuffers.append(WTF::move(contents));
+                        write(sharedBufferIndex);
+                        return true;
+                    }
+                }
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+
+            if (arrayBuffer->isResizableOrGrowableShared()) {
+                appendObjectPoolTag(ResizableArrayBufferTag);
+                write(ResizableArrayBufferTag);
+                writeResizableArrayBuffer(arrayBuffer->span(), arrayBuffer->maxByteLength().value_or(0));
+                return true;
+            }
+
+            appendObjectPoolTag(ArrayBufferTag);
+            write(ArrayBufferTag);
+            uint64_t byteLength = arrayBuffer->byteLength();
+            write(byteLength);
+            write(arrayBuffer->span());
+            return true;
+        }
+        if (obj->inherits<JSArrayBufferView>()) {
+            // Note: we can't just use addToObjectPoolIfNotDupe() here because the deserializer
+            // expects to deserialize the children before it deserializes the JSArrayBufferView.
+            // We need to make the serializer follow the same serialization order here by doing
+            // this dance with writeObjectReferenceIfDupe() and addToObjectPool().
+            if (writeObjectReferenceIfDupe<ArrayBufferViewTag>(obj))
+                return true;
+            bool success = dumpArrayBufferView(obj, code);
+            addToObjectPool<ArrayBufferViewTag>(obj);
+            return success;
+        }
+#if ENABLE(WEBASSEMBLY)
+        if (JSWebAssemblyModule* module = dynamicDowncast<JSWebAssemblyModule>(obj)) {
+            if (!static_cast<Derived*>(this)->allowsWasmModuleSerialization()) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+
+            uint32_t index = m_sideChannels.wasmModules.size();
+            m_sideChannels.wasmModules.append(Ref { module->module() });
+            write(WasmModuleTag);
+            write(static_cast<Derived*>(this)->agentClusterID());
+            write(index);
+            return true;
+        }
+        if (JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(obj)) {
+            if (!static_cast<Derived*>(this)->allowsSharedMemorySerialization() || memory->memory().sharingMode() != MemorySharingMode::Shared) {
+                code = SerializationReturnCode::DataCloneError;
+                return true;
+            }
+            uint32_t index = m_sideChannels.wasmMemoryHandles.size();
+            m_sideChannels.wasmMemoryHandles.append(memory->memory().shared());
+            write(WasmMemoryTag);
+            write(static_cast<Derived*>(this)->agentClusterID());
+            write(index);
+            // The address type is not recoverable from the shared contents, and a memory declared with a
+            // maximum of zero has no contents at all. Embedders that persist serialized values
+            // reject shared memory in allowsSharedMemorySerialization(), so this record only ever
+            // travels between live agents and needs no version guard.
+            write(memory->memory().addressType().is64Bit());
+            return true;
+        }
+#endif
         // The walker descends into JSArray/JSMap/JSSet; never let Derived or the generic error
         // path claim them as terminals.
         if (is<JSArray>(*obj) || is<JSMap>(*obj) || is<JSSet>(*obj))
@@ -719,6 +905,8 @@ protected:
     Vector<uint8_t>& m_buffer;
     StringConstantPool m_constantPool;
     ObjectPoolMap m_objectPoolMap;
+    ObjectPoolMap m_transferredArrayBuffers;
+    SideChannels m_sideChannels;
 };
 
 } // namespace JSC

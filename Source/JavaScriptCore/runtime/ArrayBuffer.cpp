@@ -247,7 +247,7 @@ void ArrayBufferContents::copyTo(ArrayBufferContents& other)
     ASSERT(other.m_maxByteLength <= MAX_ARRAY_BUFFER_SIZE);
 }
 
-void ArrayBufferContents::shareWith(ArrayBufferContents& other)
+void ArrayBufferContents::shareWith(ArrayBufferContents& other) const
 {
     ASSERT(!other.m_data);
     ASSERT(m_shared);
