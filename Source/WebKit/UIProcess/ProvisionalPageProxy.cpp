@@ -41,6 +41,7 @@
 #include "PageClient.h"
 #include "ProvisionalFrameCreationParameters.h"
 #include "RemotePageProxy.h"
+#include "SecurityFlags.h"
 #include "SuspendedPageProxy.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebBackForwardCacheEntry.h"
@@ -439,13 +440,22 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didStartProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(m_provisionalLoadURL.isNull());
+
+    RefPtr page = m_page.get();
+    if (SecurityFlags::radar180469521()) {
+        RefPtr navigation = page ? page->navigationState().navigation(m_navigationID) : nullptr;
+        if (navigation) {
+            RefPtr targetItem = navigation->targetItem();
+            MESSAGE_CHECK(url == navigation->currentRequest().url() || (targetItem && url == targetItem->url()));
+        }
+    }
+
     m_provisionalLoadURL = url;
 
     // Merely following a server side redirect so there is no need to send a didStartProvisionalLoad again.
     if (m_isServerRedirect)
         return;
 
-    RefPtr page = m_page.get();
     if (!page)
         return;
 

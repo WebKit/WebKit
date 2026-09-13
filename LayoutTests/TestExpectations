@@ -8280,3 +8280,6 @@ webkit.org/b/317017 imported/w3c/web-platform-tests/largest-contentful-paint/mul
 
 imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Skip ] # Different hash generated on each run
 imported/w3c/web-platform-tests/preload/modulepreload-multiple.html [ Failure Pass ]
+
+# IPC testing is disabled in Release builds
+[ Release ] http/tests/ipc/provisional-page-forged-provisional-url-message-check.html [ Skip ]
