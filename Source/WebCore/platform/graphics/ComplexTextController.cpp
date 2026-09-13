@@ -722,8 +722,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         auto glyphs = complexTextRun->glyphs();
         auto advances = complexTextRun->baseAdvances();
 
-        // Lower in this function, synthetic bold is blanket-applied to everything, so no need to double-apply it here.
-        float spaceWidth = font->spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+        float spaceWidth = font->spaceWidth();
         auto charactersSpan = complexTextRun->characters();
         FloatPoint glyphOrigin;
         unsigned previousCharacterIndex = m_run->ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
@@ -766,7 +765,7 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             float advanceAdjustmentExcludedFromMarkCompensation = 0;
 
             if (isTabWithTabStops) {
-                advance.setWidth(m_fontCascade->tabWidth(font.get(), m_run->tabSize(), m_run->xPos() + m_totalAdvance.width(), Font::SyntheticBoldInclusion::Exclude));
+                advance.setWidth(m_fontCascade->tabWidth(font.get(), m_run->tabSize(), m_run->xPos() + m_totalAdvance.width()));
                 // Like simple text path in WidthIterator::applyCSSVisibilityRules,
                 // make tabCharacter glyph invisible after advancing.
                 glyph = deletedGlyph;
@@ -810,10 +809,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     advanceAdjustmentExcludedFromMarkCompensation -= origins[0].x();
                 }
             }
-
-            // Only embolden glyphs that advance the pen, like the "zero width lurkers" guard below.
-            if (advance.width())
-                advance.expand(font->syntheticBoldOffset(), 0);
 
             if (hasExtraSpacing) {
                 // If we're a glyph with an advance, add in letter-spacing.
@@ -981,8 +976,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Font& font, std::spa
 
     // Synthesize a run of missing glyphs.
     m_glyphs.fill(0, m_glyphCount);
-    // Synthetic bold will be handled later in adjustGlyphsAndAdvances().
-    m_baseAdvances.fill(FloatSize(protect(font)->widthForGlyph(0, Font::SyntheticBoldInclusion::Exclude), 0), m_glyphCount);
+    m_baseAdvances.fill(FloatSize(protect(font)->widthForGlyph(0), 0), m_glyphCount);
 }
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& advances, const Vector<FloatPoint>& origins, const Vector<Glyph>& glyphs, const Vector<unsigned>& stringIndices, FloatSize initialAdvance, const Font& font, std::span<const char16_t> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd, bool ltr)

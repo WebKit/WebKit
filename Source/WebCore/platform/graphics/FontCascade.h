@@ -164,7 +164,7 @@ public:
 
     inline const FontMetrics& metricsOfPrimaryFont() const; // Defined in FontCascadeInlines.h
     WEBCORE_EXPORT float zeroWidth() const;
-    float tabWidth(const Font&, const TabSize&, float, Font::SyntheticBoldInclusion) const;
+    float tabWidth(const Font&, const TabSize&, float) const;
     bool hasValidAverageCharWidth() const;
     bool fastAverageCharWidthIfAvailable(float &width) const; // returns true on success
 

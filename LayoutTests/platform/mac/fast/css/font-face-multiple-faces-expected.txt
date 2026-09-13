@@ -153,17 +153,17 @@ layer at (0,0) size 800x600
             text run at (1,19) width 111: "Helvetica Bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (4,180) size 776x28 [border: (1px solid #ADD8E6)]
-        RenderInline {B} at (1,1) size 174x25
-          RenderText {#text} at (1,1) size 174x25
-            text run at (1,1) width 174: "Papyrus synthetic bold"
-        RenderText {#text} at (174,1) size 67x25
-          text run at (174,1) width 67: " Papyrus "
-        RenderInline {I} at (240,1) size 381x25
-          RenderText {#text} at (240,1) size 168x25
-            text run at (240,1) width 168: "Papyrus synthetic italic "
-          RenderInline {B} at (407,1) size 214x25
-            RenderText {#text} at (407,1) size 214x25
-              text run at (407,1) width 214: "Papyrus synthetic bold italic"
+        RenderInline {B} at (1,1) size 164x25
+          RenderText {#text} at (1,1) size 164x25
+            text run at (1,1) width 164: "Papyrus synthetic bold"
+        RenderText {#text} at (164,1) size 67x25
+          text run at (164,1) width 67: " Papyrus "
+        RenderInline {I} at (230,1) size 368x25
+          RenderText {#text} at (230,1) size 168x25
+            text run at (230,1) width 168: "Papyrus synthetic italic "
+          RenderInline {B} at (397,1) size 201x25
+            RenderText {#text} at (397,1) size 201x25
+              text run at (397,1) width 201: "Papyrus synthetic bold italic"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,223) size 784x19
         RenderText {#text} at (0,0) size 338x18
@@ -191,9 +191,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (4,393) size 776x19 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x16
           text run at (1,1) width 80: "AHEM "
-        RenderInline {B} at (81,1) size 66x16
-          RenderText {#text} at (81,1) size 66x16
-            text run at (81,1) width 66: "AHEM"
+        RenderInline {B} at (81,1) size 64x16
+          RenderText {#text} at (81,1) size 64x16
+            text run at (81,1) width 64: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,427) size 784x19
         RenderText {#text} at (0,0) size 343x18
