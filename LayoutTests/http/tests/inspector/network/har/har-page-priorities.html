@@ -19,9 +19,12 @@ function test()
             await NetworkAgent.setResourceCachingDisabled(false);
 
             await Promise.all([
+                WI.networkManager.mainFrame.removeAllResources(),
+                WI.networkManager.mainFrame.clearProvisionalLoad(false),
+            ]);
+
+            await Promise.all([
                 InspectorTest.awaitEvent("LoadComplete"),
-                // WI.networkManager.mainFrame.removeAllResources(),
-                // WI.networkManager.mainFrame.clearProvisionalLoad(false),
                 InspectorTest.reloadPage({ignoreCache: true}),
             ]);
 
@@ -31,73 +34,44 @@ function test()
             let firstDuplicate = true;
 
             localResources.forEach((entry) => {
+                const priorityName = WI.Resource.displayNameForPriority(entry.priority);
+                const initialPriorityName = WI.Resource.displayNameForPriority(entry.initialPriority);
+
                 if ((/html$/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
-                        "VeryHigh",
-                        `HTML ${entry.url} should start with a VeryHigh priority`);
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "VeryHigh",
-                        "- HTML should still have VeryHigh priority");
+                    InspectorTest.expectEqual(initialPriorityName, "Very High", `HTML ${entry.url} should start with a Very High priority`);
+                    InspectorTest.expectEqual(priorityName, "Very High", "- HTML should still have Very High priority");
                 } else if ((/duplicate$/).test(entry.url)) {
                     if (firstDuplicate) {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
-                            "Low",
-                            `First duplicate ${entry.url} should start with a Low priority`);
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "Medium",
-                            "- First duplicate priority has been boosted");
+                        InspectorTest.expectEqual(initialPriorityName, "Low", `First duplicate ${entry.url} should start with a Low priority`);
+                        InspectorTest.expectEqual(priorityName, "Medium", "- First duplicate priority has been boosted");
                         firstDuplicate = false;
                     } else {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "Low",
-                            "- Second duplicate image has not been boosted");
+                        InspectorTest.expectEqual(priorityName, "Low", "- Second duplicate image has not been boosted");
                         firstDuplicate = true;
                     }
                 } else if ((/image\/png/).test(entry.mimeType)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "Low",
-                        `Image ${entry.url} should have a Low priority`);
+                    InspectorTest.expectEqual(priorityName, "Low", `Image ${entry.url} should have a Low priority`);
                 } else if ((/javascript$/).test(entry.mimeType)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
-                        "High",
-                        `JavaScript ${entry.url} should start with a High priority`);
+                    InspectorTest.expectEqual(initialPriorityName, "High", `JavaScript ${entry.url} should start with a High priority`);
                     if ((/async$/).test(entry.url)) {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "Medium",
-                            `- Async JavaScript should be reduced to Medium priority`);
+                        InspectorTest.expectEqual(priorityName, "Medium", `- Async JavaScript should be reduced to Medium priority`);
                     } else {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "High",
-                            `- JavaScript should still have a High priority`);
+                        InspectorTest.expectEqual(priorityName, "High", `- JavaScript should still have a High priority`);
                     }
                 } else if ((/beacon/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "VeryLow",
-                        `Beacon ${entry.url} should have VeryLow priority`);
+                    InspectorTest.expectEqual(priorityName, "Very Low", `Beacon ${entry.url} should have Very Low priority`);
                 } else if ((/\.css/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
-                        "High",
-                        `Stylesheet ${entry.url} should start with a High priority`);
+                    InspectorTest.expectEqual(initialPriorityName, "High", `Stylesheet ${entry.url} should start with a High priority`);
                     if ((/print$/).test(entry.url)) {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "VeryLow",
-                            `- Print stylesheet should be reduced to a VeryLow priority`);
+                        InspectorTest.expectEqual(priorityName, "Very Low", `- Print stylesheet should be reduced to a Very Low priority`);
                     } else if ((/low$/).test(entry.url)) {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "Medium",
-                            `- Priority was only reduced to Medium`);
+                        InspectorTest.expectEqual(priorityName, "Medium", `- Priority was only reduced to Medium`);
                     } else {
-                        InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                            "High",
-                            `- Screen stylesheet should stay at a High priority`);
+                        InspectorTest.expectEqual(priorityName, "High", `- Screen stylesheet should stay at a High priority`);
                     }
                 } else if ((/\.woff$/).test(entry.url)) {
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.initialPriority),
-                        "Medium",
-                        `Font ${entry.url} should start with a Medium priority`);
-                    InspectorTest.expectEqual(WI.Resource.displayNameForPriority(entry.priority),
-                        "Medium",
-                        `- Font should stay with a Medium priority`);
+                    InspectorTest.expectEqual(initialPriorityName, "Medium", `Font ${entry.url} should start with a Medium priority`);
+                    InspectorTest.expectEqual(priorityName, "Medium", `- Font should stay with a Medium priority`);
                 }
             });
         }
