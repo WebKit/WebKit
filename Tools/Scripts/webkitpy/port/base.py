@@ -353,7 +353,9 @@ class Port(object):
         return True
 
     def environment_for_api_tests(self):
-        return self.setup_environ_for_server()
+        environment = self.setup_environ_for_server()
+        self._append_sanitizer_options(environment)
+        return environment
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
@@ -835,6 +837,34 @@ class Port(object):
             env[name] = env[name] + os.pathsep + value
         else:
             env[name] = value
+
+    @staticmethod
+    def _append_sanitizer_option(environment, variable, option):
+        # Sanitizer options are always ':'-separated, unlike a path list (os.pathsep is ';' on Windows).
+        # Keep an existing setting for the same key, so --additional-env-var wins.
+        if not environment.get(variable):
+            environment[variable] = option
+            return
+        key = option.split('=', 1)[0]
+        options = [each for each in environment[variable].split(':') if each]
+        if any(each.split('=', 1)[0] == key for each in options):
+            return
+        environment[variable] = ':'.join(options + [option])
+
+    def _append_asan_options(self, environment):
+        self._append_sanitizer_option(environment, 'ASAN_OPTIONS', 'allocator_may_return_null=1')
+        environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
+
+    def _append_tsan_options(self, environment):
+        if not self._config.tsan:
+            return
+        self._append_sanitizer_option(environment, 'TSAN_OPTIONS', 'second_deadlock_stack=1')
+        self._append_sanitizer_option(environment, 'TSAN_OPTIONS', 'suppressions=' + self.path_from_webkit_base('Tools', 'Scripts', 'tsan_suppressions.txt'))
+        environment['__XPC_TSAN_OPTIONS'] = environment['TSAN_OPTIONS']
+
+    def _append_sanitizer_options(self, environment):
+        self._append_asan_options(environment)
+        self._append_tsan_options(environment)
 
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by
