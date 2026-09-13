@@ -2156,6 +2156,11 @@ static bool styleAffectsLayerGeometry(const Style::ComputedStyle& style)
         || style.border().hasBorderRadius();
 }
 
+static bool filterOutsetsChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+{
+    return oldStyle.filter().calculateOutsets(oldStyle.usedZoomForLength()) != newStyle.filter().calculateOutsets(newStyle.usedZoomForLength());
+}
+
 static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.transform() != newStyle.transform()
@@ -2318,12 +2323,13 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
             if (oldStyle && oldStyle->opacity() != newStyle.opacity() && (oldStyle->opacity().isTransparent() || newStyle.opacity().isTransparent()))
                 layer.setNeedsCompositingConfigurationUpdate();
         }
-        if (oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
+        bool outsetsChanged = oldStyle && filterOutsetsChanged(*oldStyle, newStyle);
+        if (oldStyle && (outsetsChanged || recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle))) {
             // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
             layer.setNeedsPostLayoutCompositingUpdate();
             layer.setNeedsCompositingGeometryUpdate();
         }
-        if (oldStyle && recompositeChangeRequiresChildrenGeometryUpdate(*oldStyle, newStyle))
+        if (oldStyle && (outsetsChanged || recompositeChangeRequiresChildrenGeometryUpdate(*oldStyle, newStyle)))
             layer.setChildrenNeedCompositingGeometryUpdate();
     }
 }

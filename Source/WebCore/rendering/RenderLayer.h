@@ -865,6 +865,7 @@ public:
     bool hasFilterOutsets() const { return !filterOutsets().isZero(); }
     bool hasAncestorWithFilterOutsets() const;
     IntOutsets filterOutsets() const;
+    IntOutsets outsetsForFiltersSamplingThisLayer() const;
     void clearFilters();
 
     inline bool hasBackdropFilter() const;
