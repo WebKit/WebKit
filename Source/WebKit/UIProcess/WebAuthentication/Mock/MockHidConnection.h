@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 
 #include "HidConnection.h"
 #include <WebCore/FidoHidMessage.h>
@@ -83,4 +83,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(COCOA)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 
 #include "HidService.h"
 #include <WebCore/MockWebAuthenticationConfiguration.h>
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(COCOA)

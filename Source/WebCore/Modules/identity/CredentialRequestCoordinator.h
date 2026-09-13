@@ -37,6 +37,7 @@
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class AbortSignal;

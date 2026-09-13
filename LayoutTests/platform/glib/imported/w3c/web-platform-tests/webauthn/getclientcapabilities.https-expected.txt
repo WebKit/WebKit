@@ -1,0 +1,3 @@
+
+PASS Known capabilities are reported and are sorted
+

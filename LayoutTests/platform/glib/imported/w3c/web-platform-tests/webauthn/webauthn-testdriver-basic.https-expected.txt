@@ -1,0 +1,6 @@
+
+FAIL Set up the test environment promise_test: Unhandled rejection with value: "error: Action add_virtual_authenticator not implemented"
+FAIL Create a credential promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+FAIL Get an assertion promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'credential.rawId')"
+FAIL Clean up the test environment promise_test: Unhandled rejection with value: object "Error: remove_virtual_authenticator() is not implemented by testdriver-vendor.js"
+

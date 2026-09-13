@@ -1,0 +1,8 @@
+
+PASS signalCurrentUserDetails fails with SecurityError for invalid RP IDs
+FAIL signalCurrentUserDetails fails with TypeError for invalid userId base64url promise_rejects_js: function "function() { throw e; }" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL signalCurrentUserDetails does not update a different user id promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+FAIL signalCurrentUserDetails updates a matching user id promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+
