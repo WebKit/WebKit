@@ -8568,6 +8568,34 @@ void WebPageProxy::didCancelClientRedirectForFrame(IPC::Connection& connection, 
         m_navigationClient->didCancelClientRedirect(*this);
 }
 
+void WebPageProxy::didBlockNavigationByContentPolicyForFrame(IPC::Connection& connection, FrameIdentifier frameID, URL&& blockedURL)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_URL(process, blockedURL);
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didBlockNavigationByContentPolicyForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // A child-frame navigation blocked by the embedding content security policy never starts a
+    // provisional load, so WebCore reports neither a start nor a failure. Synthesize both for
+    // automation so the blocked navigable emits navigationStarted then navigationFailed, each with
+    // the blocked URL, matching the frame's browsing-context handle in browsingContext.getTree. The
+    // load never started, so it has no WebCore navigation identifier; allocate one so the start and
+    // failure share a single, unique id (the same allocator API::Navigation uses).
+    if (RefPtr automationSession = activeAutomationSession()) {
+        auto navigationID = WebCore::NavigationIdentifier::generate();
+        automationSession->navigationStartedForFrame(*frame, navigationID, blockedURL.string());
+        automationSession->navigationFailedForFrame(*frame, navigationID, blockedURL.string());
+    }
+#else
+    UNUSED_PARAM(blockedURL);
+#endif
+}
+
 void WebPageProxy::didChangeProvisionalURLForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url)
 {
     didChangeProvisionalURLForFrameShared(WebProcessProxy::fromConnection(connection), frameID, navigationID, WTF::move(url));

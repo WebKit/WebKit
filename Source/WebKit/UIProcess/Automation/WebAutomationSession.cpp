@@ -1084,19 +1084,9 @@ void WebAutomationSession::reloadBrowsingContext(const Inspector::Protocol::Auto
 void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame)
 {
     if (frame.isMainFrame()) {
-        // New page loaded, clear frame handles previously cached for frame's page.
-        HashSet<String> handlesToRemove;
-        for (const auto& iter : m_handleWebFrameMap) {
-            RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
-            if (webFrame && webFrame->page() == frame.page()) {
-                handlesToRemove.add(iter.key);
-                m_webFrameHandleMap.remove(iter.value);
-            }
-        }
-        m_handleWebFrameMap.removeIf([&](auto& iter) {
-            return handlesToRemove.contains(iter.key);
-        });
-
+        // Frame-handle cleanup for a new top-level document happens at commit
+        // (navigationCommittedForFrame), not here: clearing on load completion would evict the new
+        // document's own subframes, which are created before the main frame finishes loading.
         if (auto callback = m_pendingNormalNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->identifier())) {
             m_loadTimer.stop();
             callback({ });
@@ -1366,20 +1356,49 @@ void WebAutomationSession::emitBidiNavigationAbortedIfInFlight(const WebFramePro
     emitBidiNavigationTerminal(frame, BidiNavigationTerminalType::Aborted, state.navigationID, state.url);
 }
 
-void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
+void WebAutomationSession::navigationStartedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID, const String& url)
 {
+    // A caller may supply the navigation's URL explicitly for a load that never reaches WebCore's
+    // provisional-load reporting (a policy-blocked child frame); otherwise the provisional URL is the
+    // tracked target and the frame's current URL is what the event reports.
+    auto trackedURL = url.isNull() ? frame.provisionalURL().string() : url;
+
     // Suppress a start reported after the navigation has already been superseded and terminated;
     // emitting it would deliver navigationStarted after navigationAborted and reverse the lifecycle.
-    if (trackBidiNavigationForFrame(frame, navigationID, frame.provisionalURL().string(), BidiNavigationSource::WebCore) == BidiNavigationTrackingResult::Ignored)
+    if (trackBidiNavigationForFrame(frame, navigationID, trackedURL, BidiNavigationSource::WebCore) == BidiNavigationTrackingResult::Ignored)
         return;
 
+    auto eventURL = url.isNull() ? frame.url().string() : url;
     m_bidiProcessor->emitEventIfEnabled(BidiEventNames::BrowsingContext::NavigationStarted, { }, [&]() {
-        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), frame.url().string());
+        m_bidiProcessor->browsingContextDomainNotifier().navigationStarted(effectiveHandleForWebFrameProxy(frame), navigationIDToProtocolString(navigationID), std::trunc(WallTime::now().secondsSinceEpoch().milliseconds()), eventURL);
     });
 }
 
 void WebAutomationSession::navigationCommittedForFrame(const WebFrameProxy& frame, std::optional<WebCore::NavigationIdentifier> navigationID)
 {
+    if (frame.isMainFrame()) {
+        // The main frame has committed a new document, replacing the previous document and its child
+        // navigables. Clear the previous document's cached child-frame handles now: the commit is the
+        // point the old contexts cease to be current, and it is before the new document has parsed and
+        // created its own subframes. A stale handle then resolves to FrameNotFound (even for a frame
+        // the previous document left in the back/forward cache, which sends no DidDestroyFrame), while
+        // a subframe the new document creates afterwards keeps the handle its own navigation events
+        // report through to browsingContext.getTree. Clearing at provisional start instead would
+        // wrongly invalidate the still-current children if that navigation fails before committing;
+        // clearing at load completion would run after the new document's subframes already exist.
+        HashSet<String> handlesToRemove;
+        for (const auto& iter : m_handleWebFrameMap) {
+            RefPtr webFrame = WebFrameProxy::webFrame(iter.value);
+            if (webFrame && webFrame->page() == frame.page()) {
+                handlesToRemove.add(iter.key);
+                m_webFrameHandleMap.remove(iter.value);
+            }
+        }
+        m_handleWebFrameMap.removeIf([&](auto& iter) {
+            return handlesToRemove.contains(iter.key);
+        });
+    }
+
     auto frameHandle = effectiveHandleForWebFrameProxy(frame);
     // A commit reported after the navigation already terminated is stale; do not emit it.
     if (!isBidiNavigationTerminated(frame.frameID(), navigationID)) {
