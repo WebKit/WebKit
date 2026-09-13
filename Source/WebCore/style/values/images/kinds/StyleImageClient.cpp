@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,45 +24,66 @@
  * SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "StyleImageClient.h"
 
-#include "StyleCustomIdent.h"
-#include "StyleGeneratedImage.h"
+#include "CachedImageClient.h"
 
 namespace WebCore {
 namespace Style {
 
-class NamedImage final : public GeneratedImage {
-public:
-    static Ref<NamedImage> create(CustomIdent&& name)
-    {
-        return adoptRef(*new NamedImage(WTF::move(name)));
-    }
-    virtual ~NamedImage();
+ImageClient::ImageClient() = default;
+ImageClient::~ImageClient() = default;
 
-    bool operator==(const Image&) const final;
-    bool NODELETE equals(const NamedImage&) const;
+void ImageClient::imageChanged(const Image&, const IntRect*) const
+{
+}
 
-    static constexpr bool isFixedSize = false;
+void ImageClient::notifyFinished(const CachedImage&) const
+{
+}
 
-private:
-    explicit NamedImage(CustomIdent&&);
+bool ImageClient::allowsAnimation(const CachedImage&) const
+{
+    return true;
+}
 
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
-    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
-    bool isPending() const final;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(ImageClient&) final { }
-    void didRemoveClient(ImageClient&) final { }
+bool ImageClient::canDestroyDecodedData(const CachedImage&) const
+{
+    return true;
+}
 
-    CustomIdent m_name;
-};
+bool ImageClient::useSystemDarkAppearance(const CachedImage&) const
+{
+    return false;
+}
+
+VisibleInViewportState ImageClient::imageFrameAvailable(const CachedImage&, ImageAnimatingState, const IntRect*) const
+{
+    return VisibleInViewportState::No;
+}
+
+VisibleInViewportState ImageClient::imageVisibleInViewport(const CachedImage&, const Document&) const
+{
+    return VisibleInViewportState::No;
+}
+
+void ImageClient::didRemoveCachedImageClient(const CachedImage&) const
+{
+}
+
+void ImageClient::imageContentChanged(const CachedImage&) const
+{
+}
+
+void ImageClient::scheduleRenderingUpdateForImage(const CachedImage&) const
+{
+}
+
+bool ImageClient::isRendererClient() const
+{
+    return false;
+}
 
 } // namespace Style
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(NamedImage, isNamedImage)
-

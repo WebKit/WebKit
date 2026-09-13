@@ -73,7 +73,7 @@ SVGDocument* IsolatedSVGDocumentContext::document() const
     return localMainFrame ? dynamicDowncast<SVGDocument>(localMainFrame->document()) : nullptr;
 }
 
-void IsolatedSVGDocumentContext::imageChanged(CachedImage*, const IntRect*)
+void IsolatedSVGDocumentContext::imageChanged(CachedImage&, const IntRect*)
 {
     // The isolated document just finished loading and laying out. Force referencing renderers to
     // rebuild their SVGResources so paint servers re-resolve.

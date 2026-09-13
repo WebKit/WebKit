@@ -2219,22 +2219,22 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
     return result;
 }
 
-void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
+void RenderBox::imageChanged(const Style::Image& image, const IntRect*)
 {
-    if (RefPtr source = style().borderImageSource().tryStyleImage(); source && source->data() == image) {
+    if (RefPtr source = style().borderImageSource().tryStyleImage(); source && source->isOrContains(image)) {
         if (parent())
             repaint();
         return;
     }
 
-    if (RefPtr source = style().maskBorderSource().tryStyleImage(); source && source->data() == image) {
+    if (RefPtr source = style().maskBorderSource().tryStyleImage(); source && source->isOrContains(image)) {
         if (parent())
             repaint();
         return;
     }
 
     if (!view().frameView().layoutContext().isInRenderTreeLayout() && isFloating()) {
-        if (RefPtr shapeOutsideImage = style().shapeOutside().image(); shapeOutsideImage && shapeOutsideImage->data() == image) {
+        if (RefPtr shapeOutsideImage = style().shapeOutside().tryStyleImage(); shapeOutsideImage && shapeOutsideImage->isOrContains(image)) {
             ensureShapeOutsideInfo().markShapeAsDirty();
             markShapeOutsideDependentsForLayout();
         }
@@ -2262,7 +2262,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     if (styleImage && isNonEmpty) {
         incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(protect(styleable->element).get(), styleImage);
     }
 
     if (!isComposited())
@@ -2285,13 +2285,13 @@ void RenderBox::incrementVisuallyNonEmptyPixelCountIfNeeded(const IntSize& size)
 }
 
 template<typename Layers>
-bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const Layers& layers, Style::ZoomFactor zoom, bool drawingBackground)
+bool RenderBox::repaintLayerRectsForImage(const Style::Image& image, const Layers& layers, Style::ZoomFactor zoom, bool drawingBackground)
 {
     LayoutRect rendererRect;
     RenderBox* layerRenderer = nullptr;
 
     for (auto& layer : layers.usedValues()) {
-        if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->data() == image && (layerImage->isLoaded(this) || layerImage->canRender(this, style().usedZoom()))) {
+        if (RefPtr layerImage = layer.image().tryStyleImage(); layerImage && layerImage->isOrContains(image) && (layerImage->isLoaded(this) || layerImage->canRender(this, style().usedZoom()))) {
             // Now that we know this image is being used, compute the renderer and the rect if we haven't already.
             bool drawingRootBackground = drawingBackground && (isDocumentElementRenderer() || (isBody() && !document().documentElement()->renderer()->hasBackground()));
             if (!layerRenderer) {

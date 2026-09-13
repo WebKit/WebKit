@@ -47,8 +47,8 @@ public:
     static constexpr bool isFixedSize = true;
 
 protected:
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    void didAddClient(ImageClient&) final { }
+    void didRemoveClient(ImageClient&) final { }
 
     FloatSize fixedSize(const RenderElement&) const final { return { }; }
 

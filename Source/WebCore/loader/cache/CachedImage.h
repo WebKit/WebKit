@@ -29,7 +29,9 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutSize.h>
 #include <WebCore/SVGImageCache.h>
-#include <WebCore/StyleLinkParameters.h>
+#include <WebCore/StyleImageContainerContext.h>
+#include <WebCore/StyleImageContainerContextKey.h>
+#include <WebCore/StyleImageSizeOptions.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -53,20 +55,27 @@ public:
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image() const; // Returns the nullImage() if the image is not available yet.
+    WEBCORE_EXPORT Image* imageForKey(const ImageContainerContextKey*); // Returns the nullImage() if the image is not available yet.
     WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
-    bool hasImage() const { return m_image.get(); }
-    bool currentFrameKnownToBeOpaque(const RenderElement*);
-    bool currentFrameIsComplete(const RenderElement*);
 
-    std::pair<WeakPtr<Image>, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
+    bool hasImage() const { return m_image.get(); }
+
+    bool currentFrameKnownToBeOpaqueForKey(const ImageContainerContextKey&);
+    bool currentFrameKnownToBeOpaqueForRenderer(const RenderObject&);
+
+    bool currentFrameIsCompleteForKey(const ImageContainerContextKey&);
+    bool currentFrameIsCompleteForRenderer(const RenderObject&);
+
+    static std::pair<WeakPtr<Image>, float> brokenImage(float deviceScaleFactor); // Returns an image and the image's resolution scale factor.
     bool NODELETE willPaintBrokenImage() const;
 
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
+    bool canRender(const ImageContainerContextKey& key, const ImageSizeOptions& options) { return !errorOccurred() && !imageSizeForKey(key, options).isEmpty(); }
 
     void setAllowsOrientationOverride(bool b) { m_allowsOrientationOverride = b; }
     bool allowsOrientationOverride() const { return m_allowsOrientationOverride; }
 
-    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&);
     bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
     bool imageHasNaturalAspectRatio() const { return m_image && m_image->hasNaturalAspectRatio(); }
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
@@ -75,14 +84,18 @@ public:
     void updateBuffer(const FragmentedSharedBuffer&) override;
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;
 
-    enum SizeType {
-        UsedSize,
-        IntrinsicSize
-    };
-    WEBCORE_EXPORT FloatSize imageSizeForRenderer(const RenderElement*) const;
-    // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
-    LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
-    LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
+    LayoutSize imageSize(const ImageSizeOptions& = ImageSizeOptions { }) const;
+    LayoutSize imageSizeForKey(const ImageContainerContextKey&, const ImageSizeOptions&) const;
+    LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier = 1.0f, ImageSizeType type = ImageSizeType::Used, float density = 1.0f) const;
+
+    LayoutSize unclampedImageSize(const ImageSizeOptions& = ImageSizeOptions { }) const;
+    LayoutSize unclampedImageSizeForKey(const ImageContainerContextKey&, const ImageSizeOptions&) const;
+    LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier = 1.0f, ImageSizeType type = ImageSizeType::Used, float density = 1.0f) const;
+
+    WEBCORE_EXPORT FloatSize imageFloatSize(const ImageSizeOptions& = ImageSizeOptions { }) const;
+    WEBCORE_EXPORT FloatSize imageFloatSizeForKey(const ImageContainerContextKey&, const ImageSizeOptions&) const;
+    WEBCORE_EXPORT FloatSize imageFloatSizeForRenderer(const RenderElement*, float multiplier = 1.0f, ImageSizeType type = ImageSizeType::Used, float density = 1.0f) const;
+
     void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
 
     bool hasHDRContent() const;
@@ -115,7 +128,7 @@ public:
 #endif
 
 private:
-    FloatSize internalImageSizeForRenderer(const RenderElement*, float multiplier, SizeType, float density) const;
+    FloatSize internalImageSize(const ImageContainerContextKey*, const ImageSizeOptions&) const;
 
     void clear();
 
@@ -193,14 +206,7 @@ private:
 
     void didReplaceSharedBufferContents() override;
 
-    struct ContainerContext {
-        LayoutSize containerSize;
-        float containerZoom;
-        URL imageURL;
-        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
-    };
-
-    using ContainerContextRequests = HashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;
+    using ContainerContextRequests = HashMap<SingleThreadWeakRef<const ImageContainerContextKey>, ImageContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
     SingleThreadWeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;

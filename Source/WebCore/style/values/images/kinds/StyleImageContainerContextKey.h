@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,43 +26,18 @@
 
 #pragma once
 
-#include "StyleCustomIdent.h"
-#include "StyleGeneratedImage.h"
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
-namespace Style {
 
-class NamedImage final : public GeneratedImage {
+class ImageContainerContextKey : public CanMakeSingleThreadWeakPtr<ImageContainerContextKey>, public AbstractRefCounted {
 public:
-    static Ref<NamedImage> create(CustomIdent&& name)
-    {
-        return adoptRef(*new NamedImage(WTF::move(name)));
-    }
-    virtual ~NamedImage();
+    ~ImageContainerContextKey() = default;
 
-    bool operator==(const Image&) const final;
-    bool NODELETE equals(const NamedImage&) const;
-
-    static constexpr bool isFixedSize = false;
-
-private:
-    explicit NamedImage(CustomIdent&&);
-
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
-    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
-    bool isPending() const final;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(ImageClient&) final { }
-    void didRemoveClient(ImageClient&) final { }
-
-    CustomIdent m_name;
+protected:
+    ImageContainerContextKey() = default;
 };
 
-} // namespace Style
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(NamedImage, isNamedImage)
-

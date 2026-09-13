@@ -670,7 +670,7 @@ unsigned HTMLImageElement::width()
 
         // if the image is available, use its width
         if (RefPtr image = m_imageLoader->image())
-            return image->imageSizeForRenderer(nullptr, 1.0f, CachedImage::IntrinsicSize).width().toUnsigned();
+            return image->imageSize(ImageSizeOptions { .type = ImageSizeType::Intrinsic }).width().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -693,7 +693,7 @@ unsigned HTMLImageElement::height()
 
         // if the image is available, use its height
         if (RefPtr image = m_imageLoader->image())
-            return image->imageSizeForRenderer(nullptr, 1.0f, CachedImage::IntrinsicSize).height().toUnsigned();
+            return image->imageSize(ImageSizeOptions { .type = ImageSizeType::Intrinsic }).height().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -708,7 +708,7 @@ unsigned HTMLImageElement::naturalWidth() const
     RefPtr image = m_imageLoader->image();
     if (!image)
         return 0;
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio).width().toUnsigned();
+    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, ImageSizeType::Intrinsic, m_imageDevicePixelRatio).width().toUnsigned();
 }
 
 unsigned HTMLImageElement::naturalHeight() const
@@ -716,7 +716,7 @@ unsigned HTMLImageElement::naturalHeight() const
     RefPtr image = m_imageLoader->image();
     if (!image)
         return 0;
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio).height().toUnsigned();
+    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, ImageSizeType::Intrinsic, m_imageDevicePixelRatio).height().toUnsigned();
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const

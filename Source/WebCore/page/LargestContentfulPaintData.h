@@ -34,7 +34,10 @@
 
 namespace WebCore {
 
-class CachedImage;
+namespace Style {
+class Image;
+}
+
 class Element;
 class HTMLImageElement;
 class LargestContentfulPaint;
@@ -46,7 +49,7 @@ class WeakPtrImplWithEventTargetData;
 using DOMHighResTimeStamp = double;
 
 struct PerElementImageData {
-    WeakPtr<CachedImage> image;
+    WeakPtr<const Style::Image> image;
     FloatRect rect;
     Markable<MonotonicTime> loadTime;
     bool inContentSet { false };
@@ -64,8 +67,8 @@ public:
     LargestContentfulPaintData();
     ~LargestContentfulPaintData();
 
-    void didLoadImage(Element&, CachedImage*);
-    void didPaintImage(Element&, CachedImage*, FloatRect localRect);
+    void didLoadImage(Element&, const Style::Image*);
+    void didPaintImage(Element&, const Style::Image*, FloatRect localRect);
     void didPaintText(const RenderBlockFlow& formattingContextRoot, FloatRect localRect, bool isOnlyTextBoxForElement);
 
     RefPtr<LargestContentfulPaint> generateLargestContentfulPaintEntry(DOMHighResTimeStamp);
@@ -74,7 +77,7 @@ public:
 
 private:
 
-    static std::optional<float> effectiveVisualArea(const Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize);
+    static std::optional<float> effectiveVisualArea(const Element&, const Style::Image*, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize);
 
     static FloatRect computeViewportIntersectionRect(Element&, FloatRect localRect);
     static FloatRect computeViewportIntersectionRectForTextContainer(Element&, const WeakHashSet<Text, WeakPtrImplWithEventTargetData>&);
@@ -82,14 +85,14 @@ private:
     static bool NODELETE isEligibleForLargestContentfulPaint(const Element&, float effectiveVisualArea);
     static bool NODELETE canCompareWithLargestPaintArea(const Element&);
 
-    void potentiallyAddLargestContentfulPaintEntry(Element&, CachedImage*, FloatRect imageLocalRect, FloatRect intersectionRect, MonotonicTime loadTime, DOMHighResTimeStamp paintTimestamp, std::optional<FloatSize>& viewportSize);
+    void potentiallyAddLargestContentfulPaintEntry(Element&, const Style::Image*, FloatRect imageLocalRect, FloatRect intersectionRect, MonotonicTime loadTime, DOMHighResTimeStamp paintTimestamp, std::optional<FloatSize>& viewportSize);
 
     void scheduleRenderingUpdateIfNecessary(Element&);
 
     float m_largestPaintArea { 0 };
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_paintedTextRecords;
-    WeakHashMap<Element, Vector<WeakPtr<CachedImage>>, WeakPtrImplWithEventTargetData> m_pendingImageRecords;
+    WeakHashMap<Element, Vector<WeakPtr<const Style::Image>>, WeakPtrImplWithEventTargetData> m_pendingImageRecords;
 
     RefPtr<LargestContentfulPaint> m_pendingEntry;
     bool m_haveNewCandidate { false };

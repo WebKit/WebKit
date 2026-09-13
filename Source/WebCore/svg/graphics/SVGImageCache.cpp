@@ -45,49 +45,39 @@ SVGImageCache::~SVGImageCache()
     m_imageForContainerMap.clear();
 }
 
-void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
+void SVGImageCache::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& containerContext)
 {
-    ASSERT(client);
-
-    m_imageForContainerMap.remove(client);
-}
-
-void SVGImageCache::setContainerContextForClient(const CachedImageClient& client, const LayoutSize& containerSize, float containerZoom, const URL& imageURL, const Style::LinkParameters& linkParameters)
-{
-    ASSERT(!containerSize.isEmpty());
-    ASSERT(containerZoom);
+    ASSERT(!containerContext.containerSize.isEmpty());
+    ASSERT(containerContext.containerZoom);
 
     // SVG container has width or height less than 1 pixel.
-    if (flooredIntSize(containerSize).isEmpty())
+    if (flooredIntSize(containerContext.containerSize).isEmpty())
         return;
 
-    FloatSize containerSizeWithoutZoom(containerSize);
-    containerSizeWithoutZoom.scale(1 / containerZoom);
+    FloatSize containerSizeWithoutZoom(containerContext.containerSize);
+    containerSizeWithoutZoom.scale(1 / containerContext.containerZoom);
 
-    m_imageForContainerMap.set(&client, SVGImageForContainer::create(protect(m_svgImage).get(), {
-        .containerSize = containerSizeWithoutZoom,
-        .containerZoom = containerZoom,
-        .initialFragmentURL = imageURL,
-        .linkParameters = linkParameters
-    }));
+    containerContext.containerSize = containerSizeWithoutZoom;
+
+    m_imageForContainerMap.set(key, SVGImageForContainer::create(protect(m_svgImage).get(), WTF::move(containerContext)));
 }
 
-Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
+Image* SVGImageCache::findImageForKey(const ImageContainerContextKey* key) const
 {
-    return renderer ? m_imageForContainerMap.get(&renderer->cachedImageClient()) : nullptr;
+    return key ? m_imageForContainerMap.get(*key) : nullptr;
 }
 
-FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
+FloatSize SVGImageCache::imageSizeForKey(const ImageContainerContextKey* key) const
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* image = findImageForRenderer(renderer);
+    SUPPRESS_UNCOUNTED_LOCAL auto* image = findImageForKey(key);
     return image ? image->size() : protect(m_svgImage)->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not
 // restart on page load, nor will two animations in different pages have different timelines.
-Image* SVGImageCache::imageForRenderer(const RenderObject* renderer) const
+Image* SVGImageCache::imageForKey(const ImageContainerContextKey* key) const
 {
-    if (Image* image = findImageForRenderer(renderer)) {
+    if (Image* image = findImageForKey(key)) {
         ASSERT(!image->size().isEmpty());
         return image;
     }

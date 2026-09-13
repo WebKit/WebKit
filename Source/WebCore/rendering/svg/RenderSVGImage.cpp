@@ -45,6 +45,7 @@
 #include "SVGImageElement.h"
 #include "SVGImageIntrinsicSizing.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleCachedImage.h"
 #include "Settings.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -166,7 +167,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
 
     auto drawResult = paintInfo.context().drawImage(*image, rect, sourceRect, options);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
+        protect(imageResource().styleImage())->addClientWaitingForAsyncDecoding(protect(styleImageClient()));
 
     return drawResult;
 }
@@ -175,12 +176,12 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 {
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
-            protect(cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (imageResource().styleImage() && imageResource().styleImage()->isClientWaitingForAsyncDecoding(styleImageClient()))
+            protect(imageResource().styleImage())->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
-    if (!imageResource().cachedImage()) {
+    if (!imageResource().styleImage()) {
         protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
@@ -199,19 +200,19 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
 
     ImageDrawResult result = paintIntoRect(paintInfo, contentBoxRect, replacedContentRect);
 
-    if (cachedImage() && !context.paintingDisabled()) {
+    if (RefPtr styleImage = imageResource().styleImage(); styleImage && !context.paintingDisabled()) {
         // For now, count images as unpainted if they are still progressively loading. We may want
         // to refine this in the future to account for the portion of the image that has painted.
         replacedContentRect.moveBy(paintOffset);
         auto visibleRect = intersection(replacedContentRect, contentBoxRect);
-        if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
+        if (styleImage->isLoading() || result == ImageDrawResult::DidRequestDecoding)
             protect(page())->addRelevantUnpaintedObject(*this, enclosingLayoutRect(visibleRect));
         else
             protect(page())->addRelevantRepaintedObject(*this, enclosingLayoutRect(visibleRect));
 
         auto localVisibleRect = visibleRect;
         localVisibleRect.moveBy(-paintOffset);
-        protect(document())->didPaintImage(protect(imageElement()).get(), protect(cachedImage()), localVisibleRect);
+        protect(document())->didPaintImage(protect(imageElement()).get(), styleImage, localVisibleRect);
     }
 }
 
@@ -271,9 +272,9 @@ bool RenderSVGImage::updateImageViewport()
     // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
     if (imageElement->preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
         if (RefPtr cachedImage = imageResource().cachedImage()) {
-            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
+            LayoutSize intrinsicSize = cachedImage->imageSize(ImageSizeOptions { .multiplier = style().usedZoom() });
             if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
-                imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
+                imageResource().registerContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
                 updatedViewport = true;
             }
         }
@@ -281,7 +282,7 @@ bool RenderSVGImage::updateImageViewport()
 
     if (oldBoundaries != m_objectBoundingBox) {
         if (!updatedViewport)
-            imageResource().setContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
+            imageResource().registerContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
         updatedViewport = true;
     }
 
@@ -312,24 +313,24 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
         layer()->contentChanged(ContentChangeType::Image);
 }
 
-void RenderSVGImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void RenderSVGImage::notifyFinished(const Style::CachedImage& newImage)
 {
     if (renderTreeBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();
 
-    if (&newImage == cachedImage()) {
+    if (imageResource().isOrContains(newImage)) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         if (hasLayer())
             layer()->contentChanged(ContentChangeType::Image);
     }
 
-    RenderSVGModelObject::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+    RenderSVGModelObject::notifyFinished(newImage);
 }
 
-void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderSVGImage::imageChanged(const Style::Image& newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed() || !parent())
         return;
@@ -339,7 +340,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderSVGModelObject::imageChanged(newImage, rect);
 
-    if (newImage != imageResource().imagePtr() || !newImage)
+    if (!imageResource().isOrContains(newImage))
         return;
 
     repaintOrMarkForLayout(rect);
@@ -347,9 +348,9 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(imageElement()).ptr());
 
-    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (newImage.currentFrameIsComplete(*this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), image);
+            protect(document())->didLoadImage(protect(styleable->element).get(), &newImage);
     }
 }
 

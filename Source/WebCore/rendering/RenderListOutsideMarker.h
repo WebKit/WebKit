@@ -91,7 +91,7 @@ private:
     bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
-    void imageChanged(WrappedImagePtr, const IntRect*) final;
+    void imageChanged(const Style::Image&, const IntRect*) final;
     LayoutRect NODELETE selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) final;

@@ -64,7 +64,7 @@ private:
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final { return SVGBoundingBoxComputation::computeRepaintBoundingBox(*this); }
     FloatRect decoratedBoundingBox() const final { return m_objectBoundingBox; }
 
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) final;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) final;
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;
@@ -75,7 +75,7 @@ private:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
     void repaintOrMarkForLayout(const IntRect* = nullptr);
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    void notifyFinished(const Style::CachedImage&) final;
     bool bufferForeground(PaintInfo&, const LayoutPoint&);
 
     bool needsHasSVGTransformFlags() const final;

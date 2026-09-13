@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-SVGImageForContainer::SVGImageForContainer(SVGImage* image, SVGImage::ContainerContext&& containerContext)
+SVGImageForContainer::SVGImageForContainer(SVGImage* image, ImageContainerContext&& containerContext)
     : m_image(image)
     , m_containerContext(WTF::move(containerContext))
 {

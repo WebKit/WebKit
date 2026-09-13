@@ -93,6 +93,7 @@
 #include "ScrollAnchoringController.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "StyleResolver.h"
 #include "StyleTransformResolver.h"
 #include "TransformState.h"
@@ -111,7 +112,7 @@ using namespace HTMLNames;
 
 WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_IMPL(RenderObject);
 WTF_MAKE_PREFERABLY_COMPACT_TZONE_ALLOCATED_IMPL(RenderObject::RenderObjectRareData);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderObject::CachedImageListener);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderObject::StyleImageClientProxy);
 
 #if ASSERT_ENABLED
 
@@ -3063,84 +3064,89 @@ TextStream& operator<<(TextStream& ts, const RenderObject::RepaintRects& repaint
     return ts;
 }
 
-auto RenderObject::CachedImageListener::create(RenderObject& renderer) -> Ref<CachedImageListener>
+auto RenderObject::StyleImageClientProxy::create(RenderObject& renderer) -> Ref<StyleImageClientProxy>
 {
-    return adoptRef(*new CachedImageListener(renderer));
+    return adoptRef(*new StyleImageClientProxy(renderer));
 }
 
-RenderObject::CachedImageListener::CachedImageListener(RenderObject& renderer)
+RenderObject::StyleImageClientProxy::StyleImageClientProxy(RenderObject& renderer)
     : m_renderer(renderer)
 {
 }
 
-void RenderObject::CachedImageListener::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void RenderObject::StyleImageClientProxy::imageChanged(const Style::Image& image, const IntRect* rect) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        renderer->notifyFinished(resource, metrics, loadWillContinueInAnotherProcess);
+        renderer->imageChanged(image, rect);
 }
 
-void RenderObject::CachedImageListener::imageChanged(CachedImage* image, const IntRect* rect)
+void RenderObject::StyleImageClientProxy::notifyFinished(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        renderer->imageChanged(static_cast<WrappedImagePtr>(image), rect);
+        renderer->notifyFinished(image);
 }
 
-bool RenderObject::CachedImageListener::allowsAnimation() const
+bool RenderObject::StyleImageClientProxy::allowsAnimation(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        return renderer->allowsAnimation();
+        return renderer->allowsAnimation(image);
     return true;
 }
 
-bool RenderObject::CachedImageListener::useSystemDarkAppearance() const
+bool RenderObject::StyleImageClientProxy::useSystemDarkAppearance(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        return renderer->useSystemDarkAppearance();
+        return renderer->useSystemDarkAppearance(image);
     return false;
 }
 
-bool RenderObject::CachedImageListener::canDestroyDecodedData() const
+bool RenderObject::StyleImageClientProxy::canDestroyDecodedData(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        return renderer->canDestroyDecodedData();
+        return renderer->canDestroyDecodedData(image);
     return true;
 }
 
-VisibleInViewportState RenderObject::CachedImageListener::imageFrameAvailable(CachedImage& image, ImageAnimatingState state, const IntRect* rect)
+VisibleInViewportState RenderObject::StyleImageClientProxy::imageFrameAvailable(const Style::CachedImage& image, ImageAnimatingState state, const IntRect* rect) const
 {
     if (CheckedPtr renderer = m_renderer.get())
         return renderer->imageFrameAvailable(image, state, rect);
     return VisibleInViewportState::No;
 }
 
-VisibleInViewportState RenderObject::CachedImageListener::imageVisibleInViewport(const Document& document) const
+VisibleInViewportState RenderObject::StyleImageClientProxy::imageVisibleInViewport(const Style::CachedImage& image, const Document& document) const
 {
     if (CheckedPtr renderer = m_renderer.get())
-        return renderer->imageVisibleInViewport(document);
+        return renderer->imageVisibleInViewport(image, document);
     return VisibleInViewportState::No;
 }
 
-void RenderObject::CachedImageListener::didRemoveCachedImageClient(CachedImage& image)
+void RenderObject::StyleImageClientProxy::didRemoveCachedImageClient(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
         renderer->didRemoveCachedImageClient(image);
 }
 
-void RenderObject::CachedImageListener::imageContentChanged(CachedImage& image)
+void RenderObject::StyleImageClientProxy::imageContentChanged(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
         renderer->imageContentChanged(image);
 }
 
-void RenderObject::CachedImageListener::scheduleRenderingUpdateForImage(CachedImage& image)
+void RenderObject::StyleImageClientProxy::scheduleRenderingUpdateForImage(const Style::CachedImage& image) const
 {
     if (CheckedPtr renderer = m_renderer.get())
         renderer->scheduleRenderingUpdateForImage(image);
 }
 
-VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
+VisibleInViewportState RenderObject::imageFrameAvailable(const Style::CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
 {
-    imageChanged(static_cast<WrappedImagePtr>(&image), changeRect);
+    imageChanged(image, changeRect);
+    return VisibleInViewportState::No;
+}
+
+VisibleInViewportState RenderObject::imageVisibleInViewport(const Style::CachedImage&, const Document&) const
+{
     return VisibleInViewportState::No;
 }
 

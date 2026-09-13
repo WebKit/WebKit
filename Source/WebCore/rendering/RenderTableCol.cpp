@@ -158,7 +158,7 @@ auto RenderTableCol::rectsForRepaintingAfterLayout(const RenderLayerModelObject*
     return { clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()) };
 }
 
-void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
+void RenderTableCol::imageChanged(const Style::Image&, const IntRect*)
 {
     // FIXME: Repaint only the rect the image paints in.
     if (!parent())

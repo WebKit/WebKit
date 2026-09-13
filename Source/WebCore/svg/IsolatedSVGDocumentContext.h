@@ -56,7 +56,7 @@ public:
 private:
     IsolatedSVGDocumentContext(CachedImage&, Document&);
 
-    void imageChanged(CachedImage*, const IntRect*) final;
+    void imageChanged(CachedImage&, const IntRect*) final;
 
     const CachedResourceHandle<CachedImage> m_cachedImage;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_owningDocument;

@@ -28,12 +28,15 @@
 #include <WebCore/RenderPtr.h>
 #include <WebCore/StyleComputedStyle.h>
 #include <WebCore/StyleDifference.h>
+#include <WebCore/StyleImageSizeOptions.h>
+#include <WebCore/VisibleInViewportState.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Packed.h>
 
 namespace WebCore {
 
+class CachedImage;
 class ContainerNode;
 class BlendingKeyframes;
 class GraphicsLayerAnimation;
@@ -41,6 +44,7 @@ class ReferencedSVGResources;
 class RenderBlock;
 class RenderTreeBuilder;
 class SVGElement;
+struct ImageContainerContext;
 struct ImageOrientation;
 
 struct MarginRect {
@@ -246,7 +250,7 @@ public:
     bool scrollAnchoringSuppressionStyleChanged() const { return m_scrollAnchoringSuppressionStyleChanged; }
     void setScrollAnchoringSuppressionStyleChanged(bool b) { m_scrollAnchoringSuppressionStyleChanged = b; }
 
-    bool allowsAnimation() const final;
+    bool allowsAnimation() const;
     bool repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage&);
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
@@ -357,6 +361,9 @@ public:
 
     bool addReferencedSVGResourceIfNeeded(SVGElement&, const AtomString&);
 
+    ImageContainerContext imageContainerContext(const FloatSize& containerSize, float containerZoom, const WTF::URL& url = WTF::URL()) const;
+    ImageSizeOptions imageSizeOptions(float multiplier = 1.0f, ImageSizeType = ImageSizeType::Used, float density = 1.0f) const;
+
 protected:
     RenderElement(Type, Element&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
     RenderElement(Type, Document&, Style::ComputedStyle&&, OptionSet<TypeFlag>, TypeSpecificFlags);
@@ -379,7 +386,7 @@ protected:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
     void willBeDestroyed() override;
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
+    void notifyFinished(const Style::CachedImage&) override;
 
     void pushOntoGeometryMap(RenderGeometryMap&, const RenderLayerModelObject* repaintContainer, RenderElement* container, bool containerSkipped) const;
 
@@ -433,13 +440,14 @@ private:
 
     Style::Difference adjustStyleDifference(Style::Difference) const;
 
-    bool canDestroyDecodedData() const final { return !isVisibleInViewport(); }
-    bool useSystemDarkAppearance() const final;
-    VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
-    VisibleInViewportState imageVisibleInViewport(const Document&) const final;
-    void didRemoveCachedImageClient(CachedImage&) final;
-    void imageContentChanged(CachedImage&) final;
-    void scheduleRenderingUpdateForImage(CachedImage&) final;
+    bool allowsAnimation(const Style::CachedImage&) const final { return allowsAnimation(); }
+    bool canDestroyDecodedData(const Style::CachedImage&) const final { return !isVisibleInViewport(); }
+    bool useSystemDarkAppearance(const Style::CachedImage&) const final;
+    VisibleInViewportState imageFrameAvailable(const Style::CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
+    VisibleInViewportState imageVisibleInViewport(const Style::CachedImage&, const Document&) const final;
+    void didRemoveCachedImageClient(const Style::CachedImage&) final;
+    void imageContentChanged(const Style::CachedImage&) final;
+    void scheduleRenderingUpdateForImage(const Style::CachedImage&) final;
 
     bool getLeadingCorner(FloatPoint& output, bool& insideFixed) const;
     bool getTrailingCorner(FloatPoint& output, bool& insideFixed) const;

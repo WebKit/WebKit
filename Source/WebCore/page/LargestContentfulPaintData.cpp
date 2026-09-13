@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LargestContentfulPaintData.h"
 
-#include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentView.h"
 #include "ElementInlines.h"
@@ -50,6 +49,7 @@
 #include "RenderSVGImage.h"
 #include "RenderText.h"
 #include "RenderView.h"
+#include "StyleImage.h"
 #include "VisibleRectContext.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
@@ -109,7 +109,7 @@ bool LargestContentfulPaintData::canCompareWithLargestPaintArea(const Element& e
 }
 
 // https://w3c.github.io/largest-contentful-paint/#sec-effective-visual-size
-std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Element& element, CachedImage* image, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize)
+std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Element& element, const Style::Image* image, FloatRect imageLocalRect, FloatRect intersectionRect, FloatSize viewportSize)
 {
     RefPtr frameView = element.document().view();
     if (!frameView)
@@ -129,7 +129,7 @@ std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Eleme
         auto intersectingContentRect = intersection(absoluteContentRect, intersectionRect);
         area = intersectingContentRect.area();
 
-        auto naturalSize = image->imageSizeForRenderer(renderer.get(), 1);
+        auto naturalSize = image->imageSize(renderer.get(), 1);
         if (naturalSize.isEmpty())
             return { };
 
@@ -144,7 +144,7 @@ std::optional<float> LargestContentfulPaintData::effectiveVisualArea(const Eleme
 }
 
 // https://w3c.github.io/largest-contentful-paint/#sec-add-lcp-entry
-void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Element& element, CachedImage* image, FloatRect imageLocalRect, FloatRect intersectionRect, MonotonicTime loadTime, DOMHighResTimeStamp paintTimestamp, std::optional<FloatSize>& viewportSize)
+void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Element& element, const Style::Image* image, FloatRect imageLocalRect, FloatRect intersectionRect, MonotonicTime loadTime, DOMHighResTimeStamp paintTimestamp, std::optional<FloatSize>& viewportSize)
 {
     if (!image) {
         // For text we have to accumulate rectangles for a single element from possibly multiple text boxes, so we can only mark an element as being in the content set after all the painting is done.
@@ -152,7 +152,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
         element.setInLargestContentfulPaintTextContentSet();
     }
 
-    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " potentiallyAddLargestContentfulPaintEntry() " << element << " image " << (image ? image->url().string() : emptyString()) << " rect " << intersectionRect);
+    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " potentiallyAddLargestContentfulPaintEntry() " << element << " image " << (image ? image->url().resolved.string() : emptyString()) << " rect " << intersectionRect);
 
     if (intersectionRect.isEmpty())
         return;
@@ -195,7 +195,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
     pendingEntry->setSize(std::round<unsigned>(m_largestPaintArea));
 
     if (image) {
-        pendingEntry->setURLString(image->url().string());
+        pendingEntry->setURLString(image->url().resolved.string());
         auto loadTimestamp = protect(window->performance())->relativeTimeFromTimeOriginInReducedResolution(loadTime);
         pendingEntry->setLoadTime(loadTimestamp);
 
@@ -213,7 +213,7 @@ void LargestContentfulPaintData::potentiallyAddLargestContentfulPaintEntry(Eleme
     if (element.hasID())
         pendingEntry->setID(element.getIdAttribute().string());
 
-    LOG_WITH_STREAM(LargestContentfulPaint, stream << " making new entry for " << element << " image " << (image ? image->url().string() : emptyString()) << " id " << pendingEntry->id() <<
+    LOG_WITH_STREAM(LargestContentfulPaint, stream << " making new entry for " << element << " image " << (image ? image->url().resolved.string() : emptyString()) << " id " << pendingEntry->id() <<
         ": entry size " << pendingEntry->size() << ", loadTime " << pendingEntry->loadTime() << ", renderTime " << pendingEntry->renderTime());
 
     m_pendingEntry = RefPtr { WTF::move(pendingEntry) };
@@ -341,16 +341,16 @@ FloatRect LargestContentfulPaintData::computeViewportIntersectionRectForTextCont
     return intersectionRect;
 }
 
-void LargestContentfulPaintData::didLoadImage(Element& element, CachedImage* image)
+void LargestContentfulPaintData::didLoadImage(Element& element, const Style::Image* image)
 {
     if (!image)
         return;
 
     // `loadTime` isn't interesting for a data URI, so let's avoid the overhead of tracking it.
-    if (image->url().protocolIsData())
+    if (image->url().resolved.protocolIsData())
         return;
 
-    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " didLoadImage() " << element << " image " << (image ? image->url().string() : emptyString()));
+    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " didLoadImage() " << element << " image " << image->url().resolved.string());
 
     auto& lcpData = element.ensureLargestContentfulPaintData();
     auto findIndex = lcpData.imageData.findIf([&](auto& value) {
@@ -371,9 +371,9 @@ void LargestContentfulPaintData::didLoadImage(Element& element, CachedImage* ima
         lcpData.imageData[findIndex].loadTime = now;
 }
 
-void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* image, FloatRect localRect)
+void LargestContentfulPaintData::didPaintImage(Element& element, const Style::Image* image, FloatRect localRect)
 {
-    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " didPaintImage() " << element << " image " << (image ? image->url().string() : emptyString()) << " localRect " << localRect);
+    LOG_WITH_STREAM(LargestContentfulPaint, stream << "LargestContentfulPaintData " << this << " didPaintImage() " << element << " image " << (image ? image->url().resolved.string() : emptyString()) << " localRect " << localRect);
 
     if (!image)
         return;
@@ -411,7 +411,7 @@ void LargestContentfulPaintData::didPaintImage(Element& element, CachedImage* im
         imageData.rect = localRect;
 
     m_pendingImageRecords.ensure(element, [] {
-        return Vector<WeakPtr<CachedImage>> { };
+        return Vector<WeakPtr<const Style::Image>> { };
     }).iterator->value.append(*image);
 
     scheduleRenderingUpdateIfNecessary(element);

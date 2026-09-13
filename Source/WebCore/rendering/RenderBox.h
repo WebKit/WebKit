@@ -483,7 +483,7 @@ public:
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
     virtual void paintClippingMask(PaintInfo&, const LayoutPoint&);
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
 
     virtual void adjustBorderBoxRectForPainting(LayoutRect&) { };
 
@@ -688,7 +688,7 @@ private:
     bool isScrollableOrRubberbandableBox() const override;
 
     // Returns true if we did a full repaint.
-    template<typename Layers> bool repaintLayerRectsForImage(WrappedImagePtr, const Layers&, Style::ZoomFactor, bool drawingBackground);
+    template<typename Layers> bool repaintLayerRectsForImage(const Style::Image&, const Layers&, Style::ZoomFactor, bool drawingBackground);
 
     void computeOutOfFlowPositionedLogicalHeight(LogicalExtentComputedValues&) const;
 

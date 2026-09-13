@@ -52,14 +52,18 @@ CrossfadeImage::CrossfadeImage(RefPtr<Image>&& from, RefPtr<Image>&& to, Progres
     , m_isPrefixed { isPrefixed }
     , m_inputImagesAreReady { false }
 {
+    if (m_from)
+        protect(m_from)->addClient(*this);
+    if (m_to)
+        protect(m_to)->addClient(*this);
 }
 
 CrossfadeImage::~CrossfadeImage()
 {
-    if (m_cachedFromImage)
-        protect(m_cachedFromImage)->removeClient(*this);
-    if (m_cachedToImage)
-        protect(m_cachedToImage)->removeClient(*this);
+    if (m_from)
+        protect(m_from)->removeClient(*this);
+    if (m_to)
+        protect(m_to)->removeClient(*this);
 }
 
 bool CrossfadeImage::operator==(const Image& other) const
@@ -83,10 +87,6 @@ bool CrossfadeImage::equalInputImages(const CrossfadeImage& other) const
 RefPtr<CrossfadeImage> CrossfadeImage::blend(const CrossfadeImage& from, const BlendingContext& context) const
 {
     ASSERT(equalInputImages(from));
-
-    if (!m_cachedToImage || !m_cachedFromImage)
-        return nullptr;
-
     auto newProgress = Style::blend(from.m_progress, m_progress, context);
     return CrossfadeImage::create(m_from, m_to, newProgress, from.m_isPrefixed && m_isPrefixed);
 }
@@ -118,40 +118,19 @@ bool CrossfadeImage::isPending() const
     return false;
 }
 
+bool CrossfadeImage::isLoading() const
+{
+    if (m_from && protect(m_from)->isLoading())
+        return true;
+    if (m_to && protect(m_to)->isLoading())
+        return true;
+    return false;
+}
+
 void CrossfadeImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    auto oldCachedFromImage = m_cachedFromImage;
-    auto oldCachedToImage = m_cachedToImage;
-
-    if (m_from) {
-        RefPtr from = m_from;
-        if (from->isPending())
-            from->load(loader, options);
-        m_cachedFromImage = from->cachedImage();
-    } else
-        m_cachedFromImage = nullptr;
-
-    if (m_to) {
-        RefPtr to = m_to;
-        if (to->isPending())
-            to->load(loader, options);
-        m_cachedToImage = to->cachedImage();
-    } else
-        m_cachedToImage = nullptr;
-
-    if (m_cachedFromImage != oldCachedFromImage) {
-        if (oldCachedFromImage)
-            protect(oldCachedFromImage)->removeClient(*this);
-        if (m_cachedFromImage)
-            protect(m_cachedFromImage)->addClient(*this);
-    }
-
-    if (m_cachedToImage != oldCachedToImage) {
-        if (oldCachedToImage)
-            protect(oldCachedToImage)->removeClient(*this);
-        if (m_cachedToImage)
-            protect(m_cachedToImage)->addClient(*this);
-    }
+    protect(m_from)->load(loader, options);
+    protect(m_to)->load(loader, options);
 
     m_inputImagesAreReady = true;
 }
@@ -176,19 +155,20 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     RefPtr protectedFromImage = fromImage;
     RefPtr protectedToImage = toImage;
 
-    if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
-        auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL });
-    }
-    if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
-        auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL });
-    }
+    // FIXME: Come back here.
+//    if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
+//        auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
+//        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL });
+//    }
+//    if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
+//        auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
+//        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL });
+//    }
 
     return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);
 }
 
-bool CrossfadeImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CrossfadeImage::currentFrameIsComplete(const RenderElement& renderer) const
 {
     if (m_from && !protect(m_from)->currentFrameIsComplete(renderer))
         return false;
@@ -225,14 +205,123 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     return fromImageSize * inverseProgress + toImageSize * progress;
 }
 
-void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)
+void CrossfadeImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
 {
-    if (!m_inputImagesAreReady)
-        return;
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
+    if (m_from)
+        protect(m_from)->registerContainerContext(key, ImageContainerContext { context });
+    if (m_to)
+        protect(m_to)->registerContainerContext(key, ImageContainerContext { context });
+
+    GeneratedImage::registerContainerContext(key, WTF::move(context));
+}
+
+bool CrossfadeImage::contains(const Image& image) const
+{
+    return (m_to && protect(m_to)->isOrContains(image))
+        || (m_from && protect(m_from)->isOrContains(image));
+}
+
+void CrossfadeImage::imageChanged(const Image& image, const IntRect* changeRect) const
+{
+    //    if (!m_inputImagesAreReady)
+    //        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageChanged(image, changeRect);
     }
+}
+
+void CrossfadeImage::notifyFinished(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->notifyFinished(image);
+    }
+}
+
+bool CrossfadeImage::allowsAnimation(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->allowsAnimation(image))
+            return true;
+    }
+    return ImageClient::allowsAnimation(image);
+}
+
+bool CrossfadeImage::canDestroyDecodedData(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (!client->canDestroyDecodedData(image))
+            return false;
+    }
+    return ImageClient::canDestroyDecodedData(image);
+}
+
+bool CrossfadeImage::useSystemDarkAppearance(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->useSystemDarkAppearance(image))
+            return true;
+    }
+    return ImageClient::useSystemDarkAppearance(image);
+}
+
+VisibleInViewportState CrossfadeImage::imageFrameAvailable(const CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageFrameAvailable(image, animatingState, changeRect) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageFrameAvailable(image, animatingState, changeRect);
+}
+
+VisibleInViewportState CrossfadeImage::imageVisibleInViewport(const CachedImage& image, const Document& document) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageVisibleInViewport(image, document) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageVisibleInViewport(image, document);
+}
+
+void CrossfadeImage::didRemoveCachedImageClient(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->didRemoveCachedImageClient(image);
+    }
+}
+
+void CrossfadeImage::imageContentChanged(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+void CrossfadeImage::scheduleRenderingUpdateForImage(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+bool CrossfadeImage::isRendererClient() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->isRendererClient())
+            return true;
+    }
+    return ImageClient::isRendererClient();
 }
 
 } // namespace Style

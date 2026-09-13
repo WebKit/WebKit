@@ -251,8 +251,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
     }
 
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(m_renderer.cachedImageClient()))
-            protect(bgImage->cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (shouldPaintBackgroundImage && bgImage->isClientWaitingForAsyncDecoding(m_renderer.styleImageClient()))
+            bgImage->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -536,7 +536,8 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
         auto geometry = calculateFillLayerImageGeometry(m_renderer, m_paintInfo.paintContainer, layer.layer, layer.zoom, paintOffset, imageRect, m_overrideOrigin);
 
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
-        bgImage->setContainerContextForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom());
+
+        bgImage->registerContainerContext(clientForBackgroundImage.imageContainerContextKey(), clientForBackgroundImage.imageContainerContext(geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom()));
 
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
@@ -576,16 +577,16 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
             auto drawResult = context.drawTiledImage(*imageToDraw, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
-                protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
+                bgImage->addClientWaitingForAsyncDecoding(protect(m_renderer)->styleImageClient());
             }
 
             if (!context.paintingDisabled()) {
                 if (m_renderer.element())
                     protect(m_renderer)->element()->setHasEverPaintedImages(true);
 
-                if (RefPtr image = bgImage->cachedImage(); image && image->currentFrameIsComplete(&m_renderer)) {
+                if (bgImage->currentFrameIsComplete(m_renderer)) {
                     if (auto styleable = Styleable::fromRenderer(m_renderer))
-                        document().didPaintImage(protect(styleable->element), image, geometry.destinationRect);
+                        document().didPaintImage(protect(styleable->element), bgImage, geometry.destinationRect);
                 }
             }
         }

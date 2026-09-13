@@ -29,6 +29,9 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/StyleImageClient.h>
+#include <WebCore/StyleImageContainerContextKey.h>
+#include <WebCore/StyleImageSizeOptions.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
@@ -43,8 +46,10 @@ class CSSStyleDeclaration;
 class CSSValue;
 class CSSValuePool;
 class Document;
+class ImageContainerContextKey;
 class RenderElement;
 class RenderObject;
+struct ImageContainerContext;
 struct ResourceLoaderOptions;
 
 namespace Style {
@@ -66,6 +71,7 @@ public:
 
     // Loading.
     virtual bool isPending() const = 0;
+    virtual bool isLoading() const { return false; }
     virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&) = 0;
     virtual bool isLoaded(const RenderElement*) const { return true; }
     virtual bool errorOccurred() const { return false; }
@@ -74,12 +80,14 @@ public:
     virtual URL url() const { return { }; }
 
     // Clients.
-    virtual void addClient(RenderElement&) = 0;
-    virtual void removeClient(RenderElement&) = 0;
-    virtual bool hasClient(RenderElement&) const = 0;
+    void addClient(ImageClient&);
+    void removeClient(ImageClient&);
+    bool hasClient(ImageClient&) const;
+    virtual void didAddClient(ImageClient&) = 0;
+    virtual void didRemoveClient(ImageClient&) = 0;
 
     // Size / scale.
-    virtual FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const = 0;
+    virtual FloatSize imageSize(const RenderElement*, float multiplier, ImageSizeType = ImageSizeType::Used) const = 0;
     virtual bool usesImageContainerSize() const = 0;
     virtual void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
@@ -87,19 +95,29 @@ public:
     virtual float imageScaleFactor() const { return 1; }
     virtual bool imageHasNaturalDimensions() const { return true; }
     virtual bool imageHasNaturalAspectRatio() const { return true; }
+    virtual bool hasHDRContent() const { return false; }
 
     // Platform Image.
+    virtual RefPtr<WebCore::Image> image() const { return nullptr; } // Returns the source backing image - see CachedImage::image().
     virtual RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine = false) const = 0;
     virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
-    virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
+    virtual bool currentFrameIsComplete(const RenderElement&) const { return true; }
+
+    virtual void addClientWaitingForAsyncDecoding(ImageClient&) { }
+    virtual void removeAllClientsWaitingForAsyncDecoding() { }
+    virtual bool isClientWaitingForAsyncDecoding(ImageClient&) const { return false; }
 
     // Multiple Image selection.
     virtual Image* selectedImage() { return this; }
     virtual const Image* selectedImage() const { return this; }
 
+    // Children.
+    virtual bool contains(const Image&) const { return false; }
+    bool isOrContains(const Image& other) const { return this == &other || contains(other); }
+
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
-    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) = 0;
+    virtual void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&) = 0;
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Derived type.
@@ -139,6 +157,7 @@ protected:
     }
 
     Type m_type;
+    SingleThreadWeakHashCountedSet<ImageClient> m_clients;
 };
 
 } // namespace Style

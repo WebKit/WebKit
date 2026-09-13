@@ -104,8 +104,10 @@
 #include "ScrollAnchoringController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StyleCachedImage.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleDifference.h"
+#include "StyleImageContainerContext.h"
 #include "StylePendingResources.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleResolver.h"
@@ -439,7 +441,7 @@ template<typename FillLayers> void RenderElement::updateFillImages(const FillLay
         if (!newLayers)
             return true;
         for (auto& layer : newLayers->usedValues()) {
-            if (RefPtr image = layer.image().tryStyleImage(); image && !image->hasClient(*this))
+            if (RefPtr image = layer.image().tryStyleImage(); image && !image->hasClient(this->styleImageClient()))
                 return false;
         }
         return true;
@@ -454,13 +456,13 @@ template<typename FillLayers> void RenderElement::updateFillImages(const FillLay
     if (newLayers) {
         for (auto& layer : newLayers->usedValues()) {
             if (RefPtr image = layer.image().tryStyleImage())
-                image->addClient(*this);
+                image->addClient(this->styleImageClient());
         }
     }
     if (oldLayers) {
         for (auto& layer : oldLayers->usedValues()) {
             if (RefPtr image = layer.image().tryStyleImage())
-                image->removeClient(*this);
+                image->removeClient(this->styleImageClient());
         }
     }
 }
@@ -470,15 +472,15 @@ void RenderElement::updateImage(Style::Image* oldImage, Style::Image* newImage)
     if (oldImage == newImage)
         return;
     if (oldImage)
-        oldImage->removeClient(*this);
+        oldImage->removeClient(this->styleImageClient());
     if (newImage)
-        newImage->addClient(*this);
+        newImage->addClient(this->styleImageClient());
 }
 
 void RenderElement::updateShapeImage(const Style::ShapeOutside* oldShapeValue, const Style::ShapeOutside* newShapeValue)
 {
     if (oldShapeValue || newShapeValue)
-        updateImage(oldShapeValue ? oldShapeValue->image().get() : nullptr, newShapeValue ? newShapeValue->image().get() : nullptr);
+        updateImage(oldShapeValue ? oldShapeValue->tryStyleImage().get() : nullptr, newShapeValue ? newShapeValue->tryStyleImage().get() : nullptr);
 }
 
 bool RenderElement::repaintBeforeStyleChange(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
@@ -1331,7 +1333,7 @@ void RenderElement::willBeDestroyed()
 
     auto unregisterImage = [this](auto* image) {
         if (image)
-            image->removeClient(*this);
+            image->removeClient(this->styleImageClient());
     };
 
     auto unregisterImages = [&](auto& style) {
@@ -1341,7 +1343,7 @@ void RenderElement::willBeDestroyed()
             unregisterImage(maskLayer.image().tryStyleImage().get());
         unregisterImage(style.borderImageSource().tryStyleImage().get());
         unregisterImage(style.maskBorderSource().tryStyleImage().get());
-        unregisterImage(style.shapeOutside().image().get());
+        unregisterImage(style.shapeOutside().tryStyleImage().get());
     };
 
     if (hasInitializedStyle()) {
@@ -1842,24 +1844,24 @@ bool RenderElement::isVisibleInViewport() const
     return isVisibleInDocumentRect(visibleRect);
 }
 
-bool RenderElement::useSystemDarkAppearance() const
+bool RenderElement::useSystemDarkAppearance(const Style::CachedImage&) const
 {
     if (RefPtr page = document().page())
         return page->useDarkAppearance();
     return false;
 }
 
-VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
+VisibleInViewportState RenderElement::imageFrameAvailable(const Style::CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect)
 {
     bool isVisible = isVisibleInViewport();
 
-    if (!isVisible && animatingState == ImageAnimatingState::Yes)
-        protect(view())->addRendererWithPausedImageAnimations(*this, image);
+    if (!isVisible && animatingState == ImageAnimatingState::Yes && image.cachedImage())
+        protect(view())->addRendererWithPausedImageAnimations(*this, protect(*image.cachedImage()));
 
     // Static images should repaint even if they are outside the viewport rectangle
     // because they should be inside the TileCoverageRect.
     if (isVisible || animatingState == ImageAnimatingState::No)
-        imageChanged(&image, changeRect);
+        imageChanged(image, changeRect);
 
     if (element() && protect(image)->image()->isBitmapImage())
         protect(element())->dispatchWebKitImageReadyEventForTesting();
@@ -1867,7 +1869,7 @@ VisibleInViewportState RenderElement::imageFrameAvailable(CachedImage& image, Im
     return isVisible ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
-VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& document) const
+VisibleInViewportState RenderElement::imageVisibleInViewport(const Style::CachedImage&, const Document& document) const
 {
     if (&this->document() != &document)
         return VisibleInViewportState::No;
@@ -1875,28 +1877,21 @@ VisibleInViewportState RenderElement::imageVisibleInViewport(const Document& doc
     return isVisibleInViewport() ? VisibleInViewportState::Yes : VisibleInViewportState::No;
 }
 
-void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+void RenderElement::notifyFinished(const Style::CachedImage& newImage)
 {
-    if (auto* cachedImage = dynamicDowncast<CachedImage>(resource))
-        imageContentChanged(*cachedImage);
+    imageContentChanged(newImage);
 
-    protect(protect(document())->cachedResourceLoader())->notifyFinished(resource);
+    if (newImage.cachedImage())
+        protect(protect(document())->cachedResourceLoader())->notifyFinished(protect(*newImage.cachedImage()));
 }
 
-bool RenderElement::allowsAnimation() const
+void RenderElement::didRemoveCachedImageClient(const Style::CachedImage& cachedImage)
 {
-    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
-        return imageElement->allowsAnimation();
-    return page().imageAnimationEnabled();
+    if (hasPausedImageAnimations() && cachedImage.cachedImage())
+        protect(view())->removeRendererWithPausedImageAnimations(*this, protect(*cachedImage.cachedImage()));
 }
 
-void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
-{
-    if (hasPausedImageAnimations())
-        protect(view())->removeRendererWithPausedImageAnimations(*this, cachedImage);
-}
-
-void RenderElement::imageContentChanged(CachedImage& cachedImage)
+void RenderElement::imageContentChanged(const Style::CachedImage& cachedImage)
 {
 #if HAVE(SUPPORT_HDR_DISPLAY)
     if (!document().hasHDRContent()) {
@@ -1921,10 +1916,17 @@ void RenderElement::imageContentChanged(CachedImage& cachedImage)
 #endif
 }
 
-void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
+void RenderElement::scheduleRenderingUpdateForImage(const Style::CachedImage&)
 {
     if (RefPtr page = document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
+}
+
+bool RenderElement::allowsAnimation() const
+{
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        return imageElement->allowsAnimation();
+    return page().imageAnimationEnabled();
 }
 
 bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visibleRect, CachedImage& cachedImage)
@@ -2902,4 +2904,33 @@ void RenderElement::layoutIfNeeded()
         Style::AnchorPositionEvaluator::captureScrollSnapshots(downcast<RenderBox>(*this));
 }
 
+ImageContainerContext RenderElement::imageContainerContext(const FloatSize& containerSize, float containerZoom, const WTF::URL& imageURL) const
+{
+    return ImageContainerContext {
+        .containerSize = containerSize,
+        .containerZoom = containerZoom,
+        .imageURL = imageURL,
+        .linkParameters = style().linkParameters(),
+    };
 }
+
+ImageSizeOptions RenderElement::imageSizeOptions(float multiplier, ImageSizeType type, float density) const
+{
+    auto computedOverrideImageSize = [&] -> std::optional<FloatSize> {
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+        if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(*this); renderImage && renderImage->isMultiRepresentationHEIC())
+            return renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size();
+#endif
+        return std::nullopt;
+    };
+
+    return ImageSizeOptions {
+        .multiplier = multiplier,
+        .type = type,
+        .density = density,
+        .orientation = imageOrientation(),
+        .overrideImageSize = computedOverrideImageSize(),
+    };
+}
+
+} // namespace WebCore

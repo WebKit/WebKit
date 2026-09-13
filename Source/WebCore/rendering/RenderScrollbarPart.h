@@ -54,7 +54,7 @@ public:
 
 private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
 
     void layoutHorizontalPart();
     void layoutVerticalPart();
