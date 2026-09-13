@@ -42,7 +42,7 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderInline* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
+InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoint& paintOffset, const RenderBoxModelObject* inlineBoxWithLayer, const InlineContent& inlineContent, const RenderBlockFlow& root)
     : m_paintInfo(paintInfo)
     , m_paintOffset(paintOffset)
     , m_inlineBoxWithLayer(inlineBoxWithLayer)
@@ -210,7 +210,7 @@ const RenderBlock& InlineContentPainter::root() const
     return m_root;
 }
 
-LayerPaintScope::LayerPaintScope(const RenderInline* inlineBoxWithLayer)
+LayerPaintScope::LayerPaintScope(const RenderBoxModelObject* inlineBoxWithLayer)
     : m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
 {
 }

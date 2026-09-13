@@ -379,10 +379,9 @@ CheckedPtr<const RenderElement> ViewTimeline::stickyContainer() const
     CheckedPtr renderer = subject->renderer();
 
     CheckedPtr scrollerRenderer = sourceScrollerRenderer();
-    while (renderer && renderer.get() != scrollerRenderer) {
+    for (; renderer && renderer.get() != scrollerRenderer; renderer = renderer->parent()) {
         if (renderer->isStickilyPositioned())
             return renderer;
-        renderer = renderer->containingBlock();
     }
     return nullptr;
 }

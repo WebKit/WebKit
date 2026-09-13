@@ -478,7 +478,7 @@ static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, con
     bool wasFixed = false;
     auto localRect = [&]() -> LayoutRect {
         if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(&box))
-            return inlineBox->linesBoundingBox();
+            return inlineBox->borderBoxRectInContainer();
         return box.borderBoundingBox();
     }();
     // FIXME: figure out if OverscrollClamp is still needed.
@@ -492,8 +492,8 @@ static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, con
 
     if (box.containingBlock() == container.containingBlock()) {
         // Account for 'position: relative' inline containing blocks by shifting back down into them.
-        if (CheckedPtr ancestorInline = dynamicDowncast<RenderInline>(&container))
-            boundingBox.moveBy(-ancestorInline->firstInlineBoxTopLeft()); // FIXME: Handle RTL.
+        if (container.isInlineBox())
+            boundingBox.moveBy(-downcast<RenderBoxModelObject>(container).firstFragmentBorderBoxRect().location()); // FIXME: Handle RTL.
     }
 
     if (auto ancestorBox = dynamicDowncast<RenderBox>(container)) // Zero out containing block scroll position.

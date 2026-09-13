@@ -82,21 +82,6 @@ RenderInline::RenderInline(Type type, Document& document, Style::ComputedStyle&&
 
 RenderInline::~RenderInline() = default;
 
-// Only SVG inlines have legacy line boxes, and they always do: SVG text is always laid out by
-// LegacyLineLayout (Settings::useIFCForSVGText, the in-progress migration off it, is never enabled).
-// Every legacy arm below is therefore reachable from RenderSVGInline only.
-static LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderInline& renderer)
-{
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
-    return svgInline ? svgInline->firstLegacyInlineBox() : nullptr;
-}
-
-static LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderInline& renderer)
-{
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
-    return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
-}
-
 void RenderInline::updateFromStyle()
 {
     RenderBoxModelObject::updateFromStyle();
@@ -230,26 +215,7 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
     generateLineBoxRects(context);
 }
 
-LayoutUnit RenderInline::offsetLeft() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();
-}
-
-LayoutUnit RenderInline::offsetTop() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).y();
-}
-
-LayoutPoint RenderInline::firstInlineBoxTopLeft() const
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        return lineLayout->firstInlineBoxRect(*this).location();
-    if (auto* inlineBox = firstLegacyInlineBoxFor(*this))
-        return flooredLayoutPoint(inlineBox->locationIncludingFlipping());
-    return { };
-}
-
-static LayoutUnit computeMargin(const RenderInline* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
+static LayoutUnit computeMargin(const RenderBoxModelObject* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
 {
     return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
         return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
@@ -365,62 +331,9 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
 LayoutUnit RenderInline::innerPaddingBoxHeight() const
 {
-    auto innerPaddingBoxLogicalHeight = LayoutUnit { isHorizontalWritingMode() ? linesBoundingBox().height() : linesBoundingBox().width() };
+    auto innerPaddingBoxLogicalHeight = LayoutUnit { isHorizontalWritingMode() ? borderBoxRectInContainer().height() : borderBoxRectInContainer().width() };
     innerPaddingBoxLogicalHeight -= (borderBefore() + borderAfter());
     return innerPaddingBoxLogicalHeight;
-}
-
-IntRect RenderInline::linesBoundingBox() const
-{
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox() || !layout->contains(*this)) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers
-            // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
-            ASSERT(needsLayout());
-            return { };
-        }
-        if (isRenderSVGInline()) {
-            // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
-            // any post-layout box adjustments.
-            FloatRect result;
-            for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward()) {
-                auto rect = box->visualRectIgnoringBlockDirection();
-                result.unite(rect);
-            }
-            return enclosingIntRect(result);
-        }
-        return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
-    }
-
-    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
-    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
-
-    // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
-    // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
-    // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
-    ASSERT(!firstInlineBox == !lastInlineBox); // Either both are null or both exist.
-    IntRect result;
-    if (firstInlineBox && lastInlineBox) {
-        // Return the width of the minimal left side and the maximal right side.
-        float logicalLeftSide = 0;
-        float logicalRightSide = 0;
-        for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
-            if (curr == firstInlineBox || curr->logicalLeft() < logicalLeftSide)
-                logicalLeftSide = curr->logicalLeft();
-            if (curr == firstInlineBox || curr->logicalRight() > logicalRightSide)
-                logicalRightSide = curr->logicalRight();
-        }
-
-        bool isHorizontal = writingMode().isHorizontal();
-
-        float x = isHorizontal ? logicalLeftSide : firstInlineBox->x();
-        float y = isHorizontal ? firstInlineBox->y() : logicalLeftSide;
-        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastInlineBox->logicalBottom() - x;
-        float height = isHorizontal ? lastInlineBox->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = enclosingIntRect(FloatRect(x, y, width, height));
-    }
-
-    return result;
 }
 
 LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
@@ -553,61 +466,6 @@ auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, con
     return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
-LayoutSize RenderInline::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
-{
-    ASSERT(&container == this->container());
-    
-    LayoutSize offset;    
-    if (isInFlowPositioned())
-        offset += offsetForInFlowPosition();
-
-    if (auto* box = dynamicDowncast<RenderBox>(container))
-        offset -= toLayoutSize(box->scrollPosition());
-
-    if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
-
-    return offset;
-}
-
-void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
-{
-    if (ancestorContainer == this)
-        return;
-
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !ancestorContainer) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
-        LayoutSize offset = layoutState->paintOffset();
-        if (style().hasInFlowPosition() && layer())
-            offset += layer()->offsetForInFlowPosition();
-        transformState.move(offset);
-        return;
-    }
-
-    bool containerSkipped;
-    RenderElement* container = this->container(ancestorContainer, containerSkipped);
-    if (!container)
-        return;
-
-    if (mode.contains(MapCoordinatesMode::ApplyContainerFlip)) {
-        if (CheckedPtr box = dynamicDowncast<RenderBox>(*container)) {
-            if (container->writingMode().isBlockFlipped()) {
-                LayoutPoint centerPoint(transformState.mappedPoint());
-                transformState.move(box->flipForWritingMode(centerPoint) - centerPoint);
-            }
-            mode.remove(MapCoordinatesMode::ApplyContainerFlip);
-        }
-    }
-
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
-
-    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
-    if (containerSkipped)
-        return;
-
-    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
-}
-
 const RenderElement* RenderInline::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT(ancestorToStopAt != this);
@@ -620,61 +478,6 @@ const RenderElement* RenderInline::pushMappingToContainer(const RenderLayerModel
     pushOntoGeometryMap(geometryMap, ancestorToStopAt, container, ancestorSkipped);
 
     return ancestorSkipped ? ancestorToStopAt : container;
-}
-
-LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child) const
-{
-    // FIXME: This function isn't right with mixed writing modes.
-    // An inline box is the containing block for an out-of-flow child when it is in-flow positioned, and also when
-    // something else about it makes it one, e.g. a filter. Either way the child's static position is relative to the
-    // inline's own content, so it needs the offset of the line the inline starts on.
-    if (!canContainAbsolutelyPositionedObjects()) {
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-
-    if (!hasLayer()) {
-        // It looks like we are a containing block but no layer created yet. It essentially means we don't have a position offset yet.
-        return { };
-    }
-
-    // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
-    // box from the rest of the content, but only in the cases where we know we're positioned
-    // relative to the inline itself.
-    auto inlinePosition = layer()->staticInlinePosition();
-    auto blockPosition = layer()->staticBlockPosition();
-    if (auto* inlineBox = firstLegacyInlineBoxFor(*this)) {
-        inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeft());
-        blockPosition = inlineBox->logicalTop();
-    } else if (LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
-            ASSERT(needsLayout());
-            return { };
-        }
-        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
-            inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeftIgnoringInlineDirection());
-            blockPosition = inlineBox->logicalTop();
-        } else if (auto* blockContainer = containingBlock()) {
-            // This must be a block with no in-flow content e.g. <div><span><abs pos box></span></div> where we don't construct any display box at all.
-            auto contentBoxLocation = blockContainer->contentBoxLocation();
-            inlinePosition = contentBoxLocation.x();
-            blockPosition = contentBoxLocation.y();
-        }
-    }
-
-    // Per http://www.w3.org/TR/CSS2/visudet.html#abs-non-replaced-width an absolute positioned box with a static position
-    // should locate itself as though it is a normal flow box in relation to its containing block.
-    LayoutSize logicalOffset;
-    if (!child->style().hasStaticInlinePosition(writingMode().isHorizontal())
-        || !child->style().positionArea().isNone() || child->style().justifySelf().isAnchorCenter())
-        logicalOffset.setWidth(inlinePosition);
-
-    if (!child->style().hasStaticBlockPosition(writingMode().isHorizontal())
-        || !child->style().positionArea().isNone() || child->style().alignSelf().isAnchorCenter())
-        logicalOffset.setHeight(blockPosition);
-
-    return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
 }
 
 void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
@@ -713,7 +516,7 @@ void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPo
     generateLineBoxRects(context);
 }
 
-static RenderObject* firstContentfulChild(const RenderInline& renderer)
+static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
         if (current.isFloatingOrOutOfFlowPositioned())
@@ -730,14 +533,14 @@ static RenderObject* firstContentfulChild(const RenderInline& renderer)
     return { };
 }
 
-bool isEmptyInline(const RenderInline& renderer)
+bool isEmptyInline(const RenderBoxModelObject& renderer)
 {
     return !firstContentfulChild(renderer);
 }
 
-RenderObject* firstContentfulChild(RenderInline& renderer)
+RenderObject* firstContentfulChild(RenderBoxModelObject& renderer)
 {
-    return firstContentfulChild(const_cast<const RenderInline&>(renderer));
+    return firstContentfulChild(const_cast<const RenderBoxModelObject&>(renderer));
 }
 
 bool RenderInline::requiresLayer() const
