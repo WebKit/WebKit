@@ -165,6 +165,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this.reset();
         }, this);
 
+        this._resourcesWithChangedDisplayNames = new IterableWeakSet;
+
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
@@ -174,6 +176,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.addEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
+        WI.Resource.addEventListener(WI.SourceCode.Event.DisplayNameChanged, this._handleResourceDisplayNameChanged, this);
         WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
         WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearNetworkOnNavigateChanged, this);
@@ -324,6 +327,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.removeEventListener(WI.Resource.Event.RedirectsDidChange, this._resourceRedirectsDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.SizeDidChange, this._handleResourceSizeDidChange, this);
         WI.Resource.removeEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
+        WI.Resource.removeEventListener(WI.SourceCode.Event.DisplayNameChanged, this._handleResourceDisplayNameChanged, this);
         WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
         WI.settings.resourceCachingDisabled.removeEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
@@ -709,7 +713,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _populateNameCell(cell, entry)
     {
-        console.assert(!cell.firstChild, "We expect the cell to be empty.", cell, cell.firstChild);
+        cell.removeChildren();
 
         function createIconElement() {
             let iconElement = cell.appendChild(document.createElement("img"));
@@ -786,7 +790,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         let nameElement = cell.appendChild(document.createElement("span"));
-        nameElement.textContent = entry.name;
+        nameElement.textContent = resource.displayName;
 
         let range = resource.requestedByteRange;
         if (range) {
@@ -1504,6 +1508,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         this._updateWaterfallTimelineRuler();
         this._processPendingEntries();
+        this._reloadChangedDisplayNameCells();
         this._positionDetailView();
         this._updateExportButton();
     }
@@ -1649,6 +1654,29 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._updateFilteredEntries();
         this._reloadTable();
         this._updateStatistics();
+    }
+
+    _reloadChangedDisplayNameCells()
+    {
+        if (!this._resourcesWithChangedDisplayNames.size)
+            return;
+
+        if (!this._table)
+            return;
+
+        let resourcesWithChangedDisplayNames = this._resourcesWithChangedDisplayNames;
+        this._resourcesWithChangedDisplayNames = new IterableWeakSet;
+
+        for (let resource of resourcesWithChangedDisplayNames) {
+            let rowIndex = this._rowIndexForRepresentedObject(resource);
+            if (rowIndex !== -1)
+                this._table.reloadCell(rowIndex, "name");
+        }
+
+        this._activeCollection.filteredEntries.forEach((entry, i) => {
+            if (entry.redirect && !entry.previousRedirect && resourcesWithChangedDisplayNames.has(entry.resource))
+                this._table.reloadCell(i, "initiator");
+        });
     }
 
     _populateWithInitialResourcesIfNeeded(mainFrame, collection)
@@ -2993,6 +3021,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     _handleGlobalModifierKeysDidChange(event)
     {
         this._highlightRelatedResourcesForHoveredResource();
+    }
+
+    _handleResourceDisplayNameChanged(event)
+    {
+        if (!this._table)
+            return;
+
+        this._resourcesWithChangedDisplayNames.add(event.target);
+        this.needsLayout();
     }
 
     _handleCurrentResourceDetailViewDidChange(event)

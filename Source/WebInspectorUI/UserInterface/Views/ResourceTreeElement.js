@@ -177,9 +177,14 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
     get mainTitleText()
     {
         // Overridden by subclasses if needed.
-        return this._resource.scripts.find((script) => script.customName)?.customName || WI.displayNameForURL(this._resource.url, this._resource.urlComponents, {
+        return this._resource.scripts.find((script) => script.customName)?.customName || this._resource.displayNameWithAffix({
             allowDirectoryAsName: this._allowDirectoryAsName,
         });
+    }
+
+    updateDisplayName()
+    {
+        this._updateTitles();
     }
 
     _updateTitles()
