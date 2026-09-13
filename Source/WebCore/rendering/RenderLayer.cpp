@@ -99,6 +99,7 @@
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PositionedLayoutConstraints.h"
 #include "ReferencedSVGResources.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBoxInlines.h"
@@ -2099,7 +2100,7 @@ bool RenderLayer::computeHasVisibleContent() const
 static LayoutRect computeLayerPositionAndIntegralSize(const RenderLayerModelObject& renderer)
 {
     if (auto* inlineRenderer = dynamicDowncast<RenderInline>(renderer); inlineRenderer && inlineRenderer->isInline())
-        return { LayoutPoint(), inlineRenderer->linesBoundingBox().size() };
+        return { LayoutPoint(), inlineRenderer->borderBoxRectInContainer().size() };
 
     if (auto* boxRenderer = dynamicDowncast<RenderBox>(renderer)) {
         const auto& borderBox = boxRenderer->borderBoxRectInContainer();
@@ -2206,8 +2207,8 @@ bool RenderLayer::updateLayerPosition(OptionSet<UpdateLayerPositionsFlag>* flags
             if (auto* positionedParentScrollableArea = positionedParent->scrollableArea())
                 localPoint -= toLayoutSize(positionedParentScrollableArea->scrollPosition());
         }
-        if (auto* inlinePositionedParent = dynamicDowncast<RenderInline>(positionedParent->renderer()); inlinePositionedParent && inlinePositionedParent->canContainAbsolutelyPositionedObjects())
-            localPoint += inlinePositionedParent->offsetForInFlowPositionedInline(renderBox());
+        if (positionedParent->renderer().isInlineBox() && positionedParent->renderer().canContainAbsolutelyPositionedObjects())
+            localPoint += PositionedLayoutConstraints::containingBlockOffsetForNonStaticAxes(downcast<RenderBoxModelObject>(positionedParent->renderer()), renderer().style());
 
         ASSERT(positionedParent->contentsScrollingScope());
         m_boxScrollingScope = positionedParent->contentsScrollingScope();

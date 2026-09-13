@@ -675,15 +675,15 @@ void BoxGeometryUpdater::updateLineBreakBoxDimensions(const RenderLineBreak& lin
     layoutState().ensureGeometryForBox(*lineBreakBox.layoutBox()).reset();
 }
 
-void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInline, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
+void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderBoxModelObject& inlineBox, std::optional<LayoutUnit> availableWidth, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& boxGeometry = layoutState().ensureGeometryForBox(*renderInline.layoutBox());
+    auto& boxGeometry = layoutState().ensureGeometryForBox(*inlineBox.layoutBox());
 
-    auto writingMode = renderInline.writingMode();
+    auto writingMode = inlineBox.writingMode();
 
-    auto inlineMargin = horizontalLogicalMargin(renderInline, availableWidth, writingMode);
-    auto border = logicalBorder(renderInline, writingMode, intrinsicWidthMode.has_value());
-    auto padding = logicalPadding(renderInline, availableWidth, writingMode);
+    auto inlineMargin = horizontalLogicalMargin(inlineBox, availableWidth, writingMode);
+    auto border = logicalBorder(inlineBox, writingMode, intrinsicWidthMode.has_value());
+    auto padding = logicalPadding(inlineBox, availableWidth, writingMode);
 
     if (intrinsicWidthMode) {
         boxGeometry.setHorizontalMargin(inlineMargin);
@@ -693,7 +693,7 @@ void BoxGeometryUpdater::updateInlineBoxDimensions(const RenderInline& renderInl
     }
 
     boxGeometry.setHorizontalMargin(inlineMargin);
-    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderInline, availableWidth, writingMode));
+    boxGeometry.setVerticalMargin(verticalLogicalMargin(inlineBox, availableWidth, writingMode));
     boxGeometry.setBorder(border);
     boxGeometry.setPadding(padding);
 }
@@ -849,8 +849,8 @@ void BoxGeometryUpdater::updateBoxGeometry(const RenderElement& renderer, std::o
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
         return updateLineBreakBoxDimensions(*renderLineBreak);
 
-    if (auto* renderInline = dynamicDowncast<RenderInline>(renderer))
-        return updateInlineBoxDimensions(*renderInline, availableWidth, intrinsicWidthMode);
+    if (auto* inlineBox = dynamicDowncast<RenderInline>(renderer))
+        return updateInlineBoxDimensions(*inlineBox, availableWidth, intrinsicWidthMode);
 }
 
 const Layout::ElementBox& BoxGeometryUpdater::rootLayoutBox() const
