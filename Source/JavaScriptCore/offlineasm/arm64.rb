@@ -601,7 +601,7 @@ class Sequence
             | node, address |
             isLoadStorePairOp = false
             case node.opcode
-            when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/, "loadlinkacqb", "storecondrelb", /^atomic[a-z]+b$/
+            when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/, "loadlinkacqb", "storecondrelb", /^atomic[a-z]+b$/, "loadbinc", "loadbpreinc"
                 size = 1
             when "loadh", "loadhsi", "loadhsq", "orh", "storeh", "loadlinkacqh", "storecondrelh", /^atomic[a-z]+h$/
                 size = 2
@@ -631,7 +631,7 @@ class Sequence
             if address.is_a? BaseIndex
                 registerOffsetForm = $currentSettings["ADDRESS64"] &&
                     !isLoadStorePairOp &&
-                    node.opcode !~ /^loadqinc$|^atomic|^loadlinkacq|^storecondrel|^loadv$|^storev$/
+                    node.opcode !~ /^loadqinc$|^loadbinc$|^loadbpreinc$|^atomic|^loadlinkacq|^storecondrel|^loadv$|^storev$/
                 address.offset.value == 0 and
                     (node.opcode =~ /^lea/ or
                      (registerOffsetForm and (address.scaleValue == 1 or address.scaleValue == size)))
@@ -987,6 +987,8 @@ class Instruction
             emitARM64Add("add", operands, :quad)
         when 'addlshiftp'
             emitARM64AddShift("add", operands, :quad)
+        when 'orlshifti'
+            emitARM64AddShift("orr", operands, :word)
         when 'addqs'
             emitARM64Add("adds", operands, :quad)
         when 'subqs'
@@ -1097,6 +1099,13 @@ class Instruction
             emitARM64Access("ldr", "ldur", operands[1], operands[0], :quad)
         when "loadqinc"
             $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[2].value}"
+        when "loadbinc"
+            $asm.puts "ldrb #{operands[1].arm64Operand(:word)}, #{operands[0].arm64Operand(:word)}, #{operands[2].value}"
+        when "loadbpreinc"
+            address = operands[0]
+            raise "loadbpreinc needs an address with an immediate offset at #{operands[0].codeOriginString}" unless address.is_a? Address
+            raise "loadbpreinc offset #{address.offset.value} out of range at #{address.codeOriginString}" unless (-256..255).include? address.offset.value
+            $asm.puts "ldrb #{operands[1].arm64Operand(:word)}, [#{address.base.arm64Operand(:ptr)}, \##{address.offset.value}]!"
         when "storei"
             emitARM64Unflipped("str", operands, :word)
         when "storep"
@@ -1448,6 +1457,8 @@ class Instruction
             $asm.puts "b.eq #{operands[0].asmLabel}"
         when "bnz"
             $asm.puts "b.ne #{operands[0].asmLabel}"
+        when "bc"
+            $asm.puts "b.hs #{operands[0].asmLabel}"
         when "leai"
             operands[0].arm64EmitLea(operands[1], :word)
         when "leap"

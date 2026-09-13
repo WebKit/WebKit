@@ -396,7 +396,15 @@ def riscLowerMalformedImmediates(list, validImmediates, validLogicalImmediates)
                     newList << node.riscLowerMalformedImmediatesRecurse(newList, validImmediates)
                 end
             when "muli", "mulp", "mulq"
-                if node.operands[0].is_a? Immediate
+                if node.operands[0].is_a? Immediate and node.operands.size <= 3 and
+                        node.operands[0].value > 1 and isPowerOfTwo(node.operands[0].value)
+                    shift = Immediate.new(node.codeOrigin, Math.log2(node.operands[0].value).to_i)
+                    shiftOperands = node.operands.size == 2 \
+                        ? [shift, node.operands[1]] \
+                        : [node.operands[1], shift, node.operands[2]]
+                    newList << Instruction.new(node.codeOrigin, "lshift" + node.opcode[-1, 1],
+                                               shiftOperands, annotation)
+                elsif node.operands[0].is_a? Immediate
                     tmp = Tmp.new(codeOrigin, :gpr)
                     newList << Instruction.new(node.codeOrigin, "move", [node.operands[0], tmp], annotation)
                     newList << Instruction.new(node.codeOrigin, node.opcode, [tmp] + node.operands[1..-1])

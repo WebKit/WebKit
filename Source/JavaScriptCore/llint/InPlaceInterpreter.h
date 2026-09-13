@@ -797,16 +797,24 @@ FOR_EACH_IPINT_UINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
 
 namespace JSC { namespace IPInt {
 
+// IPInt dispatches by scaling the opcode by the slot size, so every handler has to fit in one
+// slot and anything that does not is kept out of line. x86_64 encodings are longer than ARM64's,
+// and LLINT_TRACING injects a prologue into every handler, so both need a bigger slot.
+//
+// Note that this number is very sensitive: increasing this makes IPInt hot loop bigger and
+// hurts IPInt performance. If your opcode becomes bigger, consider defining out-of-line code and
+// jump to that.
 #if LLINT_TRACING
-// When LLINT_TRACING is enabled, each ipintOp handler has a trace prologue injected,
-// which can push the largest handlers past 256 bytes. Double the slot size in tracing
-// builds so the dispatch table stays valid.
+#if CPU(ARM64) || CPU(ARM64E)
+constexpr uint64_t alignIPInt = 256;
+#else
 constexpr uint64_t alignIPInt = 512;
+#endif
+#elif CPU(ARM64) || CPU(ARM64E)
+constexpr uint64_t alignIPInt = 128;
 #else
 constexpr uint64_t alignIPInt = 256;
 #endif
-// FIXME: adding an adds instruction to offlineasm could shrink atomic handlers back to 256 bytes
-constexpr uint64_t alignAtomicIPInt = 2 * alignIPInt;
 constexpr uint64_t alignArgumInt = 64;
 constexpr uint64_t alignUInt = 64;
 constexpr uint64_t alignMInt = 64;
