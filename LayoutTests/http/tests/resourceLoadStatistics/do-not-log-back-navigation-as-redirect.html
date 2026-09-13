@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that back navigation is not classified as a redirect and therefore not logged.");
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        if (performance.navigation.type !== performance.navigation.TYPE_BACK_FORWARD) {
+            setEnableFeature(true, function () {
+                testRunner.queueLoad("http://localhost:8000/resourceLoadStatistics/resources/basic-iframe.html");
+                testRunner.queueBackNavigation(1);
+                testRunner.queueNonLoadingScript("testRunner.dumpResourceLoadStatistics(); setEnableFeature(false, function () { testRunner.notifyDone(); });");
+                testRunner.queueLoadingScript("testRunner.waitUntilDone();");
+            });
+        }
+    }
+</script>
+</body>
+</html>
