@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--validateExceptionChecks=true ] -->
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+// See https://tc39.es/proposal-dynamic-code-brand-checks/#sec-performeval
+description("Tests that eval() returns a non-trusted, non-string object unchanged without ever calling toString() on it, per the Dynamic Code Brand Checks proposal (HostGetCodeForEval step 3c: if codeForEval() does not return a String, the object is returned unchanged, and ToString() is never called). Unlike new Function(), eval() has no ToString() fallback for object arguments, so there is no reachable exception-check gap to test here.");
+
+// codeForEval() returns null for untrustedObject, and per step 3c eval() returns
+// the object unchanged instead of falling back to toString() (unlike
+// new Function()). toString() intentionally throws here; if eval() incorrectly
+// called it, this test would fail with that exception instead of passing.
+const untrustedObject = { toString() { throw new Error("toString() should never be called"); } };
+
+shouldBeTrue("eval(untrustedObject) === untrustedObject");
+</script>
+</body>
+</html>
