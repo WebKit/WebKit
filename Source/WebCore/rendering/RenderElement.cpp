@@ -2243,15 +2243,16 @@ MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) 
 
     auto& scrollMarginBox = style().scrollMarginBox();
     if (Style::isZero(scrollMarginBox))
-        return { anchorRect, anchorRect };
+        return { anchorRect, anchorRect, { } };
 
     // The scroll snap specification says that the scroll-margin should be applied in the
     // coordinate system of the scroll container and applied to the rectangular bounding
     // box of the transformed border box of the target element.
-    // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
+    // See https://drafts.csswg.org/css-scroll-snap-1/#scroll-margin.
+    auto scrollMargin = Style::extentForRect(scrollMarginBox, anchorRect, style().usedZoomForLength());
     auto marginRect = anchorRect;
-    marginRect.expand(Style::extentForRect(scrollMarginBox, anchorRect, style().usedZoomForLength()));
-    return { marginRect, anchorRect };
+    marginRect.expand(scrollMargin);
+    return { marginRect, anchorRect, scrollMargin };
 }
 
 void RenderElement::paintOutline(PaintInfo& paintInfo, const LayoutRect& paintRect)
