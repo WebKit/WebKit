@@ -3295,16 +3295,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case ArraySlice: {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-        bool includesCopyOnWrite = true;
-        AbstractValue& source = forNode(m_graph.varArgChild(node, 0));
-        if (source.m_structure.isFinite()) {
-            includesCopyOnWrite = false;
-            source.m_structure.forEach(
-                [&](RegisteredStructure structure) {
-                    if (isCopyOnWrite(structure->indexingMode()))
-                        includesCopyOnWrite = true;
-                });
-        }
+        bool includesCopyOnWrite = m_graph.mayBeCopyOnWriteArray(forNode(m_graph.varArgChild(node, 0)));
 
         // FIXME: We could do better here if we prove that the
         // incoming value has only a single structure.
