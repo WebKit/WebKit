@@ -64,6 +64,8 @@ public:
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
+    WEBCORE_EXPORT friend bool operator==(const RemoteFrameLayoutInfo&, const RemoteFrameLayoutInfo&);
+
 private:
     WEBCORE_EXPORT RemoteFrameLayoutInfo(
         std::optional<LayoutRect> visibleRectInParent,

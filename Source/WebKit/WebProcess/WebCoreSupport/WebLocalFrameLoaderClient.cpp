@@ -1128,6 +1128,12 @@ void WebLocalFrameLoaderClient::broadcastAllFrameTreeSyncDataToOtherProcesses(Fr
 
 void WebLocalFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(FrameTreeSyncSerializationData&& data)
 {
+    if (auto* frameGeometry = std::get_if<FrameGeometrySyncData>(&data.value)) {
+        if (m_lastBroadcastFrameGeometry == *frameGeometry)
+            return;
+        m_lastBroadcastFrameGeometry = *frameGeometry;
+    }
+
     WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(WTF::move(data));
 }
 
