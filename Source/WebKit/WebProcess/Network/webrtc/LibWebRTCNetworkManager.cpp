@@ -111,17 +111,24 @@ void LibWebRTCNetworkManager::setEnumeratingVisibleNetworkInterfacesEnabled(bool
 
 void LibWebRTCNetworkManager::StartUpdating()
 {
+    // Called on the WebRTC network thread. Signaling from here rather than after a round trip through
+    // the main run loop keeps the signal ahead of the session's own allocation, where it is free; a
+    // later one makes every already allocating session of the document reallocate its ports.
+    if (m_hasMergedNetworkList && !m_hasPendingNetworksChangedNotification.exchange(true)) {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([protectedThis = Ref { *this }] {
+            // Cleared before signaling so that a session starting to gather from within it reschedules.
+            protectedThis->m_hasPendingNetworksChangedNotification.store(false);
+            protectedThis->NotifyNetworksChanged();
+        });
+    }
+
     callOnMainRunLoop([weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         Ref monitor = WebProcess::singleton().libWebRTCNetwork().monitor();
-        if (protectedThis->m_receivedNetworkList) {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([protectedThis] {
-                protectedThis->NotifyNetworksChanged();
-            });
-        } else if (monitor->didReceiveNetworkList())
+        if (!protectedThis->m_receivedNetworkList && monitor->didReceiveNetworkList())
             protectedThis->networksChanged(monitor->networkList() , monitor->ipv4(), monitor->ipv6());
         monitor->startUpdating();
     });
@@ -192,6 +199,7 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
         bool hasChanged;
         set_default_local_addresses(ipv4.rtcAddress(), ipv6.rtcAddress());
         MergeNetworkList(WTF::move(networkList), &hasChanged);
+        m_hasMergedNetworkList.store(true);
         if (hasChanged || forceSignaling)
             NotifyNetworksChanged();
     });
