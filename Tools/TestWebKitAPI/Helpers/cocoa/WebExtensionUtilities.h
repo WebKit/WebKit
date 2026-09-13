@@ -49,6 +49,7 @@ NS_SWIFT_UI_ACTOR
 
 // The equivalent of Util::parseExtension() for callers that cannot spell RetainPtr, such as Swift.
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources;
+- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(nullable NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(nullable WKWebExtensionControllerConfiguration *)configuration;
 
 @property (nonatomic, strong) WKWebExtension *extension;
 // Cleared by tests that check what the controller does once the context is released.
