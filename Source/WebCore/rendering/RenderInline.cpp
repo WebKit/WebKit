@@ -601,6 +601,9 @@ void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorCon
 
     LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
 
+    if (mode.contains(MapCoordinatesMode::IgnoreStickyOffsets) && isStickilyPositioned())
+        containerOffset -= stickyPositionOffset();
+
     pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
     if (containerSkipped)
         return;
