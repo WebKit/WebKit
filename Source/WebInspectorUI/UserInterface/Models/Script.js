@@ -42,7 +42,6 @@ WI.Script = class Script extends WI.SourceCode
         this._parentFrame = parentFrame || null;
         this._displayName = displayName || null;
         this._dynamicallyAddedScriptElement = false;
-        this._scriptSyntaxTree = null;
         this._requestId = requestId || null;
 
         this._resource = this._resolveResource();
@@ -232,11 +231,6 @@ WI.Script = class Script extends WI.SourceCode
         return true;
     }
 
-    get scriptSyntaxTree()
-    {
-        return this._scriptSyntaxTree;
-    }
-
     couldBeMainResource(target)
     {
         console.assert(target instanceof WI.Target, target);
@@ -299,33 +293,6 @@ WI.Script = class Script extends WI.SourceCode
         cookie[WI.Script.DisplayNameCookieKey] = this.displayName;
     }
 
-    requestScriptSyntaxTree(callback)
-    {
-        if (this._scriptSyntaxTree) {
-            setTimeout(() => { callback(this._scriptSyntaxTree); }, 0);
-            return;
-        }
-
-        var makeSyntaxTreeAndCallCallback = (content) => {
-            this._makeSyntaxTree(content);
-            callback(this._scriptSyntaxTree);
-        };
-
-        var content = this.content;
-        if (!content && this._resource && this._resource.type === WI.Resource.Type.Script && this._resource.finished)
-            content = this._resource.content;
-        if (content) {
-            setTimeout(makeSyntaxTreeAndCallCallback, 0, content);
-            return;
-        }
-
-        this.requestContent().then(function(parameters) {
-            makeSyntaxTreeAndCallCallback(parameters.sourceCode.content);
-        }).catch(function(error) {
-            makeSyntaxTreeAndCallCallback(null);
-        });
-    }
-
     async breakpointLocations(startPosition, endPosition)
     {
         console.assert(startPosition instanceof WI.SourceCodePosition, startPosition);
@@ -352,6 +319,21 @@ WI.Script = class Script extends WI.SourceCode
             let sourceCode = this._resource || this;
             return sourceCode.createLazySourceCodeLocation(location.lineNumber, location.columnNumber);
         });
+    }
+
+    // Protected
+
+    contentForScriptSyntaxTree()
+    {
+        let content = this.content;
+        if (!content && this._resource?.type === WI.Resource.Type.Script && this._resource.finished)
+            content = this._resource.content;
+        return content;
+    }
+
+    sourceTypeForScriptSyntaxTree()
+    {
+        return this.sourceType;
     }
 
     // Private
@@ -501,14 +483,6 @@ WI.Script = class Script extends WI.SourceCode
         }
 
         return null;
-    }
-
-    _makeSyntaxTree(sourceText)
-    {
-        if (this._scriptSyntaxTree || !sourceText)
-            return;
-
-        this._scriptSyntaxTree = new WI.ScriptSyntaxTree(sourceText, this);
     }
 };
 

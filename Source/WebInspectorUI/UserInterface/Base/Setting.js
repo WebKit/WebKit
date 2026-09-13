@@ -247,6 +247,7 @@ WI.settings = {
     experimentalUseFuzzyMatchingForCSSCodeCompletion: new WI.Setting("experimental-use-fuzzy-matching-for-css-code-completion", true),
     experimentalUseStrictCheckForGlobMatching: new WI.Setting("experimental-use-strict-check-for-glob-matching", false),
     experimentalLayers3DShowLayerContents: new WI.Setting("experimental-layers-3d-show-layer-contents", true),
+    experimentalSourceMapStepping: new WI.Setting("experimental-source-map-stepping", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),
