@@ -1,0 +1,5 @@
+button1  button2button3
+
+PASS Focused element is removed
+PASS Focused element is disabled
+

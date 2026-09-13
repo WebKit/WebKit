@@ -392,6 +392,7 @@ webkit.org/b/304644 [ Debug ] inspector/unit-tests/editing-support.html [ Crash 
 webkit.org/b/304644 [ Release ] inspector/unit-tests/editing-support.html [ Pass Crash Timeout ]
 
 imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6.html [ Skip ]
+webkit.org/b/286127 imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-extend.html [ Skip ]
 imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Range-isPointInRange.html [ Skip ]
 imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Selection-getComposedRanges-range-update.html [ Skip ]
 imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Selection-getComposedRanges.html [ Skip ]

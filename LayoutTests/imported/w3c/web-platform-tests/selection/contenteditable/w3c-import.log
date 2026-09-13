@@ -10,16 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/cefalse-on-boundaries.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/collapse.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/initial-selection-during-focus-event-propagation.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/initial-selection-on-focus.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/modify-around-inline-element-boundary.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/modify-around-non-editable-span.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/modify.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/modifying-selection-with-non-primary-mouse-button.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/modifying-selection-with-primary-mouse-button.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/contenteditable/selection-outside-focused-editing-host.tentative.html
