@@ -59,6 +59,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
@@ -988,6 +989,72 @@ LayoutSize RenderBoxModelObject::offsetFromContainer(const RenderElement& contai
         *offsetDependsOnPoint |= (is<RenderBox>(container) && container.writingMode().isBlockFlipped()) || is<RenderFragmentedFlow>(container);
 
     return offset;
+}
+
+void RenderBoxModelObject::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
+{
+    if (ancestorContainer == this)
+        return;
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(*this);
+
+    if (!ancestorContainer && view().frameView().layoutContext().isPaintOffsetCacheEnabled()) {
+        auto* layoutState = view().frameView().layoutContext().layoutState();
+        auto offset = layoutState->paintOffset();
+        if (box)
+            offset += box->locationOffset();
+        if (style().hasInFlowPosition() && layer())
+            offset += layer()->offsetForInFlowPosition();
+        transformState.move(offset);
+        return;
+    }
+
+    bool containerSkipped;
+    RenderElement* container = this->container(ancestorContainer, containerSkipped);
+    if (!container)
+        return;
+
+    bool isFixedPos = isFixedPositioned();
+    // If this box has a transform, it acts as a fixed position container for fixed descendants,
+    // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
+    if (isFixedPos)
+        mode.add(MapCoordinatesMode::IsFixed);
+    else if (mode.contains(MapCoordinatesMode::IsFixed) && canContainFixedPositionObjects())
+        mode.remove(MapCoordinatesMode::IsFixed);
+
+    if (wasFixed)
+        *wasFixed = mode.contains(MapCoordinatesMode::IsFixed);
+
+    if (!box && mode.contains(MapCoordinatesMode::ApplyContainerFlip)) {
+        // A box's own location is already flipped, so only a box without one has to flip here.
+        if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(*container)) {
+            if (container->writingMode().isBlockFlipped()) {
+                LayoutPoint centerPoint(transformState.mappedPoint());
+                transformState.move(boxContainer->flipForWritingMode(centerPoint) - centerPoint);
+            }
+            mode.remove(MapCoordinatesMode::ApplyContainerFlip);
+        }
+    }
+
+    auto containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
+
+    if (mode.contains(MapCoordinatesMode::IgnoreStickyOffsets) && isStickilyPositioned())
+        containerOffset -= stickyPositionOffset();
+
+    // Clamp overscroll if requested, so we don't layout into it.
+    if (mode.contains(MapCoordinatesMode::ClampOverscroll)) {
+        if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(container); boxContainer && boxContainer->hasPotentiallyScrollableOverflow())
+            containerOffset += boxContainer->scrollPosition() - boxContainer->constrainedScrollPosition();
+    }
+
+    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
+    if (containerSkipped)
+        return;
+
+    if (box)
+        mode.remove(MapCoordinatesMode::ApplyContainerFlip);
+
+    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
 }
 
 LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const

@@ -2603,58 +2603,6 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return std::min(fillAvailableExtent, fillFallbackExtent);
 }
 
-void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
-{
-    if (ancestorContainer == this)
-        return;
-
-    if (!ancestorContainer && view().frameView().layoutContext().isPaintOffsetCacheEnabled()) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
-        LayoutSize offset = layoutState->paintOffset() + locationOffset();
-        if (style().hasInFlowPosition() && layer())
-            offset += layer()->offsetForInFlowPosition();
-        transformState.move(offset);
-        return;
-    }
-
-    bool containerSkipped;
-    RenderElement* container = this->container(ancestorContainer, containerSkipped);
-    if (!container)
-        return;
-
-    bool isFixedPos = isFixedPositioned();
-    // If this box has a transform, it acts as a fixed position container for fixed descendants,
-    // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
-    if (isFixedPos)
-        mode.add(MapCoordinatesMode::IsFixed);
-    else if (mode.contains(MapCoordinatesMode::IsFixed) && canContainFixedPositionObjects())
-        mode.remove(MapCoordinatesMode::IsFixed);
-
-    if (wasFixed)
-        *wasFixed = mode.contains(MapCoordinatesMode::IsFixed);
-
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
-
-    // Remove sticky positioning from the offset if it should be ignored. This is done here in
-    // order to avoid piping this flag down the method chain.
-    if (mode.contains(MapCoordinatesMode::IgnoreStickyOffsets) && isStickilyPositioned())
-        containerOffset -= stickyPositionOffset();
-
-    // Clamp overscroll if requested, so we don't layout into it.
-    if (mode.contains(MapCoordinatesMode::ClampOverscroll)) {
-        if (CheckedPtr boxContainer = dynamicDowncast<RenderBox>(container); boxContainer && boxContainer->hasPotentiallyScrollableOverflow())
-            containerOffset += boxContainer->scrollPosition() - boxContainer->constrainedScrollPosition();
-    }
-
-    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
-    if (containerSkipped)
-        return;
-
-    mode.remove(MapCoordinatesMode::ApplyContainerFlip);
-
-    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
-}
-
 const RenderElement* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT(ancestorToStopAt != this);

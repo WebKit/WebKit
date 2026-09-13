@@ -466,47 +466,6 @@ auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, con
     return localContainer->computeVisibleRectsInContainer(adjustedRects, container, context, state);
 }
 
-void RenderInline::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
-{
-    if (ancestorContainer == this)
-        return;
-
-    if (view().frameView().layoutContext().isPaintOffsetCacheEnabled() && !ancestorContainer) {
-        auto* layoutState = view().frameView().layoutContext().layoutState();
-        LayoutSize offset = layoutState->paintOffset();
-        if (style().hasInFlowPosition() && layer())
-            offset += layer()->offsetForInFlowPosition();
-        transformState.move(offset);
-        return;
-    }
-
-    bool containerSkipped;
-    RenderElement* container = this->container(ancestorContainer, containerSkipped);
-    if (!container)
-        return;
-
-    if (mode.contains(MapCoordinatesMode::ApplyContainerFlip)) {
-        if (CheckedPtr box = dynamicDowncast<RenderBox>(*container)) {
-            if (container->writingMode().isBlockFlipped()) {
-                LayoutPoint centerPoint(transformState.mappedPoint());
-                transformState.move(box->flipForWritingMode(centerPoint) - centerPoint);
-            }
-            mode.remove(MapCoordinatesMode::ApplyContainerFlip);
-        }
-    }
-
-    LayoutSize containerOffset = offsetFromContainer(*container, LayoutPoint(transformState.mappedPoint()));
-
-    if (mode.contains(MapCoordinatesMode::IgnoreStickyOffsets) && isStickilyPositioned())
-        containerOffset -= stickyPositionOffset();
-
-    pushOntoTransformState(transformState, mode, ancestorContainer, container, containerOffset, containerSkipped);
-    if (containerSkipped)
-        return;
-
-    container->mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
-}
-
 const RenderElement* RenderInline::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
 {
     ASSERT(ancestorToStopAt != this);
