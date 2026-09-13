@@ -99,14 +99,19 @@ void FrameLoadState::didFailProvisionalLoad()
     });
 }
 
-void FrameLoadState::didCommitLoad()
+void FrameLoadState::didCommitLoad(URL&& committedURL)
 {
     // State might be set to Finished in didFailProvisionalLoad with content filter error,
     // but the load might commit with replacement data from content fitler.
     ASSERT(m_state == State::Provisional || m_state == State::Finished);
 
     m_state = State::Committed;
-    m_url = m_provisionalURL.isNull() ? aboutBlankURL() : std::exchange(m_provisionalURL, { });
+
+    if (!committedURL.isNull())
+        m_url = WTF::move(committedURL);
+    else
+        m_url = m_provisionalURL.isNull() ? aboutBlankURL() : m_provisionalURL;
+    m_provisionalURL = { };
 
     forEachObserver([&](FrameLoadStateObserver& observer) {
         observer.didCommitProvisionalLoad();

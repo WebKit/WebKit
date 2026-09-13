@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCookieManager.h"
 
+#import "MessageSenderInlines.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
 #import "NetworkStorageSession.h"

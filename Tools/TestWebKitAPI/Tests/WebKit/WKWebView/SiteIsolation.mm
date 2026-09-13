@@ -1452,6 +1452,57 @@ TEST(SiteIsolation, ReuseUncommittedProcessForMultipleRedirects)
     EXPECT_WK_STREQ(webView.get().URL.absoluteString, @"https://apple.com/destination");
 }
 
+static HTTPServer::ResponseMap suspendedReusedMainFrameResponses()
+{
+    HTTPServer::ResponseMap responses;
+    responses.add("/example"_s, HTTPResponse("<script>w = window.open('https://webkit.org/webkit')</script>"_s));
+    responses.add("/webkit"_s, HTTPResponse("hi"_s));
+    responses.add("/coop"_s, HTTPResponse({ { "Content-Type"_s, "text/html"_s }, { "Cross-Origin-Opener-Policy"_s, "same-origin"_s } }, "coop"_s));
+    responses.add("/destination"_s, HTTPResponse("destination"_s));
+    return responses;
+}
+
+static void checkSameDocumentNavigationAfterSuspendingReusedMainFrame(NSString *sameDocumentNavigationScript)
+{
+    HTTPServer server(suspendedReusedMainFrameResponses(), HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, opened] = openerAndOpenedViews(server);
+    RetainPtr openedWebView = opened.webView;
+    RetainPtr openedNavigationDelegate = opened.navigationDelegate;
+    EXPECT_WK_STREQ([openedWebView _mainFrameURL].absoluteString, @"https://webkit.org/webkit");
+
+    [openedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/coop"]]];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([openedWebView _mainFrameURL].absoluteString, @"https://apple.com/coop");
+
+    [openedWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/destination"]]];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ([openedWebView _mainFrameURL].absoluteString, @"https://example.com/destination");
+    EXPECT_WK_STREQ(openedWebView.get().URL.absoluteString, @"https://example.com/destination");
+    auto pidAfterNavigation = [openedWebView _webProcessIdentifier];
+
+    [openedWebView objectByEvaluatingJavaScript:sameDocumentNavigationScript];
+
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return [[openedWebView _mainFrameURL].absoluteString isEqualToString:@"https://example.com/same_document"];
+    }));
+    EXPECT_WK_STREQ([openedWebView _mainFrameURL].absoluteString, @"https://example.com/same_document");
+    EXPECT_WK_STREQ(openedWebView.get().URL.absoluteString, @"https://example.com/same_document");
+
+    EXPECT_EQ(pidAfterNavigation, [openedWebView _webProcessIdentifier]);
+}
+
+TEST(SiteIsolation, ReplaceStateAfterSuspendingReusedMainFrame)
+{
+    checkSameDocumentNavigationAfterSuspendingReusedMainFrame(@"history.replaceState(null, null, '/same_document')");
+}
+
+TEST(SiteIsolation, PushStateAfterSuspendingReusedMainFrame)
+{
+    checkSameDocumentNavigationAfterSuspendingReusedMainFrame(@"history.pushState(null, null, '/same_document')");
+}
+
 void pollUntilOpenedWindowIsClosed(RetainPtr<WKWebView> webView, bool& finished)
 {
     [webView evaluateJavaScript:@"openedWindow.closed" completionHandler:makeBlockPtr([webView, &finished](id result, NSError *error) {

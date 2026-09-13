@@ -69,7 +69,7 @@ public:
     void didFailProvisionalLoad();
     void didSuspend();
 
-    void didCommitLoad();
+    void didCommitLoad(URL&& committedURL);
     void didFinishLoad();
     void didFailLoad();
 
