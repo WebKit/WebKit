@@ -95,6 +95,11 @@ public:
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual LayoutRect borderBoundingBox() const = 0;
 
+    virtual LayoutRect borderBoxRectInContainer() const;
+    virtual LayoutRect visualOverflowRect() const;
+    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
+    LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const override;
+
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
     inline LayoutUnit computedCSSPaddingBottom() const;

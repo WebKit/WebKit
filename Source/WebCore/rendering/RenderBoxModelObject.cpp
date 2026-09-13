@@ -41,12 +41,16 @@
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
 #include "InlineIteratorInlineBox.h"
+#include "LayoutIntegrationLineLayout.h"
+#include "LegacyInlineFlowBox.h"
+#include "LegacyRootInlineBox.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "Path.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
@@ -58,6 +62,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInline.h"
 #include "RenderTable.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
@@ -962,6 +967,134 @@ void RenderBoxModelObject::removeOutOfFlowBoxesIfNeededOnStyleChange(RenderBlock
         if (CheckedPtr containingBlock = RenderObject::containingBlockForPositionType(PositionType::Absolute, *this))
             containingBlock->removeOutOfFlowBoxes(&delegateBlock,  RenderBlock::ContainingBlockState::NewContainingBlock);
     }
+}
+
+LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
+{
+    auto boundingBoxOfFragments = [&]() -> IntRect {
+        if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+            if (!layoutBox() || !layout->contains(*this)) {
+                // Repaint may be issued on subtrees during content mutation with newly inserted renderers
+                // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
+                ASSERT(needsLayout());
+                return { };
+            }
+            if (isRenderSVGInline()) {
+                // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
+                // any post-layout box adjustments.
+                FloatRect result;
+                for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward())
+                    result.unite(box->visualRectIgnoringBlockDirection());
+                return enclosingIntRect(result);
+            }
+            return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
+        }
+
+        auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+        auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+
+        // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero. We have been
+        // unable to reproduce this at all (and consequently unable to figure ot why this is happening). The assert will hopefully catch the problem in debug
+        // builds and help us someday figure out why. We also put in a redundant check of lastLineBox() to avoid the crash for now.
+        ASSERT(!firstInlineBox == !lastInlineBox); // Either both are null or both exist.
+        if (!firstInlineBox || !lastInlineBox)
+            return { };
+
+        // Return the width of the minimal left side and the maximal right side.
+        float logicalLeftSide = 0;
+        float logicalRightSide = 0;
+        for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
+            if (curr == firstInlineBox || curr->logicalLeft() < logicalLeftSide)
+                logicalLeftSide = curr->logicalLeft();
+            if (curr == firstInlineBox || curr->logicalRight() > logicalRightSide)
+                logicalRightSide = curr->logicalRight();
+        }
+
+        bool isHorizontal = writingMode().isHorizontal();
+
+        float x = isHorizontal ? logicalLeftSide : firstInlineBox->x();
+        float y = isHorizontal ? firstInlineBox->y() : logicalLeftSide;
+        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastInlineBox->logicalBottom() - x;
+        float height = isHorizontal ? lastInlineBox->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        return enclosingIntRect(FloatRect { x, y, width, height });
+    };
+
+    return boundingBoxOfFragments();
+}
+auto RenderBoxModelObject::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRects
+{
+    // RepaintOutlineBounds is unused for inlines.
+
+    // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
+#ifndef NDEBUG
+    auto insideSelfPaintingInlineBox = [&] {
+        if (hasSelfPaintingLayer())
+            return true;
+        auto* containingBlock = this->containingBlock();
+        for (auto* ancestor = this->parent(); ancestor && ancestor != containingBlock; ancestor = ancestor->parent()) {
+            if (ancestor->hasSelfPaintingLayer())
+                return true;
+        }
+        return false;
+    };
+    ASSERT_UNUSED(insideSelfPaintingInlineBox, !view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().pseudoElementType() == PseudoElementType::FirstLetter || insideSelfPaintingInlineBox());
+#endif
+
+    if (!firstLegacyInlineBoxFor(*this) && !LayoutIntegration::LineLayout::containing(*this))
+        return { };
+
+    auto repaintRect = visualOverflowRect();
+    repaintRect.inflate(LayoutUnit { style().usedOutlineSize(style().usedZoomForLength(), style().deviceScaleFactor()) });
+    return { repaintRect };
+}
+
+
+LayoutRect RenderBoxModelObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
+{
+    auto rect = RenderLayerModelObject::rectWithOutlineForRepaint(repaintContainer, outlineWidth);
+    if (!isInlineBox())
+        return rect;
+
+    for (auto& child : childrenOfType<RenderElement>(*this))
+        rect.unite(child.rectWithOutlineForRepaint(repaintContainer, outlineWidth));
+    return rect;
+}
+
+LayoutRect RenderBoxModelObject::visualOverflowRect() const
+{
+    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
+        if (!layoutBox()) {
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
+            ASSERT(needsLayout());
+            return { };
+        }
+        return layout->inkOverflowBoundingBoxRectFor(*this);
+    }
+
+    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
+    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
+    if (!firstInlineBox || !lastInlineBox)
+        return { };
+
+    // Return the width of the minimal left side and the maximal right side.
+    LayoutUnit logicalLeftSide = LayoutUnit::max();
+    LayoutUnit logicalRightSide = LayoutUnit::min();
+    for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
+        logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
+        logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
+    }
+
+    const LegacyRootInlineBox& firstRootBox = firstInlineBox->root();
+    const LegacyRootInlineBox& lastRootBox = lastInlineBox->root();
+
+    LayoutUnit logicalTop = firstInlineBox->logicalTopVisualOverflow(firstRootBox.lineTop());
+    LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
+    LayoutUnit logicalHeight = lastInlineBox->logicalBottomVisualOverflow(lastRootBox.lineBottom()) - logicalTop;
+
+    LayoutRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
+    if (!writingMode().isHorizontal())
+        rect = rect.transposedRect();
+    return rect;
 }
 
 } // namespace WebCore
