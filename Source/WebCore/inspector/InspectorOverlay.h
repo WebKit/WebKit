@@ -29,12 +29,15 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/FloatLine.h>
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/InspectorBackendClient.h>
 #include <WebCore/InspectorOverlayLabel.h>
+#include <WebCore/IntPoint.h>
 #include <WebCore/Path.h>
 #include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
@@ -115,6 +118,19 @@ struct InspectorOverlayHighlight {
         Vector<InspectorOverlayLabel> labels;
     };
 
+    struct RulerData {
+        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RulerData);
+        FloatRect bounds;
+        Vector<FloatRect> boundsForGuides;
+        FloatSize viewportSize;
+        FloatBoxExtent obscuredContentInsets;
+        IntPoint scrollOffset;
+        FloatSize visualViewportSize;
+        float pageScaleFactor { 1 };
+        float pageZoomFactor { 1 };
+        String fontFamily;
+    };
+
     void setDataFromConfig(const Config& config)
     {
         contentColor = config.content;
@@ -135,6 +151,7 @@ struct InspectorOverlayHighlight {
     Vector<FloatQuad> quads;
     Vector<GridHighlightOverlay> gridHighlightOverlays;
     Vector<FlexHighlightOverlay> flexHighlightOverlays;
+    std::optional<RulerData> rulerData;
     bool usePageCoordinates { true };
 
     using Bounds = FloatRect;
@@ -226,6 +243,8 @@ public:
 
     WEBCORE_EXPORT static void drawGridOverlay(GraphicsContext&, const InspectorOverlayHighlight::GridHighlightOverlay&);
     WEBCORE_EXPORT static void drawFlexOverlay(GraphicsContext&, const InspectorOverlayHighlight::FlexHighlightOverlay&);
+    WEBCORE_EXPORT static void drawBounds(GraphicsContext&, const InspectorOverlayHighlight::RulerData&, const FloatPoint& viewportOrigin);
+    WEBCORE_EXPORT static void drawRulers(GraphicsContext&, const InspectorOverlayHighlight::RulerData&, const Path& titlePath, const FloatPoint& viewportOrigin);
 
 private:
     using TimeRectPair = std::pair<MonotonicTime, FloatRect>;
@@ -240,6 +259,8 @@ private:
     void drawPaintRects(GraphicsContext&, const Deque<TimeRectPair>&);
     void drawBounds(GraphicsContext&, const Highlight::Bounds&);
     void drawRulers(GraphicsContext&, const RulerExclusion&);
+
+    std::optional<Highlight::RulerData> buildRulerData(const Highlight::Bounds&) const;
 
     Path drawElementTitle(GraphicsContext&, Node&, const Highlight::Bounds&);
     
