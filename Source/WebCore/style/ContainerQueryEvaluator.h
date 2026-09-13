@@ -39,9 +39,23 @@ namespace Style {
 
 class BuilderState;
 
+struct HostElementStyle {
+    CheckedRef<const Element> element;
+    CheckedRef<const ComputedStyle> style;
+};
+
 struct ContainerQueryEvaluationState {
     Vector<Ref<const Element>> sizeQueryContainers;
+
+    // Style::Update of the current style resolution has the latest style,
+    // unlike render style which only gets updated after render tree update.
     CheckedPtr<Style::Update> styleUpdate;
+
+    // In the context when a pseudo-element's style is being resolved (which could
+    // include container queries being evaluated), this is the style of its host.
+    // It's populated right after the host style is resolved, but before its
+    // pseudo-elements are.
+    std::optional<HostElementStyle> hostElementStyle;
 };
 
 class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
