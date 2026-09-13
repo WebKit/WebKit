@@ -43,6 +43,7 @@ GPUProcess/graphics/RemoteSnapshot.cpp
 GPUProcess/graphics/RemoteSnapshotRecorder.cpp
 GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp
 GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
+GPUProcess/graphics/ShareableFont.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
 GPUProcess/graphics/Model/ModelObjectHeap.cpp
 GPUProcess/graphics/Model/RemoteMesh.cpp

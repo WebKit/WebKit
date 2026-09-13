@@ -54,6 +54,7 @@
 #include "RemoteTextDetector.h"
 #include "RemoteTextDetectorMessages.h"
 #include "ShapeDetectionObjectHeap.h"
+#include "ShareableFont.h"
 #include "WebPageProxy.h"
 #include <WebCore/Filter.h>
 #include <WebCore/FontCustomPlatformData.h>
@@ -191,7 +192,6 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
     MESSAGE_CHECK(remoteImageBuffer, "Missing ImageBuffer");
     Ref imageBuffer = RemoteImageBuffer::sinkIntoImageBuffer(remoteImageBuffer.releaseNonNull());
     MESSAGE_CHECK(imageBuffer->hasOneRef(), "ImageBuffer in use");
-    imageBuffer->replaceFontsWithRebuildData();
     // Avoid leaking cross-RemoteRenderingBackend state through context by releasing the context.
     imageBuffer->releaseGraphicsContext();
     bool success = m_sharedResourceCache->addSerializedImageBuffer(serializedIdentifier, WTF::move(imageBuffer));
@@ -215,7 +215,6 @@ void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferIdenti
     ImageBufferCreationContext creationContext;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     imageBuffer->transferToNewContext(creationContext);
-    imageBuffer->rebuildFonts();
     auto result = m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(imageBuffer.releaseNonNull(), imageBufferIdentifier, contextIdentifier, *this));
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
 }
@@ -474,7 +473,7 @@ void RemoteRenderingBackend::cacheFont(const Font::Attributes& fontAttributes, F
 
     FontPlatformData platform = FontPlatformData::create(platformData, customPlatformData.get());
 
-    Ref<Font> font = Font::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
+    Ref font = ShareableFont::create(platform, fontAttributes.origin, fontAttributes.isInterstitial, fontAttributes.visibility, fontAttributes.isTextOrientationFallback, fontAttributes.renderingResourceIdentifier);
 
     bool success = m_remoteResourceCache.cacheFont(WTF::move(font));
     MESSAGE_CHECK(success, "Font already cached.");

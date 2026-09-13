@@ -96,12 +96,7 @@ Font::Font(const FontPlatformData& platformData, Origin origin, IsInterstitial i
     platformGlyphInit();
     platformCharWidthInit();
     platformCharHeightInit();
-#if ENABLE(OPENTYPE_VERTICAL)
-    if (platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback()) {
-        m_verticalData = FontCache::forCurrentThread().verticalData(platformData);
-        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
-    }
-#endif
+    platformVerticalDataInit();
     applyFontMetricsOverrides();
 }
 

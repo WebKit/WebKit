@@ -312,12 +312,12 @@ void RemoteGraphicsContextProxy::drawGlyphs(const Font& font, std::span<const Gl
     drawGlyphsImmediate(font, glyphs, advances, localAnchor, smoothingMode);
 }
 
-void RemoteGraphicsContextProxy::drawGlyphsImmediate(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
+void RemoteGraphicsContextProxy::drawGlyphsImmediate(const FontBase& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {
     ASSERT(glyphs.size() == advances.size());
     sendPendingDrawsIfNecessary();
     appendStateChangeItemIfNecessary();
-    recordResourceUse(const_cast<Font&>(font));
+    recordResourceUse(const_cast<FontBase&>(font));
     send(Messages::RemoteGraphicsContext::DrawGlyphs(font.renderingResourceIdentifier(), { glyphs.data(), Vector<FloatSize>(advances).span().data(), glyphs.size() }, localAnchor, smoothingMode));
 }
 
@@ -796,7 +796,7 @@ bool RemoteGraphicsContextProxy::recordResourceUse(const SourceImage& image)
     return true;
 }
 
-bool RemoteGraphicsContextProxy::recordResourceUse(Font& font)
+bool RemoteGraphicsContextProxy::recordResourceUse(FontBase& font)
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]] {

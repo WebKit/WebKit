@@ -224,9 +224,6 @@ public:
 
     WEBCORE_EXPORT virtual ImageBufferBackendSharing* toBackendSharing();
 
-    WEBCORE_EXPORT void replaceFontsWithRebuildData();
-    WEBCORE_EXPORT void rebuildFonts();
-
 protected:
     WEBCORE_EXPORT ImageBuffer(ImageBufferParameters, const WebCore::ImageBufferCreationContext&, std::unique_ptr<ImageBufferBackend>&&, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 

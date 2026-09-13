@@ -28,8 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "ShareableFont.h"
 #include <WebCore/Filter.h>
-#include <WebCore/Font.h>
 #include <WebCore/FontCustomPlatformData.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/ImageBuffer.h>
@@ -103,7 +103,7 @@ RefPtr<Filter> RemoteResourceCache::cachedFilter(RenderingResourceIdentifier ide
     return m_filters.get(identifier);
 }
 
-bool RemoteResourceCache::cacheFont(Ref<Font>&& font)
+bool RemoteResourceCache::cacheFont(Ref<ShareableFont>&& font)
 {
     auto identifier = font->renderingResourceIdentifier();
     return m_fonts.add(identifier, WTF::move(font)).isNewEntry;
@@ -114,7 +114,7 @@ bool RemoteResourceCache::releaseFont(RenderingResourceIdentifier identifier)
     return m_fonts.remove(identifier);
 }
 
-RefPtr<Font> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identifier) const
+RefPtr<ShareableFont> RemoteResourceCache::cachedFont(RenderingResourceIdentifier identifier) const
 {
     return m_fonts.get(identifier);
 }
