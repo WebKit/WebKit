@@ -1,0 +1,197 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameHighlight");
+
+    // Geometry is deliberately not asserted: internals.inspectorHighlightRects() reads the page
+    // controller's overlay, so it cannot observe a frame overlay's quads. These cases assert that each
+    // command is dispatched to the frame target and accepted rather than erroring.
+    // FIXME: a coverage gap in the test, not a known bug -- the contents-to-root-view translation in
+    // InspectorOverlay::paint() is not verifiable from a layout test today.
+
+    async function containerNodeForFrame(resourceName) {
+        let target = await frameTargetForURLContaining(resourceName);
+        InspectorTest.expectNotNull(target, "Should find the frame target for " + resourceName + ".");
+
+        if (target.isProvisional) {
+            let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            target = committedEvent.data.target;
+        }
+        await target.ensureTargetExecutionContext();
+
+        let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+        if (!frameDoc) {
+            let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            frameDoc = docEvent.data.document;
+        }
+        InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+        let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        InspectorTest.expectNotNull(bodyNode, "Frame document should have a BODY.");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+        // Bind the container's children first; an unbound nodeId resolves to null.
+        let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+        InspectorTest.expectNotNull(containerNode, "Frame document should have #container.");
+        await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+        return {target, containerNode};
+    }
+
+    function highlightConfig() {
+        return {
+            showInfo: true,
+            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
+            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
+            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
+            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
+        };
+    }
+
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    suite.addTestCase({
+        name: "HighlightNode",
+        description: "DOM.highlightNode and DOM.hideHighlight should be accepted by a frame target.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("highlight-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#target'.");
+
+            let highlightError = await errorFrom(target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()}));
+            InspectorTest.expectNull(highlightError, "DOM.highlightNode should be accepted by the frame target.");
+
+            let hideError = await errorFrom(target.DOMAgent.hideHighlight());
+            InspectorTest.expectNull(hideError, "DOM.hideHighlight should be accepted by the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightNodeScrolled",
+        description: "Highlighting should be accepted while the frame is scrolled.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("highlight-frame.html");
+
+            // A scrolled frame is the case the paint() translation exists for.
+            await target.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 300)"});
+
+            try {
+                let nodeId = await containerNode.querySelector("#target");
+                let error = await errorFrom(target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()}));
+                InspectorTest.expectNull(error, "DOM.highlightNode should be accepted while the frame is scrolled.");
+
+                await errorFrom(target.DOMAgent.hideHighlight());
+            } finally {
+                // Later cases share this frame, so do not leave it scrolled if the above throws.
+                await target.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 0)"});
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightNodeRTL",
+        description: "Highlighting should be accepted in an RTL frame, where scrollOrigin is non-zero.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("highlight-rtl-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            let error = await errorFrom(target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()}));
+            InspectorTest.expectNull(error, "DOM.highlightNode should be accepted in an RTL frame.");
+
+            await errorFrom(target.DOMAgent.hideHighlight());
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightNodeVerticalWritingMode",
+        description: "Highlighting should be accepted in a vertical-rl frame, where scrollOrigin is non-zero.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("highlight-vertical-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            let error = await errorFrom(target.DOMAgent.highlightNode.invoke({nodeId, highlightConfig: highlightConfig()}));
+            InspectorTest.expectNull(error, "DOM.highlightNode should be accepted in a vertical-rl frame.");
+
+            await errorFrom(target.DOMAgent.hideHighlight());
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightNodeList",
+        description: "DOM.highlightNodeList should be accepted by a frame target.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("highlight-frame.html");
+
+            let targetId = await containerNode.querySelector("#target");
+            let tailId = await containerNode.querySelector("#tail");
+            InspectorTest.expectNotNull(targetId, "Should get a nodeId for '#target'.");
+            InspectorTest.expectNotNull(tailId, "Should get a nodeId for '#tail'.");
+
+            let error = await errorFrom(target.DOMAgent.highlightNodeList.invoke({nodeIds: [targetId, tailId], highlightConfig: highlightConfig()}));
+            InspectorTest.expectNull(error, "DOM.highlightNodeList should be accepted by the frame target.");
+
+            await errorFrom(target.DOMAgent.hideHighlight());
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightRectAndQuad",
+        description: "DOM.highlightRect and DOM.highlightQuad should be accepted by a frame target.",
+        async test() {
+            let {target} = await containerNodeForFrame("highlight-frame.html");
+
+            let rectError = await errorFrom(target.DOMAgent.highlightRect.invoke({x: 10, y: 20, width: 100, height: 50, usePageCoordinates: false}));
+            InspectorTest.expectNull(rectError, "DOM.highlightRect should be accepted by the frame target.");
+
+            let quadError = await errorFrom(target.DOMAgent.highlightQuad.invoke({quad: [10, 20, 110, 20, 110, 70, 10, 70], usePageCoordinates: false}));
+            InspectorTest.expectNull(quadError, "DOM.highlightQuad should be accepted by the frame target.");
+
+            await errorFrom(target.DOMAgent.hideHighlight());
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightQuadRejectsMalformedQuad",
+        description: "DOM.highlightQuad should report an error for a malformed quad.",
+        async test() {
+            let {target} = await containerNodeForFrame("highlight-frame.html");
+
+            let error = await errorFrom(target.DOMAgent.highlightQuad.invoke({quad: [1, 2, 3]}));
+            InspectorTest.expectNotNull(error, "DOM.highlightQuad should reject a three-element quad.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HighlightSelectorNotDispatchable",
+        description: "DOM.highlightSelector is page-only, so a frame target should not expose it.",
+        async test() {
+            let {target} = await containerNodeForFrame("highlight-frame.html");
+
+            // highlightSelector resolves a frameId through the page-level identifier registry, so it
+            // is still page-only. Asserted so implementing it must update this expectation.
+            InspectorTest.expectFalse(target.hasCommand("DOM.highlightSelector"), "Frame target should not expose DOM.highlightSelector.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that a cross-origin iframe's FrameDOMAgent accepts the DOM highlight commands.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-frame.html" width="300" height="200"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-rtl-frame.html" width="300" height="200"></iframe>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/highlight-vertical-frame.html" width="300" height="200"></iframe>
+</body>

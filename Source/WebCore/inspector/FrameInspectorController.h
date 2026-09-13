@@ -52,6 +52,8 @@ class FrontendRouter;
 
 namespace WebCore {
 
+class FrameDOMAgent;
+class GraphicsContext;
 class InspectorBackendClient;
 class InspectorController;
 class InspectorFrontendClient;
@@ -59,10 +61,11 @@ class InspectorInstrumentation;
 class InstrumentingAgents;
 class LocalFrame;
 class PageInspectorController;
+class RenderObject;
 class WebInjectedScriptManager;
 struct FrameAgentContext;
 
-class FrameInspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<FrameInspectorController> {
+class FrameInspectorController final : public Inspector::InspectorEnvironment, public InspectorOverlayOwner, public CanMakeCheckedPtr<FrameInspectorController> {
     WTF_MAKE_NONCOPYABLE(FrameInspectorController);
     WTF_MAKE_TZONE_ALLOCATED(FrameInspectorController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameInspectorController);
@@ -70,15 +73,22 @@ public:
     FrameInspectorController(LocalFrame&, PageInspectorController&);
     ~FrameInspectorController() override;
 
-    // AbstractCanMakeCheckedPtr overrides
-    uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
-    uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
-    void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
-    void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
-    void setDidBeginCheckedPtrDeletion() final { CanMakeCheckedPtr::setDidBeginCheckedPtrDeletion(); }
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
     WEBCORE_EXPORT void NODELETE ref() const;
     WEBCORE_EXPORT void deref() const;
+
+    // InspectorOverlayOwner
+    void overlayOwnerRef() const final { ref(); }
+    void overlayOwnerDeref() const final { deref(); }
+    Page* NODELETE overlayOwnerPage() const final;
+    LocalFrame* NODELETE overlayOwnerFrame() const final;
+    InspectorBackendClient* NODELETE overlayOwnerBackendClient() const final;
+    Vector<size_t> overlayOwnerFlexLineStarts(const RenderObject&) const final;
+
+    WEBCORE_EXPORT void drawHighlight(GraphicsContext&) const;
+
+    WEBCORE_EXPORT bool hasOverlayContentToDraw() const;
 
     WEBCORE_EXPORT void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
@@ -111,6 +121,9 @@ private:
     const Ref<WebInjectedScriptManager> m_injectedScriptManager;
     const Ref<Inspector::FrontendRouter> m_frontendRouter;
     const Ref<Inspector::BackendDispatcher> m_backendDispatcher;
+
+    const UniqueRef<InspectorOverlay> m_overlay;
+
     const Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<JSC::Debugger> m_debugger;
     Inspector::AgentRegistry m_agents;
@@ -118,6 +131,9 @@ private:
     bool m_didCreateConsoleAgent { false };
     bool m_didCreateLazyAgents { false };
     WeakPtr<InspectorFrontendClient> m_inspectorFrontendClient;
+
+    // Non-owning, so the overlay can reach the flex line-start cache; the agent is owned by m_agents.
+    CheckedPtr<FrameDOMAgent> m_domAgent;
 };
 
 } // namespace WebCore
