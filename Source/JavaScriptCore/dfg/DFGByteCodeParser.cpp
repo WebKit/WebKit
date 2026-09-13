@@ -12510,27 +12510,21 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         auto prediction = getPredictionWithoutOSRExit(BytecodeIndex(m_currentIndex.offset(), OpIteratorNext::getValue));
 
         {
-            // FIXME: doneIndex is -1 so it seems like we should be able to do CompareBelow(index, length). See: https://bugs.webkit.org/show_bug.cgi?id=210927
+            static_assert(JSArrayIterator::doneIndex == -1);
             Node* iterator = get(bytecode.m_iterator);
-            Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
             Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
-            Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
             Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), iterator);
             Node* butterfly = addToGraph(GetButterfly, iteratedObject);
             Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iteratedObject), Edge(butterfly, KnownStorageUse));
             // GetArrayLength is pessimized prior to fixup.
             emitExitOK();
-            Node* isOutOfBounds = addToGraph(CompareGreaterEq, Edge(index, Int32Use), Edge(length, Int32Use));
-
-            isDone = addToGraph(ArithBitOr, isDone, isOutOfBounds);
-            // The above compare doesn't produce effects since we know the values are booleans. We don't set UseKinds because Fixup likes to add edges.
-            emitExitOK();
+            Node* isInBounds = addToGraph(CompareBelow, Edge(index, Int32Use), Edge(length, Int32Use));
 
             BranchData* branchData = m_graph.m_branchData.add();
-            branchData->taken = BranchTarget(isDoneBlock);
-            branchData->notTaken = BranchTarget(doLoadBlock);
-            addToGraph(Branch, OpInfo(branchData), isDone);
+            branchData->taken = BranchTarget(doLoadBlock);
+            branchData->notTaken = BranchTarget(isDoneBlock);
+            addToGraph(Branch, OpInfo(branchData), isInBounds);
         }
 
         {
