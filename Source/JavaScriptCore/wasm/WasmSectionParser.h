@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmFormat.h"
+#include "WasmMemoryInformation.h"
 #include "WasmOps.h"
 #include "WasmParser.h"
 #include "WasmTypeSectionState.h"
@@ -63,9 +64,24 @@ private:
         return UnexpectedResult(makeString("WebAssembly.Module doesn't parse at byte "_s, String::number(m_offset + m_offsetInSource), ": "_s, makeString(args)...));
     }
 
+    struct ParsedImportType {
+        ExternalKind kind { ExternalKind::Function };
+        TypeSignatureIndex typeIndex;
+        TableInformation table;
+        MemoryInformation memory;
+        GlobalInformation global;
+    };
+
     [[nodiscard]] PartialResult parseGlobalType(GlobalInformation&);
+    [[nodiscard]] PartialResult parseMemoryType(bool isImport, MemoryInformation&);
     [[nodiscard]] PartialResult parseMemoryHelper(bool isImport);
+    [[nodiscard]] PartialResult parseTableType(bool isImport, TableInformation&);
     [[nodiscard]] PartialResult parseTableHelper(bool isImport);
+    [[nodiscard]] PartialResult appendTable(const TableInformation&);
+    [[nodiscard]] PartialResult appendMemory(const MemoryInformation&);
+    [[nodiscard]] PartialResult parseImportType(uint32_t importNumber, const Name& module, const Name& field, ExternalKind, ParsedImportType&);
+    [[nodiscard]] PartialResult appendImportType(const ParsedImportType&, unsigned& kindIndex);
+    [[nodiscard]] PartialResult addImport(Name&& module, Name&& field, const ParsedImportType&);
     enum class LimitsType { Memory, Table };
     template <LimitsType T>
     [[nodiscard]] PartialResult parseResizableLimits(uint64_t& initial, std::optional<uint64_t>& maximum, bool& isShared, bool& is64bit);
