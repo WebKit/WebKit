@@ -270,7 +270,7 @@ export default [
             "no-unused-expressions": 2,
             "no-unused-labels": "error",
             "no-unused-private-class-members": "error",
-            "no-unused-vars": [2, {"vars": "local", "args": "none", "destructuredArrayIgnorePattern": ".*"}],
+            "no-unused-vars": [2, {"vars": "local", "args": "none", "destructuredArrayIgnorePattern": ".*", "ignoreUsingDeclarations": true}],
             "no-use-before-define": 0,
             "no-useless-backreference": "error",
             "no-useless-assignment": "error",

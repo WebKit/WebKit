@@ -306,30 +306,26 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
         previewErrorElement.textContent = WI.UIString("No preview available");
     }
 
-    _populateWindowPreview(containerElement)
+    async _populateWindowPreview(containerElement)
     {
-        this._getRemoteObject((remoteObject) => {
-            if (!remoteObject) {
-                this._populateError(containerElement);
-                return;
-            }
-
-            function inspectedPage_window_getLocationHref() {
-                return this.location.href;
-            }
-
-            const args = undefined;
-            remoteObject.callFunctionJSON(inspectedPage_window_getLocationHref, args, (href) => {
-                remoteObject.release();
-
-                if (!href) {
-                    this._populateError(containerElement);
-                    return;
-                }
-
-                this._populateRemoteObject(containerElement, WI.RemoteObject.fromPrimitiveValue(href));
-            });
+        using remoteObject = await new Promise((resolve) => {
+            this._getRemoteObject(resolve);
         });
+        if (!remoteObject) {
+            this._populateError(containerElement);
+            return;
+        }
+
+        function inspectedPage_window_getLocationHref() {
+            return this.location.href;
+        }
+        let href = await remoteObject.callFunctionJSON(inspectedPage_window_getLocationHref);
+        if (!href) {
+            this._populateError(containerElement);
+            return;
+        }
+
+        this._populateRemoteObject(containerElement, WI.RemoteObject.fromPrimitiveValue(href));
     }
 
     _populatePreview(containerElement)

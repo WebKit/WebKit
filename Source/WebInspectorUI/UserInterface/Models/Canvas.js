@@ -499,7 +499,7 @@ WI.Canvas = class Canvas extends WI.Object
 
     async _calculateSize()
     {
-        let remoteObject = await WI.RemoteObject.resolveCanvasContext(this);
+        using remoteObject = await WI.RemoteObject.resolveCanvasContext(this);
         if (!remoteObject)
             return;
 
@@ -510,7 +510,6 @@ WI.Canvas = class Canvas extends WI.Object
             };
         }
         let size = await remoteObject.callFunctionJSON(inspectedPage_context_getCanvasSize);
-        remoteObject.release();
 
         this.sizeChanged([WI.Size.fromJSON(size)]);
     }

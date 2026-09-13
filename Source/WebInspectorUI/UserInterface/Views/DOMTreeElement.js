@@ -350,7 +350,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         return this.children[index];
     }
 
-    toggleElementVisibility(forceHidden)
+    async toggleElementVisibility(forceHidden)
     {
         let effectiveNode = this.representedObject;
         if (effectiveNode.isPseudoElement()) {
@@ -362,6 +362,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
             return;
+
+        using object = await WI.RemoteObject.resolveNode(effectiveNode);
 
         function inspectedPage_node_injectStyleAndToggleClass(hiddenClassName, force) {
             let root = this.getRootNode() || document;
@@ -380,47 +382,39 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
             this.classList.toggle(hiddenClassName, force);
         }
-
-        WI.RemoteObject.resolveNode(effectiveNode).then((object) => {
-            object.callFunction(inspectedPage_node_injectStyleAndToggleClass, [WI.DOMTreeElement.HideElementStyleSheetIdOrClassName, forceHidden], false);
-            object.release();
-        });
+        await object.callFunction(inspectedPage_node_injectStyleAndToggleClass, [WI.DOMTreeElement.HideElementStyleSheetIdOrClassName, forceHidden]);
     }
 
-    _createTooltipForNode()
+    async _createTooltipForNode()
     {
-        var node = this.representedObject;
+        let node = this.representedObject;
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
-        function setTooltip(error, result, wasThrown)
-        {
-            if (error || wasThrown || !result || result.type !== "string")
-                return;
+        using object = await WI.RemoteObject.resolveNode(node);
 
-            try {
-                var properties = JSON.parse(result.description);
-                var offsetWidth = properties[0];
-                var offsetHeight = properties[1];
-                var naturalWidth = properties[2];
-                var naturalHeight = properties[3];
-                if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
-                    this.tooltip = WI.UIString("%d \xd7 %d pixels").format(offsetWidth, offsetHeight);
-                else
-                    this.tooltip = WI.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)").format(offsetWidth, offsetHeight, naturalWidth, naturalHeight);
-            } catch (e) {
-                console.error(e);
-            }
+        function inspectedPage_node_dimensions() {
+            return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
+        }
+        using result = await object.callFunction(inspectedPage_node_dimensions);
+        if (result?.type !== "string")
+            return;
+
+        let offsetWidth;
+        let offsetHeight;
+        let naturalWidth;
+        let naturalHeight;
+        try {
+            [offsetWidth, offsetHeight, naturalWidth, naturalHeight] = JSON.parse(result.description);
+        } catch (error) {
+            WI.reportInternalError(error);
+            return;
         }
 
-        WI.RemoteObject.resolveNode(node).then((object) => {
-            function inspectedPage_node_dimensions() {
-                return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
-            }
-
-            object.callFunction(inspectedPage_node_dimensions, undefined, false, setTooltip.bind(this));
-            object.release();
-        });
+        if (offsetHeight === naturalHeight && offsetWidth === naturalWidth)
+            this.tooltip = WI.UIString("%d \xd7 %d pixels").format(offsetWidth, offsetHeight);
+        else
+            this.tooltip = WI.UIString("%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)").format(offsetWidth, offsetHeight, naturalWidth, naturalHeight);
     }
 
     updateSelectionArea()
