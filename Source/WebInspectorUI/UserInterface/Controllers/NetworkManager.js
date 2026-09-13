@@ -605,7 +605,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         if (typeof json.log !== "object" || typeof json.log.version !== "string") {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" log"));
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" log issue"));
             return null;
         }
 
@@ -614,15 +614,15 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return null;
         }
 
-        if (!Array.isArray(json.log.entries)) {//||
+        if (!Array.isArray(json.log.entries)) {
             WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" missing entries"));
             return null;
         }
-        if (!Array.isArray(json.log.pages)) {// ||
+        if (!Array.isArray(json.log.pages)) {
             WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" missing pages"));
             return null;
         }
-        if (!json.log.pages[0]) {// ||
+        if (!json.log.pages[0]) {
             WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" missing first page"));
             return null;
         }
@@ -633,7 +633,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         let mainResourceSentWalltime = WI.HARBuilder.dateFromHARDate(json.log.pages[0].startedDateTime) / 1000;
         if (isNaN(mainResourceSentWalltime)) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" mainResourceSentWalltime"));
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR%s").format(" mainResourceSentWalltime issue"));
             return null;
         }
 

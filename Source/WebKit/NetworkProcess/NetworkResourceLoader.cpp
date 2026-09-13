@@ -1434,7 +1434,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         int metricPriority = static_cast<int>(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority);
 
         networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority =
-            toNetworkLoadPriority(m_parameters.request.initialPriority());
+            m_parameters.request.initialPriority();
 
         if (requestPriority != metricPriority) {
             // Priority changed, so update metric to latest value
