@@ -1418,14 +1418,6 @@ CaretBrowsingEnabled:
   status: embedder
   defaultValue: false
 
-CaretPositionFromPointEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "document.caretPositionFromPoint() API"
-  humanReadableDescription: "Enable document.caretPositionFromPoint() API"
-  defaultValue: true
-
 ChildProcessDebuggabilityEnabled:
   comment: Disables GPU process IPC timeouts
   type: bool
