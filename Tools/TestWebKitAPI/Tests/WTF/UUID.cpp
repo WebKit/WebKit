@@ -154,3 +154,14 @@ TEST(WTF, UUIDTryCreateFromHighAndLow)
     EXPECT_EQ(uuid->low(), 0x89ab0123456789abULL);
     EXPECT_EQ(makeString(*uuid), "12345678-9abc-4de0-89ab-0123456789ab"_s);
 }
+
+// UUIDCanonicalForm renders bits a UUID cannot hold, and has to agree with a UUID on bits it can.
+TEST(WTF, UUIDCanonicalForm)
+{
+    EXPECT_EQ(makeString(WTF::UUIDCanonicalForm { }), "00000000-0000-0000-0000-000000000000"_s);
+    EXPECT_EQ(makeString(WTF::UUIDCanonicalForm { 0, 1 }), "00000000-0000-0000-0000-000000000001"_s);
+
+    auto uuid = WTF::UUID::tryCreate(0x123456789abc4de0ULL, 0x89ab0123456789abULL);
+    EXPECT_TRUE(!!uuid);
+    EXPECT_EQ(makeString(WTF::UUIDCanonicalForm { uuid->high(), uuid->low() }), makeString(*uuid));
+}

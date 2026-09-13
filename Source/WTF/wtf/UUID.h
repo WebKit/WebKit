@@ -190,30 +190,35 @@ WTF_EXPORT_PRIVATE String createVersion4UUIDStringWeak();
 WTF_EXPORT_PRIVATE String bootSessionUUIDString();
 WTF_EXPORT_PRIVATE bool isVersion4UUID(StringView);
 
+// 128 bits rendered in the canonical UUID form, for bits that are UUID-shaped but cannot be held in a
+// UUID because they may be a reserved value, such as a FIDO AAGUID: 16 arbitrary vendor bytes, and
+// commonly all-zero. StringTypeAdapter<UUID> is this with the bits taken from a UUID.
+struct UUIDCanonicalForm {
+    uint64_t high { 0 };
+    uint64_t low { 0 };
+};
+
 template<>
-class StringTypeAdapter<UUID> {
+class StringTypeAdapter<UUIDCanonicalForm> {
 public:
-    StringTypeAdapter(UUID uuid)
-        : m_uuid { uuid }
+    StringTypeAdapter(UUIDCanonicalForm bits)
+        : m_bits { bits }
     {
     }
 
     template<typename Func>
     auto handle(Func&& func) const -> decltype(auto)
     {
-        UInt128 data = m_uuid.data();
-        auto high = static_cast<uint64_t>(data >> 64);
-        auto low = static_cast<uint64_t>(data);
         return handleWithAdapters(std::forward<Func>(func),
-            hex(high >> 32, 8, Lowercase),
+            hex(m_bits.high >> 32, 8, Lowercase),
             '-',
-            hex((high >> 16) & 0xffff, 4, Lowercase),
+            hex((m_bits.high >> 16) & 0xffff, 4, Lowercase),
             '-',
-            hex(high & 0xffff, 4, Lowercase),
+            hex(m_bits.high & 0xffff, 4, Lowercase),
             '-',
-            hex(low >> 48, 4, Lowercase),
+            hex(m_bits.low >> 48, 4, Lowercase),
             '-',
-            hex(low & 0xffffffffffff, 12, Lowercase));
+            hex(m_bits.low & 0xffffffffffff, 12, Lowercase));
     }
 
     unsigned length() const
@@ -237,7 +242,16 @@ public:
     }
 
 private:
-    UUID m_uuid;
+    UUIDCanonicalForm m_bits;
+};
+
+template<>
+class StringTypeAdapter<UUID> : public StringTypeAdapter<UUIDCanonicalForm> {
+public:
+    StringTypeAdapter(UUID uuid)
+        : StringTypeAdapter<UUIDCanonicalForm> { { uuid.high(), uuid.low() } }
+    {
+    }
 };
 
 }
