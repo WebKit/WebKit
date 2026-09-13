@@ -4078,7 +4078,7 @@ void WebPageProxy::selectAll()
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::SelectAll());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SelectAll());
 }
 
 static std::optional<DOMPasteAccessCategory> pasteAccessCategoryForCommand(const String& commandName)
