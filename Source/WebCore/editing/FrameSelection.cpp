@@ -1999,10 +1999,10 @@ void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& pai
 }
 
 #if !(PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)) && HAVE(REDESIGNED_TEXT_CURSOR)
-static LayoutSize inFlowPositionOffsetToCaretPainter(const RenderInline& inlineRenderer, const RenderBlock& caretPainter)
+static LayoutSize inFlowPositionOffsetToCaretPainter(const RenderBoxModelObject& inlineBox, const RenderBlock& caretPainter)
 {
     LayoutSize offset;
-    for (CheckedPtr<const RenderElement> ancestor = &inlineRenderer; ancestor && ancestor != &caretPainter; ancestor = ancestor->parent()) {
+    for (CheckedPtr<const RenderElement> ancestor = &inlineBox; ancestor && ancestor != &caretPainter; ancestor = ancestor->parent()) {
         CheckedPtr modelObject = dynamicDowncast<RenderBoxModelObject>(ancestor.get());
         if (modelObject && modelObject->isInFlowPositioned())
             offset += modelObject->offsetForInFlowPosition();
@@ -2010,16 +2010,16 @@ static LayoutSize inFlowPositionOffsetToCaretPainter(const RenderInline& inlineR
     return offset;
 }
 
-static bool backgroundPaintsUnderCaret(const RenderInline& inlineRenderer, const RenderBlock& caretPainter, const LayoutRect& caretRect)
+static bool backgroundPaintsUnderCaret(const RenderBoxModelObject& inlineBox, const RenderBlock& caretPainter, const LayoutRect& caretRect)
 {
-    if (inlineRenderer.containingBlock() != &caretPainter)
+    if (inlineBox.containingBlock() != &caretPainter)
         return true;
 
     auto isHorizontal = caretPainter.isHorizontalWritingMode();
     auto caretMiddleAlongInlineAxis = isHorizontal ? caretRect.x() + caretRect.width() / 2 : caretRect.y() + caretRect.height() / 2;
-    auto inFlowOffset = inFlowPositionOffsetToCaretPainter(inlineRenderer, caretPainter);
+    auto inFlowOffset = inFlowPositionOffsetToCaretPainter(inlineBox, caretPainter);
 
-    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(inlineRenderer); box; box.traverseInlineBoxLineRightward()) {
+    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(inlineBox); box; box.traverseInlineBoxLineRightward()) {
         auto boxRect = LayoutRect { box->visualRectIgnoringBlockDirection() };
         boxRect.move(inFlowOffset);
         if (!boxRect.intersects(caretRect))
@@ -2041,14 +2041,14 @@ static CheckedPtr<const RenderElement> rendererSkippingInlinesNotPaintingUnderCa
 
     CheckedPtr<const RenderElement> outermostSkipped;
     for (CheckedPtr renderer = node.renderer(); renderer && renderer != caretPainter; renderer = renderer->parent()) {
-        CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get());
-        if (!inlineRenderer)
+        CheckedPtr inlineBox = dynamicDowncast<RenderInline>(renderer.get());
+        if (!inlineBox)
             continue;
-        if (!inlineRenderer->style().visitedDependentBackgroundColorApplyingColorFilter().isOpaque())
+        if (!inlineBox->style().visitedDependentBackgroundColorApplyingColorFilter().isOpaque())
             continue;
-        if (backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, caretRect))
+        if (backgroundPaintsUnderCaret(*inlineBox, *caretPainter, caretRect))
             return { };
-        outermostSkipped = inlineRenderer->parent();
+        outermostSkipped = inlineBox->parent();
     }
 
     return outermostSkipped;
@@ -2102,8 +2102,8 @@ Color CaretBase::computeCaretColor(const Style::ComputedStyle& elementStyle, con
     if (is<RenderText>(firstRenderer.get()))
         firstRenderer = firstRenderer->parent();
     for (CheckedPtr renderer = firstRenderer; renderer && !surface.isOpaque(); renderer = renderer->parent()) {
-        if (CheckedPtr inlineRenderer = dynamicDowncast<RenderInline>(renderer.get())) {
-            if (!caretPainter || !caretRectInPainterSpace || !backgroundPaintsUnderCaret(*inlineRenderer, *caretPainter, *caretRectInPainterSpace))
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(renderer.get())) {
+            if (!caretPainter || !caretRectInPainterSpace || !backgroundPaintsUnderCaret(*inlineBox, *caretPainter, *caretRectInPainterSpace))
                 continue;
         }
         surface = blendSourceOver(renderer->style().visitedDependentBackgroundColorApplyingColorFilter(), surface);

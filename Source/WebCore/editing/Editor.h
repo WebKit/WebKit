@@ -668,8 +668,8 @@ public:
     WritingSuggestionData* writingSuggestionData() const LIFETIME_BOUND { return m_writingSuggestionData.get(); }
     bool isInsertingTextForWritingSuggestion() const { return m_isInsertingTextForWritingSuggestion; }
 
-    RenderInline* NODELETE writingSuggestionRenderer() const;
-    void NODELETE setWritingSuggestionRenderer(RenderInline&);
+    RenderBoxModelObject* NODELETE writingSuggestionRenderer() const;
+    void NODELETE setWritingSuggestionRenderer(RenderBoxModelObject&);
 
     WEBCORE_EXPORT void closeTyping();
 
@@ -767,7 +767,7 @@ private:
 #endif
 
     std::unique_ptr<WritingSuggestionData> m_writingSuggestionData;
-    SingleThreadWeakPtr<RenderInline> m_writingSuggestionRenderer;
+    SingleThreadWeakPtr<RenderBoxModelObject> m_writingSuggestionRenderer;
     bool m_isInsertingTextForWritingSuggestion { false };
 
     VisibleSelection m_mark;
