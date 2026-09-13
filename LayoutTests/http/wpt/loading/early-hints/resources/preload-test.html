@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<body>
+<script>
+"use strict";
+// Loaded (with a preceding 103) in a popup or iframe by the *.h2.window.js runner, which owns the
+// assertions. Fetch the hinted script and report whether it ran and whether it was served from the
+// Early Hints preload cache.
+//
+// - no_consume: don't consume the preload here, just report (via `parked`) whether it completed.
+//   Used by the cross-site test, where a different-site window is the one that tries to consume it.
+// - wait_key: with no_consume, poll until the preload has fetched this UUID (or give up), so the
+//   consumer in the other window runs against a genuinely parked preload.
+// - fetch_url: consume this URL instead of the preloaded one (used by the cross-site consumer).
+const params = new URLSearchParams(location.search);
+const reportTo = window.opener || window.parent;
+window.scriptExecuted = false;
+
+async function waitUntilFetched(key, timeout = 4000) {
+    const deadline = performance.now() + timeout;
+    while (performance.now() < deadline) {
+        const response = await fetch("status.py?id=" + key, { cache: "no-store" });
+        if ((await response.text()) === "1") {
+            // The endpoint records at request time; let the load finish and be parked.
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            return true;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    return false;
+}
+
+if (params.get("no_consume")) {
+    const key = params.get("wait_key");
+    (async () => {
+        const parked = key ? await waitUntilFetched(key) : false;
+        reportTo.postMessage({ parked }, "*");
+    })();
+} else {
+    const fetchURL = params.get("fetch_url") || "PRELOAD_URL_PLACEHOLDER";
+    const script = document.createElement("script");
+    script.src = fetchURL;
+    script.onload = script.onerror = () => {
+        const entries = performance.getEntriesByName(new URL(fetchURL, location).href);
+        const preloadedByEarlyHints = entries.length === 1 && entries[0].initiatorType === "early-hints";
+        reportTo.postMessage({ executed: window.scriptExecuted === true, preloadedByEarlyHints }, "*");
+    };
+    document.body.appendChild(script);
+}
+</script>
+</body>
