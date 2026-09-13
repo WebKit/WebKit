@@ -1,0 +1,12 @@
+Tests JavaScript code completions while paused in a Worker.
+
+
+== Running test suite: Worker.JavaScriptRuntimeCompletions
+-- Running test case: Worker.JavaScriptRuntimeCompletions.Paused
+PASS: Creating a Worker completion object should not throw.
+PASS: The Worker completion object should have an object identifier.
+PASS: Worker completions should include Worker Command Line API functions.
+PASS: Worker completions should not include page-only Command Line API functions.
+PASS: The Worker completion object group should be released after the request finishes.
+PASS: The active call frame should belong to the Worker.
+
