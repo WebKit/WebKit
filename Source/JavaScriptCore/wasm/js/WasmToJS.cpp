@@ -65,6 +65,97 @@ static std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> han
     return FINALIZE_WASM_CODE(linkBuffer, WasmEntryPtrTag, nullptr, "WebAssembly->JavaScript throw exception due to invalid use of restricted type in import[%i]", importIndex);
 }
 
+enum class StackArgClass : uint8_t { I32, Copy64, F32, F64 };
+
+static StackArgClass stackArgClass(Type type)
+{
+    if (type.isI32())
+        return StackArgClass::I32;
+    if (type.isF32())
+        return StackArgClass::F32;
+    if (type.isF64())
+        return StackArgClass::F64;
+    return StackArgClass::Copy64;
+}
+
+static bool isFloatArg(Type type)
+{
+    return type.isF32() || type.isF64();
+}
+
+static unsigned firstArgumentAfterLastRegisterArg(const RTT& signature, unsigned nGpr, unsigned nFpr)
+{
+    unsigned gprs = 0;
+    unsigned fprs = 0;
+    unsigned start = 0;
+    unsigned argCount = signature.argumentCount();
+    for (unsigned i = 0; i < argCount; ++i) {
+        Type type = signature.argumentType(i);
+        bool onStack = isFloatArg(type) ? fprs >= nFpr : gprs >= nGpr;
+        if (!onStack)
+            start = i + 1;
+        if (isFloatArg(type))
+            ++fprs;
+        else
+            ++gprs;
+    }
+    return start;
+}
+
+static void emitStackArgRun(JIT& jit, StackArgClass klass, unsigned count, unsigned destOffset, unsigned srcOffset)
+{
+    GPRReg destGPR = GPRInfo::argumentGPR2;
+    GPRReg srcGPR = GPRInfo::argumentGPR3;
+    GPRReg countGPR = GPRInfo::nonPreservedNonArgumentGPR0;
+    constexpr JSValueRegs valueJSR { GPRInfo::argumentGPR0 };
+    GPRReg scratch = GPRInfo::argumentGPR1;
+    FPRReg fpr = FPRInfo::argumentFPR0;
+
+    jit.addPtr(JIT::TrustedImm32(destOffset - sizeof(CallerFrameAndPC)), MacroAssembler::stackPointerRegister, destGPR);
+    jit.addPtr(JIT::TrustedImm32(srcOffset), GPRInfo::callFrameRegister, srcGPR);
+    jit.move(JIT::TrustedImm32(count), countGPR);
+
+    auto boxDouble = [&] {
+        jit.purifyNaN(fpr, fpr);
+        jit.moveDoubleTo64(fpr, scratch);
+#if CPU(ARM64)
+        jit.move(JIT::TrustedImm64(JSValue::DoubleEncodeOffset), valueJSR.payloadGPR());
+#else
+        jit.move(JIT::TrustedImm32(1), valueJSR.payloadGPR());
+        jit.lshift64(JIT::TrustedImm32(JSValue::DoubleEncodeOffsetBit), valueJSR.payloadGPR());
+#endif
+        jit.add64(valueJSR.payloadGPR(), scratch);
+        jit.store64(scratch, JIT::Address(destGPR));
+    };
+
+    auto loop = jit.label();
+    switch (klass) {
+    case StackArgClass::I32:
+        jit.load32(JIT::Address(srcGPR), valueJSR.payloadGPR());
+        jit.zeroExtend32ToWord(valueJSR.payloadGPR(), valueJSR.payloadGPR());
+        jit.boxInt32(valueJSR.payloadGPR(), valueJSR, DoNotHaveTagRegisters);
+        jit.storeValue(valueJSR, JIT::Address(destGPR));
+        break;
+    case StackArgClass::Copy64:
+        jit.loadValue(JIT::Address(srcGPR), valueJSR);
+        jit.storeValue(valueJSR, JIT::Address(destGPR));
+        break;
+    case StackArgClass::F32:
+        jit.loadFloat(JIT::Address(srcGPR), fpr);
+        jit.convertFloatToDouble(fpr, fpr);
+        boxDouble();
+        break;
+    case StackArgClass::F64:
+        jit.loadDouble(JIT::Address(srcGPR), fpr);
+        boxDouble();
+        break;
+    }
+    jit.addPtr(JIT::TrustedImm32(sizeof(Register)), destGPR);
+    jit.addPtr(JIT::TrustedImm32(sizeof(Register)), srcGPR);
+    jit.sub32(JIT::TrustedImm32(1), countGPR);
+    jit.branchTest32(MacroAssembler::NonZero, countGPR).linkTo(loop, &jit);
+}
+
 std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const Wasm::ModuleInformation& info, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
@@ -121,7 +212,10 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
     jit.storePtr(GPRInfo::wasmIPIntPCRegister, CCallHelpers::Address(GPRInfo::callFrameRegister, WasmToJSIPIntReturnPCSlot));
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
 
-    // FIXME make these loops which switch on signature if there are many arguments on the stack. It'll otherwise be huge for huge type definitions. https://bugs.webkit.org/show_bug.cgi?id=165547
+    constexpr unsigned minStackArgsToLoop = 4;
+    unsigned stackLoopStart = firstArgumentAfterLastRegisterArg(signature, wasmCC.jsrArgs.size(), wasmCC.fprArgs.size());
+    if (argCount - stackLoopStart < minStackArgsToLoop)
+        stackLoopStart = argCount;
 
     constexpr GPRReg argumentScratchGPR = GPRInfo::argumentGPR0;
 
@@ -131,7 +225,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
         unsigned marshalledFPRs = 0;
         unsigned calleeFrameOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
         unsigned frOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
-        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
+        for (unsigned argNum = 0; argNum < stackLoopStart; ++argNum) {
             Type argType = signature.argumentType(argNum);
             switch (argType.kind()) {
             case TypeKind::Void:
@@ -215,7 +309,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
             ++marshalledFPRs;
         };
 
-        for (unsigned argNum = 0; argNum < argCount; ++argNum) {
+        for (unsigned argNum = 0; argNum < stackLoopStart; ++argNum) {
             Type argType = signature.argumentType(argNum);
             switch (argType.kind()) {
             case TypeKind::Void:
@@ -272,6 +366,35 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
                 break;
             }
             }
+        }
+    }
+
+    if (stackLoopStart < argCount) {
+        unsigned destOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register)) + stackLoopStart * sizeof(Register);
+        unsigned srcOffset = CallFrameSlot::firstArgument * static_cast<int>(sizeof(Register));
+        unsigned gprs = 0;
+        unsigned fprs = 0;
+        for (unsigned i = 0; i < stackLoopStart; ++i) {
+            Type type = signature.argumentType(i);
+            if (isFloatArg(type)) {
+                if (fprs >= wasmCC.fprArgs.size())
+                    srcOffset += sizeof(Register);
+                ++fprs;
+            } else {
+                if (gprs >= wasmCC.jsrArgs.size())
+                    srcOffset += sizeof(Register);
+                ++gprs;
+            }
+        }
+        for (unsigned i = stackLoopStart; i < argCount; ) {
+            StackArgClass klass = stackArgClass(signature.argumentType(i));
+            unsigned run = 1;
+            while (i + run < argCount && stackArgClass(signature.argumentType(i + run)) == klass)
+                ++run;
+            emitStackArgRun(jit, klass, run, destOffset, srcOffset);
+            destOffset += run * sizeof(Register);
+            srcOffset += run * sizeof(Register);
+            i += run;
         }
     }
 
