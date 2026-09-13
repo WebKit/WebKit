@@ -2577,10 +2577,35 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
     ASSERT_NOT_REACHED();
 }
 
+IntOutsets RenderLayer::outsetsForFiltersSamplingThisLayer() const
+{
+    IntOutsets outsets;
+    auto position = renderer().style().position();
+    for (CheckedPtr<const RenderLayer> currentLayer = this; currentLayer; currentLayer = currentLayer->parent()) {
+        if (currentLayer != this) {
+            auto& ancestorRenderer = currentLayer->renderer();
+
+            bool isInContainingBlockChain = true;
+            if (position == PositionType::Fixed)
+                isInContainingBlockChain = ancestorRenderer.canContainFixedPositionObjects();
+            else if (position == PositionType::Absolute)
+                isInContainingBlockChain = ancestorRenderer.canContainAbsolutelyPositionedObjects();
+
+            if (isInContainingBlockChain) {
+                if (ancestorRenderer.hasClipOrNonVisibleOverflow())
+                    break;
+                position = ancestorRenderer.style().position();
+            }
+        }
+        outsets += currentLayer->filterOutsets().xyFlippedCopy();
+    }
+    return outsets;
+}
+
 bool RenderLayer::hasAncestorWithFilterOutsets() const
 {
-    for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        if (curr->hasFilterOutsets())
+    for (CheckedPtr<const RenderLayer> currentLayer = this; currentLayer; currentLayer = currentLayer->parent()) {
+        if (currentLayer->hasFilterOutsets())
             return true;
     }
     return false;

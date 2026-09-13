@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- A filtered layer inside a clipped ancestor with its child above the clip. The clip applies to the
+         filtered result, not to what the filter may sample, so the child's shadow has to show up
+         inside the clip. -->
+    <style>
+      body { margin: 0; background: white; }
+      .clip {
+        position: absolute;
+        top: 300px;
+        left: 50px;
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        background: silver;
+      }
+      .filtered {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        filter: drop-shadow(0 260px 0 green);
+      }
+      .filtered > div {
+        position: absolute;
+        top: -250px;
+        left: 20px;
+        width: 100px;
+        height: 100px;
+        background: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=clip>
+      <div class=filtered><div></div></div>
+    </div>
+  </body>
+</html>

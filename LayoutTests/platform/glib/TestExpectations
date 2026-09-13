@@ -1355,8 +1355,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pl
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-rotated-clip.html [ Pass ]
 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-parent-element-overflow-scroll-blended-position-fixed.html [ Pass ]
 
-webkit.org/b/314309 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-behavior.html [ ImageOnlyFailure ]
-webkit.org/b/314310 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-currentcolor-dynamic-003.html [ ImageOnlyFailure ]
 webkit.org/b/314312 media/media-sources-selection.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1518,10 +1516,6 @@ imported/w3c/web-platform-tests/css/css-transforms/css-scale-of-clip-path.html [
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-clip.html
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg.html
-
-webkit.org/b/245716 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
-
-webkit.org/b/264579 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
 
 webkit.org/b/315151 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 
@@ -2573,7 +2567,6 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-boundary.html
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-clipping-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-mirror.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-edge-pixels-2.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-with-3d-transform.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/fecolormatrix-display-p3.html [ Skip ] # timeout
 imported/w3c/web-platform-tests/css/filter-effects/fecomponenttransfer-display-p3.html [ Skip ] # timeout
 

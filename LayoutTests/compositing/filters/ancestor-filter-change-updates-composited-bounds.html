@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Adding a drop-shadow to an ancestor must grow the composited bounds of its descendants</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.filtered {
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 200px;
+    height: 100px;
+    filter: blur(0px);
+}
+.box {
+    width: 100px;
+    height: 100px;
+    background: green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        const before = internals.layerTreeAsText(document);
+        document.querySelector(".filtered").style.filter = "drop-shadow(100px 0 0 green)";
+        requestAnimationFrame(() => {
+            document.getElementById("layers").textContent = "Before adding the drop-shadow:\n" + before + "\nAfter adding the drop-shadow:\n" + internals.layerTreeAsText(document);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+};
+</script>
+</head>
+<body>
+<div class="clip">
+    <div class="filtered">
+        <div class="box"></div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

@@ -992,6 +992,14 @@ void GraphicsLayerCoordinated::clampToSizeIfRectIsInfinite(FloatRect& rect, cons
     }
 }
 
+IntOutsets GraphicsLayerCoordinated::outsetsForFiltersSamplingThisLayer() const
+{
+    IntOutsets outsets;
+    for (const GraphicsLayer* layer = this; layer; layer = layer->parent())
+        outsets += layer->filters().outsets().xyFlippedCopy();
+    return outsets;
+}
+
 void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
 {
     assertIsHeld(m_platformLayer->lock());
@@ -1015,6 +1023,10 @@ void GraphicsLayerCoordinated::updateVisibleRect(const FloatRect& rect)
     auto visibleRect = transformedRect(*m_layerTransform.cachedInverse);
     if (m_layerTransform.cachedFutureInverse && m_layerTransform.cachedInverse != m_layerTransform.cachedFutureInverse)
         visibleRect.unite(transformedRect(*m_layerTransform.cachedFutureInverse));
+
+    auto outsets = outsetsForFiltersSamplingThisLayer();
+    visibleRect.move(-outsets.left(), -outsets.top());
+    visibleRect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
     m_platformLayer->setTransformedVisibleRect(WTF::move(visibleRect));
 }
 
