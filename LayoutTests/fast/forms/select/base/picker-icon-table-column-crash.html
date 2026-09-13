@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="column" style="display: table-column"><option>One</option></select>
+<select id="columnGroup" style="display: table-column-group"><option>Two</option></select>
+<script>
+description("A base-appearance select whose display turns it into a table column must not get a ::picker-icon renderer attached to its RenderTableCol.");
+
+document.body.offsetHeight;
+
+shouldBeEqualToString('getComputedStyle(document.getElementById("column")).display', 'table-column');
+shouldBeEqualToString('getComputedStyle(document.getElementById("columnGroup")).display', 'table-column-group');
+</script>
+</body>
+</html>

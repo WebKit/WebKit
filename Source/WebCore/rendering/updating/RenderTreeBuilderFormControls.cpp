@@ -141,11 +141,17 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
         existingPseudoElement = nullptr;
     }
 
+    if (!renderer.canHaveChildren())
+        return;
+
     Ref document = renderer.document();
     auto pseudoElementStyle = Style::ComputedStyle::clone(*pseudoStyle);
 
     RenderPtr<RenderBlockFlow> pseudoElement = createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTF::move(pseudoElementStyle));
     pseudoElement->initializeStyle();
+
+    if (!renderer.isChildAllowed(*pseudoElement, pseudoElement->style()))
+        return;
 
     if (pseudoElement->style().content().isData())
         RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, *pseudoElement, pseudoElement->style(), type);

@@ -1,0 +1,11 @@
+A base-appearance select whose display turns it into a table column must not get a ::picker-icon renderer attached to its RenderTableCol.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.getElementById("column")).display is "table-column"
+PASS getComputedStyle(document.getElementById("columnGroup")).display is "table-column-group"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
