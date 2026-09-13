@@ -1,0 +1,10 @@
+An ImageBitmap sent to a cross-site iframe over a MessagePort should arrive with its pixels intact. That path is brokered by the network process rather than the UI process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "40x20 pixel 0,255,0,255"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

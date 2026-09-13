@@ -3766,6 +3766,27 @@ void SerializedScriptValue::setNonSerializedDataToken(std::optional<NonSerialize
     m_internals->nonSerializedDataToken = token;
 }
 
+Vector<ImageBufferTransferIdentifier> SerializedScriptValue::sinkBuffersIntoTransferHandles()
+{
+    Vector<ImageBufferTransferIdentifier> identifiers;
+    for (auto& bitmap : m_internals->detachedImageBitmaps) {
+        if (!bitmap)
+            continue;
+        if (auto handle = bitmap->sinkBufferIntoTransferHandle())
+            identifiers.append(handle->identifier);
+    }
+    return identifiers;
+}
+
+Vector<ImageBufferTransferIdentifier> SerializedScriptValue::transferredImageBufferIdentifiers() const
+{
+    return WTF::compactMap(m_internals->detachedImageBitmaps, [](auto& bitmap) -> std::optional<ImageBufferTransferIdentifier> {
+        if (!bitmap || !bitmap->transferHandle())
+            return std::nullopt;
+        return bitmap->transferHandle()->identifier;
+    });
+}
+
 RefPtr<SerializedScriptValue> SerializedScriptValue::convert(JSGlobalObject& globalObject, JSValue value)
 {
     return create(globalObject, value, SerializationForStorage::Yes);
