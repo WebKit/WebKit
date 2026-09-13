@@ -37,6 +37,7 @@
 #include "WebProcess.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <WebCore/CachedResource.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/Document.h>
 #include <WebCore/DocumentInlines.h>
 #include <WebCore/DocumentLoader.h>
@@ -54,7 +55,6 @@
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/loader/DefaultResourceLoadPriority.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 
