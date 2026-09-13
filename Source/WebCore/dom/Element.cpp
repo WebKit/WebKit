@@ -2347,7 +2347,7 @@ bool Element::isElementReflectionAttribute(const Settings& settings, const Quali
 {
     return name == HTMLNames::aria_activedescendantAttr
         || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
-        || (settings.commandAttributesEnabled() && name == HTMLNames::commandforAttr);
+        || name == HTMLNames::commandforAttr;
 }
 
 bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
