@@ -40,7 +40,7 @@ namespace WebCore {
 
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
-bool GraphicsContextGLImageExtractor::extractImage(AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha)
+bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha)
 {
     m_imageSurface = m_image->platformImage();
 

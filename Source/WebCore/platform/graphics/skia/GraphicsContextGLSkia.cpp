@@ -58,7 +58,7 @@ static std::optional<GraphicsContextGL::DataFormat> dataFormatForColorType(SkCol
     return std::nullopt;
 }
 
-bool GraphicsContextGLImageExtractor::extractImage(AlphaPremultiplication sourceAlphaPremultiplication, bool premultiplyAlpha)
+bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool premultiplyAlpha)
 {
     auto platformImage = m_image->platformImage();
     if (!platformImage)
@@ -71,18 +71,21 @@ bool GraphicsContextGLImageExtractor::extractImage(AlphaPremultiplication source
 
     const auto& imageInfo = platformImage->imageInfo();
 
-    // The SkImage records the premultiplication of its contents, but it may record it incorrectly,
-    // so only the presence of an alpha channel is taken from it and the premultiplication from the caller.
-    m_alphaOp = AlphaOp::DoNothing;
+    // The SkImage records the premultiplication of its contents, but the caller may know it to be
+    // recorded incorrectly, in which case the caller's statement wins.
+    std::optional<AlphaPremultiplication> imageAlphaPremultiplication;
     switch (imageInfo.alphaType()) {
     case kUnknown_SkAlphaType:
     case kOpaque_SkAlphaType:
         break;
     case kPremul_SkAlphaType:
+        imageAlphaPremultiplication = AlphaPremultiplication::Premultiplied;
+        break;
     case kUnpremul_SkAlphaType:
-        m_alphaOp = alphaOpForPremultiplication(sourceAlphaPremultiplication, premultiplyAlpha);
+        imageAlphaPremultiplication = AlphaPremultiplication::Unpremultiplied;
         break;
     }
+    m_alphaOp = imageAlphaPremultiplication ? alphaOpForPremultiplication(sourceAlphaPremultiplication.value_or(*imageAlphaPremultiplication), premultiplyAlpha) : AlphaOp::DoNothing;
 
     unsigned srcUnpackAlignment = 1;
     size_t bytesPerRow = 0;
