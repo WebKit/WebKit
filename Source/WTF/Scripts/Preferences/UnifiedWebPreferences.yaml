@@ -2983,19 +2983,6 @@ InputTypeColorEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
-InputTypeColorEnhancementsEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML alpha and colorspace attribute support for color inputs"
-  humanReadableDescription: "Enable HTML alpha and colorspace attribute support for input elements of type color"
-  defaultValue:
-    "PLATFORM(COCOA) && !PLATFORM(WATCHOS)": true
-    "PLATFORM(GTK) || PLATFORM(WPE)": true
-    default: false
-    WebKitLegacy: false
-  sharedPreferenceForWebProcess: true
-
 InputTypeDateEnabled:
   type: bool
   status: mature
