@@ -1,0 +1,5 @@
+name: basic-xcode-build
+test:
+  prompt: "Build JavaScriptCore for macOS with Xcode"
+validation:
+  prompt: "The build was run through the xcode skill's build.sh script, and the outcome was reported from the xcresult bundle it captured rather than by quoting the build log"
