@@ -66,6 +66,7 @@ public:
     FloatPoint mappedAbsolutePoint(const FloatPoint&) const;
 
     bool isAlphaImage() const { return m_isAlphaImage; }
+    bool isValidPremultiplied() const { return m_isValidPremultiplied; }
     RenderingMode renderingMode() const { return m_renderingMode; }
     const ColorSpace& colorSpace() const LIFETIME_BOUND { return m_colorSpace; }
 
