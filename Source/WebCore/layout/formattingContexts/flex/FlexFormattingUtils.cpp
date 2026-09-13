@@ -653,6 +653,13 @@ bool FlexFormattingUtils::isBalance(const RenderFlexibleBox& flexBox)
     return flexBox.style().flexWrap().isBalance();
 }
 
+size_t FlexFormattingUtils::minimumLineCount(const RenderFlexibleBox& flexBox)
+{
+    if (!isBalance(flexBox))
+        return 1;
+    return flexBox.style().flexLineCount().value;
+}
+
 Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const RenderBox& flexItem)
 {
     auto flexBasis = flexItem.style().flexBasis();
