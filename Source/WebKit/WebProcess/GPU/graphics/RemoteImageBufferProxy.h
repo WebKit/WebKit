@@ -180,6 +180,8 @@ private:
         return nullptr;
     }
 
+    std::optional<WebCore::ImageBufferTransferHandle> sinkIntoTransferHandle() final;
+
     bool isRemoteSerializedImageBufferProxy() const final { return true; }
 
     const WebCore::ImageBuffer::Parameters m_parameters;
@@ -187,6 +189,7 @@ private:
     const size_t m_memoryCost;
     std::optional<ImageBufferBackendHandle> m_backendHandle;
     RefPtr<IPC::Connection> m_connection;
+    WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 };
 
 } // namespace WebKit

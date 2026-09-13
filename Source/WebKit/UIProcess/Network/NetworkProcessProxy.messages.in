@@ -119,6 +119,8 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
 #endif
 
     ReceivedQualifiedServerTrust(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, WebCore::CertificateInfo serverTrust, WebCore::CertificateInfo qualifiedServerTrust)
+
+    AuthorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers, WebCore::ProcessIdentifier destinationProcess) -> ()
 }
 
 }

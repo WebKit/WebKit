@@ -31,6 +31,7 @@
 #include <WebCore/ImageBufferBackend.h>
 #include <WebCore/ImageBufferFormat.h>
 #include <WebCore/ImageBufferParameters.h>
+#include <WebCore/ImageBufferTransferIdentifier.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingMode.h>
@@ -81,6 +82,15 @@ struct ImageBufferCreationContext {
     ImageBufferCreationContext() = default;
 };
 
+// Names a SerializedImageBuffer that is crossing a process boundary. The pixels stay where they
+// already are, since no web process is necessarily able to map them.
+struct ImageBufferTransferHandle {
+    ImageBufferTransferIdentifier identifier;
+    ImageBufferParameters parameters;
+    RenderingMode renderingMode;
+    size_t memoryCost;
+};
+
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBuffer, WEBCORE_EXPORT);
 public:
@@ -92,6 +102,10 @@ public:
     }
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const ColorSpace&, ImageBufferFormat, GraphicsClient* = nullptr);
+
+    // Claims a buffer another process handed to this one. Null only when this process has no
+    // rendering backend to claim into; an unsatisfiable claim is caught on the far side instead.
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> createFromTransferHandle(const ImageBufferTransferHandle&, GraphicsClient*);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat bufferFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
@@ -197,7 +211,7 @@ public:
     //     buffer = nullptr;
     WEBCORE_EXPORT static RefPtr<NativeImage> sinkIntoNativeImage(RefPtr<ImageBuffer>);
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread(RefPtr<ImageBuffer>);
-    static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
+    WEBCORE_EXPORT static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
     WEBCORE_EXPORT static RefPtr<SharedBuffer> sinkIntoPDFDocument(RefPtr<ImageBuffer>);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
@@ -254,10 +268,15 @@ public:
 
     WEBCORE_EXPORT static RefPtr<ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<SerializedImageBuffer>, GraphicsClient* = nullptr);
 
+    // Returns nullopt if this kind of buffer cannot cross a process boundary. The buffer is spent
+    // either way.
+    WEBCORE_EXPORT static std::optional<ImageBufferTransferHandle> sinkIntoTransferHandle(std::unique_ptr<SerializedImageBuffer>);
+
     virtual bool isRemoteSerializedImageBufferProxy() const { return false; }
 
 protected:
     virtual RefPtr<ImageBuffer> sinkIntoImageBuffer() = 0;
+    virtual std::optional<ImageBufferTransferHandle> sinkIntoTransferHandle() { return std::nullopt; }
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageBuffer&);

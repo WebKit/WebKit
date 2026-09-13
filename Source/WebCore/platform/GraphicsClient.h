@@ -35,6 +35,8 @@ class GraphicsContextGL;
 class ImageBuffer;
 class SerializedImageBuffer;
 
+struct ImageBufferTransferHandle;
+
 struct GraphicsContextGLAttributes;
 
 struct ImageBufferFormat;
@@ -67,6 +69,9 @@ private:
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;
+
+    // Called by passing GraphicsClient into ImageBuffer::createFromTransferHandle().
+    virtual RefPtr<WebCore::ImageBuffer> createImageBufferFromTransferHandle(const ImageBufferTransferHandle&) { return nullptr; }
 
     friend class ImageBuffer;
     friend class SerializedImageBuffer;

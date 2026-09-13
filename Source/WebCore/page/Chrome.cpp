@@ -538,6 +538,11 @@ RefPtr<ImageBuffer> Chrome::sinkIntoImageBuffer(std::unique_ptr<SerializedImageB
     return m_client->sinkIntoImageBuffer(WTF::move(imageBuffer));
 }
 
+RefPtr<ImageBuffer> Chrome::createImageBufferFromTransferHandle(const ImageBufferTransferHandle& handle)
+{
+    return m_client->createImageBufferFromTransferHandle(handle);
+}
+
 std::unique_ptr<WorkerClient> Chrome::createWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
     return m_client->createWorkerClient(dispatcher);

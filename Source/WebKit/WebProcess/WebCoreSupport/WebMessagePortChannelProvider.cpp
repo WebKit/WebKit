@@ -175,6 +175,9 @@ void WebMessagePortChannelProvider::postMessageToRemote(MessageWithMessagePorts&
         }
     }
 
+    if (RefPtr serializedScriptValue = message.message)
+        serializedScriptValue->sinkBuffersIntoTransferHandles();
+
     protect(networkProcessConnection())->send(Messages::NetworkConnectionToWebProcess::PostMessageToRemote { message, remoteTarget, blobURLs }, 0);
 }
 

@@ -523,6 +523,7 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::Imag
     , m_memoryCost(memoryCost)
     , m_backendHandle(WTF::move(backendHandle))
     , m_connection(nullptr/*backend.connection()*/)
+    , m_renderingBackend(backend)
 {
 }
 
@@ -550,6 +551,23 @@ static std::optional<ImageBufferBackendHandle> copyBackendHandle(const std::opti
 std::unique_ptr<WebCore::SerializedImageBuffer> RemoteSerializedImageBufferProxy::clone() const
 {
     return std::unique_ptr<WebCore::SerializedImageBuffer>(new RemoteSerializedImageBufferProxy(m_parameters, m_renderingMode, m_memoryCost, copyBackendHandle(m_backendHandle), m_connection));
+}
+
+std::optional<WebCore::ImageBufferTransferHandle> RemoteSerializedImageBufferProxy::sinkIntoTransferHandle()
+{
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend)
+        return std::nullopt;
+
+    auto transferIdentifier = WebCore::ImageBufferTransferIdentifier::generate();
+    renderingBackend->moveSerializedBufferToTransferHeap(*this, transferIdentifier);
+    // The pixels stay in the GPU process, so any backing store this process allocated is of no use
+    // to the recipient; it asks the GPU process for a handle if it ever needs one.
+    m_backendHandle = std::nullopt;
+    // Must not be released back into this process's rendering backend when the proxy goes away.
+    m_connection = nullptr;
+    m_renderingBackend = nullptr;
+    return WebCore::ImageBufferTransferHandle { transferIdentifier, m_parameters, m_renderingMode, m_memoryCost };
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& renderingBackend)
