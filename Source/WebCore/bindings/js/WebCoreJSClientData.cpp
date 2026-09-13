@@ -57,6 +57,7 @@
 #include <JavaScriptCore/MarkingConstraint.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
 #include "runtime_array.h"
 #include "runtime_method.h"
 #include "runtime_object.h"
@@ -170,6 +171,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , CLIENT_ISO_SUBSPACE_INIT(m_windowProxySpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_idbSerializationSpace)
     , m_clientSubspaces(makeUniqueRef<ExtendedDOMClientIsoSubspaces>())
+    , m_jsHandleGlobalObjects(vm)
 {
 }
 

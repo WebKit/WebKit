@@ -26,27 +26,37 @@
 #include "config.h"
 #include "WebKitJSHandle.h"
 
+#include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "JSDOMGlobalObject.h"
 #include "JSWindowProxy.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/Weak.h>
-#include <JavaScriptCore/WeakInlines.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-using HandleToGlobalMap = HashMap<JSHandleIdentifier, JSC::Weak<JSDOMGlobalObject>>;
-static HandleToGlobalMap& handleToGlobalMap()
+using HandleToGlobalMap = JSC::WeakGCMap<JSHandleIdentifier, JSDOMGlobalObject>;
+
+static HandleToGlobalMap& handleToGlobalMap(JSC::VM& vm)
 {
-    static MainThreadNeverDestroyed<HandleToGlobalMap> map;
-    return map.get();
+    return downcast<JSVMClientData>(vm.clientData)->jsHandleGlobalObjects();
+}
+
+// Handles are only ever created on the main thread, so the global object a handle names always
+// belongs to the common VM.
+static HandleToGlobalMap* handleToGlobalMapIfExists()
+{
+    ASSERT(isMainThread());
+    auto* vm = commonVMOrNull();
+    return vm ? &handleToGlobalMap(*vm) : nullptr;
 }
 
 static JSDOMGlobalObject* globalObjectForIdentifier(JSHandleIdentifier identifier)
 {
-    auto it = handleToGlobalMap().find(identifier);
-    return it == handleToGlobalMap().end() ? nullptr : it->value.get();
+    auto* map = handleToGlobalMapIfExists();
+    return map ? map->get(identifier) : nullptr;
 }
 
 Ref<WebKitJSHandle> WebKitJSHandle::create(JSC::JSObject* object)
@@ -67,9 +77,12 @@ void WebKitJSHandle::jsHandleSentToAnotherProcess(JSHandleIdentifier identifier)
 
 void WebKitJSHandle::jsHandleDestroyed(JSHandleIdentifier identifier)
 {
-    auto* global = globalObjectForIdentifier(identifier);
+    auto* map = handleToGlobalMapIfExists();
+    if (!map)
+        return;
+    auto* global = map->get(identifier);
     if (!global || global->derefJSHandle(identifier))
-        handleToGlobalMap().remove(identifier);
+        map->remove(identifier);
 }
 
 JSC::JSObject* WebKitJSHandle::objectForIdentifier(JSHandleIdentifier identifier)
@@ -97,7 +110,8 @@ WebKitJSHandle::WebKitJSHandle(JSC::JSObject* object)
     if (!global)
         return;
     global->addJSHandle(m_identifier, *object);
-    handleToGlobalMap().set(m_identifier, JSC::Weak<JSDOMGlobalObject> { global });
+    ASSERT(&global->vm() == commonVMOrNull());
+    handleToGlobalMap(global->vm()).set(m_identifier, global);
 }
 
 }
