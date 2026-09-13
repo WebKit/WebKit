@@ -638,6 +638,19 @@ void MediaPlayer::reloadAndResumePlaybackIfNeeded()
     protect(client())->mediaPlayerReloadAndResumePlaybackIfNeeded();
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+void MediaPlayer::setPlayerPrivate(RefPtr<MediaPlayerPrivateInterface>&& playerPrivate)
+{
+    // m_private is read on the audio render thread by audioSourceProvider(), and this player owns
+    // the only reference. It may only be replaced between mediaPlayerWillInitializeMediaEngine()
+    // and mediaPlayerDidInitializeMediaEngine(), which hold MediaElementAudioSourceNode's process
+    // lock; m_initializingMediaEngine tracks that window.
+    ASSERT(isMainThread());
+    ASSERT(m_initializingMediaEngine);
+    m_private = WTF::move(playerPrivate);
+}
+#endif
+
 void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 {
 
@@ -670,12 +683,20 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     if (!engine) {
         LOG(Media, "MediaPlayer::loadWithNextMediaEngine - no media engine found for type \"%s\"", contentType().raw().utf8().data());
         m_currentMediaEngine = engine.get();
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_private = nullptr;
+#else
+        setPlayerPrivate(nullptr);
+#endif
     } else if (m_currentMediaEngine.get() != engine.get()) {
         m_currentMediaEngine = engine.get();
         m_attemptedEngines.add(*engine);
         RefPtr playerPrivate = engine->createMediaEnginePlayer(*this);
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_private = playerPrivate;
+#else
+        setPlayerPrivate(playerPrivate.copyRef());
+#endif
         if (playerPrivate) {
             protect(client())->mediaPlayerEngineUpdated();
             playerPrivate->setMessageClientForTesting(m_internalMessageClient);
@@ -715,7 +736,11 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #endif
         playerPrivate->load(m_url, m_loadOptions);
     } else {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         m_private = NullMediaPlayerPrivate::create(*this);
+#else
+        setPlayerPrivate(NullMediaPlayerPrivate::create(*this));
+#endif
         CheckedPtr currentMediaEngine = m_currentMediaEngine.get();
         if (!m_activeEngineIdentifier
             && installedMediaEngines().size() > 1
@@ -1477,6 +1502,12 @@ bool MediaPlayer::attemptSniffAndReload()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        // A new load clears m_sniffer through cancelSniffer(), but an already settled promise still
+        // delivers this callback. The result describes a load that is no longer the current one.
+        if (!protectedThis->m_sniffer)
+            return;
+#endif
         protectedThis->m_sniffer = nullptr;
 
         auto reportOriginalFailure = [&protectedThis] {
@@ -1502,7 +1533,13 @@ bool MediaPlayer::attemptSniffAndReload()
         protectedThis->m_loadOptions.contentType = sniffed;
         protectedThis->m_attemptedEngines.clear();
         protectedThis->m_currentMediaEngine = nullptr;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         protectedThis->m_private = nullptr;
+#else
+        // Clearing m_private here would free the engine while the audio render thread reads it in
+        // audioSourceProvider(). loadWithNextMediaEngine() replaces it under the process lock.
+        protectedThis->cancelLoad();
+#endif
         protectedThis->loadWithNextMediaEngine(nullptr);
     });
     return true;
