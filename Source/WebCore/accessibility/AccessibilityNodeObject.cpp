@@ -4407,6 +4407,8 @@ SRGBA<uint8_t> AccessibilityNodeObject::colorValue() const
     return input->valueAsColor().toColorTypeLossy<SRGBA<uint8_t>>();
 }
 
+static constexpr unsigned maxNestedAccessibleNameComputations = 128;
+
 // This function implements the ARIA accessible name as described by the Mozilla
 // ARIA Implementer's Guide.
 static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendIntoContainers descendIntoContainers)
@@ -4426,6 +4428,19 @@ static String accessibleNameForNode(Node& node, Node* labelledbyNode, DescendInt
         if (String title = svgElement->title(); !title.isEmpty())
             return title;
     }
+
+    // Acc-name computation can recurse. If it does, the node whose traversal is already in
+    // progress contributes the empty string: https://w3c.github.io/accname/#computation-steps
+    // Track and check visited nodes to support this.
+    Ref protectedNode { node };
+    static NeverDestroyed<HashSet<const Node*>> nodesCurrentlyBeingNamed;
+    if (nodesCurrentlyBeingNamed->size() >= maxNestedAccessibleNameComputations)
+        return { };
+    if (!nodesCurrentlyBeingNamed->add(protectedNode.ptr()).isNewEntry)
+        return { };
+    auto removeOnExit = makeScopeExit([&] {
+        nodesCurrentlyBeingNamed->remove(protectedNode.ptr());
+    });
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
