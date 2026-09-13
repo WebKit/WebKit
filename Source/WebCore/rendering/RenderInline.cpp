@@ -97,30 +97,6 @@ static LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderInline& renderer)
     return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
 }
 
-void RenderInline::updateFromStyle()
-{
-    RenderBoxModelObject::updateFromStyle();
-
-    // FIXME: Support transforms and reflections on inline flows someday.
-    setHasTransformRelatedProperty(false);
-    setHasReflection(false);    
-}
-
-void RenderInline::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
-{
-    RenderBoxModelObject::styleWillChange(diff, newStyle);
-
-    // RenderInlines forward their absolute positioned descendants to their (non-anonymous) containing block.
-    // Check if this non-anonymous containing block can hold the absolute positioned elements when the inline is no longer positioned.
-    CheckedPtr container = containingBlock();
-    if (!container)
-        return;
-
-    const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
-    if (oldStyle)
-        removeOutOfFlowBoxesIfNeededOnStyleChange(*container, *oldStyle, newStyle);
-}
-
 void RenderInline::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);

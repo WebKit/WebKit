@@ -77,7 +77,7 @@ public:
     void addOutOfFlowBox(RenderBox&);
     static void removeOutOfFlowBox(const RenderBox&);
     enum class ContainingBlockState : bool { NewContainingBlock, SameContainingBlock };
-    void removeOutOfFlowBoxes(const RenderBlock*, ContainingBlockState = ContainingBlockState::SameContainingBlock);
+    void removeOutOfFlowBoxes(const RenderElement*, ContainingBlockState = ContainingBlockState::SameContainingBlock);
 
     TrackedRendererListHashSet* NODELETE outOfFlowBoxes() const LIFETIME_BOUND;
     bool hasOutOfFlowBoxes() const

@@ -78,10 +78,7 @@ public:
     LayoutPoint firstInlineBoxTopLeft() const;
 
 protected:
-    void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
-
-    void updateFromStyle() override;
 
 private:
     ASCIILiteral renderName() const override;
