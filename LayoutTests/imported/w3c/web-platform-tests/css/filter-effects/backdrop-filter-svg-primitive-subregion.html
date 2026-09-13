@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter with an explicit primitive subregion</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-primitive-subregion-expected.html">
+<!-- filterUnits=userSpaceOnUse with an explicit primitive subregion covering only the left
+     half of the element: the left half of the backdrop is inverted, and the area outside the
+     primitive subregion is transparent black, so the right half shows the backdrop unchanged. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="inverthalf" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"
+          color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0"
+                   x="0" y="0" width="50" height="100"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+  backdrop-filter: url(#inverthalf);
+}
+</style>

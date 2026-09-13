@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: filter function chained with an SVG reference filter</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-mixed-function-and-reference-expected.html">
+<!-- A filter function chained with an identity reference filter must render like the filter
+     function alone; an implementation that drops the whole chain when it contains a url()
+     shows the unfiltered backdrop instead. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="identity" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+  backdrop-filter: invert(1) url(#identity);
+}
+</style>
