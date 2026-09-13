@@ -7512,33 +7512,40 @@ void WebPageProxy::findTextRangesForStringMatches(const String& string, OptionSe
     });
 }
 
+static RefPtr<WebFrameProxy> frameContainingRange(const WebFoundTextRange& range, WebFrameProxy* mainFrame)
+{
+    RefPtr current = mainFrame;
+    for (size_t index = 0; index < range.pathToFrame.size() && current; ++index)
+        current = current->childFrame(range.pathToFrame[index]);
+
+    return current;
+}
+
 void WebPageProxy::replaceFoundTextRangeWithString(const WebFoundTextRange& range, const String& string)
 {
-    RefPtr current = m_mainFrame;
-    for (size_t i = 0; i < range.pathToFrame.size() && current; i++)
-        current = current->childFrame(range.pathToFrame[i]);
-
-    if (!current)
+    RefPtr containingFrame = frameContainingRange(range, m_mainFrame);
+    if (!containingFrame)
         return;
 
-    sendToProcessContainingFrame(current->frameID(), Messages::WebPage::ReplaceFoundTextRangeWithString(range, string));
+    sendToProcessContainingFrame(containingFrame->frameID(), Messages::WebPage::ReplaceFoundTextRangeWithString(range, string));
 }
 
 void WebPageProxy::decorateTextRangeWithStyle(const WebFoundTextRange& range, FindDecorationStyle style)
 {
-    send(Messages::WebPage::DecorateTextRangeWithStyle(range, style));
+    RefPtr containingFrame = frameContainingRange(range, m_mainFrame);
+    if (!containingFrame)
+        return;
+
+    sendToProcessContainingFrame(containingFrame->frameID(), Messages::WebPage::DecorateTextRangeWithStyle(range, style));
 }
 
 void WebPageProxy::scrollTextRangeToVisible(const WebFoundTextRange& range)
 {
-    RefPtr current = m_mainFrame;
-    for (size_t i = 0; i < range.pathToFrame.size() && current; i++)
-        current = current->childFrame(range.pathToFrame[i]);
-
-    if (!current)
+    RefPtr containingFrame = frameContainingRange(range, m_mainFrame);
+    if (!containingFrame)
         return;
 
-    sendToProcessContainingFrame(current->frameID(), Messages::WebPage::ScrollTextRangeToVisible(range));
+    sendToProcessContainingFrame(containingFrame->frameID(), Messages::WebPage::ScrollTextRangeToVisible(range));
 }
 
 void WebPageProxy::clearAllDecoratedFoundText()
@@ -7557,16 +7564,13 @@ void WebPageProxy::didBeginTextSearchOperation()
 
 void WebPageProxy::requestRectForFoundTextRange(const WebFoundTextRange& range, CompletionHandler<void(WebCore::FloatRect)>&& callbackFunction)
 {
-    RefPtr current = m_mainFrame;
-    for (size_t i = 0; i < range.pathToFrame.size() && current; i++)
-        current = current->childFrame(range.pathToFrame[i]);
-
-    if (!current) {
+    RefPtr containingFrame = frameContainingRange(range, m_mainFrame);
+    if (!containingFrame) {
         callbackFunction({ });
         return;
     }
 
-    sendWithAsyncReplyToProcessContainingFrame(current->frameID(), Messages::WebPage::RequestRectForFoundTextRange(range), WTF::move(callbackFunction));
+    sendWithAsyncReplyToProcessContainingFrame(containingFrame->frameID(), Messages::WebPage::RequestRectForFoundTextRange(range), WTF::move(callbackFunction));
 }
 
 void WebPageProxy::addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&& callbackFunction)
