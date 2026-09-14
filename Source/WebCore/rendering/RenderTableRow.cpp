@@ -283,7 +283,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         table->paintCollapsedBordersForRow(paintInfo, *this, adjustedPaintOffset);
 }
 
-void RenderTableRow::imageChanged(WrappedImagePtr, const IntRect*)
+void RenderTableRow::imageChanged(const Style::Image&, const IntRect*)
 {
     // FIXME: Examine cells and repaint only the rect the image paints in.
     if (!parent())

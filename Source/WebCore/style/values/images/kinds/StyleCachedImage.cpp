@@ -224,6 +224,11 @@ bool CachedImage::isPending() const
     return m_isPending;
 }
 
+bool CachedImage::isLoading() const
+{
+    return m_cachedImage && m_cachedImage->isLoaded();
+}
+
 bool CachedImage::isLoaded(const RenderElement* renderer) const
 {
     if (isRenderSVGResource(renderer))
@@ -240,7 +245,7 @@ bool CachedImage::errorOccurred() const
     return m_cachedImage->errorOccurred();
 }
 
-FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, ImageSizeType sizeType) const
 {
     if (isRenderSVGResource(renderer))
         return m_containerSize;
@@ -273,6 +278,11 @@ bool CachedImage::imageHasNaturalAspectRatio() const
     return m_cachedImage->imageHasNaturalAspectRatio();
 }
 
+bool CachedImage::hasHDRContent() const
+{
+    return m_cachedImage && m_cachedImage->hasHDRContent();
+}
+
 void CachedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
 {
     // In case of an SVG resource, we should return the container size.
@@ -297,36 +307,16 @@ bool CachedImage::usesImageContainerSize() const
     return protect(m_cachedImage)->usesImageContainerSize();
 }
 
-void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
+void CachedImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& containerContext)
 {
-    m_containerSize = containerSize;
+    m_containerSize = containerContext.containerSize;
     if (!m_cachedImage)
         return;
-    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved, renderer.style().linkParameters());
-}
 
-void CachedImage::addClient(RenderElement& renderer)
-{
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return;
-    protect(m_cachedImage)->addClient(protect(renderer.cachedImageClient()));
-}
+    if (containerContext.imageURL.isNull())
+        containerContext.imageURL = m_url.resolved;
 
-void CachedImage::removeClient(RenderElement& renderer)
-{
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return;
-    protect(m_cachedImage)->removeClient(protect(renderer.cachedImageClient()));
-}
-
-bool CachedImage::hasClient(RenderElement& renderer) const
-{
-    ASSERT(!m_isPending);
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->hasClient(renderer.cachedImageClient());
+    protect(m_cachedImage)->registerContainerContext(key, WTF::move(containerContext));
 }
 
 bool CachedImage::hasImage() const
@@ -334,6 +324,13 @@ bool CachedImage::hasImage() const
     if (!m_cachedImage)
         return false;
     return m_cachedImage->hasImage();
+}
+
+RefPtr<WebCore::Image> CachedImage::image() const
+{
+    if (!m_cachedImage)
+        return nullptr;
+    return protect(m_cachedImage)->image();
 }
 
 RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const FloatSize&, const GraphicsContext&, bool) const
@@ -352,9 +349,9 @@ RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const F
     return protect(m_cachedImage)->imageForRenderer(renderer);
 }
 
-bool CachedImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CachedImage::currentFrameIsComplete(const RenderElement& renderer) const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete(renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameIsCompleteForKey(renderer.imageContainerContextKey());
 }
 
 float CachedImage::imageScaleFactor() const
@@ -364,12 +361,129 @@ float CachedImage::imageScaleFactor() const
 
 bool CachedImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque(&renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaqueForKey(renderer.imageContainerContextKey());
 }
 
 bool CachedImage::usesDataProtocol() const
 {
     return m_url.resolved.protocolIsData();
+}
+
+// MARK: - CachedImageClient
+
+void CachedImage::notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->notifyFinished(*this);
+    }
+}
+
+void CachedImage::imageChanged(WebCore::CachedImage&, const IntRect* changeRect)
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageChanged(*this, changeRect);
+    }
+}
+
+bool CachedImage::allowsAnimation() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->allowsAnimation(*this))
+            return true;
+    }
+    return false;
+}
+
+bool CachedImage::canDestroyDecodedData() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (!client->canDestroyDecodedData(*this))
+            return false;
+    }
+    return false;
+}
+
+bool CachedImage::useSystemDarkAppearance() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->useSystemDarkAppearance(*this))
+            return true;
+    }
+    return false;
+}
+
+VisibleInViewportState CachedImage::imageFrameAvailable(WebCore::CachedImage& cachedImage, ImageAnimatingState animatingState, const IntRect* changeRect)
+{
+    if (&cachedImage != m_cachedImage)
+        return VisibleInViewportState::No;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageFrameAvailable(*this, animatingState, changeRect) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return VisibleInViewportState::No;
+}
+
+VisibleInViewportState CachedImage::imageVisibleInViewport(WebCore::CachedImage& cachedImage, const Document& document) const
+{
+    if (&cachedImage != m_cachedImage)
+        return VisibleInViewportState::No;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageVisibleInViewport(*this, document) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return VisibleInViewportState::No;
+}
+
+void CachedImage::didRemoveCachedImageClient(WebCore::CachedImage& cachedImage)
+{
+    if (&cachedImage != m_cachedImage)
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->didRemoveCachedImageClient(*this);
+    }
+}
+
+void CachedImage::imageContentChanged(WebCore::CachedImage& cachedImage)
+{
+    if (&cachedImage != m_cachedImage)
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(*this);
+    }
+}
+
+void CachedImage::scheduleRenderingUpdateForImage(WebCore::CachedImage& cachedImage)
+{
+    if (&cachedImage != m_cachedImage)
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->scheduleRenderingUpdateForImage(*this);
+    }
+}
+
+bool CachedImage::isRendererClient() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->isRendererClient())
+            return true;
+    }
+    return false;
 }
 
 } // namespace Style

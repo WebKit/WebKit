@@ -86,7 +86,7 @@ private:
 
     bool requiresLayer() const final;
     void paint(PaintInfo&, const LayoutPoint&) override;
-    void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    void imageChanged(const Style::Image&, const IntRect* = 0) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     void firstChild() const = delete;

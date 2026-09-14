@@ -27,17 +27,15 @@
 
 #include <WebCore/AffineTransform.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
 #include <WebCore/SVGImage.h>
-#include <WebCore/StyleLinkParameters.h>
-#include <wtf/URL.h>
+#include <WebCore/StyleImageContainerContext.h>
 
 namespace WebCore {
 
 class SVGImageForContainer final : public Image {
 public:
-    static Ref<SVGImageForContainer> create(SVGImage* image, SVGImage::ContainerContext&& containerContext)
+    static Ref<SVGImageForContainer> create(SVGImage* image, ImageContainerContext&& containerContext)
     {
         return adoptRef(*new SVGImageForContainer(image, WTF::move(containerContext)));
     }
@@ -65,10 +63,10 @@ public:
     RefPtr<NativeImage> currentNativeImage() final;
 
 private:
-    WEBCORE_EXPORT SVGImageForContainer(SVGImage*, SVGImage::ContainerContext&&);
+    WEBCORE_EXPORT SVGImageForContainer(SVGImage*, ImageContainerContext&&);
 
     WeakPtr<SVGImage> m_image;
-    const SVGImage::ContainerContext m_containerContext;
+    const ImageContainerContext m_containerContext;
 };
 
 } // namespace WebCore

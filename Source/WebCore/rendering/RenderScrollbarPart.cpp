@@ -149,7 +149,7 @@ void RenderScrollbarPart::styleDidChange(Style::Difference diff, const Style::Co
         m_scrollbar->theme().invalidatePart(protect(*m_scrollbar), m_part);
 }
 
-void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rect)
+void RenderScrollbarPart::imageChanged(const Style::Image& image, const IntRect* rect)
 {
     if (m_scrollbar && m_part != NoPart)
         m_scrollbar->theme().invalidatePart(protect(*m_scrollbar), m_part);

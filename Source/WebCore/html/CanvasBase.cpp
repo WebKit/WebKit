@@ -222,11 +222,12 @@ HashSet<Ref<Element>> CanvasBase::cssCanvasClients() const
         if (!image)
             continue;
 
-        for (auto entry : image->clients()) {
-            CheckedRef client = entry.key;
-            if (RefPtr element = client->element())
-                cssCanvasClients.add(element.releaseNonNull());
-        }
+        // FIXME: Implement.
+        //        for (auto entry : image->clients()) {
+        //            CheckedRef client = entry.key;
+        //            if (RefPtr element = client->element())
+        //                cssCanvasClients.add(element.releaseNonNull());
+        //        }
     }
     return cssCanvasClients;
 }

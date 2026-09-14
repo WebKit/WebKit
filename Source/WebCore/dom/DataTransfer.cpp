@@ -79,7 +79,7 @@ public:
 private:
     DragImageLoader(DataTransfer&, const Document&);
 
-    void imageChanged(CachedImage*, const IntRect*) override;
+    void imageChanged(CachedImage&, const IntRect*) override;
 
     WeakPtr<DataTransfer> m_dataTransfer;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
@@ -676,7 +676,7 @@ void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& im
     protect(image)->removeClient(*this);
 }
 
-void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
+void DragImageLoader::imageChanged(CachedImage&, const IntRect*)
 {
     RefPtr document = m_document.get();
     if (RefPtr dataTransfer = m_dataTransfer.get())

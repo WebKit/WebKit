@@ -53,25 +53,27 @@ public:
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_styleImage ? m_styleImage->cachedImage() : nullptr; }
     bool hasStyleImage() const { return !!m_styleImage; }
+    Style::Image* styleImage() const { return m_styleImage.get(); }
+
+    bool isOrContains(const Style::Image&) const;
 
     void resetAnimation();
 
     Ref<Image> image(const IntSize& size = { }) const;
-    bool currentFrameIsComplete() const;
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
 
-    void setContainerContext(const IntSize&, const URL&);
+    void registerContainerContext(const IntSize&, const URL&);
 
     bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_styleImage && m_styleImage->imageHasRelativeHeight(); }
 
-    inline LayoutSize imageSize(float multiplier) const { return imageSize(multiplier, CachedImage::UsedSize); }
-    inline LayoutSize intrinsicSize(float multiplier) const { return imageSize(multiplier, CachedImage::IntrinsicSize); }
+    inline LayoutSize imageSize(float multiplier) const { return imageSize(multiplier, ImageSizeType::Used); }
+    inline LayoutSize intrinsicSize(float multiplier) const { return imageSize(multiplier, ImageSizeType::Intrinsic); }
 
     WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : nullptr; }
 
 private:
-    LayoutSize imageSize(float multiplier, CachedImage::SizeType) const;
+    LayoutSize imageSize(float multiplier, ImageSizeType) const;
 
     SingleThreadWeakPtr<RenderElement> m_renderer;
     RefPtr<Style::Image> m_styleImage;

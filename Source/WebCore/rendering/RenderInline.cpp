@@ -677,7 +677,7 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
     return writingMode().isHorizontal() ? logicalOffset : logicalOffset.transposedSize();
 }
 
-void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
+void RenderInline::imageChanged(const Style::Image& image, const IntRect*)
 {
     if (!parent())
         return;
@@ -686,7 +686,7 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
+            protect(document())->didLoadImage(protect(styleable->element).get(), styleImage);
     }
 
     // FIXME: We can do better.

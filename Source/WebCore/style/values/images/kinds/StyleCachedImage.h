@@ -42,7 +42,7 @@ class TreeScope;
 
 namespace Style {
 
-class CachedImage final : public Image {
+class CachedImage final : public Image, public CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED(CachedImage);
 public:
     static Ref<CachedImage> create(URL&&, Ref<CSSImageValue>&&, float scaleFactor = 1);
@@ -50,6 +50,10 @@ public:
     static Ref<CachedImage> create(WebCore::CachedImage&, float scaleFactor = 1);
     static Ref<CachedImage> copyOverridingScaleFactor(CachedImage&, float scaleFactor);
     virtual ~CachedImage();
+
+    // CachedImageClient.
+    void ref() const final { Image::ref(); }
+    void deref() const final { Image::deref(); }
 
     bool operator==(const Image&) const final;
     bool equals(const CachedImage&) const;
@@ -63,25 +67,27 @@ public:
 
     bool canRender(const RenderElement*, float multiplier) const final;
     bool isPending() const final;
+    bool isLoading() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     bool isLoaded(const RenderElement*) const final;
     bool errorOccurred() const final;
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
+    FloatSize imageSize(const RenderElement*, float multiplier, ImageSizeType = ImageSizeType::Used) const final;
     bool imageHasRelativeWidth() const final;
     bool imageHasRelativeHeight() const final;
     bool imageHasNaturalAspectRatio() const final;
+    bool hasHDRContent() const final;
     void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
     bool usesImageContainerSize() const final;
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) final;
-    void addClient(RenderElement&) final;
-    void removeClient(RenderElement&) final;
-    bool hasClient(RenderElement&) const final;
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&) final;
     bool hasImage() const final;
+    RefPtr<WebCore::Image> image() const final;
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool currentFrameIsComplete(const RenderElement*) const final;
+    bool currentFrameIsComplete(const RenderElement&) const final;
     float imageScaleFactor() const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     bool usesDataProtocol() const final;
+    void didAddClient(ImageClient&) final { }
+    void didRemoveClient(ImageClient&) final { }
 
     URL url() const final;
 
@@ -93,6 +99,19 @@ private:
     LegacyRenderSVGResourceContainer* legacyRenderSVGResource(const RenderElement*) const;
     RenderSVGResourceContainer* renderSVGResource(const RenderElement*) const;
     bool isRenderSVGResource(const RenderElement*) const;
+
+    // CachedImageClient.
+    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    void imageChanged(WebCore::CachedImage&, const IntRect* = nullptr) final;
+    bool allowsAnimation() const final;
+    bool canDestroyDecodedData() const final;
+    bool useSystemDarkAppearance() const final;
+    VisibleInViewportState imageFrameAvailable(WebCore::CachedImage&, ImageAnimatingState, const IntRect*) final;
+    VisibleInViewportState imageVisibleInViewport(WebCore::CachedImage&, const Document&) const final;
+    void didRemoveCachedImageClient(WebCore::CachedImage&) final;
+    void imageContentChanged(WebCore::CachedImage&) final;
+    void scheduleRenderingUpdateForImage(WebCore::CachedImage&) final;
+    bool isRendererClient() const final;
 
     URL m_url;
     const Ref<CSSImageValue> m_cssValue;

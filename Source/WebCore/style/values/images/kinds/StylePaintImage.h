@@ -58,8 +58,8 @@ private:
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    void didAddClient(ImageClient&) final { }
+    void didRemoveClient(ImageClient&) final { }
 
     CustomIdent m_name;
     const Ref<CSSVariableData> m_arguments;

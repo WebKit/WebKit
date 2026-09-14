@@ -5288,6 +5288,11 @@
 		BC452A912ED24DE500FD066C /* StyleTextAlign.h in Headers */ = {isa = PBXBuildFile; fileRef = BC452A8A2ED2493700FD066C /* StyleTextAlign.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC452A922ED24DE500FD066C /* StyleTextAlignLast.h in Headers */ = {isa = PBXBuildFile; fileRef = BC452A8B2ED2493700FD066C /* StyleTextAlignLast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC452A962ED2528000FD066C /* StyleMaskMode.h in Headers */ = {isa = PBXBuildFile; fileRef = BC452A932ED250B700FD066C /* StyleMaskMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC45A1AE30532839001A8DD1 /* StyleImageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC45A1AC30532446001A8DD1 /* StyleImageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC45A1B330546F0A001A8DD1 /* StyleImageContainerContextKey.h in Headers */ = {isa = PBXBuildFile; fileRef = BC45A1B230546EC1001A8DD1 /* StyleImageContainerContextKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC45A1B430546FA5001A8DD1 /* StyleImageContainerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BC45A1B130546EC1001A8DD1 /* StyleImageContainerContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC45A1B630547B84001A8DD1 /* StyleImageSizeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC45A1B530547A91001A8DD1 /* StyleImageSizeOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC45A1B830548CC4001A8DD1 /* VisibleInViewportState.h in Headers */ = {isa = PBXBuildFile; fileRef = BC45A1B730548C9C001A8DD1 /* VisibleInViewportState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46306E2E9B0F6500EA911F /* StyleCalculationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4630652E9B098600EA911F /* StyleCalculationValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC4630702E9B0F8B00EA911F /* StyleCalculationTree.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46305E2E9B098600EA911F /* StyleCalculationTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46307C2E9C18D100EA911F /* ModelPlayerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46307B2E9C18CB00EA911F /* ModelPlayerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19682,6 +19687,13 @@
 		BC452A8F2ED24DDB00FD066C /* StyleResize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleResize.cpp; sourceTree = "<group>"; };
 		BC452A932ED250B700FD066C /* StyleMaskMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleMaskMode.h; sourceTree = "<group>"; };
 		BC452A942ED250B700FD066C /* StyleMaskMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleMaskMode.cpp; sourceTree = "<group>"; };
+		BC45A1AB30532446001A8DD1 /* StyleImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImage.cpp; sourceTree = "<group>"; };
+		BC45A1AC30532446001A8DD1 /* StyleImageClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageClient.h; sourceTree = "<group>"; };
+		BC45A1AD30532639001A8DD1 /* StyleImageClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImageClient.cpp; sourceTree = "<group>"; };
+		BC45A1B130546EC1001A8DD1 /* StyleImageContainerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageContainerContext.h; sourceTree = "<group>"; };
+		BC45A1B230546EC1001A8DD1 /* StyleImageContainerContextKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageContainerContextKey.h; sourceTree = "<group>"; };
+		BC45A1B530547A91001A8DD1 /* StyleImageSizeOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageSizeOptions.h; sourceTree = "<group>"; };
+		BC45A1B730548C9C001A8DD1 /* VisibleInViewportState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisibleInViewportState.h; sourceTree = "<group>"; };
 		BC46305E2E9B098600EA911F /* StyleCalculationTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalculationTree.h; sourceTree = "<group>"; };
 		BC46305F2E9B098600EA911F /* StyleCalculationTree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalculationTree.cpp; sourceTree = "<group>"; };
 		BC4630602E9B098600EA911F /* StyleCalculationTree+Copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Copy.h"; sourceTree = "<group>"; };
@@ -36103,6 +36115,7 @@
 				BCB16BFF0979C3BD00467741 /* MemoryCache.h */,
 				4C5BEFD529489295006E05E5 /* TrustedFonts.cpp */,
 				4C15D8CF294786F000A220AD /* TrustedFonts.h */,
+				BC45A1B730548C9C001A8DD1 /* VisibleInViewportState.h */,
 			);
 			path = cache;
 			sourceTree = "<group>";
@@ -37711,9 +37724,15 @@
 				BC1777712F42418A00E318C5 /* StyleGeneratedImage.h */,
 				BC1777742F42418A00E318C5 /* StyleGradientImage.cpp */,
 				BC1777732F42418A00E318C5 /* StyleGradientImage.h */,
+				BC45A1AB30532446001A8DD1 /* StyleImage.cpp */,
 				BC1777752F42418A00E318C5 /* StyleImage.h */,
+				BC45A1AD30532639001A8DD1 /* StyleImageClient.cpp */,
+				BC45A1AC30532446001A8DD1 /* StyleImageClient.h */,
+				BC45A1B130546EC1001A8DD1 /* StyleImageContainerContext.h */,
+				BC45A1B230546EC1001A8DD1 /* StyleImageContainerContextKey.h */,
 				BC1777772F42418A00E318C5 /* StyleImageSet.cpp */,
 				BC1777762F42418A00E318C5 /* StyleImageSet.h */,
+				BC45A1B530547A91001A8DD1 /* StyleImageSizeOptions.h */,
 				BC1777792F42418A00E318C5 /* StyleInvalidImage.cpp */,
 				BC1777782F42418A00E318C5 /* StyleInvalidImage.h */,
 				BC17777B2F42418A00E318C5 /* StyleMultiImage.cpp */,
@@ -49380,8 +49399,12 @@
 				BC092AAF2E317441002ACB2C /* StyleHyphenateLimitEdge.h in Headers */,
 				BC092AA92E31573F002ACB2C /* StyleHyphenateLimitLines.h in Headers */,
 				BC1777832F42513300E318C5 /* StyleImage.h in Headers */,
+				BC45A1AE30532839001A8DD1 /* StyleImageClient.h in Headers */,
+				BC45A1B430546FA5001A8DD1 /* StyleImageContainerContext.h in Headers */,
+				BC45A1B330546F0A001A8DD1 /* StyleImageContainerContextKey.h in Headers */,
 				BC4631762EA854B700EA911F /* StyleImageOrientation.h in Headers */,
 				BC731E752E636D8700A6584F /* StyleImageOrNone.h in Headers */,
+				BC45A1B630547B84001A8DD1 /* StyleImageSizeOptions.h in Headers */,
 				BC22AA9E2E36A2BD009AC0C3 /* StyleImageWrapper.h in Headers */,
 				BC63AD3E2F084C2F007B62C4 /* StyleInheritedData.h in Headers */,
 				BC63AD512F08565F007B62C4 /* StyleInheritedRareData.h in Headers */,
@@ -50176,6 +50199,7 @@
 				F4FC07D62BB3A6220090B808 /* VisibilityAdjustment.h in Headers */,
 				83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */,
 				46CA9C441F97BBE9004CFC3A /* VisibilityState.h in Headers */,
+				BC45A1B830548CC4001A8DD1 /* VisibleInViewportState.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				BCAE82302E7C71B300F30967 /* VisibleRectContext.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,

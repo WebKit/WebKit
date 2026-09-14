@@ -69,6 +69,7 @@
 #include "SVGSVGElement.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
@@ -304,7 +305,7 @@ LayoutUnit RenderImage::computeReplacedLogicalHeight(std::optional<LayoutUnit> e
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);
 }
 
-void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderImage::imageChanged(const Style::Image& newImage, const IntRect* rect)
 {
     if (renderTreeBeingDestroyed())
         return;
@@ -317,7 +318,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         setNeedsLayout();
     }
 
-    if (newImage != imageResource().imagePtr() || !newImage)
+    if (!imageResource().isOrContains(newImage))
         return;
 
     // At a zoom level of 1 the image is guaranteed to have an integer size.
@@ -341,15 +342,25 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(element()));
 
-    if (RefPtr image = cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr styleImage = imageResource().styleImage(); styleImage && styleImage->currentFrameIsComplete(*this)) {
         if (auto styleable = Styleable::fromRenderer(*this))
-            protect(document())->didLoadImage(protect(styleable->element).get(), image);
+            protect(document())->didLoadImage(protect(styleable->element).get(), styleImage);
     }
+}
+
+void RenderImage::intrinsicSizeChanged()
+{
+    if (RefPtr styleImage = imageResource().styleImage())
+        imageChanged(*styleImage);
+
+    // FIXME: Implement no style image case..
+    // else
+    //    oof();
 }
 
 void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
 {
-    if (imageResource().errorOccurred() || !m_imageResource->cachedImage())
+    if (imageResource().errorOccurred() || !imageResource().styleImage())
         return;
     setIntrinsicSize(newSize);
 }
@@ -365,7 +376,7 @@ void RenderImage::updateInnerContentRect()
         URL imageSourceURL;
         if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
             imageSourceURL = imageElement->currentURL();
-        imageResource().setContainerContext(containerSize, imageSourceURL);
+        imageResource().registerContainerContext(containerSize, imageSourceURL);
     }
 }
 
@@ -394,7 +405,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
         // may need values from the containing block, though, so make sure that we're not too
         // early. It may be that layout hasn't even taken place once yet.
 
-        // FIXME: we should not have to trigger another call to setContainerContextForRenderer()
+        // FIXME: we should not have to trigger another call to registerContainerContext()
         // from here, since it's already being done during layout.
         updateInnerContentRect();
     }
@@ -416,14 +427,14 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     contentChanged(ContentChangeType::Image);
 }
 
-void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetrics& metrics, LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)
+void RenderImage::notifyFinished(const Style::CachedImage& newImage)
 {
     if (renderTreeBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();
 
-    if (&newImage == cachedImage()) {
+    if (imageResource().isOrContains(newImage)) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         contentChanged(ContentChangeType::Image);
@@ -432,7 +443,7 @@ void RenderImage::notifyFinished(CachedResource& newImage, const NetworkLoadMetr
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element()))
         protect(page())->didFinishLoadingImageForElement(*image);
 
-    RenderReplaced::notifyFinished(newImage, metrics, loadWillContinueInAnotherProcess);
+    RenderReplaced::notifyFinished(newImage);
 }
 
 void RenderImage::setImageDevicePixelRatio(float factor)
@@ -649,8 +660,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     GraphicsContext& context = paintInfo.context();
     if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(cachedImageClient()))
-            protect(cachedImage())->removeAllClientsWaitingForAsyncDecoding();
+        if (RefPtr styleImage = imageResource().styleImage(); styleImage && styleImage->isClientWaitingForAsyncDecoding(styleImageClient()))
+            styleImage->removeAllClientsWaitingForAsyncDecoding();
         return;
     }
 
@@ -662,7 +673,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     if (context.detectingContentfulPaint()) {
-        if (!context.contentfulPaintDetected() && cachedImage() && protect(cachedImage())->canRender(this, deviceScaleFactor) && !contentBoxRect.isEmpty())
+        if (!context.contentfulPaintDetected() && imageResource().styleImage() && protect(imageResource().styleImage())->canRender(this, deviceScaleFactor) && !contentBoxRect.isEmpty())
             context.setContentfulPaintDetected();
         return;
     }
@@ -711,23 +722,23 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(paintRect, deviceScaleFactor));
 
-    if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (cachedImage() && cachedImage()->isLoading())))
+    if (showBorderForIncompleteImage && (result != ImageDrawResult::DidDraw || (imageResource().styleImage() && imageResource().styleImage()->isLoading())))
         paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
-    if (cachedImage() && paintInfo.phase == PaintPhase::Foreground && !context.paintingDisabled()) {
+    if (RefPtr styleImage = imageResource().styleImage(); styleImage && paintInfo.phase == PaintPhase::Foreground && !context.paintingDisabled()) {
         // For now, count images as unpainted if they are still progressively loading. We may want
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
-        if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
+        if (styleImage->isLoading() || result == ImageDrawResult::DidRequestDecoding)
             protect(page())->addRelevantUnpaintedObject(*this, visibleRect);
         else
             protect(page())->addRelevantRepaintedObject(*this, visibleRect);
 
-        if (protect(cachedImage())->currentFrameIsComplete(this)) {
+        if (styleImage->currentFrameIsComplete(*this)) {
             if (auto styleable = Styleable::fromRenderer(*this)) {
                 auto localVisibleRect = visibleRect;
                 localVisibleRect.moveBy(-paintOffset);
-                protect(document())->didPaintImage(protect(styleable->element), protect(cachedImage()), localVisibleRect);
+                protect(document())->didPaintImage(protect(styleable->element), styleImage, localVisibleRect);
             }
         }
     }
@@ -827,7 +838,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = paintInfo.context().drawImage(*img, rect, options);
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
-        protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
+        protect(imageResource().styleImage())->addClientWaitingForAsyncDecoding(protect(styleImageClient()));
 
 #if USE(SYSTEM_PREVIEW)
     RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
@@ -870,7 +881,7 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
 
     // Check for image with alpha.
-    return cachedImage() && protect(cachedImage())->currentFrameKnownToBeOpaque(this);
+    return imageResource().styleImage() && protect(imageResource().styleImage())->knownToBeOpaque(*this);
 }
 
 bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)

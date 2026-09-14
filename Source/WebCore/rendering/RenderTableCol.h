@@ -83,7 +83,7 @@ private:
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, const VisibleRectContext&) const override;
     RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
 
-    void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
+    void imageChanged(const Style::Image&, const IntRect* = 0) override;
 
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
     void paint(PaintInfo&, const LayoutPoint&) override { }

@@ -55,7 +55,11 @@ MultiImage::MultiImage(Type type)
 {
 }
 
-MultiImage::~MultiImage() = default;
+MultiImage::~MultiImage()
+{
+    if (m_selectedImage)
+        protect(m_selectedImage)->removeClient(*this);
+}
 
 bool MultiImage::equals(const MultiImage& other) const
 {
@@ -74,17 +78,25 @@ void MultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions&
     ASSERT(is<CachedImage>(bestFitImage.image) || is<GeneratedImage>(bestFitImage.image));
 
     if (is<GeneratedImage>(bestFitImage.image)) {
+        if (m_selectedImage)
+            protect(m_selectedImage)->removeClient(*this);
+
         m_selectedImage = bestFitImage.image;
+        protect(m_selectedImage)->addClient(*this);
         protect(m_selectedImage)->load(loader, options);
         return;
     }
 
     if (RefPtr styleCachedImage = dynamicDowncast<CachedImage>(bestFitImage.image)) {
+        if (m_selectedImage)
+            protect(m_selectedImage)->removeClient(*this);
+
         if (styleCachedImage->imageScaleFactor() == bestFitImage.scaleFactor.value)
             m_selectedImage = WTF::move(styleCachedImage);
         else
             m_selectedImage = CachedImage::copyOverridingScaleFactor(*styleCachedImage, bestFitImage.scaleFactor.value);
 
+        protect(m_selectedImage)->addClient(*this);
         if (protect(m_selectedImage)->isPending())
             protect(m_selectedImage)->load(loader, options);
         return;
@@ -110,6 +122,11 @@ bool MultiImage::canRender(const RenderElement* renderer, float multiplier) cons
     return m_selectedImage && protect(m_selectedImage)->canRender(renderer, multiplier);
 }
 
+bool MultiImage::isLoading() const
+{
+    return m_selectedImage && protect(m_selectedImage)->isLoading();
+}
+
 bool MultiImage::isLoaded(const RenderElement* renderer) const
 {
     return m_selectedImage && protect(m_selectedImage)->isLoaded(renderer);
@@ -120,7 +137,7 @@ bool MultiImage::errorOccurred() const
     return m_selectedImage && protect(m_selectedImage)->errorOccurred();
 }
 
-FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, ImageSizeType sizeType) const
 {
     if (!m_selectedImage)
         return { };
@@ -149,32 +166,11 @@ bool MultiImage::usesImageContainerSize() const
     return m_selectedImage && protect(m_selectedImage)->usesImageContainerSize();
 }
 
-void MultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
+void MultiImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
 {
     if (!m_selectedImage)
         return;
-    protect(m_selectedImage)->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
-}
-
-void MultiImage::addClient(RenderElement& renderer)
-{
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->addClient(renderer);
-}
-
-void MultiImage::removeClient(RenderElement& renderer)
-{
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->removeClient(renderer);
-}
-
-bool MultiImage::hasClient(RenderElement& renderer) const
-{
-    if (!m_selectedImage)
-        return false;
-    return protect(m_selectedImage)->hasClient(renderer);
+    protect(m_selectedImage)->registerContainerContext(key, WTF::move(context));
 }
 
 RefPtr<WebCore::Image> MultiImage::image(const RenderElement* renderer, const FloatSize& size, const GraphicsContext& destinationContext, bool isForFirstLine) const
@@ -184,7 +180,7 @@ RefPtr<WebCore::Image> MultiImage::image(const RenderElement* renderer, const Fl
     return protect(m_selectedImage)->image(renderer, size, destinationContext, isForFirstLine);
 }
 
-bool MultiImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool MultiImage::currentFrameIsComplete(const RenderElement& renderer) const
 {
     return m_selectedImage && protect(m_selectedImage)->currentFrameIsComplete(renderer);
 }
@@ -199,6 +195,141 @@ float MultiImage::imageScaleFactor() const
 bool MultiImage::knownToBeOpaque(const RenderElement& renderer) const
 {
     return m_selectedImage && protect(m_selectedImage)->knownToBeOpaque(renderer);
+}
+
+bool MultiImage::contains(const Image& image) const
+{
+    return m_selectedImage && protect(m_selectedImage)->isOrContains(image);
+}
+
+void MultiImage::imageChanged(const Image& image, const IntRect* changeRect) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageChanged(image, changeRect);
+    }
+}
+
+void MultiImage::notifyFinished(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->notifyFinished(image);
+    }
+}
+
+bool MultiImage::allowsAnimation(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return ImageClient::allowsAnimation(image);
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->allowsAnimation(image))
+            return true;
+    }
+    return ImageClient::allowsAnimation(image);
+}
+
+bool MultiImage::canDestroyDecodedData(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return ImageClient::canDestroyDecodedData(image);
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (!client->canDestroyDecodedData(image))
+            return false;
+    }
+    return ImageClient::canDestroyDecodedData(image);
+}
+
+bool MultiImage::useSystemDarkAppearance(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return ImageClient::useSystemDarkAppearance(image);
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->useSystemDarkAppearance(image))
+            return true;
+    }
+    return ImageClient::useSystemDarkAppearance(image);
+}
+
+VisibleInViewportState MultiImage::imageFrameAvailable(const CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return ImageClient::imageFrameAvailable(image, animatingState, changeRect);
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageFrameAvailable(image, animatingState, changeRect) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageFrameAvailable(image, animatingState, changeRect);
+}
+
+VisibleInViewportState MultiImage::imageVisibleInViewport(const CachedImage& image, const Document& document) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return ImageClient::imageVisibleInViewport(image, document);
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageVisibleInViewport(image, document) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageVisibleInViewport(image, document);
+}
+
+void MultiImage::didRemoveCachedImageClient(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->didRemoveCachedImageClient(image);
+    }
+}
+
+void MultiImage::imageContentChanged(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+void MultiImage::scheduleRenderingUpdateForImage(const CachedImage& image) const
+{
+    if (!m_selectedImage || !m_selectedImage->isOrContains(image))
+        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+bool MultiImage::isRendererClient() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->isRendererClient())
+            return true;
+    }
+    return ImageClient::isRendererClient();
 }
 
 } // namespace Style

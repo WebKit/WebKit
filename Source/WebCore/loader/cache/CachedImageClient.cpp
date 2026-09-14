@@ -32,7 +32,7 @@ CachedImageClient::CachedImageClient() = default;
 
 VisibleInViewportState CachedImageClient::imageFrameAvailable(CachedImage& image, ImageAnimatingState, const IntRect* changeRect)
 {
-    imageChanged(&image, changeRect);
+    imageChanged(image, changeRect);
     return VisibleInViewportState::No;
 }
 

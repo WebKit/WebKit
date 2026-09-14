@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,45 +24,38 @@
  * SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "StyleCustomIdent.h"
-#include "StyleGeneratedImage.h"
+#include "config.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 namespace Style {
 
-class NamedImage final : public GeneratedImage {
-public:
-    static Ref<NamedImage> create(CustomIdent&& name)
-    {
-        return adoptRef(*new NamedImage(WTF::move(name)));
-    }
-    virtual ~NamedImage();
+void Image::addClient(ImageClient& client)
+{
+    if (m_clients.isEmptyIgnoringNullReferences())
+        ref();
 
-    bool operator==(const Image&) const final;
-    bool NODELETE equals(const NamedImage&) const;
+    m_clients.add(client);
 
-    static constexpr bool isFixedSize = false;
+    this->didAddClient(client);
+}
 
-private:
-    explicit NamedImage(CustomIdent&&);
+void Image::removeClient(ImageClient& client)
+{
+    ASSERT(m_clients.contains(client));
+    if (!m_clients.remove(client))
+        return;
 
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
-    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
-    bool isPending() const final;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(ImageClient&) final { }
-    void didRemoveClient(ImageClient&) final { }
+    this->didRemoveClient(client);
 
-    CustomIdent m_name;
-};
+    if (m_clients.isEmptyIgnoringNullReferences())
+        deref();
+}
+
+bool Image::hasClient(ImageClient& client) const
+{
+    return m_clients.contains(client);
+}
 
 } // namespace Style
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(NamedImage, isNamedImage)
-

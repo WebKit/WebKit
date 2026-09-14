@@ -381,6 +381,7 @@ struct RandomCachingKey;
 namespace Style {
 class ComputedStyle;
 class CustomPropertyRegistry;
+class Image;
 class Resolver;
 class Scope;
 class DocumentScope;
@@ -1532,8 +1533,8 @@ public:
     const DocumentEventTiming& eventTiming() const LIFETIME_BOUND { return m_eventTiming; }
 
     LargestContentfulPaintData& largestContentfulPaintData() const;
-    void didLoadImage(Element&, CachedImage*) const;
-    void didPaintImage(Element&, CachedImage*, FloatRect localRect) const;
+    void didLoadImage(Element&, const Style::Image*) const;
+    void didPaintImage(Element&, const Style::Image*, FloatRect localRect) const;
     void didPaintText(const RenderBlockFlow&, FloatRect localRect, bool isOnlyTextBoxForElement) const;
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);

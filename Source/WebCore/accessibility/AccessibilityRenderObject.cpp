@@ -1268,7 +1268,7 @@ bool AccessibilityRenderObject::computeIsIgnored() const
 
             // check whether rendered image was stretched from one-dimensional file image
             if (image->cachedImage()) {
-                LayoutSize imageSize = protect(image->cachedImage())->imageSizeForRenderer(image.get(), image->view().pageZoomFactor());
+                LayoutSize imageSize = protect(image->cachedImage())->imageSizeForRenderer(image, image->view().pageZoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
             }
         }

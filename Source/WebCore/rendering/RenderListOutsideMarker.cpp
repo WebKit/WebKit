@@ -79,7 +79,7 @@ RenderListOutsideMarker::~RenderListOutsideMarker() = default;
 void RenderListOutsideMarker::willBeDestroyed()
 {
     if (RefPtr image = style().listStyleImage().tryStyleImage())
-        image->removeClient(*this);
+        image->removeClient(this->styleImageClient());
     RenderBox::willBeDestroyed();
 }
 
@@ -113,9 +113,9 @@ void RenderListOutsideMarker::styleDidChange(Style::Difference diff, const Style
     RefPtr newImage = style().listStyleImage().tryStyleImage();
     if (oldImage != newImage) {
         if (oldImage)
-            oldImage->removeClient(*this);
+            oldImage->removeClient(this->styleImageClient());
         if (newImage)
-            newImage->addClient(*this);
+            newImage->addClient(this->styleImageClient());
     }
 }
 
@@ -239,11 +239,10 @@ void RenderListOutsideMarker::layoutContentContainer(RenderBlockFlow& container)
     addVisualOverflow(contentVisualOverflow);
 }
 
-void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
+void RenderListOutsideMarker::imageChanged(const Style::Image& newImage, const IntRect* rect)
 {
     if (parent()) {
-        RefPtr image = style().listStyleImage().tryStyleImage();
-        if (image && o == image->data()) {
+        if (RefPtr image = style().listStyleImage().tryStyleImage(); image && image->isOrContains(newImage)) {
             if (image->errorOccurred()) {
                 // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
                 RefPtr element = m_listItem ? m_listItem->element() : nullptr;
@@ -259,7 +258,7 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 repaint();
         }
     }
-    RenderBox::imageChanged(o, rect);
+    RenderBox::imageChanged(newImage, rect);
 }
 
 void RenderListOutsideMarker::updateInlineMarginsAndContent()

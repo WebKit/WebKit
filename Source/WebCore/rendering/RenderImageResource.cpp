@@ -56,7 +56,7 @@ void RenderImageResource::initialize(RenderElement& renderer)
 
     m_renderer = renderer;
     if (m_styleImage)
-        protect(m_styleImage)->addClient(renderer);
+        protect(m_styleImage)->addClient(renderer.styleImageClient());
 }
 
 void RenderImageResource::willBeDestroyed()
@@ -64,7 +64,7 @@ void RenderImageResource::willBeDestroyed()
     RefPtr cachedImage = this->cachedImage();
     Ref image = this->image();
     if (m_styleImage && m_renderer)
-        protect(m_styleImage)->removeClient(*m_renderer);
+        protect(m_styleImage)->removeClient(m_renderer->styleImageClient());
     if (image->isAnimated() && cachedImage && !cachedImage->hasRendererClients())
         image->stopAnimation();
 }
@@ -75,7 +75,7 @@ void RenderImageResource::clearCachedImage()
         return;
 
     if (m_renderer)
-        protect(m_styleImage)->removeClient(*m_renderer);
+        protect(m_styleImage)->removeClient(m_renderer->styleImageClient());
 
     m_styleImage = nullptr;
 }
@@ -88,7 +88,7 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
 
     if (m_styleImage && m_renderer) {
         RefPtr styleImage = m_styleImage;
-        styleImage->removeClient(*m_renderer);
+        styleImage->removeClient(m_renderer->styleImageClient());
     }
 
     if (!m_renderer) {
@@ -103,11 +103,16 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
         m_styleImage = Style::CachedImage::create(*newImage);
 
         RefPtr styleImage = m_styleImage;
-        styleImage->addClient(*m_renderer);
+        styleImage->addClient(m_renderer->styleImageClient());
 
         if (styleImage->errorOccurred())
-            m_renderer->imageChanged(styleImage->cachedImage());
+            m_renderer->imageChanged(*styleImage);
     }
+}
+
+bool RenderImageResource::isOrContains(const Style::Image& image) const
+{
+    return m_styleImage && m_styleImage->isOrContains(image);
 }
 
 void RenderImageResource::resetAnimation()
@@ -138,21 +143,15 @@ Ref<Image> RenderImageResource::image(const IntSize& size) const
     return image.releaseNonNull();
 }
 
-bool RenderImageResource::currentFrameIsComplete() const
-{
-    if (!m_styleImage)
-        return false;
-    return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
-}
-
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
+void RenderImageResource::registerContainerContext(const IntSize& imageContainerSize, const URL& url)
 {
     if (!m_styleImage || !m_renderer)
         return;
-    protect(m_styleImage)->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
+
+    protect(m_styleImage)->registerContainerContext(m_renderer->imageContainerContextKey(), m_renderer->imageContainerContext(imageContainerSize, m_renderer->style().usedZoom(), url));
 }
 
-LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const
+LayoutSize RenderImageResource::imageSize(float multiplier, ImageSizeType type) const
 {
     if (!m_styleImage)
         return { };

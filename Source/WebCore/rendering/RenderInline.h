@@ -117,7 +117,7 @@ private:
 
     LayoutRect frameRectForStickyPositioning() const final { return linesBoundingBox(); }
 
-    void imageChanged(WrappedImagePtr, const IntRect* = 0) final;
+    void imageChanged(const Style::Image&, const IntRect* = 0) final;
 };
 
 bool isEmptyInline(const RenderInline&);

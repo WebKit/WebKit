@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,45 +26,46 @@
 
 #pragma once
 
-#include "StyleGeneratedImage.h"
-#include "StyleGradient.h"
+#include <wtf/AbstractRefCounted.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+class Document;
+class IntRect;
+
+enum class ImageAnimatingState : bool;
+enum class VisibleInViewportState : uint8_t;
+
 namespace Style {
 
-class GradientImage final : public GeneratedImage {
+class Image;
+class CachedImage;
+
+class ImageClient : public CanMakeSingleThreadWeakPtr<ImageClient>, public AbstractRefCounted {
+    WTF_MAKE_NONCOPYABLE(ImageClient);
 public:
-    static Ref<GradientImage> create(Gradient gradient)
-    {
-        return adoptRef(*new GradientImage(WTF::move(gradient)));
-    }
-    virtual ~GradientImage();
+    virtual ~ImageClient();
 
-    bool operator==(const Image&) const final;
-    bool equals(const GradientImage&) const;
+    virtual void imageChanged(const Image&, const IntRect*) const;
 
-    static constexpr bool isFixedSize = false;
+    // Called for any Style::CachedImage children.
+    virtual void notifyFinished(const CachedImage&) const;
+    virtual bool allowsAnimation(const CachedImage&) const;
+    virtual bool canDestroyDecodedData(const CachedImage&) const;
+    virtual bool useSystemDarkAppearance(const CachedImage&) const;
+    virtual VisibleInViewportState imageFrameAvailable(const CachedImage&, ImageAnimatingState, const IntRect*) const;
+    virtual VisibleInViewportState imageVisibleInViewport(const CachedImage&, const Document&) const;
+    virtual void didRemoveCachedImageClient(const CachedImage&) const;
+    virtual void imageContentChanged(const CachedImage&) const;
+    virtual void scheduleRenderingUpdateForImage(const CachedImage&) const;
 
-    const Gradient& gradient() const LIFETIME_BOUND { return m_gradient; }
+    virtual bool isRendererClient() const;
 
-private:
-    explicit GradientImage(Gradient&&);
-
-    Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
-    Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
-    bool isPending() const final;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
-    RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
-    bool knownToBeOpaque(const RenderElement&) const final;
-    FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(ImageClient&) final { }
-    void didRemoveClient(ImageClient&) final { }
-
-    Gradient m_gradient;
-    bool m_knownCacheableBarringFilter { false };
+protected:
+    ImageClient();
 };
 
 } // namespace Style
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_STYLE_IMAGE(GradientImage, isGradientImage)

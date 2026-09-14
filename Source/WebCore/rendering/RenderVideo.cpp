@@ -181,7 +181,7 @@ LayoutSize RenderVideo::calculateIntrinsicSize()
     return calculatedIntrinsicSize;
 }
 
-void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
+void RenderVideo::imageChanged(const Style::Image& newImage, const IntRect* rect)
 {
     RenderMedia::imageChanged(newImage, rect);
 
@@ -398,7 +398,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (paintInfo.phase == PaintPhase::Foreground) {
         page->addRelevantRepaintedObject(*this, rect);
         if (displayingPoster && !context.paintingDisabled())
-            protect(document())->didPaintImage(videoElement.get(), protect(cachedImage()), videoBoxRect);
+            protect(document())->didPaintImage(videoElement.get(), protect(imageResource().styleImage()), videoBoxRect);
     }
 
     if (context.detectingContentfulPaint()) {

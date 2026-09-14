@@ -765,7 +765,7 @@ void ImageLoader::resetLazyImageLoading(Document& document)
     m_lazyImageLoadState = LazyImageLoadState::None;
 }
 
-VisibleInViewportState ImageLoader::imageVisibleInViewport(const Document& document) const
+VisibleInViewportState ImageLoader::imageVisibleInViewport(CachedImage&, const Document& document) const
 {
     if (&element().document() != &document)
         return VisibleInViewportState::No;

@@ -116,11 +116,11 @@ bool hasAnyBackgroundClipText(const CoordinatedValueList<T>& list)
 }
 
 template<FillLayer T>
-RefPtr<Image> findLayerUsedImage(const CoordinatedValueList<T>& list, WrappedImagePtr image, bool& isNonEmpty)
+RefPtr<Image> findLayerUsedImage(const CoordinatedValueList<T>& list, const Style::Image& image, bool& isNonEmpty)
 {
     for (auto& layer : list.usedValues()) {
         RefPtr layerImage = layer.image().tryStyleImage();
-        if (!layerImage || layerImage->data() != image)
+        if (!layerImage || !layerImage->isOrContains(image))
             continue;
 
         // FIXME: This really needs to compute the tile rect with BackgroundPainter::calculateFillTileSize().

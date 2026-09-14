@@ -53,12 +53,14 @@ FilterImage::FilterImage(RefPtr<Image>&& image, Filter&& filter)
     , m_filter { WTF::move(filter) }
     , m_inputImageIsReady { false }
 {
+    if (m_image)
+        protect(m_image)->addClient(*this);
 }
 
 FilterImage::~FilterImage()
 {
-    if (RefPtr cachedImage = m_cachedImage)
-        cachedImage->removeClient(*this);
+    if (m_image)
+        protect(m_image)->removeClient(*this);
 }
 
 bool FilterImage::operator==(const Image& other) const
@@ -93,26 +95,18 @@ Ref<DeprecatedCSSOMValue> FilterImage::computedStyleDeprecatedCSSOMValue(CSSValu
 
 bool FilterImage::isPending() const
 {
-    RefPtr image = m_image;
-    return image && image->isPending();
+    return m_image && protect(m_image)->isPending();
+}
+
+bool FilterImage::isLoading() const
+{
+    return m_image && protect(m_image)->isLoading();
 }
 
 void FilterImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
-    RefPtr oldCachedImage = m_cachedImage;
-
-    if (RefPtr image = m_image) {
-        image->load(cachedResourceLoader, options);
-        m_cachedImage = image->cachedImage();
-    } else
-        m_cachedImage = nullptr;
-
-    if (m_cachedImage != oldCachedImage) {
-        if (oldCachedImage)
-            oldCachedImage->removeClient(*this);
-        if (RefPtr cachedImage = m_cachedImage)
-            cachedImage->addClient(*this);
-    }
+    if (m_image)
+        protect(m_image)->load(cachedResourceLoader, options);
 
     for (auto& value : m_filter) {
         WTF::switchOn(value,
@@ -176,20 +170,125 @@ bool FilterImage::knownToBeOpaque(const RenderElement&) const
 
 FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
 {
-    if (RefPtr image = m_image)
-        return image->imageSize(&renderer, 1);
+    if (m_image)
+        return protect(m_image)->imageSize(&renderer, 1);
     return { };
 }
 
-void FilterImage::imageChanged(WebCore::CachedImage*, const IntRect*)
+void FilterImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
 {
-    if (!m_inputImageIsReady)
-        return;
+    if (m_image)
+        protect(m_image)->registerContainerContext(key, ImageContainerContext { context });
 
-    for (auto entry : clients()) {
-        CheckedRef client = entry.key;
-        client->imageChanged(static_cast<WrappedImagePtr>(this));
+    GeneratedImage::registerContainerContext(key, WTF::move(context));
+}
+
+bool FilterImage::contains(const Image& image) const
+{
+    return m_image && protect(m_image)->isOrContains(image);
+}
+
+void FilterImage::imageChanged(const Image& image, const IntRect* changeRect) const
+{
+    //    if (!m_inputImageIsReady)
+    //        return;
+
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageChanged(image, changeRect);
     }
+}
+
+void FilterImage::notifyFinished(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->notifyFinished(image);
+    }
+}
+
+bool FilterImage::allowsAnimation(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->allowsAnimation(image))
+            return true;
+    }
+    return ImageClient::allowsAnimation(image);
+}
+
+bool FilterImage::canDestroyDecodedData(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (!client->canDestroyDecodedData(image))
+            return false;
+    }
+    return ImageClient::canDestroyDecodedData(image);
+}
+
+bool FilterImage::useSystemDarkAppearance(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->useSystemDarkAppearance(image))
+            return true;
+    }
+    return ImageClient::useSystemDarkAppearance(image);
+}
+
+VisibleInViewportState FilterImage::imageFrameAvailable(const CachedImage& image, ImageAnimatingState animatingState, const IntRect* changeRect) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageFrameAvailable(image, animatingState, changeRect) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageFrameAvailable(image, animatingState, changeRect);
+}
+
+VisibleInViewportState FilterImage::imageVisibleInViewport(const CachedImage& image, const Document& document) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->imageVisibleInViewport(image, document) == VisibleInViewportState::Yes)
+            return VisibleInViewportState::Yes;
+    }
+    return ImageClient::imageVisibleInViewport(image, document);
+}
+
+void FilterImage::didRemoveCachedImageClient(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->didRemoveCachedImageClient(image);
+    }
+}
+
+void FilterImage::imageContentChanged(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+void FilterImage::scheduleRenderingUpdateForImage(const CachedImage& image) const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        client->imageContentChanged(image);
+    }
+}
+
+bool FilterImage::isRendererClient() const
+{
+    for (auto entry : m_clients) {
+        Ref client = entry.key;
+        if (client->isRendererClient())
+            return true;
+    }
+    return ImageClient::isRendererClient();
 }
 
 } // namespace Style

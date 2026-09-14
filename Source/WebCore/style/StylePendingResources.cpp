@@ -178,8 +178,7 @@ void loadPendingResources(Style::ComputedStyle& style, Document& document, const
     for (auto& maskLayer : style.maskLayers().usedValues())
         loadPendingImage(document, maskLayer.image().tryStyleImage().get(), element, LoadPolicy::CORS);
 
-    if (RefPtr shapeValueImage = style.shapeOutside().image())
-        loadPendingImage(document, shapeValueImage.get(), element, LoadPolicy::Anonymous);
+    loadPendingImage(document, style.shapeOutside().tryStyleImage().get(), element, LoadPolicy::Anonymous);
 
     if (document.settings().svgExternalResourcesEnabled()) {
         // Paint servers and markers resolve through SVGResources, which only applies to SVG elements.

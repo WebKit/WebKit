@@ -100,16 +100,12 @@ protected:
     void styleWillChange(Style::Difference, const Style::ComputedStyle& newStyle) override;
     void styleDidChange(Style::Difference, const Style::ComputedStyle*) override;
 
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
+    void intrinsicSizeChanged() override;
 
     ImageDrawResult paintIntoRect(PaintInfo&, const FloatRect&);
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() override;
-
-    void intrinsicSizeChanged() override
-    {
-        imageChanged(imageResource().imagePtr());
-    }
 
 private:
     ASCIILiteral renderName() const override { return "RenderImage"_s; }
@@ -126,7 +122,7 @@ private:
 
     LayoutUnit minimumReplacedHeight() const override;
 
-    void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    void notifyFinished(const Style::CachedImage&) final;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
     IntSize imageSizeForError(CachedImage*) const;

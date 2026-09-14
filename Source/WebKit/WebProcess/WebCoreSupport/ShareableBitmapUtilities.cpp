@@ -92,7 +92,7 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (options.allowAnimatedImages == AllowAnimatedImages::No && image->isAnimated())
         return { };
 
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
+    auto bitmapSize = cachedImage->imageFloatSizeForRenderer(&renderImage);
     if (options.screenSizeInPixels) {
         auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *options.screenSizeInPixels }).size();
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;

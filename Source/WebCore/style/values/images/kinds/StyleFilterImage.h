@@ -27,15 +27,13 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
-#include "CachedResourceHandle.h"
 #include "StyleFilter.h"
 #include "StyleGeneratedImage.h"
 
 namespace WebCore {
 namespace Style {
 
-class FilterImage final : public GeneratedImage, private CachedImageClient {
+class FilterImage final : public GeneratedImage, private ImageClient {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(FilterImage);
 public:
     static Ref<FilterImage> create(RefPtr<Image> image, Filter filter)
@@ -44,7 +42,7 @@ public:
     }
     virtual ~FilterImage();
 
-    // CachedResourceClient.
+    // ImageClient.
     void ref() const final { GeneratedImage::ref(); }
     void deref() const final { GeneratedImage::deref(); }
 
@@ -63,24 +61,31 @@ private:
     Ref<CSSValue> computedStyleValue(const Style::ComputedStyle&) const final;
     Ref<DeprecatedCSSOMValue> computedStyleDeprecatedCSSOMValue(CSSValuePool&, const Style::ComputedStyle&, CSSStyleDeclaration&) const final;
     bool isPending() const final;
+    bool isLoading() const final;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&) final;
+    bool contains(const Image&) const final;
+    void didAddClient(ImageClient&) final { }
+    void didRemoveClient(ImageClient&) final { }
 
-    // CachedImageClient.
-    void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) final;
+    // ImageClient.
+    void imageChanged(const Image&, const IntRect*) const final;
+    void notifyFinished(const CachedImage&) const final;
+    bool allowsAnimation(const CachedImage&) const final;
+    bool canDestroyDecodedData(const CachedImage&) const final;
+    bool useSystemDarkAppearance(const CachedImage&) const final;
+    VisibleInViewportState imageFrameAvailable(const CachedImage&, ImageAnimatingState, const IntRect*) const final;
+    VisibleInViewportState imageVisibleInViewport(const CachedImage&, const Document&) const final;
+    void didRemoveCachedImageClient(const CachedImage&) const final;
+    void imageContentChanged(const CachedImage&) const final;
+    void scheduleRenderingUpdateForImage(const CachedImage&) const final;
+    bool isRendererClient() const final;
 
     RefPtr<Image> m_image;
     Filter m_filter;
-
-    // FIXME: Rather than caching and tracking the input image via WebCore::CachedImages, we should
-    // instead use a new, Style::Image specific notification, to allow correct tracking of
-    // nested images (e.g. the input image for a Style::FilterImage is a Style::CrossfadeImage
-    // where one of the inputs to the Style::CrossfadeImage is a Style::CachedImage).
-    CachedResourceHandle<WebCore::CachedImage> m_cachedImage;
     bool m_inputImageIsReady;
 };
 

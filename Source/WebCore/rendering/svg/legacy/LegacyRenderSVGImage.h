@@ -64,7 +64,7 @@ private:
 
     const AffineTransform& localToParentTransform() const LIFETIME_BOUND override { return m_localTransform; }
 
-    void notifyFinished(CachedResource& newImage, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) override;
+    void notifyFinished(const Style::CachedImage&) override;
 
     FloatRect calculateObjectBoundingBox() const;
     FloatRect objectBoundingBox() const override { return m_objectBoundingBox; }
@@ -74,7 +74,7 @@ private:
 
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = nullptr) const override;
 
-    void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
+    void imageChanged(const Style::Image&, const IntRect* = nullptr) override;
 
     void layout() override;
     void paint(PaintInfo&, const LayoutPoint&) override;

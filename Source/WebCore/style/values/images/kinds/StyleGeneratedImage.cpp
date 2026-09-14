@@ -105,7 +105,7 @@ void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
     m_images.remove(size);
 }
 
-FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
+FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, ImageSizeType) const
 {
     if (!m_fixedSize)
         return m_containerSize;
@@ -139,33 +139,9 @@ void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, f
     intrinsicRatio = size;
 }
 
-// MARK: Client support.
-
-void GeneratedImage::addClient(RenderElement& renderer)
+void GeneratedImage::registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&& context)
 {
-    if (m_clients.isEmptyIgnoringNullReferences())
-        ref();
-
-    m_clients.add(renderer);
-
-    this->didAddClient(renderer);
-}
-
-void GeneratedImage::removeClient(RenderElement& renderer)
-{
-    ASSERT(m_clients.contains(renderer));
-    if (!m_clients.remove(renderer))
-        return;
-
-    this->didRemoveClient(renderer);
-
-    if (m_clients.isEmptyIgnoringNullReferences())
-        deref();
-}
-
-bool GeneratedImage::hasClient(RenderElement& renderer) const
-{
-    return m_clients.contains(renderer);
+    m_containerSize = context.containerSize;
 }
 
 } // namespace Style
