@@ -37,13 +37,23 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/MediaResourceLoader.h>
+#import <WebCore/NetworkLoadMetrics.h>
+#import <WebCore/PlatformMediaResourceLoader.h>
+#import <WebCore/ResourceError.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/ResourceResponse.h>
 #import <WebCore/Settings.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/SubresourceLoader.h>
 #import <WebCore/WebCoreNSURLSession.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebKit/WebView.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SchedulePair.h>
+#import <wtf/ThreadSafeRefCounted.h>
+#import <wtf/ThreadSafeWeakPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 
 static bool didLoadMainResource;
 static bool didRecieveResponse;
@@ -102,7 +112,71 @@ using namespace WebCore;
 - (WebCore::LocalFrame*)_mainCoreFrame;
 @end
 
+static bool rangeTestReceivedResponse;
+static bool rangeTestFirstChunkDelivered;
+static bool rangeTestComplete;
+static RetainPtr<NSMutableData> rangeTestReceivedData;
+static uint64_t rangeTestFirstChunkThreshold;
+
+@interface TestRangeSessionDelegate : NSObject<NSURLSessionDataDelegate>
+@end
+
+@implementation TestRangeSessionDelegate
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+{
+    rangeTestReceivedResponse = true;
+    completionHandler(NSURLSessionResponseAllow);
+}
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    [rangeTestReceivedData appendData:data];
+    if ([rangeTestReceivedData length] >= rangeTestFirstChunkThreshold)
+        rangeTestFirstChunkDelivered = true;
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(nullable NSError *)error
+{
+    rangeTestComplete = true;
+}
+@end
+
 namespace TestWebKitAPI {
+
+// A PlatformMediaResource whose data delivery is driven directly by the test,
+// so we can control exactly when each byte reaches the RangeResponseGenerator.
+class TestRangeMediaResource final : public WebCore::PlatformMediaResource {
+public:
+    static Ref<TestRangeMediaResource> create() { return adoptRef(*new TestRangeMediaResource()); }
+};
+
+class TestRangeMediaResourceLoader final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TestRangeMediaResourceLoader, WTF::DestructionThread::Main>
+    , public WebCore::PlatformMediaResourceLoader {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(TestRangeMediaResourceLoader);
+public:
+    static Ref<TestRangeMediaResourceLoader> create() { return adoptRef(*new TestRangeMediaResourceLoader()); }
+
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
+    WTF::ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::controlBlock(); }
+    uint32_t weakRefCount() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::weakRefCount(); }
+
+    RefPtr<TestRangeMediaResource> lastResource;
+
+private:
+    void sendH2Ping(const URL&, CompletionHandler<void(std::expected<Seconds, ResourceError>&&)>&& completionHandler) final
+    {
+        completionHandler(makeUnexpected(ResourceError { }));
+    }
+
+    RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final
+    {
+        lastResource = TestRangeMediaResource::create();
+        return lastResource;
+    }
+};
+
 
 class WebCoreNSURLSessionTest : public testing::Test {
 public:
@@ -170,6 +244,74 @@ TEST_F(WebCoreNSURLSessionTest, InvalidateEmpty)
     didInvalidate = false;
     [session finishTasksAndInvalidate];
     TestWebKitAPI::Util::run(&didInvalidate);
+}
+
+TEST_F(WebCoreNSURLSessionTest, RangeResponseDeliversLastByteAtChunkBoundary)
+{
+    // Request the closed range "bytes=0-99" (100 bytes, indices 0...99). The
+    // last byte of the range only arrives after the buffer has momentarily held
+    // exactly `end` bytes. RangeResponseGenerator used to finish the task as
+    // soon as the delivered byte index reached `end` (>=), dropping the final
+    // byte; it must wait until the index passes `end` (>).
+    constexpr uint64_t rangeEnd = 99;
+    constexpr uint64_t expectedLength = rangeEnd + 1; // 100 bytes.
+    constexpr size_t totalLength = 132;
+
+    Vector<uint8_t> resourceBytes;
+    resourceBytes.reserveInitialCapacity(totalLength);
+    for (size_t i = 0; i < totalLength; ++i)
+        resourceBytes.append(static_cast<uint8_t>(i & 0xFF));
+
+    rangeTestReceivedResponse = false;
+    rangeTestFirstChunkDelivered = false;
+    rangeTestComplete = false;
+    rangeTestReceivedData = adoptNS([[NSMutableData alloc] init]);
+    // The first chunk we push is exactly `end` bytes (indices 0...end-1), which
+    // gets fully delivered by both the buggy and fixed code paths.
+    rangeTestFirstChunkThreshold = rangeEnd;
+
+    RetainPtr rangeDelegate = adoptNS([[TestRangeSessionDelegate alloc] init]);
+    Ref rangeLoader = TestRangeMediaResourceLoader::create();
+    RetainPtr session = adoptNS([[WebCoreNSURLSession alloc] initWithResourceLoader:rangeLoader.get() delegate:rangeDelegate.get() delegateQueue:[NSOperationQueue mainQueue]]);
+
+    RetainPtr request = adoptNS([[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://example.com/test-range.mp4"]]);
+    [request setValue:@"bytes=0-99" forHTTPHeaderField:@"Range"];
+
+    RetainPtr<NSURLSessionDataTask> task = [session dataTaskWithRequest:request.get()];
+    [task resume];
+
+    // Wait for the task to request a resource from our loader.
+    while (!rangeLoader->lastResource)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    RefPtr resource = rangeLoader->lastResource;
+    URL url { "https://example.com/test-range.mp4"_str };
+    ResourceResponse response(URL { url }, "video/mp4"_s, totalLength, String { });
+    response.setHTTPStatusCode(200);
+
+    // Deliver the 200 response so the range response gets synthesized. This
+    // reassigns the resource's client to the generator's internal client.
+    resource->client()->responseReceived(*resource, response, [] (WebCore::ShouldContinuePolicyCheck) { });
+
+    // First chunk: indices 0...end-1 (buffer size becomes exactly `end`).
+    Ref firstChunk = SharedBuffer::create(resourceBytes.subspan(0, rangeEnd));
+    resource->client()->dataReceived(*resource, firstChunk.get());
+    TestWebKitAPI::Util::run(&rangeTestFirstChunkDelivered);
+
+    // Second chunk: the remaining bytes, including the range's last byte at
+    // index `end`. On the fixed code the task is still running and receives it.
+    Ref secondChunk = SharedBuffer::create(resourceBytes.subspan(rangeEnd));
+    resource->client()->dataReceived(*resource, secondChunk.get());
+    resource->client()->loadFinished(*resource, NetworkLoadMetrics { });
+
+    TestWebKitAPI::Util::run(&rangeTestComplete);
+
+    EXPECT_EQ([rangeTestReceivedData length], expectedLength);
+
+    RetainPtr expectedData = [NSData dataWithBytes:resourceBytes.subspan(0, expectedLength).data() length:expectedLength];
+    EXPECT_TRUE([rangeTestReceivedData isEqualToData:expectedData.get()]);
+
+    rangeTestReceivedData = nullptr;
 }
 
 }

@@ -165,7 +165,7 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
             byteIndex += bytesFromThisViewToDeliver;
             [task resource:nullptr receivedData:SharedBufferDataView(bufferView, bytesFromThisViewToDeliver).createSharedBuffer()->createNSData()];
         }
-        if (byteIndex >= taskData->end) {
+        if (byteIndex > taskData->end) {
             [task resourceFinished:nullptr metrics:NetworkLoadMetrics { }];
             // This can be called while we are currently iterating data.taskData in giveResponseToTasksWithFinishedRanges,
             // as such we can't remove the task from the hash table yet. Queue a task to process deletion.
