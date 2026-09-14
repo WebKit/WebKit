@@ -99,6 +99,16 @@ static constexpr auto ceacBeforeUnloadFixScript = R"js((function() {
     };
 })();)js"_s;
 
+static constexpr auto xGoogleSignInButtonFixScript = R"js((function() {
+    if (window.__xGoogleSignInButtonFix)
+        return;
+    window.__xGoogleSignInButtonFix = true;
+    var style = document.createElement('style');
+    style.textContent = '.jf-gsi-hit > div > div:first-child:empty:not([role]) { display: none !important }';
+    (document.head || document.documentElement).appendChild(style);
+})();
+)js"_s;
+
 namespace SiteSpecificQuirks {
 using namespace QuirkBehaviors;
 using namespace URLRefinement;
@@ -106,6 +116,7 @@ using namespace BuildCondition;
 
 static constexpr auto anyclipPlayerScriptURL = URLMatch::host("player.anyclip.com"_s).when(lastPathComponentEndsWith("lre.js"_s));
 static constexpr auto ceacBrowserCloseScriptURL = URLMatch::anyURL().when(lastPathComponentIs("CheckBrowserClose.js"_s));
+static constexpr auto googleSignInClientScriptURL = URLMatch::host("accounts.google.com"_s).when(pathIs("/gsi/client"_s));
 static constexpr auto webExPushDownloadScriptURL = URLMatch::anyURL().when(lastPathComponentStartsWith("pushdownload."_s));
 
 static constexpr Quirk fullTable[] = {
@@ -822,6 +833,8 @@ static constexpr Quirk fullTable[] = {
             requiresUserGestureToLoadInPictureInPictureQuirk,
             // x.com: rdar://73369869
             requiresUserGestureToPauseInPictureInPictureQuirk,
+            // x.com: https://bugs.webkit.org/show_bug.cgi?id=323931 rdar://183399060
+            needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(xGoogleSignInButtonFixScript)).when(googleSignInClientScriptURL),
         } },
 
     { .match = URLMatch::domain("x.com"_s),
