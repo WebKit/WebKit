@@ -1,0 +1,31 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter on a content-less position:fixed overlay</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-empty-fixed-overlay-expected.html">
+<!-- An element with no content of its own must still apply its backdrop-filter. -->
+
+<div class="fuchsiabox"></div>
+<div class="overlay"></div>
+
+<svg width="0" height="0">
+  <filter id="invert" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 100px;
+  left: 60px;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: url(#invert);
+}
+</style>

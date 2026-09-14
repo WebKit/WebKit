@@ -37,9 +37,12 @@
 #include "RenderLayerModelObject.h"
 #include "RenderObject.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGFilterElement.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGRenderingContext.h"
+#include "SVGResourceElementClient.h"
 #include "SVGTransformComputation.h"
 #include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
@@ -175,12 +178,22 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!isConnected())
         return;
 
-    RefPtr parent = parentElement();
-
-    if (!parent || !parent->hasTagName(SVGNames::filterTag))
+    RefPtr filterElement = dynamicDowncast<SVGFilterElement>(parentElement());
+    if (!filterElement)
         return;
 
-    CheckedPtr parentRenderer = parent->renderer();
+    // The <filter> may be referenced by an HTML or SVG element through a CSS filter or
+    // backdrop-filter property. Such consumers register as CSS clients on the element and
+    // do not depend on the <filter> having a renderer (it typically lives in a hidden
+    // resources subtree). Notify them directly so they repaint now that the image has
+    // loaded; this also covers the layer-based SVG engine, where the legacy renderer path
+    // below does not run.
+    for (auto& client : filterElement->referencingCSSClients()) {
+        if (client)
+            client->resourceChanged(*filterElement);
+    }
+
+    CheckedPtr parentRenderer = filterElement->renderer();
     if (!parentRenderer)
         return;
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter with feFlood-driven feDisplacementMap</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-feflood-displacement-expected.html">
+<meta name="fuzzy" content="maxDifference=0-255; totalPixels=0-150">
+<!-- feFlood supplies a uniform rgb(255,128,0) displacement map. With scale=16,
+     xChannelSelector=R (255) and yChannelSelector=B (0), every output pixel samples the backdrop
+     at (x + 8, y - 8), so the fuchsia square painted at (110, 110) appears at (102, 118) inside
+     the glass. The reference draws that expected result directly with plain CSS. The integer
+     displacement makes every sample land on a pixel boundary, where the nearest-neighbor
+     tie-break is implementation-defined; the fuzzy range covers that one-pixel band. -->
+
+<div class="pattern"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="displace" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+    <feFlood flood-color="rgb(255,128,0)" result="map"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="16" xChannelSelector="R" yChannelSelector="B"/>
+  </filter>
+</svg>
+
+<style>
+body { margin: 0; background: white; }
+.pattern {
+  position: absolute;
+  background: fuchsia;
+  width: 60px;
+  height: 60px;
+  top: 110px;
+  left: 110px;
+}
+.filter {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  top: 80px;
+  left: 80px;
+  backdrop-filter: url(#displace);
+}
+</style>
