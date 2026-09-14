@@ -41,10 +41,19 @@ import UIKit
 /// - Parameters:
 ///   - manifest: The extension's manifest, as it would appear in `manifest.json`.
 ///   - resources: The extension's resources, keyed by path.
+///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
 /// - Returns: A manager for the parsed extension.
 @MainActor
-public func parseWebExtension(manifest: [String: Any], resources: [String: Any] = [:]) -> TestWebExtensionManager {
-    let manager = TestWebExtensionManager(manifest: manifest, resources: resources)
+public func parseWebExtension(
+    manifest: [String: Any],
+    resources: [String: Any] = [:],
+    configuration: WKWebExtensionController.Configuration? = nil
+) -> TestWebExtensionManager {
+    let manager = TestWebExtensionManager(
+        manifest: manifest,
+        resources: resources,
+        extensionControllerConfiguration: configuration
+    )
     manager.collectsFailures = true
     return manager
 }
@@ -54,11 +63,16 @@ public func parseWebExtension(manifest: [String: Any], resources: [String: Any] 
 /// - Parameters:
 ///   - manifest: The extension's manifest, as it would appear in `manifest.json`.
 ///   - resources: The extension's resources, keyed by path.
+///   - configuration: The controller configuration to use. Defaults to a non-persistent one.
 /// - Returns: A manager for the loaded extension.
 /// - Throws: the failure the extension reported if it could not be loaded.
 @MainActor
-public func loadWebExtension(manifest: [String: Any], resources: [String: Any] = [:]) throws -> TestWebExtensionManager {
-    let manager = parseWebExtension(manifest: manifest, resources: resources)
+public func loadWebExtension(
+    manifest: [String: Any],
+    resources: [String: Any] = [:],
+    configuration: WKWebExtensionController.Configuration? = nil
+) throws -> TestWebExtensionManager {
+    let manager = parseWebExtension(manifest: manifest, resources: resources, configuration: configuration)
 
     manager.load()
 

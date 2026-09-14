@@ -453,15 +453,36 @@ TestWebKitAPI.WKProcessPoolConfiguration
 TestWebKitAPI.WKScrollGeometry
 TestWebKitAPI.WKScrollViewTests
 TestWebKitAPI.WKWebExtension
-TestWebKitAPI.WKWebExtensionAPIAlarms
-TestWebKitAPI.WKWebExtensionAPICommands
-TestWebKitAPI.WKWebExtensionAPICookies.ChangedEvent
-TestWebKitAPI.WKWebExtensionAPICookies.ErrorsRead
-TestWebKitAPI.WKWebExtensionAPICookies.ErrorsWrite
-TestWebKitAPI.WKWebExtensionAPICookies.GetAllCookieStores
-TestWebKitAPI.WKWebExtensionAPICookies.GetAllCookieStoresWithPrivateAccess
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/clearAllAlarms()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/clearSingleAlarm()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/createAlarms()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/delayRepeating()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/delaySingleShot()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/errors()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/getAllAlarms()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/getSingleAlarm()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/removeListenerDuringEvent()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/unnamedAlarm()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/whenRepeating()
+TestWebKitAPI.WKWebExtensionAPIAlarmsTests/whenSingleShot()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/changedEvent()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/commandEvent()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/commandForEvent()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/executeActionCommand()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/getAllCommands()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/getAllCommandsEmptyManifest()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/getAllCommandsEmptyManifestNoActionName()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/performCommandAndPermissionsRequest()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/performCommandForEvent()
+TestWebKitAPI.WKWebExtensionAPICommandsTests/performMenuItem()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/changedEvent()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/errorsRead()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/errorsWrite()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllCookieStores()
+TestWebKitAPI.WKWebExtensionAPICookiesTests/getAllCookieStoresWithPrivateAccess()
 TestWebKitAPI.WKWebExtensionAPIDOM
-TestWebKitAPI.WKWebExtensionAPIEvent
+TestWebKitAPI.WKWebExtensionAPIEventTests/errors()
+TestWebKitAPI.WKWebExtensionAPIEventTests/testEventListener()
 TestWebKitAPI.WKWebExtensionAPIExtension
 TestWebKitAPI.WKWebExtensionAPILocalization
 TestWebKitAPI.WKWebExtensionAPINamespace
@@ -470,8 +491,9 @@ TestWebKitAPI.WKWebExtensionController
 TestWebKitAPI.WKWebExtensionControllerConfiguration
 TestWebKitAPI.WKWebExtensionDataRecord
 TestWebKitAPI.WKWebExtensionMatchPattern
-TestWebKitAPI.WKWebExtensionTab
-TestWebKitAPI.WKWebExtensionWindow
+TestWebKitAPI.WKWebExtensionTabTests/openTabs()
+TestWebKitAPI.WKWebExtensionWindowTests/focusedWindow()
+TestWebKitAPI.WKWebExtensionWindowTests/openWindows()
 TestWebKitAPI.WKWebViewAutoFillTests
 TestWebKitAPI.WKWebViewCandidateTests
 TestWebKitAPI.WKWebViewConfiguration
@@ -5121,7 +5143,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/updateTabFromPopupPage()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowOpenOpensInNewWindow()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIActionTests/windowSpecificActionProperties()
-[ ios ] TestWebKitAPI.WKWebExtensionAPICommands.PerformKeyCommand
+[ ios ] TestWebKitAPI.WKWebExtensionAPICommandsTests/performKeyCommand()
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.BlockedLoadTest
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.DynamicRules
 [ ios ] TestWebKitAPI.WKWebExtensionAPIDeclarativeNetRequest.GetDynamicRules

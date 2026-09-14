@@ -74,8 +74,13 @@ static NSError *managerError(NSString *description)
 
 - (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources
 {
+    return [self initWithManifest:manifest resources:resources extensionControllerConfiguration:nil];
+}
+
+- (instancetype)initWithManifest:(NSDictionary<NSString *, id> *)manifest resources:(NSDictionary<NSString *, id> *)resources extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration
+{
     RetainPtr extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    return [self initForExtension:extension.get()];
+    return [self initForExtension:extension.get() extensionControllerConfiguration:configuration];
 }
 
 - (instancetype)initForExtension:(WKWebExtension *)extension extensionControllerConfiguration:(WKWebExtensionControllerConfiguration *)configuration
