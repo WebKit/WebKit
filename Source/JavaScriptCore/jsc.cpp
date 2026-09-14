@@ -27,6 +27,8 @@
 #include "AtomicsObject.h"
 #include "BigIntConstructor.h"
 #include "BytecodeCacheError.h"
+#include "CloneDeserializerBase.h"
+#include "CloneSerializerBase.h"
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CompilerTimingScope.h"
@@ -75,6 +77,7 @@
 #include "SimpleTypedArrayController.h"
 #include "StackVisitor.h"
 #include "StructureCreateInlines.h"
+#include "StructuredCloneTags.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
 #include "TopExceptionScope.h"
@@ -234,23 +237,39 @@ static void checkException(GlobalObject*, bool isLastFile, bool hasException, JS
 
 class Message : public ThreadSafeRefCounted<Message> {
 public:
-#if ENABLE(WEBASSEMBLY)
-    struct WasmMemory {
-        RefPtr<SharedArrayBufferContents> contents;
-        Wasm::AddressType addressType;
-    };
-    using Content = Variant<ArrayBufferContents, WasmMemory>;
-#else
-    using Content = Variant<ArrayBufferContents>;
-#endif
-    Message(Content&&, int32_t);
-    ~Message();
-    
-    Content&& NODELETE releaseContents() { return WTF::move(m_contents); }
+    static Ref<Message> create(Vector<uint8_t>&& data, CloneSerializationSideChannels&& sideChannels, int32_t index)
+    {
+        return adoptRef(*new Message(WTF::move(data), WTF::move(sideChannels), index));
+    }
+
+    std::span<const uint8_t> data() const { return m_data.span(); }
     int32_t NODELETE index() const { return m_index; }
 
+    // Every recipient worker gets this same Message and deserializes from it concurrently, which
+    // is safe because the side channels (other than arrayBufferContents) are read-only.
+    CloneDeserializationSideChannels sideChannels()
+    {
+        return {
+            // Broadcast never transfers buffers, so there is no transferred-buffer channel.
+            .arrayBufferContents = nullptr,
+            .sharedBuffers = &m_sideChannels.sharedBuffers,
+#if ENABLE(WEBASSEMBLY)
+            .wasmModules = &m_sideChannels.wasmModules,
+            .wasmMemoryHandles = &m_sideChannels.wasmMemoryHandles,
+#endif
+        };
+    }
+
 private:
-    Content m_contents;
+    Message(Vector<uint8_t>&& data, CloneSerializationSideChannels&& sideChannels, int32_t index)
+        : m_data(WTF::move(data))
+        , m_sideChannels(WTF::move(sideChannels))
+        , m_index(index)
+    {
+    }
+
+    const Vector<uint8_t> m_data;
+    CloneSerializationSideChannels m_sideChannels;
     int32_t m_index { 0 };
 };
 
@@ -299,6 +318,79 @@ private:
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Workers);
+
+class JSCCloneSerializer final : public CloneSerializerBase<JSCCloneSerializer> {
+    using Base = CloneSerializerBase<JSCCloneSerializer>;
+public:
+    struct Result {
+        SerializationReturnCode code;
+        SideChannels sideChannels;
+    };
+
+    static Result serialize(JSGlobalObject* globalObject, JSValue value, Vector<uint8_t>& out)
+    {
+        JSCCloneSerializer serializer(globalObject, out);
+        auto code = serializer.Base::serialize(value);
+        return { code, serializer.takeSideChannels() };
+    }
+
+    bool dumpDerivedTerminal(JSObject*, SerializationReturnCode&) { return false; }
+
+private:
+    JSCCloneSerializer(JSGlobalObject* globalObject, Vector<uint8_t>& out)
+        : Base(globalObject, out)
+    {
+        write(currentVersion());
+    }
+};
+static_assert(StructuredCloneSerializerHandler<JSCCloneSerializer>);
+
+class JSCCloneDeserializer final : public CloneDeserializerBase<JSCCloneDeserializer> {
+    using Base = CloneDeserializerBase<JSCCloneDeserializer>;
+public:
+    static DeserializationResult deserialize(JSGlobalObject* globalObject, std::span<const uint8_t> data,
+        CloneDeserializationSideChannels sideChannels)
+    {
+        JSCCloneDeserializer deserializer(globalObject, data, sideChannels);
+        if (!deserializer.isValid())
+            return { JSValue(), SerializationReturnCode::ValidationError };
+        return deserializer.Base::deserialize();
+    }
+
+    bool isTagExposed(SerializationTag) const { return true; }
+    // An empty JSValue tells CloneDeserializerBase::readTerminal() that the tag it just consumed
+    // isn't a terminal after all, so it should rewind and let the walker re-read the tag as the
+    // start of an Array/Object/Map/Set.
+    JSValue readDerivedTerminal(SerializationTag) { return { }; }
+
+private:
+    JSCCloneDeserializer(JSGlobalObject* globalObject, std::span<const uint8_t> data, CloneDeserializationSideChannels sideChannels)
+        : Base(globalObject, globalObject, data, sideChannels)
+    {
+        readAndStoreVersion();
+    }
+};
+static_assert(StructuredCloneDeserializerHandler<JSCCloneDeserializer>);
+
+static EncodedJSValue throwSerializationError(JSGlobalObject* globalObject, ThrowScope& scope, SerializationReturnCode code)
+{
+    switch (code) {
+    case SerializationReturnCode::SuccessfullyCompleted:
+        RELEASE_ASSERT_NOT_REACHED();
+    case SerializationReturnCode::StackOverflowError:
+        return throwVMException(globalObject, scope, createStackOverflowError(globalObject));
+    case SerializationReturnCode::ValidationError:
+    case SerializationReturnCode::DataCloneError:
+        return throwVMTypeError(globalObject, scope, "Value could not be cloned."_s);
+    case SerializationReturnCode::ExistingExceptionError:
+        ASSERT(scope.exception());
+        return encodedJSValue();
+    case SerializationReturnCode::InterruptedExecutionError:
+    case SerializationReturnCode::UnspecifiedError:
+        break;
+    }
+    return throwVMException(globalObject, scope, createError(globalObject, "Value could not be cloned."_s));
+}
 
 
 static JSC_DECLARE_HOST_FUNCTION(functionAtob);
@@ -2375,14 +2467,6 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* glob
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Message::Message(Content&& contents, int32_t index)
-    : m_contents(WTF::move(contents))
-    , m_index(index)
-{
-}
-
-Message::~Message() = default;
-
 Worker::Worker(Workers& workers, bool isMain)
     : m_workers(workers)
     , m_isMain(isMain)
@@ -2638,32 +2722,13 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
         message = Worker::current().dequeue();
     }
 
-    auto content = message->releaseContents();
-    JSValue result = ([&]() -> JSValue {
-        if (std::holds_alternative<ArrayBufferContents>(content)) {
-            auto nativeBuffer = ArrayBuffer::create(std::get<ArrayBufferContents>(WTF::move(content)));
-            ArrayBufferSharingMode sharingMode = nativeBuffer->sharingMode();
-            return JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(sharingMode), WTF::move(nativeBuffer));
-        }
-#if ENABLE(WEBASSEMBLY)
-        if (std::holds_alternative<Message::WasmMemory>(content)) {
-            JSWebAssemblyMemory* jsMemory = JSC::JSWebAssemblyMemory::create(vm, globalObject->webAssemblyMemoryStructure());
-            auto handler = [&vm, jsMemory](Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { jsMemory->growSuccessCallback(vm, oldPageCount, newPageCount); };
-            auto wasmMemory = std::get<Message::WasmMemory>(WTF::move(content));
-            RefPtr<Wasm::Memory> memory;
-            if (auto shared = WTF::move(wasmMemory.contents))
-                memory = Wasm::Memory::create(shared.releaseNonNull(), wasmMemory.addressType, WTF::move(handler));
-            else
-                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, wasmMemory.addressType, WTF::move(handler));
-            jsMemory->adopt(memory.releaseNonNull());
-            return jsMemory;
-        }
-#endif
-        return jsUndefined();
-    })();
+    auto result = JSCCloneDeserializer::deserialize(globalObject, message->data(), message->sideChannels());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (result.code != SerializationReturnCode::SuccessfullyCompleted)
+        return throwSerializationError(globalObject, scope, result.code);
 
     auto args = WTF::toArray<EncodedJSValue>({
-        JSValue::encode(result),
+        JSValue::encode(result.value),
         JSValue::encode(jsNumber(message->index())),
     });
     RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, callback, callData, jsNull(), ArgList { args.data(), args.size() })));
@@ -2703,33 +2768,19 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentBroadcast, (JSGlobalObject* globalOb
     int32_t index = callFrame->argument(1).toInt32(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSArrayBuffer* jsBuffer = dynamicDowncast<JSArrayBuffer>(callFrame->argument(0));
-    if (jsBuffer && jsBuffer->isShared()) {
-        Workers::singleton().broadcast(
-            [&] (const AbstractLocker& locker, Worker& worker) {
-                ArrayBuffer* nativeBuffer = jsBuffer->impl();
-                ArrayBufferContents contents;
-                nativeBuffer->transferTo(vm, contents); // "transferTo" means "share" if the buffer is shared.
-                RefPtr<Message> message = adoptRef(new Message(WTF::move(contents), index));
-                worker.enqueue(locker, message);
-            });
-        return JSValue::encode(jsUndefined());
-    }
+    // Serialize outside Workers::broadcast's lock as serialization can run arbitrary JS e.g. getters.
+    Vector<uint8_t> data;
+    auto [code, sideChannels] = JSCCloneSerializer::serialize(globalObject, callFrame->argument(0), data);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (code != SerializationReturnCode::SuccessfullyCompleted)
+        return throwSerializationError(globalObject, scope, code);
 
-#if ENABLE(WEBASSEMBLY)
-    JSWebAssemblyMemory* memory = dynamicDowncast<JSWebAssemblyMemory>(callFrame->argument(0));
-    if (memory && memory->memory().sharingMode() == MemorySharingMode::Shared) {
-        Workers::singleton().broadcast(
-            [&] (const AbstractLocker& locker, Worker& worker) {
-                Message::WasmMemory wasmMemory { memory->memory().shared(), memory->memory().addressType() };
-                RefPtr<Message> message = adoptRef(new Message(WTF::move(wasmMemory), index));
-                worker.enqueue(locker, message);
-            });
-        return JSValue::encode(jsUndefined());
-    }
-#endif
-
-    return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Not supported object"_s)));
+    Ref<Message> message = Message::create(WTF::move(data), WTF::move(sideChannels), index);
+    Workers::singleton().broadcast(
+        [&] (const AbstractLocker& locker, Worker& worker) {
+            worker.enqueue(locker, message.copyRef());
+        });
+    return JSValue::encode(jsUndefined());
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentGetReport, (JSGlobalObject* globalObject, CallFrame*))

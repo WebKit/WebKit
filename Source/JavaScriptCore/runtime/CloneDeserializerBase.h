@@ -25,37 +25,55 @@
 
 #pragma once
 
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/BigIntObject.h>
 #include <JavaScriptCore/BooleanObject.h>
 #include <JavaScriptCore/CloneBase.h>
+#include <JavaScriptCore/DataView.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSBigInt.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSDataView.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSMapInlines.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/JSSetInlines.h>
 #include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/JSTypedArrays.h>
 #include <JavaScriptCore/MarkedVector.h>
 #include <JavaScriptCore/NumberObject.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <JavaScriptCore/RegExpObject.h>
 #include <JavaScriptCore/StringObject.h>
 #include <JavaScriptCore/TopExceptionScope.h>
+#include <JavaScriptCore/TypedArrayController.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <JavaScriptCore/TypedArrays.h>
 #include <JavaScriptCore/YarrFlags.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(WEBASSEMBLY)
+#include <JavaScriptCore/JSWebAssemblyMemory.h>
+#include <JavaScriptCore/JSWebAssemblyModule.h>
+#include <JavaScriptCore/WasmModule.h>
+#endif
+
 namespace JSC {
 
 template<typename Derived>
-concept StructuredCloneDeserializerHandler = requires(Derived& d, SerializationTag t) {
+concept StructuredCloneDeserializerHandler = requires(Derived& d, SerializationTag t, Ref<ArrayBuffer>&& buffer) {
     { d.readDerivedTerminal(t) } -> std::same_as<JSValue>;
     { d.isTagExposed(t) } -> std::same_as<bool>;
+    // Optional hooks with defaults:
+    { d.agentClusterID() } -> std::same_as<String>;
+    { d.toJSArrayBuffer(WTF::move(buffer)) } -> std::same_as<JSValue>;
 };
 
 namespace StructuredCloneInternal {
@@ -108,13 +126,29 @@ enum class ShouldAtomize : bool { No, Yes };
 template<typename Derived>
 class CloneDeserializerBase : public CloneBase {
 protected:
-    CloneDeserializerBase(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, std::span<const uint8_t> data)
+    CloneDeserializerBase(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject, std::span<const uint8_t> data, CloneDeserializationSideChannels sideChannels)
         : CloneBase(lexicalGlobalObject)
         , m_globalObject(globalObject)
         , m_data(data)
+        , m_sideChannels(sideChannels)
+        , m_arrayBuffers(sideChannels.arrayBufferContents ? sideChannels.arrayBufferContents->size() : 0)
     {
     }
 
+    // BEGIN: hooks for embedders.
+    // Derived can override any of these; the defaults below are used when Derived doesn't provide its own.
+
+public:
+    String agentClusterID() { return emptyString(); }
+    JSValue toJSArrayBuffer(Ref<ArrayBuffer>&& arrayBuffer)
+    {
+        VM& vm = m_lexicalGlobalObject->vm();
+        return vm.m_typedArrayController->toJS(m_lexicalGlobalObject, m_globalObject, arrayBuffer.get());
+    }
+
+    // END: hooks for embedders.
+
+protected:
     template<typename T> bool readLittleEndian(T& value)
     {
         if (m_failed || !StructuredCloneInternal::readLittleEndian(m_data, value)) {
@@ -406,6 +440,126 @@ protected:
         appendObjectPoolTag(tag);
     }
 
+    bool NODELETE readArrayBufferViewSubtag(ArrayBufferViewSubtag& tag)
+    {
+        if (m_data.empty())
+            return false;
+        tag = static_cast<ArrayBufferViewSubtag>(consume(m_data));
+        return true;
+    }
+
+    template<typename LengthType>
+    bool readArrayBufferImpl(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        LengthType length;
+        if (!read(length))
+            return false;
+        if (m_data.size() < length)
+            return false;
+        arrayBuffer = ArrayBuffer::tryCreate(m_data.first(length));
+        if (!arrayBuffer)
+            return false;
+        skip(m_data, length);
+        return true;
+    }
+
+    bool readArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        if (m_majorVersion < 10)
+            return readArrayBufferImpl<uint32_t>(arrayBuffer);
+        return readArrayBufferImpl<uint64_t>(arrayBuffer);
+    }
+
+    bool readResizableNonSharedArrayBuffer(RefPtr<ArrayBuffer>& arrayBuffer)
+    {
+        uint64_t byteLength;
+        if (!read(byteLength))
+            return false;
+        uint64_t maxByteLength;
+        if (!read(maxByteLength))
+            return false;
+        if (m_data.size() < byteLength)
+            return false;
+        arrayBuffer = ArrayBuffer::tryCreate(byteLength, 1, maxByteLength);
+        if (!arrayBuffer)
+            return false;
+        ASSERT(arrayBuffer->isResizableNonShared());
+        memcpySpan(arrayBuffer->mutableSpan(), consumeSpan(m_data, byteLength));
+        return true;
+    }
+
+    template<typename LengthType>
+    bool readArrayBufferViewImpl(VM& vm, JSValue& arrayBufferView)
+    {
+        if (!isSafeToRecurse())
+            return false;
+        ArrayBufferViewSubtag arrayBufferViewSubtag;
+        if (!readArrayBufferViewSubtag(arrayBufferViewSubtag))
+            return false;
+        LengthType byteOffset;
+        if (!read(byteOffset))
+            return false;
+        LengthType byteLength;
+        if (!read(byteLength))
+            return false;
+        JSValue arrayBufferValue = readTerminal();
+        if (!arrayBufferValue || !arrayBufferValue.inherits<JSArrayBuffer>())
+            return false;
+        JSObject* arrayBufferObj = asObject(arrayBufferValue);
+
+        unsigned elementSize = typedArrayElementSize(arrayBufferViewSubtag);
+        if (!elementSize)
+            return false;
+
+        RefPtr<ArrayBuffer> arrayBuffer = toPossiblySharedArrayBuffer(vm, arrayBufferObj);
+        if (!arrayBuffer) {
+            arrayBufferView = jsNull();
+            return true;
+        }
+
+        std::optional<size_t> length;
+        if (byteLength != autoLengthMarker) {
+            LengthType computedLength = byteLength / elementSize;
+            if (computedLength * elementSize != byteLength)
+                return false;
+            length = computedLength;
+        } else {
+            if (!arrayBuffer->isResizableOrGrowableShared())
+                return false;
+        }
+
+        if (!ArrayBufferView::verifySubRangeLength(arrayBuffer->byteLength(), byteOffset, length.value_or(0), 1))
+            return false;
+
+        auto makeArrayBufferView = [&](auto&& view) -> bool {
+            if (!view)
+                return false;
+            arrayBufferView = view->wrap(m_lexicalGlobalObject, m_globalObject);
+            return true;
+        };
+
+        switch (arrayBufferViewSubtag) {
+#define JSC_READ_ARRAY_BUFFER_VIEW_SUBTAG(name) \
+        case name##ArrayTag: \
+            return makeArrayBufferView(name##Array::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
+        FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_READ_ARRAY_BUFFER_VIEW_SUBTAG)
+#undef JSC_READ_ARRAY_BUFFER_VIEW_SUBTAG
+        case DataViewTag:
+            return makeArrayBufferView(DataView::wrappedAs(arrayBuffer.releaseNonNull(), byteOffset, length));
+        default:
+            return false;
+        }
+    }
+
+    bool readArrayBufferView(VM& vm, JSValue& arrayBufferView)
+    {
+        if (!isSafeToRecurse())
+            return false;
+        if (m_majorVersion < 10)
+            return readArrayBufferViewImpl<uint32_t>(vm, arrayBufferView);
+        return readArrayBufferViewImpl<uint64_t>(vm, arrayBufferView);
+    }
+
     ALWAYS_INLINE JSValue readTerminalImpl(SerializationTag tag)
     {
         switch (tag) {
@@ -550,6 +704,163 @@ protected:
                 return JSValue();
             }
             return ErrorInstance::create(m_lexicalGlobalObject, WTF::move(message), toErrorType(serializedErrorType), { line, column }, WTF::move(sourceURL), WTF::move(stackString), WTF::move(causeString));
+        }
+#if ENABLE(WEBASSEMBLY)
+        case WasmModuleTag: {
+            // https://webassembly.github.io/spec/web-api/index.html#serialization
+            CachedStringRef agentClusterID;
+            bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
+            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || !m_sideChannels.wasmModules || index >= m_sideChannels.wasmModules->size()) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            return JSWebAssemblyModule::create(m_lexicalGlobalObject->vm(), m_globalObject->webAssemblyModuleStructure(), m_sideChannels.wasmModules->at(index).copyRef());
+        }
+        case WasmMemoryTag: {
+            CachedStringRef agentClusterID;
+            bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
+            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || !m_sideChannels.wasmMemoryHandles || index >= m_sideChannels.wasmMemoryHandles->size()) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+
+            bool isMemory64;
+            if (!read(isMemory64)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            Wasm::AddressType addressType { isMemory64 };
+
+            auto& vm = m_lexicalGlobalObject->vm();
+            JSWebAssemblyMemory* result = JSWebAssemblyMemory::create(vm, m_globalObject->webAssemblyMemoryStructure());
+            RefPtr<Wasm::Memory> memory;
+            auto handler = [&vm, result] (Wasm::Memory::GrowSuccess, PageCount oldPageCount, PageCount newPageCount) { result->growSuccessCallback(vm, oldPageCount, newPageCount); };
+            if (RefPtr<SharedArrayBufferContents> contents = m_sideChannels.wasmMemoryHandles->at(index)) {
+                if (!contents->memoryHandle()) {
+                    SERIALIZE_TRACE("FAIL deserialize");
+                    fail();
+                    return JSValue();
+                }
+                memory = Wasm::Memory::create(contents.releaseNonNull(), addressType, WTF::move(handler));
+            } else {
+                // zero size & max-size.
+                memory = Wasm::Memory::createZeroSized(MemorySharingMode::Shared, addressType, WTF::move(handler));
+            }
+
+            result->adopt(memory.releaseNonNull());
+            return result;
+        }
+#endif
+        case ArrayBufferTag: {
+            RefPtr<ArrayBuffer> arrayBuffer;
+            if (!readArrayBuffer(arrayBuffer)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            Structure* structure = m_globalObject->arrayBufferStructure(arrayBuffer->sharingMode());
+            // A crazy RuntimeFlags mismatch could mean that we are not equipped to handle shared
+            // array buffers while the sender is. In that case, we would see a null structure here.
+            if (!structure) [[unlikely]] {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            JSValue result = static_cast<Derived*>(this)->toJSArrayBuffer(arrayBuffer.releaseNonNull());
+            addToObjectPool<ArrayBufferTag>(result);
+            return result;
+        }
+        case ResizableArrayBufferTag: {
+            RefPtr<ArrayBuffer> arrayBuffer;
+            if (!readResizableNonSharedArrayBuffer(arrayBuffer)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            Structure* structure = m_globalObject->arrayBufferStructure(arrayBuffer->sharingMode());
+            // A crazy RuntimeFlags mismatch could mean that we are not equipped to handle shared
+            // array buffers while the sender is. In that case, we would see a null structure here.
+            if (!structure) [[unlikely]] {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            JSValue result = static_cast<Derived*>(this)->toJSArrayBuffer(arrayBuffer.releaseNonNull());
+            addToObjectPool<ResizableArrayBufferTag>(result);
+            return result;
+        }
+        case ArrayBufferTransferTag: {
+            uint32_t index;
+            bool indexSuccessfullyRead = read(index);
+            if (!indexSuccessfullyRead || index >= m_arrayBuffers.size()) {
+                SERIALIZE_TRACE("FAIL deserialize ArrayBufferTransferTag: indexSuccessfullyRead ", indexSuccessfullyRead, " index ", index, " m_arrayBuffers.size() ", m_arrayBuffers.size());
+                fail();
+                return JSValue();
+            }
+
+            if (!m_arrayBuffers[index])
+                m_arrayBuffers[index] = ArrayBuffer::create(WTF::move(m_sideChannels.arrayBufferContents->at(index)));
+            return static_cast<Derived*>(this)->toJSArrayBuffer(Ref { *m_arrayBuffers[index] });
+        }
+        case SharedArrayBufferTag: {
+            // https://html.spec.whatwg.org/multipage/structured-data.html#structureddeserialize
+            CachedStringRef agentClusterID;
+            bool agentClusterIDSuccessfullyRead = readStringData(agentClusterID);
+            uint32_t index = UINT_MAX;
+            bool indexSuccessfullyRead = read(index);
+            if (!agentClusterIDSuccessfullyRead || agentClusterID->string() != static_cast<Derived*>(this)->agentClusterID()
+                || !indexSuccessfullyRead || !m_sideChannels.sharedBuffers || index >= m_sideChannels.sharedBuffers->size()) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+
+            RELEASE_ASSERT(m_sideChannels.sharedBuffers->at(index));
+            ArrayBufferContents arrayBufferContents;
+            m_sideChannels.sharedBuffers->at(index).shareWith(arrayBufferContents);
+            auto buffer = ArrayBuffer::create(WTF::move(arrayBufferContents));
+            JSValue result = static_cast<Derived*>(this)->toJSArrayBuffer(WTF::move(buffer));
+            addToObjectPool<SharedArrayBufferTag>(result);
+            return result;
+        }
+        case ArrayBufferViewTag: {
+            JSValue arrayBufferView;
+            if (!readArrayBufferView(m_lexicalGlobalObject->vm(), arrayBufferView)) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            addToObjectPool<ArrayBufferViewTag>(arrayBufferView);
+            return arrayBufferView;
+        }
+        case ObjectReferenceTag: {
+            // The counterpart of CloneSerializer's writeObjectReferenceIfDupe(): a backreference to
+            // an object already in the pool, which is how a graph with duplicate or cyclic
+            // references is encoded.
+            auto index = readConstantPoolIndex(m_objectPool);
+            if (!index) {
+                SERIALIZE_TRACE("FAIL deserialize");
+                fail();
+                return JSValue();
+            }
+            return m_objectPool.at(*index);
         }
         default:
             return static_cast<Derived*>(this)->readDerivedTerminal(tag);
@@ -939,6 +1250,8 @@ protected:
     Vector<CachedString> m_constantPool;
     unsigned m_majorVersion { 0xFFFFFFFFu };
     unsigned m_minorVersion { 0xFFFFFFFFu };
+    CloneDeserializationSideChannels m_sideChannels;
+    Vector<RefPtr<ArrayBuffer>> m_arrayBuffers;
 };
 
 inline JSValue CachedString::jsString(CloneBase& deserializer)
