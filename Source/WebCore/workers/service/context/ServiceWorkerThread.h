@@ -30,6 +30,7 @@
 #include <WebCore/NotificationEventType.h>
 #include <WebCore/PushSubscriptionData.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
@@ -55,12 +56,14 @@ enum class AdvancedPrivacyProtections : uint16_t;
 
 class ServiceWorkerThread final : public WorkerThread {
 public:
+    using ExecutionReadyCallback = Function<void(ScriptExecutionContextIdentifier, SecurityOriginData&&)>;
+
     static Ref<ServiceWorkerThread> create(ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, const SettingsValues&, WorkerLoaderProxy&, WorkerDebuggerProxy&, WorkerBadgeProxy&, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID, std::optional<uint64_t>, OptionSet<AdvancedPrivacyProtections>);
     virtual ~ServiceWorkerThread();
 
     WorkerObjectProxy& NODELETE workerObjectProxy() const;
 
-    void start(Function<void(const String&, bool)>&&);
+    void start(Function<void(const String&, bool)>&&, ExecutionReadyCallback&& = { });
 
     void willPostTaskToFireInstallEvent();
     void willPostTaskToFireActivateEvent();

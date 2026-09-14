@@ -1267,6 +1267,16 @@ void WebAutomationSessionProxy::scriptSharedWorkerRealmDestroyed(WebCore::Shared
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptSharedWorkerRealmDestroyed(workerIdentifier), 0);
 }
 
+void WebAutomationSessionProxy::scriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, const WebCore::SecurityOriginData& origin)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptServiceWorkerRealmCreated(executionContextIdentifier, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptServiceWorkerRealmDestroyed(executionContextIdentifier), 0);
+}
+
 void WebAutomationSessionProxy::getSharedWorkerRealms(CompletionHandler<void(Vector<SharedWorkerRealmData>&&)>&& completionHandler)
 {
     completionHandler(AutomationInstrumentation::sharedWorkerRealms());

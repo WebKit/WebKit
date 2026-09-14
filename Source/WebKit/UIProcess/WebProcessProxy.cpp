@@ -1600,6 +1600,11 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // to be deleted before we can finish our work.
     Ref protectedThis { *this };
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (RefPtr automationSession = processPool().automationSession())
+        automationSession->removeServiceWorkerRealmsForProcess(coreProcessIdentifier());
+#endif
+
     auto pages = mainPages();
 
     Vector<Ref<ProvisionalPageProxy>> provisionalPages;

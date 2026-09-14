@@ -1308,6 +1308,52 @@ void BidiScriptAgent::notifySharedWorkerRealmDestroyed(WebCore::SharedWorkerIden
     sendRealmDestroyedEvent(*realmIdentifier, *realmInfo);
 }
 
+void BidiScriptAgent::notifyServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, const WebCore::SecurityOriginData& origin)
+{
+    auto addResult = m_serviceWorkerRealmIdentifiers.add(executionContextIdentifier, RealmIdentifier::generate());
+    if (!addResult.isNewEntry)
+        return;
+
+    auto realmIdentifier = addResult.iterator->value;
+    RealmInfo realmInfo {
+        originStringFromSecurityOriginData(origin),
+        Inspector::Protocol::BidiScript::RealmType::ServiceWorker,
+        std::nullopt,
+        { },
+        { },
+        { },
+        true
+    };
+    auto activeRealmAddResult = m_activeRealms.add(realmIdentifier, WTF::move(realmInfo));
+    ASSERT(activeRealmAddResult.isNewEntry);
+    sendRealmCreatedEvent(realmIdentifier, activeRealmAddResult.iterator->value);
+}
+
+void BidiScriptAgent::notifyServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier)
+{
+    auto realmIdentifier = m_serviceWorkerRealmIdentifiers.takeOptional(executionContextIdentifier);
+    if (!realmIdentifier)
+        return;
+
+    auto realmInfo = m_activeRealms.takeOptional(*realmIdentifier);
+    if (!realmInfo)
+        return;
+
+    sendRealmDestroyedEvent(*realmIdentifier, *realmInfo);
+}
+
+void BidiScriptAgent::removeServiceWorkerRealmsForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    Vector<WebCore::ScriptExecutionContextIdentifier> executionContextIdentifiers;
+    for (auto executionContextIdentifier : m_serviceWorkerRealmIdentifiers.keys()) {
+        if (executionContextIdentifier.processIdentifier() == processIdentifier)
+            executionContextIdentifiers.append(executionContextIdentifier);
+    }
+
+    for (auto executionContextIdentifier : executionContextIdentifiers)
+        notifyServiceWorkerRealmDestroyed(executionContextIdentifier);
+}
+
 std::optional<RealmIdentifier> BidiScriptAgent::realmIdentifierForBrowsingContext(const String& browsingContext) const
 {
     auto it = m_browsingContextToRealmId.find(browsingContext);
@@ -1325,9 +1371,8 @@ void BidiScriptAgent::emitEventsForActiveRealms(const HashSet<String>& contextFi
         RealmInfo& realmInfo = entry.value;
 
         if (!contextFilter.isEmpty()) {
-            // A shared-worker realm has no associated Document, so the subscription replay steps include
-            // them only for global subscriptions.
-            if (realmInfo.type == Inspector::Protocol::BidiScript::RealmType::SharedWorker)
+            // Worker realms without an associated Document are replayed only for global subscriptions.
+            if (realmInfo.type == Inspector::Protocol::BidiScript::RealmType::SharedWorker || realmInfo.type == Inspector::Protocol::BidiScript::RealmType::ServiceWorker)
                 continue;
             bool matchesContextFilter = false;
             for (const auto& browsingContext : realmInfo.associatedBrowsingContexts) {

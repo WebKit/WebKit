@@ -123,6 +123,8 @@ private:
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier) override;
     void scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier, const Vector<WebCore::FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<WebCore::FrameIdentifier>& attachedOwnerFrameIdentifiers, const WebCore::SecurityOriginData&) override;
     void scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier) override;
+    void scriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier, const WebCore::SecurityOriginData&) override;
+    void scriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
 
     using DedicatedWorkerRealmData = std::tuple<String, WebCore::FrameIdentifier, WebCore::SecurityOriginData>;
