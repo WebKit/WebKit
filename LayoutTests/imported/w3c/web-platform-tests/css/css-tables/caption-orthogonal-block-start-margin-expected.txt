@@ -1,0 +1,6 @@
+c
+c
+
+PASS A caption in the table's writing mode is offset by its block-start margin
+PASS A caption in an orthogonal writing mode is offset by its block-start margin
+
