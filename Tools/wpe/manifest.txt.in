@@ -117,6 +117,8 @@ file Tools/CMakeLists.txt
 file Tools/PlatformWPE.cmake
 
 file Tools/Scripts/rewrite-compile-commands
+file Tools/Scripts/swift/depfile.py
+file Tools/Scripts/swift/rebuild_trigger.py
 file Tools/Scripts/swift/swiftc-wrapper.py
 
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-javascriptcore-${WPE_API_VERSION} Documentation/wpe-javascriptcore-${WPE_API_VERSION}
