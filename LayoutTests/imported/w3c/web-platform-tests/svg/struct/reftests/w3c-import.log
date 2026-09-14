@@ -31,7 +31,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/inner-svg-transform.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/nested-svg-through-display-contents-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/nested-svg-through-display-contents.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-css-transform-in-html-scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-css-transform-in-html-scale.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-in-html-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-in-html-scale-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-in-html-scale.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform-in-html.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/outer-svg-transform.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/struct/reftests/requiredextensions-empty-string.svg
