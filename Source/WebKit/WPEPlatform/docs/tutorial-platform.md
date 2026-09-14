@@ -40,6 +40,13 @@ The conceptual model behind these classes is introduced in
 [Overview](overview.html). The examples here use the public
 `wpe-platform-2.0` API, in C.
 
+If you are porting an existing WPEBackend-fdo backend, the "exportable"
+callback set (`export_fdo_egl_image` and friends) collapses into the
+single [vfunc@View.render_buffer] below, and the rest of the fdo surface
+maps onto the classes described here. The [Migration mapping
+table](migration-mapping.html) pairs each old symbol with its WPEPlatform
+equivalent.
+
 ## The display: connecting and creating objects
 
 The [class@Display] is the entry point. It opens the connection to the
@@ -92,13 +99,15 @@ have:
   [vfunc@Display.create_input_method_context],
   [vfunc@Display.create_gamepad_manager] — keyboard, clipboard, input
   method, and gamepad support. A display that provides no keymap gets a
-  fallback XKB one automatically.
+  fallback XKB one automatically, and one that provides no gamepad
+  manager gets a libmanette-based one.
 - [vfunc@Display.get_n_screens] / [vfunc@Display.get_screen] — the
   monitors the platform exposes (see
   [The display's screens](#the-displays-screens)).
-- [vfunc@Display.get_preferred_buffer_formats] and
-  [vfunc@Display.use_explicit_sync] — buffer format negotiation and
-  synchronization. These are a rendering concern, independent of
+- [vfunc@Display.get_preferred_buffer_formats],
+  [vfunc@Display.use_explicit_sync], and [vfunc@Display.get_drm_device] —
+  buffer format negotiation, explicit-sync support, and the DRM device
+  used for rendering. These are a rendering concern, independent of
   whether the platform has monitors: even an offscreen implementation
   has to agree on buffer formats.
 
@@ -153,6 +162,26 @@ arrives. Its central vfunc is [vfunc@View.render_buffer]: WebKit hands
 the view a [class@Buffer], the view presents it onto the toplevel's
 surface, and then reports back.
 
+```c
+static gboolean
+my_view_render_buffer (WPEView *view, WPEBuffer *buffer,
+                       const WPERectangle *damage_rects, guint n_damage_rects,
+                       GError **error)
+{
+    if (WPE_IS_BUFFER_DMA_BUF (buffer)) {
+        EGLImage image = wpe_buffer_import_to_egl_image (buffer, error);
+        // ...present the EGLImage on the toplevel's surface...
+    } else if (WPE_IS_BUFFER_SHM (buffer)) {
+        // ...blit the pixel data from WPE_BUFFER_SHM (buffer)...
+    }
+    return TRUE;
+}
+```
+
+WebKit produces a [class@BufferDMABuf] or a [class@BufferSHM]; dispatch
+on the concrete type. [method@Buffer.import_to_egl_image] turns a DMA-BUF
+into an `EGLImage` for hardware-accelerated presentation.
+
 The reporting is a two-step lifecycle, and the distinction between the
 two steps matters:
 
@@ -168,7 +197,15 @@ later, when the platform signals the buffer is free — a Wayland
 `wl_buffer` release, a KMS page-flip completing on the next frame, and
 so on.
 
-### Visibility and geometry
+On an explicit-sync platform the buffer carries fences instead of
+blocking. Wait on its rendering fence
+([method@Buffer.take_rendering_fence]) before reading the buffer, and
+attach a release fence with [method@Buffer.set_release_fence] before
+`buffer_released`, so WebKit holds off reusing the buffer until your
+presentation completes. The [vfunc@Display.use_explicit_sync] slot
+advertises the capability.
+
+### Visibility, focus, and geometry
 
 A view has two related but distinct notions of visibility:
 
@@ -184,6 +221,11 @@ and [method@View.unmap] as those conditions change; WebKit uses it to
 pause and resume rendering. Report geometry changes with
 [method@View.resized]. When one view fills its toplevel, keeping the two
 in sync just means resizing the view whenever the toplevel resizes.
+
+Report keyboard focus the same way: call [method@View.focus_in] when the
+platform gives the view focus and [method@View.focus_out] when it loses
+it. The Wayland implementation drives these from the `wl_seat` keyboard
+enter/leave events.
 
 ## Input
 
@@ -201,12 +243,20 @@ g_autoptr(WPEEvent) event =
 wpe_view_event (view, event);
 ```
 
+Multi-touch is delivered as one event per touch point, each tagged with a
+sequence id ([method@Event.touch_get_sequence_id]) so WebKit can track
+individual points across their lifetime.
+
 Key events are interpreted through a [class@Keymap]; if your display
 provides none, WebKit falls back to an XKB keymap. The Wayland
 implementation is the reference here — it drives input from the
 `wl_seat` family of interfaces and builds its keymap from the
 compositor. A windowless implementation has no input at all, which is
 why headless does not implement any of this.
+
+A view can also override [vfunc@View.lock_pointer] and
+[vfunc@View.unlock_pointer] to support the Pointer Lock API, and
+[vfunc@View.set_cursor_from_name] to set the cursor shape.
 
 ## The display's screens
 
@@ -219,10 +269,20 @@ negotiate formats without having any monitors.
 
 ## Making the implementation discoverable
 
-To let WebKit find your implementation automatically, register a
-[class@Display] subclass against the GIO extension point
-`WPE_DISPLAY_EXTENSION_POINT_NAME` from the type's
-`G_DEFINE_..._WITH_CODE` block, passing a unique name and a priority:
+WebKit finds implementations through the GIO extension point
+`WPE_DISPLAY_EXTENSION_POINT_NAME`: a [class@Display] subclass registers
+itself there with a unique name and a priority. The name is what
+`WPE_DISPLAY` selects — by convention `wpe-display-<name>` — and the
+priority orders candidates when several are installed: the Wayland
+implementation uses `0`, and the more specialized DRM and headless ones
+use `-100` so they are tried only after Wayland declines.
+
+How you register depends on whether the implementation is compiled in or
+loaded as a module.
+
+**Linked directly.** When the type is part of the binary, the
+`G_DEFINE_..._WITH_CODE` form registers it against the extension point at
+type-registration time:
 
 ```c
 G_DEFINE_FINAL_TYPE_WITH_CODE (MyDisplay, my_display, WPE_TYPE_DISPLAY,
@@ -230,40 +290,34 @@ G_DEFINE_FINAL_TYPE_WITH_CODE (MyDisplay, my_display, WPE_TYPE_DISPLAY,
         g_define_type_id, "wpe-display-myplatform", 0))
 ```
 
-The extension name (`"wpe-display-myplatform"` here) is what selects
-your implementation via the `WPE_DISPLAY` environment variable; by
-convention it is `wpe-display-<name>`. The priority orders candidates
-when several are installed — the Wayland implementation uses `0`, and
-the more specialized DRM and headless ones use `-100` so they are tried
-only after Wayland declines.
+An application that links the library can then construct `MyDisplay`
+itself, or let [func@Display.get_default] find it.
 
-A loadable module is discovered through GIO, so it also exports the
-standard GIO module entry points:
+**As a loadable module.** A module's types are tied to the module's
+lifetime, so the display must be a *dynamic* type —
+`G_DEFINE_DYNAMIC_TYPE_EXTENDED`, which generates a
+`my_display_register_type()` — registered from the module's load entry
+point rather than with `WITH_CODE`:
 
 ```c
 G_MODULE_EXPORT void
 g_io_module_load (GIOModule *module)
 {
-    g_type_module_use (G_TYPE_MODULE (module));
-    g_type_ensure (my_display_get_type ());
+    my_display_register_type (G_TYPE_MODULE (module));
+    g_io_extension_point_implement (WPE_DISPLAY_EXTENSION_POINT_NAME,
+        MY_TYPE_DISPLAY, "wpe-display-myplatform", 0);
 }
 
 G_MODULE_EXPORT void
 g_io_module_unload (GIOModule *module)
 {
 }
-
-G_MODULE_EXPORT char **
-g_io_module_query (void)
-{
-    char *names[] = { (char *) WPE_DISPLAY_EXTENSION_POINT_NAME, NULL };
-    return g_strdupv (names);
-}
 ```
 
-All of this is optional: an application that knows exactly which
-implementation it wants can skip the extension point entirely, link the
-implementation directly, and construct the [class@Display] itself.
+WebKit scans its module directory eagerly, so a `g_io_module_query` entry
+point is not needed. GLib also supports module-name-scoped entry points
+(`g_io_<module-name>_load` / `_unload`), which the out-of-tree GTK
+implementation uses so several modules can share a binary.
 
 ## Building and installing
 
