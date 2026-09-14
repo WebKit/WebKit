@@ -47,6 +47,10 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if OS(LINUX)
+#include <wtf/MonotonicTime.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextGLCocoa.h>
 #elif USE(GBM)
@@ -110,6 +114,9 @@ protected:
 
     // StreamServerConnection::Client overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+#if OS(LINUX)
+    void didRunOutOfStreamMessages() final;
+#endif
     void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
 
     // GraphicsContextGL::Client overrides.
@@ -179,6 +186,9 @@ protected:
     const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     const Ref<IPC::StreamServerConnection> m_connection;
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
+#if OS(LINUX)
+    MonotonicTime m_lastRunDryFlushTime WTF_GUARDED_BY_CAPABILITY(workQueue());
+#endif
     const RemoteGraphicsContextGLIdentifier m_identifier;
     const Ref<RemoteRenderingBackend> m_renderingBackend;
     const Ref<RemoteSharedResourceCache> m_sharedResourceCache;

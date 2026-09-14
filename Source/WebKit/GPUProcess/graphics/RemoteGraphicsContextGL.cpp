@@ -178,6 +178,20 @@ void RemoteGraphicsContextGL::workQueueUninitialize()
     m_renderingResourcesRequest = { };
 }
 
+#if OS(LINUX)
+void RemoteGraphicsContextGL::didRunOutOfStreamMessages()
+{
+    assertIsCurrent(workQueue());
+    static constexpr Seconds minimumRunDryFlushInterval = 1_ms;
+    MonotonicTime now = MonotonicTime::now();
+    if (now - m_lastRunDryFlushTime < minimumRunDryFlushInterval)
+        return;
+    m_lastRunDryFlushTime = now;
+    if (RefPtr context = m_context)
+        context->flush();
+}
+#endif
+
 void RemoteGraphicsContextGL::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
 {
     RefPtr gpuConnectionToWebProcess = m_gpuConnectionToWebProcess.get();
