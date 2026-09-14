@@ -88,8 +88,7 @@ private:
 
     bool canHaveChildren() const final { return true; }
 
-    template<typename GeneratorContext>
-    void generateLineBoxRects(GeneratorContext& yield) const;
+    Vector<FloatRect> lineBoxRects() const;
 
     void layout() final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
 
