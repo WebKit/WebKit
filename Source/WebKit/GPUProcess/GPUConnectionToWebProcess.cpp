@@ -438,6 +438,8 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     protect(videoFrameObjectHeap())->close();
     protect(remoteMediaPlayerManagerProxy())->connectionToWebProcessClosed();
 #endif
+    // RemoteGPU objects maintains ref to RemoteRenderingBackend objects so drop them first.
+    m_remoteGPUMap.clear();
     // RemoteRenderingBackend objects ref their GPUConnectionToWebProcess so we need to make sure
     // to break the reference cycle by destroying them.
     m_remoteRenderingBackendMap.clear();
