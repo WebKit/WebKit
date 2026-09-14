@@ -249,7 +249,7 @@ void CommandBuffer::recordCommands(const DawnProcTable *wgpu, RenderPassEncoderH
     {
         const CommandBlock *commandBlock = mCommandBlocks[cmdBlockIdx].get();
 
-        const uint8_t *currentCommand = commandBlock->mData;
+        const uint8_t *currentCommand = commandBlock->mData.data();
         while (CurrentCommandID(currentCommand) != CommandID::Invalid)
         {
             switch (CurrentCommandID(currentCommand))

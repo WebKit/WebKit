@@ -16,12 +16,11 @@
 #include "libANGLE/CLMemory.h"
 #include "libANGLE/CLObject.h"
 #include "libANGLE/CLPlatform.h"
+#include "libANGLE/cl_utils.h"
 #include "libANGLE/renderer/CLContextImpl.h"
 
 #include <cstddef>
-#include <stack>
 #include <string>
-#include <utility>
 
 namespace cl
 {
@@ -136,8 +135,6 @@ class Context final : public _cl_context, public Object
                                                         const void *handle);
 
   private:
-    using CallbackData = std::pair<ContextCB, void *>;
-
     Context(Platform &platform,
             PropArray &&properties,
             DevicePtrs &&devices,
@@ -159,7 +156,7 @@ class Context final : public _cl_context, public Object
     rx::CLContextImpl::Ptr mImpl;
     DevicePtrs mDevices;
 
-    angle::SynchronizedValue<std::stack<CallbackData>> mDestructorCallbacks;
+    DestructorCallbacks<ContextCB> mDestructorCallbacks;
 
     friend class Object;
 };

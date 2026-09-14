@@ -12,6 +12,9 @@
 
 #include "compiler/translator/ImmutableString.h"
 
+#include <array>
+#include <string_view>
+
 namespace sh
 {
 
@@ -29,15 +32,15 @@ std::ostream &operator<<(std::ostream &os, const ImmutableString &str)
 namespace
 {
 
-constexpr int mangledkT1[] = {2540, 2567, 1310, 307,  1429, 81,   1838, 2549, 711,  1470,
-                              2521, 195,  1556, 1823, 1551, 104,  51,   1880, 1024, 869,
-                              228,  428,  561,  1055, 1733, 1166, 279,  2393, 1386, 947,
-                              193,  2129, 975,  1305, 174,  2147, 831,  2207, 613,  987};
-constexpr int mangledkT2[] = {1206, 1083, 2011, 7,    1824, 646,  999,  1423, 955,  464,
-                              2624, 2648, 2452, 150,  1328, 721,  1905, 420,  1639, 2301,
-                              1082, 239,  42,   2148, 2379, 1366, 1972, 1087, 1369, 1811,
-                              2143, 73,   1567, 467,  2299, 998,  123,  1281, 2343, 2017};
-constexpr int mangledkG[]  = {
+constexpr std::array<int, 40> mangledkT1 = {
+    2540, 2567, 1310, 307,  1429, 81,   1838, 2549, 711, 1470, 2521, 195,  1556, 1823,
+    1551, 104,  51,   1880, 1024, 869,  228,  428,  561, 1055, 1733, 1166, 279,  2393,
+    1386, 947,  193,  2129, 975,  1305, 174,  2147, 831, 2207, 613,  987};
+constexpr std::array<int, 40> mangledkT2 = {
+    1206, 1083, 2011, 7,   1824, 646,  999,  1423, 955, 464,  2624, 2648, 2452, 150,
+    1328, 721,  1905, 420, 1639, 2301, 1082, 239,  42,  2148, 2379, 1366, 1972, 1087,
+    1369, 1811, 2143, 73,  1567, 467,  2299, 998,  123, 1281, 2343, 2017};
+constexpr std::array<int, 2678> mangledkG = {
     0,    0,    1363, 0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    869,  0,
     0,    1014, 0,    0,    0,    0,    0,    0,    0,    0,    1225, 0,    0,    0,    2421, 0,
     0,    0,    0,    0,    0,    0,    0,    2039, 0,    0,    2370, 0,    0,    479,  0,    0,
@@ -207,11 +210,11 @@ constexpr int mangledkG[]  = {
     691,  752,  0,    1804, 0,    1341, 0,    0,    0,    0,    0,    0,    129,  0,    243,  1588,
     361,  325,  0,    172,  324,  590};
 
-int MangledHashG(const char *key, const int *T)
+int MangledHashG(std::string_view key, const std::array<int, 40> &T)
 {
     int sum = 0;
 
-    for (int i = 0; key[i] != '\0'; i++)
+    for (size_t i = 0; i < key.length(); i++)
     {
         sum += T[i] * key[i];
         sum %= 2678;
@@ -219,9 +222,9 @@ int MangledHashG(const char *key, const int *T)
     return mangledkG[sum];
 }
 
-int MangledPerfectHash(const char *key)
+int MangledPerfectHash(std::string_view key)
 {
-    if (strlen(key) > 40)
+    if (key.length() > 40)
     {
         return 0;
     }
@@ -229,13 +232,13 @@ int MangledPerfectHash(const char *key)
     return (MangledHashG(key, mangledkT1) + MangledHashG(key, mangledkT2)) % 2678;
 }
 
-constexpr int unmangledkT1[] = {141, 187, 20, 214, 16,  317, 21,  202, 208, 161, 55,
-                                320, 91,  91, 268, 308, 221, 262, 118, 260, 195, 55,
-                                0,   209, 41, 176, 190, 93,  50,  126, 183, 265};
-constexpr int unmangledkT2[] = {100, 311, 0,   74,  44, 103, 261, 51,  123, 161, 42,
-                                272, 120, 248, 312, 47, 289, 171, 138, 263, 227, 289,
-                                150, 279, 29,  24,  17, 169, 280, 120, 293, 114};
-constexpr int unmangledkG[]  = {
+constexpr std::array<int, 32> unmangledkT1 = {141, 187, 20, 214, 16,  317, 21,  202, 208, 161, 55,
+                                              320, 91,  91, 268, 308, 221, 262, 118, 260, 195, 55,
+                                              0,   209, 41, 176, 190, 93,  50,  126, 183, 265};
+constexpr std::array<int, 32> unmangledkT2 = {100, 311, 0,   74,  44, 103, 261, 51,  123, 161, 42,
+                                              272, 120, 248, 312, 47, 289, 171, 138, 263, 227, 289,
+                                              150, 279, 29,  24,  17, 169, 280, 120, 293, 114};
+constexpr std::array<int, 327> unmangledkG = {
     0,   0,   0,   0,   0,   54,  0,   123, 288, 0,   0,   0,   0,   0,   206, 0,   0,   0,   174,
     28,  157, 4,   296, 0,   221, 0,   283, 0,   0,   255, 323, 0,   0,   0,   0,   0,   9,   0,
     171, 0,   0,   0,   78,  288, 0,   0,   0,   302, 227, 0,   174, 0,   0,   0,   277, 42,  229,
@@ -255,11 +258,11 @@ constexpr int unmangledkG[]  = {
     5,   262, 117, 0,   0,   43,  0,   110, 188, 194, 0,   0,   0,   164, 0,   0,   0,   291, 104,
     89,  0,   0,   133};
 
-int UnmangledHashG(const char *key, const int *T)
+int UnmangledHashG(std::string_view key, const std::array<int, 32> &T)
 {
     int sum = 0;
 
-    for (int i = 0; key[i] != '\0'; i++)
+    for (size_t i = 0; i < key.length(); i++)
     {
         sum += T[i] * key[i];
         sum %= 327;
@@ -267,9 +270,9 @@ int UnmangledHashG(const char *key, const int *T)
     return unmangledkG[sum];
 }
 
-int UnmangledPerfectHash(const char *key)
+int UnmangledPerfectHash(std::string_view key)
 {
-    if (strlen(key) > 32)
+    if (key.length() > 32)
     {
         return 0;
     }

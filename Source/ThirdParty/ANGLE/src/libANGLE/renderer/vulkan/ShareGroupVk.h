@@ -52,7 +52,7 @@ class ShareGroupVk : public ShareGroupImpl
     // synchronous update to the caches.
     PipelineLayoutCache &getPipelineLayoutCache() { return mPipelineLayoutCache; }
     DescriptorSetLayoutCache &getDescriptorSetLayoutCache() { return mDescriptorSetLayoutCache; }
-    const egl::ContextMap &getContexts() const { return mState.getContexts(); }
+    const egl::SharedContextMap &getContexts() const { return mState.getContexts(); }
     vk::DescriptorSetArray<vk::MetaDescriptorPool> &getMetaDescriptorPools()
     {
         return mMetaDescriptorPools;

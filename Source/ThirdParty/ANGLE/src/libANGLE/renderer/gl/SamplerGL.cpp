@@ -8,8 +8,10 @@
 
 #include "libANGLE/renderer/gl/SamplerGL.h"
 
+#include "libANGLE/Context.h"
 #include "libANGLE/renderer/gl/FunctionsGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace
 {
@@ -65,21 +67,19 @@ static inline void SyncSamplerStateMember(const rx::FunctionsGL *functions,
 namespace rx
 {
 
-SamplerGL::SamplerGL(const gl::SamplerState &state,
-                     const FunctionsGL *functions,
-                     StateManagerGL *stateManager)
-    : SamplerImpl(state),
-      mFunctions(functions),
-      mStateManager(stateManager),
-      mAppliedSamplerState(),
-      mSamplerID(0)
-{
-    mFunctions->genSamplers(1, &mSamplerID);
-}
+SamplerGL::SamplerGL(const gl::SamplerState &state, GLuint sampler)
+    : SamplerImpl(state), mAppliedSamplerState(), mSamplerID(sampler)
+{}
 
 SamplerGL::~SamplerGL()
 {
-    mStateManager->deleteSampler(mSamplerID);
+    ASSERT(mSamplerID == 0);
+}
+
+void SamplerGL::onDestroy(const gl::Context *context)
+{
+    StateManagerGL *stateManager = GetStateManagerGL(context);
+    stateManager->deleteSampler(mSamplerID);
     mSamplerID = 0;
 }
 
@@ -89,19 +89,20 @@ angle::Result SamplerGL::syncState(const gl::Context *context, const bool dirty)
     {
         return angle::Result::Continue;
     }
+    const FunctionsGL *functions = GetFunctionsGL(context);
     // clang-format off
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::getMinFilter, &gl::SamplerState::setMinFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::getMagFilter, &gl::SamplerState::setMagFilter);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::getWrapS, &gl::SamplerState::setWrapS);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::getWrapT, &gl::SamplerState::setWrapT);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::getWrapR, &gl::SamplerState::setWrapR);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::getMaxAnisotropy, &gl::SamplerState::setMaxAnisotropy);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::getMinLod, &gl::SamplerState::setMinLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::getMaxLod, &gl::SamplerState::setMaxLod);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::getCompareMode, &gl::SamplerState::setCompareMode);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::getCompareFunc, &gl::SamplerState::setCompareFunc);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::getSRGBDecode, &gl::SamplerState::setSRGBDecode);
-    SyncSamplerStateMember(mFunctions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_BORDER_COLOR, &gl::SamplerState::getBorderColor, &gl::SamplerState::setBorderColor);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_FILTER, &gl::SamplerState::getMinFilter, &gl::SamplerState::setMinFilter);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAG_FILTER, &gl::SamplerState::getMagFilter, &gl::SamplerState::setMagFilter);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_S, &gl::SamplerState::getWrapS, &gl::SamplerState::setWrapS);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_T, &gl::SamplerState::getWrapT, &gl::SamplerState::setWrapT);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_WRAP_R, &gl::SamplerState::getWrapR, &gl::SamplerState::setWrapR);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_ANISOTROPY_EXT, &gl::SamplerState::getMaxAnisotropy, &gl::SamplerState::setMaxAnisotropy);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MIN_LOD, &gl::SamplerState::getMinLod, &gl::SamplerState::setMinLod);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_MAX_LOD, &gl::SamplerState::getMaxLod, &gl::SamplerState::setMaxLod);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_MODE, &gl::SamplerState::getCompareMode, &gl::SamplerState::setCompareMode);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_COMPARE_FUNC, &gl::SamplerState::getCompareFunc, &gl::SamplerState::setCompareFunc);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_SRGB_DECODE_EXT, &gl::SamplerState::getSRGBDecode, &gl::SamplerState::setSRGBDecode);
+    SyncSamplerStateMember(functions, mSamplerID, mState, mAppliedSamplerState, GL_TEXTURE_BORDER_COLOR, &gl::SamplerState::getBorderColor, &gl::SamplerState::setBorderColor);
     // clang-format on
     return angle::Result::Continue;
 }

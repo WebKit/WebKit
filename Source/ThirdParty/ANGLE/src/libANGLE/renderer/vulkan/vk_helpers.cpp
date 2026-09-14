@@ -7,6 +7,9 @@
 //   Helper utility classes that manage Vulkan resources.
 
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
+
+#include <array>
+
 #include "common/unsafe_buffers.h"
 
 #include "common/aligned_memory.h"
@@ -992,9 +995,7 @@ CommandBufferHelperCommon::CommandBufferHelperCommon()
 
 CommandBufferHelperCommon::~CommandBufferHelperCommon() {}
 
-void CommandBufferHelperCommon::initializeImpl()
-{
-}
+void CommandBufferHelperCommon::initializeImpl() {}
 
 void CommandBufferHelperCommon::resetImpl(ErrorContext *context)
 {
@@ -1959,7 +1960,7 @@ void RenderPassCommandBufferHelper::finalizeDepthStencilImageLayout(Context *con
         renderPassUsageFlags[RenderPassUsage::StencilTextureSampler];
     const bool isReadOnlyDepth   = renderPassUsageFlags[RenderPassUsage::DepthReadOnlyAttachment];
     const bool isReadOnlyStencil = renderPassUsageFlags[RenderPassUsage::StencilReadOnlyAttachment];
-    BarrierType barrierType = BarrierType::Event;
+    BarrierType barrierType      = BarrierType::Event;
 
     if (isDepthAttachmentAndSampler || isStencilAttachmentAndSampler)
     {
@@ -3240,7 +3241,7 @@ void BufferPool::initWithFlags(Renderer *renderer,
     mInitialSize             = renderer->getPreferredInitialBufferBlockSize(memoryTypeIndex);
     mPreferredSize           = renderer->getPreferredLargeBufferBlockSize(memoryTypeIndex);
     mSize                    = mInitialSize;
-    mHostVisible = ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0);
+    mHostVisible             = ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0);
     mBufferBlocks.reserve(32);
 }
 
@@ -3254,7 +3255,7 @@ void BufferPool::pruneEmptyBuffers(Renderer *renderer)
 {
     // Walk through mBuffers and move empty buffers to mEmptyBuffer and remove null
     // pointers for allocation performance.
-    bool needsCompact = false;
+    bool needsCompact          = false;
     size_t nonEmptyBufferCount = 0;
     for (std::unique_ptr<BufferBlock> &block : mBufferBlocks)
     {
@@ -4762,7 +4763,7 @@ BufferHelper &BufferHelper::operator=(BufferHelper &&other)
         mCurrentReadEvents = std::move(other.mCurrentReadEvents);
     }
     mXFBOrComputeWriteHeuristicBits = std::move(other.mXFBOrComputeWriteHeuristicBits);
-    mSerial                  = other.mSerial;
+    mSerial                         = other.mSerial;
 
     // BufferHelper is usually std::move()'ed when the GL buffer backing is internally recreated as
     // an optimization, or for other internal buffer allocation reasons.  It should never happen for
@@ -4993,11 +4994,11 @@ void BufferHelper::initializeBarrierTracker(ErrorContext *context)
     mIsReleasedToExternal    = false;
     mCurrentWriteEvent.release(renderer);
     mCurrentReadEvents.release(renderer);
-    mSerial                  = renderer->getResourceSerialFactory().generateBufferSerial();
-    mCurrentWriteAccess      = 0;
-    mCurrentReadAccess       = 0;
-    mCurrentWriteStages      = 0;
-    mCurrentReadStages       = 0;
+    mSerial             = renderer->getResourceSerialFactory().generateBufferSerial();
+    mCurrentWriteAccess = 0;
+    mCurrentReadAccess  = 0;
+    mCurrentWriteStages = 0;
+    mCurrentReadStages  = 0;
 }
 
 angle::Result BufferHelper::initializeRobustMemory(ErrorContext *context,
@@ -5062,7 +5063,7 @@ angle::Result BufferHelper::initializeMemoryWithValueImpl(ErrorContext *context,
     else if (isHostVisible())
     {
         // Can map the memory to initialize non-zero memory for sanitization.
-        uint8_t *mapPointer             = mSuballocation.getMappedMemory();
+        uint8_t *mapPointer = mSuballocation.getMappedMemory();
         ANGLE_UNSAFE_TODO(memset(mapPointer, value, static_cast<size_t>(size)));
         if (!isCoherent())
         {
@@ -6548,11 +6549,10 @@ VkResult ImageHelper::initMemory(ErrorContext *context,
     return VK_SUCCESS;
 }
 
-angle::Result ImageHelper::initMemoryAndNonZeroFillIfNeeded(
-    ErrorContext *context,
-    bool hasProtectedContent,
-    VkMemoryPropertyFlags flags,
-    MemoryAllocationType allocationType)
+angle::Result ImageHelper::initMemoryAndNonZeroFillIfNeeded(ErrorContext *context,
+                                                            bool hasProtectedContent,
+                                                            VkMemoryPropertyFlags flags,
+                                                            MemoryAllocationType allocationType)
 {
     Renderer *renderer = context->getRenderer();
     VkMemoryPropertyFlags outputFlags;
@@ -6590,8 +6590,8 @@ angle::Result ImageHelper::initExternalMemory(ErrorContext *context,
                                               VkMemoryPropertyFlags flags)
 {
     // Vulkan allows up to 4 memory planes.
-    constexpr size_t kMaxMemoryPlanes                                     = 4;
-    constexpr VkImageAspectFlagBits kMemoryPlaneAspects[kMaxMemoryPlanes] = {
+    constexpr size_t kMaxMemoryPlanes                                                        = 4;
+    static constexpr std::array<VkImageAspectFlagBits, kMaxMemoryPlanes> kMemoryPlaneAspects = {
         VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT,
         VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT,
         VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT,
@@ -6610,13 +6610,33 @@ angle::Result ImageHelper::initExternalMemory(ErrorContext *context,
 
     for (uint32_t memoryPlane = 0; memoryPlane < extraAllocationInfoCount; ++memoryPlane)
     {
-        bindImagePlaneMemoryInfo.planeAspect = ANGLE_UNSAFE_TODO(kMemoryPlaneAspects[memoryPlane]);
+        bindImagePlaneMemoryInfo.planeAspect = kMemoryPlaneAspects[memoryPlane];
 
-        ANGLE_UNSAFE_TODO(
-            ANGLE_VK_TRY(context, AllocateImageMemoryWithRequirements(
-                                      context, mMemoryAllocationType, flags, memoryRequirements,
-                                      extraAllocationInfo[memoryPlane], bindImagePlaneMemoryInfoPtr,
-                                      &mImage, &mMemoryTypeIndex, &mDeviceMemory)));
+        VkMemoryRequirements planeMemoryRequirements = memoryRequirements;
+        if (extraAllocationInfoCount > 1)
+        {
+            VkImagePlaneMemoryRequirementsInfo planeMemoryRequirementsInfo = {};
+            planeMemoryRequirementsInfo.sType =
+                VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
+            planeMemoryRequirementsInfo.planeAspect = kMemoryPlaneAspects[memoryPlane];
+
+            VkImageMemoryRequirementsInfo2 imageMemoryRequirementsInfo = {};
+            imageMemoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
+            imageMemoryRequirementsInfo.pNext = &planeMemoryRequirementsInfo;
+            imageMemoryRequirementsInfo.image = mImage.getHandle();
+
+            VkMemoryRequirements2 planeMemoryRequirements2 = {};
+            planeMemoryRequirements2.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+            mImage.getMemoryRequirements2(context->getDevice(), imageMemoryRequirementsInfo,
+                                          &planeMemoryRequirements2);
+            planeMemoryRequirements = planeMemoryRequirements2.memoryRequirements;
+        }
+
+        ANGLE_VK_TRY(context,
+                     AllocateImageMemoryWithRequirements(
+                         context, mMemoryAllocationType, flags, planeMemoryRequirements,
+                         ANGLE_UNSAFE_TODO(extraAllocationInfo[memoryPlane]),
+                         bindImagePlaneMemoryInfoPtr, &mImage, &mMemoryTypeIndex, &mDeviceMemory));
     }
     mCurrentDeviceQueueIndex = currentDeviceQueueIndex;
     mIsReleasedToExternal    = false;
@@ -7186,7 +7206,7 @@ void ImageHelper::setCurrentImageAccess(Renderer *renderer, ImageAccess newAcces
     mCurrentShaderReadStageMask = IsShaderReadOnlyAccess(newAccess)
                                       ? renderer->getImageMemoryBarrierData(newAccess).dstStageMask
                                       : 0;
-    mCurrentAccess = newAccess;
+    mCurrentAccess              = newAccess;
 }
 
 VkImageLayout ImageHelper::getCurrentLayout(Renderer *renderer) const
@@ -7451,9 +7471,9 @@ ANGLE_INLINE void ImageHelper::initImageMemoryBarrierStruct(
         renderer->getImageMemoryBarrierData(mCurrentAccess);
     const ImageMemoryBarrierData &transitionTo = renderer->getImageMemoryBarrierData(newAccess);
 
-    imageMemoryBarrier->sType         = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier->srcAccessMask = transitionFrom.srcAccessMask;
-    imageMemoryBarrier->dstAccessMask = transitionTo.dstAccessMask;
+    imageMemoryBarrier->sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier->srcAccessMask       = transitionFrom.srcAccessMask;
+    imageMemoryBarrier->dstAccessMask       = transitionTo.dstAccessMask;
     imageMemoryBarrier->oldLayout           = renderer->getVkImageLayout(mCurrentAccess);
     imageMemoryBarrier->newLayout           = renderer->getVkImageLayout(newAccess);
     imageMemoryBarrier->srcQueueFamilyIndex = mCurrentDeviceQueueIndex.familyIndex();
@@ -7740,7 +7760,7 @@ void ImageHelper::updateLayoutAndBarrier(Context *context,
     if (hasQueueChange)
     {
         // Fallback to pipelineBarrier if the VkQueue has changed.
-        barrierType              = BarrierType::Pipeline;
+        barrierType = BarrierType::Pipeline;
         if (mCurrentDeviceQueueIndex == kForeignDeviceQueueIndex)
         {
             context->onForeignImageUse(this);
@@ -8487,33 +8507,6 @@ void ImageHelper::removeSingleSubresourceStagedUpdates(ContextVk *contextVk,
     }
 }
 
-void ImageHelper::removeSingleStagedClearAfterInvalidate(gl::OwnerLevel levelIndexGL,
-                                                         gl::OwnerLayer layerIndex,
-                                                         uint32_t layerCount)
-{
-    // When this function is called, it's expected that there may be at most one
-    // ClearAfterInvalidate update pending to this subresource, and that's a color clear due to
-    // emulated channels after invalidate.  This function removes that update.
-
-    SubresourceUpdates *levelUpdates = getLevelUpdates(levelIndexGL);
-    if (levelUpdates == nullptr)
-    {
-        return;
-    }
-
-    for (size_t index = 0; index < levelUpdates->size(); ++index)
-    {
-        auto update = levelUpdates->begin() + index;
-        if (update->updateSource == UpdateSource::ClearAfterInvalidate &&
-            update->matchesLayerRange(layerIndex, layerCount, mLayerCount))
-        {
-            // It's a clear, so doesn't need to be released.
-            levelUpdates->erase(update);
-            // There's only one such clear possible.
-            return;
-        }
-    }
-}
 
 void ImageHelper::removeStagedUpdates(ErrorContext *context,
                                       gl::OwnerLevel levelGLStart,
@@ -8777,7 +8770,7 @@ angle::Result ImageHelper::stageSubresourceUpdate(ContextVk *contextVk,
     {
         gl::YuvFormatInfo yuvInfo(formatInfo.internalFormat, glExtents);
 
-        constexpr VkImageAspectFlagBits kPlaneAspectFlags[3] = {
+        static constexpr std::array<VkImageAspectFlagBits, 3> kPlaneAspectFlags = {
             VK_IMAGE_ASPECT_PLANE_0_BIT, VK_IMAGE_ASPECT_PLANE_1_BIT, VK_IMAGE_ASPECT_PLANE_2_BIT};
 
         // We only support mip level 0 and layerCount of 1 for YUV formats.
@@ -8966,8 +8959,8 @@ angle::Result ImageHelper::updateSubresourceOnHost(ContextVk *contextVk,
         transition.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         // The GENERAL layout is always guaranteed to be in
         // VkPhysicalDeviceHostImageCopyPropertiesEXT::pCopyDstLayouts
-        transition.newLayout = renderer->getVkImageLayout(ImageAccess::HostCopy);
-        transition.subresourceRange.aspectMask     = aspectMask;
+        transition.newLayout                   = renderer->getVkImageLayout(ImageAccess::HostCopy);
+        transition.subresourceRange.aspectMask = aspectMask;
         transition.subresourceRange.baseMipLevel   = 0;
         transition.subresourceRange.levelCount     = mLevelCount;
         transition.subresourceRange.baseArrayLayer = 0;
@@ -9477,8 +9470,8 @@ void ImageHelper::invalidateSubresourceStencilContent(ContextVk *contextVk,
 {
     bool layerLimitReached = false;
     invalidateSubresourceContentImpl(contextVk, level, layerIndex, layerCount,
-                                     VK_IMAGE_ASPECT_STENCIL_BIT,
-                                     preferToKeepContentsDefinedOut, &layerLimitReached);
+                                     VK_IMAGE_ASPECT_STENCIL_BIT, preferToKeepContentsDefinedOut,
+                                     &layerLimitReached);
     if (layerLimitReached)
     {
         ANGLE_VK_PERF_WARNING(
@@ -9843,9 +9836,9 @@ angle::Result ImageHelper::stageSubresourceUpdateFromFramebuffer(
     {
         // When a conversion is required, we need to use the loadFunction to read from a temporary
         // buffer instead so its an even slower path.
-        const size_t bufferSize = static_cast<size_t>(clippedRectangle.width) *
-                                  static_cast<size_t>(clippedRectangle.height) *
-                                  storageFormat.pixelBytes;
+        const size_t bufferSize           = static_cast<size_t>(clippedRectangle.width) *
+                                            static_cast<size_t>(clippedRectangle.height) *
+                                            storageFormat.pixelBytes;
         angle::MemoryBuffer *memoryBuffer = nullptr;
         ANGLE_VK_CHECK_ALLOC(contextVk, context->getScratchBuffer(bufferSize, &memoryBuffer));
 
@@ -9990,13 +9983,12 @@ angle::Result ImageHelper::stageResourceClearWithFormat(ContextVk *contextVk,
                                                         const angle::Format &imageFormat,
                                                         const VkClearValue &clearValue)
 {
-    // It's possible that a ClearAfterInvalidate is already staged on this image, drop that.  This
-    // is only possible if the format has an emulated channel.
-    if (intendedFormat.id != imageFormat.id)
-    {
-        removeSingleStagedClearAfterInvalidate(index.getLevelIndex(), index.getLayerIndex(),
-                                               index.getLayerCount());
-    }
+    // A prior clear or update (such as a previous robust clear or a ClearAfterInvalidate on an
+    // emulated format) may already be staged on this subresource if the texture level was
+    // redefined or re-initialized across operations like mipmap generation. Drop any prior
+    // staged updates so that this newly staged clear becomes the sole pending update.
+    removeSingleSubresourceStagedUpdates(contextVk, index.getLevelIndex(), index.getLayerIndex(),
+                                         index.getLayerCount());
 
     // Otherwise robust clears must only be staged if we do not have any prior data for this
     // subresource.
@@ -10644,7 +10636,7 @@ angle::Result ImageHelper::flushStagedUpdatesImpl(ContextVk *contextVk,
                     contextVk->getPerfCounters().fullImageClears++;
                     // Remember the latest operation is a clear call.  Note that the tracked level
                     // is the GL level.
-                    mCurrentSingleClearValue = update.data.clear;
+                    mCurrentSingleClearValue                    = update.data.clear;
                     mCurrentSingleClearValue.value().levelIndex = updateMipLevelGL.get();
 
                     // Do not call onWrite as it removes mCurrentSingleClearValue, but instead call
@@ -11132,7 +11124,6 @@ void ImageHelper::pruneSupersededUpdatesForLevelImpl(ContextVk *contextVk,
         const bool isDepth   = (aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) != 0;
         const bool isStencil = (aspectMask & VK_IMAGE_ASPECT_STENCIL_BIT) != 0;
         ASSERT(isColor || isDepth || isStencil);
-        int aspectIndex = (isColor || isDepth) ? 0 : 1;
 
         gl::OwnerLayer layerIndex;
         uint32_t layerCount = 0;
@@ -11166,7 +11157,10 @@ void ImageHelper::pruneSupersededUpdatesForLevelImpl(ContextVk *contextVk,
         }
 
         // Check if current update region is superseded by the accumulated update region
-        if (boundingBox[aspectIndex].contains(currentUpdateBox))
+        const bool aspect0Superseded =
+            !(isColor || isDepth) || boundingBox[0].contains(currentUpdateBox);
+        const bool aspect1Superseded = !isStencil || boundingBox[1].contains(currentUpdateBox);
+        if (aspect0Superseded && aspect1Superseded)
         {
             // Warn that the app did something useless.  In case of ClearEmulatedChannelsOnly, a
             // clear is staged by ANGLE not the app, so no need to warn in that case.
@@ -11187,13 +11181,18 @@ void ImageHelper::pruneSupersededUpdatesForLevelImpl(ContextVk *contextVk,
         }
         else
         {
-            // Extend boundingBox to best accommodate current update's box.
-            boundingBox[aspectIndex].extend(currentUpdateBox);
-            // If the volume of the current update box is larger than the extended boundingBox
-            // use that as the new boundingBox instead.
-            if (currentUpdateBox.volume() > boundingBox[aspectIndex].volume())
+            const int aspectIndexStart = (isColor || isDepth) ? 0 : 1;
+            const int aspectIndexEnd   = isStencil ? 1 : 0;
+            for (int aspectIndex = aspectIndexStart; aspectIndex <= aspectIndexEnd; ++aspectIndex)
             {
-                boundingBox[aspectIndex] = currentUpdateBox;
+                // Extend boundingBox to best accommodate current update's box.
+                boundingBox[aspectIndex].extend(currentUpdateBox);
+                // If the volume of the current update box is larger than the extended boundingBox
+                // use that as the new boundingBox instead.
+                if (currentUpdateBox.volume() > boundingBox[aspectIndex].volume())
+                {
+                    boundingBox[aspectIndex] = currentUpdateBox;
+                }
             }
             return false;
         }
@@ -12269,14 +12268,10 @@ bool ImageHelper::SubresourceUpdate::matchesLayerRange(gl::OwnerLayer layerIndex
                                                        uint32_t layerCount,
                                                        uint32_t imageLayerCount) const
 {
+    ASSERT(layerCount != VK_REMAINING_ARRAY_LAYERS);
     gl::OwnerLayer updateBaseLayer;
     uint32_t updateLayerCount;
-    getDestSubresource(gl::ImageIndex::kEntireLevel, &updateBaseLayer, &updateLayerCount);
-
-    if (updateLayerCount == VK_REMAINING_ARRAY_LAYERS)
-    {
-        updateLayerCount = imageLayerCount;
-    }
+    getDestSubresource(imageLayerCount, &updateBaseLayer, &updateLayerCount);
 
     return updateBaseLayer == layerIndex && updateLayerCount == layerCount;
 }
@@ -13270,7 +13265,7 @@ ImageOrBufferViewSubresourceSerial ImageViewHelper::getSubresourceSerialForColor
     ASSERT(mImageViewSerial.valid());
 
     ImageOrBufferViewSubresourceSerial serial = {};
-    serial.viewSerial  = mImageViewSerial;
+    serial.viewSerial                         = mImageViewSerial;
     serial.subresource = MakeImageSubresourceReadRange(levelGL, levelCount, layer, layerMode,
                                                        readColorspace, mWriteColorspace);
     return serial;
@@ -13486,12 +13481,11 @@ void ShaderProgramHelper::setShader(gl::ShaderType shaderType, const ShaderModul
     mShaders[shaderType] = shader;
 }
 
-void ShaderProgramHelper::createMonolithicPipelineCreationTask(
-    vk::ErrorContext *context,
-    PipelineCacheAccess *pipelineCache,
-    const GraphicsPipelineDesc &desc,
-    const PipelineLayout &pipelineLayout,
-    PipelineHelper *pipeline) const
+void ShaderProgramHelper::createMonolithicPipelineCreationTask(vk::ErrorContext *context,
+                                                               PipelineCacheAccess *pipelineCache,
+                                                               const GraphicsPipelineDesc &desc,
+                                                               const PipelineLayout &pipelineLayout,
+                                                               PipelineHelper *pipeline) const
 {
     std::shared_ptr<CreateMonolithicPipelineTask> monolithicPipelineCreationTask =
         std::make_shared<CreateMonolithicPipelineTask>(context->getRenderer(), *pipelineCache,

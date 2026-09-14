@@ -115,6 +115,7 @@ class ValidateAST : public TIntermTraverser
 
     // For validateStructUsage:
     std::vector<std::map<Name, const TFieldListCollection *>> mStructsAndBlocksByName;
+    std::vector<std::map<TSymbolUniqueId, const TFieldListCollection *>> mStructsById;
     std::set<const TFunction *> mStructUsageProcessedFunctions;
     bool mStructUsageFailed = false;
 
@@ -376,6 +377,10 @@ void ValidateAST::visitStructOrInterfaceBlockDeclaration(const TType &type,
             mStructsAndBlocksByName.back()[typeName] = namedStructOrBlock;
         }
     }
+    if (type.getStruct() != nullptr)
+    {
+        mStructsById.back()[type.getStruct()->uniqueId()] = type.getStruct();
+    }
 }
 
 void ValidateAST::visitStructUsage(const TType &type, const TSourceLoc &location)
@@ -388,15 +393,17 @@ void ValidateAST::visitStructUsage(const TType &type, const TSourceLoc &location
     // Make sure the structure being referenced has the same pointer as the closest (in scope)
     // definition.
     const TStructure *structure     = type.getStruct();
-    const Name typeName(*structure);
+    const ImmutableString typeName  = structure->symbolType() == SymbolType::Empty
+                                          ? ImmutableString("<anonymous>")
+                                          : structure->name();
 
     bool foundDeclaration = false;
-    for (size_t scopeIndex = mStructsAndBlocksByName.size(); scopeIndex > 0; --scopeIndex)
+    for (size_t scopeIndex = mStructsById.size(); scopeIndex > 0; --scopeIndex)
     {
-        const std::map<Name, const TFieldListCollection *> &scopeDecls =
-            mStructsAndBlocksByName[scopeIndex - 1];
+        const std::map<TSymbolUniqueId, const TFieldListCollection *> &scopeDecls =
+            mStructsById[scopeIndex - 1];
 
-        auto iter = scopeDecls.find(typeName);
+        auto iter = scopeDecls.find(structure->uniqueId());
         if (iter != scopeDecls.end())
         {
             foundDeclaration = true;
@@ -406,7 +413,7 @@ void ValidateAST::visitStructUsage(const TType &type, const TSourceLoc &location
                 mDiagnostics->error(location,
                                     "Found reference to struct or interface block with doubly "
                                     "created type <validateStructUsage>",
-                                    typeName.rawName().data());
+                                    typeName.data());
                 mStructUsageFailed = true;
             }
 
@@ -419,7 +426,7 @@ void ValidateAST::visitStructUsage(const TType &type, const TSourceLoc &location
         mDiagnostics->error(location,
                             "Found reference to struct or interface block with no declaration "
                             "<validateStructUsage>",
-                            typeName.rawName().data());
+                            typeName.data());
         mStructUsageFailed = true;
     }
 }
@@ -682,10 +689,12 @@ void ValidateAST::scope(Visit visit)
         if (visit == PreVisit)
         {
             mStructsAndBlocksByName.push_back({});
+            mStructsById.push_back({});
         }
         else if (visit == PostVisit)
         {
             mStructsAndBlocksByName.pop_back();
+            mStructsById.pop_back();
         }
     }
 }

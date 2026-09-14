@@ -16,6 +16,7 @@
 #include "test_utils/gl_raii.h"
 #include "util/random_utils.h"
 
+#include <array>
 #include <thread>
 
 using namespace angle;
@@ -2257,7 +2258,7 @@ TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
     glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(posData), posData, GL_STATIC_DRAW);
 
-    GLBuffer colorBuffers[kRepeat];
+    std::array<GLBuffer, kRepeat> colorBuffers;
     constexpr size_t colorOffset                = 1;
     const GLfloat colorData[]                   = {0.515f, 0.515f, 0.515f, 1.0f};
     constexpr size_t colorBufferSize            = colorOffset + sizeof(colorData);
@@ -2286,7 +2287,7 @@ TEST_P(SimpleStateChangeTest, DrawRepeatUnalignedVboChange)
 
     // draw and get drawing results
     constexpr size_t kRenderSize = kWindowSize * kWindowSize;
-    std::array<GLColor, kRenderSize> pixelBufs[kRepeat];
+    std::array<std::array<GLColor, kRenderSize>, kRepeat> pixelBufs;
 
     for (uint32_t i = 0; i < kRepeat; i++)
     {
@@ -4257,7 +4258,7 @@ TEST_P(SimpleStateChangeTestES3, MultipleSamplersWithSingleTextureObject)
     // Create 2 samplers with NEAREST filtering.
     constexpr GLsizei kNumSamplers = 2;
     // We create/bind an extra sampler w/o bound tex object for testing purposes
-    GLSampler samplers[kNumSamplers + 1];
+    std::array<GLSampler, kNumSamplers + 1> samplers;
     // Set samplers to initially have same state w/ NEAREST filter mode
     for (uint32_t i = 0; i < kNumSamplers + 1; ++i)
     {
@@ -4810,9 +4811,9 @@ void main()
     glEnableVertexAttribArray(positionLoc);
 
     glUseProgram(program);
-    constexpr float kValue1[4] = {0.1f, 0.2f, 0.3f, 0.4f};
+    static constexpr std::array<float, 4> kValue1 = {0.1f, 0.2f, 0.3f, 0.4f};
 
-    glUniform4fv(valueLoc, 1, kValue1);
+    glUniform4fv(valueLoc, 1, kValue1.data());
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -4831,8 +4832,8 @@ void main()
     GLenum drawBuffers[] = {GL_NONE};
     glDrawBuffers(1, drawBuffers);
 
-    constexpr float kValue2[4] = {0.5f, 0.6f, 0.7f, 0.9f};
-    glUniform4fv(valueLoc, 1, kValue2);
+    static constexpr std::array<float, 4> kValue2 = {0.5f, 0.6f, 0.7f, 0.9f};
+    glUniform4fv(valueLoc, 1, kValue2.data());
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -4918,9 +4919,9 @@ void main()
     glEnableVertexAttribArray(positionLoc);
 
     glUseProgram(program);
-    constexpr float kValue1[4] = {0.1f, 0.2f, 0.3f, 0.4f};
+    static constexpr std::array<float, 4> kValue1 = {0.1f, 0.2f, 0.3f, 0.4f};
 
-    glUniform4fv(valueLoc, 1, kValue1);
+    glUniform4fv(valueLoc, 1, kValue1.data());
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -4939,8 +4940,8 @@ void main()
     GLenum drawBuffers[] = {GL_NONE};
     glDrawBuffers(1, drawBuffers);
 
-    constexpr float kValue2[4] = {0.5f, 0.6f, 0.7f, 0.9f};
-    glUniform4fv(valueLoc, 1, kValue2);
+    static constexpr std::array<float, 4> kValue2 = {0.5f, 0.6f, 0.7f, 0.9f};
+    glUniform4fv(valueLoc, 1, kValue2.data());
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -6291,7 +6292,7 @@ void main()
     GLFramebuffer floatFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, floatFramebuffer);
 
-    GLTexture floatTextures[2];
+    std::array<GLTexture, 2> floatTextures;
     for (int i = 0; i < 2; ++i)
     {
         glBindTexture(GL_TEXTURE_2D, floatTextures[i]);
@@ -6307,7 +6308,7 @@ void main()
     GLFramebuffer intFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, intFramebuffer);
 
-    GLTexture intTextures[2];
+    std::array<GLTexture, 2> intTextures;
     for (int i = 0; i < 2; ++i)
     {
         glBindTexture(GL_TEXTURE_2D, intTextures[i]);
@@ -7165,7 +7166,7 @@ void main()
     // binding.
 
     constexpr size_t kProgramCount = 2;
-    GLuint programs[kProgramCount] = {program1, program2};
+    std::array<GLuint, kProgramCount> programs = {program1, program2};
     for (size_t i = 0; i < kProgramCount; ++i)
     {
         glUseProgram(programs[i]);

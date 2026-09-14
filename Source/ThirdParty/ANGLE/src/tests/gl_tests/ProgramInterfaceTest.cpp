@@ -6,6 +6,8 @@
 
 // ProgramInterfaceTest: Tests of program interfaces.
 
+#include <array>
+
 #include "common/string_utils.h"
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
@@ -233,8 +235,8 @@ void main()
         GLenum iface;
         const GLchar *resourceName;
     };
-    InterfaceProperties kInterfaceProps[kInterfaceCount] = {
-        {programTCS, GL_PROGRAM_OUTPUT, "tt[0][0]"}, {programTES, GL_PROGRAM_INPUT, "tt[0][0]"}};
+    std::array<InterfaceProperties, kInterfaceCount> kInterfaceProps = {
+        {{programTCS, GL_PROGRAM_OUTPUT, "tt[0][0]"}, {programTES, GL_PROGRAM_INPUT, "tt[0][0]"}}};
 
     // Table of queries to perform on resource.
     constexpr GLsizei kPropCount                = 3;
@@ -249,8 +251,8 @@ void main()
     {
         GLint numActiveResources = 0;
         GLchar name[64];
-        GLuint program          = ANGLE_UNSAFE_TODO(kInterfaceProps[i]).programIndex;
-        GLenum programInterface = ANGLE_UNSAFE_TODO(kInterfaceProps[i]).iface;
+        GLuint program          = kInterfaceProps[i].programIndex;
+        GLenum programInterface = kInterfaceProps[i].iface;
         bool resourceFound      = false;
 
         // Get the number of active resources for the given interface. Should be bigger than zero.
@@ -283,8 +285,7 @@ void main()
                 ASSERT_NE(0, length);
 
                 // Validate queried resource properties.
-                ANGLE_UNSAFE_TODO(ASSERT_EQ(strlen(kInterfaceProps[i].resourceName) + 1,
-                                            (GLuint)resourceResults[0]));
+                ASSERT_EQ(strlen(kInterfaceProps[i].resourceName) + 1, (GLuint)resourceResults[0]);
                 ASSERT_EQ(GL_FLOAT, resourceResults[1]);
                 ASSERT_EQ(2, resourceResults[2]);
 

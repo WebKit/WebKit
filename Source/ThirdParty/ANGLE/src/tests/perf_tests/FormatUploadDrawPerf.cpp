@@ -10,6 +10,7 @@
 #include "ANGLEPerfTest.h"
 #include "common/unsafe_buffers.h"
 
+#include <array>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -26,7 +27,7 @@ enum class TestedFormat
     RGB565,
 };
 
-constexpr const char *kTestedFormatString[] = {
+static constexpr std::array<const char *, 3> kTestedFormatString = {
     "rgba8",
     "rgb8",
     "rgb565",
@@ -58,8 +59,7 @@ std::string FormatUploadDrawPerfParams::story() const
 {
     std::stringstream strstr;
 
-    strstr << RenderTestParams::story() << "_"
-           << ANGLE_UNSAFE_TODO(kTestedFormatString[ToUnderlying(testedFormat)]);
+    strstr << RenderTestParams::story() << "_" << kTestedFormatString[ToUnderlying(testedFormat)];
 
     return strstr.str();
 }

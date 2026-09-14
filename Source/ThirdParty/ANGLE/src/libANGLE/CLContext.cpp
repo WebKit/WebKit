@@ -93,7 +93,7 @@ angle::Result Context::getInfo(ContextInfo name,
 
 angle::Result Context::setDestructorCallback(ContextCB pfnNotify, void *userData)
 {
-    mDestructorCallbacks->emplace(pfnNotify, userData);
+    mDestructorCallbacks.add(pfnNotify, userData);
     return angle::Result::Continue;
 }
 
@@ -382,17 +382,7 @@ angle::Result Context::waitForEvents(cl_uint numEvents, const cl_event *eventLis
 
 Context::~Context()
 {
-    // TODO(aannestrand): make dtor callback handling a "helper" util and reuse for CLMemory dtor
-    // http://anglebug.com/496408119
-    std::stack<CallbackData> callbacks;
-    mDestructorCallbacks->swap(callbacks);
-    while (!callbacks.empty())
-    {
-        const ContextCB callback = callbacks.top().first;
-        void *const userData     = callbacks.top().second;
-        callbacks.pop();
-        callback(this, userData);
-    }
+    mDestructorCallbacks.invoke(this);
 }
 
 void Context::ErrorCallback(const char *errinfo, const void *privateInfo, size_t cb, void *userData)

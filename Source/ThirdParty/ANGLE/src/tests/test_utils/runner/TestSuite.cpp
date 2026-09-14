@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <format>
 #include <fstream>
 #include <unordered_map>
 
@@ -313,10 +314,8 @@ void WriteResultsFile(bool interrupted,
 
         jsResult.AddMember("times", times, allocator);
 
-        char testName[500];
-        id.snprintfName(testName, sizeof(testName));
         js::Value jsName;
-        jsName.SetString(testName, allocator);
+        jsName.SetString(id.fullName(), allocator);
 
         tests.AddMember(jsName, jsResult, allocator);
     }
@@ -428,11 +427,60 @@ std::vector<TestIdentifier> FilterTests(std::map<TestIdentifier, FileLine> *file
     return tests;
 }
 
+struct TestFilter
+{
+    std::vector<std::string_view> globPatterns;
+    std::unordered_set<std::string_view> exactMatches;
+};
+
+TestFilter ParseTestFilter(const std::string_view &filterString)
+{
+    std::vector<std::string_view> patterns =
+        SplitStringView(filterString, ":", TRIM_WHITESPACE, SPLIT_WANT_ALL);
+
+    TestFilter filter;
+    for (const std::string_view &pattern : patterns)
+    {
+        if (IsGlobPattern(pattern))
+        {
+            filter.globPatterns.push_back(pattern);
+        }
+        else
+        {
+            filter.exactMatches.insert(pattern);
+        }
+    }
+
+    return filter;
+}
+
+bool TestFilterMatchesName(const TestFilter &filter, const std::string_view &name)
+{
+    return filter.exactMatches.find(name) != filter.exactMatches.end() ||
+           std::any_of(filter.globPatterns.begin(), filter.globPatterns.end(),
+                       [&name](const std::string_view &glob) {
+                           return NamesMatchWithWildcard(glob, name);
+                       });
+}
+
 std::vector<TestIdentifier> GetFilteredTests(std::map<TestIdentifier, FileLine> *fileLinesOut,
                                              bool alsoRunDisabledTests)
 {
-    TestIdentifierFilter gtestIDFilter = [](const TestIdentifier &id) {
-        return testing::internal::UnitTestOptions::FilterMatchesTest(id.testSuiteName, id.testName);
+    std::string filterString = GTEST_FLAG_GET(filter);
+    std::vector<std::string_view> positiveAndNegativeFilters =
+        SplitStringView(filterString, "-", TRIM_WHITESPACE, SPLIT_WANT_ALL);
+    TestFilter positiveFilter = ParseTestFilter(
+        (positiveAndNegativeFilters.size() >= 1 && !positiveAndNegativeFilters[0].empty())
+            ? positiveAndNegativeFilters[0]
+            : "*");
+    TestFilter negativeFilter = ParseTestFilter(
+        positiveAndNegativeFilters.size() >= 2 ? positiveAndNegativeFilters[1] : "");
+
+    TestIdentifierFilter gtestIDFilter = [&positiveFilter,
+                                          &negativeFilter](const TestIdentifier &id) {
+        std::string fullTestName = id.fullName();
+        return TestFilterMatchesName(positiveFilter, fullTestName) &&
+               !TestFilterMatchesName(negativeFilter, fullTestName);
     };
 
     return FilterTests(fileLinesOut, gtestIDFilter, alsoRunDisabledTests);
@@ -1036,10 +1084,9 @@ TestIdentifier::~TestIdentifier() = default;
 
 TestIdentifier &TestIdentifier::operator=(const TestIdentifier &other) = default;
 
-void TestIdentifier::snprintfName(char *outBuffer, size_t maxLen) const
+std::string TestIdentifier::fullName() const
 {
-    ANGLE_UNSAFE_TODO(
-        snprintf(outBuffer, maxLen, "%s.%s", testSuiteName.c_str(), testName.c_str()));
+    return std::format("{}.{}", testSuiteName, testName);
 }
 
 // static

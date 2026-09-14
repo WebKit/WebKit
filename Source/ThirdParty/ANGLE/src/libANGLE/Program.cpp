@@ -1011,7 +1011,6 @@ angle::Result Program::link(const Context *context, angle::JobResultExpectancy r
     // TODO: http://anglebug.com/42263141: Enable program caching for separable programs
     if (cache && !isSeparable())
     {
-        std::lock_guard<angle::SimpleMutex> cacheLock(context->getProgramCacheMutex());
         egl::CacheGetResult result = egl::CacheGetResult::NotFound;
         ANGLE_TRY(cache->getProgram(context, this, &mProgramHash, &result));
 
@@ -2562,7 +2561,6 @@ void Program::cacheProgramBinaryIfNotAlready(const Context *context)
     ASSERT(mState.mExecutable->mPostLinkSubTasks.empty());
 
     // Save to the program cache.
-    std::lock_guard<angle::SimpleMutex> cacheLock(context->getProgramCacheMutex());
     MemoryProgramCache *cache = context->getMemoryProgramCache();
     // TODO: http://anglebug.com/42263141: Enable program caching for separable programs
     if (cache && !isSeparable() &&

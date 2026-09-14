@@ -1291,6 +1291,12 @@ angle::Result TextureVk::setSubImageImpl(const gl::Context *context,
             gl::Offset areaOffset = area.getOffset();
             areaOffset.z          = mState.toOwnerDepth(areaOffset).get();
 
+            // Cannot defer the copy as the PBO buffer is unmapped after the call.
+            if (applyUpdate == vk::ApplyImageUpdate::ImmediatelyInUnlockedTailCall)
+            {
+                applyUpdate = vk::ApplyImageUpdate::Immediately;
+            }
+
             ANGLE_TRY(mImage->stageSubresourceUpdate(
                 contextVk, index, area.getExtents(), areaOffset, formatInfo, type, source, vkFormat,
                 getRequiredFormatSupport(), inputRowPitch, inputDepthPitch, inputSkipBytes,
@@ -1419,6 +1425,22 @@ angle::Result TextureVk::copyImage(const gl::Context *context,
 
     if (isSelfCopy)
     {
+        // The front-end is unable to stage a robust init clear during self-copies because that
+        // would clear the source (which is the same as destination) before the copy.  That has to
+        // be done by the front-end.
+        if ((context->isWebGL() || contextVk->isRobustResourceInitEnabled()) &&
+            sourceArea != clippedSourceArea)
+        {
+            const gl::ImageDesc &desc = mState.getImageDesc(ownIndex);
+            const vk::Format &format =
+                contextVk->getRenderer()->getFormat(desc.format.info->sizedInternalFormat);
+
+            ASSERT(mImage);
+            ANGLE_TRY(mImage->stageRobustResourceClearWithFormat(
+                contextVk, mState.toOwnerIndex(ownIndex), desc.size, format.getIntendedFormat(),
+                format.getActualImageFormat(getRequiredFormatSupport())));
+        }
+
         if (!hasCopyArea)
         {
             return angle::Result::Continue;

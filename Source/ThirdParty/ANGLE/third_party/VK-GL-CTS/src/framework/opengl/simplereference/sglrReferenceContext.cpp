@@ -185,6 +185,8 @@ tcu::TextureFormat toTextureFormat(const tcu::PixelFormat &pixelFmt)
         tcu::PixelFormat pixelFmt;
         tcu::TextureFormat texFmt;
     } pixelFormatMap[] = {
+        {tcu::PixelFormat(10, 10, 10, 2),
+         tcu::TextureFormat(tcu::TextureFormat::RGBA, tcu::TextureFormat::UNORM_INT_1010102_REV)},
         {tcu::PixelFormat(8, 8, 8, 8), tcu::TextureFormat(tcu::TextureFormat::RGBA, tcu::TextureFormat::UNORM_INT8)},
         {tcu::PixelFormat(8, 8, 8, 0), tcu::TextureFormat(tcu::TextureFormat::RGB, tcu::TextureFormat::UNORM_INT8)},
         {tcu::PixelFormat(4, 4, 4, 4),

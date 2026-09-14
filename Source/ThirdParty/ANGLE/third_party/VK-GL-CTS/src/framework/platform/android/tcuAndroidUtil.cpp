@@ -39,50 +39,6 @@ using std::vector;
 namespace
 {
 
-class ScopedJNIEnv
-{
-public:
-    ScopedJNIEnv(JavaVM *vm);
-    ~ScopedJNIEnv(void);
-
-    JavaVM *getVM(void) const
-    {
-        return m_vm;
-    }
-    JNIEnv *getEnv(void) const
-    {
-        return m_env;
-    }
-
-private:
-    JavaVM *const m_vm;
-    JNIEnv *m_env;
-    bool m_detach;
-};
-
-ScopedJNIEnv::ScopedJNIEnv(JavaVM *vm) : m_vm(vm), m_env(nullptr), m_detach(false)
-{
-    const int getEnvRes = m_vm->GetEnv((void **)&m_env, JNI_VERSION_1_6);
-
-    if (getEnvRes == JNI_EDETACHED)
-    {
-        if (m_vm->AttachCurrentThread(&m_env, nullptr) != JNI_OK)
-            throw std::runtime_error("JNI AttachCurrentThread() failed");
-
-        m_detach = true;
-    }
-    else if (getEnvRes != JNI_OK)
-        throw std::runtime_error("JNI GetEnv() failed");
-
-    DE_ASSERT(m_env);
-}
-
-ScopedJNIEnv::~ScopedJNIEnv(void)
-{
-    if (m_detach)
-        m_vm->DetachCurrentThread();
-}
-
 class LocalRef
 {
 public:
@@ -352,6 +308,29 @@ void describePlatform(JNIEnv *env, std::ostream &dst)
 
 } // namespace
 
+ScopedJNIEnv::ScopedJNIEnv(JavaVM *vm) : m_vm(vm), m_env(nullptr), m_detach(false)
+{
+    const int getEnvRes = m_vm->GetEnv((void **)&m_env, JNI_VERSION_1_6);
+
+    if (getEnvRes == JNI_EDETACHED)
+    {
+        if (m_vm->AttachCurrentThread(&m_env, nullptr) != JNI_OK)
+            throw std::runtime_error("JNI AttachCurrentThread() failed");
+
+        m_detach = true;
+    }
+    else if (getEnvRes != JNI_OK)
+        throw std::runtime_error("JNI GetEnv() failed");
+
+    DE_ASSERT(m_env);
+}
+
+ScopedJNIEnv::~ScopedJNIEnv(void)
+{
+    if (m_detach)
+        m_vm->DetachCurrentThread();
+}
+
 ScreenOrientation mapScreenRotation(ScreenRotation rotation)
 {
     switch (rotation)
@@ -438,26 +417,31 @@ void setRequestedOrientation(ANativeActivity *activity, ScreenOrientation orient
     setRequestedOrientation(env.getEnv(), activity->clazz, orientation);
 }
 
-void describePlatform(ANativeActivity *activity, std::ostream &dst)
+void describePlatform(JavaVM *vm, std::ostream &dst)
 {
-    const ScopedJNIEnv env(activity->vm);
+    const ScopedJNIEnv env(vm);
 
     describePlatform(env.getEnv(), dst);
 }
 
-size_t getTotalAndroidSystemMemory(ANativeActivity *activity)
+void describePlatform(ANativeActivity *activity, std::ostream &dst)
 {
-    const ScopedJNIEnv scopedJniEnv(activity->vm);
+    describePlatform(activity->vm, dst);
+}
+
+size_t getTotalAndroidSystemMemory(JavaVM *vm, jobject context)
+{
+    const ScopedJNIEnv scopedJniEnv(vm);
     JNIEnv *env = scopedJniEnv.getEnv();
 
     // Get activity manager instance:
     // ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     const jclass activityManagerClass = findClass(env, "android/app/ActivityManager");
     const LocalRef activityString(env, env->NewStringUTF("activity")); // Context.ACTIVITY_SERVICE == "activity"
-    const jclass activityClass = getObjectClass(env, activity->clazz);
+    const jclass activityClass = getObjectClass(env, context);
     const jmethodID getServiceID =
         getMethodID(env, activityClass, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-    LocalRef activityManager(env, env->CallObjectMethod(activity->clazz, getServiceID, *activityString));
+    LocalRef activityManager(env, env->CallObjectMethod(context, getServiceID, *activityString));
     checkException(env);
     TCU_CHECK_INTERNAL(activityManager);
 
@@ -478,6 +462,11 @@ size_t getTotalAndroidSystemMemory(ANativeActivity *activity)
 
     // Return 'totalMem' field from the memory info instance.
     return static_cast<size_t>(getField<int64_t>(env, *memoryInfo, "totalMem"));
+}
+
+size_t getTotalAndroidSystemMemory(ANativeActivity *activity)
+{
+    return getTotalAndroidSystemMemory(activity->vm, activity->clazz);
 }
 
 } // namespace Android

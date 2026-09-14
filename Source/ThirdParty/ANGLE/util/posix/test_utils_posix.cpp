@@ -22,6 +22,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+#include <array>
 #include <cstdarg>
 #include <cstring>
 #include <iostream>
@@ -67,7 +68,7 @@ struct ScopedPipe
 
     bool valid() const { return fds[0] != -1 || fds[1] != -1; }
 
-    int fds[2] = {
+    std::array<int, 2> fds = {
         -1,
         -1,
     };
@@ -128,7 +129,7 @@ class PosixProcess : public Process
         // Create pipes for stdout and stderr.
         if (captureStdout)
         {
-            if (pipe(mStdoutPipe.fds) != 0)
+            if (pipe(mStdoutPipe.fds.data()) != 0)
             {
                 std::cerr << "Error calling pipe: " << errno << "\n";
                 return;
@@ -141,7 +142,7 @@ class PosixProcess : public Process
         }
         if (captureStderr && !pipeStderrToStdout)
         {
-            if (pipe(mStderrPipe.fds) != 0)
+            if (pipe(mStderrPipe.fds.data()) != 0)
             {
                 std::cerr << "Error calling pipe: " << errno << "\n";
                 return;

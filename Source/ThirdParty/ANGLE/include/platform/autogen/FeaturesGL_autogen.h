@@ -266,6 +266,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo resetTexStorage2DBaseLevel = {
+        "resetTexStorage2DBaseLevel",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo useTempForNonZeroBaseLevelGenMipmapUsingCopyImageSubData = {
         "useTempForNonZeroBaseLevelGenMipmapUsingCopyImageSubData",
         FeatureCategory::OpenGLWorkarounds,
@@ -734,6 +740,12 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo flushBeforeGenerateMipmap = {
+        "flushBeforeGenerateMipmap",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo splitLevel0PboFullSubImage2D = {
         "splitLevel0PboFullSubImage2D",
         FeatureCategory::OpenGLWorkarounds,
@@ -764,9 +776,27 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo uploadOversizedMipLevelsViaUnpackBuffer = {
+        "uploadOversizedMipLevelsViaUnpackBuffer",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
     FeatureInfo validateState = {
         "validateState",
         FeatureCategory::OpenGLFeatures,
+        &members,
+    };
+
+    FeatureInfo finishBeforeBlitFramebufferMultiAttachment = {
+        "finishBeforeBlitFramebufferMultiAttachment",
+        FeatureCategory::OpenGLWorkarounds,
+        &members,
+    };
+
+    FeatureInfo useTexSubImageForHostTwiddledNpotUploads = {
+        "useTexSubImageForHostTwiddledNpotUploads",
+        FeatureCategory::OpenGLWorkarounds,
         &members,
     };
 

@@ -24,6 +24,8 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex_autogen.cpp).
 // glslang.l:
 //   Lexer for the OpenGL shading language.
 
+#include <stdint.h>
+
 // Ignore errors in auto-generated code.
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic ignored "-Wswitch-enum"

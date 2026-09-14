@@ -15,6 +15,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 
+#include <array>
 #include <map>
 
 namespace angle
@@ -210,7 +211,7 @@ class BlitGL : angle::NonCopyable
     using BlitProgramType = std::tuple<gl::TextureType, GLenum, GLenum>;
     std::map<BlitProgramType, BlitProgram> mBlitPrograms;
 
-    GLuint mScratchTextures[2] = {0};
+    std::array<GLuint, 2> mScratchTextures = {0};
     GLuint mScratchFBO         = 0;
 
     GLuint mVAO                   = 0;

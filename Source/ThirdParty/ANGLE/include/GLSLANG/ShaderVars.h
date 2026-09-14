@@ -333,7 +333,7 @@ struct WorkGroupSize
     // Checks whether either all of the values are set, or none of them are.
     bool isLocalSizeValid() const;
 
-    int localSizeQualifiers[3];
+    std::array<int, 3> localSizeQualifiers;
 };
 
 inline constexpr WorkGroupSize::WorkGroupSize(int initialSize)

@@ -41,6 +41,7 @@ enum CaseType
     CASETYPE_COMPLETE = 0,  //!< Has all shaders specified separately.
     CASETYPE_VERTEX_ONLY,   //!< "Both" case, vertex shader sub case.
     CASETYPE_FRAGMENT_ONLY, //!< "Both" case, fragment shader sub case.
+    CASETYPE_COMPUTE_ONLY,  //!< "Both" case, compute shader sub case.
 
     CASETYPE_LAST
 };
@@ -198,6 +199,10 @@ public:
                                             const std::vector<tcu::TestNode *> &children) = 0;
     virtual tcu::TestCase *createCase(const std::string &name, const std::string &description,
                                       const ShaderCaseSpecification &spec)                = 0;
+    virtual bool supportsComputeOnlyCase() const
+    {
+        return false;
+    }
 };
 
 std::vector<tcu::TestNode *> parseFile(const tcu::Archive &archive, const std::string &filename,

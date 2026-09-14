@@ -7,6 +7,8 @@
 //   Tests for indexed draws.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -298,8 +300,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles)
     GLint posLocation = glGetAttribLocation(programDrawRed, essl3_shaders::PositionAttrib());
     ASSERT_NE(-1, posLocation);
 
-    GLVertexArray vertexArray[2];
-    GLBuffer vertexBuffer[2];
+    std::array<GLVertexArray, 2> vertexArray;
+    std::array<GLBuffer, 2> vertexBuffer;
 
     glBindVertexArray(vertexArray[0]);
 
@@ -310,8 +312,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles)
 
     for (int i = 0; i < 2; i++)
     {
-        glBindVertexArray(ANGLE_UNSAFE_TODO(vertexArray[i]));
-        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffer[i]));
+        glBindVertexArray(vertexArray[i]);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -359,8 +361,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles2)
     GLint posLocation = glGetAttribLocation(programDrawRed, essl3_shaders::PositionAttrib());
     ASSERT_NE(-1, posLocation);
 
-    GLVertexArray vertexArray[2];
-    GLBuffer vertexBuffer[2];
+    std::array<GLVertexArray, 2> vertexArray;
+    std::array<GLBuffer, 2> vertexBuffer;
 
     GLBuffer indexBuffer;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -369,8 +371,8 @@ TEST_P(DrawElementsTest, LineLoopTriangles2)
 
     for (int i = 0; i < 2; i++)
     {
-        glBindVertexArray(ANGLE_UNSAFE_TODO(vertexArray[i]));
-        glBindBuffer(GL_ARRAY_BUFFER, ANGLE_UNSAFE_TODO(vertexBuffer[i]));
+        glBindVertexArray(vertexArray[i]);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer[i]);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
                      GL_STATIC_DRAW);
         glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);

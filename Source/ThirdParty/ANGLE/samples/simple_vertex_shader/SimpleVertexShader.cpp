@@ -91,7 +91,7 @@ void main()
         Matrix4 mvpMatrix = perspectiveMatrix * viewMatrix * modelMatrix;
 
         // Load the matrices
-        glUniformMatrix4fv(mMVPMatrixLoc, 1, GL_FALSE, mvpMatrix.data);
+        glUniformMatrix4fv(mMVPMatrixLoc, 1, GL_FALSE, mvpMatrix.data.data());
     }
 
     void draw() override

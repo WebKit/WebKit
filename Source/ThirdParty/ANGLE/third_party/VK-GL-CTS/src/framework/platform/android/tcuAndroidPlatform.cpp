@@ -542,17 +542,17 @@ private:
     WindowRegistry &m_windowRegistry;
 };
 
-static size_t getTotalSystemMemory(ANativeActivity *activity)
+static size_t getTotalSystemMemory(JavaVM *vm, jobject context)
 {
     const size_t MiB = (size_t)(1 << 20);
     // Use relatively high fallback size to encourage CDD-compliant behavior
     const size_t fallbackSize = (sizeof(void *) == sizeof(uint64_t)) ? 2048 * MiB : 1024 * MiB;
 
-    if (activity)
+    if (vm && context)
     {
         try
         {
-            const size_t totalMemory = getTotalAndroidSystemMemory(activity);
+            const size_t totalMemory = getTotalAndroidSystemMemory(vm, context);
             print("Device has %.2f MiB of system memory\n",
                   static_cast<double>(totalMemory) / static_cast<double>(MiB));
             return totalMemory;
@@ -569,16 +569,58 @@ static size_t getTotalSystemMemory(ANativeActivity *activity)
 
 // Platform
 
-Platform::Platform(NativeActivity &activity)
-    : m_activity(activity)
-    , m_totalSystemMemory(getTotalSystemMemory(activity.getNativeActivity()))
+Platform::Platform(NativeActivity &activity, ANativeWindow *window)
+    : m_activity(&activity)
+    , m_vm(activity.getNativeActivity() ? activity.getNativeActivity()->vm : nullptr)
+    , m_context(activity.getNativeActivity() ? activity.getNativeActivity()->clazz : nullptr)
+    , m_ownsContext(false)
+    , m_totalSystemMemory(getTotalSystemMemory(m_vm, m_context))
+{
+    initialize(window);
+}
+
+Platform::Platform(JavaVM *vm, jobject context, ANativeWindow *window)
+    : m_activity(nullptr)
+    , m_vm(vm)
+    , m_context(nullptr)
+    , m_ownsContext(false)
+    , m_totalSystemMemory(getTotalSystemMemory(vm, context))
+{
+    if (context && vm)
+    {
+        const ScopedJNIEnv env(vm);
+        if (env.getEnv())
+        {
+            m_context     = env.getEnv()->NewGlobalRef(context);
+            m_ownsContext = true;
+        }
+    }
+    initialize(window);
+}
+
+void Platform::initialize(ANativeWindow *window)
 {
     m_nativeDisplayFactoryRegistry.registerFactory(new NativeDisplayFactory(m_windowRegistry));
     m_contextFactoryRegistry.registerFactory(new eglu::GLContextFactory(m_nativeDisplayFactoryRegistry));
+    if (window)
+        m_windowRegistry.addWindow(window);
 }
 
 Platform::~Platform(void)
 {
+    if (m_ownsContext && m_context && m_vm)
+    {
+        try
+        {
+            const ScopedJNIEnv env(m_vm);
+            if (env.getEnv())
+                env.getEnv()->DeleteGlobalRef(m_context);
+        }
+        catch (const std::exception &)
+        {
+            // Destructors should not throw.
+        }
+    }
 }
 
 bool Platform::processEvents(void)
@@ -594,7 +636,10 @@ vk::Library *Platform::createLibrary(const char *libraryPath) const
 
 void Platform::describePlatform(std::ostream &dst) const
 {
-    tcu::Android::describePlatform(m_activity.getNativeActivity(), dst);
+    if (m_vm)
+        tcu::Android::describePlatform(m_vm, dst);
+    else
+        dst << "Android platform: no JVM available\n";
 }
 
 void Platform::getMemoryLimits(tcu::PlatformMemoryLimits &limits) const
@@ -653,20 +698,20 @@ void Platform::setCustomScreenOrientation(bool enable) const
 
 void Platform::requestPixelCopy(const char *filename) const
 {
-    PixelCopy(m_activity.getNativeActivity(), filename);
+    if (!m_activity)
+        TCU_THROW(NotSupportedError, "requestPixelCopy is not supported without ANativeActivity");
+
+    PixelCopy(m_activity->getNativeActivity(), filename);
 }
 
 void Platform::rotateScreen(int rotation) const
 {
-    ANativeActivity *activity = m_activity.getNativeActivity();
+    if (!m_activity)
+        TCU_THROW(NotSupportedError, "rotateScreen is not supported without ANativeActivity");
+
+    ANativeActivity *activity = m_activity->getNativeActivity();
     setRequestedOrientation(activity, tcu::Android::mapScreenRotation((tcu::ScreenRotation)rotation));
 }
 
 } // namespace Android
 } // namespace tcu
-
-tcu::Platform *createPlatform(void)
-{
-    tcu::Android::NativeActivity activity(NULL);
-    return new tcu::Android::Platform(activity);
-}

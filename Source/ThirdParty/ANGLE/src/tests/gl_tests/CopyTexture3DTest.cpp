@@ -6,6 +6,8 @@
 
 // CopyTexture3DTest.cpp: Tests of the GL_ANGLE_copy_texture_3d extension
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -402,12 +404,12 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    GLColor rgbaPixels[27];
+    std::array<GLColor, 27> rgbaPixels;
 
     // Create pixel data for a 3x3x3 red cube
     for (int i = 0; i < 27; i++)
     {
-        ANGLE_UNSAFE_TODO(rgbaPixels[i]) = GLColor(255u, 0u, 0u, 255u);
+        rgbaPixels[i] = GLColor(255u, 0u, 0u, 255u);
     }
 
     // Change a pixel to create a 1x1x1 blue cube at (0, 0, 0)
@@ -424,7 +426,8 @@ TEST_P(Texture3DCopy, OffsetSubCopy)
     rgbaPixels[26] = GLColor(0u, 255u, 0u, 255u);
 
     glBindTexture(GL_TEXTURE_3D, sourceTexture);
-    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 3, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgbaPixels);
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 3, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 rgbaPixels.data());
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
@@ -1168,12 +1171,12 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    GLColor rgbaPixels[27];
+    std::array<GLColor, 27> rgbaPixels;
 
     // Create pixel data for a 3x3x3 red cube
     for (int i = 0; i < 27; i++)
     {
-        ANGLE_UNSAFE_TODO(rgbaPixels[i]) = GLColor(255u, 0u, 0u, 255u);
+        rgbaPixels[i] = GLColor(255u, 0u, 0u, 255u);
     }
 
     // Change a pixel to create a 1x1x1 blue cube at (0, 0, 0)
@@ -1191,7 +1194,7 @@ TEST_P(Texture2DArrayCopy, OffsetSubCopy)
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, sourceTexture);
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, 3, 3, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 rgbaPixels);
+                 rgbaPixels.data());
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);

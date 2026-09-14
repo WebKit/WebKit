@@ -5,6 +5,8 @@
 //
 // RobustResourceInitTest: Tests for GL_ANGLE_robust_resource_initialization.
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -3673,7 +3675,7 @@ void main()
 
     glDrawArrays(GL_POINTS, 0, 1);
 
-    const GLColor expectedColors[4] = {
+    const std::array<GLColor, 4> expectedColors = {
         GLColor::transparentBlack,
         GLColor::green,
         GLColor::transparentBlack,
@@ -3682,7 +3684,7 @@ void main()
     for (size_t i = 0; i < textures.size(); i++)
     {
         glReadBuffer(GL_COLOR_ATTACHMENT0 + i);
-        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[i])) << " at attachment " << i;
+        EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[i]) << " at attachment " << i;
     }
 }
 

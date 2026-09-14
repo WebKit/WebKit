@@ -54,6 +54,15 @@ template("angle_trace") {
         "//build/config/compiler:optimize_max",
         "//build/config/compiler/pgo:default_pgo_flags",
       ]
+
+      # Disable max LTO optimization for traces on Android Vulkan to avoid huge
+      # link times. This mirrors http://crrev/c/7667288 which added the them to
+      # angle.gni explicitly for this platform.
+      if (is_android && angle_enable_vulkan) {
+        suppressed_configs += [ "//build/config/compiler:thinlto_optimize_max" ]
+        suppressed_configs -=
+            [ "//build/config/compiler:thinlto_optimize_default" ]
+      }
       configs += [ "//build/config/compiler:no_optimize" ]
     }
 

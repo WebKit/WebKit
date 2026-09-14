@@ -1065,12 +1065,15 @@ class BufferHelper : public ReadWriteResource
     {
         mXFBOrComputeWriteHeuristicBits <<= 1;
 
+        const bool hasVertexInputRead =
+            (mCurrentReadStages & VK_PIPELINE_STAGE_VERTEX_INPUT_BIT) != 0 ||
+            mCurrentReadEvents.getBitMask().test(EventStage::VertexInput);
+
         if (writeStage == PipelineStage::TransformFeedback)
         {
             mXFBOrComputeWriteHeuristicBits |= 1;
         }
-        else if ((writeStage == PipelineStage::ComputeShader) &&
-                 (mCurrentReadStages & VK_PIPELINE_STAGE_VERTEX_INPUT_BIT) != 0 &&
+        else if ((writeStage == PipelineStage::ComputeShader) && hasVertexInputRead &&
                  context->getFeatures().isVertexSyncDeferred.enabled)
         {
             // When a buffer is written in compute after read in vertex stage, using vkEvent
@@ -2633,9 +2636,6 @@ class ImageHelper final : public Resource, public angle::Subject
                                               gl::OwnerLevel levelIndexGL,
                                               gl::OwnerLayer layerIndex,
                                               uint32_t layerCount);
-    void removeSingleStagedClearAfterInvalidate(gl::OwnerLevel levelIndexGL,
-                                                gl::OwnerLayer layerIndex,
-                                                uint32_t layerCount);
     void removeStagedUpdates(ErrorContext *context,
                              gl::OwnerLevel levelGLStart,
                              gl::OwnerLevel levelGLEnd);

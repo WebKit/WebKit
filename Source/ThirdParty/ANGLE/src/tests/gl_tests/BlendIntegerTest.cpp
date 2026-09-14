@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -26,10 +28,10 @@ class BlendIntegerTest : public ANGLETest<>
     template <typename T, GLuint components>
     void compareValue(const T *value, const char *name, GLenum attachment)
     {
-        T pixel[4];
+        std::array<T, 4> pixel;
         glReadBuffer(attachment);
         glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER,
-                     std::is_same<T, int32_t>::value ? GL_INT : GL_UNSIGNED_INT, pixel);
+                     std::is_same<T, int32_t>::value ? GL_INT : GL_UNSIGNED_INT, pixel.data());
         for (size_t componentIdx = 0; componentIdx < components; componentIdx++)
         {
             ANGLE_UNSAFE_TODO(EXPECT_EQ(value[componentIdx], pixel[componentIdx]))

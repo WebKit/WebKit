@@ -15,6 +15,8 @@
 
 #include "SampleApplication.h"
 
+#include <array>
+
 #include "util/shader_utils.h"
 
 class StencilOperationsSample : public SampleApplication
@@ -100,7 +102,7 @@ void main()
             {1.0f, 1.0f, 0.0f, 0.0f},
         };
 
-        GLuint stencilValues[testCount] = {
+        std::array<GLuint, testCount> stencilValues = {
             0x7,  // Result of test 0
             0x0,  // Result of test 1
             0x2,  // Result of test 2

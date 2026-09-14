@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <ostream>
 #include "common/unsafe_buffers.h"
@@ -48,14 +49,18 @@ inline constexpr int log2(T x)
     static_assert(std::is_integral<T>::value, "log2 must be called on an integer type.");
     int r = 0;
     while ((x >> r) > 1)
+    {
         r++;
+    }
     return r;
 }
 
 inline unsigned int ceilPow2(unsigned int x)
 {
     if (x != 0)
+    {
         x--;
+    }
     x |= x >> 1;
     x |= x >> 2;
     x |= x >> 4;
@@ -998,18 +1003,10 @@ inline int8_t ToPackedSnorm8(float f)
 // unsigned integer starting from the least significant bits.
 inline uint32_t PackUnorm4x8(float f1, float f2, float f3, float f4)
 {
-    uint8_t bits[4];
-    bits[0]         = priv::ToPackedUnorm8(f1);
-    bits[1]         = priv::ToPackedUnorm8(f2);
-    bits[2]         = priv::ToPackedUnorm8(f3);
-    bits[3]         = priv::ToPackedUnorm8(f4);
-    uint32_t result = 0u;
-    for (int i = 0; i < 4; ++i)
-    {
-        int shift = i * 8;
-        result |= (static_cast<uint32_t>(ANGLE_UNSAFE_TODO(bits[i])) << shift);
-    }
-    return result;
+    return static_cast<uint32_t>(priv::ToPackedUnorm8(f1)) |
+           (static_cast<uint32_t>(priv::ToPackedUnorm8(f2)) << 8) |
+           (static_cast<uint32_t>(priv::ToPackedUnorm8(f3)) << 16) |
+           (static_cast<uint32_t>(priv::ToPackedUnorm8(f4)) << 24);
 }
 
 // Unpacks 4 normalized unsigned floating-point values from a single 32-bit unsigned integer into f.
@@ -1030,18 +1027,10 @@ inline void UnpackUnorm4x8(uint32_t u, float *f)
 // significant bits.
 inline uint32_t PackSnorm4x8(float f1, float f2, float f3, float f4)
 {
-    int8_t bits[4];
-    bits[0]         = priv::ToPackedSnorm8(f1);
-    bits[1]         = priv::ToPackedSnorm8(f2);
-    bits[2]         = priv::ToPackedSnorm8(f3);
-    bits[3]         = priv::ToPackedSnorm8(f4);
-    uint32_t result = 0u;
-    for (int i = 0; i < 4; ++i)
-    {
-        int shift = i * 8;
-        result |= ((static_cast<uint32_t>(ANGLE_UNSAFE_TODO(bits[i])) & 0xFF) << shift);
-    }
-    return result;
+    return (static_cast<uint32_t>(priv::ToPackedSnorm8(f1)) & 0xFF) |
+           ((static_cast<uint32_t>(priv::ToPackedSnorm8(f2)) & 0xFF) << 8) |
+           ((static_cast<uint32_t>(priv::ToPackedSnorm8(f3)) & 0xFF) << 16) |
+           ((static_cast<uint32_t>(priv::ToPackedSnorm8(f4)) & 0xFF) << 24);
 }
 
 // Unpacks 4 normalized signed floating-point values from a single 32-bit unsigned integer into f.

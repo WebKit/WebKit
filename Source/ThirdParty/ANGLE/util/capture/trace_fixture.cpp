@@ -17,9 +17,41 @@
 
 #include <filesystem>
 #include <string>
+#include "common/system_utils.h"
 
 namespace
 {
+// For perf, this runs the detection only the first time and preserves the result
+bool RetraceModeActive()
+{
+    static const bool retraceModeActive = angle::IsCaptureConfiguredFromEnv();
+    return retraceModeActive;
+}
+
+// This class uses KHR debug calls to mark the beginning and end of a call sequence to be
+// skipped for capture during a retrace or trace upgrade
+struct ScopedCaptureExclude
+{
+    ScopedCaptureExclude()
+    {
+        if (RetraceModeActive())
+        {
+            glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_MARKER,
+                                    angle::kFixtureInjectedCommandsBeginId,
+                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1, "");
+        }
+    }
+    ~ScopedCaptureExclude()
+    {
+        if (RetraceModeActive())
+        {
+            glDebugMessageInsertKHR(GL_DEBUG_SOURCE_THIRD_PARTY, GL_DEBUG_TYPE_MARKER,
+                                    angle::kFixtureInjectedCommandsEndId,
+                                    GL_DEBUG_SEVERITY_NOTIFICATION, -1, "");
+        }
+    }
+};
+
 void UpdateResourceMap(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
 {
     GLuint returnedID;
@@ -111,6 +143,9 @@ BlockIndexesMap gUniformBlockIndexes;
 
 void UpdateUniformLocation(GLuint program, const char *name, GLint location, GLint count)
 {
+    // Do not capture the glGetUniformLocation below on retrace
+    ScopedCaptureExclude skipRecording;
+
     std::vector<GLint> &programLocations = gInternalUniformLocationsMap[program];
     if (static_cast<GLint>(programLocations.size()) < location + count)
     {
@@ -132,6 +167,9 @@ void DeleteUniformLocations(GLuint program)
 
 void UpdateUniformBlockIndex(GLuint program, const char *name, GLuint index)
 {
+    // Do not capture the glGetUniformBlockIndex below on retrace
+    ScopedCaptureExclude skipRecording;
+
     gUniformBlockIndexes[program][index] = glGetUniformBlockIndex(program, name);
 }
 

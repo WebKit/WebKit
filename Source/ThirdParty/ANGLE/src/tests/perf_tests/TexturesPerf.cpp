@@ -9,6 +9,7 @@
 
 #include "ANGLEPerfTest.h"
 
+#include <array>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -283,7 +284,7 @@ void TexturesBenchmark::drawBenchmark()
                 size_t updateTexture = firstTexture + updateTextureIdx;
                 glActiveTexture(static_cast<GLenum>(GL_TEXTURE0 + updateTexture));
 
-                const GLenum minFilters[] = {
+                static constexpr std::array<GLenum, 6> minFilters = {
                     GL_NEAREST,
                     GL_LINEAR,
                     GL_NEAREST_MIPMAP_NEAREST,
@@ -292,24 +293,24 @@ void TexturesBenchmark::drawBenchmark()
                     GL_LINEAR_MIPMAP_LINEAR,
                 };
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                                minFilters[stateUpdateCount % ArraySize(minFilters)]);
+                                minFilters[stateUpdateCount % minFilters.size()]);
 
-                const GLenum magFilters[] = {
+                static constexpr std::array<GLenum, 2> magFilters = {
                     GL_NEAREST,
                     GL_LINEAR,
                 };
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                                magFilters[stateUpdateCount % ArraySize(magFilters)]);
+                                magFilters[stateUpdateCount % magFilters.size()]);
 
-                const GLenum wrapParameters[] = {
+                static constexpr std::array<GLenum, 3> wrapParameters = {
                     GL_CLAMP_TO_EDGE,
                     GL_REPEAT,
                     GL_MIRRORED_REPEAT,
                 };
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-                                wrapParameters[stateUpdateCount % ArraySize(wrapParameters)]);
+                                wrapParameters[stateUpdateCount % wrapParameters.size()]);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-                                wrapParameters[stateUpdateCount % ArraySize(wrapParameters)]);
+                                wrapParameters[stateUpdateCount % wrapParameters.size()]);
             }
         }
 

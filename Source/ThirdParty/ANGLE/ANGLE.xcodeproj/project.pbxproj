@@ -170,6 +170,8 @@
 		171A4AA4BC42B69E49E82F17 /* es3fInteger64StateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 69C84200BA79E31CBB632E27 /* es3fInteger64StateQueryTests.cpp */; };
 		172C423CAAA876496B832706 /* es2fTextureStateQueryTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 717C49CBB5C93335E7F5F19B /* es2fTextureStateQueryTests.cpp */; };
 		18074337BB9DCBA4DE6BFE99 /* tcuTestSessionExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D1D40FD89149377817B4862 /* tcuTestSessionExecutor.cpp */; };
+		A1B2C3D40001E5F600010001 /* tcuSubprocessTestExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E40001F5A600020001 /* tcuSubprocessTestExecutor.cpp */; };
+		A1B2C3D40002E5F600010002 /* tcuSubprocessTestExecutorLin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E40002F5A600020002 /* tcuSubprocessTestExecutorLin.cpp */; };
 		187D4B96B208288B4186975E /* rsgToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D92A4F00BB594EC5B402FCB0 /* rsgToken.cpp */; };
 		189D4C9C80C0B534AC3E2287 /* es2fShaderFragDataTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF0437EBD4AB4FD158B87AB /* es2fShaderFragDataTests.cpp */; };
 		18D0439E966C68BA35ACACB2 /* es3pRedundantStateChangeTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C0647159330DA42E9680A06 /* es3pRedundantStateChangeTests.cpp */; };
@@ -1422,7 +1424,7 @@
 		7BF555252C81F198002B101E /* QualifierTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD819E1DBFEA5C006066B8 /* QualifierTypes.cpp */; };
 		7BF555262C81F198002B101E /* ConstantUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81991DBFEA5C006066B8 /* ConstantUnion.cpp */; };
 		7BF555272C81F198002B101E /* RewritePipelines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF3C2581919700894E24 /* RewritePipelines.cpp */; };
-		7BF555292C81F198002B101E /* SeparateStructFromUniformDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */; };
+		7BF555292C81F198002B101E /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD427432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp */; };
 		7BF5552A2C81F198002B101E /* Symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D6D922826C7800B5BA2C /* Symbol.cpp */; };
 		7BF5552B2C81F198002B101E /* ClampPointSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D60122826B8F00B5BA2C /* ClampPointSize.cpp */; };
 		7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */; };
@@ -2381,8 +2383,8 @@
 		FF194FC727432C4D006A97A3 /* Operator_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FBB27432C4D006A97A3 /* Operator_autogen.h */; };
 		FF194FE027432CC3006A97A3 /* ClampIndirectIndices.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD227432CC2006A97A3 /* ClampIndirectIndices.h */; };
 		FF194FE127432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD327432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp */; };
-		FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */; };
-		FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */; };
+		FF194FE227432CC3006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FD427432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp */; };
+		FF194FE427432CC3006A97A3 /* UseGeneratedNamesForAnonymousStructs.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD627432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.h */; };
 		FF194FE527432CC3006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */; };
 		FF194FE727432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */; };
 		FF194FE927432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */; };
@@ -4146,6 +4148,8 @@
 		7D13424995942F2CB08541B1 /* gluRenderContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gluRenderContext.cpp; sourceTree = "<group>"; };
 		7D144E25BC63593E858A0456 /* es3fShaderOperatorTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3fShaderOperatorTests.cpp; sourceTree = "<group>"; };
 		7D1D40FD89149377817B4862 /* tcuTestSessionExecutor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tcuTestSessionExecutor.cpp; sourceTree = "<group>"; };
+		B1C2D3E40001F5A600020001 /* tcuSubprocessTestExecutor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tcuSubprocessTestExecutor.cpp; sourceTree = "<group>"; };
+		B1C2D3E40002F5A600020002 /* tcuSubprocessTestExecutorLin.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tcuSubprocessTestExecutorLin.cpp; sourceTree = "<group>"; };
 		7D5C4D378EED0879463570E1 /* es3fShaderConstExprTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3fShaderConstExprTests.cpp; sourceTree = "<group>"; };
 		7DAC4954AA047573306D3EBD /* es3fDefaultVertexArrayObjectTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3fDefaultVertexArrayObjectTests.cpp; sourceTree = "<group>"; };
 		7DCE47AB936F8F0AC9F67BBE /* xeXMLWriter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = xeXMLWriter.cpp; sourceTree = "<group>"; };
@@ -4664,8 +4668,8 @@
 		FF194FBB27432C4D006A97A3 /* Operator_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Operator_autogen.h; sourceTree = "<group>"; };
 		FF194FD227432CC2006A97A3 /* ClampIndirectIndices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClampIndirectIndices.h; sourceTree = "<group>"; };
 		FF194FD327432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteArrayOfArrayOfOpaqueUniforms.cpp; sourceTree = "<group>"; };
-		FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromUniformDeclarations.cpp; sourceTree = "<group>"; };
-		FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromUniformDeclarations.h; sourceTree = "<group>"; };
+		FF194FD427432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UseGeneratedNamesForAnonymousStructs.cpp; sourceTree = "<group>"; };
+		FF194FD627432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UseGeneratedNamesForAnonymousStructs.h; sourceTree = "<group>"; };
 		FF194FD727432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteArrayOfArrayOfOpaqueUniforms.h; sourceTree = "<group>"; };
 		FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonomorphizeUnsupportedFunctions.h; sourceTree = "<group>"; };
 		FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonomorphizeUnsupportedFunctions.cpp; sourceTree = "<group>"; };
@@ -5824,12 +5828,12 @@
 				7B62E9DD2DA91F0900793212 /* ScalarizeVecAndMatConstructorArgs.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
-				FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */,
-				FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */,
 				5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */,
 				5C55D60522826B9000B5BA2C /* SimplifyLoopConditions.h */,
 				5C55D63422826B9900B5BA2C /* SplitSequenceOperator.cpp */,
 				5C55D63F22826B9C00B5BA2C /* SplitSequenceOperator.h */,
+				FF194FD427432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp */,
+				FF194FD627432CC2006A97A3 /* UseGeneratedNamesForAnonymousStructs.h */,
 			);
 			name = treeops;
 			path = tree_ops;
@@ -7414,6 +7418,8 @@
 				3A014F248B54FD3CF22BA4D1 /* tcuRGBA.cpp */,
 				A65E44948F3D8E09A61F4FAA /* tcuSeedBuilder.cpp */,
 				961E4AB4A25F87C8F57B8F2D /* tcuStringTemplate.cpp */,
+				B1C2D3E40001F5A600020001 /* tcuSubprocessTestExecutor.cpp */,
+				B1C2D3E40002F5A600020002 /* tcuSubprocessTestExecutorLin.cpp */,
 				07BA442E8B7BECF1216A41BA /* tcuSurface.cpp */,
 				8C6E477DAF2636D1A4C40D89 /* tcuSurfaceAccess.cpp */,
 				CF06407AB81851F9117060ED /* tcuTestCase.cpp */,
@@ -8069,7 +8075,6 @@
 				31CD0030249184F400486F27 /* SemaphoreImpl.h in Headers */,
 				7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
-				FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */,
 				31CD0031249184F400486F27 /* serial_utils.h in Headers */,
 				31CDFFD0249184A700486F27 /* Severity.h in Headers */,
 				3A0EBF9B2980B49D002C72BC /* sha1.h in Headers */,
@@ -8123,6 +8128,7 @@
 				31CDFFF2249184A700486F27 /* Types.h in Headers */,
 				31CD00B0249184FD00486F27 /* Uniform.h in Headers */,
 				7B5B1F112F0FC73B00B5D57B /* unsafe_buffers.h in Headers */,
+				FF194FE427432CC3006A97A3 /* UseGeneratedNamesForAnonymousStructs.h in Headers */,
 				7B359D6E2A7CED3C0016DC59 /* UseInterfaceBlockFields.h in Headers */,
 				31CDFFDD249184A700486F27 /* util.h in Headers */,
 				31CDFF642491848C00486F27 /* utilities.h in Headers */,
@@ -9241,7 +9247,6 @@
 				DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */,
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
-				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				7BD3D2EE2FCDD69B00C386DC /* serialize_mock.cpp in Sources */,
 				3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */,
 				DF83E2EE2639FE17000825EF /* Shader.cpp in Sources */,
@@ -9291,6 +9296,7 @@
 				DF83E2D02639FD84000825EF /* Types.cpp in Sources */,
 				DF83E3262639FE18000825EF /* Uniform.cpp in Sources */,
 				DF83E21C2639FC74000825EF /* uniform_type_info_autogen.cpp in Sources */,
+				FF194FE227432CC3006A97A3 /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */,
 				DF83E2B32639FD83000825EF /* util.cpp in Sources */,
 				DF83E21A2639FC74000825EF /* utilities.cpp in Sources */,
 				7B359D5A2A7CECAE0016DC59 /* UtilsMSL.cpp in Sources */,
@@ -9681,6 +9687,8 @@
 				283347E7BA62533229655D89 /* tcuRGBA.cpp in Sources */,
 				8FC1420882090C5A8F26ABB6 /* tcuSeedBuilder.cpp in Sources */,
 				F91C455C8AF4B589499907CA /* tcuStringTemplate.cpp in Sources */,
+				A1B2C3D40001E5F600010001 /* tcuSubprocessTestExecutor.cpp in Sources */,
+				A1B2C3D40002E5F600010002 /* tcuSubprocessTestExecutorLin.cpp in Sources */,
 				E66540BA83799A47B575CB04 /* tcuSurface.cpp in Sources */,
 				23D1400E949F7503AA46F502 /* tcuSurfaceAccess.cpp in Sources */,
 				B3AE409C90010528B24DB68F /* tcuTestCase.cpp in Sources */,
@@ -10724,7 +10732,6 @@
 				7B62E9E02DA91F0900793212 /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */,
 				7BF5557F2C81F198002B101E /* SeparateCompoundExpressions.cpp in Sources */,
 				7BF555642C81F198002B101E /* SeparateDeclarations.cpp in Sources */,
-				7BF555292C81F198002B101E /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				7BF554F42C81F198002B101E /* ShaderLang.cpp in Sources */,
 				7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */,
 				7BF555432C81F198002B101E /* SimplifyLoopConditions.cpp in Sources */,
@@ -10750,6 +10757,7 @@
 				7BF554FD2C81F198002B101E /* TransposeRowMajorMatrices.cpp in Sources */,
 				7BF555402C81F198002B101E /* Types.cpp in Sources */,
 				7BF5557B2C81F198002B101E /* uniform_type_info_autogen.cpp in Sources */,
+				7BF555292C81F198002B101E /* UseGeneratedNamesForAnonymousStructs.cpp in Sources */,
 				7BF5553C2C81F198002B101E /* util.cpp in Sources */,
 				7BF555162C81F198002B101E /* utilities.cpp in Sources */,
 				7BF5557E2C81F198002B101E /* UtilsMSL.cpp in Sources */,

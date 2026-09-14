@@ -8,6 +8,8 @@
 //   MEC will have to capture everything, and we can test with capture/replay
 //   whether this is done correctly. In this case the focus is on external images
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -39,7 +41,7 @@ class EGLImageMECFriendlyTest : public ANGLETest<>
         }
 
         constexpr GLsizei texSize = 32;
-        GLubyte data[texSize * texSize * 4];
+        std::array<GLubyte, texSize * texSize * 4> data;
 
         for (int y = 0; y < texSize; y++)
         {
@@ -48,19 +50,17 @@ class EGLImageMECFriendlyTest : public ANGLETest<>
             {
                 float blue = static_cast<float>(x) / texSize;
 
-                ANGLE_UNSAFE_TODO(data[(y * texSize + x) * 4 + 0]) = 0;
-                ANGLE_UNSAFE_TODO(data[(y * texSize + x) * 4 + 1]) =
-                    static_cast<GLubyte>(green * 255);
-                ANGLE_UNSAFE_TODO(data[(y * texSize + x) * 4 + 2]) =
-                    static_cast<GLubyte>(blue * 255);
-                ANGLE_UNSAFE_TODO(data[(y * texSize + x) * 4 + 3]) = 255;
+                data[(y * texSize + x) * 4 + 0] = 0;
+                data[(y * texSize + x) * 4 + 1] = static_cast<GLubyte>(green * 255);
+                data[(y * texSize + x) * 4 + 2] = static_cast<GLubyte>(blue * 255);
+                data[(y * texSize + x) * 4 + 3] = 255;
             }
         }
 
         glGenTextures(1, &mSourceTexture);
         glBindTexture(GL_TEXTURE_2D, mSourceTexture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texSize, texSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                     data);
+                     data.data());
         glBindTexture(GL_TEXTURE_2D, 0);
         glGenTextures(1, &mExternalTexture);
 

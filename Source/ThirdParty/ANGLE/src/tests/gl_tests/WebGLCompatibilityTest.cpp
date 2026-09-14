@@ -6,6 +6,8 @@
 
 // WebGLCompatibilityTest.cpp : Tests of the GL_ANGLE_webgl_compatibility extension.
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -6992,13 +6994,14 @@ TEST_P(WebGL2CompatibilityTest, ETC2EACFormats)
 // Test that GL_HALF_FLOAT_OES type is rejected by WebGL 2.0 contexts.
 TEST_P(WebGL2CompatibilityTest, HalfFloatOesType)
 {
-    const std::array<std::pair<GLenum, GLenum>, 6> formats = {{{GL_R16F, GL_RED},
-                                                               {GL_RG16F, GL_RG},
-                                                               {GL_RGB16F, GL_RGB},
-                                                               {GL_RGBA16F, GL_RGBA},
-                                                               {GL_R11F_G11F_B10F, GL_RGB},
-                                                               {GL_RGB9_E5, GL_RGB}}};
-    for (const auto &fmt : formats)
+    static constexpr std::array<std::pair<GLenum, GLenum>, 6> kFormats = {
+        {{GL_R16F, GL_RED},
+         {GL_RG16F, GL_RG},
+         {GL_RGB16F, GL_RGB},
+         {GL_RGBA16F, GL_RGBA},
+         {GL_R11F_G11F_B10F, GL_RGB},
+         {GL_RGB9_E5, GL_RGB}}};
+    for (const auto &fmt : kFormats)
     {
         {
             GLTexture tex;
@@ -7372,10 +7375,10 @@ void main(void) {
 
     GLBuffer buffer;
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    std::array<int8_t, 12> data = {
+    static constexpr std::array<int8_t, 12> kData = {
         1,
     };
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(data[0]), data.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, kData.size() * sizeof(kData[0]), kData.data(), GL_STATIC_DRAW);
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glBindAttribLocation(program, 0, "attr1");
@@ -7499,14 +7502,14 @@ void main()
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
 
-    const GLint attrLocations[4] = {
+    const std::array<GLint, 4> attrLocations = {
         glGetAttribLocation(program, "attr1"),
         glGetAttribLocation(program, "attr2"),
         glGetAttribLocation(program, "attr3"),
         glGetAttribLocation(program, "attr4"),
     };
 
-    GLBuffer buffers[4];
+    std::array<GLBuffer, 4> buffers;
 
     // Set up all the buffers as such:
     //
@@ -7514,27 +7517,27 @@ void main()
     // Buffer 2: 16 bytes + (offset) 212
     // Buffer 3: 128 bytes + (offset) 76
     // Buffer 4: 96 bytes + (offset) 52
-    constexpr GLsizei kBufferSizes[4] = {
+    static constexpr std::array<GLsizei, 4> kBufferSizes = {
         64,
         16,
         128,
         96,
     };
-    constexpr GLsizei kBufferOffsets[4] = {
+    static constexpr std::array<GLsizei, 4> kBufferOffsets = {
         124,
         212,
         76,
         52,
     };
     // Attribute component count corresponding to the shader
-    constexpr GLint kAttrComponents[4] = {
+    static constexpr std::array<GLint, 4> kAttrComponents = {
         4,
         2,
         4,
         3,
     };
     // Attribute types
-    constexpr GLenum kAttrTypes[4] = {
+    static constexpr std::array<GLenum, 4> kAttrTypes = {
         GL_SHORT,
         GL_BYTE,
         GL_FLOAT,
@@ -7550,7 +7553,7 @@ void main()
     //   drawn from this buffer.
     // - Buffer 4 has 96 bytes, each attribute is 6 bytes.  With a stride of 8, 12 vertices can be
     //   drawn from this buffer.
-    constexpr GLsizei kAttrStrides[4] = {
+    static constexpr std::array<GLsizei, 4> kAttrStrides = {
         12,
         0,
         20,
@@ -7559,15 +7562,12 @@ void main()
 
     for (int i = 0; i < 4; ++i)
     {
-        ANGLE_UNSAFE_TODO({
-            glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
-            glBufferData(GL_ARRAY_BUFFER, kBufferSizes[i] + kBufferOffsets[i], nullptr,
-                         GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
+        glBufferData(GL_ARRAY_BUFFER, kBufferSizes[i] + kBufferOffsets[i], nullptr, GL_STATIC_DRAW);
 
-            glEnableVertexAttribArray(attrLocations[i]);
-            glVertexAttribPointer(attrLocations[i], kAttrComponents[i], kAttrTypes[i], GL_TRUE,
-                                  kAttrStrides[i], reinterpret_cast<void *>(kBufferOffsets[i]));
-        })
+        glEnableVertexAttribArray(attrLocations[i]);
+        glVertexAttribPointer(attrLocations[i], kAttrComponents[i], kAttrTypes[i], GL_TRUE,
+                              kAttrStrides[i], reinterpret_cast<void *>(kBufferOffsets[i]));
     }
     ASSERT_GL_NO_ERROR();
 

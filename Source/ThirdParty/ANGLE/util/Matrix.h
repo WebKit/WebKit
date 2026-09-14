@@ -10,12 +10,14 @@
 #ifndef UTIL_MATRIX_H
 #define UTIL_MATRIX_H
 
+#include <array>
+
 #include "common/vector_utils.h"
 #include "util/util_export.h"
 
 struct ANGLE_UTIL_EXPORT Matrix4
 {
-    float data[16];
+    std::array<float, 16> data;
 
     Matrix4();
     Matrix4(float m00,

@@ -7,6 +7,8 @@
 //   Various tests related for atomic counter buffers.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -589,11 +591,11 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
     constexpr int32_t kBufferCount = 16;
     // The initial value of counter 'ac' is 3u.
     unsigned int bufferData[3] = {11u, 3u, 1u};
-    GLBuffer atomicCounterBuffer[kBufferCount];
+    std::array<GLBuffer, kBufferCount> atomicCounterBuffer;
     // Populate atomicCounterBuffer[0] with valid data and the rest with nullptr
     for (int32_t bufferIndex = 0; bufferIndex < kBufferCount; bufferIndex++)
     {
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffer[bufferIndex]));
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer[bufferIndex]);
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData),
                      (bufferIndex == 0) ? bufferData : nullptr, GL_STATIC_DRAW);
     }
@@ -604,23 +606,23 @@ TEST_P(AtomicCounterBufferTest31, AtomicCounterBufferRepeatedBindUnbind)
     // Cycle through multiple buffers
     for (int32_t i = 0; i < kBufferCount; i++)
     {
-        constexpr int32_t kBufferIndices[kBufferCount] = {7, 12, 15, 5, 13, 14, 1, 2,
-                                                          0, 6,  4,  9, 8,  11, 3, 10};
-        int32_t bufferIndex                            = ANGLE_UNSAFE_TODO(kBufferIndices[i]);
+        constexpr std::array<int32_t, kBufferCount> kBufferIndices = {7, 12, 15, 5, 13, 14, 1, 2,
+                                                                      0, 6,  4,  9, 8,  11, 3, 10};
+        int32_t bufferIndex                                        = kBufferIndices[i];
 
         // Randomly bind/unbind buffers to/from different binding points,
         // capped by GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS
         for (int32_t bufferCount = 0; bufferCount < maxAtomicCounterBuffers; bufferCount++)
         {
             constexpr uint32_t kBindingSlotsSize                = kBufferCount;
-            constexpr uint32_t kBindingSlots[kBindingSlotsSize] = {1,  3,  4, 14, 15, 9, 0, 6,
-                                                                   12, 11, 8, 5,  10, 2, 7, 13};
+            constexpr std::array<uint32_t, kBindingSlotsSize> kBindingSlots = {
+                1, 3, 4, 14, 15, 9, 0, 6, 12, 11, 8, 5, 10, 2, 7, 13};
 
             uint32_t bindingSlotIndex = bufferCount % kBindingSlotsSize;
-            uint32_t bindingSlot      = ANGLE_UNSAFE_TODO(kBindingSlots[bindingSlotIndex]);
+            uint32_t bindingSlot      = kBindingSlots[bindingSlotIndex];
             uint32_t bindingPoint     = bindingSlot % maxAtomicCounterBuffers;
             bool even                 = (bufferCount % 2 == 0);
-            int32_t bufferId = (even) ? 0 : ANGLE_UNSAFE_TODO(atomicCounterBuffer[bufferIndex]);
+            int32_t bufferId          = (even) ? 0 : atomicCounterBuffer[bufferIndex];
 
             glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, bindingPoint, bufferId);
         }
@@ -700,15 +702,15 @@ void main()
 
     glUseProgram(program);
 
-    GLBuffer atomicCounterBuffers[kBufferCount];
+    std::array<GLBuffer, kBufferCount> atomicCounterBuffers;
 
     for (unsigned int ii = 0; ii < kBufferCount; ++ii)
     {
         GLuint initialData[1] = {ii};
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffers[ii]);
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(initialData), initialData, GL_STATIC_DRAW);
 
-        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, ii, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
+        glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, ii, atomicCounterBuffers[ii]);
     }
 
     glDispatchCompute(1, 1, 1);
@@ -718,7 +720,7 @@ void main()
 
     for (unsigned int ii = 0; ii < kBufferCount; ++ii)
     {
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(atomicCounterBuffers[ii]));
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffers[ii]);
         GLuint *mappedBuffer = static_cast<GLuint *>(
             glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint), GL_MAP_READ_BIT));
         EXPECT_EQ(ii + 1, mappedBuffer[0]);
@@ -839,15 +841,15 @@ void main()
     glUseProgram(program);
 
     // The initial value of atomic counters is 0, 1, 2, ...
-    unsigned int bufferData[kAtomicCounterCount] = {};
+    std::array<unsigned int, kAtomicCounterCount> bufferData = {};
     for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
     {
-        ANGLE_UNSAFE_TODO(bufferData[index]) = index;
+        bufferData[index] = index;
     }
 
     GLBuffer atomicCounterBuffer;
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
-    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData), bufferData, GL_STATIC_DRAW);
+    glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(bufferData), bufferData.data(), GL_STATIC_DRAW);
 
     glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounterBuffer);
 
@@ -856,16 +858,16 @@ void main()
 
     glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 
-    unsigned int result[kAtomicCounterCount] = {};
+    std::array<unsigned int, kAtomicCounterCount> result = {};
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, atomicCounterBuffer);
     void *mappedBuffer =
         glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(bufferData), GL_MAP_READ_BIT);
-    ANGLE_UNSAFE_TODO(memcpy(result, mappedBuffer, sizeof(bufferData)));
+    ANGLE_UNSAFE_TODO(memcpy(result.data(), mappedBuffer, sizeof(bufferData)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     for (uint32_t index = 0; index < kAtomicCounterCount; ++index)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(result[index], bufferData[index] + 1)) << "index " << index;
+        EXPECT_EQ(result[index], bufferData[index] + 1) << "index " << index;
     }
 }
 
@@ -977,19 +979,21 @@ void main()
 
     // Array containing the names of all active atomic counters in the shader */
     GLenum activeVariablesProperty = GL_ACTIVE_VARIABLES;
-    const char *activeACNames[] = {"ac", "acArray[0]", "acArrayArray[0][0]", "acArrayArray[1][0]"};
-    const int numACs            = sizeof(activeACNames) / sizeof(activeACNames[0]);
-    GLuint uniformsIndices[numACs];
+    constexpr std::array<const char *, 4> activeACNames = {"ac", "acArray[0]", "acArrayArray[0][0]",
+                                                           "acArrayArray[1][0]"};
+    constexpr int numACs                                = static_cast<int>(activeACNames.size());
+    std::array<GLuint, numACs> uniformsIndices;
 
     // Getting the uniform indices for the later queries.
     glGetProgramResourceiv(program, GL_ATOMIC_COUNTER_BUFFER, 0, 1, &activeVariablesProperty,
-                           numACs, &length, (GLint *)&uniformsIndices[0]);
+                           numACs, &length, (GLint *)uniformsIndices.data());
     EXPECT_EQ(length, numACs);
 
     // If <pname> is UNIFORM_OFFSET, then the returned value will be its offset
     // relative to the beginning of its active atomic counter buffer.
-    GLint queryOffsets[numACs] = {0};
-    glGetActiveUniformsiv(program, numACs, uniformsIndices, GL_UNIFORM_OFFSET, queryOffsets);
+    std::array<GLint, numACs> queryOffsets = {};
+    glGetActiveUniformsiv(program, numACs, uniformsIndices.data(), GL_UNIFORM_OFFSET,
+                          queryOffsets.data());
 
     GLint maxLength;
     glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxLength);
@@ -999,24 +1003,24 @@ void main()
         GLint size;
         GLenum type;
 
-        glGetActiveUniform(program, ANGLE_UNSAFE_TODO(uniformsIndices[index]), maxLength, nullptr,
-                           &size, &type, queryNames.data());
+        glGetActiveUniform(program, uniformsIndices[index], maxLength, nullptr, &size, &type,
+                           queryNames.data());
 
         if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[0])))
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 0));
+            EXPECT_EQ(queryOffsets[index], 0);
         }
         else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[1])))
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 4));
+            EXPECT_EQ(queryOffsets[index], 4);
         }
         else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[2])))
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 12));
+            EXPECT_EQ(queryOffsets[index], 12);
         }
         else if (0 == ANGLE_UNSAFE_TODO(std::strcmp(queryNames.data(), activeACNames[3])))
         {
-            ANGLE_UNSAFE_TODO(EXPECT_EQ(queryOffsets[index], 24));
+            EXPECT_EQ(queryOffsets[index], 24);
         }
         else
         {
@@ -1043,10 +1047,10 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     // Read back buffer data
-    GLuint results[kAtomicCounterCount] = {};
+    std::array<GLuint, kAtomicCounterCount> results = {};
     void *ptr = glMapBufferRange(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(results), GL_MAP_READ_BIT);
     ASSERT_NE(ptr, nullptr);
-    ANGLE_UNSAFE_TODO(memcpy(results, ptr, sizeof(results)));
+    ANGLE_UNSAFE_TODO(memcpy(results.data(), ptr, sizeof(results)));
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
 
     // Validate values:
@@ -1059,10 +1063,11 @@ void main()
     // acArrayArray[1][0] = 600 - 1 = 599
     // acArrayArray[1][1] = 700 + 1 = 701
     // acArrayArray[1][2] = 800 + 1 = 801
-    const GLuint kExpectedResults[kAtomicCounterCount] = {1, 99, 201, 301, 399, 501, 599, 701, 801};
+    const std::array<GLuint, kAtomicCounterCount> kExpectedResults = {1,   99,  201, 301, 399,
+                                                                      501, 599, 701, 801};
     for (uint32_t i = 0; i < kAtomicCounterCount; ++i)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(results[i], kExpectedResults[i])) << "at index " << i;
+        EXPECT_EQ(results[i], kExpectedResults[i]) << "at index " << i;
     }
     EXPECT_GL_NO_ERROR();
 }

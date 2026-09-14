@@ -762,7 +762,7 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                 {
                     const SetBlendConstantsParams *params =
                         getParamPtr<SetBlendConstantsParams>(currentCommand);
-                    vkCmdSetBlendConstants(cmdBuffer, params->blendConstants);
+                    vkCmdSetBlendConstants(cmdBuffer, params->blendConstants.data());
                     break;
                 }
                 case CommandID::SetCullMode:

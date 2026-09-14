@@ -8,6 +8,8 @@
 //   For example we can verify a certain call set doesn't break the render pass.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "include/platform/Feature.h"
 #include "test_utils/ANGLETest.h"
@@ -7514,20 +7516,19 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateThenRepeatedClearThenBlitThenDraw
     constexpr GLsizei kSize = 2;
 
     // tex[0] is what's being tested.  The others are helpers.
-    GLTexture tex[3];
+    std::array<GLTexture, 3> tex;
     for (int i = 0; i < 3; ++i)
     {
-        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(tex[i]));
+        glBindTexture(GL_TEXTURE_2D, tex[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      nullptr);
     }
 
-    GLFramebuffer fbo[3];
+    std::array<GLFramebuffer, 3> fbo;
     for (int i = 0; i < 3; ++i)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[i]));
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                               ANGLE_UNSAFE_TODO(tex[i]), 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex[i], 0);
     }
 
     // Expect rpCount+1, color(Clears+0, Loads+1, LoadNones+0, Stores+1, StoreNones+0)
@@ -8072,7 +8073,6 @@ TEST_P(VulkanPerformanceCounterTest, ResizeFBOAttachedTexture)
     int32_t framebufferCacheSizeAfter    = getPerfCounters().framebufferCacheSize;
     int32_t framebufferCacheSizeIncrease = framebufferCacheSizeAfter - framebufferCacheSizeBefore;
     int32_t expectedFramebufferCacheSizeIncrease = (hasSupportsImagelessFramebuffer()) ? 0 : 1;
-    printf("\tframebufferCacheCountIncrease:%u\n", framebufferCacheSizeIncrease);
     // We should not cache obsolete VkImages. Only current VkImage should be cached.
     EXPECT_EQ(framebufferCacheSizeIncrease, expectedFramebufferCacheSizeIncrease);
 }
@@ -8158,13 +8158,13 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
-    GLColor expectedColors[] = {GLColor::black,   GLColor::black,  GLColor::blue,  GLColor::black,
-                                GLColor::black,   GLColor::blue,   GLColor::green, GLColor::green,
-                                GLColor::cyan,    GLColor::black,  GLColor::black, GLColor::blue,
-                                GLColor::black,   GLColor::black,  GLColor::blue,  GLColor::green,
-                                GLColor::green,   GLColor::cyan,   GLColor::red,   GLColor::red,
-                                GLColor::magenta, GLColor::red,    GLColor::red,   GLColor::magenta,
-                                GLColor::yellow,  GLColor::yellow, GLColor::white};
+    std::array<GLColor, 27> expectedColors = {
+        GLColor::black,   GLColor::black, GLColor::blue,  GLColor::black,   GLColor::black,
+        GLColor::blue,    GLColor::green, GLColor::green, GLColor::cyan,    GLColor::black,
+        GLColor::black,   GLColor::blue,  GLColor::black, GLColor::black,   GLColor::blue,
+        GLColor::green,   GLColor::green, GLColor::cyan,  GLColor::red,     GLColor::red,
+        GLColor::magenta, GLColor::red,   GLColor::red,   GLColor::magenta, GLColor::yellow,
+        GLColor::yellow,  GLColor::white};
     int32_t framebufferCacheSizeBefore = getPerfCounters().framebufferCacheSize;
     int loop                           = 0;
     for (GLenum swizzle_R = GL_RED; swizzle_R <= GL_BLUE; swizzle_R++)
@@ -8188,7 +8188,7 @@ TEST_P(VulkanPerformanceCounterTest, SetTextureSwizzleWithDifferentValueOnFBOAtt
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, swizzle_B);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
                 drawQuad(textureProgram, std::string(essl1_shaders::PositionAttrib()), 0.0f);
-                ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]));
+                EXPECT_PIXEL_COLOR_EQ(0, 0, expectedColors[loop]);
                 loop++;
             }
         }
@@ -8409,12 +8409,12 @@ TEST_P(VulkanPerformanceCounterTest_ES31, DestroyAtomicCounterBufferAlsoDestroyD
 
     // Create atomic counter buffer and use it and then destroy it.
     constexpr int kBufferCount = 16;
-    GLBuffer paddingBuffers[kBufferCount];
+    std::array<GLBuffer, kBufferCount> paddingBuffers;
     for (uint32_t i = 0; i < kBufferCount; i++)
     {
         // Allocate a padding buffer so that atomicCounterBuffer will be allocated in different
         // offset
-        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, ANGLE_UNSAFE_TODO(paddingBuffers[i]));
+        glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, paddingBuffers[i]);
         glBufferData(GL_ATOMIC_COUNTER_BUFFER, 256, nullptr, GL_STATIC_DRAW);
         // Allocate, use, destroy atomic counter buffer
         GLBuffer atomicCounterBuffer;
@@ -8874,7 +8874,8 @@ TEST_P(VulkanPerformanceCounterTest, DepthBufferWriteThenReadThenWriteInThreeRen
     glDepthMask(GL_FALSE);
     drawQuad(drawGreen, essl1_shaders::PositionAttrib(), depthValue);
 
-    std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
+                                                          GL_STENCIL_ATTACHMENT};
     glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 2, attachments.data());
 
     // Draw to fbo1 with depth buffer write
@@ -9054,17 +9055,16 @@ TEST_P(VulkanPerformanceCounterTest, ClearThenBlitThenDraw)
     constexpr uint32_t kHeight = 4;
 
     // Initialize two FBOs with red color and depthValue
-    GLTexture colorTextures[2];
-    GLRenderbuffer depthStencils[2];
-    GLFramebuffer fbos[2];
+    std::array<GLTexture, 2> colorTextures;
+    std::array<GLRenderbuffer, 2> depthStencils;
+    std::array<GLFramebuffer, 2> fbos;
     GLfloat depthValue  = 0.0f;
     GLuint stencilValue = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
-                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
-        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
-                                   kWidth, kHeight));
+        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
+                                        kWidth, kHeight);
+        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9121,17 +9121,16 @@ TEST_P(VulkanPerformanceCounterTest, ScissoredDrawThenBlitThenDraw)
     constexpr uint32_t kHeight = 64;
 
     // Initialize two FBOs with red color and depth and stencil value
-    GLTexture colorTextures[2];
-    GLRenderbuffer depthStencils[2];
-    GLFramebuffer fbos[2];
+    std::array<GLTexture, 2> colorTextures;
+    std::array<GLRenderbuffer, 2> depthStencils;
+    std::array<GLFramebuffer, 2> fbos;
     std::array<GLfloat, 2> depthValues = {0.0f, 0.5f};
     GLuint stencilValue                = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
-                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
-        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
-                                   kWidth, kHeight));
+        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
+                                        kWidth, kHeight);
+        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9193,17 +9192,16 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithXFB)
     constexpr uint32_t kHeight = 4;
 
     // Initialize two FBOs with red color and depthValue
-    GLTexture colorTextures[2];
-    GLRenderbuffer depthStencils[2];
-    GLFramebuffer fbos[2];
+    std::array<GLTexture, 2> colorTextures;
+    std::array<GLRenderbuffer, 2> depthStencils;
+    std::array<GLFramebuffer, 2> fbos;
     GLfloat depthValue  = 0.0f;
     GLuint stencilValue = 0x55;
     for (size_t i = 0; i < 2; i++)
     {
-        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
-                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
-        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
-                                   kWidth, kHeight));
+        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
+                                        kWidth, kHeight);
+        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9259,7 +9257,7 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithXFB)
                                           quadCount * vertexCount * sizeof(float), GL_MAP_READ_BIT);
     ASSERT_NE(nullptr, mappedBuffer);
 
-    const GLfloat expect[] = {
+    const std::array<GLfloat, 24> expect = {
         // clang-format off
         -1.0f, 1.0f, depthValue, 1.0f,
         -1.0f, -1.0f, depthValue, 1.0f,
@@ -9298,16 +9296,15 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithQuery)
     constexpr uint32_t kHeight = 4;
 
     // Initialize two FBOs
-    GLTexture colorTextures[2];
-    GLRenderbuffer depthStencils[2];
-    GLFramebuffer fbos[2];
+    std::array<GLTexture, 2> colorTextures;
+    std::array<GLRenderbuffer, 2> depthStencils;
+    std::array<GLFramebuffer, 2> fbos;
     std::array<GLfloat, 2> depthValues = {0.0f, 0.5};
     for (size_t i = 0; i < 2; i++)
     {
-        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
-                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
-        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
-                                   kWidth, kHeight));
+        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
+                                        kWidth, kHeight);
+        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9374,16 +9371,15 @@ TEST_P(VulkanPerformanceCounterTest, DrawThenBlitThenDrawWithSameProgram)
     constexpr uint32_t kHeight = 4;
 
     // Initialize two FBOs with red color and depthValue
-    GLTexture colorTextures[2];
-    GLRenderbuffer depthStencils[2];
-    GLFramebuffer fbos[2];
+    std::array<GLTexture, 2> colorTextures;
+    std::array<GLRenderbuffer, 2> depthStencils;
+    std::array<GLFramebuffer, 2> fbos;
     std::array<GLfloat, 2> depthValues = {0.0f, 0.5};
     for (size_t i = 0; i < 2; i++)
     {
-        ANGLE_UNSAFE_TODO(setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i],
-                                                          GL_DEPTH24_STENCIL8, kWidth, kHeight));
-        ANGLE_UNSAFE_TODO(setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i],
-                                   kWidth, kHeight));
+        setupColorTextureAndDepthBuffer(colorTextures[i], depthStencils[i], GL_DEPTH24_STENCIL8,
+                                        kWidth, kHeight);
+        setupFBO(colorTextures[i], depthStencils[i], depthStencils[i], fbos[i], kWidth, kHeight);
 
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
@@ -9487,8 +9483,8 @@ TEST_P(VulkanPerformanceCounterTest, RedundantColorClearOnFBOWithGapedAttachment
     ASSERT_GL_NO_ERROR();
 
     // Clear color (first clear, mid-RP)
-    uint32_t colorClearsBefore              = getPerfCounters().colorClearAttachments;
-    const std::array<GLfloat, 4> clearColor = {1.0f, 0.0f, 0.0f, 1.0f};
+    uint32_t colorClearsBefore                         = getPerfCounters().colorClearAttachments;
+    static constexpr std::array<GLfloat, 4> clearColor = {1.0f, 0.0f, 0.0f, 1.0f};
     glClearBufferfv(GL_COLOR, 2, clearColor.data());
 
     // Clear color again with the same value, should be skipped!
@@ -10262,7 +10258,8 @@ class VulkanPerformanceCounterTest_TileMemory : public VulkanPerformanceCounterT
             drawQuadToVerifyDepthValue(drawGreen, drawRed, depthValue);
         }
 
-        std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+        static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
+                                                              GL_STENCIL_ATTACHMENT};
         glInvalidateFramebuffer(GL_FRAMEBUFFER, attachments.size(), attachments.data());
         EXPECT_GL_NO_ERROR();
 
@@ -10387,7 +10384,8 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, OneDSBufferUsedInTwoRenderPasses
     glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
     glClear(GL_COLOR_BUFFER_BIT);
     drawQuadToVerifyDepthStencilValue(depthValue, 0x55);
-    std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
+                                                          GL_STENCIL_ATTACHMENT};
     glInvalidateFramebuffer(GL_DRAW_FRAMEBUFFER, 2, attachments.data());
     EXPECT_GL_NO_ERROR();
 
@@ -10429,7 +10427,8 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, ManyDSBufferUsedInOneSubmit)
     uint64_t expectedMinTileMemoryImageCount = getPerfCounters().tileMemoryImages + 1;
     uint64_t expectedRenderPassCount         = getPerfCounters().renderPasses + 2 * kRepeatCount;
 
-    std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
+                                                          GL_STENCIL_ATTACHMENT};
     GLfloat depthValue                = 0.0f;
     for (size_t i = 0; i < kRepeatCount; i++)
     {
@@ -10610,7 +10609,8 @@ TEST_P(VulkanPerformanceCounterTest_TileMemory, DepthBufferPBOReadThenDelete)
     // Delete depthBuffer
     depthStencil.reset();
 
-    std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT};
+    static constexpr std::array<GLenum, 2> attachments = {GL_DEPTH_ATTACHMENT,
+                                                          GL_STENCIL_ATTACHMENT};
     glInvalidateFramebuffer(GL_FRAMEBUFFER, attachments.size(), attachments.data());
 
     // For completeness, verify rendering results.

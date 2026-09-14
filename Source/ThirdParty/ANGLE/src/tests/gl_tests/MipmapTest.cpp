@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -909,15 +911,15 @@ TEST_P(MipmapTest, DefineValidExtraLevelAndUseItLater)
 
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
 
-    GLubyte *levels[] = {mLevelZeroBlueInitData.data(), mLevelOneGreenInitData.data(),
-                         mLevelTwoRedInitData.data()};
+    std::array<GLubyte *, 3> levels = {mLevelZeroBlueInitData.data(), mLevelOneGreenInitData.data(),
+                                       mLevelTwoRedInitData.data()};
 
     int maxLevel = 1 + static_cast<int>(floor(log2(std::max(getWindowWidth(), getWindowHeight()))));
 
     for (int i = 0; i < maxLevel; i++)
     {
         glTexImage2D(GL_TEXTURE_2D, i, GL_RGB, getWindowWidth() >> i, getWindowHeight() >> i, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, ANGLE_UNSAFE_TODO(levels[i % 3]));
+                     GL_RGB, GL_UNSIGNED_BYTE, levels[i % 3]);
     }
 
     // Define an extra level that won't be used for now
@@ -957,7 +959,7 @@ TEST_P(MipmapTest, DefineValidExtraLevelAndUseItLater)
     for (int i = 0; i < maxLevel - 1; i++)
     {
         glTexImage2D(GL_TEXTURE_2D, i + 1, GL_RGB, getWindowWidth() >> i, getWindowHeight() >> i, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, ANGLE_UNSAFE_TODO(levels[i % 3]));
+                     GL_RGB, GL_UNSIGNED_BYTE, levels[i % 3]);
     }
 
     // At this point we have a valid mip chain, the last level being magenta if we draw 1x1 pixel.
@@ -2261,19 +2263,19 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     // clang-format off
-    constexpr GLubyte kRedColor[16] = {
+    constexpr std::array<GLubyte, 16> kRedColor ={
         0x0c, 0x08, 0x4c, 0x48,
         0x00, 0x04, 0x40, 0x44,
         0xcc, 0xc8, 0x8c, 0x88,
         0xc0, 0xc4, 0x80, 0x84,
     };
 
-    constexpr GLubyte kExpectedMip1Color[4] = {
+    constexpr std::array<GLubyte, 4> kExpectedMip1Color ={
         0x0c, 0x4c,
         0xcc, 0x8c,
     };
 
-    constexpr GLubyte kExpectedMip2Color[1] = {
+    constexpr std::array<GLubyte, 1> kExpectedMip2Color ={
         0xcc
     };
     // clang-format on
@@ -2341,19 +2343,19 @@ void main()
     EXPECT_GL_NO_ERROR();
 
     // Read back rendered pixel values and compare
-    GLubyte resultColors[16];
+    std::array<GLubyte, 16> resultColors = {};
     glBindFramebuffer(GL_FRAMEBUFFER, fb1);
-    glReadPixels(0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, &resultColors[0]);
+    glReadPixels(0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, resultColors.data());
     for (size_t i = 0; i < 4; i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(resultColors[i * 4], kExpectedMip1Color[i]));
+        EXPECT_EQ(resultColors[i * 4], kExpectedMip1Color[i]);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, fb2);
-    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &resultColors[0]);
+    glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, resultColors.data());
     for (size_t i = 0; i < 1; i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(resultColors[i * 4], kExpectedMip2Color[i]));
+        EXPECT_EQ(resultColors[i * 4], kExpectedMip2Color[i]);
     }
 }
 

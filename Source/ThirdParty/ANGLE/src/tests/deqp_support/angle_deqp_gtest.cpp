@@ -67,7 +67,7 @@ constexpr char kSupportPath[] = "src/tests/deqp_support/";
 #define GL_CTS_DIR(PATH) "external/openglcts/data/gl_cts/data/mustpass/gl/" PATH
 #define EGL_CTS_DIR(PATH) "external/openglcts/data/gl_cts/data/mustpass/egl/" PATH
 
-const char *gCaseListFiles[] = {
+constexpr std::array<const char *, 22> gCaseListFiles = {
     EGL_CTS_DIR("aosp_mustpass/main/egl-main.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles2-main.txt"),
     GLES_CTS_DIR("aosp_mustpass/main/gles3-main.txt"),
@@ -92,7 +92,7 @@ const char *gCaseListFiles[] = {
     GLES_CTS_DIR("aosp_mustpass/main/gles31-565-no-depth-no-stencil.txt"),
 };
 
-const std::vector<const char *> gTestSuiteConfigParameters[] = {
+const std::array<std::vector<const char *>, 22> gTestSuiteConfigParameters = {{
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // egl
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles2
     {"--deqp-gl-config-name=rgba8888d24s8ms0"},  // gles3
@@ -115,12 +115,12 @@ const std::vector<const char *> gTestSuiteConfigParameters[] = {
     {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles3_rgb565_no_depth_no_stencil
     {"--deqp-gl-config-name=rgba8888d24s8ms4"},  // gles31_multisample
     {"--deqp-gl-config-name=rgb565d0s0ms0"},     // gles31_rgb565_no_depth_no_stencil
-};
+}};
 
 #undef GLES_CTS_DIR
 #undef GL_CTS_DIR
 
-const char *gTestExpectationsFiles[] = {
+constexpr std::array<const char *, 22> gTestExpectationsFiles = {
     "deqp_egl_test_expectations.txt",
     "deqp_gles2_test_expectations.txt",
     "deqp_gles3_test_expectations.txt",

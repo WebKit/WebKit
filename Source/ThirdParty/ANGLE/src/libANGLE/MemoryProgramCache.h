@@ -28,17 +28,10 @@ class MemoryProgramCache final : angle::NonCopyable
     explicit MemoryProgramCache(egl::BlobCache &blobCache);
     ~MemoryProgramCache();
 
-    static void ComputeHash(const Context *context,
-                            const Program *program,
-                            egl::BlobCache::Key *hashOut);
-
     // For querying the contents of the cache.
     bool getAt(size_t index,
                const egl::BlobCache::Key **hashOut,
                egl::BlobCache::Value *programOut);
-
-    // Evict a program from the binary cache.
-    void remove(const egl::BlobCache::Key &programHash);
 
     // Helper method that serializes a program.
     angle::Result putProgram(const egl::BlobCache::Key &programHash,
@@ -64,8 +57,8 @@ class MemoryProgramCache final : angle::NonCopyable
     // Empty the cache.
     void clear();
 
-    // Resize the cache. Discards current contents.
-    void resize(size_t maxCacheSizeBytes);
+    // Resize the cache. Discards current contents. Returns previous cache size.
+    size_t resize(size_t maxCacheSizeBytes);
 
     // Returns the number of entries in the cache.
     size_t entryCount() const;
@@ -80,6 +73,10 @@ class MemoryProgramCache final : angle::NonCopyable
     size_t maxSize() const;
 
   private:
+    static void ComputeHash(const Context *context,
+                            const Program *program,
+                            egl::BlobCache::Key *hashOut);
+
     egl::BlobCache &mBlobCache;
 };
 

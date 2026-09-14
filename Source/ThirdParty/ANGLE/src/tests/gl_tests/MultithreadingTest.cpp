@@ -16,6 +16,7 @@
 #include "util/EGLWindow.h"
 #include "util/test_utils.h"
 
+#include <array>
 #include <atomic>
 #include <functional>
 #include <mutex>
@@ -2206,10 +2207,11 @@ TEST_P(MultithreadingTestES3, RenderThenSampleDifferentContextPriority)
     // Large enough texture to catch timing problems.
     constexpr GLsizei kTexSize       = 1024;
     constexpr size_t kThreadCount    = 2;
-    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
-    EGLContext ctx[kThreadCount]     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLSurface, kThreadCount> surface = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, kThreadCount> ctx     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
 
-    EGLint priorities[kThreadCount] = {EGL_CONTEXT_PRIORITY_LOW_IMG, EGL_CONTEXT_PRIORITY_HIGH_IMG};
+    std::array<EGLint, kThreadCount> priorities = {EGL_CONTEXT_PRIORITY_LOW_IMG,
+                                                   EGL_CONTEXT_PRIORITY_HIGH_IMG};
 
     EGLint pbufferAttributes[kThreadCount][6] = {
         {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE, EGL_NONE},
@@ -2406,10 +2408,11 @@ TEST_P(MultithreadingTestES3, RenderThenSampleInNewContextWithDifferentPriority)
     // Large enough texture to catch timing problems.
     constexpr GLsizei kTexSize       = 1024;
     constexpr size_t kThreadCount    = 2;
-    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
-    EGLContext ctx[kThreadCount]     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLSurface, kThreadCount> surface = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, kThreadCount> ctx     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
 
-    EGLint priorities[kThreadCount] = {EGL_CONTEXT_PRIORITY_LOW_IMG, EGL_CONTEXT_PRIORITY_HIGH_IMG};
+    std::array<EGLint, kThreadCount> priorities = {EGL_CONTEXT_PRIORITY_LOW_IMG,
+                                                   EGL_CONTEXT_PRIORITY_HIGH_IMG};
 
     EGLint pbufferAttributes[kThreadCount][6] = {
         {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE, EGL_NONE},
@@ -2614,10 +2617,11 @@ TEST_P(MultithreadingTestES3, RenderThenSampleDifferentContextPriorityUsingEGLIm
     // Large enough texture to catch timing problems.
     constexpr GLsizei kTexSize       = 1024;
     constexpr size_t kThreadCount    = 2;
-    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
-    EGLContext ctx[kThreadCount]     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLSurface, kThreadCount> surface = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, kThreadCount> ctx     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
 
-    EGLint priorities[kThreadCount] = {EGL_CONTEXT_PRIORITY_LOW_IMG, EGL_CONTEXT_PRIORITY_HIGH_IMG};
+    std::array<EGLint, kThreadCount> priorities = {EGL_CONTEXT_PRIORITY_LOW_IMG,
+                                                   EGL_CONTEXT_PRIORITY_HIGH_IMG};
 
     EGLint pbufferAttributes[kThreadCount][6] = {
         {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE, EGL_NONE},
@@ -2829,10 +2833,11 @@ TEST_P(MultithreadingTestES3, ContextPriorityMixing)
     // Large enough texture to catch timing problems.
     constexpr GLsizei kTexSize       = 1024;
     constexpr size_t kThreadCount    = 2;
-    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
-    EGLContext ctx[kThreadCount]     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLSurface, kThreadCount> surface = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, kThreadCount> ctx     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
 
-    EGLint priorities[kThreadCount] = {EGL_CONTEXT_PRIORITY_LOW_IMG, EGL_CONTEXT_PRIORITY_HIGH_IMG};
+    std::array<EGLint, kThreadCount> priorities = {EGL_CONTEXT_PRIORITY_LOW_IMG,
+                                                   EGL_CONTEXT_PRIORITY_HIGH_IMG};
 
     EGLint pbufferAttributes[kThreadCount][6] = {
         {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE, EGL_NONE},
@@ -3346,7 +3351,7 @@ void main()
 })";
 
     constexpr uint32_t kTextureCount = 10;
-    GLuint textures[kTextureCount];
+    std::array<GLuint, kTextureCount> textures;
 
     ASSERT(IsGLExtensionEnabled("GL_KHR_texture_compression_astc_ldr") ||
            IsGLExtensionEnabled("GL_EXT_texture_compression_bptc"));
@@ -3355,7 +3360,7 @@ void main()
     const GLenum compressedFormat =
         hasBPTC ? GL_COMPRESSED_RGBA_BPTC_UNORM_EXT : GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
 
-    std::vector<uint8_t> textureData[kTextureCount];
+    std::array<std::vector<uint8_t>, kTextureCount> textureData;
 
     constexpr int kSurfaceWidth  = 256;
     constexpr int kSurfaceHeight = 512;
@@ -3424,10 +3429,10 @@ void main()
         GLuint busyDrawALoc  = glGetAttribLocation(busyDrawProgram, "a");
 
         ANGLE_GL_PROGRAM(textureDrawProgram, kTextureDrawVS, kTextureDrawFS);
-        GLuint textureDrawSamplerLoc[kTextureCount] = {};
+        std::array<GLuint, kTextureCount> textureDrawSamplerLoc = {};
 
         glUseProgram(textureDrawProgram);
-        glGenTextures(kTextureCount, textures);
+        glGenTextures(kTextureCount, textures.data());
         for (uint32_t i = 0; i < kTextureCount; ++i)
         {
             std::ostringstream name;

@@ -10,6 +10,7 @@
 #include "ANGLEPerfTest.h"
 #include "common/unsafe_buffers.h"
 
+#include <array>
 #include <cmath>
 #include <sstream>
 
@@ -141,9 +142,9 @@ void InstancingPerfBenchmark::initializeBenchmark()
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    GLuint baseIndexData[6]     = {0, 1, 2, 1, 3, 2};
-    Vector2 basePositionData[4] = {Vector2(-1.0f, 1.0f), Vector2(1.0f, 1.0f), Vector2(-1.0f, -1.0f),
-                                   Vector2(1.0f, -1.0f)};
+    static constexpr std::array<GLuint, 6> baseIndexData = {0, 1, 2, 1, 3, 2};
+    std::array<Vector2, 4> basePositionData = {Vector2(-1.0f, 1.0f), Vector2(1.0f, 1.0f),
+                                               Vector2(-1.0f, -1.0f), Vector2(1.0f, -1.0f)};
 
     std::vector<GLuint> indexData;
     std::vector<Vector2> positionData;
@@ -155,14 +156,13 @@ void InstancingPerfBenchmark::initializeBenchmark()
         {
             for (GLuint indexIndex = 0; indexIndex < 6; ++indexIndex)
             {
-                indexData.push_back(ANGLE_UNSAFE_TODO(baseIndexData[indexIndex]) +
-                                    pointIndex * pointVertexStride);
+                indexData.push_back(baseIndexData[indexIndex] + pointIndex * pointVertexStride);
             }
 
             Vector3 randVec = RandomVector3(&mRNG);
             for (GLuint vertexIndex = 0; vertexIndex < 4; ++vertexIndex)
             {
-                positionData.push_back(ANGLE_UNSAFE_TODO(basePositionData[vertexIndex]));
+                positionData.push_back(basePositionData[vertexIndex]);
                 mTranslateData.push_back(randVec);
             }
         }

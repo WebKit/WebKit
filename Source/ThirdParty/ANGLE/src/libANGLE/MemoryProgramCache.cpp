@@ -142,7 +142,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
         case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Error decompressing program binary data fetched from cache.");
-            remove(*hashOut);
+            mBlobCache.remove(*hashOut);
             // Consider this blob "not found".  As far as the rest of the code is considered,
             // corrupted cache might as well not have existed.
             return angle::Result::Continue;
@@ -159,7 +159,7 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
             {
                 ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                    "Failed to load program binary from cache.");
-                remove(*hashOut);
+                mBlobCache.remove(*hashOut);
             }
 
             return angle::Result::Continue;
@@ -174,11 +174,6 @@ bool MemoryProgramCache::getAt(size_t index,
                                egl::BlobCache::Value *programOut)
 {
     return mBlobCache.getAt(index, hashOut, programOut);
-}
-
-void MemoryProgramCache::remove(const egl::BlobCache::Key &programHash)
-{
-    mBlobCache.remove(programHash);
 }
 
 angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programHash,
@@ -214,7 +209,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     }
 
     {
-        std::scoped_lock<angle::SimpleMutex> lock(mBlobCache.getMutex());
+        std::scoped_lock<angle::SimpleMutex> blobCacheLock(mBlobCache.getMutex());
         // TODO: http://anglebug.com/42266037
         // This was a workaround for Chrome until it added support for EGL_ANDROID_blob_cache,
         // tracked by http://anglebug.com/42261225. This issue has since been closed, but removing
@@ -259,9 +254,9 @@ void MemoryProgramCache::clear()
     mBlobCache.clear();
 }
 
-void MemoryProgramCache::resize(size_t maxCacheSizeBytes)
+size_t MemoryProgramCache::resize(size_t maxCacheSizeBytes)
 {
-    mBlobCache.resize(maxCacheSizeBytes);
+    return mBlobCache.resize(maxCacheSizeBytes);
 }
 
 size_t MemoryProgramCache::entryCount() const

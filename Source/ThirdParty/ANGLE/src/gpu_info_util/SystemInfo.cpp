@@ -165,7 +165,7 @@ bool IsNVIDIA(VendorID vendorId)
 
 bool IsQualcomm(VendorID vendorId)
 {
-    return vendorId == kVendorID_Qualcomm;
+    return vendorId == kVendorID_Qualcomm || vendorId == kVendorID_Qualcomm_DXGI;
 }
 
 bool IsSamsung(VendorID vendorId)
@@ -247,19 +247,6 @@ bool ParseAMDCatalystDriverVersion(const std::string &content, std::string *vers
         }
     }
     return false;
-}
-
-bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, uint32_t *deviceId)
-{
-    unsigned int vendor = 0;
-    unsigned int device = 0;
-
-    bool success = id.length() >= 21 && HexStringToUInt(id.substr(8, 4), &vendor) &&
-                   HexStringToUInt(id.substr(17, 4), &device);
-
-    *vendorId = vendor;
-    *deviceId = device;
-    return success;
 }
 
 void GetDualGPUInfo(SystemInfo *info)

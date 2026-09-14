@@ -12,6 +12,8 @@
 #include "libANGLE/renderer/FormatID_autogen.h"
 #include "libANGLE/renderer/cl_types.h"
 
+#include <stack>
+
 #define ANGLE_CL_SET_ERROR(error) cl::gClErrorTls = error
 
 #define ANGLE_CL_RETURN_ERROR(error) \
@@ -37,6 +39,38 @@
 
 namespace cl
 {
+
+template <typename CallbackT>
+class DestructorCallbacks final
+{
+  public:
+    void add(CallbackT callback, void *userData) { mCallbacks->push({callback, userData}); }
+
+    template <typename ObjectT>
+    void invoke(ObjectT *object)
+    {
+        // Invoke callbacks in reverse registration order without holding the lock.
+        CallbackStack callbacks;
+        mCallbacks->swap(callbacks);
+        while (!callbacks.empty())
+        {
+            const CallbackData callbackData = callbacks.top();
+            callbacks.pop();
+            callbackData.callback(object, callbackData.userData);
+        }
+    }
+
+  private:
+    struct CallbackData
+    {
+        CallbackT callback;
+        void *userData;
+    };
+
+    using CallbackStack = std::stack<CallbackData>;
+
+    angle::SynchronizedValue<CallbackStack> mCallbacks;
+};
 
 size_t GetChannelCount(cl_channel_order channelOrder);
 

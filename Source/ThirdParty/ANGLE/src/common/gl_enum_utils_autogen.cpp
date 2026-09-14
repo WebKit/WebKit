@@ -12,9 +12,12 @@
 
 #include "common/debug.h"
 #include "common/gl_enum_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
-#include <cstring>
+#include <array>
+#include <iterator>
+#include <string_view>
 
 namespace gl
 {
@@ -23,9 +26,9 @@ namespace
 const char *UnknownEnumToString(unsigned int value)
 {
     constexpr size_t kBufferSize = 64;
-    static thread_local char sBuffer[kBufferSize];
-    snprintf(sBuffer, kBufferSize, "0x%04X", value);
-    return sBuffer;
+    static thread_local std::array<char, kBufferSize> sBuffer;
+    ANGLE_UNSAFE_TODO(snprintf(sBuffer.data(), kBufferSize, "0x%04X", value));
+    return sBuffer.data();
 }
 }  // anonymous namespace
 
@@ -8660,8 +8663,13 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
 
 namespace
 {
-using StringEnumEntry                      = std::pair<const char *, unsigned int>;
-static StringEnumEntry g_stringEnumTable[] = {
+struct StringEnumEntry
+{
+    std::string_view name;
+    unsigned int enumValue;
+};
+
+constexpr std::array<StringEnumEntry, 6206> g_stringEnumTable = {{
     {"GL_1PASS_EXT", 0x80A1},
     {"GL_1PASS_SGIS", 0x80A1},
     {"GL_2D", 0x0600},
@@ -11999,7 +12007,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_NEGATIVE_Y_EXT", 0x87DA},
     {"GL_NEGATIVE_Z_EXT", 0x87DB},
     {"GL_NEVER", 0x0200},
-    {"GL_NEXT_BUFFER_NV", -2},
+    {"GL_NEXT_BUFFER_NV", static_cast<unsigned int>(-2)},
     {"GL_NEXT_VIDEO_CAPTURE_BUFFER_STATUS_NV", 0x9025},
     {"GL_NICEST", 0x1102},
     {"GL_NONE", 0x0000},
@@ -13415,10 +13423,10 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_SIMULTANEOUS_TEXTURE_AND_STENCIL_WRITE", 0x82AF},
     {"GL_SINGLE_COLOR", 0x81F9},
     {"GL_SINGLE_COLOR_EXT", 0x81F9},
-    {"GL_SKIP_COMPONENTS1_NV", -6},
-    {"GL_SKIP_COMPONENTS2_NV", -5},
-    {"GL_SKIP_COMPONENTS3_NV", -4},
-    {"GL_SKIP_COMPONENTS4_NV", -3},
+    {"GL_SKIP_COMPONENTS1_NV", static_cast<unsigned int>(-6)},
+    {"GL_SKIP_COMPONENTS2_NV", static_cast<unsigned int>(-5)},
+    {"GL_SKIP_COMPONENTS3_NV", static_cast<unsigned int>(-4)},
+    {"GL_SKIP_COMPONENTS4_NV", static_cast<unsigned int>(-3)},
     {"GL_SKIP_DECODE_EXT", 0x8A4A},
     {"GL_SKIP_MISSING_GLYPH_NV", 0x90A9},
     {"GL_SLICE_ACCUM_SUN", 0x85CC},
@@ -14868,23 +14876,21 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_ZOOM_X", 0x0D16},
     {"GL_ZOOM_Y", 0x0D17},
     {"GL_Z_EXT", 0x87D7},
-};
-
-const size_t g_numStringEnums = std::size(g_stringEnumTable);
+}};
 }  // anonymous namespace
 
 unsigned int StringToGLenum(const char *str)
 {
+    std::string_view strView(str);
     auto it = std::lower_bound(
-        &g_stringEnumTable[0], &g_stringEnumTable[g_numStringEnums], str,
-        [](const StringEnumEntry &a, const char *b) { return strcmp(a.first, b) < 0; });
+        g_stringEnumTable.begin(), g_stringEnumTable.end(), strView,
+        [](const StringEnumEntry &entry, std::string_view target) { return entry.name < target; });
 
-    if (strcmp(it->first, str) == 0)
+    if (it != g_stringEnumTable.end() && it->name == strView)
     {
-        return it->second;
+        return it->enumValue;
     }
 
-    UNREACHABLE();
     return 0;
 }
 }  // namespace gl

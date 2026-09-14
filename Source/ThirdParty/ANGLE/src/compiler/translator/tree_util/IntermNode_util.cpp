@@ -571,6 +571,23 @@ TIntermNode *CastScalar(const TType &type, TIntermTyped *scalar)
     return TIntermAggregate::CreateConstructor(castDestType, {scalar});
 }
 
+TIntermTyped *RemoveCommaLeftHandSize(TIntermTyped *node)
+{
+    TIntermTyped *current = node;
+    while (true)
+    {
+        TIntermBinary *asBinary = current->getAsBinaryNode();
+        if (asBinary == nullptr || asBinary->getOp() != EOpComma)
+        {
+            break;
+        }
+
+        current = asBinary->getRight();
+    }
+
+    return current;
+}
+
 void MoveDeclarationsBeforeFunctions(TIntermBlock *root)
 {
     TIntermSequence *original = root->getSequence();

@@ -289,6 +289,7 @@ class TType
     bool isInterfaceBlockContainingType(TBasicType t) const;
 
     bool isStructSpecifier() const { return mIsStructSpecifier; }
+    void removeStructSpecifier() { mIsStructSpecifier = false; }
 
     // Whether matrix packing is applicable to this type.  Other types should not have a matrix
     // packing.

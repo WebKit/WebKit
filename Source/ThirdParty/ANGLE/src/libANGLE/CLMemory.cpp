@@ -52,7 +52,7 @@ MemFlags InheritMemFlags(MemFlags flags, Memory *parent)
 
 angle::Result Memory::setDestructorCallback(MemoryCB pfnNotify, void *userData)
 {
-    mDestructorCallbacks->emplace(pfnNotify, userData);
+    mDestructorCallbacks.add(pfnNotify, userData);
     return angle::Result::Continue;
 }
 
@@ -148,15 +148,7 @@ angle::Result Memory::getInfo(MemInfo name,
 
 Memory::~Memory()
 {
-    std::stack<CallbackData> callbacks;
-    mDestructorCallbacks->swap(callbacks);
-    while (!callbacks.empty())
-    {
-        const MemoryCB callback = callbacks.top().first;
-        void *const userData    = callbacks.top().second;
-        callbacks.pop();
-        callback(this, userData);
-    }
+    mDestructorCallbacks.invoke(this);
 }
 
 Memory::Memory(const Buffer &buffer,

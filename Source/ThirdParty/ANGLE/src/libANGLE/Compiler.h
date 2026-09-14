@@ -31,7 +31,7 @@ class State;
 class Compiler final : public RefCountObjectNoID
 {
   public:
-    Compiler(rx::GLImplFactory *implFactory, const State &data, egl::Display *display);
+    Compiler(rx::GLImplFactory *implFactory, const State &data);
 
     void onDestroy(const Context *context) override;
 

@@ -327,6 +327,15 @@
             "issue": "https://crbug.com/528131119"
         },
         {
+            "name": "reset_TexStorage2D_base_level",
+            "category": "Workarounds",
+            "description": [
+                "Reset texture base level before calling glTexStorage2D to ",
+                "work around PowerVR driver bug."
+            ],
+            "issue": "https://crbug.com/551573368"
+        },
+        {
             "name": "use_temp_for_non_zero_base_level_GenMipmap_using_CopyImageSubData",
             "category": "Workarounds",
             "description": [
@@ -963,6 +972,14 @@
             "issue": "http://crbug.com/475877320"
         },
         {
+            "name": "flush_before_generate_mipmap",
+            "category": "Workarounds",
+            "description": [
+                "Force a flush before calling generateMipmap to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/549350408"
+        },
+        {
             "name": "split_level_0_pbo_full_sub_image_2D",
             "category": "Workarounds",
             "description": [
@@ -1004,12 +1021,38 @@
             "issue": "http://crbug.com/499602793"
         },
         {
+            "name": "upload_oversized_mip_levels_via_unpack_buffer",
+            "category": "Workarounds",
+            "description": [
+                "Stage oversized nonzero-level texture definitions through a scratch pixel unpack buffer ",
+                "to work around driver bugs."
+            ],
+            "issue": "http://crbug.com/548127218"
+        },
+        {
             "name": "validate_state",
             "category": "Features",
             "description": [
                 "Validate applied driver state frequently."
             ],
             "issue": "http://anglebug.com/532176406"
+        },
+        {
+            "name": "finish_before_blit_framebuffer_multi_attachment",
+            "category": "Workarounds",
+            "description": [
+                "Issue a glFinish before calling glBlitFramebuffer if the draw framebuffer has ",
+                "multiple color attachments or any color attachment's texture has base_level > 0."
+            ],
+            "issue": "http://crbug.com/546252753"
+        },
+        {
+            "name": "use_tex_sub_image_for_host_twiddled_npot_uploads",
+            "category": "Workarounds",
+            "description": [
+                "For texture formats which would be twiddled on the host CPU, upload via TexSubImage2D instead of TexImage2D."
+            ],
+            "issue": "http://crbug.com/553172761"
         }
     ]
 }

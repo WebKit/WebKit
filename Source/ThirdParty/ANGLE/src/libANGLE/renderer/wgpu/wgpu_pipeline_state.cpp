@@ -106,7 +106,7 @@ bool RenderPipelineDesc::setPrimitiveMode(gl::PrimitiveMode primitiveMode,
 
 bool RenderPipelineDesc::setBlendEnabled(size_t colorIndex, bool enabled)
 {
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
     if (colorTarget.blendEnabled == enabled)
     {
         return false;
@@ -123,7 +123,7 @@ bool RenderPipelineDesc::setBlendFuncs(size_t colorIndex,
                                        WGPUBlendFactor dstAlpha)
 {
     bool changed                        = false;
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
 
     if (colorTarget.colorBlendSrcFactor != static_cast<uint32_t>(srcRGB))
     {
@@ -157,7 +157,7 @@ bool RenderPipelineDesc::setBlendEquations(size_t colorIndex,
                                            WGPUBlendOperation alpha)
 {
     bool changed                        = false;
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
 
     if (colorTarget.colorBlendOp != static_cast<uint32_t>(rgb))
     {
@@ -186,7 +186,7 @@ void RenderPipelineDesc::setCullMode(gl::CullFaceMode cullMode, bool cullFaceEna
 
 bool RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bool b, bool a)
 {
-    PackedColorTargetState &colorTarget = ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]);
+    PackedColorTargetState &colorTarget = mColorTargetStates[colorIndex];
     uint32_t newWriteMask = static_cast<uint32_t>(gl_wgpu::GetColorWriteMask(r, g, b, a));
     if (colorTarget.writeMask == newWriteMask)
     {
@@ -199,7 +199,7 @@ bool RenderPipelineDesc::setColorWriteMask(size_t colorIndex, bool r, bool g, bo
 
 bool RenderPipelineDesc::setVertexAttribute(size_t attribIndex, PackedVertexAttribute &newAttrib)
 {
-    PackedVertexAttribute &currentAttrib = ANGLE_UNSAFE_TODO(mVertexAttributes[attribIndex]);
+    PackedVertexAttribute &currentAttrib = mVertexAttributes[attribIndex];
     if (ANGLE_UNSAFE_TODO(memcmp(&currentAttrib, &newAttrib, sizeof(PackedVertexAttribute))) == 0)
     {
         return false;
@@ -211,12 +211,12 @@ bool RenderPipelineDesc::setVertexAttribute(size_t attribIndex, PackedVertexAttr
 
 bool RenderPipelineDesc::setColorAttachmentFormat(size_t colorIndex, WGPUTextureFormat format)
 {
-    if (ANGLE_UNSAFE_TODO(mColorTargetStates[colorIndex]).format == static_cast<uint8_t>(format))
+    if (mColorTargetStates[colorIndex].format == static_cast<uint8_t>(format))
     {
         return false;
     }
 
-    ANGLE_UNSAFE_TODO(SetBitField(mColorTargetStates[colorIndex].format, format));
+    SetBitField(mColorTargetStates[colorIndex].format, format);
     return true;
 }
 
@@ -395,7 +395,7 @@ angle::Result RenderPipelineDesc::createPipeline(ContextWgpu *context,
              ++colorTargetIndex)
         {
             const webgpu::PackedColorTargetState &packedColorTarget =
-                ANGLE_UNSAFE_TODO(mColorTargetStates[colorTargetIndex]);
+                mColorTargetStates[colorTargetIndex];
             WGPUColorTargetState &outputColorTarget = colorTargets[colorTargetIndex];
             outputColorTarget                       = WGPU_COLOR_TARGET_STATE_INIT;
 

@@ -109,32 +109,4 @@ TEST(SystemInfoTest, MacMachineModelParsing)
 
 #endif  // defined(ANGLE_PLATFORM_MACOS)
 
-// Test Windows CM Device ID parsing
-TEST(SystemInfoTest, CMDeviceIDToDeviceAndVendorID)
-{
-    uint32_t vendor = 0;
-    uint32_t device = 0;
-
-    // Test on a real-life CM Device ID
-    EXPECT_TRUE(CMDeviceIDToDeviceAndVendorID(
-        "PCI\\VEN_10DE&DEV_0FFA&SUBSYS_094B10DE&REV_A1\\4&95673C&0&0018", &vendor, &device));
-    EXPECT_EQ(0x10deu, vendor);
-    EXPECT_EQ(0x0ffau, device);
-
-    // Test on a stripped-down but valid CM Device ID string
-    EXPECT_TRUE(CMDeviceIDToDeviceAndVendorID("PCI\\VEN_10DE&DEV_0FFA", &vendor, &device));
-    EXPECT_EQ(0x10deu, vendor);
-    EXPECT_EQ(0x0ffau, device);
-
-    // Test on a string that is too small
-    EXPECT_FALSE(CMDeviceIDToDeviceAndVendorID("\\VEN_10DE&DEV_0FFA", &vendor, &device));
-    EXPECT_EQ(0u, vendor);
-    EXPECT_EQ(0u, device);
-
-    // Test with invalid number
-    EXPECT_FALSE(CMDeviceIDToDeviceAndVendorID("PCI\\VEN_XXXX&DEV_XXXX", &vendor, &device));
-    EXPECT_EQ(0u, vendor);
-    EXPECT_EQ(0u, device);
-}
-
 }  // anonymous namespace

@@ -7,6 +7,7 @@
 //   Some tests for shader inspection
 //
 
+#include <array>
 #include <memory>
 #include "common/unsafe_buffers.h"
 
@@ -1085,7 +1086,7 @@ TEST_F(CollectGeometryVariablesTest, GLInArraySize)
     const std::array<std::string, 5> kInputPrimitives = {
         {"points", "lines", "lines_adjacency", "triangles", "triangles_adjacency"}};
 
-    const GLuint kArraySizeForInputPrimitives[] = {1u, 2u, 4u, 3u, 6u};
+    static constexpr std::array<GLuint, 5> kArraySizeForInputPrimitives = {1u, 2u, 4u, 3u, 6u};
 
     const std::string &functionBody =
         R"(void main()
@@ -1102,7 +1103,7 @@ TEST_F(CollectGeometryVariablesTest, GLInArraySize)
 
         const ShaderVariable &glIn = inVaryings[0];
         ASSERT_EQ("gl_in", glIn.name);
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(kArraySizeForInputPrimitives[i], glIn.arraySizes[0]));
+        EXPECT_EQ(kArraySizeForInputPrimitives[i], glIn.arraySizes[0]);
     }
 }
 
@@ -1446,13 +1447,13 @@ TEST_F(CollectGeometryVariablesTest, CollectInputs)
     const auto &inputVaryings = mTranslator->getInputVaryings();
     ASSERT_EQ(2u, inputVaryings.size());
 
-    const std::string kVaryingName[] = {"texcoord1", "texcoord2"};
+    const std::array<std::string, 2> kVaryingName = {"texcoord1", "texcoord2"};
 
     for (size_t i = 0; i < inputVaryings.size(); ++i)
     {
         const ShaderVariable &varying = inputVaryings[i];
 
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(kVaryingName[i], varying.name));
+        EXPECT_EQ(kVaryingName[i], varying.name);
         EXPECT_TRUE(varying.isArray());
         EXPECT_FALSE(varying.isStruct());
         EXPECT_TRUE(varying.staticUse);
@@ -1472,7 +1473,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputArraySizeForUnsizedInput)
     const std::array<std::string, 5> kInputPrimitives = {
         {"points", "lines", "lines_adjacency", "triangles", "triangles_adjacency"}};
 
-    const GLuint kArraySizeForInputPrimitives[] = {1u, 2u, 4u, 3u, 6u};
+    const std::array<GLuint, 5> kArraySizeForInputPrimitives = {1u, 2u, 4u, 3u, 6u};
 
     const std::string &kVariableDeclaration = "in vec4 texcoord[];\n";
     const std::string &kFunctionBody =
@@ -1492,7 +1493,7 @@ TEST_F(CollectGeometryVariablesTest, CollectInputArraySizeForUnsizedInput)
         const ShaderVariable *varying = &inputVaryings[0];
         EXPECT_EQ("texcoord", varying->name);
         ASSERT_EQ(1u, varying->arraySizes.size());
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(kArraySizeForInputPrimitives[i], varying->arraySizes.back()));
+        EXPECT_EQ(kArraySizeForInputPrimitives[i], varying->arraySizes.back());
     }
 }
 

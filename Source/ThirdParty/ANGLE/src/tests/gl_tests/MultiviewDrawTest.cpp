@@ -7,6 +7,8 @@
 //   Test issuing multiview Draw* commands.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "platform/autogen/FeaturesD3D_autogen.h"
 #include "test_utils/MultiviewTest.h"
@@ -1685,10 +1687,10 @@ void main()
                                 Vector2(-1.f, -1.f), Vector2(1.f, 1.f),  Vector2(-1.f, 1.f)};
     glBufferData(GL_ARRAY_BUFFER, sizeof(kQuadVertices), kQuadVertices, GL_STATIC_DRAW);
 
-    GLVertexArray vao[2];
+    std::array<GLVertexArray, 2> vao;
     for (size_t i = 0u; i < 2u; ++i)
     {
-        glBindVertexArray(ANGLE_UNSAFE_TODO(vao[i]));
+        glBindVertexArray(vao[i]);
 
         glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -2339,11 +2341,11 @@ void main()
         GLint numAttachedShaders = 0;
         glGetProgramiv(program, GL_ATTACHED_SHADERS, &numAttachedShaders);
 
-        GLuint attachedShaders[2] = {0u};
-        glGetAttachedShaders(program, numAttachedShaders, nullptr, attachedShaders);
+        std::array<GLuint, 2> attachedShaders = {0u};
+        glGetAttachedShaders(program, numAttachedShaders, nullptr, attachedShaders.data());
         for (int i = 0; i < 2; ++i)
         {
-            glDetachShader(program, ANGLE_UNSAFE_TODO(attachedShaders[i]));
+            glDetachShader(program, attachedShaders[i]);
         }
 
         glAttachShader(program, vs);

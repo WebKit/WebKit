@@ -1587,11 +1587,15 @@ angle::Result Texture::copyImage(Context *context,
         const FramebufferAttachment *sourceReadAttachment = source->getReadColorAttachment();
         Extents fbSize                                    = sourceReadAttachment->getSize();
         // Force using copySubImage when the source area is out of bounds AND
-        // we're not copying to and from the same texture
-        forceCopySubImage = ((sourceArea.x < 0) || (sourceArea.y < 0) ||
-                             ((sourceArea.x + sourceArea.width) > fbSize.width) ||
-                             ((sourceArea.y + sourceArea.height) > fbSize.height)) &&
-                            (sourceReadAttachment->getResource() != this);
+        // we're not copying to and from the same texture.  When
+        // noRobustInitOnOOBCopyTexImageSameTexture is set, copySubImage is used also when copying
+        // between different subresources of the same texture.
+        forceCopySubImage = (sourceArea.x < 0 || sourceArea.y < 0 ||
+                             sourceArea.x + sourceArea.width > fbSize.width ||
+                             sourceArea.y + sourceArea.height > fbSize.height) &&
+                            (sourceReadAttachment->getResource() != this ||
+                             (context->getLimitations().noRobustInitOnOOBCopyTexImageSameTexture &&
+                              sourceReadAttachment->getTextureImageIndex() != index));
         Rectangle clippedArea;
         if (ClipRectangle(sourceArea, Rectangle(0, 0, fbSize.width, fbSize.height), &clippedArea))
         {

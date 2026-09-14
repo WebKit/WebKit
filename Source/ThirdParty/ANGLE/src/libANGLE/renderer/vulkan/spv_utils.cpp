@@ -2641,7 +2641,7 @@ void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const XFBInterfaceVa
         ASSERT(xfb.pod.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
         ASSERT(xfb.pod.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
 
-        const uint32_t xfbDecorationValues[kXfbDecorationCount] = {
+        const std::array<uint32_t, kXfbDecorationCount> xfbDecorationValues = {
             xfb.pod.buffer,
             xfb.pod.stride,
             xfb.pod.offset,
@@ -2654,10 +2654,9 @@ void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const XFBInterfaceVa
         //     OpMemberDecorate %id fieldIndex Offset xfb.offset
         for (size_t i = 0; i < kXfbDecorationCount; ++i)
         {
-            spirv::WriteMemberDecorate(
-                blobOut, id, spirv::LiteralInteger(fieldIndex),
-                ANGLE_UNSAFE_TODO(kXfbDecorations[i]),
-                {spirv::LiteralInteger(ANGLE_UNSAFE_TODO(xfbDecorationValues[i]))});
+            spirv::WriteMemberDecorate(blobOut, id, spirv::LiteralInteger(fieldIndex),
+                                       ANGLE_UNSAFE_TODO(kXfbDecorations[i]),
+                                       {spirv::LiteralInteger(xfbDecorationValues[i])});
         }
     }
 }
@@ -2674,7 +2673,7 @@ void SpirvTransformFeedbackCodeGenerator::addDecorate(const XFBInterfaceVariable
     ASSERT(info.xfb.pod.stride != ShaderInterfaceVariableXfbInfo::kInvalid);
     ASSERT(info.xfb.pod.offset != ShaderInterfaceVariableXfbInfo::kInvalid);
 
-    const uint32_t xfbDecorationValues[kXfbDecorationCount] = {
+    const std::array<uint32_t, kXfbDecorationCount> xfbDecorationValues = {
         info.xfb.pod.buffer,
         info.xfb.pod.stride,
         info.xfb.pod.offset,
@@ -2688,7 +2687,7 @@ void SpirvTransformFeedbackCodeGenerator::addDecorate(const XFBInterfaceVariable
     for (size_t i = 0; i < kXfbDecorationCount; ++i)
     {
         spirv::WriteDecorate(blobOut, id, ANGLE_UNSAFE_TODO(kXfbDecorations[i]),
-                             {spirv::LiteralInteger(ANGLE_UNSAFE_TODO(xfbDecorationValues[i]))});
+                             {spirv::LiteralInteger(xfbDecorationValues[i])});
     }
 }
 

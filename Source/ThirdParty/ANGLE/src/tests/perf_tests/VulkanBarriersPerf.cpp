@@ -7,6 +7,7 @@
 //   Performance tests for ANGLE's Vulkan backend w.r.t barrier efficiency.
 //
 
+#include <array>
 #include <sstream>
 #include "common/unsafe_buffers.h"
 
@@ -42,15 +43,13 @@ struct VulkanBarriersPerfParams final : public RenderTestParams
     std::string story() const override;
 
     // Static parameters
-    static constexpr int kImageSizes[3] = {256, 512, 4096};
-    static constexpr int kBufferSize    = 4096 * 4096;
+    static constexpr std::array<int, 3> kImageSizes = {256, 512, 4096};
+    static constexpr int kBufferSize                = 4096 * 4096;
 
     bool doBufferCopy;
     bool doLargeTransfers;
     bool doSlowFragmentShaders;
 };
-
-constexpr int VulkanBarriersPerfParams::kImageSizes[];
 
 std::ostream &operator<<(std::ostream &os, const VulkanBarriersPerfParams &params)
 {
@@ -85,13 +84,13 @@ class VulkanBarriersPerfBenchmark : public ANGLERenderTest,
     GLint mSamplerLoc;
 
     // Texture handles
-    GLTexture mTextures[4];
+    std::array<GLTexture, 4> mTextures;
 
     // Uniform buffer handles
-    GLBuffer mUniformBuffers[2];
+    std::array<GLBuffer, 2> mUniformBuffers;
 
     // Framebuffer handles
-    GLFramebuffer mFbos[2];
+    std::array<GLFramebuffer, 2> mFbos;
 
     // Buffer handle
     GLBuffer mVertexBuffer;
@@ -191,10 +190,9 @@ void VulkanBarriersPerfBenchmark::createTexture(uint32_t textureIndex,
     // TODO(syoussefi): compressed copy using vkCmdCopyImage not yet implemented in the vulkan
     // backend. http://anglebug.com/42261682
 
-    glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(mTextures[textureIndex]));
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ANGLE_UNSAFE_TODO(params.kImageSizes[sizeIndex]),
-                 ANGLE_UNSAFE_TODO(params.kImageSizes[sizeIndex]), 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 nullptr);
+    glBindTexture(GL_TEXTURE_2D, mTextures[textureIndex]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.kImageSizes[sizeIndex],
+                 params.kImageSizes[sizeIndex], 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
     // Disable mipmapping
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -218,9 +216,9 @@ void VulkanBarriersPerfBenchmark::createFramebuffer(uint32_t fboIndex,
 {
     createTexture(textureIndex, sizeIndex, false);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mFbos[fboIndex]));
+    glBindFramebuffer(GL_FRAMEBUFFER, mFbos[fboIndex]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                           ANGLE_UNSAFE_TODO(mTextures[textureIndex]), 0);
+                           mTextures[textureIndex], 0);
 }
 
 void VulkanBarriersPerfBenchmark::createResources()
@@ -369,27 +367,25 @@ void VulkanBarriersPerfBenchmark::drawBenchmark()
         if (params.doBufferCopy)
         {
             // Transfer data between the 2 Uniform buffers
-            glBindBuffer(GL_COPY_READ_BUFFER,
-                         ANGLE_UNSAFE_TODO(mUniformBuffers[uniformBufferReadIndex]));
-            glBindBuffer(GL_COPY_WRITE_BUFFER,
-                         ANGLE_UNSAFE_TODO(mUniformBuffers[uniformBufferWriteIndex]));
+            glBindBuffer(GL_COPY_READ_BUFFER, mUniformBuffers[uniformBufferReadIndex]);
+            glBindBuffer(GL_COPY_WRITE_BUFFER, mUniformBuffers[uniformBufferWriteIndex]);
             glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
                                 params.kBufferSize);
         }
 
         // Bind the framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(mFbos[fboDestIndex]));
+        glBindFramebuffer(GL_FRAMEBUFFER, mFbos[fboDestIndex]);
 
         // Set the viewport
-        glViewport(0, 0, ANGLE_UNSAFE_TODO(params.kImageSizes[fboDestSizeIndex]),
-                   ANGLE_UNSAFE_TODO(params.kImageSizes[fboDestSizeIndex]));
+        glViewport(0, 0, params.kImageSizes[fboDestSizeIndex],
+                   params.kImageSizes[fboDestSizeIndex]);
 
         // Clear the color buffer
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Bind the texture
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(mTextures[fboTexSrcIndex]));
+        glBindTexture(GL_TEXTURE_2D, mTextures[fboTexSrcIndex]);
 
         ASSERT_GL_NO_ERROR();
 

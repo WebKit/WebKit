@@ -6,6 +6,8 @@
 
 // SemaphoreTest.cpp : Tests of the GL_EXT_semaphore extension.
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -34,17 +36,17 @@ TEST_P(SemaphoreTest, SemaphoreShouldBeSemaphore)
     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_semaphore"));
 
     constexpr GLsizei kSemaphoreCount = 2;
-    GLuint semaphores[kSemaphoreCount];
-    glGenSemaphoresEXT(kSemaphoreCount, semaphores);
+    std::array<GLuint, kSemaphoreCount> semaphores;
+    glGenSemaphoresEXT(kSemaphoreCount, semaphores.data());
 
     EXPECT_FALSE(glIsSemaphoreEXT(0));
 
     for (GLsizei i = 0; i < kSemaphoreCount; ++i)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_TRUE(glIsSemaphoreEXT(semaphores[i])));
+        EXPECT_TRUE(glIsSemaphoreEXT(semaphores[i]));
     }
 
-    glDeleteSemaphoresEXT(kSemaphoreCount, semaphores);
+    glDeleteSemaphoresEXT(kSemaphoreCount, semaphores.data());
 
     EXPECT_GL_NO_ERROR();
 }

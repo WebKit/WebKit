@@ -432,32 +432,29 @@ bool GPUTestExpectationsParser::loadAllTestExpectationsFromFile(const std::strin
 int32_t GPUTestExpectationsParser::getTestExpectationImpl(const GPUTestConfig *config,
                                                           const std::string &testName)
 {
+    // If no config is present, set all bits to match all entries
+    constexpr GPUTestConfig::ConditionArray kDefaultConditions =
+        GPUTestConfig::ConditionArray::Mask(GPUTestConfig::ConditionArray::size());
+    const GPUTestConfig::ConditionArray &configConditions =
+        config ? config->getConditions() : kDefaultConditions;
+
     for (GPUTestExpectationEntry &entry : mEntries)
     {
-        if (NamesMatchWithWildcard(entry.testName.c_str(), testName.c_str()))
+        // Entry condition bits must be a subset of the config condition bits.
+        if ((configConditions & entry.conditions) != entry.conditions)
         {
-            // Filter by condition first.
-            bool satisfiesConditions = true;
-            if (config)
-            {
-                for (size_t condition : entry.conditions)
-                {
-                    if (!config->getConditions()[condition])
-                    {
-                        satisfiesConditions = false;
-                        break;
-                    }
-                }
-            }
-
-            // Use the first matching expectation in the file as the matching expression.
-            if (satisfiesConditions)
-            {
-                entry.used = true;
-                return entry.testExpectation;
-            }
+            continue;
         }
+
+        if (!NamesMatchWithWildcard(entry.testName.c_str(), testName.c_str()))
+        {
+            continue;
+        }
+
+        entry.used = true;
+        return entry.testExpectation;
     }
+
     return kGpuTestPass;
 }
 

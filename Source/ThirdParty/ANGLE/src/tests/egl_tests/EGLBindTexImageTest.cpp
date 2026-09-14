@@ -8,6 +8,9 @@
 //
 
 #include <gtest/gtest.h>
+
+#include <array>
+
 #include "common/unsafe_buffers.h"
 
 #include <iostream>
@@ -134,13 +137,13 @@ class EGLBindTexImageTest : public ANGLETest<EGLBindTexImageTestParams>
             eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
             for (size_t i = 0; i < 2; i++)
             {
-                if (ANGLE_UNSAFE_TODO(mSurfaces[i]) != EGL_NO_SURFACE)
+                if (mSurfaces[i] != EGL_NO_SURFACE)
                 {
-                    eglDestroySurface(mDisplay, ANGLE_UNSAFE_TODO(mSurfaces[i]));
+                    eglDestroySurface(mDisplay, mSurfaces[i]);
                 }
-                if (ANGLE_UNSAFE_TODO(mContexts[i]) != EGL_NO_CONTEXT)
+                if (mContexts[i] != EGL_NO_CONTEXT)
                 {
-                    eglDestroyContext(mDisplay, ANGLE_UNSAFE_TODO(mContexts[i]));
+                    eglDestroyContext(mDisplay, mContexts[i]);
                 }
             }
             eglTerminate(mDisplay);
@@ -201,8 +204,8 @@ class EGLBindTexImageTest : public ANGLETest<EGLBindTexImageTestParams>
     }
 
     EGLDisplay mDisplay     = EGL_NO_DISPLAY;
-    EGLContext mContexts[2] = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
-    EGLContext mSurfaces[2] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, 2> mContexts = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLContext, 2> mSurfaces = {EGL_NO_SURFACE, EGL_NO_SURFACE};
     EGLConfig mConfig       = EGL_NO_CONFIG_KHR;
     FlushMode mFlushMode;
     ContextMode mContextMode;

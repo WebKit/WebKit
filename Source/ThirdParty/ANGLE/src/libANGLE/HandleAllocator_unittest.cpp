@@ -6,6 +6,7 @@
 // Unit tests for HandleAllocator.
 //
 
+#include <array>
 #include <unordered_set>
 #include "common/unsafe_buffers.h"
 
@@ -134,10 +135,10 @@ TEST(HandleAllocatorTest, SortedOrderHandle)
 
     allocator.reserve(3);
 
-    GLuint allocatedList[5];
+    std::array<GLuint, 5> allocatedList;
     for (GLuint count = 0; count < 5; count++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_TRUE(allocator.allocate(&allocatedList[count])));
+        EXPECT_TRUE(allocator.allocate(&allocatedList[count]));
     }
 
     EXPECT_EQ(1u, allocatedList[0]);
@@ -298,10 +299,10 @@ TEST(HandleAllocatorTest, ReleaseThenReuseInFIFO)
     gl::HandleAllocator allocator(1000);
 
     // Allocate handles 1-11. The next unallocated index is 12.
-    GLuint handles[11];
+    std::array<GLuint, 11> handles;
     for (int i = 0; i < 11; i++)
     {
-        ANGLE_UNSAFE_TODO(EXPECT_TRUE(allocator.allocate(&handles[i])));
+        EXPECT_TRUE(allocator.allocate(&handles[i]));
     }
 
     // Release handles in a non-sorted order. None is adjacent to 12, so all go into mReleasedList

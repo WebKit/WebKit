@@ -1517,6 +1517,10 @@ void Renderer::ensureCapsInitialized() const
     mNativeLimitations.maxBufferBytes  = static_cast<size_t>(mMaxMemoryAllocationSize);
     mNativeLimitations.maxTextureBytes = static_cast<size_t>(mMaxMemoryAllocationSize);
 
+    // Ask the front-end to handle robust-init when copying between mips of the same texture via
+    // glCopyTexImage2D.
+    mNativeLimitations.noRobustInitOnOOBCopyTexImageSameTexture = true;
+
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);
 }

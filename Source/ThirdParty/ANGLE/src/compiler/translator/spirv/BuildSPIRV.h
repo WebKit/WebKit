@@ -9,6 +9,8 @@
 #ifndef COMPILER_TRANSLATOR_SPIRV_BUILDSPIRV_H_
 #define COMPILER_TRANSLATOR_SPIRV_BUILDSPIRV_H_
 
+#include <array>
+
 #include "common/FixedVector.h"
 #include "common/PackedEnums.h"
 #include "common/bitset_utils.h"
@@ -565,7 +567,7 @@ class SPIRVBuilder : angle::NonCopyable
     std::vector<SpirvBlock> mSpirvCurrentFunctionBlocks;
 
     // List of constants that are already defined (for reuse).
-    spirv::IdRef mBoolConstants[2];
+    std::array<spirv::IdRef, 2> mBoolConstants;
     angle::HashMap<uint32_t, spirv::IdRef> mUintConstants;
     angle::HashMap<uint32_t, spirv::IdRef> mIntConstants;
     angle::HashMap<uint32_t, spirv::IdRef> mFloatConstants;

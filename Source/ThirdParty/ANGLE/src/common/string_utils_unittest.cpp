@@ -218,6 +218,8 @@ TEST(StringUtilsTest, ToCamelCase)
 TEST(StringUtilsTest, NamesMatchWithWildcard)
 {
     EXPECT_TRUE(NamesMatchWithWildcard("ASDF", "ASDF"));
+
+    // '*' matching
     EXPECT_TRUE(NamesMatchWithWildcard("A*", "ASDF"));
     EXPECT_TRUE(NamesMatchWithWildcard("AS*", "ASDF"));
     EXPECT_TRUE(NamesMatchWithWildcard("ASD*", "ASDF"));
@@ -239,6 +241,20 @@ TEST(StringUtilsTest, NamesMatchWithWildcard)
     EXPECT_TRUE(NamesMatchWithWildcard("*S*D*", "ASDF"));
 
     EXPECT_TRUE(NamesMatchWithWildcard("ASD*", "ASDF*"));
+
+    // '?' matching
+    EXPECT_TRUE(NamesMatchWithWildcard("AS?F", "ASDF"));
+    EXPECT_FALSE(NamesMatchWithWildcard("AS??F", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("????", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("??D?", "ASDF"));
+    EXPECT_FALSE(NamesMatchWithWildcard("AS?DF", "ASDF"));
+
+    // Mixed '?' and '*' matching
+    EXPECT_TRUE(NamesMatchWithWildcard("AS?*F", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("AS*?*F", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("*AS*?*F*", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("*S*?**", "ASDF"));
+    EXPECT_TRUE(NamesMatchWithWildcard("*?*", "ASDF"));
 }
 
 // Note: ReadFileToString is harder to test

@@ -472,6 +472,19 @@ enum class StructureOriginalScope
     FunctionLocal,
 };
 
+TIntermDeclaration *DeclareStruct(TSymbolTable *symbolTable, const TStructure *structure)
+{
+    TType *namedType = new TType(structure, true);
+    namedType->setQualifier(EvqGlobal);
+
+    TVariable *structVariable =
+        new TVariable(symbolTable, kEmptyImmutableString, namedType, SymbolType::Empty);
+    TIntermSymbol *structDeclarator       = new TIntermSymbol(structVariable);
+    TIntermDeclaration *structDeclaration = new TIntermDeclaration;
+    structDeclaration->appendDeclarator(structDeclarator);
+    return structDeclaration;
+}
+
 TIntermDeclaration *RenameAndDeclareStruct(TSymbolTable *symbolTable,
                                            TStructure *structure,
                                            StructureOriginalScope scope)
@@ -493,15 +506,7 @@ TIntermDeclaration *RenameAndDeclareStruct(TSymbolTable *symbolTable,
             << (scope == StructureOriginalScope::Global ? 0 : structure->uniqueId().get());
     structure->setName(builder);
 
-    TType *namedType = new TType(structure, true);
-    namedType->setQualifier(EvqGlobal);
-
-    TVariable *structVariable =
-        new TVariable(symbolTable, kEmptyImmutableString, namedType, SymbolType::Empty);
-    TIntermSymbol *structDeclarator       = new TIntermSymbol(structVariable);
-    TIntermDeclaration *structDeclaration = new TIntermDeclaration;
-    structDeclaration->appendDeclarator(structDeclarator);
-    return structDeclaration;
+    return DeclareStruct(symbolTable, structure);
 }
 
 unsigned int GetTypeComponentCount(const TType &type)
@@ -527,23 +532,6 @@ unsigned int GetTypeComponentCount(const TType &type)
     }
     components *= type.getArraySizeProduct();
     return components;
-}
-
-TIntermTyped *RemoveCommaLeftHandSize(TIntermTyped *node)
-{
-    TIntermTyped *current = node;
-    while (true)
-    {
-        TIntermBinary *asBinary = current->getAsBinaryNode();
-        if (asBinary == nullptr || asBinary->getOp() != EOpComma)
-        {
-            break;
-        }
-
-        current = asBinary->getRight();
-    }
-
-    return current;
 }
 }  // namespace
 
@@ -2202,6 +2190,29 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
             break;
         default:
             break;
+    }
+
+    // If this is a nameless struct, then either the variable is a shader input/output or not.  In
+    // the former case, remove the struct from mNamelessStructs and let it be declared together
+    // with the variable.  This is needed to support shader linking.  In the latter case, make the
+    // type not a struct specifier and let the struct be separately declared.
+    if (type->getStruct() != nullptr)
+    {
+        auto it = std::find(mNamelessStructs.begin(), mNamelessStructs.end(), type->getStruct());
+        if (it != mNamelessStructs.end())
+        {
+            if (IsShaderIn(type->getQualifier()) || IsShaderOut(type->getQualifier()))
+            {
+                mNamelessStructs.erase(it);
+            }
+            else
+            {
+                TType *newType = new TType(*type);
+                newType->removeStructSpecifier();
+                newType->setTypeId(type->typeId());
+                type = newType;
+            }
+        }
     }
 
     *variable = new TVariable(&symbolTable, identifier, type, symbolType);
@@ -5227,14 +5238,7 @@ TIntermDeclaration *TParseContext::parseSingleDeclaration(
     {
         emptyDeclarationErrorCheck(*type, identifierOrTypeLocation);
         // In most cases we don't need to create a symbol node for an empty declaration.
-        // But if the empty declaration is declaring a struct type, the symbol node will store that.
-        if (type->getBasicType() == EbtStruct)
-        {
-            TVariable *emptyVariable =
-                new TVariable(&symbolTable, kEmptyImmutableString, type, SymbolType::Empty);
-            symbol = new TIntermSymbol(emptyVariable);
-        }
-        else if (IsAtomicCounter(publicType.getBasicType()))
+        if (IsAtomicCounter(publicType.getBasicType()))
         {
             setAtomicCounterBindingDefaultOffset(publicType, identifierOrTypeLocation);
         }
@@ -8754,13 +8758,18 @@ TTypeSpecifierNonArray TParseContext::addStructure(const TSourceLoc &structLine,
             angle::Span<const TField *const>(reorderedFields->data(), reorderedFields->size())),
         {}, false, false, symbolTable.atGlobalLevel());
 
-    // Nameless structs are declared inline with their variables.  But named structs are always
-    // separately declared at the end of parse.
+    // Nameless structs are declared inline with their variables if the variable is a shader input
+    // or output.  But named structs are always separately declared at the end of parse, as well as
+    // nameless structs that are used for uniforms or global/local variables.
     TTypeSpecifierNonArray typeSpecifierNonArray;
     typeSpecifierNonArray.initializeStruct(structure, isNamelessStruct, true, structLine);
     exitStructDeclaration();
 
-    if (!isNamelessStruct)
+    if (isNamelessStruct)
+    {
+        mNamelessStructs.push_back(structure);
+    }
+    else
     {
         if (symbolTable.atGlobalLevel())
         {
@@ -10498,7 +10507,9 @@ void TParseContext::prependPendingStructDeclarations()
     //
     // The whole list is prepended to the shader at the end.  Global structs are declared first, as
     // they may be used by function-local structs.  Within global or function-local structs, they
-    // are declared in the order they are encountered in the shader for the same reason.
+    // are declared in the order they are encountered in the shader for the same reason.  Nameless
+    // structs are declared last as they may use the other named structs, but they cannot be
+    // referred to by the named ones.
 
     for (TStructure *structure : mGlobalNamedStructs)
     {
@@ -10510,6 +10521,16 @@ void TParseContext::prependPendingStructDeclarations()
     {
         allStructDecls.push_back(
             RenameAndDeclareStruct(&symbolTable, structure, StructureOriginalScope::FunctionLocal));
+    }
+
+    for (TStructure *structure : mNamelessStructs)
+    {
+        // If the struct is part of a shader input/output variable declaration, it's already removed
+        // from this list in |declareVariable|.
+        ASSERT(structure->symbolType() == SymbolType::Empty);
+        structure->setName(kEmptyImmutableString);
+
+        allStructDecls.push_back(DeclareStruct(&symbolTable, structure));
     }
 
     mTreeRoot->getSequence()->insert(mTreeRoot->getSequence()->begin(), allStructDecls.begin(),

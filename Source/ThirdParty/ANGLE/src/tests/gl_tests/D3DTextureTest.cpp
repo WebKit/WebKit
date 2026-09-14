@@ -2357,6 +2357,8 @@ TEST_P(D3DTextureYUVTestES3, NV12TextureImageRender)
 // framebuffer attachments.
 TEST_P(D3DTextureYUVTestES3, P010TextureImageRender)
 {
+    // TODO(anglebug.com/546181659): Fails on Win/ARM64 w/ Snapdragon X Elite SoC.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsQualcomm());
     RunYUVRenderTest(DXGI_FORMAT_P010);
 }
 
@@ -2378,6 +2380,8 @@ TEST_P(D3DTextureYUVTestES3, NV12TextureImageReadPixel)
 // framebuffer attachments and then read from as individual planes.
 TEST_P(D3DTextureYUVTestES3, P010TextureImageReadPixel)
 {
+    // TODO(anglebug.com/546181659): Fails on Win/ARM64 w/ Snapdragon X Elite SoC.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsQualcomm());
     RunYUVReadPixelTest(DXGI_FORMAT_P010);
 }
 
@@ -2401,6 +2405,8 @@ TEST_P(D3DTextureYUVTestES3, NV12TextureImageWritePixel)
 // as individual planes.
 TEST_P(D3DTextureYUVTestES3, P010TextureImageWritePixel)
 {
+    // TODO(anglebug.com/546181659): Fails on Win/ARM64 w/ Snapdragon X Elite SoC.
+    ANGLE_SKIP_TEST_IF(IsWindows() && IsQualcomm());
     RunYUVWritePixelTest<uint16_t>(DXGI_FORMAT_P010);
 }
 

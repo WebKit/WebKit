@@ -106,6 +106,12 @@ To do so, remove `angle_restricted_traces` from your GN args, then compile with:
 ```
 autoninja -C out/<config> angle_trace_perf_tests
 ```
+
+Tip: If you have `use_remoteexec = true` enabled in your GN args, you can pass `-config=remote-link` to Siso to link all trace libraries in parallel remotely on RBE workers, significantly speeding up the build:
+```
+autoninja -C out/<config> -config=remote-link angle_trace_perf_tests
+```
+
 and run with (including recommended options):
 ```
 out/<config>/angle_trace_tests --filter='*among_us*' --verbose --fixed-test-time-with-warmup 10

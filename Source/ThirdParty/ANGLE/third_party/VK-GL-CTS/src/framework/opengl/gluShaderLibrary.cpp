@@ -217,6 +217,12 @@ bool isValid(const ShaderCaseSpecification &spec)
             return false;
         }
 
+        if (spec.caseType == CASETYPE_COMPUTE_ONLY && (!hasVertex || hasFragment))
+        {
+            print("ERROR: Compute-only case must have only vertex (both) shader source!\n");
+            return false;
+        }
+
         if (spec.caseType == CASETYPE_COMPLETE && (!hasVertex || !hasFragment))
         {
             print("ERROR: Complete case must have at least vertex and fragment shaders\n");
@@ -1607,6 +1613,24 @@ void ShaderParser::parseShaderCase(vector<tcu::TestNode *> &shaderNodeList)
 
             shaderNodeList.push_back(
                 m_caseFactory->createCase(caseName + "_fragment", description, ShaderCaseSpecification(spec)));
+        }
+
+        // compute
+        if (m_caseFactory->supportsComputeOnlyCase())
+        {
+            ShaderCaseSpecification spec;
+            spec.caseType      = CASETYPE_COMPUTE_ONLY;
+            spec.expectResult  = expectResult;
+            spec.targetVersion = version;
+            spec.requiredCaps  = requiredCaps;
+            spec.values        = valueBlock;
+
+            spec.programs.resize(1);
+            spec.programs[0].sources << VertexSource(bothSource);
+            spec.programs[0].requiredExtensions = requiredExts;
+
+            shaderNodeList.push_back(
+                m_caseFactory->createCase(caseName + "_compute", description, ShaderCaseSpecification(spec)));
         }
     }
     else if (pipelinePrograms.empty())

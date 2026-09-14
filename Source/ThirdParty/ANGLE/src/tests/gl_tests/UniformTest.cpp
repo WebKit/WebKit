@@ -1683,14 +1683,14 @@ void main(void)
     EXPECT_EQ(glGetUniformLocation(program, "uColor"), glGetUniformLocation(program, "uColor[0]"));
 
     // All array uniform locations should be unique
-    GLint positionLocations[4] = {
+    std::array<GLint, 4> positionLocations = {
         glGetUniformLocation(program, "uPosition[0]"),
         glGetUniformLocation(program, "uPosition[1]"),
         glGetUniformLocation(program, "uPosition[2]"),
         glGetUniformLocation(program, "uPosition[3]"),
     };
 
-    GLint colorLocations[4] = {
+    std::array<GLint, 4> colorLocations = {
         glGetUniformLocation(program, "uColor[0]"),
         glGetUniformLocation(program, "uColor[1]"),
         glGetUniformLocation(program, "uColor[2]"),
@@ -1965,10 +1965,10 @@ TEST_P(UniformTest, BooleanArrayUniformStateQuery)
 {
 
     glUseProgram(mProgram);
-    GLint boolValuesi[4]   = {0, 1, 0, 1};
-    GLfloat boolValuesf[4] = {0, 1, 0, 1};
+    static constexpr std::array<GLint, 4> boolValuesi   = {0, 1, 0, 1};
+    static constexpr std::array<GLfloat, 4> boolValuesf = {0, 1, 0, 1};
 
-    GLint locations[4] = {
+    std::array<GLint, 4> locations = {
         glGetUniformLocation(mProgram, "uniBArr"),
         glGetUniformLocation(mProgram, "uniBArr[1]"),
         glGetUniformLocation(mProgram, "uniBArr[2]"),
@@ -1981,7 +1981,7 @@ TEST_P(UniformTest, BooleanArrayUniformStateQuery)
     }
 
     // Calling Uniform1iv
-    glUniform1iv(locations[0], 4, boolValuesi);
+    glUniform1iv(locations[0], 4, boolValuesi.data());
 
     for (unsigned int idx = 0; idx < 4; ++idx)
     {
@@ -1998,7 +1998,7 @@ TEST_P(UniformTest, BooleanArrayUniformStateQuery)
     }
 
     // Calling Uniform1fv
-    glUniform1fv(locations[0], 4, boolValuesf);
+    glUniform1fv(locations[0], 4, boolValuesf.data());
 
     for (unsigned int idx = 0; idx < 4; ++idx)
     {
@@ -2056,12 +2056,13 @@ TEST_P(UniformTestES3, MatrixArrayUniformStateQuery)
     ASSERT_NE(mProgram, 0u);
 
     glUseProgram(mProgram);
-    GLfloat expected[kArrayCount][kMatrixStride] = {
+    static constexpr std::array<std::array<GLfloat, kMatrixStride>, kArrayCount> expected = {{
         {0.6f, -0.4f, 0.6f, 0.9f, -0.6f, 0.3f, -0.3f, -0.1f, -0.4f, -0.3f, 0.7f, 0.1f},
         {-0.4f, -0.4f, -0.5f, -0.7f, 0.1f, -0.5f, 0.0f, -0.9f, -0.4f, 0.8f, -0.6f, 0.9f},
         {0.4f, 0.1f, -0.9f, 1.0f, -0.8f, 0.4f, -0.2f, 0.4f, -0.0f, 0.2f, 0.9f, -0.3f},
         {0.5f, 0.7f, -0.0f, 1.0f, 0.7f, 0.7f, 0.7f, -0.7f, -0.8f, 0.6f, 0.5f, -0.2f},
-        {-1.0f, 0.8f, 1.0f, -0.4f, 0.7f, 0.5f, 0.5f, 0.8f, 0.6f, 0.1f, 0.4f, -0.9f}};
+        {-1.0f, 0.8f, 1.0f, -0.4f, 0.7f, 0.5f, 0.5f, 0.8f, 0.6f, 0.1f, 0.4f, -0.9f},
+    }};
 
     GLint baseLocation = glGetUniformLocation(mProgram, "uniMat3x4");
     ASSERT_NE(-1, baseLocation);
@@ -3186,7 +3187,7 @@ TEST_P(UniformTestES31, PackedEncoderWorksForArrayOfStructs)
     ASSERT_NE(program, 0u);
     glUseProgram(program);
 
-    GLfloat expectedData[36] = {
+    static constexpr std::array<GLfloat, 36> expectedData = {
         0.0f,  1.0f,  2.0f,  0.0f, 3.0f,  4.0f,  5.0f,  0.0f, 6.0f,  7.0f,  8.0f,  9.0f,
 
         10.0f, 11.0f, 12.0f, 0.0f, 13.0f, 14.0f, 15.0f, 0.0f, 16.0f, 17.0f, 18.0f, 19.0f,
@@ -3295,7 +3296,7 @@ TEST_P(UniformTestES31, PackedEncoderWorksForArrayOfNestedStructs)
     ASSERT_NE(program, 0u);
     glUseProgram(program);
 
-    GLfloat expectedData[72] = {
+    static constexpr std::array<GLfloat, 72> expectedData = {
         0.0f,  1.0f,  2.0f,  0.0f, 3.0f,  4.0f,  5.0f,  0.0f, 6.0f,  7.0f,  8.0f,  9.0f,
 
         10.0f, 11.0f, 12.0f, 0.0f, 13.0f, 14.0f, 15.0f, 0.0f, 16.0f, 17.0f, 18.0f, 19.0f,
@@ -3444,13 +3445,14 @@ TEST_P(UniformTestES3, MatrixUniformUpload)
     }
 
     using UniformMatrixCxRfv = GL_APIENTRY void (*)(GLint, GLsizei, GLboolean, const GLfloat *);
-    UniformMatrixCxRfv uniformMatrixCxRfv[kMaxDims + 1][kMaxDims + 1] = {
-        {nullptr, nullptr, nullptr, nullptr, nullptr},
-        {nullptr, nullptr, nullptr, nullptr, nullptr},
-        {nullptr, nullptr, glUniformMatrix2fv, glUniformMatrix2x3fv, glUniformMatrix2x4fv},
-        {nullptr, nullptr, glUniformMatrix3x2fv, glUniformMatrix3fv, glUniformMatrix3x4fv},
-        {nullptr, nullptr, glUniformMatrix4x2fv, glUniformMatrix4x3fv, glUniformMatrix4fv},
-    };
+    static const std::array<std::array<UniformMatrixCxRfv, kMaxDims + 1>, kMaxDims + 1>
+        uniformMatrixCxRfv = {{
+            {nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, nullptr, nullptr, nullptr},
+            {nullptr, nullptr, glUniformMatrix2fv, glUniformMatrix2x3fv, glUniformMatrix2x4fv},
+            {nullptr, nullptr, glUniformMatrix3x2fv, glUniformMatrix3fv, glUniformMatrix3x4fv},
+            {nullptr, nullptr, glUniformMatrix4x2fv, glUniformMatrix4x3fv, glUniformMatrix4fv},
+        }};
 
     for (int transpose = 0; transpose < 2; ++transpose)
     {

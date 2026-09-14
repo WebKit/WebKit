@@ -7,6 +7,8 @@
 //   Tests that malformed shaders fail compilation, and that correct shaders pass compilation.
 //
 
+#include <array>
+
 #include "GLSLANG/ShaderLang.h"
 #include "common/unsafe_buffers.h"
 #include "gtest/gtest.h"
@@ -4016,7 +4018,7 @@ TEST_F(ComputeShaderValidationTest, InvalidEarlyFragmentTests)
 // Test that layout(x) in; only accepts x=early_fragment_tests.
 TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVariableDecl)
 {
-    const char *noValueQualifiers[] = {
+    static constexpr std::array<const char *, 28> noValueQualifiers = {
         "shared",      "packed",
         "std140",      "std430",
         "row_major",   "col_major",
@@ -4033,7 +4035,7 @@ TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVa
         "line_strip",  "triangle_strip",
     };
 
-    const char *withValueQualifiers[] = {
+    static constexpr std::array<const char *, 10> withValueQualifiers = {
         "location",     "binding",   "offset",      "local_size_x", "local_size_y",
         "local_size_z", "num_views", "invocations", "max_vertices", "index",
     };
@@ -4058,11 +4060,10 @@ TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVa
         FAIL() << "Shader compilation failed, expecting success:\n" << mInfoLog;
     }
 
-    for (size_t i = 0; i < ArraySize(noValueQualifiers); ++i)
+    for (const char *noValueQualifier : noValueQualifiers)
     {
-        const std::string shaderString = kShaderStringPre +
-                                         std::string(ANGLE_UNSAFE_TODO(noValueQualifiers[i])) +
-                                         kShaderStringPost;
+        const std::string shaderString =
+            kShaderStringPre + std::string(noValueQualifier) + kShaderStringPost;
 
         if (compile(shaderString))
         {
@@ -4070,11 +4071,10 @@ TEST_F(FragmentShaderValidationTest, NothingButEarlyFragmentTestsWithInWithoutVa
         }
     }
 
-    for (size_t i = 0; i < ArraySize(withValueQualifiers); ++i)
+    for (const char *withValueQualifier : withValueQualifiers)
     {
-        const std::string shaderString = kShaderStringPre +
-                                         std::string(ANGLE_UNSAFE_TODO(withValueQualifiers[i])) +
-                                         "=1" + kShaderStringPost;
+        const std::string shaderString =
+            kShaderStringPre + std::string(withValueQualifier) + "=1" + kShaderStringPost;
 
         if (compile(shaderString))
         {

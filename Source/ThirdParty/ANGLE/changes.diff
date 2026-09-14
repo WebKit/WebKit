@@ -102,7 +102,7 @@ index 8235662ed0a725064cced4d71065f424a69c36dd..2f4ea31fe7ad1bc6976538ae6f894cb6
  #define GL_ANGLE_explicit_context
  typedef void *GLeglDisplayANGLE;
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index 86ff33d00911b6dd57740333b7487fd45bc32f9e..fbd3ac6e12df79fc46e513d66da0141802d41dcd 100644
+index e0357e0a87400e8923f2b4df2c5252c46880b7ff..c153044aa3f9381ccff25914da07f1d679045e30 100644
 --- a/include/GLSLANG/ShaderLang.h
 +++ b/include/GLSLANG/ShaderLang.h
 @@ -160,8 +160,8 @@ struct ShPixelLocalStorageOptions
@@ -193,25 +193,21 @@ index acdbfe0028f6217de03ef3963a751b9d43aa6148..a8a81f42e834fa7c1375b33879a9e3d9
              "name": "copy_IOSurface_to_non_IOSurface_for_read_optimization",
              "category": "Workarounds",
 diff --git a/scripts/code_generation_hashes/ANGLE_load_functions_table.json b/scripts/code_generation_hashes/ANGLE_load_functions_table.json
-index 588af1066c44d6a03bffcd6bcfc5b0c9ea45710f..e632669b07938e44a1aac6b9fcfbb0e66891ad07 100644
+index 588af1066c44d6a03bffcd6bcfc5b0c9ea45710f..a328bcfe49499d6028867eb53bb301cb4c67f611 100644
 --- a/scripts/code_generation_hashes/ANGLE_load_functions_table.json
 +++ b/scripts/code_generation_hashes/ANGLE_load_functions_table.json
-@@ -1,10 +1,10 @@
- {
-   "src/libANGLE/renderer/angle_format.py":
--    "ad644811f7f2e1d0b4947534f839a11b",
-+    "49c55a74e763b1cfd0d96c4b49b4e402",
+@@ -4,7 +4,7 @@
    "src/libANGLE/renderer/gen_load_functions_table.py":
      "10e66c76a350a1c70fadd2e10a28981e",
    "src/libANGLE/renderer/load_functions_data.json":
 -    "785ee129a0007b4e43ef273fdd404973",
-+    "83b25b5a038379e4e90964246aa80330",
++    "4dc799b58f67a1faf535234a3fb9a821",
    "src/libANGLE/renderer/load_functions_table_autogen.cpp":
 -    "626b0cfa494220a546e4f7164d0f5770"
-+    "78971f33a5563eec562557321788cafa"
++    "1da16f2072ae5079307471a3ba121e01"
  }
 diff --git a/scripts/code_generation_hashes/ANGLE_shader_preprocessor.json b/scripts/code_generation_hashes/ANGLE_shader_preprocessor.json
-index d1558ae249710b392bc99ea778d241f8b1024ce0..52db61aeaeabd11b14f63bec253f8ae956d65283 100644
+index 8e13939809ac635fc89ac21599e2120274fb936f..f27c2e10d633951194a12cb4a66ae93abf0a1a80 100644
 --- a/scripts/code_generation_hashes/ANGLE_shader_preprocessor.json
 +++ b/scripts/code_generation_hashes/ANGLE_shader_preprocessor.json
 @@ -1,16 +1,16 @@
@@ -222,13 +218,13 @@ index d1558ae249710b392bc99ea778d241f8b1024ce0..52db61aeaeabd11b14f63bec253f8ae9
    "src/compiler/preprocessor/generate_parser.py":
      "9a4588fdf009298fe49c52b9252789c7",
    "src/compiler/preprocessor/preprocessor.l":
--    "31b4f8bc0bb8f713f5e4db8ae04925e2",
-+    "85a503bfb4d16d3a78e9d8a55685036c",
+-    "906e092159e41db707f3d63426e974c4",
++    "28da5c4260fa7d8a2df25a3226d8f47d",
    "src/compiler/preprocessor/preprocessor.y":
      "8e4f866302395b2e2e504d8f079a6631",
    "src/compiler/preprocessor/preprocessor_lex_autogen.cpp":
--    "40cfbba831efff3ae572453545dfbd5a",
-+    "ac6be3698142d1c5025efc3a04b28e21",
+-    "e816c40e3f1f9f3c2d6bc7e6a13e46d1",
++    "1a6d7f2f9bfeb4f91adefa0c20a67a99",
    "src/compiler/preprocessor/preprocessor_tab_autogen.cpp":
 -    "000f93c6b244dcae862efa319a737a7f",
 +    "ff3120300799cd96965e4c424b2d2ffb",
@@ -236,7 +232,7 @@ index d1558ae249710b392bc99ea778d241f8b1024ce0..52db61aeaeabd11b14f63bec253f8ae9
      "dfc9209e0c76eddd9bed0601c6c189e5",
    "tools/flex-bison/linux/flex.sha1":
 diff --git a/scripts/code_generation_hashes/ANGLE_shader_translator.json b/scripts/code_generation_hashes/ANGLE_shader_translator.json
-index 39548fadb441de90024a3de10c5ee5da73e48c30..adf4bcd28869cbb6c700f79fbb1f6c12ee72d9ad 100644
+index 4dc0eb35ca8695b4366da003eba303a43cd84468..f8a490ca498cce1aaa989e878fbd67bb837e4cc7 100644
 --- a/scripts/code_generation_hashes/ANGLE_shader_translator.json
 +++ b/scripts/code_generation_hashes/ANGLE_shader_translator.json
 @@ -1,18 +1,18 @@
@@ -247,13 +243,13 @@ index 39548fadb441de90024a3de10c5ee5da73e48c30..adf4bcd28869cbb6c700f79fbb1f6c12
    "src/compiler/translator/generate_parser.py":
      "ad919972a040d9b3b4aa5dc547fadc75",
    "src/compiler/translator/glslang.l":
--    "aa7542c5cad1b9476b76426958b58d61",
-+    "d3d1bee80390827eed4dd26b278089c8",
+-    "9ca50b5b488bfd537cc2f5c479670cda",
++    "06b9752c225bdf872614e272c3ccfa9d",
    "src/compiler/translator/glslang.y":
      "6c4f0838296500f96a99e2e0b0715529",
    "src/compiler/translator/glslang_lex_autogen.cpp":
--    "93a9f8320f1ff165d2b31d9e8add91c3",
-+    "4d77ad7d8f5dc0a855c88cc90ca94e48",
+-    "45a1f8708d2249232b20fd7634691ab0",
++    "fd57062fd7ee3b8225dc98d23f580850",
    "src/compiler/translator/glslang_tab_autogen.cpp":
 -    "86d84b555871d272c2618e3c645c7dae",
 +    "8edeb0aa08e5e96817fa62823b903fb8",
@@ -296,7 +292,7 @@ index aa6d0ffbf1d2abc0e5afa3aeb78725dba1456f57..453114ebcfe3e1be71d258996ab1c55e
      "2056d54ea07156f1988ca1366bdee21a",
    "third_party/OpenCL-Docs/src/xml/cl.xml":
 diff --git a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
-index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c26789abfa 100644
+index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
 --- a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 +++ b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 @@ -11,166 +11,8 @@
@@ -346,13 +342,13 @@ index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c2
 -  "third_party/VK-GL-CTS/src/external/vulkancts/framework/vulkan/CMakeLists.txt":
 -    "f10f1d60d6120763c8a4f2878e605b68",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/CMakeLists.txt":
--    "0373c12ffe45746b288811c033013eef",
+-    "2879725046df90880029b24f0585596f",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/amber/CMakeLists.txt":
 -    "51aed6000e6c76f2e4a5922e48841885",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/api/CMakeLists.txt":
--    "f8859abde74ed165792a68418fa8a2a7",
+-    "02e15370f47081f609361962fbadeda2",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/binding_model/CMakeLists.txt":
--    "448a94a060bc7ce2ce04793945068ba3",
+-    "1d296a4235616526b4a34c502be6c8d4",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/clipping/CMakeLists.txt":
 -    "2341f788b087bc78e89f66446fdad59b",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/compute/CMakeLists.txt":
@@ -362,11 +358,11 @@ index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c2
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/cooperative_vector/CMakeLists.txt":
 -    "7c0e5da40f80c2b1045cc16fc70b893c",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/data_graph/CMakeLists.txt":
--    "08d38968f69580ea8bc4b18bd16c32be",
+-    "081189c864125df03d4a95566365b53b",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/descriptor_indexing/CMakeLists.txt":
 -    "32f809fa5ec2534a5567ce5f42d7a685",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/device_generated_commands/CMakeLists.txt":
--    "8ba06f20e6ee76bb0d6ad48be9fbf3ed",
+-    "48a64c0ad3781631834a54298845af5a",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/device_group/CMakeLists.txt":
 -    "451a6c35fd38aec3212d02f14f201cf9",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/draw/CMakeLists.txt":
@@ -402,7 +398,7 @@ index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c2
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/pipeline/CMakeLists.txt":
 -    "3ae9900b7c55828bf5c58dc0c1bbfb80",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/postmortem/CMakeLists.txt":
--    "701b4a0c61cf94fa3cf44a6017496562",
+-    "a7cede3be182251b4be471d5e4e11b56",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/protected_memory/CMakeLists.txt":
 -    "57966bb46c3156d090443753a38ee0ac",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/query_pool/CMakeLists.txt":
@@ -416,13 +412,13 @@ index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c2
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/reconvergence/CMakeLists.txt":
 -    "c00ddc8833c41b98d0d70e2067f1c08b",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/renderpass/CMakeLists.txt":
--    "ef60a69e26562cf0829a5cb30d65bb14",
+-    "24508dc138d4b74ebc1bfd5582128868",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/robustness/CMakeLists.txt":
 -    "643240ef59da29b16b9ad3882d338f6e",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/sc/CMakeLists.txt":
 -    "59984e5eeb9a42789bd499b24b45fdc9",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/shader_object/CMakeLists.txt":
--    "5992d8d787569663fcf4c780c19b0cdc",
+-    "aa156acc34bf9513ba5cb763c98ffde8",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/shaderexecutor/CMakeLists.txt":
 -    "b454631bc58923238e5e3eedd4fe496c",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/shaderrender/CMakeLists.txt":
@@ -448,7 +444,7 @@ index 366da44f828eacb03c1a1b7641ee58ea41a4f4d6..015eee691619099bae5b69a0f477b4c2
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/ubo/CMakeLists.txt":
 -    "b19406c9adcf4f085868da42a6910ee5",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/util/CMakeLists.txt":
--    "91d17e85771f10651a62d757da9e1bb1",
+-    "0ba9c26c56b6846043701ecf497c5fbc",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/video/CMakeLists.txt":
 -    "89aafa542376271f90f645676a695a21",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/wsi/CMakeLists.txt":
@@ -530,7 +526,7 @@ index c5e98abae2b24bc235de0c7d75c21bb79149e655..dfd23caf75c92f70ca3304eb5a5e6b28
      "373b062587eab8a163121255f54597dc",
    "util/windows/wgl_loader_autogen.h":
 diff --git a/scripts/code_generation_hashes/GL_EGL_entry_points.json b/scripts/code_generation_hashes/GL_EGL_entry_points.json
-index f0e08bf3895acca2f10f363ac371617623f83b7c..dca5504bd83c0bf7caf547d3995bbae1a41be267 100644
+index 74e7d95c991e3e4fb11ad2a9f8ee073dd010294e..1f5423aeb0d1ad1970f660d3e7b96af0d45c3ccb 100644
 --- a/scripts/code_generation_hashes/GL_EGL_entry_points.json
 +++ b/scripts/code_generation_hashes/GL_EGL_entry_points.json
 @@ -4,21 +4,21 @@
@@ -540,8 +536,8 @@ index f0e08bf3895acca2f10f363ac371617623f83b7c..dca5504bd83c0bf7caf547d3995bbae1
 -    "98232396b4f8d4d0bd0ffea09770ccdb",
 +    "5897f8249501ed541254a95cbaed2f67",
    "scripts/generate_entry_points.py":
--    "ee9c546b58361e7392312fc3a1928003",
-+    "daf404aa6c402a32c3a90b0a123b97fa",
+-    "c38f9f2788917e03aa7da7856edfc004",
++    "783d6cdf6e2bf5e253e584f806df41db",
    "scripts/gl_angle_ext.xml":
 -    "7c8a9d563c1229cb360245781460e360",
 +    "0b41a31dc16307fe117a0ec8b0a4540b",
@@ -597,14 +593,14 @@ index f0e08bf3895acca2f10f363ac371617623f83b7c..dca5504bd83c0bf7caf547d3995bbae1
    "src/libGLESv2/entry_points_gles_3_2_autogen.h":
      "647f932a299cdb4726b60bbba059f0d2",
    "src/libGLESv2/entry_points_gles_ext_autogen.cpp":
--    "988c5dd0afc1e006f132116a8b7310ba",
-+    "49c56f55cac4a7d53ee3e080297bfa32",
+-    "e1e4857905f0cfc9b1a5d4123b8ee012",
++    "d0acda26500f1cf9bd3a8f3cc809a07e",
    "src/libGLESv2/entry_points_gles_ext_autogen.h":
 -    "4e05535667599fec4abe94a65c65809f",
 +    "16f1f091125f00828aa9722b05f335e5",
    "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp":
--    "9476a80cd3371bd0c8862abd6af71101",
-+    "4b8c893022c941b83d01e91c2a74bcda",
+-    "950ce5629eb82ef062f8c93490cd6bef",
++    "46919286fd51828e605a157f6975abb5",
    "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.h":
 -    "64fe5dc719bcdf87fb6415fb84b2088a",
 +    "c68195a31cf66cae8a3dd1f402c6c13d",
@@ -634,12 +630,12 @@ index f0e08bf3895acca2f10f363ac371617623f83b7c..dca5504bd83c0bf7caf547d3995bbae1
 +    "45fc3597cc59ef138c8c1f52ef3a03aa"
  }
 diff --git a/scripts/code_generation_hashes/GLenum_value_to_string_map.json b/scripts/code_generation_hashes/GLenum_value_to_string_map.json
-index e8cf872f4f772f6d0a578245c992c576ae045739..8b82516d2f08a8e3e4e0a6262ee1a7a816bd7b32 100644
+index c3b8e1f0bfb911f9f014aa4af4c33d5d71754c84..509bad2cb80bfedc1a47c4d3dafdca6e71e5ac47 100644
 --- a/scripts/code_generation_hashes/GLenum_value_to_string_map.json
 +++ b/scripts/code_generation_hashes/GLenum_value_to_string_map.json
 @@ -2,11 +2,11 @@
    "scripts/gen_gl_enum_utils.py":
-     "12506d2a222614dc840212e20c192450",
+     "bf766b6c9f69979e59e358b93607cb75",
    "scripts/gl_angle_ext.xml":
 -    "7c8a9d563c1229cb360245781460e360",
 +    "0b41a31dc16307fe117a0ec8b0a4540b",
@@ -647,8 +643,8 @@ index e8cf872f4f772f6d0a578245c992c576ae045739..8b82516d2f08a8e3e4e0a6262ee1a7a8
 -    "5d2c2e9b94fc4973a7f2ff4cc432338e",
 +    "cf7e20d2ac61949d1d7025458192b61c",
    "src/common/gl_enum_utils_autogen.cpp":
--    "c8d753908272495a266bab15fa00511d",
-+    "acc17f655777651dc9ffc80f8e6ba83e",
+-    "e059cbd837f261797f418137633ee934",
++    "903210a70bf10b95bb708d92c9328ce4",
    "src/common/gl_enum_utils_autogen.h":
      "2de2b2dfc98be173cc8d49dfc4a4510c",
    "third_party/OpenGL-Registry/src/xml/gl.xml":
@@ -688,7 +684,7 @@ index 42cc71d0c437458caad7e9a9155d48d7a58da3ec..01c20c70aaf71dbd88b3a8ec77cf02f8
 +    "7663a717e56d22922e54aa88e4962f23"
  }
 diff --git a/scripts/code_generation_hashes/interpreter_utils.json b/scripts/code_generation_hashes/interpreter_utils.json
-index 038cf35759044e759676da069d23081c153959aa..fec9480dbc99a60636d08dd5c2be9caea6051926 100644
+index ca66c302116f9b27fc6c0d1bf642c15ae07d4086..0b7a9ab45da387826ea6664a40e19a6c86b1135e 100644
 --- a/scripts/code_generation_hashes/interpreter_utils.json
 +++ b/scripts/code_generation_hashes/interpreter_utils.json
 @@ -4,9 +4,9 @@
@@ -705,7 +701,7 @@ index 038cf35759044e759676da069d23081c153959aa..fec9480dbc99a60636d08dd5c2be9cae
    "third_party/OpenCL-Docs/src/xml/cl.xml":
 @@ -20,5 +20,5 @@
    "util/capture/trace_fixture.h":
-     "f19a8900661c5bcb7407cd0d88999943",
+     "447ea06b8a340dc312fd34466889fabe",
    "util/capture/trace_interpreter_autogen.cpp":
 -    "7e4cdd3815777e34cc3cb173074dbdf5"
 +    "04a3c770d56ca6ded0fd70c7dd471c3c"
@@ -744,7 +740,7 @@ index 3ea251bcf454898aa4071a371a09e14cce196b2b..ca08842b501bf0df10f64071a0174aff
          "renderbuffer": "RenderbufferID"
      },
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 793a890f9624603e613e0234f3531f882dad48f9..4e7a2eab1dd670a78f7b953eca22ee1291e42033 100755
+index 8d543333f4767d8acc2f88572509d9b19700160f..b70c0cd5cefe371a5b45368bf58dc54b86cb752d 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1114,6 +1114,7 @@ FORMAT_DICT = {
@@ -1906,10 +1902,10 @@ index 374f795fdf600d251ae8a3ca436274a6d3d31403..1ee95be3838c087dbd09ea73947fd4f4
              SetParamVal<ParamType::TGLSETBLOBPROCANGLE>(valueIn, valueOut);
              break;
 diff --git a/src/common/gl_enum_utils_autogen.cpp b/src/common/gl_enum_utils_autogen.cpp
-index 27b44ad85f04e6108400f4b8a97f63ff78c5f41f..b56072ca70f68e41f2b43ea38f40fbfebf3e8aa3 100644
+index 71129338789a34974c9dee605d2287b2ef8fc502..a80eb57d5ef6a3d9d24f53ca5da2ad766d9fa9a2 100644
 --- a/src/common/gl_enum_utils_autogen.cpp
 +++ b/src/common/gl_enum_utils_autogen.cpp
-@@ -2812,6 +2812,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
+@@ -2815,6 +2815,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                      return "GL_RGBX8_ANGLE";
                  case 0x96BB:
                      return "GL_SHADER_BINARY_ANGLE";
@@ -1920,7 +1916,16 @@ index 27b44ad85f04e6108400f4b8a97f63ff78c5f41f..b56072ca70f68e41f2b43ea38f40fbfe
                  case 0x96BE:
                      return "GL_PROGRAM_BINARY_READY_ANGLE";
                  case 0x96C0:
-@@ -11840,6 +11844,7 @@ static StringEnumEntry g_stringEnumTable[] = {
+@@ -8665,7 +8669,7 @@ struct StringEnumEntry
+     unsigned int enumValue;
+ };
+ 
+-constexpr std::array<StringEnumEntry, 6204> g_stringEnumTable = {{
++constexpr std::array<StringEnumEntry, 6206> g_stringEnumTable = {{
+     {"GL_1PASS_EXT", 0x80A1},
+     {"GL_1PASS_SGIS", 0x80A1},
+     {"GL_2D", 0x0600},
+@@ -11848,6 +11852,7 @@ constexpr std::array<StringEnumEntry, 6204> g_stringEnumTable = {{
      {"GL_MESH_VERTICES_OUT_NV", 0x9579},
      {"GL_MESH_WORK_GROUP_SIZE_EXT", 0x953E},
      {"GL_MESH_WORK_GROUP_SIZE_NV", 0x953E},
@@ -1928,7 +1933,7 @@ index 27b44ad85f04e6108400f4b8a97f63ff78c5f41f..b56072ca70f68e41f2b43ea38f40fbfe
      {"GL_MIN", 0x8007},
      {"GL_MINMAX", 0x802E},
      {"GL_MINMAX_EXT", 0x802E},
-@@ -14542,6 +14547,7 @@ static StringEnumEntry g_stringEnumTable[] = {
+@@ -14550,6 +14555,7 @@ constexpr std::array<StringEnumEntry, 6204> g_stringEnumTable = {{
      {"GL_VARIABLE_E_NV", 0x8527},
      {"GL_VARIABLE_F_NV", 0x8528},
      {"GL_VARIABLE_G_NV", 0x8529},
@@ -1937,7 +1942,7 @@ index 27b44ad85f04e6108400f4b8a97f63ff78c5f41f..b56072ca70f68e41f2b43ea38f40fbfe
      {"GL_VARIANT_ARRAY_POINTER_EXT", 0x87E9},
      {"GL_VARIANT_ARRAY_STRIDE_EXT", 0x87E6},
 diff --git a/src/common/log_utils.h b/src/common/log_utils.h
-index 9034ba9fa2f68d830a2d3c3c2b72626832602ef9..7abf8d6518587af2b84581815afcc71ce75ca1af 100644
+index 31f4a6db0dafd5922495c3f2f02e53b845014834..57b41c484a9c11e7e4f6da682338446df8509208 100644
 --- a/src/common/log_utils.h
 +++ b/src/common/log_utils.h
 @@ -262,10 +262,13 @@ std::ostream &FmtHex(std::ostream &os, T value)
@@ -1957,10 +1962,10 @@ index 9034ba9fa2f68d830a2d3c3c2b72626832602ef9..7abf8d6518587af2b84581815afcc71c
  #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
  #endif  // defined(ANGLE_ENABLE_ASSERTS)
 diff --git a/src/common/mathutil.h b/src/common/mathutil.h
-index 4a5f29460a0a5e18d2a7aebcb25d1a4f7a8c5fb1..11fa0f9478a9690d71519255a8ade4369e32b50a 100644
+index f94c75508454aeca1ec4bb5347a0bc68026d0cc2..1913cbd7269e6b9ee9134358d9de3b5c9077ec24 100644
 --- a/src/common/mathutil.h
 +++ b/src/common/mathutil.h
-@@ -876,12 +876,8 @@ struct IndexRange
+@@ -881,12 +881,8 @@ struct IndexRange
      {};
      IndexRange(Undefined) {}
      IndexRange() = default;
@@ -1975,7 +1980,7 @@ index 4a5f29460a0a5e18d2a7aebcb25d1a4f7a8c5fb1..11fa0f9478a9690d71519255a8ade436
      uint32_t start() const
      {
          ASSERT(!isEmpty());
-@@ -894,22 +890,20 @@ struct IndexRange
+@@ -899,22 +895,20 @@ struct IndexRange
      }
  
      // Number of vertices in the range.
@@ -2189,13 +2194,14 @@ index 71b370065e00ed5cb20738f977ac0243d2c9c4c6..3422ace60c834f8b3064a5251886e809
  
  
 diff --git a/src/compiler/preprocessor/preprocessor.l b/src/compiler/preprocessor/preprocessor.l
-index cca479bd1b260bc4f5c8dce6bea7b9f5432f116e..af355e8adce477d4d55795e27301578ab6457fca 100644
+index 5a452a4e20a63ef31c8b2fbd507d800aef2a3fb6..2d1c9147a83f09b81833ad3bcc0cbc17443108e8 100644
 --- a/src/compiler/preprocessor/preprocessor.l
 +++ b/src/compiler/preprocessor/preprocessor.l
-@@ -23,6 +23,10 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN scripts/run_code_generation.py
- // preprocessor.l:
+@@ -24,6 +24,11 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN scripts/run_code_generation.py
  //   Lexer for the OpenGL shading language preprocessor.
  
+ #include <stdint.h>
++
 +// Rename yyalloc/yyrealloc/yyfree during flex generation to allow macro definitions.
 +#define yyalloc yyalloc_FLEXGEN
 +#define yyrealloc yyrealloc_FLEXGEN
@@ -2203,7 +2209,7 @@ index cca479bd1b260bc4f5c8dce6bea7b9f5432f116e..af355e8adce477d4d55795e27301578a
  }
  
  %{
-@@ -95,8 +99,17 @@ typedef angle::pp::SourceLocation YYLTYPE;
+@@ -96,8 +101,17 @@ typedef angle::pp::SourceLocation YYLTYPE;
  #define YY_INPUT(buf, result, maxSize) \
      result = yyextra->input.read(buf, maxSize, &yylineno);
  
@@ -2222,12 +2228,12 @@ index cca479bd1b260bc4f5c8dce6bea7b9f5432f116e..af355e8adce477d4d55795e27301578a
  %option reentrant bison-bridge bison-locations
  %option prefix="pp"
 diff --git a/src/compiler/preprocessor/preprocessor_lex_autogen.cpp b/src/compiler/preprocessor/preprocessor_lex_autogen.cpp
-index 835292884e9eebf7c36b176e90a71eba61efecae..4f6124638a5941e5eeb83cd7fee07a3e5117e065 100644
+index 63905e6d136be1c79898a68e4d7ac92b28d6a99b..5368966ee9ab26973ef25378821e40666ec74893 100644
 --- a/src/compiler/preprocessor/preprocessor_lex_autogen.cpp
 +++ b/src/compiler/preprocessor/preprocessor_lex_autogen.cpp
-@@ -9,6 +9,11 @@
- // preprocessor.l:
- //   Lexer for the OpenGL shading language preprocessor.
+@@ -11,6 +11,11 @@
+ 
+ #include <stdint.h>
  
 +// Rename yyalloc/yyrealloc/yyfree during flex generation to allow macro definitions.
 +#define yyalloc yyalloc_FLEXGEN
@@ -2237,7 +2243,7 @@ index 835292884e9eebf7c36b176e90a71eba61efecae..4f6124638a5941e5eeb83cd7fee07a3e
  #define YY_INT_ALIGNED short int
  
  /* A lexical scanner generated by flex */
-@@ -754,6 +759,14 @@ typedef angle::pp::SourceLocation YYLTYPE;
+@@ -756,6 +761,14 @@ typedef angle::pp::SourceLocation YYLTYPE;
  
  #define YY_INPUT(buf, result, maxSize) result = yyextra->input.read(buf, maxSize, &yylineno);
  
@@ -2252,7 +2258,7 @@ index 835292884e9eebf7c36b176e90a71eba61efecae..4f6124638a5941e5eeb83cd7fee07a3e
  #define INITIAL 0
  #define COMMENT 1
  
-@@ -2592,35 +2605,6 @@ static int yy_flex_strlen(const char *s, yyscan_t yyscanner)
+@@ -2594,35 +2607,6 @@ static int yy_flex_strlen(const char *s, yyscan_t yyscanner)
  }
  #endif
  
@@ -2300,10 +2306,10 @@ index cfb4bc1b2a0113b0d6ea863be78fbbd60afd922c..8702d01fef25765c4778172a2a45cd5e
  
  /* Bison implementation for Yacc-like parsers in C
 diff --git a/src/compiler/translator/IntermNode.cpp b/src/compiler/translator/IntermNode.cpp
-index 710bba9725dfddd970be1bc3e19ee91f18c7e359..33d4a644e82c58dc143fa43038e8b48ba81618c1 100644
+index 5189d334c75c45cf461d05c8465dbc506948e69a..60375246e26ae32a5495a14f50798681bd89b607 100644
 --- a/src/compiler/translator/IntermNode.cpp
 +++ b/src/compiler/translator/IntermNode.cpp
-@@ -880,7 +880,7 @@ const TConstantUnion *TIntermAggregate::getConstantValue() const
+@@ -881,7 +881,7 @@ const TConstantUnion *TIntermAggregate::getConstantValue() const
          // http://crbug.com/498400132
          angle::base::CheckedNumeric<size_t> checkedArraySize = elementSize;
          checkedArraySize *= getOutermostArraySize();
@@ -2370,10 +2376,10 @@ index 139bfdec4be2c88b88c817579cdb43fc6a78b253..f2427cae6f03541b6773ca599188fc53
 +    memset(this, 0, sizeof(*this));
  }
 diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
-index dfe7108b84e6a42a2ff011bdb8dae685afd7c110..248a4259e543ce56ef0218f4c05aee6b472200c1 100644
+index 5dae83a5b571606aa0e540905b10b93a8cbb8f09..c4dad8acbeb7d8c39d28f330baf9bea06a4a3253 100644
 --- a/src/compiler/translator/glslang.l
 +++ b/src/compiler/translator/glslang.l
-@@ -49,6 +49,11 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex_autogen.cpp).
+@@ -51,6 +51,11 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex_autogen.cpp).
  #pragma clang diagnostic ignored "-Wextra-semi-stmt"
  #pragma clang diagnostic ignored "-Wunreachable-code"
  #endif
@@ -2385,7 +2391,7 @@ index dfe7108b84e6a42a2ff011bdb8dae685afd7c110..248a4259e543ce56ef0218f4c05aee6b
  }
  
  %{
-@@ -82,6 +87,14 @@ using namespace sh;
+@@ -84,6 +89,14 @@ using namespace sh;
  #define YY_INPUT(buf, result, max_size) \
      result = string_input(buf, max_size, yyscanner);
  
@@ -2400,7 +2406,7 @@ index dfe7108b84e6a42a2ff011bdb8dae685afd7c110..248a4259e543ce56ef0218f4c05aee6b
  static yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner);
  static int check_type(yyscan_t yyscanner);
  static int reserved_word(yyscan_t yyscanner);
-@@ -119,6 +132,7 @@ static int floatsuffix_check(TParseContext* context);
+@@ -121,6 +134,7 @@ static int floatsuffix_check(TParseContext* context);
  static int yuvcscstandardext_constant(TParseContext *context);
  %}
  
@@ -2409,10 +2415,10 @@ index dfe7108b84e6a42a2ff011bdb8dae685afd7c110..248a4259e543ce56ef0218f4c05aee6b
  %option yylineno reentrant bison-bridge bison-locations
  %option extra-type="TParseContext*"
 diff --git a/src/compiler/translator/glslang_lex_autogen.cpp b/src/compiler/translator/glslang_lex_autogen.cpp
-index 74e9c10b2ae187cb082a42801620c88420c80ed8..6aedc245411acb8230c26ccac62ccfd7087a7611 100644
+index 899bb62c9b8e19692192fc293f9111b74b93a359..c410b4b4e448d8f3ebac6d70b20579a513e26edb 100644
 --- a/src/compiler/translator/glslang_lex_autogen.cpp
 +++ b/src/compiler/translator/glslang_lex_autogen.cpp
-@@ -35,6 +35,11 @@
+@@ -37,6 +37,11 @@
  #    pragma clang diagnostic ignored "-Wunreachable-code"
  #endif
  
@@ -2424,7 +2430,7 @@ index 74e9c10b2ae187cb082a42801620c88420c80ed8..6aedc245411acb8230c26ccac62ccfd7
  #define YY_INT_ALIGNED short int
  
  /* A lexical scanner generated by flex */
-@@ -907,6 +912,14 @@ using namespace sh;
+@@ -909,6 +914,14 @@ using namespace sh;
  
  #define YY_INPUT(buf, result, max_size) result = string_input(buf, max_size, yyscanner);
  
@@ -2439,7 +2445,7 @@ index 74e9c10b2ae187cb082a42801620c88420c80ed8..6aedc245411acb8230c26ccac62ccfd7
  static yy_size_t string_input(char *buf, yy_size_t max_size, yyscan_t yyscanner);
  static int check_type(yyscan_t yyscanner);
  static int reserved_word(yyscan_t yyscanner);
-@@ -3863,35 +3876,6 @@ static int yy_flex_strlen(const char *s, yyscan_t yyscanner)
+@@ -3865,35 +3878,6 @@ static int yy_flex_strlen(const char *s, yyscan_t yyscanner)
  }
  #endif
  
@@ -3181,10 +3187,10 @@ index 0fe49be2f162985d89bd00562d92a4afff9f26b9..52debef72c7446dd6149307248de2119
      return true;
  }
 diff --git a/src/gpu_info_util/SystemInfo_internal.h b/src/gpu_info_util/SystemInfo_internal.h
-index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32cce79bd37 100644
+index 4da60c18bbe8b611953095537d611d0a588abece..07d79956a9f97b3bf84440114d92a11de2c48571 100644
 --- a/src/gpu_info_util/SystemInfo_internal.h
 +++ b/src/gpu_info_util/SystemInfo_internal.h
-@@ -41,11 +41,10 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
+@@ -40,11 +40,10 @@ uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
  uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
  #    endif
  
@@ -3199,10 +3205,10 @@ index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32c
  
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index 511c080678fc4d3df29ae57bcc99cede9f9b9dee..25ab2b93f2ffb242b707dda95abe1865a5ffacbf 100644
+index acd6b60acd12ce48fa0928bee25ebd8e68339b8f..aafa296e4e71017f315e9fbd991d14a7d811d2d3 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -10129,6 +10129,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -10124,6 +10124,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -3236,7 +3242,7 @@ index 511c080678fc4d3df29ae57bcc99cede9f9b9dee..25ab2b93f2ffb242b707dda95abe1865
  void Context::endTiling(GLbitfield preserveMask)
  {
      ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
-@@ -10203,6 +10230,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+@@ -10198,6 +10225,16 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
      mState.getBlobCacheCallbacks() = {set, get, userParam};
  }
  
@@ -3279,10 +3285,10 @@ index 9f11356319284d751407db9f4ac408d49cdcd99f..77035bed002688585040efdf3b0b24ca
  
  #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Display.cpp b/src/libANGLE/Display.cpp
-index f4b27dbe1dae851107f2ed5947d42795bfd826c4..81cded27e321355633f9e5255461704b3df5a5d4 100644
+index 6a43dbbfa6ce5d9c695a82473aa44e1e4a247206..ae46ee10d0941e1f361244e595a7495c325902dc 100644
 --- a/src/libANGLE/Display.cpp
 +++ b/src/libANGLE/Display.cpp
-@@ -2434,7 +2434,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
+@@ -2367,7 +2367,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
      return mImplementation->validateImageClientBuffer(context, target, clientBuffer, attribs);
  }
  
@@ -3292,10 +3298,10 @@ index f4b27dbe1dae851107f2ed5947d42795bfd826c4..81cded27e321355633f9e5255461704b
                                const AttributeMap &attributes) const
  {
 diff --git a/src/libANGLE/Display.h b/src/libANGLE/Display.h
-index aea0acc7cb8b630ee9092ffde7bfae8e46503b4b..5c6ff476f4f7328a806d159dac0a531b8b5f6431 100644
+index f9c0bc1f0fb7454d4ac128a4e6bbe8c39876e6e5..d0ac8996e65aea969bf58a2105f5f30739c6b88a 100644
 --- a/src/libANGLE/Display.h
 +++ b/src/libANGLE/Display.h
-@@ -217,7 +217,7 @@ class Display final : public LabeledObject,
+@@ -218,7 +218,7 @@ class Display final : public LabeledObject,
                                      EGLenum target,
                                      EGLClientBuffer clientBuffer,
                                      const egl::AttributeMap &attribs) const;
@@ -4135,10 +4141,10 @@ index c85ef6270cb1f10b6e17c179b0e5195042b4a039..11de2386287c32d94a8c79c0ea2ee28f
  
      return result;
 diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index c212b201525f2030506cf3de73e01dd4a47a186b..e8fab4abfe922c160d0c4b54be5472b134e876c3 100644
+index ba1bc56b5a5d7a5c72e8a88a93cca336188515f2..c1a58c12b32434063c0c42e44d6b107d6c9e6ef9 100644
 --- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
 +++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -3889,6 +3889,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
+@@ -3891,6 +3891,9 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_FETCH_PER_SAMPLE_ENABLED:
                              break;
@@ -4340,7 +4346,7 @@ index 4ea4a3cc12467b1bd6dc34bbf3903149aa8e1e98..78b49fdcb6eb28092508a749faf34a94
  
  }  // namespace rx
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4cf23f4633 100644
+index 497701140d72e76a46b801ae0be90470f93c62ce..05906f6f315b303c9d9ab74ed8407f4cf23f4633 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
 @@ -239,6 +239,8 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
@@ -4545,7 +4551,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
              handleError(GL_INVALID_OPERATION, errorStream.str().c_str(), __FILE__, ANGLE_FUNCTION,
                          __LINE__);
              return nullptr;
-@@ -2216,10 +2269,11 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
+@@ -2216,78 +2269,73 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
      onDrawFrameBufferChangedState(context, framebuffer, true);
  }
  
@@ -4553,19 +4559,18 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
 +angle::Result ContextMtl::onOcclusionQueryBegin(QueryMtl &query)
  {
 -    ASSERT(mOcclusionQuery == nullptr);
--    mOcclusionQuery = query;
 +    ASSERT(!mOcclusionQueryResultBuffer);  // Frontend guarantees none active at the time.
 +    const mtl::BufferRef &resultBuffer = query.getVisibilityResultBuffer();
 +    bool isEnabledInRenderPass;
  
      if (mRenderEncoder.valid() && !mOcclusionQueryPool.canAllocateQueryOffset(this))
      {
-@@ -2228,67 +2282,60 @@ GLint GetOwnershipIdentity(const egl::AttributeMap &attribs)
- 
+         endEncoding(true);
+     }
++
      if (mRenderEncoder.valid())
      {
--        // if render pass has started, start the query in the encoder
--        return startOcclusionQueryInRenderPass(query, true);
+-        ANGLE_TRY(startOcclusionQueryInRenderPass(query, true));
 +        size_t resultOffset;
 +        ANGLE_TRY(mOcclusionQueryPool.beginQuery(this, resultBuffer, &resultOffset));
 +        mRenderEncoder.setVisibilityResultMode(MTLVisibilityResultModeBoolean, resultOffset);
@@ -4584,12 +4589,15 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
 +        isEnabledInRenderPass = false;
      }
 -
+-    mOcclusionQuery = query;
 +    mOcclusionQueryResultBuffer          = resultBuffer;
 +    mOcclusionQueryIsEnabledInRenderPass = isEnabledInRenderPass;
      return angle::Result::Continue;
  }
+ 
 -void ContextMtl::onOcclusionQueryEnd(const gl::Context *context, QueryMtl *query)
--{
++void ContextMtl::onOcclusionQueryEnd()
+ {
 -    ASSERT(mOcclusionQuery == query);
 -
 -    if (mRenderEncoder.valid())
@@ -4597,10 +4605,8 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
 -        // if render pass has started, end the query in the encoder
 -        disableActiveOcclusionQueryInRenderPass();
 -    }
- 
+-
 -    mOcclusionQuery = nullptr;
-+void ContextMtl::onOcclusionQueryEnd()
-+{
 +    ASSERT(mOcclusionQueryResultBuffer);  // Frontend guarantees one active at the time.
 +    disableOcclusionQueryInRenderPass();
 +    mOcclusionQueryResultBuffer = nullptr;
@@ -4664,7 +4670,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      return angle::Result::Continue;
  }
  
-@@ -2415,13 +2462,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2414,13 +2462,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                                      GLint firstVertex,
                                      GLsizei vertexOrIndexCount,
                                      GLsizei instances,
@@ -4681,7 +4687,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      if (*isNoOp)
      {
          return angle::Result::Continue;
-@@ -2432,7 +2480,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2431,7 +2480,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
          // pass state. This would happen for example when there is no more space in the uniform
          // buffers in the uniform buffer pool. The rendering would be flushed to free the uniform
          // buffer memory for new usage. In this case, re-run the setup.
@@ -4690,7 +4696,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
                                  indexTypeOrNone, indices, xfbPass, isNoOp));
  
          if (*isNoOp)
-@@ -2440,8 +2488,22 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2439,8 +2488,22 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              return checkCommandBufferError();
          }
          // Setup with flushed state should either produce a working encoder or fail with an error
@@ -4715,7 +4721,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      }
      return angle::Result::Continue;
  }
-@@ -2450,6 +2512,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2449,6 +2512,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                                          GLint firstVertex,
                                          GLsizei vertexOrIndexCount,
                                          GLsizei instances,
@@ -4723,7 +4729,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
                                          gl::DrawElementsType indexTypeOrNone,
                                          const void *indices,
                                          bool xfbPass,
-@@ -2463,7 +2526,8 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2462,7 +2526,8 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
      if (context->hasAnyActiveClientAttrib())
      {
          ANGLE_TRY(mVertexArray->updateClientAttribs(context, firstVertex, vertexOrIndexCount,
@@ -4733,7 +4739,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      }
  
      // This must be called before render command encoder is started.
-@@ -2499,8 +2563,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2498,8 +2563,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
          ANGLE_TRY(handleDirtyRenderPass(context));
      }
  
@@ -4743,7 +4749,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      {
          // The occlusion query is still active, and a new render pass has started or we have paused
          // the querying process. We need to continue the querying process.
-@@ -2511,7 +2574,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2510,7 +2574,7 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              endEncoding(true);
              return angle::Result::Continue;
          }
@@ -4752,7 +4758,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
      }
  
      bool isPipelineDescChanged;
-@@ -2557,10 +2620,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2556,10 +2620,14 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
                      mState.getBlendColor().blue, mState.getBlendColor().alpha);
                  break;
              case DIRTY_BIT_VIEWPORT:
@@ -4769,7 +4775,7 @@ index ad2cd4015c204f3375211009b9ba3fdf6616c863..05906f6f315b303c9d9ab74ed8407f4c
                  break;
              case DIRTY_BIT_DRAW_FRAMEBUFFER:
                  // Already handled.
-@@ -2585,6 +2652,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
+@@ -2584,6 +2652,15 @@ static bool isDrawNoOp(const mtl::RenderPipelineDesc &descriptor,
              case DIRTY_BIT_RASTERIZER_DISCARD:
                  // Already handled.
                  break;
@@ -4814,7 +4820,7 @@ index f5da6321a1b17b6e7b6897b27b1c7f11b1fc102e..41f2120330562bbb3b80bd2ec825978a
      mutable bool mHasFragmentMemoryBarriers;
  
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d60487e0aa695 100644
+index ba764ae5769fde9ea04a5397029613b5bcd18227..a2cc39931b76c1edc7df8a444fc0297c12986a92 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -177,12 +177,22 @@ bool IsMetalDisplayAvailable()
@@ -4851,7 +4857,7 @@ index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d6048
  
      EGLAttrib high = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
      EGLAttrib low  = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
-@@ -779,25 +793,6 @@ bool IsMetalDisplayAvailable()
+@@ -778,25 +792,6 @@ bool IsMetalDisplayAvailable()
      mNativeCaps.maxViewportWidth     = mNativeCaps.max2DTextureSize;
      mNativeCaps.maxViewportHeight    = mNativeCaps.max2DTextureSize;
  
@@ -4877,7 +4883,7 @@ index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d6048
      if (!mFeatures.limitMaxVisibilityQueryOffset.enabled && supportsAppleGPUFamily(7))
      {
          mMaxVisibilityQueryOffset = 262136;
-@@ -1152,6 +1147,14 @@ bool IsMetalDisplayAvailable()
+@@ -1151,6 +1146,14 @@ bool IsMetalDisplayAvailable()
      // qualifier on that hardware.
      mNativePLSOptions.supportsNoncoherent = !supportsAppleGPUFamily(1);
  
@@ -4892,7 +4898,7 @@ index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d6048
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1222,6 +1225,8 @@ bool IsMetalDisplayAvailable()
+@@ -1221,6 +1224,8 @@ bool IsMetalDisplayAvailable()
      ANGLE_FEATURE_CONDITION((&mFeatures), hasExplicitMemBarrier, (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -4901,7 +4907,7 @@ index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d6048
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1268,6 +1273,8 @@ bool IsMetalDisplayAvailable()
+@@ -1267,6 +1272,8 @@ bool IsMetalDisplayAvailable()
      ANGLE_FEATURE_CONDITION((&mFeatures), writeHelperSampleMask, supportsAppleGPUFamily(1));
  
      ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
@@ -4910,7 +4916,7 @@ index 71f0c61921ffc6e02d7176a154f98358d9f0779f..09a3d173fb9441d328f32153cf8d6048
      ANGLE_FEATURE_CONDITION((&mFeatures), copyIOSurfaceToNonIOSurfaceForReadOptimization,
                              isIntel() || isAMD());
      ANGLE_FEATURE_CONDITION((&mFeatures), copyTextureToBufferForReadOptimization, isAMD());
-@@ -1405,6 +1412,17 @@ bool IsMetalDisplayAvailable()
+@@ -1404,6 +1411,17 @@ bool IsMetalDisplayAvailable()
      return false;
  #endif
  }
@@ -11273,10 +11279,10 @@ index fc169ed5f20035aa6db277ef7d3aa305a9a806d3..1c68dc70ef52eaeada8eff00c975a941
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index a51214a54a81d164d28e5e54ba5cf0b899f58bd5..ebbd791e09dc061e3221397704f61a076e31d136 100644
+index 1579aaa8a93aad993e3a1797c4151e804cac3507..93abe9e3de2f1cf4f791165e7f7e7deb58726c23 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -5996,6 +5996,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -6000,6 +6000,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -11301,10 +11307,10 @@ index 09c4896096e2458bc181d869a303afee169dcc1d..4354bb747ad51e570e865525503f32eb
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index 10a76d0ee60e98c1859ccd35559b0d70785f9d6b..2cfca5bad15948f9ae044c439dc0df86faee0f7e 100644
+index 415b3751e751d91795e7597ae510d73a289e40ad..df880a7598814c954996e06baf4f9d12463ea164 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-@@ -9371,10 +9371,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
+@@ -9364,10 +9364,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
          return angle::Result::Continue;
      }
  
@@ -11319,10 +11325,10 @@ index 10a76d0ee60e98c1859ccd35559b0d70785f9d6b..2cfca5bad15948f9ae044c439dc0df86
  }
  
 diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index 0668ae9de068bc495a82c35e60791f2abbb66c60..107b711a737ac09b8374c0ba530256524a448e8c 100644
+index 7605a660ac3a028c2ca2c41fd2a4432595830ab7..6051caaf000d1ba1ad9164a2f1ef6c32bb68bcb0 100644
 --- a/src/libANGLE/validationEGL.cpp
 +++ b/src/libANGLE/validationEGL.cpp
-@@ -3616,11 +3616,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
+@@ -3618,11 +3618,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
  
      if (!(config->surfaceType & EGL_PIXMAP_BIT))
      {
@@ -11336,7 +11342,7 @@ index 0668ae9de068bc495a82c35e60791f2abbb66c60..107b711a737ac09b8374c0ba53025652
                           val->entryPoint, val->labeledObject, false);
  
      return true;
-@@ -7208,7 +7208,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
+@@ -7210,7 +7210,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
              break;
          default:
          {
@@ -11460,10 +11466,10 @@ index db3a5aebe8b3b856473c371a68c058525e9fee11..94d8856749dc2ede7549f0af5426488f
                  return false;
              }
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index 3b52b4dda60e1e88a7787f175f2478762a63dbc2..a5585c2f3101e30a7b65434ae86d8ac2f0757e04 100644
+index b44bfc8164d83fa1cb18280381503dd7958628ef..10545e7bed058359930fad207ebca8bbd54e0b5c 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
-@@ -707,6 +707,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
+@@ -708,6 +708,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
          case GL_BLEND_ADVANCED_COHERENT_KHR:
              return state.getExtensions().blendEquationAdvancedCoherentKHR;
  
@@ -11473,7 +11479,7 @@ index 3b52b4dda60e1e88a7787f175f2478762a63dbc2..a5585c2f3101e30a7b65434ae86d8ac2
          default:
              break;
      }
-@@ -5983,6 +5986,19 @@ bool ValidateTexImage3DOES(const Context *context,
+@@ -5999,6 +6002,19 @@ bool ValidateTexImage3DOES(const Context *context,
                                depth, border, format, type, pixels);
  }
  
@@ -11770,10 +11776,10 @@ index 249ad324b271c792d458478363a7c6f56bf73ca8..b208a20e8698a2b5faadf33e581ba0f9
      {"glFramebufferShadingRateEXT", P(GL_FramebufferShadingRateEXT)},
  #if defined(ANGLE_ENABLE_EXPLICIT_CONTEXT)
 diff --git a/src/libGLESv2/entry_points_gles_ext_autogen.cpp b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
-index b6c0c0c8734bba3e986185d064a2f852921d5433..54554c7ab70bf59a2315f461e99220a7578d53e8 100644
+index e371aa9da8eeafdbdecfb69c8fb73f56fb18a839..33452943c4b95a66e9c9a3baadca252cea986631 100644
 --- a/src/libGLESv2/entry_points_gles_ext_autogen.cpp
 +++ b/src/libGLESv2/entry_points_gles_ext_autogen.cpp
-@@ -6110,6 +6110,55 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
+@@ -6029,6 +6029,55 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLE(GLuint shader,
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -11783,9 +11789,9 @@ index b6c0c0c8734bba3e986185d064a2f852921d5433..54554c7ab70bf59a2315f461e99220a7
 +{
 +    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 +    Context *context = GetValidGlobalContext();
-+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindMetalRasterizationRateMapANGLE,
-+                            "context = %d, framebuffer = %u, map = 0x%016" PRIxPTR "", CID(context),
-+                            framebuffer, (uintptr_t)map));
++    EVENT(context, GLBindMetalRasterizationRateMapANGLE,
++          "context = %d, framebuffer = %u, map = 0x%016" PRIxPTR "", CID(context), framebuffer,
++          (uintptr_t)map);
 +
 +    if (ANGLE_LIKELY(context != nullptr))
 +    {
@@ -11829,7 +11835,7 @@ index b6c0c0c8734bba3e986185d064a2f852921d5433..54554c7ab70bf59a2315f461e99220a7
  // GL_ANGLE_vulkan_image
  void GL_APIENTRY GL_AcquireTexturesANGLE(GLuint numTextures,
                                           const GLuint *textures,
-@@ -20118,4 +20167,60 @@ GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield p
+@@ -19840,4 +19889,59 @@ GL_StartTilingQCOM(GLuint x, GLuint y, GLuint width, GLuint height, GLbitfield p
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -11841,12 +11847,11 @@ index b6c0c0c8734bba3e986185d064a2f852921d5433..54554c7ab70bf59a2315f461e99220a7
 +{
 +    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 +    Context *context = GetValidGlobalContext();
-+    ANGLE_UNSAFE_TODO(EVENT(
-+        context, GLFramebufferResolveRenderbufferWEBKIT,
-+        "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
-+        CID(context), GLenumToString(GLESEnum::AllEnums, target),
-+        GLenumToString(GLESEnum::AllEnums, attachment),
-+        GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer));
++    EVENT(context, GLFramebufferResolveRenderbufferWEBKIT,
++          "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
++          CID(context), GLenumToString(GLESEnum::AllEnums, target),
++          GLenumToString(GLESEnum::AllEnums, attachment),
++          GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer);
 +
 +    if (ANGLE_LIKELY(context != nullptr))
 +    {
@@ -11919,10 +11924,10 @@ index 0551441208ba5848d2a893d44411893047b2f299..811ab5a2cdab76ca9b36768385ed4be6
  
  #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_
 diff --git a/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp b/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
-index cc12bce729ff09bef447222b0cc74ab518ed2ee9..d44c053c75e6329925b37a0db47d682b46328807 100644
+index 08d2de8b77cc424bad7d3f93540df58dbc7057f2..50ae1ece660050f98b5594da3f37db0392963277 100644
 --- a/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
 +++ b/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
-@@ -28305,6 +28305,57 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLEContextANGLE(GLeglDisplayANGLE
+@@ -27924,6 +27924,57 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLEContextANGLE(GLeglDisplayANGLE
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -11934,9 +11939,9 @@ index cc12bce729ff09bef447222b0cc74ab518ed2ee9..d44c053c75e6329925b37a0db47d682b
 +{
 +    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 +    Context *context = GetValidContext(dpy, ctx);
-+    ANGLE_UNSAFE_TODO(EVENT(context, GLBindMetalRasterizationRateMapANGLE,
-+                            "context = %d, framebuffer = %u, map = 0x%016" PRIxPTR "", CID(context),
-+                            framebuffer, (uintptr_t)map));
++    EVENT(context, GLBindMetalRasterizationRateMapANGLE,
++          "context = %d, framebuffer = %u, map = 0x%016" PRIxPTR "", CID(context), framebuffer,
++          (uintptr_t)map);
 +
 +    if (ANGLE_LIKELY(context != nullptr))
 +    {
@@ -11980,7 +11985,7 @@ index cc12bce729ff09bef447222b0cc74ab518ed2ee9..d44c053c75e6329925b37a0db47d682b
  void GL_APIENTRY GL_AcquireTexturesANGLEContextANGLE(GLeglDisplayANGLE dpy,
                                                       GLeglContextANGLE ctx,
                                                       GLuint numTextures,
-@@ -42788,4 +42839,61 @@ void GL_APIENTRY GL_StartTilingQCOMContextANGLE(GLeglDisplayANGLE dpy,
+@@ -42210,4 +42261,60 @@ void GL_APIENTRY GL_StartTilingQCOMContextANGLE(GLeglDisplayANGLE dpy,
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -11993,12 +11998,11 @@ index cc12bce729ff09bef447222b0cc74ab518ed2ee9..d44c053c75e6329925b37a0db47d682b
 +{
 +    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 +    Context *context = GetValidContext(dpy, ctx);
-+    ANGLE_UNSAFE_TODO(EVENT(
-+        context, GLFramebufferResolveRenderbufferWEBKIT,
-+        "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
-+        CID(context), GLenumToString(GLESEnum::AllEnums, target),
-+        GLenumToString(GLESEnum::AllEnums, attachment),
-+        GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer));
++    EVENT(context, GLFramebufferResolveRenderbufferWEBKIT,
++          "context = %d, target = %s, attachment = %s, renderbuffertarget = %s, renderbuffer = %u",
++          CID(context), GLenumToString(GLESEnum::AllEnums, target),
++          GLenumToString(GLESEnum::AllEnums, attachment),
++          GLenumToString(GLESEnum::AllEnums, renderbuffertarget), renderbuffer);
 +
 +    if (ANGLE_LIKELY(context != nullptr))
 +    {
@@ -12227,10 +12231,10 @@ index 44ad8549bad5363a433c4bab846c21489b97507c..d0d17d85af90cf5bba590a3294e34919
    "gl_tests/LineLoopTest.cpp",
    "gl_tests/LinkAndRelinkTest.cpp",
 diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
-index de1f2744b596dfcc4b5be2e0848375241aee4ebd..5a3a077162b72bd4ce9cff2f87b4d593c2f2e314 100644
+index aed57003b1391f24eafa872f5755d46aff95672a..8b0d4d531cc7ff726ae77570d6a2715fb7f83d89 100644
 --- a/src/tests/angle_end2end_tests_expectations.txt
 +++ b/src/tests/angle_end2end_tests_expectations.txt
-@@ -517,6 +517,8 @@
+@@ -526,6 +526,8 @@
  42266214 MAC APPLE METAL : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
  494392011 MAC METAL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
  496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
@@ -12239,7 +12243,7 @@ index de1f2744b596dfcc4b5be2e0848375241aee4ebd..5a3a077162b72bd4ce9cff2f87b4d593
  515709506 MAC METAL : DrawBaseVertexBaseInstanceTest_ES3.BaseInstanceSmallDivisorClientMemory/* = SKIP
  524008572 MAC METAL : VertexAttributeTestES3.LargeAttribPointerOffsetNoCrash/* = SKIP
  534815900 MAC METAL : TextureCubeTestES3.RedefinedCubemapLevelsOnlyFaceZeroCompatible/* = SKIP
-@@ -568,6 +570,10 @@
+@@ -578,6 +580,10 @@
  351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  
@@ -12250,7 +12254,7 @@ index de1f2744b596dfcc4b5be2e0848375241aee4ebd..5a3a077162b72bd4ce9cff2f87b4d593
  // D3D
  42264653 WIN D3D11 : GLSLTestLoops.*ContinueInSwitch/* = SKIP
  // D3D does not support compressed textures where the base mip level is not a multiple of 4
-@@ -1411,8 +1417,6 @@
+@@ -1425,8 +1431,6 @@
  40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/* = SKIP
  40096874 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/* = SKIP
  40096874 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/* = SKIP
@@ -12259,7 +12263,7 @@ index de1f2744b596dfcc4b5be2e0848375241aee4ebd..5a3a077162b72bd4ce9cff2f87b4d593
  40096874 IOS METAL : MaxTextureSizeTest.Render1xTexture/* = SKIP
  40096874 IOS METAL : MultisampleTest.AlphaToSampleCoverage/* = SKIP
  40096838 IOS METAL : PixelLocalStorageTest.BlendColorMaskAndClear/ES3_Metal_EmulatePixelLocalStorage* = SKIP
-@@ -1505,6 +1509,9 @@
+@@ -1519,6 +1523,9 @@
  365066518 IOS METAL : ShadowSamplerFunctionTexture2DArrayTest.Test/* = SKIP
  365066518 IOS METAL : ShadowSamplerFunctionTextureCubeTest.Test/* = SKIP
  
@@ -12269,7 +12273,7 @@ index de1f2744b596dfcc4b5be2e0848375241aee4ebd..5a3a077162b72bd4ce9cff2f87b4d593
  // D3D11 backend does not support LOD options with shadow samplers
  365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureBias_Mipmapped = SKIP
  365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureOffsetBias_Mipmapped = SKIP
-@@ -2887,6 +2894,61 @@
+@@ -2900,6 +2907,61 @@
  // Unimplemented parts.
  515493666 D3D11 : Restart/DrawElementsVariantsTest.Draw/* = SKIP
  
@@ -12378,10 +12382,10 @@ index d2239dc882d94f52e281a8514fad0432ed9ef8fb..ff52612d4b784b02a516c082a7107970
      testing::AddGlobalTestEnvironment(new CompilerTestEnvironment());
      return testSuite.run();
 diff --git a/src/tests/angle_unittests.gni b/src/tests/angle_unittests.gni
-index 4a1d52f8079817d8ef7afcc9cc2a3f95ecf7584a..343ea375af0699b2361438cbac4c6e43d4a1a61f 100644
+index c8342782edf698cc54efd97f6bfd30d81835e628..34254d48613a8c45893352b72d3e71911e246cd5 100644
 --- a/src/tests/angle_unittests.gni
 +++ b/src/tests/angle_unittests.gni
-@@ -137,6 +137,7 @@ angle_unittests_msl_sources = [
+@@ -138,6 +138,7 @@ angle_unittests_msl_sources = [
    "../common/apple/ObjCPtr_test.mm",
    "../libANGLE/renderer/metal/VertexArrayMtl_unittest.mm",
    "../tests/compiler_tests/MSLOutput_test.cpp",
@@ -12556,7 +12560,7 @@ index 0000000000000000000000000000000000000000..e54b427cd472d753152105d9584228e3
 +
 +}  // namespace sh
 diff --git a/src/tests/deqp_support/angle_deqp_gtest.cpp b/src/tests/deqp_support/angle_deqp_gtest.cpp
-index 9d3b15bdce7811425a0a188dc00dcc3e866877df..3fb001c6c1520b890ee2c1f784bf174947cd0992 100644
+index 171d5a1a1a247c27954e6811b6861c1db97b6192..6d11886fe278586508743554bb8ed740f0bff51e 100644
 --- a/src/tests/deqp_support/angle_deqp_gtest.cpp
 +++ b/src/tests/deqp_support/angle_deqp_gtest.cpp
 @@ -227,7 +227,7 @@ const char *GetDefaultAPIName()
@@ -12662,10 +12666,10 @@ index f68de4db0037643faf0fd8fcf06709c663463948..886a1d73ab521aa189d95d8cb651f9c6
  
      void initializeContextForDisplay(EGLDisplay display, EGLContext *context)
 diff --git a/src/tests/egl_tests/EGLDisplayTest.cpp b/src/tests/egl_tests/EGLDisplayTest.cpp
-index 14ef69d831b522cc4ad9b448a09949c47c9b523d..1e1636a5e8945aead739c659a8075479c046b58a 100644
+index 025e357a2ea137df30c9fab3582199a2118fe899..b70daba4e3451b30fbe142edaadaef151ae2f780 100644
 --- a/src/tests/egl_tests/EGLDisplayTest.cpp
 +++ b/src/tests/egl_tests/EGLDisplayTest.cpp
-@@ -200,7 +200,9 @@ TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
+@@ -222,7 +222,9 @@ TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
      // eglGetPlatformDisplayEXT() requires EGL_EXT_platform_base.
      ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_EXT_platform_base"));
  
@@ -12676,10 +12680,10 @@ index 14ef69d831b522cc4ad9b448a09949c47c9b523d..1e1636a5e8945aead739c659a8075479
      EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
      EGLDisplay display = eglGetPlatformDisplayEXT(
 diff --git a/src/tests/egl_tests/EGLRobustnessTest.cpp b/src/tests/egl_tests/EGLRobustnessTest.cpp
-index 67405ffa537c6d8d7d3e17f9d8ce291cd57d959b..daaeb14aca30ffb7404c8c8e38461bd47c417bf3 100644
+index 4e59342a7785e7557f727e3bbeead1922b2c5dd5..91cf4b3c39f7cb7703ba931eae57b243b54cdf1f 100644
 --- a/src/tests/egl_tests/EGLRobustnessTest.cpp
 +++ b/src/tests/egl_tests/EGLRobustnessTest.cpp
-@@ -32,7 +32,7 @@ class EGLRobustnessTest : public ANGLETest<>
+@@ -34,7 +34,7 @@ class EGLRobustnessTest : public ANGLETest<>
      {
          mOSWindow = OSWindow::New();
          mOSWindow->initialize("EGLRobustnessTest", 500, 500);
@@ -12689,10 +12693,10 @@ index 67405ffa537c6d8d7d3e17f9d8ce291cd57d959b..daaeb14aca30ffb7404c8c8e38461bd4
          const auto &platform = GetParam().eglParameters;
  
 diff --git a/src/tests/egl_tests/EGLSurfaceTest.cpp b/src/tests/egl_tests/EGLSurfaceTest.cpp
-index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0b554fefd 100644
+index 10af001fad6e8f027cd158f91bcad5cdafc2835f..e3d1bb39321099cacdaf47a073b4d884095395c1 100644
 --- a/src/tests/egl_tests/EGLSurfaceTest.cpp
 +++ b/src/tests/egl_tests/EGLSurfaceTest.cpp
-@@ -757,7 +757,7 @@ TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
+@@ -758,7 +758,7 @@ TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
  // Test that the window can be reset repeatedly before surface creation.
  TEST_P(EGLSurfaceTest, ResetNativeWindow)
  {
@@ -12701,7 +12705,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -3262,7 +3262,7 @@ TEST_P(EGLSurfaceTest, DISABLED_RandomClearTearing)
+@@ -3263,7 +3263,7 @@ TEST_P(EGLSurfaceTest, DISABLED_RandomClearTearing)
  // the app get over the problem.
  TEST_P(EGLSurfaceTest, DestroyAndRecreateWhileCurrent)
  {
@@ -12710,7 +12714,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -3820,7 +3820,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwap)
+@@ -3821,7 +3821,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwap)
      constexpr std::array<int, kSizeCount> kHeights{499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12719,7 +12723,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -3865,7 +3865,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwapSkipSizeQuery)
+@@ -3866,7 +3866,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterSwapSkipSizeQuery)
      constexpr std::array<int, kSizeCount> kHeights{499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12728,7 +12732,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -3900,7 +3900,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDraw)
+@@ -3901,7 +3901,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDraw)
      constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12737,7 +12741,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -3953,7 +3953,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDrawPostSizeQuery)
+@@ -3954,7 +3954,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeDrawPostSizeQuery)
      constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12746,7 +12750,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4012,7 +4012,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterDraw)
+@@ -4013,7 +4013,7 @@ TEST_P(EGLSurfaceTest, ResizeAfterDraw)
      constexpr std::array<int, kSizeCount> kHeights{64, 499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12755,7 +12759,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4070,7 +4070,7 @@ TEST_P(EGLSurfaceTest, ResizeLargeWindow)
+@@ -4071,7 +4071,7 @@ TEST_P(EGLSurfaceTest, ResizeLargeWindow)
      constexpr std::array<int, kSizeCount> kHeights{999, 1079};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12764,7 +12768,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4171,7 +4171,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrent)
+@@ -4172,7 +4172,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrent)
      constexpr std::array<int, kSizeCount> kHeights{64, 499};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12773,7 +12777,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4239,7 +4239,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrentPostSizeQuery)
+@@ -4240,7 +4240,7 @@ TEST_P(EGLSurfaceTest, ResizeBeforeMakeCurrentPostSizeQuery)
      constexpr std::array<int, kSizeCount> kHeights{64, 499};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12782,7 +12786,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4306,7 +4306,7 @@ TEST_P(EGLSurfaceTest, ResizeAndReadPixelsRobustANGLE)
+@@ -4307,7 +4307,7 @@ TEST_P(EGLSurfaceTest, ResizeAndReadPixelsRobustANGLE)
      constexpr std::array<int, kSizeCount> kHeights{499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12791,7 +12795,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
      initializeSurfaceWithDefaultConfig(true);
-@@ -4357,7 +4357,7 @@ TEST_P(EGLSurfaceTest, ResizeAndBlitFramebufferANGLE)
+@@ -4358,7 +4358,7 @@ TEST_P(EGLSurfaceTest, ResizeAndBlitFramebufferANGLE)
      constexpr std::array<int, kSizeCount> kHeights{499, 200};
  
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12800,7 +12804,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -4433,7 +4433,7 @@ class EGLWindowSurfaceColorspaceTestES3 : public EGLSurfaceTest
+@@ -4434,7 +4434,7 @@ class EGLWindowSurfaceColorspaceTestES3 : public EGLSurfaceTest
  // Test interaction between GL_EXT_sRGB_write_control and default framebuffer
  TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControl)
  {
@@ -12809,7 +12813,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -4504,7 +4504,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControl)
+@@ -4505,7 +4505,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControl)
  // wouldn't refresh the framebuffer
  TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControlWithinRenderPass)
  {
@@ -12818,7 +12822,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -4580,7 +4580,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControlWithinRenderPass
+@@ -4581,7 +4581,7 @@ TEST_P(EGLWindowSurfaceColorspaceTestES3, ToggleSrgbWriteControlWithinRenderPass
  TEST_P(EGLSurfaceTest, PreserveThenClearToBlack)
  {
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12827,7 +12831,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -4626,7 +4626,7 @@ TEST_P(EGLSurfaceTest, PreserveThenClearToBlack)
+@@ -4627,7 +4627,7 @@ TEST_P(EGLSurfaceTest, PreserveThenClearToBlack)
  TEST_P(EGLSurfaceTest, PreserveThenBlend)
  {
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12836,7 +12840,7 @@ index 661b7dc3c455ee95402b6bf9f8e178ce035d607b..e3108a12dafbc71feb11a834a97740a0
  
      initializeDisplay();
  
-@@ -4672,7 +4672,7 @@ TEST_P(EGLSurfaceTest, PreserveThenBlend)
+@@ -4673,7 +4673,7 @@ TEST_P(EGLSurfaceTest, PreserveThenBlend)
  TEST_P(EGLSurfaceTest, ClearThenPreserve)
  {
      // Necessary for some platforms (NVIDIA on Linux) if there is no per-frame window size query.
@@ -12903,10 +12907,10 @@ index 9b0d0facc1bb6b4b2570d3b4dccabe6ce4d5ef7d..e82974f351797df675951a6a54636e9e
      }
  
 diff --git a/src/tests/gl_tests/CopyTexImageTest.cpp b/src/tests/gl_tests/CopyTexImageTest.cpp
-index e0f116bc67ceecc24b6fbfba7d759c0e465cfd91..967f31a381df305c011713477fde09b4a3555e58 100644
+index 2375a4887497b162477a428a273b34ff8d2381bb..60da59f6ebe11ef300798d16db5ae541b4a64247 100644
 --- a/src/tests/gl_tests/CopyTexImageTest.cpp
 +++ b/src/tests/gl_tests/CopyTexImageTest.cpp
-@@ -1455,6 +1455,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
+@@ -1464,6 +1464,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
                    kTexSize, 1.0);
  }
  
@@ -12948,7 +12952,7 @@ index e0f116bc67ceecc24b6fbfba7d759c0e465cfd91..967f31a381df305c011713477fde09b4
  // Initialize the 3D texture we will copy the subImage data into
  void CopyTexImageTestES3::initialize3DTexture(GLTexture &texture,
                                                const GLsizei imageWidth,
-@@ -1717,6 +1752,85 @@ TEST_P(CopyTexImageTestES3, RedefineSameLevel)
+@@ -1726,6 +1761,85 @@ TEST_P(CopyTexImageTestES3, RedefineSameLevel)
                           GLColor::yellow);
  }
  
@@ -13035,10 +13039,10 @@ index e0f116bc67ceecc24b6fbfba7d759c0e465cfd91..967f31a381df305c011713477fde09b4
  TEST_P(CopyTexImageTestES3, Snorm3DTextureNonZeroOffset)
  {
 diff --git a/src/tests/gl_tests/CubeMapTextureTest.cpp b/src/tests/gl_tests/CubeMapTextureTest.cpp
-index e036b6d3c039f6fa1e950b81f59e7cc94dcff07a..4e17dad12baf18d7e61edde2175d3e500a55838b 100644
+index 6bc586d7d257cddf5d0b02be9c1c3fc87f5d4ee4..1f4c66119b1153b03c9d808087bb496012861a6f 100644
 --- a/src/tests/gl_tests/CubeMapTextureTest.cpp
 +++ b/src/tests/gl_tests/CubeMapTextureTest.cpp
-@@ -8,7 +8,6 @@
+@@ -10,7 +10,6 @@
  #include "test_utils/ANGLETest.h"
  #include "test_utils/angle_test_configs.h"
  #include "test_utils/gl_raii.h"
@@ -13047,10 +13051,10 @@ index e036b6d3c039f6fa1e950b81f59e7cc94dcff07a..4e17dad12baf18d7e61edde2175d3e50
  using namespace angle;
  
 diff --git a/src/tests/gl_tests/DepthStencilFormatsTest.cpp b/src/tests/gl_tests/DepthStencilFormatsTest.cpp
-index 831c7998b222964be8aa9c214fc955dfc572a020..269d1f25d119637b28e4a43ba45ecc1925a5af94 100644
+index b8106385a638436f9daf97fea4d16b508ed256e3..812ee635d6b650e96881cd06261c546563d4bbf7 100644
 --- a/src/tests/gl_tests/DepthStencilFormatsTest.cpp
 +++ b/src/tests/gl_tests/DepthStencilFormatsTest.cpp
-@@ -1092,6 +1092,66 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
+@@ -1094,6 +1094,66 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
      EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::black);
  }
  
@@ -13133,10 +13137,10 @@ index 78127dd8beb1e8917b88b9d23bd843f6012cab39..e706c61d0261e6c6b30cc3f1e8d7c04b
  #include "test_utils/ANGLETest.h"
  #include "test_utils/gl_raii.h"
 diff --git a/src/tests/gl_tests/DrawBuffersTest.cpp b/src/tests/gl_tests/DrawBuffersTest.cpp
-index 4423395e59931f41fcd8f34971f77b2543dbbe84..cb7b3d877752506477b50ae8c32eda11b2cebfc7 100644
+index 5632a5f38c2a04966c5ad939c8615678c26dad5e..0c490655e4751f512755bfb7cdb75654fd873c87 100644
 --- a/src/tests/gl_tests/DrawBuffersTest.cpp
 +++ b/src/tests/gl_tests/DrawBuffersTest.cpp
-@@ -11,6 +11,10 @@
+@@ -13,6 +13,10 @@
  #include "test_utils/ANGLETest.h"
  #include "test_utils/gl_raii.h"
  
@@ -13147,7 +13151,7 @@ index 4423395e59931f41fcd8f34971f77b2543dbbe84..cb7b3d877752506477b50ae8c32eda11
  using namespace angle;
  
  class DrawBuffersTest : public ANGLETest<>
-@@ -59,7 +63,7 @@ class DrawBuffersTest : public ANGLETest<>
+@@ -61,7 +65,7 @@ class DrawBuffersTest : public ANGLETest<>
          }
  
          // This test seems to fail on an nVidia machine when the window is hidden
@@ -13156,7 +13160,7 @@ index 4423395e59931f41fcd8f34971f77b2543dbbe84..cb7b3d877752506477b50ae8c32eda11
  
          glGenFramebuffers(1, &mFBO);
          glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFBO);
-@@ -1771,8 +1775,1063 @@ TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsBlendState)
+@@ -1773,8 +1777,1063 @@ TEST_P(ColorMaskForDrawBuffersTest, StateChangeAffectsBlendState)
      EXPECT_GL_NO_ERROR();
  }
  
@@ -14220,7 +14224,7 @@ index 4423395e59931f41fcd8f34971f77b2543dbbe84..cb7b3d877752506477b50ae8c32eda11
                                         ES2_VULKAN()
                                             .disable(Feature::SupportsTransformFeedbackExtension)
                                             .disable(Feature::EmulateTransformFeedback));
-@@ -1785,3 +2844,51 @@ ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersTestES3);
+@@ -1787,3 +2846,51 @@ ANGLE_INSTANTIATE_TEST_ES3(DrawBuffersTestES3);
  
  GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ColorMaskForDrawBuffersTest);
  ANGLE_INSTANTIATE_TEST_ES3(ColorMaskForDrawBuffersTest);
@@ -14273,10 +14277,10 @@ index 4423395e59931f41fcd8f34971f77b2543dbbe84..cb7b3d877752506477b50ae8c32eda11
 +    DrawBuffersAnyFormatVariationsTestPrint);
 +#endif
 diff --git a/src/tests/gl_tests/DrawElementsTest.cpp b/src/tests/gl_tests/DrawElementsTest.cpp
-index ace2d8149ad3431795e9ab61adae4ee0e86a8857..d7252f83795cd9154c26d94120ee5e7f497bdc7a 100644
+index 1a9ca7ce3a89ea195df026b174c013acbc4496af..ed04375d79de477bc9a581081d5ef9c2355461d9 100644
 --- a/src/tests/gl_tests/DrawElementsTest.cpp
 +++ b/src/tests/gl_tests/DrawElementsTest.cpp
-@@ -1496,6 +1496,71 @@ TEST_P(DrawElementsTest, LargeIndexBufferSubData)
+@@ -1498,6 +1498,71 @@ TEST_P(DrawElementsTest, LargeIndexBufferSubData)
      EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
  }
  
@@ -14349,10 +14353,10 @@ index ace2d8149ad3431795e9ab61adae4ee0e86a8857..d7252f83795cd9154c26d94120ee5e7f
  ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
  
 diff --git a/src/tests/gl_tests/FramebufferTest.cpp b/src/tests/gl_tests/FramebufferTest.cpp
-index ac38bdbcd983dbe77e5e1013fef93e1f50b5d142..31ac2126476aa44250de0409b1113b24f9457bbd 100644
+index f3a10d115ccceaa1035ceedb2b671211362449db..00e2e400293bf9b1b1b4ff05972ad10f72df1e8d 100644
 --- a/src/tests/gl_tests/FramebufferTest.cpp
 +++ b/src/tests/gl_tests/FramebufferTest.cpp
-@@ -10788,6 +10788,7 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
+@@ -10801,6 +10801,7 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
      ES3_OPENGLES().enable(Feature::ReattachFboDepthStencilOnReallocation),
      ES3_OPENGLES().disable(Feature::ReattachFboDepthStencilOnReallocation));
  
@@ -14407,10 +14411,10 @@ index 08f170575c583d3aea4c151322496106e2954633..2b360367929d9c07b7aae0f3a65cd987
          compileShader(GL_FRAGMENT_SHADER, shader.c_str());
          verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
 diff --git a/src/tests/gl_tests/GLSLTest.cpp b/src/tests/gl_tests/GLSLTest.cpp
-index 78ff8b1dd6e2c4029889b65d2683560972923438..0cfd1eb462b352e4e1a8d285ecd424eb7fd3135d 100644
+index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163c4db29b9 100644
 --- a/src/tests/gl_tests/GLSLTest.cpp
 +++ b/src/tests/gl_tests/GLSLTest.cpp
-@@ -808,6 +808,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
+@@ -810,6 +810,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor(75, 75, 38, 38));
  }
  
@@ -14440,7 +14444,7 @@ index 78ff8b1dd6e2c4029889b65d2683560972923438..0cfd1eb462b352e4e1a8d285ecd424eb
  // Same test as above without unary increments.
  TEST_P(GLSLTest, SwizzledChainedAssign)
  {
-@@ -7467,6 +7490,94 @@ void main()
+@@ -7468,6 +7491,94 @@ void main()
      ASSERT_GL_NO_ERROR();
  }
  
@@ -14535,7 +14539,7 @@ index 78ff8b1dd6e2c4029889b65d2683560972923438..0cfd1eb462b352e4e1a8d285ecd424eb
  // Test that nested structs with samplers work when the nested struct is not the last element.
  TEST_P(GLSLTest_ES3, NestedStructWithSamplers)
  {
-@@ -11517,6 +11628,43 @@ void main()
+@@ -11518,6 +11629,43 @@ void main()
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
  }
  
@@ -14579,7 +14583,7 @@ index 78ff8b1dd6e2c4029889b65d2683560972923438..0cfd1eb462b352e4e1a8d285ecd424eb
  // Test a fragment shader that returns inside if (that being the only branch that actually gets
  // executed). Regression test for http://anglebug.com/42261034
  TEST_P(GLSLTest, IfElseIfAndReturn)
-@@ -23215,6 +23363,830 @@ void main()
+@@ -23216,6 +23364,830 @@ void main()
      ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
      drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -15632,10 +15636,10 @@ index 0000000000000000000000000000000000000000..70d8f1b9dabc7ceddc43ec5d0133ecbc
 +
 +}  // namespace
 diff --git a/src/tests/gl_tests/MipmapTest.cpp b/src/tests/gl_tests/MipmapTest.cpp
-index b2020edcd3d79f8eb9c2364969349b501d292d6e..ec8df28205c7661e35b3434660b6d66b69a34ff9 100644
+index 08ad0817f7e1579c93908f5bee34487f7fb1942b..dc9d208340813c60a64a72732877d6e7b9aaa4ca 100644
 --- a/src/tests/gl_tests/MipmapTest.cpp
 +++ b/src/tests/gl_tests/MipmapTest.cpp
-@@ -2196,6 +2196,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
+@@ -2198,6 +2198,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
      EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::black);
  }
  
@@ -15667,7 +15671,7 @@ index b2020edcd3d79f8eb9c2364969349b501d292d6e..ec8df28205c7661e35b3434660b6d66b
  // Test that manually generating mipmaps using draw calls is functional
  TEST_P(MipmapTestES31, GenerateMipmapWithDraw)
  {
-@@ -2882,6 +2907,82 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(MipmapRobustInitTestES3,
+@@ -2884,6 +2909,82 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(MipmapRobustInitTestES3,
                                 ES3_VULKAN().enable(Feature::AllocateNonZeroMemory),
                                 ES3_VULKAN_SWIFTSHADER().enable(Feature::AllocateNonZeroMemory));
  
@@ -15751,10 +15755,10 @@ index b2020edcd3d79f8eb9c2364969349b501d292d6e..ec8df28205c7661e35b3434660b6d66b
  // tests should be run against.
  ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
 diff --git a/src/tests/gl_tests/OcclusionQueriesTest.cpp b/src/tests/gl_tests/OcclusionQueriesTest.cpp
-index 429e9da68b7828af03ee8ad7ad11e5c5b15ba09e..59f250a6440a3e81da3eb29e958ec7841ec9aef9 100644
+index 1b759e3df6f3337c0a2dc302f7f7f2915cbde718..730c1c0f696c6fac0a94fa9586f080aec5320ab1 100644
 --- a/src/tests/gl_tests/OcclusionQueriesTest.cpp
 +++ b/src/tests/gl_tests/OcclusionQueriesTest.cpp
-@@ -1245,6 +1245,140 @@ TEST_P(OcclusionQueriesTestES3, QueryReuseWithMultipleFBOs)
+@@ -1246,6 +1246,140 @@ TEST_P(OcclusionQueriesTestES3, QueryReuseWithMultipleFBOs)
      EXPECT_GL_TRUE(result);
  }
  
@@ -15896,10 +15900,10 @@ index 429e9da68b7828af03ee8ad7ad11e5c5b15ba09e..59f250a6440a3e81da3eb29e958ec784
  // when calling glGetQueryObjectuiv.
  TEST_P(OcclusionQueriesTestES3, DeleteFBOWithPendingQuery)
 diff --git a/src/tests/gl_tests/PbufferTest.cpp b/src/tests/gl_tests/PbufferTest.cpp
-index cce438308a4fc9d12ebb6de24b887c55e196b01e..bb872e68a6a1a009b1d874557b367dec0da2fc46 100644
+index 5925ec944964f46aefbd1d36448eabf92ed692ec..282641614e0e2478c79b81fc2e66f31699c58d0f 100644
 --- a/src/tests/gl_tests/PbufferTest.cpp
 +++ b/src/tests/gl_tests/PbufferTest.cpp
-@@ -303,7 +303,6 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
+@@ -305,7 +305,6 @@ TEST_P(PbufferTest, BindTexImageOverwrite)
      // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
      // textures.
      ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
@@ -15907,7 +15911,7 @@ index cce438308a4fc9d12ebb6de24b887c55e196b01e..bb872e68a6a1a009b1d874557b367dec
      EGLWindow *window = getEGLWindow();
      window->makeCurrent();
  
-@@ -581,7 +580,6 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
+@@ -583,7 +582,6 @@ TEST_P(PbufferTest, BindTexImageOverwriteReleasesOrphanedPbuffer)
      // Test skipped because Pbuffers are not supported or Pbuffer does not support binding to RGBA
      // textures.
      ANGLE_SKIP_TEST_IF(!mSupportsPbuffers || !mSupportsBindTexImage);
@@ -15915,97 +15919,11 @@ index cce438308a4fc9d12ebb6de24b887c55e196b01e..bb872e68a6a1a009b1d874557b367dec
      EGLWindow *window = getEGLWindow();
      window->makeCurrent();
  
-diff --git a/src/tests/gl_tests/PixelLocalStorageTest.cpp b/src/tests/gl_tests/PixelLocalStorageTest.cpp
-index 7e644a0cdd7845f5ca119b1e612fa65ac3154f53..6573f0d9ca48977d2022fcf513a595f70134fb05 100644
---- a/src/tests/gl_tests/PixelLocalStorageTest.cpp
-+++ b/src/tests/gl_tests/PixelLocalStorageTest.cpp
-@@ -6,7 +6,7 @@
- 
- #include <sstream>
- #include <string>
--#include "common/unsafe_buffers.h"
-+#include "common/string_utils.h"
- #include "test_utils/ANGLETest.h"
- #include "test_utils/gl_raii.h"
- 
-@@ -9602,7 +9602,6 @@ TEST_P(PixelLocalStorageCompilerTest, BlendEquationAdvanced_illegal_with_PLS)
-     layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
-     EXPECT_TRUE(log.compileFragmentShader(kRequireBlendAdvanced));
- 
--    bool before = true;
-     for (const char *layoutQualifier : {
-              "blend_support_multiply",
-              "blend_support_screen",
-@@ -9622,44 +9621,34 @@ TEST_P(PixelLocalStorageCompilerTest, BlendEquationAdvanced_illegal_with_PLS)
-              "blend_support_all_equations",
-          })
-     {
--        constexpr char kRequireBlendAdvancedBeforePLS[] = R"(#version 300 es
--        #extension GL_ANGLE_shader_pixel_local_storage : require
--        #extension GL_KHR_blend_equation_advanced : require
--        layout(%s) out;
--        void main()
--        {}
--        layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
--
--        constexpr char kRequireBlendAdvancedAfterPLS[] = R"(#version 300 es
--        #extension GL_ANGLE_shader_pixel_local_storage : require
--        #extension GL_KHR_blend_equation_advanced : require
--        layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;
--        layout(%s) out;
--        void main()
--        {})";
-+        std::string shaderBefore = R"(#version 300 es
-+#extension GL_ANGLE_shader_pixel_local_storage : require
-+#extension GL_KHR_blend_equation_advanced : require
-+layout(%s) out;
-+void main()
-+{}
-+layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;)";
-+        ReplaceSubstring(&shaderBefore, "%s", layoutQualifier);
- 
--        const char *formatStr =
--            before ? kRequireBlendAdvancedBeforePLS : kRequireBlendAdvancedAfterPLS;
--        size_t buffSize = ANGLE_UNSAFE_TODO(snprintf(nullptr, 0, formatStr, layoutQualifier) +
--                                            1);  // Extra space for '\0'
--        std::unique_ptr<char[]> shader(new char[buffSize]);
--        ANGLE_UNSAFE_TODO(std::snprintf(shader.get(), buffSize, formatStr, layoutQualifier));
--        EXPECT_FALSE(log.compileFragmentShader(shader.get()));
--        if (before)
--        {
-+        EXPECT_FALSE(log.compileFragmentShader(shaderBefore.c_str()));
-         EXPECT_TRUE(
-             log.has("ERROR: 0:4: 'layout' : illegal advanced blend equation when pixel local "
-                     "storage is declared"));
--        }
--        else
--        {
-+
-+        std::string shaderAfter = R"(#version 300 es
-+#extension GL_ANGLE_shader_pixel_local_storage : require
-+#extension GL_KHR_blend_equation_advanced : require
-+layout(binding=0, rgba8i) uniform lowp ipixelLocalANGLE pls;
-+layout(%s) out;
-+void main()
-+{})";
-+        ReplaceSubstring(&shaderAfter, "%s", layoutQualifier);
-+
-+        EXPECT_FALSE(log.compileFragmentShader(shaderAfter.c_str()));
-         EXPECT_TRUE(
-             log.has("ERROR: 0:5: 'layout' : illegal advanced blend equation when pixel local "
-                     "storage is declared"));
-     }
--
--        before = !before;
--    }
- }
- 
- // Check proper validation of PLS function arguments.
 diff --git a/src/tests/gl_tests/ProvokingVertexTest.cpp b/src/tests/gl_tests/ProvokingVertexTest.cpp
-index 314cae92deaef9b0eae11b4909415ef2fb91e11c..e05979cdc925b8ce5168b121504f5ce0f1c394be 100644
+index 47b525a22b550c08d21425975d8698c2e4ddbfd2..080cf7f35b1a37e88a797b6e422be60e892cccad 100644
 --- a/src/tests/gl_tests/ProvokingVertexTest.cpp
 +++ b/src/tests/gl_tests/ProvokingVertexTest.cpp
-@@ -13,7 +13,6 @@
+@@ -15,7 +15,6 @@
  #include "common/unsafe_buffers.h"
  #include "test_utils/ANGLETest.h"
  #include "test_utils/gl_raii.h"
@@ -16027,10 +15945,10 @@ index fcae00f2b1167dda52f8c857c8d94cc6c2eb7d98..a03f894e251fa90bcad100a9401b845b
          Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(getDriverType());
  
 diff --git a/src/tests/gl_tests/RobustResourceInitTest.cpp b/src/tests/gl_tests/RobustResourceInitTest.cpp
-index 575a65b85d3b4a8912ffa7ea401bb36240cedac2..a73251ede8a16db9ca81939b8811775c10576ab2 100644
+index 1818097855682c8f596292846067149ebe4ce3d5..a7548ecaf1a1ef8b492b7ea279cb550cc924a19f 100644
 --- a/src/tests/gl_tests/RobustResourceInitTest.cpp
 +++ b/src/tests/gl_tests/RobustResourceInitTest.cpp
-@@ -10,7 +10,6 @@
+@@ -12,7 +12,6 @@
  
  #include "test_utils/gl_raii.h"
  #include "util/EGLWindow.h"
@@ -16196,7 +16114,7 @@ index d87dd3dc5299e44482cdda4fde6d51623bd67093..882be7ceac6c71a30e21357d6d49358f
  {};
  
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index 7de29e3a20a0b7e4ed9e84e6199548b9f05c8afe..3aba94205b29cb748efc011e66867b81207da759 100644
+index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a4312c6c6b5 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
 @@ -2026,6 +2026,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
@@ -16246,7 +16164,7 @@ index 7de29e3a20a0b7e4ed9e84e6199548b9f05c8afe..3aba94205b29cb748efc011e66867b81
  TEST_P(TextureCubeTest, CubeMapBug)
  {
      glActiveTexture(GL_TEXTURE0);
-@@ -14088,7 +14119,7 @@ class TextureLimitsTest : public ANGLETest<>
+@@ -14238,7 +14269,7 @@ class TextureLimitsTest : public ANGLETest<>
          initTextures(vertexTextureCount + fragmentTextureCount, 0);
  
          glUseProgram(mProgram);
@@ -16255,7 +16173,7 @@ index 7de29e3a20a0b7e4ed9e84e6199548b9f05c8afe..3aba94205b29cb748efc011e66867b81
          for (GLint texIndex = 0; texIndex < vertexTextureCount; ++texIndex)
          {
              std::stringstream uniformNameStr;
-@@ -15243,6 +15274,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
+@@ -15394,6 +15425,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
  }
  
@@ -16337,7 +16255,7 @@ index 7de29e3a20a0b7e4ed9e84e6199548b9f05c8afe..3aba94205b29cb748efc011e66867b81
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
-@@ -20294,7 +20400,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
+@@ -20445,7 +20551,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
  }
  
  // Create an integer format texture but specify a FLOAT sampler. OpenGL
@@ -16346,7 +16264,7 @@ index 7de29e3a20a0b7e4ed9e84e6199548b9f05c8afe..3aba94205b29cb748efc011e66867b81
  TEST_P(Texture2DTestES3, TexImageFormatMismatch)
  {
      GLint textureUnit = 2;
-@@ -20395,6 +20501,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
+@@ -20546,6 +20652,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
      glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
  }
  
@@ -16679,10 +16597,10 @@ index 67117508a660725490566f3ce55ddd2e62266a16..0e6f8ee5e77aa6b0143b5e415b0b0981
  
  GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TextureUploadFormatTest_ES3);
 diff --git a/src/tests/gl_tests/TransformFeedbackTest.cpp b/src/tests/gl_tests/TransformFeedbackTest.cpp
-index d638786adbb69ee011bd6917e7bedd9874f961f7..c0ea629a537d9f5f9eadee3abb35225ca319cce3 100644
+index 3a74bc35a7b5ba096061810baa04715a5cd87b70..ac184906f3104118f30962feb30c550194284316 100644
 --- a/src/tests/gl_tests/TransformFeedbackTest.cpp
 +++ b/src/tests/gl_tests/TransformFeedbackTest.cpp
-@@ -11,7 +11,6 @@
+@@ -13,7 +13,6 @@
  #include "test_utils/ANGLETest.h"
  #include "test_utils/gl_raii.h"
  #include "util/EGLWindow.h"
@@ -16690,7 +16608,7 @@ index d638786adbb69ee011bd6917e7bedd9874f961f7..c0ea629a537d9f5f9eadee3abb35225c
  #include "util/random_utils.h"
  #include "util/test_utils.h"
  
-@@ -5471,6 +5470,64 @@ TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
+@@ -5473,6 +5472,64 @@ TEST_P(TransformFeedbackTest, InstancedOverflowIncompletePrimitive)
      EXPECT_EQ(6u, primitivesWritten);
  }
  
@@ -16756,7 +16674,7 @@ index d638786adbb69ee011bd6917e7bedd9874f961f7..c0ea629a537d9f5f9eadee3abb35225c
  {
    public:
 diff --git a/src/tests/gl_tests/UniformTest.cpp b/src/tests/gl_tests/UniformTest.cpp
-index fc742ddb4b03d07e6ebbd513360cd8118b245a07..5afd3663fb967b1f364d3ab353a05b0a1bda5586 100644
+index 3db493dbdcf7d972d9e6d1f72956881e69674dfe..2199b24a2c08b3e300d62f1a459ba41882c7efc3 100644
 --- a/src/tests/gl_tests/UniformTest.cpp
 +++ b/src/tests/gl_tests/UniformTest.cpp
 @@ -13,7 +13,6 @@
@@ -16767,20 +16685,20 @@ index fc742ddb4b03d07e6ebbd513360cd8118b245a07..5afd3663fb967b1f364d3ab353a05b0a
  #include "util/shader_utils.h"
  
  #include <array>
-@@ -3444,7 +3443,7 @@ TEST_P(UniformTestES3, MatrixUniformUpload)
+@@ -3445,7 +3444,7 @@ TEST_P(UniformTestES3, MatrixUniformUpload)
          matrixValues[i] = static_cast<GLfloat>(i);
      }
  
 -    using UniformMatrixCxRfv = decltype(glUniformMatrix2fv);
 +    using UniformMatrixCxRfv = GL_APIENTRY void (*)(GLint, GLsizei, GLboolean, const GLfloat *);
-     UniformMatrixCxRfv uniformMatrixCxRfv[kMaxDims + 1][kMaxDims + 1] = {
-         {nullptr, nullptr, nullptr, nullptr, nullptr},
-         {nullptr, nullptr, nullptr, nullptr, nullptr},
+     static const std::array<std::array<UniformMatrixCxRfv, kMaxDims + 1>, kMaxDims + 1>
+         uniformMatrixCxRfv = {{
+             {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c450710b9 100644
+index d2317b2ec910cc322221a5904ea37aabb165db8d..6db130160e80c06a6e4f2828494fb4b98b646f75 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
-@@ -37,6 +37,7 @@ GLsizei TypeStride(GLenum attribType)
+@@ -38,6 +38,7 @@ GLsizei TypeStride(GLenum attribType)
          case GL_FLOAT:
          case GL_UNSIGNED_INT_10_10_10_2_OES:
          case GL_INT_10_10_10_2_OES:
@@ -16788,7 +16706,7 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
              return 4;
          default:
              EXPECT_TRUE(false);
-@@ -142,6 +143,33 @@ DestT Pack1010102(std::array<SrcT, 4> input)
+@@ -143,6 +144,33 @@ DestT Pack1010102(std::array<SrcT, 4> input)
      }
  }
  
@@ -16822,7 +16740,7 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
  class VertexAttributeTest : public ANGLETest<>
  {
    protected:
-@@ -1067,6 +1095,92 @@ class VertexAttributeTestES3 : public VertexAttributeTest
+@@ -1068,6 +1096,92 @@ class VertexAttributeTestES3 : public VertexAttributeTest
      VertexAttributeTestES3() {}
  };
  
@@ -16915,7 +16833,7 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
  TEST_P(VertexAttributeTestES3, IntUnnormalized)
  {
      GLint lo                                  = std::numeric_limits<GLint>::min();
-@@ -1427,6 +1541,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
+@@ -1428,6 +1542,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
      EXPECT_GL_ERROR(GL_INVALID_OPERATION);
  }
  
@@ -16988,7 +16906,7 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
  // Test that enabling a buffer in an unused attribute doesn't crash.  There should be an active
  // attribute after that.
  TEST_P(RobustVertexAttributeTest, BoundButUnusedBuffer)
-@@ -5881,6 +6061,305 @@ void main(void)
+@@ -5885,6 +6065,305 @@ void main(void)
      EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
  }
  
@@ -17294,7 +17212,7 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
  // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/40096758
  #if !defined(__APPLE__)
  #    define EMULATED_VAO_CONFIGS                                          \
-@@ -6436,7 +6915,8 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
+@@ -6440,7 +6919,8 @@ TEST_P(VertexAttributeUint8Test, ConvertUint8IndexAtEndOfBuffer)
      std::vector<float> verts(256 * 2);
      for (int i = 0; i < 256; i++)
      {
@@ -17305,10 +17223,10 @@ index 06a924985bc2009a87e54fc6134b913bd0cadf9c..319fbbb296e8127b4ce96d82addfbe6c
          // Vertices 3, 4, 5: cover the left half of the framebuffer
          switch (i % 6)
 diff --git a/src/tests/gl_tests/WebGLCompatibilityTest.cpp b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
-index 200a3513eda6c5a2342440864db3bce42adea0a4..233178d1d3323af81c7a5bb58fa68bb81e327618 100644
+index 6fdc3cafbd459e3e6b1faeecf57eff4b0d5a6305..da76aaee4a0616c529f4c4a59a9134a751c7d1bf 100644
 --- a/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 +++ b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
-@@ -1762,13 +1762,16 @@ void main()
+@@ -1764,13 +1764,16 @@ void main()
      ANGLE_GL_PROGRAM(program, kVS, essl1_shaders::fs::Red());
      glUseProgram(program);
  
@@ -17326,7 +17244,7 @@ index 200a3513eda6c5a2342440864db3bce42adea0a4..233178d1d3323af81c7a5bb58fa68bb8
  
      GLuint positionLocation = glGetAttribLocation(program, "a_Position");
      glEnableVertexAttribArray(positionLocation);
-@@ -1796,6 +1799,33 @@ void main()
+@@ -1798,6 +1801,33 @@ void main()
      // Neither index is representable as 32-bit int
      glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, reinterpret_cast<void *>(sizeof(GLuint) * 2));
      EXPECT_GL_ERROR(GL_INVALID_OPERATION);
@@ -17360,7 +17278,7 @@ index 200a3513eda6c5a2342440864db3bce42adea0a4..233178d1d3323af81c7a5bb58fa68bb8
  }
  
  // Test for drawing with a null index buffer
-@@ -3506,6 +3536,49 @@ TEST_P(WebGLCompatibilityTest, CompressedTexImageBPTC)
+@@ -3508,6 +3538,49 @@ TEST_P(WebGLCompatibilityTest, CompressedTexImageBPTC)
      }
  }
  
@@ -17634,7 +17552,7 @@ index fe13e667f945eae5bcf53b57cf5a64958aafd344..27f01016a0d0bed51eb852022c325cb8
          kConditionGLDesktop,
          kConditionGLES,
 diff --git a/src/tests/test_expectations/GPUTestExpectationsParser.cpp b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
-index ad43bd6ae904becfdda958b97933596b87365d16..50791f3fc31adab353f2efb9322c590a7a23bbeb 100644
+index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496b375fb38 100644
 --- a/src/tests/test_expectations/GPUTestExpectationsParser.cpp
 +++ b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
 @@ -53,6 +53,7 @@ enum Token
@@ -17669,7 +17587,7 @@ index ad43bd6ae904becfdda958b97933596b87365d16..50791f3fc31adab353f2efb9322c590a
      {"d3d11", GPUTestConfig::kConditionD3D11},
      {"opengl", GPUTestConfig::kConditionGLDesktop},
      {"gles", GPUTestConfig::kConditionGLES},
-@@ -524,6 +528,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -521,6 +525,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigMacMojave:
              case kConfigMac:
              case kConfigIOS:
@@ -17677,7 +17595,7 @@ index ad43bd6ae904becfdda958b97933596b87365d16..50791f3fc31adab353f2efb9322c590a
              case kConfigLinux:
              case kConfigChromeOS:
              case kConfigAndroid:
-@@ -537,6 +542,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -534,6 +539,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigSamsung:
              case kConfigRelease:
              case kConfigDebug:
@@ -17826,7 +17744,7 @@ index 03e9037aaca4df6de668fac7ed2819b76dc2d936..28b076380cc304c6fd52af0ad0d23c95
      }
  
 diff --git a/src/tests/test_utils/angle_test_instantiate.cpp b/src/tests/test_utils/angle_test_instantiate.cpp
-index 203ff422e1cbb19c67182dc4e9ea5943c2579501..7bc21f217fc4226f261ac99331b1babbc072d60d 100644
+index e46f9911fb452bf59b007ee69345e6bafc7bf54c..5e39009c10e9958228d57da4c93e5e1fe43c1174 100644
 --- a/src/tests/test_utils/angle_test_instantiate.cpp
 +++ b/src/tests/test_utils/angle_test_instantiate.cpp
 @@ -194,6 +194,8 @@ bool gEnableRenderDocCapture = true;
@@ -17864,10 +17782,10 @@ index 739d3f6c2c00c080b8901e5c83cb2cf761ec2a61..25dbbcd7857e64756152beae90220646
  `--isolated-script-test-output` and `--isolated-script-perf-test-output` mirror `--results-file`
  and `--histogram-json-file` respectively.
 diff --git a/src/tests/test_utils/runner/TestSuite.cpp b/src/tests/test_utils/runner/TestSuite.cpp
-index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627a9a0a045 100644
+index 597128270279a978989c1b2cbefc6bcca9b473d8..887dc98599707c32e8f75a896828833f360af055 100644
 --- a/src/tests/test_utils/runner/TestSuite.cpp
 +++ b/src/tests/test_utils/runner/TestSuite.cpp
-@@ -25,16 +25,20 @@
+@@ -26,16 +26,20 @@
  #include <unordered_map>
  
  #include <gtest/gtest.h>
@@ -17893,7 +17811,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  
  namespace angle
  {
-@@ -45,6 +49,7 @@ constexpr char kFilterFileArg[]       = "--filter-file";
+@@ -46,6 +50,7 @@ constexpr char kFilterFileArg[]       = "--filter-file";
  constexpr char kResultFileArg[]       = "--results-file";
  constexpr char kTestTimeoutArg[]      = "--test-timeout";
  constexpr char kDisableCrashHandler[] = "--disable-crash-handler";
@@ -17901,7 +17819,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  constexpr char kIsolatedOutDir[]      = "--isolated-outdir";
  
  constexpr char kStartedTestString[] = "[ RUN      ] ";
-@@ -140,6 +145,7 @@ const char *ResultTypeToString(TestResultType type)
+@@ -141,6 +146,7 @@ const char *ResultTypeToString(TestResultType type)
      }
  }
  
@@ -17909,7 +17827,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  TestResultType GetResultTypeFromString(const std::string &str)
  {
      if (str == "CRASH")
-@@ -156,12 +162,14 @@ TestResultType GetResultTypeFromString(const std::string &str)
+@@ -157,12 +163,14 @@ TestResultType GetResultTypeFromString(const std::string &str)
          return TestResultType::Timeout;
      return TestResultType::Unknown;
  }
@@ -17924,7 +17842,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  js::Value ResultTypeToJSString(TestResultType type, js::Document::AllocatorType *allocator)
  {
      js::Value jsName;
-@@ -351,6 +359,7 @@ void WriteHistogramJson(const HistogramWriter &histogramWriter, const std::strin
+@@ -350,6 +358,7 @@ void WriteHistogramJson(const HistogramWriter &histogramWriter, const std::strin
          printf("Error writing histogram json file.\n");
      }
  }
@@ -17932,7 +17850,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  
  void UpdateCurrentTestResult(const testing::TestResult &resultIn, TestResults *resultsOut)
  {
-@@ -466,6 +475,7 @@ std::string GetTestFilter(const std::vector<TestIdentifier> &tests)
+@@ -514,6 +523,7 @@ std::string GetTestFilter(const std::vector<TestIdentifier> &tests)
      return filterStream.str();
  }
  
@@ -17940,7 +17858,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  bool GetTestArtifactsFromJSON(const js::Value::ConstObject &obj,
                                std::vector<std::string> *testArtifactPathsOut)
  {
-@@ -650,6 +660,7 @@ bool GetTestResultsFromJSON(const js::Document &document, TestResults *resultsOu
+@@ -698,6 +708,7 @@ bool GetTestResultsFromJSON(const js::Document &document, TestResults *resultsOu
  
      return true;
  }
@@ -17948,7 +17866,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  
  bool MergeTestResults(TestResults *input, TestResults *output, int flakyRetries)
  {
-@@ -1131,7 +1142,7 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1178,7 +1189,7 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
      Optional<int> filterArgIndex;
      bool alsoRunDisabledTests = false;
  
@@ -17957,7 +17875,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
      // By default, we should hook file API functions on macOS to avoid slow Metal shader caching
      // file access.
      angle::InitMetalFileAPIHooking(*argc, argv);
-@@ -1201,6 +1212,19 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1248,6 +1259,19 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
          mCrashCallback = [this]() { onCrashOrTimeout(TestResultType::Crash); };
          InitCrashHandler(&mCrashCallback);
      }
@@ -17977,7 +17895,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  
  #if defined(ANGLE_PLATFORM_WINDOWS) || defined(ANGLE_PLATFORM_LINUX)
      if (IsASan())
-@@ -1209,7 +1233,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
+@@ -1256,7 +1280,6 @@ TestSuite::TestSuite(int *argc, char **argv, std::function<void()> registerTests
          SetEnvironmentVar(kVkLoaderDisableDLLUnloadingEnvVar, "1");
      }
  #endif
@@ -17985,7 +17903,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
      registerTestsCallback();
  
      std::string envShardIndex = angle::GetEnvironmentVar("GTEST_SHARD_INDEX");
-@@ -1467,7 +1490,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
+@@ -1514,7 +1537,8 @@ bool TestSuite::parseSingleArg(int *argc, char **argv, int argIndex)
             ParseFlag("--gtest_list_tests", argc, argv, argIndex, &mGTestListTests) ||
             ParseFlag("--list-tests", argc, argv, argIndex, &mListTests) ||
             ParseFlag("--print-test-stdout", argc, argv, argIndex, &mPrintTestStdout) ||
@@ -17995,7 +17913,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  }
  
  void TestSuite::onCrashOrTimeout(TestResultType crashOrTimeout)
-@@ -2038,7 +2062,9 @@ void TestSuite::addHistogramSample(const std::string &measurement,
+@@ -2085,7 +2109,9 @@ void TestSuite::addHistogramSample(const std::string &measurement,
                                     double value,
                                     const std::string &units)
  {
@@ -18005,7 +17923,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  }
  
  bool TestSuite::hasTestArtifactsDirectory() const
-@@ -2062,6 +2088,7 @@ std::string TestSuite::reserveTestArtifactPath(const std::string &artifactName)
+@@ -2109,6 +2135,7 @@ std::string TestSuite::reserveTestArtifactPath(const std::string &artifactName)
  
  bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
  {
@@ -18013,7 +17931,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
      std::ifstream ifs(fileName);
      if (!ifs.is_open())
      {
-@@ -2086,6 +2113,9 @@ bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
+@@ -2133,6 +2160,9 @@ bool GetTestResultsFromFile(const char *fileName, TestResults *resultsOut)
      }
  
      return true;
@@ -18023,7 +17941,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
  }
  
  void TestSuite::dumpTestExpectationsErrorMessages()
-@@ -2166,6 +2196,7 @@ int TestSuite::getSlowTestTimeout() const
+@@ -2213,6 +2243,7 @@ int TestSuite::getSlowTestTimeout() const
  
  void TestSuite::writeOutputFiles(bool interrupted)
  {
@@ -18031,7 +17949,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
      if (!mResultsFile.empty())
      {
          WriteResultsFile(interrupted, mTestResults, mResultsFile);
-@@ -2175,6 +2206,7 @@ void TestSuite::writeOutputFiles(bool interrupted)
+@@ -2222,6 +2253,7 @@ void TestSuite::writeOutputFiles(bool interrupted)
      {
          WriteHistogramJson(mHistogramWriter, mHistogramJsonFile);
      }
@@ -18040,7 +17958,7 @@ index cd3cb3b31c793613b7b7035d093206ad755e173b..9e6a90300ed505c525fe40e4c0102627
      mMetricWriter.close();
  }
 diff --git a/src/tests/test_utils/runner/TestSuite.h b/src/tests/test_utils/runner/TestSuite.h
-index 43108d062545d2bd52e2adcec26615c263c93d1a..eff93edbc71c18a793ff0db6c0ba962f7f8d8c7d 100644
+index 5509f511b02a0b283885424fd00ef04d5b2618b4..776725dd23a2ad22ca94e8df62baab765e4c25b2 100644
 --- a/src/tests/test_utils/runner/TestSuite.h
 +++ b/src/tests/test_utils/runner/TestSuite.h
 @@ -16,10 +16,13 @@
@@ -18393,7 +18311,7 @@ index 63710e7589b0479ede4630fde35b5c5d511c59f0..54d225db62abc0a15ee469a4a44df6c2
  
      for (const std::string &path : searchPaths)
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 2d2096bf43de171f1be52907550a1fb922d571c8..ba2b13e135ab9db24ea6b46ca1208de72a3c5a38 100644
+index 4c8d47c2336aa415ef3879c9644bc463a20d5706..9ed40c6ddc4665e3f491ed24b8f9d74a3fb5a09d 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -75,6 +75,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -18404,7 +18322,7 @@ index 2d2096bf43de171f1be52907550a1fb922d571c8..ba2b13e135ab9db24ea6b46ca1208de7
      {Feature::ClearsWithGapsNeedFlush, "clearsWithGapsNeedFlush"},
      {Feature::ClipCullDistanceBrokenWithPassthroughShaders, "clipCullDistanceBrokenWithPassthroughShaders"},
      {Feature::ClipSrcRegionForBlitFramebuffer, "clipSrcRegionForBlitFramebuffer"},
-@@ -236,6 +237,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -238,6 +239,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -18413,7 +18331,7 @@ index 2d2096bf43de171f1be52907550a1fb922d571c8..ba2b13e135ab9db24ea6b46ca1208de7
      {Feature::InitializeColorAttachmentWithWhite, "initializeColorAttachmentWithWhite"},
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 0d329ff42c4df94e3763317de6abc529626e66f2..1ffde06530f57545e085fa28d86195549cd37583 100644
+index 5dfce3eaa5420af3318aaa45bf5d0447c2776582..54cf18b06da0d5fe7ab01cbf110720ba7ffc0110 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -75,6 +75,7 @@ enum class Feature
@@ -18424,7 +18342,7 @@ index 0d329ff42c4df94e3763317de6abc529626e66f2..1ffde06530f57545e085fa28d8619554
      ClearsWithGapsNeedFlush,
      ClipCullDistanceBrokenWithPassthroughShaders,
      ClipSrcRegionForBlitFramebuffer,
-@@ -236,6 +237,7 @@ enum class Feature
+@@ -238,6 +239,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,
@@ -18760,10 +18678,10 @@ index c08e8f9b68ac84b50f960b77d600bdf009f594fc..5dc534bdc6872c5b1e28805e21c634a2
      mDelegate = nil;
      // NSWindow won't be completely released unless its content view is set to nil:
 diff --git a/util/posix/test_utils_posix.cpp b/util/posix/test_utils_posix.cpp
-index 92dfa30ef88288bceddf4d4447ebeac2fa93311c..6e8acc86a08618278d542220dc8a95916a795656 100644
+index cd7d2cef16757db954357597f5c276d84d87341a..70a19d9a300ed65a2cd90014b4bd8d7906b33ec9 100644
 --- a/util/posix/test_utils_posix.cpp
 +++ b/util/posix/test_utils_posix.cpp
-@@ -360,7 +360,9 @@ void WriteDebugMessage(const char *format, ...)
+@@ -361,7 +361,9 @@ void WriteDebugMessage(const char *format, ...)
  {
      va_list vararg;
      va_start(vararg, format);

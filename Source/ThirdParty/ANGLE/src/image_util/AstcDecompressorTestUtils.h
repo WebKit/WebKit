@@ -5,6 +5,7 @@
 //
 // AstcDecompressorTestUtils.h: Utility functions for ASTC decompression tests
 
+#include <array>
 #include <vector>
 #include "common/debug.h"
 #include "common/unsafe_buffers.h"
@@ -27,7 +28,7 @@ std::vector<Rgba> makeCheckerboard(int width, int height)
 
     const Rgba white    = {0xFF, 0xFF, 0xFF, 0xFF};
     const Rgba black    = {0, 0, 0, 0xFF};
-    const Rgba colors[] = {white, black};
+    const std::array<Rgba, 2> colors = {white, black};
 
     std::vector<Rgba> result;
     result.reserve(width * height);
@@ -37,7 +38,7 @@ std::vector<Rgba> makeCheckerboard(int width, int height)
     {
         for (int x = 0; x < width; ++x)
         {
-            result.push_back(ANGLE_UNSAFE_TODO(colors[colorIndex]));
+            result.push_back(colors[colorIndex]);
             colorIndex ^= 1UL;  // toggle the last bit, so we alternate between 0 and 1;
         }
         colorIndex ^= 1UL;

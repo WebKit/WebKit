@@ -1137,8 +1137,6 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         const TType &variableType = variable.getType();
         TQualifier qualifier      = variable.getType().getQualifier();
 
-        ensureStructDefined(variableType);
-
         if (qualifier == EvqUniform)
         {
             const TInterfaceBlock *interfaceBlock = variableType.getInterfaceBlock();
@@ -1988,7 +1986,6 @@ bool OutputHLSL::visitFunctionDefinition(Visit visit, TIntermFunctionDefinition 
         for (unsigned int i = 0; i < paramCount; i++)
         {
             const TVariable *param = func->getParam(i);
-            ensureStructDefined(param->getType());
 
             writeParameter(param, out);
 
@@ -2034,10 +2031,11 @@ bool OutputHLSL::visitDeclaration(Visit visit, TIntermDeclaration *node)
         ASSERT(sequence->size() == 1);
         ASSERT(declarator);
 
+        ensureStructDefined(declarator->getType());
+
         if (IsDeclarationWrittenOut(node))
         {
             TInfoSinkBase &out = getInfoSink();
-            ensureStructDefined(declarator->getType());
 
             if (!declarator->getAsSymbolNode() ||
                 declarator->getAsSymbolNode()->variable().symbolType() !=

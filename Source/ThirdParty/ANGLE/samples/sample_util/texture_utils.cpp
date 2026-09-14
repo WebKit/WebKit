@@ -48,23 +48,25 @@ GLuint CreateSimpleTextureCubemap()
     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
     // Load the texture faces
-    GLubyte pixels[6][3] = {// Face 0 - Red
-                            {255, 0, 0},
-                            // Face 1 - Green,
-                            {0, 255, 0},
-                            // Face 3 - Blue
-                            {0, 0, 255},
-                            // Face 4 - Yellow
-                            {255, 255, 0},
-                            // Face 5 - Purple
-                            {255, 0, 255},
-                            // Face 6 - White
-                            {255, 255, 255}};
+    static constexpr std::array<std::array<GLubyte, 3>, 6> pixels = {{
+        // Face 0 - Red
+        {255, 0, 0},
+        // Face 1 - Green,
+        {0, 255, 0},
+        // Face 3 - Blue
+        {0, 0, 255},
+        // Face 4 - Yellow
+        {255, 255, 0},
+        // Face 5 - Purple
+        {255, 0, 255},
+        // Face 6 - White
+        {255, 255, 255},
+    }};
 
     for (size_t i = 0; i < 6; i++)
     {
         glTexImage2D(static_cast<GLenum>(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), 0, GL_RGB, 1, 1, 0,
-                     GL_RGB, GL_UNSIGNED_BYTE, &pixels[i]);
+                     GL_RGB, GL_UNSIGNED_BYTE, pixels[i].data());
     }
 
     // Set the filtering mode

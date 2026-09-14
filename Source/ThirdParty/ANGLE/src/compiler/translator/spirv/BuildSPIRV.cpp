@@ -9,6 +9,8 @@
 #include "compiler/translator/spirv/BuildSPIRV.h"
 #include "common/unsafe_buffers.h"
 
+#include <array>
+
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 #include "compiler/translator/ValidateVaryingLocations.h"
 #include "compiler/translator/blocklayout.h"
@@ -1053,12 +1055,13 @@ void SPIRVBuilder::predefineCommonTypes()
     // A few type pointers that are helpful for the SPIR-V transformer
     if (mShaderType != gl::ShaderType::Compute)
     {
-        struct
+        struct Infos
         {
             ReservedIds typeId;
             ReservedIds typePointerId;
             spv::StorageClass storageClass;
-        } infos[] = {
+        };
+        static constexpr std::array<Infos, 5> kInfos = {{
             {
                 kIdInt,
                 kIdIntInputTypePointer,
@@ -1084,12 +1087,10 @@ void SPIRVBuilder::predefineCommonTypes()
                 kIdIVec4FunctionTypePointer,
                 spv::StorageClassFunction,
             },
-        };
+        }};
 
-        for (size_t index = 0; index < ArraySize(infos); ++index)
+        for (const Infos &info : kInfos)
         {
-            const auto &info = ANGLE_UNSAFE_TODO(infos[index]);
-
             const spirv::IdRef typeId        = spirv::IdRef(info.typeId);
             const spirv::IdRef typePointerId = spirv::IdRef(info.typePointerId);
             SpirvIdAndStorageClass key{typeId, info.storageClass};
@@ -1660,7 +1661,7 @@ spirv::IdRef SPIRVBuilder::getBoolConstant(bool value)
 {
     uint32_t asInt = static_cast<uint32_t>(value);
 
-    spirv::IdRef constantId = ANGLE_UNSAFE_TODO(mBoolConstants[asInt]);
+    spirv::IdRef constantId = mBoolConstants[asInt];
 
     if (!constantId.valid())
     {
@@ -1669,7 +1670,7 @@ spirv::IdRef SPIRVBuilder::getBoolConstant(bool value)
 
         const spirv::IdRef boolTypeId = getSpirvTypeData(boolType, nullptr).id;
 
-        ANGLE_UNSAFE_TODO(mBoolConstants[asInt]) = constantId = getNewId({});
+        mBoolConstants[asInt] = constantId = getNewId({});
         if (value)
         {
             spirv::WriteConstantTrue(&mSpirvTypeAndConstantDecls, boolTypeId, constantId);

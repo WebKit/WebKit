@@ -1110,9 +1110,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
         if (!shouldRunLoopAndIndexingValidation())
         {
-            if (!SimplifyLoopConditions(this, root,
-                                        IntermNodePatternMatcher::kArrayDeclaration |
-                                            IntermNodePatternMatcher::kNamelessStructDeclaration,
+            if (!SimplifyLoopConditions(this, root, IntermNodePatternMatcher::kArrayDeclaration,
                                         &getSymbolTable()))
             {
                 return false;

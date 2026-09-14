@@ -64,8 +64,7 @@ bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument)
         case NonSemanticClspvReflectionArgumentStorageImage:
         case NonSemanticClspvReflectionArgumentSampledImage:
         {
-            const cl::Memory *mem = cl::Memory::Cast(*static_cast<cl_mem *>(kernelArgument.handle));
-            return mem->getFlags().intersects(CL_MEM_READ_ONLY);
+            return kernelArgument.info.accessQualifier == CL_KERNEL_ARG_ACCESS_READ_ONLY;
         }
         default:
         {
@@ -266,10 +265,21 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
             case NonSemanticClspvReflectionArgumentStorageTexelBuffer:
             case NonSemanticClspvReflectionArgumentPointerPushConstant:
             case NonSemanticClspvReflectionArgumentPointerUniform:
+            {
                 ASSERT(argSize == sizeof(cl_mem *));
-                arg.handle     = *static_cast<const cl_mem *>(argValue);
+                cl_mem memHandle = *static_cast<const cl_mem *>(argValue);
+                arg.handle       = memHandle;
                 arg.handleSize = argSize;
+
+                if (cl::Memory::Cast(memHandle)->getFlags().intersects(CL_MEM_READ_ONLY) &&
+                    !IsCLKernelArgumentReadonly(arg))
+                {
+                    WARN() << "The cl_mem argument at index:" << argIndex
+                           << " is setup as read-only, and the kernel is writing to it -- This "
+                              "could lead to undefined behavior";
+                }
                 break;
+            }
             case NonSemanticClspvReflectionArgumentWorkgroup:
                 ASSERT(arg.workgroupBufferElemSize != 0);
                 mLocalMemoryArgSizes[argIndex] = argSize;

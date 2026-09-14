@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -99,16 +101,16 @@ TEST(ImageIndexTest, Iterator3D)
 
 TEST(ImageIndexTest, Iterator2DArray)
 {
-    GLsizei layerCounts[] = {1, 3, 5, 2};
+    std::array<GLsizei, 4> layerCounts = {1, 3, 5, 2};
 
-    ImageIndexIterator iter = ImageIndexIterator::Make2DArray(minMip, maxMip, layerCounts);
+    ImageIndexIterator iter = ImageIndexIterator::Make2DArray(minMip, maxMip, layerCounts.data());
 
     ASSERT_GE(0, minMip);
-    ASSERT_EQ(ArraySize(layerCounts), static_cast<size_t>(maxMip));
+    ASSERT_EQ(layerCounts.size(), static_cast<size_t>(maxMip));
 
     for (GLint mip = minMip; mip < maxMip; mip++)
     {
-        for (GLint layer = 0; layer < ANGLE_UNSAFE_TODO(layerCounts[mip]); layer++)
+        for (GLint layer = 0; layer < layerCounts[mip]; layer++)
         {
             EXPECT_TRUE(iter.hasNext());
             ImageIndex nextIndex = iter.next();
@@ -127,19 +129,18 @@ TEST(ImageIndexTest, Iterator2DArray)
 
 TEST(ImageIndexTest, LayerIterator2DArray)
 {
-    GLsizei layerCounts[] = {1, 3, 5, 2};
+    std::array<GLsizei, 4> layerCounts = {1, 3, 5, 2};
 
     ASSERT_GE(0, minMip);
-    ASSERT_EQ(ArraySize(layerCounts), static_cast<size_t>(maxMip));
+    ASSERT_EQ(layerCounts.size(), static_cast<size_t>(maxMip));
 
     for (GLint mip = minMip; mip < maxMip; mip++)
     {
         // Make a layer iterator.
         ImageIndex mipImageIndex = ImageIndex::Make2DArray(mip, ImageIndex::kEntireLevel);
-        ImageIndexIterator iter =
-            mipImageIndex.getLayerIterator(ANGLE_UNSAFE_TODO(layerCounts[mip]));
+        ImageIndexIterator iter  = mipImageIndex.getLayerIterator(layerCounts[mip]);
 
-        for (GLint layer = 0; layer < ANGLE_UNSAFE_TODO(layerCounts[mip]); layer++)
+        for (GLint layer = 0; layer < layerCounts[mip]; layer++)
         {
             EXPECT_TRUE(iter.hasNext());
             ImageIndex nextIndex = iter.next();
@@ -150,7 +151,7 @@ TEST(ImageIndexTest, LayerIterator2DArray)
             EXPECT_EQ(layer, nextIndex.getLayerIndex());
             EXPECT_TRUE(nextIndex.hasLayer());
             EXPECT_TRUE(nextIndex.has3DLayer());
-            ANGLE_UNSAFE_TODO(EXPECT_LT(nextIndex.getLayerIndex(), layerCounts[mip]));
+            EXPECT_LT(nextIndex.getLayerIndex(), layerCounts[mip]);
         }
 
         EXPECT_FALSE(iter.hasNext());

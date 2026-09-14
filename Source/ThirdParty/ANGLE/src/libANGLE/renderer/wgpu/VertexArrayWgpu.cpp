@@ -8,6 +8,9 @@
 //
 
 #include "libANGLE/renderer/wgpu/VertexArrayWgpu.h"
+
+#include <array>
+
 #include "common/unsafe_buffers.h"
 
 #include "common/PackedEnums.h"
@@ -83,7 +86,7 @@ CopyIndexFunction GetCopyIndexFunction(gl::DrawElementsType sourceType,
     ASSERT(static_cast<size_t>(destType) >=
            static_cast<size_t>(sourceType));  // Can't copy to a smaller type
 
-    constexpr CopyIndexFunction copyFunctions[3][3] = {
+    static constexpr std::array<std::array<CopyIndexFunction, 3>, 3> copyFunctions = {{
         {
             CopyIndexData<GLubyte, GLubyte>,
             CopyIndexData<GLubyte, GLushort>,
@@ -99,10 +102,10 @@ CopyIndexFunction GetCopyIndexFunction(gl::DrawElementsType sourceType,
             nullptr,
             CopyIndexData<GLuint, GLuint>,
         },
-    };
+    }};
 
-    CopyIndexFunction copyFunction = ANGLE_UNSAFE_TODO(
-        copyFunctions[static_cast<size_t>(sourceType)][static_cast<size_t>(destType)]);
+    CopyIndexFunction copyFunction =
+        copyFunctions[static_cast<size_t>(sourceType)][static_cast<size_t>(destType)];
     ASSERT(copyFunction != nullptr);
     return copyFunction;
 }

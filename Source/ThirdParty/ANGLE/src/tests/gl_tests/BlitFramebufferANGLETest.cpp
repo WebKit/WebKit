@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -3359,7 +3361,7 @@ TEST_P(BlitFramebufferTest, BlitWithDifferentSizesColorAttachments)
     glBindFramebuffer(GL_FRAMEBUFFER, srcFramebuffer);
     constexpr GLint kWidth  = 32;
     constexpr GLint kHeight = 48;
-    GLColor texture_pattern[kWidth * kHeight];
+    std::array<GLColor, kWidth * kHeight> texture_pattern;
 
     // Prepare texture pattern
     for (int y = 0; y < kHeight; y++)
@@ -3369,13 +3371,13 @@ TEST_P(BlitFramebufferTest, BlitWithDifferentSizesColorAttachments)
             switch ((x + 2 * y) % 3)
             {
                 case 0:
-                    ANGLE_UNSAFE_TODO(texture_pattern[y * kWidth + x]) = GLColor::red;
+                    texture_pattern[y * kWidth + x] = GLColor::red;
                     break;
                 case 1:
-                    ANGLE_UNSAFE_TODO(texture_pattern[y * kWidth + x]) = GLColor::green;
+                    texture_pattern[y * kWidth + x] = GLColor::green;
                     break;
                 case 2:
-                    ANGLE_UNSAFE_TODO(texture_pattern[y * kWidth + x]) = GLColor::blue;
+                    texture_pattern[y * kWidth + x] = GLColor::blue;
                     break;
                 default:
                     break;
@@ -3386,7 +3388,7 @@ TEST_P(BlitFramebufferTest, BlitWithDifferentSizesColorAttachments)
     GLTexture largeColorBuffer;
     glBindTexture(GL_TEXTURE_2D, largeColorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 texture_pattern);
+                 texture_pattern.data());
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, largeColorBuffer,
                            0);
     EXPECT_GL_NO_ERROR();
@@ -3896,8 +3898,8 @@ TEST_P(BlitFramebufferTestES31, PartialResolve)
 // Test that a draw call to a small FBO followed by a resolve of a large FBO works.
 TEST_P(BlitFramebufferTestES31, DrawToSmallFBOThenResolveLargeFBO)
 {
-    GLFramebuffer fboMS[2];
-    GLTexture textureMS[2];
+    std::array<GLFramebuffer, 2> fboMS;
+    std::array<GLTexture, 2> textureMS;
     GLFramebuffer fboSS;
     GLTexture textureSS;
 
@@ -3926,12 +3928,12 @@ TEST_P(BlitFramebufferTestES31, DrawToSmallFBOThenResolveLargeFBO)
         const GLsizei width  = fboIndex == 0 ? kLargeWidth : kSmallWidth;
         const GLsizei height = fboIndex == 0 ? kLargeHeight : kSmallHeight;
 
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, ANGLE_UNSAFE_TODO(textureMS[fboIndex]));
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureMS[fboIndex]);
         glTexStorage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, width, height, GL_TRUE);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fboMS[fboIndex]));
+        glBindFramebuffer(GL_FRAMEBUFFER, fboMS[fboIndex]);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE,
-                               ANGLE_UNSAFE_TODO(textureMS[fboIndex]), 0);
+                               textureMS[fboIndex], 0);
         ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
         glViewport(0, 0, width, height);
@@ -4232,29 +4234,25 @@ TEST_P(BlitFramebufferTestES31, MultisampleFlippedResolveWithBlitAndNonFlippedDr
 // Test resolving into smaller framebuffer.
 TEST_P(BlitFramebufferTest, ResolveIntoSmallerFramebuffer)
 {
-    constexpr GLuint kSize[2] = {40, 32};
+    constexpr std::array<GLuint, 2> kSize = {40, 32};
     glViewport(0, 0, kSize[0], kSize[0]);
 
-    GLRenderbuffer rbo[2];
-    GLFramebuffer fbo[2];
+    std::array<GLRenderbuffer, 2> rbo;
+    std::array<GLFramebuffer, 2> fbo;
 
     for (int i = 0; i < 2; ++i)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(rbo[i]));
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo[i]);
         if (i == 0)
         {
-            glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8,
-                                             ANGLE_UNSAFE_TODO(kSize[i]),
-                                             ANGLE_UNSAFE_TODO(kSize[i]));
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kSize[i], kSize[i]);
         }
         else
         {
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, ANGLE_UNSAFE_TODO(kSize[i]),
-                                  ANGLE_UNSAFE_TODO(kSize[i]));
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize[i], kSize[i]);
         }
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[i]));
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                  ANGLE_UNSAFE_TODO(rbo[i]));
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[i]);
     }
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
@@ -4274,29 +4272,25 @@ TEST_P(BlitFramebufferTest, ResolveIntoSmallerFramebuffer)
 // Test resolving into bigger framebuffer.
 TEST_P(BlitFramebufferTest, ResolveIntoBiggerFramebuffer)
 {
-    constexpr GLuint kSize[2] = {32, 40};
+    constexpr std::array<GLuint, 2> kSize = {32, 40};
     glViewport(0, 0, kSize[0], kSize[0]);
 
-    GLRenderbuffer rbo[2];
-    GLFramebuffer fbo[2];
+    std::array<GLRenderbuffer, 2> rbo;
+    std::array<GLFramebuffer, 2> fbo;
 
     for (int i = 0; i < 2; ++i)
     {
-        glBindRenderbuffer(GL_RENDERBUFFER, ANGLE_UNSAFE_TODO(rbo[i]));
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo[i]);
         if (i == 0)
         {
-            glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8,
-                                             ANGLE_UNSAFE_TODO(kSize[i]),
-                                             ANGLE_UNSAFE_TODO(kSize[i]));
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kSize[i], kSize[i]);
         }
         else
         {
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, ANGLE_UNSAFE_TODO(kSize[i]),
-                                  ANGLE_UNSAFE_TODO(kSize[i]));
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kSize[i], kSize[i]);
         }
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[i]));
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                  ANGLE_UNSAFE_TODO(rbo[i]));
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[i]);
     }
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());

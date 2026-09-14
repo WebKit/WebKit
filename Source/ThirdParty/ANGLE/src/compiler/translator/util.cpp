@@ -9,6 +9,7 @@
 
 #include "compiler/translator/util.h"
 
+#include <array>
 #include <limits>
 
 #include "common/span.h"
@@ -32,7 +33,7 @@ namespace sh
 namespace
 {
 // [primarySize-1][secondarySize-1] is the GL type with a basic type of float.
-constexpr GLenum kFloatGLType[4][4] = {
+static constexpr std::array<std::array<GLenum, 4>, 4> kFloatGLType = {{
     // float1xS only makes sense for S == 1
     {
         GL_FLOAT,
@@ -61,14 +62,15 @@ constexpr GLenum kFloatGLType[4][4] = {
         GL_FLOAT_MAT4x3,
         GL_FLOAT_MAT4,
     },
-};
+}};
 // [primarySize-1] is the GL type with a basic type of int.
-constexpr GLenum kIntGLType[4] = {GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4};
+static constexpr std::array<GLenum, 4> kIntGLType = {GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4};
 // [primarySize-1] is the GL type with a basic type of uint.
-constexpr GLenum kUIntGLType[4] = {GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3,
-                                   GL_UNSIGNED_INT_VEC4};
+static constexpr std::array<GLenum, 4> kUIntGLType = {GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2,
+                                                      GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4};
 // [primarySize-1] is the GL type with a basic type of bool.
-constexpr GLenum kBoolGLType[4] = {GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4};
+static constexpr std::array<GLenum, 4> kBoolGLType = {GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3,
+                                                      GL_BOOL_VEC4};
 
 bool IsInterpolationIn(TQualifier qualifier)
 {
@@ -288,26 +290,25 @@ GLenum GLVariableType(const TType &type)
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() >= 1 && type.getSecondarySize() <= 4);
 
-            return ANGLE_UNSAFE_TODO(
-                kFloatGLType[type.getNominalSize() - 1][type.getSecondarySize() - 1]);
+            return kFloatGLType[type.getNominalSize() - 1][type.getSecondarySize() - 1];
 
         case EbtInt:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return ANGLE_UNSAFE_TODO(kIntGLType[type.getNominalSize() - 1]);
+            return kIntGLType[type.getNominalSize() - 1];
 
         case EbtUInt:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return ANGLE_UNSAFE_TODO(kUIntGLType[type.getNominalSize() - 1]);
+            return kUIntGLType[type.getNominalSize() - 1];
 
         case EbtBool:
             ASSERT(type.getNominalSize() >= 1 && type.getNominalSize() <= 4);
             ASSERT(type.getSecondarySize() == 1);
 
-            return ANGLE_UNSAFE_TODO(kBoolGLType[type.getNominalSize() - 1]);
+            return kBoolGLType[type.getNominalSize() - 1];
 
         case EbtYuvCscStandardEXT:
             return GL_UNSIGNED_INT;

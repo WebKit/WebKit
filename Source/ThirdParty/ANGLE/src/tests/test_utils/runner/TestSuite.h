@@ -37,7 +37,7 @@ struct TestIdentifier
     static bool ParseFromString(const std::string &str, TestIdentifier *idOut);
 
     bool valid() const { return !testName.empty(); }
-    void snprintfName(char *outBuffer, size_t maxLen) const;
+    std::string fullName() const;
 
     std::string testSuiteName;
     std::string testName;

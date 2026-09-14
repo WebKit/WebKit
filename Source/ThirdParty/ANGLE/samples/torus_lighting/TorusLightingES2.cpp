@@ -105,8 +105,8 @@ void main() {
 
         Matrix4 mvpMatrix = mPerspectiveMatrix * modelMatrix;
 
-        glUniformMatrix4fv(mMVMatrixLoc, 1, GL_FALSE, modelMatrix.data);
-        glUniformMatrix4fv(mMVPMatrixLoc, 1, GL_FALSE, mvpMatrix.data);
+        glUniformMatrix4fv(mMVMatrixLoc, 1, GL_FALSE, modelMatrix.data.data());
+        glUniformMatrix4fv(mMVPMatrixLoc, 1, GL_FALSE, mvpMatrix.data.data());
 
         glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_SHORT, 0);
     }

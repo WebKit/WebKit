@@ -10,6 +10,7 @@
 //   - various combinations of data types
 //
 
+#include <array>
 #include <vector>
 #include "common/unsafe_buffers.h"
 
@@ -687,13 +688,13 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
 
         glDisable(GL_DEPTH_TEST);
 
-        constexpr const char *kVS[VsInputDataType::COUNT] = {
+        constexpr std::array<const char *, VsInputDataType::COUNT> kVS = {
             VS_SHADER(vec4),
             VS_SHADER(ivec4),
             VS_SHADER(uvec4),
         };
 
-        constexpr const char *kFS[VsInputDataType::COUNT] = {
+        constexpr std::array<const char *, VsInputDataType::COUNT> kFS = {
             PS_SHADER(vec4),
             PS_SHADER(ivec4),
             PS_SHADER(uvec4),
@@ -701,14 +702,12 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
 
         for (int i = VsInputDataType::FLOAT; i < VsInputDataType::COUNT; ++i)
         {
-            ANGLE_UNSAFE_TODO({
-                mProgram[i] = CompileProgram(kVS[i], kFS[i], BindAttribLocation);
-                ASSERT_NE(0u, mProgram[i]);
-                mRbo[i] = createRbo(static_cast<VsInputDataType>(i));
-                ASSERT_NE(0u, mRbo[i]);
-                mFbo[i] = createFbo(mRbo[i]);
-                ASSERT_NE(0u, mFbo[i]);
-            })
+            mProgram[i] = CompileProgram(kVS[i], kFS[i], BindAttribLocation);
+            ASSERT_NE(0u, mProgram[i]);
+            mRbo[i] = createRbo(static_cast<VsInputDataType>(i));
+            ASSERT_NE(0u, mRbo[i]);
+            mFbo[i] = createFbo(mRbo[i]);
+            ASSERT_NE(0u, mFbo[i]);
         }
 
         glGenBuffers(1, &mIndexBuffer);
@@ -771,11 +770,9 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
         mTestCases.clear();
         for (int i = 0; i < VsInputDataType::COUNT; ++i)
         {
-            ANGLE_UNSAFE_TODO({
-                glDeleteProgram(mProgram[i]);
-                glDeleteFramebuffers(1, &mFbo[i]);
-                glDeleteRenderbuffers(1, &mRbo[i]);
-            })
+            glDeleteProgram(mProgram[i]);
+            glDeleteFramebuffers(1, &mFbo[i]);
+            glDeleteRenderbuffers(1, &mRbo[i]);
         }
         glDeleteBuffers(1, &mIndexBuffer);
     }
@@ -809,11 +806,9 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
     {
         GetTestCases(dataType);
         ASSERT(dataType < VsInputDataType::COUNT);
-        ANGLE_UNSAFE_TODO({
-            glBindFramebuffer(GL_FRAMEBUFFER, mFbo[dataType]);
-            glViewport(0, 0, kRboSize, kRboSize);
-            glUseProgram(mProgram[dataType]);
-        })
+        glBindFramebuffer(GL_FRAMEBUFFER, mFbo[dataType]);
+        glViewport(0, 0, kRboSize, kRboSize);
+        glUseProgram(mProgram[dataType]);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
         for (unsigned i = 0; i < mTestCases.size(); ++i)
         {
@@ -871,9 +866,9 @@ class AttributeDataTypeMismatchTest : public ANGLETest<>
 
     static const GLushort mIndices[kIndexCount];
 
-    GLuint mProgram[VsInputDataType::COUNT];
-    GLuint mFbo[VsInputDataType::COUNT];
-    GLuint mRbo[VsInputDataType::COUNT];
+    std::array<GLuint, VsInputDataType::COUNT> mProgram;
+    std::array<GLuint, VsInputDataType::COUNT> mFbo;
+    std::array<GLuint, VsInputDataType::COUNT> mRbo;
     GLuint mIndexBuffer;
 
     std::vector<TestCase> mTestCases;

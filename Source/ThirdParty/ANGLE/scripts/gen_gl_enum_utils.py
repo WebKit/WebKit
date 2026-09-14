@@ -51,9 +51,12 @@ template_gl_enums_source = """// GENERATED FILE - DO NOT EDIT.
 
 #include "common/debug.h"
 #include "common/gl_enum_utils.h"
+#include "common/unsafe_buffers.h"
 
 #include <algorithm>
-#include <cstring>
+#include <array>
+#include <iterator>
+#include <string_view>
 
 namespace gl
 {{
@@ -62,9 +65,9 @@ namespace
 const char *UnknownEnumToString(unsigned int value)
 {{
     constexpr size_t kBufferSize = 64;
-    static thread_local char sBuffer[kBufferSize];
-    snprintf(sBuffer, kBufferSize, "0x%04X", value);
-    return sBuffer;
+    static thread_local std::array<char,kBufferSize> sBuffer;
+    ANGLE_UNSAFE_TODO(snprintf(sBuffer.data(), kBufferSize, "0x%04X", value));
+    return sBuffer.data();
 }}
 }}  // anonymous namespace
 
@@ -80,26 +83,31 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
 
 namespace
 {{
-using StringEnumEntry = std::pair<const char*, unsigned int>;
-static StringEnumEntry g_stringEnumTable[] = {{
-    {string_to_enum_table}
+struct StringEnumEntry
+{{
+    std::string_view name;
+    unsigned int enumValue;
 }};
 
-const size_t g_numStringEnums = std::size(g_stringEnumTable);
+constexpr std::array<StringEnumEntry, {string_to_enum_table_size}> g_stringEnumTable = {{{{
+    {string_to_enum_table}
+}}}};
 }}  // anonymous namespace
 
 unsigned int StringToGLenum(const char *str)
 {{
+    std::string_view strView(str);
     auto it = std::lower_bound(
-        &g_stringEnumTable[0], &g_stringEnumTable[g_numStringEnums], str,
-        [](const StringEnumEntry& a, const char* b) {{ return strcmp(a.first, b) < 0; }});
+        g_stringEnumTable.begin(), g_stringEnumTable.end(), strView,
+        [](const StringEnumEntry &entry, std::string_view target) {{
+            return entry.name < target;
+        }});
 
-    if (strcmp(it->first, str) == 0)
+    if (it != g_stringEnumTable.end() && it->name == strView)
     {{
-        return it->second;
+        return it->enumValue;
     }}
 
-    UNREACHABLE();
     return 0;
 }}
 }}  // namespace gl
@@ -168,7 +176,7 @@ def dump_string_to_value_mapping(enums_and_values):
 
     def f(value):
         if value < 0:
-            return str(value)
+            return "static_cast<unsigned int>(%s)" % value
         if value < 0xFFFF:
             return "0x%04X" % value
         if value <= 0xFFFFFFFF:
@@ -250,6 +258,7 @@ def main(header_output_path, source_output_path):
         data_source_name="gl.xml and gl_angle_ext.xml",
         gles_enums_value_to_string_table=gles_enums_value_to_string_table,
         string_to_enum_table=string_to_enum_table,
+        string_to_enum_table_size=len(enums_and_values),
     )
 
     source_output_path = registry_xml.script_relative(source_output_path)

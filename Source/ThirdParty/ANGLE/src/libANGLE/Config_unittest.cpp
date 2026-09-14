@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -127,29 +129,32 @@ TEST(ConfigSetTest, FilteringBitSizes)
         EGLint(egl::Config::*ConfigMember);
     };
 
-    VariableConfigBitSize testMembers[] = {
-        {EGL_RED_SIZE, &egl::Config::redSize},     {EGL_GREEN_SIZE, &egl::Config::greenSize},
-        {EGL_BLUE_SIZE, &egl::Config::blueSize},   {EGL_ALPHA_SIZE, &egl::Config::alphaSize},
-        {EGL_DEPTH_SIZE, &egl::Config::depthSize}, {EGL_STENCIL_SIZE, &egl::Config::stencilSize},
-    };
+    std::array<VariableConfigBitSize, 6> testMembers = {{
+        {EGL_RED_SIZE, &egl::Config::redSize},
+        {EGL_GREEN_SIZE, &egl::Config::greenSize},
+        {EGL_BLUE_SIZE, &egl::Config::blueSize},
+        {EGL_ALPHA_SIZE, &egl::Config::alphaSize},
+        {EGL_DEPTH_SIZE, &egl::Config::depthSize},
+        {EGL_STENCIL_SIZE, &egl::Config::stencilSize},
+    }};
 
     // Generate configsPerType configs with varying bit sizes of each type
     size_t configsPerType = 4;
-    for (size_t i = 0; i < ArraySize(testMembers); i++)
+    for (const VariableConfigBitSize &testedMember : testMembers)
     {
         for (size_t j = 0; j < configsPerType; j++)
         {
             egl::Config config = GenerateGenericConfig();
 
             // Set all the other tested members of this config to 0
-            for (size_t k = 0; k < ArraySize(testMembers); k++)
+            for (const VariableConfigBitSize &member : testMembers)
             {
-                config.*(ANGLE_UNSAFE_TODO(testMembers[k]).ConfigMember) = 0;
+                config.*(member.ConfigMember) = 0;
             }
 
-            // Set the tested member of this config to i so it ranges from
+            // Set the tested member of this config so it ranges from
             // [1, configsPerType]
-            config.*(ANGLE_UNSAFE_TODO(testMembers[i]).ConfigMember) = static_cast<EGLint>(j) + 1;
+            config.*(testedMember.ConfigMember) = static_cast<EGLint>(j) + 1;
 
             set.add(config);
         }
@@ -157,13 +162,13 @@ TEST(ConfigSetTest, FilteringBitSizes)
 
     // for each tested member, filter by it's type and verify that the correct number
     // of results are returned
-    for (size_t i = 0; i < ArraySize(testMembers); i++)
+    for (const VariableConfigBitSize &testedMember : testMembers)
     {
         // Start with a filter of 1 to not grab the other members
         for (EGLint j = 0; j < static_cast<EGLint>(configsPerType); j++)
         {
             egl::AttributeMap filter;
-            filter.insert(ANGLE_UNSAFE_TODO(testMembers[i]).Name, j + 1);
+            filter.insert(testedMember.Name, j + 1);
 
             std::vector<const egl::Config *> filteredConfigs = set.filter(filter);
 

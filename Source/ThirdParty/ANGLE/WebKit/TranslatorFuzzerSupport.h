@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 422
+#if ANGLE_SH_VERSION != 423
 #    error Check if there are added options and update this check.
 #endif
 

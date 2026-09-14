@@ -27,8 +27,10 @@
 #include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/MemoryProgramCache.h"
 #include "libANGLE/MemoryShaderCache.h"
+#include "libANGLE/ObjectMap.h"
 #include "libANGLE/Observer.h"
 #include "libANGLE/ShareGroup.h"
+#include "libANGLE/Surface.h"
 #include "libANGLE/Version.h"
 #include "platform/Feature.h"
 #include "platform/autogen/FrontendFeatures_autogen.h"
@@ -70,7 +72,7 @@ class Surface;
 class Sync;
 class Thread;
 
-using SurfaceMap = angle::HashMap<GLuint, Surface *>;
+using SurfaceMap = priv::ObjectMap<Surface, angle::SimpleMutex>;
 using ThreadSet  = angle::HashSet<Thread *>;
 
 struct DisplayState final : private angle::NonCopyable
@@ -82,7 +84,6 @@ struct DisplayState final : private angle::NonCopyable
 
     EGLLabelKHR label;
     ContextMap contextMap;
-    mutable angle::SimpleMutex contextMapMutex;
     SurfaceMap surfaceMap;
     angle::FeatureOverrides featureOverrides;
     EGLNativeDisplayType displayId;
@@ -296,13 +297,8 @@ class Display final : public LabeledObject,
 
     egl::Error waitUntilWorkScheduled();
 
-    angle::SimpleMutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
-    angle::SimpleMutex &getProgramCacheMutex() { return mProgramCacheMutex; }
-
     void lockVulkanQueue();
     void unlockVulkanQueue();
-
-    gl::MemoryShaderCache *getMemoryShaderCache() { return &mMemoryShaderCache; }
 
     // Installs LoggingAnnotator as the global DebugAnnotator, for back-ends that do not implement
     // their own DebugAnnotator.
@@ -445,9 +441,6 @@ class Display final : public LabeledObject,
     angle::SimpleMutex mScratchBufferMutex;
     std::vector<angle::ScratchBuffer> mScratchBuffers;
     std::vector<angle::ScratchBuffer> mZeroFilledBuffers;
-
-    angle::SimpleMutex mDisplayGlobalMutex;
-    angle::SimpleMutex mProgramCacheMutex;
 
     bool mTerminatedByApi;
 };

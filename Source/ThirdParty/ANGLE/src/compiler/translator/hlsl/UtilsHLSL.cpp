@@ -887,14 +887,8 @@ TString TypeString(const TType &type)
     const TStructure *structure = type.getStruct();
     if (structure)
     {
-        if (structure->symbolType() != SymbolType::Empty)
-        {
-            return StructNameString(*structure);
-        }
-        else  // Nameless structure, define in place
-        {
-            return StructureHLSL::defineNameless(*structure);
-        }
+        ASSERT(structure->symbolType() != SymbolType::Empty);
+        return StructNameString(*structure);
     }
     else if (type.isMatrix())
     {
@@ -980,10 +974,7 @@ TString TypeString(const TType &type)
 
 TString StructNameString(const TStructure &structure)
 {
-    if (structure.symbolType() == SymbolType::Empty)
-    {
-        return "";
-    }
+    ASSERT(structure.symbolType() != SymbolType::Empty);
 
     // For structures at global scope we use a consistent
     // translation so that we can link between shader stages.
@@ -1000,10 +991,7 @@ TString QualifiedStructNameString(const TStructure &structure,
                                   bool useStd140Packing,
                                   bool forcePadding)
 {
-    if (structure.symbolType() == SymbolType::Empty)
-    {
-        return "";
-    }
+    ASSERT(structure.symbolType() != SymbolType::Empty);
 
     TString prefix = "";
 

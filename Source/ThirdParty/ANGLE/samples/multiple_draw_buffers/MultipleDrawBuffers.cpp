@@ -19,6 +19,7 @@
 #include "util/shader_utils.h"
 #include "util/test_utils.h"
 
+#include <array>
 #include <cstring>
 #include <iostream>
 
@@ -82,7 +83,7 @@ class MultipleDrawBuffersSample : public SampleApplication
 
         // Initialize the user framebuffer
         glGenFramebuffers(1, &mFramebuffer);
-        glGenTextures(mFramebufferAttachmentCount, mFramebufferTextures);
+        glGenTextures(mFramebufferAttachmentCount, mFramebufferTextures.data());
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer);
         for (size_t i = 0; i < mFramebufferAttachmentCount; i++)
@@ -112,7 +113,7 @@ class MultipleDrawBuffersSample : public SampleApplication
         glDeleteProgram(mCopyProgram);
         glDeleteProgram(mMRTProgram);
         glDeleteTextures(1, &mTexture);
-        glDeleteTextures(mFramebufferAttachmentCount, mFramebufferTextures);
+        glDeleteTextures(mFramebufferAttachmentCount, mFramebufferTextures.data());
         glDeleteFramebuffers(1, &mFramebuffer);
     }
 
@@ -209,7 +210,7 @@ class MultipleDrawBuffersSample : public SampleApplication
 
     // Framebuffer color attachments
     static const size_t mFramebufferAttachmentCount = 4;
-    GLuint mFramebufferTextures[mFramebufferAttachmentCount];
+    std::array<GLuint, mFramebufferAttachmentCount> mFramebufferTextures;
 
     // Loaded draw buffer entry points
     PFNGLDRAWBUFFERSEXTPROC mDrawBuffers;

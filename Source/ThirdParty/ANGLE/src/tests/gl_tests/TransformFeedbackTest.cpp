@@ -8,6 +8,8 @@
 #    pragma allow_unsafe_buffers
 #endif
 
+#include <array>
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
@@ -155,7 +157,7 @@ void main()
         glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(float) * 24, GL_MAP_READ_BIT);
     ASSERT_NE(nullptr, mappedBuffer);
 
-    const GLfloat expect[] = {
+    static constexpr std::array<GLfloat, 24> expect = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
         -1.0f, 1.0f, 0.5f, 1.0f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f, 1.0f,  0.5f, 1.0f,
     };
@@ -363,7 +365,7 @@ void main() {
     ASSERT_NE(0u, program2);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
@@ -475,7 +477,7 @@ void main() {
     ASSERT_NE(0u, program2);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
@@ -1387,11 +1389,11 @@ void main(void)
     glEnable(GL_DEPTH_TEST);
     ASSERT_GL_NO_ERROR();
 
-    GLuint transformFeedbacks[transformFeedbackCount];
-    glGenTransformFeedbacks(transformFeedbackCount, transformFeedbacks);
+    std::array<GLuint, transformFeedbackCount> transformFeedbacks;
+    glGenTransformFeedbacks(transformFeedbackCount, transformFeedbacks.data());
 
-    GLuint buffers[transformFeedbackCount];
-    glGenBuffers(transformFeedbackCount, buffers);
+    std::array<GLuint, transformFeedbackCount> buffers;
+    glGenBuffers(transformFeedbackCount, buffers.data());
 
     for (size_t i = 0; i < transformFeedbackCount; i++)
     {
@@ -1455,7 +1457,7 @@ TEST_P(TransformFeedbackTest, MultiContext)
         GLuint program;
         GLuint query;
         GLuint buffer;
-        size_t primitiveCounts[passCount];
+        std::array<size_t, passCount> primitiveCounts;
     };
     static constexpr uint32_t kContextCount = 32;
     ContextInfo contexts[kContextCount];
@@ -3483,8 +3485,8 @@ TEST_P(TransformFeedbackTestES32, PrimitivesWrittenAndGenerated)
     // begins or ends, as well as testing render pass restarts with the queries active and begin and
     // end of queries outside or mid render pass.
     constexpr size_t kQueryCount = 3;
-    GLQuery primitivesWrittenQueries[kQueryCount];
-    GLQuery primitivesGeneratedQueries[kQueryCount];
+    std::array<GLQuery, kQueryCount> primitivesWrittenQueries;
+    std::array<GLQuery, kQueryCount> primitivesGeneratedQueries;
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -3532,12 +3534,12 @@ TEST_P(TransformFeedbackTestES32, PrimitivesWrittenAndGenerated)
     }
     EXPECT_GL_NO_ERROR();
 
-    constexpr GLuint kPrimitivesWrittenExpected[kQueryCount] = {
+    static constexpr std::array<GLuint, kQueryCount> kPrimitivesWrittenExpected = {
         3 + 4,
         7 + 8 + 9,
         11 + 12,
     };
-    constexpr GLuint kPrimitivesGeneratedExpected[kQueryCount] = {
+    static constexpr std::array<GLuint, kQueryCount> kPrimitivesGeneratedExpected = {
         4 + 5 + 6 + 7 + 8,
         9 + 10,
         11 + 12,
@@ -4064,11 +4066,11 @@ void main()
     std::vector<std::string> tfVaryings     = {"VSBlock1.b", "d", "looseVarying"};
     constexpr size_t kCapturedVaryingsCount = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {8, 9, 4};
-    const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
+    const std::array<std::vector<float>, kCapturedVaryingsCount> kExpected = {{
         {0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48},
         {0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87},
         {0.25, 0.5, 0.75, 1.0},
-    };
+    }};
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
     EXPECT_GL_NO_ERROR();
@@ -4163,11 +4165,11 @@ void main()
     std::vector<std::string> tfVaryings                                = {"a", "b", "c"};
     constexpr size_t kCapturedVaryingsCount                            = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {1, 2, 1};
-    const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
+    const std::array<std::vector<float>, kCapturedVaryingsCount> kExpected = {{
         {0.25},
         {0.5, 0.75},
         {1.0},
-    };
+    }};
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_SEPARATE_ATTRIBS);
     EXPECT_GL_NO_ERROR();
@@ -4418,13 +4420,13 @@ void main (void)
     void *resultBuffer =
         glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, maxResults * 4, GL_MAP_READ_BIT);
     const float *actual        = reinterpret_cast<const float *>(resultBuffer);
-    constexpr float expected[] = {
+    static constexpr std::array<float, 10> expected = {
         22,  24, 26, 28, 30, 32,  // from first draw, 2 triangles
         36,  38, 40,              // from second draw, 1 triangle
         100,                      // initial value
     };
 
-    for (size_t i = 0; i < ArraySize(expected); ++i)
+    for (size_t i = 0; i < expected.size(); ++i)
     {
         EXPECT_EQ(actual[i], expected[i]) << "i:" << i;
     }

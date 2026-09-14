@@ -473,7 +473,7 @@ void TOutputGLSLBase::writeVariableType(const TType &type,
     //        ...
     //     } variable;
     const bool isStruct          = type.getStruct() != nullptr;
-    const bool isAnonymousStruct = isStruct && type.getStruct()->isNameless();
+    const bool isAnonymousStruct = isStruct && type.getStruct()->symbolType() == SymbolType::Empty;
     const bool isAnonymousStructDeclaration =
         isAnonymousStruct && symbol->symbolType() == SymbolType::Empty;
     const bool isNamedStructDeclaration = type.isStructSpecifier() && !isAnonymousStruct;
@@ -1227,7 +1227,7 @@ void TOutputGLSLBase::declareStruct(const TStructure *structure)
 
     // Keep nameless structs nameless, because they may need to match with another shader
     // stage (for example if used to declare a varying).
-    if (structure->symbolType() != SymbolType::Empty && !structure->isNameless())
+    if (structure->symbolType() != SymbolType::Empty)
     {
         out << hashName(structure) << " ";
     }

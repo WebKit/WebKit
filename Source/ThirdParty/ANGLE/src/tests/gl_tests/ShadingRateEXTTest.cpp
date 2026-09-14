@@ -6,6 +6,8 @@
 
 // ShadingRateEXTTest.cpp : Tests of the GL_EXT_fragment_shading_rate extension.
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -102,13 +104,13 @@ TEST_P(ShadingRateEXTTest, FragmentShadingRate)
     // Verify validate shading rate.
     GLsizei count    = 0;
     const int maxNum = 9;
-    GLenum shadingRates[maxNum];
-    glGetFragmentShadingRatesEXT(1, maxNum, &count, shadingRates);
+    std::array<GLenum, maxNum> shadingRates;
+    glGetFragmentShadingRatesEXT(1, maxNum, &count, shadingRates.data());
     ASSERT_GL_NO_ERROR();
 
     for (int i = 0; i < count; i++)
     {
-        glShadingRateEXT(ANGLE_UNSAFE_TODO(shadingRates[i]));
+        glShadingRateEXT(shadingRates[i]);
     }
     ASSERT_GL_NO_ERROR();
 

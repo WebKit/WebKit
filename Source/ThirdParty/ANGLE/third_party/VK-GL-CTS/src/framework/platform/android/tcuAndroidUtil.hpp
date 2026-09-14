@@ -30,11 +30,36 @@
 #include <ostream>
 
 #include <android/native_activity.h>
+#include <jni.h>
 
 namespace tcu
 {
 namespace Android
 {
+class ScopedJNIEnv
+{
+public:
+    ScopedJNIEnv(JavaVM *vm);
+    ~ScopedJNIEnv(void);
+
+    JavaVM *getVM(void) const
+    {
+        return m_vm;
+    }
+    JNIEnv *getEnv(void) const
+    {
+        return m_env;
+    }
+
+private:
+    // Avoid copying
+    ScopedJNIEnv(const ScopedJNIEnv &);
+    ScopedJNIEnv &operator=(const ScopedJNIEnv &);
+
+    JavaVM *const m_vm;
+    JNIEnv *m_env;
+    bool m_detach;
+};
 
 enum ScreenOrientation
 {
@@ -72,8 +97,10 @@ ScreenOrientation mapScreenRotation(ScreenRotation rotation);
 void PixelCopy(ANativeActivity *activity, const char *path);
 
 void describePlatform(ANativeActivity *activity, std::ostream &dst);
+void describePlatform(JavaVM *vm, std::ostream &dst);
 
 size_t getTotalAndroidSystemMemory(ANativeActivity *activity);
+size_t getTotalAndroidSystemMemory(JavaVM *vm, jobject context);
 } // namespace Android
 } // namespace tcu
 

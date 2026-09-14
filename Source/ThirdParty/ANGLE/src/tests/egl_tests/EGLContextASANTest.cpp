@@ -16,6 +16,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <vector>
 
 using namespace angle;
 
@@ -200,6 +201,100 @@ TEST_P(EGLContextASANTest, DestroyContextInUse)
 
     // cleanup
     ASSERT_GL_NO_ERROR();
+}
+
+// Tests that destroying a context with cached robust resource initialization depth PBOs does
+// not cause a use-after-free during destruction.
+// https://crbug.com/550379413
+TEST_P(EGLContextASANTest, DestroyContextWithRobustDepthInitPBO)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLConfig config   = getEGLWindow()->getConfig();
+    EGLSurface surface = getEGLWindow()->getSurface();
+
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_robust_resource_initialization"));
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Unmake default context
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EXPECT_EGL_SUCCESS();
+
+    std::vector<EGLint> contextAttribs = {
+        EGL_CONTEXT_CLIENT_VERSION,
+        3,
+        EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE,
+        EGL_TRUE,
+    };
+
+    if (IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_context_virtualization"))
+    {
+        contextAttribs.push_back(EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE);
+        contextAttribs.push_back(1);
+    }
+    contextAttribs.push_back(EGL_NONE);
+
+    EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs.data());
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(context, EGL_NO_CONTEXT);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, surface, surface, context));
+    EXPECT_EGL_SUCCESS();
+
+    // Create an uninitialized depth texture
+    GLTexture depthTex;
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, 64, 64, 0, GL_DEPTH_COMPONENT,
+                 GL_UNSIGNED_INT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr char kVS[] = R"(#version 300 es
+void main() {
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_PointSize = 1.0;
+})";
+    constexpr char kFS[] = R"(#version 300 es
+uniform highp sampler2DShadow u;
+out highp vec4 o;
+void main() {
+    o = vec4(texture(u, vec3(0.5, 0.5, 0.5)), 0.0, 0.0, 1.0);
+})";
+
+    GLProgram program;
+    program.makeRaster(kVS, kFS);
+    ASSERT_TRUE(program.valid());
+    glUseProgram(program);
+    glUniform1i(glGetUniformLocation(program, "u"), 0);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    GLTexture colorTex;
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+
+    glDrawArrays(GL_POINTS, 0, 1);
+    ASSERT_GL_NO_ERROR();
+    glFlush();
+
+    // Unmake current and destroy context.
+    EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    EXPECT_EGL_SUCCESS();
+
+    EXPECT_EGL_TRUE(SafeDestroyContext(display, context));
+    EXPECT_EGL_SUCCESS();
+
+    // Make default context and surface current again.
+    EXPECT_TRUE(getEGLWindow()->makeCurrent());
+    EXPECT_EGL_SUCCESS();
 }
 }  // anonymous namespace
 

@@ -8,9 +8,13 @@
 // a lossless  deserialization is not supported.
 
 #include "JsonSerializer.h"
-#include "common/unsafe_buffers.h"
+
+#include <array>
+#include <sstream>
+#include <string_view>
 
 #include "common/debug.h"
+#include "common/unsafe_buffers.h"
 
 #include <anglebase/sha1.h>
 #include <rapidjson/document.h>
@@ -56,16 +60,16 @@ void JsonSerializer::addBlobWithMax(const std::string &name,
                                     angle::Span<const uint8_t> blob,
                                     size_t maxSerializedLength)
 {
-    unsigned char hash[angle::base::kSHA1Length];
-    angle::base::SHA1HashBytes(blob.data(), blob.size(), hash);
+    std::array<unsigned char, angle::base::kSHA1Length> hash;
+    angle::base::SHA1HashBytes(blob.data(), blob.size(), hash.data());
     std::ostringstream os;
 
     // Since we don't want to de-serialize the data we just store a checksum of the blob
     os << "SHA1:";
-    static constexpr char kASCII[] = "0123456789ABCDEF";
+    static constexpr std::string_view kASCII = "0123456789ABCDEF";
     for (size_t i = 0; i < angle::base::kSHA1Length; ++i)
     {
-        ANGLE_UNSAFE_TODO(os << kASCII[hash[i] & 0xf] << kASCII[hash[i] >> 4]);
+        os << kASCII[hash[i] & 0xf] << kASCII[hash[i] >> 4];
     }
 
     std::ostringstream hashName;

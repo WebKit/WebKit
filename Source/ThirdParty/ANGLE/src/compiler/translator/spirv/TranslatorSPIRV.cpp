@@ -28,7 +28,6 @@
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
 #include "compiler/translator/tree_ops/RewriteDfdy.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
-#include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/spirv/ClampGLLayer.h"
 #include "compiler/translator/tree_ops/spirv/EmulateAdvancedBlendEquations.h"
 #include "compiler/translator/tree_ops/spirv/EmulateFragColorData.h"
@@ -664,11 +663,6 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
 
     if (aggregateTypesUsedForUniforms > 0)
     {
-        if (!SeparateStructFromUniformDeclarations(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-
         if (!RewriteStructSamplers(this, root, &getSymbolTable()))
         {
             return false;

@@ -42,6 +42,9 @@ template_immutablestring_cpp = """// GENERATED FILE - DO NOT EDIT.
 
 #include "compiler/translator/ImmutableString.h"
 
+#include <array>
+#include <string_view>
+
 namespace sh {{
 
 std::ostream &operator<<(std::ostream &os, const ImmutableString &str)
@@ -59,15 +62,15 @@ std::ostream &operator<<(std::ostream &os, const ImmutableString &str)
 namespace
 {{
 
-constexpr int mangledkT1[] = {{{mangled_S1}}};
-constexpr int mangledkT2[] = {{{mangled_S2}}};
-constexpr int mangledkG[] = {{{mangled_G}}};
+constexpr std::array<int, {mangled_NS}> mangledkT1 = {{{mangled_S1}}};
+constexpr std::array<int, {mangled_NS}> mangledkT2 = {{{mangled_S2}}};
+constexpr std::array<int, {mangled_NG}> mangledkG = {{{mangled_G}}};
 
-int MangledHashG(const char *key, const int *T)
+int MangledHashG(std::string_view key, const std::array<int, {mangled_NS}> &T)
 {{
     int sum = 0;
 
-    for (int i = 0; key[i] != '\\0'; i++)
+    for (size_t i = 0; i < key.length(); i++)
     {{
         sum += T[i] * key[i];
         sum %= {mangled_NG};
@@ -75,23 +78,23 @@ int MangledHashG(const char *key, const int *T)
     return mangledkG[sum];
 }}
 
-int MangledPerfectHash(const char *key)
+int MangledPerfectHash(std::string_view key)
 {{
-    if (strlen(key) > {mangled_NS})
+    if (key.length() > {mangled_NS})
         return 0;
 
     return (MangledHashG(key, mangledkT1) + MangledHashG(key, mangledkT2)) % {mangled_NG};
 }}
 
-constexpr int unmangledkT1[] = {{{unmangled_S1}}};
-constexpr int unmangledkT2[] = {{{unmangled_S2}}};
-constexpr int unmangledkG[] = {{{unmangled_G}}};
+constexpr std::array<int, {unmangled_NS}> unmangledkT1 = {{{unmangled_S1}}};
+constexpr std::array<int, {unmangled_NS}> unmangledkT2 = {{{unmangled_S2}}};
+constexpr std::array<int, {unmangled_NG}> unmangledkG = {{{unmangled_G}}};
 
-int UnmangledHashG(const char *key, const int *T)
+int UnmangledHashG(std::string_view key, const std::array<int, {unmangled_NS}> &T)
 {{
     int sum = 0;
 
-    for (int i = 0; key[i] != '\\0'; i++)
+    for (size_t i = 0; i < key.length(); i++)
     {{
         sum += T[i] * key[i];
         sum %= {unmangled_NG};
@@ -99,9 +102,9 @@ int UnmangledHashG(const char *key, const int *T)
     return unmangledkG[sum];
 }}
 
-int UnmangledPerfectHash(const char *key)
+int UnmangledPerfectHash(std::string_view key)
 {{
-    if (strlen(key) > {unmangled_NS})
+    if (key.length() > {unmangled_NS})
         return 0;
 
     return (UnmangledHashG(key, unmangledkT1) + UnmangledHashG(key, unmangledkT2)) % {unmangled_NG};
@@ -257,6 +260,8 @@ template_symboltable_cpp = """// GENERATED FILE - DO NOT EDIT.
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable.h"
 
+#include <array>
+
 namespace sh
 {{
 using Resources = ShBuiltInResources;
@@ -312,26 +317,26 @@ using namespace Func;
 using Rule = SymbolRule;
 
 // Rules used to initialize the mangled name array.
-constexpr SymbolRule kRules[] = {{
+constexpr std::array<SymbolRule, {num_mangled_rules}> kRules = {{{{
 {mangled_rules}
-}};
+}}}};
 
 // Flat array of all mangled names.
-constexpr const char *kMangledNames[] = {{
+constexpr std::array<const char *, {num_mangled_names}> kMangledNames = {{{{
 {mangled_names_array}
-}};
+}}}};
 
 // Flat array of offsets from a symbol into the rules table.
-constexpr uint16_t kMangledOffsets[] = {{
+constexpr std::array<uint16_t, {num_mangled_names}> kMangledOffsets = {{{{
 {mangled_offsets_array}
-}};
+}}}};
 
 using Ext = TExtension;
 
 // Flat array of all unmangled name identifiers.
-constexpr UnmangledEntry unmangled[] = {{
+constexpr std::array<UnmangledEntry, {num_unmangled_array}> unmangled = {{{{
 {unmangled_array}
-}};
+}}}};
 
 }}
 
@@ -370,7 +375,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name,
     uint16_t startIndex = BuiltInArray::kMangledOffsets[nameHash];
     uint16_t nextIndex = GetNextRuleIndex(nameHash);
 
-    return FindMangledBuiltIn(mShaderSpec, shaderVersion, mShaderType, mResources, *this, BuiltInArray::kRules, startIndex, nextIndex);
+    return FindMangledBuiltIn(mShaderSpec, shaderVersion, mShaderType, mResources, *this, BuiltInArray::kRules.data(), startIndex, nextIndex);
 }}
 
 bool TSymbolTable::isUnmangledBuiltInName(const ImmutableString &name,
@@ -1596,18 +1601,21 @@ def process_single_function(shader_type, group_name, function_props, symbols, va
         template_args['parameters_var_name'] = get_variable_name_to_store_parameters(parameters)
         if len(parameters) > 0:
             template_args['parameters_list'] = ', '.join(parameters_list)
-            template_parameter_list_declaration = 'constexpr const TVariable *{parameters_var_name}[{param_count}] = {{ {parameters_list} }};'
+            template_parameter_list_declaration = 'constexpr std::array<const TVariable *, {param_count}> {parameters_var_name} = {{{{ {parameters_list} }}}};'
             functions.parameter_declarations[
                 template_args['parameters_var_name']] = template_parameter_list_declaration.format(
                     **template_args)
+            data_call = '.data()'
         else:
             template_parameter_list_declaration = 'constexpr const TVariable **{parameters_var_name} = nullptr;'
             functions.parameter_declarations[
                 template_args['parameters_var_name']] = template_parameter_list_declaration.format(
                     **template_args)
+            data_call = ''
 
         template_args['extension'] = extension_string
-        template_function_declaration = 'constexpr const TFunction {unique_name}(BuiltInId::{human_readable_name}, BuiltInName::{name_with_suffix}, {extension}, BuiltInParameters::{parameters_var_name}, {param_count}, {return_type}, {op}, {known_to_not_have_side_effects});'
+        template_args['data_call'] = data_call
+        template_function_declaration = 'constexpr const TFunction {unique_name}(BuiltInId::{human_readable_name}, BuiltInName::{name_with_suffix}, {extension}, BuiltInParameters::{parameters_var_name}{data_call}, {param_count}, {return_type}, {op}, {known_to_not_have_side_effects});'
         functions.function_declarations.append(
             template_function_declaration.format(**template_args))
 
@@ -1701,6 +1709,9 @@ def prune_parameters_arrays(parameter_declarations, function_declarations):
         for replaced, replacement in parameter_variable_name_replacements.items():
             function_declarations[i] = function_declarations[i].replace(
                 'BuiltInParameters::' + replaced + ',', 'BuiltInParameters::' + replacement + ',')
+            function_declarations[i] = function_declarations[i].replace(
+                'BuiltInParameters::' + replaced + '.data(),',
+                'BuiltInParameters::' + replacement + '.data(),')
 
     return [
         value for key, value in parameter_declarations.items() if key in used_param_variable_names
@@ -1787,7 +1798,7 @@ m_{name_with_suffix} = new TVariable(BuiltInId::{name_with_suffix}, BuiltInName:
         template_init_variable = """    m_{name_with_suffix} = new TVariable(BuiltInId::{name_with_suffix}, BuiltInName::{name}, SymbolType::BuiltIn, {extension}, {type});
 {{
     TConstantUnion *unionArray = new TConstantUnion[{object_size}];
-    unionArray[0].setIConst({value});
+    unionArray->setIConst({value});
     static_cast<TVariable *>(m_{name_with_suffix})->shareConstPointer(unionArray);
 }}"""
         if template_args['object_size'] > 1:
@@ -1796,7 +1807,7 @@ m_{name_with_suffix} = new TVariable(BuiltInId::{name_with_suffix}, BuiltInName:
     TConstantUnion *unionArray = new TConstantUnion[{object_size}];
     for (size_t index = 0u; index < {object_size}; ++index)
     {{
-        unionArray[index].setIConst({value}[index]);
+        ANGLE_UNSAFE_TODO(unionArray[index].setIConst({value}[index]));
     }}
     static_cast<TVariable *>(m_{name_with_suffix})->shareConstPointer(unionArray);
 }}"""
@@ -1988,8 +1999,12 @@ def generate_files(args, functions_txt_filename, variables_json_filename,
             '\n'.join(mangled_builtins.get_offsets()),
         'mangled_rules':
             ',\n'.join(mangled_builtins.get_rules()),
+        'num_mangled_rules':
+            mangled_builtins.rule_offset,
         'unmangled_array':
             ', '.join(unmangled_function_if_statements.get_array()),
+        'num_unmangled_array':
+            len(unmangled_function_if_statements.get_array()),
         'max_unmangled_name_length':
             unmangled_function_if_statements.get_max_name_length(),
         'max_mangled_name_length':

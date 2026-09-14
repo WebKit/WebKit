@@ -14,6 +14,7 @@
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/State.h"
+#include "libANGLE/Texture.h"
 #include "libANGLE/angletypes.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/queryconversions.h"
@@ -972,6 +973,36 @@ angle::Result FramebufferGL::blit(const gl::Context *context,
         if (result != angle::Result::Continue)
         {
             return result;
+        }
+    }
+
+    if (features.finishBeforeBlitFramebufferMultiAttachment.enabled)
+    {
+        bool needFinish = false;
+        if (destFramebuffer->getState().getColorAttachmentsMask().count() > 1)
+        {
+            needFinish = true;
+        }
+        else
+        {
+            for (size_t colorIndex : destFramebuffer->getState().getColorAttachmentsMask())
+            {
+                const FramebufferAttachment *attachment =
+                    destFramebuffer->getColorAttachment(colorIndex);
+                if (attachment && attachment->type() == GL_TEXTURE)
+                {
+                    const Texture *texture = attachment->getTexture();
+                    if (texture && texture->getBaseLevel() > 0)
+                    {
+                        needFinish = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (needFinish)
+        {
+            functions->finish();
         }
     }
 

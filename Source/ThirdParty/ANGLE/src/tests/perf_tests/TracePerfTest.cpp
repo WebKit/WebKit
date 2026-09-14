@@ -1033,11 +1033,6 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
     }
 
-    if (traceNameIs("saint_seiya_awakening"))
-    {
-        addExtensionPrerequisite("GL_EXT_shadow_samplers");
-    }
-
     if (traceNameIs("magic_tiles_3"))
     {
         // Linux+NVIDIA doesn't support GL_KHR_texture_compression_astc_ldr (possibly others also)

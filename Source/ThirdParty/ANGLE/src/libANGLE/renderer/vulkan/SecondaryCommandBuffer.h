@@ -11,6 +11,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SECONDARYCOMMANDBUFFERVK_H_
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/AllocatorHelperPool.h"
@@ -617,7 +619,7 @@ struct SetBlendConstantsParams
     CommandHeader header;
 
     uint32_t padding;
-    float blendConstants[4];
+    std::array<float, 4> blendConstants;
 };
 VERIFY_8_BYTE_ALIGNMENT(SetBlendConstantsParams)
 

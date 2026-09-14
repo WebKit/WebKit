@@ -8,6 +8,9 @@
 //
 
 #include "common/frame_capture_utils.h"
+
+#include <array>
+
 #include "common/unsafe_buffers.h"
 
 namespace angle
@@ -25,10 +28,7 @@ ParamCapture::ParamCapture()
 {}
 
 ParamCapture::ParamCapture(const char *nameIn, ParamType typeIn)
-    : name(nameIn),
-      type(typeIn),
-      enumGroup(gl::GLESEnum::AllEnums),
-      uniqueID(nextID++)
+    : name(nameIn), type(typeIn), enumGroup(gl::GLESEnum::AllEnums), uniqueID(nextID++)
 {}
 
 ParamCapture::~ParamCapture() = default;
@@ -127,11 +127,12 @@ void ParamBuffer::addReturnValue(ParamCapture &&returnValue)
 
 const char *ParamBuffer::getNextParamName()
 {
-    static const char *kParamNames[] = {"p0",  "p1",  "p2",  "p3",  "p4",  "p5",  "p6",  "p7",
-                                        "p8",  "p9",  "p10", "p11", "p12", "p13", "p14", "p15",
-                                        "p16", "p17", "p18", "p19", "p20", "p21", "p22"};
-    ASSERT(mParamCaptures.size() < ArraySize(kParamNames));
-    return ANGLE_UNSAFE_TODO(kParamNames[mParamCaptures.size()]);
+    static constexpr std::array<const char *, 23> kParamNames = {
+        "p0",  "p1",  "p2",  "p3",  "p4",  "p5",  "p6",  "p7",  "p8",  "p9",  "p10", "p11",
+        "p12", "p13", "p14", "p15", "p16", "p17", "p18", "p19", "p20", "p21", "p22",
+    };
+    ASSERT(mParamCaptures.size() < kParamNames.size());
+    return kParamNames[mParamCaptures.size()];
 }
 
 ParamCapture &ParamBuffer::getClientArrayPointerParameter()

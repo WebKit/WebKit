@@ -17,6 +17,7 @@
 
 #include "util/shader_utils.h"
 
+#include <array>
 #include <cstring>
 #include <iostream>
 
@@ -40,8 +41,8 @@ class TriangleFanBenchSample : public SampleApplication
 
         mNumFanVerts = numFanVertices;
 
-        const GLfloat halfDim = 0.0625;
-        GLfloat fanVertices[] = {
+        constexpr GLfloat halfDim                            = 0.0625f;
+        static constexpr std::array<GLfloat, 30> fanVertices = {
             0.0f,     0.0f,     0.0f,  // center
             -halfDim, -halfDim, 0.0f,  // LL
             -halfDim, 0.0f,     0.0f,  // CL
@@ -59,13 +60,13 @@ class TriangleFanBenchSample : public SampleApplication
         const GLfloat yMin = -1.0f;
         // const GLfloat yMax = 1.0f;
 
-        glGenBuffers(mNumSquares, mFanBufId);
+        glGenBuffers(mNumSquares, mFanBufId.data());
 
         GLfloat xOffset = xMin;
         GLfloat yOffset = yMin;
         for (unsigned int i = 0; i < mNumSquares; ++i)
         {
-            GLfloat tempVerts[fanFloats] = {0};
+            std::array<GLfloat, fanFloats> tempVerts = {0};
             for (unsigned int j = 0; j < numFanVertices; ++j)
             {
                 tempVerts[j * 3]     = fanVertices[j * 3] + xOffset;
@@ -74,7 +75,8 @@ class TriangleFanBenchSample : public SampleApplication
             }
 
             glBindBuffer(GL_ARRAY_BUFFER, mFanBufId[i]);
-            glBufferData(GL_ARRAY_BUFFER, fanFloats * sizeof(GLfloat), tempVerts, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, fanFloats * sizeof(GLfloat), tempVerts.data(),
+                         GL_STATIC_DRAW);
 
             xOffset += 2 * halfDim;
             if (xOffset > xMax)
@@ -93,12 +95,12 @@ class TriangleFanBenchSample : public SampleApplication
 
         for (unsigned int i = 0; i < slices; ++i)
         {
-            memcpy(triPointer, fanVertices,
+            memcpy(triPointer, fanVertices.data(),
                    3 * sizeof(GLfloat));  // copy center point as first vertex for this slice
             triPointer += 3;
             for (unsigned int j = 1; j < 3; ++j)
             {
-                GLfloat *vertex =
+                const GLfloat *vertex =
                     &(fanVertices[(i + j) * 3]);  // copy two outer vertices for this point
                 memcpy(triPointer, vertex, 3 * sizeof(GLfloat));
                 triPointer += 3;
@@ -106,14 +108,14 @@ class TriangleFanBenchSample : public SampleApplication
         }
 
         // GLfloat triVertices2[triFloats];
-        glGenBuffers(mNumSquares, mTriBufId);
+        glGenBuffers(mNumSquares, mTriBufId.data());
         xOffset = xMin;
         yOffset = yMin;
 
         for (unsigned int i = 0; i < mNumSquares; ++i)
         {
             triPointer = triVertices;
-            GLfloat tempVerts[triFloats];
+            std::array<GLfloat, triFloats> tempVerts;
             for (unsigned int j = 0; j < numTriVertices; ++j)
             {
                 tempVerts[j * 3]     = triPointer[0] + xOffset;
@@ -123,7 +125,8 @@ class TriangleFanBenchSample : public SampleApplication
             }
 
             glBindBuffer(GL_ARRAY_BUFFER, mTriBufId[i]);
-            glBufferData(GL_ARRAY_BUFFER, triFloats * sizeof(GLfloat), tempVerts, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, triFloats * sizeof(GLfloat), tempVerts.data(),
+                         GL_STATIC_DRAW);
             xOffset += 2 * halfDim;
             if (xOffset > xMax)
             {
@@ -227,8 +230,8 @@ void main()
     unsigned int mNumFanVerts;
     unsigned int mNumTriVerts;
     GLuint mProgram;
-    GLuint mFanBufId[mNumSquares];
-    GLuint mTriBufId[mNumSquares];
+    std::array<GLuint, mNumSquares> mFanBufId;
+    std::array<GLuint, mNumSquares> mTriBufId;
 
     Timer mFanTimer;
     Timer mTriTimer;

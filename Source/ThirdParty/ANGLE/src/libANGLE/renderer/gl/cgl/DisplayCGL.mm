@@ -529,10 +529,7 @@ egl::Error DisplayCGL::waitNative(const gl::Context *context, EGLint engine)
 
 egl::Error DisplayCGL::waitUntilWorkScheduled()
 {
-    for (auto context : mState.contextMap)
-    {
-        context.second->flush();
-    }
+    mState.contextMap.forEach([](gl::Context *context) { context->flush(); });
     return egl::NoError();
 }
 

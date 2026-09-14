@@ -28,6 +28,7 @@
 #include "tcuTestCase.hpp"
 #include "tcuTestPackage.hpp"
 #include "tcuTestHierarchyIterator.hpp"
+#include "tcuSubprocessTestExecutor.hpp"
 #include "deUniquePtr.hpp"
 #include <map>
 
@@ -59,8 +60,8 @@ private:
     void leaveTestGroup(const std::string &casePath);
 
     bool enterTestCase(TestCase *testCase, const std::string &casePath);
-    TestCase::IterateResult iterateTestCase(TestCase *testCase);
-    void leaveTestCase(TestCase *testCase);
+    TestCase::IterateResult iterateTestCase(TestCase *testCase, const std::string &casePath);
+    void leaveTestCase(TestCase *testCase, const std::string &casePath);
 
     enum State
     {
@@ -84,6 +85,7 @@ private:
     uint64_t m_testStartTime;
     uint64_t m_packageStartTime;
     std::map<std::string, uint64_t> m_groupsDurationTime;
+    SubprocessTestExecutor m_subprocessTestExecutor;
 };
 
 } // namespace tcu

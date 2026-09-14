@@ -11,6 +11,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_CACHE_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_CACHE_UTILS_H_
 
+#include <array>
 #include <deque>
 #include "common/unsafe_buffers.h"
 
@@ -518,7 +519,7 @@ static_assert(kPackedAttribDescSize == 4, "Size mismatch");
 
 struct PackedVertexInputAttributes final
 {
-    PackedAttribDesc attribs[gl::MAX_VERTEX_ATTRIBS];
+    std::array<PackedAttribDesc, gl::MAX_VERTEX_ATTRIBS> attribs;
 
     // Component type of the corresponding input in the program.  Used to adjust the format if
     // necessary.  Takes values from gl::ComponentType.
@@ -528,7 +529,7 @@ struct PackedVertexInputAttributes final
     // greater than MAX_USHORT should not be that helpful. Note that stride limits are
     // introduced in ES 3.1.
     // Dynamic in VK_EXT_extended_dynamic_state
-    uint16_t strides[gl::MAX_VERTEX_ATTRIBS];
+    std::array<uint16_t, gl::MAX_VERTEX_ATTRIBS> strides;
 };
 
 constexpr size_t kPackedVertexInputAttributesSize = sizeof(PackedVertexInputAttributes);
@@ -671,7 +672,7 @@ static_assert(kPackedColorBlendAttachmentStateSize == 4, "Size check failed");
 
 struct PackedColorBlendState final
 {
-    uint8_t colorWriteMaskBits[gl::IMPLEMENTATION_MAX_DRAW_BUFFERS / 2];
+    std::array<uint8_t, gl::IMPLEMENTATION_MAX_DRAW_BUFFERS / 2> colorWriteMaskBits;
     PackedColorBlendAttachmentState attachments[gl::IMPLEMENTATION_MAX_DRAW_BUFFERS];
 };
 

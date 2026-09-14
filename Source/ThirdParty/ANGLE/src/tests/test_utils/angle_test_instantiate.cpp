@@ -469,11 +469,6 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                         // outdated card with many driver bugs. See http://anglebug.com/42263687
                         return !IsAMD();
                     case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
-                        if (IsARM64())
-                        {
-                            return param.getDeviceType() ==
-                                   EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
-                        }
                         return true;
                     case EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE:
                         // ES 3.1+ back-end is not supported properly.

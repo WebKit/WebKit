@@ -61,6 +61,8 @@ TestSessionExecutor::TestSessionExecutor(TestPackageRoot &root, TestContext &tes
     , m_isInTestCase(false)
     , m_testStartTime(0)
     , m_packageStartTime(0)
+    , m_groupsDurationTime()
+    , m_subprocessTestExecutor(testCtx)
 {
 }
 
@@ -114,7 +116,7 @@ bool TestSessionExecutor::iterate(void)
                         // else remain in TRAVERSING_HIERARCHY => node will be exited from in the next iteration
                     }
                     else
-                        leaveTestCase(testCase);
+                        leaveTestCase(testCase, m_iterator.getNodePath());
 
                     break;
                 }
@@ -141,7 +143,7 @@ bool TestSessionExecutor::iterate(void)
                       isTestNodeTypeExecutable(m_iterator.getNode()->getNodeType()));
 
             TestCase *const testCase                 = static_cast<TestCase *>(m_iterator.getNode());
-            const TestCase::IterateResult iterResult = iterateTestCase(testCase);
+            const TestCase::IterateResult iterResult = iterateTestCase(testCase, m_iterator.getNodePath());
 
             if (iterResult == TestCase::STOP)
                 m_state = STATE_TRAVERSE_HIERARCHY;
@@ -207,6 +209,11 @@ void TestSessionExecutor::enterTestGroup(const std::string &casePath)
 void TestSessionExecutor::leaveTestGroup(const std::string &casePath)
 {
     m_groupsDurationTime[casePath] = deGetMicroseconds() - m_groupsDurationTime[casePath];
+    if (m_subprocessTestExecutor.isSubprocessCase(casePath, false, true))
+    {
+        m_subprocessTestExecutor.spawnSubprocessCases();
+        m_subprocessTestExecutor.updateRunStatus(m_status);
+    }
 }
 
 bool TestSessionExecutor::enterTestCase(TestCase *testCase, const std::string &casePath)
@@ -220,7 +227,13 @@ bool TestSessionExecutor::enterTestCase(TestCase *testCase, const std::string &c
 #endif
     bool initOk = false;
 
-    print("\nTest case '%s'..\n", casePath.c_str());
+    const int addResult     = m_subprocessTestExecutor.addSubprocessCase(casePath);
+    const bool inSubprocess = m_subprocessTestExecutor.inSubprocessCaseCount() != 0u;
+
+    if (addResult < 0) // for the tests that are not a part of subprocess
+    {
+        print("\nTest case '%s'..\n", casePath.c_str());
+    }
 
 #if (DE_OS == DE_OS_WIN32)
     fflush(stdout);
@@ -235,7 +248,10 @@ bool TestSessionExecutor::enterTestCase(TestCase *testCase, const std::string &c
 
     try
     {
-        m_caseExecutor->init(testCase, casePath);
+        if (inSubprocess || (m_subprocessTestExecutor.getSubprocessCaseCount() == 0u) || (addResult < 0))
+        {
+            m_caseExecutor->init(testCase, casePath);
+        }
         initOk = true;
     }
     catch (const std::bad_alloc &)
@@ -264,14 +280,26 @@ bool TestSessionExecutor::enterTestCase(TestCase *testCase, const std::string &c
     return initOk;
 }
 
-void TestSessionExecutor::leaveTestCase(TestCase *testCase)
+void TestSessionExecutor::leaveTestCase(TestCase *testCase, const std::string &casePath)
 {
     TestLog &log = m_testCtx.getLog();
+
+    const bool executeDeinit = (m_subprocessTestExecutor.inSubprocessCaseCount() ||
+                                (m_subprocessTestExecutor.getSubprocessCaseCount() == 0u) ||
+                                (m_subprocessTestExecutor.isSubprocessCase(casePath, true) == false));
 
     // De-init case.
     try
     {
-        m_caseExecutor->deinit(testCase);
+        if (executeDeinit)
+        {
+            m_caseExecutor->deinit(testCase);
+        }
+        else
+        {
+            // testResult must not be QP_TEST_RESULT_LAST
+            m_testCtx.setTestResult(QP_TEST_RESULT_PENDING, "Pending");
+        }
     }
     catch (const tcu::Exception &e)
     {
@@ -303,47 +331,53 @@ void TestSessionExecutor::leaveTestCase(TestCase *testCase)
         m_isInTestCase = false;
         m_testCtx.getLog().endCase(testResult, testResultDesc);
 
-        // Update statistics.
-        print("  %s (%s)\n", qpGetTestResultName(testResult), testResultDesc);
+        if (executeDeinit)
+        {
+            // Update statistics.
+            print("  %s (%s)\n", qpGetTestResultName(testResult), testResultDesc);
+        }
 
 #if (DE_OS == DE_OS_WIN32)
         fflush(stdout);
 #endif
-        if (!m_caseExecutor->usesLocalStatus(m_testCtx))
+        if (executeDeinit)
         {
-            m_status.numExecuted += 1;
-            switch (testResult)
+            if (!m_caseExecutor->usesLocalStatus(m_testCtx))
             {
-            case QP_TEST_RESULT_PASS:
-                m_status.numPassed += 1;
-                break;
-            case QP_TEST_RESULT_NOT_SUPPORTED:
-                m_status.numNotSupported += 1;
-                break;
-            case QP_TEST_RESULT_QUALITY_WARNING:
-                m_status.numWarnings += 1;
-                break;
-            case QP_TEST_RESULT_COMPATIBILITY_WARNING:
-                m_status.numWarnings += 1;
-                break;
-            case QP_TEST_RESULT_CAPABILITY_WARNING:
-                m_status.numWarnings += 1;
-                break;
-            case QP_TEST_RESULT_WAIVER:
-                m_status.numWaived += 1;
-                break;
-            case QP_TEST_RESULT_DEVICE_LOST:
-                m_status.numDeviceLost += 1;
-                m_status.numFailed += 1;
-                break;
-            default:
-                m_status.numFailed += 1;
-                break;
+                m_status.numExecuted += 1;
+                switch (testResult)
+                {
+                case QP_TEST_RESULT_PASS:
+                    m_status.numPassed += 1;
+                    break;
+                case QP_TEST_RESULT_NOT_SUPPORTED:
+                    m_status.numNotSupported += 1;
+                    break;
+                case QP_TEST_RESULT_QUALITY_WARNING:
+                    m_status.numWarnings += 1;
+                    break;
+                case QP_TEST_RESULT_COMPATIBILITY_WARNING:
+                    m_status.numWarnings += 1;
+                    break;
+                case QP_TEST_RESULT_CAPABILITY_WARNING:
+                    m_status.numWarnings += 1;
+                    break;
+                case QP_TEST_RESULT_WAIVER:
+                    m_status.numWaived += 1;
+                    break;
+                case QP_TEST_RESULT_DEVICE_LOST:
+                    m_status.numDeviceLost += 1;
+                    m_status.numFailed += 1;
+                    break;
+                default:
+                    m_status.numFailed += 1;
+                    break;
+                }
             }
-        }
-        else
-        {
-            m_caseExecutor->updateGlobalStatus(m_status);
+            else
+            {
+                m_caseExecutor->updateGlobalStatus(m_status);
+            }
         }
 
         // terminateAfter, Resource error or any error in deinit means that execution should end
@@ -356,9 +390,15 @@ void TestSessionExecutor::leaveTestCase(TestCase *testCase)
 
     if (m_testCtx.getWatchDog())
         qpWatchDog_reset(m_testCtx.getWatchDog());
+
+    if (m_subprocessTestExecutor.inSubprocessCaseCount())
+    {
+        m_subprocessTestExecutor.updateSubprocessCase(casePath, m_testCtx.getTestResult(),
+                                                      m_testCtx.getTestResultDesc(), 999);
+    }
 }
 
-TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase)
+TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase, const std::string &casePath)
 {
     TestLog &log                          = m_testCtx.getLog();
     TestCase::IterateResult iterateResult = TestCase::STOP;
@@ -367,7 +407,12 @@ TestCase::IterateResult TestSessionExecutor::iterateTestCase(TestCase *testCase)
 
     try
     {
-        iterateResult = m_caseExecutor->iterate(testCase);
+        if (m_subprocessTestExecutor.inSubprocessCaseCount() ||
+            (m_subprocessTestExecutor.getSubprocessCaseCount() == 0u) ||
+            (m_subprocessTestExecutor.isSubprocessCase(casePath, true) == false))
+        {
+            iterateResult = m_caseExecutor->iterate(testCase);
+        }
     }
     catch (const std::bad_alloc &)
     {

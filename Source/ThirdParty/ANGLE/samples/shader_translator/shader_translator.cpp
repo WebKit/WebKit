@@ -199,6 +199,7 @@ int main(int argc, char *argv[])
                                 compileOptions.removeInactiveVariables              = true;
                                 compileOptions.retainInactiveFragmentOutputs        = true;
                                 compileOptions.ensureLoopForwardProgress            = true;
+                                compileOptions.separateCompoundStructDeclarations   = true;
                                 break;
                             default:
                                 failCode = EFailUsage;

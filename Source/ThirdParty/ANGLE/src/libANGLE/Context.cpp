@@ -2029,7 +2029,7 @@ Compiler *Context::getCompiler() const
 {
     if (mCompiler.get() == nullptr)
     {
-        mCompiler.set(this, new Compiler(mImplementation.get(), mState, mDisplay));
+        mCompiler.set(this, new Compiler(mImplementation.get(), mState));
     }
     return mCompiler.get();
 }
@@ -9850,11 +9850,6 @@ egl::Error Context::releaseExternalContext()
 {
     mImplementation->releaseExternalContext(this);
     return egl::NoError();
-}
-
-angle::SimpleMutex &Context::getProgramCacheMutex() const
-{
-    return mDisplay->getProgramCacheMutex();
 }
 
 bool Context::supportsGeometryOrTesselation() const

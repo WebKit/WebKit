@@ -104,25 +104,53 @@ class BlobCache final : angle::NonCopyable
     void remove(const BlobCache::Key &key);
 
     // Empty the cache.
-    void clear() { mBlobCache.clear(); }
+    void clear()
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        mBlobCache.clear();
+    }
 
-    // Resize the cache. Discards current contents.
-    void resize(size_t maxCacheSizeBytes) { mBlobCache.resize(maxCacheSizeBytes); }
+    // Resize the cache. Discards current contents. Returns previous cache size.
+    size_t resize(size_t maxCacheSizeBytes)
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.resize(maxCacheSizeBytes);
+    }
 
     // Returns the number of entries in the cache.
-    size_t entryCount() const { return mBlobCache.entryCount(); }
+    size_t entryCount() const
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.entryCount();
+    }
 
     // Reduces the current cache size and returns the number of bytes freed.
-    size_t trim(size_t limit) { return mBlobCache.shrinkToSize(limit); }
+    size_t trim(size_t limit)
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.shrinkToSize(limit);
+    }
 
     // Returns the current cache size in bytes.
-    size_t size() const { return mBlobCache.size(); }
+    size_t size() const
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.size();
+    }
 
     // Returns whether the cache is empty
-    bool empty() const { return mBlobCache.empty(); }
+    bool empty() const
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.empty();
+    }
 
     // Returns the maximum cache size in bytes.
-    size_t maxSize() const { return mBlobCache.maxSize(); }
+    size_t maxSize() const
+    {
+        std::scoped_lock<angle::SimpleMutex> lock(mBlobCacheMutex);
+        return mBlobCache.maxSize();
+    }
 
     void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get);
 

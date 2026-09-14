@@ -18,6 +18,7 @@
 
 #include "angle_gl.h"
 #include "common/frame_capture_binary_data.h"
+#include "common/frame_capture_shared.h"
 #include "trace_interface.h"
 #include "traces_export.h"
 

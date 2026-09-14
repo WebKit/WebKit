@@ -413,7 +413,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -438,7 +438,7 @@ void GL_APIENTRY GL_{name}({params})
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
     if ({valid_context_check})
     {{{packed_gl_enum_conversions}
@@ -462,7 +462,7 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -495,7 +495,7 @@ TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_WITH_RETURN = """\
 {{
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
-    {event_comment}ANGLE_UNSAFE_TODO(EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params}));
+    {event_comment}EVENT(context, GL{name_enum}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
     {return_type} returnValue;
     if ({valid_context_check})
@@ -529,7 +529,7 @@ void EGLAPIENTRY EGL_{name}({params})
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {{
         ANGLE_SCOPED_GLOBAL_LOCK();
-        ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
         {packed_gl_enum_conversions}
 
@@ -560,7 +560,7 @@ void EGLAPIENTRY EGL_{name}({params})
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 
-    ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -591,7 +591,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
     {return_type} returnValue;
     {{
         {egl_lock}
-        ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
         {packed_gl_enum_conversions}
 
@@ -624,7 +624,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
 
-    ANGLE_UNSAFE_TODO(EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -649,7 +649,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 TEMPLATE_CL_ENTRY_POINT_NO_RETURN = """\
 void CL_API_CALL cl{name}({params})
 {{
-    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -664,7 +664,7 @@ void CL_API_CALL cl{name}({params})
 TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_ERROR = """\
 cl_int CL_API_CALL cl{name}({params})
 {{{initialization}
-    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -680,7 +680,7 @@ cl_int CL_API_CALL cl{name}({params})
 TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET = """\
 {return_type} CL_API_CALL cl{name}({params})
 {{{initialization}
-    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -702,7 +702,7 @@ TEMPLATE_CL_ENTRY_POINT_WITH_ERRCODE_RET = """\
 TEMPLATE_CL_ENTRY_POINT_WITH_RETURN_POINTER = """\
 {return_type} CL_API_CALL cl{name}({params})
 {{{initialization}
-    ANGLE_UNSAFE_TODO(CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params}));
+    CL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -1795,6 +1795,7 @@ def is_cmd_map_buffer_range(cmd_name):
         return True
     return False
 
+
 def validation_needs_private_state_cache(name):
     return name in VALIDATION_NEEDS_PRIVATE_STATE_CACHE_LIST
 
@@ -2264,7 +2265,10 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         internal_val_params = ["validDisplay" if p == dpy_param else p for p in internal_params]
     elif api == apis.EGL and dpy_param and labeled_object == f"GetDisplayIfValid({dpy_param})" and dpy_param in internal_params:
         labeled_object = "validDisplay"
-        internal_val_params = ["validDisplay" if p == dpy_param else p for p in internal_params]
+        internal_val_params = [
+            "validDisplay" if (p == dpy_param and name != "QueryString") else p
+            for p in internal_params
+        ]
         indent = "        " if is_lockless_egl_entry_point(cmd_name) else "            "
         val_prefix = f"const egl::Display *validDisplay = GetDisplayIfValid({dpy_param});\n{indent}    "
     else:

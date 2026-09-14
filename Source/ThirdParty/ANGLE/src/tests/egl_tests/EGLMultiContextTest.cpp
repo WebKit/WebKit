@@ -9,6 +9,8 @@
 #include <gtest/gtest.h>
 #include "common/unsafe_buffers.h"
 
+#include <array>
+
 #include "test_utils/ANGLETest.h"
 #include "test_utils/MultiThreadSteps.h"
 #include "test_utils/angle_test_configs.h"
@@ -206,18 +208,18 @@ TEST_P(EGLMultiContextTest, ComputeShaderOkayWithRendering)
     EGLConfig config  = window->getConfig();
 
     constexpr size_t kThreadCount    = 2;
-    EGLSurface surface[kThreadCount] = {EGL_NO_SURFACE, EGL_NO_SURFACE};
-    EGLContext ctx[kThreadCount]     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
+    std::array<EGLSurface, kThreadCount> surface = {EGL_NO_SURFACE, EGL_NO_SURFACE};
+    std::array<EGLContext, kThreadCount> ctx     = {EGL_NO_CONTEXT, EGL_NO_CONTEXT};
 
     EGLint pbufferAttributes[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE, EGL_NONE};
 
     for (size_t t = 0; t < kThreadCount; ++t)
     {
-        ANGLE_UNSAFE_TODO(surface[t]) = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
+        surface[t] = eglCreatePbufferSurface(dpy, config, pbufferAttributes);
         EXPECT_EGL_SUCCESS();
 
-        ANGLE_UNSAFE_TODO(ctx[t]) = window->createContext(EGL_NO_CONTEXT, nullptr);
-        ANGLE_UNSAFE_TODO(EXPECT_NE(EGL_NO_CONTEXT, ctx[t]));
+        ctx[t] = window->createContext(EGL_NO_CONTEXT, nullptr);
+        EXPECT_NE(EGL_NO_CONTEXT, ctx[t]);
     }
 
     // Synchronization tools to ensure the two threads are interleaved as designed by this test.
@@ -349,8 +351,8 @@ void main()
     EXPECT_EGL_TRUE(eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
     for (size_t t = 0; t < kThreadCount; ++t)
     {
-        eglDestroySurface(dpy, ANGLE_UNSAFE_TODO(surface[t]));
-        eglDestroyContext(dpy, ANGLE_UNSAFE_TODO(ctx[t]));
+        eglDestroySurface(dpy, surface[t]);
+        eglDestroyContext(dpy, ctx[t]);
     }
 }
 

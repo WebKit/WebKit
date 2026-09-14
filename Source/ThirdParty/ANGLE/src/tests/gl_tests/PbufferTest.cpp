@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -1638,16 +1640,15 @@ TEST_P(PbufferTest, NegativeValidationBadAttributes)
     EGLWindow *window = getEGLWindow();
     EGLSurface pbufferSurface;
 
-    const EGLint invalidPBufferAttributeList[][3] = {
+    static constexpr std::array<std::array<EGLint, 3>, 2> invalidPBufferAttributeList = {{
         {EGL_MIPMAP_TEXTURE, EGL_MIPMAP_TEXTURE, EGL_NONE},
         {EGL_LARGEST_PBUFFER, EGL_LARGEST_PBUFFER, EGL_NONE},
-    };
+    }};
 
     for (size_t i = 0; i < 2; i++)
     {
-        pbufferSurface =
-            eglCreatePbufferSurface(window->getDisplay(), window->getConfig(),
-                                    &ANGLE_UNSAFE_TODO(invalidPBufferAttributeList[i][0]));
+        pbufferSurface = eglCreatePbufferSurface(window->getDisplay(), window->getConfig(),
+                                                 invalidPBufferAttributeList[i].data());
         ASSERT_EQ(pbufferSurface, EGL_NO_SURFACE);
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }

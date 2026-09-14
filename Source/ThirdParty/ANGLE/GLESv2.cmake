@@ -304,6 +304,7 @@ set(libangle_headers
     "src/libANGLE/MemoryObject.h"
     "src/libANGLE/MemoryProgramCache.h"
     "src/libANGLE/MemoryShaderCache.h"
+    "src/libANGLE/ObjectMap.h"
     "src/libANGLE/Observer.h"
     "src/libANGLE/PixelLocalStorage.h"
     "src/libANGLE/Program.h"
@@ -592,6 +593,7 @@ set(libangle_mac_sources "src/libANGLE/renderer/driver_utils_mac.mm")
 
 list(APPEND libangle_sources
     "src/common/frame_capture_binary_data.h"
+    "src/common/frame_capture_shared.h"
     "src/common/frame_capture_utils.h"
     "src/common/frame_capture_utils_autogen.h"
     "src/common/gl_enum_utils.h"

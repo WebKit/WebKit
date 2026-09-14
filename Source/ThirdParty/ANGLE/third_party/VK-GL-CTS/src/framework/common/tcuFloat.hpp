@@ -37,6 +37,8 @@ enum FloatFlags
     FLOAT_HAS_SIGN       = (1 << 0),
     FLOAT_SUPPORT_DENORM = (1 << 1),
     FLOAT_NO_INFINITY    = (1 << 2),
+    FLOAT_NO_NAN         = (1 << 3),
+    FLOAT_NO_ZERO        = (1 << 4),
 };
 
 enum RoundingDirection
@@ -128,7 +130,14 @@ public:
 
     inline int signBit(void) const
     {
-        return (int)(m_value >> (ExponentBits + MantissaBits)) & 1;
+        if constexpr (ExponentBits + MantissaBits == 8 * sizeof(StorageType))
+        {
+            return 0;
+        }
+        else
+        {
+            return (int)(m_value >> (ExponentBits + MantissaBits)) & 1;
+        }
     }
     inline StorageType exponentBits(void) const
     {
@@ -165,6 +174,10 @@ public:
     }
     inline bool isNaN(void) const
     {
+        if (Flags & FLOAT_NO_NAN)
+        {
+            return false;
+        }
         if (!(Flags & FLOAT_NO_INFINITY))
         {
             return exponentBits() == ((1 << ExponentBits) - 1) && mantissaBits() != 0;
@@ -178,6 +191,10 @@ public:
     }
     inline bool isZero(void) const
     {
+        if (Flags & FLOAT_NO_ZERO)
+        {
+            return false;
+        }
         return exponentBits() == 0 && mantissaBits() == 0;
     }
     inline bool isDenorm(void) const
@@ -196,6 +213,10 @@ public:
 
     static Float largestNormal(int sign);
     static Float smallestNormal(int sign);
+    static bool supportsSign()
+    {
+        return Flags & FLOAT_HAS_SIGN;
+    }
 
 private:
     StorageType m_value;
@@ -217,6 +238,11 @@ typedef Float<uint16_t, 5, 10, 15, FLOAT_HAS_SIGN>
 typedef Float<uint8_t, 5, 2, 15, FLOAT_HAS_SIGN | FLOAT_SUPPORT_DENORM> FloatE5M2;
 
 typedef Float<uint8_t, 4, 3, 7, FLOAT_HAS_SIGN | FLOAT_SUPPORT_DENORM | FLOAT_NO_INFINITY> FloatE4M3;
+
+typedef Float<uint8_t, 2, 1, 1, FLOAT_HAS_SIGN | FLOAT_SUPPORT_DENORM | FLOAT_NO_INFINITY | FLOAT_NO_NAN> FloatE2M1;
+typedef Float<uint8_t, 3, 2, 3, FLOAT_HAS_SIGN | FLOAT_SUPPORT_DENORM | FLOAT_NO_INFINITY | FLOAT_NO_NAN> FloatE3M2;
+typedef Float<uint8_t, 2, 3, 1, FLOAT_HAS_SIGN | FLOAT_SUPPORT_DENORM | FLOAT_NO_INFINITY | FLOAT_NO_NAN> FloatE2M3;
+typedef Float<uint8_t, 8, 0, 127, FLOAT_SUPPORT_DENORM | FLOAT_NO_INFINITY | FLOAT_NO_ZERO> FloatUE8M0;
 
 template <typename StorageType, int ExponentBits, int MantissaBits, int ExponentBias, uint32_t Flags>
 inline Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags>::Float(void) : m_value(0)
@@ -299,6 +325,11 @@ inline Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags> Float
         return Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags>::construct(
             sign, ExponentBias, (static_cast<StorageType>(1) << (MantissaBits + 1)) - 1);
     }
+    else if (MantissaBits == 0 && !(Flags & FLOAT_NO_NAN))
+    {
+        // UE8M0 doesn't max out exponent because that's NaN
+        return Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags>::construct(sign, ExponentBias, 0);
+    }
     else
     {
         // E4M3 has all exponent bits set, and the LSB of mantissa not set
@@ -331,7 +362,7 @@ Float<StorageType, ExponentBits, MantissaBits, ExponentBias, Flags> Float<
     const StorageType exp = (isShorthandZero || isDenormOrZero) ? StorageType(0) : StorageType(exponent + ExponentBias);
 
     DE_ASSERT(sign == +1 || sign == -1);
-    DE_ASSERT(isShorthandZero || isDenormOrZero || mantissa >> MantissaBits == 1);
+    DE_ASSERT(isShorthandZero || isDenormOrZero || MantissaBits == 0 || mantissa >> MantissaBits == 1);
     DE_ASSERT(exp >> ExponentBits == 0);
 
     return Float(StorageType(s | (exp << MantissaBits) | (mantissa & ((StorageType(1) << MantissaBits) - 1))));
@@ -532,6 +563,81 @@ template <class F>
 inline constexpr F floatSignalingNaN = std::numeric_limits<F>::signaling_NaN();
 template <>
 inline constexpr float16_t floatSignalingNaN<float16_t> = 0x7c01;
+
+// Signed 8-bit integer with implicit 1/64 scale
+struct FloatMXINT8
+{
+    typedef uint8_t StorageType;
+
+    FloatMXINT8(void) : FloatMXINT8(0)
+    {
+    }
+    explicit FloatMXINT8(StorageType value) : m_value(value)
+    {
+    }
+
+    static FloatMXINT8 zero(int sign)
+    {
+        DE_UNREF(sign);
+        return FloatMXINT8(0);
+    }
+    static FloatMXINT8 largestNormal(int sign)
+    {
+        return sign ? FloatMXINT8(0x81) : FloatMXINT8(0x7F);
+    }
+    static FloatMXINT8 smallestNormal(int sign)
+    {
+        return sign ? FloatMXINT8(0xFF) : FloatMXINT8(0x1);
+    }
+
+    static bool supportsSign()
+    {
+        return true;
+    }
+
+    double asDouble() const
+    {
+        int32_t v = (int32_t)(int8_t)(m_value);
+        v         = std::max(v, (int32_t)0xFFFFFF81);
+        return (double)(v) / 64.0;
+    }
+    double asFloat() const
+    {
+        return (float)asDouble();
+    }
+    bool isNaN() const
+    {
+        return false;
+    }
+    bool isInf() const
+    {
+        return false;
+    }
+    bool isDenorm() const
+    {
+        return false;
+    }
+    bool isZero() const
+    {
+        return m_value == 0;
+    }
+
+    StorageType bits(void) const
+    {
+        return m_value;
+    }
+    int signBit(void) const
+    {
+        return (int)(m_value >> 7) & 1;
+    }
+    int sign(void) const
+    {
+        return signBit() ? -1 : 1;
+    }
+
+private:
+    StorageType m_value;
+};
 
 } // namespace tcu
 

@@ -12,9 +12,9 @@
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 #include "compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
-#include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
+#include "compiler/translator/tree_ops/UseGeneratedNamesForAnonymousStructs.h"
 #include "compiler/translator/tree_ops/hlsl/ArrayReturnValueToOutParameter.h"
 #include "compiler/translator/tree_ops/hlsl/BreakVariableAliasingInInnerLoops.h"
 #include "compiler/translator/tree_ops/hlsl/ExpandIntegerPowExpressions.h"
@@ -148,6 +148,13 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
         }
     }
 
+    // The HLSL generator prefers every struct to have a name, and is not bound by GLSL's
+    // requirement that anonymous structs match their (lack of) name between shader stages.
+    if (!UseGeneratedNamesForAnonymousStructs(this, root))
+    {
+        return false;
+    }
+
     // Note that SimplifyLoopConditions needs to be run before any other AST transformations that
     // may need to generate new statements from loop conditions or loop expressions.
     // Note that SeparateDeclarations has already been run in TCompiler::compileTreeImpl().
@@ -273,11 +280,6 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
             {
                 return false;
             }
-        }
-
-        if (!SeparateStructFromUniformDeclarations(this, root, &getSymbolTable()))
-        {
-            return false;
         }
 
         if (!RewriteStructSamplers(this, root, &getSymbolTable()))

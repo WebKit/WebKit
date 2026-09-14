@@ -15,25 +15,19 @@
 namespace rx
 {
 
-class FunctionsGL;
-class StateManagerGL;
-
 class SamplerGL : public SamplerImpl
 {
   public:
-    SamplerGL(const gl::SamplerState &state,
-              const FunctionsGL *functions,
-              StateManagerGL *stateManager);
+    SamplerGL(const gl::SamplerState &state, GLuint sampler);
     ~SamplerGL() override;
+
+    void onDestroy(const gl::Context *context) override;
 
     angle::Result syncState(const gl::Context *context, const bool dirty) override;
 
     GLuint getSamplerID() const;
 
   private:
-    const FunctionsGL *mFunctions;
-    StateManagerGL *mStateManager;
-
     mutable gl::SamplerState mAppliedSamplerState;
     GLuint mSamplerID;
 };

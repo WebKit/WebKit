@@ -989,6 +989,9 @@ class TParseContext : angle::NonCopyable
     // |_uniqueId|.
     TVector<TStructure *> mGlobalNamedStructs;
     TVector<TStructure *> mFunctionLocalNamedStructs;
+    // Nameless structs are also separated and declared globally, unless they are part of a shader
+    // input/output variable declaration.
+    TVector<TStructure *> mNamelessStructs;
 
     // Track the locations used by input and output varyings to detect conflicts.
     LocationValidationMap mInputVaryingLocations;

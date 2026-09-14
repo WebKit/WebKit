@@ -31,11 +31,6 @@ constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::YesIfAvailabl
 constexpr vk::UseDebugLayers kUseDebugLayers = vk::UseDebugLayers::No;
 #endif
 
-#if defined(ANGLE_OPENCL_COMPUTE_ONLY_PIPE)
-constexpr bool kUseComputeOnlyQueue = true;
-#else
-constexpr bool kUseComputeOnlyQueue = false;
-#endif
 }  // namespace
 
 angle::Result CLPlatformVk::initBackendRenderer()
@@ -263,14 +258,8 @@ void CLPlatformVk::handleError(VkResult result,
 
 angle::NativeWindowSystem CLPlatformVk::getWindowSystem()
 {
-    if (kUseComputeOnlyQueue)
-    {
-        return angle::NativeWindowSystem::NullCompute;
-    }
-    else
-    {
-        return angle::NativeWindowSystem::Other;
-    }
+    // This is an indicator that renderer will be used for OpenCL
+    return angle::NativeWindowSystem::NullCompute;
 }
 
 const char *CLPlatformVk::getWSIExtension()

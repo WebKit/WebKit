@@ -3089,6 +3089,11 @@ TextureLevel::TextureLevel(const TextureFormat &format, int width, int height, i
     setSize(width, height, depth);
 }
 
+TextureLevel::TextureLevel(const TextureFormat &format, const tcu::IVec3 &extent) : m_format(format), m_size(0)
+{
+    setSize(extent.x(), extent.y(), extent.z());
+}
+
 TextureLevel::~TextureLevel(void)
 {
 }

@@ -17,6 +17,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <algorithm>
+#include <array>
 #include <vector>
 
 #include "common/mathutil.h"
@@ -263,7 +264,7 @@ size_t TIntermLoop::getChildCount() const
 
 TIntermNode *TIntermLoop::getChildNode(size_t index) const
 {
-    TIntermNode *children[4];
+    std::array<TIntermNode *, 4> children;
     unsigned int childIndex = 0;
     if (mInit)
     {
@@ -1785,7 +1786,7 @@ bool TIntermSwizzle::hasDuplicateOffsets() const
     {
         return true;
     }
-    uint32_t offsetCount[4] = {0u, 0u, 0u, 0u};
+    std::array<uint32_t, 4> offsetCount = {0u, 0u, 0u, 0u};
     for (const uint32_t offset : mSwizzleOffsets)
     {
         offsetCount[offset]++;

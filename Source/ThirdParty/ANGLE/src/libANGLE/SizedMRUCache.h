@@ -90,11 +90,13 @@ class SizedMRUCache final : angle::NonCopyable
 
     size_t size() const { return mCurrentSize; }
 
-    // Also discards the cache contents.
-    void resize(size_t maximumTotalSize)
+    // Also discards the cache contents. Returns previous cache size.
+    size_t resize(size_t maximumTotalSize)
     {
+        size_t initialSize = mCurrentSize;
         clear();
         mMaximumTotalSize = maximumTotalSize;
+        return initialSize;
     }
 
     // Reduce current memory usage.

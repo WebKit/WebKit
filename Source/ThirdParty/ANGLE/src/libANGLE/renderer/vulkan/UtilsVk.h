@@ -27,6 +27,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_UTILSVK_H_
 #define LIBANGLE_RENDERER_VULKAN_UTILSVK_H_
 
+#include <array>
+
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -224,7 +226,7 @@ class UtilsVk : angle::NonCopyable
         uint32_t attachmentBlockWidth;
         uint32_t attachmentBlockHeight;
         uint32_t numFocalPoints;
-        gl::FocalPoint focalPoints[gl::IMPLEMENTATION_MAX_FOCAL_POINTS];
+        std::array<gl::FocalPoint, gl::IMPLEMENTATION_MAX_FOCAL_POINTS> focalPoints;
     };
 
     // Based on the maximum number of levels in GenerateMipmap.comp.
@@ -715,29 +717,38 @@ class UtilsVk : angle::NonCopyable
     std::unordered_map<vk::SamplerDesc, vk::DynamicDescriptorPool>
         mImageCopyWithSamplerDescriptorPools;
 
-    ComputeShaderProgramAndPipelines
-        mConvertIndex[vk::InternalShader::ConvertIndex_comp::kArrayLen];
-    ComputeShaderProgramAndPipelines mConvertIndexIndirectLineLoop
-        [vk::InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen];
-    ComputeShaderProgramAndPipelines
-        mConvertIndirectLineLoop[vk::InternalShader::ConvertIndirectLineLoop_comp::kArrayLen];
-    ComputeShaderProgramAndPipelines
-        mConvertVertex[vk::InternalShader::ConvertVertex_comp::kArrayLen];
+    std::array<ComputeShaderProgramAndPipelines, vk::InternalShader::ConvertIndex_comp::kArrayLen>
+        mConvertIndex;
+    std::array<ComputeShaderProgramAndPipelines,
+               vk::InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen>
+        mConvertIndexIndirectLineLoop;
+    std::array<ComputeShaderProgramAndPipelines,
+               vk::InternalShader::ConvertIndirectLineLoop_comp::kArrayLen>
+        mConvertIndirectLineLoop;
+    std::array<ComputeShaderProgramAndPipelines, vk::InternalShader::ConvertVertex_comp::kArrayLen>
+        mConvertVertex;
     GraphicsShaderProgramAndPipelines mImageClearVSOnly;
-    GraphicsShaderProgramAndPipelines mImageClear[vk::InternalShader::ImageClear_frag::kArrayLen];
-    GraphicsShaderProgramAndPipelines mImageCopy[vk::InternalShader::ImageCopy_frag::kArrayLen];
+    std::array<GraphicsShaderProgramAndPipelines, vk::InternalShader::ImageClear_frag::kArrayLen>
+        mImageClear;
+    std::array<GraphicsShaderProgramAndPipelines, vk::InternalShader::ImageCopy_frag::kArrayLen>
+        mImageCopy;
     GraphicsShaderProgramAndPipelines mImageCopyFloat;
     std::unordered_map<vk::SamplerDesc, GraphicsShaderProgramAndPipelines> mImageCopyWithSampler;
-    ComputeShaderProgramAndPipelines
-        mCopyImageToBuffer[vk::InternalShader::CopyImageToBuffer_comp::kArrayLen];
-    GraphicsShaderProgramAndPipelines mBlitResolve[vk::InternalShader::BlitResolve_frag::kArrayLen];
-    GraphicsShaderProgramAndPipelines mBlit3DSrc[vk::InternalShader::Blit3DSrc_frag::kArrayLen];
-    ComputeShaderProgramAndPipelines
-        mBlitResolveStencilNoExport[vk::InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];
+    std::array<ComputeShaderProgramAndPipelines,
+               vk::InternalShader::CopyImageToBuffer_comp::kArrayLen>
+        mCopyImageToBuffer;
+    std::array<GraphicsShaderProgramAndPipelines, vk::InternalShader::BlitResolve_frag::kArrayLen>
+        mBlitResolve;
+    std::array<GraphicsShaderProgramAndPipelines, vk::InternalShader::Blit3DSrc_frag::kArrayLen>
+        mBlit3DSrc;
+    std::array<ComputeShaderProgramAndPipelines,
+               vk::InternalShader::BlitResolveStencilNoExport_comp::kArrayLen>
+        mBlitResolveStencilNoExport;
     GraphicsShaderProgramAndPipelines mExportStencil;
-    ComputeShaderProgramAndPipelines
-        mGenerateMipmap[vk::InternalShader::GenerateMipmap_comp::kArrayLen];
-    ComputeShaderProgramAndPipelines mEtcToBc[vk::InternalShader::EtcToBc_comp::kArrayLen];
+    std::array<ComputeShaderProgramAndPipelines, vk::InternalShader::GenerateMipmap_comp::kArrayLen>
+        mGenerateMipmap;
+    std::array<ComputeShaderProgramAndPipelines, vk::InternalShader::EtcToBc_comp::kArrayLen>
+        mEtcToBc;
 
     // Unresolve shaders are special as they are generated on the fly due to the large number of
     // combinations.

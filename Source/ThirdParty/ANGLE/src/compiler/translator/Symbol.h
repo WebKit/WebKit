@@ -48,10 +48,6 @@ class TSymbol : angle::NonCopyable
     // Don't call getMangledName() for empty symbols (symbolType == SymbolType::Empty).
     ImmutableString getMangledName() const;
 
-    // Return whether this will generate a temporary name in `name()`.  Not to be confused with
-    // SymbolType::Empty, which shouldn't call `name()`.
-    bool isNameless() const { return mSymbolType == SymbolType::AngleInternal && mName.empty(); }
-
     bool isFunction() const { return mSymbolClass == SymbolClass::Function; }
     bool isVariable() const { return mSymbolClass == SymbolClass::Variable; }
     bool isStruct() const { return mSymbolClass == SymbolClass::Struct; }
@@ -101,8 +97,12 @@ class TSymbol : angle::NonCopyable
   private:
     const TSymbolUniqueId mUniqueId;
     const std::array<TExtension, 3u> mExtensions;
-    const SymbolType mSymbolType : 4;
 
+  protected:
+    // Not const temporarily due to TStructure::setName() and TStructure::forceGeneratedName()
+    SymbolType mSymbolType : 4;
+
+  private:
     // We use this instead of having virtual functions for querying the class in order to support
     // constexpr symbols.
     const SymbolClass mSymbolClass : 4;
@@ -177,8 +177,15 @@ class TStructure : public TSymbol, public TFieldListCollection
     bool atGlobalScope() const { return mAtGlobalScope; }
 
     // This function is temporary while transition to IR is happening.  It allows the AST to promote
-    // structs to the global scope at the end of parse.  Do not use.
+    // structs to the global scope at the end of parse, as well as give names to nameless structs.
+    // Do not use.
     void setName(const ImmutableString &name);
+    // This function is temporary while transition to IR is happening.  It allows generators that
+    // don't care about struct names to give anonymous structs temporary names.  Must be called on
+    // structs with SymbolType::Empty to change them to SymbolType::AngleInternal with an empty
+    // name.
+    void forceGeneratedName() const;
+
     // This function is temporary while transition to IR is happening.  Used by
     // ReduceInterfaceBlocks to indicate that this struct used to be an interface block.  This
     // information is used to disambiguate the prefix.

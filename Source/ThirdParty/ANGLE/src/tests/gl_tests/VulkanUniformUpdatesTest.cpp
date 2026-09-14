@@ -7,6 +7,8 @@
 //   Tests to validate our Vulkan dynamic uniform updates are working as expected.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
@@ -425,7 +427,8 @@ TEST_P(VulkanUniformUpdatesTest, TextureStagingBufferRecycling)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    const GLColor kColors[4] = {GLColor::red, GLColor::green, GLColor::blue, GLColor::yellow};
+    const std::array<GLColor, 4> kColors = {GLColor::red, GLColor::green, GLColor::blue,
+                                            GLColor::yellow};
 
     // Repeatedly update the staging buffer to trigger multiple recyclings.
     const GLsizei kHalfX      = getWindowWidth() / 2;
@@ -436,7 +439,7 @@ TEST_P(VulkanUniformUpdatesTest, TextureStagingBufferRecycling)
         for (int y = 0; y < 2; ++y)
         {
             const int kColorIndex = x + y * 2;
-            const GLColor kColor  = ANGLE_UNSAFE_TODO(kColors[kColorIndex]);
+            const GLColor kColor  = kColors[kColorIndex];
 
             for (int iteration = 0; iteration < kIterations; ++iteration)
             {
@@ -467,7 +470,7 @@ TEST_P(VulkanUniformUpdatesTest, TextureStagingBufferRecycling)
             const GLsizei xoffset = x * kHalfX;
             const GLsizei yoffset = y * kHalfY;
             const int kColorIndex = x + y * 2;
-            const GLColor kColor  = ANGLE_UNSAFE_TODO(kColors[kColorIndex]);
+            const GLColor kColor  = kColors[kColorIndex];
             EXPECT_PIXEL_RECT_EQ(xoffset, yoffset, kHalfX, kHalfY, kColor);
         }
     }
@@ -570,7 +573,7 @@ TEST_P(VulkanUniformUpdatesTest, MultipleProgramsShareDescriptors)
     const std::array<Vector3, kDrawIterations> uniforms = {
         Vector3(0.1f, 0.2f, 0.3f), Vector3(0.4f, 0.5f, 0.6f), Vector3(0.7f, 0.8f, 0.9f),
         Vector3(0.1f, 0.5f, 0.9f)};
-    const std::array<GLColor, kDrawIterations> expectedColors = {
+    static constexpr std::array<GLColor, kDrawIterations> expectedColors = {
         GLColor(25, 51, 76, 255), GLColor(102, 127, 153, 255), GLColor(178, 204, 229, 255),
         GLColor(25, 127, 229, 255)};
 

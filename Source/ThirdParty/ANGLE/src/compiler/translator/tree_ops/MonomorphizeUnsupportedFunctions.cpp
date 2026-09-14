@@ -458,9 +458,8 @@ class UpdateFunctionsDefinitionsTraverser final : public TIntermTraverser
         const FunctionData &data = mFunctionMap.at(function);
 
         // If nothing to do, leave it be.
-        if (data.monomorphizedDefinitions.empty())
+        if (data.monomorphizedDefinitions.empty() && (data.isOriginalUsed || function->isMain()))
         {
-            ASSERT(data.isOriginalUsed || function->isMain());
             return;
         }
 
@@ -489,9 +488,8 @@ class UpdateFunctionsDefinitionsTraverser final : public TIntermTraverser
         const FunctionData &data = mFunctionMap.at(function);
 
         // If nothing to do, leave it be.
-        if (data.monomorphizedDefinitions.empty())
+        if (data.monomorphizedDefinitions.empty() && (data.isOriginalUsed || function->isMain()))
         {
-            ASSERT(data.isOriginalUsed || function->isMain());
             return false;
         }
 

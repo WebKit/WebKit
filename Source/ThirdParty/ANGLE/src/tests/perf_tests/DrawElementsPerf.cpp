@@ -89,7 +89,14 @@ class DrawElementsPerfBenchmark : public ANGLERenderTest,
 DrawElementsPerfBenchmark::DrawElementsPerfBenchmark()
     : ANGLERenderTest("DrawElementsPerf", GetParam())
 {
-    if (GetParam().type == GL_UNSIGNED_INT)
+    const auto &params = GetParam();
+    if (angle::IsWindows() && angle::IsQualcomm() &&
+        params.driver == angle::GLESDriverType::SystemWGL)
+    {
+        skipTest("anglebug.com/546189136 Fails on Windows ARM64 Qualcomm");
+    }
+
+    if (params.type == GL_UNSIGNED_INT)
     {
         addExtensionPrerequisite("GL_OES_element_index_uint");
     }

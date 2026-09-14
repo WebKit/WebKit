@@ -629,6 +629,8 @@ angle_source_set("angle_capture_common") {
   sources = [
     "src/common/frame_capture_binary_data.cpp",
     "src/common/frame_capture_binary_data.h",
+    "src/common/frame_capture_shared.cpp",
+    "src/common/frame_capture_shared.h",
     "src/common/frame_capture_utils.cpp",
     "src/common/frame_capture_utils.h",
     "src/common/frame_capture_utils_autogen.cpp",
@@ -1207,6 +1209,7 @@ angle_source_set("angle_frame_capture_mock") {
   public_configs = [ ":angle_frame_capture_disabled" ]
   sources = [
     "src/common/frame_capture_binary_data.h",
+    "src/common/frame_capture_shared.h",
     "src/common/frame_capture_utils.h",
     "src/common/frame_capture_utils_autogen.h",
     "src/common/gl_enum_utils_autogen.h",
@@ -1313,6 +1316,7 @@ group("angle_abseil") {
 
     public_configs = [ ":angle_abseil_config" ]
   }
+  visibility = [ "./*" ]
 }
 
 config("angle_compression_config") {
@@ -1332,6 +1336,7 @@ if (angle_has_rapidjson) {
   config("angle_rapidjson_config") {
     defines = [ "ANGLE_HAS_RAPIDJSON" ]
   }
+
   angle_source_set("angle_json_serializer") {
     public_deps = [
       ":angle_common",
@@ -1866,6 +1871,7 @@ if (install_prefix != "") {
     }
 
     install_deps += [ ":install_includes" ]
+
     action("install_includes") {
       script = "scripts/install_target.py"
       configs = invoker.configs

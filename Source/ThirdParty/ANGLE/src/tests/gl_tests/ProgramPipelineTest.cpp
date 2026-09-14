@@ -7,6 +7,8 @@
 //   Various tests related to Program Pipeline.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -1732,13 +1734,13 @@ void main() {
     glEnable(GL_RASTERIZER_DISCARD);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -1756,7 +1758,7 @@ void main() {
     // Validate the XFB values for the first program.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -1800,7 +1802,7 @@ void main() {
     // Validate the XFB values for the second program.
     for (int i = 0; i < 2; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -1866,13 +1868,13 @@ void main() {
     glEnable(GL_RASTERIZER_DISCARD);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -1890,7 +1892,7 @@ void main() {
     // Validate the XFB values for the first program.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -1940,7 +1942,7 @@ void main() {
     // Validate the XFB values for the second program.
     for (int i = 0; i < 2; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -1958,7 +1960,7 @@ void main() {
     // Validate the XFB values for the first PPO again.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -2022,13 +2024,13 @@ void main() {
     glEnable(GL_RASTERIZER_DISCARD);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -2046,7 +2048,7 @@ void main() {
     // Validate the XFB values for the first pipeline.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -2089,7 +2091,7 @@ void main() {
     // Validate the XFB values for the second pipeline.
     for (int i = 0; i < 2; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -2155,13 +2157,13 @@ void main() {
     glEnable(GL_RASTERIZER_DISCARD);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -2179,7 +2181,7 @@ void main() {
     // Validate the XFB values for the first program.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -2220,7 +2222,7 @@ void main() {
     // Validate the XFB values for the first program.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);
@@ -2287,13 +2289,13 @@ void main() {
     glEnable(GL_RASTERIZER_DISCARD);
 
     // XFB buffers
-    GLBuffer xfbBuffers[4];
+    std::array<GLBuffer, 4> xfbBuffers;
     constexpr GLsizei kInitSize = 4 * 1024;
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, kInitSize, nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, i, xfbBuffers[i]);
         ASSERT_GL_NO_ERROR();
     }
 
@@ -2321,7 +2323,7 @@ void main() {
     // Validate the XFB values, which should align with the bound program and not the PPO.
     for (int i = 0; i < 4; ++i)
     {
-        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, ANGLE_UNSAFE_TODO(xfbBuffers[i]));
+        glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, xfbBuffers[i]);
         const float *bufferData = reinterpret_cast<float *>(
             glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0, sizeof(GLfloat), GL_MAP_READ_BIT));
         ASSERT_NE(nullptr, bufferData);

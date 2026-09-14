@@ -6,6 +6,8 @@
 
 // MSRTTTest: Tests of EXT_multisampled_render_to_texture extension
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -329,6 +331,19 @@ TEST_P(MSRTTTest, Texture2DParameterCheck)
         assertErrorIfNotMSRTT2(GL_INVALID_ENUM);
     }
 
+    // Attachment not 2D texture
+    GLTexture cube;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cube);
+    for (GLenum face = 0; face < 6; face++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGBA, 64, 64, 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        ASSERT_GL_NO_ERROR();
+    }
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cube,
+                                         0, 4);
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
+
     // Target not framebuffer
     glFramebufferTexture2DMultisampleEXT(GL_RENDERBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                          texture, 0, 4);
@@ -424,6 +439,14 @@ TEST_P(MSRTTTest, TextureCubeMapParameterCheck)
         // the next larger sample count supported by the implementation"
         EXPECT_GE(param, 4);
     }
+
+    // Attachment not cubemap texture
+    GLTexture notcube;
+    glBindTexture(GL_TEXTURE_2D, notcube);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                         GL_TEXTURE_CUBE_MAP_POSITIVE_X, notcube, 0, 4);
+    ASSERT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 // Checking for framebuffer completeness using extension methods.
@@ -4016,21 +4039,25 @@ void MSRTTES31Test::drawCopyThenBlendAllAttachmentsMixed(bool useRenderbuffer)
     // have the same sample count for all attachments.
     const GLint sampleCount = std::min(mTestSampleCount, mMaxIntegerSamples);
 
-    constexpr const char *kDecl[kImplMaxDrawBuffers] = {
+    constexpr std::array<const char *, kImplMaxDrawBuffers> kDecl = {
         "layout(location = 0) out vec4 out0;",  "layout(location = 1) out ivec4 out1;",
         "layout(location = 2) out uvec4 out2;", "layout(location = 3) out vec4 out3;",
         "layout(location = 4) out uvec4 out4;", "layout(location = 5) out ivec4 out5;",
         "layout(location = 6) out ivec4 out6;", "layout(location = 7) out vec4 out7;",
     };
 
-    constexpr GLType kGLType[kImplMaxDrawBuffers] = {
-        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},           {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
-        {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT}, {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
-        {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT}, {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
-        {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},           {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
-    };
+    constexpr std::array<GLType, kImplMaxDrawBuffers> kGLType = {{
+        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
+        {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT},
+        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT},
+        {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
+        {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
+        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
+    }};
 
-    constexpr const char *kAssign1[kImplMaxDrawBuffers] = {
+    constexpr std::array<const char *, kImplMaxDrawBuffers> kAssign1 = {
         "out0 = vec4(1.0f, 0.0f, 0.0f, 1.0f);",
         "out1 = ivec4(-19, 13, 123456, -654321);",
         "out2 = uvec4(98765, 43210, 2, 0);",
@@ -4041,7 +4068,7 @@ void MSRTTES31Test::drawCopyThenBlendAllAttachmentsMixed(bool useRenderbuffer)
         "out7 = vec4(0.0f, 0.0f, 1.0f, 1.0f);",
     };
 
-    constexpr const char *kAssign2[kImplMaxDrawBuffers] = {
+    constexpr std::array<const char *, kImplMaxDrawBuffers> kAssign2 = {
         "out0 = vec4(0.0f, 1.0f, 0.0f, 0.5f);",
         "out1 = ivec4(0, 0, 0, 0);",
         "out2 = uvec4(0, 0, 0, 0);",
@@ -4053,29 +4080,29 @@ void MSRTTES31Test::drawCopyThenBlendAllAttachmentsMixed(bool useRenderbuffer)
     };
 
     // Generate the shaders, [0] for first draw and [1] for second.
-    std::stringstream fsStr[2];
+    std::array<std::stringstream, 2> fsStr;
     for (unsigned int index = 0; index < 2; ++index)
     {
-        ANGLE_UNSAFE_TODO(fsStr[index]) << R"(#version 300 es
+        fsStr[index] << R"(#version 300 es
 precision highp float;
 )";
 
         for (GLint drawBuffer = 0; drawBuffer < maxDrawBuffers; ++drawBuffer)
         {
-            ANGLE_UNSAFE_TODO(fsStr[index] << kDecl[drawBuffer] << "\n");
+            fsStr[index] << kDecl[drawBuffer] << "\n";
         }
 
-        ANGLE_UNSAFE_TODO(fsStr[index]) << R"(void main()
+        fsStr[index] << R"(void main()
 {
 )";
 
-        const char *const *assign = index == 0 ? kAssign1 : kAssign2;
+        const auto &assign = index == 0 ? kAssign1 : kAssign2;
         for (GLint drawBuffer = 0; drawBuffer < maxDrawBuffers; ++drawBuffer)
         {
-            ANGLE_UNSAFE_TODO(fsStr[index] << assign[drawBuffer] << "\n");
+            fsStr[index] << assign[drawBuffer] << "\n";
         }
 
-        ANGLE_UNSAFE_TODO(fsStr[index]) << "}\n";
+        fsStr[index] << "}\n";
     }
 
     constexpr GLsizei kSize = 64;
@@ -4086,13 +4113,13 @@ precision highp float;
     GLFramebuffer fboMS;
     glBindFramebuffer(GL_FRAMEBUFFER, fboMS);
 
-    GLTexture textureMS[kImplMaxDrawBuffers];
-    GLRenderbuffer renderbufferMS[kImplMaxDrawBuffers];
+    std::array<GLTexture, kImplMaxDrawBuffers> textureMS;
+    std::array<GLRenderbuffer, kImplMaxDrawBuffers> renderbufferMS;
     for (GLint drawBuffer = 0; drawBuffer < maxDrawBuffers; ++drawBuffer)
     {
-        ANGLE_UNSAFE_TODO(createAndAttachColorAttachment(
-            useRenderbuffer, kSize, GL_COLOR_ATTACHMENT0 + drawBuffer, &kGLType[drawBuffer],
-            sampleCount, &textureMS[drawBuffer], &renderbufferMS[drawBuffer]));
+        createAndAttachColorAttachment(useRenderbuffer, kSize, GL_COLOR_ATTACHMENT0 + drawBuffer,
+                                       &kGLType[drawBuffer], sampleCount, &textureMS[drawBuffer],
+                                       &renderbufferMS[drawBuffer]);
     }
     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 

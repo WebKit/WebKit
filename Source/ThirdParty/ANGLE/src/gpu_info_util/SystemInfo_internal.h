@@ -24,7 +24,6 @@ bool GetNvidiaDriverVersionWithXNVCtrl(std::string *version);
 // Live in SystemInfo.cpp
 bool ParseAMDBrahmaDriverVersion(const std::string &content, std::string *version);
 bool ParseAMDCatalystDriverVersion(const std::string &content, std::string *version);
-bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, uint32_t *deviceId);
 
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 bool GetSystemInfo_mac(SystemInfo *info);

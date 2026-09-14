@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -393,18 +395,18 @@ TEST_P(OcclusionQueriesTest, FramebufferBindingChange)
     constexpr GLsizei kSize = 4;
 
     // Create two framebuffers, and make sure they are synced.
-    GLFramebuffer fbo[2];
-    GLTexture color[2];
+    std::array<GLFramebuffer, 2> fbo;
+    std::array<GLTexture, 2> color;
 
     for (size_t index = 0; index < 2; ++index)
     {
-        glBindTexture(GL_TEXTURE_2D, ANGLE_UNSAFE_TODO(color[index]));
+        glBindTexture(GL_TEXTURE_2D, color[index]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      nullptr);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[index]));
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                               ANGLE_UNSAFE_TODO(color[index]), 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[index]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color[index],
+                               0);
 
         glClearColor(0, index, 1 - index, 1);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -422,7 +424,7 @@ TEST_P(OcclusionQueriesTest, FramebufferBindingChange)
 
     for (size_t index = 0; index < 2; ++index)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, ANGLE_UNSAFE_TODO(fbo[index]));
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[index]);
         drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
     }
 
@@ -776,7 +778,7 @@ TEST_P(OcclusionQueriesTest, MultiContext)
         EGLContext context;
         GLuint program;
         GLuint query;
-        bool visiblePasses[passCount];
+        std::array<bool, passCount> visiblePasses;
         bool shouldPass;
     };
 
@@ -864,9 +866,8 @@ TEST_P(OcclusionQueriesTest, MultiContext)
         {
             eglMakeCurrent(display, surface, surface, context.context);
 
-            float depth = ANGLE_UNSAFE_TODO(context.visiblePasses[pass])
-                              ? mRNG.randomFloatBetween(0.0f, 0.4f)
-                              : mRNG.randomFloatBetween(0.6f, 1.0f);
+            float depth = context.visiblePasses[pass] ? mRNG.randomFloatBetween(0.0f, 0.4f)
+                                                      : mRNG.randomFloatBetween(0.6f, 1.0f);
             drawQuad(context.program, essl1_shaders::PositionAttrib(), depth);
 
             EXPECT_GL_NO_ERROR();

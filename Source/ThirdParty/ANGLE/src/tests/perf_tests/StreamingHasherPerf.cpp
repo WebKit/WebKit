@@ -7,6 +7,8 @@
 //   Performance benchmark for streaming hashers
 //
 
+#include <array>
+
 #include "ANGLEPerfTest.h"
 #include "common/unsafe_buffers.h"
 
@@ -101,7 +103,8 @@ void StreamingHasherPerfTest<T>::step()
 
 using TestTypes = Types<angle::base::SecureHashAlgorithm, angle::StreamingHasher>;
 
-constexpr const char *kTestTypeNames[] = {"SecureHashAlgorithm", "StreamingHasher"};
+static constexpr std::array<const char *, 2> kTestTypeNames = {"SecureHashAlgorithm",
+                                                               "StreamingHasher"};
 
 class StreamingHasherNames
 {
@@ -109,7 +112,7 @@ class StreamingHasherNames
     template <typename BitSetType>
     static std::string GetName(int typeIndex)
     {
-        return ANGLE_UNSAFE_TODO(kTestTypeNames[typeIndex]);
+        return kTestTypeNames[typeIndex];
     }
 };
 

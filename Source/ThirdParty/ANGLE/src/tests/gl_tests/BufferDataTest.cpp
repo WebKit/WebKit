@@ -14,6 +14,7 @@
 #include "util/random_utils.h"
 
 #include <stdint.h>
+#include <array>
 #include <thread>
 
 using namespace angle;
@@ -535,7 +536,7 @@ TEST_P(BufferDataTestES3, BufferResizing)
     glBufferData(GL_ARRAY_BUFFER, numBytes, nullptr, GL_STATIC_DRAW);
 
     // Copy the original data to the buffer
-    uint8_t srcBytes[numBytes];
+    std::array<uint8_t, numBytes> srcBytes;
     for (size_t i = 0; i < numBytes; ++i)
     {
         srcBytes[i] = static_cast<uint8_t>(i);
@@ -546,7 +547,7 @@ TEST_P(BufferDataTestES3, BufferResizing)
 
     ASSERT_GL_NO_ERROR();
 
-    memcpy(dest, srcBytes, numBytes);
+    memcpy(dest, srcBytes.data(), numBytes);
     glUnmapBuffer(GL_ARRAY_BUFFER);
 
     EXPECT_GL_NO_ERROR();
@@ -555,12 +556,12 @@ TEST_P(BufferDataTestES3, BufferResizing)
     GLuint readBuffer;
     glGenBuffers(1, &readBuffer);
     glBindBuffer(GL_COPY_WRITE_BUFFER, readBuffer);
-    uint8_t zeros[numBytes];
+    std::array<uint8_t, numBytes> zeros;
     for (size_t i = 0; i < numBytes; ++i)
     {
         zeros[i] = 0;
     }
-    glBufferData(GL_COPY_WRITE_BUFFER, numBytes, zeros, GL_STATIC_DRAW);
+    glBufferData(GL_COPY_WRITE_BUFFER, numBytes, zeros.data(), GL_STATIC_DRAW);
     glCopyBufferSubData(GL_ARRAY_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, numBytes);
 
     ASSERT_GL_NO_ERROR();

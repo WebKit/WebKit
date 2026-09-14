@@ -176,8 +176,7 @@ void RemoveUnreferencedVariablesTraverser::decrementStructTypeRefCount(const TTy
 void RemoveUnreferencedVariablesTraverser::removeVariableDeclaration(TIntermDeclaration *node,
                                                                      TIntermTyped *declarator)
 {
-    if (declarator->getType().isStructSpecifier() &&
-        declarator->getType().getStruct()->symbolType() != SymbolType::Empty)
+    if (declarator->getType().isStructSpecifier())
     {
         unsigned int structId = declarator->getType().getStruct()->uniqueId().get();
         unsigned int structRefCountInThisDeclarator = 1u;
@@ -192,7 +191,7 @@ void RemoveUnreferencedVariablesTraverser::removeVariableDeclaration(TIntermDecl
         }
         if ((*mStructIdRefCounts)[structId] > structRefCountInThisDeclarator)
         {
-            // If this declaration declares a named struct type that is used elsewhere, we need to
+            // If this declaration declares a struct type that is used elsewhere, we need to
             // keep it. We can still change the declarator though so that it doesn't declare an
             // unreferenced variable.
 

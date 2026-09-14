@@ -1277,16 +1277,26 @@ impl<'options> Generator<'options> {
         }
     }
 
-    fn legacy_struct_symbol_type(name: &Name) -> ffi::ASTSymbolType {
+    fn legacy_struct_symbol_type(
+        name: &Name,
+        is_type_of_shader_input_output: bool,
+    ) -> ffi::ASTSymbolType {
         // For structs, the rules are a little different compared with other symbols:
         //
-        // * Structs at global scope are marked as ShaderInterface, but their symbol type is
-        //   AngleInternal instead of Empty.
+        // * Structs at global scope are marked as ShaderInterface, but for anonymous structs their
+        //   symbol type is AngleInternal except for shader input/output variables where the
+        //   corresponding anonymous struct has a symbol type of Empty.  This helps the generators
+        //   know whether they have to declare the struct without a name and together with the
+        //   shader input/output variable.
         // * gl_DepthRangeParameters needs to be handled and given a BuiltIn symbol type.
         match name.source {
             NameSource::ShaderInterface | NameSource::Temporary => {
                 if name.name.is_empty() {
-                    ffi::ASTSymbolType::AngleInternal
+                    if is_type_of_shader_input_output {
+                        ffi::ASTSymbolType::Empty
+                    } else {
+                        ffi::ASTSymbolType::AngleInternal
+                    }
                 } else {
                     ffi::ASTSymbolType::UserDefined
                 }
@@ -2027,8 +2037,16 @@ impl ast::Target for Generator<'_> {
                     })
                     .collect::<Vec<_>>();
 
-                let symbol_type = Self::legacy_struct_symbol_type(name);
-            // SAFETY: Pointers are obtained from C++ and passed back to it.
+                // If the struct is nameless but is used to declare a shader input or output
+                // variable, it has to stay nameless.
+                let is_type_of_shader_input_output = name.name.is_empty() && ir_meta.all_global_variables().iter().any(|&variable_id| {
+                        let variable = ir_meta.get_variable(variable_id);
+                        ir_meta.get_pointee_type(variable.type_id) == id &&
+                            (variable.decorations.has(Decoration::Input) || variable.decorations.has(Decoration::Output))
+                    });
+
+                let symbol_type = Self::legacy_struct_symbol_type(name, is_type_of_shader_input_output);
+                // SAFETY: Pointers are obtained from C++ and passed back to it.
                 let legacy_type = unsafe {
                     ffi::make_struct_type(
                         self.legacy_compiler,
@@ -2042,7 +2060,7 @@ impl ast::Target for Generator<'_> {
                     )
                 };
                 if !is_interface_block && symbol_type != ffi::ASTSymbolType::BuiltIn {
-            // SAFETY: Pointers are obtained from C++ and passed back to it.
+                    // SAFETY: Pointers are obtained from C++ and passed back to it.
                     self.type_declarations
                         .push(unsafe { ffi::declare_struct(self.legacy_compiler, legacy_type) });
                 }

@@ -10,6 +10,8 @@
 
 #include "test_utils/ANGLETest.h"
 
+#include <array>
+
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/gl_raii.h"
 #include "util/shader_utils.h"
@@ -1131,12 +1133,11 @@ TEST_P(GLSLTest_ES3, FragmentShaderOutputArray)
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
 
-    GLuint textures[4];
-    glGenTextures(4, textures);
+    std::array<GLTexture, 4> textures;
 
-    for (size_t texIndex = 0; texIndex < ArraySize(textures); texIndex++)
+    for (GLTexture &texture : textures)
     {
-        glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
+        glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, nullptr);
     }
@@ -1218,7 +1219,7 @@ void main()
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
     ASSERT_GE(maxDrawBuffers, kDrawBufferCount);
 
-    GLTexture textures[kDrawBufferCount];
+    std::array<GLTexture, kDrawBufferCount> textures;
 
     for (GLint texIndex = 0; texIndex < kDrawBufferCount; ++texIndex)
     {
@@ -1916,10 +1917,10 @@ TEST_P(GLSLTest_ES3, GLVertexIDIntegerTextureDrawElementsU8)
     EXPECT_EQ(42, GetFirstIntPixelRedValue());
 
     const int kIndexDataSize = 5;
-    GLubyte indexData[]      = {1, 2, 5, 3, 100};
+    constexpr std::array<GLubyte, 5> indexData = {1, 2, 5, 3, 100};
     GLBuffer indexBuffer;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData.data(), GL_STATIC_DRAW);
 
     for (size_t first = 0; first < kIndexDataSize; ++first)
     {
@@ -1996,15 +1997,15 @@ TEST_P(GLSLTest_ES3, GLVertexIDIntegerTextureDrawElementsU8Line)
     glClearBufferiv(GL_COLOR, 0, clearData);
     EXPECT_EQ(42, GetFirstIntPixelRedValue());
 
-    GLubyte indexData[] = {1, 4, 5, 2, 50, 61};
+    constexpr std::array<GLubyte, 6> indexData = {1, 4, 5, 2, 50, 61};
     GLBuffer indexBuffer;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData.data(), GL_STATIC_DRAW);
 
-    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(0, indexData);
-    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(1, indexData);
-    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(2, indexData);
-    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(4, indexData);
+    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(0, indexData.data());
+    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(1, indexData.data());
+    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(2, indexData.data());
+    GLVertexIDIntegerTextureDrawElementsU8Line_Helper(4, indexData.data());
 
     EXPECT_GL_NO_ERROR();
 }
@@ -2036,20 +2037,19 @@ TEST_P(GLSLTest_ES3, GLVertexIDIntegerTextureDrawElementsU8LineIds)
         oVertexID = vVertexID;
     })";
 
-    GLubyte indexData[]          = {1, 4, 5, 2, 50, 61, 32, 33};
-    constexpr size_t kNumIndices = sizeof(indexData) / sizeof(indexData[0]);
+    constexpr std::array<GLubyte, 8> indexData = {1, 4, 5, 2, 50, 61, 32, 33};
     GLBuffer indexBuffer;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indexData), indexData.data(), GL_STATIC_DRAW);
 
     ANGLE_GL_PROGRAM(program, kVS, kFS);
     glUseProgram(program);
-    glUniform1f(glGetUniformLocation(program, "width"), kNumIndices);
-    glViewport(0, 0, kNumIndices, 1);
+    glUniform1f(glGetUniformLocation(program, "width"), indexData.size());
+    glViewport(0, 0, indexData.size(), 1);
 
     GLTexture tex;
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32I, kNumIndices, 1);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32I, indexData.size(), 1);
     GLFramebuffer fb;
     glBindFramebuffer(GL_FRAMEBUFFER, fb);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
@@ -2076,12 +2076,12 @@ TEST_P(GLSLTest_ES3, GLVertexIDIntegerTextureDrawElementsU8LineIds)
 
     EXPECT_GL_NO_ERROR();
 
-    glDrawElements(GL_LINES, kNumIndices, GL_UNSIGNED_BYTE, 0);
+    glDrawElements(GL_LINES, indexData.size(), GL_UNSIGNED_BYTE, 0);
 
-    GLint pixels[kNumIndices * 4];
-    glReadPixels(0, 0, kNumIndices, 1, GL_RGBA_INTEGER, GL_INT, pixels);
+    std::array<GLint, indexData.size() * 4> pixels;
+    glReadPixels(0, 0, indexData.size(), 1, GL_RGBA_INTEGER, GL_INT, pixels.data());
 
-    for (size_t i = 0; i < kNumIndices; ++i)
+    for (size_t i = 0; i < indexData.size(); ++i)
     {
         const int expected = i % 2 ? kDefaultValue : indexData[i + 1];
         const int actual   = pixels[i * 4];
@@ -3199,7 +3199,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[4];
+    std::array<GLTexture, 4> textures;
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
     memcpy(data, expected.data(), sizeof(expected));
@@ -5423,7 +5423,7 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysSampler)
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2][2];
+    std::array<std::array<GLTexture, 2>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -5497,7 +5497,7 @@ TEST_P(GLSLTest_ES31, ArraysOfArraysImage)
     EXPECT_GL_NO_ERROR();
 
     GLuint imageData = 200u;
-    GLTexture images[1][2][3];
+    std::array<std::array<std::array<GLTexture, 3>, 2>, 1> images;
     for (int i = 0; i < 1; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -5604,7 +5604,7 @@ TEST_P(GLSLTest_ES31, ConsecutiveArraysOfArraysImage)
     constexpr GLsizei kImage3Binding = kImage2Binding + kImage2Units;
 
     constexpr GLuint kImage1Data = 13;
-    GLTexture images1[kImage1Layers][kImage1Rows][kImage1Cols];
+    std::array<std::array<std::array<GLTexture, kImage1Cols>, kImage1Rows>, kImage1Layers> images1;
     for (int layer = 0; layer < kImage1Layers; layer++)
     {
         for (int row = 0; row < kImage1Rows; row++)
@@ -5624,7 +5624,7 @@ TEST_P(GLSLTest_ES31, ConsecutiveArraysOfArraysImage)
     }
 
     constexpr GLuint kImage2Data = 17;
-    GLTexture images2[kImage2Rows][kImage2Cols];
+    std::array<std::array<GLTexture, kImage2Cols>, kImage2Rows> images2;
     for (int row = 0; row < kImage2Rows; row++)
     {
         for (int col = 0; col < kImage2Cols; col++)
@@ -5735,7 +5735,7 @@ void main(void)
     constexpr GLsizei kImageRows = 2;
     constexpr GLsizei kImageCols = 3;
     constexpr GLfloat kImageData = 0;
-    GLTexture images[kImageRows][kImageCols];
+    std::array<std::array<GLTexture, kImageCols>, kImageRows> images;
     for (size_t row = 0; row < kImageRows; row++)
     {
         for (size_t col = 0; col < kImageCols; col++)
@@ -6091,7 +6091,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2];
+    std::array<GLTexture, 2> textures;
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[6]  = {};  // Two bytes of padding, so that texture can be initialized with 4 bytes
     memcpy(data, expected.data(), sizeof(expected));
@@ -6147,7 +6147,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2];
+    std::array<GLTexture, 2> textures;
     GLColor expected = MakeGLColor(32, 64, 96, 255);
     GLubyte data[6]  = {};  // Two bytes of padding, so that texture can be initialized with 4 bytes
     memcpy(data, expected.data(), sizeof(expected));
@@ -6192,7 +6192,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2][2];
+    std::array<std::array<GLTexture, 2>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -6251,7 +6251,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2][2][2][2];
+    std::array<std::array<std::array<std::array<GLTexture, 2>, 2>, 2>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -6329,14 +6329,15 @@ void main() {
         GLTexture data1[2];
         GLTexture data2[3];
     };
-    Data textures[2][3];
+    std::array<std::array<Data, 3>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            GLTexture *arrays[]     = {&textures[i][j].data1[0], &textures[i][j].data2[0]};
-            size_t arrayLengths[]   = {2, 3};
-            size_t arrayOffsets[]   = {0, 2};
+            std::array<GLTexture *, 2> arrays  = {&textures[i][j].data1[0],
+                                                  &textures[i][j].data2[0]};
+            std::array<size_t, 2> arrayLengths = {2, 3};
+            std::array<size_t, 2> arrayOffsets = {0, 2};
             size_t totalArrayLength = 5;
             for (int k = 0; k < 2; k++)
             {
@@ -6401,7 +6402,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[3][2][2];
+    std::array<std::array<std::array<GLTexture, 2>, 2>, 3> textures;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -6475,7 +6476,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2][3];
+    std::array<std::array<GLTexture, 3>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -6534,7 +6535,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[2][3];
+    std::array<std::array<GLTexture, 3>, 2> textures;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -6602,7 +6603,7 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures[3][2][2][2];
+    std::array<std::array<std::array<std::array<GLTexture, 2>, 2>, 2>, 3> textures;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -6681,8 +6682,8 @@ void main() {
 
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     glUseProgram(program);
-    GLTexture textures1[2][3][4];
-    GLTexture textures2[4];
+    std::array<std::array<std::array<GLTexture, 4>, 3>, 2> textures1;
+    std::array<GLTexture, 4> textures2;
     for (int i = 0; i < 2; i++)
     {
         for (int j = 0; j < 3; j++)
@@ -12324,8 +12325,8 @@ void main()
     GLFramebuffer fbo;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-    GLTexture textures[4];
-    for (size_t texIndex = 0; texIndex < ArraySize(textures); texIndex++)
+    std::array<GLTexture, 4> textures;
+    for (size_t texIndex = 0; texIndex < textures.size(); texIndex++)
     {
         glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -14234,7 +14235,7 @@ void main(void)
         GLColor(0, 0, 0, 0),  GLColor(127, 0, 0, 0), GLColor(255, 0, 0, 0),
         GLColor(31, 0, 0, 0), GLColor(63, 0, 0, 0),  GLColor(191, 0, 0, 0),
     };
-    GLTexture textures[2][3];
+    std::array<std::array<GLTexture, 3>, 2> textures;
 
     for (int dim1 = 0; dim1 < 2; ++dim1)
     {
@@ -14343,7 +14344,7 @@ void main(void)
         GLColor(0, 0, 0, 0),  GLColor(127, 0, 0, 0), GLColor(255, 0, 0, 0),
         GLColor(31, 0, 0, 0), GLColor(63, 0, 0, 0),  GLColor(191, 0, 0, 0),
     };
-    GLTexture textures[2][3];
+    std::array<std::array<GLTexture, 3>, 2> textures;
 
     for (int dim1 = 0; dim1 < 2; ++dim1)
     {
@@ -14492,7 +14493,7 @@ outbuf.success = uint(sampler3DAndAtomicCounter(smplr, 0u, ac));
         GLColor(128, 0, 0, 0), GLColor(136, 0, 0, 0), GLColor(144, 0, 0, 0), GLColor(152, 0, 0, 0),
         GLColor(160, 0, 0, 0), GLColor(168, 0, 0, 0), GLColor(176, 0, 0, 0), GLColor(184, 0, 0, 0),
     };
-    GLTexture textures[2][3][4];
+    std::array<std::array<std::array<GLTexture, 4>, 3>, 2> textures;
 
     for (int dim1 = 0; dim1 < 2; ++dim1)
     {
@@ -14705,7 +14706,7 @@ void main(void)
         GLColor(128, 0, 0, 0), GLColor(136, 0, 0, 0), GLColor(144, 0, 0, 0), GLColor(152, 0, 0, 0),
         GLColor(160, 0, 0, 0), GLColor(168, 0, 0, 0), GLColor(176, 0, 0, 0), GLColor(184, 0, 0, 0),
     };
-    GLTexture textures[2][3][4];
+    std::array<std::array<std::array<GLTexture, 4>, 3>, 2> textures;
 
     for (int dim1 = 0; dim1 < 2; ++dim1)
     {
@@ -14835,7 +14836,7 @@ void main(void)
         GLColor(2, 0, 0, 0), GLColor(0, 0, 0, 0), GLColor(1, 0, 0, 0),
         GLColor(1, 0, 0, 0), GLColor(2, 0, 0, 0), GLColor(0, 0, 0, 0),
     };
-    GLTexture textures[2][3];
+    std::array<std::array<GLTexture, 3>, 2> textures;
 
     for (int dim1 = 0; dim1 < 2; ++dim1)
     {
@@ -22600,10 +22601,10 @@ TEST_P(GLSLTest_ES3, UnderscoresWorkWithOutArrays)
     GLFramebuffer fbo;
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo);
 
-    GLTexture textures[4];
-    for (size_t texIndex = 0; texIndex < ArraySize(textures); texIndex++)
+    std::array<GLTexture, 4> textures;
+    for (GLTexture &texture : textures)
     {
-        glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
+        glBindTexture(GL_TEXTURE_2D, texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, nullptr);
     }
@@ -25831,6 +25832,33 @@ void main() {
 }
 
 // Test that indirect indices to gl_FragData get clamped to the right bounds when
+// GL_EXT_draw_buffers is not enabled, and gl_FragData is the right hand side of a comma expression.
+//
+// The same test for ES3 is not needed, because unlike gl_FragData in ESSL 100, it's not allowed to
+// index a fragment output variable with a non-constant index in ESSL 300+.
+TEST_P(WebGLGLSLTest, FragDataInCommaIndexClampWithoutDrawBuffers)
+{
+    constexpr char kFS[] = R"(precision mediump float;
+void main() {
+    // GL_EXT_draw_buffers is not enabled, which means only one output is valid.  Make sure all the
+    // following writes in the loop end up writing to gl_FragData[0].
+    gl_FragData[0] = vec4(0.1, 0.05, 0, 1);
+    int v = 0;
+    vec4 res = vec4(0);
+    for (int i = 0; i < 8; i++) {
+        res += (v += 1, gl_FragData)[i];
+    }
+    gl_FragData[0] = res;
+    gl_FragData[0].z = float(v == 8);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(204, 102, 255, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that indirect indices to gl_FragData get clamped to the right bounds when
 // gl_SecondaryFragDataEXT is used.
 //
 // The same test for ES3 is not needed, because unlike gl_FragData in ESSL 100, it's not allowed to
@@ -25994,6 +26022,33 @@ void main()
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(51, 153, 0, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that indirect indices to gl_FragData get clamped to the right bounds when
+// gl_SecondaryFragDataEXT is used, and gl_FragData is the right hand side of a comma expression.
+TEST_P(WebGLGLSLTest, FragDataInCommaIndexClampWithSecondaryFragData)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_blend_func_extended"));
+
+    constexpr char kFS[] = R"(#extension GL_EXT_draw_buffers : require
+#extension GL_EXT_blend_func_extended : require
+void main() {
+    gl_FragData[0] = vec4(0.1, 0.05, 0, 1);
+    int v = 0;
+    mediump vec4 res = vec4(0);
+    for (int i = 0; i < 8; i++) {
+        res += (v += 1, gl_FragData)[i];
+    }
+    gl_FragData[0] = res;
+    gl_FragData[0].z = float(v == 8);
+    gl_SecondaryFragDataEXT[0] = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, true);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(204, 102, 255, 255), 1);
     ASSERT_GL_NO_ERROR();
 }
 

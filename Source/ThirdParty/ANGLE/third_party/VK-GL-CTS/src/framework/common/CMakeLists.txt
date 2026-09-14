@@ -1,5 +1,11 @@
 # Common test utilities and framework (tcutil)
 
+if (WIN32)
+	set(tcuSubprocessTestExecutorOS tcuSubprocessTestExecutorWin.cpp)
+else()
+	set(tcuSubprocessTestExecutorOS tcuSubprocessTestExecutorLin.cpp)
+endif()
+
 set(TCUTIL_SRCS
 	tcuApp.cpp
 	tcuApp.hpp
@@ -99,6 +105,9 @@ set(TCUTIL_SRCS
 	tcuRasterizationVerifier.hpp
 	tcuWaiverUtil.cpp
 	tcuWaiverUtil.hpp
+	tcuSubprocessTestExecutor.cpp
+	${tcuSubprocessTestExecutorOS}
+	tcuSubprocessTestExecutor.hpp
 	)
 
 set(TCUTIL_LIBS

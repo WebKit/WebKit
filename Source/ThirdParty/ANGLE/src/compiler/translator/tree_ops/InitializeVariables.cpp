@@ -26,11 +26,9 @@ namespace
 
 bool IsNamelessStruct(const TType &type)
 {
-    // There are two kinds of nameless structs that need to be handled here.  When SymbolType is
-    // Empty, it's a struct that can take a temporary name.  When the struct is "nameless", it
-    // _must_ stay without a name (because it's part of the shader's interface).
-    return type.getStruct() != nullptr &&
-           (type.getStruct()->symbolType() == SymbolType::Empty || type.getStruct()->isNameless());
+    // Some nameless structs are given a temporary name, but when the SymbolType is Empty, the
+    // struct _must_ stay without a name (because it's part of the shader's interface).
+    return type.getStruct() != nullptr && type.getStruct()->symbolType() == SymbolType::Empty;
 }
 
 void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,

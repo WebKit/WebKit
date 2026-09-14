@@ -58,7 +58,6 @@ def AddCommonParserArgs(parser):
             'angle_deqp_khr_single_gles32_tests',
         ])
     parser.add_argument('-l', '--log', help='Logging level.', default='info')
-    parser.add_argument('--list-tests', help='List tests.', action='store_true')
     parser.add_argument(
         '-f',
         '--filter',
@@ -66,9 +65,15 @@ def AddCommonParserArgs(parser):
         '--gtest_filter',
         type=str,
         help='Test filter.')
-    parser.add_argument(
+    mode_group = parser.add_mutually_exclusive_group()
+    mode_group.add_argument('--list-tests', help='List tests.', action='store_true')
+    mode_group.add_argument(
         '--prepare-only',
         help='Only prepare traces, but do not actually run them.',
+        action='store_true')
+    mode_group.add_argument(
+        '--skip-prepare',
+        help='Skip test enumeration and trace preparation, and run tests directly.',
         action='store_true')
 
 
@@ -78,31 +83,32 @@ def RunWithAngleTestRunner(args, extra_args):
     android_helper.Initialize(args.suite)
     assert android_helper.IsAndroid()
 
-    rc, output, _ = android_helper.RunTests(
-        args.suite, ['--list-tests', '--verbose'] + extra_args, log_output=False)
-    if rc != 0:
-        logging.fatal('Could not find test list from test output:\n%s' % output)
-        return rc
+    if not args.skip_prepare:
+        rc, output, _ = android_helper.RunTests(
+            args.suite, ['--list-tests', '--verbose'] + extra_args, log_output=False)
+        if rc != 0:
+            logging.fatal('Could not find test list from test output:\n%s' % output)
+            return rc
 
-    tests = angle_test_util.GetTestsFromOutput(output)
-    if not tests:
-        logging.fatal('Could not find test list from test output:\n%s' % output)
-        return 1
+        tests = angle_test_util.GetTestsFromOutput(output)
+        if not tests:
+            logging.fatal('Could not find test list from test output:\n%s' % output)
+            return 1
 
-    if args.filter:
-        tests = angle_test_util.FilterTests(tests, args.filter)
+        if args.filter:
+            tests = angle_test_util.FilterTests(tests, args.filter)
 
-    if args.list_tests:
-        print('\n'.join(['Tests list:'] + tests + ['End tests list.']))
-        return 0
-
-    if args.suite == 'angle_trace_tests':
-        traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
-        android_helper.PrepareRestrictedTraces(traces)
-
-        if args.prepare_only:
-            print('Prepared traces: %s' % traces)
+        if args.list_tests:
+            print('\n'.join(['Tests list:'] + tests + ['End tests list.']))
             return 0
+
+        if args.suite == 'angle_trace_tests':
+            traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
+            android_helper.PrepareRestrictedTraces(traces)
+
+            if args.prepare_only:
+                print('Prepared traces: %s' % traces)
+                return 0
 
     flags = ['--gtest_filter=' + args.filter] if args.filter else []
     return android_helper.RunTests(args.suite, flags + extra_args)[0]

@@ -30,6 +30,7 @@
 #include "vkPlatform.hpp"
 #include "tcuAndroidWindow.hpp"
 #include "tcuAndroidNativeActivity.hpp"
+#include <jni.h>
 
 namespace tcu
 {
@@ -39,8 +40,14 @@ namespace Android
 class Platform : public tcu::Platform, private eglu::Platform, private glu::Platform, private vk::Platform
 {
 public:
-    Platform(NativeActivity &activity);
+    Platform(NativeActivity &activity, ANativeWindow *window = nullptr);
+    Platform(JavaVM *vm, jobject context = nullptr, ANativeWindow *window = nullptr);
     virtual ~Platform(void);
+
+    NativeActivity *getActivity(void) const
+    {
+        return m_activity;
+    }
 
     virtual bool processEvents(void);
 
@@ -73,9 +80,13 @@ public:
     void rotateScreen(int rotation) const;
 
 private:
-    NativeActivity &m_activity;
+    NativeActivity *m_activity;
+    JavaVM *m_vm;
+    jobject m_context;
+    bool m_ownsContext;
     WindowRegistry m_windowRegistry;
     const size_t m_totalSystemMemory;
+    void initialize(ANativeWindow *window);
 };
 
 } // namespace Android

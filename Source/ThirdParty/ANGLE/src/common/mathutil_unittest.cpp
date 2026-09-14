@@ -8,6 +8,9 @@
 //
 
 #include "mathutil.h"
+
+#include <array>
+
 #include "common/unsafe_buffers.h"
 
 #include <gtest/gtest.h>
@@ -21,18 +24,24 @@ namespace
 // For floats f1 and f2, unpackSnorm2x16(packSnorm2x16(f1, f2)) should be same as f1 and f2.
 TEST(MathUtilTest, packAndUnpackSnorm2x16)
 {
-    const float input[8][2] = {
-        {0.0f, 0.0f},    {1.0f, 1.0f},          {-1.0f, 1.0f},           {-1.0f, -1.0f},
-        {0.875f, 0.75f}, {0.00392f, -0.99215f}, {-0.000675f, 0.004954f}, {-0.6937f, -0.02146f}};
-    const float floatFaultTolerance = 0.0001f;
+    static constexpr std::array<std::array<float, 2>, 8> input = {{
+        {0.0f, 0.0f},
+        {1.0f, 1.0f},
+        {-1.0f, 1.0f},
+        {-1.0f, -1.0f},
+        {0.875f, 0.75f},
+        {0.00392f, -0.99215f},
+        {-0.000675f, 0.004954f},
+        {-0.6937f, -0.02146f},
+    }};
+    const float floatFaultTolerance                            = 0.0001f;
     float outputVal1, outputVal2;
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackSnorm2x16(ANGLE_UNSAFE_TODO(packSnorm2x16(input[i][0], input[i][1])), &outputVal1,
-                        &outputVal2);
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance));
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance));
+        unpackSnorm2x16(packSnorm2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
+        EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance);
+        EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance);
     }
 }
 
@@ -66,19 +75,25 @@ TEST(MathUtilTest, packAndUnpackSnorm2x16Infinity)
 // For floats f1 and f2, unpackUnorm2x16(packUnorm2x16(f1, f2)) should be same as f1 and f2.
 TEST(MathUtilTest, packAndUnpackUnorm2x16)
 {
-    const float input[8][2] = {
-        {0.0f, 0.0f},    {1.0f, 1.0f},          {-1.0f, 1.0f},           {-1.0f, -1.0f},
-        {0.875f, 0.75f}, {0.00392f, -0.99215f}, {-0.000675f, 0.004954f}, {-0.6937f, -0.02146f}};
-    const float floatFaultTolerance = 0.0001f;
+    static constexpr std::array<std::array<float, 2>, 8> input = {{
+        {0.0f, 0.0f},
+        {1.0f, 1.0f},
+        {-1.0f, 1.0f},
+        {-1.0f, -1.0f},
+        {0.875f, 0.75f},
+        {0.00392f, -0.99215f},
+        {-0.000675f, 0.004954f},
+        {-0.6937f, -0.02146f},
+    }};
+    const float floatFaultTolerance                            = 0.0001f;
     float outputVal1, outputVal2;
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackUnorm2x16(ANGLE_UNSAFE_TODO(packUnorm2x16(input[i][0], input[i][1])), &outputVal1,
-                        &outputVal2);
-        float expected = ANGLE_UNSAFE_TODO(input[i][0] < 0.0f ? 0.0f : input[i][0]);
+        unpackUnorm2x16(packUnorm2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
+        float expected = input[i][0] < 0.0f ? 0.0f : input[i][0];
         EXPECT_NEAR(expected, outputVal1, floatFaultTolerance);
-        expected = ANGLE_UNSAFE_TODO(input[i][1] < 0.0f ? 0.0f : input[i][1]);
+        expected = input[i][1] < 0.0f ? 0.0f : input[i][1];
         EXPECT_NEAR(expected, outputVal2, floatFaultTolerance);
     }
 }
@@ -113,19 +128,24 @@ TEST(MathUtilTest, packAndUnpackUnorm2x16Infinity)
 // For floats f1 and f2, unpackHalf2x16(packHalf2x16(f1, f2)) should be same as f1 and f2.
 TEST(MathUtilTest, packAndUnpackHalf2x16)
 {
-    const float input[8][2] = {
-        {0.0f, 0.0f},    {1.0f, 1.0f},          {-1.0f, 1.0f},           {-1.0f, -1.0f},
-        {0.875f, 0.75f}, {0.00392f, -0.99215f}, {-0.000675f, 0.004954f}, {-0.6937f, -0.02146f},
-    };
-    const float floatFaultTolerance = 0.0005f;
+    static constexpr std::array<std::array<float, 2>, 8> input = {{
+        {0.0f, 0.0f},
+        {1.0f, 1.0f},
+        {-1.0f, 1.0f},
+        {-1.0f, -1.0f},
+        {0.875f, 0.75f},
+        {0.00392f, -0.99215f},
+        {-0.000675f, 0.004954f},
+        {-0.6937f, -0.02146f},
+    }};
+    const float floatFaultTolerance                            = 0.0005f;
     float outputVal1, outputVal2;
 
     for (size_t i = 0; i < 8; i++)
     {
-        unpackHalf2x16(ANGLE_UNSAFE_TODO(packHalf2x16(input[i][0], input[i][1])), &outputVal1,
-                       &outputVal2);
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance));
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance));
+        unpackHalf2x16(packHalf2x16(input[i][0], input[i][1]), &outputVal1, &outputVal2);
+        EXPECT_NEAR(input[i][0], outputVal1, floatFaultTolerance);
+        EXPECT_NEAR(input[i][1], outputVal2, floatFaultTolerance);
     }
 }
 
@@ -133,24 +153,25 @@ TEST(MathUtilTest, packAndUnpackHalf2x16)
 // For floats f1 to f4, unpackUnorm4x8(packUnorm4x8(f1, f2, f3, f4)) should be same as f1 to f4.
 TEST(MathUtilTest, packAndUnpackUnorm4x8)
 {
-    const float input[5][4] = {{0.0f, 0.0f, 0.0f, 0.0f},
-                               {1.0f, 1.0f, 1.0f, 1.0f},
-                               {-1.0f, 1.0f, -1.0f, 1.0f},
-                               {-1.0f, -1.0f, -1.0f, -1.0f},
-                               {64.0f / 255.0f, 128.0f / 255.0f, 32.0f / 255.0f, 16.0f / 255.0f}};
+    static constexpr std::array<std::array<float, 4>, 5> input = {{
+        {0.0f, 0.0f, 0.0f, 0.0f},
+        {1.0f, 1.0f, 1.0f, 1.0f},
+        {-1.0f, 1.0f, -1.0f, 1.0f},
+        {-1.0f, -1.0f, -1.0f, -1.0f},
+        {64.0f / 255.0f, 128.0f / 255.0f, 32.0f / 255.0f, 16.0f / 255.0f},
+    }};
 
     const float floatFaultTolerance = 0.005f;
-    float outputVals[4];
+    std::array<float, 4> outputVals;
 
     for (size_t i = 0; i < 5; i++)
     {
-        UnpackUnorm4x8(
-            ANGLE_UNSAFE_TODO(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3])),
-            outputVals);
+        UnpackUnorm4x8(PackUnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
+                       outputVals.data());
         for (size_t j = 0; j < 4; j++)
         {
-            float expected = ANGLE_UNSAFE_TODO(input[i][j] < 0.0f ? 0.0f : input[i][j]);
-            ANGLE_UNSAFE_TODO(EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance));
+            float expected = input[i][j] < 0.0f ? 0.0f : input[i][j];
+            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
         }
     }
 }
@@ -159,24 +180,25 @@ TEST(MathUtilTest, packAndUnpackUnorm4x8)
 // For floats f1 to f4, unpackSnorm4x8(packSnorm4x8(f1, f2, f3, f4)) should be same as f1 to f4.
 TEST(MathUtilTest, packAndUnpackSnorm4x8)
 {
-    const float input[5][4] = {{0.0f, 0.0f, 0.0f, 0.0f},
-                               {1.0f, 1.0f, 1.0f, 1.0f},
-                               {-1.0f, 1.0f, -1.0f, 1.0f},
-                               {-1.0f, -1.0f, -1.0f, -1.0f},
-                               {64.0f / 127.0f, -8.0f / 127.0f, 32.0f / 127.0f, 16.0f / 127.0f}};
+    static constexpr std::array<std::array<float, 4>, 5> input = {{
+        {0.0f, 0.0f, 0.0f, 0.0f},
+        {1.0f, 1.0f, 1.0f, 1.0f},
+        {-1.0f, 1.0f, -1.0f, 1.0f},
+        {-1.0f, -1.0f, -1.0f, -1.0f},
+        {64.0f / 127.0f, -8.0f / 127.0f, 32.0f / 127.0f, 16.0f / 127.0f},
+    }};
 
     const float floatFaultTolerance = 0.01f;
-    float outputVals[4];
+    std::array<float, 4> outputVals;
 
     for (size_t i = 0; i < 5; i++)
     {
-        UnpackSnorm4x8(
-            ANGLE_UNSAFE_TODO(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3])),
-            outputVals);
+        UnpackSnorm4x8(PackSnorm4x8(input[i][0], input[i][1], input[i][2], input[i][3]),
+                       outputVals.data());
         for (size_t j = 0; j < 4; j++)
         {
-            float expected = ANGLE_UNSAFE_TODO(input[i][j]);
-            ANGLE_UNSAFE_TODO(EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance));
+            float expected = input[i][j];
+            EXPECT_NEAR(expected, outputVals[j], floatFaultTolerance);
         }
     }
 }
@@ -581,87 +603,91 @@ TEST(MathUtilTest, Float32ToFloat16)
 // Tests the RGB float to 999E5 conversion
 TEST(MathUtilTest, convertRGBFloatsTo999E5)
 {
-    const int numTests                  = 18;
-    const float input[numTests][3]      = {// The basics
-                                      {0.0f, 0.0f, 0.0f},
-                                      {0.0f, 0.0f, 1.0f},
-                                      {0.0f, 1.0f, 0.0f},
-                                      {0.0f, 1.0f, 1.0f},
-                                      {1.0f, 0.0f, 0.0f},
-                                      {1.0f, 0.0f, 1.0f},
-                                      {1.0f, 1.0f, 0.0f},
-                                      {1.0f, 1.0f, 1.0f},
-                                      // Extended range
-                                      {0.0f, 0.0f, 1.5f},
-                                      {0.0f, 2.0f, 0.0f},
-                                      {0.0f, 2.5f, 3.0f},
-                                      {3.5f, 0.0f, 0.0f},
-                                      {4.0f, 0.0f, 4.5f},
-                                      {5.0f, 5.5f, 0.0f},
-                                      {6.0f, 6.5f, 7.0f},
-                                      // Random
-                                      {0.1f, 9.6f, 3.2f},
-                                      {2.0f, 1.7f, 8.6f},
-                                      {0.7f, 4.2f, 9.1f}};
-    const unsigned int result[numTests] = {// The basics
-                                           0x00000000, 0x84000000, 0x80020000, 0x84020000,
-                                           0x80000100, 0x84000100, 0x80020100, 0x84020100,
-                                           // Extended range
-                                           0x86000000, 0x88020000, 0x8E028000, 0x880001C0,
-                                           0x94800100, 0x9002C140, 0x97034180,
-                                           // Random
-                                           0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
+    const int numTests                                                = 18;
+    static constexpr std::array<std::array<float, 3>, numTests> input = {{
+        // The basics
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f},
+        {1.0f, 0.0f, 1.0f},
+        {1.0f, 1.0f, 0.0f},
+        {1.0f, 1.0f, 1.0f},
+        // Extended range
+        {0.0f, 0.0f, 1.5f},
+        {0.0f, 2.0f, 0.0f},
+        {0.0f, 2.5f, 3.0f},
+        {3.5f, 0.0f, 0.0f},
+        {4.0f, 0.0f, 4.5f},
+        {5.0f, 5.5f, 0.0f},
+        {6.0f, 6.5f, 7.0f},
+        // Random
+        {0.1f, 9.6f, 3.2f},
+        {2.0f, 1.7f, 8.6f},
+        {0.7f, 4.2f, 9.1f},
+    }};
+    static constexpr std::array<unsigned int, numTests> result        = {
+        // The basics
+        0x00000000, 0x84000000, 0x80020000, 0x84020000, 0x80000100, 0x84000100, 0x80020100,
+        0x84020100,
+        // Extended range
+        0x86000000, 0x88020000, 0x8E028000, 0x880001C0, 0x94800100, 0x9002C140, 0x97034180,
+        // Random
+        0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
 
     for (int i = 0; i < numTests; i++)
     {
-        ANGLE_UNSAFE_TODO(
-            EXPECT_EQ(convertRGBFloatsTo999E5(input[i][0], input[i][1], input[i][2]), result[i]));
+
+        EXPECT_EQ(convertRGBFloatsTo999E5(input[i][0], input[i][1], input[i][2]), result[i]);
     }
 }
 
 // Tests the 999E5 to RGB float conversion
 TEST(MathUtilTest, convert999E5toRGBFloats)
 {
-    const int numTests                 = 18;
-    const float result[numTests][3]    = {// The basics
-                                       {0.0f, 0.0f, 0.0f},
-                                       {0.0f, 0.0f, 1.0f},
-                                       {0.0f, 1.0f, 0.0f},
-                                       {0.0f, 1.0f, 1.0f},
-                                       {1.0f, 0.0f, 0.0f},
-                                       {1.0f, 0.0f, 1.0f},
-                                       {1.0f, 1.0f, 0.0f},
-                                       {1.0f, 1.0f, 1.0f},
-                                       // Extended range
-                                       {0.0f, 0.0f, 1.5f},
-                                       {0.0f, 2.0f, 0.0f},
-                                       {0.0f, 2.5f, 3.0f},
-                                       {3.5f, 0.0f, 0.0f},
-                                       {4.0f, 0.0f, 4.5f},
-                                       {5.0f, 5.5f, 0.0f},
-                                       {6.0f, 6.5f, 7.0f},
-                                       // Random
-                                       {0.1f, 9.6f, 3.2f},
-                                       {2.0f, 1.7f, 8.6f},
-                                       {0.7f, 4.2f, 9.1f}};
-    const unsigned int input[numTests] = {// The basics
-                                          0x00000000, 0x84000000, 0x80020000, 0x84020000,
-                                          0x80000100, 0x84000100, 0x80020100, 0x84020100,
-                                          // Extended range
-                                          0x86000000, 0x88020000, 0x8E028000, 0x880001C0,
-                                          0x94800100, 0x9002C140, 0x97034180,
-                                          // Random
-                                          0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
+    const int numTests                                                 = 18;
+    static constexpr std::array<std::array<float, 3>, numTests> result = {{
+        // The basics
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 1.0f, 1.0f},
+        {1.0f, 0.0f, 0.0f},
+        {1.0f, 0.0f, 1.0f},
+        {1.0f, 1.0f, 0.0f},
+        {1.0f, 1.0f, 1.0f},
+        // Extended range
+        {0.0f, 0.0f, 1.5f},
+        {0.0f, 2.0f, 0.0f},
+        {0.0f, 2.5f, 3.0f},
+        {3.5f, 0.0f, 0.0f},
+        {4.0f, 0.0f, 4.5f},
+        {5.0f, 5.5f, 0.0f},
+        {6.0f, 6.5f, 7.0f},
+        // Random
+        {0.1f, 9.6f, 3.2f},
+        {2.0f, 1.7f, 8.6f},
+        {0.7f, 4.2f, 9.1f},
+    }};
+    static constexpr std::array<unsigned int, numTests> input          = {
+        // The basics
+        0x00000000, 0x84000000, 0x80020000, 0x84020000, 0x80000100, 0x84000100, 0x80020100,
+        0x84020100,
+        // Extended range
+        0x86000000, 0x88020000, 0x8E028000, 0x880001C0, 0x94800100, 0x9002C140, 0x97034180,
+        // Random
+        0x999A6603, 0x9C4C6C40, 0x9C8D0C16};
     // Note: quite a low tolerance is required
     const float floatFaultTolerance = 0.05f;
     float outR, outG, outB;
 
     for (int i = 0; i < numTests; i++)
     {
-        convert999E5toRGBFloats(ANGLE_UNSAFE_TODO(input[i]), &outR, &outG, &outB);
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][0], outR, floatFaultTolerance));
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][1], outG, floatFaultTolerance));
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(result[i][2], outB, floatFaultTolerance));
+        convert999E5toRGBFloats(input[i], &outR, &outG, &outB);
+        EXPECT_NEAR(result[i][0], outR, floatFaultTolerance);
+        EXPECT_NEAR(result[i][1], outG, floatFaultTolerance);
+        EXPECT_NEAR(result[i][2], outB, floatFaultTolerance);
     }
 }
 

@@ -9,6 +9,8 @@
 //   in the ES 3 specs.
 //
 
+#include <array>
+
 #include "GLES2/gl2.h"
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
@@ -165,8 +167,8 @@ TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
 
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mBuffer);
 
-    GLint vertexData[] = {1, 2, 3, 1, 2, 3};
-    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+    static constexpr std::array<GLint, 6> vertexData = {1, 2, 3, 1, 2, 3};
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData.data());
 
     glUseProgram(mProgram);
     glBeginTransformFeedback(GL_TRIANGLES);
@@ -265,15 +267,15 @@ TEST_P(ProvokingVertexTest, FlatLineWithFirstIndex)
 // Test drawing a simple triangle strip with flat shading, and different valued vertices.
 TEST_P(ProvokingVertexTest, FlatTriStrip)
 {
-    GLint vertexData[]     = {1, 2, 3, 4, 5, 6};
-    GLfloat positionData[] = {-1.0f, -1.0f, -1.0f, 1.0f,  0.0f, -1.0f,
-                              0.0f,  1.0f,  1.0f,  -1.0f, 1.0f, 1.0f};
+    static constexpr std::array<GLint, 6> vertexData      = {1, 2, 3, 4, 5, 6};
+    static constexpr std::array<GLfloat, 12> positionData = {
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
 
-    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData.data());
 
     GLint positionLocation = glGetAttribLocation(mProgram, "position");
     glEnableVertexAttribArray(positionLocation);
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData.data());
 
     glUseProgram(mProgram);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
@@ -286,12 +288,10 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
 
     for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
     {
-        GLfloat sumX = ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 0]) +
-                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 2]) +
-                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 4]);
-        GLfloat sumY = ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 1]) +
-                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 3]) +
-                       ANGLE_UNSAFE_TODO(positionData[triIndex * 2 + 5]);
+        GLfloat sumX = positionData[triIndex * 2 + 0] + positionData[triIndex * 2 + 2] +
+                       positionData[triIndex * 2 + 4];
+        GLfloat sumY = positionData[triIndex * 2 + 1] + positionData[triIndex * 2 + 3] +
+                       positionData[triIndex * 2 + 5];
 
         float centerX = sumX / 3.0f * 0.5f + 0.5f;
         float centerY = sumY / 3.0f * 0.5f + 0.5f;
@@ -303,7 +303,7 @@ TEST_P(ProvokingVertexTest, FlatTriStrip)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]));
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
     }
 }
 
@@ -313,21 +313,21 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
     // TODO(jmadill): Implement on the D3D back-end.
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
-    GLint indexData[]      = {0, 1, 2, -1, 1, 2, 3, 4, -1, 3, 4, 5};
-    GLint vertexData[]     = {1, 2, 3, 4, 5, 6};
-    GLfloat positionData[] = {-1.0f, -1.0f, -1.0f, 1.0f,  0.0f, -1.0f,
-                              0.0f,  1.0f,  1.0f,  -1.0f, 1.0f, 1.0f};
+    static constexpr std::array<GLint, 12> indexData      = {0, 1, 2, -1, 1, 2, 3, 4, -1, 3, 4, 5};
+    static constexpr std::array<GLint, 6> vertexData      = {1, 2, 3, 4, 5, 6};
+    static constexpr std::array<GLfloat, 12> positionData = {
+        -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
 
-    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData.data());
 
     GLint positionLocation = glGetAttribLocation(mProgram, "position");
     glEnableVertexAttribArray(positionLocation);
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData.data());
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
     glUseProgram(mProgram);
-    glDrawElements(GL_TRIANGLE_STRIP, 12, GL_UNSIGNED_INT, indexData);
+    glDrawElements(GL_TRIANGLE_STRIP, 12, GL_UNSIGNED_INT, indexData.data());
 
     std::vector<GLint> pixelBuffer(getWindowWidth() * getWindowHeight() * 4, 0);
     glReadPixels(0, 0, getWindowWidth(), getWindowHeight(), GL_RGBA_INTEGER, GL_INT,
@@ -336,20 +336,18 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
     ASSERT_GL_NO_ERROR();
 
     // Account for primitive restart when checking the tris.
-    GLint triOffsets[] = {0, 4, 5, 9};
+    static constexpr std::array<GLint, 4> triOffsets = {0, 4, 5, 9};
 
     for (unsigned int triIndex = 0; triIndex < 4; ++triIndex)
     {
-        GLint vertexA = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 0]);
-        GLint vertexB = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 1]);
-        GLint vertexC = ANGLE_UNSAFE_TODO(indexData[triOffsets[triIndex] + 2]);
+        GLint vertexA = indexData[triOffsets[triIndex] + 0];
+        GLint vertexB = indexData[triOffsets[triIndex] + 1];
+        GLint vertexC = indexData[triOffsets[triIndex] + 2];
 
-        GLfloat sumX = ANGLE_UNSAFE_TODO(positionData[vertexA * 2]) +
-                       ANGLE_UNSAFE_TODO(positionData[vertexB * 2]) +
-                       ANGLE_UNSAFE_TODO(positionData[vertexC * 2]);
-        GLfloat sumY = ANGLE_UNSAFE_TODO(positionData[vertexA * 2 + 1]) +
-                       ANGLE_UNSAFE_TODO(positionData[vertexB * 2 + 1]) +
-                       ANGLE_UNSAFE_TODO(positionData[vertexC * 2 + 1]);
+        GLfloat sumX =
+            positionData[vertexA * 2] + positionData[vertexB * 2] + positionData[vertexC * 2];
+        GLfloat sumY = positionData[vertexA * 2 + 1] + positionData[vertexB * 2 + 1] +
+                       positionData[vertexC * 2 + 1];
 
         float centerX = sumX / 3.0f * 0.5f + 0.5f;
         float centerY = sumY / 3.0f * 0.5f + 0.5f;
@@ -361,7 +359,7 @@ TEST_P(ProvokingVertexTest, FlatTriStripPrimitiveRestart)
 
         unsigned int provokingVertexIndex = triIndex + 2;
 
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]));
+        EXPECT_EQ(vertexData[provokingVertexIndex], pixelBuffer[pixelIndex * 4]);
     }
 }
 
@@ -381,15 +379,15 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertexIsAvailable)
 // Test with FRONT_CONVENTION if we have ANGLE_provoking_vertex.
 TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
 {
-    int32_t vertexData[] = {1, 2, 3};
-    float positionData[] = {-1.0f, -1.0f, 3.0f, -1.0f, -1.0f, 3.0f};
+    static constexpr std::array<int32_t, 3> vertexData = {1, 2, 3};
+    static constexpr std::array<float, 6> positionData = {-1.0f, -1.0f, 3.0f, -1.0f, -1.0f, 3.0f};
 
     glEnableVertexAttribArray(mIntAttribLocation);
-    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData);
+    glVertexAttribIPointer(mIntAttribLocation, 1, GL_INT, 0, vertexData.data());
 
     GLint positionLocation = glGetAttribLocation(mProgram, "position");
     glEnableVertexAttribArray(positionLocation);
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData);
+    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, positionData.data());
 
     glUseProgram(mProgram);
     ASSERT_GL_NO_ERROR();
@@ -403,7 +401,7 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
         glReadPixels(0, 0, 1, 1, GL_RGBA_INTEGER, GL_INT, &pixelValue);
 
         ASSERT_GL_NO_ERROR();
-        ANGLE_UNSAFE_TODO(EXPECT_EQ(vertexData[id], pixelValue[0]));
+        EXPECT_EQ(vertexData[id], pixelValue[0]);
     };
 
     fnExpectId(2);

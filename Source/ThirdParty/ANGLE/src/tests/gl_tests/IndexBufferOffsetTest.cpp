@@ -6,6 +6,9 @@
 
 // IndexBufferOffsetTest.cpp: Test glDrawElements with an offset and an index buffer
 
+#include <array>
+
+#include "common/span.h"
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -437,15 +440,9 @@ TEST_P(IndexBufferOffsetTest, DrawAtDifferentOffsetAlignments)
 // Uses un-aligned index buffer to draw, the draw call should be ignored
 TEST_P(IndexBufferOffsetTest, DrawAtUnAlignedIndexBuffer)
 {
-    constexpr GLushort indices[6] = {0, 1, 2, 2, 3, 0};
-    GLubyte indicesUnaligned[1 + sizeof(indices)];
-
-    /* unalign indices */
-    indicesUnaligned[0] = 0;
-    for (unsigned long i = 0; i < sizeof(indices); ++i)
-    {
-        ANGLE_UNSAFE_TODO(indicesUnaligned[i + 1] = ((GLubyte *)indices)[i]);
-    }
+    constexpr std::array<GLushort, 6> indices = {0, 1, 2, 2, 3, 0};
+    std::array<GLubyte, 1 + indices.size() * sizeof(GLushort)> indicesUnaligned = {0};
+    Span(indicesUnaligned).subspan(1).copy_from(as_byte_span(indices));
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -459,7 +456,7 @@ TEST_P(IndexBufferOffsetTest, DrawAtUnAlignedIndexBuffer)
 
     GLBuffer buffer;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesUnaligned), indicesUnaligned,
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesUnaligned), indicesUnaligned.data(),
                  GL_DYNAMIC_DRAW);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(1));

@@ -48,6 +48,8 @@ class ContextGL : public ContextImpl
               RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus);
     ~ContextGL() override;
 
+    void onDestroy(const gl::Context *context) override;
+
     angle::Result initialize(const angle::ImageLoadContext &imageLoadContext) override;
 
     // Shader creation
@@ -326,6 +328,12 @@ class ContextGL : public ContextImpl
     gl::AttributesMask updateAttributesForBaseInstance(GLuint baseInstance);
     void resetUpdatedAttributes(gl::AttributesMask attribMask);
 
+  protected:
+    std::shared_ptr<RendererGL> mRenderer;
+
+    RobustnessVideoMemoryPurgeStatus mRobustnessVideoMemoryPurgeStatus;
+
+  private:
     struct PixelBufferGL
     {
         const FunctionsGL *functions = nullptr;
@@ -347,11 +355,6 @@ class ContextGL : public ContextImpl
     // Keyed by the GLenum type passed to getDepthInitPBO (e.g. GL_UNSIGNED_INT_24_8,
     // GL_FLOAT_32_UNSIGNED_INT_24_8_REV).
     DepthInitPBOCache mDepthInitPBOs;
-
-  protected:
-    std::shared_ptr<RendererGL> mRenderer;
-
-    RobustnessVideoMemoryPurgeStatus mRobustnessVideoMemoryPurgeStatus;
 };
 
 }  // namespace rx

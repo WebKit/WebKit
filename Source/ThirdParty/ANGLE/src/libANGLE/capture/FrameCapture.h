@@ -17,6 +17,7 @@
 #include "common/PackedEnums.h"
 #include "common/SimpleMutex.h"
 #include "common/frame_capture_binary_data.h"
+#include "common/frame_capture_shared.h"
 #include "common/frame_capture_utils.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
@@ -1229,11 +1230,7 @@ void CaptureEGLCallToFrameCapture(CaptureFuncT captureFunc,
         egl::Display *display = GetEGLDisplayArg(captureParams...);
         if (display)
         {
-            for (const auto &contextIter : display->getState().contextMap)
-            {
-                context = contextIter.second;
-                break;
-            }
+            context = display->getState().contextMap.first();
         }
         if (!context)
         {
@@ -1540,25 +1537,6 @@ struct SaveFileHelper
     std::string mFilePath;
 };
 
-// TODO: Consolidate to C output and remove option. http://anglebug.com/42266223
-
-constexpr char kEnabledVarName[]        = "ANGLE_CAPTURE_ENABLED";
-constexpr char kOutDirectoryVarName[]   = "ANGLE_CAPTURE_OUT_DIR";
-constexpr char kFrameStartVarName[]     = "ANGLE_CAPTURE_FRAME_START";
-constexpr char kFrameEndVarName[]       = "ANGLE_CAPTURE_FRAME_END";
-constexpr char kBinaryDataSizeVarName[] = "ANGLE_CAPTURE_MAX_RESIDENT_BINARY_SIZE";
-constexpr char kBlockSizeVarName[]      = "ANGLE_CAPTURE_BLOCK_SIZE";
-constexpr char kTriggerVarName[]        = "ANGLE_CAPTURE_TRIGGER";
-constexpr char kEndCaptureVarName[]     = "ANGLE_CAPTURE_END_CAPTURE";
-constexpr char kCaptureLabelVarName[]   = "ANGLE_CAPTURE_LABEL";
-constexpr char kCompressionVarName[]    = "ANGLE_CAPTURE_COMPRESSION";
-constexpr char kSerializeStateVarName[] = "ANGLE_CAPTURE_SERIALIZE_STATE";
-constexpr char kValidationVarName[]     = "ANGLE_CAPTURE_VALIDATION";
-constexpr char kValidationExprVarName[] = "ANGLE_CAPTURE_VALIDATION_EXPR";
-constexpr char kSourceExtVarName[]      = "ANGLE_CAPTURE_SOURCE_EXT";
-constexpr char kSourceSizeVarName[]     = "ANGLE_CAPTURE_SOURCE_SIZE";
-constexpr char kForceShadowVarName[]    = "ANGLE_CAPTURE_FORCE_SHADOW";
-
 constexpr size_t kFunctionSizeLimit = 5000;
 
 // Limit based on MSVC Compiler Error C2026
@@ -1567,23 +1545,6 @@ constexpr size_t kStringLengthLimit = 16380;
 // Default limit to number of bytes in a capture source files.
 constexpr char kDefaultSourceFileExt[]           = "cpp";
 constexpr size_t kDefaultSourceFileSizeThreshold = 400000;
-
-// Android debug properties that correspond to the above environment variables
-constexpr char kAndroidEnabled[]        = "debug.angle.capture.enabled";
-constexpr char kAndroidOutDir[]         = "debug.angle.capture.out_dir";
-constexpr char kAndroidFrameStart[]     = "debug.angle.capture.frame_start";
-constexpr char kAndroidFrameEnd[]       = "debug.angle.capture.frame_end";
-constexpr char kAndroidBinaryDataSize[] = "debug.angle.capture.max_resident_binary_size";
-constexpr char kAndroidBlockSize[]      = "debug.angle.capture.block_size";
-constexpr char kAndroidTrigger[]        = "debug.angle.capture.trigger";
-constexpr char kAndroidEndCapture[]     = "debug.angle.capture.end_capture";
-constexpr char kAndroidCaptureLabel[]   = "debug.angle.capture.label";
-constexpr char kAndroidCompression[]    = "debug.angle.capture.compression";
-constexpr char kAndroidValidation[]     = "debug.angle.capture.validation";
-constexpr char kAndroidValidationExpr[] = "debug.angle.capture.validation_expr";
-constexpr char kAndroidSourceExt[]      = "debug.angle.capture.source_ext";
-constexpr char kAndroidSourceSize[]     = "debug.angle.capture.source_size";
-constexpr char kAndroidForceShadow[]    = "debug.angle.capture.force_shadow";
 
 void WriteCppReplayForCall(const CallCapture &call,
                            ReplayWriter &replayWriter,

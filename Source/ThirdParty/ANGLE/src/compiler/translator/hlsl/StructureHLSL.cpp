@@ -27,10 +27,10 @@ TString Define(const TStructure &structure,
                Std140PaddingHelper *padHelper)
 {
     const TFieldList &fields    = structure.fields();
-    const bool isNameless       = (structure.symbolType() == SymbolType::Empty);
+    ASSERT(structure.symbolType() != SymbolType::Empty);
     const TString &structName   = QualifiedStructNameString(structure, useHLSLRowMajorPacking,
                                                             useStd140Packing, forcePadding);
-    const TString declareString = (isNameless ? "struct" : "struct " + structName);
+    const TString declareString = "struct " + structName;
 
     TString string;
     string += declareString +
@@ -67,9 +67,7 @@ TString Define(const TStructure &structure,
         }
     }
 
-    // Nameless structs do not finish with a semicolon and newline, to leave room for an instance
-    // variable
-    string += (isNameless ? "} " : "};\n");
+    string += "};\n";
 
     return string;
 }
@@ -302,11 +300,6 @@ TString StructureHLSL::defineQualified(const TStructure &structure,
     }
 }
 
-TString StructureHLSL::defineNameless(const TStructure &structure)
-{
-    return Define(structure, false, false, false, nullptr);
-}
-
 StructureHLSL::DefinedStructs::iterator StructureHLSL::defineVariants(const TStructure &structure,
                                                                       const TString &name)
 {
@@ -360,10 +353,8 @@ StructureHLSL::DefinedStructs::iterator StructureHLSL::defineVariants(const TStr
 void StructureHLSL::ensureStructDefined(const TStructure &structure)
 {
     const TString name = StructNameString(structure);
-    if (name == "")
-    {
-        return;  // Nameless structures are not defined
-    }
+    // All structures are named for the HLSL generator.
+    ASSERT(name != "");
     if (mDefinedStructs.find(name) == mDefinedStructs.end())
     {
         defineVariants(structure, name);

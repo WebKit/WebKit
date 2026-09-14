@@ -932,6 +932,12 @@ ANGLE_EGL_ID_TYPES_OP(ANGLE_DEFINE_ID_TYPE)
 #undef ANGLE_EGL_ID_TYPES_OP
 
 template <>
+struct ResourceTypeToID<gl::Context>
+{
+    using IDType = gl::ContextID;
+};
+
+template <>
 struct IsResourceIDType<gl::ContextID>
 {
     static constexpr bool value = true;

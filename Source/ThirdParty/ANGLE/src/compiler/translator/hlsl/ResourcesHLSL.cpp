@@ -434,14 +434,11 @@ void ResourcesHLSL::outputUniform(TInfoSinkBase &out,
                                   const unsigned int registerIndex)
 {
     const TStructure *structure = type.getStruct();
-    // If this is a nameless struct, we need to use its full definition, rather than its (empty)
-    // name.
-    // TypeString() will invoke defineNameless in this case; qualifier prefixes are unnecessary for
-    // nameless structs in ES, as nameless structs cannot be used anywhere that layout qualifiers
-    // are permitted.
-    const TString &typeName = ((structure && structure->symbolType() != SymbolType::Empty)
-                                   ? QualifiedStructNameString(*structure, false, false, false)
-                                   : TypeString(type));
+    // Nameless structs use a generated name in the HLSL generator.
+    ASSERT(structure == nullptr || structure->symbolType() != SymbolType::Empty);
+    const TString &typeName = structure != nullptr
+                                  ? QualifiedStructNameString(*structure, false, false, false)
+                                  : TypeString(type);
 
     const TString &registerString =
         TString("register(") + UniformRegisterPrefix(type) + str(registerIndex) + ")";

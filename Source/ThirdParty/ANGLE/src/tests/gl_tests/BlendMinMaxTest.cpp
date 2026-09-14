@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -30,7 +32,7 @@ class BlendMinMaxTest : public ANGLETest<>
 
     struct Color
     {
-        float values[4];
+        std::array<float, 4> values;
     };
 
     static float getExpected(bool blendMin, float curColor, float prevColor)
@@ -54,20 +56,20 @@ class BlendMinMaxTest : public ANGLETest<>
         }
 
         const size_t colorCount = 128;
-        Color colors[colorCount];
+        std::array<Color, colorCount> colors;
         for (size_t i = 0; i < colorCount; i++)
         {
             for (size_t j = 0; j < 4; j++)
             {
-                ANGLE_UNSAFE_TODO(colors[i].values[j]) =
+                colors[i].values[j] =
                     static_cast<float>(minValue + (rand() % (maxValue - minValue)));
             }
         }
 
-        float prevColor[4];
+        std::array<float, 4> prevColor;
         for (size_t i = 0; i < colorCount; i++)
         {
-            const Color &color = ANGLE_UNSAFE_TODO(colors[i]);
+            const Color &color = colors[i];
             glUseProgram(mProgram);
             glUniform4f(mColorLocation, color.values[0], color.values[1], color.values[2],
                         color.values[3]);
@@ -77,20 +79,19 @@ class BlendMinMaxTest : public ANGLETest<>
 
             drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.5f);
 
-            float pixel[4];
+            std::array<float, 4> pixel;
             if (type == GL_UNSIGNED_BYTE)
             {
-                GLubyte ubytePixel[4];
-                glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, ubytePixel);
-                for (size_t componentIdx = 0; componentIdx < ArraySize(pixel); componentIdx++)
+                std::array<GLubyte, 4> ubytePixel;
+                glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, ubytePixel.data());
+                for (size_t componentIdx = 0; componentIdx < pixel.size(); componentIdx++)
                 {
-                    ANGLE_UNSAFE_TODO(pixel[componentIdx]) =
-                        ANGLE_UNSAFE_TODO(ubytePixel[componentIdx]) / 255.0f;
+                    pixel[componentIdx] = ubytePixel[componentIdx] / 255.0f;
                 }
             }
             else if (type == GL_FLOAT)
             {
-                glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixel);
+                glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, pixel.data());
             }
             else
             {
@@ -100,11 +101,11 @@ class BlendMinMaxTest : public ANGLETest<>
             if (i > 0)
             {
                 const float errorRange = 1.0f / 255.0f;
-                for (size_t componentIdx = 0; componentIdx < ArraySize(pixel); componentIdx++)
+                for (size_t componentIdx = 0; componentIdx < pixel.size(); componentIdx++)
                 {
-                    ANGLE_UNSAFE_TODO(EXPECT_NEAR(
+                    EXPECT_NEAR(
                         getExpected(blendMin, color.values[componentIdx], prevColor[componentIdx]),
-                        pixel[componentIdx], errorRange))
+                        pixel[componentIdx], errorRange)
                         << " blendMin=" << blendMin << " componentIdx=" << componentIdx << std::endl
                         << " color.values[0]=" << color.values[0]
                         << " prevColor[0]=" << prevColor[0] << std::endl
@@ -117,7 +118,7 @@ class BlendMinMaxTest : public ANGLETest<>
                 }
             }
 
-            ANGLE_UNSAFE_TODO(memcpy(prevColor, pixel, sizeof(pixel)));
+            prevColor = pixel;
         }
     }
 

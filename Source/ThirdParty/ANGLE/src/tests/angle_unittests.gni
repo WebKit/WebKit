@@ -130,6 +130,7 @@ angle_unittests_hlsl_sources = [ "compiler_tests/UnrollFlatten_test.cpp" ]
 
 angle_unittests_gl_sources = [
   "../libANGLE/renderer/gl/DisplayGL_unittest.cpp",
+  "../libANGLE/renderer/gl/StateManagerGL_unittest.cpp",
   "../libANGLE/renderer/gl/renderergl_utils_unittest.cpp",
 ]
 

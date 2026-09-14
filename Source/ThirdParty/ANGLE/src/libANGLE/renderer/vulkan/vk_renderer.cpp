@@ -71,6 +71,13 @@ constexpr bool kEnableVulkanAPIDumpLayer = true;
 #else
 constexpr bool kEnableVulkanAPIDumpLayer = false;
 #endif
+
+#if defined(ANGLE_OPENCL_COMPUTE_ONLY_PIPE)
+constexpr bool kUseComputeOnlyQueue = true;
+#else
+constexpr bool kUseComputeOnlyQueue = false;
+#endif
+
 }  // anonymous namespace
 
 namespace rx
@@ -2762,12 +2769,21 @@ angle::Result Renderer::initialize(vk::ErrorContext *context,
 
     VkQueueFlags queueFamilyBits = VK_QUEUE_FLAG_BITS_MAX_ENUM;
     uint32_t firstQueueFamily    = QueueFamily::kInvalidIndex;
-    if (nativeWindowSystem == angle::NativeWindowSystem::NullCompute)
+
+    // If this is compute client, give preference to compute only queue (if not available fall back
+    // to default queue)
+    if (nativeWindowSystem == angle::NativeWindowSystem::NullCompute && kUseComputeOnlyQueue)
     {
         queueFamilyBits = VK_QUEUE_COMPUTE_BIT;
         firstQueueFamily =
             QueueFamily::FindIndex(mQueueFamilyProperties2, queueFamilyBits, VK_QUEUE_PROTECTED_BIT,
                                    VK_QUEUE_GRAPHICS_BIT, &queueFamilyMatchCount);
+
+        if (queueFamilyMatchCount == 0)
+        {
+            INFO() << "Compute Only queue is not supported by the device, falling back to default "
+                      "Graphics|Compute queue";
+        }
     }
     if (queueFamilyMatchCount == 0)
     {

@@ -127,4 +127,17 @@ TEST(BlobCacheTest, OversizeValue)
     EXPECT_FALSE(blobCache.get(nullptr, nullptr, MakeKey(5), &qvalue));
 }
 
+TEST(BlobCacheTest, Resize)
+{
+    constexpr size_t kSize = 32;
+    BlobCache blobCache(kSize);
+
+    blobCache.populate(MakeKey(0), MakeBlob(16));
+    EXPECT_EQ(16u, blobCache.size());
+
+    EXPECT_EQ(16u, blobCache.resize(64));
+    EXPECT_EQ(0u, blobCache.size());
+    EXPECT_EQ(64u, blobCache.maxSize());
+}
+
 }  // namespace egl

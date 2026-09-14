@@ -737,8 +737,6 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     MemoryProgramCache *getMemoryProgramCache() const { return mMemoryProgramCache; }
     MemoryShaderCache *getMemoryShaderCache() const { return mMemoryShaderCache; }
 
-    angle::SimpleMutex &getProgramCacheMutex() const;
-
     bool hasBeenCurrent() const { return mHasBeenCurrent; }
     egl::Display *getDisplay() const { return mDisplay; }
     egl::Surface *getCurrentDrawSurface() const { return mCurrentDrawSurface; }

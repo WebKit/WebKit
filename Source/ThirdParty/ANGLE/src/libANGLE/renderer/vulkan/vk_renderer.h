@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RENDERERVK_H_
 
+#include <array>
 #include <condition_variable>
 #include <deque>
 #include <memory>
@@ -59,7 +60,7 @@ struct SkippedSyncvalMessage
 {
     const char *messageId;
     bool isDueToNonConformantCoherentColorFramebufferFetch  = false;
-    const char *extraProperties[kMaxSyncValExtraProperties] = {};
+    std::array<const char *, kMaxSyncValExtraProperties> extraProperties = {};
 };
 
 class ImageMemorySuballocator : angle::NonCopyable

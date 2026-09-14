@@ -1510,10 +1510,9 @@ angle::Result ContextVk::initialize(const angle::ImageLoadContext &imageLoadCont
     if (isEligibleForMutableTextureFlush())
     {
         ASSERT(mShareGroupVk->getContexts().size() == 1);
-        for (auto context : mShareGroupVk->getContexts())
-        {
-            ANGLE_TRY(vk::GetImpl(context.second)->flushOutsideRenderPassCommands());
-        }
+        ANGLE_TRY(mShareGroupVk->getContexts().forEach([](gl::Context *context) {
+            return vk::GetImpl(context)->flushOutsideRenderPassCommands();
+        }));
     }
 
     return angle::Result::Continue;
@@ -1680,10 +1679,14 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     {
         gl::AttributesMask strideDirtyAttribMask;
 
-        // All client attribs & any emulated buffered attribs will be updated
-        ANGLE_TRY(vertexArrayVk->updateStreamedAttribs(
-            context, firstVertexOrInvalid, vertexOrIndexCount, baseInstance, instanceCount,
-            indexTypeOrInvalid, indices, &strideDirtyAttribMask));
+        if (mCurrentActiveStreamingAttribsMask.any())
+        {
+            // All client attribs & any emulated buffered attribs will be updated
+            ANGLE_TRY(vertexArrayVk->updateStreamedAttribs(
+                context, mCurrentActiveStreamingAttribsMask, firstVertexOrInvalid,
+                vertexOrIndexCount, baseInstance, instanceCount, indexTypeOrInvalid, indices,
+                &strideDirtyAttribMask));
+        }
 
         // We may switch between merged attrib and non-merged. If stride changed, and
         // mGraphicsPipelineDesc is using it, we must update mGraphicsPipelineDesc and
@@ -5288,6 +5291,7 @@ angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *co
     if (executable->hasLinkedShaderStage(gl::ShaderType::Vertex))
     {
         invalidateCurrentGraphicsPipeline();
+        updateCurrentActiveStreamingAttribsMask(context);
         // No additional work is needed here. We will update the pipeline desc
         // later.
         invalidateDefaultAttributes(context->getActiveDefaultAttribsMask());
@@ -5742,7 +5746,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 invalidateDefaultAttributes(context->getActiveDefaultAttribsMask());
                 ANGLE_TRY(onVertexArrayChange(vertexArrayVk->getCurrentEnabledAttribsMask()));
                 ANGLE_TRY(onIndexBufferChange(vertexArrayVk->getCurrentElementArrayBuffer()));
-                vertexArrayVk->resetInactiveStreamedAttribs(context);
+                updateCurrentActiveStreamingAttribsMask(context);
                 break;
             }
             case gl::state::DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING:
@@ -9249,4 +9253,24 @@ void ContextVk::restoreAllGraphicsState()
     // update all pushConstants for future draw calls
     invalidateGraphicsDriverUniforms();
 }
+
+void ContextVk::updateCurrentActiveStreamingAttribsMask(const gl::Context *context)
+{
+    VertexArrayVk *vertexArrayVk                           = getVertexArray();
+    const gl::AttributesMask prevActiveStreamingAttribMask = mCurrentActiveStreamingAttribsMask;
+    const gl::AttributesMask activeAttribs =
+        context->getActiveClientAttribsMask() | context->getActiveBufferedAttribsMask();
+    mCurrentActiveStreamingAttribsMask =
+        vertexArrayVk->getStreamingVertexAttribsMask() & activeAttribs;
+
+    // If there are previous active streaming attribute that becomes inactive, we need to set them
+    // to empty buffer since streaming will only update the active attributes.
+    const gl::AttributesMask inactiveAttribMask =
+        prevActiveStreamingAttribMask & ~mCurrentActiveStreamingAttribsMask;
+    if (inactiveAttribMask.any())
+    {
+        vertexArrayVk->resetInactiveStreamingAttribs(inactiveAttribMask, mEmptyBuffer);
+    }
+}
+
 }  // namespace rx

@@ -6,6 +6,8 @@
 // EGLChooseConfigTest.cpp:
 //   Tests of proper default-value semantics for eglChooseConfig
 
+#include <array>
+
 #include <gtest/gtest.h>
 #include "common/unsafe_buffers.h"
 
@@ -120,19 +122,19 @@ TEST_P(EGLChooseConfigTest, NegativeValidationBadAttributes)
     EGLDisplay display = getEGLWindow()->getDisplay();
 
     // Choose configs using invalid attributes:
-    const EGLint invalidConfigAttributeList[][3] = {
+    static constexpr std::array<std::array<EGLint, 3>, 4> invalidConfigAttributeList = {{
         {EGL_CONFIG_CAVEAT, 0, EGL_NONE},
         {EGL_SURFACE_TYPE, ~EGL_VG_COLORSPACE_LINEAR_BIT, EGL_NONE},
         {EGL_CONFORMANT, (EGL_OPENGL_ES_BIT | 0x0020), EGL_NONE},
         {EGL_RENDERABLE_TYPE, (EGL_OPENGL_ES_BIT | 0x0020), EGL_NONE},
-    };
+    }};
     EGLint configCount;
     EGLConfig config;
 
     for (size_t i = 0; i < 4; i++)
     {
-        ANGLE_UNSAFE_TODO(ASSERT_EGL_FALSE(
-            eglChooseConfig(display, &invalidConfigAttributeList[i][0], &config, 1, &configCount)));
+        ASSERT_EGL_FALSE(eglChooseConfig(display, invalidConfigAttributeList[i].data(), &config, 1,
+                                         &configCount));
         ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
     }
 }

@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
@@ -59,11 +61,11 @@ class InstancingTest : public ANGLETest<>
     {
         for (unsigned i = 0; i < kMaxDrawn; ++i)
         {
-            ANGLE_UNSAFE_TODO(mInstanceData[i]) = i * kDrawSize;
+            mInstanceData[i] = i * kDrawSize;
         }
         glGenBuffers(1, &mInstanceBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, mInstanceBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(mInstanceData), mInstanceData, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(mInstanceData), mInstanceData.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         const std::string inst = "attribute float a_instance;";
@@ -123,11 +125,11 @@ class InstancingTest : public ANGLETest<>
         ASSERT_TRUE(instanceAttrib == 0 || instanceAttrib == 1);
         const int positionAttrib = 1 - instanceAttrib;
 
-        glUseProgram(ANGLE_UNSAFE_TODO(mProgram[instanceAttrib]));
+        glUseProgram(mProgram[instanceAttrib]);
 
         glBindBuffer(GL_ARRAY_BUFFER, storage == Buffer ? mInstanceBuffer : 0);
         glVertexAttribPointer(instanceAttrib, 1, GL_FLOAT, GL_FALSE, 0,
-                              storage == Buffer ? nullptr : mInstanceData);
+                              storage == Buffer ? nullptr : mInstanceData.data());
         glEnableVertexAttribArray(instanceAttrib);
         if (vendor == Angle)
             glVertexAttribDivisorANGLE(instanceAttrib, divisor);
@@ -240,12 +242,12 @@ class InstancingTest : public ANGLETest<>
         }
     }
 
-    GLuint mProgram[2];
+    std::array<GLuint, 2> mProgram;
     GLuint mInstanceBuffer;
 
     static constexpr unsigned kMaxDrawn = 16;
     static constexpr float kDrawSize    = 2.0 / kMaxDrawn;
-    GLfloat mInstanceData[kMaxDrawn];
+    std::array<GLfloat, kMaxDrawn> mInstanceData;
 
     // clang-format off
 

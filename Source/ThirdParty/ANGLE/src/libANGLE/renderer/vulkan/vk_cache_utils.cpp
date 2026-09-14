@@ -1965,7 +1965,7 @@ using PipelineStateBitSet   = angle::BitSetArray<angle::EnumSize<PipelineState>(
              ++colorIndex)
         {
             colorWriteMasks[colorIndex] =
-                Int4Array_Get<VkColorComponentFlags>(blend.colorWriteMaskBits, colorIndex);
+                Int4Array_Get<VkColorComponentFlags>(blend.colorWriteMaskBits.data(), colorIndex);
 
             srcColorBlendFactors[colorIndex] = blend.attachments[colorIndex].srcColorBlendFactor;
             dstColorBlendFactors[colorIndex] = blend.attachments[colorIndex].dstColorBlendFactor;
@@ -3396,7 +3396,7 @@ void GraphicsPipelineDesc::initDefaults(const ErrorContext *context,
             SetBitField(packedAttrib.offset, 0);
         }
         mVertexInput.vertex.shaderAttribComponentType = 0;
-        memset(mVertexInput.vertex.strides, 0, sizeof(mVertexInput.vertex.strides));
+        memset(mVertexInput.vertex.strides.data(), 0, sizeof(mVertexInput.vertex.strides));
 
         SetBitField(mVertexInput.inputAssembly.bits.topology, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
         mVertexInput.inputAssembly.bits.primitiveRestartEnable = 0;
@@ -3456,7 +3456,8 @@ void GraphicsPipelineDesc::initDefaults(const ErrorContext *context,
         for (uint32_t colorIndexGL = 0; colorIndexGL < gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
              ++colorIndexGL)
         {
-            Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits, colorIndexGL, kAllColorBits);
+            Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits.data(), colorIndexGL,
+                          kAllColorBits);
         }
 
         PackedColorBlendAttachmentState blendAttachmentState;
@@ -3467,9 +3468,10 @@ void GraphicsPipelineDesc::initDefaults(const ErrorContext *context,
         SetBitField(blendAttachmentState.dstAlphaBlendFactor, VK_BLEND_FACTOR_ZERO);
         SetBitField(blendAttachmentState.alphaBlendOp, VK_BLEND_OP_ADD);
 
-        std::fill(&mFragmentOutput.blend.attachments[0],
-                  &mFragmentOutput.blend.attachments[gl::IMPLEMENTATION_MAX_DRAW_BUFFERS],
-                  blendAttachmentState);
+        for (auto &attachment : mFragmentOutput.blend.attachments)
+        {
+            attachment = blendAttachmentState;
+        }
 
         mFragmentOutput.blendMaskAndLogic.bits.blendEnableMask = 0;
         mFragmentOutput.blendMaskAndLogic.bits.logicOpEnable   = 0;
@@ -4251,8 +4253,8 @@ void GraphicsPipelineDesc::initializePipelineFragmentOutputState(
         }
         else
         {
-            state.colorWriteMask =
-                Int4Array_Get<VkColorComponentFlags>(colorBlend.colorWriteMaskBits, colorIndexGL);
+            state.colorWriteMask = Int4Array_Get<VkColorComponentFlags>(
+                colorBlend.colorWriteMaskBits.data(), colorIndexGL);
         }
     }
 
@@ -4589,7 +4591,7 @@ void GraphicsPipelineDesc::setColorWriteMasks(gl::BlendStateExt::ColorMaskStorag
         {
             mask = alphaMask[colorIndexGL] ? (colorMask & ~VK_COLOR_COMPONENT_A_BIT) : colorMask;
         }
-        Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits, colorIndexGL, mask);
+        Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits.data(), colorIndexGL, mask);
     }
 }
 
@@ -4597,7 +4599,7 @@ void GraphicsPipelineDesc::setSingleColorWriteMask(uint32_t colorIndexGL,
                                                    VkColorComponentFlags colorComponentFlags)
 {
     uint8_t colorMask = static_cast<uint8_t>(colorComponentFlags);
-    Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits, colorIndexGL, colorMask);
+    Int4Array_Set(mFragmentOutput.blend.colorWriteMaskBits.data(), colorIndexGL, colorMask);
 }
 
 void GraphicsPipelineDesc::updateColorWriteMasks(

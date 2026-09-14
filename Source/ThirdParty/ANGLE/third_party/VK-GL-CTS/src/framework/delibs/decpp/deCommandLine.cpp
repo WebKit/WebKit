@@ -249,6 +249,9 @@ void Parser::help(std::ostream &str) const
     {
         const OptInfo &opt = *optIter;
 
+        if (false == opt.printInHelp)
+            continue;
+
         str << "  ";
         if (opt.shortName)
             str << "-" << opt.shortName;

@@ -2323,29 +2323,31 @@ angle::Result StateManagerGL::pauseQuery(const gl::Context *context, gl::QueryTy
 
 angle::Result StateManagerGL::resumeAllQueries(const gl::Context *context)
 {
+    angle::ResultAccumulator result;
+
     for (gl::QueryType type : angle::AllEnums<gl::QueryType>())
     {
-        QueryGL *pausedQuery = mTemporaryPausedQueries[type];
+        QueryGL *pausedQuery          = mTemporaryPausedQueries[type];
+        mTemporaryPausedQueries[type] = nullptr;
 
         if (pausedQuery != nullptr)
         {
             ASSERT(mQueries[type] == nullptr);
-            ANGLE_TRY(pausedQuery->resume(context));
-            mTemporaryPausedQueries[type] = nullptr;
+            result = pausedQuery->resume(context);
         }
     }
 
-    return angle::Result::Continue;
+    return result;
 }
 
 angle::Result StateManagerGL::resumeQuery(const gl::Context *context, gl::QueryType type)
 {
-    QueryGL *pausedQuery = mTemporaryPausedQueries[type];
+    QueryGL *pausedQuery          = mTemporaryPausedQueries[type];
+    mTemporaryPausedQueries[type] = nullptr;
 
     if (pausedQuery != nullptr)
     {
         ANGLE_TRY(pausedQuery->resume(context));
-        mTemporaryPausedQueries[type] = nullptr;
     }
 
     return angle::Result::Continue;

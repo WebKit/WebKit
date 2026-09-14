@@ -194,6 +194,28 @@ TEST_P(EGLDisplayTest, ContextLeakAfterTerminate)
     EXPECT_EQ(eglGetError(), EGL_NOT_INITIALIZED);
 }
 
+// Tests that eglMakeCurrent with bad display pointer fails but doesn't crash.
+TEST_P(EGLDisplayTest, MakeCurrentWithBadDisplay)
+{
+    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    EXPECT_EGL_TRUE(eglInitialize(display, nullptr, nullptr));
+
+    EGLConfig config   = chooseConfig(display);
+    EGLContext context = createContext(display, config);
+
+    // Call eglMakeCurrent with bad display pointer. It should fail validation but not crash.
+    EXPECT_EGL_FALSE(eglMakeCurrent(EGL_CAST(EGLDisplay, (void *)0xdeadbeef), EGL_NO_SURFACE,
+                                    EGL_NO_SURFACE, context));
+    EXPECT_EQ(eglGetError(), EGL_BAD_DISPLAY);
+
+    // Call eglMakeCurrent with no display. It should fail validation but not crash.
+    EXPECT_EGL_FALSE(eglMakeCurrent(EGL_NO_DISPLAY, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    EXPECT_EQ(eglGetError(), EGL_BAD_DISPLAY);
+
+    EXPECT_EGL_TRUE(eglDestroyContext(display, context));
+    EXPECT_EGL_TRUE(eglTerminate(display));
+}
+
 // Tests eglGetPlatformDisplayEXT() when EGL_EXT_platform_base is enabled.
 TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
 {
@@ -210,6 +232,27 @@ TEST_P(EGLDisplayTest, GetPlatformDisplayEXT)
 
     ASSERT_NE(EGL_NO_DISPLAY, display);
     ASSERT_EGL_SUCCESS();
+}
+
+// Tests eglQueryString(EGL_EXTENSIONS) with EGL_BAD_DISPLAY should not crash
+TEST_P(EGLDisplayTest, QueryEGLExtensionWithBadDisplay)
+{
+    eglQueryString(EGL_CAST(EGLDisplay, (void *)0xdeadbeef), EGL_EXTENSIONS);
+    EXPECT_EQ(eglGetError(), EGL_BAD_DISPLAY);
+}
+
+// Tests eglQueryString(EGL_EXTENSIONS) with EGL_NO_DISPLAY should succeed without error
+TEST_P(EGLDisplayTest, QueryEGLExtensionWithNoDisplay)
+{
+    eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
+    ASSERT_EGL_SUCCESS();
+}
+
+// Tests eglQueryString with EGL_NO_DISPLAY should fail EGL_BAD_DISPLAY error
+TEST_P(EGLDisplayTest, QueryEGLVendorWithBadDisplay)
+{
+    eglQueryString(EGL_NO_DISPLAY, EGL_VENDOR);
+    EXPECT_EQ(eglGetError(), EGL_BAD_DISPLAY);
 }
 
 // Tests that eglGetPlatformDisplayEXT can use EGL_PLATFORM_ANDROID_KHR to get a display.

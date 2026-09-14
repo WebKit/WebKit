@@ -307,15 +307,19 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
     //
     // Deferring the submission is restricted to non-EGL sync objects, so it's sufficient to ensure
     // that the contexts in the share group issue their deferred flushes.
-    for (auto context : contextVk->getShareGroup()->getContexts())
-    {
-        ContextVk *sharedContextVk = vk::GetImpl(context.second);
-        if (sharedContextVk->hasUnsubmittedUse(mUse))
-        {
-            ANGLE_TRY(sharedContextVk->flushCommandsAndEndRenderPassIfDeferredSyncInit(reason));
-            break;
-        }
-    }
+    angle::Result result        = angle::Result::Continue;
+    vk::ResourceUse resourceUse = mUse;
+    contextVk->getShareGroup()->getContexts().forEach(
+        [resourceUse, reason, &result](gl::Context *context) {
+            ContextVk *sharedContextVk = vk::GetImpl(context);
+            if (sharedContextVk->hasUnsubmittedUse(resourceUse))
+            {
+                result = sharedContextVk->flushCommandsAndEndRenderPassIfDeferredSyncInit(reason);
+                return false;
+            }
+            return true;
+        });
+    ANGLE_TRY(result);
     // Note mUse could still be invalid here if it is inserted on a fresh created context, i.e.,
     // fence is tracking nothing and is finished when inserted..
     ASSERT(contextVk->getRenderer()->hasResourceUseSubmitted(mUse));

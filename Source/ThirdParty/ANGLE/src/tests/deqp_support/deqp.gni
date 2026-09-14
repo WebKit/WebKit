@@ -1893,6 +1893,8 @@ deqp_framework_common_sources = [
   "$deqp_path/framework/common/tcuSeedBuilder.hpp",
   "$deqp_path/framework/common/tcuStringTemplate.cpp",
   "$deqp_path/framework/common/tcuStringTemplate.hpp",
+  "$deqp_path/framework/common/tcuSubprocessTestExecutor.cpp",
+  "$deqp_path/framework/common/tcuSubprocessTestExecutor.hpp",
   "$deqp_path/framework/common/tcuSurface.cpp",
   "$deqp_path/framework/common/tcuSurface.hpp",
   "$deqp_path/framework/common/tcuSurfaceAccess.cpp",
@@ -2001,6 +2003,12 @@ deqp_framework_common_sources = [
   "$deqp_path/framework/referencerenderer/rrVertexPacket.cpp",
   "$deqp_path/framework/referencerenderer/rrVertexPacket.hpp",
 ]
+
+deqp_framework_common_win_sources =
+    [ "$deqp_path/framework/common/tcuSubprocessTestExecutorWin.cpp" ]
+
+deqp_framework_common_linux_sources =
+    [ "$deqp_path/framework/common/tcuSubprocessTestExecutorLin.cpp" ]
 
 deqp_framework_qphelper_sources = [
   "$deqp_path/framework/qphelper/qpCrashHandler.c",

@@ -161,8 +161,7 @@ std::vector<Matrix4> GenMatrixData(size_t count, int parity)
         {
             for (int col = 0; col < 4; ++col)
             {
-                ANGLE_UNSAFE_TODO(mat.data[row * 4 + col]) =
-                    (row * col + parity) % 2 == 0 ? 1.0f : -1.0f;
+                mat.data[row * 4 + col] = (row * col + parity) % 2 == 0 ? 1.0f : -1.0f;
             }
         }
 
@@ -419,7 +418,7 @@ void UniformsBenchmark::drawBenchmark()
             auto setFunc = [=](const std::vector<GLuint> &locations, const MatrixData &matrixData,
                                size_t uniform, size_t frameIndex) {
                 glUniformMatrix4fv(locations[uniform], 1, transpose,
-                                   matrixData[frameIndex][uniform].data);
+                                   matrixData[frameIndex][uniform].data.data());
             };
 
             drawLoop<false>(setFunc);
@@ -430,7 +429,7 @@ void UniformsBenchmark::drawBenchmark()
             auto setFunc = [=](const std::vector<GLuint> &locations, const MatrixData &matrixData,
                                size_t uniform, size_t frameIndex) {
                 glUniformMatrix3x4fv(locations[uniform], 1, transpose,
-                                     matrixData[frameIndex][uniform].data);
+                                     matrixData[frameIndex][uniform].data.data());
             };
 
             drawLoop<false>(setFunc);
@@ -441,7 +440,7 @@ void UniformsBenchmark::drawBenchmark()
             auto setFunc = [=](const std::vector<GLuint> &locations, const MatrixData &matrixData,
                                size_t uniform, size_t frameIndex) {
                 glUniformMatrix3fv(locations[uniform], 1, transpose,
-                                   matrixData[frameIndex][uniform].data);
+                                   matrixData[frameIndex][uniform].data.data());
             };
 
             drawLoop<false>(setFunc);

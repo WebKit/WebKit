@@ -96,14 +96,19 @@ ContextGL::ContextGL(const gl::State &state,
                      const std::shared_ptr<RendererGL> &renderer,
                      RobustnessVideoMemoryPurgeStatus robustnessVideoMemoryPurgeStatus)
     : ContextImpl(state, errorSet),
+      mRenderer(renderer),
+      mRobustnessVideoMemoryPurgeStatus(robustnessVideoMemoryPurgeStatus),
       // Maximum 3 cached depth initialization PBOs stored for now; can be changed in the future if
       // needed.
-      mDepthInitPBOs(/*max=*/3),
-      mRenderer(renderer),
-      mRobustnessVideoMemoryPurgeStatus(robustnessVideoMemoryPurgeStatus)
+      mDepthInitPBOs(/*max=*/3)
 {}
 
 ContextGL::~ContextGL() {}
+
+void ContextGL::onDestroy(const gl::Context *context)
+{
+    mDepthInitPBOs.Clear();
+}
 
 angle::Result ContextGL::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
@@ -243,7 +248,12 @@ TransformFeedbackImpl *ContextGL::createTransformFeedback(const gl::TransformFee
 
 SamplerImpl *ContextGL::createSampler(const gl::SamplerState &state)
 {
-    return new SamplerGL(state, getFunctions(), getStateManager());
+    const FunctionsGL *functions = getFunctions();
+
+    GLuint sampler = 0;
+    functions->genSamplers(1, &sampler);
+
+    return new SamplerGL(state, sampler);
 }
 
 ProgramPipelineImpl *ContextGL::createProgramPipeline(const gl::ProgramPipelineState &data)

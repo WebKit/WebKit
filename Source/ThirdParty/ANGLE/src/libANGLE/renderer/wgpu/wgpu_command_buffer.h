@@ -12,6 +12,7 @@
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 #include <webgpu/webgpu.h>
+#include <array>
 #include <unordered_set>
 
 namespace rx
@@ -270,7 +271,7 @@ class CommandBuffer
     struct CommandBlock
     {
         static constexpr size_t kCommandBlockDataSize = kCommandBlockSize - (sizeof(size_t) * 2);
-        uint8_t mData[kCommandBlockDataSize]          = {0};
+        std::array<uint8_t, kCommandBlockDataSize> mData = {0};
 
         size_t mCurrentPosition = 0;
 
@@ -286,7 +287,7 @@ class CommandBuffer
         template <typename T>
         T *getDataAtCurrentPositionAndReserveSpace(size_t space)
         {
-            T *data = reinterpret_cast<T *>(&ANGLE_UNSAFE_TODO(mData[mCurrentPosition]));
+            T *data = reinterpret_cast<T *>(&mData[mCurrentPosition]);
 
             ASSERT(mRemainingSize >= space);
             mCurrentPosition += space;

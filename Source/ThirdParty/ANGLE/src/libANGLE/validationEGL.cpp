@@ -6,6 +6,8 @@
 
 // validationEGL.cpp: Validation functions for generic EGL entry point parameters
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "libANGLE/validationEGL_autogen.h"
 
@@ -3636,6 +3638,12 @@ bool ValidateMakeCurrent(const ValidationContext *val,
     bool noRead    = readSurfaceID.value == 0;
     bool noContext = contextID.value == 0;
 
+    if (display == EGL_NO_DISPLAY || !Display::isValidDisplay(display))
+    {
+        val->setError(EGL_BAD_DISPLAY, "<display> is not a valid EGLDisplay handle");
+        return false;
+    }
+
     if (noContext && (!noDraw || !noRead))
     {
         val->setError(EGL_BAD_MATCH, "If ctx is EGL_NO_CONTEXT, surfaces must be EGL_NO_SURFACE");
@@ -3670,12 +3678,6 @@ bool ValidateMakeCurrent(const ValidationContext *val,
     {
         val->setError(EGL_BAD_MATCH,
                       "read and draw must both be valid surfaces, or both be EGL_NO_SURFACE");
-        return false;
-    }
-
-    if (display == EGL_NO_DISPLAY || !Display::isValidDisplay(display))
-    {
-        val->setError(EGL_BAD_DISPLAY, "<display> is not a valid EGLDisplay handle");
         return false;
     }
 
@@ -5010,11 +5012,8 @@ bool ValidateStreamConsumerGLTextureExternalAttribsNV(const ValidationContext *v
 
     EGLAttrib colorBufferType = EGL_RGB_BUFFER;
     EGLAttrib planeCount      = -1;
-    EGLAttrib plane[3];
-    for (int i = 0; i < 3; i++)
-    {
-        ANGLE_UNSAFE_TODO(plane[i]) = -1;
-    }
+    std::array<EGLAttrib, 3> plane;
+    plane.fill(-1);
 
     attribs.initializeWithoutValidation();
 
@@ -5055,7 +5054,7 @@ bool ValidateStreamConsumerGLTextureExternalAttribsNV(const ValidationContext *v
                         val->setError(EGL_BAD_ACCESS, "Invalid texture unit");
                         return false;
                     }
-                    ANGLE_UNSAFE_TODO(plane[attribute - EGL_YUV_PLANE0_TEXTURE_UNIT_NV]) = value;
+                    plane[attribute - EGL_YUV_PLANE0_TEXTURE_UNIT_NV] = value;
                 }
                 else
                 {
@@ -5074,7 +5073,7 @@ bool ValidateStreamConsumerGLTextureExternalAttribsNV(const ValidationContext *v
         }
         for (int i = 0; i < 3; i++)
         {
-            if (ANGLE_UNSAFE_TODO(plane[i]) != -1)
+            if (plane[i] != -1)
             {
                 val->setError(EGL_BAD_MATCH, "Planes cannot be specified");
                 return false;
@@ -5102,7 +5101,7 @@ bool ValidateStreamConsumerGLTextureExternalAttribsNV(const ValidationContext *v
         }
         for (EGLAttrib i = planeCount; i < 3; i++)
         {
-            if (ANGLE_UNSAFE_TODO(plane[i]) != -1)
+            if (plane[i] != -1)
             {
                 val->setError(EGL_BAD_MATCH, "Invalid plane specified");
                 return false;
@@ -5113,16 +5112,15 @@ bool ValidateStreamConsumerGLTextureExternalAttribsNV(const ValidationContext *v
         std::set<gl::Texture *> textureSet;
         for (EGLAttrib i = 0; i < planeCount; i++)
         {
-            if (ANGLE_UNSAFE_TODO(plane[i]) == -1)
+            if (plane[i] == -1)
             {
                 val->setError(EGL_BAD_MATCH, "Not all planes specified");
                 return false;
             }
-            if (ANGLE_UNSAFE_TODO(plane[i]) != EGL_NONE)
+            if (plane[i] != EGL_NONE)
             {
                 gl::Texture *texture = context->getState().getSamplerTexture(
-                    static_cast<unsigned int>(ANGLE_UNSAFE_TODO(plane[i])),
-                    gl::TextureType::External);
+                    static_cast<unsigned int>(plane[i]), gl::TextureType::External);
                 if (texture == nullptr || texture->id().value == 0)
                 {
                     val->setError(
@@ -7022,8 +7020,12 @@ bool ValidateQueryString(const ValidationContext *val, const Display *dpyPacked,
     // EGL_EXTENSIONS or EGL_VERSION.
     const bool canQueryWithoutDisplay = (name == EGL_VERSION || name == EGL_EXTENSIONS);
 
-    if (dpyPacked != nullptr || !canQueryWithoutDisplay)
+    if (dpyPacked != EGL_NO_DISPLAY || !canQueryWithoutDisplay)
     {
+        // ValidateDisplay assumes the dpyPacked is either EGL_NO_DISPLAY or a valid display.
+        // However, the Display object dpyPacked passed here could be an invalid dipslay, we need
+        // ValidateDisplayPointer to catch that
+        ANGLE_VALIDATION_TRY(ValidateDisplayPointer(val, dpyPacked));
         ANGLE_VALIDATION_TRY(ValidateDisplay(val, dpyPacked));
     }
 

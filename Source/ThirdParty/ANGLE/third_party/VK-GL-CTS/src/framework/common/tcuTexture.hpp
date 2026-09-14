@@ -513,6 +513,7 @@ public:
     TextureLevel(void);
     TextureLevel(const TextureFormat &format);
     TextureLevel(const TextureFormat &format, int width, int height, int depth = 1);
+    TextureLevel(const TextureFormat &format, const tcu::IVec3 &extent);
     ~TextureLevel(void);
 
     const IVec3 &getSize(void) const

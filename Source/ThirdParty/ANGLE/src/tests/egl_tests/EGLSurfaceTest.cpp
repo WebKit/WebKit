@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 #include "common/unsafe_buffers.h"
 
+#include <array>
 #include <thread>
 #include <vector>
 
@@ -3763,10 +3764,10 @@ int EGLSurfaceTest::drawSizeCheckRect(EGLSurface surface,
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_GL_NO_ERROR();
 
-    const angle::GLColor referenceColors[8] = {GLColor::green, GLColor::green, GLColor::red,
-                                               GLColor::red,   GLColor::red,   GLColor::red,
-                                               GLColor::green, GLColor::green};
-    angle::GLColor surfaceColors[std::size(referenceColors)];
+    const std::array<angle::GLColor, 8> referenceColors = {
+        GLColor::green, GLColor::green, GLColor::red,   GLColor::red,
+        GLColor::red,   GLColor::red,   GLColor::green, GLColor::green};
+    std::array<angle::GLColor, std::size(referenceColors)> surfaceColors;
 
     // Pixels are listed in a scanning order (left->right, bottom->top).
     surfaceColors[0] = angle::ReadColor(0, 0);
@@ -3791,7 +3792,7 @@ int EGLSurfaceTest::drawSizeCheckRect(EGLSurface surface,
     int result = 0;
     for (size_t i = 0; i < std::size(referenceColors); ++i)
     {
-        result += ANGLE_UNSAFE_TODO(surfaceColors[i] != referenceColors[i] ? 1 : 0);
+        result += (surfaceColors[i] != referenceColors[i] ? 1 : 0);
     }
 
     // Surface size must not change after the draw.
