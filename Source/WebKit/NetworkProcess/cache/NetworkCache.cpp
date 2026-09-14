@@ -67,11 +67,12 @@ using namespace FileSystem;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cache::RetrieveInfo);
 
-static const AtomString& resourceType()
+const AtomString& recordTypeName(RecordType recordType)
 {
-    ASSERT(WTF::RunLoop::isMain());
+    ASSERT(RunLoop::isMain());
     static NeverDestroyed<const AtomString> resource("Resource"_s);
-    return resource;
+    static NeverDestroyed<const AtomString> compressionDictionary("CompressionDictionary"_s);
+    return recordType == RecordType::CompressionDictionary ? compressionDictionary : resource;
 }
 
 static size_t computeCapacity(CacheModel cacheModel, const String& cachePath)
@@ -164,12 +165,12 @@ void Cache::updateCapacity()
     m_storage->setCapacity(newCapacity);
 }
 
-Key Cache::makeCacheKey(const WebCore::ResourceRequest& request)
+Key Cache::makeCacheKey(RecordType recordType, const WebCore::ResourceRequest& request)
 {
     // FIXME: This implements minimal Range header disk cache support. We don't parse
     // ranges so only the same exact range request will be served from the cache.
     String range = request.httpHeaderField(WebCore::HTTPHeaderName::Range);
-    return { request.cachePartition(), resourceType(), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt() };
+    return { request.cachePartition(), recordTypeName(recordType), range, request.url().stringWithoutFragmentIdentifier(), m_storage->salt() };
 }
 
 static bool NODELETE cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
@@ -422,7 +423,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().stringWithoutFragmentIdentifier().ascii().data(), static_cast<int>(request.priority()));
 
-    Key storageKey = makeCacheKey(request);
+    Key storageKey = makeCacheKey(RecordType::Resource, request);
     auto priority = static_cast<unsigned>(request.priority());
 
     RetrieveInfo info;
@@ -530,26 +531,26 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
-    return makeUnique<Entry>(makeCacheKey(request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, privateRelayed, WTF::move(responseData), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
     auto cachedRedirectRequest = redirectRequest;
     cachedRedirectRequest.clearHTTPAuthorization();
-    return makeUnique<Entry>(makeCacheKey(request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
+    return makeUnique<Entry>(makeCacheKey(RecordType::Resource, request), response, WTF::move(cachedRedirectRequest), collectVaryingRequestHeaders(protect(m_networkProcess->storageSession(m_sessionID)), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
 {
     ASSERT(responseData);
 
-    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing "_s << request.url().stringWithoutFragmentIdentifier() << ", partition "_s << (makeCacheKey(request).partition()));
+    LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) storing "_s << request.url().stringWithoutFragmentIdentifier() << ", partition "_s << (makeCacheKey(RecordType::Resource, request).partition()));
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store, storeDecision=%d", static_cast<int>(storeDecision));
-        auto key = makeCacheKey(request);
+        auto key = makeCacheKey(RecordType::Resource, request);
 
         auto isSuccessfulRevalidation = response.httpStatusCode() == httpStatus304NotModified;
         if (!isSuccessfulRevalidation) {
@@ -610,6 +611,56 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
     return cacheEntry;
 }
 
+void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, CompressionDictionaryEntry::Info&& info)
+{
+    ASSERT(responseData);
+
+    auto key = makeCacheKey(RecordType::CompressionDictionary, request);
+
+    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().latin1().data(), key.partition().latin1().data());
+
+    StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
+    if (storeDecision != StoreDecision::Yes) {
+        LOG(NetworkCache, "(NetworkProcess) didn't store compression dictionary, storeDecision=%d", static_cast<int>(storeDecision));
+        // Make sure we don't keep a stale dictionary in the cache.
+        remove(key);
+        return;
+    }
+
+    auto cacheEntry = makeUnique<CompressionDictionaryEntry>(key, WTF::move(info), WTF::move(responseData));
+    auto record = cacheEntry->encodeAsStorageRecord();
+
+    m_storage->store(record, nullptr);
+}
+
+std::optional<RecordType> Cache::TraversalRecord::type() const
+{
+    auto& typeName = record.key.type();
+    if (typeName == recordTypeName(RecordType::Resource))
+        return RecordType::Resource;
+    if (typeName == recordTypeName(RecordType::CompressionDictionary))
+        return RecordType::CompressionDictionary;
+    return std::nullopt;
+}
+
+std::optional<URL> Cache::TraversalRecord::url() const
+{
+    auto recordType = type();
+    if (!recordType)
+        return std::nullopt;
+
+    std::optional<URL> url;
+    if (*recordType == RecordType::CompressionDictionary)
+        url = URL { record.key.identifier() };
+    else
+        url = Entry::decodeStorageRecordResponseURL(record);
+
+    if (url && !url->isValid())
+        return std::nullopt;
+
+    return url;
+}
+
 std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalRequest, const Entry& existingEntry, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed privateRelayed)
 {
     LOG_WITH_STREAM(NetworkCache, stream << "(NetworkProcess) updating "_s << originalRequest.url().string());
@@ -634,7 +685,7 @@ void Cache::remove(const Key& key)
 
 void Cache::remove(const WebCore::ResourceRequest& request)
 {
-    remove(makeCacheKey(request));
+    remove(makeCacheKey(RecordType::Resource, request));
 }
 
 void Cache::remove(const Vector<Key>& keys, Function<void()>&& completionHandler)
@@ -657,29 +708,47 @@ void Cache::traverseRecords(Function<void(const TraversalRecord*)>&& traverseHan
 
     ++m_traverseCount;
 
-    m_storage->traverse(resourceType(), { }, [this, protectedThis = Ref { *this }, traverseHandler = WTF::move(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
-        if (!record) {
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, { }, [this, protectedThis = Ref { *this }, traverseHandler = WTF::move(traverseHandler)] (const TraversalRecord* traversalRecord) mutable {
+        if (!traversalRecord)
             --m_traverseCount;
-            traverseHandler(nullptr);
-            return;
-        }
 
-        TraversalRecord traversalRecord { *record, recordInfo };
-        traverseHandler(&traversalRecord);
+        traverseHandler(traversalRecord);
     });
 }
 
 void Cache::traverseRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
 {
-    m_storage->traverse(resourceType(), partition, { }, [traverseHandler = WTF::move(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
+}
+
+void Cache::traverseCompressionDictionaryRecords(const String& partition, Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    traverseRecordsOfTypes({ RecordType::CompressionDictionary }, partition, { }, WTF::move(traverseHandler));
+}
+
+void Cache::traverseRecordsOfTypes(OptionSet<RecordType> types, const std::optional<String>& partition, OptionSet<Storage::TraverseFlag> flags, Function<void(const TraversalRecord*)>&& traverseHandler)
+{
+    ASSERT(!types.isEmpty());
+
+    auto recordHandler = [types, traverseHandler = WTF::move(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
         if (!record) {
             traverseHandler(nullptr);
             return;
         }
 
         TraversalRecord traversalRecord { *record, recordInfo };
-        traverseHandler(&traversalRecord);
-    });
+        auto recordType = traversalRecord.type();
+        if (recordType && types.contains(*recordType))
+            traverseHandler(&traversalRecord);
+    };
+
+    // Storage takes one type name, or an empty one to walk every type.
+    auto type = types.toSingleValue();
+    auto& typeName = type ? recordTypeName(*type) : emptyAtom();
+    if (partition)
+        m_storage->traverse(typeName, *partition, flags, WTF::move(recordHandler));
+    else
+        m_storage->traverse(typeName, flags, WTF::move(recordHandler));
 }
 
 String Cache::dumpFilePath() const
@@ -702,10 +771,10 @@ void Cache::dumpContentsToFile()
         size_t bodySize { 0 };
     };
     Totals totals;
-    auto flags = { Storage::TraverseFlag::ComputeWorth, Storage::TraverseFlag::ShareCount };
+    OptionSet<Storage::TraverseFlag> flags { Storage::TraverseFlag::ComputeWorth, Storage::TraverseFlag::ShareCount };
     size_t capacity = m_storage->capacity();
-    m_storage->traverse(resourceType(), flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const Storage::Record* record, const Storage::RecordInfo& info) mutable {
-        if (!record) {
+    traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const TraversalRecord* traversalRecord) mutable {
+        if (!traversalRecord) {
             CString writeData = makeString(
                 "{}\n"
                 "],\n"
@@ -720,15 +789,24 @@ void Cache::dumpContentsToFile()
             fileHandle = { };
             return;
         }
-        auto entry = Entry::decodeStorageRecord(*record);
-        if (!entry)
-            return;
+        auto& info = traversalRecord->recordInfo;
+        StringBuilder json;
+        if (traversalRecord->type() == RecordType::CompressionDictionary) {
+            auto entry = CompressionDictionaryEntry::decodeStorageRecord(traversalRecord->record);
+            if (!entry)
+                return;
+            entry->asJSON(json, info);
+        } else {
+            auto entry = Entry::decodeStorageRecord(traversalRecord->record);
+            if (!entry)
+                return;
+            entry->asJSON(json, info);
+        }
+
         ++totals.count;
         totals.worth += info.worth;
         totals.bodySize += info.bodySize;
 
-        StringBuilder json;
-        entry->asJSON(json, info);
         json.append(",\n"_s);
         fileHandle.write(byteCast<uint8_t>(json.toString().utf8().span()));
     });
@@ -766,11 +844,15 @@ void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<Webs
     HashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
     traverseRecords([shouldComputeSize, completionHandler = WTF::move(completionHandler), originsAndSizes = WTF::move(originsAndSizes)](auto* traversalRecord) mutable {
         if (traversalRecord) {
-            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            auto url = traversalRecord->url();
             if (!url)
                 return;
 
-            auto result = originsAndSizes.add({ url->protocol().toString(), url->host().toString(), url->port() }, 0);
+            auto origin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(*url);
+            if (origin.isNull() || origin.isOpaque())
+                return;
+
+            auto result = originsAndSizes.add(WTF::move(origin), 0);
             if (shouldComputeSize)
                 result.iterator->value += traversalRecord->record.header.size() + traversalRecord->recordInfo.bodySize;
             return;
@@ -786,7 +868,7 @@ void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<Webs
 void Cache::fetchOriginAccessTimes(CompletionHandler<void(HashMap<WebCore::RegistrableDomain, WallTime>&&)>&& completionHandler)
 {
     HashMap<WebCore::RegistrableDomain, WallTime> originAccessTimes;
-    m_storage->traverse(resourceType(), { Storage::TraverseFlag::LastAccessedRecordPerPartition }, [completionHandler = WTF::move(completionHandler), originAccessTimes = WTF::move(originAccessTimes)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
+    m_storage->traverse(recordTypeName(RecordType::Resource), { Storage::TraverseFlag::LastAccessedRecordPerPartition }, [completionHandler = WTF::move(completionHandler), originAccessTimes = WTF::move(originAccessTimes)](const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
         if (!record) {
             completionHandler(WTF::move(originAccessTimes));
             return;
@@ -810,7 +892,7 @@ void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, Compl
     Vector<NetworkCache::Key> keysToDelete;
     traverseRecords([this, protectedThis = Ref { *this }, originSet = WTF::move(originSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete)](auto* traversalRecord) mutable {
         if (traversalRecord) {
-            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            auto url = traversalRecord->url();
             if (!url)
                 return;
 
@@ -833,7 +915,7 @@ void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDom
     HashSet<WebCore::RegistrableDomain> domainsDeleted;
     traverseRecords([this, protectedThis = Ref { *this }, domainSet = WTF::move(domainSet), completionHandler = WTF::move(completionHandler), keysToDelete = WTF::move(keysToDelete), domainsDeleted = WTF::move(domainsDeleted)](auto* traversalRecord) mutable {
         if (traversalRecord) {
-            auto url = Entry::decodeStorageRecordResponseURL(traversalRecord->record);
+            auto url = traversalRecord->url();
             if (!url)
                 return;
 
