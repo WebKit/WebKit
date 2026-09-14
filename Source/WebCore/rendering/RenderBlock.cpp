@@ -2714,16 +2714,6 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
         quads.append(localToAbsoluteQuad(logicalRect, MapCoordinatesMode::UseTransforms, wasFixed));
 }
 
-LayoutRect RenderBlock::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
-{
-    return RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth);
-}
-
-const Style::ComputedStyle& RenderBlock::outlineStyleForRepaint() const
-{
-    return RenderElement::outlineStyleForRepaint();
-}
-
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();
