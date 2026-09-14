@@ -103,10 +103,8 @@ void ScriptExecutionContext::forEachMicrotaskGlobalObject(const Functor& functor
 {
     if (!m_microtaskGlobalObjects)
         return;
-    for (auto& weak : *m_microtaskGlobalObjects) {
-        if (SUPPRESS_FORWARD_DECL_ARG auto* globalObject = weak.get())
-            functor(*globalObject);
-    }
+    for (SUPPRESS_FORWARD_DECL_ARG auto* globalObject : *m_microtaskGlobalObjects)
+        functor(*globalObject);
 }
 
 } // namespace WebCore

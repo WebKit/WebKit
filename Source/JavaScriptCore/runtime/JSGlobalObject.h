@@ -680,10 +680,12 @@ public:
 
     template<typename T>
     struct WeakCustomGetterOrSetterHash {
-        static unsigned hash(const Weak<T>&);
-        static bool equal(const Weak<T>&, const Weak<T>&);
+        static unsigned hash(T*);
+        static bool equal(T*, T*);
         static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer, const ClassInfo*);
 
+        // HashTable gates WeakCustomGetterOrSetterHashTranslator::equal() on this flag too, and that
+        // one dereferences the bucket it is handed.
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 

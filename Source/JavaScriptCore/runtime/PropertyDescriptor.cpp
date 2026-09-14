@@ -49,10 +49,8 @@ struct WeakCustomGetterOrSetterHashTranslator {
         return BaseHash::hash(std::get<0>(key), std::get<1>(key), std::get<2>(key));
     }
 
-    static bool NODELETE equal(const Weak<T>& a, const Key& b)
+    static bool NODELETE equal(T* a, const Key& b)
     {
-        if (!a)
-            return false;
         return a->propertyName() == std::get<0>(b) && a->customFunctionPointer() == std::get<1>(b) && a->slotBaseClassInfoIfExists() == std::get<2>(b);
     }
 };

@@ -27,7 +27,6 @@
 
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/WeakGCSet.h>
-#include <JavaScriptCore/WeakInlines.h>
 
 namespace JSC {
 
@@ -45,19 +44,12 @@ inline WeakGCSet<ValueArg, HashArg, TraitsArg>::~WeakGCSet()
 }
 
 template<typename ValueArg, typename HashArg, typename TraitsArg>
-inline void WeakGCSet<ValueArg, HashArg, TraitsArg>::reconcileWeakReferencesAtGCEnd(VM&, CollectionScope collectionScope)
+NEVER_INLINE void WeakGCSet<ValueArg, HashArg, TraitsArg>::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
 {
-    // Entries hold Weak<>, which WeakBlock::reap has already nulled out. Only the removal is left,
-    // and it is deferred to full collections because removing rehashes the set.
-    if (collectionScope == CollectionScope::Full)
-        pruneStaleEntries();
-}
-
-template<typename ValueArg, typename HashArg, typename TraitsArg>
-NEVER_INLINE void WeakGCSet<ValueArg, HashArg, TraitsArg>::pruneStaleEntries()
-{
-    m_set.removeIf([](auto& entry) {
-        return !entry;
+    // A set entry is its own key, so unlike WeakGCMap there is no value to null out and leave for
+    // the next full collection: both scopes remove.
+    m_set.removeIf([&](ValueArg* value) {
+        return !vm.heap.isMarked(value);
     });
 }
 

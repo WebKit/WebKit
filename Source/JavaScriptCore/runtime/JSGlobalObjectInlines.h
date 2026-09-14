@@ -247,18 +247,14 @@ inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return s
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeSetsGetter() const { return std::bit_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeSetsGetter)); }
 
 template<typename T>
-inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const Weak<T>& value)
+inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(T* value)
 {
-    if (!value)
-        return 0;
     return hash(value->propertyName(), value->customFunctionPointer(), value->slotBaseClassInfoIfExists());
 }
 
 template<typename T>
-inline bool JSGlobalObject::WeakCustomGetterOrSetterHash<T>::equal(const Weak<T>& a, const Weak<T>& b)
+inline bool JSGlobalObject::WeakCustomGetterOrSetterHash<T>::equal(T* a, T* b)
 {
-    if (!a || !b)
-        return false;
     return a == b;
 }
 
