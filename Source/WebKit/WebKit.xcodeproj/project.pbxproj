@@ -3531,6 +3531,7 @@
 		073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKAppKitGestureController.swift; sourceTree = "<group>"; };
 		073EFBB72D0F448500FAE7CF /* Foundation+Extras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Extras.swift"; sourceTree = "<group>"; };
 		074021602DDA651600BAEC91 /* GroupActivities_SPI.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = GroupActivities_SPI.swiftinterface; sourceTree = "<group>"; };
+		07B4C1E12FA1D30400A5E91C /* Network_SPI.swiftinterface */ = {isa = PBXFileReference; lastKnownFileType = text; path = Network_SPI.swiftinterface; sourceTree = "<group>"; };
 		0744720525E5BD020054B231 /* MediaOverridesForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaOverridesForTesting.h; sourceTree = "<group>"; };
 		0744DA532CE05F9500AACC81 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		074A6FC52D5F1DEA0027F958 /* KeyEventInterpretationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KeyEventInterpretationContext.h; sourceTree = "<group>"; };
@@ -12917,6 +12918,7 @@
 				074021602DDA651600BAEC91 /* GroupActivities_SPI.swiftinterface */,
 				574217912400E098002B303D /* LocalAuthenticationSPI.h */,
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
+				07B4C1E12FA1D30400A5E91C /* Network_SPI.swiftinterface */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				F4EB4AFC269CD23600D297AE /* OSStateSPI.h */,
 				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,

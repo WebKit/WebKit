@@ -27,7 +27,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 
 #import "Helpers/Utilities.h"
-#import "Helpers/cocoa/HTTPServerBridging.h"
+#import "Helpers/cocoa/HTTPServer/HTTPServerBridging.h"
 #import "Helpers/cocoa/NetworkSPI.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
@@ -153,13 +153,13 @@ static bool useSwiftImplementation(HTTPServer::Protocol protocol)
 {
     switch (protocol) {
     case HTTPServer::Protocol::Http:
-        return true;
-    case HTTPServer::Protocol::HttpsProxy:
-    case HTTPServer::Protocol::HttpsProxyWithAuthentication:
-    case HTTPServer::Protocol::Http2Proxy:
     case HTTPServer::Protocol::Https:
     case HTTPServer::Protocol::HttpsWithLegacyTLS:
+    case HTTPServer::Protocol::HttpsProxy:
+    case HTTPServer::Protocol::HttpsProxyWithAuthentication:
     case HTTPServer::Protocol::Http2Raw:
+        return true;
+    case HTTPServer::Protocol::Http2Proxy:
     case HTTPServer::Protocol::Http2:
     case HTTPServer::Protocol::Http3:
         return false;
@@ -357,7 +357,10 @@ HTTPServer::HTTPServer(
         for (auto& pair : m_requestData->requestMap)
             [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:pair.key.createNSString()];
 
-        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithRoutes:routes protocol:static_cast<HTTPServerProtocolBridge>(protocol) port:port.value_or(0)]);
+        auto verifierBlock = verifier ? makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t complete) mutable {
+            verifier(metadata, trust, complete);
+        }) : nil;
+        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithRoutes:routes protocol:static_cast<HTTPServerProtocolBridge>(protocol) port:port.value_or(0) identity:identity certificateVerifier:verifierBlock.get()]);
     } else {
         m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, WTF::move(verifier), identity, port).get()));
         nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
@@ -387,16 +390,23 @@ HTTPServer::HTTPServer(
 
 HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
     : m_requestData(adoptRef(*new RequestData({ })))
-    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get())))
     , m_protocol(protocol)
 {
-    nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
-        requestData->connections.append(Connection(connection));
-        nw_connection_set_queue(connection, mainDispatchQueueSingleton());
-        nw_connection_start(connection);
-        connectionHandler(Connection(connection));
-    }).get());
+    if (useSwiftImplementation(protocol)) {
+        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+            connectionHandler(Connection(connection));
+        }).get()]);
+    } else {
+        m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get()));
+
+        nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
+        nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
+            requestData->connections.append(Connection(connection));
+            nw_connection_set_queue(connection, mainDispatchQueueSingleton());
+            nw_connection_start(connection);
+            connectionHandler(Connection(connection));
+        }).get());
+    }
 
     bool done = false;
     startListening([&] {
@@ -407,16 +417,24 @@ HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol 
 
 HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& connectionHandler, Protocol protocol)
     : m_requestData(adoptRef(*new RequestData({ })))
-    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get())))
     , m_protocol(protocol)
 {
-    nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
-        requestData->connections.append(Connection(connection));
-        nw_connection_set_queue(connection, mainDispatchQueueSingleton());
-        nw_connection_start(connection);
-        requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
-    }).get());
+    if (useSwiftImplementation(protocol)) {
+        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+            // The coroutine handle has to outlive this call, so it stays on the C++ side.
+            requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
+        }).get()]);
+    } else {
+        m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get()));
+
+        nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
+        nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
+            requestData->connections.append(Connection(connection));
+            nw_connection_set_queue(connection, mainDispatchQueueSingleton());
+            nw_connection_start(connection);
+            requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
+        }).get());
+    }
 
     bool done = false;
     startListening([&] {

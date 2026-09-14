@@ -635,11 +635,12 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Bundle+Extras.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/CocoaTypes.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/Foundation+Extras.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServerBridging.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServerConnection.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServerCore.swift
-    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServerRouting.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServer.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServerBridging.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServerConnection.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServerCore.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/HTTPServerRouting.swift
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/HTTPServer/TestCertificates.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/ImageAnalysisTestingUtilities.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/JavaScriptMessages.swift
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/JavaScriptTypes.swift

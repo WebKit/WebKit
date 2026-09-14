@@ -44,13 +44,6 @@ final class HTTPServerCore {
         case invalidPath(String)
     }
 
-    typealias CertificateVerifier =
-        @Sendable (
-            sec_protocol_metadata_t,
-            sec_trust_t,
-            sec_protocol_verify_complete_t
-        ) -> Void
-
     private struct ManagedConnection {
         let connection: NWConnection
         var isTerminated = false
@@ -77,17 +70,13 @@ final class HTTPServerCore {
         customHandler: ((NWConnection) -> Void)? = nil,
         port: UInt16? = nil,
         identity: SecIdentity? = nil,
-        verifier: CertificateVerifier? = nil
+        verifier: sec_protocol_verify_t? = nil
     ) throws {
         self.protocol = `protocol`
         self.responses = responses
         self.customHandler = customHandler
 
-        // FIXME: HTTPServer.mm defaults this to testIdentity() for every protocol but .http.
-        // Wire up once TestCertificates.swift exists.
-        let resolvedIdentity = identity
-
-        let parameters = Self.makeParameters(protocol: `protocol`, identity: resolvedIdentity, verifier: verifier)
+        let parameters = Self.makeParameters(protocol: `protocol`, identity: identity, verifier: verifier)
         let endpointPort: NWEndpoint.Port = port.flatMap { NWEndpoint.Port(rawValue: $0) } ?? .any
         self.listener = try NWListener(using: parameters, on: endpointPort)
 
@@ -248,10 +237,62 @@ final class HTTPServerCore {
 }
 
 extension HTTPServerCore {
-    fileprivate static func makeParameters(protocol: `Protocol`, identity: SecIdentity?, verifier: CertificateVerifier?) -> NWParameters {
-        switch `protocol` {
-        case .http: .tcp
-        default: fatalError("not yet ported")
+    fileprivate static func makeParameters(protocol: `Protocol`, identity: SecIdentity?, verifier: sec_protocol_verify_t?) -> NWParameters {
+        func tls() -> NWProtocolTLS.Options {
+            makeTLSOptions(protocol: `protocol`, identity: identity ?? TestCertificates.identity, verifier: verifier)
         }
+
+        switch `protocol` {
+        case .http:
+            return .tcp
+
+        case .https, .httpsWithLegacyTLS, .http2Raw:
+            return NWParameters(tls: tls())
+
+        case .httpsProxy, .httpsProxyWithAuthentication:
+            let parameters = NWParameters(tls: nil)
+            let framerDefinition = `protocol` == .httpsProxy ? HTTPSProxyFramer.definition : HTTPSProxyWithAuthenticationFramer.definition
+
+            parameters.defaultProtocolStack.applicationProtocols.insert(NWProtocolFramer.Options(definition: framerDefinition), at: 0)
+            parameters.defaultProtocolStack.applicationProtocols.insert(tls(), at: 0)
+            return parameters
+
+        default:
+            fatalError("not yet ported")
+        }
+    }
+
+    #if hasAttribute(diagnose)
+    @diagnose(DeprecatedDeclaration, as: ignored, reason: "Intentionally uses deprecated TLS version")
+    #endif
+    fileprivate static func makeTLSOptions(
+        protocol: `Protocol`,
+        identity: SecIdentity,
+        verifier: sec_protocol_verify_t?
+    ) -> NWProtocolTLS.Options {
+        let options = NWProtocolTLS.Options()
+        let securityOptions = options.securityProtocolOptions
+
+        // `sec_identity_create` nullability is mis-annotated when exposed to Swift.
+        // swift-format-ignore: NeverForceUnwrap
+        sec_protocol_options_set_local_identity(securityOptions, sec_identity_create(identity)!)
+
+        if `protocol` == .httpsWithLegacyTLS {
+            #if ENABLE_TLS_1_2_DEFAULT_MINIMUM
+            sec_protocol_options_set_min_tls_protocol_version(securityOptions, .TLSv10)
+            #endif
+            sec_protocol_options_set_max_tls_protocol_version(securityOptions, .TLSv10)
+        }
+
+        if let verifier {
+            sec_protocol_options_set_peer_authentication_required(securityOptions, true)
+            sec_protocol_options_set_verify_block(securityOptions, verifier, .main)
+        }
+
+        if `protocol` == .http2Raw || `protocol` == .http2 {
+            unsafe sec_protocol_options_add_tls_application_protocol(securityOptions, "h2")
+        }
+
+        return options
     }
 }
