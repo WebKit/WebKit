@@ -1292,6 +1292,74 @@ static void testWebViewColorQuadrants(SnapshotWebViewTest* test, gconstpointer)
 #endif
 }
 
+#if USE(GTK4)
+static void testWebViewPresentationWithoutDamage(WebViewTest* test, gconstpointer)
+{
+    webkit_settings_set_hardware_acceleration_policy(webkit_web_view_get_settings(test->webView()), WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
+    test->showInWindow(320, 192);
+
+    auto* widget = GTK_WIDGET(test->webView());
+    GRefPtr<GdkPaintable> paintable = adoptGRef(gtk_widget_paintable_new(widget));
+    unsigned presentations = 0;
+    auto signalID = g_signal_connect(paintable.get(), "invalidate-contents", G_CALLBACK(+[](GdkPaintable*, unsigned* presentations) {
+        ++*presentations;
+    }), &presentations);
+
+    test->loadHtml("<!DOCTYPE html><html style='background: #0000ff; overflow: hidden'></html>", nullptr);
+    test->waitUntilLoadFinished();
+
+    auto waitForColor = [&](uint32_t expectedColor) {
+        while (true) {
+            unsigned lastPresentation = presentations;
+            int width = gtk_widget_get_width(widget);
+            int height = gtk_widget_get_height(widget);
+            auto* snapshot = gtk_snapshot_new();
+            gdk_paintable_snapshot(paintable.get(), snapshot, width, height);
+            if (auto* node = gtk_snapshot_free_to_node(snapshot)) {
+                uint32_t pixel = 0;
+                auto* surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(&pixel), CAIRO_FORMAT_ARGB32, 1, 1, sizeof(pixel));
+                auto* cr = cairo_create(surface);
+                cairo_translate(cr, -width / 2, -height / 2);
+                gsk_render_node_draw(node, cr);
+                cairo_destroy(cr);
+                cairo_surface_flush(surface);
+                cairo_surface_destroy(surface);
+                gsk_render_node_unref(node);
+                if (pixel == expectedColor)
+                    return;
+            }
+            while (presentations == lastPresentation)
+                g_main_context_iteration(nullptr, TRUE);
+        }
+    };
+
+    // Observe the initial paint before counting presentations from animation callbacks.
+    waitForColor(0xff0000ff);
+    unsigned initialPresentations = presentations;
+    GUniqueOutPtr<GError> error;
+    auto* value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(
+        "let frames = 0;"
+        "while (frames < 20) {"
+        "    await new Promise(resolve => requestAnimationFrame(resolve));"
+        "    ++frames;"
+        "}"
+        "return frames;", nullptr, nullptr, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_nonnull(value);
+    g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(value), ==, 20);
+    while (g_main_context_pending(nullptr))
+        g_main_context_iteration(nullptr, TRUE);
+    g_assert_cmpuint(presentations, ==, initialPresentations);
+
+    value = test->runJavaScriptAndWaitUntilFinished("document.documentElement.style.backgroundColor = '#ff0000';", &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_nonnull(value);
+    waitForColor(0xffff0000);
+    g_assert_cmpuint(presentations, >, initialPresentations);
+    g_signal_handler_disconnect(paintable.get(), signalID);
+}
+#endif
+
 static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><style>html { width: 200px; height: 100px; } ::-webkit-scrollbar { display: none; }</style></head><body><p>Whatever</p></body></html>", nullptr);
@@ -2335,6 +2403,9 @@ void beforeAll()
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     SnapshotWebViewTest::add("WebKitWebView", "snapshot-color-quadrants", testWebViewColorQuadrants);
+#endif
+#if USE(GTK4)
+    WebViewTest::add("WebKitWebView", "presentation-without-damage", testWebViewPresentationWithoutDamage);
 #endif
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
     WebViewTest::add("WebKitWebView", "document-focus", testWebViewDocumentFocus);
