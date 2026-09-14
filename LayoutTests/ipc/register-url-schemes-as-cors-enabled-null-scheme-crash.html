@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit did not crash.</p>
+<script>
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+
+    (async () => {
+        if (!window.IPC)
+            return testRunner?.notifyDone();
+
+        const { CoreIPC } = await import('./coreipc.js');
+        // A null String is the empty value of NetworkSchemeRegistry's HashSet, and
+        // ASCIICaseInsensitiveHash dereferences the StringImpl in order to hash it.
+        CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterURLSchemesAsCORSEnabled(0, {
+            schemes: ['test-scheme', null, '']
+        });
+        testRunner?.notifyDone();
+    })();
+</script>

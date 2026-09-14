@@ -26,18 +26,27 @@
 #include "config.h"
 #include "NetworkSchemeRegistry.h"
 
+#include "Logging.h"
+
 namespace WebKit {
 
-void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(String&& scheme)
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
+
+void NetworkSchemeRegistry::registerURLSchemeAsCORSEnabled(IPC::Connection& connection, String&& scheme)
 {
+    MESSAGE_CHECK(!scheme.isNull(), connection);
     m_corsEnabledSchemes.add(WTF::move(scheme));
 }
 
 bool NetworkSchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(StringView scheme)
 {
+    if (scheme.isNull())
+        return false;
     if (scheme.startsWith("http"_s))
         return scheme.length() == 4 || (scheme.length() == 5 && scheme[4] == 's');
     return m_corsEnabledSchemes.contains<StringViewHashTranslator>(scheme);
 }
+
+#undef MESSAGE_CHECK
 
 } // namespace WebKit
