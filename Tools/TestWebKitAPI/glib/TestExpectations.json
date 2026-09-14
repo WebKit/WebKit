@@ -228,9 +228,6 @@
             },
             "FontCascadeTest.ComplexTextRetainsSystemFallbackFonts": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323619"}}
-            },
-            "GraphicsContextGLTextureMapperTest.ClearBufferIncorrectSizes": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323621"}}
             }
         }
     },
