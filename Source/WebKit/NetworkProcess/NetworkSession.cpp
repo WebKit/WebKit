@@ -29,6 +29,7 @@
 #include "BackgroundFetchLoad.h"
 #include "BackgroundFetchState.h"
 #include "BackgroundFetchStoreImpl.h"
+#include "EarlyHintsPreloadCache.h"
 #include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkBroadcastChannelRegistry.h"
@@ -171,6 +172,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
     , m_prefetchCache(makeUniqueRef<PrefetchCache>())
+    , m_earlyHintsPreloadCache(makeUniqueRef<EarlyHintsPreloadCache>())
     , m_broadcastChannelRegistry(NetworkBroadcastChannelRegistry::create(networkProcess))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
@@ -748,6 +750,7 @@ void NetworkSession::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, c
 void NetworkSession::lowMemoryHandler(Critical)
 {
     clearPrefetchCache();
+    m_earlyHintsPreloadCache->clear();
 
     if (RefPtr swServer = m_swServer)
         swServer->handleLowMemoryWarning();
@@ -977,6 +980,11 @@ void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& d
 PrefetchCache& NetworkSession::prefetchCache()
 {
     return m_prefetchCache.get();
+}
+
+CheckedRef<EarlyHintsPreloadCache> NetworkSession::earlyHintsPreloadCache()
+{
+    return m_earlyHintsPreloadCache.get();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
