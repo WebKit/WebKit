@@ -39,6 +39,7 @@ public:
     SVGTextPathElement& NODELETE textPathElement() const;
     RefPtr<SVGGeometryElement> targetElement() const;
 
+    bool usesPathAttribute() const;
     Path layoutPath() const;
     const SVGLengthValue& NODELETE startOffset() const LIFETIME_BOUND;
 

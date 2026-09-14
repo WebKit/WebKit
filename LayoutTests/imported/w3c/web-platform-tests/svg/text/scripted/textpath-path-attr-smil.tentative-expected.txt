@@ -1,0 +1,9 @@
+ABCDEF
+ABCDEF
+ABCDEF
+
+PASS control: the SMIL clock samples under setCurrentTime
+PASS control: an unanimated inline path does not move with the clock
+PASS SMIL reaches the path attribute
+PASS the path attribute interpolates rather than switching
+

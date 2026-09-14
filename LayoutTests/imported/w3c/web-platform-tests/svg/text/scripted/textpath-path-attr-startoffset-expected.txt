@@ -1,0 +1,9 @@
+ABCDEF
+ABCDEF
+ABCDEF
+ABCDEF
+
+PASS control: startOffset moves the text along the inline path
+PASS a percentage startOffset resolves the same way on inline path data as on href
+PASS 25% of the inline path equals the 90 user units it measures
+
