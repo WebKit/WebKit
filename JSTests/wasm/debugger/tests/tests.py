@@ -1397,6 +1397,19 @@ class MemoryAtomicWaitNoTimeoutTestCase:
         self.session.cmd("thread select 1", patterns=["->  0x4000000000000030: memory.atomic.wait32 0"])
 
 
+class ThreadStopInfoUnknownThreadTestCase:
+    test_file = "resources/wasm/memory-atomic-wait.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        # An unknown thread id must be refused without wedging. The error reply used to route back
+        # through ExecutionHandler::sendReply, which re-takes the lock sendStopReplyForThread is
+        # already holding, so the server never answered again. Thread 0 is never a valid id, so
+        # this always takes that path. The follow-up read is the real assertion.
+        self.session.cmd("process plugin packet send qThreadStopInfo0", patterns=["response: E02"])
+        self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 0000000000000000"])
+
+
 class DoCatchThrowTestCase:
     test_file = "resources/swift-wasm/do-catch-throw/main.js"
 
@@ -2265,6 +2278,7 @@ ALL_TESTS = [
     MultiVMSameModuleDifferentFunctionsTestCase,
     MemoryAtomicWaitTestCase,
     MemoryAtomicWaitNoTimeoutTestCase,
+    ThreadStopInfoUnknownThreadTestCase,
     DoCatchThrowTestCase,
     WasmWasmWasmCallStackTestCase,
     JsWasmJsWasmCallStackTestCase,

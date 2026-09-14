@@ -768,14 +768,14 @@ void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t v
     VM* vm = findVM(vmId);
     if (!vm) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] sendStopReplyForThread: thread ", vmId, " not found");
-        sendErrorReply(ProtocolError::InvalidAddress);
+        sendReplyImpl(locker, getErrorReply(ProtocolError::InvalidAddress));
         return;
     }
 
     DebugState* state = vm->debugState();
     if (!state) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] sendStopReplyForThread: thread ", vmId, " not found");
-        sendErrorReply(ProtocolError::InvalidAddress);
+        sendReplyImpl(locker, getErrorReply(ProtocolError::InvalidAddress));
         return;
     }
 
