@@ -153,6 +153,7 @@ class StringSplitCache;
 class Structure;
 class Symbol;
 class TypedArrayController;
+class BackupIncumbentScope;
 class VMEntryScope;
 class TypeProfiler;
 class TypeProfilerLog;
@@ -916,6 +917,8 @@ public:
     Interpreter interpreter;
     VMEntryScope* entryScope { nullptr };
 
+    JSGlobalObject* backupIncumbentGlobalObject() const { return m_backupIncumbentGlobalObject; }
+
     DateCache dateCache;
 
     std::unique_ptr<Profiler::Database> m_perBytecodeProfiler;
@@ -1297,7 +1300,11 @@ private:
 #endif
 
     DoublyLinkedList<Debugger> m_debuggers;
+    JSGlobalObject* m_backupIncumbentGlobalObject { nullptr };
 
+    void setBackupIncumbentGlobalObject(JSGlobalObject* globalObject) { m_backupIncumbentGlobalObject = globalObject; }
+
+    friend class BackupIncumbentScope;
     friend class Heap;
     friend class ExceptionScope; // Friend for exception checking purpose only.
     friend class TopExceptionScope; // Friend for exception checking purpose only.
@@ -1306,6 +1313,27 @@ private:
     friend class LLIntOffsetsExtractor;
     friend class SuspendExceptionScope;
     friend class VMTraps;
+};
+
+class BackupIncumbentScope {
+    WTF_MAKE_NONCOPYABLE(BackupIncumbentScope);
+public:
+    BackupIncumbentScope(VM& vm, JSGlobalObject* incumbent)
+        : m_vm(vm)
+        , m_previous(vm.backupIncumbentGlobalObject())
+    {
+        if (incumbent)
+            vm.setBackupIncumbentGlobalObject(incumbent);
+    }
+
+    ~BackupIncumbentScope()
+    {
+        m_vm.setBackupIncumbentGlobalObject(m_previous);
+    }
+
+private:
+    VM& m_vm;
+    JSGlobalObject* m_previous { nullptr };
 };
 
 static_assert(OBJECT_OFFSETOF(VM, topEntryFrame) == OBJECT_OFFSETOF(VM, topCallFrame) + sizeof(void*), "We load/store these using a pair instruction");
