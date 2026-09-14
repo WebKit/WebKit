@@ -1822,7 +1822,7 @@ static inline void markRendererAndParentForLayout(RenderBox& renderer)
     parentBlock->setChildNeedsLayout();
 }
 
-void RenderBlock::removeOutOfFlowBoxes(const RenderBlock* newContainingBlockCandidate, ContainingBlockState containingBlockState)
+void RenderBlock::removeOutOfFlowBoxes(const RenderElement* newContainingBlockCandidate, ContainingBlockState containingBlockState)
 {
     auto* outOfFlowDescendants = outOfFlowBoxes();
     if (!outOfFlowDescendants)
