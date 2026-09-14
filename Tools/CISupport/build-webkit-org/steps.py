@@ -1451,7 +1451,7 @@ class RunWebDriverTests(shell.Test, CustomFlagsMixin, ShellMixin):
                 summary = summaries[0]
 
             if summary:
-                result = {'step': summary}
+                result = {'step': "WebDriver Tests: " + summary}
                 if shouldReportBuild:
                     result['build'] = summary
 

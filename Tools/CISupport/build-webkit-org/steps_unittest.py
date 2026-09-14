@@ -2049,7 +2049,7 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout='Unexpected failures (554)\n')
             .exit(1),
         )
-        self.expect_outcome(result=FAILURE, state_string='554 failures')
+        self.expect_outcome(result=FAILURE, state_string='WebDriver Tests: 554 failures')
         d = self.run_step()
 
         @d.addCallback
@@ -2076,7 +2076,7 @@ class TestRunWebDriverTests(BuildStepMixinAdditions, unittest.TestCase):
             .log('stdio', stdout='Expected to fail, but passed (1)\n')
             .exit(1),
         )
-        self.expect_outcome(result=FAILURE, state_string='1 new pass')
+        self.expect_outcome(result=FAILURE, state_string='WebDriver Tests: 1 new pass')
         d = self.run_step()
 
         @d.addCallback
@@ -2118,7 +2118,7 @@ webkitpy.webdriver_tests.webdriver_test_runner: [INFO]   imported/w3c/webdriver/
   ''')
             .exit(1),
         )
-        self.expect_outcome(result=FAILURE, state_string='42 failures, 7 timeouts and 92 new passes')
+        self.expect_outcome(result=FAILURE, state_string='WebDriver Tests: 42 failures, 7 timeouts and 92 new passes')
         d = self.run_step()
 
         @d.addCallback
