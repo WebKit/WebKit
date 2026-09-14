@@ -97,6 +97,7 @@
 - (void)begin:(CALayer*) layer
 {
     ASSERT(_callback);
+    [self stop];
     _rootLayer = layer;
     [_rootLayer addObserver:self forKeyPath:@"bounds" options:NSKeyValueObservingOptionNew context:nil];
 }
