@@ -33,7 +33,6 @@
 #import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
-#import "WebPreferences.h"
 #import <WebCore/ColorCocoa.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -87,7 +86,7 @@
 {
     RetainPtr view = _view;
     [_colorPickerViewController setSelectedColor:cocoaColor([view focusedElementInformation].colorValue).get()];
-    [_colorPickerViewController setSupportsAlpha:[view focusedElementInformation].supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && protect([view page]->preferences())->inputTypeColorEnhancementsEnabled()];
+    [_colorPickerViewController setSupportsAlpha:[view focusedElementInformation].supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes];
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];
 }

@@ -40,12 +40,12 @@ enum AutofillButtonType {
     Exposed=Window
 ] interface HTMLInputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
-    [EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded, Reflect] attribute boolean alpha;
+    [CEReactions=NotNeeded, Reflect] attribute boolean alpha;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect="checked"] attribute boolean defaultChecked;
     attribute boolean checked;
-    [EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
+    [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString colorSpace;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
