@@ -261,11 +261,18 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
 )
 
-# Xcode names each service executable after its bundle; the .Development suffix
-# belongs to the separate macOS WebContent bundle WEBKIT_DEFINE_XPC_SERVICES builds.
-set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent)
-set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking)
-set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU)
+# Xcode appends .Development to the executable inside each service bundle for
+# macOS and the simulators, through WK_XPC_SERVICE_SUFFIX in DebugRelease.xcconfig
+# and EXECUTABLE_SUFFIX in BaseXPCService.xcconfig. Bundle names never carry it.
+if (WEBKIT_SDK_IS_MACOS OR CMAKE_OSX_SYSROOT MATCHES "[Ss]imulator")
+    set(WK_XPC_SERVICE_SUFFIX .Development)
+else ()
+    set(WK_XPC_SERVICE_SUFFIX "")
+endif ()
+
+set(WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent${WK_XPC_SERVICE_SUFFIX})
+set(NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking${WK_XPC_SERVICE_SUFFIX})
+set(GPUProcess_OUTPUT_NAME com.apple.WebKit.GPU${WK_XPC_SERVICE_SUFFIX})
 
 # Entry point shared by all three auxiliary processes on both SDKs.
 set(WebProcess_SOURCES Shared/EntryPointUtilities/Cocoa/AuxiliaryProcessMain.cpp)
@@ -2097,7 +2104,7 @@ with open(sys.argv[2], 'wb') as f:
 
     function(WEBKIT_IOS_WEBCONTENT_VARIANT _variant)
         set(_target WebProcess${_variant})
-        set(_exec_name com.apple.WebKit.WebContent.${_variant})
+        set(_exec_name com.apple.WebKit.WebContent.${_variant}${WK_XPC_SERVICE_SUFFIX})
         add_executable(${_target} ${WebProcess_SOURCES})
         target_link_libraries(${_target} PRIVATE WebKit)
         target_include_directories(${_target} PRIVATE
@@ -2781,7 +2788,7 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
     # code is allowed, which is the case a local macOS build hits.
     function(WEBKIT_WEBCONTENT_VARIANT _variant)
         set(_target WebProcess${_variant})
-        set(_exec_name com.apple.WebKit.WebContent.${_variant})
+        set(_exec_name com.apple.WebKit.WebContent.${_variant}${WK_XPC_SERVICE_SUFFIX})
         WEBKIT_EXECUTABLE_DECLARE(${_target})
         set(${_target}_SOURCES ${WebProcess_SOURCES})
         set(${_target}_INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}
