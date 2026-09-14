@@ -166,9 +166,39 @@ using WebCore::ScrollOffset = WebCore::IntPoint;
     AtomString identifier;
 };
 
+header: <WebCore/CSSCounterStyleDescriptors.h>
+[Nested, CustomHeader] enum class WebCore::CSSCounterStyleDescriptors::System : uint8_t {
+    Cyclic,
+    Numeric,
+    Alphabetic,
+    Symbolic,
+    Additive,
+    Fixed,
+    DisclosureClosed,
+    DisclosureOpen,
+    SimplifiedChineseInformal,
+    SimplifiedChineseFormal,
+    TraditionalChineseInformal,
+    TraditionalChineseFormal,
+    JapaneseInformal,
+    JapaneseFormal,
+    KoreanHangulFormal,
+    KoreanHanjaInformal,
+    KoreanHanjaFormal,
+    EthiopicNumeric,
+    Extends
+};
+
+[CustomHeader, Nested] struct WebCore::Style::ListStyleType::SymbolsFunctionData {
+    # `symbols()` only ever produces one of these five systems; reject anything else.
+    [Validator='system == WebCore::CSSCounterStyleDescriptors::System::Cyclic || system == WebCore::CSSCounterStyleDescriptors::System::Numeric || system == WebCore::CSSCounterStyleDescriptors::System::Alphabetic || system == WebCore::CSSCounterStyleDescriptors::System::Symbolic || system == WebCore::CSSCounterStyleDescriptors::System::Fixed'] WebCore::CSSCounterStyleDescriptors::System system;
+    # Matches WebCore::CSSCounterStyleDescriptors::areSymbolsValidForSystem(): non-empty, and at least two symbols for Numeric/Alphabetic.
+    [Validator='!symbols->isEmpty() && ((system != WebCore::CSSCounterStyleDescriptors::System::Numeric && system != WebCore::CSSCounterStyleDescriptors::System::Alphabetic) || symbols->size() >= 2)'] Vector<String> symbols;
+};
+
 header: <WebCore/StyleListStyleType.h>
 [CustomHeader, Nested] struct WebCore::Style::ListStyleType {
-    Variant<WebCore::Style::ListStyleType::NoneData, WebCore::Style::ListStyleType::StringData, WebCore::Style::ListStyleType::CounterStyleData> ipcData()
+    Variant<WebCore::Style::ListStyleType::NoneData, WebCore::Style::ListStyleType::StringData, WebCore::Style::ListStyleType::CounterStyleData, WebCore::Style::ListStyleType::SymbolsFunctionData> ipcData()
 };
 
 header: <WebCore/FontAttributes.h>

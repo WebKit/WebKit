@@ -15689,7 +15689,6 @@
         "<counter-style>": {
             "grammar-unused": "<counter-style-name> | <symbols()>",
             "grammar-unused-reason": "Needs support for excluding a class of names from a <custom-ident>.",
-            "grammar-comment": "Current implementation does not support '<symbols()>'.",
             "grammar-function": "consumeCounterStyle",
             "specification": {
                 "category": "css-counter-styles",
@@ -15698,6 +15697,7 @@
         },
         "<symbols()>": {
             "grammar": "symbols( <symbols-type>? [ <string> | <image> ]+ )",
+            "grammar-comment": "Current implementation does not support <image> symbols.",
             "specification": {
                 "category": "css-counter-styles",
                 "url": "https://drafts.csswg.org/css-counter-styles/#funcdef-symbols"

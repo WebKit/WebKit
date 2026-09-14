@@ -27,16 +27,40 @@
 
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSKeyword.h>
+#include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 namespace CSS {
 
-// <counter-style> = <custom-ident excluding=none>
+// The anonymous counter style defined inline by the `symbols()` function.
+// https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+struct CounterStyleSymbolsFunction {
+    // The `<symbols-type>` keyword, or `std::nullopt` for the default (`symbolic`).
+    std::optional<Keyword> system;
+    Vector<String> symbols;
+
+    bool operator==(const CounterStyleSymbolsFunction&) const = default;
+};
+
+template<> struct Serialize<CounterStyleSymbolsFunction> { void operator()(StringBuilder&, const SerializationContext&, const CounterStyleSymbolsFunction&); };
+template<> struct ComputedStyleDependenciesCollector<CounterStyleSymbolsFunction> { constexpr void operator()(ComputedStyleDependencies&, const CounterStyleSymbolsFunction&) { } };
+template<> struct CSSValueChildrenVisitor<CounterStyleSymbolsFunction> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const CounterStyleSymbolsFunction&) { return IterationStatus::Continue; } };
+
+// MARK: - Logging
+
+WTF::TextStream& operator<<(WTF::TextStream&, const CounterStyleSymbolsFunction&);
+
+// MARK: - Hashing
+
+void add(Hasher&, const CounterStyleSymbolsFunction&);
+
+// <counter-style> = <custom-ident excluding=none> | <symbols()>
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 struct CounterStyle {
     // Stores predefined style types using their Keyword representation.
-    Variant<Keyword, CustomIdent> identifier;
+    Variant<Keyword, CustomIdent, CounterStyleSymbolsFunction> identifier;
 
     bool operator==(const CounterStyle&) const = default;
 };

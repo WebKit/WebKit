@@ -34,6 +34,8 @@ namespace WebCore {
 class CSSValue;
 class StyleProperties;
 
+enum CSSValueID : uint16_t;
+
 struct CSSCounterStyleDescriptors {
     using Name = AtomString;
     using Ranges = Vector<std::pair<int, int>>;
@@ -102,6 +104,9 @@ struct CSSCounterStyleDescriptors {
 
     // create() is prefered here rather than a custom constructor, so that the Struct still classifies as an aggregate.
     static CSSCounterStyleDescriptors create(AtomString name, const StyleProperties&);
+    // Builds the anonymous counter style described by the `symbols()` function.
+    // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+    static CSSCounterStyleDescriptors createForSymbolsFunction(System, Vector<Symbol>&&);
     bool operator==(const CSSCounterStyleDescriptors& other) const
     {
         // Intentionally doesn't check m_isExtendedResolved.
@@ -172,5 +177,7 @@ CSSCounterStyleDescriptors::Symbol symbolFromCSSValue(const CSSValue*);
 Vector<CSSCounterStyleDescriptors::Symbol> symbolsFromCSSValue(const CSSValue&);
 CSSCounterStyleDescriptors::Name fallbackNameFromCSSValue(const CSSValue&);
 CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(const CSSValue*, CSSCounterStyleDescriptors::System);
+std::optional<CSSCounterStyleDescriptors::System> systemFromSymbolsTypeKeyword(CSSValueID);
+std::optional<CSSValueID> symbolsTypeKeywordFromSystem(CSSCounterStyleDescriptors::System);
 
 } // namespace WebCore

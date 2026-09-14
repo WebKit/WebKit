@@ -41,6 +41,9 @@ static std::optional<CounterStyle> counterStyleForSerialization(const CounterSty
         },
         [&](const CSS::CustomIdent&) -> std::optional<CounterStyle> {
             return style;
+        },
+        [&](const CSS::CounterStyleSymbolsFunction&) -> std::optional<CounterStyle> {
+            return style;
         }
     );
 };

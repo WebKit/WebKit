@@ -1777,8 +1777,10 @@ constrained
 // no-limit
 dynamic-range-limit-mix
 
-// @counter-style `system` descriptor values
+// @counter-style `system` descriptor values, and `symbols()` function name
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+// https://www.w3.org/TR/css-counter-styles-3/#funcdef-symbols
+symbols
 cyclic
 numeric
 // alphabetic

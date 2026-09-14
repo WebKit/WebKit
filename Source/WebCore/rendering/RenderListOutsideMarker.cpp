@@ -423,7 +423,11 @@ LayoutRect RenderListOutsideMarker::selectionRectForRepaint(const RenderLayerMod
 
 static RefPtr<CSSRegisteredCounterStyle> counterStyleFor(const Style::ComputedStyle& markerStyle, Document& document)
 {
-    auto counterStyle = markerStyle.listStyleType().tryCounterStyle();
+    auto& listStyleType = markerStyle.listStyleType();
+    if (auto symbolsFunctionCounterStyle = listStyleType.trySymbolsFunctionCounterStyle())
+        return symbolsFunctionCounterStyle;
+
+    auto counterStyle = listStyleType.tryCounterStyle();
     if (!counterStyle)
         return nullptr;
     return document.counterStyleRegistry().resolvedCounterStyle(*counterStyle);
@@ -472,6 +476,14 @@ bool listMarkerSynthesizesGlyph(const Style::ComputedStyle& markerStyle, Documen
 ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerStyle, RenderListItem& listItem)
 {
     ListMarkerTextContent textContent;
+    auto applyCounterStyle = [&] {
+        auto counter = counterStyleFor(markerStyle, protect(listItem.document()));
+        ASSERT(counter);
+        if (!counter)
+            return;
+        auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
+        textContent = { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
+    };
     WTF::switchOn(markerStyle.listStyleType(),
         [&](const CSS::Keyword::None&) {
             textContent = { .textWithSuffix = " "_s, .textWithoutSuffixLength = 0 };
@@ -480,12 +492,10 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
             textContent = { .textWithSuffix = identifier.value, .textWithoutSuffixLength = identifier.value.length() };
         },
         [&](const Style::CounterStyle&) {
-            auto counter = counterStyleFor(markerStyle, protect(listItem.document()));
-            ASSERT(counter);
-            if (!counter)
-                return;
-            auto text = makeString(counter->prefix().text, counter->text(listItem.value(), markerStyle.writingMode()));
-            textContent = { .textWithSuffix = makeString(text, counter->suffix().text), .textWithoutSuffixLength = text.length() };
+            applyCounterStyle();
+        },
+        [&](const Style::ListStyleType::SymbolsFunction&) {
+            applyCounterStyle();
         }
     );
     return textContent;

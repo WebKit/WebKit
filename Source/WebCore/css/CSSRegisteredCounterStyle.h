@@ -40,6 +40,8 @@ class CSSRegisteredCounterStyle : public RefCountedAndCanMakeWeakPtr<CSSRegister
 public:
     static Ref<CSSRegisteredCounterStyle> create(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
 
+    static Ref<CSSRegisteredCounterStyle> createForSymbolsFunction(CSSCounterStyleDescriptors::System, const Vector<String>& symbols);
+
     bool operator==(const CSSRegisteredCounterStyle& other) const
     {
         return m_descriptors == other.m_descriptors

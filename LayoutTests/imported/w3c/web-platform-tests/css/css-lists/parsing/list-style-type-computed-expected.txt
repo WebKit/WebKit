@@ -20,10 +20,10 @@ PASS Property list-style-type value '"marker string"'
 PASS Property list-style-type value '"Note: "'
 PASS Property list-style-type value 'counter-Style-Name'
 PASS Property list-style-type value 'CounterStyleName'
-FAIL Property list-style-type value 'symbols(cyclic "string")' assert_true: 'symbols(cyclic "string")' is a supported value for list-style-type. expected true got false
-FAIL Property list-style-type value 'symbols(cyclic "○" "●")' assert_true: 'symbols(cyclic "○" "●")' is a supported value for list-style-type. expected true got false
-FAIL Property list-style-type value 'symbols(fixed "1")' assert_true: 'symbols(fixed "1")' is a supported value for list-style-type. expected true got false
-FAIL Property list-style-type value 'symbols("string")' assert_true: 'symbols("string")' is a supported value for list-style-type. expected true got false
-FAIL Property list-style-type value 'symbols(alphabetic "first" "second")' assert_true: 'symbols(alphabetic "first" "second")' is a supported value for list-style-type. expected true got false
-FAIL Property list-style-type value 'symbols(numeric "first" "second")' assert_true: 'symbols(numeric "first" "second")' is a supported value for list-style-type. expected true got false
+PASS Property list-style-type value 'symbols(cyclic "string")'
+PASS Property list-style-type value 'symbols(cyclic "○" "●")'
+PASS Property list-style-type value 'symbols(fixed "1")'
+PASS Property list-style-type value 'symbols("string")'
+PASS Property list-style-type value 'symbols(alphabetic "first" "second")'
+PASS Property list-style-type value 'symbols(numeric "first" "second")'
 

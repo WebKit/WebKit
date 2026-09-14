@@ -1152,6 +1152,14 @@ CSSSizeShorthandEnabled:
   humanReadableDescription: "Enable the size shorthand for the width and height properties"
   defaultValue: false
 
+CSSSymbolsFunctionEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "CSS symbols() function"
+  humanReadableDescription: "Enable the CSS Counter Styles symbols() function"
+  defaultValue: true
+
 CSSTextDecorationInsetEnabled:
   type: bool
   status: stable

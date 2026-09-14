@@ -27,48 +27,38 @@
 #include "config.h"
 #include "StyleListStyleType.h"
 
+#include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSPropertyParserConsumer+CounterStyles.h"
+#include "CSSRegisteredCounterStyle.h"
 #include "CSSStringValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSValuePool.h"
 #include "StyleBuilderChecking.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
 
-ListStyleType::Type ListStyleType::type(const IPCData& data)
+ListStyleType::ListStyleType(const IPCData& data)
 {
-    static_assert(WTF::VariantSizeV<IPCData> == 3);
-    switch (data.index()) {
-    case WTF::alternativeIndexV<NoneData, IPCData>:
-        return Type::None;
-    case WTF::alternativeIndexV<StringData, IPCData>:
-        return Type::String;
-    case WTF::alternativeIndexV<CounterStyleData, IPCData>:
-        return Type::CounterStyle;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-AtomString ListStyleType::identifier(const IPCData& data)
-{
-    return WTF::switchOn(data,
-        [](const NoneData&) -> AtomString {
-            return nullAtom();
+    WTF::switchOn(data,
+        [&](const NoneData&) {
+            m_type = Type::None;
         },
-        [](const StringData& data) -> AtomString {
-            return data.identifier;
+        [&](const StringData& stringData) {
+            m_type = Type::String;
+            m_identifier = stringData.identifier;
         },
-        [](const CounterStyleData& data) -> AtomString {
-            return data.identifier;
+        [&](const CounterStyleData& counterStyleData) {
+            m_type = Type::CounterStyle;
+            m_identifier = counterStyleData.identifier;
+        },
+        [&](const SymbolsFunctionData& symbolsFunctionData) {
+            m_type = Type::Symbols;
+            m_symbolsFunction = { CounterStyle::SymbolsParameters { symbolsFunctionData.system, Vector<WTF::String> { symbolsFunctionData.symbols } } };
         }
     );
-}
-
-ListStyleType::ListStyleType(const IPCData& data)
-    : m_type { ListStyleType::type(data) }
-    , m_identifier { ListStyleType::identifier(data) }
-{
 }
 
 ListStyleType::IPCData ListStyleType::ipcData() const
@@ -80,6 +70,8 @@ ListStyleType::IPCData ListStyleType::ipcData() const
         return IPCData { StringData { m_identifier } };
     case Type::CounterStyle:
         return IPCData { CounterStyleData { m_identifier } };
+    case Type::Symbols:
+        return IPCData { SymbolsFunctionData { m_symbolsFunction->system, m_symbolsFunction->symbols.value } };
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -104,7 +96,39 @@ bool ListStyleType::isSquare() const
     return m_type == Type::CounterStyle && m_identifier == nameString(CSSValueSquare);
 }
 
+RefPtr<CSSRegisteredCounterStyle> ListStyleType::trySymbolsFunctionCounterStyle() const
+{
+    if (!isSymbolsFunction())
+        return nullptr;
+    return CSSRegisteredCounterStyle::createForSymbolsFunction(m_symbolsFunction->system, m_symbolsFunction->symbols.value);
+}
+
 // MARK: - Conversion
+
+static ListStyleType listStyleTypeFromSymbolsFunction(const CSSFunctionValue& function)
+{
+    ASSERT(function.name() == CSSValueSymbols);
+
+    auto system = CSSCounterStyleDescriptors::System::Symbolic;
+    unsigned index = 0;
+    if (function.length()) {
+        if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(function[0])) {
+            if (auto systemFromKeyword = systemFromSymbolsTypeKeyword(keywordValue->valueID())) {
+                system = *systemFromKeyword;
+                index = 1;
+            }
+        }
+    }
+
+    Vector<WTF::String> symbols;
+    symbols.reserveInitialCapacity(function.length() - index);
+    for (; index < function.length(); ++index) {
+        if (RefPtr stringValue = dynamicDowncast<CSSStringValue>(function[index]))
+            symbols.append(stringValue->string().value);
+    }
+
+    return { ListStyleType::SymbolsFunction { CounterStyle::SymbolsParameters { system, WTF::move(symbols) } } };
+}
 
 auto CSSValueConversion<ListStyleType>::operator()(BuilderState& state, const CSSValue& value) -> ListStyleType
 {
@@ -120,6 +144,9 @@ auto CSSValueConversion<ListStyleType>::operator()(BuilderState& state, const CS
     if (RefPtr stringValue = dynamicDowncast<CSSStringValue>(value))
         return toStyleFromCSSValue<String>(state, *stringValue);
 
+    if (RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value); functionValue && functionValue->name() == CSSValueSymbols)
+        return listStyleTypeFromSymbolsFunction(*functionValue);
+
     return CounterStyle { toStyleFromCSSValue<CustomIdent>(state, value) };
 }
 
@@ -128,7 +155,8 @@ auto CSSValueCreation<ListStyleType>::operator()(CSSValuePool& pool, const Style
     return WTF::switchOn(value,
         [&](const CSS::Keyword::None& none) { return Style::createCSSValue(pool, style, none); },
         [&](const CounterStyle& counterStyle) { return Style::createCSSValue(pool, style, counterStyle); },
-        [&](const String& string) { return Style::createCSSValue(pool, style, string); }
+        [&](const String& string) { return Style::createCSSValue(pool, style, string); },
+        [&](const ListStyleType::SymbolsFunction& symbolsFunction) { return Style::createCSSValue(pool, style, symbolsFunction); }
     );
 }
 

@@ -28,6 +28,7 @@
 
 #include "CSSCounterStyle.h"
 #include "CSSCustomIdentValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserTokenRange.h"
@@ -56,15 +57,68 @@ bool isPredefinedCounterStyle(CSSValueID valueID)
     return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
 }
 
+// <symbols-type> = cyclic | numeric | alphabetic | symbolic | fixed
+// https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
+static RefPtr<CSSKeywordValue> consumeSymbolsType(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueFixed>(range);
+}
+
+static std::optional<CSS::Keyword> consumeUnresolvedSymbolsType(CSSParserTokenRange& range)
+{
+    return consumeUnresolvedIdent<CSSValueCyclic, CSSValueNumeric, CSSValueAlphabetic, CSSValueSymbolic, CSSValueFixed>(range);
+}
+
+// symbols() = symbols( <symbols-type>? [ <string> | <image> ]+ )
+// https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+// FIXME: Add support for <image> symbols.
+static std::optional<CSS::CounterStyleSymbolsFunction> consumeUnresolvedSymbolsFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    ASSERT(range.peek().functionId() == CSSValueSymbols);
+
+    if (!state.context.cssSymbolsFunctionEnabled)
+        return { };
+
+    auto rangeAfterFunction = range;
+    auto args = consumeFunction(rangeAfterFunction);
+
+    auto systemKeyword = consumeUnresolvedSymbolsType(args);
+
+    Vector<CSS::String> symbols;
+    while (auto symbol = consumeUnresolvedString(args))
+        symbols.append(WTF::move(*symbol));
+
+    if (symbols.isEmpty() || !args.atEnd())
+        return { };
+
+    // If the system is alphabetic or numeric, there must be at least two <string>s, or else the function is invalid.
+    auto system = systemKeyword ? systemKeyword->value : CSSValueSymbolic;
+    if ((system == CSSValueAlphabetic || system == CSSValueNumeric) && symbols.size() < 2)
+        return { };
+
+    range = rangeAfterFunction;
+
+    // `symbolic` is the default system, and is omitted from the serialization.
+    if (system == CSSValueSymbolic)
+        systemKeyword = std::nullopt;
+
+    return CSS::CounterStyleSymbolsFunction { systemKeyword, WTF::move(symbols) };
+}
+
 std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <counter-style> = <counter-style-name excluding=none> | <symbols()>
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 
-    // FIXME: Implement support for `symbols()`.
-
     if (isPredefinedCounterStyle(range.peek().id()))
         return CSS::CounterStyle { CSS::Keyword { range.consumeIncludingWhitespace().id() } };
+
+    if (range.peek().functionId() == CSSValueSymbols) {
+        auto symbolsFunction = consumeUnresolvedSymbolsFunction(range, state);
+        if (!symbolsFunction)
+            return { };
+        return CSS::CounterStyle { WTF::move(*symbolsFunction) };
+    }
 
     auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
     if (!customIdent)
@@ -73,14 +127,51 @@ std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRan
     return CSS::CounterStyle { WTF::move(*customIdent) };
 }
 
+// symbols() = symbols( <symbols-type>? [ <string> | <image> ]+ )
+// https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+// FIXME: Add support for <image> symbols.
+static RefPtr<CSSValue> consumeSymbolsFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    ASSERT(range.peek().functionId() == CSSValueSymbols);
+
+    if (!state.context.cssSymbolsFunctionEnabled)
+        return nullptr;
+
+    auto rangeAfterFunction = range;
+    auto args = consumeFunction(rangeAfterFunction);
+
+    auto systemKeyword = consumeSymbolsType(args);
+
+    auto symbols = consumeListSeparatedBy<' ', OneOrMore>(args, consumeString);
+    if (!symbols || !args.atEnd())
+        return nullptr;
+
+    // If the system is alphabetic or numeric, there must be at least two <string>s, or else the function is invalid.
+    auto system = systemKeyword ? systemKeyword->valueID() : CSSValueSymbolic;
+    if ((system == CSSValueAlphabetic || system == CSSValueNumeric) && symbols->length() < 2)
+        return nullptr;
+
+    range = rangeAfterFunction;
+
+    // `symbolic` is the default system, and is omitted from the serialization.
+    CSSValueListBuilder arguments;
+    if (systemKeyword && system != CSSValueSymbolic)
+        arguments.append(systemKeyword.releaseNonNull());
+    arguments.appendVector(symbols->copyValues());
+
+    return CSSFunctionValue::create(CSSValueSymbols, WTF::move(arguments), CSSValue::ValueSeparator::Space);
+}
+
 RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     // <counter-style> = <counter-style-name excluding=none> | <symbols()>
     // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 
-    // FIXME: Implement support for `symbols()`.
     if (isPredefinedCounterStyle(range.peek().id()))
         return CSSKeywordValue::create(range.consumeIncludingWhitespace().id());
+
+    if (range.peek().functionId() == CSSValueSymbols)
+        return consumeSymbolsFunction(range, state);
 
     return consumeCustomIdentExcluding(range, state, { CSSValueNone });
 }

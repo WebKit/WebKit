@@ -39,6 +39,12 @@ CSSFunctionValue::CSSFunctionValue(CSSValueID name, CSSValueListBuilder argument
 {
 }
 
+CSSFunctionValue::CSSFunctionValue(CSSValueID name, ValueSeparator separator, CSSValueListBuilder arguments)
+    : CSSValueContainingVector(ClassType::Function, separator, WTF::move(arguments))
+    , m_name(name)
+{
+}
+
 CSSFunctionValue::CSSFunctionValue(CSSValueID name)
     : CSSValueContainingVector(ClassType::Function, ValueSeparator::Comma)
     , m_name(name)
@@ -72,6 +78,11 @@ CSSFunctionValue::CSSFunctionValue(CSSValueID name, Ref<CSSValue>&& argument1, R
 Ref<CSSFunctionValue> CSSFunctionValue::create(CSSValueID name, CSSValueListBuilder arguments)
 {
     return adoptRef(*new CSSFunctionValue(name, WTF::move(arguments)));
+}
+
+Ref<CSSFunctionValue> CSSFunctionValue::create(CSSValueID name, CSSValueListBuilder arguments, ValueSeparator separator)
+{
+    return adoptRef(*new CSSFunctionValue(name, separator, WTF::move(arguments)));
 }
 
 Ref<CSSFunctionValue> CSSFunctionValue::create(CSSValueID name)
