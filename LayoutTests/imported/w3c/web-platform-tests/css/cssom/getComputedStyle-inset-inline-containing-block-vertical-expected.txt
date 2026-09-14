@@ -1,0 +1,5 @@
+xx
+
+PASS Resolved right measures the inline containing block's physical width
+PASS Resolved bottom measures the inline containing block's physical height
+
