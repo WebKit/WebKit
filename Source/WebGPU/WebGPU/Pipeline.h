@@ -25,22 +25,46 @@
 
 #import "ConstantValue.h"
 #import "ShaderModule.h"
+#import <wtf/Function.h>
+#import <wtf/Scope.h>
 
 namespace WebGPU {
 
 class BindGroup;
+class Device;
+class Instance;
 class ShaderModule;
 
 using BufferBindingSizesForBindGroup = HashMap<uint32_t, uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 using BufferBindingSizesForPipeline = HashMap<uint32_t, BufferBindingSizesForBindGroup, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 
-struct LibraryCreationResult {
-    id<MTLLibrary> library;
+struct PreparedLibrary {
+    id<MTLLibrary> library { nil };
+    String msl;
+    String label;
+    WGSL::DeviceState deviceState;
     WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
     HashMap<String, WGSL::ConstantValue> wgslConstantValues;
 };
 
-std::optional<LibraryCreationResult> createLibrary(id<MTLDevice>, const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **, String& metalShaderSource);
+std::optional<PreparedLibrary> prepareLibrary(const ShaderModule&, PipelineLayout*, const String& entryPointName, NSString *label, std::span<const WGPUConstantEntry> constants, BufferBindingSizesForPipeline&, NSError **);
+
+struct LibraryCompileRequest {
+    id<MTLLibrary> cachedLibrary { nil };
+    NSString *msl { nil };
+    NSString *label { nil };
+    WGSL::DeviceState deviceState;
+};
+
+LibraryCompileRequest libraryCompileRequest(const PreparedLibrary&);
+
+id<MTLLibrary> compileLibrary(id<MTLDevice>, const LibraryCompileRequest&, NSError **);
+
+void compileLibraryAsync(id<MTLDevice>, Instance&, const LibraryCompileRequest&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
+void createComputePipelineStateAsync(id<MTLDevice>, Instance&, MTLComputePipelineDescriptor *, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&&);
+void createRenderPipelineStateAsync(id<MTLDevice>, Instance&, MTLRenderPipelineDescriptor *, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&&);
+
+ScopeExit<Function<void()>> scopedErrorReporting(Device&, bool suppressErrors);
 
 id<MTLFunction> createFunction(id<MTLLibrary>, const WGSL::Reflection::EntryPointInformation&, NSString *label);
 

@@ -77,6 +77,8 @@ class XRSubImage;
 class XRProjectionLayer;
 class XRView;
 
+struct LibraryCompileRequest;
+
 #if ENABLE(WEBGPU_BY_DEFAULT)
 using GPUShaderValidation = MTLShaderValidation;
 #else
@@ -290,6 +292,16 @@ private:
     bool validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing);
 
     bool NODELETE validateRenderPipeline(const WGPURenderPipelineDescriptor&);
+
+    enum class LibraryCompilation : bool { Synchronous, Asynchronous };
+    // Asynchronous, unless something process-wide requires compiling one pipeline at a time.
+    static LibraryCompilation asynchronousIfPossible();
+
+    void compileLibrary(const LibraryCompileRequest&, LibraryCompilation, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
+    void createComputePipelineState(MTLComputePipelineDescriptor *, String&& shaderSource, LibraryCompilation, CompletionHandler<void(id<MTLComputePipelineState>)>&&);
+
+    void createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync, const ComputePipeline* pipelineToReplace, LibraryCompilation, CompletionHandler<void(std::pair<Ref<ComputePipeline>, NSString*>&&)>&&);
+    void createRenderPipeline(const WGPURenderPipelineDescriptor&, bool isAsync, const RenderPipeline* pipelineToReplace, LibraryCompilation, CompletionHandler<void(std::pair<Ref<RenderPipeline>, NSString*>&&)>&&);
 
     void makeInvalid();
     NSString * _Nullable addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>&, const std::optional<WGSL::PipelineLayout>&);
