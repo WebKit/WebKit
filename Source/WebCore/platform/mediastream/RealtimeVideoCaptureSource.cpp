@@ -463,7 +463,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
     ASSERT(isMainThread());
 
     if (isEnded())
-        return TakePhotoNativePromise::createAndResolve();
+        return TakePhotoNativePromise::createAndReject("Track has ended"_s);
 
     if ((photoSettings.imageHeight && !photoSettings.imageWidth) || (!photoSettings.imageHeight && photoSettings.imageWidth)) {
         IntSize sanitizedSize;
