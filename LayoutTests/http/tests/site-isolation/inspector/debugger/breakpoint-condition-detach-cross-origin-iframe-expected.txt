@@ -1,0 +1,16 @@
+Test that a cross-origin iframe's breakpoint condition that disconnects the frame's inspector target and then throws neither pauses the frame nor reports the exception.
+
+
+
+== Running test suite: SiteIsolation.Debugger.BreakpointConditionDetach
+-- Running test case: SiteIsolation.Debugger.BreakpointConditionDetach.Setup
+PASS: Should find the cross-origin frame target.
+
+-- Running test case: SiteIsolation.Debugger.BreakpointConditionDetach.ConditionExceptionAbandoned
+PASS: Should find the frame's script.
+iframe: breakpoint condition ran, disconnecting this frame's inspector target
+iframe: breakpoint line ran
+iframe: execution continued after the breakpoint
+PASS: Frame should run to completion.
+PASS: The condition's exception should be abandoned instead of reported.
+

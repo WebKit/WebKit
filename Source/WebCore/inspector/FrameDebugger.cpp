@@ -78,6 +78,17 @@ void FrameDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
+    // Mirrors attachDebugger(). isAttached() guards the call because detach() asserts membership,
+    // and attachDebugger() skips global objects that already have a debugger.
+    if (RefPtr frame = m_frame.get()) {
+        Ref windowProxy = frame->windowProxy();
+        for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+            auto* globalObject = jsWindowProxy->window();
+            if (globalObject && isAttached(globalObject))
+                detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
+        }
+    }
+
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }
