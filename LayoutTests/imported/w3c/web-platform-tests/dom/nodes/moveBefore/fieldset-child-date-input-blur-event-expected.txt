@@ -1,0 +1,4 @@
+
+
+PASS Neither 'blur' nor 'focusout' is fired on a focused <input type=date> child of HTMLFieldSetElement during moveBefore()
+

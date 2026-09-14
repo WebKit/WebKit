@@ -1,0 +1,16 @@
+
+
+FAIL OpaqueRange on first line of multiline textarea el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange on second line of textarea el.createValueRange is not a function. (In 'el.createValueRange(6, 11)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange on third line of textarea el.createValueRange is not a function. (In 'el.createValueRange(12, 17)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange spanning newline in textarea el.createValueRange is not a function. (In 'el.createValueRange(3, 8)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange after leading newline in textarea el.createValueRange is not a function. (In 'el.createValueRange(1, 6)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange at exact newline boundary resolves to correct line el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL Partial hard-newline selection in textarea el.createValueRange is not a function. (In 'el.createValueRange(firstLine.length - 4, firstLine.length + 5)', 'el.createValueRange' is undefined)
+FAIL Full multiline selection containing a blank line has non-zero geometry el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Soft-wrapped long single line in textarea el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Collapsed caret across newline parity in textarea el.createValueRange is not a function. (In 'el.createValueRange(6, 6)', 'el.createValueRange' is undefined)
+FAIL OpaqueRange on text after consecutive newlines el.createValueRange is not a function. (In 'el.createValueRange(4, 5)', 'el.createValueRange' is undefined)
+FAIL Cross-line range produces multiple client rects el.createValueRange is not a function. (In 'el.createValueRange(3, 8)', 'el.createValueRange' is undefined)
+FAIL Trailing newline range has non-zero geometry el.createValueRange is not a function. (In 'el.createValueRange(0, 6)', 'el.createValueRange' is undefined)
+

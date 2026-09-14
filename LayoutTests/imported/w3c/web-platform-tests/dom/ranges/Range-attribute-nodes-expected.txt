@@ -1,0 +1,28 @@
+
+PASS setStart() to an Attr node at offset 0 is allowed
+PASS setEnd() to an Attr node at offset 0 is allowed
+PASS setStart() to an Attr node past its length (0) throws IndexSizeError
+PASS setEnd() to an Attr node past its length (0) throws IndexSizeError
+PASS setStartBefore() with an Attr node throws InvalidNodeTypeError (null parent)
+PASS setStartAfter() with an Attr node throws InvalidNodeTypeError (null parent)
+PASS setEndBefore() with an Attr node throws InvalidNodeTypeError (null parent)
+PASS setEndAfter() with an Attr node throws InvalidNodeTypeError (null parent)
+PASS selectNode() with an Attr node throws InvalidNodeTypeError (null parent)
+PASS selectNodeContents() on an Attr node selects an empty range rooted at the Attr
+PASS comparePoint() with an Attr node not sharing the range's root throws WrongDocumentError
+PASS isPointInRange() with an Attr node not sharing the range's root returns false
+PASS intersectsNode() with an Attr node not sharing the range's root returns false
+PASS comparePoint() with an Attr node sharing the range's root
+PASS isPointInRange() with an Attr node sharing the range's root
+PASS intersectsNode() with an Attr node sharing the range's root returns true
+PASS compareBoundaryPoints() across an Attr-rooted range and a document-rooted range throws WrongDocumentError
+PASS compareBoundaryPoints() between two ranges rooted at the same Attr node returns 0
+PASS deleteContents() on an Attr-rooted range is a no-op
+PASS extractContents() on an Attr-rooted range returns an empty fragment
+PASS cloneContents() on an Attr-rooted range returns an empty fragment
+PASS insertNode() into an Attr-rooted range throws HierarchyRequestError
+PASS surroundContents() on an Attr-rooted range throws HierarchyRequestError
+PASS insertNode() with an Attr node argument throws HierarchyRequestError
+PASS cloneRange() preserves an Attr-rooted range
+PASS stringifying an Attr-rooted range returns the empty string
+

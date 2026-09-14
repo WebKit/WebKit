@@ -46,4 +46,5 @@ FAIL from(): Aborting an async iterable subscription stops subsequent next() cal
 FAIL from(): Abort after complete does NOT call IteratorRecord#return() Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL Invalid async iterator protocol error is surfaced before Subscriber#signal is consulted Observable.from is not a function. (In 'Observable.from(asyncIterable)', 'Observable.from' is undefined)
 FAIL Invalid iterator protocol error is surfaced before Subscriber#signal is consulted Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
+FAIL No error is reported when aborting a subscription to a sync iterator that has no `return()` implementation promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from([1, 2, 3])', 'Observable.from' is undefined)"
 

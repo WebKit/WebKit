@@ -1,7 +1,7 @@
 Button
 
-PASS when reparenting an element, don't automatically reset the document focus
-PASS when reparenting a focused element into an inert parent, reset the document focus
-PASS when reparenting a focused element into a hidden parent, reset the document focus
-FAIL when reparenting an ancestor of an focused element into a hidden parent, reset the document focus promise_test: Unhandled rejection with value: undefined
+FAIL when reparenting an element, don't automatically reset the document focus new_parent.moveBefore is not a function. (In 'new_parent.moveBefore(button, null)', 'new_parent.moveBefore' is undefined)
+FAIL when reparenting a focused element into an inert parent, reset the document focus promise_test: Unhandled rejection with value: object "TypeError: inert_parent.moveBefore is not a function. (In 'inert_parent.moveBefore(button, null)', 'inert_parent.moveBefore' is undefined)"
+FAIL when reparenting a focused element into a hidden parent, reset the document focus promise_test: Unhandled rejection with value: object "TypeError: hidden_parent.moveBefore is not a function. (In 'hidden_parent.moveBefore(button, null)', 'hidden_parent.moveBefore' is undefined)"
+FAIL when reparenting an ancestor of an focused element into a hidden parent, reset the document focus promise_test: Unhandled rejection with value: object "TypeError: hidden_parent.moveBefore is not a function. (In 'hidden_parent.moveBefore(old_parent, null)', 'hidden_parent.moveBefore' is undefined)"
 

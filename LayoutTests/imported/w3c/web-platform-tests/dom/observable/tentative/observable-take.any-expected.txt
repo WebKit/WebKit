@@ -4,4 +4,5 @@ PASS take(): Forwards complete()s that happen before the take count is met, and 
 PASS take(): Should forward errors from the source observable
 PASS take(): take(0) should not subscribe to the source observable, and should return an observable that immediately completes
 PASS take(): Negative count is treated as maximum value
+FAIL take(): No crash when take(1) unsubscribes from its source when next() is called, and the Subscriber iterates over the rest of the Observables promise_test: Unhandled rejection with value: object "TypeError: Observable.from is not a function. (In 'Observable.from(asyncNumbers())', 'Observable.from' is undefined)"
 

@@ -1,0 +1,4 @@
+
+PASS querySelector matching #id + constant nth-child()
+PASS querySelectorAll matching #id + constant nth-child()
+

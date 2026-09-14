@@ -1,0 +1,7 @@
+
+
+FAIL createValueRange creates independent ranges on same element. textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, 5)', 'textarea.createValueRange' is undefined)
+FAIL createValueRange works on different form controls. input.createValueRange is not a function. (In 'input.createValueRange(0, 4)', 'input.createValueRange' is undefined)
+FAIL createValueRange works with disconnected form controls. input.createValueRange is not a function. (In 'input.createValueRange(0, 12)', 'input.createValueRange' is undefined)
+FAIL OpaqueRange collapses on full .value= replacement. textarea.createValueRange is not a function. (In 'textarea.createValueRange(1, 5)', 'textarea.createValueRange' is undefined)
+

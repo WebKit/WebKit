@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-as-prototype.html
@@ -22,5 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-own-props.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-supported-property-indices.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/HTMLCollection-supported-property-names.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/dom/collections/childnodes-messagechannel-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/domstringmap-supported-property-names.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/collections/namednodemap-supported-property-names.html

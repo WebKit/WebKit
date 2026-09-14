@@ -1,0 +1,33 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-auto-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-disconnect.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-display-none.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-geometry-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-geometry-complexity-and-visibility.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-geometry-multiline.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-geometry-mutations.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-highlight.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-highlightsFromPoint.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-interactive-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-interactive-overlap-and-selection.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-offset.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-programmatic-updates.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-range-updates.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-supported-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-unsupported-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-update-event-order.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/ranges/tentative/OpaqueRange-validation.html

@@ -1,0 +1,8 @@
+
+FAIL Bidirectional mixed text full selection geometry (input) element.createValueRange is not a function. (In 'element.createValueRange(0, mixed.length)', 'element.createValueRange' is undefined)
+FAIL Surrogate pair width normalization invariants (input) element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL visibility:hidden caret geometry (input) hidden.createValueRange is not a function. (In 'hidden.createValueRange(2, 2)', 'hidden.createValueRange' is undefined)
+FAIL Bidirectional mixed text full selection geometry (textarea) element.createValueRange is not a function. (In 'element.createValueRange(0, mixed.length)', 'element.createValueRange' is undefined)
+FAIL Surrogate pair width normalization invariants (textarea) element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL visibility:hidden caret geometry (textarea) hidden.createValueRange is not a function. (In 'hidden.createValueRange(2, 2)', 'hidden.createValueRange' is undefined)
+

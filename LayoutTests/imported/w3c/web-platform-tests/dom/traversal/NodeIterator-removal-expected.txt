@@ -22,4 +22,6 @@ PASS Test removing node xmlTextNode
 PASS Test removing node xmlComment
 PASS Test removing node foreignComment
 PASS Test removing node xmlDoctype
+PASS Removing an inclusive ancestor of reference, pointer before reference is true, with a following node within root
+FAIL Removing an inclusive ancestor of reference, pointer before reference is true, with no following node within root assert_equals: post-removal reference expected Element node <a1></a1> but got Element node <b1></b1>
 

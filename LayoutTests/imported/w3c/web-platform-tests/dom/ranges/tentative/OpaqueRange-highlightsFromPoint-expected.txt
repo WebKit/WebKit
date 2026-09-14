@@ -1,0 +1,13 @@
+
+FAIL highlightsFromPoint returns OpaqueRange highlight (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 11)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint returns empty outside control (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint returns empty for disconnected OpaqueRange (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 11)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint with multiple and overlapping OpaqueRanges (input) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint returns OpaqueRange highlight (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 11)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint returns empty outside control (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint returns empty for disconnected OpaqueRange (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 11)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint with multiple and overlapping OpaqueRanges (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, 5)', 'el.createValueRange' is undefined)
+FAIL highlightsFromPoint with mixed OpaqueRange and DOM Range in one Highlight input.createValueRange is not a function. (In 'input.createValueRange(0, 5)', 'input.createValueRange' is undefined)
+FAIL highlightsFromPoint for textarea inside an author shadow root textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, 11)', 'textarea.createValueRange' is undefined)
+FAIL OpaqueRange and DOM Range in same shadow root behave consistently textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, 13)', 'textarea.createValueRange' is undefined)
+

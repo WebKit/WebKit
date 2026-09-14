@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeFilter-constants.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeIterator-removal-during-filtering.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeIterator-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/NodeIterator.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-cross-realm-null-browsing-context.html
@@ -22,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-currentNode.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-nextNode-detached-currentNode.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-previousNodeLastChildReject.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-previousSiblingLastChildSkip.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/traversal/TreeWalker-realm.html

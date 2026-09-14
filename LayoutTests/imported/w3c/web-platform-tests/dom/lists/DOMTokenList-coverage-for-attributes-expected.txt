@@ -48,7 +48,7 @@ PASS iframe.relList in http://www.w3.org/2000/svg namespace should be undefined.
 PASS output.relList in http://www.w3.org/2000/svg namespace should be undefined.
 PASS td.relList in http://www.w3.org/2000/svg namespace should be undefined.
 PASS th.relList in http://www.w3.org/2000/svg namespace should be undefined.
-PASS a.relList in http://www.w3.org/1998/Math/MathML namespace should be undefined.
+FAIL a.relList in http://www.w3.org/1998/Math/MathML namespace should be DOMTokenList. assert_class_string: expected "[object DOMTokenList]" but got "[object Undefined]"
 PASS area.relList in http://www.w3.org/1998/Math/MathML namespace should be undefined.
 PASS link.relList in http://www.w3.org/1998/Math/MathML namespace should be undefined.
 PASS iframe.relList in http://www.w3.org/1998/Math/MathML namespace should be undefined.

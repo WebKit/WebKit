@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/Node-moveBefore.html
@@ -32,6 +30,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/css-transition-trigger.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/custom-element-move-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fieldset-child-blur-event.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fieldset-child-date-input-blur-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/fire-focusin-focusout.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-preserve-render-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-preserve-render-ref.html
@@ -47,14 +46,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/modal-dialog.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-as-flex-item-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-as-flex-item.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-dir.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-from-light-to-shadow.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-id-map.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-iframe-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-lang.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-legend-input-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-name-map.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-nodeiterator.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-option-recalc-style.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-range-iframe-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-selector-matching.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-shadow-inside.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-shadow-root.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-size-query.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/moveBefore-subframe-count-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/mutation-observer.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/nonce.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/nonce.html.headers
@@ -64,6 +70,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/preserve-render-blocking-script.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/preserve-render-blocking-style.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/relevant-mutations.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/role-updates-after-move.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/script-move-before.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/select-option-optgroup.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/moveBefore/selection-preserve.html
