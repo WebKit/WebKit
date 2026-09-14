@@ -681,9 +681,9 @@ bool BaseDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserPar
     }
 
     if (CheckedPtr renderer = element->renderer())
-        parameters.anchorRectInRootView = protect(document->view())->contentsToRootView(renderer->absoluteBoundingBoxRect());
+        parameters.anchorRectInMainFrameView = protect(document->view())->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
     else
-        parameters.anchorRectInRootView = IntRect();
+        parameters.anchorRectInMainFrameView = IntRect();
     parameters.rootFrameID = document->view()->rootFrameID();
     parameters.currentValue = element->value();
 

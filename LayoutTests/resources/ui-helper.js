@@ -1519,6 +1519,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static dateTimePickerRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.dateTimePickerRect)", result => resolve(JSON.parse(result)));
+        });
+    }
+
     static dateTimePickerValue()
     {
         return new Promise(resolve => {
