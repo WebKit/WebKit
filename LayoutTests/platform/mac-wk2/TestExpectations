@@ -2466,9 +2466,6 @@ imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.htm
 
 webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-interruption.html [ Pass Failure ]
 
-# rdar://181715555 (REGRESSION(26A343b): [macOS 27] webrtc/h265.html is a constant TIMEOUT)
-[ GoldenGate ] webrtc/h265.html [ Timeout ]
-
 # rdar://183487942 ([macOS 27] fast/inline/blocks-in-inline-ax-invalid.html is a flaky test failure)
 [ GoldenGate ] fast/inline/blocks-in-inline-ax-invalid.html [ Pass ImageOnlyFailure ]
 
