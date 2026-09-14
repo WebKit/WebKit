@@ -1752,6 +1752,13 @@ void NetworkProcess::setOptInCookiePartitioningEnabled(PAL::SessionID sessionID,
 }
 #endif
 
+void NetworkProcess::setIPAddressSpaceOverridesForTesting(PAL::SessionID sessionID, String&& overrides, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->setIPAddressSpaceOverridesForTesting(overrides);
+    completionHandler();
+}
+
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, uint64_t requiredCookiesVersion)
 {
     auto url = request.url();
