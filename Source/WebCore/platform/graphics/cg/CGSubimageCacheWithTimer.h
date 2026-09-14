@@ -33,6 +33,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
@@ -71,8 +72,7 @@ public:
     struct CacheHash {
         static unsigned NODELETE hash(CGImageRef image, const FloatRect& rect)
         {
-            return pairIntHash(PtrHash<CGImageRef>::hash(image),
-                (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
+            return computeHash(image, rect.x(), rect.y(), rect.width(), rect.height());
         }
         static unsigned hash(const CacheEntry& key)
         {
