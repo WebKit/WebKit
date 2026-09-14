@@ -8,8 +8,9 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     # Preset values are not replayed on auto-reconfigure; if CMake's "compiler
     # changed" path wipes the cache, these silently revert. Stamp them outside
-    # the cache and refuse to proceed if any go missing.
-    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS WEBKIT_SDK_NAME CMAKE_OSX_SYSROOT)
+    # the cache and refuse to proceed if any go missing. Only values CMake
+    # cannot re-derive belong here; the SDK is re-resolved every configure.
+    set(WEBKIT_IDENTITY_VARS CMAKE_BUILD_TYPE PORT DEVELOPER_MODE ENABLE_SANITIZERS WEBKIT_SDK_NAME USE_APPLE_INTERNAL_SDK)
     set(_config_stamp "${CMAKE_BINARY_DIR}/.webkit-config-stamp")
     if (EXISTS "${_config_stamp}")
         file(STRINGS "${_config_stamp}" _stamp_lines)
@@ -17,6 +18,9 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
             if (_line MATCHES "^([^=]+)=(.*)$")
                 set(_var "${CMAKE_MATCH_1}")
                 set(_prev "${CMAKE_MATCH_2}")
+                if (NOT _var IN_LIST WEBKIT_IDENTITY_VARS)
+                    continue ()
+                endif ()
                 if (NOT DEFINED CACHE{${_var}})
                     message(FATAL_ERROR
                         "${_var} is not in the CMake cache, but this build directory was "
