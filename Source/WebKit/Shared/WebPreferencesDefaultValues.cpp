@@ -313,12 +313,7 @@ bool defaultPopoverAttributeEnabled()
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)
-#if PLATFORM(MAC)
-    static bool haveSufficientCores = WTF::numberOfPhysicalProcessorCores() >= 4;
-    return haveSufficientCores;
-#else
     return true;
-#endif
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
