@@ -397,8 +397,8 @@ imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ P
 imported/w3c/web-platform-tests/css/css-pseudo/selection-paint-image.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/target-text-dynamic-004.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shadow/stylesheet-title-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-nested-pseudo-class.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/intrinsic-size-005.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/parsing/aspect-ratio-invalid.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-sizing/slice-intrinsic-size.html [ Pass ]
@@ -5341,3 +5341,6 @@ webkit.org/b/324147 imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-p
 
 # Times out on the GLib ports (GTK/WPE): the PDF-in-iframe never fires its load event (no PDF viewer), so the test never completes. Passes on macOS.
 webkit.org/b/319150 imported/w3c/web-platform-tests/loading/early-hints/iframe-pdf.h2.window.html [ Skip ]
+
+# New test in the css/css-shadow import. Fails on GTK and WPE, passes on macOS.
+imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.html [ Failure ]

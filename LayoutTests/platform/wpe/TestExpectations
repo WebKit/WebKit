@@ -852,7 +852,7 @@ imported/w3c/web-platform-tests/css/css-overflow/clip-002.html [ ImageOnlyFailur
 imported/w3c/web-platform-tests/css/css-overflow/clip-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/clip-005.html [ ImageOnlyFailure ]
 
-webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
+webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-shadow/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
 
 fast/events/mouse-cursor-pseudo-elements.html [ Failure Pass ]
 

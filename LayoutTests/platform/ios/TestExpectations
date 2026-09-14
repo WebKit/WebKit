@@ -1077,7 +1077,7 @@ svg/text/foreignObject-repaint.xml [ Skip ]
 svg/text/select-text-svgfont.html [ Skip ]
 svg/text/selection-doubleclick.svg [ Skip ]
 svg/text/selection-tripleclick.svg [ Skip ]
-imported/w3c/web-platform-tests/css/css-shadow-parts/invalidation-part-pseudo.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-part-pseudo.html [ Skip ]
 
 # iOS has a different copy image behavior.
 http/tests/pasteboard/copy-image-from-context-menu.html [ Skip ]
@@ -8737,7 +8737,7 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-co
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss-touch-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-self-invoke.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-shadowhost-focus-navigation.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-scoping/hover-invalidates-slotted-descendant.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-shadow/hover-invalidates-slotted-descendant.html [ Skip ]
 
 # rdar://168334716 (MTLCompilerService crashes when Metal Shader Validation is enabled on iOS Simulator)
 webgl/webgl2-provoking-vertex-primitive-restart-uint16-nocrash.html [ Skip ]
@@ -9939,7 +9939,7 @@ compositing/animation/animation-backing.html [ Pass Failure ] # rdar://178546584
 
 http/wpt/mediastream/transfer-videotrackgenerator-track.html [ Pass Failure ] # rdar://178546599
 
-imported/w3c/web-platform-tests/css/css-shadow-parts/interaction-with-nested-pseudo-class.html [ Pass ImageOnlyFailure ] # rdar://178546619
+imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-nested-pseudo-class.html [ Pass ImageOnlyFailure ] # rdar://178546619
 
 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/modal-dialog-display-contents.html [ Pass ImageOnlyFailure ] # rdar://178546827
 

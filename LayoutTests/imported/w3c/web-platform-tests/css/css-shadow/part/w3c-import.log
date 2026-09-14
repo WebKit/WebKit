@@ -1,0 +1,78 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/all-hosts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/animation-part-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/animation-part-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/animation-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/both-part-and-exportparts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/chaining-invalid-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/complex-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/complex-non-matching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/different-host.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/double-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-different-scope-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-different-scope-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-different-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-layered-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-layered.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-layered.ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/grouping-with-checked.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/grouping-with-disabled.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/host-part-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/host-part-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/host-part-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/host-part-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/host-stylesheet.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/inner-host.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-nested-pseudo-class-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-nested-pseudo-class-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-nested-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-placeholder-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-placeholder-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-placeholder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/interaction-with-pseudo-elements.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-change-exportparts-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-change-part-name-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-change-part-name-idl-domtokenlist.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-change-part-name-idl-setter.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-change-part-name.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-complex-selector-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-complex-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/invalidation-part-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/multiple-parts.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/multiple-scopes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-after-combinator-invalidation-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-after-combinator-invalidation-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-after-combinator-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-mutation-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-name-idl.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-nested-pseudo-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-nested-pseudo-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/part-nested-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/precedence-part-vs-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-elements-after-part.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-forward-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-forward.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-important-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-important-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/simple.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-shadow/part/style-sharing.html
