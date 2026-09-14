@@ -41,14 +41,11 @@ void GraphicsLayerContentsDisplayDelegateCoordinated::setDisplayBuffer(std::uniq
     m_displayBuffer = WTF::move(displayBuffer);
 }
 
-bool GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatformLayer& layer, std::optional<Damage>&& dirtyRegion)
+void GraphicsLayerContentsDisplayDelegateCoordinated::display(CoordinatedPlatformLayer& layer, std::optional<Damage>&& dirtyRegion)
 {
     assertIsHeld(layer.lock());
-    if (!m_displayBuffer)
-        return false;
-
-    layer.setContentsBuffer(WTF::move(m_displayBuffer), WTF::move(dirtyRegion));
-    return true;
+    if (m_displayBuffer)
+        layer.setContentsBuffer(WTF::move(m_displayBuffer), WTF::move(dirtyRegion));
 }
 
 } // namespace WebCore
