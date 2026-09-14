@@ -8005,10 +8005,13 @@ void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier 
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
-    if (RefPtr automationSession = m_configuration->processPool().automationSession())
-        automationSession->didDestroyFrame(frameID);
+    // Disconnecting the frame reports it to the automation session first (WebFrameProxy::disconnect ->
+    // WebAutomationSession::willDestroyFrame), which needs the frame's handle and navigation state; only
+    // then may the session release them.
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         frame->disconnect();
+    if (RefPtr automationSession = m_configuration->processPool().automationSession())
+        automationSession->didDestroyFrame(frameID);
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
 #if PLATFORM(COCOA)
@@ -8557,10 +8560,9 @@ void WebPageProxy::didCancelClientRedirectForFrame(IPC::Connection& connection, 
 
     WEBPAGEPROXY_RELEASE_LOG(Loading, "didCancelClientRedirectForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
 
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->navigationAbortedForFrame(*frame, std::nullopt);
-#endif
+    // This is not reported to automation as a navigation abort: FrameLoader::clientRedirectCancelledOrFinished
+    // sends it whenever a client redirect's status changes, including when the redirect succeeds. A
+    // navigation interrupted by a redirect is reported when the redirect's own navigation starts.
 
     if (frame->isMainFrame())
         m_navigationClient->didCancelClientRedirect(*this);
@@ -8669,7 +8671,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
 #if ENABLE(WEBDRIVER_BIDI)
     if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
         if (RefPtr automationSession = activeAutomationSession())
-            automationSession->navigationFailedForFrame(frame, navigationID);
+            automationSession->navigationFailedForFrame(frame, navigationID, provisionalURL);
     }
 #endif
 
@@ -9520,10 +9522,9 @@ void WebPageProxy::didSameDocumentNavigationForFrame(IPC::Connection& connection
     frame->didSameDocumentNavigation(WTF::move(url));
 
     protectedPageLoadState->commitChanges();
-#if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
-        automationSession->fragmentNavigatedForFrame(*frame, navigationID);
-#endif
+    // Automation is not told here: FrameLoader::loadInSameDocument already reported this navigation
+    // through didSameDocumentNavigationForFrameViaJS, which carries its navigation, and a second
+    // report would emit a duplicate fragmentNavigated under the retained document's id.
 
     if (isMainFrame) {
         Ref process = WebProcessProxy::fromConnection(connection);
