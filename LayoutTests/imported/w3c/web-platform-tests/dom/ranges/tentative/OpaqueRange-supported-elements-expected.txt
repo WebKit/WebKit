@@ -1,0 +1,9 @@
+
+
+FAIL createValueRange should work on textarea. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL createValueRange should work on input[type=text]. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL createValueRange should work on input[type=search]. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL createValueRange should work on input[type=password]. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL createValueRange should work on input[type=url]. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+FAIL createValueRange should work on input[type=tel]. element.createValueRange is not a function. (In 'element.createValueRange(0, value.length)', 'element.createValueRange' is undefined)
+

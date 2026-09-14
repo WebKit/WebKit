@@ -1,0 +1,12 @@
+
+FAIL Historical DOM features must be removed: MutationEvent assert_false: expected false got true
+FAIL The DOMSubtreeModified mutation event must not be fired. assert_false: Event was fired expected false got true
+FAIL The DOMNodeInserted mutation event must not be fired. assert_false: Event was fired expected false got true
+FAIL The DOMNodeRemoved mutation event must not be fired. assert_false: Event was fired expected false got true
+FAIL The DOMNodeRemovedFromDocument mutation event must not be fired. assert_false: Event was fired expected false got true
+FAIL The DOMNodeInsertedIntoDocument mutation event must not be fired. assert_false: Event was fired expected false got true
+FAIL The DOMCharacterDataModified mutation event must not be fired. assert_false: Event was fired expected false got true
+PASS The DOMAttrModified mutation event must not be fired.
+PASS The DOMAttributeNameChanged mutation event must not be fired.
+PASS The DOMElementNameChanged mutation event must not be fired.
+

@@ -1,3 +1,0 @@
-
-PASS '*' should match the documentElement
-

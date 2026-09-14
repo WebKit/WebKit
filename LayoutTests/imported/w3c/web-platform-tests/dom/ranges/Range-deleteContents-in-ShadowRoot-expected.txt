@@ -1,0 +1,6 @@
+
+PASS Range.deleteContents() when "<div><shadow-root>{}</shadow-root></div>"
+PASS Range.deleteContents() when "<div><shadow-root>{<span>ABC</span>}</shadow-root></div>"
+PASS Range.deleteContents() when "<div><shadow-root>{<span>ABC</span>}<span>DEF</span></shadow-root></div>"
+PASS Range.deleteContents() when "<div><shadow-root><span>ABC</span>{<span>DEF</span>}</shadow-root></div>"
+

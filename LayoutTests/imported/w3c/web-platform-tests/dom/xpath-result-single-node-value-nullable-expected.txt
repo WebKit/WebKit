@@ -1,0 +1,3 @@
+
+PASS singleNodeValue should be nullable
+

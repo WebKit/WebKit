@@ -1,0 +1,15 @@
+
+
+FAIL Input live insertion/deletion adjustments el.createValueRange is not a function. (In 'el.createValueRange(1, 3)', 'el.createValueRange' is undefined)
+FAIL Textarea interior deletion & insertion adjustments el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Insertion inside expands width (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Deletion collapses geometry (input) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Shrink/grow end offset clamping (input) el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Tail deletion clamps end offset (input) el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Insertion inside expands width (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Deletion collapses geometry (textarea) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Shrink/grow end offset clamping (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Tail deletion clamps end offset (textarea) el.createValueRange is not a function. (In 'el.createValueRange(0, el.value.length)', 'el.createValueRange' is undefined)
+FAIL Deletion collapses selection (input explicit) el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+FAIL Insert newline via setRangeText expands geometry vertically el.createValueRange is not a function. (In 'el.createValueRange(1, 4)', 'el.createValueRange' is undefined)
+

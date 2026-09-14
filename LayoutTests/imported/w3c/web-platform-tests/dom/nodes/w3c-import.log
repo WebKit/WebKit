@@ -12,6 +12,8 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Attr-prefix-xhtml.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/Attr-prefix.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-appendChild.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-appendData.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/CharacterData-data.html
@@ -279,9 +281,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-hierarchy.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/pre-insertion-validation-notfound.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/prepend-on-Document.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/processing-instruction-attributes.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/productions.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/query-target-in-load-event.part.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/querySelector-empty-id.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/nodes/querySelector-id-nth-child.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/querySelector-mixed-case.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-and-adopt-thcrash.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/nodes/remove-from-shadow-host-and-adopt-into-iframe-expected.html

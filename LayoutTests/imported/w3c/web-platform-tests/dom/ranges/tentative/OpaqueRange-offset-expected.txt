@@ -1,0 +1,14 @@
+
+
+FAIL createValueRange with single character in textarea. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange with empty control in textarea. element.createValueRange is not a function. (In 'element.createValueRange(0, 0)', 'element.createValueRange' is undefined)
+FAIL createValueRange boundary positions in textarea. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange with Unicode characters in textarea. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange with single character in input. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange with empty control in input. element.createValueRange is not a function. (In 'element.createValueRange(0, 0)', 'element.createValueRange' is undefined)
+FAIL createValueRange boundary positions in input. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange with Unicode characters in input. element.createValueRange is not a function. (In 'element.createValueRange(start, end)', 'element.createValueRange' is undefined)
+FAIL createValueRange on textarea with whitespace in light DOM. textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, textarea.value.length)', 'textarea.createValueRange' is undefined)
+FAIL createValueRange works correctly with weirdly formed light DOM structure. textarea.createValueRange is not a function. (In 'textarea.createValueRange(0, textarea.value.length)', 'textarea.createValueRange' is undefined)
+FAIL createValueRange ignores malformed input child nodes. input.createValueRange is not a function. (In 'input.createValueRange(0, input.value.length)', 'input.createValueRange' is undefined)
+

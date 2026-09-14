@@ -42,4 +42,5 @@ PASS Teardowns should be called synchronously during addTeardown() if the subscr
 FAIL Multiple subscriptions share the same producer and teardown runs only after last subscription abort assert_equals: Producer should not be invoked again for second subscription expected 1 but got 2
 FAIL New subscription after complete creates new producer assert_array_equals: lengths differ, expected array ["producer start", "teardown"] length 2, got ["producer start", "producer start", "teardown"] length 3
 FAIL Teardown runs after last unsubscribe regardless of unsubscription order assert_equals: Producer should be invoked once expected 1 but got 3
+FAIL Subscriber iterates over a snapshot of its internal observers assert_array_equals: lengths differ, expected array ["1-first-sub", "2-first-sub", "2-second-sub"] length 3, got ["1-first-sub", "1-second-sub", "2-second-sub", "2-first-sub"] length 4
 
