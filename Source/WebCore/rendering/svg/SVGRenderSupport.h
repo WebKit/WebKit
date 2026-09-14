@@ -57,6 +57,12 @@ public:
     // Helper function determining wheter overflow is hidden
     static bool NODELETE isOverflowHidden(const RenderElement&);
 
+    // The box that 'objectBoundingBox' units resolve against for a renderer. This is the renderer's
+    // own object bounding box, except for text content child elements ('tspan', 'textPath', and 'a'
+    // inside a text content element), which resolve against the whole 'text' element.
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#ObjectBoundingBoxUnitsTextObjects
+    static FloatRect objectBoundingBoxForResources(const RenderObject&);
+
     // Applies filter/clipper/masker resource effects to a geometric bounding rect.
     // This is the preferred API for resource code (masks, gradients, clippers) that needs
     // to compute bounds for rendering. Unlike intersectRepaintRectWithResources(), this

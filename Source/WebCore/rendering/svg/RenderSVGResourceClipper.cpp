@@ -38,6 +38,7 @@
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGRenderSupport.h"
 #include "SVGUseElement.h"
 #include "SVGVisitedRendererTracking.h"
 #include "StyleComputedStyle.h"
@@ -294,7 +295,7 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
     SVGVisitedRendererTracking recursionTracking(s_visitedSet);
-    auto targetBoundingBox = object.objectBoundingBox();
+    auto targetBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(object);
     if (recursionTracking.isVisiting(*this))
         return targetBoundingBox;
 

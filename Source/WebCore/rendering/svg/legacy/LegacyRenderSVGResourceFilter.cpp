@@ -35,6 +35,7 @@
 #include "RenderElementInlines.h"
 #include "RenderObjectInlines.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -101,7 +102,7 @@ auto LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const
 
     Ref filterElement = this->filterElement();
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer.element());
-    auto targetBoundingBox = renderer.objectBoundingBox();
+    auto targetBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(renderer);
 
     auto filterRegion = SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), targetBoundingBox);
     if (filterRegion.isEmpty()) {
@@ -231,11 +232,11 @@ FloatRect LegacyRenderSVGResourceFilter::resourceBoundingBox(const RenderObject&
 
     CheckedPtr renderer = dynamicDowncast<RenderElement>(object);
     if (!renderer)
-        return SVGLengthContext::resolveRectangle(filterElement.get(), filterElement->filterUnits(), object.objectBoundingBox());
+        return SVGLengthContext::resolveRectangle(filterElement.get(), filterElement->filterUnits(), SVGRenderSupport::objectBoundingBoxForResources(object));
 
     RefPtr contextElement = dynamicDowncast<SVGElement>(renderer->element());
 
-    return SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), object.objectBoundingBox());
+    return SVGLengthContext::resolveRectangle(contextElement.get(), filterElement.get(), filterElement->filterUnits(), SVGRenderSupport::objectBoundingBoxForResources(object));
 }
 
 void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
