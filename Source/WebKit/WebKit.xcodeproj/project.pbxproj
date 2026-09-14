@@ -2507,7 +2507,6 @@
 		E326F4DC2CA6C44F00182187 /* LogStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = E326F4DA2CA6C44F00182187 /* LogStream.mm */; };
 		E326F4DD2CA6C44F00182187 /* LogStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E326F4D92CA6C44F00182187 /* LogStream.h */; };
 		E3301EE32F48C85500796190 /* WKNavigationPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = E3301EE22F48C84E00796190 /* WKNavigationPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E331D424304B85F80075E6CA /* ShouldFreezeLayerTree.h in Headers */ = {isa = PBXBuildFile; fileRef = E331D423304B85F80075E6CA /* ShouldFreezeLayerTree.h */; };
 		E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */; };
 		E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */; };
 		E34DAD3A2B753FA700FABEE2 /* ExtensionProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E34DAD382B753FA700FABEE2 /* ExtensionProcess.h */; };
@@ -8786,7 +8785,6 @@
 		E326F4D92CA6C44F00182187 /* LogStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogStream.h; sourceTree = "<group>"; };
 		E326F4DA2CA6C44F00182187 /* LogStream.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LogStream.mm; sourceTree = "<group>"; };
 		E3301EE22F48C84E00796190 /* WKNavigationPrivateForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKNavigationPrivateForTesting.h; sourceTree = "<group>"; };
-		E331D423304B85F80075E6CA /* ShouldFreezeLayerTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShouldFreezeLayerTree.h; sourceTree = "<group>"; };
 		E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UseDownloadPlaceholder.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10649,7 +10647,6 @@
 				8313F7E71F7DAE0300B944EB /* SharedStringHashTable.h */,
 				83F9644B1FA0F76200C47750 /* SharedStringHashTableReadOnly.cpp */,
 				83F9644C1FA0F76300C47750 /* SharedStringHashTableReadOnly.h */,
-				E331D423304B85F80075E6CA /* ShouldFreezeLayerTree.h */,
 				932CA81B283C35EB00C20BEB /* StorageAreaIdentifier.h */,
 				7B50E9812771F6CF003DAAC5 /* TestParameter.h */,
 				07E2C0782C13FC0100BE6743 /* TextAnimationTypes.serialization.in */,
@@ -19002,7 +18999,6 @@
 				8313F7EC1F7DAE0800B944EB /* SharedStringHashStore.h in Headers */,
 				8313F7EE1F7DAE0800B944EB /* SharedStringHashTable.h in Headers */,
 				83F9644E1FA0F76E00C47750 /* SharedStringHashTableReadOnly.h in Headers */,
-				E331D424304B85F80075E6CA /* ShouldFreezeLayerTree.h in Headers */,
 				7A41E9FB21F81DAD00B88CDB /* ShouldGrandfatherStatistics.h in Headers */,
 				995226D6207D184600F78420 /* SimulatedInputDispatcher.h in Headers */,
 				2DAF06D618BD1A470081CEB1 /* SmartMagnificationController.h in Headers */,
