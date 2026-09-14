@@ -80,10 +80,9 @@ void RemoteMesh::setLabel(String&& label)
     m_backing->setLabel(WTF::move(label));
 }
 
-void RemoteMesh::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptor, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMesh::update(Vector<WebModel::UpdateMeshDescriptor>&& descriptor)
 {
     m_backing->update(WTF::move(descriptor));
-    completionHandler(true);
 }
 
 void RemoteMesh::render(uint32_t textureIndex, CompletionHandler<void(bool)>&& completionHandler)
@@ -96,16 +95,14 @@ void RemoteMesh::render(uint32_t textureIndex, CompletionHandler<void(bool)>&& c
     });
 }
 
-void RemoteMesh::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& descriptor, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMesh::updateTexture(Vector<WebModel::UpdateTextureDescriptor>&& descriptor)
 {
     m_backing->updateTexture(WTF::move(descriptor));
-    completionHandler(true);
 }
 
-void RemoteMesh::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&& descriptor, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMesh::updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&& descriptor)
 {
     m_backing->updateMaterial(WTF::move(descriptor));
-    completionHandler(true);
 }
 
 void RemoteMesh::updateTransform(const WebModel::Float4x4& transform)

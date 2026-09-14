@@ -506,8 +506,11 @@ static Vector<WebModel::MeshPart> convert(NSArray<WKBridgeMeshPart *> *parts)
     return result;
 }
 
-static WebModel::MeshDescriptor convert(WKBridgeMeshDescriptor *descriptor)
+static std::optional<WebModel::MeshDescriptor> convert(WKBridgeMeshDescriptor *descriptor)
 {
+    if (!descriptor)
+        return std::nullopt;
+
     return WebModel::MeshDescriptor {
         .vertexBufferCount = descriptor.vertexBufferCount,
         .vertexCapacity = descriptor.vertexCapacity,
@@ -877,7 +880,6 @@ static WebModel::UpdateMeshDescriptor convert(WKBridgeUpdateMesh *update)
 {
     return WebModel::UpdateMeshDescriptor {
         .identifier = convert(update.identifier),
-        .updateType = static_cast<uint8_t>(update.updateType),
         .descriptor = convert(update.descriptor),
         .parts = convert(update.parts),
         .indexData = makeVector(update.indexData),
