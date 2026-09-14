@@ -222,7 +222,7 @@ private:
     void holdOff(Seconds);
 
     MemoryPressureHandler();
-    ~MemoryPressureHandler() = delete;
+    ~MemoryPressureHandler() = default;
 
     void didExceedProcessMemoryLimit(ProcessMemoryLimit);
     void respondToMemoryPressure(Critical, Synchronous = Synchronous::No);
