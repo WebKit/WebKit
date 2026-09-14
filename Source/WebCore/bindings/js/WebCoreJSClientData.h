@@ -25,6 +25,7 @@
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
 #include "WorkerThreadType.h"
+#include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -188,6 +189,8 @@ public:
 
     ExtendedDOMClientIsoSubspaces& clientSubspaces() LIFETIME_BOUND { return m_clientSubspaces; }
 
+    JSC::WeakGCMap<JSHandleIdentifier, JSDOMGlobalObject>& jsHandleGlobalObjects() LIFETIME_BOUND { return m_jsHandleGlobalObjects; }
+
     void addClient(JSVMClientDataClient& client) { m_clients.add(client); }
 
 private:
@@ -220,6 +223,8 @@ private:
     JSC::GCClient::IsoSubspace m_idbSerializationSpace;
 
     const UniqueRef<ExtendedDOMClientIsoSubspaces> m_clientSubspaces;
+
+    JSC::WeakGCMap<JSHandleIdentifier, JSDOMGlobalObject> m_jsHandleGlobalObjects;
 
     WeakHashSet<JSVMClientDataClient> m_clients;
 };
