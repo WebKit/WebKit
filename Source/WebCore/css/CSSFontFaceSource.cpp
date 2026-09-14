@@ -195,14 +195,14 @@ void CSSFontFaceSource::load(DownloadableBinaryFontTrustedTypes trustedTypes, Do
             m_immediateFontCustomPlatformData = loadCustomFont(buffer.get(), trustedTypes);
             success = static_cast<bool>(m_immediateFontCustomPlatformData);
         } else {
-            // We are only interested in whether or not fontForFamily() returns null or not. Luckily, none of
+            // We are only interested in whether or not localFontForFace() returns null or not. Luckily, none of
             // the values in the FontDescription other than the family name can cause the function to return
             // null if it wasn't going to otherwise (and vice-versa).
             FontCascadeDescription fontDescription;
             fontDescription.setOneFamily(m_fontFaceName);
             fontDescription.setUsedSize(1);
             fontDescription.setShouldAllowUserInstalledFonts(cssFontFace().allowUserInstalledFonts());
-            success = protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, m_fontFaceName, { }, FontLookupOptions::ExactFamilyNameMatch);
+            success = protect(FontCache::forCurrentThread())->localFontForFace(fontDescription, m_fontFaceName, { }, FontLookupOptions::ExactFamilyNameMatch);
             if (document && document->settings().webAPIStatisticsEnabled())
                 ResourceLoadObserver::singleton().logFontLoad(*document, m_fontFaceName.string(), success);
         }
@@ -230,7 +230,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
             options.add(FontLookupOptions::DisallowBoldSynthesis);
         if (!syntheticItalic)
             options.add(FontLookupOptions::DisallowObliqueSynthesis);
-        return protect(FontCache::forCurrentThread())->fontForFamily(fontDescription, m_fontFaceName, fontCreationContext, options);
+        return protect(FontCache::forCurrentThread())->localFontForFace(fontDescription, m_fontFaceName, fontCreationContext, options);
     }
 
     if (m_fontRequest) {
