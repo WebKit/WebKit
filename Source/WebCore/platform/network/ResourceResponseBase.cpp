@@ -921,7 +921,7 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
         m_wasPrivateRelayed,
         String { m_proxyName },
         m_isRangeRequested,
-        m_certificateInfo,
+        std::optional<CertificateInfo> { m_certificateInfo },
         m_ipAddressSpace
     } };
 }
