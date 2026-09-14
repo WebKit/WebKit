@@ -62,10 +62,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/LegacySessionStateCodingNone.cpp
     UIProcess/WebGrammarDetail.cpp
     UIProcess/WebMemoryPressureHandler.cpp
-    UIProcess/WebViewportAttributes.cpp
 
     UIProcess/API/C/WKUserScriptRef.cpp
-    UIProcess/API/C/WKViewportAttributes.cpp
 
     UIProcess/API/C/playstation/WKContextConfigurationPlayStation.cpp
     UIProcess/API/C/playstation/WKPagePrivatePlayStation.cpp
