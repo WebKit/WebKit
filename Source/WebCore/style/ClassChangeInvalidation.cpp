@@ -101,7 +101,15 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
                 mayAffectStyleInShadowTree = true;
             if (features.classesAffectingHost.contains(classChange.className))
                 shouldInvalidateCurrent = true;
+            for (auto& prefix : features.classPrefixesAffectingHost) {
+                if (SpaceSplitString::classNameMatchesPrefix(AtomString { classChange.className }, prefix))
+                    shouldInvalidateCurrent = true;
+            }
         }
+        // Class prefix rules can't be looked up by the exact changed class name, so conservatively
+        // treat any class change as possibly affecting the shadow tree when such rules exist.
+        if (mayAffectShadowTree && !classChanges.isEmpty() && !features.classPrefixRules.isEmpty())
+            mayAffectStyleInShadowTree = true;
     });
 
     if (mayAffectStyleInShadowTree) {
@@ -165,6 +173,42 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     if (RefPtr shadowRoot = m_element->shadowRoot())
         collect(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Relation::Host);
+
+    // Class prefix (`.foo-*`) rules aren't indexed by exact class name, so they're matched here by
+    // comparing whole before/after class lists against each rule's prefix, mirroring how attribute
+    // selector invalidation re-evaluates the selector rather than relying on a value-keyed lookup.
+    auto collectClassPrefixRules = [&](auto& ruleSets, std::optional<MatchElement::Relation> onlyRelation = { }) {
+        for (auto& invalidationRuleSet : ruleSets.classPrefixInvalidationRuleSets()) {
+            if (onlyRelation && invalidationRuleSet.matchElement.relation != onlyRelation)
+                continue;
+
+            if (invalidateBeforeAndAfterChange(invalidationRuleSet)) {
+                Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+                continue;
+            }
+
+            for (auto& selector : invalidationRuleSet.invalidationSelectors) {
+                ASSERT(selector.match() == CSSSelector::Match::ClassPrefix);
+                bool oldMatches = oldClasses.containsClassPrefix(selector.value());
+                bool newMatches = newClasses.containsClassPrefix(selector.value());
+                if (oldMatches == newMatches)
+                    continue;
+
+                bool shouldInvalidateBeforeChange = invalidationRuleSet.isNegation == IsNegation::Yes ? newMatches : oldMatches;
+                if (shouldInvalidateBeforeChange)
+                    Invalidator::addToMatchElementRuleSets(m_beforeChangeRuleSets, invalidationRuleSet);
+                else
+                    Invalidator::addToMatchElementRuleSets(m_afterChangeRuleSets, invalidationRuleSet);
+                break;
+            }
+        }
+    };
+
+    collectClassPrefixRules(m_element->styleResolver().ruleSets());
+
+    if (RefPtr shadowRoot = m_element->shadowRoot())
+        collectClassPrefixRules(shadowRoot->styleScope().resolver().ruleSets(), MatchElement::Relation::Host);
 }
 
 void ClassChangeInvalidation::invalidateBeforeChange()
