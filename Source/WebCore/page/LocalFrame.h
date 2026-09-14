@@ -50,9 +50,13 @@ typedef struct HBITMAP__* HBITMAP;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
-namespace JSC { namespace Yarr {
+namespace JSC {
+class Debugger;
+
+namespace Yarr {
 class RegularExpression;
-} }
+}
+} // namespace JSC
 
 namespace WTF {
 class TextStream;
@@ -368,6 +372,9 @@ public:
     const FrameInspectorController& inspectorController() const { return m_inspectorController.get(); }
     FrameConsoleClient& console() { return m_consoleClient.get(); }
     const FrameConsoleClient& console() const { return m_consoleClient.get(); }
+
+    // The debugger to attach to this frame's global objects.
+    WEBCORE_EXPORT JSC::Debugger* debugger() const LIFETIME_BOUND;
 
 protected:
     void frameWasDisconnectedFromOwner() const final;

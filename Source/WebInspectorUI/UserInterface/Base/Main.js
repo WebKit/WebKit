@@ -3209,9 +3209,10 @@ WI.assumingMainTarget = function()
     return WI.mainTarget;
 };
 
-// Site Isolation runs cross-origin iframes in separate WebContent processes, each surfaced to the
-// frontend as its own WI.FrameTarget (rather than a WI.Frame in the page tree). The presence of any
-// FrameTarget is therefore the signal that Site Isolation is active for this inspection.
+// FIXME: Rename this: a WI.FrameTarget now exists for every frame of every inspection, whether or not
+// Site Isolation is enabled, so this really reports "frame targets are in use". Consumers that need
+// Site Isolation itself (cross-origin iframes running in their own WebContent process) can no longer
+// rely on it.
 WI.isSiteIsolationEnabled = function()
 {
     return WI.targets.some((target) => target instanceof WI.FrameTarget);

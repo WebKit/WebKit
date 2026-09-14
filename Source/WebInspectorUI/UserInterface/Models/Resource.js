@@ -893,7 +893,7 @@ WI.Resource = class Resource extends WI.SourceCode
                 // Under Site Isolation the backend target's Network agent owns the response data for
                 // cross-process requestIds that the resource's own target can't resolve; route there.
                 // Gated on enabledNetworkForSiteIsolation rather than hasDomain("Network") alone, which
-                // is statically true on the backend target even when no Network agent is enabled on it.
+                // is statically true on the backend target even when its Network agent is inert.
                 let networkTarget = this._target;
                 if (WI.networkManager.enabledNetworkForSiteIsolation && WI.backendTarget && WI.backendTarget !== this._target && WI.backendTarget.hasDomain("Network"))
                     networkTarget = WI.backendTarget;
@@ -907,9 +907,9 @@ WI.Resource = class Resource extends WI.SourceCode
                 // the in-process InspectorPageAgent, which only resolves LocalFrames and would fail
                 // assertFrame() for the remote child. WI.backendTarget's PageAgent is the UIProcess
                 // ProxyingPageAgent, which routes getResourceContent to the frame's hosting process.
-                // Without Site Isolation WI.backendTarget has no PageAgent at all, so this is unchanged.
-                // Can't use hasCommand("Page.getResourceContent") here: that only reflects the static
-                // protocol, which declares the command regardless of whether SI is actually on.
+                // Without Site Isolation that agent is inert and the page target still owns the Page
+                // domain, so this is unchanged. Can't use hasCommand("Page.getResourceContent") here:
+                // that only reflects the static protocol, which declares the command regardless.
                 let contentTarget = WI.backendTarget && WI.networkManager.enabledPageForSiteIsolation ? WI.backendTarget : this._target;
                 return contentTarget.PageAgent.getResourceContent(this._parentFrame.id, this._url);
             }

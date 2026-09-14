@@ -60,11 +60,30 @@ void InspectorScriptProfilerAgent::willDestroyFrontendAndBackend(DisconnectReaso
     if (m_tracking) {
         m_tracking = false;
         m_activeEvaluateScript = false;
-        protect(m_environment)->debugger()->setProfilingClient(nullptr);
+        setProfilingClientOnCoveredDebuggers(false);
 
         // Stop sampling without processing the samples.
         stopSamplingWhenDisconnecting();
     }
+}
+
+// A single profiling client is shared by every debugger the environment covers, so nested
+// evaluation across those debuggers is not double-counted.
+void InspectorScriptProfilerAgent::setProfilingClientOnCoveredDebuggers(bool install)
+{
+    protect(m_environment)->forEachDebugger([&](JSC::Debugger& debugger) {
+        // Avoid tripping Debugger::setProfilingClient's 1:1 assertion if the covered set changed.
+        if (debugger.hasProfilingClient() != install)
+            debugger.setProfilingClient(install ? this : nullptr);
+    });
+}
+
+void InspectorScriptProfilerAgent::installProfilingClientIfTracking(JSC::Debugger& debugger)
+{
+    if (!m_tracking || debugger.hasProfilingClient())
+        return;
+
+    debugger.setProfilingClient(this);
 }
 
 Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(std::optional<bool>&& includeSamples)
@@ -91,7 +110,7 @@ Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::startTracking(std::o
     UNUSED_PARAM(includeSamples);
 #endif // ENABLE(SAMPLING_PROFILER)
 
-    protect(m_environment)->debugger()->setProfilingClient(this);
+    setProfilingClientOnCoveredDebuggers(true);
 
     m_frontendDispatcher->trackingStart(stopwatch.elapsedTime().seconds());
 
@@ -106,7 +125,7 @@ Protocol::ErrorStringOr<void> InspectorScriptProfilerAgent::stopTracking()
     m_tracking = false;
     m_activeEvaluateScript = false;
 
-    protect(m_environment)->debugger()->setProfilingClient(nullptr);
+    setProfilingClientOnCoveredDebuggers(false);
 
     trackingComplete();
 

@@ -94,13 +94,13 @@ function test()
             await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.NodeRemoved);
 
             InspectorTest.log("Disabling all breakpoints...");
-            await DebuggerAgent.setBreakpointsActive(false);
+            await InspectorTest.mainFrameTarget.DebuggerAgent.setBreakpointsActive(false);
 
             InspectorTest.log("Triggering breakpoint...");
             await InspectorTest.evaluateInPage(`testNodeRemovedDirect()`);
 
             InspectorTest.log("Enabling all breakpoints...");
-            await DebuggerAgent.setBreakpointsActive(true);
+            await InspectorTest.mainFrameTarget.DebuggerAgent.setBreakpointsActive(true);
 
             InspectorTest.expectFalse(paused, "Should not pause when all breakpoints disabled.");
             WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);

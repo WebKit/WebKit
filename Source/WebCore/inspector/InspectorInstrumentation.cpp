@@ -439,16 +439,16 @@ void InspectorInstrumentation::characterDataModifiedImpl(InstrumentingAgents& in
         domAgent->characterDataModified(characterData);
 }
 
-void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& instrumentingAgents, const String& url)
+void InspectorInstrumentation::willSendXMLHttpRequestImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, const String& url)
 {
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendXMLHttpRequest(url);
+        domDebuggerAgent->willSendXMLHttpRequest(context, url);
 }
 
-void InspectorInstrumentation::willFetchImpl(InstrumentingAgents& instrumentingAgents, const String& url)
+void InspectorInstrumentation::willFetchImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, const String& url)
 {
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willFetch(url);
+        domDebuggerAgent->willFetch(context, url);
 }
 
 void InspectorInstrumentation::didInstallTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext& context)
@@ -602,22 +602,22 @@ void InspectorInstrumentation::didEvaluateScriptImpl(InstrumentingAgents& instru
         timelineAgent->didEvaluateScript();
 }
 
-void InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, bool oneShot)
+void InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willFireTimer(oneShot);
+        domDebuggerAgent->willFireTimer(context, oneShot);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willFireTimer(timerId);
 }
 
-void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents, int timerId, bool oneShot)
+void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::DOMTimer, timerId);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->didFireTimer(oneShot);
+        domDebuggerAgent->didFireTimer(context, oneShot);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didFireTimer();
 }
@@ -730,24 +730,24 @@ void InspectorInstrumentation::flexibleBoxRendererWrappedToNextLineImpl(Instrume
         domAgent->flexibleBoxRendererWrappedToNextLine(renderer, lineStartItemIndex);
 }
 
-void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
+void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents& instrumentingAgents, LocalFrame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
         networkProxy->willSendRequest(identifier, loader, request, redirectResponse, cachedResource, resourceLoader);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendRequest(request);
+        domDebuggerAgent->willSendRequest(frame, request);
 }
 
-void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
+void InspectorInstrumentation::willSendRequestOfTypeImpl(InstrumentingAgents& instrumentingAgents, LocalFrame* frame, ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, Inspector::UncachedLoadType loadType)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->willSendRequestOfType(identifier, loader, request, loadType);
     if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
         networkProxy->willSendRequestOfType(identifier, loader, request, loadType);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willSendRequestOfType(request);
+        domDebuggerAgent->willSendRequestOfType(frame, request);
 }
 
 void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingAgents& instrumentingAgents, DocumentLoader* loader, CachedResource* cachedResource)
@@ -1511,22 +1511,22 @@ void InspectorInstrumentation::didCancelAnimationFrameImpl(InstrumentingAgents& 
         timelineAgent->didCancelAnimationFrame(callbackId);
 }
 
-void InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId)
+void InspectorInstrumentation::willFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, int callbackId)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->willFireAnimationFrame(callbackId);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willFireAnimationFrame();
+        domDebuggerAgent->willFireAnimationFrame(context);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->willFireAnimationFrame(callbackId);
 }
 
-void InspectorInstrumentation::didFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId)
+void InspectorInstrumentation::didFireAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, int callbackId)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didFireAnimationFrame(callbackId);
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->didFireAnimationFrame();
+        domDebuggerAgent->didFireAnimationFrame(context);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didFireAnimationFrame();
 }
