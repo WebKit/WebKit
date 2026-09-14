@@ -629,21 +629,24 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
 }
 
 // Initial priority information only for the Web Inspector
-ResourceLoadPriority ResourceRequestBase::initialPriority() const
+std::optional<ResourceLoadPriority> ResourceRequestBase::initialPriority() const
 {
     updateResourceRequest();
 
     return m_requestData.m_initialPriority;
 }
 
-void ResourceRequestBase::setInitialPriority(ResourceLoadPriority priority)
+void ResourceRequestBase::setInitialPriority(std::optional<ResourceLoadPriority> priority)
 {
-    updateResourceRequest();
-
-    if (m_requestData.m_initialPriority == priority)
+    if (!priority.has_value())
         return;
 
-    m_requestData.m_initialPriority = priority;
+    updateResourceRequest();
+
+    if (m_requestData.m_initialPriority.has_value() && *m_requestData.m_initialPriority == *priority)
+        return;
+
+    m_requestData.m_initialPriority = *priority;
 
     m_platformRequestUpdated = false;
 }

@@ -126,21 +126,23 @@ NetworkResourcesData::~NetworkResourcesData()
     clear();
 }
 
-void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType type)
+void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType type, CachedResource::Type resourceType)
 {
     ensureNoDataForRequestId(requestId);
 
     auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setType(type);
+    resourceData->setRequestResourceType(resourceType);
     m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
-void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, CachedResource& cachedResource)
+void NetworkResourcesData::resourceCreated(const String& requestId, const String& loaderId, CachedResource& cachedResource, CachedResource::Type resourceType)
 {
     ensureNoDataForRequestId(requestId);
 
     auto resourceData = makeUnique<ResourceData>(requestId, loaderId);
     resourceData->setCachedResource(&cachedResource);
+    resourceData->setRequestResourceType(resourceType);
     m_requestIdToResourceDataMap.set(requestId, WTF::move(resourceData));
 }
 
@@ -166,6 +168,14 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
         if (auto& certificateInfo = response.certificateInfo())
             resourceData->setCertificateInfo(certificateInfo);
     }
+}
+
+void NetworkResourcesData::setRequestResourceType(const String& requestId, CachedResource::Type resourceRequestType)
+{
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
+    if (!resourceData)
+        return;
+    resourceData->setRequestResourceType(resourceRequestType);
 }
 
 void NetworkResourcesData::setResourceType(const String& requestId, Inspector::ResourceType type)

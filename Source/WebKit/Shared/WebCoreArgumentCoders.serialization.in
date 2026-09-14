@@ -1148,7 +1148,7 @@ header: <WebCore/ResourceRequest.h>
     WebCore::ResourceRequestCachePolicy m_cachePolicy;
     WebCore::ResourceRequestBase::SameSiteDisposition m_sameSiteDisposition;
     WebCore::ResourceLoadPriority m_priority;
-    WebCore::ResourceLoadPriority m_initialPriority;
+    std::optional<WebCore::ResourceLoadPriority> m_initialPriority;
     WebCore::ResourceRequestRequester m_requester;
     [BitField] bool m_allowCookies;
     [BitField] bool m_isTopSite;
@@ -5581,7 +5581,7 @@ class WebCore::NetworkLoadMetrics {
 header: <WebCore/NetworkLoadMetrics.h>
 [RefCounted, CustomHeader] struct WebCore::AdditionalNetworkLoadMetricsForWebInspector {
     WebCore::NetworkLoadPriority priority;
-    WebCore::ResourceLoadPriority initialPriority;
+    std::optional<WebCore::ResourceLoadPriority> initialPriority;
     String remoteAddress;
     String connectionIdentifier;
     String tlsProtocol;

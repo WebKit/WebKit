@@ -759,6 +759,7 @@ ResourceRequest SWServer::createScriptRequest(const URL& url, const ServiceWorke
     request.setHTTPReferrer(SecurityPolicy::referrerToOriginString(jobData.scriptURL));
     request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
     request.setPriority(ResourceLoadPriority::Low);
+    request.setInitialPriority(ResourceLoadPriority::Low);
     request.setIsAppInitiated(registration.isAppInitiated());
 
     if (isMainScript == IsMainScript::Yes) {

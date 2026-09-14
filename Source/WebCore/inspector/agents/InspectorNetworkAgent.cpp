@@ -187,8 +187,10 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
-
+        if (additionalMetrics->initialPriority.has_value())
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority.value()));
+        else
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
@@ -380,7 +382,7 @@ double InspectorNetworkAgent::timestamp()
     return protect(environment())->executionStopwatch().elapsedTime().seconds();
 }
 
-void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, Inspector::ResourceType type, ResourceLoader* resourceLoader)
+void InspectorNetworkAgent::willSendRequestInternal(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, Inspector::ResourceType type, ResourceLoader* resourceLoader, CachedResource::Type resourceType)
 {
     if (request.hiddenFromInspector()) {
         m_hiddenRequestIdentifiers.add(identifier);
@@ -396,7 +398,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     String targetId = request.initiatorIdentifier();
 
 
-    m_resourcesData->resourceCreated(requestId, loaderId, type);
+    m_resourcesData->resourceCreated(requestId, loaderId, type, resourceType);
 
     for (auto& entry : m_extraRequestHeaders)
         request.setHTTPHeaderField(entry.key, entry.value);
@@ -434,6 +436,30 @@ static ResourceType resourceTypeForLoadType(UncachedLoadType loadType)
     return ResourceType::Other;
 }
 
+static CachedResource::Type inferCachedResourceType(const ResourceRequest& request, const CachedResource* cachedResource)
+{
+    if (cachedResource)
+        return cachedResource->type();
+
+    switch (request.requester()) {
+    case ResourceRequestRequester::XHR:
+    case ResourceRequestRequester::Fetch:
+        return CachedResource::Type::RawResource;
+    case ResourceRequestRequester::Media:
+        return CachedResource::Type::MediaResource;
+    case ResourceRequestRequester::Main:
+        return CachedResource::Type::MainResource;
+    case WebCore::ResourceRequestRequester::Ping:
+        return CachedResource::Type::Ping;
+    case WebCore::ResourceRequestRequester::Beacon:
+        return CachedResource::Type::Beacon;
+    default:
+        break;
+    }
+
+    return CachedResource::Type::RawResource;
+}
+
 void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
     Inspector::ResourceType type = ResourceType::Other;
@@ -459,12 +485,55 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
             updatedCachedResource = cachedResource;
         type = resourceTypeForCachedResource(updatedCachedResource);
     }
-    willSendRequest(identifier, loader, request, redirectResponse, type, resourceLoader);
+
+    CachedResource::Type resourceType = inferCachedResourceType(request, cachedResource);
+
+    willSendRequestInternal(identifier, loader, request, redirectResponse, type, resourceLoader, resourceType);
 }
 
 void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, UncachedLoadType loadType)
 {
-    willSendRequest(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType), nullptr);
+    CachedResource::Type requestType = CachedResource::Type::RawResource;
+    if (loadType == UncachedLoadType::Ping)
+        requestType = CachedResource::Type::Ping;
+    else if (loadType == UncachedLoadType::Beacon)
+        requestType = CachedResource::Type::Beacon;
+
+    willSendRequestInternal(identifier, loader, request, ResourceResponse(), resourceTypeForLoadType(loadType), nullptr, requestType);
+}
+
+void InspectorNetworkAgent::setRequestResourceType(const ResourceResponse& response, String requestId, const CachedResource* cachedResource)
+{
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+    NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
+
+    // May already be set
+    if (resourceData)
+        resourceRequestType = resourceData->requestResourceType();
+
+    if (resourceRequestType == CachedResource::Type::RawResource) {
+        String mimeType = response.mimeType();
+        if (mimeType.isEmpty() && cachedResource)
+            mimeType = cachedResource->response().mimeType();
+
+        // Try to find the true value
+        if (!mimeType.isEmpty()) {
+            if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::ImageResource;
+            else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::Script;
+            else if (MIMETypeRegistry::isSupportedJSONMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::JSON;
+            else if (MIMETypeRegistry::isSupportedStyleSheetMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::CSSStyleSheet;
+            else if (MIMETypeRegistry::isSupportedFontMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::FontResource;
+            else if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType))
+                resourceRequestType = CachedResource::Type::MediaResource;
+
+            m_resourcesData->setRequestResourceType(requestId, resourceRequestType);
+        }
+    }
 }
 
 void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
@@ -501,6 +570,8 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
             resourceResponse->setString("mimeType"_s, cachedResource->response().mimeType());
         m_resourcesData->addCachedResource(requestId, cachedResource);
     }
+
+    setRequestResourceType(response, requestId, cachedResource);
 
     Inspector::ResourceType type = m_resourcesData->resourceType(requestId);
     Inspector::ResourceType newType = cachedResource ? ResourceUtilities::inspectorResourceType(*cachedResource) : type;
@@ -583,9 +654,11 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
     CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
-    if (resourceData && resourceData->cachedResource()) {
-        sourceMappingURL = ResourceUtilities::sourceMapURLForResource(protect(resourceData->cachedResource()));
-        resourceRequestType = resourceData->cachedResource()->type();
+    if (resourceData) {
+        resourceRequestType = resourceData->requestResourceType();
+
+        if (resourceData->cachedResource())
+            sourceMappingURL = ResourceUtilities::sourceMapURLForResource(protect(resourceData->cachedResource()));
     }
 
     std::optional<NetworkLoadMetrics> realMetrics;
@@ -630,7 +703,7 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
     Inspector::Protocol::Network::LoaderId loaderId = loaderIdentifier(loader);
     Inspector::Protocol::Network::FrameId frameId = frameIdentifier(loader);
 
-    m_resourcesData->resourceCreated(requestId, loaderId, resource);
+    m_resourcesData->resourceCreated(requestId, loaderId, resource, resource.type());
 
     auto initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : nullptr, &protect(resource)->resourceRequest());
 
