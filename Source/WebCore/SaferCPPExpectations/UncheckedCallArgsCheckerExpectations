@@ -238,7 +238,6 @@ page/MemoryRelease.cpp
 page/PageSerializer.cpp
 page/Performance.cpp
 page/PerformanceMonitor.cpp
-[ iOS ] page/Quirks.cpp
 page/ResizeObserver.cpp
 page/SettingsBase.cpp
 page/SpatialNavigation.cpp

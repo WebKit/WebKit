@@ -13,4 +13,5 @@ rendering/GridLanesLayout.cpp
 rendering/RenderGeometryMap.cpp
 rendering/StyledMarkedText.cpp
 rendering/TextDecorationPainter.cpp
+svg/animation/SMILTimeContainer.cpp
 testing/Internals.cpp

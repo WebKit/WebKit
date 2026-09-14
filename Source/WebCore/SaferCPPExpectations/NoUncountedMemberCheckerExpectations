@@ -9,6 +9,7 @@ css/CSSStyleProperties.h
 css/CSSValueList.h
 css/SelectorChecker.h
 css/SelectorFilter.h
+css/ShorthandSerializer.cpp
 css/StyleProperties.h
 css/StyleRuleImport.h
 css/StyleSheetContents.h

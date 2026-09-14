@@ -1,2 +1,3 @@
 [ macOS ] Buffer.mm
 [ macOS ] HardwareCapabilities.mm
+WGSL/Metal/MetalFunctionWriter.cpp
