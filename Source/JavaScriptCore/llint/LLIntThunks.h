@@ -101,7 +101,6 @@ MacroAssemblerCodeRef<ExceptionHandlerPtrTag> handleCatchThunk(OpcodeSize);
 
 #if ENABLE(JIT_CAGE)
 MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCagePtrThunk();
-MacroAssemblerCodeRef<NativeToJITGatePtrTag> jitCageProbeThunk();
 #endif
 
 #if CPU(ARM64E)

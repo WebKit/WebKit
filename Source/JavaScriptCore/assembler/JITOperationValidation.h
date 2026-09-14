@@ -57,14 +57,6 @@ namespace JSC {
 #define JIT_OPERATION_VALIDATION_FUNCTOR Functor
 #endif
 
-#ifndef JSC_JIT_CAGE_PROBE
-#define JSC_JIT_CAGE_PROBE(v) do { (void)x; } while (0)
-#endif
-
-#ifndef JSC_JIT_CAGE_PROBE_IMPL
-#define JSC_JIT_CAGE_PROBE(v) do { (void)x; } while (0)
-#endif
-
 template<typename Functor>
 struct JITOperationAnnotationInitializer {
     Functor* operation;
