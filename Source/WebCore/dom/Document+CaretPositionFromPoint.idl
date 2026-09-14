@@ -25,5 +25,5 @@
 
 // https://drafts.csswg.org/cssom-view/#extensions-to-the-document-interface
 partial interface Document {
-    [EnabledBySetting=CaretPositionFromPointEnabled] CaretPosition? caretPositionFromPoint(double x, double y, optional CaretPositionFromPointOptions options = {});
+    CaretPosition? caretPositionFromPoint(double x, double y, optional CaretPositionFromPointOptions options = {});
 };
