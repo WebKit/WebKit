@@ -392,6 +392,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         return InteractionInformationAtPosition::Selectability::Selectable;
     })();
     info.isSelected = result.isSelected();
+    info.isOverEditableContent = hitNode->isContentEditable();
 
     info.isOverSelectableText = info.isSelectable() && renderer->isRenderText() && hitNode->canStartSelection();
 

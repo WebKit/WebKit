@@ -563,6 +563,74 @@ extension AppKitGesturesTests.Basic {
         #expect(newSelection == crazySelection)
     }
 
+    @Test(arguments: [false, true])
+    func doubleClickingInWordInTextFieldSelectsWord(readOnly: Bool) async throws {
+        try await loadTextField(readOnly: readOnly)
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+
+        let crazyBoundsInScreenCoordinates = try await screenBoundsOfTextFieldText("crazy")
+
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: crazyBoundsInScreenCoordinates.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        // `getSelection()` cannot see into the field's shadow tree, so read the selection off the field.
+        let (start, end) = try await page.callJavaScript(returning: (Int, Int).self) {
+            """
+            const input = document.getElementById("input");
+            return [input.selectionStart, input.selectionEnd];
+            """
+        }
+
+        #expect(start == crazyRange.lowerBound)
+        #expect(end == crazyRange.upperBound)
+    }
+
+    @Test()
+    func clickingEmptySpaceInTextAreaDismissesSelection() async throws {
+        try await loadTextArea()
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+
+        try await page.callJavaScript(arguments: ["start": crazyRange.lowerBound, "end": crazyRange.upperBound]) {
+            """
+            const textArea = document.getElementById("textarea");
+            textArea.focus();
+            textArea.setSelectionRange(start, end);
+            """
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let fieldBounds = try await screenBounds(ofElementWithID: "textarea")
+        let emptySpace = CGPoint(x: fieldBounds.midX, y: fieldBounds.maxY - 20)
+
+        await recap.play { composer in
+            composer._wk_click(at: emptySpace, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let (start, end) = try await page.callJavaScript(returning: (Int, Int).self) {
+            """
+            const textArea = document.getElementById("textarea");
+            return [textArea.selectionStart, textArea.selectionEnd];
+            """
+        }
+
+        #expect(start == end)
+        #expect(start == Self.text.utf16.count)
+    }
+
     @Test(
         .disabled("This test is flaky"),
         .bug("https://webkit.org/b/314804", "Triple click does not generate a line selection on PDF"),
@@ -1928,6 +1996,47 @@ extension AppKitGesturesTests.Basic {
             <div id="text" style="font-size: 60px; margin: 0;">\(lines)</div>
             """
         try await page.load(html: html).wait()
+    }
+
+    // The field renders its value in a shadow tree that JavaScript cannot reach, so `#ruler` lays out
+    // the same text identically and stands in for it when measuring where a word sits on screen.
+    private func loadTextField(clickHandler: Bool = false, readOnly: Bool = false) async throws {
+        let clickHandlerMarkup = clickHandler ? "onclick='void(0)'" : ""
+        let readOnlyMarkup = readOnly ? "readonly" : ""
+        let sharedStyle =
+            "appearance: none; display: block; font: 30px monospace; margin: 0; border: none; padding: 0; width: 700px; white-space: pre;"
+
+        let html = """
+            <body style="margin: 0">
+            <input id="input" type="text" value="\(Self.text)" \(clickHandlerMarkup) \(readOnlyMarkup) style="\(sharedStyle)">
+            <div id="ruler" style="\(sharedStyle)">\(Self.text)</div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+    }
+
+    private func loadTextArea() async throws {
+        let style =
+            "appearance: none; display: block; font: 30px monospace; margin: 0; border: none; padding: 0; width: 700px; height: 300px;"
+
+        let html = """
+            <body style="margin: 0">
+            <textarea id="textarea" style="\(style)">\(Self.text)</textarea>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+    }
+
+    private func screenBoundsOfTextFieldText(_ text: String) async throws -> CGRect {
+        let range = try #require(Self.text.utf16Range(of: text))
+
+        let rulerCoordinates = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(in: "ruler", range: range))
+        let rulerBounds = screenBounds(ofRectInViewportCoordinates: rulerCoordinates)
+        let fieldBounds = try await screenBounds(ofElementWithID: "input")
+
+        return CGRect(x: rulerBounds.minX, y: fieldBounds.minY, width: rulerBounds.width, height: fieldBounds.height)
     }
 
     private func loadScrollableGrid() async throws {

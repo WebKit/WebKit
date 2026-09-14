@@ -1079,14 +1079,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
             if (strongDeferring == strongSelf->_dragDeferringGestureRecognizer) {
                 const auto isDraggable = representsDraggableElement(info);
+
                 WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: isDraggable=%d (link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d)", isDraggable, info.isLink, info.isImage, info.isAttachment, info.isDHTMLDraggable, info.isColorInput, info.prefersDraggingOverTextSelection);
+
                 return isDraggable && !overLiveTextImage;
             }
 
             if (strongDeferring == strongSelf->_secondaryClickDeferringGestureRecognizer) {
-                const auto isEditableWithoutText = info.selectability == WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement && info.isContentEditable;
-                const auto isSelectable = info.isSelectable() || isEditableWithoutText;
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d (selectability=%hhu contentEditable=%d)", isSelectable, static_cast<uint8_t>(info.selectability), info.isContentEditable);
+                const auto isSelectable = info.isSelectable() || info.isFocusableWithSelectableText();
+
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d (selectability=%hhu overEditableContent=%d)", isSelectable, static_cast<uint8_t>(info.selectability), info.isOverEditableContent);
+
                 return !isSelectable && !overLiveTextImage;
             }
 
@@ -1147,9 +1150,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
 
+    const auto& information = _positionInformationManager->currentInformation();
+
     bool requestIsValid = _positionInformationManager->currentIsValid(request);
-    bool isSelectable = _positionInformationManager->currentInformation().isSelectable();
-    bool isOverSelectableText = _positionInformationManager->currentInformation().isOverSelectableText;
+    bool isSelectable = information.isSelectable() || information.isFocusableWithSelectableText();
+    bool isOverSelectableText = information.isOverSelectableText;
 
     // The secondary click owns selectable points that are not over actual text (e.g. the page
     // background). Over a run of selectable text, the text selection manager should win so that a
