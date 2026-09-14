@@ -607,9 +607,10 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
         }
     }
     // Retrieve original sampler bindings produced by front end.
-    OriginalSamplerBindingMap originalSamplerBindings;
     const std::vector<gl::SamplerBinding> &samplerBindings = executable.getSamplerBindings();
-    std::unordered_set<std::string> structSamplers         = {};
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    OriginalSamplerBindingMap originalSamplerBindings;
+    std::unordered_set<std::string> structSamplers = {};
 
     angle::HashMap<std::string, size_t> extractedSamplerIndices;
     for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
@@ -629,6 +630,45 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
         originalSamplerBindings[mappedSamplerName].push_back(
             {textureIndex, static_cast<uint32_t>(samplerBinding.textureUnitsCount)});
     }
+#else
+    // The reflection consulted below is per-stage, and so is the actualSamplerBindings table being
+    // filled in, so the original bindings have to be partitioned per-stage as well.  Samplers
+    // extracted out of structs are named |extractedSamplerN| by the translator, where N counts the
+    // struct samplers of a single shader in declaration order and restarts for each shader (see
+    // RewriteStructSamplers).  Counting them program-wide instead would give a shader's sampler a
+    // name that belongs to another shader's sampler, so a stage could pick up the wrong binding,
+    // and with it an array element count that does not fit the slots the stage was assigned.
+    gl::ShaderMap<OriginalSamplerBindingMap> originalSamplerBindings;
+    gl::ShaderMap<std::unordered_set<std::string>> structSamplers;
+
+    gl::ShaderMap<angle::HashMap<std::string, size_t>> extractedSamplerIndices;
+    for (uint32_t textureIndex = 0; textureIndex < samplerBindings.size(); ++textureIndex)
+    {
+        const gl::SamplerBinding &samplerBinding = samplerBindings[textureIndex];
+        uint32_t uniformIndex            = executable.getUniformIndexFromSamplerIndex(textureIndex);
+        const gl::LinkedUniform &uniform = executable.getUniforms()[uniformIndex];
+        const std::string &uniformName   = executable.getUniformNames()[uniformIndex];
+        const std::string &uniformMappedName = executable.getUniformMappedNames()[uniformIndex];
+        bool isSamplerInStruct               = uniformName.find('.') != std::string::npos;
+        for (gl::ShaderType shaderType : gl::AllShaderTypes())
+        {
+            if (!uniform.isActive(shaderType))
+            {
+                continue;
+            }
+            std::string mappedSamplerName =
+                MSLGetMappedSamplerName(isSamplerInStruct ? uniformName : uniformMappedName,
+                                        &extractedSamplerIndices[shaderType]);
+            // These need to be prefixed later seperately
+            if (isSamplerInStruct)
+            {
+                structSamplers[shaderType].insert(mappedSamplerName);
+            }
+            originalSamplerBindings[shaderType][mappedSamplerName].push_back(
+                {textureIndex, static_cast<uint32_t>(samplerBinding.textureUnitsCount)});
+        }
+    }
+#endif
     for (gl::ShaderType type : {gl::ShaderType::Vertex, gl::ShaderType::Fragment})
     {
         std::string source;
@@ -684,11 +724,20 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
             }
         }
         // Retrieve automatic texture slot assignments
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (originalSamplerBindings.size() > 0)
         {
             GetAssignedSamplerBindings(reflection, originalSamplerBindings, structSamplers,
                                        &mslShaderInfoOut->at(type).actualSamplerBindings);
         }
+#else
+        if (originalSamplerBindings[type].size() > 0)
+        {
+            GetAssignedSamplerBindings(reflection, originalSamplerBindings[type],
+                                       structSamplers[type],
+                                       &mslShaderInfoOut->at(type).actualSamplerBindings);
+        }
+#endif
         for (uint32_t i = 0; i < kMaxShaderImages; ++i)
         {
             mslShaderInfoOut->at(type).actualImageBindings[i] = reflection->getRWTextureBinding(i);

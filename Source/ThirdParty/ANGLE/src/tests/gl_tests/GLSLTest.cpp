@@ -12463,6 +12463,154 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that samplers in structs declared in different shader stages don't alias.  Extracted
+// sampler names are numbered per shader, so the vertex shader's struct sampler and the fragment
+// shader's struct sampler are both named |extractedSampler0|.  Backends that resolve those names
+// against a program-wide table must not confuse the two.
+TEST_P(GLSLTest_ES3, SamplersInStructNoNameCollisionAcrossStages)
+{
+    constexpr char kVS[] = R"(#version 300 es
+struct A { sampler2D s; };
+uniform A a;
+in vec4 a_position;
+out vec4 vsColor;
+void main() {
+  vsColor = texture(a.s, vec2(0.0));
+  gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+struct B { sampler2D s; };
+uniform B b;
+in vec4 vsColor;
+out vec4 color;
+void main() {
+  color = vsColor + texture(b.s, vec2(0.0));
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    // Red on the unit the vertex stage samples, green on the unit the fragment stage samples. If
+    // the two extracted samplers alias, one of the stages reads the wrong unit and the result is
+    // not yellow.
+    const GLColor kRed   = GLColor::red;
+    const GLColor kGreen = GLColor::green;
+
+    GLTexture vsTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, vsTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &kRed);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLTexture fsTexture;
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, fsTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &kGreen);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glUniform1i(glGetUniformLocation(program, "a.s"), 0);
+    glUniform1i(glGetUniformLocation(program, "b.s"), 1);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, "a_position", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Regression test for a heap buffer overflow in the Metal backend.  The fragment shader's
+// extracted sampler name resolves to the vertex shader's struct sampler array, so the array's
+// element count is added to the base texture slot the fragment shader was assigned.  A base near
+// the per-stage sampler limit plus a large element count used to walk past the backend's
+// fixed-size per-stage sampler tables.  The draw must stay in bounds.
+TEST_P(GLSLTest_ES3, SamplersInStructCrossStageBindingOverflow)
+{
+    GLint maxVertexTextureImageUnits = 0;
+    glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &maxVertexTextureImageUnits);
+    GLint maxTextureImageUnits = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureImageUnits);
+    GLint maxCombinedTextureImageUnits = 0;
+    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedTextureImageUnits);
+    ANGLE_SKIP_TEST_IF(maxVertexTextureImageUnits < 16 || maxTextureImageUnits < 16 ||
+                       maxCombinedTextureImageUnits < 32);
+
+    // The vertex shader's struct sampler array fills the vertex stage's sampler budget.  Shadow
+    // samplers are used because the Metal backend records a per-slot compare mode for them, which
+    // is the table that used to be overflowed.
+    constexpr char kVS[] = R"(#version 300 es
+struct A { highp sampler2DShadow c[16]; };
+uniform A x;
+in vec4 a_position;
+out float vsValue;
+void main() {
+  float sum = 0.0;
+  for (int i = 0; i < 16; ++i) { sum += 0.0; }
+  sum += texture(x.c[0], vec3(0.0)) + texture(x.c[15], vec3(0.0));
+  vsValue = sum;
+  gl_Position = a_position;
+})";
+
+    // The fragment shader declares 15 plain samplers ahead of its own struct sampler, so that the
+    // struct sampler is assigned the last slot in the fragment stage's budget.  That high base is
+    // what the vertex array's element count used to be added to.
+    std::ostringstream fs;
+    fs << R"(#version 300 es
+precision mediump float;
+uniform sampler2D plain[15];
+struct B { sampler2D d; };
+uniform B y;
+in float vsValue;
+out vec4 color;
+void main() {
+  vec4 sum = vec4(vsValue);
+)";
+    for (int i = 0; i < 15; ++i)
+    {
+        fs << "  sum += texture(plain[" << i << "], vec2(0.0));\n";
+    }
+    fs << R"(  sum += texture(y.d, vec2(0.0));
+  color = sum;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, fs.str().c_str());
+    glUseProgram(program);
+
+    // Disjoint texture units so the draw passes sampler validation: the fragment stage takes
+    // 0..15 and the vertex stage's array takes 16..31.
+    for (int i = 0; i < 15; ++i)
+    {
+        const std::string name = "plain[" + std::to_string(i) + "]";
+        glUniform1i(glGetUniformLocation(program, name.c_str()), i);
+    }
+    glUniform1i(glGetUniformLocation(program, "y.d"), 15);
+
+    std::array<GLint, 16> vertexUnits;
+    for (size_t i = 0; i < vertexUnits.size(); ++i)
+    {
+        vertexUnits[i] = static_cast<GLint>(16 + i);
+    }
+    glUniform1iv(glGetUniformLocation(program, "x.c[0]"), static_cast<GLsizei>(vertexUnits.size()),
+                 vertexUnits.data());
+    ASSERT_GL_NO_ERROR();
+
+    // A non-zero compare mode on every unit the vertex array covers, so the backend takes the
+    // per-slot compare-mode store for each element of the array.
+    std::array<GLSampler, 16> samplers;
+    for (size_t i = 0; i < samplers.size(); ++i)
+    {
+        glSamplerParameteri(samplers[i], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        glSamplerParameteri(samplers[i], GL_TEXTURE_COMPARE_FUNC, GL_LESS);
+        glBindSampler(static_cast<GLuint>(16 + i), samplers[i]);
+    }
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, "a_position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Helper functions for MixedRowAndColumnMajorMatrices* tests
 
 // Round up to alignment, assuming it's a power of 2

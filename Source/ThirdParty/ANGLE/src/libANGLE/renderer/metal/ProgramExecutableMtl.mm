@@ -1165,6 +1165,17 @@ angle::Result ProgramExecutableMtl::updateTextures(const gl::Context *glContext,
                 gl::Sampler *sampler = contextMtl->getState().getSampler(textureUnit);
                 uint32_t textureSlot = mslBinding.textureBinding + arrayElement;
                 uint32_t samplerSlot = mslBinding.samplerBinding + arrayElement;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                if (textureSlot >= mtl::kMaxShaderSamplers)
+                {
+                    // The remaining array elements of this binding have no slot assigned. The
+                    // per-stage sampler count is capped at kMaxShaderSamplers by
+                    // maxShaderTextureImageUnits, so a slot past the end means the binding
+                    // assignment computed in GetAssignedSamplerBindings was inconsistent; drop the
+                    // rest of the array rather than writing out of bounds.
+                    break;
+                }
+#endif
                 if (!texture)
                 {
                     ANGLE_TRY(contextMtl->getIncompleteTexture(glContext, textureType,

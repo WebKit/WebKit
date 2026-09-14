@@ -9,6 +9,10 @@
 #ifndef LIBANGLE_RENDERER_MTL_PROGRAMEXECUTABLEMTL_H_
 #define LIBANGLE_RENDERER_MTL_PROGRAMEXECUTABLEMTL_H_
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#    include <array>
+
+#endif
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/renderer/ProgramExecutableImpl.h"
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
@@ -289,7 +293,11 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     // into an argument buffer.
     std::vector<uint32_t> mArgumentBufferRenderStageUsages;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers];
+#else
+    std::array<uint32_t, mtl::kMaxShaderSamplers> mShadowCompareModes;
+#endif
 
     gl::ShaderMap<std::unique_ptr<mtl::BufferPool>> mDefaultUniformBufferPools;
 
