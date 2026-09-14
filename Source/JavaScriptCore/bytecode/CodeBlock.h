@@ -759,6 +759,7 @@ public:
     void updateAllArrayProfilePredictions();
     void updateAllArrayAllocationProfilePredictions();
     void updateAllPredictions();
+    void updatePredictionsConcurrently();
 
     unsigned frameRegisterCount();
     int stackPointerOffset();
