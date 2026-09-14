@@ -1,0 +1,8 @@
+ABCDEF
+ABCDEF
+ABCDEF
+
+PASS control: with no path attribute the text is on the href geometry
+PASS control: an empty path value does fall back, so the fallback works here
+PASS a lone moveto does not fall back to href
+

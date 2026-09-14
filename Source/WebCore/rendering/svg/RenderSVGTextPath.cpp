@@ -66,8 +66,20 @@ RefPtr<SVGGeometryElement> RenderSVGTextPath::targetElement() const
     return dynamicDowncast<SVGGeometryElement>(WTF::move(target.element));
 }
 
+bool RenderSVGTextPath::usesPathAttribute() const
+{
+    // Spec: 'href' is used only when the 'path' attribute produced no path segments at all.
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementPathAttribute
+    return !protect(textPathElement())->byteStreamForPathAttribute().isEmpty();
+}
+
 Path RenderSVGTextPath::layoutPath() const
 {
+    // Inline path data is already in the <text> element's user space, so unlike the
+    // referenced-element case below it takes no supplemental transform.
+    if (usesPathAttribute())
+        return protect(textPathElement())->pathForPathAttribute();
+
     RefPtr element = targetElement();
     if (!is<SVGGeometryElement>(element))
         return { };

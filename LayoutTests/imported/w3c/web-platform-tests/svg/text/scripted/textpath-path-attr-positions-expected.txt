@@ -1,0 +1,12 @@
+ABCDEF
+ABCDEF
+ABCDEF
+
+PASS control: the href reference is really laid out on the curve
+PASS control: different inline path data gives different positions
+PASS getNumberOfChars
+PASS getStartPositionOfChar
+PASS getEndPositionOfChar
+PASS getRotationOfChar
+PASS getComputedTextLength
+

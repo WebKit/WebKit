@@ -21,7 +21,10 @@
 #pragma once
 
 #include "CommonAtomStrings.h"
+#include "Path.h"
 #include "SVGNames.h"
+#include "SVGPath.h"
+#include "SVGPathByteStream.h"
 #include "SVGTextContentElement.h"
 #include "SVGURIReference.h"
 #include <wtf/TZoneMalloc.h>
@@ -118,6 +121,9 @@ public:
     SVGTextPathMethodType method() const { return m_method->currentValue<SVGTextPathMethodType>(); }
     SVGTextPathSpacingType spacing() const { return m_spacing->currentValue<SVGTextPathSpacingType>(); }
 
+    const SVGPathByteStream& byteStreamForPathAttribute() const LIFETIME_BOUND;
+    Path pathForPathAttribute() const;
+
     SVGAnimatedLength& startOffsetAnimated() { return m_startOffset; }
     SVGAnimatedEnumeration& methodAnimated() { return m_method; }
     SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
@@ -147,6 +153,7 @@ private:
     const Ref<SVGAnimatedLength> m_startOffset { SVGAnimatedLength::create(this, SVGLengthMode::Other) };
     const Ref<SVGAnimatedEnumeration> m_method { SVGAnimatedEnumeration::create(this, SVGTextPathMethodAlign) };
     const Ref<SVGAnimatedEnumeration> m_spacing { SVGAnimatedEnumeration::create(this, SVGTextPathSpacingExact) };
+    const Ref<SVGAnimatedPath> m_pathAttribute { SVGAnimatedPath::create(this) };
 };
 
 } // namespace WebCore

@@ -53,6 +53,7 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
         PropertyRegistry::registerProperty<SVGNames::startOffsetAttr, &SVGTextPathElement::m_startOffset>();
         PropertyRegistry::registerProperty<SVGNames::methodAttr, SVGTextPathMethodType, &SVGTextPathElement::m_method>();
         PropertyRegistry::registerProperty<SVGNames::spacingAttr, SVGTextPathSpacingType, &SVGTextPathElement::m_spacing>();
+        PropertyRegistry::registerProperty<SVGNames::pathAttr, &SVGTextPathElement::m_pathAttribute>();
     }
 }
 
@@ -85,6 +86,16 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
     case AttributeNames::spacingAttr:
         protect(m_spacing)->parseBaseVal<SVGTextPathSpacingType>(*this, newValue);
         break;
+    case AttributeNames::pathAttr: {
+        // Not an error when it fails to parse: SVG 2 keeps the valid portion, and parse()
+        // leaves behind whatever it built before the first error.
+        Ref pathAttribute = protect(m_pathAttribute)->baseVal();
+        if (newValue.isEmpty())
+            pathAttribute->clearByteStreamData();
+        else
+            pathAttribute->parse(newValue);
+        break;
+    }
     default:
         break;
     }
@@ -113,6 +124,16 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGTextContentElement::svgAttributeChanged(attrName);
+}
+
+const SVGPathByteStream& SVGTextPathElement::byteStreamForPathAttribute() const
+{
+    return Ref { m_pathAttribute }->currentPathByteStream();
+}
+
+Path SVGTextPathElement::pathForPathAttribute() const
+{
+    return Ref { m_pathAttribute }->currentPath();
 }
 
 RenderPtr<RenderElement> SVGTextPathElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition&)

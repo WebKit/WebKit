@@ -8136,8 +8136,6 @@ imported/w3c/web-platform-tests/xml/xslt/encoding-single-chunk.html [ ImageOnlyF
 webkit.org/b/307614 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-display-types.html [ ImageOnlyFailure ]
 
 webkit.org/b/307602 imported/w3c/web-platform-tests/svg/text/reftests/rtl-text-path.html [ ImageOnlyFailure ]
-webkit.org/b/307602 imported/w3c/web-platform-tests/svg/text/reftests/textpath-path-attr-precedence-over-href.svg [ ImageOnlyFailure ]
-webkit.org/b/307602 imported/w3c/web-platform-tests/svg/text/reftests/textpath-path-attr.svg [ ImageOnlyFailure ]
 
 # VNE testing is flaky.
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
@@ -8187,7 +8185,6 @@ imported/w3c/web-platform-tests/svg/path/distance/path-length-css-overrides-pres
 imported/w3c/web-platform-tests/svg/path/distance/path-length-css-property.tentative.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/distance/path-length-css-zero.tentative.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-foreignObject.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/textpath-path-attr-use-up-to-first-error.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-pathlength-css-display-none.tentative.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-003.svg [ ImageOnlyFailure ]    
 imported/w3c/web-platform-tests/svg/text/reftests/textpath-side-005.svg [ ImageOnlyFailure ]
