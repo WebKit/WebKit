@@ -486,6 +486,21 @@ Subspace* MarkedBlock::Handle::subspace() const
     return directory()->subspace();
 }
 
+void MarkedBlock::Handle::emptyWeakSet()
+{
+    // A block swept while empty keeps its WeakSet untouched, and BlockDirectory marks a block empty
+    // at the end of marking without sweeping anything, so blocks do reach here still holding one.
+    if (m_weakSet.head()) [[unlikely]] {
+        SweepingScope sweepingScope(*heap());
+        m_weakSet.sweep();
+    }
+    // Nothing in an empty block was marked, so every handle above was reaped dead and the sweep
+    // finalized it, handing back each block and unlisting the set. The block is about to change
+    // directory, and a WeakSet left on the active list would still be reaped and visited.
+    ASSERT(!m_weakSet.head());
+    ASSERT(!m_weakSet.isOnList());
+}
+
 void MarkedBlock::Handle::sweep(FreeList* freeList)
 {
     m_directory->assertIsMutatorOrMutatorIsStopped();

@@ -36,12 +36,11 @@ inline WeakImpl* WeakSet::allocate(JSValue jsValue, WeakHandleOwner* weakHandleO
     CellContainer container = jsValue.asCell()->cellContainer();
     ASSERT(container.vm().currentThreadIsHoldingAPILock());
     WeakSet& weakSet = container.weakSet();
-    WeakBlock::FreeCell* allocator = weakSet.m_allocator;
-    if (!allocator) [[unlikely]]
-        allocator = weakSet.findAllocator(container);
-    weakSet.m_allocator = allocator->next;
+    WeakBlock* block = weakSet.m_currentBlock;
+    if (!block || !block->hasFreeCell()) [[unlikely]]
+        block = weakSet.findAllocator(container);
 
-    WeakImpl* weakImpl = WeakBlock::asWeakImpl(allocator);
+    WeakImpl* weakImpl = WeakBlock::asWeakImpl(block->takeFreeCell());
     container.vm().heap.didAllocate(sizeof(WeakImpl));
     return new (NotNull, weakImpl) WeakImpl(jsValue, weakHandleOwner, context);
 }
@@ -50,6 +49,8 @@ inline void WeakBlock::finalize(WeakImpl* weakImpl)
 {
     ASSERT(weakImpl->state() == WeakImpl::Dead);
     weakImpl->setState(WeakImpl::Finalized);
+    ASSERT(m_deadCount);
+    --m_deadCount;
     WeakHandleOwner* weakHandleOwner = weakImpl->weakHandleOwner();
     if (!weakHandleOwner)
         return;

@@ -52,7 +52,7 @@ public:
 
     State state();
     void setState(State);
-    void clear();
+    void NODELETE clear();
 
     const JSValue& jsValue();
     static constexpr ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
@@ -71,12 +71,6 @@ private:
 inline WeakImpl::WeakImpl()
     : m_weakHandleOwner(std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated)))
 {
-}
-
-inline void WeakImpl::clear()
-{
-    ASSERT(Deallocated >= this->state());
-    m_weakHandleOwner = std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated));
 }
 
 inline WeakImpl::WeakImpl(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)

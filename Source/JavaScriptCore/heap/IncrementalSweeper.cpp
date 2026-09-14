@@ -123,7 +123,7 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
         return true;
     }
 
-    return vm.heap.sweepNextLogicallyEmptyWeakBlock();
+    return false;
 }
 
 void IncrementalSweeper::startSweeping(JSC::Heap& heap)

@@ -26,7 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/Weak.h>
-#include <JavaScriptCore/WeakImpl.h>
+#include <JavaScriptCore/WeakBlock.h>
 
 namespace JSC {
 
