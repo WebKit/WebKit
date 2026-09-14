@@ -1,0 +1,8 @@
+c
+c
+c
+c
+
+PASS A caption in the table's writing mode adds its horizontal margins to the table's block size
+PASS A caption in an orthogonal writing mode adds its horizontal margins to the table's block size
+
