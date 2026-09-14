@@ -227,7 +227,8 @@ Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectFor
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
-        metrics->setInitialPriority(toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
+        if (resourceRequestType != CachedResource::Type::Unknown)
+            metrics->setInitialPriority(toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
 
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
             metrics->setPriority(toProtocol(additionalMetrics->priority));
@@ -631,7 +632,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+    CachedResource::Type resourceRequestType = CachedResource::Type::Unknown;
     if (resourceData)
         resourceRequestType = resourceData->cachedResource()->type();
 
