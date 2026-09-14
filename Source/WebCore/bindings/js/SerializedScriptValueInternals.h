@@ -27,6 +27,7 @@
 #pragma once
 
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/StructuredCloneTags.h>
 #include <WebCore/FileSystemStorageConnection.h>
 #include <WebCore/NonSerializedDataToken.h>
 #include <WebCore/URLKeepingBlobAlive.h>
@@ -54,10 +55,6 @@
 #include <WebCore/RTCRtpTransformableFrame.h>
 #endif
 
-#if ENABLE(WEBASSEMBLY)
-namespace JSC { namespace Wasm { class Module; } }
-#endif
-
 namespace WebCore {
 
 class DetachedImageBitmap;
@@ -69,11 +66,11 @@ class DetachedOffscreenCanvas;
 #endif
 
 #if ENABLE(WEBASSEMBLY)
-using WasmModuleArray = Vector<Ref<::JSC::Wasm::Module>>;
-using WasmMemoryHandleArray = Vector<RefPtr<::JSC::SharedArrayBufferContents>>;
+using WasmModuleArray = ::JSC::WasmModuleArray;
+using WasmMemoryHandleArray = ::JSC::WasmMemoryHandleArray;
 #endif
 
-using ArrayBufferContentsArray = Vector<::JSC::ArrayBufferContents>;
+using ArrayBufferContentsArray = ::JSC::ArrayBufferContentsArray;
 
 struct SerializedScriptValueInternals {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(SerializedScriptValueInternals, WEBCORE_EXPORT);
