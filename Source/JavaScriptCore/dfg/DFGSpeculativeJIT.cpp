@@ -16328,18 +16328,16 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
 
     Label loop = label();
     and32(maskGPR, indexGPR);
+    // bucket = buffer + zeroExtend(index) * sizeof(bucket). The zero-extension and the scaling are one UBFIZ on arm64.
     if (node->child1().useKind() == WeakSetObjectUse) {
-        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*));
-        zeroExtend32ToWord(indexGPR, bucketGPR);
-        lshiftPtr(Imm32(sizeof(void*) == 4 ? 2 : 3), bucketGPR);
-        addPtr(bufferGPR, bucketGPR);
+        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == 8);
+        insertUnsignedBitfieldInZero64(indexGPR, TrustedImm32(3), TrustedImm32(32), bucketGPR);
     } else {
         ASSERT(node->child1().useKind() == WeakMapObjectUse);
         static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16);
-        zeroExtend32ToWord(indexGPR, bucketGPR);
-        lshiftPtr(Imm32(4), bucketGPR);
-        addPtr(bufferGPR, bucketGPR);
+        insertUnsignedBitfieldInZero64(indexGPR, TrustedImm32(4), TrustedImm32(32), bucketGPR);
     }
+    addPtr(bufferGPR, bucketGPR);
 
     loadPtr(Address(bucketGPR, WeakMapBucket<WeakMapBucketDataKeyValue>::offsetOfKey()), resultGPR);
 

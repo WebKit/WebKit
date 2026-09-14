@@ -1522,6 +1522,7 @@ void testMultiplyNegZeroExtend32()
         }
     }
 }
+#endif // CPU(ARM64)
 
 void testExtractUnsignedBitfield32()
 {
@@ -1621,6 +1622,7 @@ void testInsertUnsignedBitfieldInZero64()
     }
 }
 
+#if CPU(ARM64)
 void testInsertBitField32()
 {
     uint32_t src = 0x0f0f0f0f;
@@ -3223,7 +3225,6 @@ void testZeroExtend48ToWord()
 }
 #endif
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 void testCompareFloat(MacroAssembler::DoubleCondition condition)
 {
     float arg1 = 0;
@@ -3264,9 +3265,6 @@ void testCompareFloat(MacroAssembler::DoubleCondition condition)
         }
     }
 }
-#endif // CPU(X86_64) || CPU(ARM64)
-
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 template<typename T, typename SelectionType>
 void testMoveConditionallyFloatingPoint(MacroAssembler::DoubleCondition condition, const MacroAssemblerCodeRef<JSEntryPtrTag>& testCode, T& arg1, T& arg2, const Vector<T> operands, SelectionType selectionA, SelectionType selectionB)
@@ -4088,8 +4086,6 @@ void testSignExtend16To64()
         CHECK_EQ(invoke<int64_t>(code, a), expectedResult);
     }
 }
-
-#endif // CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
 
 #if CPU(ARM64)
 
@@ -8587,10 +8583,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMultiplyNegSignExtend32());
     RUN(testMultiplyNegZeroExtend32());
 
-    RUN(testExtractUnsignedBitfield32());
-    RUN(testExtractUnsignedBitfield64());
-    RUN(testInsertUnsignedBitfieldInZero32());
-    RUN(testInsertUnsignedBitfieldInZero64());
     RUN(testInsertBitField32());
     RUN(testInsertBitField64());
     RUN(testExtractInsertBitfieldAtLowEnd32());
@@ -8667,11 +8659,13 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     }
 #endif
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     FOR_EACH_DOUBLE_CONDITION_RUN(testCompareFloat);
-#endif
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
+    RUN(testExtractUnsignedBitfield32());
+    RUN(testExtractUnsignedBitfield64());
+    RUN(testInsertUnsignedBitfieldInZero32());
+    RUN(testInsertUnsignedBitfieldInZero64());
+
     // Comparing 2 different registers.
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble2);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyDouble3);
@@ -8695,7 +8689,6 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveConditionallyFloat3SameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyDoubleSameArg);
     FOR_EACH_DOUBLE_CONDITION_RUN(testMoveDoubleConditionallyFloatSameArg);
-#endif
 
 #if CPU(X86_64) || CPU(ARM64)
     // Tests for moveConditionally32 and moveConditionallyTest32 with immediate thenCase.
@@ -8708,12 +8701,10 @@ void run(const char* filter) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     RUN(testMoveConditionallyTest32WithImmThenCaseImmMask(MacroAssembler::NonZero));
 #endif
 
-#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
     RUN(testSignExtend8To32());
     RUN(testSignExtend16To32());
     RUN(testSignExtend8To64());
     RUN(testSignExtend16To64());
-#endif
 
     RUN(testProbeReadsArgumentRegisters());
     RUN(testProbeWritesArgumentRegisters());

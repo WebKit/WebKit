@@ -4605,11 +4605,22 @@ private:
                     return false;
                 }
 
-                if (left->opcode() == ZExt32 && left->child(0)->opcode() == Trunc && canBeInternal(left->child(0))) {
-                    Value* nValue = left->child(0)->child(0);
-                    uint64_t mask = 0xffffffffULL;
-                    if (doAppend(nValue, mask)) {
-                        commitInternal(left->child(0));
+                if (left->opcode() == ZExt32) {
+                    // Shl(ZExt32(Trunc(n64)), lsb): the low 32 bits of n64, moved up by lsb.
+                    if (left->child(0)->opcode() == Trunc && canBeInternal(left->child(0))) {
+                        Value* nValue = left->child(0)->child(0);
+                        uint64_t mask = 0xffffffffULL;
+                        if (doAppend(nValue, mask)) {
+                            commitInternal(left->child(0));
+                            commitInternal(left);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    // Shl(ZExt32(n32), lsb): UBFIZ reads only the low 32 bits of its source, so the
+                    // zero-extension comes for free.
+                    if (doAppend(left->child(0), 0xffffffffULL)) {
                         commitInternal(left);
                         return true;
                     }
@@ -4727,16 +4738,15 @@ private:
                     lsb = lsbValue->asInt();
                 } else {
                     // SBFX Pattern (non-canonical): (src << leftAmt) >> rightAmt
-                    // Where: rightAmt > leftAmt, lsb = rightAmt - leftAmt, width = datasize - rightAmt
+                    // Where: rightAmt >= leftAmt, lsb = rightAmt - leftAmt, width = datasize - rightAmt
                     Value* leftAmtValue = left->child(1);
                     if (!imm(leftAmtValue) || leftAmtValue->asInt() < 0)
                         return false;
                     uint64_t leftAmt = leftAmtValue->asInt();
-                    if (amount <= leftAmt)
+                    if (amount < leftAmt)
                         return false;
                     srcValue = left->child(0);
                     lsb = amount - leftAmt;
-                    ASSERT(lsb);
                 }
 
                 if (m_locked.contains(srcValue))

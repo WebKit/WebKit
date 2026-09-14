@@ -4021,6 +4021,115 @@ void testUbfx64ArithmeticShiftAnd()
     test(8, generateMask(57), false);
 }
 
+void testUbfx32MaskThenShift()
+{
+    // Test Pattern: (src & (mask << lsb)) >> lsb
+    // Where: mask = (1 << width) - 1
+    // ReduceStrength rewrites this to (src >> lsb) & mask, which is one UBFX, or a bare LSR once the field reaches
+    // bit 31. Masks with bit 31 set used to be lost to the sign extension of the 32-bit constant.
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint32_t> srcs = { 0xffffffff, 0x12345678, 0x80000001 };
+    Vector<uint32_t> lsbs = { 1, 14, 30, 8 };
+    Vector<uint32_t> widths = { 30, 17, 1, 8 };
+    Vector<uint32_t> topLsbs = { 24, 31 };
+    Vector<uint32_t> topWidths = { 8, 1 };
+
+    auto test = [&] (uint32_t src, uint32_t lsb, uint32_t shiftedMask, const char* expected, const char* forbidden) -> uint32_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<uint32_t>(proc, root);
+
+        Value* srcValue = arguments[0];
+        Value* maskValue = root->appendNew<Const32Value>(proc, Origin(), shiftedMask);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* masked = root->appendNew<Value>(proc, BitAnd, Origin(), srcValue, maskValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, ZShr, Origin(), masked, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            if (expected)
+                checkUsesInstruction(*code, expected);
+            if (forbidden)
+                checkDoesNotUseInstruction(*code, forbidden);
+        }
+        return invoke<uint32_t>(*code, src);
+    };
+
+    auto shiftedMask = [] (uint32_t lsb, uint32_t width) -> uint32_t {
+        return ((1U << width) - 1U) << lsb;
+    };
+
+    for (uint32_t src : srcs) {
+        // A field that stops short of bit 31 is one UBFX.
+        for (size_t i = 0; i < lsbs.size(); ++i) {
+            uint32_t mask = shiftedMask(lsbs.at(i), widths.at(i));
+            CHECK_EQ(test(src, lsbs.at(i), mask, "ubfx", nullptr), (src & mask) >> lsbs.at(i));
+        }
+        // A field that reaches bit 31 needs no mask at all once shifted down.
+        for (size_t i = 0; i < topLsbs.size(); ++i) {
+            uint32_t mask = shiftedMask(topLsbs.at(i), topWidths.at(i));
+            CHECK_EQ(test(src, topLsbs.at(i), mask, "lsr", "and"), (src & mask) >> topLsbs.at(i));
+        }
+        // A mask with a hole above lsb is not one field.
+        CHECK_EQ(test(src, 16, 0xff0f0000, nullptr, "ubfx"), (src & 0xff0f0000) >> 16);
+    }
+}
+
+void testUbfx64MaskThenShift()
+{
+    // Test Pattern: (src & (mask << lsb)) >> lsb
+    // Where: mask = (1 << width) - 1
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<uint64_t> srcs = { 0xffffffffffffffff, 0x123456789abcdef0, 0x8000000000000001 };
+    Vector<uint64_t> lsbs = { 1, 30, 62, 40 };
+    Vector<uint64_t> widths = { 62, 33, 1, 8 };
+    Vector<uint64_t> topLsbs = { 56, 63 };
+    Vector<uint64_t> topWidths = { 8, 1 };
+
+    auto test = [&] (uint64_t src, uint64_t lsb, uint64_t shiftedMask, const char* expected, const char* forbidden) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<uint64_t>(proc, root);
+
+        Value* srcValue = arguments[0];
+        Value* maskValue = root->appendNew<Const64Value>(proc, Origin(), shiftedMask);
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* masked = root->appendNew<Value>(proc, BitAnd, Origin(), srcValue, maskValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, ZShr, Origin(), masked, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            if (expected)
+                checkUsesInstruction(*code, expected);
+            if (forbidden)
+                checkDoesNotUseInstruction(*code, forbidden);
+        }
+        return invoke<uint64_t>(*code, src);
+    };
+
+    auto shiftedMask = [] (uint64_t lsb, uint64_t width) -> uint64_t {
+        return ((1ULL << width) - 1ULL) << lsb;
+    };
+
+    for (uint64_t src : srcs) {
+        for (size_t i = 0; i < lsbs.size(); ++i) {
+            uint64_t mask = shiftedMask(lsbs.at(i), widths.at(i));
+            CHECK_EQ(test(src, lsbs.at(i), mask, "ubfx", nullptr), (src & mask) >> lsbs.at(i));
+        }
+        for (size_t i = 0; i < topLsbs.size(); ++i) {
+            uint64_t mask = shiftedMask(topLsbs.at(i), topWidths.at(i));
+            CHECK_EQ(test(src, topLsbs.at(i), mask, "lsr", "and"), (src & mask) >> topLsbs.at(i));
+        }
+        CHECK_EQ(test(src, 48, 0xff0f000000000000ULL, nullptr, "ubfx"), (src & 0xff0f000000000000ULL) >> 48);
+    }
+}
+
 void testUbfiz32AndShiftValueMask()
 {
     // Test Pattern: d = (n & mask) << lsb 
@@ -4350,6 +4459,48 @@ void testUbfiz64AndShift()
         uint64_t lsb = lsbs.at(i);
         uint64_t maskShift = generateMaskShift(widths.at(i), lsb);
         CHECK_EQ(test(lsb, maskShift), (maskShift & (n << lsb)));
+    }
+}
+
+void testUbfiz64ZExt32Shift()
+{
+    // Test Pattern: d = ZExt32(n) << lsb
+    // A 32-bit field inserted at lsb while lsb + 32 < 64. At lsb == 32 the zero-extension is dead and B3 emits a
+    // bare shift; beyond that the field would not fit.
+    if (JSC::Options::defaultB3OptLevel() < 2)
+        return;
+    Vector<int32_t> ns = { 0x12345678, static_cast<int32_t>(0xfedcba98), -1, 0 };
+    Vector<uint32_t> foldingLsbs = { 1, 3, 12, 31 };
+    Vector<uint32_t> nonFoldingLsbs = { 32, 33 };
+
+    auto test = [&] (int32_t n, uint32_t lsb, bool expectFold) -> uint64_t {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        auto arguments = cCallArgumentValues<int32_t>(proc, root);
+
+        Value* nValue = arguments[0];
+        Value* lsbValue = root->appendNew<Const32Value>(proc, Origin(), lsb);
+        Value* zeroExtended = root->appendNew<Value>(proc, ZExt32, Origin(), nValue);
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+            root->appendNew<Value>(proc, Shl, Origin(), zeroExtended, lsbValue));
+
+        auto code = compileProc(proc);
+        if (isARM64()) {
+            if (expectFold)
+                checkUsesInstruction(*code, "ubfiz");
+            else
+                checkDoesNotUseInstruction(*code, "ubfiz");
+        }
+        return invoke<uint64_t>(*code, n);
+    };
+
+    for (int32_t n : ns) {
+        uint64_t zeroExtended = static_cast<uint32_t>(n);
+        for (uint32_t lsb : foldingLsbs)
+            CHECK_EQ(test(n, lsb, true), zeroExtended << lsb);
+        for (uint32_t lsb : nonFoldingLsbs)
+            CHECK_EQ(test(n, lsb, false), zeroExtended << lsb);
     }
 }
 
@@ -7813,6 +7964,8 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testUbfx64AndShift());
     RUN(testUbfx32ArithmeticShiftAnd());
     RUN(testUbfx64ArithmeticShiftAnd());
+    RUN(testUbfx32MaskThenShift());
+    RUN(testUbfx64MaskThenShift());
     RUN(testUbfiz32AndShiftValueMask());
     RUN(testUbfiz32AndShiftMaskValue());
     RUN(testUbfiz32ShiftAnd());
@@ -7821,6 +7974,7 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testUbfiz64AndShiftMaskValue());
     RUN(testUbfiz64ShiftAnd());
     RUN(testUbfiz64AndShift());
+    RUN(testUbfiz64ZExt32Shift());
     RUN(testInsertBitField32());
     RUN(testInsertBitField64());
     RUN(testExtractInsertBitfieldAtLowEnd32());
@@ -7847,6 +8001,8 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
     RUN(testExtractSignedBitfield64());
     RUN(testExtractSignedBitfieldNonCanonical32());
     RUN(testExtractSignedBitfieldNonCanonical64());
+    RUN(testExtractSignedBitfieldEqualShifts32());
+    RUN(testExtractSignedBitfieldEqualShifts64());
     RUN(testAddWithLeftShift32());
     RUN(testAddWithRightShift32());
     RUN(testAddWithUnsignedRightShift32());
