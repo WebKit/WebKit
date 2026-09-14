@@ -570,12 +570,15 @@ private:
         bool byobCanceled = m_forBranch2 ? m_state->canceled2() : m_state->canceled1();
         bool otherCanceled = m_forBranch2 ? m_state->canceled1() : m_state->canceled2();
 
-        bool shouldStopSteps = false;
-        if (!byobCanceled && branch1)
-            shouldStopSteps = !branch1->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
+        RefPtr byobBranch = m_forBranch2 ? branch2 : branch1;
+        RefPtr otherBranch = m_forBranch2 ? branch1 : branch2;
 
-        if (!otherCanceled && branch2)
-            shouldStopSteps |= !branch2->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
+        bool shouldStopSteps = false;
+        if (!byobCanceled && byobBranch)
+            shouldStopSteps = !byobBranch->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
+
+        if (!otherCanceled && otherBranch)
+            shouldStopSteps |= !otherBranch->controller()->close(*globalObject, ReadableByteStreamController::ShouldThrowOnError::No);
 
         if (shouldStopSteps)
             return;
@@ -591,10 +594,10 @@ private:
             Ref chunk = chunkResult.releaseReturnValue();
             ASSERT(!chunk->byteLength());
 
-            if (!byobCanceled && branch1)
-                protect(branch1->controller())->respondWithNewView(*globalObject, chunk);
-            if (!otherCanceled && branch2 && branch2->controller()->hasPendingPullIntos())
-                protect(branch2->controller())->respond(*globalObject, 0);
+            if (!byobCanceled && byobBranch)
+                protect(byobBranch->controller())->respondWithNewView(*globalObject, chunk);
+            if (!otherCanceled && otherBranch && otherBranch->controller()->hasPendingPullIntos())
+                protect(otherBranch->controller())->respond(*globalObject, 0);
         }
 
         if (!byobCanceled || !otherCanceled)
