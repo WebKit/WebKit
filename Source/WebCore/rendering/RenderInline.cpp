@@ -280,12 +280,6 @@ bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return false;
 }
 
-PositionWithAffinity RenderInline::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)
-{
-    auto& containingBlock = *this->containingBlock();
-    return containingBlock.positionForPoint(point, source, fragment);
-}
-
 LayoutUnit RenderInline::innerPaddingBoxWidth() const
 {
     auto firstInlineBoxPaddingBoxLeft = LayoutUnit { };
