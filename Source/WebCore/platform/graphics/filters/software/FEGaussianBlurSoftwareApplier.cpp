@@ -273,7 +273,7 @@ inline void FEGaussianBlurSoftwareApplier::boxBlurAccelerated(PixelBuffer& ioBuf
 
     // Determine the size of a temporary buffer by calling the function first with a special flag. vImage will return
     // the size needed, or an error (which are all negative).
-    size_t tmpBufferSize = vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, 0, 0, 0, kernelSize, kernelSize, 0, kvImageEdgeExtend | kvImageGetTempBufferSize);
+    auto tmpBufferSize = vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, 0, 0, 0, kernelSize, kernelSize, 0, kvImageEdgeExtend | kvImageGetTempBufferSize);
     if (tmpBufferSize <= 0)
         return;
 
