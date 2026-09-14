@@ -27,6 +27,7 @@
 #include "RemoteDOMWindow.h"
 
 #include "Document.h"
+#include "DocumentPage.h"
 #include "ExceptionOr.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
@@ -130,8 +131,23 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     RefPtr userGestureToForward = UserGestureIndicator::currentUserGesture();
 
     MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
-    if (RefPtr remoteFrame = frame())
-        remoteFrame->client().postMessageToRemote(sourceFrame->frameID(), sourceOrigin, remoteFrame->frameID(), target, messageWithPorts, userGestureToForward ? std::optional(userGestureToForward->data()) : std::nullopt);
+    RefPtr remoteFrame = frame();
+    if (!remoteFrame)
+        return { };
+
+    auto sendMessage = [remoteFrame = WeakPtr { *remoteFrame }, sourceFrameID = sourceFrame->frameID(), sourceOrigin, target, messageWithPorts = WTF::move(messageWithPorts), userGestureToForward = userGestureToForward ? std::optional(userGestureToForward->data()) : std::nullopt] mutable {
+        if (RefPtr frame = remoteFrame.get())
+            frame->client().postMessageToRemote(sourceFrameID, sourceOrigin, frame->frameID(), target, messageWithPorts, userGestureToForward);
+    };
+
+    // Sending the message right away would let it be observed by the target process before notifications
+    // which are sent later in this task but dispatched synchronously, such as the load event of a frame
+    // owner element. Buffer the message in that case so that the ordering matches the same-process behavior.
+    RefPtr page = remoteFrame->page();
+    if (page && page->shouldDeferRemotePostMessage())
+        page->deferRemotePostMessage(WTF::move(sendMessage));
+    else
+        sendMessage();
     return { };
 }
 
