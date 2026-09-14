@@ -69,6 +69,7 @@ private:
     FloatSize fixedSize(const RenderElement&) const final;
     void didAddClient(RenderElement&) final { }
     void didRemoveClient(RenderElement&) final { }
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&) final;
 
     // CachedImageClient.
     void imageChanged(WebCore::CachedImage*, const IntRect* = nullptr) final;

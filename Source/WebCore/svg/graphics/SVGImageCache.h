@@ -19,25 +19,18 @@
 
 #pragma once
 
-#include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
+#include <WebCore/StyleImageContainerContext.h>
+#include <WebCore/StyleImageContainerContextKey.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-namespace Style {
-struct LinkParameters;
-}
-
-class CachedImage;
-class CachedImageClient;
 class ImageBuffer;
-class LayoutSize;
 class SVGImage;
 class SVGImageForContainer;
-class RenderObject;
 
 class SVGImageCache {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SVGImageCache, WEBCORE_EXPORT);
@@ -45,17 +38,16 @@ public:
     explicit SVGImageCache(SVGImage*);
     ~SVGImageCache();
 
-    void removeClientFromCache(const CachedImageClient*);
+    void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&);
+    void unregisterContainerContext(const ImageContainerContextKey&);
 
-    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
-    FloatSize imageSizeForRenderer(const RenderObject*) const;
-
-    Image* imageForRenderer(const RenderObject*) const;
+    FloatSize imageSizeForKey(const ImageContainerContextKey*) const;
+    Image* imageForKey(const ImageContainerContextKey*) const;
 
 private:
-    Image* findImageForRenderer(const RenderObject*) const;
+    Image* findImageForKey(const ImageContainerContextKey*) const;
 
-    using ImageForContainerMap = HashMap<const CachedImageClient*, Ref<SVGImageForContainer>>;
+    using ImageForContainerMap = HashMap<SingleThreadWeakPtr<const ImageContainerContextKey>, Ref<SVGImageForContainer>>;
 
     WeakPtr<SVGImage> m_svgImage;
     ImageForContainerMap m_imageForContainerMap;

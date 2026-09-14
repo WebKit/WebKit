@@ -79,7 +79,7 @@ public:
     virtual bool hasClient(RenderElement&) const = 0;
 
     // Size / scale.
-    virtual FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const = 0;
+    virtual FloatSize imageSize(const RenderElement*, float multiplier, ImageSizeType = ImageSizeType::Used) const = 0;
     virtual bool usesImageContainerSize() const = 0;
     virtual void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
     virtual bool imageHasRelativeWidth() const = 0;
@@ -91,7 +91,7 @@ public:
     // Platform Image.
     virtual RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine = false) const = 0;
     virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
-    virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
+    virtual bool currentFrameIsComplete(const RenderElement&) const { return true; }
 
     // Multiple Image selection.
     virtual Image* selectedImage() { return this; }
@@ -99,7 +99,7 @@ public:
 
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
-    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) = 0;
+    virtual void registerContainerContext(const ImageContainerContextKey&, ImageContainerContext&&) = 0;
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Derived type.

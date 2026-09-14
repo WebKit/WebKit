@@ -178,7 +178,7 @@ bool CSSImageValue::knownToBeOpaque(const RenderElement& renderer) const
     if (!m_cachedImage)
         return false;
     RefPtr cacheImage = m_cachedImage->get();
-    return cacheImage && cacheImage->currentFrameKnownToBeOpaque(&renderer);
+    return cacheImage && cacheImage->currentFrameKnownToBeOpaqueForRenderer(renderer);
 }
 
 } // namespace WebCore

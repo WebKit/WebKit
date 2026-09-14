@@ -240,7 +240,7 @@ bool CachedImage::errorOccurred() const
     return m_cachedImage->errorOccurred();
 }
 
-FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, ImageSizeType sizeType) const
 {
     if (isRenderSVGResource(renderer))
         return m_containerSize;
@@ -297,12 +297,16 @@ bool CachedImage::usesImageContainerSize() const
     return protect(m_cachedImage)->usesImageContainerSize();
 }
 
-void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
+void CachedImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& containerContext)
 {
-    m_containerSize = containerSize;
+    m_containerSize = containerContext.containerSize;
     if (!m_cachedImage)
         return;
-    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved, renderer.style().linkParameters());
+
+    if (containerContext.imageURL.isNull())
+        containerContext.imageURL = m_url.resolved;
+
+    protect(m_cachedImage)->registerContainerContext(key, WTF::move(containerContext));
 }
 
 void CachedImage::addClient(RenderElement& renderer)
@@ -319,6 +323,7 @@ void CachedImage::removeClient(RenderElement& renderer)
     if (!m_cachedImage)
         return;
     protect(m_cachedImage)->removeClient(protect(renderer.cachedImageClient()));
+    protect(m_cachedImage)->unregisterContainerContext(protect(renderer.imageContainerContextKey()));
 }
 
 bool CachedImage::hasClient(RenderElement& renderer) const
@@ -352,9 +357,9 @@ RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const F
     return protect(m_cachedImage)->imageForRenderer(renderer);
 }
 
-bool CachedImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CachedImage::currentFrameIsComplete(const RenderElement& renderer) const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete(renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameIsCompleteForRenderer(renderer);
 }
 
 float CachedImage::imageScaleFactor() const
@@ -364,7 +369,7 @@ float CachedImage::imageScaleFactor() const
 
 bool CachedImage::knownToBeOpaque(const RenderElement& renderer) const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque(&renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaqueForRenderer(renderer);
 }
 
 bool CachedImage::usesDataProtocol() const

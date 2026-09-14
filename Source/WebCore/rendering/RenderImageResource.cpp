@@ -138,21 +138,15 @@ Ref<Image> RenderImageResource::image(const IntSize& size) const
     return image.releaseNonNull();
 }
 
-bool RenderImageResource::currentFrameIsComplete() const
-{
-    if (!m_styleImage)
-        return false;
-    return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
-}
-
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
+void RenderImageResource::registerContainerContext(const IntSize& imageContainerSize, const URL& url)
 {
     if (!m_styleImage || !m_renderer)
         return;
-    protect(m_styleImage)->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
+
+    protect(m_styleImage)->registerContainerContext(m_renderer->imageContainerContextKey(), m_renderer->imageContainerContext(imageContainerSize, m_renderer->style().usedZoom(), url));
 }
 
-LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const
+LayoutSize RenderImageResource::imageSize(float multiplier, ImageSizeType type) const
 {
     if (!m_styleImage)
         return { };

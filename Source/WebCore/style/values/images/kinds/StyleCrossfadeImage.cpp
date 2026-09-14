@@ -178,17 +178,17 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
 
     if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
         auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL });
+        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .imageURL = fromURL });
     }
     if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
         auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL });
+        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .imageURL = toURL });
     }
 
     return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);
 }
 
-bool CrossfadeImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CrossfadeImage::currentFrameIsComplete(const RenderElement& renderer) const
 {
     if (m_from && !protect(m_from)->currentFrameIsComplete(renderer))
         return false;
@@ -223,6 +223,16 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     float inverseProgress = 1 - progress;
 
     return fromImageSize * inverseProgress + toImageSize * progress;
+}
+
+void CrossfadeImage::registerContainerContext(const ImageContainerContextKey& key, ImageContainerContext&& context)
+{
+    m_containerSize = context.containerSize;
+
+    if (m_from)
+        protect(m_from)->registerContainerContext(key, ImageContainerContext { context });
+    if (m_to)
+        protect(m_to)->registerContainerContext(key, ImageContainerContext { context });
 }
 
 void CrossfadeImage::imageChanged(WebCore::CachedImage*, const IntRect*)
