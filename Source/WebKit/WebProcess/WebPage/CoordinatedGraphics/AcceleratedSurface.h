@@ -245,7 +245,9 @@ private:
         void initializeColorBuffer(EGLImage = nullptr);
 
         unsigned m_fbo { 0 };
+#if USE(TEXTURE_MAPPER)
         unsigned m_depthStencilBuffer { 0 };
+#endif
         unsigned m_colorBuffer { 0 };
         UnixFileDescriptor m_renderingFenceFD;
         UnixFileDescriptor m_releaseFenceFD;
