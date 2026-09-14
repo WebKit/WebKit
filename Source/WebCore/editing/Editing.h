@@ -54,19 +54,19 @@ enum class TextDirection : bool;
 // Node
 // -------------------------------------------------------------------------
 
-RefPtr<ContainerNode> highestEditableRoot(const Position&, EditableType = ContentIsEditable);
+RefPtr<ContainerNode> highestEditableRoot(const Position&, EditableType = EditableType::Content);
 
-RefPtr<Node> highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = nullptr);
+RefPtr<Node> highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross, Node* stayWithin = nullptr);
 RefPtr<Node> highestNodeToRemoveInPruning(Node*);
 Element* lowestEditableAncestor(Node*);
 
 Element* deprecatedEnclosingBlockFlowElement(Node*); // Use enclosingBlock instead.
-RefPtr<Element> enclosingBlock(RefPtr<Node>, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+RefPtr<Element> enclosingBlock(RefPtr<Node>, EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 RefPtr<Element> enclosingTableCell(const Position&);
 RefPtr<Node> enclosingEmptyListItem(const VisiblePosition&);
 RefPtr<Element> NODELETE enclosingAnchorElement(const Position&);
 Element* enclosingElementWithTag(const Position&, const QualifiedName&);
-RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+RefPtr<Node> enclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node&), EditingBoundaryCrossingRule = EditingBoundaryCrossingRule::CannotCross);
 HTMLSpanElement* NODELETE tabSpanNode(Node*);
 HTMLSpanElement* NODELETE parentTabSpanNode(Node*);
 RefPtr<Element> isLastPositionBeforeTable(const VisiblePosition&); // FIXME: Strange to name this isXXX, but return an element.
@@ -148,7 +148,7 @@ inline Position lastPositionInOrAfterNode(Node*); // Defined in EditingInlines.h
 Position firstEditablePositionAfterPositionInRoot(const Position&, ContainerNode* root);
 Position lastEditablePositionBeforePositionInRoot(const Position&, ContainerNode* root);
 
-WEBCORE_EXPORT bool isEditablePosition(const Position&, EditableType = ContentIsEditable);
+WEBCORE_EXPORT bool isEditablePosition(const Position&, EditableType = EditableType::Content);
 bool isRichlyEditablePosition(const Position&);
 bool lineBreakExistsAtPosition(const Position&);
 bool isAtUnsplittableElement(const Position&);
@@ -204,7 +204,7 @@ Ref<Element> createTabSpanElement(Document&);
 Ref<Element> createTabSpanElement(Document&, String&& tabText);
 Ref<Element> createBlockPlaceholderElement(Document&);
 
-Element* editableRootForPosition(const Position&, EditableType = ContentIsEditable);
+Element* editableRootForPosition(const Position&, EditableType = EditableType::Content);
 RefPtr<Element> unsplittableElementForPosition(const Position&);
 
 bool canMergeLists(Element* firstList, Element* secondList);
