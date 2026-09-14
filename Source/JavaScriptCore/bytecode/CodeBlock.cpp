@@ -1258,10 +1258,8 @@ void CodeBlock::visitChildren(Visitor& visitor)
 
     // Update profiles from concurrent markers to reduce the cost of update at the GC end phase as its execution is serialized.
     if constexpr (std::is_same_v<Visitor, SlotVisitor>) {
-        if (visitor.isFirstVisit() && JITCode::isBaselineCode(jitType())) {
-            updateAllNonLazyValueProfilePredictions();
-            updateAllLazyValueProfilePredictions();
-        }
+        if (visitor.isFirstVisit() && JITCode::isBaselineCode(jitType()))
+            updatePredictionsConcurrently();
     }
     
     Heap::CodeBlockSpaceAndSet::setFor(*subspace()).add(this);
@@ -3147,9 +3145,15 @@ void CodeBlock::updateAllArrayAllocationProfilePredictions()
 // readable, which means any time from marking up to the sweep that would free them.
 void CodeBlock::updateAllPredictions()
 {
+    updatePredictionsConcurrently();
+    // This reads Butterfly from JSObject to obtain vectorLength, which can be safe only from the main thread.
+    updateAllArrayAllocationProfilePredictions();
+}
+
+void CodeBlock::updatePredictionsConcurrently()
+{
     updateAllNonLazyValueProfilePredictions();
     updateAllLazyValueProfilePredictions();
-    updateAllArrayAllocationProfilePredictions();
     updateAllArrayProfilePredictions();
 }
 
@@ -3164,8 +3168,8 @@ bool CodeBlock::shouldOptimizeNowFromBaseline()
     unsigned numberOfSamplesInProfiles;
     updateAllNonLazyValueProfilePredictionsAndCountLiveness(numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
     updateAllLazyValueProfilePredictions();
-    updateAllArrayAllocationProfilePredictions();
     updateAllArrayProfilePredictions();
+    updateAllArrayAllocationProfilePredictions();
 
     double livenessRate = 1.0;
     if (numberOfNonArgumentValueProfiles())
