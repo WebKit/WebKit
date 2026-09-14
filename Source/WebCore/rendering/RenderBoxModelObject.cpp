@@ -47,6 +47,7 @@
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderFlexibleBox.h"
@@ -114,6 +115,33 @@ static FirstLetterRemainingTextMap& NODELETE firstLetterRemainingTextMap()
 {
     static NeverDestroyed<FirstLetterRemainingTextMap> map;
     return map;
+}
+
+static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)
+{
+    for (auto& current : childrenOfType<RenderObject>(renderer)) {
+        if (current.isFloatingOrOutOfFlowPositioned())
+            continue;
+        if (auto* text = dynamicDowncast<RenderText>(current); text && text->containsOnlyCollapsibleWhitespace())
+            continue;
+        if (auto* renderInline = dynamicDowncast<RenderInline>(current)) {
+            if (auto* nested = firstContentfulChild(*renderInline))
+                return nested;
+            continue;
+        }
+        return const_cast<RenderObject*>(&current);
+    }
+    return { };
+}
+
+bool isEmptyInline(const RenderBoxModelObject& renderer)
+{
+    return !firstContentfulChild(renderer);
+}
+
+RenderObject* firstContentfulChild(RenderBoxModelObject& renderer)
+{
+    return firstContentfulChild(const_cast<const RenderBoxModelObject&>(renderer));
 }
 
 void RenderBoxModelObject::styleWillChange(Style::Difference diff, const Style::ComputedStyle& newStyle)
