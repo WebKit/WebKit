@@ -221,6 +221,11 @@ function(GI_DOCGEN namespace toml)
         --add-include-path "${CMAKE_BINARY_DIR}"
     )
 
+    # Fatal warnings only for >= 2026.2 due to https://gitlab.gnome.org/GNOME/gi-docgen/-/merge_requests/272
+    if (CMAKE_COMPILE_WARNING_AS_ERROR AND ${GIDocgen_VERSION} VERSION_GREATER_EQUAL 2026.2)
+        list(APPEND common_flags --fatal-warnings)
+    endif ()
+
     set(content_dir_flags
         --content-dir "${contentdir}"
         --content-dir "${toml_dir}"
