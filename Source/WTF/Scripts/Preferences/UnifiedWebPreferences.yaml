@@ -1459,14 +1459,6 @@ ColorFilterEnabled:
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   defaultValue: false
 
-CommandAttributesEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML command & commandfor attributes"
-  humanReadableDescription: "Enable HTML command & commandfor attribute support"
-  defaultValue: true
-
 # FIXME: WebKit has an alternate name for this called 'ShowDebugBorders'. We should standardize on one name.
 CompositingBordersVisible:
   type: bool
