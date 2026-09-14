@@ -1,0 +1,47 @@
+<!doctype html><!-- webkit-test-runner [ WebRTCAV1CodecEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="64" height="64"></canvas>
+<script>
+promise_test(async (test) => {
+    const av1Codecs = RTCRtpSender.getCapabilities("video").codecs.filter(c => /AV1/i.test(c.mimeType));
+    if (!av1Codecs.length)
+        return;
+
+    const context = canvas.getContext("2d");
+    let hue = 0;
+    (function draw() {
+        context.fillStyle = "hsl(" + (hue++ % 360) + ",100%,50%)";
+        context.fillRect(0, 0, 64, 64);
+        requestAnimationFrame(draw);
+    })();
+    const stream = canvas.captureStream(30);
+
+    const worker = new Worker("script-transform-av1-large-obu-crash-worker.js");
+    const wrote = new Promise(resolve => worker.onmessage = e => { if (e.data === "wrote") resolve(); });
+
+    const pc1 = new RTCPeerConnection();
+    const pc2 = new RTCPeerConnection();
+    test.add_cleanup(() => { pc1.close(); pc2.close(); });
+    pc1.onicecandidate = e => e.candidate && pc2.addIceCandidate(e.candidate);
+    pc2.onicecandidate = e => e.candidate && pc1.addIceCandidate(e.candidate);
+
+    const sender = pc1.addTrack(stream.getVideoTracks()[0], stream);
+    pc1.getTransceivers()[0].setCodecPreferences(av1Codecs);
+    sender.transform = new RTCRtpScriptTransform(worker, { side: "sender" });
+
+    await pc1.setLocalDescription();
+    await pc2.setRemoteDescription(pc1.localDescription);
+    await pc2.setLocalDescription();
+    await pc1.setRemoteDescription(pc2.localDescription);
+
+    await wrote;
+    await new Promise(resolve => test.step_timeout(resolve, 500));
+}, "RtpPacketizerAv1 should reject an encoded frame whose OBU payload size overflows int");
+</script>
+</body>
+</html>

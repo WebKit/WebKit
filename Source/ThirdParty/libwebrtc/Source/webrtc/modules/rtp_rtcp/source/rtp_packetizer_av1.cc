@@ -14,6 +14,9 @@
 #include <cstdint>
 #include <cstring>
 #include <span>
+#if WEBRTC_WEBKIT_BUILD
+#include <limits>
+#endif
 #include <vector>
 
 #include "api/video/video_frame_type.h"
@@ -81,6 +84,7 @@ RtpPacketizerAv1::RtpPacketizerAv1(std::span<const uint8_t> payload,
 
 std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
     std::span<const uint8_t> payload) {
+
   std::vector<Obu> result;
   ByteBufferReader payload_reader(payload);
   while (payload_reader.Length() > 0) {
@@ -115,6 +119,14 @@ std::vector<RtpPacketizerAv1::Obu> RtpPacketizerAv1::ParseObus(
           reinterpret_cast<const uint8_t*>(payload_reader.Data()), size);
       payload_reader.Consume(size);
     }
+#if WEBRTC_WEBKIT_BUILD
+    if (obu.payload.size() > static_cast<size_t>(std::numeric_limits<int>::max() - obu.size)) {
+      RTC_DLOG(LS_ERROR) << "Malformed AV1 input: OBU payload size "
+                         << obu.payload.size()
+                         << " exceeds maximum supported size";
+      return {};
+    }
+#endif
     obu.size += obu.payload.size();
     // Skip obus that shouldn't be transfered over rtp.
     int obu_type = ObuType(obu.header);
