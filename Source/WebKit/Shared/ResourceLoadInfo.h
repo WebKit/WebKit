@@ -62,6 +62,7 @@ struct ResourceLoadInfo {
     WallTime eventTimestamp;
     bool loadedFromCache { false };
     Type type { Type::Other };
+    bool parentFrameIsMainFrame { false };
 };
 
 } // namespace WebKit

@@ -127,6 +127,7 @@
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
 #include "RemoteWebTouchEvent.h"
+#include "ResourceLoadInfo.h"
 #include "RestrictedOpenerType.h"
 #include "RunJavaScriptParameters.h"
 #include "SandboxExtension.h"
@@ -12495,11 +12496,20 @@ WebInspectorUIProxy* WebPageProxy::inspector() const
     return m_inspector.get();
 }
 
+#if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
+static bool isParentFrameMainFrame(const ResourceLoadInfo& loadInfo, WebFrameProxy* mainFrame)
+{
+    return loadInfo.parentFrameID && mainFrame && *loadInfo.parentFrameID == mainFrame->frameID();
+}
+#endif
+
 void WebPageProxy::resourceLoadDidSendRequest(ResourceLoadInfo&& loadInfo, WebCore::ResourceRequest&& request)
 {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = this->webExtensionController())
+    if (RefPtr webExtensionController = this->webExtensionController()) {
+        loadInfo.parentFrameIsMainFrame = isParentFrameMainFrame(loadInfo, mainFrame());
         webExtensionController->resourceLoadDidSendRequest(identifier(), loadInfo, request);
+    }
 #endif
 
     if (m_resourceLoadClient)
@@ -12509,8 +12519,10 @@ void WebPageProxy::resourceLoadDidSendRequest(ResourceLoadInfo&& loadInfo, WebCo
 void WebPageProxy::resourceLoadDidPerformHTTPRedirection(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request)
 {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = this->webExtensionController())
+    if (RefPtr webExtensionController = this->webExtensionController()) {
+        loadInfo.parentFrameIsMainFrame = isParentFrameMainFrame(loadInfo, mainFrame());
         webExtensionController->resourceLoadDidPerformHTTPRedirection(identifier(), loadInfo, response, request);
+    }
 #endif
 
     if (m_resourceLoadClient)
@@ -12520,8 +12532,10 @@ void WebPageProxy::resourceLoadDidPerformHTTPRedirection(ResourceLoadInfo&& load
 void WebPageProxy::resourceLoadDidReceiveChallenge(ResourceLoadInfo&& loadInfo, WebCore::AuthenticationChallenge&& challenge)
 {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = this->webExtensionController())
+    if (RefPtr webExtensionController = this->webExtensionController()) {
+        loadInfo.parentFrameIsMainFrame = isParentFrameMainFrame(loadInfo, mainFrame());
         webExtensionController->resourceLoadDidReceiveChallenge(identifier(), loadInfo, challenge);
+    }
 #endif
 
     if (m_resourceLoadClient)
@@ -12531,8 +12545,10 @@ void WebPageProxy::resourceLoadDidReceiveChallenge(ResourceLoadInfo&& loadInfo, 
 void WebPageProxy::resourceLoadDidReceiveResponse(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response)
 {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = this->webExtensionController())
+    if (RefPtr webExtensionController = this->webExtensionController()) {
+        loadInfo.parentFrameIsMainFrame = isParentFrameMainFrame(loadInfo, mainFrame());
         webExtensionController->resourceLoadDidReceiveResponse(identifier(), loadInfo, response);
+    }
 #endif
 
     if (m_resourceLoadClient)
@@ -12542,8 +12558,10 @@ void WebPageProxy::resourceLoadDidReceiveResponse(ResourceLoadInfo&& loadInfo, W
 void WebPageProxy::resourceLoadDidCompleteWithError(ResourceLoadInfo&& loadInfo, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error)
 {
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
-    if (RefPtr webExtensionController = this->webExtensionController())
+    if (RefPtr webExtensionController = this->webExtensionController()) {
+        loadInfo.parentFrameIsMainFrame = isParentFrameMainFrame(loadInfo, mainFrame());
         webExtensionController->resourceLoadDidCompleteWithError(identifier(), loadInfo, response, error);
+    }
 #endif
 
     if (m_resourceLoadClient)
