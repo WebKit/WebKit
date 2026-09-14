@@ -1,0 +1,12 @@
+SameSite=Strict cookies must be sent on same-site WebSocket upgrade requests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Created socket to 'ws://127.0.0.1:8880/websocket/tests/hybi/echo-cookie'; readyState 0
+Connection opened.
+Received cookie header: strict=1
+PASS SameSite=Strict cookie WAS sent on same-site WebSocket upgrade request.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
