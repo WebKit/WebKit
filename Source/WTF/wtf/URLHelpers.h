@@ -30,6 +30,7 @@
 #pragma once
 
 #include <optional>
+#include <span>
 #include <wtf/ExportMacros.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +40,7 @@ namespace URLHelpers {
 
 using URLDecodeFunction = String(*)(const String&);
 
-WTF_EXPORT_PRIVATE String userVisibleURL(const CString& URL);
+WTF_EXPORT_PRIVATE String userVisibleURL(std::span<const char8_t> URL);
 void loadIDNAllowedScriptList();
 void addScriptToIDNAllowedScriptList(const char* scriptName);
 void initializeDefaultIDNAllowedScriptList();

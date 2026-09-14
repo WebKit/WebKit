@@ -167,7 +167,7 @@ static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogCli
             auto logString = spanConstCast<char>(unsafeSpan(messageString.get()));
             if (logString.size() >= logStringMaxSize)
                 logString = logString.first(logStringMaxSize - 1);
-            WebCore::logClient()->log(byteCast<uint8_t>(logChannel), byteCast<uint8_t>(logCategory), byteCast<uint8_t>(logString), type);
+            WebCore::logClient()->log(byteCast<char8_t>(logChannel), byteCast<char8_t>(logCategory), byteCast<char8_t>(logString), type);
         }
     }).get());
 

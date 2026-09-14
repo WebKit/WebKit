@@ -28,6 +28,6 @@
 
 #if ENABLE(SANDBOX_EXTENSIONS)
 [Nested, RValue] class WebKit::SandboxExtensionImpl {
-    std::span<const uint8_t> getSerializedFormat();
+    UTF8CString getSerializedFormat();
 }
 #endif

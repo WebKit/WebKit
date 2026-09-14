@@ -45,7 +45,7 @@ class FragmentedSharedBuffer;
 
 class WEBCORE_EXPORT NetworkSendQueue : public RefCounted<NetworkSendQueue>, public ContextDestructionObserver {
 public:
-    using WriteString = Function<void(const CString& utf8)>;
+    using WriteString = Function<void(const UTF8CString&)>;
     using WriteRawData = Function<void(std::span<const uint8_t>)>;
     enum class Continue : bool { No, Yes };
     using ProcessError = Function<Continue(ExceptionCode)>;
@@ -56,7 +56,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void enqueue(CString&& utf8);
+    void enqueue(UTF8CString&&);
     void enqueue(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength);
     void enqueue(Blob&);
 
@@ -69,7 +69,7 @@ private:
 
     void processMessages();
 
-    using Message = Variant<CString, Ref<FragmentedSharedBuffer>, Ref<BlobLoader>>;
+    using Message = Variant<UTF8CString, Ref<FragmentedSharedBuffer>, Ref<BlobLoader>>;
     Deque<Message> m_queue;
 
     WriteString m_writeString;

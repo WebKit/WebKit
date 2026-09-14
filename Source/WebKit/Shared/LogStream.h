@@ -48,7 +48,7 @@ constexpr size_t logCategoryMaxSize = 32;
 constexpr size_t logSubsystemMaxSize = 32;
 constexpr size_t logStringMaxSize = 256;
 
-void logWithProcessNamePrefix(os_log_t, os_log_type_t, ASCIILiteral processName, int pid, const char* message);
+void logWithProcessNamePrefix(os_log_t, os_log_type_t, ASCIILiteral processName, int pid, const UTF8CString& message);
 
 class AuxiliaryProcessProxy;
 // Type which receives log messages from another process and invokes the platform logging.
@@ -101,7 +101,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 #endif
 
-    void logOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType);
+    void logOnBehalfOfWebContent(std::span<const char8_t> logChannel, std::span<const char8_t> logCategory, std::span<const char8_t> logString, uint8_t logType);
 
 #if __has_include("LogMessagesDeclarations.h")
 #include "LogMessagesDeclarations.h"

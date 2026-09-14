@@ -216,14 +216,14 @@ void SHA1::addUTF8Bytes(StringView string)
         else
             addBytes(String::make8Bit(string.span16()).span8());
     } else
-        addBytes(string.utf8().span());
+        addBytes(asByteSpan(string.utf8().span()));
 }
 
 #if USE(CF)
 void SHA1::addUTF8Bytes(CFStringRef string)
 {
     if (auto characters = CFStringGetASCIICStringSpan(string); characters.data()) {
-        addBytes(byteCast<uint8_t>(characters));
+        addBytes(asByteSpan(characters));
         return;
     }
 

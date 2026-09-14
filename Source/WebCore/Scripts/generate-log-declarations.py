@@ -86,7 +86,7 @@ public:
     LogClient() = default;
     virtual ~LogClient() { }
 
-    virtual void log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t) = 0;
+    virtual void log(std::span<const char8_t> logChannel, std::span<const char8_t> logCategory, std::span<const char8_t> logString, os_log_type_t) = 0;
     virtual bool isWebKitLogClient() const { return false; }
 
 """)

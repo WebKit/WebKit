@@ -33,7 +33,7 @@ LogClient::LogClient(Ref<ConnectionType>&& connection)
 {
 }
 
-void LogClient::log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
+void LogClient::log(std::span<const char8_t> logChannel, std::span<const char8_t> logCategory, std::span<const char8_t> logString, os_log_type_t type)
 {
     send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type));
 }

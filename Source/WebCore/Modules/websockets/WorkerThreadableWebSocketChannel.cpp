@@ -94,7 +94,7 @@ String WorkerThreadableWebSocketChannel::extensions()
     return m_workerClientWrapper->extensions();
 }
 
-void WorkerThreadableWebSocketChannel::send(CString&& message)
+void WorkerThreadableWebSocketChannel::send(UTF8CString&& message)
 {
     if (RefPtr bridge = m_bridge)
         bridge->send(WTF::move(message));
@@ -176,7 +176,7 @@ WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel
     return channel->connect(url, protocol);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::send(CString&& message)
+void WorkerThreadableWebSocketChannel::Peer::send(UTF8CString&& message)
 {
     ASSERT(isMainThread());
     if (RefPtr channel = m_mainWebSocketChannel)
@@ -422,7 +422,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
     });
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::send(CString&& message)
+void WorkerThreadableWebSocketChannel::Bridge::send(UTF8CString&& message)
 {
     RefPtr peer = m_peer.get();
     if (!peer)

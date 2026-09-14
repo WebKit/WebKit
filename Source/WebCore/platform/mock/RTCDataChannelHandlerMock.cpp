@@ -52,7 +52,7 @@ void RTCDataChannelHandlerMock::setClient(RTCDataChannelHandlerClient& client, s
     m_timerEvents.append(adoptRef(*new TimerEvent(this, WTF::move(notifier))));
 }
 
-bool RTCDataChannelHandlerMock::sendStringData(const CString& string)
+bool RTCDataChannelHandlerMock::sendStringData(const UTF8CString& string)
 {
     if (RefPtr client = m_client.get())
         client->didReceiveStringData(String::fromUTF8(string.span()));

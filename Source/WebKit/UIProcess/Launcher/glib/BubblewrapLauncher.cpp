@@ -223,7 +223,7 @@ static void bindIfExists(Vector<CString>& args, const CStringView& path, BindFla
     // directives on top, which could fail in the presence of symbolic
     // links.
     if (!startsWith(path.span(), "/etc/"_s)) {
-        auto pathString = CString(path.span());
+        UTF8CString pathString { path.span() };
         args.appendList<CString>({ bindType, pathString, pathString });
     }
 }
