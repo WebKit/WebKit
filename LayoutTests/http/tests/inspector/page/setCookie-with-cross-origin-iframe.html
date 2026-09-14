@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.setAlwaysAcceptCookies(true);
+
+function loadFrameWithURL(url) {
+    let frame = document.createElement("iframe");
+    frame.src = url;
+    frame.addEventListener("load", (event) => {
+        TestPage.dispatchEventToFrontend("FrameLoad");
+    });
+    document.body.appendChild(frame);
+}
+
+function test()
+{
+    const firstParty = "127.0.0.1";
+    const thirdParty = "localhost";
+
+    let suite = InspectorTest.createAsyncSuite("Page.setCookie.CrossOriginIframe");
+
+    suite.addTestCase({
+        name: "Page.setCookie.LoadCrossOriginFrame",
+        description: "Load a third-party iframe so that Page.setCookie has to walk a frame whose document URL differs from the first party.",
+        async test() {
+            await Promise.all([
+                InspectorTest.awaitEvent("FrameLoad"),
+                InspectorTest.evaluateInPage(`loadFrameWithURL("http://${thirdParty}:8000/inspector/page/resources/test-page.html")`),
+            ]);
+            InspectorTest.log("Loaded third-party iframe.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.setCookie.FirstPartyCookieWithCrossOriginFrame",
+        description: "Setting a first-party cookie while a third-party iframe is present should work and should not terminate the WebProcess.",
+        async test() {
+            let cookie = new WI.Cookie(WI.Cookie.Type.Response, "CrossOriginFrameCookie", "PASS", {
+                session: true,
+                path: "/",
+                domain: firstParty,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.Lax,
+            });
+            await PageAgent.setCookie(cookie.toProtocol());
+
+            let {cookies} = await PageAgent.getCookies();
+            let found = cookies.filter((each) => each.name === "CrossOriginFrameCookie");
+            InspectorTest.expectEqual(found.length, 1, "Should have set the first-party cookie.");
+            InspectorTest.expectEqual(found[0]?.value, "PASS", "Cookie should have value 'PASS'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Page.setCookie.UnrelatedDomain",
+        description: "Setting a cookie for a domain that no frame in the page is on should be a no-op.",
+        async test() {
+            let cookie = new WI.Cookie(WI.Cookie.Type.Response, "UnrelatedDomainCookie", "FAIL", {
+                session: true,
+                path: "/",
+                domain: "webkit.org",
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.Lax,
+            });
+            await PageAgent.setCookie(cookie.toProtocol());
+
+            let {cookies} = await PageAgent.getCookies();
+            let found = cookies.filter((each) => each.name === "UnrelatedDomainCookie");
+            InspectorTest.expectEqual(found.length, 0, "Should not have set a cookie for an unrelated domain.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that Page.setCookie does not terminate the WebProcess when the inspected page has a cross-origin iframe.</p>
+</body>
+</html>
