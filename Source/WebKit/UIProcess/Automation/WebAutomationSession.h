@@ -356,8 +356,9 @@ private:
 
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
     void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&);
-    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>>&);
-    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>>&);
+    void respondToPendingPageNavigationCallbacksWithTimeout(HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>>&);
+    void respondToPendingFrameNavigationCallbacksWithTimeout(HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>>&);
+    void respondToPendingNavigationCallbacksWithSuccess(Vector<Inspector::CommandCallback<void>>&&);
     void loadTimerFired();
 
     void exitFullscreenWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
@@ -438,10 +439,10 @@ private:
     HashMap<WebCore::FrameIdentifier, String> m_webFrameHandleMap;
     HashMap<String, WebCore::FrameIdentifier> m_handleWebFrameMap;
 
-    HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
-    HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
-    HashMap<WebCore::FrameIdentifier, Inspector::CommandCallback<void>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;
+    HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame;
+    HashMap<WebCore::FrameIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame;
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingInspectorCallbacksPerPage;
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
     HashMap<WebPageProxyIdentifier, Inspector::CommandCallback<void>> m_pendingKeyboardEventsFlushedCallbacksPerPage;
