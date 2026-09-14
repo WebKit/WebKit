@@ -83,9 +83,11 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
+#include "HTMLFieldSetElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
+#include "HTMLLegendElement.h"
 #include "HTMLMapElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLMeterElement.h"
@@ -112,6 +114,7 @@
 #include "RemoteFrame.h"
 #include "RemoteFrameView.h"
 #include "RenderAttachment.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderImage.h"
@@ -5789,6 +5792,11 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
                 m_elementsWithRelationAttributes.add(*label);
                 handleLabelChanged(protect(getOrCreate(*label)));
             }
+
+            if (is<HTMLLegendElement>(*element)) {
+                // A legend (which can label a fieldset) was added or removed.
+                markRelationsDirty();
+            }
         }
     }
     m_deferredElementAddedOrRemovedList.clear();
@@ -7078,7 +7086,7 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
         // For instance, LabelFor in HTMLLabelElements.
         addLabelForRelation(element);
 
-        if (hasRelationAttribute || is<HTMLLabelElement>(element.get()))
+        if (hasRelationAttribute || is<HTMLLabelElement>(element.get()) || is<HTMLFieldSetElement>(element.get()))
             m_elementsWithRelationAttributes.add(element);
     }
 }
@@ -7209,6 +7217,13 @@ void AXObjectCache::addLabelForRelation(Element& origin)
             if (!hasAnyARIALabelling(*control))
                 addRelation(origin, *control, AXRelation::LabelFor);
         }
+    }
+
+    if (is<HTMLFieldSetElement>(origin)) {
+        CheckedPtr fieldsetRenderer = dynamicDowncast<RenderBlock>(origin.renderer());
+        CheckedPtr legendRenderer = fieldsetRenderer ? fieldsetRenderer->findFieldsetLegend(RenderBlock::FieldsetIncludeFloatingOrOutOfFlow) : nullptr;
+        if (RefPtr legend = legendRenderer ? legendRenderer->element() : nullptr)
+            addedRelation |= addRelation(*legend, origin, AXRelation::LabelFor);
     }
 
     if (addedRelation)
