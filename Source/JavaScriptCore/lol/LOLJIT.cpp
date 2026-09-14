@@ -347,6 +347,8 @@ void LOLJIT::privateCompileMainPass()
         DEFINE_SLOW_OP(create_async_generator)
         DEFINE_SLOW_OP(new_generator)
         DEFINE_SLOW_OP(new_async_function_generator)
+        DEFINE_SLOW_OP(save_generator_locals)
+        DEFINE_SLOW_OP(restore_generator_locals)
 
         DEFINE_OP(op_add)
         DEFINE_OP(op_bitnot)
