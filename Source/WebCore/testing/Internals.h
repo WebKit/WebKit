@@ -211,10 +211,10 @@ class Internals final
 #endif
     {
     WTF_MAKE_TZONE_ALLOCATED(Internals);
-#if ENABLE(MEDIA_STREAM)
+    #if ENABLE(MEDIA_STREAM)
         WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Internals);
     #endif
-public:
+    public:
     static Ref<Internals> create(Document&);
     virtual ~Internals();
 
@@ -310,12 +310,12 @@ public:
 
     enum ContentsFormat {
         RGBA8,
-#if ENABLE(PIXEL_FORMAT_RGB10)
+    #if ENABLE(PIXEL_FORMAT_RGB10)
         RGBA10,
-#endif
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    #endif
+    #if ENABLE(PIXEL_FORMAT_RGBA16F)
         RGBA16F,
-#endif
+    #endif
     };
 
     enum CompositingPolicy { Normal, Conservative };
@@ -494,7 +494,7 @@ public:
         std::optional<double> expiry { std::nullopt }; // Cookie's expires field in seconds.
         String sameSite { "None"_s };
     };
-    
+
     struct TextIndicatorInfo {
         RefPtr<DOMRectReadOnly> textBoundingRectInRootViewCoordinates;
         RefPtr<DOMRectList> textRectsInBoundingRectCoordinates;
@@ -583,7 +583,7 @@ public:
     void NODELETE setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
     void setHasHDRContentForTesting(HTMLImageElement&);
 
-#if ENABLE(WEB_CODECS)
+    #if ENABLE(WEB_CODECS)
         bool hasPendingActivity(const WebCodecsVideoDecoder&) const;
         bool is10bitsVideoFrame(const WebCodecsVideoFrame&) const;
     #endif
@@ -660,7 +660,7 @@ public:
     ExceptionOr<bool> isCaretBlinkingSuspended();
     ExceptionOr<bool> isCaretBlinkingSuspended(Document&);
 
-#if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
+    #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
         void setPrefersNonBlinkingCursor(bool);
     #endif
 
@@ -702,11 +702,11 @@ public:
 
     ExceptionOr<bool> displayP3Available()
     {
-#if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
+    #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
         return true;
-#else
+    #else
         return false;
-#endif
+    #endif
     }
 
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);
@@ -774,11 +774,11 @@ public:
 
     static bool sentenceRetroCorrectionEnabled()
     {
-#if PLATFORM(MAC)
+    #if PLATFORM(MAC)
         return true;
-#else
+    #else
         return false;
-#endif
+    #endif
     }
     bool hasSpellingMarker(int from, int length);
     bool hasGrammarMarker(int from, int length);
@@ -787,7 +787,7 @@ public:
     bool hasAutocorrectedMarker(int from, int length);
     bool hasDictationAlternativesMarker(int from, int length);
     bool hasCorrectionIndicatorMarker(int from, int length);
-#if ENABLE(WRITING_TOOLS)
+    #if ENABLE(WRITING_TOOLS)
         bool hasWritingToolsTextSuggestionMarker(int from, int length);
     #endif
     bool hasTransparentContentMarker(int from, int length);
@@ -816,7 +816,7 @@ public:
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
     ExceptionOr<unsigned> countFindMatches(const String&, const Vector<String>& findOptions);
     void setCachedFindMatchBufferLimitForTesting(unsigned maximumRunCount);
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         ExceptionOr<Vector<double>> findCueMatches(const String&, const Vector<String>& findOptions);
     #endif
 
@@ -891,13 +891,13 @@ public:
     ExceptionOr<void> executeOpportunisticallyScheduledTasks() const;
     ExceptionOr<void> releaseMemoryNow() const;
 
-#if ENABLE(WEB_AUDIO)
+    #if ENABLE(WEB_AUDIO)
         // BaseAudioContext lifetime testing.
         static uint64_t NODELETE baseAudioContextIdentifier(const BaseAudioContext&);
         static bool isBaseAudioContextAlive(uint64_t contextID);
-    
+
         Vector<float> waveShaperProcessCurveWithData(Vector<float> source, Vector<float> curve);
-    
+
     #endif
 
     unsigned NODELETE numberOfIntersectionObservers(const Document&) const;
@@ -949,11 +949,11 @@ public:
     ExceptionOr<void> setFullscreenAutoHideDuration(double);
     void NODELETE setScreenContentsFormatsForTesting(const Vector<Internals::ContentsFormat>&);
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         bool NODELETE isChangingPresentationMode(HTMLVideoElement&) const;
     #endif
 
-#if ENABLE(VIDEO_PRESENTATION_MODE)
+    #if ENABLE(VIDEO_PRESENTATION_MODE)
         void setMockVideoPresentationModeEnabled(bool);
     #endif
 
@@ -1029,17 +1029,17 @@ public:
     void enableFixedWidthAutoSizeMode(bool enabled, int width, int height);
     void enableSizeToContentAutoSizeMode(bool enabled, int width, int height);
 
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         void initializeMockCDM();
     #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
+    #if ENABLE(ENCRYPTED_MEDIA)
         Ref<MockCDMFactory> registerMockCDM();
     #endif
 
     void NODELETE enableMockMediaCapabilities();
 
-#if ENABLE(SPEECH_SYNTHESIS)
+    #if ENABLE(SPEECH_SYNTHESIS)
         void simulateSpeechSynthesizerVoiceListChange();
         void enableMockSpeechSynthesizer();
         void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
@@ -1048,14 +1048,14 @@ public:
         unsigned NODELETE minimumExpectedVoiceCount();
     #endif
 
-#if ENABLE(MEDIA_STREAM)
+    #if ENABLE(MEDIA_STREAM)
         void NODELETE setShouldInterruptAudioOnPageVisibilityChange(bool);
     #endif
-#if ENABLE(MEDIA_RECORDER)
+    #if ENABLE(MEDIA_RECORDER)
         void NODELETE setCustomPrivateRecorderCreator();
     #endif
 
-#if ENABLE(WEB_RTC)
+    #if ENABLE(WEB_RTC)
         void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection&, const String& action);
         void useMockRTCPeerConnectionFactory(const String&);
         void setICECandidateFiltering(bool);
@@ -1070,7 +1070,7 @@ public:
         bool isSupportingVP9HardwareDecoder() const;
         void isVP9HardwareDecoderUsed(RTCPeerConnection&, DOMPromiseDeferred<IDLBoolean>&&);
         bool isSupportingAV1HardwareDecoder() const;
-    
+
         void NODELETE setEnableWebRTCEncryption(bool);
         bool hasPeerConnectionEnabledServiceClass(const RTCPeerConnection&);
     #endif
@@ -1080,7 +1080,7 @@ public:
     String NODELETE blobInternalURL(const Blob&);
     void isBlobInternalURLRegistered(const String&, DOMPromiseDeferred<IDLBoolean>&&);
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         unsigned NODELETE mediaElementCount();
         Vector<String> mediaResponseSources(HTMLMediaElement&);
         Vector<String> mediaResponseContentRanges(HTMLMediaElement&);
@@ -1088,7 +1088,7 @@ public:
         ExceptionOr<bool> mediaElementHasCharacteristic(HTMLMediaElement&, const String&);
         void enterViewerMode(HTMLVideoElement&);
         ExceptionOr<bool> mediaPlayerRenderingCanBeAccelerated(HTMLMediaElement&);
-    
+
         bool NODELETE elementShouldBufferData(HTMLMediaElement&);
         String elementBufferingPolicy(HTMLMediaElement&);
         void setMediaElementBufferingPolicy(HTMLMediaElement&, const String&);
@@ -1097,11 +1097,11 @@ public:
         double privatePlayerCurrentTime(HTMLMediaElement&);
         bool isMediaElementHidden(const HTMLMediaElement&);
         double elementEffectivePlaybackRate(const HTMLMediaElement&);
-    
+
         ExceptionOr<void> setOverridePreferredDynamicRangeMode(HTMLMediaElement&, const String&);
-    
+
         void NODELETE enableGStreamerHolePunching(HTMLVideoElement&);
-    
+
         double effectiveDynamicRangeLimitValue(const HTMLMediaElement&);
     #if ENABLE(FULLSCREEN_API)
         bool isChildOfElementFullscreen(const HTMLMediaElement&) const;
@@ -1122,15 +1122,15 @@ public:
     ExceptionOr<void> setPreferredAudioCharacteristicsForTesting(const Vector<String>&);
     ExceptionOr<void> setCaptionDisplayMode(const String&);
     String captionDisplayMode() const;
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
         ExceptionOr<String> textTrackBCP47Language(TextTrack&);
         Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);
         double closestTimeToTimeRanges(double time, TimeRanges&);
-    
+
         void showCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement&);
         void hideCaptionDisplaySettingsPreviewForMediaElement(HTMLMediaElement&);
-    
+
         void setMockCaptionDisplaySettingsClientCallback(RefPtr<MockCaptionDisplaySettingsClientCallback>&&);
         MockCaptionDisplaySettingsClientCallback* NODELETE mockCaptionDisplaySettingsClientCallback() const;
         RefPtr<MediaControlsHost> NODELETE controlsHostForMediaElement(HTMLMediaElement&);
@@ -1141,7 +1141,7 @@ public:
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
     void setSelectionFromNone();
 
-#if ENABLE(MEDIA_SOURCE)
+    #if ENABLE(MEDIA_SOURCE)
         WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
         void setMaximumSourceBufferSize(SourceBuffer&, uint64_t, DOMPromiseDeferred<void>&&);
         using BufferedSamplesPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
@@ -1153,7 +1153,7 @@ public:
         size_t evictableSize(SourceBuffer&);
     #endif
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         ExceptionOr<void> beginMediaSessionInterruption(const String&);
         void endMediaSessionInterruption(const String&);
         void applicationWillBecomeInactive();
@@ -1179,7 +1179,7 @@ public:
         void resumeAllMediaPlayback();
     #endif
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    #if ENABLE(WIRELESS_PLAYBACK_TARGET)
         void setMockMediaPlaybackTargetPickerEnabled(bool);
         ExceptionOr<void> setMockMediaPlaybackTargetPickerState(const String& deviceName, const String& deviceState);
         void mockMediaPlaybackTargetPickerDismissPopup();
@@ -1187,7 +1187,7 @@ public:
 
     bool isMonitoringWirelessRoutes() const;
 
-#if ENABLE(WEB_AUDIO)
+    #if ENABLE(WEB_AUDIO)
         void setAudioContextRestrictions(AudioContext&, StringView restrictionsString);
         void NODELETE useMockAudioDestinationCocoa();
     #endif
@@ -1215,7 +1215,7 @@ public:
     void queueMicroTask(int);
     bool testPreloaderSettingViewport();
 
-#if ENABLE(CONTENT_FILTERING)
+    #if ENABLE(CONTENT_FILTERING)
         MockContentFilterSettings& mockContentFilterSettings();
     #endif
 
@@ -1225,7 +1225,7 @@ public:
 
     ExceptionOr<String> pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius);
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         void setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement&, size_t);
         void setMediaControlsHidePlaybackRates(HTMLMediaElement&, bool);
     #endif // ENABLE(VIDEO)
@@ -1233,7 +1233,7 @@ public:
     float NODELETE pageMediaVolume();
     void setPageMediaVolume(float);
 
-#if ENABLE(NSREFRESHCONTROLLER_TESTING)
+    #if ENABLE(NSREFRESHCONTROLLER_TESTING)
         void setPageHasRefreshControllerForTesting(bool);
     #endif
 
@@ -1276,7 +1276,7 @@ public:
     void NODELETE reportBacktrace();
     void setBaseWritingDirection(BaseWritingDirection);
 
-#if ENABLE(POINTER_LOCK)
+    #if ENABLE(POINTER_LOCK)
         bool NODELETE pageHasPendingPointerLock() const;
         bool NODELETE pageHasPointerLock() const;
     #endif
@@ -1287,13 +1287,13 @@ public:
 
     void setAsRunningUserScripts(Document&);
 
-#if ENABLE(WEBGL)
+    #if ENABLE(WEBGL)
         enum class SimulatedWebGLContextEvent {
             GPUStatusFailure,
             Timeout
         };
         void simulateEventForWebGLContext(SimulatedWebGLContextEvent, WebGLRenderingContextBase&);
-    
+
         enum class RequestedGPU {
             Default,
             LowPower,
@@ -1308,9 +1308,9 @@ public:
     void setPageIsInWindow(bool);
     bool NODELETE isPageActive() const;
 
-#if ENABLE(MEDIA_STREAM)
+    #if ENABLE(MEDIA_STREAM)
         void stopObservingRealtimeMediaSource();
-    
+
         void setMockAudioTrackChannelNumber(MediaStreamTrack&, unsigned short);
         void setCameraMediaStreamTrackOrientation(MediaStreamTrack&, int orientation);
         unsigned long trackAudioSampleCount() const { return m_trackAudioSampleCount; }
@@ -1332,13 +1332,13 @@ public:
         bool NODELETE shouldAudioTrackPlay(const AudioTrack&);
         void deleteAudioUnit();
     #endif // ENABLE(MEDIA_STREAM)
-#if ENABLE(WEB_RTC)
+    #if ENABLE(WEB_RTC)
         String rtcNetworkInterfaceName() const;
     #endif
 
     bool NODELETE isHardwareVP9DecoderExpected();
 
-#if USE(AUDIO_SESSION)
+    #if USE(AUDIO_SESSION)
         using AudioSessionCategory = WebCore::AudioSessionCategory;
         using AudioSessionMode = WebCore::AudioSessionMode;
         using RouteSharingPolicy = WebCore::RouteSharingPolicy;
@@ -1352,13 +1352,13 @@ public:
             PlayAndRecord,
             AudioProcessing,
         };
-    
+
         enum class AudioSessionMode : uint8_t {
             Default,
             VideoChat,
             MoviePlayback,
         };
-    
+
         enum class RouteSharingPolicy : uint8_t {
             Default,
             LongFormAudio,
@@ -1371,7 +1371,7 @@ public:
     AudioSessionCategory audioSessionCategory() const;
     AudioSessionMode audioSessionMode() const;
     RouteSharingPolicy routeSharingPolicy() const;
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         AudioSessionCategory NODELETE categoryAtMostRecentPlayback(HTMLMediaElement&) const;
         AudioSessionMode modeAtMostRecentPlayback(HTMLMediaElement&) const;
     #endif
@@ -1393,6 +1393,7 @@ public:
     void updateQuotaBasedOnSpaceUsage();
 
     void setConsoleMessageListener(RefPtr<StringCallback>&&);
+    void configureLoggingChannel(const String& channelName, bool enabled);
 
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
@@ -1403,14 +1404,14 @@ public:
 
     void numberOfWebSocketChannelsInNetworkProcess(DOMPromiseDeferred<IDLUnsignedLong>&&);
 
-#if ENABLE(APPLE_PAY)
+    #if ENABLE(APPLE_PAY)
         ExceptionOr<Ref<MockPaymentCoordinator>> mockPaymentCoordinator(Document&);
     #endif
 
     void installImageOverlay(Element&, Vector<ImageOverlayLine>&&, Vector<ImageOverlayBlock>&& = { }, Vector<ImageOverlayDataDetector>&& = { });
     bool hasActiveDataDetectorHighlight() const;
 
-#if ENABLE(IMAGE_ANALYSIS)
+    #if ENABLE(IMAGE_ANALYSIS)
         void requestTextRecognition(Element&, Ref<VoidCallback>&&);
         RefPtr<Element> textRecognitionCandidate() const;
     #endif
@@ -1435,10 +1436,10 @@ public:
 
     ExceptionOr<bool> elementShouldDisplayPosterImage(HTMLVideoElement&) const;
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         using PlaybackControlsPurpose = MediaElementSession::PlaybackControlsPurpose;
         RefPtr<HTMLMediaElement> bestMediaElementForRemoteControls(PlaybackControlsPurpose);
-    
+
         // Same values as PlatformMediaSession::State, but re-declared to avoid redefinitions when linking
         // directly with libWebCore (e.g. with non-unified builds)
         enum MediaSessionState {
@@ -1449,19 +1450,19 @@ public:
             Interrupted,
         };
         MediaSessionState mediaSessionState(HTMLMediaElement&);
-    
+
         size_t mediaElementCount() const;
-    
+
         void setMediaElementVolumeLocked(HTMLMediaElement&, bool);
         String mediaElementViewportVisibility(HTMLMediaElement&);
-    
+
     #if ENABLE(SPEECH_SYNTHESIS)
         SpeechSynthesisUtterance* NODELETE speechSynthesisUtteranceForCue(const VTTCue&);
         ExceptionOr<RefPtr<VTTCue>> mediaElementCurrentlySpokenCue(HTMLMediaElement&);
     #endif
-    
+
         bool elementIsActiveNowPlayingSession(HTMLMediaElement&) const;
-    
+
     #endif // ENABLE(VIDEO)
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);
@@ -1524,7 +1525,7 @@ public:
 
     void addPrefetchLoadEventListener(HTMLLinkElement&, RefPtr<EventListener>&&);
 
-#if ENABLE(WEB_AUTHN)
+    #if ENABLE(WEB_AUTHN)
         void setMockWebAuthenticationConfiguration(const MockWebAuthenticationConfiguration&);
     #endif
 
@@ -1538,7 +1539,7 @@ public:
     bool hasSandboxIOKitOpenAccessToClass(const String& process, const String& ioKitClass);
     bool hasSandboxUnixSyscallAccess(const String& process, unsigned syscall) const;
 
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
         bool emitWebCoreLogs(unsigned logCount, bool useMainThread) const;
         bool emitLogs(const String& logString, unsigned logCount, bool useMainThread) const;
     #endif
@@ -1578,45 +1579,45 @@ public:
 
     void setTopDocumentURLForQuirks(const String&);
 
-#if ENABLE(APP_HIGHLIGHTS)
+    #if ENABLE(APP_HIGHLIGHTS)
         Vector<String> appHighlightContextMenuItemTitles() const;
         unsigned NODELETE numberOfAppHighlights();
     #endif
 
     Vector<Ref<AbstractRange>> textExtractionHighlightRanges() const;
 
-#if ENABLE(WEBXR)
+    #if ENABLE(WEBXR)
         ExceptionOr<Ref<WebXRTest>> xrTest();
     #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
+    #if ENABLE(ENCRYPTED_MEDIA)
         unsigned NODELETE mediaKeysInternalInstanceObjectRefCount(const MediaKeys&) const;
         unsigned NODELETE mediaKeySessionInternalInstanceSessionObjectRefCount(const MediaKeySession&) const;
     #endif
     void setContentSizeCategory(ContentSizeCategory);
 
-#if ENABLE(ATTACHMENT_ELEMENT)
+    #if ENABLE(ATTACHMENT_ELEMENT)
     #if ENABLE(SERVICE_CONTROLS)
         bool hasImageControls(const HTMLImageElement&) const;
     #endif // ENABLE(SERVICE_CONTROLS)
         String attachmentElementShadowUserAgentStyleSheet() const;
     #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-#if ENABLE(MEDIA_SESSION)
+    #if ENABLE(MEDIA_SESSION)
         ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
         ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
-    
+
     #if ENABLE(WEB_CODECS)
         using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<WebCodecsVideoFrame>>;
         void loadArtworkImage(String&&, ArtworkImagePromise&&);
     #endif
         ExceptionOr<Vector<String>> platformSupportedCommands() const;
-    
+
     #if ENABLE(MEDIA_SESSION_COORDINATOR)
         ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, Ref<StringCallback>&&);
         ExceptionOr<void> setMockMediaSessionCoordinatorCommandsShouldFail(bool);
     #endif
-    
+
     #endif // ENABLE(MEDIA_SESSION)
     String treeOrder(Node&, Node&, TreeType);
     String treeOrderBoundaryPoints(Node& containerA, unsigned offsetA, Node& containerB, unsigned offsetB, TreeType);
@@ -1658,7 +1659,7 @@ public:
 
     String NODELETE defaultSpatialTrackingLabel() const;
 
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         bool isEffectivelyMuted(const HTMLMediaElement&);
         Ref<EventTarget> addInternalEventTarget(HTMLMediaElement&);
     #endif
@@ -1673,7 +1674,7 @@ public:
     void NODELETE setResourceCachingDisabledByWebInspector(bool);
     ExceptionOr<void> lowerAllFrameMemoryMonitorLimits();
 
-#if ENABLE(DAMAGE_TRACKING)
+    #if ENABLE(DAMAGE_TRACKING)
         struct FrameDamage {
             unsigned sequenceId { 0 };
             RefPtr<DOMRectReadOnly> bounds;
@@ -1685,7 +1686,7 @@ public:
     ExceptionOr<Ref<ReadableStream>> readableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
     ExceptionOr<Ref<WritableStream>> writableStreamFromMessagePort(JSDOMGlobalObject&, MessagePort&);
 
-#if ENABLE(MODEL_ELEMENT)
+    #if ENABLE(MODEL_ELEMENT)
         void NODELETE disableModelLoadDelaysForTesting();
         String modelElementState(HTMLModelElement&);
         bool NODELETE isModelElementIntersectingViewport(HTMLModelElement&);
@@ -1700,14 +1701,14 @@ public:
     using IteratorResultPromise = DOMPromiseDeferred<IDLSequence<IDLAny>>;
     void testAsyncIterator(JSDOMGlobalObject&, JSC::JSValue, IteratorResultPromise&&);
 
-#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
         MockMediaDeviceRouteController& NODELETE mockMediaDeviceRouteController();
     #endif
 
-private:
+    private:
     explicit Internals(Document&);
 
-#if ENABLE(MEDIA_STREAM)
+    #if ENABLE(MEDIA_STREAM)
         // CheckedPtr interface
         uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
         uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
@@ -1726,11 +1727,11 @@ private:
     ExceptionOr<RenderedDocumentMarker*> markerAt(Node&, const String& markerType, unsigned index);
     ExceptionOr<ScrollableArea*> scrollableAreaForNode(Node*) const;
 
-#if ENABLE(IMAGE_ANALYSIS)
+    #if ENABLE(IMAGE_ANALYSIS)
         static RetainPtr<VKCImageAnalysis> fakeImageAnalysisResultForTesting(const Vector<ImageOverlayLine>&);
     #endif
 
-#if ENABLE(DATA_DETECTION)
+    #if ENABLE(DATA_DETECTION)
         static DDScannerResult *fakeDataDetectorResultForTesting();
     #endif
 
@@ -1742,19 +1743,19 @@ private:
 
     RefPtr<MediaSessionManagerInterface> sessionManager() const;
 
-#if ENABLE(MEDIA_STREAM)
+    #if ENABLE(MEDIA_STREAM)
         // RealtimeMediaSourceObserver API
         void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
         // RealtimeMediaSource::AudioSampleObserver API
         void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { m_trackAudioSampleCount++; }
-    
+
         OrientationNotifier m_orientationNotifier;
         unsigned long m_trackVideoSampleCount { 0 };
         unsigned long m_trackAudioSampleCount { 0 };
         RefPtr<RealtimeMediaSource> m_trackSource;
         int m_trackVideoRotation { 0 };
     #endif
-#if ENABLE(MEDIA_SESSION) && ENABLE(WEB_CODECS)
+    #if ENABLE(MEDIA_SESSION) && ENABLE(WEB_CODECS)
         RefPtr<ArtworkImageLoader> m_artworkLoader;
         std::unique_ptr<ArtworkImagePromise> m_artworkImagePromise;
     #endif
@@ -1765,24 +1766,24 @@ private:
 
     std::unique_ptr<TextIterator> m_textIterator;
 
-#if ENABLE(WEBXR)
+    #if ENABLE(WEBXR)
         RefPtr<WebXRTest> m_xrTest;
     #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+    #if ENABLE(SPEECH_SYNTHESIS)
         RefPtr<PlatformSpeechSynthesizerMock> m_platformSpeechSynthesizer;
     #endif
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    #if ENABLE(MEDIA_SESSION_COORDINATOR)
         RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
     #endif
-#if ENABLE(VIDEO)
+    #if ENABLE(VIDEO)
         std::unique_ptr<CaptionUserPreferencesTestingModeToken> m_testingModeToken;
         RefPtr<MockCaptionDisplaySettingsClientCallback> m_mockCaptionDisplaySettingsClientCallback;
     #endif
-#if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
+    #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
         RefPtr<MockMediaDeviceRouteController> m_mockMediaDeviceRouteController;
     #endif
     WeakHashSet<ReadableStream> m_observedLiveReadableStreams;
-};
+    };
 
 } // namespace WebCore

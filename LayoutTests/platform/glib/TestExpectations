@@ -1823,6 +1823,9 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjec
 
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Failure Pass ]
 
+# MediaSource in Workers is not supported
+media/media-source/worker/media-source-worker-logger-observer-crash.html [ Skip ]
+
 # See also bug #175578.
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 
