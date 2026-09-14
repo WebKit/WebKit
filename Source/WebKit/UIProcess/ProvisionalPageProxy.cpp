@@ -270,7 +270,6 @@ void ProvisionalPageProxy::cancel()
         m_page ? std::optional { m_page->identifier() } : std::nullopt,
         std::nullopt,
         std::nullopt,
-        { },
         mainFrame->processID(),
         mainFrame->isFocused(),
     };

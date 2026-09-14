@@ -1354,7 +1354,6 @@ Awaitable<std::optional<FrameTreeNodeData>> WebPage::getFrameTreeForBackForwardC
         std::nullopt,
         std::nullopt,
         topDocument ? std::optional { topDocument-> identifier() }  : std::nullopt,
-        WebCore::CertificateInfo { },
         getCurrentProcessID(),
         false,
         false,

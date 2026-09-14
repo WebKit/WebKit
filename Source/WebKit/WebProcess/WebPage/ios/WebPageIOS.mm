@@ -2664,7 +2664,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
     FocusedElementInformation information;
 
     if (RefPtr webFrame = WebProcess::singleton().webFrame(focusedOrMainFrame->frameID()))
-        information.frame = webFrame->info(WithCertificateInfo::Yes);
+        information.frame = webFrame->info();
 
     information.lastInteractionLocation = flooredIntPoint(m_lastInteractionLocation);
     if (auto elementContext = contextForElement(*focusedElement))
