@@ -109,6 +109,11 @@ Color::Color(ResolvedColor&& color)
 {
 }
 
+Color::Color(CurrentAccentColor&& color)
+    : value { WTF::move(color) }
+{
+}
+
 Color::Color(CurrentColor&& color)
     : value { WTF::move(color) }
 {
