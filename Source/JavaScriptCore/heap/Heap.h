@@ -1329,6 +1329,12 @@ private:
 
 } // namespace GCClient
 
+// True when the calling thread is performing garbage collection work for a heap that currently
+// has the world stopped. State that the mutator may read without locking only because it is
+// paused can assert this, rather than settling for "some GC thread", which does not distinguish
+// the stop-the-world phases from concurrent marking.
+JS_EXPORT_PRIVATE bool currentThreadIsCollectingWithWorldStopped();
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
