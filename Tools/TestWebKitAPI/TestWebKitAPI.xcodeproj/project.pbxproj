@@ -591,6 +591,12 @@
 				WebKit/WKWebView/CodingTests.swift,
 				WebKit/WKWebView/TextFragments.swift,
 				WebKit/WKWebView/WKWebExtensionAPIAction.swift,
+				WebKit/WKWebView/WKWebExtensionAPIAlarms.swift,
+				WebKit/WKWebView/WKWebExtensionAPICommands.swift,
+				WebKit/WKWebView/WKWebExtensionAPICookies.swift,
+				WebKit/WKWebView/WKWebExtensionAPIEvent.swift,
+				WebKit/WKWebView/WKWebExtensionTab.swift,
+				WebKit/WKWebView/WKWebExtensionWindow.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;

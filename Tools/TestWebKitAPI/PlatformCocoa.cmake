@@ -667,6 +667,12 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAction.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPICommands.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPICookies.swift
+    Tests/WebKit/WKWebView/WKWebExtensionAPIEvent.swift
+    Tests/WebKit/WKWebView/WKWebExtensionTab.swift
+    Tests/WebKit/WKWebView/WKWebExtensionWindow.swift
     Tests/WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift
 
     Tests/WebKit/WebPage/ControlledByExternalAgent.swift

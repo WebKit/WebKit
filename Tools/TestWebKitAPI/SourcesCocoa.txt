@@ -366,14 +366,10 @@ Tests/WebKit/WKWebView/WKScrollGeometryTests.mm @nonARC
 Tests/WebKit/WKWebView/WKURLSchemeHandler-1.mm @nonARC
 Tests/WebKit/WKWebView/WKURLSchemeHandler-leaks.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtension.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIBookmarks.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPICommands.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPICookies.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIDeclarativeNetRequest.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIDevTools.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIDOM.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionAPIEvent.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIExtension.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPIMenus.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionAPINamespace.mm @nonARC
@@ -393,8 +389,6 @@ Tests/WebKit/WKWebView/WKWebExtensionController.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionControllerConfiguration.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionDataRecord.mm @nonARC
 Tests/WebKit/WKWebView/WKWebExtensionMatchPattern.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionTab.mm @nonARC
-Tests/WebKit/WKWebView/WKWebExtensionWindow.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewAlwaysShowsScroller.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewCandidateTests.mm @nonARC
 Tests/WebKit/WKWebView/WKWebViewCloseAllMediaPresentations.mm @nonARC
