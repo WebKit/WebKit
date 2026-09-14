@@ -136,6 +136,14 @@ void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomSt
         HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
+void HTMLButtonElement::childrenChanged(const ChildChange& change)
+{
+    HTMLFormControlElement::childrenChanged(change);
+
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(parentNode()); select && select->buttonElement() == this)
+        select->buttonElementChildrenChanged();
+}
+
 RefPtr<Element> HTMLButtonElement::commandForElement() const
 {
     if (isDisabledFormControl())

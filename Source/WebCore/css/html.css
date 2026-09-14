@@ -1114,7 +1114,7 @@ select:not(:-internal-uses-menulist):enabled {
     color: CanvasText;
 }
 
-select:not([multiple]):-internal-uses-menulist > button:first-child {
+select:-internal-uses-menulist > button:first-child {
     all: unset;
     display: contents;
 }
