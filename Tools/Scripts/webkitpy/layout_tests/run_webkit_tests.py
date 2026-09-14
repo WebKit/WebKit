@@ -344,9 +344,6 @@ def parse_args(args):
         optparse.make_option("--profiler", action="store",
             help="Output per-test profile information, using the specified profiler."),
         optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
-        optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
-            help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
-                 '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
         optparse.make_option('--enable-core-dumps-nolimit', action='store_true', default=False, help='Enable core dumps for the test run (runs the equivalent of "ulimit -c unlimited" before starting the tests).'),
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
@@ -363,6 +360,15 @@ def parse_args(args):
             help="If set, dedicated iOS simulators will always be created.  If not set, the script will attempt to use any currently running simulator."),
         optparse.make_option('--show-touches', action="store_true", default=False, help="If set, a small dot will be shown where the generated touches are. Helpful for debugging touch tests."),
         optparse.make_option('--udid', '--udids', dest='udids', action='store', help='Specify a device UDID to pick the connected device to run tests on. Specify multiple by separating with commas. If using --*-simulator and the specified UDIDs don\'t satisfy the request, simulators will be created to fulfill the remaining requests.'),
+    ]))
+
+    option_group_definitions.append(("GTK/WPE Options", [
+        optparse.make_option(
+            '--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
+            help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                 '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+        optparse.make_option('--gl-rendering-backend', choices=['cpu', 'gpu'], default='cpu', help='"cpu": Use LIBGL_ALWAYS_SOFTWARE=1. "gpu": Use native GL. Default: cpu.'),
+        optparse.make_option('--skia-rendering-backend', choices=['cpu', 'gpu'], default='cpu', help='"cpu": Use Skia CPU. "gpu": Use Skia GPU. Default: cpu.'),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [

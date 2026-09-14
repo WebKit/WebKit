@@ -73,12 +73,16 @@ class WPEPort(GLibPort):
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
         self._copy_values_from_environ_with_prefix(environment, 'WPE_')
-        environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
-        # Run WPE tests with Skia CPU (usual configuration on embedded)
-        # to help catching issues/crashes <https://webkit.org/b/287632>
-        if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
-            _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "1".')
-        environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '1'
+        if self._gl_rendering_backend == "cpu":
+            environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
+        if self._skia_rendering_backend == "cpu":
+            if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
+                _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "1".')
+            environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '1'
+        else:
+            if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
+                _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "0".')
+            environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '0'
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'BREAKPAD_MINIDUMP_DIR')
         return environment
